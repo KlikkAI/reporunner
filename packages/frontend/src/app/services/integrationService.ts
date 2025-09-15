@@ -1,19 +1,19 @@
 // Integration Management Service - Handle backend integration operations
-import { apiClient, ApiClientError } from '@/core/api/ApiClient'
-import { ApiResponseSchema } from '@/core/schemas'
-import { z } from 'zod'
+import { apiClient, ApiClientError } from "@/core/api/ApiClient";
+import { ApiResponseSchema } from "@/core/schemas";
+import { z } from "zod";
 
 export interface IntegrationStatus {
-  connected: boolean
-  config?: Record<string, any>
-  lastConnectedAt?: string
-  connectionHealth?: 'healthy' | 'warning' | 'error'
+  connected: boolean;
+  config?: Record<string, any>;
+  lastConnectedAt?: string;
+  connectionHealth?: "healthy" | "warning" | "error";
 }
 
 export interface IntegrationConnection {
-  integrationId: string
-  config: Record<string, any>
-  credentials?: string[]
+  integrationId: string;
+  config: Record<string, any>;
+  credentials?: string[];
 }
 
 export class IntegrationService {
@@ -23,33 +23,34 @@ export class IntegrationService {
   async getIntegrationStatuses(): Promise<Record<string, IntegrationStatus>> {
     try {
       const response = await apiClient.get(
-        '/integrations/status',
+        "/integrations/status",
         ApiResponseSchema(
           z.record(
+            z.string(),
             z.object({
               connected: z.boolean(),
-              config: z.record(z.any()).optional(),
+              config: z.record(z.string(), z.any()).optional(),
               lastConnectedAt: z.string().optional(),
               connectionHealth: z
-                .enum(['healthy', 'warning', 'error'])
+                .enum(["healthy", "warning", "error"])
                 .optional(),
-            })
-          )
-        )
-      )
-      return response
+            }),
+          ),
+        ),
+      );
+      return response;
     } catch (error: any) {
       // If it's a 404, the endpoint doesn't exist yet
       if (error.statusCode === 404) {
-        console.warn('Integration status endpoint not implemented yet')
-        return {}
+        console.warn("Integration status endpoint not implemented yet");
+        return {};
       }
       throw new ApiClientError(
-        'Failed to get integration statuses',
+        "Failed to get integration statuses",
         0,
-        'INTEGRATION_STATUS_ERROR',
-        error
-      )
+        "INTEGRATION_STATUS_ERROR",
+        error,
+      );
     }
   }
 
@@ -57,7 +58,7 @@ export class IntegrationService {
    * Get status for specific integration
    */
   async getIntegrationStatus(
-    integrationId: string
+    integrationId: string,
   ): Promise<IntegrationStatus> {
     try {
       const response = await apiClient.get(
@@ -65,22 +66,22 @@ export class IntegrationService {
         ApiResponseSchema(
           z.object({
             connected: z.boolean(),
-            config: z.record(z.any()).optional(),
+            config: z.record(z.string(), z.any()).optional(),
             lastConnectedAt: z.string().optional(),
             connectionHealth: z
-              .enum(['healthy', 'warning', 'error'])
+              .enum(["healthy", "warning", "error"])
               .optional(),
-          })
-        )
-      )
-      return response
+          }),
+        ),
+      );
+      return response;
     } catch (error) {
       throw new ApiClientError(
-        'Failed to get integration status',
+        "Failed to get integration status",
         0,
-        'INTEGRATION_STATUS_ERROR',
-        error
-      )
+        "INTEGRATION_STATUS_ERROR",
+        error,
+      );
     }
   }
 
@@ -89,24 +90,24 @@ export class IntegrationService {
    */
   async connectIntegration(
     integrationId: string,
-    config: Record<string, any>
+    config: Record<string, any>,
   ): Promise<{ message: string }> {
     try {
       return await apiClient.post(
-        '/integrations/connect',
+        "/integrations/connect",
         {
           integrationId,
           config,
         },
-        ApiResponseSchema(z.object({ message: z.string() }))
-      )
+        ApiResponseSchema(z.object({ message: z.string() })),
+      );
     } catch (error) {
       throw new ApiClientError(
-        'Failed to connect integration',
+        "Failed to connect integration",
         0,
-        'INTEGRATION_CONNECT_ERROR',
-        error
-      )
+        "INTEGRATION_CONNECT_ERROR",
+        error,
+      );
     }
   }
 
@@ -114,20 +115,20 @@ export class IntegrationService {
    * Disconnect an integration
    */
   async disconnectIntegration(
-    integrationId: string
+    integrationId: string,
   ): Promise<{ message: string }> {
     try {
       return await apiClient.delete(
         `/integrations/${integrationId}/connection`,
-        ApiResponseSchema(z.object({ message: z.string() }))
-      )
+        ApiResponseSchema(z.object({ message: z.string() })),
+      );
     } catch (error) {
       throw new ApiClientError(
-        'Failed to disconnect integration',
+        "Failed to disconnect integration",
         0,
-        'INTEGRATION_DISCONNECT_ERROR',
-        error
-      )
+        "INTEGRATION_DISCONNECT_ERROR",
+        error,
+      );
     }
   }
 
@@ -135,9 +136,9 @@ export class IntegrationService {
    * Test integration connection
    */
   async testIntegrationConnection(integrationId: string): Promise<{
-    success: boolean
-    message: string
-    details?: any
+    success: boolean;
+    message: string;
+    details?: any;
   }> {
     try {
       return await apiClient.post(
@@ -148,16 +149,16 @@ export class IntegrationService {
             success: z.boolean(),
             message: z.string(),
             details: z.any().optional(),
-          })
-        )
-      )
+          }),
+        ),
+      );
     } catch (error) {
       throw new ApiClientError(
-        'Failed to test integration connection',
+        "Failed to test integration connection",
         0,
-        'INTEGRATION_TEST_ERROR',
-        error
-      )
+        "INTEGRATION_TEST_ERROR",
+        error,
+      );
     }
   }
 
@@ -167,16 +168,16 @@ export class IntegrationService {
   async getAvailableIntegrations(): Promise<any[]> {
     try {
       return await apiClient.get(
-        '/integrations/available',
-        ApiResponseSchema(z.array(z.any())) // Adjust schema as needed
-      )
+        "/integrations/available",
+        ApiResponseSchema(z.array(z.any())), // Adjust schema as needed
+      );
     } catch (error) {
       throw new ApiClientError(
-        'Failed to get available integrations',
+        "Failed to get available integrations",
         0,
-        'INTEGRATION_FETCH_ERROR',
-        error
-      )
+        "INTEGRATION_FETCH_ERROR",
+        error,
+      );
     }
   }
 
@@ -184,9 +185,9 @@ export class IntegrationService {
    * Get integration configuration requirements
    */
   async getIntegrationConfig(integrationId: string): Promise<{
-    fields: any[]
-    instructions?: string[]
-    links?: any[]
+    fields: any[];
+    instructions?: string[];
+    links?: any[];
   }> {
     try {
       return await apiClient.get(
@@ -196,18 +197,18 @@ export class IntegrationService {
             fields: z.array(z.any()), // Adjust schema as needed
             instructions: z.array(z.string()).optional(),
             links: z.array(z.any()).optional(),
-          })
-        )
-      )
+          }),
+        ),
+      );
     } catch (error) {
       throw new ApiClientError(
-        'Failed to get integration configuration',
+        "Failed to get integration configuration",
         0,
-        'INTEGRATION_CONFIG_ERROR',
-        error
-      )
+        "INTEGRATION_CONFIG_ERROR",
+        error,
+      );
     }
   }
 }
 
-export const integrationService = new IntegrationService()
+export const integrationService = new IntegrationService();

@@ -1,32 +1,35 @@
-import { create } from 'zustand'
-import type { Credential, CredentialTestResult } from '@/core/schemas'
-import { CredentialApiService } from '@/core/api/CredentialApiService'
-import type { CredentialType } from '@/core/schemas'
+import { create } from "zustand";
+import type { Credential, CredentialTestResult } from "@/core/schemas";
+import { CredentialApiService } from "@/core/api/CredentialApiService";
+import type { CredentialType } from "@/core/schemas";
 
-const credentialApiService = new CredentialApiService()
+const credentialApiService = new CredentialApiService();
 
 interface CredentialState {
-  credentials: Credential[]
-  isLoading: boolean
-  testingCredential: string | null
-  credentialTypes: CredentialType[]
+  credentials: Credential[];
+  isLoading: boolean;
+  testingCredential: string | null;
+  credentialTypes: CredentialType[];
 
   // Actions
-  loadCredentials: () => Promise<void>
+  loadCredentials: () => Promise<void>;
   createCredential: (
     name: string,
     type: string,
-    data: Record<string, unknown>
-  ) => Promise<string>
-  addCredential: (credential: any) => void
-  updateCredential: (id: string, data: Record<string, unknown>) => Promise<void>
-  deleteCredential: (id: string) => Promise<void>
-  revokeGmailCredential: (id: string) => Promise<void>
-  testCredential: (id: string) => Promise<CredentialTestResult>
-  loadCredentialTypes: () => Promise<void>
-  getCredentialsOfType: (type: string) => Credential[]
-  getCredentialsByTypes: (types: string[]) => Credential[]
-  getCredentialById: (id: string) => Credential | undefined
+    data: Record<string, unknown>,
+  ) => Promise<string>;
+  addCredential: (credential: any) => void;
+  updateCredential: (
+    id: string,
+    data: Record<string, unknown>,
+  ) => Promise<void>;
+  deleteCredential: (id: string) => Promise<void>;
+  revokeGmailCredential: (id: string) => Promise<void>;
+  testCredential: (id: string) => Promise<CredentialTestResult>;
+  loadCredentialTypes: () => Promise<void>;
+  getCredentialsOfType: (type: string) => Credential[];
+  getCredentialsByTypes: (types: string[]) => Credential[];
+  getCredentialById: (id: string) => Credential | undefined;
 }
 
 export const useCredentialStore = create<CredentialState>((set, get) => ({
@@ -36,164 +39,170 @@ export const useCredentialStore = create<CredentialState>((set, get) => ({
   credentialTypes: [],
 
   loadCredentials: async () => {
-    set({ isLoading: true })
+    set({ isLoading: true });
     try {
-      const result = await credentialApiService.getCredentials()
-      set({ credentials: result.items })
+      const result = await credentialApiService.getCredentials();
+      set({ credentials: result.items });
     } catch (error) {
-      console.error('Failed to load credentials:', error)
+      console.error("Failed to load credentials:", error);
       // Fallback to empty array on error
-      set({ credentials: [] })
+      set({ credentials: [] });
     } finally {
-      set({ isLoading: false })
+      set({ isLoading: false });
     }
   },
 
   createCredential: async (name, type, data) => {
-    set({ isLoading: true })
+    set({ isLoading: true });
     try {
       const credential = await credentialApiService.createCredential({
         type: type as CredentialType,
         name,
         integration: type,
         data,
-      })
-      set(state => ({
+        testOnCreate: true,
+      });
+      set((state) => ({
         credentials: [...state.credentials, credential],
-      }))
-      return credential.id
+      }));
+      return credential.id;
     } catch (error) {
-      console.error('Failed to create credential:', error)
-      throw error
+      console.error("Failed to create credential:", error);
+      throw error;
     } finally {
-      set({ isLoading: false })
+      set({ isLoading: false });
     }
   },
 
-  addCredential: credential => {
+  addCredential: (credential) => {
     const newCredential: Credential = {
       ...credential,
       createdAt: credential.createdAt || new Date().toISOString(),
       updatedAt: credential.updatedAt || new Date().toISOString(),
-    }
+    };
 
-    set(state => ({
+    set((state) => ({
       credentials: [...state.credentials, newCredential],
-    }))
+    }));
   },
 
   updateCredential: async (id, data) => {
-    set({ isLoading: true })
+    set({ isLoading: true });
     try {
       const updatedCredential = await credentialApiService.updateCredential(
         id,
         {
           data,
-        }
-      )
-      set(state => ({
-        credentials: state.credentials.map(cred =>
-          cred.id === id ? updatedCredential : cred
+        },
+      );
+      set((state) => ({
+        credentials: state.credentials.map((cred) =>
+          cred.id === id ? updatedCredential : cred,
         ),
-      }))
+      }));
     } catch (error) {
-      console.error('Failed to update credential:', error)
-      throw error
+      console.error("Failed to update credential:", error);
+      throw error;
     } finally {
-      set({ isLoading: false })
+      set({ isLoading: false });
     }
   },
 
-  deleteCredential: async id => {
-    set({ isLoading: true })
+  deleteCredential: async (id) => {
+    set({ isLoading: true });
     try {
-      await credentialApiService.deleteCredential(id)
-      set(state => ({
-        credentials: state.credentials.filter(cred => cred.id !== id),
-      }))
+      await credentialApiService.deleteCredential(id);
+      set((state) => ({
+        credentials: state.credentials.filter((cred) => cred.id !== id),
+      }));
     } catch (error) {
-      console.error('Failed to delete credential:', error)
-      throw error
+      console.error("Failed to delete credential:", error);
+      throw error;
     } finally {
-      set({ isLoading: false })
+      set({ isLoading: false });
     }
   },
 
-  revokeGmailCredential: async id => {
-    set({ isLoading: true })
+  revokeGmailCredential: async (id) => {
+    set({ isLoading: true });
     try {
-      const result = await credentialApiService.revokeOAuth2(id)
+      const result = await credentialApiService.revokeOAuth2(id);
       if (result.message) {
-        set(state => ({
-          credentials: state.credentials.filter(cred => cred.id !== id),
-        }))
+        set((state) => ({
+          credentials: state.credentials.filter((cred) => cred.id !== id),
+        }));
       } else {
-        throw new Error(result.message)
+        throw new Error(result.message);
       }
     } catch (error) {
-      console.error('Failed to revoke Gmail credential:', error)
-      throw error
+      console.error("Failed to revoke Gmail credential:", error);
+      throw error;
     } finally {
-      set({ isLoading: false })
+      set({ isLoading: false });
     }
   },
 
-  testCredential: async id => {
-    const credential = get().credentials.find(c => c.id === id)
+  testCredential: async (id) => {
+    const credential = get().credentials.find((c) => c.id === id);
     if (!credential) {
-      return { success: false, message: 'Credential not found' }
+      return {
+        success: false,
+        message: "Credential not found",
+        testedAt: new Date().toISOString(),
+      };
     }
 
-    set({ testingCredential: id })
+    set({ testingCredential: id });
     try {
-      const result = await credentialApiService.testCredential(id)
+      const result = await credentialApiService.testCredential(id);
 
       // Update credential with test result
-      set(state => ({
-        credentials: state.credentials.map(cred =>
+      set((state) => ({
+        credentials: state.credentials.map((cred) =>
           cred.id === id
             ? {
                 ...cred,
                 testedAt: new Date().toISOString(),
                 isValid: result.success,
               }
-            : cred
+            : cred,
         ),
-      }))
+      }));
 
-      return result
+      return result;
     } catch (error) {
       return {
         success: false,
-        message: 'Test failed due to network error',
-      }
+        message: "Test failed due to network error",
+        testedAt: new Date().toISOString(),
+      };
     } finally {
-      set({ testingCredential: null })
+      set({ testingCredential: null });
     }
   },
 
   loadCredentialTypes: async () => {
-    set({ isLoading: true })
+    set({ isLoading: true });
     try {
-      const types = await credentialApiService.getCredentialTypes()
-      set({ credentialTypes: types })
+      const types = await credentialApiService.getCredentialTypes();
+      set({ credentialTypes: types as any });
     } catch (error) {
-      console.error('Failed to load credential types:', error)
-      set({ credentialTypes: [] })
+      console.error("Failed to load credential types:", error);
+      set({ credentialTypes: [] });
     } finally {
-      set({ isLoading: false })
+      set({ isLoading: false });
     }
   },
 
-  getCredentialsOfType: type => {
-    return get().credentials.filter(cred => cred.type === type)
+  getCredentialsOfType: (type) => {
+    return get().credentials.filter((cred) => cred.type === type);
   },
 
   getCredentialsByTypes: (types: string[]) => {
-    return get().credentials.filter(cred => types.includes(cred.type))
+    return get().credentials.filter((cred) => types.includes(cred.type));
   },
 
   getCredentialById: (id: string) => {
-    return get().credentials.find(cred => cred.id === id)
+    return get().credentials.find((cred) => cred.id === id);
   },
-}))
+}));

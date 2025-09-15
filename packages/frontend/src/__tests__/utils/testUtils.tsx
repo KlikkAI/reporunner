@@ -178,6 +178,7 @@ export const mockApiResponse = (data: any, status = 200) => {
     blob: vi.fn(),
     formData: vi.fn(),
     text: vi.fn(),
+    bytes: vi.fn(),
   } as Response);
 };
 
@@ -199,6 +200,7 @@ export const mockApiError = (status = 500, message = "Server Error") => {
     blob: vi.fn(),
     formData: vi.fn(),
     text: vi.fn(),
+    bytes: vi.fn(),
   } as Response);
 };
 

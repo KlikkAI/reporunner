@@ -4,9 +4,9 @@
  */
 
 // Initialize components and themes immediately
-import './bodies' // Auto-registers specialized components
-import './nodeUiRegistry' // Initializes the registry and factory
-import './themes' // Initializes theme system including Gmail theme
+import "./bodies"; // Auto-registers specialized components
+import "./nodeUiRegistry"; // Initializes the registry and factory
+import "./themes"; // Initializes theme system including Gmail theme
 
 // ============================================================================
 // Core Registry System
@@ -25,9 +25,9 @@ export {
   getRegistryStatistics,
   listRegisteredComponentTypes,
   enhancedRegistry,
-} from './nodeUiRegistry'
+} from "./nodeUiRegistry";
 
-export { componentFactory, ComponentFactory } from './ComponentFactory'
+export { componentFactory, ComponentFactory } from "./ComponentFactory";
 
 // ============================================================================
 // Theme System
@@ -40,21 +40,21 @@ export {
   useNodeTheme,
   NodeThemeProvider,
   useNodeThemeContext,
-} from './themes'
+} from "./themes";
 
 // ============================================================================
 // Reusable Components
 // ============================================================================
-export { default as NodeBadge } from './components/NodeBadge'
+export { default as NodeBadge } from "./components/NodeBadge";
 export {
   NodeBadgeGroup,
   createStatusBadge,
   createCountBadge,
   createTextBadge,
   createIconBadge,
-} from './components/NodeBadge'
+} from "./components/NodeBadge";
 
-export { default as NodeHandle } from './components/NodeHandle'
+export { default as NodeHandle } from "./components/NodeHandle";
 export {
   NodeHandleGroup,
   createInputHandle,
@@ -63,16 +63,16 @@ export {
   createConditionHandle,
   createWebhookHandle,
   createTriggerHandle,
-} from './components/NodeHandle'
+} from "./components/NodeHandle";
 
-export { default as EnhancedNodeToolbar } from './components/EnhancedNodeToolbar'
-export { default as PropertyField } from './components/PropertyField'
+export { default as EnhancedNodeToolbar } from "./components/EnhancedNodeToolbar";
+export { default as PropertyField } from "./components/PropertyField";
 
 // ============================================================================
 // Specialized Node Bodies (existing)
 // ============================================================================
-export { default as AIAgentNodeBody } from './AIAgentNodeBody'
-export { default as ConditionNodeBody } from './ConditionNodeBody'
+export { default as AIAgentNodeBody } from "./AIAgentNodeBody";
+export { default as ConditionNodeBody } from "./ConditionNodeBody";
 
 // ============================================================================
 // Type Definitions
@@ -83,23 +83,23 @@ export type {
   CustomPropertiesPanelProps,
   CustomHandleRendererProps,
   CustomToolbarProps,
-  
+
   // Enhanced node type
   EnhancedNodeTypeDescription,
-  
+
   // Visual system
   NodeShape,
   NodeAnimation,
   NodeVisualConfig,
   NodeGradient,
-  NodeBadge,
+  NodeBadge as NodeBadgeType,
   BadgePosition,
-  
+
   // Component system
   CustomHandle,
   HandleStyle,
   ToolbarAction,
-  
+
   // Theme system
   NodeTheme,
   NodeColorScheme,
@@ -107,17 +107,17 @@ export type {
   NodeSpacing,
   NodeAnimationConfig,
   ThemeVariant,
-  
+
   // Registry system
   UIComponentFactory,
   EnhancedNodeRegistry,
   ThemeManager as IThemeManager,
-  
+
   // Utility types
   DeepPartial,
   NodeUIConfig,
   ResponsiveValue,
-} from './types'
+} from "./types";
 
 // ============================================================================
 // Utility Functions
@@ -128,15 +128,15 @@ export type {
  */
 export function initializeNodeExtensions(): void {
   // System is auto-initialized via imports
-  console.log('Node Extensions System initialized')
-  console.log('Registry stats:', getRegistryStatistics())
+  console.log("Node Extensions System initialized");
+  console.log("Registry stats:", getRegistryStatistics());
 }
 
 /**
  * Get the current system version
  */
 export function getVersion(): string {
-  return '2.0.0' // Enhanced UI system version
+  return "2.0.0"; // Enhanced UI system version
 }
 
 /**
@@ -147,7 +147,7 @@ export function getSystemInfo() {
     version: getVersion(),
     components: listRegisteredComponentTypes(),
     stats: getRegistryStatistics(),
-    themes: themeManager.getAllThemes().map(t => t.name),
+    themes: themeManager.getAllThemes().map((t) => t.name),
     currentTheme: themeManager.getCurrentTheme().name,
-  }
+  };
 }

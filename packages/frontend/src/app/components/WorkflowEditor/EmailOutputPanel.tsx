@@ -1,4 +1,5 @@
-import React, { useState, useMemo } from 'react'
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import React, { useState, useMemo } from "react";
 import {
   Search,
   CheckCircle,
@@ -6,106 +7,108 @@ import {
   Edit,
   ChevronDown,
   ChevronRight,
-} from 'lucide-react'
+} from "lucide-react";
 
-type DisplayMode = 'schema' | 'table' | 'json'
+type DisplayMode = "schema" | "table" | "json";
 
 interface EmailOutputPanelProps {
-  selectedEmail?: any
-  isVisible?: boolean
+  selectedEmail?: any;
+  isVisible?: boolean;
 }
 
 const EmailOutputPanel: React.FC<EmailOutputPanelProps> = ({
   selectedEmail,
   isVisible = true,
 }) => {
-  const [displayMode, setDisplayMode] = useState<DisplayMode>('schema')
-  const [searchTerm, setSearchTerm] = useState('')
+  const [displayMode, setDisplayMode] = useState<DisplayMode>("schema");
+  const [searchTerm, setSearchTerm] = useState("");
   const [expandedItems, setExpandedItems] = useState<Set<string>>(
-    new Set(['labelIds', 'headers', 'from', 'to'])
-  )
+    new Set(["labelIds", "headers", "from", "to"]),
+  );
 
   // Filter data based on search term
   const filteredData = useMemo(() => {
-    if (!searchTerm || !selectedEmail) return selectedEmail
+    if (!searchTerm || !selectedEmail) return selectedEmail;
 
-    const filterObject = (obj: any, path = ''): any => {
-      if (typeof obj === 'string') {
-        return obj.toLowerCase().includes(searchTerm.toLowerCase()) ? obj : null
+    const filterObject = (obj: any, path = ""): any => {
+      if (typeof obj === "string") {
+        return obj.toLowerCase().includes(searchTerm.toLowerCase())
+          ? obj
+          : null;
       }
-      if (typeof obj === 'number') {
-        return obj.toString().includes(searchTerm) ? obj : null
+      if (typeof obj === "number") {
+        return obj.toString().includes(searchTerm) ? obj : null;
       }
       if (Array.isArray(obj)) {
         const filtered = obj.filter((item, index) => {
-          const result = filterObject(item, `${path}[${index}]`)
-          return result !== null
-        })
-        return filtered.length > 0 ? filtered : null
+          const result = filterObject(item, `${path}[${index}]`);
+          return result !== null;
+        });
+        return filtered.length > 0 ? filtered : null;
       }
-      if (typeof obj === 'object' && obj !== null) {
-        const filtered: any = {}
+      if (typeof obj === "object" && obj !== null) {
+        const filtered: any = {};
         for (const [key, value] of Object.entries(obj)) {
-          const newPath = path ? `${path}.${key}` : key
+          const newPath = path ? `${path}.${key}` : key;
           if (key.toLowerCase().includes(searchTerm.toLowerCase())) {
-            filtered[key] = value
+            filtered[key] = value;
           } else {
-            const result = filterObject(value, newPath)
+            const result = filterObject(value, newPath);
             if (result !== null) {
-              filtered[key] = result
+              filtered[key] = result;
             }
           }
         }
-        return Object.keys(filtered).length > 0 ? filtered : null
+        return Object.keys(filtered).length > 0 ? filtered : null;
       }
-      return null
-    }
+      return null;
+    };
 
-    return filterObject(selectedEmail)
-  }, [selectedEmail, searchTerm])
+    return filterObject(selectedEmail);
+  }, [selectedEmail, searchTerm]);
 
   const toggleExpanded = (path: string) => {
-    const newExpanded = new Set(expandedItems)
+    const newExpanded = new Set(expandedItems);
     if (newExpanded.has(path)) {
-      newExpanded.delete(path)
+      newExpanded.delete(path);
     } else {
-      newExpanded.add(path)
+      newExpanded.add(path);
     }
-    setExpandedItems(newExpanded)
-  }
+    setExpandedItems(newExpanded);
+  };
 
   // Get data type icon
   const getTypeIcon = (value: any) => {
-    if (typeof value === 'string') {
-      return <span className="text-blue-400">Aa</span>
+    if (typeof value === "string") {
+      return <span className="text-blue-400">Aa</span>;
     }
-    if (typeof value === 'number') {
-      return <span className="text-green-400">#</span>
+    if (typeof value === "number") {
+      return <span className="text-green-400">#</span>;
     }
     if (Array.isArray(value)) {
-      return <span className="text-purple-400">[]</span>
+      return <span className="text-purple-400">[]</span>;
     }
-    if (typeof value === 'object') {
-      return <span className="text-yellow-400">{}</span>
+    if (typeof value === "object") {
+      return <span className="text-yellow-400">{}</span>;
     }
-    return <span className="text-gray-400">?</span>
-  }
+    return <span className="text-gray-400">?</span>;
+  };
 
   // Render schema view
   const renderSchemaItem = (
     key: string,
     value: any,
     path: string,
-    nestLevel: number = 0
+    nestLevel: number = 0,
   ) => {
-    const isExpanded = expandedItems.has(path)
+    const isExpanded = expandedItems.has(path);
     const hasChildren =
-      Array.isArray(value) || (typeof value === 'object' && value !== null)
+      Array.isArray(value) || (typeof value === "object" && value !== null);
 
     return (
       <div key={path} className="border-b border-gray-700 last:border-b-0">
         <div
-          className={`flex items-center py-2 px-3 hover:bg-gray-700 transition-colors ${nestLevel > 0 ? 'pl-8' : ''}`}
+          className={`flex items-center py-2 px-3 hover:bg-gray-700 transition-colors ${nestLevel > 0 ? "pl-8" : ""}`}
           style={{ paddingLeft: `${nestLevel * 24 + 12}px` }}
         >
           {/* Toggle button for expandable items */}
@@ -135,7 +138,7 @@ const EmailOutputPanel: React.FC<EmailOutputPanelProps> = ({
           <div className="flex-1 min-w-0">
             {!hasChildren ? (
               <span className="text-sm text-gray-300 break-all">
-                {typeof value === 'string' && value.includes('\n') ? (
+                {typeof value === "string" && value.includes("\n") ? (
                   <div className="whitespace-pre-wrap">{value}</div>
                 ) : (
                   String(value)
@@ -145,7 +148,7 @@ const EmailOutputPanel: React.FC<EmailOutputPanelProps> = ({
               <span className="text-sm text-gray-400">
                 {Array.isArray(value)
                   ? `Array (${value.length} items)`
-                  : 'Object'}
+                  : "Object"}
               </span>
             )}
           </div>
@@ -160,50 +163,50 @@ const EmailOutputPanel: React.FC<EmailOutputPanelProps> = ({
                     `[${index}]`,
                     item,
                     `${path}[${index}]`,
-                    nestLevel + 1
-                  )
+                    nestLevel + 1,
+                  ),
                 )
               : Object.entries(value).map(([childKey, childValue]) =>
                   renderSchemaItem(
                     childKey,
                     childValue,
                     `${path}.${childKey}`,
-                    nestLevel + 1
-                  )
+                    nestLevel + 1,
+                  ),
                 )}
           </div>
         )}
       </div>
-    )
-  }
+    );
+  };
 
   // Render table view
   const renderTableView = () => {
     if (!selectedEmail)
       return (
         <div className="text-gray-400 text-center py-8">No email selected</div>
-      )
+      );
 
-    const flattenObject = (obj: any, prefix = ''): Record<string, any> => {
-      const result: Record<string, any> = {}
+    const flattenObject = (obj: any, prefix = ""): Record<string, any> => {
+      const result: Record<string, any> = {};
 
       for (const [key, value] of Object.entries(obj)) {
-        const newKey = prefix ? `${prefix}.${key}` : key
+        const newKey = prefix ? `${prefix}.${key}` : key;
 
         if (Array.isArray(value)) {
-          result[newKey] = value.join(', ')
-        } else if (typeof value === 'object' && value !== null) {
+          result[newKey] = value.join(", ");
+        } else if (typeof value === "object" && value !== null) {
           // For nested objects, show a preview
-          result[newKey] = `Object (${Object.keys(value).length} properties)`
+          result[newKey] = `Object (${Object.keys(value).length} properties)`;
         } else {
-          result[newKey] = value
+          result[newKey] = value;
         }
       }
 
-      return result
-    }
+      return result;
+    };
 
-    const flatData = flattenObject(selectedEmail)
+    const flatData = flattenObject(selectedEmail);
 
     return (
       <div className="overflow-auto">
@@ -231,7 +234,7 @@ const EmailOutputPanel: React.FC<EmailOutputPanelProps> = ({
                   {key}
                 </td>
                 <td className="py-2 px-3 text-gray-300 break-all">
-                  {typeof value === 'string' && value.length > 100
+                  {typeof value === "string" && value.length > 100
                     ? `${value.substring(0, 100)}...`
                     : String(value)}
                 </td>
@@ -243,15 +246,15 @@ const EmailOutputPanel: React.FC<EmailOutputPanelProps> = ({
           </tbody>
         </table>
       </div>
-    )
-  }
+    );
+  };
 
   // Render JSON view
   const renderJsonView = () => {
     if (!selectedEmail)
       return (
         <div className="text-gray-400 text-center py-8">No email selected</div>
-      )
+      );
 
     return (
       <div className="overflow-auto">
@@ -259,8 +262,8 @@ const EmailOutputPanel: React.FC<EmailOutputPanelProps> = ({
           {JSON.stringify(filteredData || selectedEmail, null, 2)}
         </pre>
       </div>
-    )
-  }
+    );
+  };
 
   const renderContent = () => {
     if (!selectedEmail) {
@@ -274,16 +277,16 @@ const EmailOutputPanel: React.FC<EmailOutputPanelProps> = ({
           <p className="mb-2">Select an email from the input column</p>
           <p className="text-gray-400">to view its detailed structure</p>
         </div>
-      )
+      );
     }
 
     switch (displayMode) {
-      case 'schema':
+      case "schema":
         return (
           <div className="overflow-auto max-h-full">
             {filteredData ? (
               Object.entries(filteredData).map(([key, value]) =>
-                renderSchemaItem(key, value, key)
+                renderSchemaItem(key, value, key),
               )
             ) : (
               <div className="text-gray-400 text-center py-8">
@@ -291,17 +294,17 @@ const EmailOutputPanel: React.FC<EmailOutputPanelProps> = ({
               </div>
             )}
           </div>
-        )
-      case 'table':
-        return renderTableView()
-      case 'json':
-        return renderJsonView()
+        );
+      case "table":
+        return renderTableView();
+      case "json":
+        return renderJsonView();
       default:
-        return null
+        return null;
     }
-  }
+  };
 
-  if (!isVisible) return null
+  if (!isVisible) return null;
 
   return (
     <div className="flex flex-col h-full bg-gray-900">
@@ -331,7 +334,7 @@ const EmailOutputPanel: React.FC<EmailOutputPanelProps> = ({
               <input
                 type="text"
                 value={searchTerm}
-                onChange={e => setSearchTerm(e.target.value)}
+                onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder="Search email data"
                 className="w-full pl-10 pr-3 py-2 bg-gray-600 border border-gray-500 rounded text-white text-sm focus:ring-2 focus:ring-blue-400 focus:border-blue-400 focus:bg-gray-700"
               />
@@ -340,17 +343,17 @@ const EmailOutputPanel: React.FC<EmailOutputPanelProps> = ({
             {/* Display mode tabs */}
             <div className="flex bg-gray-700 rounded overflow-hidden">
               {[
-                { key: 'schema', label: 'Schema' },
-                { key: 'table', label: 'Table' },
-                { key: 'json', label: 'JSON' },
+                { key: "schema", label: "Schema" },
+                { key: "table", label: "Table" },
+                { key: "json", label: "JSON" },
               ].map(({ key, label }) => (
                 <button
                   key={key}
                   onClick={() => setDisplayMode(key as DisplayMode)}
                   className={`px-3 py-2 text-sm font-medium transition-colors ${
                     displayMode === key
-                      ? 'bg-gray-600 text-white'
-                      : 'text-gray-300 hover:text-white hover:bg-gray-600'
+                      ? "bg-gray-600 text-white"
+                      : "text-gray-300 hover:text-white hover:bg-gray-600"
                   }`}
                 >
                   {label}
@@ -375,12 +378,12 @@ const EmailOutputPanel: React.FC<EmailOutputPanelProps> = ({
         {selectedEmail && (
           <div className="mt-3 flex items-center justify-between">
             <div className="text-sm text-gray-300">
-              <span className="text-blue-300">From:</span>{' '}
-              {selectedEmail.from || 'Unknown'}
+              <span className="text-blue-300">From:</span>{" "}
+              {selectedEmail.from || "Unknown"}
             </div>
             <div className="text-sm text-gray-300">
-              <span className="text-blue-300">Subject:</span>{' '}
-              {selectedEmail.subject || 'No subject'}
+              <span className="text-blue-300">Subject:</span>{" "}
+              {selectedEmail.subject || "No subject"}
             </div>
           </div>
         )}
@@ -389,7 +392,7 @@ const EmailOutputPanel: React.FC<EmailOutputPanelProps> = ({
       {/* Content */}
       <div className="flex-1 overflow-hidden">{renderContent()}</div>
     </div>
-  )
-}
+  );
+};
 
-export default EmailOutputPanel
+export default EmailOutputPanel;

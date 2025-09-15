@@ -21,7 +21,7 @@
     "version-packages": "changeset version",
     "release": "pnpm build && changeset publish",
     "prepare": "husky",
-    "commit": "cz",
+    "commit": "czz",
     "docs": "typedoc",
     "docs:serve": "pnpm docs && cd docs/api && python -m http.server 8080"
   },

@@ -1,11 +1,12 @@
-import React, { useState } from 'react'
-import { Search, Mail, Clock, Paperclip, Star } from 'lucide-react'
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import React, { useState } from "react";
+import { Search, Mail, Clock, Paperclip, Star } from "lucide-react";
 
 interface EmailInputPanelProps {
-  emails?: any[]
-  selectedEmailId?: string
-  onEmailSelect: (email: any) => void
-  isVisible?: boolean
+  emails?: any[];
+  selectedEmailId?: string;
+  onEmailSelect: (email: any) => void;
+  isVisible?: boolean;
 }
 
 const EmailInputPanel: React.FC<EmailInputPanelProps> = ({
@@ -14,79 +15,79 @@ const EmailInputPanel: React.FC<EmailInputPanelProps> = ({
   onEmailSelect,
   isVisible = true,
 }) => {
-  const [searchTerm, setSearchTerm] = useState('')
+  const [searchTerm, setSearchTerm] = useState("");
 
   // Filter emails based on search term
-  const filteredEmails = emails.filter(email => {
-    if (!searchTerm) return true
-    const searchLower = searchTerm.toLowerCase()
+  const filteredEmails = emails.filter((email) => {
+    if (!searchTerm) return true;
+    const searchLower = searchTerm.toLowerCase();
     return (
       email.subject?.toLowerCase().includes(searchLower) ||
       email.from?.toLowerCase().includes(searchLower) ||
       email.snippet?.toLowerCase().includes(searchLower)
-    )
-  })
+    );
+  });
 
   // Format date
   const formatDate = (dateString: string) => {
     try {
-      const date = new Date(dateString)
-      const now = new Date()
-      const diffMs = now.getTime() - date.getTime()
-      const diffHours = Math.floor(diffMs / (1000 * 60 * 60))
-      const diffDays = Math.floor(diffHours / 24)
+      const date = new Date(dateString);
+      const now = new Date();
+      const diffMs = now.getTime() - date.getTime();
+      const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+      const diffDays = Math.floor(diffHours / 24);
 
       if (diffHours < 1) {
-        return 'Just now'
+        return "Just now";
       } else if (diffHours < 24) {
-        return `${diffHours}h ago`
+        return `${diffHours}h ago`;
       } else if (diffDays < 7) {
-        return `${diffDays}d ago`
+        return `${diffDays}d ago`;
       } else {
-        return date.toLocaleDateString()
+        return date.toLocaleDateString();
       }
     } catch {
-      return dateString
+      return dateString;
     }
-  }
+  };
 
   // Extract sender name from email
   const getSenderName = (from: string) => {
-    if (!from) return 'Unknown'
+    if (!from) return "Unknown";
 
     // Handle "Name <email@domain.com>" format
-    const match = from.match(/^(.+?)\s*<(.+)>$/)
+    const match = from.match(/^(.+?)\s*<(.+)>$/);
     if (match) {
-      return match[1].trim()
+      return match[1].trim();
     }
 
     // Handle plain email format
-    if (from.includes('@')) {
-      return from.split('@')[0]
+    if (from.includes("@")) {
+      return from.split("@")[0];
     }
 
-    return from
-  }
+    return from;
+  };
 
   // Get sender avatar color based on email
   const getAvatarColor = (from: string) => {
     const colors = [
-      'bg-blue-500',
-      'bg-green-500',
-      'bg-yellow-500',
-      'bg-red-500',
-      'bg-purple-500',
-      'bg-pink-500',
-      'bg-indigo-500',
-      'bg-teal-500',
-    ]
+      "bg-blue-500",
+      "bg-green-500",
+      "bg-yellow-500",
+      "bg-red-500",
+      "bg-purple-500",
+      "bg-pink-500",
+      "bg-indigo-500",
+      "bg-teal-500",
+    ];
     const hash = from
-      .split('')
-      .reduce((acc, char) => acc + char.charCodeAt(0), 0)
-    return colors[hash % colors.length]
-  }
+      .split("")
+      .reduce((acc, char) => acc + char.charCodeAt(0), 0);
+    return colors[hash % colors.length];
+  };
 
-  if (!isVisible) return null
+  if (!isVisible) return null;
 
   return (
     <div className="flex flex-col h-full bg-gray-900">
@@ -109,7 +110,7 @@ const EmailInputPanel: React.FC<EmailInputPanelProps> = ({
             <input
               type="text"
               value={searchTerm}
-              onChange={e => setSearchTerm(e.target.value)}
+              onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Search emails..."
               className="w-full pl-10 pr-3 py-2 bg-gray-600 border border-gray-500 rounded text-white text-sm focus:ring-2 focus:ring-blue-400 focus:border-blue-400 focus:bg-gray-700"
             />
@@ -138,9 +139,9 @@ const EmailInputPanel: React.FC<EmailInputPanelProps> = ({
         ) : (
           <div className="space-y-1 p-2">
             {filteredEmails.map((email, index) => {
-              const isSelected = selectedEmailId === email.id
-              const senderName = getSenderName(email.from)
-              const avatarColor = getAvatarColor(email.from)
+              const isSelected = selectedEmailId === email.id;
+              const senderName = getSenderName(email.from);
+              const avatarColor = getAvatarColor(email.from);
 
               return (
                 <div
@@ -148,8 +149,8 @@ const EmailInputPanel: React.FC<EmailInputPanelProps> = ({
                   onClick={() => onEmailSelect(email)}
                   className={`p-3 rounded-lg cursor-pointer transition-all duration-200 border ${
                     isSelected
-                      ? 'bg-blue-600 border-blue-500 text-white'
-                      : 'bg-gray-800 border-gray-700 hover:bg-gray-700 hover:border-gray-600 text-gray-100'
+                      ? "bg-blue-600 border-blue-500 text-white"
+                      : "bg-gray-800 border-gray-700 hover:bg-gray-700 hover:border-gray-600 text-gray-100"
                   }`}
                 >
                   <div className="flex items-start space-x-3">
@@ -167,7 +168,7 @@ const EmailInputPanel: React.FC<EmailInputPanelProps> = ({
                         <div className="flex items-center space-x-2 min-w-0">
                           <span
                             className={`font-medium text-sm truncate ${
-                              isSelected ? 'text-white' : 'text-gray-200'
+                              isSelected ? "text-white" : "text-gray-200"
                             }`}
                           >
                             {senderName}
@@ -181,7 +182,7 @@ const EmailInputPanel: React.FC<EmailInputPanelProps> = ({
                             {email.isUnread && (
                               <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
                             )}
-                            {email.labels?.includes('STARRED') && (
+                            {email.labels?.includes("STARRED") && (
                               <Star className="w-3 h-3 text-yellow-400 fill-current" />
                             )}
                           </div>
@@ -191,7 +192,7 @@ const EmailInputPanel: React.FC<EmailInputPanelProps> = ({
                           <Clock className="w-3 h-3 text-gray-400" />
                           <span
                             className={`text-xs ${
-                              isSelected ? 'text-blue-100' : 'text-gray-400'
+                              isSelected ? "text-blue-100" : "text-gray-400"
                             }`}
                           >
                             {formatDate(email.date)}
@@ -202,21 +203,21 @@ const EmailInputPanel: React.FC<EmailInputPanelProps> = ({
                       {/* Subject */}
                       <div
                         className={`text-sm font-medium mb-1 truncate ${
-                          isSelected ? 'text-white' : 'text-gray-100'
+                          isSelected ? "text-white" : "text-gray-100"
                         }`}
                       >
-                        {email.subject || '(No subject)'}
+                        {email.subject || "(No subject)"}
                       </div>
 
                       {/* Snippet */}
                       <div
                         className={`text-xs leading-relaxed line-clamp-2 ${
-                          isSelected ? 'text-blue-100' : 'text-gray-400'
+                          isSelected ? "text-blue-100" : "text-gray-400"
                         }`}
                       >
                         {email.snippet ||
                           email.body ||
-                          'No content preview available'}
+                          "No content preview available"}
                       </div>
 
                       {/* Labels */}
@@ -227,8 +228,8 @@ const EmailInputPanel: React.FC<EmailInputPanelProps> = ({
                               key={label}
                               className={`px-2 py-1 text-xs rounded-full ${
                                 isSelected
-                                  ? 'bg-blue-700 text-blue-100'
-                                  : 'bg-gray-700 text-gray-300'
+                                  ? "bg-blue-700 text-blue-100"
+                                  : "bg-gray-700 text-gray-300"
                               }`}
                             >
                               {label}
@@ -237,7 +238,7 @@ const EmailInputPanel: React.FC<EmailInputPanelProps> = ({
                           {email.labels.length > 3 && (
                             <span
                               className={`text-xs ${
-                                isSelected ? 'text-blue-200' : 'text-gray-400'
+                                isSelected ? "text-blue-200" : "text-gray-400"
                               }`}
                             >
                               +{email.labels.length - 3} more
@@ -248,13 +249,13 @@ const EmailInputPanel: React.FC<EmailInputPanelProps> = ({
                     </div>
                   </div>
                 </div>
-              )
+              );
             })}
           </div>
         )}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default EmailInputPanel
+export default EmailInputPanel;

@@ -1,20 +1,16 @@
-import React, { memo, useMemo, useState, useRef, useEffect } from 'react'
-import { Handle, Position } from 'reactflow'
-import type { NodeProps } from 'reactflow'
-import {
-  nodeRegistry,
-  type WorkflowNodeInstance,
-} from '@/core'
-import { getCustomBodyComponent } from '@/app/node-extensions/nodeUiRegistry'
-import NodeToolbar from './BaseNode/NodeToolbar'
-import NodeMenu from './BaseNode/NodeMenu'
-import { useSmartMenuPosition } from '../../../hooks/useSmartMenuPosition'
+import React, { memo, useMemo, useState, useRef } from "react";
+import { Handle, Position } from "reactflow";
+import type { NodeProps } from "reactflow";
+import { nodeRegistry, type WorkflowNodeInstance } from "@/core";
+import { getCustomBodyComponent } from "@/app/node-extensions/nodeUiRegistry";
+import NodeToolbar from "./BaseNode/NodeToolbar";
 
+import { useSmartMenuPosition } from "../../../hooks/useSmartMenuPosition";
 
 interface RegistryNodeData extends WorkflowNodeInstance {
-  onDelete?: () => void
-  onEdit?: () => void
-  onOpenProperties?: () => void
+  onDelete?: () => void;
+  onEdit?: () => void;
+  onOpenProperties?: () => void;
 }
 
 interface RegistryNodeProps extends NodeProps<RegistryNodeData> {}
@@ -25,68 +21,63 @@ interface RegistryNodeProps extends NodeProps<RegistryNodeData> {}
  */
 const RegistryNode: React.FC<RegistryNodeProps> = ({ data, selected, id }) => {
   // Hover state for custom toolbar
-  const [isHovered, setIsHovered] = useState(false)
+  const [isHovered, setIsHovered] = useState(false);
   // Menu state for NodeMenu
-  const [showMenu, setShowMenu] = useState(false)
-  const menuTriggerRef = useRef<HTMLButtonElement>(null)
-  const menuRef = useRef<HTMLDivElement>(null)
-  
+  const [showMenu, setShowMenu] = useState(false);
+  const menuTriggerRef = useRef<HTMLButtonElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+
   const { positionClasses, positionStyles } = useSmartMenuPosition({
     isOpen: showMenu,
-    triggerRef: menuTriggerRef,
-    menuRef,
+    triggerRef: menuTriggerRef as React.RefObject<HTMLElement>,
+    menuRef: menuRef as React.RefObject<HTMLElement>,
     offset: 4,
-      onClose: () => setShowMenu(false)
-  })
+    onClose: () => setShowMenu(false),
+  });
 
   // Click-outside handling is now centralized in useSmartMenuPosition hook
   // Look up the node definition from the registry
   const nodeDefinition = useMemo(() => {
-    return nodeRegistry.getNodeTypeDescription(data.type)
-  }, [data.type])
+    return nodeRegistry.getNodeTypeDescription(data.type);
+  }, [data.type]);
 
   // Get visual configuration
-  const { icon, displayName, color, subtitle } = useMemo(() => {
+  const { icon, displayName, subtitle } = useMemo(() => {
     if (!nodeDefinition) {
       return {
-        icon: '❓',
+        icon: "❓",
         displayName: data.type,
-        color: '#666',
-        subtitle: 'Unknown node type',
-      }
+        color: "#666",
+        subtitle: "Unknown node type",
+      };
     }
 
     // Build subtitle from parameters if template exists
-    let subtitle = nodeDefinition.subtitle || ''
+    let subtitle = nodeDefinition.subtitle || "";
     if (subtitle && data.parameters) {
-      subtitle = subtitle.replace(/\{\{[^}]+\}\}/g, match => {
+      subtitle = subtitle.replace(/\{\{[^}]+\}\}/g, (match) => {
         const paramPath = match
-          .replace('{{$parameter["', '')
-          .replace('"]}}', '')
-        return data.parameters[paramPath] || ''
-      })
+          .replace('{{$parameter["', "")
+          .replace('"]}}', "");
+        return data.parameters[paramPath] || "";
+      });
     }
 
     return {
-      icon: nodeDefinition.icon || nodeDefinition.iconUrl || '📦',
+      icon: nodeDefinition.icon || nodeDefinition.iconUrl || "📦",
       displayName: data.name || nodeDefinition.displayName,
-      color: nodeDefinition.defaults?.color || '#1890ff',
+      color: nodeDefinition.defaults?.color || "#1890ff",
       subtitle,
-    }
-  }, [nodeDefinition, data.name, data.parameters])
+    };
+  }, [nodeDefinition, data.name, data.parameters]);
 
   // Determine node status
-  const nodeStatus = useMemo(() => {
-    if (data.disabled) return 'disabled'
-    if (data.continueOnFail) return 'warning'
-    return 'active'
-  }, [data.disabled, data.continueOnFail])
 
   // Render handles based on node definition
   const renderHandles = () => {
-    if (!nodeDefinition) return null
+    if (!nodeDefinition) return null;
 
-    const handles = []
+    const handles = [];
 
     // Input handles
     if (nodeDefinition.inputs?.length > 0) {
@@ -97,28 +88,28 @@ const RegistryNode: React.FC<RegistryNodeProps> = ({ data, selected, id }) => {
           position={Position.Left}
           id="input_0"
           style={{
-            background: '#555',
+            background: "#555",
             width: 10,
             height: 10,
             // No top property - handle will be vertically centered by default
           }}
-        />
-      )
+        />,
+      );
     }
 
     // Output handles
     if (nodeDefinition.outputs?.length > 0) {
-      nodeDefinition.outputs.forEach((output, index) => {
+      nodeDefinition.outputs.forEach((_, index) => {
         // For single output, don't set top (centers by default)
         // For multiple outputs, calculate vertical distribution
         const handleStyle: React.CSSProperties = {
-          background: '#555',
+          background: "#555",
           width: 10,
           height: 10,
-        }
+        };
 
         if (nodeDefinition.outputs.length > 1) {
-          handleStyle.top = `${((index + 1) / (nodeDefinition.outputs.length + 1)) * 100}%`
+          handleStyle.top = `${((index + 1) / (nodeDefinition.outputs.length + 1)) * 100}%`;
         }
         // No top property for single output - centers by default
 
@@ -129,47 +120,47 @@ const RegistryNode: React.FC<RegistryNodeProps> = ({ data, selected, id }) => {
             position={Position.Right}
             id={`output_${index}`}
             style={handleStyle}
-          />
-        )
-      })
+          />,
+        );
+      });
     }
 
-    return handles
-  }
+    return handles;
+  };
 
   // Simple status indicator logic - integrated into main template
 
   // Toolbar handlers
   const handlePlay = (nodeId: string) => {
-    console.log('Play node:', nodeId)
+    console.log("Play node:", nodeId);
     // TODO: Implement play functionality
-  }
+  };
 
   const handleStop = (nodeId: string) => {
-    console.log('Stop node:', nodeId)
+    console.log("Stop node:", nodeId);
     // TODO: Implement stop functionality
-  }
+  };
 
   const handleDelete = (nodeId: string) => {
-    console.log('Delete node:', nodeId)
-    data.onDelete?.()
-  }
+    console.log("Delete node:", nodeId);
+    data.onDelete?.();
+  };
 
-  const handleMenuToggle = (nodeId: string) => {
-    setShowMenu(!showMenu)
-  }
+  const handleMenuToggle = () => {
+    setShowMenu(!showMenu);
+  };
 
   const handleDoubleClick = (event: React.MouseEvent) => {
     // Handle double-click to open properties panel
-    event.stopPropagation()
-    console.log('Double-click on registry node:', id)
-    data.onOpenProperties?.()
-  }
+    event.stopPropagation();
+    console.log("Double-click on registry node:", id);
+    data.onOpenProperties?.();
+  };
 
   // Render shared node toolbar and menu
   const renderToolbarAndMenu = () => {
-    const toolbarVisible = isHovered // Show on hover only, not requiring selection
-    
+    const toolbarVisible = isHovered; // Show on hover only, not requiring selection
+
     return (
       <>
         <NodeToolbar
@@ -177,15 +168,15 @@ const RegistryNode: React.FC<RegistryNodeProps> = ({ data, selected, id }) => {
           onPlay={() => handlePlay(id)}
           onStop={() => handleStop(id)}
           onDelete={(e) => {
-            e.stopPropagation()
-            handleDelete(id)
+            e.stopPropagation();
+            handleDelete(id);
           }}
-          onMenuToggle={() => handleMenuToggle(id)}
-          menuTriggerRef={menuTriggerRef}
+          onMenuToggle={handleMenuToggle}
+          menuTriggerRef={menuTriggerRef as React.RefObject<HTMLButtonElement>}
         />
         {/* Custom dark-themed menu with smart positioning */}
         {showMenu && (
-          <div 
+          <div
             ref={menuRef}
             className={`${positionClasses} bg-gray-800 border border-gray-600 rounded-md shadow-lg py-1 min-w-[120px]`}
             style={positionStyles}
@@ -193,9 +184,9 @@ const RegistryNode: React.FC<RegistryNodeProps> = ({ data, selected, id }) => {
           >
             <button
               onClick={(e) => {
-                e.stopPropagation()
-                data.onOpenProperties?.()
-                setShowMenu(false)
+                e.stopPropagation();
+                data.onOpenProperties?.();
+                setShowMenu(false);
               }}
               className="w-full px-3 py-1.5 text-left text-sm text-gray-200 hover:bg-gray-700 flex items-center gap-2"
             >
@@ -203,9 +194,9 @@ const RegistryNode: React.FC<RegistryNodeProps> = ({ data, selected, id }) => {
             </button>
             <button
               onClick={(e) => {
-                e.stopPropagation()
+                e.stopPropagation();
                 // TODO: Implement test functionality
-                setShowMenu(false)
+                setShowMenu(false);
               }}
               className="w-full px-3 py-1.5 text-left text-sm text-gray-200 hover:bg-gray-700 flex items-center gap-2"
             >
@@ -213,9 +204,9 @@ const RegistryNode: React.FC<RegistryNodeProps> = ({ data, selected, id }) => {
             </button>
             <button
               onClick={(e) => {
-                e.stopPropagation()
+                e.stopPropagation();
                 // TODO: Implement copy functionality
-                setShowMenu(false)
+                setShowMenu(false);
               }}
               className="w-full px-3 py-1.5 text-left text-sm text-gray-200 hover:bg-gray-700 flex items-center gap-2"
             >
@@ -223,9 +214,9 @@ const RegistryNode: React.FC<RegistryNodeProps> = ({ data, selected, id }) => {
             </button>
             <button
               onClick={(e) => {
-                e.stopPropagation()
+                e.stopPropagation();
                 // TODO: Implement duplicate functionality
-                setShowMenu(false)
+                setShowMenu(false);
               }}
               className="w-full px-3 py-1.5 text-left text-sm text-gray-200 hover:bg-gray-700 flex items-center gap-2"
             >
@@ -234,9 +225,9 @@ const RegistryNode: React.FC<RegistryNodeProps> = ({ data, selected, id }) => {
             <hr className="my-1 border-gray-600" />
             <button
               onClick={(e) => {
-                e.stopPropagation()
-                handleDelete(id)
-                setShowMenu(false)
+                e.stopPropagation();
+                handleDelete(id);
+                setShowMenu(false);
               }}
               className="w-full px-3 py-1.5 text-left text-sm text-red-400 hover:bg-gray-700 flex items-center gap-2"
             >
@@ -245,20 +236,20 @@ const RegistryNode: React.FC<RegistryNodeProps> = ({ data, selected, id }) => {
           </div>
         )}
       </>
-    )
-  }
+    );
+  };
 
   // Check for custom body component
   const CustomBodyComponent = useMemo(() => {
-    if (!nodeDefinition?.customBodyComponent) return null
-    return getCustomBodyComponent(nodeDefinition.customBodyComponent)
-  }, [nodeDefinition])
+    if (!nodeDefinition?.customBodyComponent) return null;
+    return getCustomBodyComponent(nodeDefinition.customBodyComponent);
+  }, [nodeDefinition]);
 
   // If custom body component exists, use it instead of default rendering
   if (CustomBodyComponent) {
     return (
       <div
-        className={`registry-node ${selected ? 'selected' : ''} relative`}
+        className={`registry-node ${selected ? "selected" : ""} relative`}
         style={{
           opacity: data.disabled ? 0.5 : 1,
         }}
@@ -279,12 +270,12 @@ const RegistryNode: React.FC<RegistryNodeProps> = ({ data, selected, id }) => {
           onOpenProperties={data.onOpenProperties}
         />
       </div>
-    )
+    );
   }
 
   return (
     <div
-      className={`registry-node ${selected ? 'selected' : ''} relative`}
+      className={`registry-node ${selected ? "selected" : ""} relative`}
       style={{
         opacity: data.disabled ? 0.5 : 1,
       }}
@@ -302,23 +293,23 @@ const RegistryNode: React.FC<RegistryNodeProps> = ({ data, selected, id }) => {
             className={`
               relative flex items-center justify-center bg-gray-800 p-4 shadow-lg transition-all duration-200
               rounded-md min-w-[80px] max-w-[150px] min-h-[60px]
-              ${selected ? 'ring-2 ring-offset-2 ring-offset-gray-900 ring-red-400' : ''}
-              ${isHovered ? 'hover:shadow-xl hover:scale-105 ring-2 ring-offset-2 ring-offset-gray-900 ring-red-400' : ''}
+              ${selected ? "ring-2 ring-offset-2 ring-offset-gray-900 ring-red-400" : ""}
+              ${isHovered ? "hover:shadow-xl hover:scale-105 ring-2 ring-offset-2 ring-offset-gray-900 ring-red-400" : ""}
             `}
           >
             {/* Dynamic Node Icon */}
             <div className="flex items-center justify-center">
-              {(icon.startsWith('http') || icon.startsWith('/')) ? (
+              {icon.startsWith("http") || icon.startsWith("/") ? (
                 <img
                   src={icon}
                   alt={displayName}
                   className="w-6 h-6"
                   onError={(e) => {
-                    const target = e.target as HTMLImageElement
-                    target.style.display = 'none'
-                    const fallback = target.nextElementSibling
+                    const target = e.target as HTMLImageElement;
+                    target.style.display = "none";
+                    const fallback = target.nextElementSibling;
                     if (fallback) {
-                      fallback.classList.remove('hidden')
+                      fallback.classList.remove("hidden");
                     }
                   }}
                 />
@@ -329,12 +320,11 @@ const RegistryNode: React.FC<RegistryNodeProps> = ({ data, selected, id }) => {
               <span className="hidden text-xl">📦</span>
             </div>
 
-
             {/* Status Indicators */}
             {(data.disabled || data.retryOnFail || data.continueOnFail) && (
               <div className="absolute -top-2 -right-2 w-4 h-4 bg-red-500 rounded-full flex items-center justify-center">
                 <span className="text-white text-xs">
-                  {data.disabled ? '!' : data.retryOnFail ? 'R' : 'C'}
+                  {data.disabled ? "!" : data.retryOnFail ? "R" : "C"}
                 </span>
               </div>
             )}
@@ -354,7 +344,7 @@ const RegistryNode: React.FC<RegistryNodeProps> = ({ data, selected, id }) => {
         )}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default memo(RegistryNode)
+export default memo(RegistryNode);

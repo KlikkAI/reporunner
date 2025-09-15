@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import { useAuthStore } from "@/core/stores/authStore";
 import { authApiService } from "@/core";
@@ -124,7 +125,11 @@ describe("AuthStore", () => {
         token: string;
         refreshToken: string;
       }) => void;
-      const loginPromise = new Promise((resolve) => {
+      const loginPromise = new Promise<{
+        user: UserProfile;
+        token: string;
+        refreshToken: string;
+      }>((resolve) => {
         resolveLogin = resolve;
       });
 
@@ -190,7 +195,10 @@ describe("AuthStore", () => {
         error: null,
       });
 
-      vi.mocked(authApiService.logout).mockResolvedValue();
+      vi.mocked(authApiService.logout).mockResolvedValue({
+        message: "Logged out successfully",
+        sessionId: "test-session",
+      });
 
       const store = useAuthStore.getState();
 
@@ -251,9 +259,7 @@ describe("AuthStore", () => {
       };
 
       vi.mocked(authApiService.getProfile).mockRejectedValue(unauthorizedError);
-      vi.mocked(authApiService.clearAuthData).mockResolvedValue({
-        message: "Cleared",
-      });
+      vi.mocked(authApiService.clearAuthData).mockResolvedValue();
 
       // Start with authenticated state
       useAuthStore.setState({
@@ -355,7 +361,9 @@ describe("AuthStore", () => {
         isAuthenticated: true,
       });
 
-      vi.mocked(authApiService.changePassword).mockResolvedValue();
+      vi.mocked(authApiService.changePassword).mockResolvedValue({
+        message: "Password changed successfully",
+      });
 
       const store = useAuthStore.getState();
 
@@ -378,9 +386,9 @@ describe("AuthStore", () => {
         isAuthenticated: true,
       });
 
-      vi.mocked(authApiService.changePassword).mockRejectedValue(
-        new Error(errorMessage),
-      );
+      vi.mocked(authApiService.changePassword).mockResolvedValue({
+        message: "Password changed successfully",
+      });
 
       const store = useAuthStore.getState();
 

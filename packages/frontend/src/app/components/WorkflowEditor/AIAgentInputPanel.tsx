@@ -1,8 +1,9 @@
-import React from 'react'
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import React from "react";
 
 interface AIAgentInputPanelProps {
-  connectedInputNodes: any[]
-  onDataTransform?: (data: any) => void
+  connectedInputNodes: any[];
+  onDataTransform?: (data: any) => void;
 }
 
 const AIAgentInputPanel: React.FC<AIAgentInputPanelProps> = ({
@@ -24,7 +25,7 @@ const AIAgentInputPanel: React.FC<AIAgentInputPanelProps> = ({
           </div>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -38,13 +39,13 @@ const AIAgentInputPanel: React.FC<AIAgentInputPanelProps> = ({
           </div>
           <span className="px-2 py-1 bg-blue-800 text-blue-100 rounded text-xs">
             {connectedInputNodes.length} source
-            {connectedInputNodes.length !== 1 ? 's' : ''}
+            {connectedInputNodes.length !== 1 ? "s" : ""}
           </span>
         </div>
         <div className="text-xs text-blue-300">
           This data will be processed by the AI Agent and can be referenced in
-          prompts using{' '}
-          <code className="bg-blue-800 px-1 rounded">{'{{input}}'}</code>
+          prompts using{" "}
+          <code className="bg-blue-800 px-1 rounded">{"{{input}}"}</code>
         </div>
       </div>
 
@@ -57,10 +58,10 @@ const AIAgentInputPanel: React.FC<AIAgentInputPanelProps> = ({
 
         {connectedInputNodes.map((node, index) => {
           const hasOutputData =
-            node?.data?.outputData || node?.data?.testResults?.data
+            node?.data?.outputData || node?.data?.testResults?.data;
           const nodeData = hasOutputData
             ? node.data.outputData || node.data.testResults.data
-            : null
+            : null;
 
           return (
             <div
@@ -73,13 +74,13 @@ const AIAgentInputPanel: React.FC<AIAgentInputPanelProps> = ({
                   <div className="flex items-center space-x-3">
                     <span
                       className="text-xl"
-                      title={node?.data?.label || 'Node Icon'}
+                      title={node?.data?.label || "Node Icon"}
                     >
                       {node?.data?.icon || getNodeIcon(node)}
                     </span>
                     <div>
                       <div className="text-sm font-medium text-white">
-                        {node?.data?.label || 'Unnamed Node'}
+                        {node?.data?.label || "Unnamed Node"}
                       </div>
                       <div className="text-xs text-gray-400">
                         {getNodeTypeDisplay(node)}
@@ -119,7 +120,7 @@ const AIAgentInputPanel: React.FC<AIAgentInputPanelProps> = ({
                 )}
               </div>
             </div>
-          )
+          );
         })}
       </div>
 
@@ -135,25 +136,25 @@ const AIAgentInputPanel: React.FC<AIAgentInputPanelProps> = ({
           <div className="flex items-start space-x-2">
             <span className="text-orange-400 mt-0.5">•</span>
             <span>
-              Use{' '}
+              Use{" "}
               <code className="bg-gray-700 px-1 rounded text-gray-300">
-                {'{{input}}'}
-              </code>{' '}
+                {"{{input}}"}
+              </code>{" "}
               in your prompts to reference the input data
             </span>
           </div>
           <div className="flex items-start space-x-2">
             <span className="text-orange-400 mt-0.5">•</span>
             <span>
-              For email data, you can reference specific fields like{' '}
+              For email data, you can reference specific fields like{" "}
               <code className="bg-gray-700 px-1 rounded text-gray-300">
                 subject
               </code>
-              ,{' '}
+              ,{" "}
               <code className="bg-gray-700 px-1 rounded text-gray-300">
                 body
               </code>
-              ,{' '}
+              ,{" "}
               <code className="bg-gray-700 px-1 rounded text-gray-300">
                 from
               </code>
@@ -169,8 +170,8 @@ const AIAgentInputPanel: React.FC<AIAgentInputPanelProps> = ({
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
 // Helper component to render different types of input data
 const InputDataRenderer: React.FC<{ data: any; nodeType: string }> = ({
@@ -178,17 +179,17 @@ const InputDataRenderer: React.FC<{ data: any; nodeType: string }> = ({
   nodeType,
 }) => {
   if (!data) {
-    return <div className="text-gray-400 text-sm">No data available</div>
+    return <div className="text-gray-400 text-sm">No data available</div>;
   }
 
   // Handle email data (from Gmail triggers)
-  if (nodeType === 'gmail' || nodeType === 'gmail-trigger') {
+  if (nodeType === "gmail" || nodeType === "gmail-trigger") {
     // Handle array of emails
     if (Array.isArray(data)) {
       return (
         <div className="space-y-2">
           <div className="text-xs text-gray-400 mb-2">
-            {data.length} email{data.length !== 1 ? 's' : ''} available for AI
+            {data.length} email{data.length !== 1 ? "s" : ""} available for AI
             processing
           </div>
           {data.slice(0, 3).map((email, index) => (
@@ -196,19 +197,19 @@ const InputDataRenderer: React.FC<{ data: any; nodeType: string }> = ({
           ))}
           {data.length > 3 && (
             <div className="text-xs text-gray-400 text-center py-2 border-t border-gray-600">
-              + {data.length - 3} more email{data.length - 3 !== 1 ? 's' : ''}{' '}
+              + {data.length - 3} more email{data.length - 3 !== 1 ? "s" : ""}{" "}
               available
             </div>
           )}
         </div>
-      )
+      );
     }
     // Handle single email
-    return <EmailPreview email={data} isLatest={true} />
+    return <EmailPreview email={data} isLatest={true} />;
   }
 
   // Handle transform node data
-  if (nodeType === 'transform') {
+  if (nodeType === "transform") {
     return (
       <div className="space-y-2">
         <div className="text-xs text-gray-400 mb-2">
@@ -216,29 +217,29 @@ const InputDataRenderer: React.FC<{ data: any; nodeType: string }> = ({
         </div>
         <TransformDataPreview data={data} />
       </div>
-    )
+    );
   }
 
   // Handle generic structured data
-  if (typeof data === 'object' && data !== null) {
-    const keys = Object.keys(data)
+  if (typeof data === "object" && data !== null) {
+    const keys = Object.keys(data);
     return (
       <div className="space-y-2">
         <div className="text-xs text-gray-400 mb-2">
-          Structured data with {keys.length} field{keys.length !== 1 ? 's' : ''}
+          Structured data with {keys.length} field{keys.length !== 1 ? "s" : ""}
         </div>
         <StructuredDataPreview data={data} />
       </div>
-    )
+    );
   }
 
   // Fallback for other data types
   return (
     <div className="bg-gray-900 p-2 rounded border border-gray-600 font-mono text-xs text-gray-200 max-h-32 overflow-y-auto">
-      {typeof data === 'string' ? data : JSON.stringify(data, null, 2)}
+      {typeof data === "string" ? data : JSON.stringify(data, null, 2)}
     </div>
-  )
-}
+  );
+};
 
 // Email preview component
 const EmailPreview: React.FC<{ email: any; isLatest: boolean }> = ({
@@ -247,7 +248,7 @@ const EmailPreview: React.FC<{ email: any; isLatest: boolean }> = ({
 }) => {
   return (
     <div
-      className={`p-3 rounded border ${isLatest ? 'border-blue-600 bg-blue-900/10' : 'border-gray-600 bg-gray-750'}`}
+      className={`p-3 rounded border ${isLatest ? "border-blue-600 bg-blue-900/10" : "border-gray-600 bg-gray-750"}`}
     >
       {isLatest && (
         <div className="text-xs text-blue-400 mb-2 flex items-center space-x-1">
@@ -259,21 +260,21 @@ const EmailPreview: React.FC<{ email: any; isLatest: boolean }> = ({
         <div className="flex items-start space-x-2 text-sm">
           <span className="text-gray-400 w-12 flex-shrink-0">From:</span>
           <span className="text-gray-200 truncate">
-            {email.from || 'Unknown'}
+            {email.from || "Unknown"}
           </span>
         </div>
         <div className="flex items-start space-x-2 text-sm">
           <span className="text-gray-400 w-12 flex-shrink-0">Subject:</span>
-          <span className="text-gray-200">{email.subject || 'No Subject'}</span>
+          <span className="text-gray-200">{email.subject || "No Subject"}</span>
         </div>
         <div className="flex items-start space-x-2 text-sm">
           <span className="text-gray-400 w-12 flex-shrink-0">Preview:</span>
           <span className="text-gray-300 text-xs leading-relaxed">
             {email.body
               ? email.body.length > 150
-                ? email.body.substring(0, 150) + '...'
+                ? email.body.substring(0, 150) + "..."
                 : email.body
-              : 'No content'}
+              : "No content"}
           </span>
         </div>
         {(email.isUnread ||
@@ -292,9 +293,9 @@ const EmailPreview: React.FC<{ email: any; isLatest: boolean }> = ({
             )}
             {email.labels && email.labels.length > 0 && (
               <span className="px-2 py-1 bg-gray-700 text-gray-300 rounded text-xs">
-                🏷️{' '}
+                🏷️{" "}
                 {Array.isArray(email.labels)
-                  ? email.labels.slice(0, 2).join(', ')
+                  ? email.labels.slice(0, 2).join(", ")
                   : email.labels}
               </span>
             )}
@@ -302,25 +303,25 @@ const EmailPreview: React.FC<{ email: any; isLatest: boolean }> = ({
         )}
       </div>
     </div>
-  )
-}
+  );
+};
 
 // Transform data preview component
 const TransformDataPreview: React.FC<{ data: any }> = ({ data }) => {
-  if (!data || typeof data !== 'object') {
-    return <div className="text-gray-400 text-sm">Invalid transform data</div>
+  if (!data || typeof data !== "object") {
+    return <div className="text-gray-400 text-sm">Invalid transform data</div>;
   }
 
-  const fields = Object.keys(data)
+  const fields = Object.keys(data);
   return (
     <div className="bg-gray-750 p-3 rounded border border-gray-600">
       <div className="grid grid-cols-1 gap-2">
-        {fields.slice(0, 5).map(field => {
-          const value = data[field]
+        {fields.slice(0, 5).map((field) => {
+          const value = data[field];
           const displayValue =
-            typeof value === 'string' && value.length > 100
-              ? value.substring(0, 100) + '...'
-              : value
+            typeof value === "string" && value.length > 100
+              ? value.substring(0, 100) + "..."
+              : value;
 
           return (
             <div key={field} className="flex items-start space-x-2 text-sm">
@@ -328,87 +329,87 @@ const TransformDataPreview: React.FC<{ data: any }> = ({ data }) => {
                 {field}:
               </span>
               <span className="text-gray-200 flex-1">
-                {typeof displayValue === 'object'
+                {typeof displayValue === "object"
                   ? JSON.stringify(displayValue)
-                  : String(displayValue || 'N/A')}
+                  : String(displayValue || "N/A")}
               </span>
             </div>
-          )
+          );
         })}
         {fields.length > 5 && (
           <div className="text-xs text-gray-400 text-center pt-1 border-t border-gray-600">
-            + {fields.length - 5} more field{fields.length - 5 !== 1 ? 's' : ''}
+            + {fields.length - 5} more field{fields.length - 5 !== 1 ? "s" : ""}
           </div>
         )}
       </div>
     </div>
-  )
-}
+  );
+};
 
 // Structured data preview component
 const StructuredDataPreview: React.FC<{ data: any }> = ({ data }) => {
-  const fields = Object.keys(data)
+  const fields = Object.keys(data);
 
   return (
     <div className="bg-gray-750 p-3 rounded border border-gray-600">
       <div className="space-y-2">
-        {fields.slice(0, 4).map(field => {
-          const value = data[field]
+        {fields.slice(0, 4).map((field) => {
+          const value = data[field];
           const displayValue =
-            typeof value === 'string' && value.length > 80
-              ? value.substring(0, 80) + '...'
-              : value
+            typeof value === "string" && value.length > 80
+              ? value.substring(0, 80) + "..."
+              : value;
 
           return (
             <div key={field} className="text-sm">
               <div className="text-gray-400 text-xs mb-1">{field}:</div>
               <div className="text-gray-200 bg-gray-800 p-2 rounded text-xs font-mono">
-                {typeof displayValue === 'object'
+                {typeof displayValue === "object"
                   ? JSON.stringify(displayValue, null, 2)
-                  : String(displayValue || 'null')}
+                  : String(displayValue || "null")}
               </div>
             </div>
-          )
+          );
         })}
         {fields.length > 4 && (
           <div className="text-xs text-gray-400 text-center pt-2 border-t border-gray-600">
-            + {fields.length - 4} more field{fields.length - 4 !== 1 ? 's' : ''}
+            + {fields.length - 4} more field{fields.length - 4 !== 1 ? "s" : ""}
           </div>
         )}
       </div>
     </div>
-  )
-}
+  );
+};
 
 // Helper functions
 const getNodeIcon = (node: any): string => {
   if (
-    node?.data?.integrationData?.id === 'gmail' ||
-    node?.data?.enhancedNodeType?.id === 'gmail-trigger'
+    node?.data?.integrationData?.id === "gmail" ||
+    node?.data?.enhancedNodeType?.id === "gmail-trigger"
   ) {
-    return '📧'
+    return "📧";
   }
-  if (node?.type === 'transform') {
-    return '🔄'
+  if (node?.type === "transform") {
+    return "🔄";
   }
-  if (node?.type === 'trigger') {
-    return '⚡'
+  if (node?.type === "trigger") {
+    return "⚡";
   }
-  return '📊'
-}
+  return "📊";
+};
 
 const getNodeType = (node: any): string => {
   if (
-    node?.data?.integrationData?.id === 'gmail' ||
-    node?.data?.enhancedNodeType?.id === 'gmail-trigger'
+    node?.data?.integrationData?.id === "gmail" ||
+    node?.data?.enhancedNodeType?.id === "gmail-trigger"
   ) {
-    return 'gmail-trigger'
+    return "gmail-trigger";
   }
-  if (node?.type === 'transform') {
-    return 'transform'
+  if (node?.type === "transform") {
+    return "transform";
   }
-  return node?.type || 'unknown'
-}
+  return node?.type || "unknown";
+};
 
 const getNodeTypeDisplay = (node: any): string => {
   return (
@@ -416,8 +417,8 @@ const getNodeTypeDisplay = (node: any): string => {
     node?.data?.nodeTypeData?.displayName ||
     node?.data?.nodeTypeData?.name ||
     node?.type ||
-    'Unknown Node Type'
-  )
-}
+    "Unknown Node Type"
+  );
+};
 
-export default AIAgentInputPanel
+export default AIAgentInputPanel;

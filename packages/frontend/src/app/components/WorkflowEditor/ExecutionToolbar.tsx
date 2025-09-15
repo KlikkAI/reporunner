@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // Execution Toolbar Component - Controls for running workflows
-import React, { useState } from 'react'
-import { Button, Space, Dropdown, Badge, Tooltip, message } from 'antd'
+import React, { useState } from "react";
+import { Button, Space, Dropdown, Badge, message } from "antd";
 import {
   PlayCircleOutlined,
   StopOutlined,
@@ -10,25 +11,25 @@ import {
   HistoryOutlined,
   SettingOutlined,
   DownOutlined,
-} from '@ant-design/icons'
-import { WorkflowApiService } from '@/core'
+} from "@ant-design/icons";
+import { WorkflowApiService } from "@/core";
 import {
   exportWorkflowToBackend,
   validateWorkflowForExport,
-} from '@/core/utils/workflowExporter'
-import { WorkflowTester } from '../WorkflowTester/WorkflowTester'
-import { ExecutionHistory } from '../ExecutionHistory/ExecutionHistory'
-import type { Node, Edge } from 'reactflow'
-import type { WorkflowExecution } from '@/core/types/execution'
+} from "@/core/utils/workflowExporter";
+import { WorkflowTester } from "../WorkflowTester/WorkflowTester";
+import { ExecutionHistory } from "../ExecutionHistory/ExecutionHistory";
+import type { Node, Edge } from "reactflow";
+import type { WorkflowExecution } from "@/core/schemas";
 
-const workflowApiService = new WorkflowApiService()
+const workflowApiService = new WorkflowApiService();
 
 interface ExecutionToolbarProps {
-  nodes: Node[]
-  edges: Edge[]
-  currentExecution?: WorkflowExecution | null
-  onExecutionStart?: (executionId: string) => void
-  onExecutionStop?: () => void
+  nodes: Node[];
+  edges: Edge[];
+  currentExecution?: WorkflowExecution | null;
+  onExecutionStart?: (executionId: string) => void;
+  onExecutionStop?: () => void;
 }
 
 export const ExecutionToolbar: React.FC<ExecutionToolbarProps> = ({
@@ -38,151 +39,151 @@ export const ExecutionToolbar: React.FC<ExecutionToolbarProps> = ({
   onExecutionStart,
   onExecutionStop,
 }) => {
-  const [testing, setTesting] = useState(false)
-  const [showTester, setShowTester] = useState(false)
-  const [showHistory, setShowHistory] = useState(false)
-  const [saving, setSaving] = useState(false)
+  const [testing, setTesting] = useState(false);
+  const [showTester, setShowTester] = useState(false);
+  const [showHistory, setShowHistory] = useState(false);
+  const [, setSaving] = useState(false);
 
-  const isRunning = currentExecution?.status === 'running'
-  const canRun = nodes.length > 0 && !isRunning
+  const isRunning = currentExecution?.status === "running";
+  const canRun = nodes.length > 0 && !isRunning;
 
   const handleTest = () => {
-    setShowTester(true)
-  }
+    setShowTester(true);
+  };
 
   const handleRun = async () => {
-    if (!canRun) return
+    if (!canRun) return;
 
     // Validate workflow first
-    const validation = validateWorkflowForExport(nodes, edges)
+    const validation = validateWorkflowForExport(nodes, edges);
     if (!validation.isValid) {
-      message.error(`Cannot run workflow: ${validation.errors.join(', ')}`)
-      return
+      message.error(`Cannot run workflow: ${validation.errors.join(", ")}`);
+      return;
     }
 
     if (validation.warnings.length > 0) {
-      message.warning(`Warnings: ${validation.warnings.join(', ')}`)
+      message.warning(`Warnings: ${validation.warnings.join(", ")}`);
     }
 
     try {
-      setTesting(true)
-      const workflowJson = exportWorkflowToBackend(nodes, edges)
+      setTesting(true);
+      const workflowJson = exportWorkflowToBackend(nodes, edges);
 
       const execution = await workflowApiService.executeWorkflow({
         workflow: workflowJson,
         options: {
           timeout: 600000, // 10 minutes
         },
-      })
+      });
 
-      message.success('Workflow execution started')
-      onExecutionStart?.(execution.id)
+      message.success("Workflow execution started");
+      onExecutionStart?.(execution.id);
     } catch (error: any) {
-      message.error(`Failed to start workflow: ${error.message}`)
+      message.error(`Failed to start workflow: ${error.message}`);
     } finally {
-      setTesting(false)
+      setTesting(false);
     }
-  }
+  };
 
   const handleStop = async () => {
-    if (!currentExecution) return
+    if (!currentExecution) return;
 
     try {
-      await workflowApiService.stopExecution(currentExecution.id)
-      message.success('Workflow execution stopped')
-      onExecutionStop?.()
+      await workflowApiService.stopExecution(currentExecution.id);
+      message.success("Workflow execution stopped");
+      onExecutionStop?.();
     } catch (error: any) {
-      message.error(`Failed to stop workflow: ${error.message}`)
+      message.error(`Failed to stop workflow: ${error.message}`);
     }
-  }
+  };
 
   const handleSave = async () => {
     if (nodes.length === 0) {
-      message.warning('Cannot save empty workflow')
-      return
+      message.warning("Cannot save empty workflow");
+      return;
     }
 
     try {
-      setSaving(true)
-      const workflowJson = exportWorkflowToBackend(nodes, edges)
+      setSaving(true);
+      const workflowJson = exportWorkflowToBackend(nodes, edges);
 
       await workflowApiService.createWorkflow({
         name: `Workflow ${new Date().toLocaleDateString()}`,
-        description: 'Saved from workflow editor',
-        definition: workflowJson,
-        tags: ['editor'],
-      })
+        description: "Saved from workflow editor",
+        ...workflowJson,
+        tags: ["editor"],
+      });
 
-      message.success('Workflow saved successfully')
+      message.success("Workflow saved successfully");
     } catch (error: any) {
-      message.error(`Failed to save workflow: ${error.message}`)
+      message.error(`Failed to save workflow: ${error.message}`);
     } finally {
-      setSaving(false)
+      setSaving(false);
     }
-  }
+  };
 
   const handleExport = () => {
     if (nodes.length === 0) {
-      message.warning('Cannot export empty workflow')
-      return
+      message.warning("Cannot export empty workflow");
+      return;
     }
 
     try {
-      const workflowJson = exportWorkflowToBackend(nodes, edges)
+      const workflowJson = exportWorkflowToBackend(nodes, edges);
       const blob = new Blob([JSON.stringify(workflowJson, null, 2)], {
-        type: 'application/json',
-      })
-      const url = URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.href = url
-      a.download = `workflow-${Date.now()}.json`
-      document.body.appendChild(a)
-      a.click()
-      document.body.removeChild(a)
-      URL.revokeObjectURL(url)
+        type: "application/json",
+      });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `workflow-${Date.now()}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
 
-      message.success('Workflow exported successfully')
+      message.success("Workflow exported successfully");
     } catch (error: any) {
-      message.error(`Failed to export workflow: ${error.message}`)
+      message.error(`Failed to export workflow: ${error.message}`);
     }
-  }
+  };
 
   const runMenuItems = [
     {
-      key: 'run',
-      label: 'Run Workflow',
+      key: "run",
+      label: "Run Workflow",
       icon: <PlayCircleOutlined />,
       onClick: handleRun,
       disabled: !canRun,
     },
     {
-      key: 'test',
-      label: 'Test Workflow',
+      key: "test",
+      label: "Test Workflow",
       icon: <BugOutlined />,
       onClick: handleTest,
     },
-  ]
+  ];
 
   const moreMenuItems = [
     {
-      key: 'save',
-      label: 'Save Workflow',
+      key: "save",
+      label: "Save Workflow",
       icon: <SaveOutlined />,
       onClick: handleSave,
     },
     {
-      key: 'export',
-      label: 'Export JSON',
+      key: "export",
+      label: "Export JSON",
       icon: <ExportOutlined />,
       onClick: handleExport,
     },
     {
-      key: 'history',
-      label: 'Execution History',
+      key: "history",
+      label: "Execution History",
       icon: <HistoryOutlined />,
       onClick: () => setShowHistory(true),
     },
-  ]
+  ];
 
   return (
     <div className="execution-toolbar">
@@ -201,7 +202,7 @@ export const ExecutionToolbar: React.FC<ExecutionToolbarProps> = ({
           ) : (
             <Dropdown
               menu={{ items: runMenuItems }}
-              trigger={['click']}
+              trigger={["click"]}
               disabled={nodes.length === 0}
             >
               <Button
@@ -229,18 +230,18 @@ export const ExecutionToolbar: React.FC<ExecutionToolbarProps> = ({
           {currentExecution && (
             <Badge
               status={
-                currentExecution.status === 'running'
-                  ? 'processing'
-                  : currentExecution.status === 'completed'
-                    ? 'success'
-                    : currentExecution.status === 'failed'
-                      ? 'error'
-                      : 'default'
+                currentExecution.status === "running"
+                  ? "processing"
+                  : currentExecution.status === "completed"
+                    ? "success"
+                    : currentExecution.status === "failed"
+                      ? "error"
+                      : "default"
               }
               text={
                 <span className="text-sm">
-                  {currentExecution.status === 'running'
-                    ? `Running (${currentExecution.progress?.completedNodes?.length || 0}/${currentExecution.progress?.totalNodes || 0})`
+                  {currentExecution.status === "running"
+                    ? `Running (${(currentExecution as any).progress?.completedNodes?.length || 0}/${(currentExecution as any).progress?.totalNodes || 0})`
                     : `${currentExecution.status} - ${Math.round((currentExecution.duration || 0) / 1000)}s`}
                 </span>
               }
@@ -255,7 +256,7 @@ export const ExecutionToolbar: React.FC<ExecutionToolbarProps> = ({
           </span>
 
           {/* More actions */}
-          <Dropdown menu={{ items: moreMenuItems }} trigger={['click']}>
+          <Dropdown menu={{ items: moreMenuItems }} trigger={["click"]}>
             <Button icon={<SettingOutlined />} size="small">
               <DownOutlined />
             </Button>
@@ -277,5 +278,5 @@ export const ExecutionToolbar: React.FC<ExecutionToolbarProps> = ({
         <ExecutionHistory onClose={() => setShowHistory(false)} />
       )}
     </div>
-  )
-}
+  );
+};

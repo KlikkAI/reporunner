@@ -1,93 +1,94 @@
-import React, { useState, useEffect } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
-import { useAuthStore } from '@/core/stores/authStore'
+import React, { useState, useEffect } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import { useAuthStore } from "@/core/stores/authStore";
 
 const Register: React.FC = () => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const { register, isLoading, error, isAuthenticated, clearError } =
-    useAuthStore()
+    useAuthStore();
 
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-  })
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    acceptTerms: false,
+  });
 
-  const [formErrors, setFormErrors] = useState<Record<string, string>>({})
+  const [formErrors, setFormErrors] = useState<Record<string, string>>({});
 
   // Redirect if already authenticated
   useEffect(() => {
     if (isAuthenticated) {
-      navigate('/dashboard')
+      navigate("/dashboard");
     }
-  }, [isAuthenticated, navigate])
+  }, [isAuthenticated, navigate]);
 
   // Clear errors when component mounts
   useEffect(() => {
-    clearError()
-  }, [clearError])
+    clearError();
+  }, [clearError]);
 
   const validateForm = () => {
-    const errors: Record<string, string> = {}
+    const errors: Record<string, string> = {};
 
     if (!formData.firstName.trim()) {
-      errors.firstName = 'First name is required'
+      errors.firstName = "First name is required";
     }
 
     if (!formData.lastName.trim()) {
-      errors.lastName = 'Last name is required'
+      errors.lastName = "Last name is required";
     }
 
     if (!formData.email) {
-      errors.email = 'Email is required'
+      errors.email = "Email is required";
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      errors.email = 'Email is invalid'
+      errors.email = "Email is invalid";
     }
 
     if (!formData.password) {
-      errors.password = 'Password is required'
+      errors.password = "Password is required";
     } else if (formData.password.length < 8) {
-      errors.password = 'Password must be at least 8 characters'
+      errors.password = "Password must be at least 8 characters";
     }
 
     if (!formData.confirmPassword) {
-      errors.confirmPassword = 'Please confirm your password'
+      errors.confirmPassword = "Please confirm your password";
     } else if (formData.password !== formData.confirmPassword) {
-      errors.confirmPassword = 'Passwords do not match'
+      errors.confirmPassword = "Passwords do not match";
     }
 
-    setFormErrors(errors)
-    return Object.keys(errors).length === 0
-  }
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
 
     if (!validateForm()) {
-      return
+      return;
     }
 
     try {
-      const { confirmPassword, ...registerData } = formData
-      await register(registerData)
-      navigate('/dashboard')
+      const { confirmPassword, ...registerData } = formData;
+      await register(registerData);
+      navigate("/dashboard");
     } catch (error) {
       // Error is handled by the store
-      console.error('Registration failed:', error)
+      console.error("Registration failed:", error);
     }
-  }
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target
-    setFormData(prev => ({ ...prev, [name]: value }))
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
 
     // Clear field error when user starts typing
     if (formErrors[name]) {
-      setFormErrors(prev => ({ ...prev, [name]: '' }))
+      setFormErrors((prev) => ({ ...prev, [name]: "" }));
     }
-  }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
@@ -133,8 +134,8 @@ const Register: React.FC = () => {
                     onChange={handleChange}
                     className={`appearance-none block w-full px-3 py-2 border ${
                       formErrors.firstName
-                        ? 'border-red-300'
-                        : 'border-gray-300'
+                        ? "border-red-300"
+                        : "border-gray-300"
                     } rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm`}
                     placeholder="First name"
                   />
@@ -163,7 +164,7 @@ const Register: React.FC = () => {
                     value={formData.lastName}
                     onChange={handleChange}
                     className={`appearance-none block w-full px-3 py-2 border ${
-                      formErrors.lastName ? 'border-red-300' : 'border-gray-300'
+                      formErrors.lastName ? "border-red-300" : "border-gray-300"
                     } rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm`}
                     placeholder="Last name"
                   />
@@ -194,7 +195,7 @@ const Register: React.FC = () => {
                   value={formData.email}
                   onChange={handleChange}
                   className={`appearance-none block w-full px-3 py-2 border ${
-                    formErrors.email ? 'border-red-300' : 'border-gray-300'
+                    formErrors.email ? "border-red-300" : "border-gray-300"
                   } rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm`}
                   placeholder="Enter your email"
                 />
@@ -224,7 +225,7 @@ const Register: React.FC = () => {
                   value={formData.password}
                   onChange={handleChange}
                   className={`appearance-none block w-full px-3 py-2 border ${
-                    formErrors.password ? 'border-red-300' : 'border-gray-300'
+                    formErrors.password ? "border-red-300" : "border-gray-300"
                   } rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm`}
                   placeholder="Create a password"
                 />
@@ -255,8 +256,8 @@ const Register: React.FC = () => {
                   onChange={handleChange}
                   className={`appearance-none block w-full px-3 py-2 border ${
                     formErrors.confirmPassword
-                      ? 'border-red-300'
-                      : 'border-gray-300'
+                      ? "border-red-300"
+                      : "border-gray-300"
                   } rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm`}
                   placeholder="Confirm your password"
                 />
@@ -281,7 +282,7 @@ const Register: React.FC = () => {
                     Creating account...
                   </div>
                 ) : (
-                  'Create account'
+                  "Create account"
                 )}
               </button>
             </div>
@@ -312,7 +313,7 @@ const Register: React.FC = () => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Register
+export default Register;

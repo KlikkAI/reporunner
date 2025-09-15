@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import ReactFlow, {
   Background,
   Controls,
@@ -13,22 +13,21 @@ import ReactFlow, {
   type Node,
   type ReactFlowInstance,
   ReactFlowProvider,
-} from 'reactflow'
-import 'reactflow/dist/style.css'
-import { useLeanWorkflowStore, nodeRegistry } from '@/core'
-import { useCredentialStore } from '@/core/stores/credentialStore'
-import { ExecutionToolbar } from './ExecutionToolbar'
+} from "reactflow";
+import "reactflow/dist/style.css";
+import { useLeanWorkflowStore, nodeRegistry } from "@/core";
+import { useCredentialStore } from "@/core/stores/credentialStore";
+import { ExecutionToolbar } from "./ExecutionToolbar";
 import {
   executionMonitor,
   useExecutionMonitor,
-} from '@/app/services/executionMonitor'
-import type { WorkflowExecution } from '@/core/schemas'
-import AdvancedNodePanel from './AdvancedNodePanel'
-import RegistryNode from './NodeTypes/RegistryNode'
-import NodePropertyPanel from './NodePropertyPanel'
-import CustomEdge from './CustomEdge'
-import { ConnectionType } from '@/core/types/edge'
-import ConnectionLine from './ConnectionLine'
+} from "@/app/services/executionMonitor";
+import AdvancedNodePanel from "./AdvancedNodePanel";
+import RegistryNode from "./NodeTypes/RegistryNode";
+import NodePropertyPanel from "./NodePropertyPanel";
+import CustomEdge from "./CustomEdge";
+import { ConnectionType } from "@/core/types/edge";
+import ConnectionLine from "./ConnectionLine";
 import {
   AILanguageModelEdge,
   AIEmbeddingEdge,
@@ -36,37 +35,41 @@ import {
   AIToolEdge,
   AIEdgeMarkers,
   AIEdgeStyles,
-} from './AIEdges'
+} from "./AIEdges";
 // Generate dynamic node types from registry
 // 🎯 100% Registry Migration - No Legacy Fallback Needed
 const generateNodeTypes = () => {
-  const nodeTypes: Record<string, any> = {}
+  const nodeTypes: Record<string, any> = {};
 
   // Get ALL node descriptions (regular + enhanced) and map them to RegistryNode
-  const allNodeDescriptions = nodeRegistry.getAllNodeTypeDescriptions()
-  allNodeDescriptions.forEach(nodeDesc => {
-    nodeTypes[nodeDesc.name] = RegistryNode
-  })
+  const allNodeDescriptions = nodeRegistry.getAllNodeTypeDescriptions();
+  allNodeDescriptions.forEach((nodeDesc) => {
+    nodeTypes[nodeDesc.name] = RegistryNode;
+  });
 
   // Only log in development mode and only if there are issues
   if (import.meta.env.DEV) {
-    const hasGmailNode = 'gmail-enhanced' in nodeTypes
-    
+    const hasGmailNode = "gmail-enhanced" in nodeTypes;
+
     if (!hasGmailNode) {
-      console.warn('⚠️ Gmail enhanced node missing from React Flow mapping!')
-      console.warn('🔍 Available nodes:', Object.keys(nodeTypes))
-      console.warn(`📊 Generated ${Object.keys(nodeTypes).length} node types from registry`)
+      console.warn("⚠️ Gmail enhanced node missing from React Flow mapping!");
+      console.warn("🔍 Available nodes:", Object.keys(nodeTypes));
+      console.warn(
+        `📊 Generated ${Object.keys(nodeTypes).length} node types from registry`,
+      );
     } else {
       // Only log success once per session to avoid spam
       if (!(window as any).__gmailNodeValidationLogged) {
-        console.log(`✅ Generated ${Object.keys(nodeTypes).length} node types including Gmail`)
-        ;(window as any).__gmailNodeValidationLogged = true
+        console.log(
+          `✅ Generated ${Object.keys(nodeTypes).length} node types including Gmail`,
+        );
+        (window as any).__gmailNodeValidationLogged = true;
       }
     }
   }
 
-  return nodeTypes
-}
+  return nodeTypes;
+};
 
 const edgeTypes = {
   default: CustomEdge,
@@ -75,7 +78,7 @@ const edgeTypes = {
   ai_embedding: AIEmbeddingEdge,
   ai_vectorStore: AIVectorStoreEdge,
   ai_tool: AIToolEdge,
-}
+};
 
 const WorkflowEditor: React.FC = () => {
   const {
@@ -90,59 +93,69 @@ const WorkflowEditor: React.FC = () => {
     addEdge: addEdgeToStore,
     removeNode,
     loadWorkflow,
-    getNodeById,
-  } = useLeanWorkflowStore()
-  const { loadCredentials } = useCredentialStore()
+  } = useLeanWorkflowStore();
+  const { loadCredentials } = useCredentialStore();
 
   // Memoized node types - prevent React Flow warnings about creating new objects
   const nodeTypes = useMemo<Record<string, any>>(() => {
     if (import.meta.env.DEV) {
-      console.log('🔄 WorkflowEditor: Memoizing node types')
+      console.log("🔄 WorkflowEditor: Memoizing node types");
     }
-    return generateNodeTypes()
-  }, [])
+    return generateNodeTypes();
+  }, []);
 
   // One-time registry validation on component mount
   useEffect(() => {
     // Validate that Gmail node is properly registered (one-time check)
-    const hasGmailInRegistry = nodeRegistry.getAllNodeTypeDescriptions().some(n => n.name === 'gmail-enhanced')
-    const hasGmailInReactFlow = 'gmail-enhanced' in nodeTypes
-    
+    const hasGmailInRegistry = nodeRegistry
+      .getAllNodeTypeDescriptions()
+      .some((n) => n.name === "gmail-enhanced");
+    const hasGmailInReactFlow = "gmail-enhanced" in nodeTypes;
+
     // Only log if there's actually a problem
     if (hasGmailInRegistry !== hasGmailInReactFlow) {
-      console.warn('🔍 Gmail Node Validation Issue:', {
+      console.warn("🔍 Gmail Node Validation Issue:", {
         inRegistry: hasGmailInRegistry,
         inReactFlow: hasGmailInReactFlow,
-        registryStats: nodeRegistry.getStatistics()
-      })
+        registryStats: nodeRegistry.getStatistics(),
+      });
 
       // Note: With memoized nodeTypes, we can't dynamically regenerate
       // If this happens, the user should refresh the page
       if (hasGmailInRegistry && !hasGmailInReactFlow) {
-        console.error('🔄 Gmail node in registry but missing from React Flow - page refresh may be needed')
+        console.error(
+          "🔄 Gmail node in registry but missing from React Flow - page refresh may be needed",
+        );
       }
     } else if (import.meta.env.DEV) {
       // Success case - only show in dev mode and only once
-      console.log('✅ Gmail node validation passed on mount')
+      console.log("✅ Gmail node validation passed on mount");
     }
-  }, []) // ✅ Fixed: Empty dependency array - runs only once on mount
+  }, []); // ✅ Fixed: Empty dependency array - runs only once on mount
 
   // Convert lean nodes to React Flow format with error handling
   const reactFlowNodes = useMemo(() => {
-    return leanNodes.map(leanNode => {
-      const nodeDefinition = nodeRegistry.getNodeTypeDescription(leanNode.type)
-      
+    return leanNodes.map((leanNode) => {
+      const nodeDefinition = nodeRegistry.getNodeTypeDescription(leanNode.type);
+
       // Error handling for missing node types
       if (!nodeDefinition) {
-        console.error(`❌ Node type "${leanNode.type}" not found in registry!`, {
-          nodeId: leanNode.id,
-          nodeType: leanNode.type,
-          availableTypes: nodeRegistry.getAllNodeTypeDescriptions().map(n => n.name)
-        })
-        
+        console.error(
+          `❌ Node type "${leanNode.type}" not found in registry!`,
+          {
+            nodeId: leanNode.id,
+            nodeType: leanNode.type,
+            availableTypes: nodeRegistry
+              .getAllNodeTypeDescriptions()
+              .map((n) => n.name),
+          },
+        );
+
         // Special handling for Gmail node - likely needs page refresh
-        if (leanNode.type === 'gmail-enhanced') {
-          console.error('🔥 Gmail Enhanced Node missing - page refresh may be needed')
+        if (leanNode.type === "gmail-enhanced") {
+          console.error(
+            "🔥 Gmail Enhanced Node missing - page refresh may be needed",
+          );
         }
       }
       return {
@@ -158,52 +171,52 @@ const WorkflowEditor: React.FC = () => {
           // Add node definition for display
           nodeDefinition,
         },
-      }
-    })
-  }, [leanNodes, removeNode])
+      };
+    });
+  }, [leanNodes, removeNode]);
 
-  const [localNodes, setNodes, onNodesChange] = useNodesState(reactFlowNodes)
-  const [localEdges, setEdges, onEdgesChange] = useEdgesState(edges)
+  const [localNodes, setNodes, onNodesChange] = useNodesState(reactFlowNodes);
+  const [localEdges, setEdges, onEdgesChange] = useEdgesState(edges);
   const [reactFlowInstance, setReactFlowInstance] =
-    React.useState<ReactFlowInstance | null>(null)
+    React.useState<ReactFlowInstance | null>(null);
   const [selectedNodeForConfig, setSelectedNodeForConfig] = useState<
     string | null
-  >(null)
+  >(null);
   const [edgesHoveredById, setEdgesHoveredById] = useState<
     Record<string, boolean>
-  >({})
+  >({});
   const [edgesBringToFrontById, setEdgesBringToFrontById] = useState<
     Record<string, boolean>
-  >({})
-  const [isNodePanelCollapsed, setIsNodePanelCollapsed] = useState(false)
-  const [isMinimapMinimized, setIsMinimapMinimized] = useState(false)
-  const [isFullscreen, setIsFullscreen] = useState(false)
+  >({});
+  const [isNodePanelCollapsed, setIsNodePanelCollapsed] = useState(false);
+  const [isMinimapMinimized, setIsMinimapMinimized] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const [currentExecutionId, setCurrentExecutionId] = useState<string | null>(
-    null
-  )
+    null,
+  );
 
   // Monitor current execution
-  const { execution, isConnected } = useExecutionMonitor(currentExecutionId)
+  const { execution } = useExecutionMonitor(currentExecutionId);
 
   const onConnect = useCallback(
     (params: Connection | Edge) => {
       // Handle redirection for AI agent plus icons
-      const correctedParams = { ...params }
+      const correctedParams = { ...params };
 
       // If connecting FROM an AI agent plus icon, redirect to main handle
-      if (correctedParams.sourceHandle?.startsWith('plus-')) {
+      if (correctedParams.sourceHandle?.startsWith("plus-")) {
         correctedParams.sourceHandle = correctedParams.sourceHandle.replace(
-          'plus-',
-          ''
-        )
+          "plus-",
+          "",
+        );
       }
 
       // If connecting TO an AI agent plus icon, redirect to main handle
-      if (correctedParams.targetHandle?.startsWith('plus-ai_')) {
+      if (correctedParams.targetHandle?.startsWith("plus-ai_")) {
         correctedParams.targetHandle = correctedParams.targetHandle.replace(
-          'plus-ai_',
-          'ai_'
-        )
+          "plus-ai_",
+          "ai_",
+        );
       }
 
       const newEdge = addEdge(
@@ -211,82 +224,75 @@ const WorkflowEditor: React.FC = () => {
           ...correctedParams,
           data: {
             connectionType: ConnectionType.Main,
-            ...('data' in params ? params.data : {}),
+            ...("data" in params ? params.data : {}),
           },
         },
-        localEdges
-      )
-      setEdges(newEdge)
+        localEdges,
+      );
+      setEdges(newEdge);
     },
-    [localEdges, setEdges]
-  )
-
-  const onNodeDelete = useCallback(
-    (nodeId: string) => {
-      removeNode(nodeId)
-    },
-    [removeNode]
-  )
+    [localEdges, setEdges],
+  );
 
   const onEdgeDelete = useCallback(
     (edgeId: string) => {
-      const filteredEdges = localEdges.filter(edge => edge.id !== edgeId)
-      setEdges(filteredEdges)
-      updateEdges(filteredEdges as any)
+      const filteredEdges = localEdges.filter((edge) => edge.id !== edgeId);
+      setEdges(filteredEdges);
+      updateEdges(filteredEdges as any);
     },
-    [localEdges, setEdges, updateEdges]
-  )
+    [localEdges, setEdges, updateEdges],
+  );
 
   // Edge hover handlers
   const onEdgeMouseEnter = useCallback(
     (_event: React.MouseEvent, edge: Edge) => {
-      setEdgesBringToFrontById(prev => ({ ...prev, [edge.id]: true }))
-      setEdgesHoveredById(prev => ({ ...prev, [edge.id]: true }))
+      setEdgesBringToFrontById((prev) => ({ ...prev, [edge.id]: true }));
+      setEdgesHoveredById((prev) => ({ ...prev, [edge.id]: true }));
     },
-    []
-  )
+    [],
+  );
 
   const onEdgeMouseLeave = useCallback(
     (_event: React.MouseEvent, edge: Edge) => {
-      setEdgesBringToFrontById(prev => ({ ...prev, [edge.id]: false }))
-      setEdgesHoveredById(prev => ({ ...prev, [edge.id]: false }))
+      setEdgesBringToFrontById((prev) => ({ ...prev, [edge.id]: false }));
+      setEdgesHoveredById((prev) => ({ ...prev, [edge.id]: false }));
     },
-    []
-  )
+    [],
+  );
 
   const onKeyDown = useCallback(
     (event: KeyboardEvent) => {
       // Don't interfere with typing in input fields
-      const target = event.target as HTMLElement
+      const target = event.target as HTMLElement;
       if (
-        target.tagName === 'INPUT' ||
-        target.tagName === 'TEXTAREA' ||
+        target.tagName === "INPUT" ||
+        target.tagName === "TEXTAREA" ||
         target.isContentEditable
       ) {
-        return
+        return;
       }
 
-      if (event.key === 'Delete' || event.key === 'Backspace') {
-        event.preventDefault()
+      if (event.key === "Delete" || event.key === "Backspace") {
+        event.preventDefault();
         if (selectedNodeIds.length > 0) {
           // Delete selected nodes
-          selectedNodeIds.forEach(nodeId => removeNode(nodeId))
-          clearSelection()
+          selectedNodeIds.forEach((nodeId) => removeNode(nodeId));
+          clearSelection();
         }
       } else if (event.ctrlKey || event.metaKey) {
-        if (event.key === 'a') {
+        if (event.key === "a") {
           // Select all nodes
-          event.preventDefault()
-          setSelectedNodes(localNodes.map(n => n.id))
+          event.preventDefault();
+          setSelectedNodes(localNodes.map((n) => n.id));
         }
-      } else if (event.key === 'Escape') {
-        event.preventDefault()
+      } else if (event.key === "Escape") {
+        event.preventDefault();
         if (isFullscreen) {
           // Exit fullscreen mode
-          setIsFullscreen(false)
+          setIsFullscreen(false);
         } else {
           // Clear selection
-          clearSelection()
+          clearSelection();
         }
       }
     },
@@ -297,89 +303,89 @@ const WorkflowEditor: React.FC = () => {
       setSelectedNodes,
       localNodes,
       isFullscreen,
-    ]
-  )
+    ],
+  );
 
   // Add keyboard event listener for delete
   useEffect(() => {
-    window.addEventListener('keydown', onKeyDown)
-    return () => window.removeEventListener('keydown', onKeyDown)
-  }, [onKeyDown])
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [onKeyDown]);
 
   const onNodeClick = useCallback(
     (event: React.MouseEvent, node: Node) => {
-      event?.stopPropagation()
+      event?.stopPropagation();
 
-      const isCtrlOrCmd = event.ctrlKey || event.metaKey
+      const isCtrlOrCmd = event.ctrlKey || event.metaKey;
 
       if (isCtrlOrCmd) {
         // Multi-select mode
-        const isSelected = selectedNodeIds.includes(node.id)
+        const isSelected = selectedNodeIds.includes(node.id);
         if (isSelected) {
-          setSelectedNodes(selectedNodeIds.filter(id => id !== node.id))
+          setSelectedNodes(selectedNodeIds.filter((id) => id !== node.id));
         } else {
-          setSelectedNodes([...selectedNodeIds, node.id])
+          setSelectedNodes([...selectedNodeIds, node.id]);
         }
       } else {
         // Single select mode
-        setSelectedNodes([node.id])
+        setSelectedNodes([node.id]);
       }
     },
-    [selectedNodeIds, setSelectedNodes]
-  )
+    [selectedNodeIds, setSelectedNodes],
+  );
 
   const onNodeDoubleClick = useCallback(
     (event: React.MouseEvent, node: Node) => {
-      event?.stopPropagation()
-      setSelectedNodes([node.id])
-      setSelectedNodeForConfig(node.id)
+      event?.stopPropagation();
+      setSelectedNodes([node.id]);
+      setSelectedNodeForConfig(node.id);
     },
-    [setSelectedNodes]
-  )
+    [setSelectedNodes],
+  );
 
   const onPaneClick = useCallback(() => {
-    clearSelection()
-  }, [clearSelection])
+    clearSelection();
+  }, [clearSelection]);
 
   const onDragOver = useCallback((event: React.DragEvent) => {
-    event.preventDefault()
-    event.dataTransfer.dropEffect = 'move'
-  }, [])
+    event.preventDefault();
+    event.dataTransfer.dropEffect = "move";
+  }, []);
 
   // Helper function to find the rightmost node (last in sequence) for auto-connection
   const findLastNode = useCallback(() => {
-    if (localNodes.length === 0) return null
+    if (localNodes.length === 0) return null;
 
     // Find node with no outgoing connections (target but no source edges)
-    const nodesWithOutgoing = new Set(localEdges.map(edge => edge.source))
+    const nodesWithOutgoing = new Set(localEdges.map((edge) => edge.source));
     const candidateNodes = localNodes.filter(
-      node => !nodesWithOutgoing.has(node.id)
-    )
+      (node) => !nodesWithOutgoing.has(node.id),
+    );
 
     if (candidateNodes.length === 0) {
       // If all nodes have outgoing connections, use the rightmost positioned node
       return localNodes.reduce((rightmost, current) =>
-        current.position.x > rightmost.position.x ? current : rightmost
-      )
+        current.position.x > rightmost.position.x ? current : rightmost,
+      );
     }
 
     // Among candidates with no outgoing connections, pick the rightmost
     return candidateNodes.reduce((rightmost, current) =>
-      current.position.x > rightmost.position.x ? current : rightmost
-    )
-  }, [localNodes, localEdges])
+      current.position.x > rightmost.position.x ? current : rightmost,
+    );
+  }, [localNodes, localEdges]);
 
   const onDrop = useCallback(
     (event: React.DragEvent) => {
-      event.preventDefault()
+      event.preventDefault();
 
       try {
-        const reactFlowBounds = event.currentTarget.getBoundingClientRect()
-        const data = event.dataTransfer.getData('application/reactflow')
+        const reactFlowBounds = event.currentTarget.getBoundingClientRect();
+        const data = event.dataTransfer.getData("application/reactflow");
 
         if (!data || !reactFlowInstance) {
-          console.warn('No drag data or ReactFlow instance available')
-          return
+          console.warn("No drag data or ReactFlow instance available");
+          return;
         }
 
         const {
@@ -388,33 +394,33 @@ const WorkflowEditor: React.FC = () => {
           connectionId,
           nodeTypeData,
           integrationData,
-        } = JSON.parse(data)
+        } = JSON.parse(data);
 
         const position = reactFlowInstance.project({
           x: event.clientX - reactFlowBounds.left,
           y: event.clientY - reactFlowBounds.top,
-        })
+        });
 
         // Find the last node for auto-connection
-        const lastNode = findLastNode()
+        const lastNode = findLastNode();
 
-        const baseId = nodeTypeData?.name || type
-        const newNodeId = `node-${Date.now()}-${Math.random().toString(36).substr(2, 9)}-${baseId}`
+        const baseId = nodeTypeData?.name || type;
+        const newNodeId = `node-${Date.now()}-${Math.random().toString(36).substr(2, 9)}-${baseId}`;
 
         // Get the enhanced node type for integration nodes
-        let enhancedNodeType = null
-        let nodeIcon = null
+        let enhancedNodeType = null;
+        let nodeIcon = null;
 
         if (integrationData?.enhancedNodeTypes) {
           // Find the matching enhanced node type
           enhancedNodeType =
             integrationData.enhancedNodeTypes.find(
               (nt: any) =>
-                nt.id === nodeTypeData?.id || nt.name === nodeTypeData?.name
-            ) || integrationData.enhancedNodeTypes[0]
+                nt.id === nodeTypeData?.id || nt.name === nodeTypeData?.name,
+            ) || integrationData.enhancedNodeTypes[0];
 
           // Get icon from enhanced node type or integration
-          nodeIcon = enhancedNodeType?.icon || integrationData?.icon
+          nodeIcon = enhancedNodeType?.icon || integrationData?.icon;
         }
 
         const newNode = {
@@ -438,9 +444,9 @@ const WorkflowEditor: React.FC = () => {
             parameters: {},
           },
           connectionId,
-        }
+        };
 
-        addNode(newNode)
+        addNode(newNode);
 
         // Auto-connect to the last node if it exists
         if (lastNode) {
@@ -448,40 +454,40 @@ const WorkflowEditor: React.FC = () => {
             id: `edge-${lastNode.id}-${newNodeId}`,
             source: lastNode.id,
             target: newNodeId,
-            type: 'default',
+            type: "default",
             data: {
               connectionType: ConnectionType.Main,
             },
-          }
-          addEdgeToStore(newEdge)
+          };
+          addEdgeToStore(newEdge);
         }
       } catch (error) {
-        console.error('Error in onDrop:', error)
+        console.error("Error in onDrop:", error);
       }
     },
-    [reactFlowInstance, addNode, addEdgeToStore, findLastNode]
-  )
+    [reactFlowInstance, addNode, addEdgeToStore, findLastNode],
+  );
 
   const onInit = useCallback((instance: ReactFlowInstance) => {
-    setReactFlowInstance(instance)
-  }, [])
+    setReactFlowInstance(instance);
+  }, []);
 
   // Initialize local state when store changes
   useEffect(() => {
-    setNodes(reactFlowNodes)
-  }, [reactFlowNodes, setNodes])
+    setNodes(reactFlowNodes);
+  }, [reactFlowNodes, setNodes]);
 
   useEffect(() => {
-    setEdges(edges)
-  }, [edges, setEdges])
+    setEdges(edges);
+  }, [edges, setEdges]);
 
   // Save to store only when user stops interacting (debounced)
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       // Convert React Flow nodes back to lean format
       const leanNodes = localNodes
-        .filter(node => node.type)
-        .map(node => ({
+        .filter((node) => node.type)
+        .map((node) => ({
           id: node.id,
           type: node.type!,
           position: node.position,
@@ -492,100 +498,100 @@ const WorkflowEditor: React.FC = () => {
           name: node.data?.name,
           continueOnFail: node.data?.continueOnFail,
           executeOnce: node.data?.executeOnce,
-        }))
+        }));
 
       if (JSON.stringify(leanNodes) !== JSON.stringify(leanNodes)) {
-        updateNodes(leanNodes)
+        updateNodes(leanNodes);
       }
-    }, 300)
-    return () => clearTimeout(timeoutId)
-  }, [localNodes, updateNodes])
+    }, 300);
+    return () => clearTimeout(timeoutId);
+  }, [localNodes, updateNodes]);
 
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       if (JSON.stringify(localEdges) !== JSON.stringify(edges)) {
-        updateEdges(localEdges as any)
+        updateEdges(localEdges as any);
       }
-    }, 300)
-    return () => clearTimeout(timeoutId)
-  }, [localEdges, edges, updateEdges])
+    }, 300);
+    return () => clearTimeout(timeoutId);
+  }, [localEdges, edges, updateEdges]);
 
   // Handler for node connection - no longer creates automatic nodes, just logs
-  const handleNodeConnect = useCallback((sourceNodeId: string) => {
+  const handleNodeConnect = useCallback(() => {
     // This is now handled by ReactFlow's native connection system through handles
-  }, [])
+  }, []);
 
   // Handler for opening node properties
   const handleOpenProperties = useCallback(
     (nodeId: string) => {
-      setSelectedNodes([nodeId])
-      setSelectedNodeForConfig(nodeId)
+      setSelectedNodes([nodeId]);
+      setSelectedNodeForConfig(nodeId);
     },
-    [setSelectedNodes]
-  )
+    [setSelectedNodes],
+  );
 
   // Execution control handlers
   const handleExecutionStart = useCallback((executionId: string) => {
-    setCurrentExecutionId(executionId)
-  }, [])
+    setCurrentExecutionId(executionId);
+  }, []);
 
   const handleExecutionStop = useCallback(() => {
-    setCurrentExecutionId(null)
-  }, [])
+    setCurrentExecutionId(null);
+  }, []);
 
   // Connect to execution monitor on mount
   useEffect(() => {
-    executionMonitor.connect().catch(console.error)
+    executionMonitor.connect().catch(console.error);
 
     return () => {
-      executionMonitor.disconnect()
-    }
-  }, [])
+      executionMonitor.disconnect();
+    };
+  }, []);
 
   // Handle OAuth success/error messages from URL parameters
   useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search)
-    const credentialStatus = urlParams.get('credential')
-    const credentialName = urlParams.get('name')
-    const errorMessage = urlParams.get('message')
+    const urlParams = new URLSearchParams(window.location.search);
+    const credentialStatus = urlParams.get("credential");
+    const credentialName = urlParams.get("name");
+    const errorMessage = urlParams.get("message");
 
-    if (credentialStatus === 'success' && credentialName) {
-      console.log('OAuth success:', credentialName)
+    if (credentialStatus === "success" && credentialName) {
+      console.log("OAuth success:", credentialName);
       // Show success notification
-      alert(`Successfully connected ${decodeURIComponent(credentialName)}!`)
+      alert(`Successfully connected ${decodeURIComponent(credentialName)}!`);
 
       // Clean up URL parameters
-      const newUrl = window.location.pathname + window.location.hash
-      window.history.replaceState({}, document.title, newUrl)
+      const newUrl = window.location.pathname + window.location.hash;
+      window.history.replaceState({}, document.title, newUrl);
 
       // Reload credentials to show the new one in dropdowns
-      loadCredentials().catch(console.error)
+      loadCredentials().catch(console.error);
 
       // Reload workflow to ensure it's fresh after OAuth redirect
       const workflowId = window.location.pathname
-        .split('/workflow/')[1]
-        ?.split('?')[0]
+        .split("/workflow/")[1]
+        ?.split("?")[0];
       if (workflowId) {
-        loadWorkflow(workflowId).catch(console.error)
+        loadWorkflow(workflowId).catch(console.error);
       }
-    } else if (credentialStatus === 'error' && errorMessage) {
-      console.error('OAuth error:', errorMessage)
+    } else if (credentialStatus === "error" && errorMessage) {
+      console.error("OAuth error:", errorMessage);
       // Show error notification
-      alert(`Failed to connect: ${decodeURIComponent(errorMessage)}`)
+      alert(`Failed to connect: ${decodeURIComponent(errorMessage)}`);
 
       // Clean up URL parameters
-      const newUrl = window.location.pathname + window.location.hash
-      window.history.replaceState({}, document.title, newUrl)
+      const newUrl = window.location.pathname + window.location.hash;
+      window.history.replaceState({}, document.title, newUrl);
     }
-  }, [])
+  }, []);
 
   const memoizedNodes = useMemo(
     () =>
-      localNodes.map(node => {
+      localNodes.map((node) => {
         // Check if this node has outgoing connections from any handle
         const hasOutgoingConnection = localEdges.some(
-          edge => edge.source === node.id
-        )
+          (edge) => edge.source === node.id,
+        );
 
         return {
           ...node,
@@ -598,9 +604,9 @@ const WorkflowEditor: React.FC = () => {
             hasOutgoingConnection,
             isSelected: selectedNodeIds.includes(node.id),
             // For AI agent nodes, pass edges data for handle connection tracking
-            ...(node.type === 'ai-agent' && { edges: localEdges }),
+            ...(node.type === "ai-agent" && { edges: localEdges }),
           },
-        }
+        };
       }),
     [
       localNodes,
@@ -609,14 +615,14 @@ const WorkflowEditor: React.FC = () => {
       removeNode,
       handleNodeConnect,
       handleOpenProperties,
-    ]
-  )
+    ],
+  );
 
   const memoizedEdges = useMemo(
     () =>
-      localEdges.map(edge => ({
+      localEdges.map((edge) => ({
         ...edge,
-        type: 'default',
+        type: "default",
         data: {
           onDelete: onEdgeDelete,
           connectionType: edge.data?.connectionType || ConnectionType.Main,
@@ -626,12 +632,12 @@ const WorkflowEditor: React.FC = () => {
         hovered: edgesHoveredById[edge.id] || false,
         bringToFront: edgesBringToFrontById[edge.id] || false,
       })),
-    [localEdges, onEdgeDelete, edgesHoveredById, edgesBringToFrontById]
-  )
+    [localEdges, onEdgeDelete, edgesHoveredById, edgesBringToFrontById],
+  );
 
   return (
     <div
-      className={`h-full flex flex-col ${isFullscreen ? 'fixed inset-0 z-50 bg-gray-900' : ''}`}
+      className={`h-full flex flex-col ${isFullscreen ? "fixed inset-0 z-50 bg-gray-900" : ""}`}
     >
       {/* Execution Toolbar - hidden in fullscreen */}
       {!isFullscreen && (
@@ -682,7 +688,7 @@ const WorkflowEditor: React.FC = () => {
               selectionOnDrag={true}
             >
               {/* AI Edge Markers for specialized connections */}
-              <svg style={{ position: 'absolute', top: 0, left: 0 }}>
+              <svg style={{ position: "absolute", top: 0, left: 0 }}>
                 <AIEdgeMarkers />
               </svg>
 
@@ -714,9 +720,9 @@ const WorkflowEditor: React.FC = () => {
                 <button
                   onClick={() => setIsFullscreen(!isFullscreen)}
                   className="react-flow__controls-button"
-                  title={isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}
+                  title={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
                 >
-                  {isFullscreen ? '⊞' : '⛶'}
+                  {isFullscreen ? "⊞" : "⛶"}
                 </button>
               </Controls>
 
@@ -728,30 +734,30 @@ const WorkflowEditor: React.FC = () => {
                   pannable={true}
                   zoomable={true}
                   ariaLabel="Workflow minimap"
-                  nodeColor={node => {
+                  nodeColor={(node) => {
                     switch (node.type) {
-                      case 'trigger':
-                        return '#10b981'
-                      case 'action':
-                        return '#3b82f6'
-                      case 'condition':
-                        return '#f59e0b'
-                      case 'delay':
-                        return '#a855f7'
-                      case 'loop':
-                        return '#6366f1'
-                      case 'transform':
-                        return '#14b8a6'
-                      case 'webhook':
-                        return '#f97316'
-                      case 'database':
-                        return '#64748b'
-                      case 'email':
-                        return '#ef4444'
-                      case 'file':
-                        return '#059669'
+                      case "trigger":
+                        return "#10b981";
+                      case "action":
+                        return "#3b82f6";
+                      case "condition":
+                        return "#f59e0b";
+                      case "delay":
+                        return "#a855f7";
+                      case "loop":
+                        return "#6366f1";
+                      case "transform":
+                        return "#14b8a6";
+                      case "webhook":
+                        return "#f97316";
+                      case "database":
+                        return "#64748b";
+                      case "email":
+                        return "#ef4444";
+                      case "file":
+                        return "#059669";
                       default:
-                        return '#6b7280'
+                        return "#6b7280";
                     }
                   }}
                   nodeStrokeWidth={1}
@@ -765,9 +771,9 @@ const WorkflowEditor: React.FC = () => {
                 <button
                   onClick={() => setIsMinimapMinimized(!isMinimapMinimized)}
                   className="w-8 h-8 bg-white border border-gray-300 rounded-md flex items-center justify-center hover:bg-gray-50 transition-colors shadow-sm text-gray-700 font-bold"
-                  title={isMinimapMinimized ? 'Show minimap' : 'Hide minimap'}
+                  title={isMinimapMinimized ? "Show minimap" : "Hide minimap"}
                 >
-                  {isMinimapMinimized ? '□' : '−'}
+                  {isMinimapMinimized ? "□" : "−"}
                 </button>
               </Panel>
               <Background color="#ffffff" gap={20} size={1} />
@@ -783,7 +789,7 @@ const WorkflowEditor: React.FC = () => {
         nodeId={selectedNodeForConfig || undefined}
       />
     </div>
-  )
-}
+  );
+};
 
-export default WorkflowEditor
+export default WorkflowEditor;

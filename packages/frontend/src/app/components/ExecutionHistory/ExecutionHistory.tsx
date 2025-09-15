@@ -1,6 +1,6 @@
 // Execution History Component - Display workflow execution results
-import React, { useState, useEffect, useCallback } from 'react'
-import { logger } from '@/core/services/LoggingService'
+import React, { useState, useEffect, useCallback } from "react";
+import { logger } from "@/core/services/LoggingService";
 import {
   Table,
   Tag,
@@ -15,149 +15,174 @@ import {
   Input,
   DatePicker,
   Select,
-} from 'antd'
-import { StopOutlined, EyeOutlined, ReloadOutlined } from '@ant-design/icons'
-import { WorkflowApiService } from '@/core'
-const workflowApiService = new WorkflowApiService()
+} from "antd";
+import { StopOutlined, EyeOutlined, ReloadOutlined } from "@ant-design/icons";
+import { WorkflowApiService } from "@/core";
+const workflowApiService = new WorkflowApiService();
 import type {
+  ExecutionFilter,
+  PaginationParams,
   WorkflowExecution,
-  WorkflowExecutionFilter,
-} from '@/core/types/execution'
+} from "@/core/schemas";
 
-const { RangePicker } = DatePicker
-const { Search } = Input
-const { Option } = Select
+const { RangePicker } = DatePicker;
+const { Search } = Input;
+const { Option } = Select;
 
 export const ExecutionHistory: React.FC<{
-  workflowId?: string
-  onClose?: () => void
+  workflowId?: string;
+  onClose?: () => void;
 }> = ({ workflowId, onClose }) => {
-  const [executions, setExecutions] = useState<WorkflowExecution[]>([])
-  const [loading, setLoading] = useState(false)
+  const [executions, setExecutions] = useState<WorkflowExecution[]>([]);
+  const [loading, setLoading] = useState(false);
   const [selectedExecution, setSelectedExecution] =
-    useState<WorkflowExecution | null>(null)
-  const [detailsVisible, setDetailsVisible] = useState(false)
-  const [filter, setFilter] = useState<WorkflowExecutionFilter>({
+    useState<WorkflowExecution | null>(null);
+  const [detailsVisible, setDetailsVisible] = useState(false);
+  const [filter, setFilter] = useState<ExecutionFilter & PaginationParams>({
     workflowId,
     limit: 20,
     offset: 0,
-  })
-  const [total, setTotal] = useState(0)
+    sortOrder: "desc",
+  });
+  const [total, setTotal] = useState(0);
 
   const loadExecutions = useCallback(async () => {
-    setLoading(true)
+    setLoading(true);
     try {
-      const result = await workflowApiService.getExecutions(filter)
-      setExecutions(result.items)
-      setTotal(result.total)
+      const result = await workflowApiService.getExecutions(filter);
+      setExecutions(result.items);
+      setTotal(result.total);
     } catch (error) {
       logger.error(
-        'Failed to load executions',
-        error instanceof Error ? error : undefined
-      )
+        "Failed to load executions",
+        error instanceof Error ? error : undefined,
+      );
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }, [filter])
+  }, [filter]);
 
   useEffect(() => {
-    loadExecutions()
-  }, [loadExecutions])
+    loadExecutions();
+  }, [loadExecutions]);
 
   const handleStopExecution = async (executionId: string) => {
     try {
-      await workflowApiService.stopExecution(executionId)
-      await loadExecutions()
+      await workflowApiService.stopExecution(executionId);
+      await loadExecutions();
     } catch (error) {
       logger.error(
-        'Failed to stop execution',
+        "Failed to stop execution",
         error instanceof Error ? error : undefined,
-        { executionId }
-      )
+        { executionId },
+      );
     }
-  }
+  };
 
   const showExecutionDetails = async (execution: WorkflowExecution) => {
-    setSelectedExecution(execution)
-    setDetailsVisible(true)
-  }
+    setSelectedExecution(execution);
+    setDetailsVisible(true);
+  };
 
-  const getStatusColor = (status: WorkflowExecution['status']) => {
+  const getStatusColor = (status: WorkflowExecution["status"]) => {
     const colors: Record<string, string> = {
-      pending: 'orange',
-      running: 'blue',
-      completed: 'green',
-      failed: 'red',
-      cancelled: 'gray',
-      success: 'green',
-      error: 'red',
-    }
-    return colors[status] || 'default'
-  }
+      pending: "orange",
+      running: "blue",
+      completed: "green",
+      failed: "red",
+      cancelled: "gray",
+      success: "green",
+      error: "red",
+    };
+    return colors[status] || "default";
+  };
 
   const formatDuration = (duration?: number) => {
-    if (!duration) return '-'
-    const seconds = Math.floor(duration / 1000)
-    const minutes = Math.floor(seconds / 60)
-    const hours = Math.floor(minutes / 60)
+    if (!duration) return "-";
+    const seconds = Math.floor(duration / 1000);
+    const minutes = Math.floor(seconds / 60);
+    const hours = Math.floor(minutes / 60);
 
-    if (hours > 0) return `${hours}h ${minutes % 60}m ${seconds % 60}s`
-    if (minutes > 0) return `${minutes}m ${seconds % 60}s`
-    return `${seconds}s`
-  }
+    if (hours > 0) return `${hours}h ${minutes % 60}m ${seconds % 60}s`;
+    if (minutes > 0) return `${minutes}m ${seconds % 60}s`;
+    return `${seconds}s`;
+  };
+
+  const getExecutionResults = (execution: WorkflowExecution) => {
+    // Handle both array and record results formats for backward compatibility
+    if (Array.isArray(execution.results)) {
+      return execution.results;
+    }
+    if (execution.results && typeof execution.results === "object") {
+      return Object.entries(execution.results).map(
+        ([nodeId, data]: [string, any]) => ({
+          nodeId,
+          nodeName: data?.nodeName || nodeId,
+          status: data?.status || "success",
+          output: data?.output,
+          error: data?.error,
+          executedAt:
+            data?.executedAt || execution.startTime || new Date().toISOString(),
+          duration: data?.duration || 0,
+        }),
+      );
+    }
+    return [];
+  };
 
   const columns = [
     {
-      title: 'Execution ID',
-      dataIndex: 'id',
-      key: 'id',
+      title: "Execution ID",
+      dataIndex: "id",
+      key: "id",
       width: 120,
       render: (id: string) => (
         <span className="font-mono text-xs">{id.substring(0, 8)}...</span>
       ),
     },
     {
-      title: 'Workflow',
-      dataIndex: 'workflowName',
-      key: 'workflowName',
+      title: "Workflow",
+      dataIndex: "workflowName",
+      key: "workflowName",
       width: 200,
     },
     {
-      title: 'Status',
-      dataIndex: 'status',
-      key: 'status',
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
       width: 100,
-      render: (status: WorkflowExecution['status']) => (
+      render: (status: WorkflowExecution["status"]) => (
         <Tag color={getStatusColor(status)}>{status.toUpperCase()}</Tag>
       ),
     },
     {
-      title: 'Progress',
-      key: 'progress',
+      title: "Progress",
+      key: "progress",
       width: 120,
       render: (record: WorkflowExecution) => (
         <div className="text-xs">
-          {record.progress?.completedNodes?.length || 0} /{' '}
-          {record.progress?.totalNodes || 0} nodes
+          {record.nodeExecutions?.filter((n) => n.status === "completed")
+            .length || 0}{" "}
+          / {record.nodeExecutions?.length || 0} nodes
         </div>
       ),
     },
     {
-      title: 'Started',
-      dataIndex: 'startedAt',
-      key: 'startedAt',
+      title: "Started",
+      dataIndex: "startedAt",
+      key: "startedAt",
       width: 150,
       render: (date: string) => new Date(date).toLocaleString(),
     },
     {
-      title: 'Duration',
-      key: 'duration',
+      title: "Duration",
+      key: "duration",
       width: 100,
       render: (record: WorkflowExecution) => formatDuration(record.duration),
     },
     {
-      title: 'Actions',
-      key: 'actions',
+      title: "Actions",
+      key: "actions",
       width: 150,
       render: (record: WorkflowExecution) => (
         <Space>
@@ -168,7 +193,7 @@ export const ExecutionHistory: React.FC<{
           >
             Details
           </Button>
-          {record.status === 'running' && (
+          {record.status === "running" && (
             <Button
               size="small"
               danger
@@ -181,7 +206,7 @@ export const ExecutionHistory: React.FC<{
         </Space>
       ),
     },
-  ]
+  ];
 
   const content = (
     <div className="execution-history">
@@ -190,7 +215,7 @@ export const ExecutionHistory: React.FC<{
           <Col span={6}>
             <Search
               placeholder="Search executions..."
-              onSearch={value =>
+              onSearch={(value) =>
                 setFilter({ ...filter, workflowId: value || workflowId })
               }
             />
@@ -199,8 +224,8 @@ export const ExecutionHistory: React.FC<{
             <Select
               placeholder="Filter by status"
               allowClear
-              style={{ width: '100%' }}
-              onChange={value => setFilter({ ...filter, status: value })}
+              style={{ width: "100%" }}
+              onChange={(value) => setFilter({ ...filter, status: value })}
             >
               <Option value="pending">Pending</Option>
               <Option value="running">Running</Option>
@@ -211,20 +236,20 @@ export const ExecutionHistory: React.FC<{
           </Col>
           <Col span={8}>
             <RangePicker
-              placeholder={['Start date', 'End date']}
-              onChange={dates => {
+              placeholder={["Start date", "End date"]}
+              onChange={(dates) => {
                 if (dates) {
                   setFilter({
                     ...filter,
-                    dateFrom: dates[0]?.toISOString(),
+                    startDate: dates[0]?.toISOString(),
                     endDate: dates[1]?.toISOString(),
-                  })
+                  });
                 } else {
                   setFilter({
                     ...filter,
-                    dateFrom: undefined,
+                    startDate: undefined,
                     endDate: undefined,
-                  })
+                  });
                 }
               }}
             />
@@ -255,7 +280,7 @@ export const ExecutionHistory: React.FC<{
               ...filter,
               offset: (page - 1) * (pageSize || 20),
               limit: pageSize,
-            })
+            });
           },
         }}
       />
@@ -292,13 +317,22 @@ export const ExecutionHistory: React.FC<{
               <Col span={6}>
                 <Statistic
                   title="Nodes Completed"
-                  value={`${selectedExecution.progress?.completedNodes?.length || 0} / ${selectedExecution.progress?.totalNodes || 0}`}
+                  value={`${selectedExecution.nodeExecutions?.filter((n) => n.status === "completed").length || 0} / ${selectedExecution.nodeExecutions?.length || 0}`}
                 />
               </Col>
               <Col span={6}>
                 <Statistic
                   title="Success Rate"
-                  value={`${Math.round(((selectedExecution.results?.filter((r: { status: string }) => r.status === 'success').length || 0) / (selectedExecution.results?.length || 1)) * 100)}%`}
+                  value={(() => {
+                    const results = getExecutionResults(selectedExecution);
+                    const successCount = results.filter(
+                      (r) => r.status === "success",
+                    ).length;
+                    const total = results.length;
+                    return total > 0
+                      ? Math.round((successCount / total) * 100)
+                      : 0;
+                  })()}
                   suffix="%"
                 />
               </Col>
@@ -306,79 +340,54 @@ export const ExecutionHistory: React.FC<{
 
             <Card title="Node Execution Results" className="mb-4">
               <Timeline>
-                {selectedExecution.results?.map(
-                  (result: {
-                    nodeId: string
-                    nodeName: string
-                    status: string
-                    output?: unknown
-                    error?: string
-                    duration?: number
-                    executedAt: string
-                  }) => (
-                    <Timeline.Item
-                      key={result.nodeId}
-                      color={
-                        result.status === 'success'
-                          ? 'green'
-                          : result.status === 'error'
-                            ? 'red'
-                            : 'gray'
-                      }
-                    >
-                      <div>
-                        <strong>{result.nodeName}</strong>
-                        <Tag
-                          color={result.status === 'success' ? 'green' : 'red'}
-                          className="ml-2"
-                        >
-                          {result.status}
-                        </Tag>
-                        <div className="text-gray-500 text-xs">
-                          {new Date(result.executedAt).toLocaleString()} •{' '}
-                          {formatDuration(result.duration)}
-                        </div>
-                        {result.error && (
-                          <div className="text-red-500 text-sm mt-1">
-                            {result.error}
-                          </div>
-                        )}
-                        {result.output && (
-                          <details className="mt-1">
-                            <summary className="text-blue-500 cursor-pointer text-sm">
-                              View Output
-                            </summary>
-                            <pre className="bg-gray-100 p-2 rounded mt-1 text-xs overflow-auto max-h-32">
-                              {JSON.stringify(result.output, null, 2)}
-                            </pre>
-                          </details>
-                        )}
+                {getExecutionResults(selectedExecution).map((result) => (
+                  <Timeline.Item
+                    key={result.nodeId}
+                    color={
+                      result.status === "success"
+                        ? "green"
+                        : result.status === "error"
+                          ? "red"
+                          : "gray"
+                    }
+                  >
+                    <div>
+                      <strong>{result.nodeName}</strong>
+                      <Tag
+                        color={result.status === "success" ? "green" : "red"}
+                        className="ml-2"
+                      >
+                        {result.status}
+                      </Tag>
+                      <div className="text-gray-500 text-xs">
+                        {new Date(result.executedAt).toLocaleString()} •{" "}
+                        {formatDuration(result.duration)}
                       </div>
-                    </Timeline.Item>
-                  )
-                )}
+                      {result.error && (
+                        <div className="text-red-500 text-sm mt-1">
+                          {result.error}
+                        </div>
+                      )}
+                      {result.output && (
+                        <details className="mt-1">
+                          <summary className="text-blue-500 cursor-pointer text-sm">
+                            View Output
+                          </summary>
+                          <pre className="bg-gray-100 p-2 rounded mt-1 text-xs overflow-auto max-h-32">
+                            {JSON.stringify(result.output, null, 2)}
+                          </pre>
+                        </details>
+                      )}
+                    </div>
+                  </Timeline.Item>
+                ))}
               </Timeline>
             </Card>
 
             {selectedExecution.error && (
               <Card title="Execution Error" className="border-red-200">
                 <div className="text-red-600">
-                  <div className="font-semibold">
-                    {selectedExecution.error.message}
-                  </div>
-                  {selectedExecution.error.nodeId && (
-                    <div className="text-sm mt-1">
-                      Failed at node: {selectedExecution.error.nodeId}
-                    </div>
-                  )}
-                  {selectedExecution.error.stack && (
-                    <details className="mt-2">
-                      <summary className="cursor-pointer">Stack Trace</summary>
-                      <pre className="bg-red-50 p-2 rounded mt-1 text-xs overflow-auto max-h-32">
-                        {selectedExecution.error.stack}
-                      </pre>
-                    </details>
-                  )}
+                  <div className="font-semibold">{selectedExecution.error}</div>
                 </div>
               </Card>
             )}
@@ -386,7 +395,7 @@ export const ExecutionHistory: React.FC<{
         )}
       </Modal>
     </div>
-  )
+  );
 
   // If onClose is provided, wrap in a modal
   if (onClose) {
@@ -404,8 +413,8 @@ export const ExecutionHistory: React.FC<{
       >
         {content}
       </Modal>
-    )
+    );
   }
 
-  return content
-}
+  return content;
+};
