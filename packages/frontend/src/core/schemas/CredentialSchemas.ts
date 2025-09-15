@@ -64,7 +64,8 @@ export const DatabaseCredentialDataSchema = z.object({
 
 // Generic credential data (for custom/webhook types)
 export const GenericCredentialDataSchema = z.record(
-  z.union([z.string(), z.number(), z.boolean(), z.null()])
+  z.string(),
+  z.union([z.string(), z.unknown()])
 )
 
 // Main credential schema - matches actual backend response
@@ -85,8 +86,8 @@ export const CredentialSchema = z.object({
   isExpired: z.boolean().optional(),
   // Optional fields that might appear
   description: z.string().optional(),
-  data: z.record(z.unknown()).optional(), // Flexible data object
-  metadata: z.record(z.unknown()).optional(),
+  data: z.record(z.string(), z.unknown()).optional(), // Flexible data object
+  metadata: z.record(z.string(), z.unknown()).optional(),
 })
 
 // Credential configuration (for creation/update)
@@ -109,7 +110,7 @@ export const CredentialConfigSchema = z.object({
 export const CredentialTestRequestSchema = z.object({
   credentialId: IdSchema,
   testType: z.enum(['connection', 'auth', 'permissions']).default('connection'),
-  additionalParams: z.record(z.unknown()).optional(),
+  additionalParams: z.record(z.string(), z.unknown()).optional(),
 })
 
 export const CredentialTestResultSchema = z.object({
@@ -201,7 +202,7 @@ export const CredentialUsageLogSchema = z.object({
   usedAt: TimestampSchema,
   action: z.enum(['authenticate', 'api_call', 'test', 'refresh']),
   success: z.boolean(),
-  details: z.record(z.unknown()).optional(),
+  details: z.record(z.string(), z.unknown()).optional(),
 })
 
 // API Response schemas

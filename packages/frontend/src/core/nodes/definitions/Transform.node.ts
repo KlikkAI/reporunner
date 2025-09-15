@@ -32,7 +32,7 @@ export class TransformNode implements INodeType {
     icon: '🔄',
     iconColor: '#14b8a6',
     group: ['transform'],
-    version: [2, 3], // Support multiple versions
+    version: 2, // Use single version number
     subtitle: '={{$parameter["mode"] === "manual" ? ($parameter["assignments"]["values"] ? $parameter["assignments"]["values"].length + " assignments" : "0 assignments") : "JSON mode"}}',
     description: 'Transform and manipulate data with advanced field operations, type validation, expression evaluation, and flexible input handling - full n8n EditFields compatibility',
     defaults: {
@@ -137,7 +137,7 @@ export class TransformNode implements INodeType {
           {
             name: 'values',
             displayName: 'Assignment',
-            values: [
+            options: [
               {
                 displayName: 'Field Name',
                 name: 'name',
@@ -462,7 +462,7 @@ export class TransformNode implements INodeType {
         
         return { json: parsedObject }
       } catch (error) {
-        throw new Error(`Invalid JSON in Transform node: ${error.message}`)
+        throw new Error(`Invalid JSON in Transform node: ${error instanceof Error ? error.message : String(error)}`)
       }
     })
   }

@@ -378,7 +378,7 @@ export async function executeGmailSendEnhanced(
       return {
         success: false,
         message: 'Send condition evaluation failed',
-        error: error.message
+        error: error instanceof Error ? error.message : String(error)
       }
     }
   }
@@ -525,7 +525,7 @@ export async function testGmailConnection(
   } catch (error) {
     return {
       success: false,
-      message: `Gmail connection failed: ${error.message}`
+      message: `Gmail connection failed: ${error instanceof Error ? error.message : String(error)}`
     }
   }
 }

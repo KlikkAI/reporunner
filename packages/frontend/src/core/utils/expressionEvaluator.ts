@@ -488,7 +488,7 @@ class ExpressionUtils {
       
       return { valid: true }
     } catch (error) {
-      return { valid: false, error: error.message }
+      return { valid: false, error: error instanceof Error ? error.message : String(error) }
     }
   }
   

@@ -46,7 +46,7 @@ export const WorkflowEdgeSchema = z.object({
   sourceHandle: z.string().optional(),
   targetHandle: z.string().optional(),
   type: z.string().optional(),
-  data: z.record(z.unknown()).optional(),
+  data: z.record(z.string(), z.unknown()).optional(),
   label: z.string().optional(),
 })
 
@@ -126,8 +126,8 @@ export const NodeExecutionSchema = z.object({
   startTime: TimestampSchema,
   endTime: TimestampSchema.optional(),
   duration: z.number().int().min(0).optional(),
-  input: z.record(z.unknown()).optional(),
-  output: z.record(z.unknown()).optional(),
+  input: z.record(z.string(), z.unknown()).optional(),
+  output: z.record(z.string(), z.unknown()).optional(),
   error: z.string().optional(),
   logs: z
     .array(
@@ -135,7 +135,7 @@ export const NodeExecutionSchema = z.object({
         timestamp: TimestampSchema,
         level: z.enum(['debug', 'info', 'warn', 'error']),
         message: z.string(),
-        data: z.record(z.unknown()).optional(),
+        data: z.record(z.string(), z.unknown()).optional(),
       })
     )
     .default([]),
@@ -151,9 +151,9 @@ export const WorkflowExecutionSchema = z.object({
   endTime: TimestampSchema.optional(),
   duration: z.number().int().min(0).optional(),
   triggerType: z.enum(['manual', 'webhook', 'schedule', 'event']),
-  triggerData: z.record(z.unknown()).optional(),
+  triggerData: z.record(z.string(), z.unknown()).optional(),
   nodeExecutions: z.array(NodeExecutionSchema).default([]),
-  results: z.record(z.unknown()).optional(),
+  results: z.record(z.string(), z.unknown()).optional(),
   error: z.string().optional(),
   logs: z
     .array(
@@ -162,7 +162,7 @@ export const WorkflowExecutionSchema = z.object({
         level: z.enum(['debug', 'info', 'warn', 'error']),
         message: z.string(),
         nodeId: z.string().optional(),
-        data: z.record(z.unknown()).optional(),
+        data: z.record(z.string(), z.unknown()).optional(),
       })
     )
     .default([]),
@@ -218,7 +218,7 @@ export const UpdateWorkflowRequestSchema =
 export const ExecuteWorkflowRequestSchema = z.object({
   workflowId: OptionalIdSchema,
   workflow: WorkflowDefinitionSchema.optional(), // For direct execution
-  triggerData: z.record(z.unknown()).default({}),
+  triggerData: z.record(z.string(), z.unknown()).default({}),
   options: z
     .object({
       timeout: z.number().int().min(1000).max(3600000).optional(),

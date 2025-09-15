@@ -197,7 +197,6 @@ export const useLeanWorkflowStore = create<LeanWorkflowState>((set, get) => ({
       name,
       description: description || '',
       active: false,
-      isActive: false,
       status: 'inactive',
       nodes: [],
       connections: {},

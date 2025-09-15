@@ -37,7 +37,7 @@ export const ApiResponseSchema = <T extends z.ZodType>(dataSchema: T) =>
     data: dataSchema,
     message: z.string().optional(),
     errors: z.array(z.string()).optional(),
-    meta: z.record(z.unknown()).optional(),
+    meta: z.record(z.string(), z.unknown()).optional(),
   })
 
 export const ApiErrorSchema = z.object({
@@ -73,15 +73,16 @@ export const NodeParameterValueSchema: z.ZodSchema<unknown> = z.lazy(() =>
     z.boolean(),
     z.null(),
     z.array(NodeParameterValueSchema),
-    z.record(NodeParameterValueSchema),
+    z.record(z.string(), NodeParameterValueSchema),
   ])
 )
 
-export const NodeParametersSchema = z.record(NodeParameterValueSchema)
+export const NodeParametersSchema = z.record(z.string(), NodeParameterValueSchema)
 
 // Common metadata schema
 export const MetadataSchema = z.record(
-  z.union([z.string(), z.number(), z.boolean(), z.null()])
+  z.string(),
+  z.union([z.string(), z.number(), z.boolean(), z.null(), z.any()])
 )
 
 // Type inference helpers

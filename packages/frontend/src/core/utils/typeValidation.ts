@@ -181,7 +181,7 @@ class AdvancedTypeValidator {
             value: originalValue,
             originalValue,
             type: targetType,
-            error: `Expression evaluation failed: ${error.message}`
+            error: `Expression evaluation failed: ${error instanceof Error ? error.message : String(error)}`
           }
         }
       }
@@ -206,7 +206,7 @@ class AdvancedTypeValidator {
           value: this.getDefaultValue(targetType),
           originalValue,
           type: targetType,
-          warnings: [`Conversion failed, using default value: ${error.message}`]
+          warnings: [`Conversion failed, using default value: ${error instanceof Error ? error.message : String(error)}`]
         }
       }
       
@@ -215,7 +215,7 @@ class AdvancedTypeValidator {
         value: originalValue,
         originalValue,
         type: targetType,
-        error: error.message
+        error: error instanceof Error ? error.message : String(error)
       }
     }
   }
