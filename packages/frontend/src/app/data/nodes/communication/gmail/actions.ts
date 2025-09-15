@@ -38,7 +38,7 @@ export async function executeGmailTrigger(
  */
 export async function archiveGmailMessage(
   parameters: PropertyFormState,
-  credentials: Record<string, any>,
+  _credentials: Record<string, any>,
 ): Promise<{ success: boolean; archivedCount: number }> {
   console.log("Archiving Gmail message(s):", parameters);
 
@@ -54,7 +54,7 @@ export async function archiveGmailMessage(
  */
 export async function starGmailMessage(
   parameters: PropertyFormState,
-  credentials: Record<string, any>,
+  _credentials: Record<string, any>,
 ): Promise<{ success: boolean; starredCount: number }> {
   console.log("Starring Gmail message(s):", parameters);
 
@@ -70,7 +70,7 @@ export async function starGmailMessage(
  */
 export async function unstarGmailMessage(
   parameters: PropertyFormState,
-  credentials: Record<string, any>,
+  _credentials: Record<string, any>,
 ): Promise<{ success: boolean; unstarredCount: number }> {
   console.log("Unstarring Gmail message(s):", parameters);
 
@@ -86,7 +86,7 @@ export async function unstarGmailMessage(
  */
 export async function unarchiveGmailMessage(
   parameters: PropertyFormState,
-  credentials: Record<string, any>,
+  _credentials: Record<string, any>,
 ): Promise<{ success: boolean; unarchivedCount: number }> {
   console.log("Unarchiving Gmail message(s):", parameters);
 
@@ -102,7 +102,7 @@ export async function unarchiveGmailMessage(
  */
 export async function sendGmailMessage(
   parameters: PropertyFormState,
-  credentials: Record<string, any>,
+  _credentials: Record<string, any>,
 ): Promise<{ success: boolean; messageId: string }> {
   console.log("Sending Gmail message:", parameters);
 
@@ -118,7 +118,7 @@ export async function sendGmailMessage(
  */
 export async function classifyGmailMessage(
   parameters: PropertyFormState,
-  credentials: Record<string, any>,
+  _credentials: Record<string, any>,
 ): Promise<{ classification: string; confidence: number }> {
   console.log("Classifying Gmail message:", parameters);
 
@@ -134,7 +134,7 @@ export async function classifyGmailMessage(
  */
 export async function generateSmartReplies(
   parameters: PropertyFormState,
-  credentials: Record<string, any>,
+  _credentials: Record<string, any>,
 ): Promise<{ replies: string[] }> {
   console.log("Generating smart replies:", parameters);
 
@@ -168,4 +168,25 @@ export async function testGmailConnection(
       message: `Gmail connection test failed: ${error.message}`,
     };
   }
+}
+
+/**
+ * Send Gmail message (alias for sendGmailMessage)
+ */
+export const executeGmailSend = sendGmailMessage;
+
+/**
+ * Create Gmail draft message
+ */
+export async function executeGmailCreateDraft(
+  parameters: PropertyFormState,
+  _credentials: Record<string, any>,
+): Promise<{ success: boolean; draftId: string }> {
+  console.log("Creating Gmail draft:", parameters);
+
+  // Mock implementation
+  return {
+    success: true,
+    draftId: "draft-" + Date.now(),
+  };
 }

@@ -1,48 +1,48 @@
-import React, { useState, useRef } from 'react'
-import { Handle, Position } from 'reactflow'
-import type { CustomNodeBodyProps } from './nodeUiRegistry'
-import { NodeIcon, StatusBadge, NodeLabel } from './shared'
-import NodeToolbar from '../components/WorkflowEditor/NodeTypes/BaseNode/NodeToolbar'
-import { useSmartMenuPosition } from '../hooks/useSmartMenuPosition'
+import React, { useState, useRef } from "react";
+import { Handle, Position } from "reactflow";
+import type { CustomNodeBodyProps } from "./nodeUiRegistry";
+import { NodeIcon, StatusBadge, NodeLabel } from "./shared";
+import NodeToolbar from "../components/WorkflowEditor/NodeTypes/BaseNode/NodeToolbar";
+import { useSmartMenuPosition } from "../hooks/useSmartMenuPosition";
 
 /**
  * Custom AI Agent Node Body Component
  * Gmail-style UI with AI-specific features and handles
  */
-const AIAgentNodeBody: React.FC<CustomNodeBodyProps> = ({ 
-  nodeId, 
-  nodeData, 
-  selected, 
-  isHovered, 
-  onMouseEnter, 
-  onMouseLeave, 
-  onDelete, 
-  onEdit, 
-  onOpenProperties 
+const AIAgentNodeBody: React.FC<CustomNodeBodyProps> = ({
+  nodeId,
+  nodeData,
+  selected,
+  isHovered,
+  onMouseEnter,
+  onMouseLeave,
+  onDelete,
+
+  onOpenProperties,
 }) => {
-  const displayName = nodeData.name || nodeData.label || 'AI Agent'
-  const provider = nodeData.parameters?.provider || 'Google (Gemini)'
-  const icon = '🤖' // Simple robot emoji like old frontend
-  
+  const displayName = nodeData.name || nodeData.label || "AI Agent";
+  const provider = nodeData.parameters?.provider || "Google (Gemini)";
+  const icon = "🤖"; // Simple robot emoji like old frontend
+
   // Menu state for NodeToolbar
-  const [showLocalMenu, setShowLocalMenu] = useState(false)
-  const menuTriggerRef = useRef<HTMLButtonElement>(null)
-  const menuRef = useRef<HTMLDivElement>(null)
-  
+  const [showLocalMenu, setShowLocalMenu] = useState(false);
+  const menuTriggerRef = useRef<HTMLButtonElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+
   const { positionClasses, positionStyles } = useSmartMenuPosition({
     isOpen: showLocalMenu,
-    triggerRef: menuTriggerRef,
-    menuRef,
+    triggerRef: menuTriggerRef as React.RefObject<HTMLElement>,
+    menuRef: menuRef as React.RefObject<HTMLElement>,
     offset: 4,
-      onClose: () => setShowLocalMenu(false)
-  })
+    onClose: () => setShowLocalMenu(false),
+  });
 
   // Click-outside handling is now centralized in useSmartMenuPosition hook
 
   const handleDoubleClick = (event: React.MouseEvent) => {
-    event.stopPropagation()
-    onOpenProperties?.()
-  }
+    event.stopPropagation();
+    onOpenProperties?.();
+  };
 
   return (
     <div className="flex flex-col">
@@ -52,8 +52,8 @@ const AIAgentNodeBody: React.FC<CustomNodeBodyProps> = ({
             className={`
               relative flex items-center justify-center bg-gray-800 p-4 shadow-lg transition-all duration-200
               rounded-md min-w-[80px] max-w-[150px] min-h-[60px]
-              ${selected ? 'ring-2 ring-offset-2 ring-offset-gray-900 ring-purple-400' : ''}
-              ${isHovered ? 'hover:shadow-xl hover:scale-105 ring-2 ring-offset-2 ring-offset-gray-900 ring-purple-400' : ''}
+              ${selected ? "ring-2 ring-offset-2 ring-offset-gray-900 ring-purple-400" : ""}
+              ${isHovered ? "hover:shadow-xl hover:scale-105 ring-2 ring-offset-2 ring-offset-gray-900 ring-purple-400" : ""}
             `}
             onMouseEnter={onMouseEnter}
             onMouseLeave={onMouseLeave}
@@ -65,53 +65,53 @@ const AIAgentNodeBody: React.FC<CustomNodeBodyProps> = ({
               position={Position.Left}
               id="input_0"
               style={{
-                background: '#555',
+                background: "#555",
                 width: 10,
                 height: 10,
                 left: -5,
-                top: '25%',
+                top: "25%",
               }}
             />
-            
+
             {/* AI Language Model Handle */}
             <Handle
               type="target"
-              position={Position.Left}  
+              position={Position.Left}
               id="ai_languageModel"
               style={{
-                background: '#8b5cf6',
+                background: "#8b5cf6",
                 width: 8,
                 height: 8,
                 left: -4,
-                top: '45%',
+                top: "45%",
               }}
             />
-            
+
             {/* AI Memory Handle */}
             <Handle
               type="target"
               position={Position.Left}
               id="ai_memory"
               style={{
-                background: '#f59e0b',
+                background: "#f59e0b",
                 width: 8,
                 height: 8,
                 left: -4,
-                top: '65%',
+                top: "65%",
               }}
             />
-            
+
             {/* AI Tool Handle */}
             <Handle
               type="target"
               position={Position.Left}
               id="ai_tool"
               style={{
-                background: '#ef4444',
+                background: "#ef4444",
                 width: 8,
                 height: 8,
                 left: -4,
-                top: '85%',
+                top: "85%",
               }}
             />
 
@@ -121,7 +121,7 @@ const AIAgentNodeBody: React.FC<CustomNodeBodyProps> = ({
               position={Position.Right}
               id="output_0"
               style={{
-                background: '#555',
+                background: "#555",
                 width: 10,
                 height: 10,
                 right: -5,
@@ -129,28 +129,24 @@ const AIAgentNodeBody: React.FC<CustomNodeBodyProps> = ({
             />
 
             {/* AI Agent Icon */}
-            <NodeIcon 
-              icon={icon}
-              displayName={displayName}
-              size="md"
-            />
+            <NodeIcon icon={icon} displayName={displayName} size="md" />
 
             {/* Shared NodeToolbar */}
             <NodeToolbar
               visible={isHovered}
-              onPlay={() => console.log('Play AI Agent:', nodeId)}
-              onStop={() => console.log('Stop AI Agent:', nodeId)}
+              onPlay={() => console.log("Play AI Agent:", nodeId)}
+              onStop={() => console.log("Stop AI Agent:", nodeId)}
               onDelete={(e) => {
-                e.stopPropagation()
-                onDelete?.()
+                e.stopPropagation();
+                onDelete?.();
               }}
-                onMenuToggle={() => setShowLocalMenu(!showLocalMenu)}
+              onMenuToggle={() => setShowLocalMenu(!showLocalMenu)}
               menuTriggerRef={menuTriggerRef}
             />
 
             {/* Menu Dropdown */}
             {showLocalMenu && (
-              <div 
+              <div
                 ref={menuRef}
                 className={`${positionClasses} bg-gray-800 border border-gray-600 rounded-md shadow-lg py-1 min-w-[120px]`}
                 style={positionStyles}
@@ -158,9 +154,9 @@ const AIAgentNodeBody: React.FC<CustomNodeBodyProps> = ({
               >
                 <button
                   onClick={(e) => {
-                    e.stopPropagation()
-                    onOpenProperties?.()
-                    setShowLocalMenu(false)
+                    e.stopPropagation();
+                    onOpenProperties?.();
+                    setShowLocalMenu(false);
                   }}
                   className="w-full px-3 py-1.5 text-left text-sm text-gray-200 hover:bg-gray-700 flex items-center gap-2"
                 >
@@ -168,9 +164,9 @@ const AIAgentNodeBody: React.FC<CustomNodeBodyProps> = ({
                 </button>
                 <button
                   onClick={(e) => {
-                    e.stopPropagation()
-                    console.log('Test AI Agent:', nodeId)
-                    setShowLocalMenu(false)
+                    e.stopPropagation();
+                    console.log("Test AI Agent:", nodeId);
+                    setShowLocalMenu(false);
                   }}
                   className="w-full px-3 py-1.5 text-left text-sm text-gray-200 hover:bg-gray-700 flex items-center gap-2"
                 >
@@ -178,9 +174,9 @@ const AIAgentNodeBody: React.FC<CustomNodeBodyProps> = ({
                 </button>
                 <button
                   onClick={(e) => {
-                    e.stopPropagation()
-                    console.log('Copy AI Agent:', nodeId)
-                    setShowLocalMenu(false)
+                    e.stopPropagation();
+                    console.log("Copy AI Agent:", nodeId);
+                    setShowLocalMenu(false);
                   }}
                   className="w-full px-3 py-1.5 text-left text-sm text-gray-200 hover:bg-gray-700 flex items-center gap-2"
                 >
@@ -188,9 +184,9 @@ const AIAgentNodeBody: React.FC<CustomNodeBodyProps> = ({
                 </button>
                 <button
                   onClick={(e) => {
-                    e.stopPropagation()
-                    console.log('Duplicate AI Agent:', nodeId)
-                    setShowLocalMenu(false)
+                    e.stopPropagation();
+                    console.log("Duplicate AI Agent:", nodeId);
+                    setShowLocalMenu(false);
                   }}
                   className="w-full px-3 py-1.5 text-left text-sm text-gray-200 hover:bg-gray-700 flex items-center gap-2"
                 >
@@ -199,9 +195,9 @@ const AIAgentNodeBody: React.FC<CustomNodeBodyProps> = ({
                 <hr className="my-1 border-gray-600" />
                 <button
                   onClick={(e) => {
-                    e.stopPropagation()
-                    onDelete?.()
-                    setShowLocalMenu(false)
+                    e.stopPropagation();
+                    onDelete?.();
+                    setShowLocalMenu(false);
                   }}
                   className="w-full px-3 py-1.5 text-left text-sm text-red-400 hover:bg-gray-700 flex items-center gap-2"
                 >
@@ -219,13 +215,9 @@ const AIAgentNodeBody: React.FC<CustomNodeBodyProps> = ({
       </div>
 
       {/* Node Label */}
-      <NodeLabel 
-        displayName={displayName}
-        subtitle={provider}
-        maxWidth={150}
-      />
+      <NodeLabel displayName={displayName} subtitle={provider} maxWidth={150} />
     </div>
-  )
-}
+  );
+};
 
-export default AIAgentNodeBody
+export default AIAgentNodeBody;

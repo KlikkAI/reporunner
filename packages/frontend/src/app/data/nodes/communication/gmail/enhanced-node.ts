@@ -11,10 +11,7 @@ import {
   executeGmailCreateDraft,
   testGmailConnection,
 } from "./actions";
-import {
-  EnhancedIntegrationNodeType,
-  NodeProperty,
-} from "@/core/types/dynamicProperties";
+import { EnhancedIntegrationNodeType } from "@/core/types/dynamicProperties";
 
 /**
  * Unified Gmail Node - Enterprise Registry Pattern
@@ -143,8 +140,8 @@ export const gmailEnhancedNode: EnhancedIntegrationNodeType = {
   },
 
   // Custom UI components for enhanced user experience
-  customBodyComponent: "GmailNodeBody", // Using custom UI that matches old frontend style
-  customPropertiesPanel: "GmailPropertiesPanel",
+  // customBodyComponent: "GmailNodeBody", // Using custom UI that matches old frontend style
+  // customPropertiesPanel: "GmailPropertiesPanel",
 
   // Enhanced visual styling for Gmail branding
   styling: {
@@ -263,12 +260,7 @@ export async function executeGmailEnhanced(
   // Route execution based on resource and operation
   switch (resource) {
     case "email":
-      return executeEmailOperations(
-        operation,
-        nodeParameters,
-        credentials,
-        context,
-      );
+      return executeEmailOperations(operation, nodeParameters, credentials);
     case "label":
       return executeLabelOperations(operation, nodeParameters, credentials);
     case "draft":
@@ -341,7 +333,7 @@ async function executeDraftOperations(
 async function executeThreadOperations(
   operation: string,
   parameters: any,
-  credentials: any,
+  _credentials: any,
 ): Promise<any[]> {
   // TODO: Implement thread operations
   console.log("🧵 Executing thread operation:", operation);
@@ -350,40 +342,40 @@ async function executeThreadOperations(
 
 // Mock implementations for new email operations (to be implemented)
 async function executeEmailReply(
-  parameters: any,
-  credentials: any,
+  _parameters: any,
+  _credentials: any,
 ): Promise<any[]> {
   console.log("↩️ Mock: Email reply operation");
   return [{ operation: "reply", status: "mock_implementation" }];
 }
 
 async function executeEmailForward(
-  parameters: any,
-  credentials: any,
+  _parameters: any,
+  _credentials: any,
 ): Promise<any[]> {
   console.log("➡️ Mock: Email forward operation");
   return [{ operation: "forward", status: "mock_implementation" }];
 }
 
 async function executeEmailGet(
-  parameters: any,
-  credentials: any,
+  _parameters: any,
+  _credentials: any,
 ): Promise<any[]> {
   console.log("📧 Mock: Email get operation");
   return [{ operation: "get", status: "mock_implementation" }];
 }
 
 async function executeEmailGetAll(
-  parameters: any,
-  credentials: any,
+  _parameters: any,
+  _credentials: any,
 ): Promise<any[]> {
   console.log("📬 Mock: Email getAll operation");
   return [{ operation: "getAll", status: "mock_implementation" }];
 }
 
 async function executeEmailDelete(
-  parameters: any,
-  credentials: any,
+  _parameters: any,
+  _credentials: any,
 ): Promise<any[]> {
   console.log("🗑️ Mock: Email delete operation");
   return [{ operation: "delete", status: "mock_implementation" }];
@@ -391,8 +383,8 @@ async function executeEmailDelete(
 
 async function executeEmailMarkRead(
   operation: string,
-  parameters: any,
-  credentials: any,
+  _parameters: any,
+  _credentials: any,
 ): Promise<any[]> {
   console.log(`👁️ Mock: Email ${operation} operation`);
   return [{ operation, status: "mock_implementation" }];
@@ -400,8 +392,8 @@ async function executeEmailMarkRead(
 
 async function executeEmailLabelManagement(
   operation: string,
-  parameters: any,
-  credentials: any,
+  _parameters: any,
+  _credentials: any,
 ): Promise<any[]> {
   console.log(`🏷️ Mock: Email ${operation} operation`);
   return [{ operation, status: "mock_implementation" }];

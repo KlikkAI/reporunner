@@ -30,7 +30,7 @@ export async function demoGmailEnterpriseNode() {
   console.log(
     "- Features:",
     Object.keys(gmailEnhanced.meta.features).filter(
-      (f) => gmailEnhanced.meta.features[f],
+      (f) => (gmailEnhanced.meta.features as Record<string, boolean>)[f],
     ),
   );
 

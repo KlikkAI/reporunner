@@ -1,17 +1,9 @@
-import React, { useState, useRef } from 'react'
-import { Handle, Position } from 'reactflow'
-import type { CustomNodeBodyProps } from './nodeUiRegistry'
-import { NodeIcon, StatusBadge, NodeLabel } from './shared'
-import NodeToolbar from '../components/WorkflowEditor/NodeTypes/BaseNode/NodeToolbar'
-import { useSmartMenuPosition } from '../hooks/useSmartMenuPosition'
-
-interface ConditionOutput {
-  id: string
-  label: string
-  position: { top: string }
-  color: string
-  condition?: string
-}
+import React, { useState, useRef } from "react";
+import { Handle, Position } from "reactflow";
+import type { CustomNodeBodyProps } from "./nodeUiRegistry";
+import { NodeIcon, StatusBadge, NodeLabel } from "./shared";
+import NodeToolbar from "../components/WorkflowEditor/NodeTypes/BaseNode/NodeToolbar";
+import { useSmartMenuPosition } from "../hooks/useSmartMenuPosition";
 
 /**
  * Custom Condition Node Body Component
@@ -25,43 +17,41 @@ const ConditionNodeBody: React.FC<CustomNodeBodyProps> = ({
   onMouseEnter,
   onMouseLeave,
   onDelete,
-  onEdit,
-  onOpenProperties
+  onOpenProperties,
 }) => {
-  const displayName = nodeData.name || nodeData.label || 'Condition'
-  const mode = nodeData.parameters?.mode || 'expression'
-  const expression = nodeData.parameters?.expression || '{{$json.id > 0}}'
-  const rules = nodeData.parameters?.rules || []
-  
+  const displayName = nodeData.name || nodeData.label || "Condition";
+  const mode = nodeData.parameters?.mode || "expression";
+  const rules = nodeData.parameters?.rules || [];
+
   // Menu state for NodeToolbar
-  const [showLocalMenu, setShowLocalMenu] = useState(false)
-  const menuTriggerRef = useRef<HTMLButtonElement>(null)
-  const menuRef = useRef<HTMLDivElement>(null)
-  
+  const [showLocalMenu, setShowLocalMenu] = useState(false);
+  const menuTriggerRef = useRef<HTMLButtonElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+
   const { positionClasses, positionStyles } = useSmartMenuPosition({
     isOpen: showLocalMenu,
-    triggerRef: menuTriggerRef,
-    menuRef,
+    triggerRef: menuTriggerRef as React.RefObject<HTMLElement>,
+    menuRef: menuRef as React.RefObject<HTMLElement>,
     offset: 4,
-      onClose: () => setShowLocalMenu(false)
-  })
+    onClose: () => setShowLocalMenu(false),
+  });
 
   // Click-outside handling is now centralized in useSmartMenuPosition hook
-  const logic = nodeData.parameters?.logic || 'AND'
-  const icon = '❓' // Question mark for condition
-  
+  const logic = nodeData.parameters?.logic || "AND";
+  const icon = "❓"; // Question mark for condition
+
   // Generate subtitle based on condition configuration
   const getSubtitle = () => {
-    if (mode === 'rules' && rules.length > 0) {
-      return `${rules.length} rule${rules.length > 1 ? 's' : ''} (${logic})`
+    if (mode === "rules" && rules.length > 0) {
+      return `${rules.length} rule${rules.length > 1 ? "s" : ""} (${logic})`;
     }
-    return 'Expression Mode'
-  }
+    return "Expression Mode";
+  };
 
   const handleDoubleClick = (event: React.MouseEvent) => {
-    event.stopPropagation()
-    onOpenProperties?.()
-  }
+    event.stopPropagation();
+    onOpenProperties?.();
+  };
 
   return (
     <div className="flex flex-col">
@@ -71,8 +61,8 @@ const ConditionNodeBody: React.FC<CustomNodeBodyProps> = ({
             className={`
               relative flex items-center justify-center bg-gray-800 p-4 shadow-lg transition-all duration-200
               rounded-md min-w-[80px] max-w-[150px] min-h-[60px]
-              ${selected ? 'ring-2 ring-offset-2 ring-offset-gray-900 ring-yellow-400' : ''}
-              ${isHovered ? 'hover:shadow-xl hover:scale-105 ring-2 ring-offset-2 ring-offset-gray-900 ring-yellow-400' : ''}
+              ${selected ? "ring-2 ring-offset-2 ring-offset-gray-900 ring-yellow-400" : ""}
+              ${isHovered ? "hover:shadow-xl hover:scale-105 ring-2 ring-offset-2 ring-offset-gray-900 ring-yellow-400" : ""}
             `}
             onMouseEnter={onMouseEnter}
             onMouseLeave={onMouseLeave}
@@ -84,7 +74,7 @@ const ConditionNodeBody: React.FC<CustomNodeBodyProps> = ({
               position={Position.Left}
               id="input_0"
               style={{
-                background: '#555',
+                background: "#555",
                 width: 10,
                 height: 10,
                 left: -5,
@@ -97,11 +87,11 @@ const ConditionNodeBody: React.FC<CustomNodeBodyProps> = ({
               position={Position.Right}
               id="output_0"
               style={{
-                background: '#22c55e', // green for true
+                background: "#22c55e", // green for true
                 width: 10,
                 height: 10,
                 right: -5,
-                top: '35%',
+                top: "35%",
               }}
             />
 
@@ -111,44 +101,59 @@ const ConditionNodeBody: React.FC<CustomNodeBodyProps> = ({
               position={Position.Right}
               id="output_1"
               style={{
-                background: '#ef4444', // red for false
+                background: "#ef4444", // red for false
                 width: 10,
                 height: 10,
                 right: -5,
-                top: '65%',
+                top: "65%",
               }}
             />
 
             {/* Condition Icon */}
-            <NodeIcon 
-              icon={icon}
-              displayName={displayName}
-              size="md"
-            />
+            <NodeIcon icon={icon} displayName={displayName} size="md" />
 
             {/* Output Labels */}
-            <div className="absolute right-0 text-xs text-white px-1 py-0.5 rounded-l pointer-events-none z-10" 
-                 style={{top: '35%', backgroundColor: '#22c55e', transform: 'translateY(-50%)', marginRight: '-1px', fontSize: '10px'}}>T</div>
-            <div className="absolute right-0 text-xs text-white px-1 py-0.5 rounded-l pointer-events-none z-10" 
-                 style={{top: '65%', backgroundColor: '#ef4444', transform: 'translateY(-50%)', marginRight: '-1px', fontSize: '10px'}}>F</div>
-
+            <div
+              className="absolute right-0 text-xs text-white px-1 py-0.5 rounded-l pointer-events-none z-10"
+              style={{
+                top: "35%",
+                backgroundColor: "#22c55e",
+                transform: "translateY(-50%)",
+                marginRight: "-1px",
+                fontSize: "10px",
+              }}
+            >
+              T
+            </div>
+            <div
+              className="absolute right-0 text-xs text-white px-1 py-0.5 rounded-l pointer-events-none z-10"
+              style={{
+                top: "65%",
+                backgroundColor: "#ef4444",
+                transform: "translateY(-50%)",
+                marginRight: "-1px",
+                fontSize: "10px",
+              }}
+            >
+              F
+            </div>
 
             {/* Shared NodeToolbar */}
             <NodeToolbar
               visible={isHovered}
-              onPlay={() => console.log('Play Condition:', nodeId)}
-              onStop={() => console.log('Stop Condition:', nodeId)}
+              onPlay={() => console.log("Play Condition:", nodeId)}
+              onStop={() => console.log("Stop Condition:", nodeId)}
               onDelete={(e) => {
-                e.stopPropagation()
-                onDelete?.()
+                e.stopPropagation();
+                onDelete?.();
               }}
-                onMenuToggle={() => setShowLocalMenu(!showLocalMenu)}
+              onMenuToggle={() => setShowLocalMenu(!showLocalMenu)}
               menuTriggerRef={menuTriggerRef}
             />
 
             {/* Menu Dropdown */}
             {showLocalMenu && (
-              <div 
+              <div
                 ref={menuRef}
                 className={`${positionClasses} bg-gray-800 border border-gray-600 rounded-md shadow-lg py-1 min-w-[120px]`}
                 style={positionStyles}
@@ -156,9 +161,9 @@ const ConditionNodeBody: React.FC<CustomNodeBodyProps> = ({
               >
                 <button
                   onClick={(e) => {
-                    e.stopPropagation()
-                    onOpenProperties?.()
-                    setShowLocalMenu(false)
+                    e.stopPropagation();
+                    onOpenProperties?.();
+                    setShowLocalMenu(false);
                   }}
                   className="w-full px-3 py-1.5 text-left text-sm text-gray-200 hover:bg-gray-700 flex items-center gap-2"
                 >
@@ -166,9 +171,9 @@ const ConditionNodeBody: React.FC<CustomNodeBodyProps> = ({
                 </button>
                 <button
                   onClick={(e) => {
-                    e.stopPropagation()
-                    console.log('Test Condition:', nodeId)
-                    setShowLocalMenu(false)
+                    e.stopPropagation();
+                    console.log("Test Condition:", nodeId);
+                    setShowLocalMenu(false);
                   }}
                   className="w-full px-3 py-1.5 text-left text-sm text-gray-200 hover:bg-gray-700 flex items-center gap-2"
                 >
@@ -176,9 +181,9 @@ const ConditionNodeBody: React.FC<CustomNodeBodyProps> = ({
                 </button>
                 <button
                   onClick={(e) => {
-                    e.stopPropagation()
-                    console.log('Copy Condition:', nodeId)
-                    setShowLocalMenu(false)
+                    e.stopPropagation();
+                    console.log("Copy Condition:", nodeId);
+                    setShowLocalMenu(false);
                   }}
                   className="w-full px-3 py-1.5 text-left text-sm text-gray-200 hover:bg-gray-700 flex items-center gap-2"
                 >
@@ -186,9 +191,9 @@ const ConditionNodeBody: React.FC<CustomNodeBodyProps> = ({
                 </button>
                 <button
                   onClick={(e) => {
-                    e.stopPropagation()
-                    console.log('Duplicate Condition:', nodeId)
-                    setShowLocalMenu(false)
+                    e.stopPropagation();
+                    console.log("Duplicate Condition:", nodeId);
+                    setShowLocalMenu(false);
                   }}
                   className="w-full px-3 py-1.5 text-left text-sm text-gray-200 hover:bg-gray-700 flex items-center gap-2"
                 >
@@ -197,9 +202,9 @@ const ConditionNodeBody: React.FC<CustomNodeBodyProps> = ({
                 <hr className="my-1 border-gray-600" />
                 <button
                   onClick={(e) => {
-                    e.stopPropagation()
-                    onDelete?.()
-                    setShowLocalMenu(false)
+                    e.stopPropagation();
+                    onDelete?.();
+                    setShowLocalMenu(false);
                   }}
                   className="w-full px-3 py-1.5 text-left text-sm text-red-400 hover:bg-gray-700 flex items-center gap-2"
                 >
@@ -212,21 +217,26 @@ const ConditionNodeBody: React.FC<CustomNodeBodyProps> = ({
             {nodeData.disabled && (
               <StatusBadge type="disabled" position="top-right" />
             )}
-            {mode === 'rules' && rules.length > 0 && (
-              <StatusBadge type="count" content={rules.length} position="top-left" color="yellow" />
+            {mode === "rules" && rules.length > 0 && (
+              <StatusBadge
+                type="count"
+                content={rules.length}
+                position="top-left"
+                color="yellow"
+              />
             )}
           </div>
         </div>
       </div>
 
       {/* Node Label */}
-      <NodeLabel 
+      <NodeLabel
         displayName={displayName}
         subtitle={getSubtitle()}
         maxWidth={150}
       />
     </div>
-  )
-}
+  );
+};
 
-export default ConditionNodeBody
+export default ConditionNodeBody;

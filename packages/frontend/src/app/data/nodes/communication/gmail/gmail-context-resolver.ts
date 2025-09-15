@@ -3,7 +3,7 @@ import type {
   ContextResolver,
   WorkflowContext,
   ResolvedContext,
-} from "../../../../core/nodes/registry";
+} from "@/core/nodes/registry";
 
 /**
  * Gmail-specific context resolver that determines the appropriate mode,

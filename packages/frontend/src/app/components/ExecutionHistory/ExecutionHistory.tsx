@@ -23,6 +23,7 @@ import type {
   ExecutionFilter,
   PaginationParams,
   WorkflowExecution,
+  NodeExecution,
 } from "@/core/schemas";
 
 const { RangePicker } = DatePicker;
@@ -161,8 +162,9 @@ export const ExecutionHistory: React.FC<{
       width: 120,
       render: (record: WorkflowExecution) => (
         <div className="text-xs">
-          {record.nodeExecutions?.filter((n) => n.status === "completed")
-            .length || 0}{" "}
+          {record.nodeExecutions?.filter(
+            (n: NodeExecution) => n.status === "completed",
+          ).length || 0}{" "}
           / {record.nodeExecutions?.length || 0} nodes
         </div>
       ),
@@ -317,7 +319,7 @@ export const ExecutionHistory: React.FC<{
               <Col span={6}>
                 <Statistic
                   title="Nodes Completed"
-                  value={`${selectedExecution.nodeExecutions?.filter((n) => n.status === "completed").length || 0} / ${selectedExecution.nodeExecutions?.length || 0}`}
+                  value={`${selectedExecution.nodeExecutions?.filter((n: NodeExecution) => n.status === "completed").length || 0} / ${selectedExecution.nodeExecutions?.length || 0}`}
                 />
               </Col>
               <Col span={6}>

@@ -118,7 +118,10 @@ export const ExecutionToolbar: React.FC<ExecutionToolbarProps> = ({
           data: {
             label: node.name,
             parameters: node.parameters,
-            credentials: node.credentials,
+            credentials:
+              typeof node.credentials === "object" && node.credentials
+                ? Object.keys(node.credentials)[0] || undefined
+                : (node.credentials as string | undefined),
             disabled: node.disabled,
             notes: node.notes,
           },

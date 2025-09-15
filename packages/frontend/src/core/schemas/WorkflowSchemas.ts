@@ -122,7 +122,7 @@ export const WorkflowSchema = WorkflowDefinitionSchema.and(
 export const NodeExecutionSchema = z.object({
   nodeId: IdSchema,
   nodeName: z.string(),
-  status: z.enum(["error", "success", "skipped"]),
+  status: z.enum(["pending", "running", "completed", "failed", "skipped"]),
   output: z.unknown().optional(),
   error: z.string().optional(),
   executedAt: TimestampSchema,
@@ -154,6 +154,7 @@ export const WorkflowExecutionSchema = z.object({
     })
     .optional(),
   error: z.string().optional(),
+  nodeExecutions: z.array(NodeExecutionSchema).optional(),
   logs: z
     .array(
       z.object({
