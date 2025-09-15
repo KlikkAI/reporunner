@@ -378,15 +378,24 @@ class ComponentFactory implements UIComponentFactory {
       }, []);
 
       if (loading && LoadingComponent) {
-        return React.createElement(LoadingComponent, props as any);
+        return React.createElement(
+          LoadingComponent as React.ComponentType<any>,
+          props as any,
+        );
       }
 
       if (error && ErrorComponent) {
-        return React.createElement(ErrorComponent, { ...props, error });
+        return React.createElement(ErrorComponent as React.ComponentType<any>, {
+          ...props,
+          error,
+        });
       }
 
       if (component) {
-        return React.createElement(component, props as any);
+        return React.createElement(
+          component as React.ComponentType<any>,
+          props as any,
+        );
       }
 
       return null;

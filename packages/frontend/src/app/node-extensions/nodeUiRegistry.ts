@@ -3,12 +3,12 @@
  * Integrates with ComponentFactory for advanced component management and lazy loading
  */
 
-import type { ComponentType } from 'react'
-import { componentFactory } from './ComponentFactory'
-import AIAgentNodeBody from './AIAgentNodeBody'
-import ConditionNodeBody from './ConditionNodeBody'
-import GmailNodeBody from './custom-nodes/GmailNodeBody'
-import { GmailTriggerNodeBody, GmailPropertiesPanel } from '../../design-system/components/nodes/GmailNode'
+import type { ComponentType } from "react";
+import { componentFactory } from "./ComponentFactory";
+import AIAgentNodeBody from "./AIAgentNodeBody";
+import ConditionNodeBody from "./ConditionNodeBody";
+import GmailNodeBody from "./custom-nodes/GmailNodeBody";
+import { GmailPropertiesPanel } from "../../design-system/components/nodes/GmailNode";
 
 // Re-export types from the main types file
 export type {
@@ -20,119 +20,158 @@ export type {
   ToolbarAction,
   NodeBadge,
   CustomHandle,
-} from './types'
+} from "./types";
 
 // Enhanced Registry Implementation
 class NodeUIRegistry {
-  private initialized = false
-  
+  private initialized = false;
+
   constructor() {
     // Don't initialize immediately - wait until first use
-    console.log('🏗️ NodeUIRegistry: Constructor called (lazy initialization)')
+    console.log("🏗️ NodeUIRegistry: Constructor called (lazy initialization)");
   }
-  
+
   private ensureInitialized(): void {
     if (!this.initialized) {
-      console.log('🔄 NodeUIRegistry: Performing lazy initialization...')
-      this.initializeComponents()
-      this.initialized = true
+      console.log("🔄 NodeUIRegistry: Performing lazy initialization...");
+      this.initializeComponents();
+      this.initialized = true;
     }
   }
 
   private initializeComponents(): void {
-    console.log('🔧 NodeUIRegistry: Starting component initialization...')
-    
+    console.log("🔧 NodeUIRegistry: Starting component initialization...");
+
     // Register existing components with the factory
-    console.log('📝 Registering core components...')
-    componentFactory.registerBodyComponent('AIAgentNodeBody', AIAgentNodeBody)
-    componentFactory.registerBodyComponent('ConditionNodeBody', ConditionNodeBody)
-    console.log('✅ Core components registered:', ['AIAgentNodeBody', 'ConditionNodeBody'])
+    console.log("📝 Registering core components...");
+    componentFactory.registerBodyComponent("AIAgentNodeBody", AIAgentNodeBody);
+    componentFactory.registerBodyComponent(
+      "ConditionNodeBody",
+      ConditionNodeBody,
+    );
+    console.log("✅ Core components registered:", [
+      "AIAgentNodeBody",
+      "ConditionNodeBody",
+    ]);
 
     // Register Gmail components directly (no lazy loading to ensure immediate availability)
-    console.log('📧 Registering Gmail components directly...')
-    console.log('📧 Gmail imports:', { GmailNodeBody, GmailPropertiesPanel })
-    
+    console.log("📧 Registering Gmail components directly...");
+    console.log("📧 Gmail imports:", { GmailNodeBody, GmailPropertiesPanel });
+
     try {
       // Register our custom Gmail node body that matches old UI
-      componentFactory.registerBodyComponent('GmailNodeBody', GmailNodeBody)
-      console.log('✅ GmailNodeBody (custom UI) registered successfully')
-      
+      componentFactory.registerBodyComponent("GmailNodeBody", GmailNodeBody);
+      console.log("✅ GmailNodeBody (custom UI) registered successfully");
+
       // Keep the original for backward compatibility if needed
-      componentFactory.registerBodyComponent('GmailTriggerNodeBody', GmailNodeBody)
-      console.log('✅ GmailTriggerNodeBody registered successfully (using custom UI)')
-      
-      componentFactory.registerPropertiesPanel('GmailPropertiesPanel', GmailPropertiesPanel)
-      console.log('✅ GmailPropertiesPanel registered successfully')
-      
+      componentFactory.registerBodyComponent(
+        "GmailTriggerNodeBody",
+        GmailNodeBody,
+      );
+      console.log(
+        "✅ GmailTriggerNodeBody registered successfully (using custom UI)",
+      );
+
+      componentFactory.registerPropertiesPanel(
+        "GmailPropertiesPanel",
+        GmailPropertiesPanel,
+      );
+      console.log("✅ GmailPropertiesPanel registered successfully");
+
       // Verify registration immediately
-      const gmailBodyComponent = componentFactory.createNodeBody('GmailTriggerNodeBody')
-      const gmailPropertiesPanel = componentFactory.createPropertiesPanel('GmailPropertiesPanel')
-      
-      console.log('🔍 Gmail registration verification:', {
+      const gmailBodyComponent = componentFactory.createNodeBody(
+        "GmailTriggerNodeBody",
+      );
+      const gmailPropertiesPanel = componentFactory.createPropertiesPanel(
+        "GmailPropertiesPanel",
+      );
+
+      console.log("🔍 Gmail registration verification:", {
         bodyComponent: !!gmailBodyComponent,
         bodyComponentName: gmailBodyComponent?.name,
         propertiesPanel: !!gmailPropertiesPanel,
-        propertiesPanelName: gmailPropertiesPanel?.name
-      })
-      
+        propertiesPanelName: gmailPropertiesPanel?.name,
+      });
     } catch (error) {
-      console.error('❌ Gmail component registration failed:', error)
+      console.error("❌ Gmail component registration failed:", error);
     }
-    
-    console.log('📧 Gmail components registered directly for immediate availability')
-    
+
+    console.log(
+      "📧 Gmail components registered directly for immediate availability",
+    );
+
     // Register other specialized components with lazy loading
-    componentFactory.registerLazyBodyComponent('DatabaseNodeBody', 
-      () => import('./bodies/DatabaseNodeBody')
-    )
-    
-    componentFactory.registerLazyPropertiesPanel('AIAgentPropertiesPanel',
-      () => import('./panels/AIAgentPropertiesPanel')
-    )
-    
+    componentFactory.registerLazyBodyComponent(
+      "DatabaseNodeBody",
+      () => import("./bodies/DatabaseNodeBody"),
+    );
+
+    componentFactory.registerLazyPropertiesPanel(
+      "AIAgentPropertiesPanel",
+      () => import("./panels/AIAgentPropertiesPanel"),
+    );
+
     // Final registry state logging
-    console.log('🏁 Component Factory Statistics:', componentFactory.getStatistics())
-    console.log('🏁 Registered Component Types:', componentFactory.listRegisteredTypes())
-    console.log('🔧 NodeUIRegistry initialization completed')
+    console.log(
+      "🏁 Component Factory Statistics:",
+      componentFactory.getStatistics(),
+    );
+    console.log(
+      "🏁 Registered Component Types:",
+      componentFactory.listRegisteredTypes(),
+    );
+    console.log("🔧 NodeUIRegistry initialization completed");
   }
 
   // ============================================================================
   // Primary Interface Methods
   // ============================================================================
 
-  getCustomBodyComponent(componentName?: string): ComponentType<any> | undefined {
-    this.ensureInitialized() // Ensure components are registered before lookup
-    
-    if (!componentName) return undefined
-    const component = componentFactory.createNodeBody(componentName)
-    console.log(`🔍 Custom body component lookup: "${componentName}" → ${component ? 'FOUND' : 'NOT FOUND'}`)
-    
+  getCustomBodyComponent(
+    componentName?: string,
+  ): ComponentType<any> | null | undefined {
+    this.ensureInitialized(); // Ensure components are registered before lookup
+
+    if (!componentName) return undefined;
+    const component = componentFactory.createNodeBody(componentName);
+    console.log(
+      `🔍 Custom body component lookup: "${componentName}" → ${component ? "FOUND" : "NOT FOUND"}`,
+    );
+
     // Additional debug logging for Gmail specifically
-    if (componentName === 'GmailTriggerNodeBody') {
-      console.log('📧 Gmail component lookup details:', {
+    if (componentName === "GmailTriggerNodeBody") {
+      console.log("📧 Gmail component lookup details:", {
         componentName,
         componentFound: !!component,
-        componentType: component?.name || 'unknown',
-        factoryStats: componentFactory.getStatistics()
-      })
+        componentType: component?.name || "unknown",
+        factoryStats: componentFactory.getStatistics(),
+      });
     }
-    
-    return component
+
+    return component;
   }
 
-  getCustomPropertiesPanel(componentName?: string): ComponentType<any> | undefined {
-    this.ensureInitialized() // Ensure components are registered before lookup
-    
-    if (!componentName) return undefined
-    return componentFactory.createPropertiesPanel(componentName)
+  getCustomPropertiesPanel(
+    componentName?: string,
+  ): ComponentType<any> | null | undefined {
+    this.ensureInitialized(); // Ensure components are registered before lookup
+
+    if (!componentName) return undefined;
+    return componentFactory.createPropertiesPanel(componentName);
   }
 
-  registerCustomBodyComponent(name: string, component: ComponentType<any>): void {
-    componentFactory.registerBodyComponent(name, component)
+  registerCustomBodyComponent(
+    name: string,
+    component: ComponentType<any>,
+  ): void {
+    componentFactory.registerBodyComponent(name, component);
   }
 
-  registerCustomPropertiesPanel(name: string, component: ComponentType<any>): void {
-    componentFactory.registerPropertiesPanel(name, component)
+  registerCustomPropertiesPanel(
+    name: string,
+    component: ComponentType<any>,
+  ): void {
+    componentFactory.registerPropertiesPanel(name, component);
   }
 
   // ============================================================================
@@ -141,53 +180,57 @@ class NodeUIRegistry {
 
   registerLazyBodyComponent(
     name: string,
-    loader: () => Promise<{ default: ComponentType<any> }>
+    loader: () => Promise<{ default: ComponentType<any> }>,
   ): void {
-    componentFactory.registerLazyBodyComponent(name, loader)
+    componentFactory.registerLazyBodyComponent(name, loader);
   }
 
   registerLazyPropertiesPanel(
     name: string,
-    loader: () => Promise<{ default: ComponentType<any> }>
+    loader: () => Promise<{ default: ComponentType<any> }>,
   ): void {
-    componentFactory.registerLazyPropertiesPanel(name, loader)
+    componentFactory.registerLazyPropertiesPanel(name, loader);
   }
 
   async preloadComponents(nodeTypes: string[]): Promise<void> {
-    return componentFactory.preloadComponents(nodeTypes)
+    return componentFactory.preloadComponents(nodeTypes);
   }
 
   hasCustomBody(typeName: string): boolean {
-    return componentFactory.hasCustomBody(typeName)
+    return componentFactory.hasCustomBody(typeName);
   }
 
   hasCustomPropertiesPanel(typeName: string): boolean {
-    return componentFactory.hasCustomPropertiesPanel(typeName)
+    return componentFactory.hasCustomPropertiesPanel(typeName);
   }
 
   getStatistics() {
-    return componentFactory.getStatistics()
+    return componentFactory.getStatistics();
   }
 
   listRegisteredTypes() {
-    return componentFactory.listRegisteredTypes()
+    return componentFactory.listRegisteredTypes();
   }
 }
 
 // Create singleton instance
-const registryInstance = new NodeUIRegistry()
+const registryInstance = new NodeUIRegistry();
 
 // Legacy compatibility - maintain the old interface
 export const nodeUiRegistry = {
   bodyComponents: {
-    get AIAgentNodeBody() { return AIAgentNodeBody },
-    get ConditionNodeBody() { return ConditionNodeBody },
+    get AIAgentNodeBody() {
+      return AIAgentNodeBody;
+    },
+    get ConditionNodeBody() {
+      return ConditionNodeBody;
+    },
     // Gmail components are lazy-loaded, use the registry functions instead
   },
   propertiesPanelComponents: {
     // Gmail properties panel is lazy-loaded, use the registry functions instead
   },
-}
+};
 
 // ============================================================================
 // Enhanced Helper Functions
@@ -197,18 +240,18 @@ export const nodeUiRegistry = {
  * Get a custom body component from the enhanced registry
  */
 export function getCustomBodyComponent(
-  componentName?: string
+  componentName?: string,
 ): ComponentType<any> | undefined {
-  return registryInstance.getCustomBodyComponent(componentName)
+  return registryInstance.getCustomBodyComponent(componentName);
 }
 
 /**
  * Get a custom properties panel component from the enhanced registry
  */
 export function getCustomPropertiesPanelComponent(
-  componentName?: string
+  componentName?: string,
 ): ComponentType<any> | undefined {
-  return registryInstance.getCustomPropertiesPanel(componentName)
+  return registryInstance.getCustomPropertiesPanel(componentName);
 }
 
 /**
@@ -216,9 +259,9 @@ export function getCustomPropertiesPanelComponent(
  */
 export function registerCustomBodyComponent(
   name: string,
-  component: ComponentType<any>
+  component: ComponentType<any>,
 ): void {
-  registryInstance.registerCustomBodyComponent(name, component)
+  registryInstance.registerCustomBodyComponent(name, component);
 }
 
 /**
@@ -226,9 +269,9 @@ export function registerCustomBodyComponent(
  */
 export function registerCustomPropertiesPanelComponent(
   name: string,
-  component: ComponentType<any>
+  component: ComponentType<any>,
 ): void {
-  registryInstance.registerCustomPropertiesPanel(name, component)
+  registryInstance.registerCustomPropertiesPanel(name, component);
 }
 
 // ============================================================================
@@ -240,9 +283,9 @@ export function registerCustomPropertiesPanelComponent(
  */
 export function registerLazyBodyComponent(
   name: string,
-  loader: () => Promise<{ default: ComponentType<any> }>
+  loader: () => Promise<{ default: ComponentType<any> }>,
 ): void {
-  registryInstance.registerLazyBodyComponent(name, loader)
+  registryInstance.registerLazyBodyComponent(name, loader);
 }
 
 /**
@@ -250,45 +293,47 @@ export function registerLazyBodyComponent(
  */
 export function registerLazyPropertiesPanel(
   name: string,
-  loader: () => Promise<{ default: ComponentType<any> }>
+  loader: () => Promise<{ default: ComponentType<any> }>,
 ): void {
-  registryInstance.registerLazyPropertiesPanel(name, loader)
+  registryInstance.registerLazyPropertiesPanel(name, loader);
 }
 
 /**
  * Preload components for specified node types
  */
-export async function preloadNodeComponents(nodeTypes: string[]): Promise<void> {
-  return registryInstance.preloadComponents(nodeTypes)
+export async function preloadNodeComponents(
+  nodeTypes: string[],
+): Promise<void> {
+  return registryInstance.preloadComponents(nodeTypes);
 }
 
 /**
  * Check if a node type has a custom body component
  */
 export function hasCustomBody(typeName: string): boolean {
-  return registryInstance.hasCustomBody(typeName)
+  return registryInstance.hasCustomBody(typeName);
 }
 
 /**
  * Check if a node type has a custom properties panel
  */
 export function hasCustomPropertiesPanel(typeName: string): boolean {
-  return registryInstance.hasCustomPropertiesPanel(typeName)
+  return registryInstance.hasCustomPropertiesPanel(typeName);
 }
 
 /**
  * Get registry statistics
  */
 export function getRegistryStatistics() {
-  return registryInstance.getStatistics()
+  return registryInstance.getStatistics();
 }
 
 /**
  * List all registered component types
  */
 export function listRegisteredComponentTypes() {
-  return registryInstance.listRegisteredTypes()
+  return registryInstance.listRegisteredTypes();
 }
 
 // Export the enhanced registry instance for advanced usage
-export { registryInstance as enhancedRegistry }
+export { registryInstance as enhancedRegistry };

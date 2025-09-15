@@ -28,13 +28,6 @@ import type {
 } from "@/core/nodes/types";
 
 // Define interfaces locally to avoid circular imports
-interface IAssignmentValue {
-  id: string;
-  name: string;
-  value: any;
-  type?: string;
-  removeIfEmpty?: boolean;
-}
 
 interface IExpressionContext {
   $json: Record<string, any>;
@@ -46,6 +39,7 @@ interface IExpressionContext {
 import {
   ExpressionEvaluator,
   ExpressionUtils,
+  type IExpressionContext as CoreExpressionContext,
 } from "@/core/utils/expressionEvaluator";
 import { cn } from "@/design-system/utils";
 
@@ -65,7 +59,7 @@ export interface PropertyRendererProps {
     required?: boolean;
     options?: Array<{
       name: string;
-      value: string | number;
+      value: string | number | boolean | undefined;
       description?: string;
     }>;
     typeOptions?: INodePropertyTypeOptions;
@@ -76,7 +70,7 @@ export interface PropertyRendererProps {
   };
   value: any;
   onChange: (value: any) => void;
-  context?: IExpressionContext;
+  context?: CoreExpressionContext;
   disabled?: boolean;
   nodeValues?: Record<string, any>;
 }
@@ -96,11 +90,7 @@ export const StringRenderer: React.FC<PropertyRendererProps> = ({
         <label className="block text-sm font-medium text-gray-200">
           {property.displayName}
         </label>
-        {isExpression && (
-          <Tag color="blue" size="small">
-            Expression
-          </Tag>
-        )}
+        {isExpression && <Tag color="blue">Expression</Tag>}
       </div>
       <Input
         value={value || ""}
@@ -206,7 +196,7 @@ export const OptionsRenderer: React.FC<PropertyRendererProps> = ({
       >
         {options.map((option) => (
           <Option
-            key={option.value}
+            key={String(option.value)}
             value={option.value}
             title={option.description}
           >
@@ -257,7 +247,7 @@ export const MultiOptionsRenderer: React.FC<PropertyRendererProps> = ({
       >
         {options.map((option) => (
           <Option
-            key={option.value}
+            key={String(option.value)}
             value={option.value}
             title={option.description}
           >
@@ -465,7 +455,7 @@ export const JsonRenderer: React.FC<PropertyRendererProps> = ({
         <label className="block text-sm font-medium text-gray-200">
           {property.displayName}
         </label>
-        <Tag color={isValid ? "green" : "red"} size="small">
+        <Tag color={isValid ? "green" : "red"}>
           {isValid ? "Valid JSON" : "Invalid JSON"}
         </Tag>
       </div>
@@ -504,11 +494,6 @@ export const ExpressionRenderer: React.FC<PropertyRendererProps> = ({
     [context],
   );
 
-  const suggestions = useMemo(
-    () => (context ? ExpressionUtils.getExpressionSuggestions(context) : []),
-    [context],
-  );
-
   const [previewValue, setPreviewValue] = useState<any>(null);
 
   const handleEvaluatePreview = useCallback(() => {
@@ -517,7 +502,11 @@ export const ExpressionRenderer: React.FC<PropertyRendererProps> = ({
         const result = evaluator.evaluate(value);
         setPreviewValue(result);
       } catch (error) {
-        setPreviewValue(`Error: ${error.message}`);
+        if (error instanceof Error) {
+          setPreviewValue(`Error: ${error.message}`);
+        } else {
+          setPreviewValue(`Error: ${String(error)}`);
+        }
       }
     }
   }, [evaluator, value]);
@@ -535,7 +524,7 @@ export const ExpressionRenderer: React.FC<PropertyRendererProps> = ({
             onClick={() => setShowExpressionMode(!showExpressionMode)}
             className="text-xs"
           >
-            {{}}
+            {`{{}}`}
           </Button>
           {showExpressionMode && (
             <Button
@@ -661,21 +650,8 @@ export const ResourceLocatorRenderer: React.FC<PropertyRendererProps> = ({
 export const AssignmentCollectionRenderer: React.FC<PropertyRendererProps> = ({
   property,
   value,
-  onChange,
-  context,
-  disabled,
 }) => {
   const assignments = value?.values || [];
-
-  const handleAssignmentsChange = useCallback(
-    (newAssignments: IAssignmentValue[]) => {
-      onChange({
-        ...value,
-        values: newAssignments,
-      });
-    },
-    [value, onChange],
-  );
 
   return (
     <div className="space-y-2">
@@ -704,7 +680,6 @@ export const AssignmentCollectionRenderer: React.FC<PropertyRendererProps> = ({
 export const ResourceMapperRenderer: React.FC<PropertyRendererProps> = ({
   property,
   value,
-  onChange,
   disabled,
 }) => {
   const mappings = value?.mappings || [];
@@ -774,7 +749,6 @@ export const ResourceMapperRenderer: React.FC<PropertyRendererProps> = ({
 export const FilterRenderer: React.FC<PropertyRendererProps> = ({
   property,
   value,
-  onChange,
   disabled,
 }) => {
   const conditions = value?.conditions || [];
@@ -976,7 +950,6 @@ export const HiddenRenderer: React.FC<PropertyRendererProps> = () => null;
 export const CollectionRenderer: React.FC<PropertyRendererProps> = ({
   property,
   value,
-  onChange,
   disabled,
 }) => {
   const items = Array.isArray(value) ? value : [];
@@ -989,7 +962,7 @@ export const CollectionRenderer: React.FC<PropertyRendererProps> = ({
       <Collapse>
         <Panel header={`${items.length} items configured`} key="1">
           <div className="space-y-2">
-            {items.map((item: any, index: number) => (
+            {items.map((_item: any, index: number) => (
               <div key={index} className="p-2 bg-gray-700 rounded">
                 <div className="text-sm text-gray-200">Item {index + 1}</div>
                 {/* Render collection item properties */}
@@ -1054,8 +1027,6 @@ export const PropertyRenderer: React.FC<PropertyRendererProps> = (props) => {
       return <CurlImportRenderer {...props} />;
     case "workflowSelector":
       return <WorkflowSelectorRenderer {...props} />;
-    case "nodeSelector":
-      return <NodeSelectorRenderer {...props} />;
     case "credentialsSelect":
       return <CredentialsSelectRenderer {...props} />;
     case "hidden":
@@ -1069,6 +1040,3 @@ export const PropertyRenderer: React.FC<PropertyRendererProps> = (props) => {
 };
 
 export default PropertyRenderer;
-
-// Ensure interface is properly exported
-export type { PropertyRendererProps };

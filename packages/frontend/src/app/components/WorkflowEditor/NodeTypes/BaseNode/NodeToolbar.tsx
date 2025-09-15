@@ -1,12 +1,12 @@
-import React from 'react'
+import React from "react";
 
 interface NodeToolbarProps {
-  visible: boolean
-  onPlay: () => void
-  onStop: () => void
-  onDelete: (event: React.MouseEvent) => void
-  onMenuToggle: () => void
-  menuTriggerRef?: React.RefObject<HTMLButtonElement>
+  visible: boolean;
+  onPlay: () => void;
+  onStop: () => void;
+  onDelete: (event: React.MouseEvent) => void;
+  onMenuToggle: () => void;
+  menuTriggerRef?: React.RefObject<HTMLButtonElement | null>;
 }
 
 const NodeToolbar: React.FC<NodeToolbarProps> = ({
@@ -17,7 +17,7 @@ const NodeToolbar: React.FC<NodeToolbarProps> = ({
   onMenuToggle,
   menuTriggerRef,
 }) => {
-  if (!visible) return null
+  if (!visible) return null;
 
   return (
     <div
@@ -27,9 +27,9 @@ const NodeToolbar: React.FC<NodeToolbarProps> = ({
       {/* Play Button */}
       <button
         className="w-6 h-6 bg-transparent hover:bg-green-600 text-green-400 hover:text-white rounded transition-colors flex items-center justify-center text-xs"
-        onClick={e => {
-          e.stopPropagation()
-          onPlay()
+        onClick={(e) => {
+          e.stopPropagation();
+          onPlay();
         }}
         title="Play"
       >
@@ -39,9 +39,9 @@ const NodeToolbar: React.FC<NodeToolbarProps> = ({
       {/* Stop Button */}
       <button
         className="w-6 h-6 bg-transparent hover:bg-red-600 text-red-400 hover:text-white rounded transition-colors flex items-center justify-center text-xs"
-        onClick={e => {
-          e.stopPropagation()
-          onStop()
+        onClick={(e) => {
+          e.stopPropagation();
+          onStop();
         }}
         title="Stop"
       >
@@ -61,16 +61,16 @@ const NodeToolbar: React.FC<NodeToolbarProps> = ({
       <button
         ref={menuTriggerRef}
         className="w-6 h-6 bg-transparent hover:bg-blue-600 text-blue-400 hover:text-white rounded transition-colors flex items-center justify-center text-xs"
-        onClick={e => {
-          e.stopPropagation()
-          onMenuToggle()
+        onClick={(e) => {
+          e.stopPropagation();
+          onMenuToggle();
         }}
         title="More options"
       >
         ⋯
       </button>
     </div>
-  )
-}
+  );
+};
 
-export default NodeToolbar
+export default NodeToolbar;

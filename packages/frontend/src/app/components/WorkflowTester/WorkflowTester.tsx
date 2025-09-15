@@ -54,14 +54,62 @@ export const WorkflowTester: React.FC<{
 
       if (testMode === "validate") {
         // Just validate the workflow structure
-        const result = await workflowApiService.testWorkflow(workflowJson);
+        // Convert BackendWorkflow to WorkflowDefinition format
+        const workflowDefinition = {
+          name: `Test Workflow ${Date.now()}`,
+          version: "1.0.0",
+          nodes: workflowJson.nodes.map((node) => ({
+            id: node.id,
+            type: node.type,
+            position: { x: node.position[0], y: node.position[1] },
+            data: {
+              label: node.name,
+              parameters: node.parameters,
+              credentials:
+                typeof node.credentials === "object" && node.credentials
+                  ? Object.keys(node.credentials)[0] || undefined
+                  : (node.credentials as string | undefined),
+              disabled: node.disabled,
+              notes: node.notes,
+            },
+          })),
+          edges: [], // Convert connections to edges if needed
+          tags: ["test"],
+          isActive: true,
+        };
+        const result =
+          await workflowApiService.testWorkflow(workflowDefinition);
         setTestResult({
           type: "validation",
           ...result,
         });
       } else if (testMode === "dry_run") {
         // Dry run - validate and simulate execution
-        const result = await workflowApiService.testWorkflow(workflowJson);
+        // Convert BackendWorkflow to WorkflowDefinition format
+        const workflowDefinition = {
+          name: `Test Workflow ${Date.now()}`,
+          version: "1.0.0",
+          nodes: workflowJson.nodes.map((node) => ({
+            id: node.id,
+            type: node.type,
+            position: { x: node.position[0], y: node.position[1] },
+            data: {
+              label: node.name,
+              parameters: node.parameters,
+              credentials:
+                typeof node.credentials === "object" && node.credentials
+                  ? Object.keys(node.credentials)[0] || undefined
+                  : (node.credentials as string | undefined),
+              disabled: node.disabled,
+              notes: node.notes,
+            },
+          })),
+          edges: [], // Convert connections to edges if needed
+          tags: ["test"],
+          isActive: true,
+        };
+        const result =
+          await workflowApiService.testWorkflow(workflowDefinition);
         setTestResult({
           type: "dry_run",
           ...result,

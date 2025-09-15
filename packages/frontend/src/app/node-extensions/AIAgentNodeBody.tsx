@@ -31,8 +31,8 @@ const AIAgentNodeBody: React.FC<CustomNodeBodyProps> = ({
 
   const { positionClasses, positionStyles } = useSmartMenuPosition({
     isOpen: showLocalMenu,
-    triggerRef: menuTriggerRef as React.RefObject<HTMLElement>,
-    menuRef: menuRef as React.RefObject<HTMLElement>,
+    triggerRef: menuTriggerRef,
+    menuRef: menuRef,
     offset: 4,
     onClose: () => setShowLocalMenu(false),
   });

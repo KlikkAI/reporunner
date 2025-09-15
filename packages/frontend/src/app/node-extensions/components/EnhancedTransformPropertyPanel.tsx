@@ -107,7 +107,10 @@ const EnhancedTransformPropertyPanel: React.FC<
       try {
         JSON.parse(jsonObject);
       } catch (error) {
-        errors.push("Invalid JSON syntax in JSON Object", error);
+        errors.push(
+          "Invalid JSON syntax in JSON Object",
+          error instanceof Error ? error.message : String(error),
+        );
       }
     }
 
@@ -191,16 +194,15 @@ const EnhancedTransformPropertyPanel: React.FC<
                         <Text type="secondary" style={{ fontSize: "11px" }}>
                           Available fields:{" "}
                         </Text>
-                        {inputFieldSuggestions.map((field) => (
+                        {inputFieldSuggestions.map((field: string) => (
                           <Tag
                             key={field}
-                            size="small"
                             style={{ cursor: "pointer", margin: "2px" }}
                             onClick={() => {
                               const currentFields = selectedInputFields
                                 .split(",")
-                                .map((f) => f.trim())
-                                .filter((f) => f);
+                                .map((f: string) => f.trim())
+                                .filter((f: string) => f);
                               if (!currentFields.includes(field)) {
                                 const newFields = [
                                   ...currentFields,
@@ -351,7 +353,7 @@ const EnhancedTransformPropertyPanel: React.FC<
       className="enhanced-transform-property-panel"
       style={{ height: "100%", display: "flex", flexDirection: "column" }}
     >
-      <style jsx>{`
+      <style>{`
         .enhanced-transform-property-panel {
           background: #fff;
         }
@@ -430,7 +432,7 @@ const EnhancedTransformPropertyPanel: React.FC<
             message="Configuration Errors"
             description={
               <ul style={{ margin: "8px 0", paddingLeft: "20px" }}>
-                {validationErrors.map((error, index) => (
+                {validationErrors.map((error: string, index: number) => (
                   <li key={index} style={{ fontSize: "12px" }}>
                     {error}
                   </li>

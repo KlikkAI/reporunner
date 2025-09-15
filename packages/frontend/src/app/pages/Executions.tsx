@@ -1,83 +1,83 @@
-import React, { useState, useEffect } from 'react'
-import { WorkflowApiService } from '@/core'
-import type { WorkflowExecution } from '@/core/types/execution'
+import React, { useState, useEffect } from "react";
+import { WorkflowApiService } from "@/core";
+import type { WorkflowExecution } from "@/core/types/execution";
 
-const workflowApiService = new WorkflowApiService()
+const workflowApiService = new WorkflowApiService();
 
 const Executions: React.FC = () => {
-  const [executions, setExecutions] = useState<WorkflowExecution[]>([])
-  const [isLoading, setIsLoading] = useState(true)
+  const [executions, setExecutions] = useState<WorkflowExecution[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [filter, setFilter] = useState<
-    'all' | 'pending' | 'running' | 'success' | 'error' | 'cancelled'
-  >('all')
-  const [page, setPage] = useState(1)
-  const [hasMore, setHasMore] = useState(true)
+    "all" | "pending" | "running" | "success" | "error" | "cancelled"
+  >("all");
+  const [page, setPage] = useState(1);
+  const [, setHasMore] = useState(true);
 
   useEffect(() => {
-    loadExecutions()
-  }, [filter, page])
+    loadExecutions();
+  }, [filter, page]);
 
   const loadExecutions = async () => {
-    setIsLoading(true)
+    setIsLoading(true);
     try {
       const result = await workflowApiService.getExecutions({
-        status: filter === 'all' ? undefined : filter,
+        status: filter === "all" ? undefined : filter,
         page,
         limit: 20,
-      })
+      });
 
       if (page === 1) {
-        setExecutions(result.items)
+        setExecutions(result.items);
       } else {
-        setExecutions(prev => [...prev, ...result.items])
+        setExecutions((prev) => [...prev, ...result.items]);
       }
-      setHasMore(result.hasMore)
+      setHasMore(result.hasMore);
     } catch (error) {
-      console.error('Failed to load executions:', error)
-      setExecutions([])
+      console.error("Failed to load executions:", error);
+      setExecutions([]);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   const handleStopExecution = async (executionId: string) => {
     try {
-      await workflowApiService.stopExecution(executionId)
+      await workflowApiService.stopExecution(executionId);
       // Refresh executions
-      setPage(1)
-      loadExecutions()
+      setPage(1);
+      loadExecutions();
     } catch (error) {
-      console.error('Failed to stop execution:', error)
-      alert('Failed to stop execution')
+      console.error("Failed to stop execution:", error);
+      alert("Failed to stop execution");
     }
-  }
+  };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'success':
-        return 'bg-green-100 text-green-800'
-      case 'running':
-        return 'bg-blue-100 text-blue-800'
-      case 'pending':
-        return 'bg-yellow-100 text-yellow-800'
-      case 'error':
-        return 'bg-red-100 text-red-800'
-      case 'cancelled':
-        return 'bg-gray-100 text-gray-800'
+      case "success":
+        return "bg-green-100 text-green-800";
+      case "running":
+        return "bg-blue-100 text-blue-800";
+      case "pending":
+        return "bg-yellow-100 text-yellow-800";
+      case "error":
+        return "bg-red-100 text-red-800";
+      case "cancelled":
+        return "bg-gray-100 text-gray-800";
       default:
-        return 'bg-gray-100 text-gray-800'
+        return "bg-gray-100 text-gray-800";
     }
-  }
+  };
 
   const formatDuration = (execution: WorkflowExecution) => {
-    if (!execution.endTime || !execution.startTime) return 'N/A'
-    const start = new Date(execution.startTime).getTime()
-    const end = new Date(execution.endTime).getTime()
-    const seconds = Math.floor((end - start) / 1000)
-    const mins = Math.floor(seconds / 60)
-    const secs = seconds % 60
-    return `${mins}:${secs.toString().padStart(2, '0')}`
-  }
+    if (!execution.endTime || !execution.startTime) return "N/A";
+    const start = new Date(execution.startTime).getTime();
+    const end = new Date(execution.endTime).getTime();
+    const seconds = Math.floor((end - start) / 1000);
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, "0")}`;
+  };
 
   return (
     <div className="p-6">
@@ -92,23 +92,23 @@ const Executions: React.FC = () => {
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
         {[
-          { name: 'Total Executions', value: executions.length, color: 'blue' },
+          { name: "Total Executions", value: executions.length, color: "blue" },
           {
-            name: 'Running',
-            value: executions.filter(e => e.status === 'running').length,
-            color: 'blue',
+            name: "Running",
+            value: executions.filter((e) => e.status === "running").length,
+            color: "blue",
           },
           {
-            name: 'Success',
-            value: executions.filter(e => e.status === 'success').length,
-            color: 'green',
+            name: "Success",
+            value: executions.filter((e) => e.status === "success").length,
+            color: "green",
           },
           {
-            name: 'Failed',
-            value: executions.filter(e => e.status === 'error').length,
-            color: 'red',
+            name: "Failed",
+            value: executions.filter((e) => e.status === "error").length,
+            color: "red",
           },
-        ].map(stat => (
+        ].map((stat) => (
           <div key={stat.name} className="bg-white p-6 rounded-lg shadow">
             <div className="flex items-center">
               <div
@@ -130,20 +130,20 @@ const Executions: React.FC = () => {
         <div className="p-4 border-b border-gray-200">
           <div className="flex space-x-4">
             {[
-              { key: 'all', label: 'All' },
-              { key: 'pending', label: 'Pending' },
-              { key: 'running', label: 'Running' },
-              { key: 'success', label: 'Success' },
-              { key: 'error', label: 'Failed' },
-              { key: 'cancelled', label: 'Cancelled' },
-            ].map(filterOption => (
+              { key: "all", label: "All" },
+              { key: "pending", label: "Pending" },
+              { key: "running", label: "Running" },
+              { key: "success", label: "Success" },
+              { key: "error", label: "Failed" },
+              { key: "cancelled", label: "Cancelled" },
+            ].map((filterOption) => (
               <button
                 key={filterOption.key}
                 onClick={() => setFilter(filterOption.key as any)}
                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                   filter === filterOption.key
-                    ? 'bg-blue-100 text-blue-700'
-                    : 'text-gray-600 hover:bg-gray-100'
+                    ? "bg-blue-100 text-blue-700"
+                    : "text-gray-600 hover:bg-gray-100"
                 }`}
               >
                 {filterOption.label}
@@ -167,7 +167,7 @@ const Executions: React.FC = () => {
             </div>
           ) : (
             <div className="space-y-4">
-              {executions.map(execution => (
+              {executions.map((execution) => (
                 <div
                   key={execution.id}
                   className="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors"
@@ -186,10 +186,10 @@ const Executions: React.FC = () => {
                       </div>
                       <div className="mt-2 flex items-center space-x-6 text-sm text-gray-600">
                         <span>
-                          Started:{' '}
+                          Started:{" "}
                           {execution.startTime
                             ? new Date(execution.startTime).toLocaleString()
-                            : 'N/A'}
+                            : "N/A"}
                         </span>
                         <span>Duration: {formatDuration(execution)}</span>
                         <span>Triggered by: {execution.triggerType}</span>
@@ -213,7 +213,7 @@ const Executions: React.FC = () => {
                                         {nodeExec.nodeName || nodeExec.nodeId}:
                                       </span>
                                       <span
-                                        className={`ml-2 ${nodeExec.status === 'success' ? 'text-green-600' : nodeExec.status === 'error' ? 'text-red-600' : 'text-blue-600'}`}
+                                        className={`ml-2 ${nodeExec.status === "success" ? "text-green-600" : nodeExec.status === "error" ? "text-red-600" : "text-blue-600"}`}
                                       >
                                         {nodeExec.status}
                                       </span>
@@ -223,7 +223,7 @@ const Executions: React.FC = () => {
                                         </span>
                                       )}
                                     </div>
-                                  )
+                                  ),
                                 )}
                               </div>
                             </details>
@@ -231,8 +231,8 @@ const Executions: React.FC = () => {
                         )}
                     </div>
                     <div className="flex items-center space-x-2">
-                      {(execution.status === 'running' ||
-                        execution.status === 'pending') && (
+                      {(execution.status === "running" ||
+                        execution.status === "pending") && (
                         <button
                           onClick={() => handleStopExecution(execution.id)}
                           className="text-red-600 hover:text-red-800 px-3 py-1 text-sm border border-red-200 rounded"
@@ -252,7 +252,7 @@ const Executions: React.FC = () => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Executions
+export default Executions;

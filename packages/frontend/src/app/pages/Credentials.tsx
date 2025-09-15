@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useEffect, useState } from 'react'
-import { useCredentialStore } from '@/core/stores/credentialStore'
-import { CredentialApiService } from '@/core'
-import type { CredentialType, Credential } from '@/core/schemas'
+import React, { useEffect, useState } from "react";
+import { useCredentialStore } from "@/core/stores/credentialStore";
+import { CredentialApiService } from "@/core";
+import type { CredentialTypeDefinition, Credential } from "@/core/schemas";
 
-const credentialApiService = new CredentialApiService()
+const credentialApiService = new CredentialApiService();
 
 const Credentials: React.FC = () => {
   const {
@@ -19,199 +19,194 @@ const Credentials: React.FC = () => {
     testCredential,
     loadCredentialTypes, // New action to load types
     credentialTypes, // Get types from store
-  } = useCredentialStore()
+  } = useCredentialStore();
 
-  const [showCreateForm, setShowCreateForm] = useState(false)
-  const [selectedType, setSelectedType] = useState<CredentialType | null>(null)
+  const [showCreateForm, setShowCreateForm] = useState(false);
+  const [selectedType, setSelectedType] =
+    useState<CredentialTypeDefinition | null>(null);
   const [editingCredential, setEditingCredential] = useState<Credential | null>(
-    null
-  )
-  const [formData, setFormData] = useState<Record<string, unknown>>({})
-  const [credentialName, setCredentialName] = useState('')
+    null,
+  );
+  const [formData, setFormData] = useState<Record<string, unknown>>({});
+  const [credentialName, setCredentialName] = useState("");
 
   useEffect(() => {
-    loadCredentials()
-    loadCredentialTypes() // Load credential types on mount
-  }, [loadCredentials, loadCredentialTypes])
+    loadCredentials();
+    loadCredentialTypes(); // Load credential types on mount
+  }, [loadCredentials, loadCredentialTypes]);
 
   // Handle OAuth callback results
   useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search)
-    const credentialStatus = urlParams.get('credential')
-    const credentialId = urlParams.get('id')
-    const credentialName = urlParams.get('name')
-    const errorMessage = urlParams.get('message')
+    const urlParams = new URLSearchParams(window.location.search);
+    const credentialStatus = urlParams.get("credential");
+    const credentialId = urlParams.get("id");
+    const credentialName = urlParams.get("name");
+    const errorMessage = urlParams.get("message");
 
-    if (credentialStatus === 'success' && credentialId && credentialName) {
+    if (credentialStatus === "success" && credentialId && credentialName) {
       alert(
-        `Gmail credential "${decodeURIComponent(credentialName)}" created successfully!`
-      )
+        `Gmail credential "${decodeURIComponent(credentialName)}" created successfully!`,
+      );
       // Reload credentials to show the new one
-      loadCredentials()
+      loadCredentials();
       // Clean up URL
-      window.history.replaceState({}, document.title, window.location.pathname)
-    } else if (credentialStatus === 'error') {
+      window.history.replaceState({}, document.title, window.location.pathname);
+    } else if (credentialStatus === "error") {
       alert(
-        `OAuth error: ${errorMessage ? decodeURIComponent(errorMessage) : 'Unknown error'}`
-      )
+        `OAuth error: ${errorMessage ? decodeURIComponent(errorMessage) : "Unknown error"}`,
+      );
       // Clean up URL
-      window.history.replaceState({}, document.title, window.location.pathname)
+      window.history.replaceState({}, document.title, window.location.pathname);
     }
-  }, [])
-
-  const handleCreateNew = (type: CredentialType) => {
-    setSelectedType(type)
-    setFormData({})
-    setCredentialName('')
-    setEditingCredential(null)
-    setShowCreateForm(true)
-  }
+  }, []);
 
   const handleEdit = (credential: Credential) => {
-    const type = credentialTypes.find(t => t.name === credential.type)
-    if (!type) return
+    const type = credentialTypes.find((t) => t.name === credential.type);
+    if (!type) return;
 
-    setSelectedType(type)
-    setFormData(credential.data)
-    setCredentialName(credential.name)
-    setEditingCredential(credential)
-    setShowCreateForm(true)
-  }
+    setSelectedType(type);
+    setFormData(credential.data || {});
+    setCredentialName(credential.name);
+    setEditingCredential(credential);
+    setShowCreateForm(true);
+  };
 
   const handleSave = async () => {
-    if (!selectedType || !credentialName.trim()) return
+    if (!selectedType || !credentialName.trim()) return;
 
     try {
       // Handle Gmail OAuth2 differently - initiate OAuth flow
-      if (selectedType.name === 'gmailOAuth2' && !editingCredential) {
+      if (selectedType.name === "gmailOAuth2" && !editingCredential) {
         // Start OAuth flow - this will redirect the user to Google
         // No client ID/secret needed - using app's shared OAuth credentials
-        await credentialApiService.startGmailOAuthFlow(credentialName)
-        return // No need to continue as user is being redirected
+        await credentialApiService.startGmailOAuthFlow(credentialName);
+        return; // No need to continue as user is being redirected
       }
 
       // Handle other credential types normally
       if (editingCredential) {
-        await updateCredential(editingCredential.id, formData)
+        await updateCredential(editingCredential.id, formData);
       } else {
-        await createCredential(credentialName, selectedType.name, formData)
+        await createCredential(credentialName, selectedType.name, formData);
       }
 
-      setShowCreateForm(false)
-      setSelectedType(null)
-      setFormData({})
-      setCredentialName('')
-      setEditingCredential(null)
+      setShowCreateForm(false);
+      setSelectedType(null);
+      setFormData({});
+      setCredentialName("");
+      setEditingCredential(null);
     } catch (error: any) {
-      console.error('Failed to save credential:', error)
-      alert(error.message || 'Failed to save credential')
+      console.error("Failed to save credential:", error);
+      alert(error.message || "Failed to save credential");
     }
-  }
+  };
 
   const handleTest = async (credentialId: string) => {
-    const result = await testCredential(credentialId)
+    const result = await testCredential(credentialId);
     // Show result in a toast or modal
-    alert(result.message)
-  }
+    alert(result.message);
+  };
 
   const handleDelete = async (credentialId: string, credentialName: string) => {
     if (
       confirm(
-        `Are you sure you want to delete the credential "${credentialName}"?`
+        `Are you sure you want to delete the credential "${credentialName}"?`,
       )
     ) {
       try {
-        await deleteCredential(credentialId)
-        alert('Credential deleted successfully')
+        await deleteCredential(credentialId);
+        alert("Credential deleted successfully");
       } catch (error: any) {
-        alert(error.message || 'Failed to delete credential')
+        alert(error.message || "Failed to delete credential");
       }
     }
-  }
+  };
 
   const handleRevokeGmail = async (
     credentialId: string,
-    credentialName: string
+    credentialName: string,
   ) => {
     if (
       confirm(
-        `Are you sure you want to revoke Gmail access for "${credentialName}"? This will also delete the credential and cannot be undone.`
+        `Are you sure you want to revoke Gmail access for "${credentialName}"? This will also delete the credential and cannot be undone.`,
       )
     ) {
       try {
-        await revokeGmailCredential(credentialId)
-        alert('Gmail access revoked and credential deleted successfully')
+        await revokeGmailCredential(credentialId);
+        alert("Gmail access revoked and credential deleted successfully");
       } catch (error: any) {
-        alert(error.message || 'Failed to revoke Gmail access')
+        alert(error.message || "Failed to revoke Gmail access");
       }
     }
-  }
+  };
 
   const handleFieldChange = (fieldName: string, value: unknown) => {
-    setFormData(prev => ({ ...prev, [fieldName]: value }))
-  }
+    setFormData((prev) => ({ ...prev, [fieldName]: value }));
+  };
 
   const renderField = (property: any) => {
-    const value = formData[property.name] ?? property.default ?? ''
+    const value = formData[property.name] ?? property.default ?? "";
 
     switch (property.type) {
-      case 'string':
+      case "string":
         return (
           <input
             type="text"
             value={String(value)}
-            onChange={e => handleFieldChange(property.name, e.target.value)}
+            onChange={(e) => handleFieldChange(property.name, e.target.value)}
             placeholder={property.placeholder}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           />
-        )
+        );
 
-      case 'password':
+      case "password":
         return (
           <input
             type="password"
             value={String(value)}
-            onChange={e => handleFieldChange(property.name, e.target.value)}
+            onChange={(e) => handleFieldChange(property.name, e.target.value)}
             placeholder={property.placeholder}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           />
-        )
+        );
 
-      case 'number':
+      case "number":
         return (
           <input
             type="number"
             value={Number(value)}
-            onChange={e =>
+            onChange={(e) =>
               handleFieldChange(property.name, Number(e.target.value))
             }
             placeholder={property.placeholder}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           />
-        )
+        );
 
-      case 'boolean':
+      case "boolean":
         return (
           <div className="flex items-center">
             <input
               aria-label="Select an option"
               type="checkbox"
               checked={Boolean(value)}
-              onChange={e => handleFieldChange(property.name, e.target.checked)}
+              onChange={(e) =>
+                handleFieldChange(property.name, e.target.checked)
+              }
               className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
             />
             <span className="ml-2 text-sm text-gray-600">
               {property.description}
             </span>
           </div>
-        )
+        );
 
-      case 'options':
+      case "options":
         return (
           <select
             aria-label="Select an option"
             value={String(value)}
-            onChange={e => handleFieldChange(property.name, e.target.value)}
+            onChange={(e) => handleFieldChange(property.name, e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           >
             {property.options?.map((option: any) => (
@@ -220,12 +215,12 @@ const Credentials: React.FC = () => {
               </option>
             ))}
           </select>
-        )
+        );
 
       default:
-        return null
+        return null;
     }
-  }
+  };
 
   return (
     <div className="p-6">
@@ -258,7 +253,7 @@ const Credentials: React.FC = () => {
             <div>
               <p className="text-sm font-medium text-gray-600">Verified</p>
               <p className="text-2xl font-semibold text-gray-900">
-                {credentials.filter(c => c.isValid).length}
+                {credentials.filter((c) => c.isValid).length}
               </p>
             </div>
           </div>
@@ -299,10 +294,10 @@ const Credentials: React.FC = () => {
             </div>
           ) : (
             <div className="space-y-4">
-              {credentials.map(credential => {
+              {credentials.map((credential) => {
                 const type = credentialTypes.find(
-                  t => t.name === credential.type
-                )
+                  (t) => t.name === credential.type,
+                );
                 return (
                   <div
                     key={credential.id}
@@ -310,7 +305,7 @@ const Credentials: React.FC = () => {
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-3">
-                        <span className="text-2xl">{type?.icon || '🔐'}</span>
+                        <span className="text-2xl">{type?.icon || "🔐"}</span>
                         <div>
                           <h3 className="font-medium text-gray-900">
                             {credential.name}
@@ -333,10 +328,10 @@ const Credentials: React.FC = () => {
                           className="text-blue-600 hover:text-blue-800 text-sm disabled:opacity-50"
                         >
                           {testingCredential === credential.id
-                            ? 'Testing...'
-                            : 'Test'}
+                            ? "Testing..."
+                            : "Test"}
                         </button>
-                        {credential.type !== 'gmailOAuth2' && (
+                        {credential.type !== "gmailOAuth2" && (
                           <button
                             onClick={() => handleEdit(credential)}
                             className="text-gray-600 hover:text-gray-800 text-sm"
@@ -344,8 +339,8 @@ const Credentials: React.FC = () => {
                             Edit
                           </button>
                         )}
-                        {credential.type === 'gmailOAuth2' ||
-                        credential?.integration === 'gmailOAuth2' ? (
+                        {credential.type === "gmailOAuth2" ||
+                        credential?.integration === "gmailOAuth2" ? (
                           <button
                             onClick={() =>
                               handleRevokeGmail(credential.id, credential.name)
@@ -368,17 +363,19 @@ const Credentials: React.FC = () => {
                     </div>
 
                     <div className="mt-2 text-xs text-gray-500">
-                      Created:{' '}
+                      Created:{" "}
                       {new Date(credential.createdAt).toLocaleDateString()}
-                      {credential.testedAt && (
+                      {credential.lastTestedAt && (
                         <span className="ml-4">
-                          Last tested:{' '}
-                          {new Date(credential.testedAt).toLocaleDateString()}
+                          Last tested:{" "}
+                          {new Date(
+                            credential.lastTestedAt,
+                          ).toLocaleDateString()}
                         </span>
                       )}
                     </div>
                   </div>
-                )
+                );
               })}
             </div>
           )}
@@ -391,7 +388,7 @@ const Credentials: React.FC = () => {
           <div className="bg-white rounded-lg shadow-xl max-w-md w-full max-h-96 overflow-y-auto">
             <div className="p-6">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">
-                {editingCredential ? 'Edit' : 'Create'}{' '}
+                {editingCredential ? "Edit" : "Create"}{" "}
                 {selectedType.displayName} Credential
               </h2>
 
@@ -403,7 +400,7 @@ const Credentials: React.FC = () => {
                 <input
                   type="text"
                   value={credentialName}
-                  onChange={e => setCredentialName(e.target.value)}
+                  onChange={(e) => setCredentialName(e.target.value)}
                   placeholder="e.g., Personal Gmail, Company SMTP"
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 />
@@ -411,7 +408,7 @@ const Credentials: React.FC = () => {
 
               {/* Dynamic Fields */}
               <div className="space-y-4">
-                {selectedType.properties.map(property => (
+                {selectedType.properties?.map((property) => (
                   <div key={property.name}>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       {property.displayName}
@@ -436,11 +433,11 @@ const Credentials: React.FC = () => {
                   disabled={!credentialName.trim()}
                   className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {selectedType.name === 'gmailOAuth2' && !editingCredential
-                    ? 'Connect with Google'
+                  {selectedType.name === "gmailOAuth2" && !editingCredential
+                    ? "Connect with Google"
                     : editingCredential
-                      ? 'Update'
-                      : 'Create'}{' '}
+                      ? "Update"
+                      : "Create"}{" "}
                   Credential
                 </button>
                 <button
@@ -455,7 +452,7 @@ const Credentials: React.FC = () => {
         </div>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default Credentials
+export default Credentials;

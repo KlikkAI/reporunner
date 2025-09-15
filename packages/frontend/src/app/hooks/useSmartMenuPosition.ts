@@ -10,8 +10,8 @@ interface MenuPosition {
 
 interface UseSmartMenuPositionProps {
   isOpen: boolean;
-  triggerRef?: RefObject<HTMLElement>;
-  menuRef?: RefObject<HTMLElement>;
+  triggerRef?: RefObject<HTMLElement | null>;
+  menuRef?: RefObject<HTMLElement | null>;
   offset?: number;
   onClose?: () => void;
 }

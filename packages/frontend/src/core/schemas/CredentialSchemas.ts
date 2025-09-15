@@ -236,8 +236,31 @@ export const CredentialStatsResponseSchema = ApiResponseSchema(
   CredentialStatsSchema,
 );
 
+// Credential type definition with UI properties
+export const CredentialTypeDefinitionSchema = z.object({
+  name: CredentialTypeSchema,
+  displayName: z.string(),
+  icon: z.string().optional(),
+  description: z.string().optional(),
+  properties: z
+    .array(
+      z.object({
+        name: z.string(),
+        displayName: z.string(),
+        type: z.string(),
+        required: z.boolean().optional(),
+        placeholder: z.string().optional(),
+        description: z.string().optional(),
+      }),
+    )
+    .optional(),
+});
+
 // Type exports
 export type CredentialType = z.infer<typeof CredentialTypeSchema>;
+export type CredentialTypeDefinition = z.infer<
+  typeof CredentialTypeDefinitionSchema
+>;
 export type OAuth2CredentialData = z.infer<typeof OAuth2CredentialDataSchema>;
 export type ApiKeyCredentialData = z.infer<typeof ApiKeyCredentialDataSchema>;
 export type DatabaseCredentialData = z.infer<

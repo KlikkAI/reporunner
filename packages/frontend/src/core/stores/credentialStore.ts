@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import type { Credential, CredentialTestResult } from "@/core/schemas";
 import { CredentialApiService } from "@/core/api/CredentialApiService";
-import type { CredentialType } from "@/core/schemas";
+import type { CredentialTypeDefinition, CredentialType } from "@/core/schemas";
 
 const credentialApiService = new CredentialApiService();
 
@@ -9,7 +9,7 @@ interface CredentialState {
   credentials: Credential[];
   isLoading: boolean;
   testingCredential: string | null;
-  credentialTypes: CredentialType[];
+  credentialTypes: CredentialTypeDefinition[];
 
   // Actions
   loadCredentials: () => Promise<void>;

@@ -88,7 +88,7 @@ export {
   type NodeParameterValue,
   type NodeParameters,
   type Metadata,
-  type Credential,
+  type Credential as SchemaCredential,
   type CredentialConfig,
   type CredentialTestResult,
   type CredentialType as SchemaCredentialType,

@@ -268,7 +268,7 @@ const PropertyField: React.FC<PropertyFieldProps> = ({
             }
           >
             {property.options?.map((option) => (
-              <Option key={option.value} value={option.value}>
+              <Option key={String(option.value)} value={option.value}>
                 {option.name}
               </Option>
             ))}
@@ -291,7 +291,7 @@ const PropertyField: React.FC<PropertyFieldProps> = ({
             }
           >
             {property.options?.map((option) => (
-              <Option key={option.value} value={option.value}>
+              <Option key={String(option.value)} value={option.value}>
                 {option.name}
               </Option>
             ))}
@@ -428,7 +428,7 @@ const PropertyField: React.FC<PropertyFieldProps> = ({
           block
           icon={<PlusOutlined />}
           onClick={() => {
-            const newItem = {};
+            const newItem: Record<string, any> = {};
             property.values?.forEach((subProperty) => {
               newItem[subProperty.name] = subProperty.default;
             });
@@ -463,7 +463,7 @@ const PropertyField: React.FC<PropertyFieldProps> = ({
         style={{ width: "100%" }}
       >
         {mockCredentials.map((cred) => (
-          <Option key={cred.value} value={cred.value}>
+          <Option key={String(cred.value)} value={cred.value}>
             {cred.name}
           </Option>
         ))}

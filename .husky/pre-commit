@@ -2,6 +2,6 @@
 pnpm exec lint-staged
 
 # Run type checking
-# pnpm type-check  # Temporarily disabled due to many type mismatches
+pnpm type-check
 
 echo "✅ Pre-commit checks passed!"

@@ -9,9 +9,9 @@ import type {
  * Gmail-specific context resolver that determines the appropriate mode,
  * resource, and properties based on workflow context
  */
-export const gmailContextResolver: ContextResolver = {
-  id: "gmail-context-resolver",
-  priority: 100, // High priority for Gmail nodes
+class GmailContextResolver implements ContextResolver {
+  readonly id = "gmail-context-resolver";
+  readonly priority = 100; // High priority for Gmail nodes
 
   async resolve(context: WorkflowContext): Promise<ResolvedContext | null> {
     // Only handle Gmail nodes
@@ -47,7 +47,7 @@ export const gmailContextResolver: ContextResolver = {
 
     console.log("✅ Resolved Gmail context:", resolvedContext);
     return resolvedContext;
-  },
+  }
 
   /**
    * Detect Gmail node mode based on workflow context
@@ -76,7 +76,7 @@ export const gmailContextResolver: ContextResolver = {
 
     // Default to action for safety
     return "action";
-  },
+  }
 
   /**
    * Detect Gmail resource type based on context and mode
@@ -107,7 +107,7 @@ export const gmailContextResolver: ContextResolver = {
       default:
         return "email";
     }
-  },
+  }
 
   /**
    * Detect operation based on context, mode, and resource
@@ -144,21 +144,21 @@ export const gmailContextResolver: ContextResolver = {
     }
 
     return undefined;
-  },
+  }
 
   /**
    * Resolve properties based on resolved context
    */
   async resolveProperties(
-    context: WorkflowContext,
-    mode: "trigger" | "action" | "webhook" | "poll",
-    resource: string,
-    operation?: string,
+    _context: WorkflowContext,
+    _mode: "trigger" | "action" | "webhook" | "poll",
+    _resource: string,
+    _operation?: string,
   ): Promise<any[]> {
     // This will be populated with context-aware property filtering
     // For now, return empty array - properties will be resolved by the registry
     return [];
-  },
+  }
 
   /**
    * Get capabilities for the resolved context
@@ -196,8 +196,11 @@ export const gmailContextResolver: ContextResolver = {
     }
 
     return capabilities;
-  },
-};
+  }
+}
+
+// Create an instance to export
+export const gmailContextResolver = new GmailContextResolver();
 
 /**
  * Register the Gmail context resolver with the node registry

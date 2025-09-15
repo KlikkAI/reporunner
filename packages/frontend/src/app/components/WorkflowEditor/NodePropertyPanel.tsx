@@ -355,9 +355,9 @@ const NodeConfigurationPanel: React.FC<NodeConfigurationPanelProps> = ({
           }
         }
 
-        // Get the enhanced transform node properties
+        // Get the enhanced transform node properties (synchronously)
         const enhancedTransformNode =
-          nodeRegistry.getEnhancedNodeType?.("transform");
+          nodeRegistry.getEnhancedNodeTypeSync("transform");
         if (enhancedTransformNode?.configuration?.properties) {
           console.log("Using enhanced Transform node properties");
           return enhancedTransformNode.configuration.properties;

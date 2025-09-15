@@ -8,6 +8,13 @@ import "./bodies"; // Auto-registers specialized components
 import "./nodeUiRegistry"; // Initializes the registry and factory
 import "./themes"; // Initializes theme system including Gmail theme
 
+// Import functions for internal use
+import {
+  getRegistryStatistics,
+  listRegisteredComponentTypes,
+} from "./nodeUiRegistry";
+import { themeManager } from "./themes";
+
 // ============================================================================
 // Core Registry System
 // ============================================================================
