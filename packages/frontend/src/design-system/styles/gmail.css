@@ -1,0 +1,303 @@
+/**
+ * Gmail Node Specific Styles
+ * Custom styling for Gmail trigger and action nodes
+ */
+
+/* Gmail Node Base Styles */
+.gmail-trigger-node {
+  transition: all 0.2s ease-in-out;
+  position: relative;
+  overflow: visible;
+}
+
+.gmail-trigger-node:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(234, 67, 53, 0.15);
+}
+
+/* Connection States */
+.gmail-trigger-node.node-connected {
+  border-color: #34a853;
+  box-shadow: 0 0 0 1px rgba(52, 168, 83, 0.1);
+}
+
+.gmail-trigger-node.node-disconnected {
+  border-color: #fbbc04;
+  box-shadow: 0 0 0 1px rgba(251, 188, 4, 0.1);
+}
+
+.gmail-trigger-node.node-selected {
+  border-color: #ea4335;
+  border-width: 2px;
+  box-shadow: 0 4px 12px rgba(234, 67, 53, 0.15);
+}
+
+/* Gmail Animations */
+@keyframes gmail-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+@keyframes gmail-glow {
+  0%, 100% { 
+    box-shadow: 0 0 10px rgba(234, 67, 53, 0.3);
+  }
+  50% { 
+    box-shadow: 0 0 20px rgba(234, 67, 53, 0.6);
+  }
+}
+
+@keyframes gmail-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Polling Indicator */
+.gmail-trigger-node .polling-indicator {
+  animation: gmail-pulse 2s infinite;
+}
+
+/* Gmail Tabs Styling */
+.gmail-tabs .ant-tabs-tab {
+  color: #6b7280;
+}
+
+.gmail-tabs .ant-tabs-tab:hover {
+  color: #ea4335;
+}
+
+.gmail-tabs .ant-tabs-tab-active {
+  color: #ea4335;
+}
+
+.gmail-tabs .ant-tabs-ink-bar {
+  background-color: #ea4335;
+}
+
+/* Gmail Form Controls */
+.gmail-properties-panel .ant-select-selector {
+  border-color: #d1d5db;
+  border-radius: 6px;
+}
+
+.gmail-properties-panel .ant-select-selector:hover,
+.gmail-properties-panel .ant-input:hover {
+  border-color: #ea4335;
+}
+
+.gmail-properties-panel .ant-select-focused .ant-select-selector,
+.gmail-properties-panel .ant-input:focus {
+  border-color: #ea4335;
+  box-shadow: 0 0 0 2px rgba(234, 67, 53, 0.1);
+}
+
+/* Gmail Switch Styling */
+.gmail-properties-panel .ant-switch-checked {
+  background-color: #34a853;
+}
+
+.gmail-properties-panel .ant-switch:hover.ant-switch-checked:not(.ant-switch-disabled) {
+  background-color: #2d8f3f;
+}
+
+/* Gmail Button Styling */
+.gmail-properties-panel .ant-btn-primary {
+  background-color: #ea4335;
+  border-color: #ea4335;
+}
+
+.gmail-properties-panel .ant-btn-primary:hover {
+  background-color: #d93025;
+  border-color: #d93025;
+}
+
+/* Gmail Alert Styling */
+.gmail-properties-panel .ant-alert-success {
+  border-color: #34a853;
+  background-color: rgba(52, 168, 83, 0.1);
+}
+
+.gmail-properties-panel .ant-alert-error {
+  border-color: #ea4335;
+  background-color: rgba(234, 67, 53, 0.1);
+}
+
+/* Gmail Badge Styling */
+.gmail-trigger-node .ant-badge-count {
+  font-size: 10px;
+  height: 16px;
+  min-width: 16px;
+  line-height: 14px;
+}
+
+/* Gmail Statistics Grid */
+.gmail-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  background-color: #f9fafb;
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.gmail-stats-item {
+  text-align: center;
+}
+
+.gmail-stats-number {
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.gmail-stats-label {
+  font-size: 11px;
+  color: #6b7280;
+  margin-top: 2px;
+}
+
+/* Gmail Connection Status */
+.gmail-connection-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.gmail-connection-status.connected {
+  background-color: rgba(52, 168, 83, 0.1);
+  color: #166534;
+}
+
+.gmail-connection-status.disconnected {
+  background-color: rgba(251, 188, 4, 0.1);
+  color: #92400e;
+}
+
+/* Gmail Toolbar Enhancements */
+.gmail-trigger-node .node-toolbar {
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(234, 67, 53, 0.2);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(8px);
+}
+
+.gmail-trigger-node .node-toolbar button {
+  color: #6b7280;
+  transition: all 0.2s ease;
+}
+
+.gmail-trigger-node .node-toolbar button:hover {
+  color: #ea4335;
+  background-color: rgba(234, 67, 53, 0.1);
+}
+
+/* Gmail Handle Styling */
+.gmail-trigger-node .react-flow__handle {
+  border: 2px solid #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+}
+
+.gmail-trigger-node .react-flow__handle:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Gmail Properties Panel Header */
+.gmail-properties-panel .panel-header {
+  background: linear-gradient(135deg, 
+    rgba(234, 67, 53, 0.05) 0%, 
+    rgba(66, 133, 244, 0.05) 100%);
+  border-bottom: 1px solid rgba(234, 67, 53, 0.1);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .gmail-trigger-node {
+    min-width: 240px;
+    max-width: 280px;
+  }
+  
+  .gmail-stats-grid {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+  
+  .gmail-stats-item {
+    padding: 4px 0;
+  }
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+  .gmail-trigger-node {
+    background-color: #1f2937;
+    color: #f9fafb;
+    border-color: #ea4335;
+  }
+  
+  .gmail-trigger-node.node-connected {
+    background-color: rgba(52, 168, 83, 0.1);
+  }
+  
+  .gmail-trigger-node.node-disconnected {
+    background-color: rgba(251, 188, 4, 0.1);
+  }
+  
+  .gmail-stats-grid {
+    background-color: #374151;
+  }
+  
+  .gmail-stats-label {
+    color: #9ca3af;
+  }
+}
+
+/* Loading States */
+.gmail-loading {
+  position: relative;
+  overflow: hidden;
+}
+
+.gmail-loading::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(234, 67, 53, 0.1),
+    transparent
+  );
+  animation: gmail-loading-shimmer 1.5s infinite;
+}
+
+@keyframes gmail-loading-shimmer {
+  0% { left: -100%; }
+  100% { left: 100%; }
+}
+
+/* Accessibility */
+.gmail-trigger-node:focus-visible {
+  outline: 2px solid #ea4335;
+  outline-offset: 2px;
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  .gmail-trigger-node {
+    border-width: 2px;
+  }
+  
+  .gmail-connection-status {
+    border: 1px solid currentColor;
+  }
+}

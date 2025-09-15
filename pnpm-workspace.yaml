@@ -1,0 +1,7 @@
+packages:
+  # Core packages
+  - 'packages/*'
+  # Applications
+  - 'apps/*'
+  # Development tools
+  - 'tools/*'
