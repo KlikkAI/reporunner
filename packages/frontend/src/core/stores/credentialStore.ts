@@ -53,7 +53,7 @@ export const useCredentialStore = create<CredentialState>((set, get) => ({
     set({ isLoading: true })
     try {
       const credential = await credentialApiService.createCredential({
-        type: type,
+        type: type as CredentialType,
         name,
         integration: type,
         data,

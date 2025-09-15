@@ -53,8 +53,9 @@ export class WorkflowApiService {
 
       // Backend returns: data.workflows[] and data.pagination
       // Frontend expects: items[] and pagination fields
-      const workflows = response.data.data?.workflows || []
-      const pagination = response.data.data?.pagination || { total: 0, page: 1, limit: 20, pages: 1 }
+      const responseData = response.data as any
+      const workflows = responseData.data?.workflows || []
+      const pagination = responseData.data?.pagination || { total: 0, page: 1, limit: 20, pages: 1 }
 
       // Workflows are already in the correct format
       const transformedWorkflows = workflows

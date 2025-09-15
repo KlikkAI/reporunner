@@ -291,7 +291,8 @@ export class AuthApiService {
 
       // Backend returns: { success, data: { user: UserProfile } }
       // Extract user from nested structure
-      const userData = response.data.data?.user || response.data.user
+      const responseData = response.data as any
+      const userData = responseData.data?.user || responseData.user
 
       if (!userData) {
         throw new ApiClientError(
@@ -327,7 +328,8 @@ export class AuthApiService {
 
       // Backend returns: { success, data: { user: UserProfile } }
       // Extract user from nested structure
-      const userData = response.data.data?.user || response.data.user
+      const responseData = response.data as any
+      const userData = responseData.data?.user || responseData.user
 
       if (!userData) {
         throw new ApiClientError(

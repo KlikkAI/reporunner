@@ -146,7 +146,7 @@ export class TransformNode implements INodeType {
                 required: true,
                 description: 'Name of the field to set (supports dot notation for nested objects)',
                 placeholder: 'e.g., user.name, address.city, items[0].value',
-                hint: 'Use dot notation for nested objects and brackets for arrays',
+                // hint: 'Use dot notation for nested objects and brackets for arrays',
               },
               {
                 displayName: 'Field Type',
@@ -281,7 +281,7 @@ export class TransformNode implements INodeType {
                   editor: 'expression',
                 },
                 placeholder: '2024-01-15 or {{$json.createdAt}} or {{now()}}',
-                hint: 'Accepts ISO dates, timestamps, or date expressions',
+                // hint: 'Accepts ISO dates, timestamps, or date expressions',
               },
             ],
           },

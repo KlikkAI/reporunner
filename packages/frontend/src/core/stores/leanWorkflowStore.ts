@@ -197,7 +197,7 @@ export const useLeanWorkflowStore = create<LeanWorkflowState>((set, get) => ({
       name,
       description: description || '',
       active: false,
-      status: 'inactive',
+      // status: 'inactive', // Not part of WorkflowDefinition schema
       nodes: [],
       connections: {},
       settings: {
@@ -287,7 +287,7 @@ export const useLeanWorkflowStore = create<LeanWorkflowState>((set, get) => ({
             data: {
               label: node.name,
               parameters: node.parameters || {},
-              credentials: node.credentials,
+              credentials: node.credentials?.[0]?.id || undefined,
               disabled: node.disabled,
               notes: node.notes,
             },
