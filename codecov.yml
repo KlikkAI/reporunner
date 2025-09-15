@@ -1,0 +1,71 @@
+coverage:
+  status:
+    project:
+      default:
+        target: 80%
+        threshold: 5%
+        base: auto
+    patch:
+      default:
+        target: 70%
+        threshold: 10%
+        base: auto
+
+flags:
+  core:
+    paths:
+      - packages/core/
+  backend:
+    paths:
+      - packages/backend/
+  frontend:
+    paths:
+      - packages/frontend/
+  cli:
+    paths:
+      - packages/cli/
+  sdk:
+    paths:
+      - packages/sdk/
+
+flag_management:
+  default_rules:
+    carryforward: true
+    statuses:
+      - name_prefix: core
+        type: project
+        target: 80%
+      - name_prefix: backend
+        type: project
+        target: 85%
+      - name_prefix: frontend
+        type: project
+        target: 75%
+      - name_prefix: cli
+        type: project
+        target: 70%
+      - name_prefix: sdk
+        type: project
+        target: 90%
+
+comment:
+  layout: "reach,diff,flags,files,footer"
+  behavior: default
+  require_changes: false
+  require_base: no
+  require_head: yes
+
+github_checks:
+  annotations: true
+
+ignore:
+  - "**/*.test.ts"
+  - "**/*.spec.ts"
+  - "**/test/**"
+  - "**/tests/**"
+  - "**/__tests__/**"
+  - "**/node_modules/**"
+  - "**/dist/**"
+  - "**/build/**"
+  - "**/*.d.ts"
+  - "**/coverage/**"

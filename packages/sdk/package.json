@@ -1,0 +1,36 @@
+{
+  "name": "@reporunner/sdk",
+  "version": "1.0.0",
+  "description": "TypeScript SDK for Reporunner workflow automation platform",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "clean": "rm -rf dist",
+    "type-check": "tsc --noEmit",
+    "test": "vitest"
+  },
+  "dependencies": {
+    "@reporunner/core": "workspace:*",
+    "axios": "^1.12.2",
+    "ws": "^8.18.3"
+  },
+  "devDependencies": {
+    "@types/ws": "^8.18.1",
+    "typescript": "^5.3.3",
+    "vitest": "^3.2.4"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "keywords": [
+    "workflow",
+    "automation",
+    "sdk",
+    "typescript",
+    "reporunner",
+    "api"
+  ]
+}

@@ -1,0 +1,77 @@
+name: Deploy Preview
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "packages/frontend/**"
+      - "apps/web/**"
+
+env:
+  TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+  TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+
+jobs:
+  deploy-frontend-preview:
+    name: Deploy Frontend Preview
+    runs-on: ubuntu-latest
+    if: contains(github.event.pull_request.changed_files, 'packages/frontend/') || contains(github.event.pull_request.changed_files, 'apps/web/')
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 8
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build frontend
+        run: pnpm build:frontend
+
+      - name: Deploy to Vercel Preview
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          working-directory: packages/frontend
+          scope: ${{ secrets.VERCEL_ORG_ID }}
+
+  deploy-backend-preview:
+    name: Deploy Backend Preview
+    runs-on: ubuntu-latest
+    if: contains(github.event.pull_request.changed_files, 'packages/backend/')
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 8
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build backend
+        run: pnpm build:backend
+
+      - name: Deploy to Railway Preview
+        uses: railwayapp/railway-deploy@v3
+        with:
+          railway-token: ${{ secrets.RAILWAY_TOKEN }}
+          service: reporunner-backend-preview
+          detach: true

@@ -1,0 +1,60 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "name": "Reporunner API Documentation",
+  "entryPointStrategy": "packages",
+  "entryPoints": [
+    "packages/core",
+    "packages/backend",
+    "packages/frontend",
+    "packages/cli",
+    "packages/sdk"
+  ],
+  "out": "docs/api",
+  "exclude": [
+    "**/*+(test|spec|e2e).ts",
+    "**/node_modules/**",
+    "**/dist/**",
+    "**/coverage/**"
+  ],
+  "excludeExternals": true,
+  "excludePrivate": true,
+  "excludeProtected": false,
+  "hideGenerator": false,
+  "includeVersion": true,
+  "sort": ["source-order"],
+  "kindSortOrder": [
+    "Document",
+    "Project",
+    "Module",
+    "Namespace",
+    "Enum",
+    "Class",
+    "Interface",
+    "TypeAlias",
+    "Constructor",
+    "Property",
+    "Variable",
+    "Function",
+    "Accessor",
+    "Method"
+  ],
+  "categorizeByGroup": true,
+  "defaultCategory": "Other",
+  "categoryOrder": ["Core", "Backend", "Frontend", "CLI", "SDK", "*"],
+  "readme": "README.md",
+  "theme": "default",
+  "lightHighlightTheme": "light-plus",
+  "darkHighlightTheme": "dark-plus",
+  "navigation": {
+    "includeCategories": true,
+    "includeGroups": true
+  },
+  "searchInComments": true,
+  "cleanOutputDir": true,
+  "treatWarningsAsErrors": false,
+  "validation": {
+    "notExported": false,
+    "invalidLink": true,
+    "notDocumented": false
+  }
+}

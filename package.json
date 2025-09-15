@@ -8,6 +8,7 @@
     "build": "turbo run build",
     "dev": "turbo run dev",
     "test": "turbo run test",
+    "test:coverage": "turbo run test:coverage",
     "lint": "turbo run lint",
     "type-check": "turbo run type-check",
     "clean": "turbo run clean",
@@ -18,7 +19,11 @@
     "deploy:frontend": "turbo run deploy --filter=@reporunner/frontend",
     "changeset": "changeset",
     "version-packages": "changeset version",
-    "release": "pnpm build && changeset publish"
+    "release": "pnpm build && changeset publish",
+    "prepare": "husky",
+    "commit": "cz",
+    "docs": "typedoc",
+    "docs:serve": "pnpm docs && cd docs/api && python -m http.server 8080"
   },
   "keywords": [
     "workflow",
@@ -34,13 +39,38 @@
   "license": "MIT",
   "devDependencies": {
     "@changesets/cli": "^2.29.7",
-    "turbo": "^2.5.6",
-    "typescript": "^5.3.3",
+    "@commitlint/cli": "^19.8.1",
+    "@commitlint/config-conventional": "^19.8.1",
+    "@commitlint/cz-commitlint": "^19.8.1",
+    "@eslint/js": "^9.35.0",
+    "@typescript-eslint/eslint-plugin": "^8.43.0",
+    "@typescript-eslint/parser": "^8.43.0",
+    "commitizen": "^4.3.1",
+    "eslint": "^8.56.0",
+    "eslint-config-prettier": "^10.1.8",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.1.6",
     "prettier": "^3.1.1",
-    "eslint": "^8.56.0"
+    "turbo": "^2.5.6",
+    "typedoc": "^0.28.13",
+    "typedoc-plugin-markdown": "^4.8.1",
+    "typescript": "^5.3.3"
   },
   "engines": {
     "node": ">=18.0.0",
     "pnpm": ">=8.0.0"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,jsx}": [
+      "prettier --write"
+    ],
+    "*.{md,json,yaml,yml}": [
+      "prettier --write"
+    ]
+  },
+  "config": {
+    "commitizen": {
+      "path": "@commitlint/cz-commitlint"
+    }
   }
 }

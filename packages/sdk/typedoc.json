@@ -1,0 +1,14 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "name": "@reporunner/sdk",
+  "entryPoints": ["src/index.ts"],
+  "out": "../../docs/api/sdk",
+  "exclude": ["**/*+(test|spec).ts", "node_modules/**", "dist/**"],
+  "excludeExternals": true,
+  "excludePrivate": true,
+  "categorizeByGroup": true,
+  "defaultCategory": "SDK",
+  "readme": "README.md",
+  "gitRevision": "main",
+  "cleanOutputDir": true
+}

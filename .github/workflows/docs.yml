@@ -1,0 +1,178 @@
+name: Documentation
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "docs/**"
+      - "packages/**/*.ts"
+      - "README.md"
+      - "typedoc.json"
+      - "packages/*/typedoc.json"
+  pull_request:
+    branches: [main]
+    paths:
+      - "docs/**"
+      - "packages/**/*.ts"
+      - "README.md"
+
+env:
+  TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+  TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+
+jobs:
+  generate-diagrams:
+    name: Generate PlantUML Diagrams
+    runs-on: ubuntu-latest
+    if: contains(github.event.head_commit.message, '[docs]') || github.event_name == 'pull_request'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Generate PlantUML Diagrams
+        uses: grassedge/generate-plantuml-action@v1.5
+        with:
+          path: docs/diagrams
+          message: "Automatically generated updated PlantUML diagrams"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Check for diagram changes
+        id: verify-changed-files
+        run: |
+          if [ -n "$(git diff --exit-code docs/diagrams 2>/dev/null)" ]; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Commit updated diagrams
+        if: steps.verify-changed-files.outputs.changed == 'true' && github.event_name == 'push'
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add docs/diagrams/
+          git commit -m "docs: update PlantUML diagrams [skip ci]" || exit 0
+          git push
+
+  generate-api-docs:
+    name: Generate API Documentation
+    runs-on: ubuntu-latest
+    needs: generate-diagrams
+    if: always() && (needs.generate-diagrams.result == 'success' || needs.generate-diagrams.result == 'skipped')
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 8
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build packages
+        run: pnpm build
+
+      - name: Generate TypeDoc documentation
+        run: pnpm docs
+
+      - name: Upload documentation artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: api-documentation
+          path: docs/api/
+          retention-days: 30
+
+      - name: Deploy to GitHub Pages
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs/api
+          destination_dir: api
+          allow_empty_commit: false
+          keep_files: true
+          force_orphan: false
+
+  validate-docs:
+    name: Validate Documentation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 8
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Check TypeDoc configuration
+        run: |
+          echo "Validating TypeDoc configurations..."
+          pnpm typedoc --options typedoc.json --dry-run
+
+          for package in core sdk cli; do
+            if [ -f "packages/$package/typedoc.json" ]; then
+              echo "Validating $package TypeDoc config..."
+              cd "packages/$package"
+              pnpm typedoc --options typedoc.json --dry-run
+              cd ../..
+            fi
+          done
+
+      - name: Validate PlantUML files
+        run: |
+          echo "Checking PlantUML syntax..."
+          if [ -d "docs/diagrams" ]; then
+            find docs/diagrams -name "*.puml" -type f | while read file; do
+              echo "Checking $file..."
+              # Basic syntax check - ensure files have @startuml and @enduml
+              if ! grep -q "@startuml" "$file" || ! grep -q "@enduml" "$file"; then
+                echo "Error: $file is missing @startuml or @enduml tags"
+                exit 1
+              fi
+            done
+          else
+            echo "No PlantUML diagrams directory found"
+          fi
+
+      - name: Check documentation completeness
+        run: |
+          echo "Checking for README files in packages..."
+          for package in packages/*/; do
+            if [ ! -f "$package/README.md" ]; then
+              echo "Warning: Missing README.md in $package"
+            fi
+          done

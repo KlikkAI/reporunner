@@ -1,0 +1,43 @@
+@startuml System Overview
+!theme plain
+title Reporunner System Architecture
+
+actor User as user
+participant "Frontend\n(React)" as frontend
+participant "Backend\n(Express)" as backend
+participant "Workflow Engine" as engine
+participant "Database\n(MongoDB)" as db
+participant "Queue\n(Redis)" as queue
+participant "External APIs" as apis
+
+user -> frontend: Access Dashboard
+frontend -> backend: API Requests
+backend -> db: Store/Retrieve Data
+
+user -> frontend: Create Workflow
+frontend -> backend: Save Workflow
+backend -> db: Persist Workflow
+
+user -> frontend: Execute Workflow
+frontend -> backend: Trigger Execution
+backend -> queue: Queue Job
+queue -> engine: Process Workflow
+engine -> apis: Call Integrations
+engine -> db: Update Status
+engine -> frontend: WebSocket Updates
+
+note right of engine
+  Workflow Engine processes
+  nodes sequentially based
+  on execution order
+end note
+
+note right of apis
+  Integrations include:
+  - Gmail
+  - OpenAI/Anthropic
+  - Webhooks
+  - Databases
+end note
+
+@enduml

@@ -1,0 +1,94 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:base",
+    "config:recommended",
+    ":dependencyDashboard",
+    ":semanticCommits",
+    ":separateMajorReleases",
+    ":combinePatchMinorReleases",
+    "group:monorepos",
+    "group:recommended",
+    "workarounds:all"
+  ],
+  "timezone": "UTC",
+  "schedule": ["before 6am on Monday"],
+  "packageRules": [
+    {
+      "description": "Group all non-major dependencies",
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "all non-major dependencies",
+      "groupSlug": "all-minor-patch"
+    },
+    {
+      "description": "Separate major TypeScript updates",
+      "matchPackageNames": ["typescript"],
+      "matchUpdateTypes": ["major"],
+      "groupName": "TypeScript major"
+    },
+    {
+      "description": "Group React ecosystem updates",
+      "matchPackagePatterns": ["^react", "^@types/react"],
+      "groupName": "React ecosystem"
+    },
+    {
+      "description": "Group Node.js types",
+      "matchPackageNames": ["@types/node"],
+      "groupName": "Node.js types"
+    },
+    {
+      "description": "Group testing utilities",
+      "matchPackagePatterns": ["vitest", "jest", "@testing-library"],
+      "groupName": "testing utilities"
+    },
+    {
+      "description": "Group linting and formatting",
+      "matchPackagePatterns": ["eslint", "prettier", "@typescript-eslint"],
+      "groupName": "linting and formatting"
+    },
+    {
+      "description": "Group build tools",
+      "matchPackagePatterns": ["vite", "turbo", "rollup", "webpack"],
+      "groupName": "build tools"
+    },
+    {
+      "description": "Auto-merge patch updates for stable packages",
+      "matchUpdateTypes": ["patch"],
+      "matchPackagePatterns": ["^@types/", "typescript", "prettier", "eslint"],
+      "automerge": true,
+      "automergeType": "pr",
+      "automergeStrategy": "squash"
+    },
+    {
+      "description": "Security updates - high priority",
+      "matchDatasources": ["npm"],
+      "vulnerabilityAlerts": true,
+      "labels": ["security"],
+      "addLabels": ["priority-high"],
+      "automerge": true
+    }
+  ],
+  "labels": ["dependencies"],
+  "addLabels": ["renovate"],
+  "commitMessagePrefix": "chore(deps):",
+  "commitMessageTopic": "{{depName}}",
+  "commitMessageExtra": "to {{newVersion}}",
+  "prTitle": "{{commitMessagePrefix}} {{commitMessageTopic}} {{commitMessageExtra}}",
+  "prBodyTemplate": "This PR contains the following updates:\n\n| Package | Change | Age | Adoption | Passing | Confidence |\n|---|---|---|---|---|---|\n{{#each upgrades as |upgrade|}}\n|{{upgrade.depName}}|{{#if upgrade.displayFrom}}`{{upgrade.displayFrom}}` -> {{/if}}{{#if upgrade.displayTo}}`{{upgrade.displayTo}}`{{/if}}|[![age](https://developer.mend.io/api/mc/badges/age/{{upgrade.datasource}}/{{upgrade.depName}}/{{upgrade.newVersion}}?slim=true)](https://docs.renovatebot.com/merge-confidence/)|[![adoption](https://developer.mend.io/api/mc/badges/adoption/{{upgrade.datasource}}/{{upgrade.depName}}/{{upgrade.newVersion}}?slim=true)](https://docs.renovatebot.com/merge-confidence/)|[![passing](https://developer.mend.io/api/mc/badges/compatibility/{{upgrade.datasource}}/{{upgrade.depName}}/{{upgrade.currentVersion}}/{{upgrade.newVersion}}?slim=true)](https://docs.renovatebot.com/merge-confidence/)|[![confidence](https://developer.mend.io/api/mc/badges/confidence/{{upgrade.datasource}}/{{upgrade.depName}}/{{upgrade.currentVersion}}/{{upgrade.newVersion}}?slim=true)](https://docs.renovatebot.com/merge-confidence/)|\n{{/each}}\n\n---\n\n### Configuration\n\n📅 **Schedule**: {{schedule}}\n\n🚦 **Automerge**: {{#if automerge}}Enabled{{else}}Disabled{{/if}}\n\n♻ **Rebasing**: {{#if rebaseWhen}}{{rebaseWhen}}{{else}}Whenever PR becomes conflicted{{/if}}\n\n🔕 **Ignore**: Add `[skip ci]` to the title of this PR to prevent this PR from being updated.\n\n---\n\n### Release Notes\n\n{{#each upgrades as |upgrade|}}\n{{#if upgrade.hasReleaseNotes}}\n<details>\n<summary>{{upgrade.depName}}</summary>\n\n{{upgrade.releaseNotes}}\n</details>\n{{/if}}\n{{/each}}",
+  "rebaseWhen": "conflicted",
+  "lockFileMaintenance": {
+    "enabled": true,
+    "schedule": ["before 6am on the first day of the month"]
+  },
+  "pinDigests": false,
+  "rangeStrategy": "bump",
+  "semanticCommitScope": "{{parentDir}}",
+  "separateMinorPatch": false,
+  "separateMultipleMajor": true,
+  "updateNotScheduled": false,
+  "vulnerabilityAlerts": {
+    "labels": ["security", "priority-high"],
+    "automerge": true,
+    "schedule": ["at any time"]
+  }
+}

@@ -1,0 +1,67 @@
+@startuml SDK Integration
+!theme plain
+title Reporunner SDK Usage Patterns
+
+actor Developer as dev
+participant "SDK Client" as sdk
+participant "Backend API" as api
+participant "WebSocket" as ws
+participant "Workflow Engine" as engine
+
+== Initialization ==
+dev -> sdk: createClient(config)
+sdk -> api: GET /api/health
+api -> sdk: 200 OK
+
+== Workflow Management ==
+dev -> sdk: getWorkflows()
+sdk -> api: GET /api/workflows
+api -> sdk: workflows[]
+
+dev -> sdk: createWorkflow(definition)
+sdk -> api: POST /api/workflows
+api -> sdk: workflow
+
+== Real-time Execution ==
+dev -> sdk: executeWorkflow(id, input)
+sdk -> api: POST /api/workflows/{id}/execute
+api -> engine: Start execution
+api -> sdk: execution
+
+sdk -> ws: Subscribe to execution updates
+loop Execution Progress
+  engine -> ws: Emit progress event
+  ws -> sdk: onExecutionUpdate(data)
+  sdk -> dev: callback(executionResult)
+end
+
+== Credential Management ==
+dev -> sdk: createCredential(credential)
+sdk -> api: POST /api/credentials
+api -> sdk: credential
+
+dev -> sdk: testCredential(id)
+sdk -> api: POST /api/credentials/{id}/test
+api -> sdk: test result
+
+== Error Handling ==
+alt API Error
+  api -> sdk: 4xx/5xx Error
+  sdk -> dev: throw Error()
+else Network Error
+  sdk -> sdk: Auto-retry with backoff
+  alt Max retries exceeded
+    sdk -> dev: throw NetworkError()
+  end
+end
+
+note right of sdk
+  SDK Features:
+  - Type-safe API client
+  - Auto-retry with backoff
+  - WebSocket real-time updates
+  - Credential management
+  - Error handling
+end note
+
+@enduml

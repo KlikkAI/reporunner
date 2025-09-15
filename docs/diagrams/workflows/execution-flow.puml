@@ -1,0 +1,71 @@
+@startuml Workflow Execution Flow
+!theme plain
+title Workflow Execution Process
+
+start
+
+:User triggers workflow execution;
+
+:Validate workflow definition;
+
+if (Workflow valid?) then (no)
+  :Return validation error;
+  stop
+else (yes)
+endif
+
+:Create execution record;
+
+:Parse workflow nodes;
+
+:Build execution graph;
+
+:Initialize execution context;
+
+while (More nodes to execute?) is (yes)
+  :Get next node(s) for execution;
+
+  :Load node configuration;
+
+  :Resolve node credentials;
+
+  if (Node has credentials?) then (yes)
+    :Decrypt and load credentials;
+  else (no)
+  endif
+
+  :Execute node action;
+
+  if (Execution successful?) then (no)
+    :Log error;
+    :Update node status to 'error';
+    if (Stop on error?) then (yes)
+      :Mark workflow as failed;
+      stop
+    else (no)
+      :Continue with next nodes;
+    endif
+  else (yes)
+    :Update node status to 'success';
+    :Store node output;
+    :Emit progress event;
+  endif
+
+endwhile (no)
+
+:Mark workflow as completed;
+
+:Send completion notification;
+
+stop
+
+note right of "Execute node action"
+  Node types include:
+  - Trigger nodes
+  - Action nodes
+  - Condition nodes
+  - AI agent nodes
+  - Transform nodes
+end note
+
+@enduml

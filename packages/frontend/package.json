@@ -9,7 +9,7 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "format": "prettier --write \"src/**/*.{ts,tsx,js,jsx,css,md}\"",
-    "lint:fix": "eslint . --ext ts,tsx --fix",
+    "lint:fix": "eslint . --fix",
     "type-check": "tsc --noEmit",
     "test": "vitest --run",
     "test:watch": "vitest",
