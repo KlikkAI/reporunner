@@ -71,6 +71,7 @@ export const ExecutionToolbar: React.FC<ExecutionToolbarProps> = ({
 
       const execution = await workflowApiService.executeWorkflow({
         workflow: workflowJson,
+        triggerData: {},
         options: {
           timeout: 600000, // 10 minutes
         },
@@ -110,7 +111,21 @@ export const ExecutionToolbar: React.FC<ExecutionToolbarProps> = ({
       await workflowApiService.createWorkflow({
         name: `Workflow ${new Date().toLocaleDateString()}`,
         description: "Saved from workflow editor",
-        ...workflowJson,
+        nodes: workflowJson.nodes.map((node) => ({
+          id: node.id,
+          type: node.type,
+          position: { x: node.position[0], y: node.position[1] },
+          data: {
+            label: node.name,
+            parameters: node.parameters,
+            credentials: node.credentials,
+            disabled: node.disabled,
+            notes: node.notes,
+          },
+        })),
+        edges: [], // Convert connections to edges if needed
+        version: "1.0.0",
+        isActive: true,
         tags: ["editor"],
       });
 

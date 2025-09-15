@@ -28,7 +28,17 @@ export interface WorkflowExecution {
     completedNodes?: string[];
     totalNodes?: number;
   };
-  nodeExecutions?: any[];
+  nodeExecutions?: {
+    nodeId: string;
+    nodeName: string;
+    status: "pending" | "running" | "completed" | "failed" | "skipped";
+    startedAt?: string;
+    completedAt?: string;
+    duration?: number;
+    input?: any;
+    output?: any;
+    error?: string;
+  }[];
   results?: {
     nodeId: string;
     nodeName: string;
