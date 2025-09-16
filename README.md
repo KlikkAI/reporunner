@@ -20,13 +20,13 @@ Reporunner is a powerful, open-source workflow automation platform that combines
 
 ## 🎯 Why Reporunner?
 
-| Feature | n8n | Reporunner |
-|---------|-----|------------|
-| **Modern Stack** | Vue 2 | React 19 + TypeScript 5.3 |
-| **AI Native** | Third-party | Built-in AI capabilities |
-| **Performance** | Good | Optimized for scale |
-| **Type Safety** | Partial | 100% TypeScript |
-| **Monorepo** | No | Yes (Turborepo + pnpm) |
+| Feature          | n8n         | Reporunner                |
+| ---------------- | ----------- | ------------------------- |
+| **Modern Stack** | Vue 2       | React 19 + TypeScript 5.3 |
+| **AI Native**    | Third-party | Built-in AI capabilities  |
+| **Performance**  | Good        | Optimized for scale       |
+| **Type Safety**  | Partial     | 100% TypeScript           |
+| **Monorepo**     | No          | Yes (Turborepo + pnpm)    |
 
 ## 🚀 Quick Start
 
@@ -60,6 +60,7 @@ pnpm dev
 ```
 
 The application will be available at:
+
 - **Frontend**: http://localhost:3000
 - **Backend API**: http://localhost:3001
 
@@ -106,6 +107,7 @@ pnpm clean                  # Clean build outputs
 ### Environment Variables
 
 #### Root (.env)
+
 ```env
 DATABASE_URL=mongodb://localhost:27017/reporunner
 REDIS_URL=redis://localhost:6379
@@ -114,6 +116,7 @@ ENCRYPTION_KEY=your_encryption_key_32_chars
 ```
 
 #### Backend (packages/backend/.env)
+
 ```env
 PORT=3001
 OPENAI_API_KEY=sk-your_openai_key_here
@@ -123,6 +126,7 @@ GMAIL_CLIENT_SECRET=your_gmail_client_secret
 ```
 
 #### Frontend (packages/frontend/.env)
+
 ```env
 VITE_API_BASE_URL=http://localhost:3001
 VITE_SOCKET_URL=http://localhost:3001
@@ -152,24 +156,26 @@ VITE_ENABLE_AI_FEATURES=true
 ### Creating a New Integration
 
 1. **Define the node type**:
+
 ```typescript
 // packages/nodes-base/src/my-integration/node.ts
 export const myIntegrationNode: NodeType = {
-  id: 'my-integration',
-  name: 'My Integration',
-  type: 'action',
+  id: "my-integration",
+  name: "My Integration",
+  type: "action",
   properties: [
     {
-      name: 'apiKey',
-      displayName: 'API Key',
-      type: 'credentials',
-      required: true
-    }
-  ]
+      name: "apiKey",
+      displayName: "API Key",
+      type: "credentials",
+      required: true,
+    },
+  ],
 };
 ```
 
 2. **Implement the execution logic**:
+
 ```typescript
 // packages/nodes-base/src/my-integration/actions.ts
 export async function execute(node: WorkflowNode, context: ExecutionContext) {
@@ -178,9 +184,10 @@ export async function execute(node: WorkflowNode, context: ExecutionContext) {
 ```
 
 3. **Register the integration**:
+
 ```typescript
 // packages/nodes-base/src/index.ts
-import { myIntegrationNode } from './my-integration';
+import { myIntegrationNode } from "./my-integration";
 
 export const integrations = [
   myIntegrationNode,
