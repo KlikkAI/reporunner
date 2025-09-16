@@ -13,7 +13,7 @@ console.log(
   "Before dotenv.config() - CREDENTIAL_ENCRYPTION_KEY:",
   process.env.CREDENTIAL_ENCRYPTION_KEY,
 );
-const envPath = path.resolve(__dirname, "../../../../../backend/.env");
+const envPath = path.resolve(__dirname, "../../.env");
 console.log("Resolved .env path:", envPath);
 dotenv.config({ path: envPath });
 console.log(
