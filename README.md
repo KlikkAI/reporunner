@@ -26,7 +26,7 @@ Reporunner is a powerful, open-source workflow automation platform that combines
 | **AI Native** | Third-party | Built-in AI capabilities |
 | **Performance** | Good | Optimized for scale |
 | **Type Safety** | Partial | 100% TypeScript |
-| **Monorepo** | No | Yes (Turborepo + pnpm) |
+| **Monorepo** | Yes | Yes (Turborepo + pnpm) |
 
 ## 🚀 Quick Start
 
