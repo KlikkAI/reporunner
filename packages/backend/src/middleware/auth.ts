@@ -1,10 +1,10 @@
-import jwt from 'jsonwebtoken';
-import { Request, Response, NextFunction } from 'express';
-import { User } from '../models/User.js';
-import { AppError } from './errorHandlers.js';
-import { catchAsync } from './errorHandlers.js';
+import jwt from "jsonwebtoken";
+import { Request, Response, NextFunction } from "express";
+import { User } from "../models/User.js";
+import { AppError } from "./errorHandlers.js";
+import { catchAsync } from "./errorHandlers.js";
 
-interface AuthRequest extends Request {
+export interface AuthRequest extends Request {
   user?: {
     id: string;
     email: string;
@@ -17,18 +17,23 @@ interface AuthRequest extends Request {
 /**
  * Middleware to verify JWT token and authenticate user
  */
-export const authenticate = async (req: AuthRequest, res: Response, next: NextFunction) => {
+export const authenticate = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<Response | void> => {
+  const authReq = req as AuthRequest;
   try {
     let token: string | undefined;
 
     // Check for token in Authorization header
-    if (req.headers.authorization) {
-      const authHeader = req.headers.authorization;
-      
+    if (authReq.headers.authorization) {
+      const authHeader = authReq.headers.authorization;
+
       // Support both "Bearer token" and "bearer token" (case-insensitive)
-      if (authHeader.toLowerCase().startsWith('bearer ')) {
-        token = authHeader.split(' ')[1];
-      } else if (!authHeader.includes(' ')) {
+      if (authHeader.toLowerCase().startsWith("bearer ")) {
+        token = authHeader.split(" ")[1];
+      } else if (!authHeader.includes(" ")) {
         // Legacy support: token without Bearer prefix (only if no spaces)
         token = authHeader;
       }
@@ -38,25 +43,28 @@ export const authenticate = async (req: AuthRequest, res: Response, next: NextFu
     if (!token) {
       return res.status(401).json({
         success: false,
-        message: 'Access token is required'
+        message: "Access token is required",
       });
     }
 
     try {
       // Verify token
-      const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as any;
+      const decoded = jwt.verify(
+        token,
+        process.env.JWT_SECRET as string,
+      ) as any;
 
       // Check if user still exists
       const user = await User.findById(decoded.userId);
       if (!user || !user.isActive) {
         return res.status(401).json({
           success: false,
-          message: 'Invalid token'
+          message: "Invalid token",
         });
       }
 
       // Grant access to protected route - include all safe user fields
-      req.user = {
+      authReq.user = {
         id: user._id.toString(), // Ensure string conversion
         email: user.email,
         role: user.role,
@@ -68,13 +76,13 @@ export const authenticate = async (req: AuthRequest, res: Response, next: NextFu
     } catch (error) {
       return res.status(401).json({
         success: false,
-        message: 'Invalid token'
+        message: "Invalid token",
       });
     }
   } catch (error) {
     return res.status(500).json({
       success: false,
-      message: 'Internal server error'
+      message: "Internal server error",
     });
   }
 };
@@ -85,11 +93,11 @@ export const authenticate = async (req: AuthRequest, res: Response, next: NextFu
 export const authorize = (...roles: string[]) => {
   return (req: AuthRequest, res: Response, next: NextFunction) => {
     if (!req.user) {
-      throw new AppError('Not authenticated', 401);
+      throw new AppError("Not authenticated", 401);
     }
 
     if (!roles.includes(req.user.role)) {
-      throw new AppError('Access denied. Insufficient permissions', 403);
+      throw new AppError("Access denied. Insufficient permissions", 403);
     }
 
     next();
@@ -103,20 +111,28 @@ export const optionalAuth = catchAsync(
   async (req: AuthRequest, res: Response, next: NextFunction) => {
     let token: string | undefined;
 
-    if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
-      token = req.headers.authorization.split(' ')[1];
+    if (
+      req.headers.authorization &&
+      req.headers.authorization.startsWith("Bearer")
+    ) {
+      token = req.headers.authorization.split(" ")[1];
     }
 
     if (token) {
       try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as any;
+        const decoded = jwt.verify(
+          token,
+          process.env.JWT_SECRET as string,
+        ) as any;
         const user = await User.findById(decoded.userId);
 
         if (user && user.isActive) {
           req.user = {
-            id: user._id,
+            id: user._id.toString(),
             email: user.email,
             role: user.role,
+            firstName: user.firstName,
+            lastName: user.lastName,
           };
         }
       } catch (error) {
@@ -125,5 +141,5 @@ export const optionalAuth = catchAsync(
     }
 
     next();
-  }
+  },
 );

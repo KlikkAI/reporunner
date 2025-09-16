@@ -452,7 +452,6 @@ export const PropertyGroupRenderer: React.FC<PropertyGroupRendererProps> = ({
   properties,
   values,
   onChange,
-  evaluationContext,
   disabled = false,
   context,
 }) => {

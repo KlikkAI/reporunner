@@ -3,7 +3,7 @@ import type { INodeType, INodeTypeDescription, ICredentialType } from "./types";
 import type {
   EnhancedIntegrationNodeType,
   PropertyFormState,
-} from "../../types/dynamicProperties";
+} from "../types/dynamicProperties";
 
 /**
  * Enterprise-Grade Registry Interfaces
@@ -193,14 +193,19 @@ class NodeRegistry {
         description: enhancedNode.description || "",
         defaults: {
           name: enhancedNode.displayName,
-          color: enhancedNode.color || "#DD4B39",
+          color: (enhancedNode as any).color || "#DD4B39",
         },
-        inputs: enhancedNode.inputs || [{ type: "main" }],
-        outputs: enhancedNode.outputs || [{ type: "main" }],
+        inputs: (enhancedNode.inputs || [{ type: "main" }]).map((input) =>
+          typeof input === "string" ? input : input.type || "main",
+        ),
+        outputs: (enhancedNode.outputs || [{ type: "main" }]).map((output) =>
+          typeof output === "string" ? output : output.type || "main",
+        ),
         categories: enhancedNode.codex?.categories || [],
+        properties: [], // Enhanced nodes use different property system
         // Preserve custom UI components from enhanced nodes
         customBodyComponent: (enhancedNode as any).customBodyComponent,
-        customPropertiesPanel: (enhancedNode as any).customPropertiesPanel,
+        // customPropertiesPanel: (enhancedNode as any).customPropertiesPanel,
       };
     }
 
@@ -245,14 +250,19 @@ class NodeRegistry {
         description: enhancedNode.description || "",
         defaults: {
           name: enhancedNode.displayName,
-          color: enhancedNode.color || "#DD4B39",
+          color: (enhancedNode as any).color || "#DD4B39",
         },
-        inputs: enhancedNode.inputs || [{ type: "main" }],
-        outputs: enhancedNode.outputs || [{ type: "main" }],
+        inputs: (enhancedNode.inputs || [{ type: "main" }]).map((input) =>
+          typeof input === "string" ? input : input.type || "main",
+        ),
+        outputs: (enhancedNode.outputs || [{ type: "main" }]).map((output) =>
+          typeof output === "string" ? output : output.type || "main",
+        ),
         categories: enhancedNode.codex?.categories || [],
+        properties: [], // Enhanced nodes use different property system
         // Preserve custom UI components from enhanced nodes
         customBodyComponent: (enhancedNode as any).customBodyComponent,
-        customPropertiesPanel: (enhancedNode as any).customPropertiesPanel,
+        // customPropertiesPanel: (enhancedNode as any).customPropertiesPanel,
       }),
     );
 
@@ -650,9 +660,9 @@ class NodeRegistry {
     if (nodeType.type === "webhook") modes.push("webhook");
     if (nodeType.configuration?.polling?.enabled) modes.push("poll");
 
-    // Hybrid nodes support multiple modes
-    if (nodeType.type === "hybrid" || !modes.length) {
-      modes.push("trigger", "action");
+    // Default modes if none specified
+    if (!modes.length) {
+      modes.push("action");
     }
 
     return modes;
@@ -663,9 +673,9 @@ class NodeRegistry {
     const resources = new Set<string>();
 
     // Analyze properties to detect resource types
-    nodeType.configuration?.properties?.forEach((prop) => {
+    nodeType.configuration?.properties?.forEach((prop: any) => {
       if (prop.name === "resource" && prop.options) {
-        prop.options.forEach((opt) => resources.add(opt.value as string));
+        prop.options.forEach((opt: any) => resources.add(opt.value as string));
       }
     });
 
@@ -688,9 +698,9 @@ class NodeRegistry {
     const operations: Record<string, string[]> = {};
 
     // Extract operations from properties
-    nodeType.configuration?.properties?.forEach((prop) => {
+    nodeType.configuration?.properties?.forEach((prop: any) => {
       if (prop.name === "operation" && prop.options) {
-        prop.options.forEach((opt) => {
+        prop.options.forEach((opt: any) => {
           const resource =
             prop.displayOptions?.show?.resource?.[0] || "default";
           if (!operations[resource]) operations[resource] = [];

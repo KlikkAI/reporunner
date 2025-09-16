@@ -121,9 +121,10 @@ export class ApiClient {
         return config;
       },
       (error) => {
-        logger.error("API Request Setup Failed", {
-          message: error.message,
-        });
+        logger.error(
+          "API Request Setup Failed",
+          error instanceof Error ? error : new Error(String(error)),
+        );
         return Promise.reject(
           new ApiClientError(
             "Request setup failed",
@@ -185,12 +186,13 @@ export class ApiClient {
           }
 
           // Log the error
-          logger.error("API Response Error", {
+          const logError = new Error(error.message);
+          logger.error("API Response Error", logError);
+          logger.info("API Error Details", {
             endpoint: context?.endpoint || "UNKNOWN",
             status,
             duration,
             errorData,
-            message: error.message,
           });
 
           // Create structured error
@@ -204,10 +206,11 @@ export class ApiClient {
           return Promise.reject(apiError);
         } else if (error.request) {
           // Network error
-          logger.error("API Network Error", {
+          const networkError = new Error(error.message);
+          logger.error("API Network Error", networkError);
+          logger.info("Network Error Details", {
             endpoint: context?.endpoint || "UNKNOWN",
             duration,
-            message: error.message,
           });
 
           return Promise.reject(
@@ -220,9 +223,10 @@ export class ApiClient {
           );
         } else {
           // Request setup error
-          logger.error("API Client Error", {
-            message: error.message,
-          });
+          logger.error(
+            "API Client Error",
+            error instanceof Error ? error : new Error(String(error)),
+          );
 
           return Promise.reject(
             new ApiClientError("Request failed", 0, "CLIENT_ERROR", error),
@@ -382,7 +386,9 @@ export class ApiClient {
       return validatedResponse.data;
     } catch (error) {
       if (error instanceof z.ZodError) {
-        logger.error("API Response Validation Failed", {
+        const validationError = new Error("Response validation failed");
+        logger.error("API Response Validation Failed", validationError);
+        logger.info("Validation Error Details", {
           validationErrors: error.issues,
           responseData: response.data,
         });

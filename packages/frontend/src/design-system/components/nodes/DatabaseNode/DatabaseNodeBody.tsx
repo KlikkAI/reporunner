@@ -29,7 +29,7 @@ const DatabaseNodeBody: React.FC<CustomNodeBodyProps> = ({
   onMouseEnter,
   onMouseLeave,
   onDelete,
-  onOpenProperties,
+  onOpenProperties: _onOpenProperties,
   theme: propTheme,
 }) => {
   const { theme: contextTheme } = useNodeTheme();
@@ -310,19 +310,14 @@ const DatabaseNodeBody: React.FC<CustomNodeBodyProps> = ({
               {table && (
                 <div className="flex items-center gap-2">
                   <span className="text-xs text-gray-600">Table:</span>
-                  <Tag size="small" color="blue">
-                    {table}
-                  </Tag>
+                  <Tag color="blue">{table}</Tag>
                 </div>
               )}
 
               {queryLimit && (
                 <div className="flex items-center gap-2">
                   <span className="text-xs text-gray-600">Limit:</span>
-                  <Tag
-                    size="small"
-                    color={queryLimit > 1000 ? "orange" : "green"}
-                  >
+                  <Tag color={queryLimit > 1000 ? "orange" : "green"}>
                     {queryLimit.toLocaleString()}
                   </Tag>
                 </div>

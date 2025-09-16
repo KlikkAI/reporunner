@@ -242,7 +242,7 @@ export const nodeUiRegistry = {
 export function getCustomBodyComponent(
   componentName?: string,
 ): ComponentType<any> | undefined {
-  return registryInstance.getCustomBodyComponent(componentName);
+  return registryInstance.getCustomBodyComponent(componentName) || undefined;
 }
 
 /**
@@ -251,7 +251,7 @@ export function getCustomBodyComponent(
 export function getCustomPropertiesPanelComponent(
   componentName?: string,
 ): ComponentType<any> | undefined {
-  return registryInstance.getCustomPropertiesPanel(componentName);
+  return registryInstance.getCustomPropertiesPanel(componentName) || undefined;
 }
 
 /**

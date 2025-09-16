@@ -1,102 +1,99 @@
 // Real-time Workflow Execution Monitoring Service
-import type {
-  WorkflowExecution,
-  NodeExecution as NodeExecutionDetails,
-} from '@/core/schemas'
-import { configService } from '@/core/services/ConfigService'
+import type { WorkflowExecution } from "@/core/schemas";
+import { configService } from "@/core/services/ConfigService";
 
 export interface ExecutionEvent {
   type:
-    | 'execution_started'
-    | 'execution_completed'
-    | 'execution_failed'
-    | 'node_started'
-    | 'node_completed'
-    | 'node_failed'
-    | 'log_entry'
-  executionId: string
-  timestamp: string
-  data: any
+    | "execution_started"
+    | "execution_completed"
+    | "execution_failed"
+    | "node_started"
+    | "node_completed"
+    | "node_failed"
+    | "log_entry";
+  executionId: string;
+  timestamp: string;
+  data: any;
 }
 
-export type ExecutionEventHandler = (event: ExecutionEvent) => void
+export type ExecutionEventHandler = (event: ExecutionEvent) => void;
 
 export class ExecutionMonitorService {
-  private ws: WebSocket | null = null
-  private reconnectTimeout: NodeJS.Timeout | null = null
-  private eventHandlers: Map<string, ExecutionEventHandler[]> = new Map()
-  private isConnecting = false
-  private shouldReconnect = true
-  private subscriptions: Set<string> = new Set()
+  private ws: WebSocket | null = null;
+  private reconnectTimeout: NodeJS.Timeout | null = null;
+  private eventHandlers: Map<string, ExecutionEventHandler[]> = new Map();
+  private isConnecting = false;
+  private shouldReconnect = true;
+  private subscriptions: Set<string> = new Set();
 
   /**
    * Connect to WebSocket for real-time updates
    */
   async connect(): Promise<void> {
     if (this.ws?.readyState === WebSocket.OPEN || this.isConnecting) {
-      return
+      return;
     }
 
-    this.isConnecting = true
+    this.isConnecting = true;
 
     try {
-      const wsUrl = this.getWebSocketUrl()
-      this.ws = new WebSocket(wsUrl)
+      const wsUrl = this.getWebSocketUrl();
+      this.ws = new WebSocket(wsUrl);
 
       this.ws.onopen = () => {
-        console.log('Execution monitor connected')
-        this.isConnecting = false
+        console.log("Execution monitor connected");
+        this.isConnecting = false;
 
         // Resubscribe to existing subscriptions
-        this.subscriptions.forEach(executionId => {
+        this.subscriptions.forEach((executionId) => {
           this.sendMessage({
-            type: 'join_execution',
+            type: "join_execution",
             data: { executionId },
-          })
-        })
-      }
+          });
+        });
+      };
 
-      this.ws.onmessage = event => {
+      this.ws.onmessage = (event) => {
         try {
-          const wsMessage = JSON.parse(event.data)
+          const wsMessage = JSON.parse(event.data);
           // Handle backend WebSocket message format
           if (wsMessage.Type && wsMessage.Data) {
             const executionEvent: ExecutionEvent = {
-              type: wsMessage.Type as ExecutionEvent['type'],
+              type: wsMessage.Type as ExecutionEvent["type"],
               executionId:
-                wsMessage.Data.ExecutionID || wsMessage.Data.executionId || '',
+                wsMessage.Data.ExecutionID || wsMessage.Data.executionId || "",
               timestamp: wsMessage.Data.Timestamp || new Date().toISOString(),
               data: wsMessage.Data,
-            }
-            this.handleEvent(executionEvent)
+            };
+            this.handleEvent(executionEvent);
           } else {
             // Handle direct execution event format
-            const executionEvent: ExecutionEvent = wsMessage
-            this.handleEvent(executionEvent)
+            const executionEvent: ExecutionEvent = wsMessage;
+            this.handleEvent(executionEvent);
           }
         } catch (error) {
-          console.error('Failed to parse execution event:', error)
+          console.error("Failed to parse execution event:", error);
         }
-      }
+      };
 
       this.ws.onclose = () => {
-        console.log('Execution monitor disconnected')
-        this.ws = null
-        this.isConnecting = false
+        console.log("Execution monitor disconnected");
+        this.ws = null;
+        this.isConnecting = false;
 
         if (this.shouldReconnect) {
-          this.scheduleReconnect()
+          this.scheduleReconnect();
         }
-      }
+      };
 
-      this.ws.onerror = error => {
-        console.error('Execution monitor error:', error)
-        this.isConnecting = false
-      }
+      this.ws.onerror = (error) => {
+        console.error("Execution monitor error:", error);
+        this.isConnecting = false;
+      };
     } catch (error) {
-      console.error('Failed to connect to execution monitor:', error)
-      this.isConnecting = false
-      throw error
+      console.error("Failed to connect to execution monitor:", error);
+      this.isConnecting = false;
+      throw error;
     }
   }
 
@@ -104,16 +101,16 @@ export class ExecutionMonitorService {
    * Disconnect from WebSocket
    */
   disconnect(): void {
-    this.shouldReconnect = false
+    this.shouldReconnect = false;
 
     if (this.reconnectTimeout) {
-      clearTimeout(this.reconnectTimeout)
-      this.reconnectTimeout = null
+      clearTimeout(this.reconnectTimeout);
+      this.reconnectTimeout = null;
     }
 
     if (this.ws) {
-      this.ws.close()
-      this.ws = null
+      this.ws.close();
+      this.ws = null;
     }
   }
 
@@ -122,25 +119,25 @@ export class ExecutionMonitorService {
    */
   async subscribeToExecution(
     executionId: string,
-    handler: ExecutionEventHandler
+    handler: ExecutionEventHandler,
   ): Promise<void> {
     // Add handler
     if (!this.eventHandlers.has(executionId)) {
-      this.eventHandlers.set(executionId, [])
+      this.eventHandlers.set(executionId, []);
     }
-    this.eventHandlers.get(executionId)!.push(handler)
+    this.eventHandlers.get(executionId)!.push(handler);
 
     // Subscribe via WebSocket
-    this.subscriptions.add(executionId)
+    this.subscriptions.add(executionId);
 
     if (this.ws?.readyState === WebSocket.OPEN) {
       this.sendMessage({
-        type: 'join_execution',
+        type: "join_execution",
         data: { executionId },
-      })
+      });
     } else {
       // Connect if not already connected
-      await this.connect()
+      await this.connect();
     }
   }
 
@@ -149,40 +146,40 @@ export class ExecutionMonitorService {
    */
   unsubscribeFromExecution(
     executionId: string,
-    handler?: ExecutionEventHandler
+    handler?: ExecutionEventHandler,
   ): void {
     if (handler) {
       // Remove specific handler
-      const handlers = this.eventHandlers.get(executionId)
+      const handlers = this.eventHandlers.get(executionId);
       if (handlers) {
-        const index = handlers.indexOf(handler)
+        const index = handlers.indexOf(handler);
         if (index > -1) {
-          handlers.splice(index, 1)
+          handlers.splice(index, 1);
         }
 
         // Clean up empty handler array
         if (handlers.length === 0) {
-          this.eventHandlers.delete(executionId)
-          this.subscriptions.delete(executionId)
+          this.eventHandlers.delete(executionId);
+          this.subscriptions.delete(executionId);
 
           if (this.ws?.readyState === WebSocket.OPEN) {
             this.sendMessage({
-              type: 'leave_execution',
+              type: "leave_execution",
               data: { executionId },
-            })
+            });
           }
         }
       }
     } else {
       // Remove all handlers for this execution
-      this.eventHandlers.delete(executionId)
-      this.subscriptions.delete(executionId)
+      this.eventHandlers.delete(executionId);
+      this.subscriptions.delete(executionId);
 
       if (this.ws?.readyState === WebSocket.OPEN) {
         this.sendMessage({
-          type: 'leave_execution',
+          type: "leave_execution",
           data: { executionId },
-        })
+        });
       }
     }
   }
@@ -190,25 +187,25 @@ export class ExecutionMonitorService {
   /**
    * Get current connection status
    */
-  getConnectionStatus(): 'connected' | 'connecting' | 'disconnected' {
-    if (this.ws?.readyState === WebSocket.OPEN) return 'connected'
-    if (this.isConnecting) return 'connecting'
-    return 'disconnected'
+  getConnectionStatus(): "connected" | "connecting" | "disconnected" {
+    if (this.ws?.readyState === WebSocket.OPEN) return "connected";
+    if (this.isConnecting) return "connecting";
+    return "disconnected";
   }
 
   /**
    * Handle incoming execution events
    */
   private handleEvent(event: ExecutionEvent): void {
-    const handlers = this.eventHandlers.get(event.executionId)
+    const handlers = this.eventHandlers.get(event.executionId);
     if (handlers) {
-      handlers.forEach(handler => {
+      handlers.forEach((handler) => {
         try {
-          handler(event)
+          handler(event);
         } catch (error) {
-          console.error('Error in execution event handler:', error)
+          console.error("Error in execution event handler:", error);
         }
-      })
+      });
     }
   }
 
@@ -217,7 +214,7 @@ export class ExecutionMonitorService {
    */
   private sendMessage(message: any): void {
     if (this.ws?.readyState === WebSocket.OPEN) {
-      this.ws.send(JSON.stringify(message))
+      this.ws.send(JSON.stringify(message));
     }
   }
 
@@ -226,82 +223,82 @@ export class ExecutionMonitorService {
    */
   private scheduleReconnect(): void {
     if (this.reconnectTimeout) {
-      clearTimeout(this.reconnectTimeout)
+      clearTimeout(this.reconnectTimeout);
     }
 
     this.reconnectTimeout = setTimeout(() => {
       if (this.shouldReconnect) {
-        console.log('Attempting to reconnect execution monitor...')
-        this.connect().catch(error => {
-          console.error('Reconnection failed:', error)
-          this.scheduleReconnect()
-        })
+        console.log("Attempting to reconnect execution monitor...");
+        this.connect().catch((error) => {
+          console.error("Reconnection failed:", error);
+          this.scheduleReconnect();
+        });
       }
-    }, configService.get('websocket').reconnectInterval)
+    }, configService.get("websocket").reconnectInterval);
   }
 
   /**
    * Get WebSocket URL
    */
   private getWebSocketUrl(): string {
-    const wsConfig = configService.get('websocket')
-    const authConfig = configService.get('auth')
-    const token = localStorage.getItem(authConfig.tokenKey)
+    const wsConfig = configService.get("websocket");
+    const authConfig = configService.get("auth");
+    const token = localStorage.getItem(authConfig.tokenKey);
 
     // Use the correct WebSocket path from backend config
-    return `${wsConfig.url}/ws${token ? `?token=${token}` : ''}`
+    return `${wsConfig.url}/ws${token ? `?token=${token}` : ""}`;
   }
 }
 
 // Singleton instance
-export const executionMonitor = new ExecutionMonitorService()
+export const executionMonitor = new ExecutionMonitorService();
 
 // Hook for React components
 export function useExecutionMonitor(executionId: string | null) {
   const [execution, setExecution] = React.useState<WorkflowExecution | null>(
-    null
-  )
-  const [isConnected, setIsConnected] = React.useState(false)
+    null,
+  );
+  const [isConnected, setIsConnected] = React.useState(false);
 
   React.useEffect(() => {
-    if (!executionId) return
+    if (!executionId) return;
 
     const handleExecutionEvent = (event: ExecutionEvent) => {
       setExecution((prev: WorkflowExecution | null) => {
-        if (!prev) return prev
+        if (!prev) return prev;
 
         switch (event.type) {
-          case 'execution_started':
-            return { ...prev, status: 'running', startedAt: event.timestamp }
+          case "execution_started":
+            return { ...prev, status: "running", startedAt: event.timestamp };
 
-          case 'execution_completed':
+          case "execution_completed":
             return {
               ...prev,
-              status: 'completed',
+              status: "completed",
               completedAt: event.timestamp,
               results: event.data.results || prev.results,
               duration: event.data.duration,
-            }
+            };
 
-          case 'execution_failed':
+          case "execution_failed":
             return {
               ...prev,
-              status: 'failed',
+              status: "failed",
               completedAt: event.timestamp,
               error: event.data.error,
               duration: event.data.duration,
-            }
+            };
 
-          case 'node_started':
+          case "node_started":
             return {
               ...prev,
               progress: {
                 ...prev.progress,
                 currentNodeId: event.data.nodeId,
               },
-            }
+            };
 
-          case 'node_completed':
+          case "node_completed":
             return {
               ...prev,
               progress: {
@@ -312,62 +309,62 @@ export function useExecutionMonitor(executionId: string | null) {
                 ],
               },
               results: [
-                ...(prev.results || []),
+                ...(Array.isArray(prev.results) ? prev.results : []),
                 {
                   nodeId: event.data.nodeId,
                   nodeName: event.data.nodeName,
-                  status: 'success',
+                  status: "completed",
                   output: event.data.output,
                   executedAt: event.timestamp,
                   duration: event.data.duration,
                 },
               ],
-            }
+            };
 
-          case 'node_failed':
+          case "node_failed":
             return {
               ...prev,
               results: [
-                ...(prev.results || []),
+                ...(Array.isArray(prev.results) ? prev.results : []),
                 {
                   nodeId: event.data.nodeId,
                   nodeName: event.data.nodeName,
-                  status: 'error',
+                  status: "failed",
                   error: event.data.error,
                   executedAt: event.timestamp,
                   duration: event.data.duration,
                 },
               ],
-            }
+            };
 
           default:
-            return prev
+            return prev;
         }
-      })
-    }
+      });
+    };
 
     // Subscribe to execution updates
-    executionMonitor.subscribeToExecution(executionId, handleExecutionEvent)
+    executionMonitor.subscribeToExecution(executionId, handleExecutionEvent);
 
     // Monitor connection status
     const checkConnection = () => {
-      setIsConnected(executionMonitor.getConnectionStatus() === 'connected')
-    }
+      setIsConnected(executionMonitor.getConnectionStatus() === "connected");
+    };
 
-    const interval = setInterval(checkConnection, 1000)
-    checkConnection()
+    const interval = setInterval(checkConnection, 1000);
+    checkConnection();
 
     return () => {
-      clearInterval(interval)
+      clearInterval(interval);
       executionMonitor.unsubscribeFromExecution(
         executionId,
-        handleExecutionEvent
-      )
-    }
-  }, [executionId])
+        handleExecutionEvent,
+      );
+    };
+  }, [executionId]);
 
-  return { execution, isConnected }
+  return { execution, isConnected };
 }
 
 // Import React for the hook
-import React from 'react'
+import React from "react";

@@ -29,13 +29,6 @@ import type {
 
 // Define interfaces locally to avoid circular imports
 
-interface IExpressionContext {
-  $json: Record<string, any>;
-  $node: Record<string, any>;
-  $vars: Record<string, any>;
-  $workflow: Record<string, any>;
-  $parameters: Record<string, any>;
-}
 import {
   ExpressionEvaluator,
   ExpressionUtils,
@@ -59,7 +52,7 @@ export interface PropertyRendererProps {
     required?: boolean;
     options?: Array<{
       name: string;
-      value: string | number | boolean | undefined;
+      value?: string | number | boolean | undefined;
       description?: string;
     }>;
     typeOptions?: INodePropertyTypeOptions;

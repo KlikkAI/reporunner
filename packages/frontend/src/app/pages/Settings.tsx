@@ -1,38 +1,38 @@
-import React, { useState, useEffect } from 'react'
-import { AuthApiService } from '@/core'
+import React, { useState, useEffect } from "react";
+import { AuthApiService } from "@/core";
 
-const authApiService = new AuthApiService()
+const authApiService = new AuthApiService();
 
 interface SettingsData {
   profile: {
-    name: string
-    email: string
-    timezone: string
-  }
+    name: string;
+    email: string;
+    timezone: string;
+  };
   notifications: {
-    emailNotifications: boolean
-    workflowFailures: boolean
-    weeklyReports: boolean
-    maintenanceUpdates: boolean
-  }
+    emailNotifications: boolean;
+    workflowFailures: boolean;
+    weeklyReports: boolean;
+    maintenanceUpdates: boolean;
+  };
   security: {
-    twoFactorAuth: boolean
-    sessionTimeout: number
-    apiAccess: boolean
-  }
+    twoFactorAuth: boolean;
+    sessionTimeout: number;
+    apiAccess: boolean;
+  };
   preferences: {
-    theme: 'light' | 'dark' | 'auto'
-    language: string
-    defaultWorkflowPrivacy: 'private' | 'team' | 'public'
-  }
+    theme: "light" | "dark" | "auto";
+    language: string;
+    defaultWorkflowPrivacy: "private" | "team" | "public";
+  };
 }
 
 const Settings: React.FC = () => {
   const [settings, setSettings] = useState<SettingsData>({
     profile: {
-      name: '',
-      email: '',
-      timezone: 'UTC-5',
+      name: "",
+      email: "",
+      timezone: "UTC-5",
     },
     notifications: {
       emailNotifications: true,
@@ -46,85 +46,84 @@ const Settings: React.FC = () => {
       apiAccess: true,
     },
     preferences: {
-      theme: 'light',
-      language: 'en',
-      defaultWorkflowPrivacy: 'private',
+      theme: "light",
+      language: "en",
+      defaultWorkflowPrivacy: "private",
     },
-  })
+  });
 
   const [activeTab, setActiveTab] = useState<
-    'profile' | 'notifications' | 'security' | 'preferences'
-  >('profile')
-  const [isSaving, setIsSaving] = useState(false)
-  const [_isLoading, setIsLoading] = useState(false)
+    "profile" | "notifications" | "security" | "preferences"
+  >("profile");
+  const [isSaving, setIsSaving] = useState(false);
+  const [_isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    loadUserProfile()
-  }, [])
+    loadUserProfile();
+  }, []);
 
   const loadUserProfile = async () => {
-    setIsLoading(true)
+    setIsLoading(true);
     try {
-      const user = await authApiService.getProfile()
-      setSettings(prev => ({
+      const user = await authApiService.getProfile();
+      setSettings((prev) => ({
         ...prev,
         profile: {
           name: `${user.firstName} ${user.lastName}`,
           email: user.email,
-          timezone: 'UTC-5', // Default, could be stored in user profile
+          timezone: "UTC-5", // Default, could be stored in user profile
         },
-      }))
+      }));
     } catch (error) {
-      console.error('Failed to load user profile:', error)
+      console.error("Failed to load user profile:", error);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   const handleSave = async () => {
-    setIsSaving(true)
+    setIsSaving(true);
     try {
       // Update profile information
-      if (activeTab === 'profile') {
-        const names = settings.profile.name.split(' ')
+      if (activeTab === "profile") {
+        const names = settings.profile.name.split(" ");
         await authApiService.updateProfile({
-          firstName: names[0] || '',
-          lastName: names.slice(1).join(' ') || '',
-          email: settings.profile.email,
-        })
+          firstName: names[0] || "",
+          lastName: names.slice(1).join(" ") || "",
+        });
       }
 
       // For other settings, you would call appropriate API endpoints
       // For now, just show success message
-      alert('Settings saved successfully!')
+      alert("Settings saved successfully!");
     } catch (error) {
-      console.error('Failed to save settings:', error)
-      alert('Failed to save settings. Please try again.')
+      console.error("Failed to save settings:", error);
+      alert("Failed to save settings. Please try again.");
     } finally {
-      setIsSaving(false)
+      setIsSaving(false);
     }
-  }
+  };
 
   const updateSetting = (
     section: keyof SettingsData,
     key: string,
-    value: any
+    value: any,
   ) => {
-    setSettings(prev => ({
+    setSettings((prev) => ({
       ...prev,
       [section]: {
         ...prev[section],
         [key]: value,
       },
-    }))
-  }
+    }));
+  };
 
   const tabs = [
-    { id: 'profile', name: 'Profile', icon: '👤' },
-    { id: 'notifications', name: 'Notifications', icon: '🔔' },
-    { id: 'security', name: 'Security', icon: '🔒' },
-    { id: 'preferences', name: 'Preferences', icon: '⚙️' },
-  ]
+    { id: "profile", name: "Profile", icon: "👤" },
+    { id: "notifications", name: "Notifications", icon: "🔔" },
+    { id: "security", name: "Security", icon: "🔒" },
+    { id: "preferences", name: "Preferences", icon: "⚙️" },
+  ];
 
   return (
     <div className="p-6">
@@ -140,14 +139,14 @@ const Settings: React.FC = () => {
         {/* Sidebar */}
         <div className="w-64">
           <nav className="space-y-2">
-            {tabs.map(tab => (
+            {tabs.map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as any)}
                 className={`w-full flex items-center px-4 py-3 text-left rounded-lg transition-colors ${
                   activeTab === tab.id
-                    ? 'bg-blue-50 text-blue-700 border border-blue-200'
-                    : 'text-gray-600 hover:bg-gray-50'
+                    ? "bg-blue-50 text-blue-700 border border-blue-200"
+                    : "text-gray-600 hover:bg-gray-50"
                 }`}
               >
                 <span className="mr-3 text-lg">{tab.icon}</span>
@@ -161,7 +160,7 @@ const Settings: React.FC = () => {
         <div className="flex-1">
           <div className="bg-white rounded-lg shadow">
             {/* Profile Tab */}
-            {activeTab === 'profile' && (
+            {activeTab === "profile" && (
               <div className="p-6">
                 <h2 className="text-lg font-medium text-gray-900 mb-6">
                   Profile Information
@@ -175,8 +174,8 @@ const Settings: React.FC = () => {
                       aria-label="Profile Name"
                       type="text"
                       value={settings.profile.name}
-                      onChange={e =>
-                        updateSetting('profile', 'name', e.target.value)
+                      onChange={(e) =>
+                        updateSetting("profile", "name", e.target.value)
                       }
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                     />
@@ -189,8 +188,8 @@ const Settings: React.FC = () => {
                       aria-label="email"
                       type="email"
                       value={settings.profile.email}
-                      onChange={e =>
-                        updateSetting('profile', 'email', e.target.value)
+                      onChange={(e) =>
+                        updateSetting("profile", "email", e.target.value)
                       }
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                     />
@@ -202,8 +201,8 @@ const Settings: React.FC = () => {
                     <select
                       aria-label="timezone"
                       value={settings.profile.timezone}
-                      onChange={e =>
-                        updateSetting('profile', 'timezone', e.target.value)
+                      onChange={(e) =>
+                        updateSetting("profile", "timezone", e.target.value)
                       }
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                     >
@@ -218,7 +217,7 @@ const Settings: React.FC = () => {
             )}
 
             {/* Notifications Tab */}
-            {activeTab === 'notifications' && (
+            {activeTab === "notifications" && (
               <div className="p-6">
                 <h2 className="text-lg font-medium text-gray-900 mb-6">
                   Notification Preferences
@@ -226,26 +225,26 @@ const Settings: React.FC = () => {
                 <div className="space-y-6">
                   {[
                     {
-                      key: 'emailNotifications',
-                      label: 'Email Notifications',
-                      description: 'Receive notifications via email',
+                      key: "emailNotifications",
+                      label: "Email Notifications",
+                      description: "Receive notifications via email",
                     },
                     {
-                      key: 'workflowFailures',
-                      label: 'Workflow Failures',
-                      description: 'Get notified when workflows fail',
+                      key: "workflowFailures",
+                      label: "Workflow Failures",
+                      description: "Get notified when workflows fail",
                     },
                     {
-                      key: 'weeklyReports',
-                      label: 'Weekly Reports',
-                      description: 'Receive weekly summary reports',
+                      key: "weeklyReports",
+                      label: "Weekly Reports",
+                      description: "Receive weekly summary reports",
                     },
                     {
-                      key: 'maintenanceUpdates',
-                      label: 'Maintenance Updates',
-                      description: 'System maintenance notifications',
+                      key: "maintenanceUpdates",
+                      label: "Maintenance Updates",
+                      description: "System maintenance notifications",
                     },
-                  ].map(item => (
+                  ].map((item) => (
                     <div
                       key={item.key}
                       className="flex items-center justify-between"
@@ -267,11 +266,11 @@ const Settings: React.FC = () => {
                               item.key as keyof typeof settings.notifications
                             ]
                           }
-                          onChange={e =>
+                          onChange={(e) =>
                             updateSetting(
-                              'notifications',
+                              "notifications",
                               item.key,
-                              e.target.checked
+                              e.target.checked,
                             )
                           }
                           className="sr-only peer"
@@ -285,7 +284,7 @@ const Settings: React.FC = () => {
             )}
 
             {/* Security Tab */}
-            {activeTab === 'security' && (
+            {activeTab === "security" && (
               <div className="p-6">
                 <h2 className="text-lg font-medium text-gray-900 mb-6">
                   Security Settings
@@ -305,11 +304,11 @@ const Settings: React.FC = () => {
                         aria-label="security"
                         type="checkbox"
                         checked={settings.security.twoFactorAuth}
-                        onChange={e =>
+                        onChange={(e) =>
                           updateSetting(
-                            'security',
-                            'twoFactorAuth',
-                            e.target.checked
+                            "security",
+                            "twoFactorAuth",
+                            e.target.checked,
                           )
                         }
                         className="sr-only peer"
@@ -324,11 +323,11 @@ const Settings: React.FC = () => {
                     <select
                       aria-label="security-session time out"
                       value={settings.security.sessionTimeout}
-                      onChange={e =>
+                      onChange={(e) =>
                         updateSetting(
-                          'security',
-                          'sessionTimeout',
-                          parseInt(e.target.value)
+                          "security",
+                          "sessionTimeout",
+                          parseInt(e.target.value),
                         )
                       }
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
@@ -353,11 +352,11 @@ const Settings: React.FC = () => {
                         aria-label="api access"
                         type="checkbox"
                         checked={settings.security.apiAccess}
-                        onChange={e =>
+                        onChange={(e) =>
                           updateSetting(
-                            'security',
-                            'apiAccess',
-                            e.target.checked
+                            "security",
+                            "apiAccess",
+                            e.target.checked,
                           )
                         }
                         className="sr-only peer"
@@ -370,7 +369,7 @@ const Settings: React.FC = () => {
             )}
 
             {/* Preferences Tab */}
-            {activeTab === 'preferences' && (
+            {activeTab === "preferences" && (
               <div className="p-6">
                 <h2 className="text-lg font-medium text-gray-900 mb-6">
                   Application Preferences
@@ -383,8 +382,8 @@ const Settings: React.FC = () => {
                     <select
                       aria-label="performance"
                       value={settings.preferences.theme}
-                      onChange={e =>
-                        updateSetting('preferences', 'theme', e.target.value)
+                      onChange={(e) =>
+                        updateSetting("preferences", "theme", e.target.value)
                       }
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                     >
@@ -400,8 +399,8 @@ const Settings: React.FC = () => {
                     <select
                       aria-label="language"
                       value={settings.preferences.language}
-                      onChange={e =>
-                        updateSetting('preferences', 'language', e.target.value)
+                      onChange={(e) =>
+                        updateSetting("preferences", "language", e.target.value)
                       }
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                     >
@@ -418,11 +417,11 @@ const Settings: React.FC = () => {
                     <select
                       aria-label="preferences"
                       value={settings.preferences.defaultWorkflowPrivacy}
-                      onChange={e =>
+                      onChange={(e) =>
                         updateSetting(
-                          'preferences',
-                          'defaultWorkflowPrivacy',
-                          e.target.value
+                          "preferences",
+                          "defaultWorkflowPrivacy",
+                          e.target.value,
                         )
                       }
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
@@ -450,7 +449,7 @@ const Settings: React.FC = () => {
                   disabled={isSaving}
                   className="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 disabled:opacity-50"
                 >
-                  {isSaving ? 'Saving...' : 'Save Changes'}
+                  {isSaving ? "Saving..." : "Save Changes"}
                 </button>
               </div>
             </div>
@@ -458,7 +457,7 @@ const Settings: React.FC = () => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Settings
+export default Settings;

@@ -1,27 +1,27 @@
-import React, { Component, ErrorInfo, ReactNode } from 'react'
-import { logger } from '@/core/services/LoggingService'
+import { Component, ErrorInfo, ReactNode } from "react";
+import { logger } from "@/core/services/LoggingService";
 
 interface Props {
-  children: ReactNode
-  fallback?: ReactNode
+  children: ReactNode;
+  fallback?: ReactNode;
 }
 
 interface State {
-  hasError: boolean
-  error: Error | null
-  errorInfo: ErrorInfo | null
-  errorId: string
+  hasError: boolean;
+  error: Error | null;
+  errorInfo: ErrorInfo | null;
+  errorId: string;
 }
 
 export class GlobalErrorBoundary extends Component<Props, State> {
   constructor(props: Props) {
-    super(props)
+    super(props);
     this.state = {
       hasError: false,
       error: null,
       errorInfo: null,
-      errorId: '',
-    }
+      errorId: "",
+    };
   }
 
   static getDerivedStateFromError(error: Error): Partial<State> {
@@ -30,25 +30,23 @@ export class GlobalErrorBoundary extends Component<Props, State> {
       hasError: true,
       error,
       errorId: `error-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-    }
+    };
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     // Log error details
-    logger.reportError('Global Error Boundary caught an error', {
-      error: error.message,
-      stack: error.stack,
+    logger.error("Global Error Boundary caught an error", error, {
       componentStack: errorInfo.componentStack,
-    })
+    });
 
     this.setState({
       error,
       errorInfo,
       errorId: `error-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-    })
+    });
 
     // TODO: Send error to monitoring service (Sentry, Bugsnag, etc.)
-    this.reportError(error, errorInfo)
+    this.reportError(error, errorInfo);
   }
 
   private reportError = (error: Error, errorInfo: ErrorInfo) => {
@@ -61,12 +59,12 @@ export class GlobalErrorBoundary extends Component<Props, State> {
       timestamp: new Date().toISOString(),
       userAgent: navigator.userAgent,
       url: window.location.href,
-      userId: this.getUserId(), // Get from auth store if available
-    }
+      userId: this.getUserId() || undefined, // Get from auth store if available
+    };
 
     // In development, log to console
     if (import.meta.env.DEV) {
-      logger.log('error', '🚨 Error Boundary Report', errorReport)
+      logger.error("🚨 Error Boundary Report", undefined, errorReport);
     }
 
     // TODO: In production, send to monitoring service
@@ -75,51 +73,51 @@ export class GlobalErrorBoundary extends Component<Props, State> {
     // Store in localStorage for debugging
     try {
       const existingErrors = JSON.parse(
-        localStorage.getItem('app_errors') || '[]'
-      )
-      existingErrors.push(errorReport)
+        localStorage.getItem("app_errors") || "[]",
+      );
+      existingErrors.push(errorReport);
       // Keep only last 10 errors
       if (existingErrors.length > 10) {
-        existingErrors.splice(0, existingErrors.length - 10)
+        existingErrors.splice(0, existingErrors.length - 10);
       }
-      localStorage.setItem('app_errors', JSON.stringify(existingErrors))
+      localStorage.setItem("app_errors", JSON.stringify(existingErrors));
     } catch (_e) {
-      logger.log('warn', 'Failed to store error in localStorage')
+      logger.warn("Failed to store error in localStorage");
     }
-  }
+  };
 
   private getUserId = (): string | null => {
     try {
       // Try to get user ID from auth store or localStorage
-      const authToken = localStorage.getItem('auth_token')
+      const authToken = localStorage.getItem("auth_token");
       if (authToken) {
-        const decoded = JSON.parse(atob(authToken.split('.')[1]))
-        return decoded.userId || decoded.sub || null
+        const decoded = JSON.parse(atob(authToken.split(".")[1]));
+        return decoded.userId || decoded.sub || null;
       }
     } catch (_e) {
       // Ignore decode errors
     }
-    return null
-  }
+    return null;
+  };
 
   private handleReload = () => {
-    window.location.reload()
-  }
+    window.location.reload();
+  };
 
   private handleReset = () => {
     this.setState({
       hasError: false,
       error: null,
       errorInfo: null,
-      errorId: '',
-    })
-  }
+      errorId: "",
+    });
+  };
 
   render() {
     if (this.state.hasError) {
       // Custom fallback UI
       if (this.props.fallback) {
-        return this.props.fallback
+        return this.props.fallback;
       }
 
       // Default fallback UI
@@ -194,11 +192,11 @@ export class GlobalErrorBoundary extends Component<Props, State> {
             </div>
           </div>
         </div>
-      )
+      );
     }
 
-    return this.props.children
+    return this.props.children;
   }
 }
 
-export default GlobalErrorBoundary
+export default GlobalErrorBoundary;

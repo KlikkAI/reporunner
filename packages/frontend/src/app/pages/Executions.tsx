@@ -22,14 +22,46 @@ const Executions: React.FC = () => {
     try {
       const result = await workflowApiService.getExecutions({
         status: filter === "all" ? undefined : filter,
-        page,
         limit: 20,
+        offset: (page - 1) * 20,
+        sortOrder: "desc",
       });
 
+      // Transform results to match WorkflowExecution interface
+      const transformedExecutions = result.items.map((execution) => ({
+        ...execution,
+        error: execution.error
+          ? typeof execution.error === "string"
+            ? {
+                message: execution.error,
+                nodeId: undefined,
+                code: undefined,
+                stack: undefined,
+              }
+            : execution.error
+          : undefined,
+        logs: Array.isArray(execution.logs)
+          ? execution.logs.map((log: any) =>
+              typeof log === "string" ? log : log.message || String(log),
+            )
+          : [],
+        results: Array.isArray(execution.results)
+          ? execution.results.map((nodeResult) => ({
+              ...nodeResult,
+              status:
+                nodeResult.status === "completed"
+                  ? ("success" as const)
+                  : nodeResult.status === "failed"
+                    ? ("error" as const)
+                    : (nodeResult.status as "success" | "error" | "skipped"),
+            }))
+          : undefined,
+      }));
+
       if (page === 1) {
-        setExecutions(result.items);
+        setExecutions(transformedExecutions);
       } else {
-        setExecutions((prev) => [...prev, ...result.items]);
+        setExecutions((prev) => [...prev, ...transformedExecutions]);
       }
       setHasMore(result.hasMore);
     } catch (error) {
@@ -213,7 +245,7 @@ const Executions: React.FC = () => {
                                         {nodeExec.nodeName || nodeExec.nodeId}:
                                       </span>
                                       <span
-                                        className={`ml-2 ${nodeExec.status === "success" ? "text-green-600" : nodeExec.status === "error" ? "text-red-600" : "text-blue-600"}`}
+                                        className={`ml-2 ${nodeExec.status === "completed" ? "text-green-600" : nodeExec.status === "failed" ? "text-red-600" : "text-blue-600"}`}
                                       >
                                         {nodeExec.status}
                                       </span>

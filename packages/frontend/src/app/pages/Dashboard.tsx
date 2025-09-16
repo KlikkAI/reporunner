@@ -25,7 +25,36 @@ const Dashboard: React.FC = () => {
   const loadWorkflows = async () => {
     try {
       const result = await workflowApiService.getWorkflows();
-      setWorkflows(result.items);
+      const workflowsWithDefaults = result.items.map((workflow) => ({
+        ...workflow,
+        connections: (workflow as any).connections || {},
+        createdAt: workflow.createdAt || new Date().toISOString(),
+        updatedAt: workflow.updatedAt || new Date().toISOString(),
+        status:
+          (workflow.status === "expired" ? "draft" : workflow.status) ||
+          "draft",
+        settings: workflow.settings
+          ? {
+              ...workflow.settings,
+              errorHandling:
+                workflow.settings.errorHandling === "retry"
+                  ? "stop"
+                  : workflow.settings.errorHandling,
+            }
+          : undefined,
+        nodes: workflow.nodes.map((node) => ({
+          ...node,
+          data: {
+            ...node.data,
+            label: node.data.label || node.id, // Ensure label is always present
+            credentials:
+              typeof node.data.credentials === "string"
+                ? [node.data.credentials]
+                : node.data.credentials,
+          },
+        })),
+      }));
+      setWorkflows(workflowsWithDefaults);
     } catch (error) {
       console.error("Failed to load workflows:", error);
       setWorkflows([]);

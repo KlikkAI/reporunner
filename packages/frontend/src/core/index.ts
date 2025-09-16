@@ -41,12 +41,22 @@ export type {
   CredentialType,
   CredentialTypeApiResponse,
 } from "./types/credentials";
-export * from "./types/integration";
 export type {
-  NodeProperty as DynamicNodeProperty,
+  Integration,
+  IntegrationNodeType,
   PropertyFormState,
-  PropertyEvaluationContext,
+  CredentialRequirement,
+  NodeExecutionContext,
+  NodeExecutionResult,
+  // NodeProperty already exported from nodeTypes, skip re-export
+} from "./types/integration";
+
+// Dynamic Properties
+export type {
   PropertyValue,
+  PropertyEvaluationContext,
+  EnhancedIntegrationNodeType,
+  NodeProperty as DynamicNodeProperty,
 } from "./types/dynamicProperties";
 
 // Utils

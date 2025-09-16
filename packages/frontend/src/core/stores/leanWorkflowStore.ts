@@ -1,5 +1,9 @@
 import { create } from "zustand";
-import type { WorkflowNodeInstance, WorkflowDefinition } from "../nodes/types";
+import type {
+  WorkflowNodeInstance,
+  WorkflowDefinition,
+  INodeCredentials,
+} from "../nodes/types";
 import { nodeRegistry } from "../nodes";
 import { logger } from "../services/LoggingService";
 import { workflowApiService } from "../api/WorkflowApiService";
@@ -205,7 +209,6 @@ export const useLeanWorkflowStore = create<LeanWorkflowState>((set, get) => ({
         executionTimeout: 300,
         maxExecutionTimeout: undefined,
         callerPolicy: undefined,
-        callerIds: undefined,
       },
       tags: [],
     };
@@ -226,9 +229,10 @@ export const useLeanWorkflowStore = create<LeanWorkflowState>((set, get) => ({
         navigate(`/workflow/${savedWorkflow.id}`);
       }
     } catch (error) {
-      logger.error("Failed to save new workflow", {
-        error: error instanceof Error ? error.message : String(error),
-      });
+      logger.error(
+        "Failed to save new workflow",
+        error instanceof Error ? error : new Error(String(error)),
+      );
       // Revert state and provide better error message
       set({
         currentWorkflow: null,
@@ -279,7 +283,7 @@ export const useLeanWorkflowStore = create<LeanWorkflowState>((set, get) => ({
         const createWorkflowPayload: CreateWorkflowRequest = {
           name: currentWorkflow.name,
           description: currentWorkflow.description || "",
-          // Remove version field - let backend set default or use number if required
+          version: "1.0.0",
           nodes: nodes.map((node) => ({
             id: node.id,
             type: node.type,
@@ -326,7 +330,10 @@ export const useLeanWorkflowStore = create<LeanWorkflowState>((set, get) => ({
             data: {
               label: node.name,
               parameters: node.parameters || {},
-              credentials: node.credentials,
+              credentials:
+                Array.isArray(node.credentials) && node.credentials.length > 0
+                  ? node.credentials[0].id
+                  : undefined,
               disabled: node.disabled,
               notes: node.notes,
             },
@@ -344,6 +351,9 @@ export const useLeanWorkflowStore = create<LeanWorkflowState>((set, get) => ({
           isActive: currentWorkflow.active || false,
         };
 
+        if (!currentWorkflow.id) {
+          throw new Error("Cannot update workflow without ID");
+        }
         savedWorkflow = await workflowApiService.updateWorkflow(
           currentWorkflow.id,
           updatePayload,
@@ -373,8 +383,10 @@ export const useLeanWorkflowStore = create<LeanWorkflowState>((set, get) => ({
         nodeCount: nodes.length,
       });
     } catch (error: unknown) {
-      logger.error("Failed to save workflow", {
-        error: error instanceof Error ? error.message : String(error),
+      const logError =
+        error instanceof Error ? error : new Error(String(error));
+      logger.error("Failed to save workflow", logError);
+      logger.info("Workflow save error details", {
         response: (error as any)?.response?.data,
       });
 
@@ -401,25 +413,44 @@ export const useLeanWorkflowStore = create<LeanWorkflowState>((set, get) => ({
 
       // Convert backend data to lean format
       const leanNodes: WorkflowNodeInstance[] = (workflowData.nodes || []).map(
-        (node: any) => ({
-          id: node.id,
-          type: node.type,
-          position: node.position || { x: 0, y: 0 },
-          parameters: node.parameters || node.data?.parameters || {},
-          credentials: node.credentials || node.data?.credentials,
-          disabled: node.disabled,
-          notes: node.notes,
-          name: node.name,
-          continueOnFail: node.continueOnFail,
-          executeOnce: node.executeOnce,
-        }),
+        (node: any) => {
+          // Handle credentials conversion from string to INodeCredentials[]
+          let credentials: INodeCredentials[] | undefined;
+          const credentialId = node.data?.credentials || node.credentials;
+          if (credentialId && typeof credentialId === "string") {
+            credentials = [{ id: credentialId, name: credentialId }];
+          } else if (Array.isArray(credentialId)) {
+            credentials = credentialId;
+          }
+
+          return {
+            id: node.id,
+            type: node.type,
+            position: node.position || { x: 0, y: 0 },
+            parameters: node.parameters || node.data?.parameters || {},
+            credentials,
+            disabled: node.disabled,
+            notes: node.notes,
+            name: node.name,
+            continueOnFail: node.continueOnFail,
+            executeOnce: node.executeOnce,
+          };
+        },
       );
 
       const workflow: WorkflowDefinition = {
         ...workflowData,
         nodes: leanNodes,
         // Ensure connections exist
-        connections: workflowData.connections || {},
+        connections: (workflowData as any).connections || {},
+        // Transform settings to match WorkflowDefinition schema
+        settings: workflowData.settings
+          ? {
+              executionTimeout: workflowData.settings.timeout || 300,
+              saveDataErrorExecution: "all" as const,
+              saveDataSuccessExecution: "all" as const,
+            }
+          : undefined,
       };
 
       // Convert connections to edges
@@ -432,10 +463,10 @@ export const useLeanWorkflowStore = create<LeanWorkflowState>((set, get) => ({
         isDirty: false,
       });
     } catch (error: unknown) {
-      logger.error("Failed to load workflow", {
-        workflowId,
-        error: error instanceof Error ? error.message : String(error),
-      });
+      const logError =
+        error instanceof Error ? error : new Error(String(error));
+      logger.error("Failed to load workflow", logError);
+      logger.info("Load workflow error details", { workflowId });
       const errorMessage =
         (error as any)?.response?.data?.message || "Failed to load workflow";
       throw new Error(errorMessage);
@@ -460,10 +491,10 @@ export const useLeanWorkflowStore = create<LeanWorkflowState>((set, get) => ({
         return state;
       });
     } catch (error: unknown) {
-      logger.error("Failed to delete workflow", {
-        workflowId,
-        error: error instanceof Error ? error.message : String(error),
-      });
+      const logError =
+        error instanceof Error ? error : new Error(String(error));
+      logger.error("Failed to delete workflow", logError);
+      logger.info("Delete workflow error details", { workflowId });
       const errorMessage =
         (error as any)?.response?.data?.message || "Failed to delete workflow";
       throw new Error(errorMessage);

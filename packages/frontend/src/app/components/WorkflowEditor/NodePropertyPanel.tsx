@@ -6,11 +6,13 @@ import { SaveOutlined } from "@ant-design/icons";
 import { message } from "antd";
 import DynamicPropertyRenderer from "./DynamicPropertyRenderer";
 import { PropertyGroupRenderer } from "@/app/node-extensions/components/ConditionalPropertyRenderer";
+import type { EnhancedDisplayOptions } from "@/app/node-extensions/components/ConditionalPropertyRenderer";
 import type {
   PropertyFormState,
   PropertyValue,
   PropertyEvaluationContext,
 } from "@/core/types/dynamicProperties";
+import type { INodeProperty } from "@/core/nodes/types";
 import EmailInputPanel from "./EmailInputPanel";
 import EmailOutputPanel from "./EmailOutputPanel";
 import DataVisualizationPanel from "@/design-system/components/DataVisualization/DataVisualizationPanel";
@@ -502,7 +504,11 @@ const NodeConfigurationPanel: React.FC<NodeConfigurationPanelProps> = ({
             {/* Use enhanced property rendering for Transform nodes and other enhanced types */}
             {currentNode?.type === "transform" || enhancedNodeType?.id ? (
               <PropertyGroupRenderer
-                properties={registryProperties}
+                properties={
+                  registryProperties as Array<
+                    INodeProperty & { displayOptions?: EnhancedDisplayOptions }
+                  >
+                }
                 values={formState}
                 onChange={handleParameterChange}
                 evaluationContext={{
@@ -515,7 +521,7 @@ const NodeConfigurationPanel: React.FC<NodeConfigurationPanelProps> = ({
               />
             ) : (
               <DynamicPropertyRenderer
-                properties={registryProperties}
+                properties={registryProperties as INodeProperty[]}
                 formState={formState}
                 onChange={handleParameterChange}
                 context={evaluationContext}

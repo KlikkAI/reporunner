@@ -341,13 +341,13 @@ const PropertyField: React.FC<PropertyFieldProps> = ({
           console.log("Gmail credential filtering debug:", {
             propertyName: property.name,
             expectedCredentialTypes: credentialTypes,
-            allCredentials: context.credentials?.map((c) => ({
+            allCredentials: context.credentials?.map((c: any) => ({
               id: c.id,
               name: c.name,
               type: c.type,
               integration: c.integration,
             })),
-            filteredCredentials: availableCredentials.map((c) => ({
+            filteredCredentials: availableCredentials.map((c: any) => ({
               id: c.id,
               name: c.name,
               type: c.type,
