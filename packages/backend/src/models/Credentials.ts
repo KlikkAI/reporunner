@@ -1,14 +1,40 @@
-import mongoose, { Document, Schema } from 'mongoose';
-import crypto from 'crypto';
-import dotenv from 'dotenv';
+import mongoose, { Document, Schema } from "mongoose";
+import crypto from "crypto";
+import dotenv from "dotenv";
+import path from "path";
+import { fileURLToPath } from "url";
+import { dirname } from "path";
 
 // Ensure environment variables are loaded
-dotenv.config();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+console.log(
+  "Before dotenv.config() - CREDENTIAL_ENCRYPTION_KEY:",
+  process.env.CREDENTIAL_ENCRYPTION_KEY,
+);
+const envPath = path.resolve(__dirname, "../../../../../backend/.env");
+console.log("Resolved .env path:", envPath);
+dotenv.config({ path: envPath });
+console.log(
+  "After dotenv.config() - CREDENTIAL_ENCRYPTION_KEY:",
+  process.env.CREDENTIAL_ENCRYPTION_KEY,
+);
 
 export interface ICredential extends Document {
   _id: string;
   name: string;
-  type: 'oauth2' | 'api_key' | 'basic_auth' | 'bearer_token' | 'custom' | 'openaiApi' | 'anthropicApi' | 'googleAiApi' | 'azureOpenAiApi' | 'awsBedrockApi';
+  type:
+    | "oauth2"
+    | "api_key"
+    | "basic_auth"
+    | "bearer_token"
+    | "custom"
+    | "openaiApi"
+    | "anthropicApi"
+    | "googleAiApi"
+    | "azureOpenAiApi"
+    | "awsBedrockApi";
   userId: string;
   integration: string;
   data: Record<string, any>;
@@ -29,23 +55,34 @@ const credentialSchema = new Schema<ICredential>(
   {
     name: {
       type: String,
-      required: [true, 'Credential name is required'],
+      required: [true, "Credential name is required"],
       trim: true,
-      maxlength: [100, 'Credential name cannot be more than 100 characters'],
+      maxlength: [100, "Credential name cannot be more than 100 characters"],
     },
     type: {
       type: String,
-      enum: ['oauth2', 'api_key', 'basic_auth', 'bearer_token', 'custom', 'openaiApi', 'anthropicApi', 'googleAiApi', 'azureOpenAiApi', 'awsBedrockApi'],
-      required: [true, 'Credential type is required'],
+      enum: [
+        "oauth2",
+        "api_key",
+        "basic_auth",
+        "bearer_token",
+        "custom",
+        "openaiApi",
+        "anthropicApi",
+        "googleAiApi",
+        "azureOpenAiApi",
+        "awsBedrockApi",
+      ],
+      required: [true, "Credential type is required"],
     },
     userId: {
       type: String,
-      required: [true, 'User ID is required'],
-      ref: 'User',
+      required: [true, "User ID is required"],
+      ref: "User",
     },
     integration: {
       type: String,
-      required: [true, 'Integration name is required'],
+      required: [true, "Integration name is required"],
       trim: true,
     },
     data: {
@@ -74,7 +111,7 @@ const credentialSchema = new Schema<ICredential>(
     timestamps: true,
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
-  }
+  },
 );
 
 // Indexes for performance
@@ -83,7 +120,7 @@ credentialSchema.index({ userId: 1, isActive: 1 });
 credentialSchema.index({ expiresAt: 1 });
 
 // Virtual for expiry status
-credentialSchema.virtual('isExpired').get(function () {
+credentialSchema.virtual("isExpired").get(function () {
   if (!this.expiresAt) return false;
   return new Date() > this.expiresAt;
 });
@@ -92,83 +129,101 @@ credentialSchema.virtual('isExpired').get(function () {
 const getEncryptionKey = (): Buffer => {
   const keyHex = process.env.CREDENTIAL_ENCRYPTION_KEY;
   if (!keyHex) {
-    throw new Error('CREDENTIAL_ENCRYPTION_KEY environment variable is required');
+    throw new Error(
+      "CREDENTIAL_ENCRYPTION_KEY environment variable is required",
+    );
   }
   if (keyHex.length !== 64) {
-    throw new Error('CREDENTIAL_ENCRYPTION_KEY must be exactly 64 hex characters (32 bytes)');
+    throw new Error(
+      "CREDENTIAL_ENCRYPTION_KEY must be exactly 64 hex characters (32 bytes)",
+    );
   }
   try {
-    return Buffer.from(keyHex, 'hex');
+    return Buffer.from(keyHex, "hex");
   } catch (error) {
-    throw new Error('CREDENTIAL_ENCRYPTION_KEY must be a valid hex string');
+    throw new Error("CREDENTIAL_ENCRYPTION_KEY must be a valid hex string");
   }
 };
 
 const ENCRYPTION_KEY = getEncryptionKey();
 
-
 // Debug: Log if we're using env key or random key
-console.log('📄 Credentials model loading...');
-console.log('   CREDENTIAL_ENCRYPTION_KEY available:', !!process.env.CREDENTIAL_ENCRYPTION_KEY);
+console.log("📄 Credentials model loading...");
+console.log(
+  "   CREDENTIAL_ENCRYPTION_KEY available:",
+  !!process.env.CREDENTIAL_ENCRYPTION_KEY,
+);
 if (process.env.CREDENTIAL_ENCRYPTION_KEY) {
-  console.log('✓ Using CREDENTIAL_ENCRYPTION_KEY from environment');
+  console.log("✓ Using CREDENTIAL_ENCRYPTION_KEY from environment");
 } else {
-  console.log('⚠️  WARNING: CREDENTIAL_ENCRYPTION_KEY not set, using random key - credentials will be lost on restart!');
+  console.log(
+    "⚠️  WARNING: CREDENTIAL_ENCRYPTION_KEY not set, using random key - credentials will be lost on restart!",
+  );
 }
 
 const IV_LENGTH = 16;
-const ALGORITHM = 'aes-256-cbc';
+const ALGORITHM = "aes-256-cbc";
 
 // Method to encrypt credential data
-credentialSchema.methods.encrypt = function (data: Record<string, any>): Record<string, any> {
+credentialSchema.methods.encrypt = function (
+  data: Record<string, any>,
+): Record<string, any> {
   try {
     const iv = crypto.randomBytes(IV_LENGTH);
     const cipher = crypto.createCipheriv(ALGORITHM, ENCRYPTION_KEY, iv);
 
-    let encrypted = cipher.update(JSON.stringify(data), 'utf8', 'hex');
-    encrypted += cipher.final('hex');
+    let encrypted = cipher.update(JSON.stringify(data), "utf8", "hex");
+    encrypted += cipher.final("hex");
 
     return {
       encrypted,
-      iv: iv.toString('hex'),
+      iv: iv.toString("hex"),
     };
   } catch (error: any) {
-    console.error('Encryption error:', error);
+    console.error("Encryption error:", error);
     throw new Error(`Failed to encrypt credential data: ${error.message}`);
   }
 };
 
 // Method to decrypt credential data
-credentialSchema.methods.decrypt = function (encryptedData: Record<string, any>): Record<string, any> {
-  if (!encryptedData || typeof encryptedData !== 'object') {
-    throw new Error('Invalid encrypted data format');
+credentialSchema.methods.decrypt = function (
+  encryptedData: Record<string, any>,
+): Record<string, any> {
+  if (!encryptedData || typeof encryptedData !== "object") {
+    throw new Error("Invalid encrypted data format");
   }
 
   try {
     // Check if data has proper IV format
     if (encryptedData.iv && encryptedData.encrypted) {
-      const iv = Buffer.from(encryptedData.iv, 'hex');
+      const iv = Buffer.from(encryptedData.iv, "hex");
       if (iv.length !== IV_LENGTH) {
-        throw new Error('Invalid IV length');
+        throw new Error("Invalid IV length");
       }
 
       const decipher = crypto.createDecipheriv(ALGORITHM, ENCRYPTION_KEY, iv);
-      let decrypted = decipher.update(encryptedData.encrypted, 'hex', 'utf8');
-      decrypted += decipher.final('utf8');
+      let decrypted = decipher.update(encryptedData.encrypted, "hex", "utf8");
+      decrypted += decipher.final("utf8");
 
       const parsedData = JSON.parse(decrypted);
       return parsedData;
     } else {
-      throw new Error('Missing encryption IV. This credential needs to be re-created.');
+      throw new Error(
+        "Missing encryption IV. This credential needs to be re-created.",
+      );
     }
   } catch (error: any) {
-    console.error('Failed to decrypt credential data:', error);
-    
+    console.error("Failed to decrypt credential data:", error);
+
     // Provide more specific error message
-    if (error.code === 'ERR_OSSL_BAD_DECRYPT') {
-      throw new Error('Failed to decrypt credential data. The credential may be corrupted or using an outdated encryption method.');
-    } else if (error.message.includes('JSON')) {
-      throw new Error('Failed to parse decrypted credential data. The credential may be corrupted.');
+    if (error.code === "ERR_OSSL_BAD_DECRYPT") {
+      throw new Error(
+        "Failed to decrypt credential data. The credential may be corrupted or using an outdated encryption method.",
+      );
+    } else if (error.message.includes("JSON")) {
+      throw new Error(
+        "Failed to parse decrypted credential data. The credential may be corrupted.",
+      );
     } else {
       throw new Error(`Failed to decrypt credential data: ${error.message}`);
     }
@@ -176,14 +231,14 @@ credentialSchema.methods.decrypt = function (encryptedData: Record<string, any>)
 };
 
 // Pre-save middleware to encrypt data
-credentialSchema.pre('save', async function (next) {
-  if (this.isModified('data') && this.data) {
+credentialSchema.pre("save", async function (next) {
+  if (this.isModified("data") && this.data) {
     // Check if data is already encrypted (has iv and encrypted properties)
-    if (typeof this.data === 'object' && this.data.iv && this.data.encrypted) {
+    if (typeof this.data === "object" && this.data.iv && this.data.encrypted) {
       // Data is already encrypted, don't encrypt again
       return next();
     }
-    
+
     // Encrypt the data
     this.data = this.encrypt(this.data);
   }
@@ -197,7 +252,10 @@ credentialSchema.methods.getDecryptedData = function (): Record<string, any> {
 };
 
 // Static method to find active credentials
-credentialSchema.statics.findActive = function (userId: string, integration?: string) {
+credentialSchema.statics.findActive = function (
+  userId: string,
+  integration?: string,
+) {
   const query: any = { userId, isActive: true };
   if (integration) {
     query.integration = integration;
@@ -213,9 +271,11 @@ credentialSchema.statics.findActive = function (userId: string, integration?: st
 };
 
 // Method to refresh OAuth2 credentials
-credentialSchema.methods.refreshOAuth2Token = async function (refreshToken: string) {
-  if (this.type !== 'oauth2') {
-    throw new Error('This method is only available for OAuth2 credentials');
+credentialSchema.methods.refreshOAuth2Token = async function (
+  refreshToken: string,
+) {
+  if (this.type !== "oauth2") {
+    throw new Error("This method is only available for OAuth2 credentials");
   }
 
   // This would typically make an API call to refresh the token
@@ -238,4 +298,7 @@ credentialSchema.methods.toJSON = function () {
   return credentialObject;
 };
 
-export const Credential = mongoose.model<ICredential>('Credential', credentialSchema);
+export const Credential = mongoose.model<ICredential>(
+  "Credential",
+  credentialSchema,
+);
