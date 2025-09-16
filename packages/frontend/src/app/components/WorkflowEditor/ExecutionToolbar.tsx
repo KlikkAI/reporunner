@@ -127,7 +127,7 @@ export const ExecutionToolbar: React.FC<ExecutionToolbarProps> = ({
           },
         })),
         edges: [], // Convert connections to edges if needed
-        version: "1.0.0",
+        version: 1,
         isActive: true,
         tags: ["editor"],
       });

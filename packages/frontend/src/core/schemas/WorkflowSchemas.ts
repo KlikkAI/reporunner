@@ -55,7 +55,7 @@ export const WorkflowDefinitionSchema = z.object({
   id: OptionalIdSchema,
   name: z.string().min(1).max(255),
   description: z.string().max(1000).optional(),
-  version: z.union([z.string(), z.number()]).default("1.0.0"),
+  version: z.number().int().min(1).default(1),
   nodes: z.array(WorkflowNodeSchema).default([]), // Make optional with default
   edges: z.array(WorkflowEdgeSchema).default([]), // Make optional with default
   settings: z
@@ -179,6 +179,7 @@ export const ExecutionStatsSchema = z
     error: z.number().int().min(0).optional(),
     cancelled: z.number().int().min(0).default(0),
     avgDuration: z.number().min(0).default(0),
+    averageDuration: z.number().min(0).default(0), // Backend field name
     successRate: z.number().min(0).max(100).default(0),
     totalExecutions: z.number().int().min(0).default(0),
     successfulExecutions: z.number().int().min(0).default(0),
@@ -194,6 +195,8 @@ export const ExecutionStatsSchema = z
       ...data,
       completed,
       failed,
+      // Normalize duration field (backend uses averageDuration, we prefer avgDuration)
+      avgDuration: data.avgDuration || data.averageDuration || 0,
       // Ensure total reflects actual counts if not provided
       total: data.total || data.running + completed + failed + data.cancelled,
       // Calculate success rate if not provided
@@ -211,7 +214,7 @@ export const CreateWorkflowRequestSchema = WorkflowDefinitionSchema.omit({
   createdAt: true,
   updatedAt: true,
 }).extend({
-  version: z.union([z.string(), z.number()]).default("1.0.0"),
+  version: z.number().int().min(1).default(1),
 });
 
 export const UpdateWorkflowRequestSchema =

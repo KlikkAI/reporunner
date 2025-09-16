@@ -57,7 +57,7 @@ export const WorkflowTester: React.FC<{
         // Convert BackendWorkflow to WorkflowDefinition format
         const workflowDefinition = {
           name: `Test Workflow ${Date.now()}`,
-          version: "1.0.0",
+          version: 1,
           nodes: workflowJson.nodes.map((node) => ({
             id: node.id,
             type: node.type,
@@ -88,7 +88,7 @@ export const WorkflowTester: React.FC<{
         // Convert BackendWorkflow to WorkflowDefinition format
         const workflowDefinition = {
           name: `Test Workflow ${Date.now()}`,
-          version: "1.0.0",
+          version: 1,
           nodes: workflowJson.nodes.map((node) => ({
             id: node.id,
             type: node.type,

@@ -53,6 +53,17 @@ export class WorkflowApiService {
       // Backend returns: data.workflows[] and data.pagination
       // Frontend expects: items[] and pagination fields
       const responseData = response.data as any;
+
+      // Check if the response indicates success
+      if (!responseData.success) {
+        throw new ApiClientError(
+          responseData.message || "Failed to fetch workflows",
+          0,
+          "API_ERROR",
+          responseData,
+        );
+      }
+
       const workflows = responseData.data?.workflows || [];
       const pagination = responseData.data?.pagination || {
         total: 0,

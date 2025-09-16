@@ -283,7 +283,7 @@ export const useLeanWorkflowStore = create<LeanWorkflowState>((set, get) => ({
         const createWorkflowPayload: CreateWorkflowRequest = {
           name: currentWorkflow.name,
           description: currentWorkflow.description || "",
-          version: "1.0.0",
+          version: 1,
           nodes: nodes.map((node) => ({
             id: node.id,
             type: node.type,

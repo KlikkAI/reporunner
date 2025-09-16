@@ -25,6 +25,13 @@ const Dashboard: React.FC = () => {
   const loadWorkflows = async () => {
     try {
       const result = await workflowApiService.getWorkflows();
+
+      if (!result || !result.items || !Array.isArray(result.items)) {
+        console.error("Invalid workflows response structure:", result);
+        setWorkflows([]);
+        return;
+      }
+
       const workflowsWithDefaults = result.items.map((workflow) => ({
         ...workflow,
         connections: (workflow as any).connections || {},
@@ -42,22 +49,31 @@ const Dashboard: React.FC = () => {
                   : workflow.settings.errorHandling,
             }
           : undefined,
-        nodes: workflow.nodes.map((node) => ({
-          ...node,
-          data: {
-            ...node.data,
-            label: node.data.label || node.id, // Ensure label is always present
-            credentials:
-              typeof node.data.credentials === "string"
-                ? [node.data.credentials]
-                : node.data.credentials,
-          },
-        })),
+        nodes: workflow.nodes
+          ? workflow.nodes.map((node) => ({
+              ...node,
+              data: {
+                ...node.data,
+                label: node.data.label || node.id, // Ensure label is always present
+                credentials:
+                  typeof node.data.credentials === "string"
+                    ? [node.data.credentials]
+                    : node.data.credentials,
+              },
+            }))
+          : [],
       }));
       setWorkflows(workflowsWithDefaults);
     } catch (error) {
       console.error("Failed to load workflows:", error);
       setWorkflows([]);
+
+      // Check if it's an authentication error
+      if (error instanceof Error && error.message.includes("token")) {
+        toast.error("Please log in to access your workflows");
+      } else {
+        toast.error("Failed to load workflows");
+      }
     }
   };
 
@@ -82,6 +98,13 @@ const Dashboard: React.FC = () => {
       setStats(executionStats);
     } catch (error) {
       console.error("Failed to load stats:", error);
+
+      // Check if it's an authentication error
+      if (error instanceof Error && error.message.includes("token")) {
+        toast.error("Please log in to access execution statistics");
+      } else {
+        toast.error("Failed to load statistics");
+      }
     } finally {
       setStatsLoading(false);
     }
