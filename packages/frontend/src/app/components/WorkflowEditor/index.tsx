@@ -19,6 +19,7 @@ import { useLeanWorkflowStore, nodeRegistry } from "@/core";
 import { useCredentialStore } from "@/core/stores/credentialStore";
 import { useAIAssistantStore } from "@/core/stores/aiAssistantStore";
 import { useCollaborationStore } from "@/core/stores/collaborationStore";
+import { useAnalyticsStore } from "@/core/stores/analyticsStore";
 import { ExecutionToolbar } from "./ExecutionToolbar";
 import {
   executionMonitor,
@@ -37,6 +38,7 @@ import DebugPanel from "./DebugPanel";
 import { CollaborationPanel } from "./CollaborationPanel";
 import { UserPresenceOverlay } from "./UserPresenceOverlay";
 import { CommentAnnotations } from "./CommentAnnotations";
+import { AnalyticsDashboard } from "./AnalyticsDashboard";
 import { ConnectionType } from "@/core/types/edge";
 import ConnectionLine from "./ConnectionLine";
 import {
@@ -125,6 +127,13 @@ const WorkflowEditor: React.FC = () => {
     updatePresence,
     sendOperation,
   } = useCollaborationStore();
+
+  // Analytics state
+  const {
+    analyticsModalOpen,
+    toggleAnalyticsModal,
+    setSelectedWorkflow,
+  } = useAnalyticsStore();
 
   // Memoized node types - prevent React Flow warnings about creating new objects
   const nodeTypes = useMemo<Record<string, any>>(() => {
@@ -906,6 +915,25 @@ const WorkflowEditor: React.FC = () => {
                   👥
                 </button>
                 <button
+                  onClick={() => {
+                    toggleAnalyticsModal();
+                    if (!analyticsModalOpen) {
+                      // Set workflow ID for analytics - would come from props in real app
+                      setSelectedWorkflow("current-workflow");
+                    }
+                  }}
+                  className={`react-flow__controls-button ${
+                    analyticsModalOpen ? "bg-purple-100 border-purple-300" : ""
+                  }`}
+                  title={
+                    analyticsModalOpen
+                      ? "Hide Analytics Dashboard"
+                      : "Open Analytics Dashboard"
+                  }
+                >
+                  📊
+                </button>
+                <button
                   onClick={() =>
                     setIsExecutionPanelVisible(!isExecutionPanelVisible)
                   }
@@ -1047,6 +1075,13 @@ const WorkflowEditor: React.FC = () => {
       <CollaborationPanel
         isVisible={collaborationPanelOpen}
         onToggle={toggleCollaborationPanel}
+      />
+
+      {/* Analytics Dashboard */}
+      <AnalyticsDashboard
+        isOpen={analyticsModalOpen}
+        onClose={toggleAnalyticsModal}
+        workflowId="current-workflow" // Would come from props in real app
       />
     </div>
   );
