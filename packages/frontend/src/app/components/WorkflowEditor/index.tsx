@@ -18,6 +18,7 @@ import "reactflow/dist/style.css";
 import { useLeanWorkflowStore, nodeRegistry } from "@/core";
 import { useCredentialStore } from "@/core/stores/credentialStore";
 import { useAIAssistantStore } from "@/core/stores/aiAssistantStore";
+import { useCollaborationStore } from "@/core/stores/collaborationStore";
 import { ExecutionToolbar } from "./ExecutionToolbar";
 import {
   executionMonitor,
@@ -33,6 +34,9 @@ import CustomEdge from "./CustomEdge";
 import ExecutionPanel from "./ExecutionPanel";
 import AIAssistantPanel from "./AIAssistantPanel";
 import DebugPanel from "./DebugPanel";
+import { CollaborationPanel } from "./CollaborationPanel";
+import { UserPresenceOverlay } from "./UserPresenceOverlay";
+import { CommentAnnotations } from "./CommentAnnotations";
 import { ConnectionType } from "@/core/types/edge";
 import ConnectionLine from "./ConnectionLine";
 import {
@@ -111,6 +115,16 @@ const WorkflowEditor: React.FC = () => {
     toggleAssistantPanel,
     analyzeWorkflow,
   } = useAIAssistantStore();
+
+  // Collaboration state
+  const {
+    isConnected: isCollaborationConnected,
+    collaborationPanelOpen,
+    commentMode,
+    toggleCollaborationPanel,
+    updatePresence,
+    sendOperation,
+  } = useCollaborationStore();
 
   // Memoized node types - prevent React Flow warnings about creating new objects
   const nodeTypes = useMemo<Record<string, any>>(() => {
@@ -212,9 +226,45 @@ const WorkflowEditor: React.FC = () => {
   );
   const [isExecutionPanelVisible, setIsExecutionPanelVisible] = useState(false);
   const [isDebugPanelVisible, setIsDebugPanelVisible] = useState(false);
+  const [containerRef, setContainerRef] = useState<HTMLDivElement | null>(null);
 
   // Monitor current execution
   const { execution } = useExecutionMonitor(currentExecutionId);
+
+  // Sync workflow changes with collaboration service
+  useEffect(() => {
+    if (isCollaborationConnected && leanNodes.length > 0) {
+      // Send operations for node changes
+      // This would be enhanced to track specific changes in a real implementation
+      const syncWorkflowChanges = async () => {
+        try {
+          await sendOperation({
+            type: "node_update",
+            data: { nodes: leanNodes },
+            workflowId: "current-workflow", // Would come from props or context
+          });
+        } catch (error) {
+          console.error("Failed to sync workflow changes:", error);
+        }
+      };
+
+      // Debounce sync to avoid excessive operations
+      const timeoutId = setTimeout(syncWorkflowChanges, 500);
+      return () => clearTimeout(timeoutId);
+    }
+  }, [leanNodes, edges, isCollaborationConnected, sendOperation]);
+
+  // Update user selection for collaboration
+  useEffect(() => {
+    if (isCollaborationConnected && selectedNodeIds.length > 0) {
+      updatePresence({
+        selection: {
+          nodeIds: selectedNodeIds,
+          timestamp: new Date().toISOString(),
+        },
+      });
+    }
+  }, [selectedNodeIds, isCollaborationConnected, updatePresence]);
 
   const onConnect = useCallback(
     (params: Connection | Edge) => {
@@ -750,7 +800,7 @@ const WorkflowEditor: React.FC = () => {
         )}
 
         {/* Main Editor */}
-        <div className="flex-1 relative">
+        <div className="flex-1 relative" ref={setContainerRef}>
           <ReactFlowProvider>
             <ReactFlow
               nodes={memoizedNodes}
@@ -766,6 +816,26 @@ const WorkflowEditor: React.FC = () => {
               onDragOver={onDragOver}
               onEdgeMouseEnter={onEdgeMouseEnter}
               onEdgeMouseLeave={onEdgeMouseLeave}
+              onMouseMove={(event) => {
+                if (isCollaborationConnected) {
+                  const rect = event.currentTarget.getBoundingClientRect();
+                  const x = event.clientX - rect.left;
+                  const y = event.clientY - rect.top;
+                  updatePresence({ cursor: { x, y, timestamp: new Date().toISOString() } });
+                }
+              }}
+              onMoveEnd={(event, viewport) => {
+                if (isCollaborationConnected) {
+                  updatePresence({
+                    viewport: {
+                      x: viewport.x,
+                      y: viewport.y,
+                      zoom: viewport.zoom,
+                      timestamp: new Date().toISOString(),
+                    },
+                  });
+                }
+              }}
               nodeTypes={nodeTypes}
               edgeTypes={edgeTypes}
               connectionLineComponent={ConnectionLine}
@@ -822,6 +892,19 @@ const WorkflowEditor: React.FC = () => {
                     🤖
                   </button>
                 )}
+                <button
+                  onClick={toggleCollaborationPanel}
+                  className={`react-flow__controls-button ${
+                    collaborationPanelOpen ? "bg-green-100 border-green-300" : ""
+                  } ${isCollaborationConnected ? "bg-green-50" : ""}`}
+                  title={
+                    collaborationPanelOpen
+                      ? "Hide Collaboration Panel"
+                      : "Open Collaboration Panel"
+                  }
+                >
+                  👥
+                </button>
                 <button
                   onClick={() =>
                     setIsExecutionPanelVisible(!isExecutionPanelVisible)
@@ -908,6 +991,21 @@ const WorkflowEditor: React.FC = () => {
                 </button>
               </Panel>
               <Background color="#ffffff" gap={20} size={1} />
+
+              {/* User Presence Overlay */}
+              <UserPresenceOverlay
+                containerRef={{ current: containerRef }}
+                transform={reactFlowInstance?.getViewport() || { x: 0, y: 0, zoom: 1 }}
+              />
+
+              {/* Comment Annotations */}
+              <CommentAnnotations
+                containerRef={{ current: containerRef }}
+                transform={reactFlowInstance?.getViewport() || { x: 0, y: 0, zoom: 1 }}
+                onCommentClick={(position) => {
+                  console.log('Comment clicked at position:', position);
+                }}
+              />
             </ReactFlow>
           </ReactFlowProvider>
         </div>
@@ -943,6 +1041,12 @@ const WorkflowEditor: React.FC = () => {
         onToggle={() => setIsDebugPanelVisible(!isDebugPanelVisible)}
         position="left"
         currentExecutionId={currentExecutionId}
+      />
+
+      {/* Collaboration Panel */}
+      <CollaborationPanel
+        isVisible={collaborationPanelOpen}
+        onToggle={toggleCollaborationPanel}
       />
     </div>
   );

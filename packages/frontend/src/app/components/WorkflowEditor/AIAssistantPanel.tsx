@@ -22,7 +22,7 @@ import {
 import {
   RobotOutlined,
   MessageOutlined,
-  AnalyticsOutlined,
+  BarChartOutlined,
   BulbOutlined,
   SettingOutlined,
   SendOutlined,
@@ -270,7 +270,7 @@ const AnalysisTab: React.FC = () => {
       {/* Analysis Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <AnalyticsOutlined className="text-green-600" />
+          <BarChartOutlined className="text-green-600" />
           <span className="text-sm font-medium">Workflow Analysis</span>
         </div>
         <div className="flex gap-2">
@@ -285,7 +285,7 @@ const AnalysisTab: React.FC = () => {
           <Button
             type="primary"
             size="small"
-            icon={<AnalyticsOutlined />}
+            icon={<BarChartOutlined />}
             onClick={handleAnalyze}
             loading={isAnalyzing}
           >
@@ -356,11 +356,11 @@ const AnalysisTab: React.FC = () => {
         </div>
       ) : (
         <div className="text-center text-gray-500 py-8">
-          <AnalyticsOutlined className="text-3xl mb-2" />
+          <BarChartOutlined className="text-3xl mb-2" />
           <div className="text-sm mb-3">No analysis available</div>
           <Button
             type="primary"
-            icon={<AnalyticsOutlined />}
+            icon={<BarChartOutlined />}
             onClick={handleAnalyze}
             loading={isAnalyzing}
             disabled={nodes.length === 0}
@@ -1012,7 +1012,7 @@ export const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({
       key: "analysis",
       label: (
         <span className="flex items-center gap-1">
-          <AnalyticsOutlined />
+          <BarChartOutlined />
           Analysis
         </span>
       ),
