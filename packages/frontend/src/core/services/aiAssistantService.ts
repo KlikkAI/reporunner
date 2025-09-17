@@ -1,572 +1,635 @@
 /**
  * AI Assistant Service
  *
- * Core service for AI-powered workflow assistance, providing intelligent
- * suggestions, workflow optimization, and natural language interactions.
- * Inspired by SIM's AI copilot and GitHub Copilot's assistance patterns.
+ * Provides AI-powered workflow assistance including:
+ * - Natural language to workflow conversion
+ * - Intelligent node suggestions
+ * - Workflow optimization recommendations
+ * - Error diagnosis and solutions
+ * - Performance analysis and suggestions
  */
 
-import { nodeRegistry } from "../nodes";
-import type { WorkflowDefinition, WorkflowNodeInstance } from "../nodes/types";
-import type { WorkflowEdge } from "../stores/leanWorkflowStore";
+import { performanceMonitor } from './performanceMonitor';
+import type { WorkflowDefinition, NodeDefinition, ExecutionMetrics } from '@/core/types';
 
-export interface AIAssistantConfig {
-  apiKey?: string;
-  provider: "openai" | "anthropic" | "local" | "mock";
-  model?: string;
-  maxTokens?: number;
-  temperature?: number;
+export interface AIWorkflowSuggestion {
+  id: string;
+  type: 'optimization' | 'error-fix' | 'enhancement' | 'pattern';
+  title: string;
+  description: string;
+  confidence: number; // 0-1
+  impact: 'low' | 'medium' | 'high';
+  category: string;
+  suggestedChanges: SuggestedChange[];
+  reasoning: string;
+  estimatedBenefit: {
+    performance?: number; // percentage improvement
+    reliability?: number;
+    maintainability?: number;
+  };
+}
+
+export interface SuggestedChange {
+  type: 'add-node' | 'remove-node' | 'modify-node' | 'reorder-nodes' | 'add-connection';
+  nodeId?: string;
+  nodeType?: string;
+  parameters?: Record<string, any>;
+  position?: { x: number; y: number };
+  connection?: {
+    source: string;
+    target: string;
+    type?: string;
+  };
+  reason: string;
 }
 
 export interface WorkflowAnalysis {
-  complexity: "simple" | "moderate" | "complex";
-  efficiency: number; // 0-100 score
-  issues: WorkflowIssue[];
-  suggestions: WorkflowSuggestion[];
-  patterns: WorkflowPattern[];
-}
-
-export interface WorkflowIssue {
-  id: string;
-  type: "performance" | "logic" | "security" | "best-practice";
-  severity: "low" | "medium" | "high" | "critical";
-  nodeId?: string;
-  title: string;
-  description: string;
-  solution?: string;
-  autoFixAvailable: boolean;
-}
-
-export interface WorkflowSuggestion {
-  id: string;
-  type: "optimization" | "enhancement" | "alternative" | "cleanup";
-  priority: "low" | "medium" | "high";
-  title: string;
-  description: string;
-  expectedBenefit: string;
-  implementation: {
-    type:
-      | "node-addition"
-      | "node-modification"
-      | "restructure"
-      | "configuration";
-    details: any;
+  complexity: number; // 0-1
+  performance: {
+    bottlenecks: string[];
+    optimizationOpportunities: string[];
+    estimatedImprovement: number;
+  };
+  reliability: {
+    errorProneNodes: string[];
+    missingErrorHandling: string[];
+    suggestions: string[];
+  };
+  maintainability: {
+    codeQuality: number;
+    documentation: number;
+    modularity: number;
+  };
+  patterns: {
+    detected: string[];
+    recommendations: string[];
   };
 }
 
-export interface WorkflowPattern {
-  id: string;
-  name: string;
-  confidence: number; // 0-1
-  description: string;
-  commonUseCase: string;
-  optimization?: string;
-}
-
-export interface NodeSuggestion {
-  nodeType: string;
-  displayName: string;
-  description: string;
-  confidence: number; // 0-1
-  reasoning: string;
-  placement: {
-    position: { x: number; y: number };
-    connections: Array<{
-      sourceNodeId?: string;
-      targetNodeId?: string;
-      type: "input" | "output";
-    }>;
-  };
-}
-
-export interface AIChat {
-  id: string;
-  timestamp: string;
-  type: "user" | "assistant" | "system";
-  content: string;
+export interface NaturalLanguageRequest {
+  text: string;
   context?: {
-    workflowId?: string;
-    nodeId?: string;
-    action?: string;
+    currentWorkflow?: WorkflowDefinition;
+    userIntent?: string;
+    domain?: string;
   };
-  suggestions?: NodeSuggestion[];
+}
+
+export interface AIWorkflowGeneration {
+  workflow: WorkflowDefinition;
+  confidence: number;
+  explanation: string;
+  suggestedIntegrations: string[];
+  estimatedComplexity: number;
+}
+
+export interface ErrorDiagnosis {
+  errorId: string;
+  nodeId: string;
+  errorType: 'configuration' | 'connection' | 'execution' | 'data' | 'network';
+  severity: 'low' | 'medium' | 'high' | 'critical';
+  description: string;
+  rootCause: string;
+  solutions: ErrorSolution[];
+  preventionTips: string[];
+}
+
+export interface ErrorSolution {
+  id: string;
+  title: string;
+  description: string;
+  steps: string[];
+  automated: boolean;
+  estimatedTime: number; // minutes
+  successRate: number; // 0-1
 }
 
 export class AIAssistantService {
-  private config: AIAssistantConfig;
-  private chatHistory: AIChat[] = [];
+  private suggestionsCache = new Map<string, AIWorkflowSuggestion[]>();
   private analysisCache = new Map<string, WorkflowAnalysis>();
+  private errorPatterns = new Map<string, ErrorDiagnosis[]>();
 
-  constructor(config: AIAssistantConfig) {
-    this.config = config;
+  /**
+   * Generate workflow from natural language description
+   */
+  async generateWorkflowFromText(request: NaturalLanguageRequest): Promise<AIWorkflowGeneration> {
+    try {
+      // Simulate AI processing - in production, this would call OpenAI/Anthropic APIs
+      const analysis = this.analyzeNaturalLanguageRequest(request.text);
+      const workflow = this.createWorkflowFromAnalysis(analysis);
+      
+      return {
+        workflow,
+        confidence: analysis.confidence,
+        explanation: this.generateExplanation(workflow, analysis),
+        suggestedIntegrations: this.suggestIntegrations(analysis),
+        estimatedComplexity: this.calculateComplexity(workflow),
+      };
+    } catch (error) {
+      throw new Error(`Failed to generate workflow: ${error}`);
+    }
   }
 
   /**
-   * Analyze workflow and provide comprehensive insights
+   * Analyze workflow and provide optimization suggestions
    */
-  async analyzeWorkflow(
-    nodes: WorkflowNodeInstance[],
-    edges: WorkflowEdge[],
-    workflowDefinition?: WorkflowDefinition,
-  ): Promise<WorkflowAnalysis> {
-    const cacheKey = this.generateCacheKey(nodes, edges);
+  async analyzeWorkflow(workflow: WorkflowDefinition): Promise<AIWorkflowSuggestion[]> {
+    const cacheKey = this.getWorkflowCacheKey(workflow);
+    
+    if (this.suggestionsCache.has(cacheKey)) {
+      return this.suggestionsCache.get(cacheKey)!;
+    }
 
+    try {
+      const analysis = await this.performWorkflowAnalysis(workflow);
+      const suggestions = this.generateSuggestions(workflow, analysis);
+      
+      this.suggestionsCache.set(cacheKey, suggestions);
+      return suggestions;
+    } catch (error) {
+      console.error('Workflow analysis failed:', error);
+      return [];
+    }
+  }
+
+  /**
+   * Get intelligent node suggestions based on context
+   */
+  async getNodeSuggestions(
+    workflow: WorkflowDefinition,
+    position: { x: number; y: number },
+    context?: { inputData?: any; previousNodes?: string[] }
+  ): Promise<AIWorkflowSuggestion[]> {
+    try {
+      const analysis = this.analyzeNodeContext(workflow, position, context);
+      return this.generateNodeSuggestions(analysis);
+    } catch (error) {
+      console.error('Node suggestion generation failed:', error);
+      return [];
+    }
+  }
+
+  /**
+   * Diagnose workflow errors and provide solutions
+   */
+  async diagnoseErrors(
+    workflow: WorkflowDefinition,
+    executionMetrics: ExecutionMetrics[]
+  ): Promise<ErrorDiagnosis[]> {
+    try {
+      const errorPatterns = this.identifyErrorPatterns(executionMetrics);
+      const diagnoses = this.generateErrorDiagnoses(workflow, errorPatterns);
+      
+      return diagnoses;
+    } catch (error) {
+      console.error('Error diagnosis failed:', error);
+      return [];
+    }
+  }
+
+  /**
+   * Get performance optimization recommendations
+   */
+  async getPerformanceRecommendations(
+    workflow: WorkflowDefinition,
+    metrics: ExecutionMetrics[]
+  ): Promise<AIWorkflowSuggestion[]> {
+    try {
+      const bottlenecks = this.identifyBottlenecks(metrics);
+      const optimizations = this.generatePerformanceOptimizations(workflow, bottlenecks);
+      
+      return optimizations;
+    } catch (error) {
+      console.error('Performance analysis failed:', error);
+      return [];
+    }
+  }
+
+  /**
+   * Suggest workflow patterns and best practices
+   */
+  async suggestPatterns(workflow: WorkflowDefinition): Promise<AIWorkflowSuggestion[]> {
+    try {
+      const patterns = this.detectPatterns(workflow);
+      return this.generatePatternSuggestions(patterns);
+    } catch (error) {
+      console.error('Pattern analysis failed:', error);
+      return [];
+    }
+  }
+
+  // Private helper methods
+
+  private analyzeNaturalLanguageRequest(text: string): any {
+    // Simulate natural language processing
+    const keywords = this.extractKeywords(text);
+    const intent = this.classifyIntent(text);
+    const entities = this.extractEntities(text);
+    
+    return {
+      keywords,
+      intent,
+      entities,
+      confidence: 0.8, // Simulated confidence
+    };
+  }
+
+  private createWorkflowFromAnalysis(analysis: any): WorkflowDefinition {
+    // Simulate workflow generation based on analysis
+    return {
+      id: `ai_generated_${Date.now()}`,
+      name: 'AI Generated Workflow',
+      description: 'Generated from natural language description',
+      nodes: this.generateNodesFromAnalysis(analysis),
+      edges: this.generateEdgesFromAnalysis(analysis),
+      triggers: [],
+      variables: {},
+      settings: {},
+    };
+  }
+
+  private generateNodesFromAnalysis(analysis: any): NodeDefinition[] {
+    // Simulate node generation
+    return [
+      {
+        id: 'trigger_1',
+        type: 'trigger',
+        name: 'Start',
+        position: { x: 100, y: 100 },
+        parameters: {},
+      },
+      {
+        id: 'action_1',
+        type: 'action',
+        name: 'Process Data',
+        position: { x: 300, y: 100 },
+        parameters: {},
+      },
+    ];
+  }
+
+  private generateEdgesFromAnalysis(analysis: any): any[] {
+    return [
+      {
+        id: 'edge_1',
+        source: 'trigger_1',
+        target: 'action_1',
+        type: 'default',
+      },
+    ];
+  }
+
+  private generateExplanation(workflow: WorkflowDefinition, analysis: any): string {
+    return `This workflow was generated based on your description. It includes ${workflow.nodes.length} nodes and follows a ${analysis.intent} pattern.`;
+  }
+
+  private suggestIntegrations(analysis: any): string[] {
+    return ['Gmail', 'Slack', 'Google Sheets', 'OpenAI'];
+  }
+
+  private calculateComplexity(workflow: WorkflowDefinition): number {
+    const nodeCount = workflow.nodes.length;
+    const edgeCount = workflow.edges.length;
+    return Math.min(1, (nodeCount + edgeCount) / 20); // Normalize to 0-1
+  }
+
+  private async performWorkflowAnalysis(workflow: WorkflowDefinition): Promise<WorkflowAnalysis> {
+    const cacheKey = this.getWorkflowCacheKey(workflow);
+    
     if (this.analysisCache.has(cacheKey)) {
       return this.analysisCache.get(cacheKey)!;
     }
 
-    try {
-      const analysis = await this.performWorkflowAnalysis(
-        nodes,
-        edges,
-        workflowDefinition,
-      );
-      this.analysisCache.set(cacheKey, analysis);
-      return analysis;
-    } catch (error) {
-      console.error("AI workflow analysis failed:", error);
-      return this.getFallbackAnalysis(nodes, edges);
-    }
-  }
-
-  /**
-   * Get AI-powered node suggestions based on context
-   */
-  async getNodeSuggestions(context: {
-    currentNodes: WorkflowNodeInstance[];
-    currentEdges: WorkflowEdge[];
-    cursorPosition?: { x: number; y: number };
-    selectedNodeId?: string;
-    lastAction?: string;
-  }): Promise<NodeSuggestion[]> {
-    try {
-      return await this.generateNodeSuggestions(context);
-    } catch (error) {
-      console.error("AI node suggestions failed:", error);
-      return this.getFallbackNodeSuggestions(context);
-    }
-  }
-
-  /**
-   * Process natural language chat request
-   */
-  async processChat(
-    message: string,
-    context: {
-      workflowId?: string;
-      currentNodes?: WorkflowNodeInstance[];
-      currentEdges?: WorkflowEdge[];
-      selectedNodeId?: string;
-    },
-  ): Promise<AIChat> {
-    const userMessage: AIChat = {
-      id: `user-${Date.now()}`,
-      timestamp: new Date().toISOString(),
-      type: "user",
-      content: message,
-      context,
+    const analysis: WorkflowAnalysis = {
+      complexity: this.calculateWorkflowComplexity(workflow),
+      performance: this.analyzePerformance(workflow),
+      reliability: this.analyzeReliability(workflow),
+      maintainability: this.analyzeMaintainability(workflow),
+      patterns: this.detectPatterns(workflow),
     };
 
-    this.chatHistory.push(userMessage);
+    this.analysisCache.set(cacheKey, analysis);
+    return analysis;
+  }
 
-    try {
-      const response = await this.generateChatResponse(message, context);
-      this.chatHistory.push(response);
-      return response;
-    } catch (error) {
-      console.error("AI chat processing failed:", error);
-      return this.getFallbackChatResponse(message, context);
+  private calculateWorkflowComplexity(workflow: WorkflowDefinition): number {
+    const nodeCount = workflow.nodes.length;
+    const edgeCount = workflow.edges.length;
+    const conditionalNodes = workflow.nodes.filter(n => n.type === 'condition').length;
+    
+    return Math.min(1, (nodeCount * 0.3 + edgeCount * 0.2 + conditionalNodes * 0.5) / 10);
+  }
+
+  private analyzePerformance(workflow: WorkflowDefinition): WorkflowAnalysis['performance'] {
+    const bottlenecks: string[] = [];
+    const optimizationOpportunities: string[] = [];
+    
+    // Simulate performance analysis
+    if (workflow.nodes.length > 10) {
+      bottlenecks.push('Large number of nodes may cause performance issues');
+      optimizationOpportunities.push('Consider using parallel processing');
     }
-  }
-
-  /**
-   * Get workflow optimization suggestions
-   */
-  async optimizeWorkflow(
-    nodes: WorkflowNodeInstance[],
-    edges: WorkflowEdge[],
-  ): Promise<{
-    optimizedNodes: WorkflowNodeInstance[];
-    optimizedEdges: WorkflowEdge[];
-    changes: Array<{
-      type: "add" | "remove" | "modify";
-      target: "node" | "edge";
-      description: string;
-      reasoning: string;
-    }>;
-  }> {
-    try {
-      return await this.performWorkflowOptimization(nodes, edges);
-    } catch (error) {
-      console.error("AI workflow optimization failed:", error);
-      return {
-        optimizedNodes: nodes,
-        optimizedEdges: edges,
-        changes: [],
-      };
+    
+    const sequentialChains = this.findSequentialChains(workflow);
+    if (sequentialChains.length > 0) {
+      bottlenecks.push('Sequential execution chains detected');
+      optimizationOpportunities.push('Parallelize independent operations');
     }
-  }
-
-  /**
-   * Auto-fix workflow issues
-   */
-  async autoFixIssue(
-    issueId: string,
-    nodes: WorkflowNodeInstance[],
-    edges: WorkflowEdge[],
-  ): Promise<{
-    success: boolean;
-    fixedNodes: WorkflowNodeInstance[];
-    fixedEdges: WorkflowEdge[];
-    description: string;
-  }> {
-    try {
-      return await this.performAutoFix(issueId, nodes, edges);
-    } catch (error) {
-      console.error("AI auto-fix failed:", error);
-      return {
-        success: false,
-        fixedNodes: nodes,
-        fixedEdges: edges,
-        description: "Auto-fix failed: " + error.message,
-      };
-    }
-  }
-
-  /**
-   * Clear chat history
-   */
-  clearChatHistory(): void {
-    this.chatHistory = [];
-  }
-
-  /**
-   * Get chat history
-   */
-  getChatHistory(): AIChat[] {
-    return [...this.chatHistory];
-  }
-
-  /**
-   * Update AI configuration
-   */
-  updateConfig(newConfig: Partial<AIAssistantConfig>): void {
-    this.config = { ...this.config, ...newConfig };
-    this.analysisCache.clear(); // Clear cache when config changes
-  }
-
-  // Private methods for AI processing
-
-  private async performWorkflowAnalysis(
-    nodes: WorkflowNodeInstance[],
-    edges: WorkflowEdge[],
-    workflowDefinition?: WorkflowDefinition,
-  ): Promise<WorkflowAnalysis> {
-    if (this.config.provider === "mock") {
-      return this.getMockWorkflowAnalysis(nodes, edges);
-    }
-
-    // Real AI analysis would go here
-    const prompt = this.buildAnalysisPrompt(nodes, edges, workflowDefinition);
-    const response = await this.callAIProvider(prompt);
-    return this.parseAnalysisResponse(response);
-  }
-
-  private async generateNodeSuggestions(
-    context: any,
-  ): Promise<NodeSuggestion[]> {
-    if (this.config.provider === "mock") {
-      return this.getMockNodeSuggestions(context);
-    }
-
-    const prompt = this.buildNodeSuggestionPrompt(context);
-    const response = await this.callAIProvider(prompt);
-    return this.parseNodeSuggestions(response);
-  }
-
-  private async generateChatResponse(
-    message: string,
-    context: any,
-  ): Promise<AIChat> {
-    if (this.config.provider === "mock") {
-      return this.getMockChatResponse(message, context);
-    }
-
-    const prompt = this.buildChatPrompt(message, context);
-    const response = await this.callAIProvider(prompt);
 
     return {
-      id: `assistant-${Date.now()}`,
-      timestamp: new Date().toISOString(),
-      type: "assistant",
-      content: response.content,
-      suggestions: response.suggestions,
+      bottlenecks,
+      optimizationOpportunities,
+      estimatedImprovement: bottlenecks.length > 0 ? 0.3 : 0,
     };
   }
 
-  private async performWorkflowOptimization(
-    nodes: WorkflowNodeInstance[],
-    edges: WorkflowEdge[],
-  ) {
-    // Implement AI-powered workflow optimization
+  private analyzeReliability(workflow: WorkflowDefinition): WorkflowAnalysis['reliability'] {
+    const errorProneNodes: string[] = [];
+    const missingErrorHandling: string[] = [];
+    const suggestions: string[] = [];
+
+    // Simulate reliability analysis
+    workflow.nodes.forEach(node => {
+      if (node.type === 'http' || node.type === 'database') {
+        errorProneNodes.push(node.id);
+        missingErrorHandling.push(node.id);
+        suggestions.push(`Add error handling for ${node.name}`);
+      }
+    });
+
     return {
-      optimizedNodes: nodes,
-      optimizedEdges: edges,
-      changes: [],
+      errorProneNodes,
+      missingErrorHandling,
+      suggestions,
     };
   }
 
-  private async performAutoFix(
-    issueId: string,
-    nodes: WorkflowNodeInstance[],
-    edges: WorkflowEdge[],
-  ) {
-    // Implement AI-powered auto-fix
+  private analyzeMaintainability(workflow: WorkflowDefinition): WorkflowAnalysis['maintainability'] {
     return {
-      success: false,
-      fixedNodes: nodes,
-      fixedEdges: edges,
-      description: "Auto-fix not yet implemented",
+      codeQuality: 0.7, // Simulated
+      documentation: 0.5,
+      modularity: 0.8,
     };
   }
 
-  private async callAIProvider(prompt: string): Promise<any> {
-    switch (this.config.provider) {
-      case "openai":
-        return this.callOpenAI(prompt);
-      case "anthropic":
-        return this.callAnthropic(prompt);
-      case "local":
-        return this.callLocalAI(prompt);
-      default:
-        throw new Error(`Unsupported AI provider: ${this.config.provider}`);
+  private detectPatterns(workflow: WorkflowDefinition): WorkflowAnalysis['patterns'] {
+    const detected: string[] = [];
+    const recommendations: string[] = [];
+
+    // Simulate pattern detection
+    if (this.hasLoopPattern(workflow)) {
+      detected.push('Loop Pattern');
+      recommendations.push('Consider using Loop Container for better control');
     }
+
+    if (this.hasParallelPattern(workflow)) {
+      detected.push('Parallel Pattern');
+      recommendations.push('Use Parallel Container for optimal performance');
+    }
+
+    return { detected, recommendations };
   }
 
-  private async callOpenAI(prompt: string): Promise<any> {
-    // OpenAI API implementation
-    throw new Error("OpenAI integration not yet implemented");
-  }
+  private generateSuggestions(workflow: WorkflowDefinition, analysis: WorkflowAnalysis): AIWorkflowSuggestion[] {
+    const suggestions: AIWorkflowSuggestion[] = [];
 
-  private async callAnthropic(prompt: string): Promise<any> {
-    // Anthropic API implementation
-    throw new Error("Anthropic integration not yet implemented");
-  }
-
-  private async callLocalAI(prompt: string): Promise<any> {
-    // Local AI implementation
-    throw new Error("Local AI integration not yet implemented");
-  }
-
-  // Mock implementations for development
-
-  private getMockWorkflowAnalysis(
-    nodes: WorkflowNodeInstance[],
-    edges: WorkflowEdge[],
-  ): WorkflowAnalysis {
-    const complexity =
-      nodes.length > 10 ? "complex" : nodes.length > 5 ? "moderate" : "simple";
-    const efficiency = Math.max(20, 100 - nodes.length * 2 - edges.length);
-
-    return {
-      complexity,
-      efficiency,
-      issues: [
-        {
-          id: "perf-1",
-          type: "performance",
-          severity: "medium",
-          title: "Sequential Processing Detected",
-          description:
-            "Some nodes could be executed in parallel for better performance",
-          solution:
-            "Consider using a Parallel Container for concurrent execution",
-          autoFixAvailable: true,
-        },
-      ],
-      suggestions: [
-        {
-          id: "opt-1",
-          type: "optimization",
-          priority: "medium",
-          title: "Add Error Handling",
-          description: "Workflow lacks comprehensive error handling mechanisms",
-          expectedBenefit: "Improved reliability and easier debugging",
-          implementation: {
-            type: "node-addition",
-            details: {
-              nodeType: "error-handler",
-              position: "after-critical-nodes",
-            },
-          },
-        },
-      ],
-      patterns: [
-        {
-          id: "pattern-1",
-          name: "Data Processing Pipeline",
-          confidence: 0.85,
-          description: "Sequential data transformation workflow",
-          commonUseCase: "ETL operations and data cleaning",
-          optimization:
-            "Consider using Transform nodes for better data handling",
-        },
-      ],
-    };
-  }
-
-  private getMockNodeSuggestions(context: any): NodeSuggestion[] {
-    const suggestions: NodeSuggestion[] = [];
-
-    // Context-aware suggestions based on workflow state
-    if (context.currentNodes.length === 0) {
+    // Performance suggestions
+    if (analysis.performance.bottlenecks.length > 0) {
       suggestions.push({
-        nodeType: "trigger",
-        displayName: "Start Workflow",
-        description: "Begin your workflow with a trigger node",
-        confidence: 0.95,
-        reasoning: "Every workflow needs a starting point",
-        placement: {
-          position: { x: 100, y: 100 },
-          connections: [],
+        id: 'perf_1',
+        type: 'optimization',
+        title: 'Optimize Performance',
+        description: 'Address performance bottlenecks in your workflow',
+        confidence: 0.9,
+        impact: 'high',
+        category: 'performance',
+        suggestedChanges: this.generatePerformanceChanges(analysis.performance),
+        reasoning: 'Performance analysis detected bottlenecks that can be optimized',
+        estimatedBenefit: {
+          performance: analysis.performance.estimatedImprovement,
         },
       });
     }
 
-    if (context.selectedNodeId) {
-      const selectedNode = context.currentNodes.find(
-        (n) => n.id === context.selectedNodeId,
-      );
-      if (selectedNode?.type === "trigger") {
-        suggestions.push({
-          nodeType: "transform",
-          displayName: "Transform Data",
-          description: "Process and transform the incoming data",
-          confidence: 0.8,
-          reasoning:
-            "Transform nodes commonly follow trigger nodes for data processing",
-          placement: {
-            position: { x: 400, y: 100 },
-            connections: [
-              { sourceNodeId: context.selectedNodeId, type: "input" },
-            ],
-          },
-        });
-      }
+    // Reliability suggestions
+    if (analysis.reliability.missingErrorHandling.length > 0) {
+      suggestions.push({
+        id: 'rel_1',
+        type: 'enhancement',
+        title: 'Add Error Handling',
+        description: 'Improve workflow reliability with proper error handling',
+        confidence: 0.8,
+        impact: 'high',
+        category: 'reliability',
+        suggestedChanges: this.generateErrorHandlingChanges(analysis.reliability),
+        reasoning: 'Some nodes lack proper error handling mechanisms',
+        estimatedBenefit: {
+          reliability: 0.4,
+        },
+      });
     }
 
     return suggestions;
   }
 
-  private getMockChatResponse(message: string, context: any): AIChat {
-    let response = "";
-    let suggestions: NodeSuggestion[] = [];
+  private generatePerformanceChanges(performance: WorkflowAnalysis['performance']): SuggestedChange[] {
+    const changes: SuggestedChange[] = [];
 
-    // Simple keyword-based responses for demo
-    const lowerMessage = message.toLowerCase();
-
-    if (lowerMessage.includes("help") || lowerMessage.includes("how")) {
-      response =
-        "I'm here to help you build better workflows! I can analyze your workflow, suggest optimizations, and recommend nodes. What would you like assistance with?";
-    } else if (
-      lowerMessage.includes("optimize") ||
-      lowerMessage.includes("improve")
-    ) {
-      response =
-        "I can help optimize your workflow! Let me analyze the current structure and suggest improvements for better performance and reliability.";
-    } else if (lowerMessage.includes("add") || lowerMessage.includes("node")) {
-      response =
-        "I can suggest the best nodes to add based on your current workflow. What type of functionality are you looking to add?";
-      suggestions = this.getMockNodeSuggestions(context);
-    } else if (
-      lowerMessage.includes("error") ||
-      lowerMessage.includes("problem")
-    ) {
-      response =
-        "I can help identify and fix issues in your workflow. Let me analyze it for potential problems and suggest solutions.";
-    } else {
-      response =
-        "I understand you're working on your workflow. I can help with optimization, node suggestions, error detection, and general workflow advice. How can I assist you?";
+    if (performance.optimizationOpportunities.includes('Parallelize independent operations')) {
+      changes.push({
+        type: 'add-node',
+        nodeType: 'parallel-container',
+        reason: 'Add parallel processing for independent operations',
+      });
     }
 
+    return changes;
+  }
+
+  private generateErrorHandlingChanges(reliability: WorkflowAnalysis['reliability']): SuggestedChange[] {
+    const changes: SuggestedChange[] = [];
+
+    reliability.missingErrorHandling.forEach(nodeId => {
+      changes.push({
+        type: 'add-node',
+        nodeType: 'try-catch-container',
+        reason: `Add error handling for ${nodeId}`,
+      });
+    });
+
+    return changes;
+  }
+
+  private analyzeNodeContext(
+    workflow: WorkflowDefinition,
+    position: { x: number; y: number },
+    context?: { inputData?: any; previousNodes?: string[] }
+  ): any {
     return {
-      id: `assistant-${Date.now()}`,
-      timestamp: new Date().toISOString(),
-      type: "assistant",
-      content: response,
-      suggestions,
+      position,
+      context,
+      nearbyNodes: this.findNearbyNodes(workflow, position),
+      dataFlow: this.analyzeDataFlow(workflow, context?.previousNodes || []),
     };
   }
 
-  // Utility methods
+  private generateNodeSuggestions(analysis: any): AIWorkflowSuggestion[] {
+    const suggestions: AIWorkflowSuggestion[] = [];
 
-  private generateCacheKey(
-    nodes: WorkflowNodeInstance[],
-    edges: WorkflowEdge[],
-  ): string {
-    const nodeIds = nodes
-      .map((n) => n.id)
-      .sort()
-      .join(",");
-    const edgeIds = edges
-      .map((e) => `${e.source}-${e.target}`)
-      .sort()
-      .join(",");
-    return `${nodeIds}|${edgeIds}`;
+    // Simulate node suggestions based on context
+    if (analysis.dataFlow.includes('email')) {
+      suggestions.push({
+        id: 'node_suggestion_1',
+        type: 'enhancement',
+        title: 'Add Email Processing',
+        description: 'Consider adding email processing nodes',
+        confidence: 0.8,
+        impact: 'medium',
+        category: 'integration',
+        suggestedChanges: [{
+          type: 'add-node',
+          nodeType: 'gmail-send',
+          reason: 'Email data detected in flow',
+        }],
+        reasoning: 'Email data is present in the workflow',
+        estimatedBenefit: {
+          maintainability: 0.2,
+        },
+      });
+    }
+
+    return suggestions;
   }
 
-  private buildAnalysisPrompt(
-    nodes: WorkflowNodeInstance[],
-    edges: WorkflowEdge[],
-    workflowDefinition?: WorkflowDefinition,
-  ): string {
-    return `Analyze this workflow and provide insights...`;
+  private identifyErrorPatterns(metrics: ExecutionMetrics[]): any[] {
+    // Simulate error pattern identification
+    return metrics
+      .filter(m => m.status === 'failed')
+      .map(m => ({
+        nodeId: m.nodeId,
+        errorType: 'execution',
+        frequency: 1,
+      }));
   }
 
-  private buildNodeSuggestionPrompt(context: any): string {
-    return `Suggest appropriate nodes for this workflow context...`;
+  private generateErrorDiagnoses(workflow: WorkflowDefinition, patterns: any[]): ErrorDiagnosis[] {
+    return patterns.map(pattern => ({
+      errorId: `error_${pattern.nodeId}`,
+      nodeId: pattern.nodeId,
+      errorType: 'execution',
+      severity: 'medium',
+      description: 'Execution error detected',
+      rootCause: 'Node configuration or data issue',
+      solutions: [{
+        id: 'sol_1',
+        title: 'Check Node Configuration',
+        description: 'Verify node parameters and input data',
+        steps: ['Review node parameters', 'Check input data format', 'Test with sample data'],
+        automated: false,
+        estimatedTime: 5,
+        successRate: 0.8,
+      }],
+      preventionTips: ['Add input validation', 'Use error handling containers'],
+    }));
   }
 
-  private buildChatPrompt(message: string, context: any): string {
-    return `User message: ${message}. Provide helpful workflow assistance...`;
+  private identifyBottlenecks(metrics: ExecutionMetrics[]): any[] {
+    return metrics
+      .filter(m => m.duration && m.duration > 5000) // > 5 seconds
+      .map(m => ({
+        nodeId: m.nodeId,
+        duration: m.duration,
+        type: 'slow-execution',
+      }));
   }
 
-  private parseAnalysisResponse(response: any): WorkflowAnalysis {
-    // Parse AI response into structured analysis
-    return this.getMockWorkflowAnalysis([], []);
+  private generatePerformanceOptimizations(workflow: WorkflowDefinition, bottlenecks: any[]): AIWorkflowSuggestion[] {
+    return bottlenecks.map(bottleneck => ({
+      id: `perf_opt_${bottleneck.nodeId}`,
+      type: 'optimization',
+      title: `Optimize ${bottleneck.nodeId}`,
+      description: `This node is taking ${bottleneck.duration}ms to execute`,
+      confidence: 0.9,
+      impact: 'high',
+      category: 'performance',
+      suggestedChanges: [{
+        type: 'modify-node',
+        nodeId: bottleneck.nodeId,
+        reason: 'Optimize slow execution',
+      }],
+      reasoning: 'Node execution time exceeds optimal threshold',
+      estimatedBenefit: {
+        performance: 0.5,
+      },
+    }));
   }
 
-  private parseNodeSuggestions(response: any): NodeSuggestion[] {
-    // Parse AI response into node suggestions
+  private generatePatternSuggestions(patterns: WorkflowAnalysis['patterns']): AIWorkflowSuggestion[] {
+    return patterns.recommendations.map((recommendation, index) => ({
+      id: `pattern_${index}`,
+      type: 'pattern',
+      title: 'Apply Best Practice Pattern',
+      description: recommendation,
+      confidence: 0.7,
+      impact: 'medium',
+      category: 'pattern',
+      suggestedChanges: [],
+      reasoning: 'Following established patterns improves maintainability',
+      estimatedBenefit: {
+        maintainability: 0.3,
+      },
+    }));
+  }
+
+  private findSequentialChains(workflow: WorkflowDefinition): any[] {
+    // Simulate sequential chain detection
     return [];
   }
 
-  private getFallbackAnalysis(
-    nodes: WorkflowNodeInstance[],
-    edges: WorkflowEdge[],
-  ): WorkflowAnalysis {
-    return this.getMockWorkflowAnalysis(nodes, edges);
+  private hasLoopPattern(workflow: WorkflowDefinition): boolean {
+    return workflow.nodes.some(n => n.type === 'loop');
   }
 
-  private getFallbackNodeSuggestions(context: any): NodeSuggestion[] {
-    return this.getMockNodeSuggestions(context);
+  private hasParallelPattern(workflow: WorkflowDefinition): boolean {
+    return workflow.nodes.some(n => n.type === 'parallel');
   }
 
-  private getFallbackChatResponse(message: string, context: any): AIChat {
-    return {
-      id: `assistant-${Date.now()}`,
-      timestamp: new Date().toISOString(),
-      type: "assistant",
-      content:
-        "I'm currently experiencing some technical difficulties. Please try again in a moment.",
-      context,
-    };
+  private findNearbyNodes(workflow: WorkflowDefinition, position: { x: number; y: number }): NodeDefinition[] {
+    return workflow.nodes.filter(n => {
+      const distance = Math.sqrt(
+        Math.pow(n.position.x - position.x, 2) + Math.pow(n.position.y - position.y, 2)
+      );
+      return distance < 200;
+    });
+  }
+
+  private analyzeDataFlow(workflow: WorkflowDefinition, previousNodes: string[]): string[] {
+    // Simulate data flow analysis
+    return ['email', 'json', 'text'];
+  }
+
+  private extractKeywords(text: string): string[] {
+    // Simulate keyword extraction
+    return text.toLowerCase().split(' ').filter(word => word.length > 3);
+  }
+
+  private classifyIntent(text: string): string {
+    // Simulate intent classification
+    if (text.includes('email') || text.includes('send')) return 'email-automation';
+    if (text.includes('data') || text.includes('process')) return 'data-processing';
+    if (text.includes('webhook') || text.includes('api')) return 'api-integration';
+    return 'general-automation';
+  }
+
+  private extractEntities(text: string): string[] {
+    // Simulate entity extraction
+    return [];
+  }
+
+  private getWorkflowCacheKey(workflow: WorkflowDefinition): string {
+    return `${workflow.id}_${workflow.nodes.length}_${workflow.edges.length}`;
   }
 }
 
-// Export singleton instance with mock configuration for development
-export const aiAssistant = new AIAssistantService({
-  provider: "mock", // Use mock by default for development
-  temperature: 0.7,
-  maxTokens: 2000,
-});
+// Export singleton instance
+export const aiAssistantService = new AIAssistantService();

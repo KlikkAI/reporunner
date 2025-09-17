@@ -1,25 +1,38 @@
 /**
- * Enhanced Debug Panel
+ * Debug Panel Component
  *
- * Comprehensive debugging interface with breakpoints, call stack,
- * variable inspection, and step-through execution controls.
- * Inspired by modern IDE debugging panels.
+ * Comprehensive debugging interface providing:
+ * - Breakpoint management and execution control
+ * - Step-through debugging with call stack visualization
+ * - Data inspection and variable watching
+ * - Execution history and replay functionality
+ * - Performance profiling and metrics
  */
 
-import React, { useState, useCallback, useEffect, useMemo } from "react";
+import React, { useState, useCallback, useEffect } from 'react';
 import {
-  Drawer,
-  Tabs,
-  Button,
   Card,
+  Button,
+  Space,
+  Typography,
+  Tabs,
+  List,
   Badge,
   Tooltip,
+  Modal,
+  Form,
   Input,
+  Select,
   Switch,
-  Tree,
-  Table,
+  InputNumber,
+  Alert,
+  Collapse,
+  Tag,
+  Divider,
   Progress,
-} from "antd";
+  Timeline,
+  Tree,
+} from 'antd';
 import {
   BugOutlined,
   PlayCircleOutlined,
@@ -27,760 +40,768 @@ import {
   StepForwardOutlined,
   StepBackwardOutlined,
   StopOutlined,
+  ReloadOutlined,
   EyeOutlined,
-  DeleteOutlined,
-  DownOutlined,
-  RightOutlined,
-  ClockCircleOutlined,
-  ThunderboltOutlined,
   CodeOutlined,
-  DatabaseOutlined,
-  BarChartOutlined,
-} from "@ant-design/icons";
-import { cn } from "@/design-system/utils";
-import { workflowDebugger } from "@/core/services/workflowDebugger";
-import { useLeanWorkflowStore } from "@/core/stores/leanWorkflowStore";
+  HistoryOutlined,
+  SettingOutlined,
+  PlusOutlined,
+  DeleteOutlined,
+  EditOutlined,
+  InfoCircleOutlined,
+  WarningOutlined,
+  CheckCircleOutlined,
+  CloseCircleOutlined,
+} from '@ant-design/icons';
+import { cn } from '@/design-system/utils';
+import { JsonViewer } from '@/design-system';
+import { enhancedDebuggingService } from '@/core/services/enhancedDebuggingService';
 import type {
   DebugSession,
   DebugBreakpoint,
-  DebugFrame,
-  DebugVariable,
-  DebugStep,
-} from "@/core/services/workflowDebugger";
+  CallStackFrame,
+  WatchExpression,
+  ExecutionStep,
+  DataInspector,
+  DebugEvent,
+  DebugMetrics,
+} from '@/core/types/debugging';
 
-const { TextArea } = Input;
+const { Title, Text, Paragraph } = Typography;
+const { TabPane } = Tabs;
+const { Panel } = Collapse;
+const { TreeNode } = Tree;
 
 interface DebugPanelProps {
-  isVisible: boolean;
-  onToggle: () => void;
-  position?: "left" | "right" | "bottom";
-  currentExecutionId?: string;
+  workflowId?: string;
+  executionId?: string;
+  className?: string;
 }
 
-interface BreakpointItemProps {
-  breakpoint: DebugBreakpoint;
-  onToggle: (nodeId: string) => void;
-  onRemove: (nodeId: string) => void;
-  onEdit: (nodeId: string, condition?: string) => void;
-}
-
-const BreakpointItem: React.FC<BreakpointItemProps> = ({
-  breakpoint,
-  onToggle,
-  onRemove,
-  onEdit,
+const DebugPanel: React.FC<DebugPanelProps> = ({
+  workflowId,
+  executionId,
+  className,
 }) => {
-  const [isEditing, setIsEditing] = useState(false);
-  const [condition, setCondition] = useState(breakpoint.condition || "");
+  const [activeTab, setActiveTab] = useState('controls');
+  const [session, setSession] = useState<DebugSession | null>(null);
+  const [isDebugging, setIsDebugging] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
+  const [currentStep, setCurrentStep] = useState<ExecutionStep | null>(null);
+  const [breakpoints, setBreakpoints] = useState<Map<string, DebugBreakpoint[]>>(new Map());
+  const [watchExpressions, setWatchExpressions] = useState<WatchExpression[]>([]);
+  const [callStack, setCallStack] = useState<CallStackFrame[]>([]);
+  const [variables, setVariables] = useState<Record<string, any>>({});
+  const [executionHistory, setExecutionHistory] = useState<ExecutionStep[]>([]);
+  const [metrics, setMetrics] = useState<DebugMetrics | null>(null);
+  const [isBreakpointModalOpen, setIsBreakpointModalOpen] = useState(false);
+  const [isWatchModalOpen, setIsWatchModalOpen] = useState(false);
+  const [selectedNodeId, setSelectedNodeId] = useState<string>('');
+  const [newWatchExpression, setNewWatchExpression] = useState('');
 
-  const handleSave = useCallback(() => {
-    onEdit(breakpoint.nodeId, condition || undefined);
-    setIsEditing(false);
-  }, [breakpoint.nodeId, condition, onEdit]);
+  // Subscribe to debug events
+  useEffect(() => {
+    const unsubscribe = enhancedDebuggingService.subscribe((event: DebugEvent) => {
+      handleDebugEvent(event);
+    });
 
-  return (
-    <Card
-      size="small"
-      className={cn("mb-2", !breakpoint.enabled && "opacity-50")}
-    >
-      <div className="flex items-start justify-between">
-        <div className="flex-1">
-          <div className="flex items-center gap-2 mb-1">
-            <div
-              className={cn(
-                "w-3 h-3 rounded-full cursor-pointer",
-                breakpoint.enabled ? "bg-red-500" : "bg-gray-300",
-              )}
-              onClick={() => onToggle(breakpoint.nodeId)}
-            />
-            <span className="text-sm font-medium">
-              Node: {breakpoint.nodeId}
-            </span>
-            <Badge count={breakpoint.hitCount} size="small" />
+    return unsubscribe;
+  }, []);
+
+  const handleDebugEvent = useCallback((event: DebugEvent) => {
+    switch (event.type) {
+      case 'session-started':
+        setIsDebugging(true);
+        break;
+      case 'session-ended':
+        setIsDebugging(false);
+        setIsPaused(false);
+        setSession(null);
+        break;
+      case 'step-completed':
+        setCurrentStep(event.data);
+        updateSessionData();
+        break;
+      case 'breakpoint-hit':
+        setIsPaused(true);
+        updateSessionData();
+        break;
+      case 'error-occurred':
+        setIsPaused(true);
+        updateSessionData();
+        break;
+    }
+  }, []);
+
+  const updateSessionData = useCallback(() => {
+    const currentSession = enhancedDebuggingService.getCurrentSession();
+    if (currentSession) {
+      setSession(currentSession);
+      setCallStack(enhancedDebuggingService.getCallStack());
+      setVariables(enhancedDebuggingService.getVariables());
+      setMetrics(enhancedDebuggingService.getDebugMetrics());
+    }
+  }, []);
+
+  const startDebugging = useCallback(async () => {
+    if (!workflowId || !executionId) return;
+
+    try {
+      await enhancedDebuggingService.startDebugging(workflowId, executionId);
+      setIsDebugging(true);
+      updateSessionData();
+    } catch (error) {
+      console.error('Failed to start debugging:', error);
+    }
+  }, [workflowId, executionId, updateSessionData]);
+
+  const stopDebugging = useCallback(() => {
+    enhancedDebuggingService.stopDebugging();
+    setIsDebugging(false);
+    setIsPaused(false);
+    setSession(null);
+  }, []);
+
+  const pauseExecution = useCallback(() => {
+    enhancedDebuggingService.pauseExecution();
+    setIsPaused(true);
+  }, []);
+
+  const resumeExecution = useCallback(() => {
+    enhancedDebuggingService.resumeExecution();
+    setIsPaused(false);
+  }, []);
+
+  const stepOver = useCallback(() => {
+    enhancedDebuggingService.stepOver();
+    setIsPaused(true);
+  }, []);
+
+  const stepInto = useCallback(() => {
+    enhancedDebuggingService.stepInto();
+    setIsPaused(true);
+  }, []);
+
+  const stepOut = useCallback(() => {
+    enhancedDebuggingService.stepOut();
+    setIsPaused(true);
+  }, []);
+
+  const addBreakpoint = useCallback((nodeId: string, condition?: string) => {
+    enhancedDebuggingService.addBreakpoint(nodeId, {
+      nodeId,
+      enabled: true,
+      hitCount: 0,
+      condition,
+      actions: [{ type: 'pause' }],
+      createdAt: Date.now(),
+    });
+    updateSessionData();
+  }, [updateSessionData]);
+
+  const removeBreakpoint = useCallback((nodeId: string, breakpointId: string) => {
+    enhancedDebuggingService.removeBreakpoint(nodeId, breakpointId);
+    updateSessionData();
+  }, [updateSessionData]);
+
+  const toggleBreakpoint = useCallback((nodeId: string, breakpointId: string) => {
+    enhancedDebuggingService.toggleBreakpoint(nodeId, breakpointId);
+    updateSessionData();
+  }, [updateSessionData]);
+
+  const addWatchExpression = useCallback(() => {
+    if (newWatchExpression.trim()) {
+      enhancedDebuggingService.addWatchExpression(newWatchExpression.trim());
+      setNewWatchExpression('');
+      setIsWatchModalOpen(false);
+      updateSessionData();
+    }
+  }, [newWatchExpression, updateSessionData]);
+
+  const removeWatchExpression = useCallback((id: string) => {
+    enhancedDebuggingService.removeWatchExpression(id);
+    updateSessionData();
+  }, [updateSessionData]);
+
+  const inspectData = useCallback((nodeId: string, type: DataInspector['type']) => {
+    return enhancedDebuggingService.inspectData(nodeId, type);
+  }, []);
+
+  const getStatusColor = () => {
+    if (!isDebugging) return 'gray';
+    if (isPaused) return 'orange';
+    return 'green';
+  };
+
+  const getStatusText = () => {
+    if (!isDebugging) return 'Not Debugging';
+    if (isPaused) return 'Paused';
+    return 'Running';
+  };
+
+  const renderDebugControls = () => (
+    <Card size="small" className="bg-gray-800 border-gray-600 mb-4">
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <BugOutlined className="text-blue-400" />
+            <Title level={5} className="text-white mb-0">Debug Controls</Title>
           </div>
+          <div className="flex items-center gap-2">
+            <Badge
+              status={getStatusColor() as any}
+              text={getStatusText()}
+              className="text-gray-300"
+            />
+          </div>
+        </div>
 
-          {isEditing ? (
-            <div className="space-y-2">
-              <Input
-                placeholder="Condition (e.g., input.value > 100)"
-                value={condition}
-                onChange={(e) => setCondition(e.target.value)}
-                size="small"
-              />
-              <div className="flex gap-1">
-                <Button size="small" type="primary" onClick={handleSave}>
-                  Save
-                </Button>
-                <Button size="small" onClick={() => setIsEditing(false)}>
-                  Cancel
-                </Button>
-              </div>
-            </div>
+        <div className="flex items-center gap-2">
+          {!isDebugging ? (
+            <Button
+              type="primary"
+              icon={<PlayCircleOutlined />}
+              onClick={startDebugging}
+              disabled={!workflowId || !executionId}
+            >
+              Start Debugging
+            </Button>
           ) : (
             <>
-              {breakpoint.condition && (
-                <div className="text-xs text-gray-600 mb-1">
-                  Condition:{" "}
-                  <code className="bg-gray-100 px-1 rounded">
-                    {breakpoint.condition}
-                  </code>
-                </div>
-              )}
-              <div className="flex gap-1">
+              {isPaused ? (
                 <Button
-                  size="small"
-                  type="text"
-                  onClick={() => setIsEditing(true)}
-                  className="text-blue-600"
+                  type="primary"
+                  icon={<PlayCircleOutlined />}
+                  onClick={resumeExecution}
                 >
-                  Edit
+                  Resume
                 </Button>
+              ) : (
                 <Button
-                  size="small"
-                  type="text"
-                  icon={<DeleteOutlined />}
-                  onClick={() => onRemove(breakpoint.nodeId)}
-                  className="text-red-600"
-                />
-              </div>
+                  icon={<PauseCircleOutlined />}
+                  onClick={pauseExecution}
+                >
+                  Pause
+                </Button>
+              )}
+              
+              <Button
+                icon={<StepForwardOutlined />}
+                onClick={stepOver}
+                disabled={!isPaused}
+                title="Step Over"
+              />
+              
+              <Button
+                icon={<StepBackwardOutlined />}
+                onClick={stepInto}
+                disabled={!isPaused}
+                title="Step Into"
+              />
+              
+              <Button
+                icon={<StopOutlined />}
+                onClick={stepOut}
+                disabled={!isPaused}
+                title="Step Out"
+              />
+              
+              <Button
+                danger
+                icon={<StopOutlined />}
+                onClick={stopDebugging}
+              >
+                Stop
+              </Button>
             </>
           )}
         </div>
+
+        {session && (
+          <div className="grid grid-cols-2 gap-4 text-sm">
+            <div>
+              <Text className="text-gray-400">Session ID:</Text>
+              <div className="text-white font-mono">{session.id}</div>
+            </div>
+            <div>
+              <Text className="text-gray-400">Step Count:</Text>
+              <div className="text-white">{session.stepCount}</div>
+            </div>
+            <div>
+              <Text className="text-gray-400">Duration:</Text>
+              <div className="text-white">
+                {Math.round((Date.now() - session.startTime) / 1000)}s
+              </div>
+            </div>
+            <div>
+              <Text className="text-gray-400">Current Node:</Text>
+              <div className="text-white">{session.currentNodeId || 'None'}</div>
+            </div>
+          </div>
+        )}
       </div>
     </Card>
   );
-};
 
-const BreakpointsTab: React.FC<{ session?: DebugSession }> = ({ session }) => {
-  const [newBreakpointNode, setNewBreakpointNode] = useState("");
-  const [newBreakpointCondition, setNewBreakpointCondition] = useState("");
-  const { nodes } = useLeanWorkflowStore();
-
-  const breakpoints = useMemo(() => workflowDebugger.getBreakpoints(), []);
-
-  const handleAddBreakpoint = useCallback(() => {
-    if (!newBreakpointNode.trim()) return;
-
-    workflowDebugger.setBreakpoint(
-      newBreakpointNode.trim(),
-      newBreakpointCondition.trim() || undefined,
-    );
-
-    setNewBreakpointNode("");
-    setNewBreakpointCondition("");
-  }, [newBreakpointNode, newBreakpointCondition]);
-
-  const handleToggleBreakpoint = useCallback((nodeId: string) => {
-    workflowDebugger.toggleBreakpoint(nodeId);
-  }, []);
-
-  const handleRemoveBreakpoint = useCallback((nodeId: string) => {
-    workflowDebugger.removeBreakpoint(nodeId);
-  }, []);
-
-  const handleEditBreakpoint = useCallback(
-    (nodeId: string, condition?: string) => {
-      workflowDebugger.setBreakpoint(nodeId, condition);
-    },
-    [],
-  );
-
-  return (
-    <div className="p-3 space-y-4">
-      {/* Add Breakpoint */}
-      <Card size="small" title="Add Breakpoint">
-        <div className="space-y-2">
-          <div>
-            <label className="text-xs text-gray-600">Node ID</label>
-            <Input
-              placeholder="Enter node ID"
-              value={newBreakpointNode}
-              onChange={(e) => setNewBreakpointNode(e.target.value)}
-              size="small"
-            />
-          </div>
-          <div>
-            <label className="text-xs text-gray-600">
-              Condition (optional)
-            </label>
-            <Input
-              placeholder="e.g., input.value > 100"
-              value={newBreakpointCondition}
-              onChange={(e) => setNewBreakpointCondition(e.target.value)}
-              size="small"
-            />
-          </div>
-          <Button
-            type="primary"
-            size="small"
-            onClick={handleAddBreakpoint}
-            disabled={!newBreakpointNode.trim()}
-            block
-          >
-            Add Breakpoint
-          </Button>
-        </div>
-      </Card>
-
-      {/* Breakpoints List */}
-      <div>
-        <h3 className="text-sm font-medium mb-2">
-          Breakpoints ({breakpoints.length})
-        </h3>
-        {breakpoints.length === 0 ? (
-          <div className="text-center text-gray-500 py-4">
-            <BugOutlined className="text-2xl mb-2" />
-            <div className="text-sm">No breakpoints set</div>
-          </div>
-        ) : (
-          breakpoints.map((breakpoint) => (
-            <BreakpointItem
-              key={breakpoint.id}
-              breakpoint={breakpoint}
-              onToggle={handleToggleBreakpoint}
-              onRemove={handleRemoveBreakpoint}
-              onEdit={handleEditBreakpoint}
-            />
-          ))
-        )}
-      </div>
-    </div>
-  );
-};
-
-const CallStackTab: React.FC<{ session?: DebugSession }> = ({ session }) => {
-  if (!session) {
-    return (
-      <div className="p-3 text-center text-gray-500 py-8">
-        <CodeOutlined className="text-3xl mb-2" />
-        <div className="text-sm">No active debug session</div>
-      </div>
-    );
-  }
-
-  const callStackData = session.callStack
-    .map((nodeId, index) => {
-      const frame = session.frames.find((f) => f.nodeId === nodeId);
-      return {
-        key: index,
-        index: session.callStack.length - index,
-        nodeId,
-        nodeName: frame?.nodeName || nodeId,
-        nodeType: frame?.nodeType || "unknown",
-        status: frame?.status || "pending",
-        duration: frame?.performance.duration || 0,
-      };
-    })
-    .reverse(); // Show most recent first
-
-  const columns = [
-    {
-      title: "#",
-      dataIndex: "index",
-      key: "index",
-      width: 40,
-      render: (index: number, record: any) => (
-        <span
-          className={cn(
-            "text-xs",
-            index === 1 && "font-bold text-blue-600", // Current frame
-          )}
+  const renderBreakpoints = () => (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <Title level={5} className="text-white mb-0">Breakpoints</Title>
+        <Button
+          type="dashed"
+          size="small"
+          icon={<PlusOutlined />}
+          onClick={() => setIsBreakpointModalOpen(true)}
         >
-          {index}
-        </span>
-      ),
-    },
-    {
-      title: "Node",
-      dataIndex: "nodeName",
-      key: "nodeName",
-      render: (name: string, record: any) => (
-        <div>
-          <div className="text-sm font-medium">{name}</div>
-          <div className="text-xs text-gray-500">{record.nodeType}</div>
-        </div>
-      ),
-    },
-    {
-      title: "Status",
-      dataIndex: "status",
-      key: "status",
-      width: 80,
-      render: (status: string) => (
-        <Badge
-          status={
-            status === "completed"
-              ? "success"
-              : status === "failed"
-                ? "error"
-                : status === "running"
-                  ? "processing"
-                  : "default"
-          }
-          text={status}
-        />
-      ),
-    },
-    {
-      title: "Time",
-      dataIndex: "duration",
-      key: "duration",
-      width: 70,
-      render: (duration: number) => (
-        <span className="text-xs">{duration > 0 ? `${duration}ms` : "-"}</span>
-      ),
-    },
-  ];
-
-  return (
-    <div className="p-3">
-      <div className="flex items-center gap-2 mb-3">
-        <CodeOutlined className="text-blue-600" />
-        <span className="text-sm font-medium">Call Stack</span>
-        <Badge count={session.callStack.length} size="small" />
+          Add Breakpoint
+        </Button>
       </div>
 
-      <Table
-        dataSource={callStackData}
-        columns={columns}
-        pagination={false}
-        size="small"
-        scroll={{ y: 300 }}
-        className="debug-call-stack"
-      />
+      {session && session.breakpoints.size === 0 ? (
+        <div className="text-center text-gray-500 py-8">
+          <BugOutlined className="text-4xl mb-2" />
+          <div>No breakpoints set</div>
+          <div className="text-xs mt-2">Add breakpoints to pause execution at specific nodes</div>
+        </div>
+      ) : (
+        <div className="space-y-2">
+          {Array.from(session?.breakpoints.entries() || []).map(([nodeId, breakpoints]) =>
+            breakpoints.map(breakpoint => (
+              <Card
+                key={breakpoint.id}
+                size="small"
+                className="bg-gray-800 border-gray-600"
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Switch
+                      size="small"
+                      checked={breakpoint.enabled}
+                      onChange={() => toggleBreakpoint(nodeId, breakpoint.id)}
+                    />
+                    <div>
+                      <div className="text-white text-sm font-medium">Node: {nodeId}</div>
+                      {breakpoint.condition && (
+                        <div className="text-gray-400 text-xs">
+                          Condition: {breakpoint.condition}
+                        </div>
+                      )}
+                      <div className="text-gray-500 text-xs">
+                        Hits: {breakpoint.hitCount}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <Badge
+                      count={breakpoint.hitCount}
+                      size="small"
+                      style={{ backgroundColor: '#1890ff' }}
+                    />
+                    <Button
+                      type="text"
+                      size="small"
+                      icon={<DeleteOutlined />}
+                      onClick={() => removeBreakpoint(nodeId, breakpoint.id)}
+                      className="text-red-400 hover:text-red-300"
+                    />
+                  </div>
+                </div>
+              </Card>
+            ))
+          )}
+        </div>
+      )}
     </div>
   );
-};
 
-const VariablesTab: React.FC<{ session?: DebugSession }> = ({ session }) => {
-  const [expandedKeys, setExpandedKeys] = useState<string[]>([]);
-  const [watchExpression, setWatchExpression] = useState("");
-
-  const currentFrame = session?.frames[session.frames.length - 1];
-
-  const handleAddWatch = useCallback(() => {
-    if (!session || !watchExpression.trim()) return;
-
-    workflowDebugger.addWatchExpression(session.id, watchExpression.trim());
-    setWatchExpression("");
-  }, [session, watchExpression]);
-
-  const handleRemoveWatch = useCallback(
-    (expression: string) => {
-      if (!session) return;
-      workflowDebugger.removeWatchExpression(session.id, expression);
-    },
-    [session],
-  );
-
-  // Convert variables to tree structure
-  const variableTree = useMemo(() => {
-    if (!currentFrame) return [];
-
-    const scopeGroups = currentFrame.variables.reduce(
-      (groups, variable) => {
-        if (!groups[variable.scope]) {
-          groups[variable.scope] = [];
-        }
-        groups[variable.scope].push(variable);
-        return groups;
-      },
-      {} as Record<string, DebugVariable[]>,
-    );
-
-    return Object.entries(scopeGroups).map(([scope, variables]) => ({
-      title: scope.toUpperCase(),
-      key: scope,
-      icon: <DatabaseOutlined />,
-      children: variables.map((variable) => ({
-        title: (
-          <div className="flex justify-between items-center">
-            <span>
-              <span className="font-medium">{variable.name}</span>
-              <span className="text-xs text-gray-500 ml-2">
-                ({variable.type})
-              </span>
-            </span>
-            <span className="text-xs text-blue-600">
-              {JSON.stringify(variable.value).slice(0, 50)}
-              {JSON.stringify(variable.value).length > 50 ? "..." : ""}
-            </span>
-          </div>
-        ),
-        key: `${scope}-${variable.name}`,
-        isLeaf: true,
-      })),
-    }));
-  }, [currentFrame]);
-
-  if (!session) {
-    return (
-      <div className="p-3 text-center text-gray-500 py-8">
-        <EyeOutlined className="text-3xl mb-2" />
-        <div className="text-sm">No active debug session</div>
+  const renderWatchExpressions = () => (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <Title level={5} className="text-white mb-0">Watch Expressions</Title>
+        <Button
+          type="dashed"
+          size="small"
+          icon={<PlusOutlined />}
+          onClick={() => setIsWatchModalOpen(true)}
+        >
+          Add Watch
+        </Button>
       </div>
-    );
-  }
 
-  return (
-    <div className="p-3 space-y-4">
-      {/* Watch Expressions */}
-      <Card size="small" title="Watch">
+      {watchExpressions.length === 0 ? (
+        <div className="text-center text-gray-500 py-8">
+          <EyeOutlined className="text-4xl mb-2" />
+          <div>No watch expressions</div>
+          <div className="text-xs mt-2">Add expressions to monitor variable values</div>
+        </div>
+      ) : (
         <div className="space-y-2">
-          <div className="flex gap-2">
-            <Input
-              placeholder="Enter expression to watch"
-              value={watchExpression}
-              onChange={(e) => setWatchExpression(e.target.value)}
+          {watchExpressions.map(watch => (
+            <Card
+              key={watch.id}
               size="small"
-              onPressEnter={handleAddWatch}
-            />
-            <Button
-              type="primary"
-              size="small"
-              onClick={handleAddWatch}
-              disabled={!watchExpression.trim()}
+              className="bg-gray-800 border-gray-600"
             >
-              Add
-            </Button>
-          </div>
-
-          {session.watchedVariables.map((watch, index) => (
-            <div
-              key={index}
-              className="flex justify-between items-center bg-gray-50 p-2 rounded"
-            >
-              <div className="flex-1">
-                <div className="text-sm font-medium">{watch.expression}</div>
-                <div className="text-xs text-gray-600">
-                  {watch.error ? (
-                    <span className="text-red-600">Error: {watch.error}</span>
-                  ) : (
-                    JSON.stringify(watch.value)
-                  )}
+              <div className="flex items-center justify-between">
+                <div className="flex-1">
+                  <div className="text-white text-sm font-mono">{watch.expression}</div>
+                  <div className="text-gray-400 text-xs mt-1">
+                    {watch.error ? (
+                      <span className="text-red-400">Error: {watch.error}</span>
+                    ) : (
+                      <>
+                        <span className="text-green-400">Value: </span>
+                        <span className="font-mono">
+                          {typeof watch.value === 'object' 
+                            ? JSON.stringify(watch.value) 
+                            : String(watch.value)
+                          }
+                        </span>
+                        <span className="text-gray-500 ml-2">({watch.type})</span>
+                      </>
+                    )}
+                  </div>
                 </div>
+                <Button
+                  type="text"
+                  size="small"
+                  icon={<DeleteOutlined />}
+                  onClick={() => removeWatchExpression(watch.id)}
+                  className="text-red-400 hover:text-red-300"
+                />
               </div>
-              <Button
-                type="text"
-                size="small"
-                icon={<DeleteOutlined />}
-                onClick={() => handleRemoveWatch(watch.expression)}
-                className="text-red-600"
-              />
-            </div>
+            </Card>
           ))}
         </div>
-      </Card>
-
-      {/* Variables Tree */}
-      <div>
-        <h3 className="text-sm font-medium mb-2">Variables</h3>
-        {variableTree.length > 0 ? (
-          <Tree
-            treeData={variableTree}
-            defaultExpandAll
-            showIcon
-            className="debug-variables-tree"
-          />
-        ) : (
-          <div className="text-center text-gray-500 py-4">
-            <DatabaseOutlined className="text-2xl mb-2" />
-            <div className="text-sm">No variables available</div>
-          </div>
-        )}
-      </div>
+      )}
     </div>
   );
-};
 
-const PerformanceTab: React.FC<{ session?: DebugSession }> = ({ session }) => {
-  if (!session) {
-    return (
-      <div className="p-3 text-center text-gray-500 py-8">
-        <BarChartOutlined className="text-3xl mb-2" />
-        <div className="text-sm">No active debug session</div>
-      </div>
-    );
-  }
-
-  const performanceData = session.frames
-    .filter((frame) => frame.performance.duration)
-    .map((frame) => ({
-      key: frame.id,
-      nodeName: frame.nodeName,
-      nodeType: frame.nodeType,
-      duration: frame.performance.duration!,
-      status: frame.status,
-    }))
-    .sort((a, b) => b.duration - a.duration);
-
-  const totalTime = performanceData.reduce(
-    (sum, item) => sum + item.duration,
-    0,
+  const renderCallStack = () => (
+    <div className="space-y-4">
+      <Title level={5} className="text-white mb-0">Call Stack</Title>
+      
+      {callStack.length === 0 ? (
+        <div className="text-center text-gray-500 py-8">
+          <CodeOutlined className="text-4xl mb-2" />
+          <div>Call stack is empty</div>
+          <div className="text-xs mt-2">Start debugging to see the call stack</div>
+        </div>
+      ) : (
+        <Timeline
+          items={callStack.map((frame, index) => ({
+            color: index === callStack.length - 1 ? 'blue' : 'gray',
+            children: (
+              <div className="space-y-1">
+                <div className="text-white font-medium">{frame.nodeName}</div>
+                <div className="text-gray-400 text-sm">{frame.nodeType}</div>
+                <div className="text-gray-500 text-xs">
+                  {new Date(frame.timestamp).toLocaleTimeString()}
+                </div>
+              </div>
+            ),
+          }))}
+        />
+      )}
+    </div>
   );
-  const maxTime = Math.max(...performanceData.map((item) => item.duration));
 
-  const columns = [
-    {
-      title: "Node",
-      dataIndex: "nodeName",
-      key: "nodeName",
-      render: (name: string, record: any) => (
-        <div>
-          <div className="text-sm font-medium">{name}</div>
-          <div className="text-xs text-gray-500">{record.nodeType}</div>
+  const renderVariables = () => (
+    <div className="space-y-4">
+      <Title level={5} className="text-white mb-0">Variables</Title>
+      
+      {Object.keys(variables).length === 0 ? (
+        <div className="text-center text-gray-500 py-8">
+          <InfoCircleOutlined className="text-4xl mb-2" />
+          <div>No variables available</div>
+          <div className="text-xs mt-2">Variables will appear during execution</div>
         </div>
-      ),
-    },
-    {
-      title: "Duration",
-      dataIndex: "duration",
-      key: "duration",
-      width: 120,
-      render: (duration: number) => (
-        <div>
-          <div className="text-sm font-medium">{duration}ms</div>
-          <Progress
-            percent={(duration / maxTime) * 100}
-            size="small"
-            showInfo={false}
-            strokeColor="#1890ff"
-          />
+      ) : (
+        <div className="space-y-2">
+          {Object.entries(variables).map(([key, value]) => (
+            <Card
+              key={key}
+              size="small"
+              className="bg-gray-800 border-gray-600"
+            >
+              <div className="space-y-2">
+                <div className="text-white font-medium">{key}</div>
+                <JsonViewer
+                  data={value}
+                  theme="dark"
+                  collapsed={1}
+                  maxHeight="200px"
+                />
+              </div>
+            </Card>
+          ))}
         </div>
-      ),
-    },
-    {
-      title: "% of Total",
-      dataIndex: "duration",
-      key: "percentage",
-      width: 80,
-      render: (duration: number) => (
-        <span className="text-xs">
-          {((duration / totalTime) * 100).toFixed(1)}%
-        </span>
-      ),
-    },
-  ];
+      )}
+    </div>
+  );
+
+  const renderExecutionHistory = () => (
+    <div className="space-y-4">
+      <Title level={5} className="text-white mb-0">Execution History</Title>
+      
+      {executionHistory.length === 0 ? (
+        <div className="text-center text-gray-500 py-8">
+          <HistoryOutlined className="text-4xl mb-2" />
+          <div>No execution history</div>
+          <div className="text-xs mt-2">Execution steps will appear here</div>
+        </div>
+      ) : (
+        <Timeline
+          items={executionHistory.map((step, index) => ({
+            color: step.action === 'error' ? 'red' : 
+                   step.action === 'breakpoint' ? 'orange' : 'blue',
+            children: (
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <span className="text-white font-medium">{step.nodeId}</span>
+                  <Tag color={
+                    step.action === 'error' ? 'red' :
+                    step.action === 'breakpoint' ? 'orange' :
+                    step.action === 'start' ? 'blue' : 'green'
+                  } size="small">
+                    {step.action}
+                  </Tag>
+                </div>
+                <div className="text-gray-500 text-xs">
+                  {new Date(step.timestamp).toLocaleTimeString()}
+                  {step.duration && ` (${step.duration}ms)`}
+                </div>
+                {step.error && (
+                  <div className="text-red-400 text-xs">
+                    Error: {step.error.message}
+                  </div>
+                )}
+              </div>
+            ),
+          }))}
+        />
+      )}
+    </div>
+  );
+
+  const renderMetrics = () => (
+    <div className="space-y-4">
+      <Title level={5} className="text-white mb-0">Debug Metrics</Title>
+      
+      {!metrics ? (
+        <div className="text-center text-gray-500 py-8">
+          <SettingOutlined className="text-4xl mb-2" />
+          <div>No metrics available</div>
+          <div className="text-xs mt-2">Start debugging to see performance metrics</div>
+        </div>
+      ) : (
+        <div className="grid grid-cols-2 gap-4">
+          <Card size="small" className="bg-gray-800 border-gray-600">
+            <div className="text-center">
+              <div className="text-2xl font-bold text-blue-400">{metrics.totalSteps}</div>
+              <div className="text-gray-400 text-sm">Total Steps</div>
+            </div>
+          </Card>
+          
+          <Card size="small" className="bg-gray-800 border-gray-600">
+            <div className="text-center">
+              <div className="text-2xl font-bold text-orange-400">{metrics.breakpointHits}</div>
+              <div className="text-gray-400 text-sm">Breakpoint Hits</div>
+            </div>
+          </Card>
+          
+          <Card size="small" className="bg-gray-800 border-gray-600">
+            <div className="text-center">
+              <div className="text-2xl font-bold text-red-400">{metrics.errors}</div>
+              <div className="text-gray-400 text-sm">Errors</div>
+            </div>
+          </Card>
+          
+          <Card size="small" className="bg-gray-800 border-gray-600">
+            <div className="text-center">
+              <div className="text-2xl font-bold text-green-400">
+                {Math.round(metrics.averageStepTime)}ms
+              </div>
+              <div className="text-gray-400 text-sm">Avg Step Time</div>
+            </div>
+          </Card>
+          
+          <Card size="small" className="bg-gray-800 border-gray-600">
+            <div className="text-center">
+              <div className="text-2xl font-bold text-purple-400">{metrics.callStackDepth}</div>
+              <div className="text-gray-400 text-sm">Call Stack Depth</div>
+            </div>
+          </Card>
+          
+          <Card size="small" className="bg-gray-800 border-gray-600">
+            <div className="text-center">
+              <div className="text-2xl font-bold text-yellow-400">
+                {Math.round(metrics.memoryUsage)}MB
+              </div>
+              <div className="text-gray-400 text-sm">Memory Usage</div>
+            </div>
+          </Card>
+        </div>
+      )}
+    </div>
+  );
 
   return (
-    <div className="p-3 space-y-4">
-      {/* Performance Summary */}
-      <Card size="small" title="Performance Summary">
-        <div className="grid grid-cols-2 gap-3 text-center">
-          <div>
-            <div className="text-xs text-gray-500">Total Time</div>
-            <div className="text-lg font-bold text-blue-600">{totalTime}ms</div>
-          </div>
-          <div>
-            <div className="text-xs text-gray-500">Nodes Executed</div>
-            <div className="text-lg font-bold text-green-600">
-              {performanceData.length}
-            </div>
-          </div>
+    <div className={cn('h-full bg-gray-900 border-r border-gray-700', className)}>
+      <div className="p-4 border-b border-gray-700">
+        <div className="flex items-center gap-2 mb-2">
+          <BugOutlined className="text-red-400 text-lg" />
+          <Title level={4} className="text-white mb-0">Debug Panel</Title>
         </div>
-      </Card>
+        <Text className="text-gray-400 text-sm">
+          Advanced debugging tools for workflow execution
+        </Text>
+      </div>
 
-      {/* Performance Table */}
-      <div>
-        <h3 className="text-sm font-medium mb-2">Node Performance</h3>
-        <Table
-          dataSource={performanceData}
-          columns={columns}
-          pagination={false}
-          size="small"
-          scroll={{ y: 300 }}
+      <div className="p-4">
+        {renderDebugControls()}
+        
+        <Tabs
+          activeKey={activeTab}
+          onChange={setActiveTab}
+          className="debug-tabs"
+          items={[
+            {
+              key: 'breakpoints',
+              label: (
+                <span>
+                  <BugOutlined className="mr-1" />
+                  Breakpoints
+                  {session && session.breakpoints.size > 0 && (
+                    <Badge count={Array.from(session.breakpoints.values()).flat().length} size="small" className="ml-2" />
+                  )}
+                </span>
+              ),
+              children: renderBreakpoints(),
+            },
+            {
+              key: 'watch',
+              label: (
+                <span>
+                  <EyeOutlined className="mr-1" />
+                  Watch
+                  {watchExpressions.length > 0 && (
+                    <Badge count={watchExpressions.length} size="small" className="ml-2" />
+                  )}
+                </span>
+              ),
+              children: renderWatchExpressions(),
+            },
+            {
+              key: 'callstack',
+              label: (
+                <span>
+                  <CodeOutlined className="mr-1" />
+                  Call Stack
+                  {callStack.length > 0 && (
+                    <Badge count={callStack.length} size="small" className="ml-2" />
+                  )}
+                </span>
+              ),
+              children: renderCallStack(),
+            },
+            {
+              key: 'variables',
+              label: (
+                <span>
+                  <InfoCircleOutlined className="mr-1" />
+                  Variables
+                  {Object.keys(variables).length > 0 && (
+                    <Badge count={Object.keys(variables).length} size="small" className="ml-2" />
+                  )}
+                </span>
+              ),
+              children: renderVariables(),
+            },
+            {
+              key: 'history',
+              label: (
+                <span>
+                  <HistoryOutlined className="mr-1" />
+                  History
+                  {executionHistory.length > 0 && (
+                    <Badge count={executionHistory.length} size="small" className="ml-2" />
+                  )}
+                </span>
+              ),
+              children: renderExecutionHistory(),
+            },
+            {
+              key: 'metrics',
+              label: (
+                <span>
+                  <SettingOutlined className="mr-1" />
+                  Metrics
+                </span>
+              ),
+              children: renderMetrics(),
+            },
+          ]}
         />
       </div>
+
+      {/* Add Breakpoint Modal */}
+      <Modal
+        title="Add Breakpoint"
+        open={isBreakpointModalOpen}
+        onCancel={() => setIsBreakpointModalOpen(false)}
+        onOk={() => {
+          if (selectedNodeId) {
+            addBreakpoint(selectedNodeId);
+            setIsBreakpointModalOpen(false);
+            setSelectedNodeId('');
+          }
+        }}
+        width={400}
+      >
+        <Form layout="vertical">
+          <Form.Item label="Node ID" required>
+            <Input
+              value={selectedNodeId}
+              onChange={(e) => setSelectedNodeId(e.target.value)}
+              placeholder="Enter node ID"
+            />
+          </Form.Item>
+        </Form>
+      </Modal>
+
+      {/* Add Watch Expression Modal */}
+      <Modal
+        title="Add Watch Expression"
+        open={isWatchModalOpen}
+        onCancel={() => setIsWatchModalOpen(false)}
+        onOk={addWatchExpression}
+        width={500}
+      >
+        <Form layout="vertical">
+          <Form.Item label="Expression" required>
+            <Input
+              value={newWatchExpression}
+              onChange={(e) => setNewWatchExpression(e.target.value)}
+              placeholder="e.g., $input.user.name, variables.count, $output.result"
+            />
+          </Form.Item>
+          <Alert
+            message="Expression Examples"
+            description={
+              <ul className="mt-2 text-sm">
+                <li><code>$input.user.name</code> - Access input data</li>
+                <li><code>$output.result</code> - Access output data</li>
+                <li><code>variables.count</code> - Access workflow variables</li>
+                <li><code>JSON.stringify($input)</code> - Convert to JSON</li>
+              </ul>
+            }
+            type="info"
+            showIcon
+          />
+        </Form>
+      </Modal>
     </div>
-  );
-};
-
-export const DebugPanel: React.FC<DebugPanelProps> = ({
-  isVisible,
-  onToggle,
-  position = "right",
-  currentExecutionId,
-}) => {
-  const [activeSession, setActiveSession] = useState<DebugSession | null>(null);
-  const [activeTab, setActiveTab] = useState("breakpoints");
-
-  // Debug control handlers
-  const handleStepInto = useCallback(() => {
-    if (!activeSession) return;
-    workflowDebugger.executeStep(activeSession.id, { type: "step_into" });
-  }, [activeSession]);
-
-  const handleStepOver = useCallback(() => {
-    if (!activeSession) return;
-    workflowDebugger.executeStep(activeSession.id, { type: "step_over" });
-  }, [activeSession]);
-
-  const handleContinue = useCallback(() => {
-    if (!activeSession) return;
-    workflowDebugger.executeStep(activeSession.id, { type: "continue" });
-  }, [activeSession]);
-
-  const handlePause = useCallback(() => {
-    if (!activeSession) return;
-    workflowDebugger.executeStep(activeSession.id, { type: "pause" });
-  }, [activeSession]);
-
-  const handleStop = useCallback(() => {
-    if (!activeSession) return;
-    workflowDebugger.executeStep(activeSession.id, { type: "stop" });
-    setActiveSession(null);
-  }, [activeSession]);
-
-  // Update active session when execution changes
-  useEffect(() => {
-    if (currentExecutionId) {
-      const sessions = workflowDebugger.getActiveSessions();
-      const session = sessions.find(
-        (s) => s.executionId === currentExecutionId,
-      );
-      setActiveSession(session || null);
-    } else {
-      setActiveSession(null);
-    }
-  }, [currentExecutionId]);
-
-  const tabItems = [
-    {
-      key: "breakpoints",
-      label: (
-        <span className="flex items-center gap-1">
-          <BugOutlined />
-          Breakpoints
-        </span>
-      ),
-      children: <BreakpointsTab session={activeSession || undefined} />,
-    },
-    {
-      key: "callstack",
-      label: (
-        <span className="flex items-center gap-1">
-          <CodeOutlined />
-          Call Stack
-        </span>
-      ),
-      children: <CallStackTab session={activeSession || undefined} />,
-    },
-    {
-      key: "variables",
-      label: (
-        <span className="flex items-center gap-1">
-          <EyeOutlined />
-          Variables
-        </span>
-      ),
-      children: <VariablesTab session={activeSession || undefined} />,
-    },
-    {
-      key: "performance",
-      label: (
-        <span className="flex items-center gap-1">
-          <BarChartOutlined />
-          Performance
-        </span>
-      ),
-      children: <PerformanceTab session={activeSession || undefined} />,
-    },
-  ];
-
-  return (
-    <Drawer
-      title={
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <BugOutlined className="text-orange-600" />
-            <span>Debug Panel</span>
-            {activeSession && (
-              <Badge
-                status={
-                  activeSession.status === "running"
-                    ? "processing"
-                    : activeSession.status === "paused"
-                      ? "warning"
-                      : activeSession.status === "completed"
-                        ? "success"
-                        : "error"
-                }
-                text={activeSession.status}
-              />
-            )}
-          </div>
-
-          {/* Debug Controls */}
-          {activeSession && (
-            <div className="flex gap-1">
-              <Tooltip title="Step Into">
-                <Button
-                  type="text"
-                  size="small"
-                  icon={<StepForwardOutlined />}
-                  onClick={handleStepInto}
-                  disabled={activeSession.status !== "paused"}
-                />
-              </Tooltip>
-              <Tooltip title="Step Over">
-                <Button
-                  type="text"
-                  size="small"
-                  icon={<StepBackwardOutlined />}
-                  onClick={handleStepOver}
-                  disabled={activeSession.status !== "paused"}
-                />
-              </Tooltip>
-              {activeSession.status === "paused" ? (
-                <Tooltip title="Continue">
-                  <Button
-                    type="text"
-                    size="small"
-                    icon={<PlayCircleOutlined />}
-                    onClick={handleContinue}
-                    className="text-green-600"
-                  />
-                </Tooltip>
-              ) : (
-                <Tooltip title="Pause">
-                  <Button
-                    type="text"
-                    size="small"
-                    icon={<PauseCircleOutlined />}
-                    onClick={handlePause}
-                    disabled={activeSession.status !== "running"}
-                    className="text-orange-600"
-                  />
-                </Tooltip>
-              )}
-              <Tooltip title="Stop">
-                <Button
-                  type="text"
-                  size="small"
-                  icon={<StopOutlined />}
-                  onClick={handleStop}
-                  className="text-red-600"
-                />
-              </Tooltip>
-            </div>
-          )}
-        </div>
-      }
-      placement={position}
-      onClose={onToggle}
-      open={isVisible}
-      width={450}
-      className="debug-panel"
-      bodyStyle={{ padding: 0 }}
-    >
-      <Tabs
-        activeKey={activeTab}
-        onChange={setActiveTab}
-        items={tabItems}
-        className="h-full"
-        tabBarStyle={{ margin: 0, paddingLeft: 16, paddingRight: 16 }}
-      />
-    </Drawer>
   );
 };
 

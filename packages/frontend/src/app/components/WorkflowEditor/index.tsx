@@ -48,6 +48,10 @@ import {
 import { WorkflowTemplatesPanel } from "./WorkflowTemplatesPanel";
 import { ConnectionType } from "@/core/types/edge";
 import ConnectionLine from "./ConnectionLine";
+import { EnterpriseDashboard } from "../EnterpriseDashboard/EnterpriseDashboard";
+import { AuditDashboard } from "../AuditDashboard/AuditDashboard";
+import { OrganizationSettingsComponent } from "../OrganizationManagement/OrganizationSettings";
+import { useRBACStore } from "@/core/stores/rbacStore";
 import {
   AILanguageModelEdge,
   AIEmbeddingEdge,
@@ -138,6 +142,7 @@ const WorkflowEditor: React.FC = () => {
   // Analytics state
   const { analyticsModalOpen, toggleAnalyticsModal, setSelectedWorkflow } =
     useAnalyticsStore();
+  const { organizations, canManageOrganization } = useRBACStore();
 
   // Memoized node types - prevent React Flow warnings about creating new objects
   const nodeTypes = useMemo<Record<string, any>>(() => {
@@ -244,6 +249,10 @@ const WorkflowEditor: React.FC = () => {
   const [isTriggerPanelVisible, setIsTriggerPanelVisible] = useState(false);
   const [isBranchingPanelVisible, setIsBranchingPanelVisible] = useState(false);
   const [isTemplatesPanelVisible, setIsTemplatesPanelVisible] = useState(false);
+  const [isEnterpriseDashboardVisible, setIsEnterpriseDashboardVisible] =
+    useState(false);
+  const [isAuditDashboardVisible, setIsAuditDashboardVisible] = useState(false);
+  const [isOrgSettingsVisible, setIsOrgSettingsVisible] = useState(false);
   const [containerRef, setContainerRef] = useState<HTMLDivElement | null>(null);
 
   // Monitor current execution
@@ -1103,6 +1112,63 @@ const WorkflowEditor: React.FC = () => {
                 >
                   📋
                 </button>
+                {canManageOrganization() && (
+                  <>
+                    <button
+                      onClick={() =>
+                        setIsEnterpriseDashboardVisible(
+                          !isEnterpriseDashboardVisible,
+                        )
+                      }
+                      className={`react-flow__controls-button ${
+                        isEnterpriseDashboardVisible
+                          ? "bg-emerald-100 border-emerald-300"
+                          : ""
+                      }`}
+                      title={
+                        isEnterpriseDashboardVisible
+                          ? "Hide enterprise dashboard"
+                          : "Show enterprise dashboard"
+                      }
+                    >
+                      📊
+                    </button>
+                    <button
+                      onClick={() =>
+                        setIsAuditDashboardVisible(!isAuditDashboardVisible)
+                      }
+                      className={`react-flow__controls-button ${
+                        isAuditDashboardVisible
+                          ? "bg-red-100 border-red-300"
+                          : ""
+                      }`}
+                      title={
+                        isAuditDashboardVisible
+                          ? "Hide audit dashboard"
+                          : "Show audit dashboard"
+                      }
+                    >
+                      🔒
+                    </button>
+                    <button
+                      onClick={() =>
+                        setIsOrgSettingsVisible(!isOrgSettingsVisible)
+                      }
+                      className={`react-flow__controls-button ${
+                        isOrgSettingsVisible
+                          ? "bg-gray-100 border-gray-300"
+                          : ""
+                      }`}
+                      title={
+                        isOrgSettingsVisible
+                          ? "Hide organization settings"
+                          : "Show organization settings"
+                      }
+                    >
+                      ⚙️
+                    </button>
+                  </>
+                )}
                 <button
                   onClick={() => setIsFullscreen(!isFullscreen)}
                   className="react-flow__controls-button"
@@ -1260,6 +1326,134 @@ const WorkflowEditor: React.FC = () => {
         onClose={() => setIsTemplatesPanelVisible(false)}
         onCreateFromTemplate={handleCreateFromTemplate}
       />
+
+      {/* Enterprise Panels - Only visible to authorized users */}
+      {canManageOrganization() && (
+        <>
+          {/* Enterprise Dashboard */}
+          {isEnterpriseDashboardVisible && (
+            <div
+              style={{
+                position: "fixed",
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                backgroundColor: "white",
+                zIndex: 1000,
+                overflow: "auto",
+              }}
+            >
+              <div
+                style={{
+                  position: "absolute",
+                  top: 16,
+                  right: 16,
+                  zIndex: 1001,
+                }}
+              >
+                <button
+                  onClick={() => setIsEnterpriseDashboardVisible(false)}
+                  style={{
+                    background: "#ff4d4f",
+                    color: "white",
+                    border: "none",
+                    borderRadius: "50%",
+                    width: 32,
+                    height: 32,
+                    cursor: "pointer",
+                  }}
+                >
+                  ✕
+                </button>
+              </div>
+              <EnterpriseDashboard />
+            </div>
+          )}
+
+          {/* Audit Dashboard */}
+          {isAuditDashboardVisible && (
+            <div
+              style={{
+                position: "fixed",
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                backgroundColor: "white",
+                zIndex: 1000,
+                overflow: "auto",
+              }}
+            >
+              <div
+                style={{
+                  position: "absolute",
+                  top: 16,
+                  right: 16,
+                  zIndex: 1001,
+                }}
+              >
+                <button
+                  onClick={() => setIsAuditDashboardVisible(false)}
+                  style={{
+                    background: "#ff4d4f",
+                    color: "white",
+                    border: "none",
+                    borderRadius: "50%",
+                    width: 32,
+                    height: 32,
+                    cursor: "pointer",
+                  }}
+                >
+                  ✕
+                </button>
+              </div>
+              <AuditDashboard />
+            </div>
+          )}
+
+          {/* Organization Settings */}
+          {isOrgSettingsVisible && organizations.length > 0 && (
+            <div
+              style={{
+                position: "fixed",
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                backgroundColor: "white",
+                zIndex: 1000,
+                overflow: "auto",
+              }}
+            >
+              <div
+                style={{
+                  position: "absolute",
+                  top: 16,
+                  right: 16,
+                  zIndex: 1001,
+                }}
+              >
+                <button
+                  onClick={() => setIsOrgSettingsVisible(false)}
+                  style={{
+                    background: "#ff4d4f",
+                    color: "white",
+                    border: "none",
+                    borderRadius: "50%",
+                    width: 32,
+                    height: 32,
+                    cursor: "pointer",
+                  }}
+                >
+                  ✕
+                </button>
+              </div>
+              <OrganizationSettingsComponent organization={organizations[0]} />
+            </div>
+          )}
+        </>
+      )}
     </div>
   );
 };

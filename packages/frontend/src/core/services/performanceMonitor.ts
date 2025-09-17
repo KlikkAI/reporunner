@@ -45,7 +45,11 @@ export interface SpanLog {
 
 export interface PerformanceAlert {
   id: string;
-  type: "slow_execution" | "high_error_rate" | "resource_exhaustion" | "bottleneck_detected";
+  type:
+    | "slow_execution"
+    | "high_error_rate"
+    | "resource_exhaustion"
+    | "bottleneck_detected";
   severity: "low" | "medium" | "high" | "critical";
   title: string;
   description: string;
@@ -85,13 +89,17 @@ export class PerformanceMonitorService {
   private readonly MONITORING_INTERVAL = 5000; // 5 seconds
 
   constructor() {
-    this.startResourceMonitoring();
+    this.startGlobalResourceMonitoring();
   }
 
   /**
    * Start performance trace for workflow execution
    */
-  startTrace(executionId: string, workflowId: string, metadata?: Record<string, any>): PerformanceTrace {
+  startTrace(
+    executionId: string,
+    workflowId: string,
+    metadata?: Record<string, any>,
+  ): PerformanceTrace {
     const traceId = `trace_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
     const trace: PerformanceTrace = {
@@ -110,7 +118,10 @@ export class PerformanceMonitorService {
   /**
    * End performance trace and submit metrics
    */
-  endTrace(executionId: string, status: "completed" | "failed" | "cancelled"): void {
+  endTrace(
+    executionId: string,
+    status: "completed" | "failed" | "cancelled",
+  ): void {
     const trace = this.activeTraces.get(executionId);
     if (!trace) return;
 
@@ -148,7 +159,7 @@ export class PerformanceMonitorService {
     nodeId: string,
     operationName: string,
     parentSpanId?: string,
-    tags?: Record<string, any>
+    tags?: Record<string, any>,
   ): PerformanceSpan {
     const spanId = `span_${Date.now()}_${nodeId}`;
 
@@ -179,7 +190,11 @@ export class PerformanceMonitorService {
   /**
    * End performance span
    */
-  endSpan(spanId: string, status: "ok" | "error" | "timeout" = "ok", error?: Error): void {
+  endSpan(
+    spanId: string,
+    status: "ok" | "error" | "timeout" = "ok",
+    error?: Error,
+  ): void {
     const span = this.activeSpans.get(spanId);
     if (!span) return;
 
@@ -212,7 +227,7 @@ export class PerformanceMonitorService {
     spanId: string,
     level: "debug" | "info" | "warn" | "error",
     message: string,
-    fields?: Record<string, any>
+    fields?: Record<string, any>,
   ): void {
     const span = this.activeSpans.get(spanId);
     if (span) {
@@ -241,7 +256,7 @@ export class PerformanceMonitorService {
   measure<T>(
     name: string,
     fn: () => T | Promise<T>,
-    tags?: Record<string, any>
+    tags?: Record<string, any>,
   ): Promise<T> {
     return new Promise(async (resolve, reject) => {
       const startTime = performance.now();
@@ -264,12 +279,15 @@ export class PerformanceMonitorService {
         const endTime = performance.now();
         const duration = endTime - startTime;
 
-        console.error(`Performance: ${name} failed after ${duration.toFixed(2)}ms`, {
-          name,
-          duration,
-          error,
-          tags,
-        });
+        console.error(
+          `Performance: ${name} failed after ${duration.toFixed(2)}ms`,
+          {
+            name,
+            duration,
+            error,
+            tags,
+          },
+        );
 
         reject(error);
       }
@@ -353,9 +371,13 @@ export class PerformanceMonitorService {
         nodeId,
         nodeType,
         nodeName,
-        startTime: new Date(Date.now() - (performance.now() - span.startTime)).toISOString(),
+        startTime: new Date(
+          Date.now() - (performance.now() - span.startTime),
+        ).toISOString(),
         endTime: span.endTime
-          ? new Date(Date.now() - (performance.now() - span.endTime)).toISOString()
+          ? new Date(
+              Date.now() - (performance.now() - span.endTime),
+            ).toISOString()
           : undefined,
         duration: span.duration,
         status: this.mapSpanStatusToNodeStatus(span.status),
@@ -364,7 +386,7 @@ export class PerformanceMonitorService {
         memoryUsage: span.tags.memoryUsage,
         cpuUsage: span.tags.cpuUsage,
         networkRequests: span.tags.networkRequests,
-        errorCount: span.logs.filter(log => log.level === "error").length,
+        errorCount: span.logs.filter((log) => log.level === "error").length,
         retryCount: span.tags.retryCount || 0,
       };
     });
@@ -389,7 +411,12 @@ export class PerformanceMonitorService {
       if (span.tags.networkRequests) apiCalls += span.tags.networkRequests;
     });
 
-    const estimatedCost = this.calculateEstimatedCost(totalMemory, totalCpu, networkIn + networkOut, apiCalls);
+    const estimatedCost = this.calculateEstimatedCost(
+      totalMemory,
+      totalCpu,
+      networkIn + networkOut,
+      apiCalls,
+    );
 
     return {
       totalMemoryMB: totalMemory,
@@ -413,14 +440,18 @@ export class PerformanceMonitorService {
         .forEach((errorLog) => {
           errors.push({
             nodeId: span.tags.nodeId || span.spanId,
-            timestamp: new Date(Date.now() - (performance.now() - errorLog.timestamp)).toISOString(),
+            timestamp: new Date(
+              Date.now() - (performance.now() - errorLog.timestamp),
+            ).toISOString(),
             type: this.classifyErrorType(errorLog.message),
             message: errorLog.message,
             stack: errorLog.fields?.stack,
-            retry: span.tags.retryAttempt ? {
-              attempt: span.tags.retryAttempt,
-              maxAttempts: span.tags.maxRetryAttempts || 3,
-            } : undefined,
+            retry: span.tags.retryAttempt
+              ? {
+                  attempt: span.tags.retryAttempt,
+                  maxAttempts: span.tags.maxRetryAttempts || 3,
+                }
+              : undefined,
           });
         });
     });
@@ -428,9 +459,15 @@ export class PerformanceMonitorService {
     return errors;
   }
 
-  private checkPerformanceAlerts(metrics: ExecutionMetrics, trace: PerformanceTrace): void {
+  private checkPerformanceAlerts(
+    metrics: ExecutionMetrics,
+    trace: PerformanceTrace,
+  ): void {
     // Check for slow execution
-    if (metrics.totalDuration && metrics.totalDuration > this.SLOW_EXECUTION_THRESHOLD) {
+    if (
+      metrics.totalDuration &&
+      metrics.totalDuration > this.SLOW_EXECUTION_THRESHOLD
+    ) {
       this.emitAlert({
         id: `slow_execution_${metrics.executionId}`,
         type: "slow_execution",
@@ -511,10 +548,14 @@ export class PerformanceMonitorService {
   }
 
   private classifyErrorType(message: string): ExecutionError["type"] {
-    if (message.includes("timeout") || message.includes("timed out")) return "timeout";
-    if (message.includes("network") || message.includes("connection")) return "network";
-    if (message.includes("auth") || message.includes("unauthorized")) return "auth";
-    if (message.includes("validation") || message.includes("invalid")) return "validation";
+    if (message.includes("timeout") || message.includes("timed out"))
+      return "timeout";
+    if (message.includes("network") || message.includes("connection"))
+      return "network";
+    if (message.includes("auth") || message.includes("unauthorized"))
+      return "auth";
+    if (message.includes("validation") || message.includes("invalid"))
+      return "validation";
     return "runtime";
   }
 
@@ -522,7 +563,7 @@ export class PerformanceMonitorService {
     memoryMB: number,
     cpuMs: number,
     networkBytes: number,
-    apiCalls: number
+    apiCalls: number,
   ) {
     // Simplified cost calculation - in production, this would be more sophisticated
     const computeCost = (cpuMs / 1000) * 0.0001; // $0.0001 per CPU second
@@ -560,7 +601,7 @@ export class PerformanceMonitorService {
     });
   }
 
-  private startResourceMonitoring(): void {
+  private startGlobalResourceMonitoring(): void {
     if (this.monitoringInterval) return;
 
     this.monitoringInterval = setInterval(() => {

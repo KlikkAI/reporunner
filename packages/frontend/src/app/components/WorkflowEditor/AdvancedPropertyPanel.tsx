@@ -19,34 +19,15 @@ import {
   FullscreenOutlined,
   SyncOutlined,
 } from "@ant-design/icons";
-import { cn } from "@/design-system/utils";
+import { cn, JsonViewer } from "@/design-system";
 import { useLeanWorkflowStore } from "@/core/stores/leanWorkflowStore";
 import { useEnhancedExecutionStore } from "@/core/stores/enhancedExecutionStore";
 import { nodeRegistry } from "@/core/nodes";
-// import EnhancedPropertyRenderer from './EnhancedPropertyRenderer';
-// import type { EnhancedNodeProperty } from '@/core/utils/enhancedPropertyEvaluator';
+import EnhancedPropertyRenderer from './EnhancedPropertyRenderer';
+import type { PropertyValidationResult } from './EnhancedPropertyRenderer';
 
 // Simple type definition for property form state
 type PropertyFormState = Record<string, any>;
-
-// Simple JSON viewer component
-const JsonViewer: React.FC<{
-  data: any;
-  theme?: string;
-  collapsed?: number;
-  enableClipboard?: boolean;
-}> = ({ data, theme = "dark" }) => (
-  <pre
-    className={cn(
-      "text-xs overflow-auto p-2 rounded border",
-      theme === "dark"
-        ? "bg-gray-900 text-gray-300 border-gray-600"
-        : "bg-gray-100 text-gray-800 border-gray-300",
-    )}
-  >
-    {JSON.stringify(data, null, 2)}
-  </pre>
-);
 
 interface AdvancedPropertyPanelProps {
   isOpen: boolean;
@@ -243,7 +224,7 @@ const InputDataPanel: React.FC<{
 };
 
 const ConfigurationPanel: React.FC<{ nodeId: string }> = ({ nodeId }) => {
-  const { getNodeById } = useLeanWorkflowStore();
+  const { getNodeById, updateNodeParameters } = useLeanWorkflowStore();
   const [activeTab, setActiveTab] = useState("properties");
   const [formState, setFormState] = useState<PropertyFormState>({});
   const [isValid, setIsValid] = useState(true);
@@ -269,17 +250,17 @@ const ConfigurationPanel: React.FC<{ nodeId: string }> = ({ nodeId }) => {
     }
   }, [node]);
 
-  // Property change handlers (commented out for now)
-  // const handlePropertyChange = useCallback((name: string, value: any) => {
-  //   const newFormState = { ...formState, [name]: value };
-  //   setFormState(newFormState);
-  //   updateNodeParameters(nodeId, { [name]: value });
-  // }, [formState, nodeId, updateNodeParameters]);
+  // Property change handlers
+  const handlePropertyChange = useCallback((name: string, value: any) => {
+    const newFormState = { ...formState, [name]: value };
+    setFormState(newFormState);
+    updateNodeParameters(nodeId, { [name]: value });
+  }, [formState, nodeId, updateNodeParameters]);
 
-  // const handleValidationChange = useCallback((valid: boolean, validationErrors: Map<string, string>) => {
-  //   setIsValid(valid);
-  //   setErrors(validationErrors);
-  // }, []);
+  const handleValidationChange = useCallback((result: PropertyValidationResult) => {
+    setIsValid(result.isValid);
+    setErrors(result.errors);
+  }, []);
 
   const handleTest = useCallback(async () => {
     // Implement node testing
@@ -349,13 +330,13 @@ const ConfigurationPanel: React.FC<{ nodeId: string }> = ({ nodeId }) => {
               </div>
             </div>
           ) : (
-            <div className="text-center text-gray-500 py-8">
-              <div className="text-2xl mb-2">⚙️</div>
-              <div>Property renderer will be integrated</div>
-              <div className="text-xs mt-2">
-                {enhancedProperties.length} properties available
-              </div>
-            </div>
+            <EnhancedPropertyRenderer
+              properties={enhancedProperties}
+              formState={formState}
+              onChange={handlePropertyChange}
+              onValidationChange={handleValidationChange}
+              theme="dark"
+            />
           )}
         </div>
       ),

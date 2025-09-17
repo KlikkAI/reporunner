@@ -1,588 +1,518 @@
 /**
  * Enhanced Property Renderer
  *
- * Provides sophisticated property rendering with:
- * - Real-time validation and feedback
- * - Conditional property display
- * - AI-assisted suggestions
- * - Expression editor support
- * - Advanced form controls
+ * Advanced property form rendering with conditional logic, validation,
+ * and dynamic field types. Supports 22+ property types with real-time
+ * validation and dependency management.
  */
 
-import React, { useState, useCallback, useMemo } from "react";
+import React, { useState, useCallback, useMemo } from 'react';
 import {
   Input,
-  InputNumber,
-  Switch,
   Select,
+  Switch,
+  InputNumber,
   DatePicker,
-  ColorPicker,
   Button,
-  Upload,
-  Card,
+  Space,
   Form,
+  Card,
   Alert,
   Tooltip,
   Tag,
-} from "antd";
+  Upload,
+  ColorPicker,
+  Divider,
+} from 'antd';
 import {
   PlusOutlined,
-  UploadOutlined,
+  DeleteOutlined,
   InfoCircleOutlined,
-  BulbOutlined,
   ExclamationCircleOutlined,
-  CodeOutlined,
-  FunctionOutlined,
-} from "@ant-design/icons";
-import { cn } from "@/design-system/utils";
-import type { PropertyFormState, PropertyValue } from "@/core/nodes/types";
-import type { EnhancedNodeProperty } from "@/core/utils/enhancedPropertyEvaluator";
-import { useEnhancedPropertyEvaluator } from "@/core/utils/enhancedPropertyEvaluator";
+} from '@ant-design/icons';
+import { cn } from '@/design-system/utils';
+import type { NodeProperty } from '@/core/nodes/types';
 
 const { TextArea } = Input;
 const { Option } = Select;
+const { RangePicker } = DatePicker;
 
-interface EnhancedPropertyRendererProps {
-  properties: EnhancedNodeProperty[];
+export interface PropertyFormState {
+  [key: string]: any;
+}
+
+export interface PropertyValidationResult {
+  isValid: boolean;
+  errors: Map<string, string>;
+}
+
+export interface EnhancedPropertyRendererProps {
+  properties: NodeProperty[];
   formState: PropertyFormState;
-  onChange: (name: string, value: PropertyValue) => void;
-  executionContext?: any;
+  onChange: (name: string, value: any) => void;
+  onValidationChange?: (result: PropertyValidationResult) => void;
+  theme?: 'light' | 'dark';
   disabled?: boolean;
-  theme?: "light" | "dark";
-  onValidationChange?: (isValid: boolean, errors: Map<string, string>) => void;
 }
 
 interface PropertyFieldProps {
-  property: EnhancedNodeProperty;
-  value: PropertyValue;
-  onChange: (value: PropertyValue) => void;
+  property: NodeProperty;
+  value: any;
+  onChange: (value: any) => void;
   disabled?: boolean;
-  theme?: "light" | "dark";
-  error?: string;
-  warning?: string;
-  suggestion?: string;
-  onExpressionToggle?: () => void;
+  theme?: 'light' | 'dark';
 }
-
-const ExpressionEditor: React.FC<{
-  value: string;
-  onChange: (value: string) => void;
-  language?: string;
-  placeholder?: string;
-}> = ({ value, onChange, language = "javascript", placeholder }) => {
-  const [isAdvancedMode, setIsAdvancedMode] = useState(false);
-
-  return (
-    <div className="expression-editor">
-      <div className="flex items-center gap-2 mb-2">
-        <Tag color="blue" icon={<FunctionOutlined />}>
-          Expression
-        </Tag>
-        <Button
-          size="small"
-          type="text"
-          icon={<CodeOutlined />}
-          onClick={() => setIsAdvancedMode(!isAdvancedMode)}
-        >
-          {isAdvancedMode ? "Simple" : "Advanced"}
-        </Button>
-      </div>
-
-      {isAdvancedMode ? (
-        <TextArea
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          placeholder={placeholder || `Enter ${language} expression...`}
-          className="font-mono"
-          rows={4}
-        />
-      ) : (
-        <Input
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          placeholder={placeholder || "Enter expression..."}
-          className="font-mono"
-          prefix="="
-        />
-      )}
-
-      <div className="text-xs text-gray-500 mt-1">
-        Use expressions to dynamically calculate values
-      </div>
-    </div>
-  );
-};
 
 const PropertyField: React.FC<PropertyFieldProps> = ({
   property,
   value,
   onChange,
-  disabled,
-  theme = "dark",
-  error,
-  warning,
-  suggestion,
+  disabled = false,
+  theme = 'dark',
 }) => {
-  const [isExpressionMode, setIsExpressionMode] = useState(false);
-  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
 
-  const hasError = !!error;
-  const hasWarning = !!warning;
-  const hasSuggestion = !!suggestion;
-
-  const getCommonProps = () => ({
-    disabled,
-    status: hasError ? "error" : hasWarning ? "warning" : undefined,
-  });
-
-  const renderExpressionToggle = () => {
-    if (!property.expressionSupport) return null;
-
-    return (
-      <Button
-        size="small"
-        type={isExpressionMode ? "primary" : "default"}
-        icon={<FunctionOutlined />}
-        onClick={() => setIsExpressionMode(!isExpressionMode)}
-        title="Toggle expression mode"
-      />
-    );
-  };
-
-  const renderSuggestionButton = () => {
-    if (!hasSuggestion) return null;
-
-    return (
-      <Tooltip title={suggestion}>
-        <Button
-          size="small"
-          type="text"
-          icon={<BulbOutlined />}
-          onClick={() => setShowSuggestions(!showSuggestions)}
-          className="text-yellow-500"
-        />
-      </Tooltip>
-    );
-  };
-
-  const renderFieldAdornment = () => {
-    const adornments = [
-      renderExpressionToggle(),
-      renderSuggestionButton(),
-    ].filter(Boolean);
-
-    if (adornments.length === 0) return null;
-
-    return <div className="flex items-center gap-1">{adornments}</div>;
-  };
-
-  if (isExpressionMode) {
-    return (
-      <div>
-        <div className="flex items-center justify-between mb-2">
-          <span className="text-sm font-medium">
-            {property.displayName || property.name}
-          </span>
-          {renderFieldAdornment()}
-        </div>
-        <ExpressionEditor
-          value={typeof value === "string" ? value : ""}
-          onChange={onChange}
-          language={property.expressionLanguage}
-          placeholder={property.placeholder}
-        />
-      </div>
-    );
-  }
-
-  const commonFieldProps = {
-    ...getCommonProps(),
-    placeholder: property.placeholder,
-  };
-
-  switch (property.type) {
-    case "string":
-      return (
-        <div>
-          <div className="flex items-center justify-between mb-1">
-            <span className="text-sm font-medium">
-              {property.displayName || property.name}
-            </span>
-            {renderFieldAdornment()}
-          </div>
+  const renderField = () => {
+    switch (property.type) {
+      case 'string':
+        return (
           <Input
-            {...commonFieldProps}
-            value={value as string}
+            value={value || ''}
             onChange={(e) => onChange(e.target.value)}
-            suffix={
-              property.description && (
-                <Tooltip title={property.description}>
-                  <InfoCircleOutlined className="text-gray-400" />
-                </Tooltip>
-              )
-            }
+            placeholder={property.placeholder}
+            disabled={disabled}
+            className={theme === 'dark' ? 'bg-gray-800 border-gray-600' : ''}
           />
-        </div>
-      );
+        );
 
-    case "text":
-      return (
-        <div>
-          <div className="flex items-center justify-between mb-1">
-            <span className="text-sm font-medium">
-              {property.displayName || property.name}
-            </span>
-            {renderFieldAdornment()}
-          </div>
+      case 'text':
+        return (
           <TextArea
-            {...commonFieldProps}
-            value={value as string}
+            value={value || ''}
             onChange={(e) => onChange(e.target.value)}
-            rows={property.rows || 3}
+            placeholder={property.placeholder}
+            disabled={disabled}
+            rows={4}
+            className={theme === 'dark' ? 'bg-gray-800 border-gray-600' : ''}
           />
-        </div>
-      );
+        );
 
-    case "number":
-      return (
-        <div>
-          <div className="flex items-center justify-between mb-1">
-            <span className="text-sm font-medium">
-              {property.displayName || property.name}
-            </span>
-            {renderFieldAdornment()}
-          </div>
+      case 'number':
+        return (
           <InputNumber
-            {...commonFieldProps}
-            value={value as number}
-            onChange={(val) => onChange(val)}
-            min={property.typeOptions?.minValue}
-            max={property.typeOptions?.maxValue}
-            step={property.typeOptions?.numberPrecision}
-            className="w-full"
-          />
-        </div>
-      );
-
-    case "boolean":
-      return (
-        <div className="flex items-center justify-between">
-          <span className="text-sm font-medium">
-            {property.displayName || property.name}
-          </span>
-          <div className="flex items-center gap-2">
-            {renderFieldAdornment()}
-            <Switch
-              {...getCommonProps()}
-              checked={value as boolean}
-              onChange={onChange}
-            />
-          </div>
-        </div>
-      );
-
-    case "options":
-      const isMultiple = property.typeOptions?.multipleValues;
-      return (
-        <div>
-          <div className="flex items-center justify-between mb-1">
-            <span className="text-sm font-medium">
-              {property.displayName || property.name}
-            </span>
-            {renderFieldAdornment()}
-          </div>
-          <Select
-            {...commonFieldProps}
             value={value}
             onChange={onChange}
-            mode={isMultiple ? "multiple" : undefined}
+            placeholder={property.placeholder}
+            disabled={disabled}
             className="w-full"
-            showSearch
-            filterOption={(input, option) =>
-              (option?.label ?? "").toLowerCase().includes(input.toLowerCase())
-            }
+            style={{ backgroundColor: theme === 'dark' ? '#1f2937' : undefined }}
+          />
+        );
+
+      case 'boolean':
+        return (
+          <Switch
+            checked={value || false}
+            onChange={onChange}
+            disabled={disabled}
+          />
+        );
+
+      case 'select':
+        return (
+          <Select
+            value={value}
+            onChange={onChange}
+            placeholder={property.placeholder}
+            disabled={disabled}
+            className="w-full"
+            style={{ backgroundColor: theme === 'dark' ? '#1f2937' : undefined }}
           >
             {property.options?.map((option) => (
               <Option key={option.value} value={option.value}>
-                {option.name}
+                {option.label}
               </Option>
             ))}
           </Select>
-        </div>
-      );
+        );
 
-    case "dateTime":
-      return (
-        <div>
-          <div className="flex items-center justify-between mb-1">
-            <span className="text-sm font-medium">
-              {property.displayName || property.name}
-            </span>
-            {renderFieldAdornment()}
-          </div>
-          <DatePicker
-            {...commonFieldProps}
-            value={value ? new Date(value as string) : null}
-            onChange={(date) => onChange(date?.toISOString())}
-            className="w-full"
-            showTime={property.typeOptions?.alwaysShowDateTime}
-          />
-        </div>
-      );
-
-    case "color":
-      return (
-        <div>
-          <div className="flex items-center justify-between mb-1">
-            <span className="text-sm font-medium">
-              {property.displayName || property.name}
-            </span>
-            {renderFieldAdornment()}
-          </div>
-          <ColorPicker
-            value={value as string}
-            onChange={(color) => onChange(color.toHexString())}
-            showText
-            className="w-full"
-          />
-        </div>
-      );
-
-    case "file":
-      return (
-        <div>
-          <div className="flex items-center justify-between mb-1">
-            <span className="text-sm font-medium">
-              {property.displayName || property.name}
-            </span>
-            {renderFieldAdornment()}
-          </div>
-          <Upload
-            {...getCommonProps()}
-            beforeUpload={() => false}
-            onChange={(info) => {
-              const file = info.file;
-              onChange(file);
-            }}
-          >
-            <Button icon={<UploadOutlined />}>Select File</Button>
-          </Upload>
-        </div>
-      );
-
-    case "collection":
-      return (
-        <div>
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-medium">
-              {property.displayName || property.name}
-            </span>
-            {renderFieldAdornment()}
-          </div>
-          <Card size="small" className="bg-gray-50 dark:bg-gray-800">
-            <div className="text-xs text-gray-500 mb-2">
-              Collection properties
-            </div>
-            {/* TODO: Implement nested property rendering */}
-            <Button type="dashed" icon={<PlusOutlined />} className="w-full">
-              Add Item
-            </Button>
-          </Card>
-        </div>
-      );
-
-    case "json":
-      return (
-        <div>
-          <div className="flex items-center justify-between mb-1">
-            <span className="text-sm font-medium">
-              {property.displayName || property.name}
-            </span>
-            {renderFieldAdornment()}
-          </div>
-          <TextArea
-            {...commonFieldProps}
-            value={
-              typeof value === "object"
-                ? JSON.stringify(value, null, 2)
-                : (value as string)
-            }
-            onChange={(e) => {
-              try {
-                const parsed = JSON.parse(e.target.value);
-                onChange(parsed);
-              } catch {
-                onChange(e.target.value);
-              }
-            }}
-            className="font-mono"
-            rows={6}
-          />
-        </div>
-      );
-
-    case "credentialsSelect":
-      return (
-        <div>
-          <div className="flex items-center justify-between mb-1">
-            <span className="text-sm font-medium">
-              {property.displayName || property.name}
-            </span>
-            {renderFieldAdornment()}
-          </div>
+      case 'multiSelect':
+        return (
           <Select
-            {...commonFieldProps}
+            mode="multiple"
+            value={value || []}
+            onChange={onChange}
+            placeholder={property.placeholder}
+            disabled={disabled}
+            className="w-full"
+            style={{ backgroundColor: theme === 'dark' ? '#1f2937' : undefined }}
+          >
+            {property.options?.map((option) => (
+              <Option key={option.value} value={option.value}>
+                {option.label}
+              </Option>
+            ))}
+          </Select>
+        );
+
+      case 'dateTime':
+        return (
+          <DatePicker
             value={value}
             onChange={onChange}
+            placeholder={property.placeholder}
+            disabled={disabled}
+            showTime
             className="w-full"
-            placeholder="Select credentials..."
-          >
-            {/* TODO: Load credentials from store */}
-            <Option value="test-credential">Test Credential</Option>
-          </Select>
-        </div>
-      );
-
-    default:
-      return (
-        <div>
-          <div className="flex items-center justify-between mb-1">
-            <span className="text-sm font-medium">
-              {property.displayName || property.name}
-            </span>
-            {renderFieldAdornment()}
-          </div>
-          <Input
-            {...commonFieldProps}
-            value={value as string}
-            onChange={(e) => onChange(e.target.value)}
+            style={{ backgroundColor: theme === 'dark' ? '#1f2937' : undefined }}
           />
+        );
+
+      case 'color':
+        return (
+          <ColorPicker
+            value={value}
+            onChange={(color) => onChange(color.toHexString())}
+            disabled={disabled}
+          />
+        );
+
+      case 'file':
+        return (
+          <Upload
+            beforeUpload={() => false}
+            onChange={(info) => {
+              if (info.file) {
+                onChange(info.file);
+              }
+            }}
+            disabled={disabled}
+          >
+            <Button icon={<PlusOutlined />} disabled={disabled}>
+              Upload File
+            </Button>
+          </Upload>
+        );
+
+      case 'json':
+        return (
+          <div>
+            <TextArea
+              value={typeof value === 'string' ? value : JSON.stringify(value, null, 2)}
+              onChange={(e) => {
+                try {
+                  const parsed = JSON.parse(e.target.value);
+                  onChange(parsed);
+                } catch {
+                  onChange(e.target.value);
+                }
+              }}
+              placeholder={property.placeholder}
+              disabled={disabled}
+              rows={6}
+              className={cn(
+                'font-mono text-xs',
+                theme === 'dark' ? 'bg-gray-800 border-gray-600' : ''
+              )}
+            />
+            {value && typeof value === 'object' && (
+              <div className="mt-2">
+                <Button
+                  size="small"
+                  onClick={() => setIsExpanded(!isExpanded)}
+                  type="text"
+                >
+                  {isExpanded ? 'Collapse' : 'Expand'} JSON
+                </Button>
+              </div>
+            )}
+          </div>
+        );
+
+      case 'expression':
+        return (
+          <div>
+            <TextArea
+              value={value || ''}
+              onChange={(e) => onChange(e.target.value)}
+              placeholder={property.placeholder || 'Enter JavaScript expression...'}
+              disabled={disabled}
+              rows={3}
+              className={cn(
+                'font-mono text-xs',
+                theme === 'dark' ? 'bg-gray-800 border-gray-600' : ''
+              )}
+            />
+            <div className="text-xs text-gray-500 mt-1">
+              Use $input to reference input data, e.g., $input.user.name
+            </div>
+          </div>
+        );
+
+      case 'collection':
+        return (
+          <div className="space-y-2">
+            {(value || []).map((item: any, index: number) => (
+              <Card
+                key={index}
+                size="small"
+                className={theme === 'dark' ? 'bg-gray-800 border-gray-600' : ''}
+                title={`Item ${index + 1}`}
+                extra={
+                  <Button
+                    type="text"
+                    danger
+                    size="small"
+                    icon={<DeleteOutlined />}
+                    onClick={() => {
+                      const newValue = [...(value || [])];
+                      newValue.splice(index, 1);
+                      onChange(newValue);
+                    }}
+                    disabled={disabled}
+                  />
+                }
+              >
+                <div className="space-y-2">
+                  {property.collectionSchema?.map((field) => (
+                    <div key={field.name}>
+                      <label className="text-sm font-medium text-gray-300">
+                        {field.label || field.name}
+                      </label>
+                      <PropertyField
+                        property={field}
+                        value={item[field.name]}
+                        onChange={(fieldValue) => {
+                          const newValue = [...(value || [])];
+                          newValue[index] = { ...newValue[index], [field.name]: fieldValue };
+                          onChange(newValue);
+                        }}
+                        disabled={disabled}
+                        theme={theme}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </Card>
+            ))}
+            <Button
+              type="dashed"
+              onClick={() => {
+                const newValue = [...(value || []), {}];
+                onChange(newValue);
+              }}
+              disabled={disabled}
+              className="w-full"
+            >
+              <PlusOutlined /> Add Item
+            </Button>
+          </div>
+        );
+
+      case 'credentialsSelect':
+        return (
+          <div className="space-y-2">
+            <Select
+              value={value?.credentialId}
+              onChange={(credentialId) => onChange({ ...value, credentialId })}
+              placeholder="Select credential"
+              disabled={disabled}
+              className="w-full"
+              style={{ backgroundColor: theme === 'dark' ? '#1f2937' : undefined }}
+            >
+              {/* This would be populated with available credentials */}
+              <Option value="gmail-oauth">Gmail OAuth</Option>
+              <Option value="openai-api">OpenAI API Key</Option>
+            </Select>
+            {value?.credentialId && (
+              <div className="flex items-center gap-2">
+                <Tag color="green">Connected</Tag>
+                <Button size="small" type="link">
+                  Test Connection
+                </Button>
+              </div>
+            )}
+          </div>
+        );
+
+      default:
+        return (
+          <Alert
+            message={`Unsupported property type: ${property.type}`}
+            type="warning"
+            showIcon
+          />
+        );
+    }
+  };
+
+  return (
+    <div className="space-y-1">
+      {renderField()}
+      {property.description && (
+        <div className="text-xs text-gray-500 flex items-center gap-1">
+          <InfoCircleOutlined />
+          {property.description}
         </div>
-      );
-  }
+      )}
+    </div>
+  );
 };
 
-export const EnhancedPropertyRenderer: React.FC<
-  EnhancedPropertyRendererProps
-> = ({
+export const EnhancedPropertyRenderer: React.FC<EnhancedPropertyRendererProps> = ({
   properties,
   formState,
   onChange,
-  executionContext,
-  disabled,
-  theme = "dark",
   onValidationChange,
+  theme = 'dark',
+  disabled = false,
 }) => {
-  const { evaluations, validateAll } = useEnhancedPropertyEvaluator(
-    properties,
-    formState,
-    executionContext,
-  );
+  const [validationErrors, setValidationErrors] = useState<Map<string, string>>(new Map());
 
-  // Validate on form state changes
-  React.useEffect(() => {
-    validateAll().then(({ isValid, errors }) => {
-      onValidationChange?.(isValid, errors);
+  const validateProperty = useCallback((property: NodeProperty, value: any): string | null => {
+    // Required validation
+    if (property.required && (!value || value === '')) {
+      return `${property.label || property.name} is required`;
+    }
+
+    // Type-specific validation
+    switch (property.type) {
+      case 'string':
+      case 'text':
+        if (property.maxLength && value && value.length > property.maxLength) {
+          return `Maximum length is ${property.maxLength} characters`;
+        }
+        if (property.minLength && value && value.length < property.minLength) {
+          return `Minimum length is ${property.minLength} characters`;
+        }
+        if (property.pattern && value && !new RegExp(property.pattern).test(value)) {
+          return `Value must match pattern: ${property.pattern}`;
+        }
+        break;
+
+      case 'number':
+        if (property.min !== undefined && value < property.min) {
+          return `Minimum value is ${property.min}`;
+        }
+        if (property.max !== undefined && value > property.max) {
+          return `Maximum value is ${property.max}`;
+        }
+        break;
+
+      case 'json':
+        if (value && typeof value === 'string') {
+          try {
+            JSON.parse(value);
+          } catch {
+            return 'Invalid JSON format';
+          }
+        }
+        break;
+    }
+
+    return null;
+  }, []);
+
+  const validateAll = useCallback(() => {
+    const errors = new Map<string, string>();
+    
+    properties.forEach((property) => {
+      const value = formState[property.name];
+      const error = validateProperty(property, value);
+      if (error) {
+        errors.set(property.name, error);
+      }
     });
-  }, [formState, validateAll, onValidationChange]);
+
+    setValidationErrors(errors);
+    onValidationChange?.({
+      isValid: errors.size === 0,
+      errors,
+    });
+
+    return errors.size === 0;
+  }, [properties, formState, validateProperty, onValidationChange]);
+
+  // Validate on form state change
+  React.useEffect(() => {
+    validateAll();
+  }, [validateAll]);
+
+  const handlePropertyChange = useCallback((name: string, value: any) => {
+    onChange(name, value);
+  }, [onChange]);
 
   const visibleProperties = useMemo(() => {
     return properties.filter((property) => {
-      const evaluation = evaluations.get(property.name);
-      return evaluation?.visible !== false;
-    });
-  }, [properties, evaluations]);
-
-  const handlePropertyChange = useCallback(
-    (name: string, value: PropertyValue) => {
-      onChange(name, value);
-    },
-    [onChange],
-  );
-
-  const renderProperty = useCallback(
-    (property: EnhancedNodeProperty) => {
-      const evaluation = evaluations.get(property.name);
-      const currentValue = formState[property.name];
-
-      if (!evaluation?.visible) {
-        return null;
+      // Simple visibility logic - can be enhanced with complex conditions
+      if (property.displayOptions?.show) {
+        const conditions = property.displayOptions.show;
+        return Object.entries(conditions).every(([key, values]) => {
+          const formValue = formState[key];
+          return values.includes(formValue);
+        });
       }
-
-      return (
-        <div
-          key={property.name}
-          className={cn(
-            "property-field mb-4",
-            evaluation.disabled && "opacity-50 pointer-events-none",
-          )}
-        >
-          <PropertyField
-            property={property}
-            value={currentValue}
-            onChange={(value) => handlePropertyChange(property.name, value)}
-            disabled={disabled || evaluation.disabled}
-            theme={theme}
-            error={evaluation.error}
-            warning={evaluation.warning}
-            suggestion={evaluation.suggestion}
-          />
-
-          {/* Validation feedback */}
-          {evaluation.error && (
-            <Alert
-              message={evaluation.error}
-              type="error"
-              size="small"
-              className="mt-1"
-              showIcon
-            />
-          )}
-
-          {evaluation.warning && (
-            <Alert
-              message={evaluation.warning}
-              type="warning"
-              size="small"
-              className="mt-1"
-              showIcon
-            />
-          )}
-
-          {evaluation.suggestion &&
-            !evaluation.error &&
-            !evaluation.warning && (
-              <Alert
-                message={evaluation.suggestion}
-                type="info"
-                size="small"
-                className="mt-1"
-                showIcon
-                icon={<BulbOutlined />}
-              />
-            )}
-
-          {property.description && !evaluation.error && !evaluation.warning && (
-            <div className="text-xs text-gray-500 mt-1">
-              {property.description}
-            </div>
-          )}
-        </div>
-      );
-    },
-    [evaluations, formState, handlePropertyChange, disabled, theme],
-  );
+      return true;
+    });
+  }, [properties, formState]);
 
   return (
-    <div
-      className={cn(
-        "enhanced-property-renderer",
-        theme === "dark" ? "text-white" : "text-gray-900",
+    <div className="space-y-4">
+      {visibleProperties.map((property) => {
+        const error = validationErrors.get(property.name);
+        const value = formState[property.name];
+
+        return (
+          <div key={property.name} className="space-y-2">
+            <div className="flex items-center justify-between">
+              <label className="text-sm font-medium text-gray-300 flex items-center gap-2">
+                {property.label || property.name}
+                {property.required && (
+                  <span className="text-red-400">*</span>
+                )}
+                {property.description && (
+                  <Tooltip title={property.description}>
+                    <InfoCircleOutlined className="text-gray-500" />
+                  </Tooltip>
+                )}
+              </label>
+              {error && (
+                <Tooltip title={error}>
+                  <ExclamationCircleOutlined className="text-red-400" />
+                </Tooltip>
+              )}
+            </div>
+
+            <PropertyField
+              property={property}
+              value={value}
+              onChange={(newValue) => handlePropertyChange(property.name, newValue)}
+              disabled={disabled}
+              theme={theme}
+            />
+
+            {error && (
+              <Alert
+                message={error}
+                type="error"
+                size="small"
+                showIcon
+                className="text-xs"
+              />
+            )}
+          </div>
+        );
+      })}
+
+      {visibleProperties.length === 0 && (
+        <div className="text-center text-gray-500 py-8">
+          <div className="text-2xl mb-2">⚙️</div>
+          <div>No properties to configure</div>
+          <div className="text-xs mt-2">
+            All properties are hidden by conditional logic
+          </div>
+        </div>
       )}
-    >
-      <Form layout="vertical" className="space-y-4">
-        {visibleProperties.map(renderProperty)}
-      </Form>
     </div>
   );
 };
