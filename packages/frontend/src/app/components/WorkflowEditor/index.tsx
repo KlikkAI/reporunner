@@ -22,10 +22,14 @@ import {
   executionMonitor,
   useExecutionMonitor,
 } from "@/app/services/executionMonitor";
+import { intelligentAutoConnect } from "@/app/services/intelligentAutoConnect";
 import AdvancedNodePanel from "./AdvancedNodePanel";
 import RegistryNode from "./NodeTypes/RegistryNode";
+import ContainerNode from "./NodeTypes/ContainerNode/ContainerNode";
 import NodePropertyPanel from "./NodePropertyPanel";
+import AdvancedPropertyPanel from "./AdvancedPropertyPanel";
 import CustomEdge from "./CustomEdge";
+import ExecutionPanel from "./ExecutionPanel";
 import { ConnectionType } from "@/core/types/edge";
 import ConnectionLine from "./ConnectionLine";
 import {
@@ -36,10 +40,13 @@ import {
   AIEdgeMarkers,
   AIEdgeStyles,
 } from "./AIEdges";
-// Generate dynamic node types from registry
+// Generate dynamic node types from registry + container nodes
 // 🎯 100% Registry Migration - No Legacy Fallback Needed
 const generateNodeTypes = () => {
   const nodeTypes: Record<string, any> = {};
+
+  // Add container node type
+  nodeTypes["container"] = ContainerNode;
 
   // Get ALL node descriptions (regular + enhanced) and map them to RegistryNode
   const allNodeDescriptions = nodeRegistry.getAllNodeTypeDescriptions();
@@ -61,7 +68,7 @@ const generateNodeTypes = () => {
       // Only log success once per session to avoid spam
       if (!(window as any).__gmailNodeValidationLogged) {
         console.log(
-          `✅ Generated ${Object.keys(nodeTypes).length} node types including Gmail`,
+          `✅ Generated ${Object.keys(nodeTypes).length} node types including Gmail and containers`,
         );
         (window as any).__gmailNodeValidationLogged = true;
       }
@@ -194,6 +201,7 @@ const WorkflowEditor: React.FC = () => {
   const [currentExecutionId, setCurrentExecutionId] = useState<string | null>(
     null,
   );
+  const [isExecutionPanelVisible, setIsExecutionPanelVisible] = useState(false);
 
   // Monitor current execution
   const { execution } = useExecutionMonitor(currentExecutionId);
@@ -352,28 +360,33 @@ const WorkflowEditor: React.FC = () => {
     event.dataTransfer.dropEffect = "move";
   }, []);
 
-  // Helper function to find the rightmost node (last in sequence) for auto-connection
-  const findLastNode = useCallback(() => {
-    if (localNodes.length === 0) return null;
+  // Enhanced auto-connection using intelligent algorithm
+  const findOptimalConnection = useCallback(
+    (dropPosition: any) => {
+      if (localNodes.length === 0) return null;
 
-    // Find node with no outgoing connections (target but no source edges)
-    const nodesWithOutgoing = new Set(localEdges.map((edge) => edge.source));
-    const candidateNodes = localNodes.filter(
-      (node) => !nodesWithOutgoing.has(node.id),
-    );
-
-    if (candidateNodes.length === 0) {
-      // If all nodes have outgoing connections, use the rightmost positioned node
-      return localNodes.reduce((rightmost, current) =>
-        current.position.x > rightmost.position.x ? current : rightmost,
+      // Use intelligent auto-connect for sophisticated connection suggestions
+      const suggestion = intelligentAutoConnect.findOptimalConnection(
+        dropPosition,
+        localNodes,
+        localEdges,
+        {
+          maxDistance: 400,
+          preferredDirection: "horizontal",
+          considerContainers: true,
+          validateNodeTypes: true,
+        },
       );
-    }
 
-    // Among candidates with no outgoing connections, pick the rightmost
-    return candidateNodes.reduce((rightmost, current) =>
-      current.position.x > rightmost.position.x ? current : rightmost,
-    );
-  }, [localNodes, localEdges]);
+      if (suggestion) {
+        return localNodes.find((node) => node.id === suggestion.sourceNodeId);
+      }
+
+      // Fallback to original logic for compatibility
+      return intelligentAutoConnect.findLastNode(localNodes, localEdges);
+    },
+    [localNodes, localEdges],
+  );
 
   const onDrop = useCallback(
     (event: React.DragEvent) => {
@@ -401,8 +414,17 @@ const WorkflowEditor: React.FC = () => {
           y: event.clientY - reactFlowBounds.top,
         });
 
-        // Find the last node for auto-connection
-        const lastNode = findLastNode();
+        // Find optimal connection using intelligent auto-connect
+        const targetNode = findOptimalConnection(position);
+
+        // Optimize position based on target connection
+        const optimizedPosition = targetNode
+          ? intelligentAutoConnect.findOptimalDropPosition(
+              position,
+              localNodes,
+              targetNode,
+            )
+          : position;
 
         const baseId = nodeTypeData?.name || type;
         const newNodeId = `node-${Date.now()}-${Math.random().toString(36).substr(2, 9)}-${baseId}`;
@@ -426,7 +448,7 @@ const WorkflowEditor: React.FC = () => {
         const newNode = {
           id: newNodeId,
           type: type,
-          position,
+          position: optimizedPosition,
           parameters: {},
           data: {
             label: nodeTypeData?.displayName || nodeTypeData?.name || type,
@@ -448,11 +470,11 @@ const WorkflowEditor: React.FC = () => {
 
         addNode(newNode);
 
-        // Auto-connect to the last node if it exists
-        if (lastNode) {
+        // Auto-connect to the target node if it exists
+        if (targetNode) {
           const newEdge = {
-            id: `edge-${lastNode.id}-${newNodeId}`,
-            source: lastNode.id,
+            id: `edge-${targetNode.id}-${newNodeId}`,
+            source: targetNode.id,
             target: newNodeId,
             type: "default",
             data: {
@@ -460,12 +482,37 @@ const WorkflowEditor: React.FC = () => {
             },
           };
           addEdgeToStore(newEdge);
+
+          // Log the intelligent connection for user feedback
+          if (import.meta.env.DEV) {
+            const suggestion = intelligentAutoConnect.findOptimalConnection(
+              position,
+              localNodes,
+              localEdges,
+              {
+                maxDistance: 400,
+                preferredDirection: "horizontal",
+                considerContainers: true,
+                validateNodeTypes: true,
+              },
+            );
+            if (suggestion) {
+              console.log(`🔗 Intelligent Auto-Connect: ${suggestion.reason}`);
+            }
+          }
         }
       } catch (error) {
         console.error("Error in onDrop:", error);
       }
     },
-    [reactFlowInstance, addNode, addEdgeToStore, findLastNode],
+    [
+      reactFlowInstance,
+      addNode,
+      addEdgeToStore,
+      findOptimalConnection,
+      localNodes,
+      localEdges,
+    ],
   );
 
   const onInit = useCallback((instance: ReactFlowInstance) => {
@@ -718,6 +765,19 @@ const WorkflowEditor: React.FC = () => {
                 showInteractive={true}
               >
                 <button
+                  onClick={() =>
+                    setIsExecutionPanelVisible(!isExecutionPanelVisible)
+                  }
+                  className="react-flow__controls-button"
+                  title={
+                    isExecutionPanelVisible
+                      ? "Hide execution panel"
+                      : "Show execution panel"
+                  }
+                >
+                  📊
+                </button>
+                <button
                   onClick={() => setIsFullscreen(!isFullscreen)}
                   className="react-flow__controls-button"
                   title={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
@@ -782,11 +842,18 @@ const WorkflowEditor: React.FC = () => {
         </div>
       </div>
 
-      {/* Node Property Panel */}
-      <NodePropertyPanel
+      {/* Advanced Property Panel */}
+      <AdvancedPropertyPanel
         isOpen={selectedNodeForConfig !== null}
         onClose={() => setSelectedNodeForConfig(null)}
         nodeId={selectedNodeForConfig || undefined}
+      />
+
+      {/* Execution Monitoring Panel */}
+      <ExecutionPanel
+        isVisible={isExecutionPanelVisible}
+        onToggle={() => setIsExecutionPanelVisible(!isExecutionPanelVisible)}
+        position="right"
       />
     </div>
   );

@@ -1,75 +1,116 @@
-import React, { useState, useCallback } from 'react'
-import { useLeanWorkflowStore, nodeRegistry } from '@/core'
-import { VirtualizedList } from '@/design-system'
+import React, { useState, useCallback } from "react";
+import { useLeanWorkflowStore, nodeRegistry } from "@/core";
+import { VirtualizedList } from "@/design-system";
 import {
   UNIFIED_CATEGORIES,
   CATEGORY_ICONS,
   CATEGORY_DESCRIPTIONS,
-} from '@/core/constants/categories'
+} from "@/core/constants/categories";
+import {
+  CONTAINER_TEMPLATES,
+  ContainerFactory,
+} from "@/app/services/containerFactory";
 interface AdvancedNodePanelProps {
-  isCollapsed: boolean
-  onToggle: () => void
+  isCollapsed: boolean;
+  onToggle: () => void;
 }
 
 // Helper function to get category metadata
 const getCategoryMetadata = (category: string) => {
-  const icon = CATEGORY_ICONS[category as keyof typeof CATEGORY_ICONS]
+  const icon = CATEGORY_ICONS[category as keyof typeof CATEGORY_ICONS];
   const info =
-    CATEGORY_DESCRIPTIONS[category as keyof typeof CATEGORY_DESCRIPTIONS]
-  return { icon, info }
-}
+    CATEGORY_DESCRIPTIONS[category as keyof typeof CATEGORY_DESCRIPTIONS];
+  return { icon, info };
+};
 
 const AdvancedNodePanel: React.FC<AdvancedNodePanelProps> = ({
   isCollapsed,
   onToggle,
 }) => {
-  const { addNode, addEdge, nodes, edges } = useLeanWorkflowStore()
-  const [searchTerm, setSearchTerm] = useState('')
-  const [selectedCategory, setSelectedCategory] = useState<string>('all')
+  const { addNode, addEdge, nodes, edges } = useLeanWorkflowStore();
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
 
   // Get all nodes from the registry (replacing hardcoded array)
-  const allRegistryDescriptions = nodeRegistry.getAllNodeTypeDescriptions()
-  
+  const allRegistryDescriptions = nodeRegistry.getAllNodeTypeDescriptions();
+
   const registryNodes = allRegistryDescriptions
-    .map(description => ({
-      id: `registry-${description.name || 'unknown'}`,
-      displayName: description.displayName || description.name || 'Unknown Node',
-      description: description.description || 'No description available',
-      icon: description.icon || '⚡',
+    .map((description) => ({
+      id: `registry-${description.name || "unknown"}`,
+      displayName:
+        description.displayName || description.name || "Unknown Node",
+      description: description.description || "No description available",
+      icon: description.icon || "⚡",
       category:
         description.categories?.[0] || UNIFIED_CATEGORIES.BUSINESS_PRODUCTIVITY,
-      color: description.defaults?.color || '#6B7280',
-      type: description.name || 'unknown',
+      color: description.defaults?.color || "#6B7280",
+      type: description.name || "unknown",
       nodeTypeData: {
-        name: description.name || 'unknown',
-        displayName: description.displayName || description.name || 'Unknown Node',
+        name: description.name || "unknown",
+        displayName:
+          description.displayName || description.name || "Unknown Node",
       },
       isCore: true, // All registry nodes are core nodes
     }))
-    .filter(node => node.type !== 'unknown') // Filter out malformed nodes
-    
+    .filter((node) => node.type !== "unknown"); // Filter out malformed nodes
+
+  // Add container nodes
+  const containerNodes = Object.values(CONTAINER_TEMPLATES).map((template) => ({
+    id: `container-${template.type}`,
+    displayName: template.label,
+    description: template.description,
+    icon: template.icon,
+    category: template.category,
+    color: "#8B5CF6", // Purple color for containers
+    type: "container",
+    containerType: template.type,
+    nodeTypeData: {
+      name: "container",
+      displayName: template.label,
+      containerType: template.type,
+    },
+    isCore: true,
+  })) as Array<{
+    id: string;
+    displayName: string;
+    description: string;
+    icon: string;
+    category: string;
+    color: string;
+    type: string;
+    containerType?: string;
+    nodeTypeData: {
+      name: string;
+      displayName: string;
+      containerType?: string;
+    };
+    isCore: boolean;
+  }>;
+
   // Only log in development mode and only if there are issues
   if (import.meta.env.DEV && registryNodes.length === 0) {
-    console.warn('⚠️ AdvancedNodePanel - No registry nodes found')
+    console.warn("⚠️ AdvancedNodePanel - No registry nodes found");
   }
 
   // Pure Registry System - use only registry nodes, no integration duplicates
-  const allAvailableNodes = [...registryNodes]
+  const allAvailableNodes = [...registryNodes, ...containerNodes];
 
   // Use unified categories
-  const categories = ['all', ...Object.values(UNIFIED_CATEGORIES).sort()]
+  const categories = ["all", ...Object.values(UNIFIED_CATEGORIES).sort()];
 
   // Filter and sort nodes in ascending order
   const filteredNodes = allAvailableNodes
-    .filter(node => {
+    .filter((node) => {
       const matchesSearch =
-        (node.displayName?.toLowerCase().includes(searchTerm.toLowerCase()) ?? false) ||
-        (node.description?.toLowerCase().includes(searchTerm.toLowerCase()) ?? false)
+        (node.displayName?.toLowerCase().includes(searchTerm.toLowerCase()) ??
+          false) ||
+        (node.description?.toLowerCase().includes(searchTerm.toLowerCase()) ??
+          false);
       const matchesCategory =
-        selectedCategory === 'all' || node.category === selectedCategory
-      return matchesSearch && matchesCategory
+        selectedCategory === "all" || node.category === selectedCategory;
+      return matchesSearch && matchesCategory;
     })
-    .sort((a, b) => (a.displayName || '').localeCompare(b.displayName || ''))
+    .sort((a, b) => (a.displayName || "").localeCompare(b.displayName || ""));
 
   const onDragStart = useCallback(
     (event: React.DragEvent, node: (typeof allAvailableNodes)[0]) => {
@@ -77,94 +118,116 @@ const AdvancedNodePanel: React.FC<AdvancedNodePanelProps> = ({
         const dragData = {
           type: node.type,
           nodeTypeData: node.nodeTypeData,
-        }
+          ...(node.type === "container" && {
+            containerType: (node as any).containerType,
+          }),
+        };
 
         event.dataTransfer.setData(
-          'application/reactflow',
-          JSON.stringify(dragData)
-        )
-        event.dataTransfer.effectAllowed = 'move'
+          "application/reactflow",
+          JSON.stringify(dragData),
+        );
+        event.dataTransfer.effectAllowed = "move";
       } catch (error) {
-        console.error('Error in onDragStart:', error)
+        console.error("Error in onDragStart:", error);
       }
     },
-    []
-  )
+    [],
+  );
 
   // Helper function to find the rightmost node (last in sequence)
   const findLastNode = useCallback(() => {
-    if (nodes.length === 0) return null
+    if (nodes.length === 0) return null;
 
     // Find node with no outgoing connections (target but no source edges)
-    const nodesWithOutgoing = new Set(edges.map(edge => edge.source))
-    const candidateNodes = nodes.filter(node => !nodesWithOutgoing.has(node.id))
+    const nodesWithOutgoing = new Set(edges.map((edge) => edge.source));
+    const candidateNodes = nodes.filter(
+      (node) => !nodesWithOutgoing.has(node.id),
+    );
 
     if (candidateNodes.length === 0) {
       // If all nodes have outgoing connections, use the rightmost positioned node
       return nodes.reduce((rightmost, current) =>
-        current.position.x > rightmost.position.x ? current : rightmost
-      )
+        current.position.x > rightmost.position.x ? current : rightmost,
+      );
     }
 
     // Among candidates with no outgoing connections, pick the rightmost
     return candidateNodes.reduce((rightmost, current) =>
-      current.position.x > rightmost.position.x ? current : rightmost
-    )
-  }, [nodes, edges])
+      current.position.x > rightmost.position.x ? current : rightmost,
+    );
+  }, [nodes, edges]);
 
   const handleAddNode = useCallback(
     (node: (typeof allAvailableNodes)[0]) => {
-      // Generate a unique ID for the workflow node (simplified for registry nodes)
-      const baseId = node.nodeTypeData.name
-
       // Find last node for auto-connection
-      const lastNode = findLastNode()
+      const lastNode = findLastNode();
 
       // Position new node to the right of the last node, or at origin if no nodes exist
       const newPosition = lastNode
         ? { x: lastNode.position.x + 300, y: lastNode.position.y }
-        : { x: 100, y: 100 }
+        : { x: 100, y: 100 };
 
-      const newNodeId = `node-${Date.now()}-${Math.random().toString(36).substr(2, 9)}-${baseId}`
+      let newNode;
 
-      // Get the node type description from registry
-      const enhancedNodeType = nodeRegistry.getNodeTypeDescription(node.type)
+      // Handle container nodes differently
+      if (node.type === "container") {
+        const containerNode = ContainerFactory.createContainer(
+          (node as any).containerType,
+          newPosition,
+          undefined,
+          node.displayName,
+        );
 
-      const newNode = {
-        id: newNodeId,
-        type: node.type,
-        position: newPosition,
-        parameters: {},
-        data: {
-          label: node.displayName,
-          nodeType: node.nodeTypeData.name,
-          configuration: {},
-          credentials: [],
-          // Include icon and enhancedNodeType for property panel
-          icon: enhancedNodeType?.icon || node.icon,
-          enhancedNodeType: enhancedNodeType,
-          // Node type data for registry system
-          nodeTypeData: node.nodeTypeData,
-          config: {},
-          parameters: {},
-        },
+        // Convert to WorkflowNodeInstance format
+        newNode = {
+          id: containerNode.id,
+          type: containerNode.type || "container",
+          position: containerNode.position,
+          parameters: containerNode.data || {},
+        };
+      } else {
+        // Generate a unique ID for the workflow node (simplified for registry nodes)
+        const baseId = node.nodeTypeData.name;
+        const newNodeId = `node-${Date.now()}-${Math.random().toString(36).substr(2, 9)}-${baseId}`;
+
+        // Get the node type description from registry
+        const enhancedNodeType = nodeRegistry.getNodeTypeDescription(node.type);
+
+        newNode = {
+          id: newNodeId,
+          type: node.type,
+          position: newPosition,
+          parameters: {
+            label: node.displayName,
+            nodeType: node.nodeTypeData.name,
+            configuration: {},
+            credentials: [],
+            // Include icon and enhancedNodeType for property panel
+            icon: enhancedNodeType?.icon || node.icon,
+            enhancedNodeType: enhancedNodeType,
+            // Node type data for registry system
+            nodeTypeData: node.nodeTypeData,
+            config: {},
+          },
+        };
       }
 
-      addNode(newNode)
+      addNode(newNode);
 
       // Auto-connect to the last node if it exists
       if (lastNode) {
         const newEdge = {
-          id: `edge-${lastNode.id}-${newNodeId}`,
+          id: `edge-${lastNode.id}-${newNode.id}`,
           source: lastNode.id,
-          target: newNodeId,
-          type: 'default',
-        }
-        addEdge(newEdge)
+          target: newNode.id,
+          type: "default",
+        };
+        addEdge(newEdge);
       }
     },
-    [addNode, addEdge, findLastNode]
-  )
+    [addNode, addEdge, findLastNode],
+  );
 
   // Render function for node items in virtualized list
   const renderNodeItem = useCallback(
@@ -172,17 +235,17 @@ const AdvancedNodePanel: React.FC<AdvancedNodePanelProps> = ({
       <div
         key={node.id}
         draggable
-        onDragStart={e => {
-          e.stopPropagation()
-          onDragStart(e, node)
+        onDragStart={(e) => {
+          e.stopPropagation();
+          onDragStart(e, node);
         }}
-        onDragEnd={e => {
-          e.preventDefault()
-          e.stopPropagation()
+        onDragEnd={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
         }}
-        onClick={e => {
-          e.stopPropagation()
-          handleAddNode(node)
+        onClick={(e) => {
+          e.stopPropagation();
+          handleAddNode(node);
         }}
         className="group p-2.5 border border-gray-200 rounded-md cursor-move hover:bg-gray-50 hover:border-gray-300 hover:shadow-sm transition-all duration-150 mb-1.5"
       >
@@ -204,7 +267,7 @@ const AdvancedNodePanel: React.FC<AdvancedNodePanelProps> = ({
             </p>
             <div className="mt-1.5">
               <span className="bg-gray-100 text-gray-600 text-xs px-1.5 py-0.5 rounded">
-                {getCategoryMetadata(node.category || '')?.icon || ''}{' '}
+                {getCategoryMetadata(node.category || "")?.icon || ""}{" "}
                 {node.category}
               </span>
             </div>
@@ -212,21 +275,21 @@ const AdvancedNodePanel: React.FC<AdvancedNodePanelProps> = ({
         </div>
       </div>
     ),
-    [onDragStart, handleAddNode]
-  )
+    [onDragStart, handleAddNode],
+  );
 
   return (
     <div
-      className={`${isCollapsed ? 'w-16' : 'w-80'} h-full bg-white border-r border-gray-200 flex flex-col transition-all duration-300 ease-in-out`}
+      className={`${isCollapsed ? "w-16" : "w-80"} h-full bg-white border-r border-gray-200 flex flex-col transition-all duration-300 ease-in-out`}
     >
       {/* Toggle Button */}
       <div className="flex justify-end p-4">
         <button
           onClick={onToggle}
           className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
-          title={isCollapsed ? 'Expand node panel' : 'Collapse node panel'}
+          title={isCollapsed ? "Expand node panel" : "Collapse node panel"}
         >
-          <span className="text-lg">{isCollapsed ? '→' : '←'}</span>
+          <span className="text-lg">{isCollapsed ? "→" : "←"}</span>
         </button>
       </div>
 
@@ -251,26 +314,26 @@ const AdvancedNodePanel: React.FC<AdvancedNodePanelProps> = ({
             type="text"
             placeholder="Search nodes..."
             value={searchTerm}
-            onChange={e => setSearchTerm(e.target.value)}
+            onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
           />
 
           <select
             value={selectedCategory}
-            onChange={e => setSelectedCategory(e.target.value)}
+            onChange={(e) => setSelectedCategory(e.target.value)}
             aria-label="Select category"
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
           >
-            {categories.map(category => {
+            {categories.map((category) => {
               const metadata =
-                category !== 'all' ? getCategoryMetadata(category) : null
+                category !== "all" ? getCategoryMetadata(category) : null;
               return (
                 <option key={category} value={category}>
-                  {category === 'all'
-                    ? 'All Categories'
-                    : `${metadata?.icon || ''} ${category}`}
+                  {category === "all"
+                    ? "All Categories"
+                    : `${metadata?.icon || ""} ${category}`}
                 </option>
-              )
+              );
             })}
           </select>
         </div>
@@ -296,15 +359,15 @@ const AdvancedNodePanel: React.FC<AdvancedNodePanelProps> = ({
                 renderItem={renderNodeItem}
                 height={700}
                 estimateSize={85} // Estimated height per node item
-                getItemKey={node => node.id}
+                getItemKey={(node) => node.id}
                 gap={0}
                 className="node-list"
                 emptyState={
                   <div className="text-center py-8">
                     <p className="text-gray-500 text-sm">
                       {searchTerm
-                        ? 'No nodes match your search'
-                        : 'No nodes available in this category'}
+                        ? "No nodes match your search"
+                        : "No nodes available in this category"}
                     </p>
                   </div>
                 }
@@ -314,7 +377,7 @@ const AdvancedNodePanel: React.FC<AdvancedNodePanelProps> = ({
         </div>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default AdvancedNodePanel
+export default AdvancedNodePanel;

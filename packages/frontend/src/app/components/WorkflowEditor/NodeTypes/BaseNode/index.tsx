@@ -5,6 +5,7 @@ import NodeToolbar from "./NodeToolbar";
 import NodeMenu from "./NodeMenu";
 import NodeHandles from "./NodeHandles";
 import { IntegrationNodeType } from "@/core";
+import ExecutionStateOverlay from "../../ExecutionStateOverlay";
 
 // Base props interface that all nodes extend
 export interface BaseNodeData {
@@ -322,6 +323,9 @@ const BaseNode: React.FC<BaseNodeComponentProps> = ({
               aiHandleConnections={aiHandleConnections}
               hasOutgoingConnection={data.hasOutgoingConnection}
             />
+
+            {/* Execution State Overlay */}
+            {id && <ExecutionStateOverlay nodeId={id} />}
 
             {/* Node Icon */}
             <div className="flex items-center justify-center">
