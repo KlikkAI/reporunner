@@ -17,6 +17,7 @@ import ReactFlow, {
 import "reactflow/dist/style.css";
 import { useLeanWorkflowStore, nodeRegistry } from "@/core";
 import { useCredentialStore } from "@/core/stores/credentialStore";
+import { useAIAssistantStore } from "@/core/stores/aiAssistantStore";
 import { ExecutionToolbar } from "./ExecutionToolbar";
 import {
   executionMonitor,
@@ -30,6 +31,8 @@ import NodePropertyPanel from "./NodePropertyPanel";
 import AdvancedPropertyPanel from "./AdvancedPropertyPanel";
 import CustomEdge from "./CustomEdge";
 import ExecutionPanel from "./ExecutionPanel";
+import AIAssistantPanel from "./AIAssistantPanel";
+import DebugPanel from "./DebugPanel";
 import { ConnectionType } from "@/core/types/edge";
 import ConnectionLine from "./ConnectionLine";
 import {
@@ -102,6 +105,12 @@ const WorkflowEditor: React.FC = () => {
     loadWorkflow,
   } = useLeanWorkflowStore();
   const { loadCredentials } = useCredentialStore();
+  const {
+    isEnabled: isAIEnabled,
+    assistantPanelOpen,
+    toggleAssistantPanel,
+    analyzeWorkflow,
+  } = useAIAssistantStore();
 
   // Memoized node types - prevent React Flow warnings about creating new objects
   const nodeTypes = useMemo<Record<string, any>>(() => {
@@ -202,6 +211,7 @@ const WorkflowEditor: React.FC = () => {
     null,
   );
   const [isExecutionPanelVisible, setIsExecutionPanelVisible] = useState(false);
+  const [isDebugPanelVisible, setIsDebugPanelVisible] = useState(false);
 
   // Monitor current execution
   const { execution } = useExecutionMonitor(currentExecutionId);
@@ -563,6 +573,39 @@ const WorkflowEditor: React.FC = () => {
     return () => clearTimeout(timeoutId);
   }, [localEdges, edges, updateEdges]);
 
+  // Auto-analyze workflow when AI is enabled and workflow changes
+  useEffect(() => {
+    if (isAIEnabled && localNodes.length > 0) {
+      const timeoutId = setTimeout(() => {
+        analyzeWorkflow(
+          localNodes.map((node) => ({
+            id: node.id,
+            type: node.type!,
+            position: node.position,
+            parameters: node.data?.parameters || {},
+            credentials: node.data?.credentials || [],
+            disabled: node.data?.disabled || false,
+            notes: node.data?.notes || "",
+            name: node.data?.name || node.data?.label || "",
+            continueOnFail: node.data?.continueOnFail || false,
+            executeOnce: node.data?.executeOnce || false,
+          })),
+          localEdges.map((edge) => ({
+            id: edge.id,
+            source: edge.source,
+            target: edge.target,
+            sourceHandle: edge.sourceHandle || undefined,
+            targetHandle: edge.targetHandle || undefined,
+            data: edge.data,
+          })),
+        ).catch((error) => {
+          console.error("AI workflow analysis failed:", error);
+        });
+      }, 1000); // Debounce analysis
+      return () => clearTimeout(timeoutId);
+    }
+  }, [isAIEnabled, localNodes, localEdges, analyzeWorkflow]);
+
   // Handler for node connection - no longer creates automatic nodes, just logs
   const handleNodeConnect = useCallback(() => {
     // This is now handled by ReactFlow's native connection system through handles
@@ -764,6 +807,21 @@ const WorkflowEditor: React.FC = () => {
                 className="bg-white border border-gray-200 rounded-lg"
                 showInteractive={true}
               >
+                {isAIEnabled && (
+                  <button
+                    onClick={toggleAssistantPanel}
+                    className={`react-flow__controls-button ${
+                      assistantPanelOpen ? "bg-blue-100 border-blue-300" : ""
+                    }`}
+                    title={
+                      assistantPanelOpen
+                        ? "Hide AI Assistant"
+                        : "Open AI Assistant"
+                    }
+                  >
+                    🤖
+                  </button>
+                )}
                 <button
                   onClick={() =>
                     setIsExecutionPanelVisible(!isExecutionPanelVisible)
@@ -776,6 +834,19 @@ const WorkflowEditor: React.FC = () => {
                   }
                 >
                   📊
+                </button>
+                <button
+                  onClick={() => setIsDebugPanelVisible(!isDebugPanelVisible)}
+                  className={`react-flow__controls-button ${
+                    isDebugPanelVisible ? "bg-orange-100 border-orange-300" : ""
+                  }`}
+                  title={
+                    isDebugPanelVisible
+                      ? "Hide debug panel"
+                      : "Show debug panel"
+                  }
+                >
+                  🐛
                 </button>
                 <button
                   onClick={() => setIsFullscreen(!isFullscreen)}
@@ -854,6 +925,24 @@ const WorkflowEditor: React.FC = () => {
         isVisible={isExecutionPanelVisible}
         onToggle={() => setIsExecutionPanelVisible(!isExecutionPanelVisible)}
         position="right"
+      />
+
+      {/* AI Assistant Panel */}
+      {isAIEnabled && (
+        <AIAssistantPanel
+          isOpen={assistantPanelOpen}
+          onClose={toggleAssistantPanel}
+          workflowNodes={localNodes}
+          workflowEdges={localEdges}
+        />
+      )}
+
+      {/* Debug Panel */}
+      <DebugPanel
+        isVisible={isDebugPanelVisible}
+        onToggle={() => setIsDebugPanelVisible(!isDebugPanelVisible)}
+        position="left"
+        currentExecutionId={currentExecutionId}
       />
     </div>
   );

@@ -1,5 +1,6 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { useLeanWorkflowStore, nodeRegistry } from "@/core";
+import { useAIAssistantStore } from "@/core/stores/aiAssistantStore";
 import { VirtualizedList } from "@/design-system";
 import {
   UNIFIED_CATEGORIES,
@@ -28,8 +29,16 @@ const AdvancedNodePanel: React.FC<AdvancedNodePanelProps> = ({
   onToggle,
 }) => {
   const { addNode, addEdge, nodes, edges } = useLeanWorkflowStore();
+  const {
+    isEnabled: isAIEnabled,
+    nodeSuggestions,
+    getNodeSuggestions,
+    suggestionsVisible,
+    hideSuggestions,
+  } = useAIAssistantStore();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const [showAISuggestions, setShowAISuggestions] = useState(true);
 
   // Get all nodes from the registry (replacing hardcoded array)
   const allRegistryDescriptions = nodeRegistry.getAllNodeTypeDescriptions();
@@ -97,6 +106,93 @@ const AdvancedNodePanel: React.FC<AdvancedNodePanelProps> = ({
 
   // Use unified categories
   const categories = ["all", ...Object.values(UNIFIED_CATEGORIES).sort()];
+
+  // AI-powered node suggestions
+  useEffect(() => {
+    if (isAIEnabled && nodes.length > 0) {
+      const timeoutId = setTimeout(() => {
+        getNodeSuggestions({
+          currentNodes: nodes,
+          currentEdges: edges,
+          lastAction: "node_added",
+        }).catch((error) => {
+          console.error("Failed to get AI node suggestions:", error);
+        });
+      }, 500); // Debounce suggestions
+      return () => clearTimeout(timeoutId);
+    }
+  }, [isAIEnabled, nodes, edges, getNodeSuggestions]);
+
+  // Convert AI suggestions to node format for rendering
+  const aiSuggestedNodes = nodeSuggestions.map((suggestion) => ({
+    id: `ai-suggestion-${suggestion.nodeType}`,
+    displayName: suggestion.displayName,
+    description: suggestion.description,
+    icon: "🤖", // AI suggestion icon
+    category: "AI_SUGGESTIONS",
+    color: "#3B82F6", // Blue color for AI suggestions
+    type: suggestion.nodeType,
+    nodeTypeData: {
+      name: suggestion.nodeType,
+      displayName: suggestion.displayName,
+    },
+    isCore: false,
+    aiSuggestion: suggestion,
+  }));
+
+  const handleAISuggestionAdd = useCallback(
+    (suggestion: (typeof aiSuggestedNodes)[0]) => {
+      if (suggestion.aiSuggestion) {
+        const { placement } = suggestion.aiSuggestion;
+
+        // Create node at suggested position
+        const newNodeId = `node-${Date.now()}-${Math.random().toString(36).substr(2, 9)}-${suggestion.type}`;
+        const enhancedNodeType = nodeRegistry.getNodeTypeDescription(
+          suggestion.type,
+        );
+
+        const newNode = {
+          id: newNodeId,
+          type: suggestion.type,
+          position: placement.position,
+          parameters: {
+            label: suggestion.displayName,
+            nodeType: suggestion.nodeTypeData.name,
+            configuration: {},
+            credentials: [],
+            icon: enhancedNodeType?.icon || suggestion.icon,
+            enhancedNodeType: enhancedNodeType,
+            nodeTypeData: suggestion.nodeTypeData,
+            config: {},
+          },
+        };
+
+        addNode(newNode);
+
+        // Auto-connect based on AI suggestion
+        placement.connections.forEach((connection) => {
+          if (connection.sourceNodeId && connection.type === "input") {
+            const newEdge = {
+              id: `edge-${connection.sourceNodeId}-${newNodeId}`,
+              source: connection.sourceNodeId,
+              target: newNodeId,
+              type: "default",
+            };
+            addEdge(newEdge);
+          } else if (connection.targetNodeId && connection.type === "output") {
+            const newEdge = {
+              id: `edge-${newNodeId}-${connection.targetNodeId}`,
+              source: newNodeId,
+              target: connection.targetNodeId,
+              type: "default",
+            };
+            addEdge(newEdge);
+          }
+        });
+      }
+    },
+    [addNode, addEdge],
+  );
 
   // Filter and sort nodes in ascending order
   const filteredNodes = allAvailableNodes
@@ -229,6 +325,60 @@ const AdvancedNodePanel: React.FC<AdvancedNodePanelProps> = ({
     [addNode, addEdge, findLastNode],
   );
 
+  // Render function for AI suggestion items
+  const renderAISuggestionItem = useCallback(
+    (suggestion: (typeof aiSuggestedNodes)[0], _index: number) => (
+      <div
+        key={suggestion.id}
+        draggable
+        onDragStart={(e) => {
+          e.stopPropagation();
+          onDragStart(e, suggestion);
+        }}
+        onDragEnd={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+        }}
+        onClick={(e) => {
+          e.stopPropagation();
+          handleAISuggestionAdd(suggestion);
+        }}
+        className="group p-2.5 border border-blue-200 bg-blue-50 rounded-md cursor-move hover:bg-blue-100 hover:border-blue-300 hover:shadow-sm transition-all duration-150 mb-1.5"
+      >
+        <div className="flex items-start space-x-2.5">
+          <div className="w-7 h-7 rounded flex-shrink-0 flex items-center justify-center text-white text-xs font-medium shadow-sm bg-blue-500">
+            {suggestion.icon}
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center justify-between">
+              <p className="text-sm font-medium text-blue-900 truncate">
+                {suggestion.displayName}
+              </p>
+              <span className="bg-blue-200 text-blue-800 text-xs px-1.5 py-0.5 rounded-full font-medium">
+                AI
+              </span>
+            </div>
+            <p className="text-xs text-blue-700 truncate mt-0.5 leading-tight">
+              {suggestion.description}
+            </p>
+            {suggestion.aiSuggestion && (
+              <div className="mt-1">
+                <p className="text-xs text-blue-600 italic">
+                  💡 {suggestion.aiSuggestion.reasoning}
+                </p>
+                <span className="bg-blue-200 text-blue-700 text-xs px-1.5 py-0.5 rounded mt-1 inline-block">
+                  Confidence:{" "}
+                  {Math.round(suggestion.aiSuggestion.confidence * 100)}%
+                </span>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    ),
+    [onDragStart, handleAISuggestionAdd],
+  );
+
   // Render function for node items in virtualized list
   const renderNodeItem = useCallback(
     (node: (typeof allAvailableNodes)[0], _index: number) => (
@@ -338,6 +488,45 @@ const AdvancedNodePanel: React.FC<AdvancedNodePanelProps> = ({
           </select>
         </div>
       )}
+
+      {/* AI Suggestions Section */}
+      {!isCollapsed &&
+        isAIEnabled &&
+        aiSuggestedNodes.length > 0 &&
+        showAISuggestions && (
+          <div className="border-b border-gray-200">
+            <div className="px-4 py-3 bg-blue-50">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  <div className="w-5 h-5 rounded-full bg-blue-500 flex items-center justify-center">
+                    <span className="text-white text-xs">🤖</span>
+                  </div>
+                  <h3 className="text-sm font-medium text-blue-900">
+                    AI Suggestions
+                  </h3>
+                  <span className="bg-blue-200 text-blue-800 text-xs px-2 py-1 rounded-full font-medium">
+                    {aiSuggestedNodes.length}
+                  </span>
+                </div>
+                <button
+                  onClick={() => setShowAISuggestions(false)}
+                  className="text-blue-600 hover:text-blue-800 text-xs"
+                  title="Hide AI suggestions"
+                >
+                  ✕
+                </button>
+              </div>
+              <p className="text-xs text-blue-700 mt-1">
+                Smart suggestions based on your current workflow
+              </p>
+            </div>
+            <div className="px-4 py-2 max-h-48 overflow-y-auto">
+              {aiSuggestedNodes.map((suggestion, index) =>
+                renderAISuggestionItem(suggestion, index),
+              )}
+            </div>
+          </div>
+        )}
 
       {/* Node List */}
       {!isCollapsed && (
