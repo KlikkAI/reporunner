@@ -39,6 +39,13 @@ import { CollaborationPanel } from "./CollaborationPanel";
 import { UserPresenceOverlay } from "./UserPresenceOverlay";
 import { CommentAnnotations } from "./CommentAnnotations";
 import { AnalyticsDashboard } from "./AnalyticsDashboard";
+import { SchedulingPanel } from "./SchedulingPanel";
+import { TriggerPanel } from "./TriggerPanel";
+import {
+  ConditionalBranchingPanel,
+  type BranchConfiguration,
+} from "./ConditionalBranchingPanel";
+import { WorkflowTemplatesPanel } from "./WorkflowTemplatesPanel";
 import { ConnectionType } from "@/core/types/edge";
 import ConnectionLine from "./ConnectionLine";
 import {
@@ -129,11 +136,8 @@ const WorkflowEditor: React.FC = () => {
   } = useCollaborationStore();
 
   // Analytics state
-  const {
-    analyticsModalOpen,
-    toggleAnalyticsModal,
-    setSelectedWorkflow,
-  } = useAnalyticsStore();
+  const { analyticsModalOpen, toggleAnalyticsModal, setSelectedWorkflow } =
+    useAnalyticsStore();
 
   // Memoized node types - prevent React Flow warnings about creating new objects
   const nodeTypes = useMemo<Record<string, any>>(() => {
@@ -235,10 +239,80 @@ const WorkflowEditor: React.FC = () => {
   );
   const [isExecutionPanelVisible, setIsExecutionPanelVisible] = useState(false);
   const [isDebugPanelVisible, setIsDebugPanelVisible] = useState(false);
+  const [isSchedulingPanelVisible, setIsSchedulingPanelVisible] =
+    useState(false);
+  const [isTriggerPanelVisible, setIsTriggerPanelVisible] = useState(false);
+  const [isBranchingPanelVisible, setIsBranchingPanelVisible] = useState(false);
+  const [isTemplatesPanelVisible, setIsTemplatesPanelVisible] = useState(false);
   const [containerRef, setContainerRef] = useState<HTMLDivElement | null>(null);
 
   // Monitor current execution
   const { execution } = useExecutionMonitor(currentExecutionId);
+
+  // Handle branch creation from conditional branching panel
+  const handleAddBranch = useCallback(
+    (branchConfig: BranchConfiguration) => {
+      console.log("Adding branch configuration:", branchConfig);
+
+      // Create condition nodes and edges based on branch configuration
+      const conditionNodeId = `condition-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`;
+
+      const conditionNode = {
+        id: conditionNodeId,
+        type: "condition",
+        position: { x: 300, y: 200 },
+        parameters: {},
+        data: {
+          label: branchConfig.name,
+          description: branchConfig.description,
+          type: "condition",
+          integration: "core",
+          nodeType: "condition",
+          configuration: {
+            conditions: branchConfig.conditions,
+            logicalOperator: branchConfig.logicalOperator,
+            defaultBranch: branchConfig.defaultBranch,
+            priority: branchConfig.priority,
+          },
+          credentials: [],
+          icon: "🔀",
+          properties: {
+            conditions: branchConfig.conditions,
+            logicalOperator: branchConfig.logicalOperator,
+          },
+        },
+      };
+
+      addNode(conditionNode);
+
+      // Create edges for true/false branches
+      const sourceNode = localNodes.find(
+        (node) => node.id === branchConfig.sourceNodeId,
+      );
+      if (sourceNode) {
+        const trueEdge = {
+          id: `edge-${branchConfig.sourceNodeId}-${conditionNodeId}-true`,
+          source: branchConfig.sourceNodeId,
+          target: conditionNodeId,
+          type: "default",
+          data: { label: "true" },
+        };
+
+        addEdgeToStore(trueEdge);
+      }
+    },
+    [addNode, addEdgeToStore, localNodes],
+  );
+
+  // Handle workflow creation from template
+  const handleCreateFromTemplate = useCallback(
+    (templateId: string, variables?: Record<string, any>) => {
+      console.log("Creating workflow from template:", templateId, variables);
+      // Template creation is handled within the WorkflowTemplatesPanel component
+      // which calls loadWorkflow directly on the store
+    },
+    [],
+  );
 
   // Sync workflow changes with collaboration service
   useEffect(() => {
@@ -830,7 +904,9 @@ const WorkflowEditor: React.FC = () => {
                   const rect = event.currentTarget.getBoundingClientRect();
                   const x = event.clientX - rect.left;
                   const y = event.clientY - rect.top;
-                  updatePresence({ cursor: { x, y, timestamp: new Date().toISOString() } });
+                  updatePresence({
+                    cursor: { x, y, timestamp: new Date().toISOString() },
+                  });
                 }
               }}
               onMoveEnd={(event, viewport) => {
@@ -904,7 +980,9 @@ const WorkflowEditor: React.FC = () => {
                 <button
                   onClick={toggleCollaborationPanel}
                   className={`react-flow__controls-button ${
-                    collaborationPanelOpen ? "bg-green-100 border-green-300" : ""
+                    collaborationPanelOpen
+                      ? "bg-green-100 border-green-300"
+                      : ""
                   } ${isCollaborationConnected ? "bg-green-50" : ""}`}
                   title={
                     collaborationPanelOpen
@@ -958,6 +1036,72 @@ const WorkflowEditor: React.FC = () => {
                   }
                 >
                   🐛
+                </button>
+                <button
+                  onClick={() =>
+                    setIsSchedulingPanelVisible(!isSchedulingPanelVisible)
+                  }
+                  className={`react-flow__controls-button ${
+                    isSchedulingPanelVisible
+                      ? "bg-purple-100 border-purple-300"
+                      : ""
+                  }`}
+                  title={
+                    isSchedulingPanelVisible
+                      ? "Hide scheduling panel"
+                      : "Show scheduling panel"
+                  }
+                >
+                  ⏰
+                </button>
+                <button
+                  onClick={() =>
+                    setIsTriggerPanelVisible(!isTriggerPanelVisible)
+                  }
+                  className={`react-flow__controls-button ${
+                    isTriggerPanelVisible
+                      ? "bg-yellow-100 border-yellow-300"
+                      : ""
+                  }`}
+                  title={
+                    isTriggerPanelVisible
+                      ? "Hide trigger panel"
+                      : "Show trigger panel"
+                  }
+                >
+                  ⚡
+                </button>
+                <button
+                  onClick={() =>
+                    setIsBranchingPanelVisible(!isBranchingPanelVisible)
+                  }
+                  className={`react-flow__controls-button ${
+                    isBranchingPanelVisible
+                      ? "bg-indigo-100 border-indigo-300"
+                      : ""
+                  }`}
+                  title={
+                    isBranchingPanelVisible
+                      ? "Hide branching panel"
+                      : "Show branching panel"
+                  }
+                >
+                  🔀
+                </button>
+                <button
+                  onClick={() =>
+                    setIsTemplatesPanelVisible(!isTemplatesPanelVisible)
+                  }
+                  className={`react-flow__controls-button ${
+                    isTemplatesPanelVisible ? "bg-cyan-100 border-cyan-300" : ""
+                  }`}
+                  title={
+                    isTemplatesPanelVisible
+                      ? "Hide templates panel"
+                      : "Show templates panel"
+                  }
+                >
+                  📋
                 </button>
                 <button
                   onClick={() => setIsFullscreen(!isFullscreen)}
@@ -1023,15 +1167,19 @@ const WorkflowEditor: React.FC = () => {
               {/* User Presence Overlay */}
               <UserPresenceOverlay
                 containerRef={{ current: containerRef }}
-                transform={reactFlowInstance?.getViewport() || { x: 0, y: 0, zoom: 1 }}
+                transform={
+                  reactFlowInstance?.getViewport() || { x: 0, y: 0, zoom: 1 }
+                }
               />
 
               {/* Comment Annotations */}
               <CommentAnnotations
                 containerRef={{ current: containerRef }}
-                transform={reactFlowInstance?.getViewport() || { x: 0, y: 0, zoom: 1 }}
+                transform={
+                  reactFlowInstance?.getViewport() || { x: 0, y: 0, zoom: 1 }
+                }
                 onCommentClick={(position) => {
-                  console.log('Comment clicked at position:', position);
+                  console.log("Comment clicked at position:", position);
                 }}
               />
             </ReactFlow>
@@ -1082,6 +1230,35 @@ const WorkflowEditor: React.FC = () => {
         isOpen={analyticsModalOpen}
         onClose={toggleAnalyticsModal}
         workflowId="current-workflow" // Would come from props in real app
+      />
+
+      {/* Scheduling Panel */}
+      <SchedulingPanel
+        workflowId="current-workflow" // Would come from props in real app
+        visible={isSchedulingPanelVisible}
+        onClose={() => setIsSchedulingPanelVisible(false)}
+      />
+
+      {/* Trigger Management Panel */}
+      <TriggerPanel
+        workflowId="current-workflow" // Would come from props in real app
+        visible={isTriggerPanelVisible}
+        onClose={() => setIsTriggerPanelVisible(false)}
+      />
+
+      {/* Conditional Branching Panel */}
+      <ConditionalBranchingPanel
+        workflowId="current-workflow" // Would come from props in real app
+        visible={isBranchingPanelVisible}
+        onClose={() => setIsBranchingPanelVisible(false)}
+        onAddBranch={handleAddBranch}
+      />
+
+      {/* Workflow Templates Panel */}
+      <WorkflowTemplatesPanel
+        visible={isTemplatesPanelVisible}
+        onClose={() => setIsTemplatesPanelVisible(false)}
+        onCreateFromTemplate={handleCreateFromTemplate}
       />
     </div>
   );
