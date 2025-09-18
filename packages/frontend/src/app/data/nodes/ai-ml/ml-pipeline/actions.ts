@@ -1,6 +1,11 @@
 // Define action interfaces locally
 type NodeExecutionContext = Record<string, any>;
-type NodeActionResult = { success: boolean; data?: any; error?: string };
+type NodeActionResult = {
+  success: boolean;
+  data?: any[];
+  error?: string | { message: string; code?: string; details?: any };
+  metadata?: Record<string, any>;
+};
 
 interface PipelineStage {
   stageName: string;
@@ -491,14 +496,14 @@ function executeDataPreprocessing(
   stage: PipelineStage,
   _context: Record<string, any>,
 ): any {
-  stage.metrics.rowsProcessed = Array.isArray(context.inputData)
-    ? context.inputData.length
+  stage.metrics.rowsProcessed = Array.isArray(_context.inputData)
+    ? _context.inputData.length
     : 1000;
   stage.metrics.columnsProcessed = 10;
   stage.metrics.processingTime = Math.random() * 1000 + 500;
 
   return {
-    processedData: context.inputData,
+    processedData: _context.inputData,
     transformations: ["normalize", "encode_categorical", "handle_missing"],
     statistics: { mean: 0.5, std: 0.2, nullCount: 0 },
   };
@@ -704,7 +709,7 @@ async function retryStage(
       await new Promise((resolve) => setTimeout(resolve, delay * 1000));
 
       stage.logs.push(`Retry attempt ${attempt} for stage: ${stage.stageName}`);
-      await executeStage(stage, context);
+      await executeStage(stage, _context);
 
       stage.status = "completed";
       stage.endTime = new Date();

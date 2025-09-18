@@ -7,7 +7,6 @@
 
 import { useCallback, useRef, useState } from "react";
 import { useReactFlow, type Node, type XYPosition } from "reactflow";
-import { useLeanWorkflowStore } from "@/core/stores/leanWorkflowStore";
 import type { ContainerType } from "../components/WorkflowEditor/NodeTypes/ContainerNode/ContainerNode";
 
 export interface ContainerIntersection {

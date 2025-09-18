@@ -26,6 +26,7 @@ export interface PropertyOption {
   value: string | number | boolean
   description?: string
   action?: string
+  type?: string
 }
 
 export interface DisplayOptions {
@@ -42,6 +43,8 @@ export interface TypeOptions {
   numberPrecision?: number
   alwaysOpenEditWindow?: boolean
   showAlpha?: boolean
+  password?: boolean
+  multiline?: boolean
   loadOptionsMethod?: string
   loadOptions?: {
     routing: {

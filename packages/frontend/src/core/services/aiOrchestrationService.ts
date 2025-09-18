@@ -837,7 +837,7 @@ export class AIOrchestrationService {
   }
 
   private identifyParallelExecutionGroups(
-    workflow: MultiModalWorkflow,
+    _workflow: MultiModalWorkflow,
   ): string[][] {
     // Implementation would analyze dependencies and identify nodes that can run in parallel
     return []; // Simplified for demo

@@ -172,7 +172,7 @@ export class ExecutionMonitorService {
    * Send message to WebSocket
    */
   // Socket.IO handles messaging; retained for compatibility
-  private sendMessage(_message: any): void {}
+
 
   /**
    * Schedule reconnection
@@ -196,12 +196,7 @@ export class ExecutionMonitorService {
   /**
    * Get WebSocket URL
    */
-  private getWebSocketUrl(): string {
-    // Deprecated; kept for compatibility
-    const socketUrl =
-      (import.meta.env["VITE_SOCKET_URL"] as string) || "http://localhost:5000";
-    return socketUrl;
-  }
+
 }
 
 // Singleton instance

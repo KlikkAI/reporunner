@@ -9,7 +9,6 @@
  * - Performance analysis and suggestions
  */
 
-import { performanceMonitor } from "./performanceMonitor";
 import type {
   WorkflowDefinition,
   NodeDefinition,
@@ -116,7 +115,7 @@ export interface ErrorSolution {
 export class AIAssistantService {
   private suggestionsCache = new Map<string, AIWorkflowSuggestion[]>();
   private analysisCache = new Map<string, WorkflowAnalysis>();
-  private errorPatterns = new Map<string, ErrorDiagnosis[]>();
+
 
   /**
    * Generate workflow from natural language description
@@ -266,7 +265,7 @@ export class AIAssistantService {
     };
   }
 
-  private generateNodesFromAnalysis(analysis: any): NodeDefinition[] {
+  private generateNodesFromAnalysis(_analysis: any): NodeDefinition[] {
     // Simulate node generation
     return [
       {

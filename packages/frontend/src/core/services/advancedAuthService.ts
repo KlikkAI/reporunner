@@ -15,9 +15,7 @@ import type {
   User,
   UserRole,
   Permission,
-  ProjectAccess,
   SSOProvider,
-  MFAConfig,
   MFAMethod,
   APIKey,
   Session,
@@ -26,8 +24,6 @@ import type {
   AuthContext,
   LoginCredentials,
   RegisterData,
-  PasswordResetRequest,
-  PasswordResetConfirm,
   MFAChallenge,
   MFAVerification,
   ResourceType,
@@ -84,11 +80,11 @@ export class AdvancedAuthService {
    */
   async login(credentials: LoginCredentials): Promise<AuthContext> {
     const startTime = performance.now();
-    
+
     try {
       // Simulate authentication - in production, this would call backend APIs
       const user = await this.authenticateUser(credentials.email, credentials.password);
-      
+
       if (!user) {
         throw new Error('Invalid credentials');
       }
@@ -105,7 +101,7 @@ export class AdvancedAuthService {
           method: 'totp',
           code: credentials.mfaToken,
         });
-        
+
         if (!isValid) {
           throw new Error('Invalid MFA token');
         }
@@ -130,7 +126,7 @@ export class AdvancedAuthService {
       };
 
       this.notifyListeners(context);
-      
+
       performanceMonitor.measure('auth.login', () => {}, {
         userId: user.id,
         duration: performance.now() - startTime,
@@ -237,7 +233,7 @@ export class AdvancedAuthService {
       case 'totp':
         mfaMethod.metadata = {
           secret: this.generateTOTPSecret(),
-          qrCode: this.generateQRCode(mfaMethod.metadata.secret, userId),
+          qrCode: this.generateQRCode(mfaMethod?.metadata?.secret, userId),
         };
         break;
       case 'sms':
@@ -258,7 +254,7 @@ export class AdvancedAuthService {
   async verifyMFA(userId: string, verification: MFAVerification): Promise<boolean> {
     // Simulate MFA verification - in production, this would verify against actual MFA service
     const isValid = this.validateMFACode(verification.method, verification.code);
-    
+
     if (isValid) {
       // Update MFA method last used
       const user = this.currentUser;
@@ -271,9 +267,9 @@ export class AdvancedAuthService {
     return isValid;
   }
 
-  async generateMFAChallenge(userId: string): Promise<MFAChallenge> {
+  async generateMFAChallenge(_userId: string): Promise<MFAChallenge> {
     const challenge = `challenge_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-    
+
     return {
       method: 'totp',
       challenge,
@@ -294,8 +290,8 @@ export class AdvancedAuthService {
     if (!user) return false;
 
     const permissions = await this.getUserPermissions(userId);
-    return permissions.some(permission => 
-      permission.resource === resource && 
+    return permissions.some(permission =>
+      permission.resource === resource &&
       permission.action === action &&
       (!permission.conditions || this.evaluateConditions(permission.conditions, context))
     );
@@ -307,10 +303,10 @@ export class AdvancedAuthService {
 
     // Get role permissions
     const rolePermissions = user.role.permissions || [];
-    
+
     // Get user-specific permissions
     const userPermissions = user.permissions || [];
-    
+
     // Get project-specific permissions
     const projectPermissions = user.projects.flatMap(project => project.permissions);
 
@@ -320,7 +316,7 @@ export class AdvancedAuthService {
   async assignRole(userId: string, roleId: string, assignedBy: string): Promise<void> {
     const user = await this.getUserById(userId);
     const role = this.userRoles.get(roleId);
-    
+
     if (!user || !role) {
       throw new Error('User or role not found');
     }
@@ -346,15 +342,13 @@ export class AdvancedAuthService {
 
     const state = `sso_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     const authUrl = this.buildSSOAuthUrl(provider, state, redirectUri);
-    
+
     return authUrl;
   }
 
   async handleSSOCallback(
     providerId: string,
-    code: string,
-    state: string
-  ): Promise<AuthContext> {
+    code: string  ): Promise<AuthContext> {
     const provider = this.ssoProviders.get(providerId);
     if (!provider) {
       throw new Error('SSO provider not found');
@@ -362,10 +356,10 @@ export class AdvancedAuthService {
 
     // Exchange code for token
     const token = await this.exchangeSSOCode(provider, code);
-    
+
     // Get user info from SSO provider
     const userInfo = await this.getSSOUserInfo(provider, token);
-    
+
     // Find or create user
     let user = await this.getUserByEmail(userInfo.email);
     if (!user) {
@@ -409,7 +403,7 @@ export class AdvancedAuthService {
   ): Promise<APIKey> {
     const key = this.generateAPIKey();
     const keyHash = this.hashAPIKey(key);
-    
+
     const apiKey: APIKey = {
       id: `key_${Date.now()}`,
       name,
@@ -425,7 +419,7 @@ export class AdvancedAuthService {
 
     this.apiKeys.set(apiKey.id, apiKey);
     console.log(`API key created: ${apiKey.id} for user ${userId}`);
-    
+
     return apiKey;
   }
 
@@ -441,14 +435,14 @@ export class AdvancedAuthService {
 
   async validateAPIKey(key: string): Promise<{ valid: boolean; userId?: string; permissions?: Permission[] }> {
     const keyHash = this.hashAPIKey(key);
-    
+
     for (const apiKey of this.apiKeys.values()) {
       if (apiKey.keyHash === keyHash && apiKey.status === 'active') {
         if (apiKey.expiresAt && apiKey.expiresAt < Date.now()) {
           apiKey.status = 'expired';
           return { valid: false };
         }
-        
+
         apiKey.lastUsedAt = Date.now();
         return {
           valid: true,
@@ -488,7 +482,7 @@ export class AdvancedAuthService {
 
     this.invitations.set(invitation.id, invitation);
     console.log(`User invitation sent to ${email} by ${invitedBy}`);
-    
+
     return invitation;
   }
 
@@ -597,7 +591,7 @@ export class AdvancedAuthService {
     // Extend session
     session.expiresAt = Date.now() + this.config.sessionTimeout;
     session.lastActivityAt = Date.now();
-    
+
     return session;
   }
 
@@ -668,23 +662,23 @@ export class AdvancedAuthService {
 
   private validatePassword(password: string): void {
     const policy = this.config.passwordPolicy;
-    
+
     if (password.length < policy.minLength) {
       throw new Error(`Password must be at least ${policy.minLength} characters long`);
     }
-    
+
     if (policy.requireUppercase && !/[A-Z]/.test(password)) {
       throw new Error('Password must contain at least one uppercase letter');
     }
-    
+
     if (policy.requireLowercase && !/[a-z]/.test(password)) {
       throw new Error('Password must contain at least one lowercase letter');
     }
-    
+
     if (policy.requireNumbers && !/\d/.test(password)) {
       throw new Error('Password must contain at least one number');
     }
-    
+
     if (policy.requireSpecialChars && !/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
       throw new Error('Password must contain at least one special character');
     }
@@ -713,9 +707,9 @@ export class AdvancedAuthService {
     return code.length >= 6 && /^\d+$/.test(code);
   }
 
-  private evaluateConditions(conditions: any[], context: any): boolean {
+  private evaluateConditions(conditions: any[], _context: any): boolean {
     // Simplified condition evaluation
-    return conditions.every(condition => {
+    return conditions.every(() => {
       // In production, this would evaluate actual conditions
       return true;
     });
@@ -733,12 +727,12 @@ export class AdvancedAuthService {
     return `${provider.configuration.endpoints.authorization}?${params.toString()}`;
   }
 
-  private async exchangeSSOCode(provider: SSOProvider, code: string): Promise<string> {
+  private async exchangeSSOCode(_provider: SSOProvider, _code: string): Promise<string> {
     // Simulate token exchange - in production, this would make actual API call
     return `token_${Date.now()}`;
   }
 
-  private async getSSOUserInfo(provider: SSOProvider, token: string): Promise<any> {
+  private async getSSOUserInfo(_provider: SSOProvider, _token: string): Promise<any> {
     // Simulate user info retrieval - in production, this would make actual API call
     return {
       email: 'user@sso-provider.com',

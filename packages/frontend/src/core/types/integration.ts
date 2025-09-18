@@ -117,6 +117,7 @@ export interface CredentialRequirement {
   type?: string;
   description?: string;
   properties?: NodeProperty[];
+  documentationUrl?: string;
 }
 
 /**
