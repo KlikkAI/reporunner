@@ -85,7 +85,7 @@ export const modelTrainerActions = {
           },
           inputSchema: {
             type:
-              modelConfig.modelType === "computer_vision" ? "image" : "text",
+              modelConfig.modelType === "computer_vision" ? ("image" as const) : ("text" as const),
             format:
               modelConfig.modelType === "computer_vision" ? "jpeg" : "string",
             fields: [

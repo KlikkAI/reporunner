@@ -113,7 +113,7 @@ export interface NodeExecutionResult {
 export interface CredentialRequirement {
   name: string;
   displayName?: string;
-  required?: boolean;
+  required: boolean;
   type?: string;
   description?: string;
   properties?: NodeProperty[];

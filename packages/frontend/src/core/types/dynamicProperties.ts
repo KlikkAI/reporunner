@@ -23,7 +23,7 @@ export type PropertyType =
 export interface PropertyOption {
   name: string
   displayName?: string
-  value: string | number | boolean
+  value?: string | number | boolean
   description?: string
   action?: string
   type?: string
@@ -33,6 +33,7 @@ export interface PropertyOption {
   options?: PropertyOption[]
   values?: unknown
   typeOptions?: TypeOptions
+  displayOptions?: DisplayOptions
 }
 
 export interface DisplayOptions {

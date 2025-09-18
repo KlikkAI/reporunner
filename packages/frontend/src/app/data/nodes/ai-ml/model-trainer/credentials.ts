@@ -4,6 +4,7 @@ export const modelTrainerCredentials: CredentialRequirement[] = [
   {
     name: "huggingface",
     displayName: "HuggingFace API",
+    required: false,
     documentationUrl: "https://huggingface.co/docs/api-inference/quicktour",
     properties: [
       {
@@ -30,6 +31,7 @@ export const modelTrainerCredentials: CredentialRequirement[] = [
   {
     name: "aws",
     displayName: "AWS SageMaker",
+    required: false,
     documentationUrl: "https://docs.aws.amazon.com/sagemaker/",
     properties: [
       {
@@ -83,6 +85,7 @@ export const modelTrainerCredentials: CredentialRequirement[] = [
   {
     name: "gcp",
     displayName: "Google Cloud AI Platform",
+    required: false,
     documentationUrl: "https://cloud.google.com/ai-platform/docs",
     properties: [
       {
@@ -123,6 +126,7 @@ export const modelTrainerCredentials: CredentialRequirement[] = [
   {
     name: "azure",
     displayName: "Azure Machine Learning",
+    required: false,
     documentationUrl:
       "https://docs.microsoft.com/en-us/azure/machine-learning/",
     properties: [
@@ -182,6 +186,7 @@ export const modelTrainerCredentials: CredentialRequirement[] = [
   {
     name: "custom_compute",
     displayName: "Custom Compute Environment",
+    required: false,
     documentationUrl: "https://docs.example.com/custom-compute",
     properties: [
       {

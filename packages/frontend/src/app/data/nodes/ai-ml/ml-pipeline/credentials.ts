@@ -4,6 +4,7 @@ export const mlPipelineCredentials: CredentialRequirement[] = [
   {
     name: "mlflow",
     displayName: "MLflow Tracking Server",
+    required: false,
     documentationUrl: "https://mlflow.org/docs/latest/tracking.html",
     properties: [
       {
@@ -49,6 +50,7 @@ export const mlPipelineCredentials: CredentialRequirement[] = [
   {
     name: "wandb",
     displayName: "Weights & Biases",
+    required: false,
     documentationUrl: "https://docs.wandb.ai/",
     properties: [
       {
@@ -83,6 +85,7 @@ export const mlPipelineCredentials: CredentialRequirement[] = [
   {
     name: "kubernetes",
     displayName: "Kubernetes Cluster",
+    required: false,
     documentationUrl:
       "https://kubernetes.io/docs/concepts/configuration/organize-cluster-access-kubeconfig/",
     properties: [
@@ -118,6 +121,7 @@ export const mlPipelineCredentials: CredentialRequirement[] = [
   {
     name: "docker_registry",
     displayName: "Docker Registry",
+    required: false,
     documentationUrl: "https://docs.docker.com/registry/",
     properties: [
       {
@@ -160,6 +164,7 @@ export const mlPipelineCredentials: CredentialRequirement[] = [
   {
     name: "prometheus",
     displayName: "Prometheus Monitoring",
+    required: false,
     documentationUrl: "https://prometheus.io/docs/",
     properties: [
       {
@@ -213,6 +218,7 @@ export const mlPipelineCredentials: CredentialRequirement[] = [
   {
     name: "feast",
     displayName: "Feast Feature Store",
+    required: false,
     documentationUrl: "https://docs.feast.dev/",
     properties: [
       {
@@ -247,6 +253,7 @@ export const mlPipelineCredentials: CredentialRequirement[] = [
   {
     name: "datadog",
     displayName: "DataDog Monitoring",
+    required: false,
     documentationUrl: "https://docs.datadoghq.com/",
     properties: [
       {
@@ -292,6 +299,7 @@ export const mlPipelineCredentials: CredentialRequirement[] = [
   {
     name: "slack",
     displayName: "Slack Notifications",
+    required: false,
     documentationUrl: "https://api.slack.com/",
     properties: [
       {
@@ -329,6 +337,7 @@ export const mlPipelineCredentials: CredentialRequirement[] = [
   {
     name: "pagerduty",
     displayName: "PagerDuty Alerts",
+    required: false,
     documentationUrl: "https://developer.pagerduty.com/",
     properties: [
       {
