@@ -346,20 +346,10 @@ export class RBACService {
           return this.isOwnResource();
         case "team":
           // User can access team resources
-          return this.isTeamResource(
-            userId,
-            resource,
-            resourceId,
-            organizationId,
-          );
+          return this.isTeamResource();
         case "organization":
           // User can access organization resources
-          return this.isOrganizationResource(
-            userId,
-            resource,
-            resourceId,
-            organizationId,
-          );
+          return this.isOrganizationResource();
         case "global":
           // Global access
           return true;
