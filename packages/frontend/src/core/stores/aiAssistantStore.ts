@@ -7,7 +7,7 @@
 
 import { create } from "zustand";
 import { subscribeWithSelector } from "zustand/middleware";
-import { aiAssistantService } from "../services/aiAssistantService";
+// import { aiAssistantService } from "../services/aiAssistantService";
 import type { WorkflowAnalysis } from "../services/aiAssistantService";
 import type { AIWorkflowSuggestion as WorkflowSuggestion } from "../services/aiAssistantService";
 import type { WorkflowNodeInstance } from "../nodes/types";
@@ -226,7 +226,7 @@ export const useAIAssistantStore = create<AIAssistantState>()(
     },
 
     // Analysis actions
-    analyzeWorkflow: async (nodes, edges) => {
+    analyzeWorkflow: async (_nodes, _edges) => {
       const state = get();
       if (!state.isEnabled || state.isAnalyzing) return;
 
@@ -258,11 +258,11 @@ export const useAIAssistantStore = create<AIAssistantState>()(
           currentAnalysis: analysis,
           isAnalyzing: false,
           analysisTimestamp: new Date().toISOString(),
-          activeIssues: analysis.issues.filter(
-            (issue) => !get().dismissedIssues.has(issue.id),
+          activeIssues: (analysis.issues || []).filter(
+            (issue: any) => !get().dismissedIssues.has(issue.id),
           ),
-          activeSuggestions: analysis.suggestions.filter(
-            (suggestion) => !get().dismissedSuggestions.has(suggestion.id),
+          activeSuggestions: (analysis.suggestions || []).filter(
+            (suggestion: any) => !get().dismissedSuggestions.has(suggestion.id),
           ),
         });
       } catch (error) {
@@ -403,7 +403,7 @@ export const useAIAssistantStore = create<AIAssistantState>()(
       }));
     },
 
-    autoFixIssue: async (issueId, nodes, edges) => {
+    autoFixIssue: async (issueId, _nodes, _edges) => {
       const state = get();
       const issue = state.activeIssues.find((i) => i.id === issueId);
 
@@ -459,7 +459,7 @@ export const useAIAssistantStore = create<AIAssistantState>()(
 // Subscribe to workflow changes for auto-analysis
 if (typeof window !== "undefined") {
   // Auto-analyze workflow when nodes change (if enabled)
-  let autoAnalyzeTimeout: NodeJS.Timeout;
+  let _autoAnalyzeTimeout: NodeJS.Timeout;
 
   useAIAssistantStore.subscribe(
     (state) => ({
