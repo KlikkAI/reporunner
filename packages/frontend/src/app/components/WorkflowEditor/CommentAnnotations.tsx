@@ -5,13 +5,12 @@
  * providing contextual commenting system similar to Figma's comments.
  */
 
-import React, { useState, useCallback, useRef, useEffect } from "react";
-import { Avatar, Badge, Tooltip, Button, Input, Card, Popover } from "antd";
+import React, { useState, useCallback } from "react";
+import { Avatar, Badge, Button, Input, Card, Popover } from "antd";
 import {
   CommentOutlined,
   SendOutlined,
   CheckOutlined,
-  MoreOutlined,
 } from "@ant-design/icons";
 import { useCollaborationStore } from "../../../core/stores/collaborationStore";
 import type { CollaborationComment } from "../../../core/services/collaborationService";
@@ -42,7 +41,6 @@ export const CommentAnnotations: React.FC<CommentAnnotationsProps> = ({
   onCommentClick,
 }) => {
   const {
-    comments,
     activeComments,
     selectedCommentId,
     currentUser,

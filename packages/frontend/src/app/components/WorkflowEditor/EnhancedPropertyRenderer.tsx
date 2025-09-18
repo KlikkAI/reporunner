@@ -14,15 +14,12 @@ import {
   InputNumber,
   DatePicker,
   Button,
-  Space,
-  Form,
   Card,
   Alert,
   Tooltip,
   Tag,
   Upload,
   ColorPicker,
-  Divider,
 } from 'antd';
 import {
   PlusOutlined,
@@ -35,7 +32,6 @@ import type { NodeProperty } from '@/core/nodes/types';
 
 const { TextArea } = Input;
 const { Option } = Select;
-const { RangePicker } = DatePicker;
 
 export interface PropertyFormState {
   [key: string]: any;
@@ -415,7 +411,7 @@ export const EnhancedPropertyRenderer: React.FC<EnhancedPropertyRendererProps> =
 
   const validateAll = useCallback(() => {
     const errors = new Map<string, string>();
-    
+
     properties.forEach((property) => {
       const value = formState[property.name];
       const error = validateProperty(property, value);

@@ -17,38 +17,30 @@ import {
   Modal,
   message,
   List,
-  Badge,
   Rate,
   Typography,
   Avatar,
-  Divider,
-  Tooltip,
   Progress,
-  Alert,
   Row,
   Col,
   Statistic,
   Empty,
 } from "antd";
 import {
-  SearchOutlined,
   HeartOutlined,
   HeartFilled,
   ClockCircleOutlined,
   StarOutlined,
-  UserOutlined,
   EyeOutlined,
   DownloadOutlined,
-  PlayCircleOutlined,
   InfoCircleOutlined,
-  FilterOutlined,
   AppstoreOutlined,
   OrderedListOutlined,
   ThunderboltOutlined,
   BranchesOutlined,
 } from "@ant-design/icons";
 import { cn } from "@/design-system/utils";
-import { colors, spacing } from "@/design-system/tokens";
+import { colors, } from "@/design-system/tokens";
 import {
   workflowTemplates,
   type WorkflowTemplate,

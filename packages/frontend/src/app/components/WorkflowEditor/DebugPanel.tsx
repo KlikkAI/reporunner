@@ -13,23 +13,16 @@ import React, { useState, useCallback, useEffect } from 'react';
 import {
   Card,
   Button,
-  Space,
   Typography,
   Tabs,
-  List,
   Badge,
-  Tooltip,
   Modal,
   Form,
   Input,
-  Select,
   Switch,
-  InputNumber,
   Alert,
   Collapse,
   Tag,
-  Divider,
-  Progress,
   Timeline,
   Tree,
 } from 'antd';
@@ -40,18 +33,13 @@ import {
   StepForwardOutlined,
   StepBackwardOutlined,
   StopOutlined,
-  ReloadOutlined,
   EyeOutlined,
   CodeOutlined,
   HistoryOutlined,
   SettingOutlined,
   PlusOutlined,
   DeleteOutlined,
-  EditOutlined,
   InfoCircleOutlined,
-  WarningOutlined,
-  CheckCircleOutlined,
-  CloseCircleOutlined,
 } from '@ant-design/icons';
 import { cn } from '@/design-system/utils';
 import { JsonViewer } from '@/design-system';
@@ -62,15 +50,12 @@ import type {
   CallStackFrame,
   WatchExpression,
   ExecutionStep,
-  DataInspector,
   DebugEvent,
   DebugMetrics,
 } from '@/core/types/debugging';
 
-const { Title, Text, Paragraph } = Typography;
-const { TabPane } = Tabs;
-const { Panel } = Collapse;
-const { TreeNode } = Tree;
+const { Title, Text } = Typography;
+
 
 interface DebugPanelProps {
   workflowId?: string;
@@ -88,7 +73,7 @@ const DebugPanel: React.FC<DebugPanelProps> = ({
   const [isDebugging, setIsDebugging] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const [currentStep, setCurrentStep] = useState<ExecutionStep | null>(null);
-  const [breakpoints, setBreakpoints] = useState<Map<string, DebugBreakpoint[]>>(new Map());
+
   const [watchExpressions, setWatchExpressions] = useState<WatchExpression[]>([]);
   const [callStack, setCallStack] = useState<CallStackFrame[]>([]);
   const [variables, setVariables] = useState<Record<string, any>>({});
@@ -223,9 +208,6 @@ const DebugPanel: React.FC<DebugPanelProps> = ({
     updateSessionData();
   }, [updateSessionData]);
 
-  const inspectData = useCallback((nodeId: string, type: DataInspector['type']) => {
-    return enhancedDebuggingService.inspectData(nodeId, type);
-  }, []);
 
   const getStatusColor = () => {
     if (!isDebugging) return 'gray';
@@ -284,28 +266,28 @@ const DebugPanel: React.FC<DebugPanelProps> = ({
                   Pause
                 </Button>
               )}
-              
+
               <Button
                 icon={<StepForwardOutlined />}
                 onClick={stepOver}
                 disabled={!isPaused}
                 title="Step Over"
               />
-              
+
               <Button
                 icon={<StepBackwardOutlined />}
                 onClick={stepInto}
                 disabled={!isPaused}
                 title="Step Into"
               />
-              
+
               <Button
                 icon={<StopOutlined />}
                 onClick={stepOut}
                 disabled={!isPaused}
                 title="Step Out"
               />
-              
+
               <Button
                 danger
                 icon={<StopOutlined />}
@@ -452,8 +434,8 @@ const DebugPanel: React.FC<DebugPanelProps> = ({
                       <>
                         <span className="text-green-400">Value: </span>
                         <span className="font-mono">
-                          {typeof watch.value === 'object' 
-                            ? JSON.stringify(watch.value) 
+                          {typeof watch.value === 'object'
+                            ? JSON.stringify(watch.value)
                             : String(watch.value)
                           }
                         </span>
@@ -480,7 +462,7 @@ const DebugPanel: React.FC<DebugPanelProps> = ({
   const renderCallStack = () => (
     <div className="space-y-4">
       <Title level={5} className="text-white mb-0">Call Stack</Title>
-      
+
       {callStack.length === 0 ? (
         <div className="text-center text-gray-500 py-8">
           <CodeOutlined className="text-4xl mb-2" />
@@ -509,7 +491,7 @@ const DebugPanel: React.FC<DebugPanelProps> = ({
   const renderVariables = () => (
     <div className="space-y-4">
       <Title level={5} className="text-white mb-0">Variables</Title>
-      
+
       {Object.keys(variables).length === 0 ? (
         <div className="text-center text-gray-500 py-8">
           <InfoCircleOutlined className="text-4xl mb-2" />
@@ -543,7 +525,7 @@ const DebugPanel: React.FC<DebugPanelProps> = ({
   const renderExecutionHistory = () => (
     <div className="space-y-4">
       <Title level={5} className="text-white mb-0">Execution History</Title>
-      
+
       {executionHistory.length === 0 ? (
         <div className="text-center text-gray-500 py-8">
           <HistoryOutlined className="text-4xl mb-2" />
@@ -552,8 +534,8 @@ const DebugPanel: React.FC<DebugPanelProps> = ({
         </div>
       ) : (
         <Timeline
-          items={executionHistory.map((step, index) => ({
-            color: step.action === 'error' ? 'red' : 
+          items={executionHistory.map((step) => ({
+            color: step.action === 'error' ? 'red' :
                    step.action === 'breakpoint' ? 'orange' : 'blue',
             children: (
               <div className="space-y-1">
@@ -587,7 +569,7 @@ const DebugPanel: React.FC<DebugPanelProps> = ({
   const renderMetrics = () => (
     <div className="space-y-4">
       <Title level={5} className="text-white mb-0">Debug Metrics</Title>
-      
+
       {!metrics ? (
         <div className="text-center text-gray-500 py-8">
           <SettingOutlined className="text-4xl mb-2" />
@@ -602,21 +584,21 @@ const DebugPanel: React.FC<DebugPanelProps> = ({
               <div className="text-gray-400 text-sm">Total Steps</div>
             </div>
           </Card>
-          
+
           <Card size="small" className="bg-gray-800 border-gray-600">
             <div className="text-center">
               <div className="text-2xl font-bold text-orange-400">{metrics.breakpointHits}</div>
               <div className="text-gray-400 text-sm">Breakpoint Hits</div>
             </div>
           </Card>
-          
+
           <Card size="small" className="bg-gray-800 border-gray-600">
             <div className="text-center">
               <div className="text-2xl font-bold text-red-400">{metrics.errors}</div>
               <div className="text-gray-400 text-sm">Errors</div>
             </div>
           </Card>
-          
+
           <Card size="small" className="bg-gray-800 border-gray-600">
             <div className="text-center">
               <div className="text-2xl font-bold text-green-400">
@@ -625,14 +607,14 @@ const DebugPanel: React.FC<DebugPanelProps> = ({
               <div className="text-gray-400 text-sm">Avg Step Time</div>
             </div>
           </Card>
-          
+
           <Card size="small" className="bg-gray-800 border-gray-600">
             <div className="text-center">
               <div className="text-2xl font-bold text-purple-400">{metrics.callStackDepth}</div>
               <div className="text-gray-400 text-sm">Call Stack Depth</div>
             </div>
           </Card>
-          
+
           <Card size="small" className="bg-gray-800 border-gray-600">
             <div className="text-center">
               <div className="text-2xl font-bold text-yellow-400">
@@ -660,7 +642,7 @@ const DebugPanel: React.FC<DebugPanelProps> = ({
 
       <div className="p-4">
         {renderDebugControls()}
-        
+
         <Tabs
           activeKey={activeTab}
           onChange={setActiveTab}

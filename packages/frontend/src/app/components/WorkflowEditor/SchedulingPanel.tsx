@@ -13,7 +13,6 @@ import {
   Input,
   Switch,
   Select,
-  TimePicker,
   InputNumber,
   Tabs,
   Tag,

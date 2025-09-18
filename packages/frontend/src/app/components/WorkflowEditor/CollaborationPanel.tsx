@@ -6,7 +6,7 @@
  * Figma's collaboration features and Google Docs comments.
  */
 
-import React, { useState, useCallback, useRef, useEffect } from "react";
+import React, { useState, useCallback } from "react";
 import {
   Drawer,
   Tabs,
@@ -17,42 +17,27 @@ import {
   Alert,
   Tooltip,
   Input,
-  List,
-  Popconfirm,
   Switch,
   Divider,
   Tag,
   Timeline,
-  Space,
   Empty,
   Modal,
-  Select,
   Radio,
 } from "antd";
 import {
   TeamOutlined,
   CommentOutlined,
   WarningOutlined,
-  SettingOutlined,
   SendOutlined,
   CheckOutlined,
-  CloseOutlined,
-  UserOutlined,
-  EyeOutlined,
-  EditOutlined,
   ClockCircleOutlined,
   ExclamationCircleOutlined,
-  SyncOutlined,
-  DotChartOutlined,
 } from "@ant-design/icons";
 import { useCollaborationStore } from "../../../core/stores/collaborationStore";
 import { useLeanWorkflowStore } from "../../../core/stores/leanWorkflowStore";
 import type {
-  CollaborationUser,
-  UserPresence,
-  CollaborationComment,
   CollaborationConflict,
-  CollaborationOperation,
 } from "../../../core/services/collaborationService";
 
 const { TextArea } = Input;
@@ -77,11 +62,9 @@ export const CollaborationPanel: React.FC<CollaborationPanelProps> = ({
   const {
     isConnected,
     connectionStatus,
-    currentSession,
     currentUser,
     userPresences,
     operationHistory,
-    comments,
     activeComments,
     activeConflicts,
     selectedCommentId,
@@ -100,7 +83,7 @@ export const CollaborationPanel: React.FC<CollaborationPanelProps> = ({
     toggleComments,
   } = useCollaborationStore();
 
-  const { selectedNodes } = useLeanWorkflowStore();
+  const { selectedNodeIds, currentWorkflow } = useLeanWorkflowStore();
 
   // Generate user colors for consistent display
   const getUserColor = useCallback((userId: string): string => {
@@ -118,9 +101,10 @@ export const CollaborationPanel: React.FC<CollaborationPanelProps> = ({
 
     try {
       await addComment({
+        workflowId: currentWorkflow?.id || '',
         content: newCommentContent,
         position: newCommentPosition,
-        nodeId: selectedNodes.length === 1 ? selectedNodes[0] : undefined,
+        nodeId: selectedNodeIds.length === 1 ? selectedNodeIds[0] : undefined,
         resolved: false,
         mentions: [], // TODO: Parse mentions from content
       });
@@ -370,7 +354,7 @@ export const CollaborationPanel: React.FC<CollaborationPanelProps> = ({
                   </div>
                   <div className="flex space-x-1">
                     {comment.nodeId && (
-                      <Tag size="small" color="blue">
+                      <Tag color="blue">
                         Node Comment
                       </Tag>
                     )}

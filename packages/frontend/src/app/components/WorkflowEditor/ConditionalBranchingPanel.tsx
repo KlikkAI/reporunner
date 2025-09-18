@@ -19,12 +19,9 @@ import {
   Space,
   Modal,
   message,
-  Tooltip,
   List,
-  Badge,
   Typography,
   Alert,
-  Collapse,
   Tree,
   Divider,
   Radio,
@@ -37,24 +34,22 @@ import {
   DeleteOutlined,
   EditOutlined,
   CodeOutlined,
-  FunctionOutlined,
   QuestionCircleOutlined,
   CheckCircleOutlined,
   CloseCircleOutlined,
-  InfoCircleOutlined,
   SettingOutlined,
   PlayCircleOutlined,
 } from "@ant-design/icons";
 import { cn } from "@/design-system/utils";
-import { colors, spacing } from "@/design-system/tokens";
+import { colors } from "@/design-system/tokens";
 import { useLeanWorkflowStore } from "@/core/stores/leanWorkflowStore";
 import type { WorkflowNodeInstance } from "@/core/nodes/types";
 
 const { TabPane } = Tabs;
 const { Option } = Select;
 const { TextArea } = Input;
-const { Text, Paragraph, Title } = Typography;
-const { Panel } = Collapse;
+const { Text } = Typography;
+
 
 interface ConditionalBranchingPanelProps {
   workflowId: string;
@@ -116,7 +111,7 @@ export const ConditionalBranchingPanel: React.FC<
   const [loading, setLoading] = useState(false);
   const [editingBranch, setEditingBranch] = useState<string | null>(null);
   const [testModalVisible, setTestModalVisible] = useState(false);
-  const [expressionBuilder, setExpressionBuilder] = useState(false);
+
 
   useEffect(() => {
     if (visible) {
@@ -128,15 +123,16 @@ export const ConditionalBranchingPanel: React.FC<
     // Extract conditional branches from existing workflow
     const conditionNodes = nodes.filter(
       (node) =>
-        node.data?.type === "condition" ||
-        node.data?.integrationData?.id === "condition",
+        node.parameters?.type === "condition" ||
+        node.parameters?.integrationData?.id === "condition" ||
+        node.type === "condition",
     );
 
     const extractedBranches: BranchConfiguration[] = conditionNodes.map(
       (node) => ({
         id: node.id,
-        name: node.data?.name || `Branch from ${node.id}`,
-        description: node.data?.description || "",
+        name: node.parameters?.name || node.name || `Branch from ${node.id}`,
+        description: node.parameters?.description || "",
         sourceNodeId: node.id,
         conditions: extractConditionsFromNode(node),
         logicalOperator: "AND",
@@ -153,7 +149,7 @@ export const ConditionalBranchingPanel: React.FC<
   const extractConditionsFromNode = (
     node: WorkflowNodeInstance,
   ): BranchCondition[] => {
-    const properties = node.data?.properties || {};
+    const properties = node.parameters?.properties || node.parameters || {};
     const conditions: BranchCondition[] = [];
 
     // Extract conditions from node properties
@@ -400,7 +396,7 @@ export const ConditionalBranchingPanel: React.FC<
             <Select placeholder="Select node to branch from">
               {nodes.map((node) => (
                 <Option key={node.id} value={node.id}>
-                  {node.data?.name || node.id}
+                  {node.parameters?.name || node.name || node.id}
                 </Option>
               ))}
             </Select>
@@ -421,7 +417,7 @@ export const ConditionalBranchingPanel: React.FC<
                 getFieldValue("conditions") || [];
               return (
                 <div className="space-y-2">
-                  {conditions.map((condition, index) => (
+                  {conditions.map((condition) => (
                     <Card
                       key={condition.id}
                       size="small"
@@ -660,7 +656,7 @@ export const ConditionalBranchingPanel: React.FC<
                       {branch.priority}
                     </Text>
                     <div>
-                      {branch.conditions.map((condition, index) => (
+                      {branch.conditions.map((condition) => (
                         <Tag
                           key={condition.id}
                           color="geekblue"

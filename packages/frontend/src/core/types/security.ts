@@ -217,6 +217,7 @@ export interface SecretMetadata {
   environment: string;
   application: string;
   compliance: ComplianceRequirement[];
+  accessCount?: number; // Optional access count for tracking usage
 }
 
 export interface DataClassification {

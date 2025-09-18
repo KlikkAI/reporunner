@@ -29,7 +29,6 @@ import { intelligentAutoConnect } from "@/app/services/intelligentAutoConnect";
 import AdvancedNodePanel from "./AdvancedNodePanel";
 import RegistryNode from "./NodeTypes/RegistryNode";
 import ContainerNode from "./NodeTypes/ContainerNode/ContainerNode";
-import NodePropertyPanel from "./NodePropertyPanel";
 import AdvancedPropertyPanel from "./AdvancedPropertyPanel";
 import CustomEdge from "./CustomEdge";
 import ExecutionPanel from "./ExecutionPanel";
@@ -133,7 +132,6 @@ const WorkflowEditor: React.FC = () => {
   const {
     isConnected: isCollaborationConnected,
     collaborationPanelOpen,
-    commentMode,
     toggleCollaborationPanel,
     updatePresence,
     sendOperation,

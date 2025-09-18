@@ -22,7 +22,6 @@ import {
   Tooltip,
   Modal,
   Tree,
-  Badge,
   Divider,
   Alert,
   Collapse,
@@ -36,12 +35,7 @@ import {
   DownloadOutlined,
   ExpandOutlined,
   CompressOutlined,
-  InfoCircleOutlined,
-  WarningOutlined,
-  CheckCircleOutlined,
   EyeOutlined,
-  FilterOutlined,
-  ReloadOutlined,
 } from '@ant-design/icons';
 import { cn } from '@/design-system/utils';
 import { JsonViewer } from '@/design-system';
@@ -51,8 +45,7 @@ const { Title, Text } = Typography;
 const { Search } = Input;
 const { Option } = Select;
 const { TreeNode } = Tree;
-const { TabPane } = Tabs;
-const { Panel } = Collapse;
+
 
 interface DataInspectorProps {
   data: any;
@@ -110,8 +103,8 @@ const DataInspector: React.FC<DataInspectorProps> = ({
 
   const handleCopyData = useCallback(async () => {
     try {
-      const text = typeof selectedData === 'string' 
-        ? selectedData 
+      const text = typeof selectedData === 'string'
+        ? selectedData
         : JSON.stringify(selectedData, null, 2);
       await navigator.clipboard.writeText(text);
     } catch (error) {
@@ -198,7 +191,7 @@ const DataInspector: React.FC<DataInspectorProps> = ({
   const renderDataAnalysis = () => (
     <div className="space-y-4">
       <Title level={5} className="text-white">Data Analysis</Title>
-      
+
       <div className="grid grid-cols-2 gap-4">
         <Card size="small" className="bg-gray-800 border-gray-600">
           <div className="text-center">
@@ -206,21 +199,21 @@ const DataInspector: React.FC<DataInspectorProps> = ({
             <div className="text-gray-400 text-sm">Total Size</div>
           </div>
         </Card>
-        
+
         <Card size="small" className="bg-gray-800 border-gray-600">
           <div className="text-center">
             <div className="text-2xl font-bold text-green-400">{dataStats.depth}</div>
             <div className="text-gray-400 text-sm">Max Depth</div>
           </div>
         </Card>
-        
+
         <Card size="small" className="bg-gray-800 border-gray-600">
           <div className="text-center">
             <div className="text-2xl font-bold text-purple-400">{dataStats.keyCount}</div>
             <div className="text-gray-400 text-sm">Total Keys</div>
           </div>
         </Card>
-        
+
         <Card size="small" className="bg-gray-800 border-gray-600">
           <div className="text-center">
             <div className="text-2xl font-bold text-orange-400">{dataStats.arrayCount}</div>
@@ -280,7 +273,7 @@ const DataInspector: React.FC<DataInspectorProps> = ({
             )}
           </Space>
         </div>
-        
+
         <div className="flex items-center gap-4 text-sm">
           <div>
             <Text className="text-gray-400">Node:</Text>
@@ -308,7 +301,7 @@ const DataInspector: React.FC<DataInspectorProps> = ({
             className="flex-1"
             prefix={<SearchOutlined className="text-gray-400" />}
           />
-          
+
           <Select
             value={filterType}
             onChange={setFilterType}
@@ -321,7 +314,7 @@ const DataInspector: React.FC<DataInspectorProps> = ({
             <Option value="object">Object</Option>
             <Option value="array">Array</Option>
           </Select>
-          
+
           <Select
             value={viewMode}
             onChange={setViewMode}
@@ -340,7 +333,7 @@ const DataInspector: React.FC<DataInspectorProps> = ({
               {selectedPath || 'root'}
             </Text>
           </div>
-          
+
           <Space>
             <Tooltip title="Copy Data">
               <Button
@@ -462,7 +455,7 @@ function convertToTree(data: any, path: string, key: string): DataNode[] {
       type: 'array',
       size: JSON.stringify(data).length,
       path: path || 'root',
-      children: data.map((item, index) => 
+      children: data.map((item, index) =>
         convertToTree(item, `${path}[${index}]`, `[${index}]`)
       ).flat(),
     }];
@@ -477,7 +470,7 @@ function convertToTree(data: any, path: string, key: string): DataNode[] {
       type: 'object',
       size: JSON.stringify(data).length,
       path: path || 'root',
-      children: entries.map(([key, value]) => 
+      children: entries.map(([key, value]) =>
         convertToTree(value, path ? `${path}.${key}` : key, key)
       ).flat(),
     }];
@@ -498,12 +491,12 @@ function filterTree(nodes: DataNode[], searchTerm: string, filterType: string): 
   if (!searchTerm && filterType === 'all') return nodes;
 
   return nodes.filter(node => {
-    const matchesSearch = !searchTerm || 
+    const matchesSearch = !searchTerm ||
       node.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       node.path.toLowerCase().includes(searchTerm.toLowerCase());
-    
+
     const matchesType = filterType === 'all' || node.type === filterType;
-    
+
     return matchesSearch && matchesType;
   }).map(node => ({
     ...node,
@@ -513,7 +506,7 @@ function filterTree(nodes: DataNode[], searchTerm: string, filterType: string): 
 
 function getDataByPath(data: any, path: string): any {
   if (path === 'root' || !path) return data;
-  
+
   try {
     return path.split('.').reduce((obj, key) => {
       if (key.includes('[') && key.includes(']')) {
@@ -545,7 +538,7 @@ function analyzeData(data: any): {
 
   function analyze(obj: any, currentDepth: number = 0) {
     stats.depth = Math.max(stats.depth, currentDepth);
-    
+
     if (Array.isArray(obj)) {
       stats.arrayCount++;
       stats.typeDistribution.array = (stats.typeDistribution.array || 0) + 1;

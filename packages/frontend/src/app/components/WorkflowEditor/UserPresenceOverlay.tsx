@@ -5,7 +5,7 @@
  * Shows collaborative user activity with smooth animations and clear visual cues.
  */
 
-import React, { useMemo, useCallback } from "react";
+import React, { useCallback } from "react";
 import { Avatar, Tooltip } from "antd";
 import { useCollaborationStore } from "../../../core/stores/collaborationStore";
 import { useLeanWorkflowStore } from "../../../core/stores/leanWorkflowStore";
@@ -26,7 +26,6 @@ export const UserPresenceOverlay: React.FC<UserPresenceOverlayProps> = ({
 }) => {
   const {
     userPresences,
-    currentUser,
     showUserCursors,
     showUserSelections,
   } = useCollaborationStore();

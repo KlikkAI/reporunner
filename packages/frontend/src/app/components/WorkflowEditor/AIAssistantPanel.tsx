@@ -66,7 +66,7 @@ const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({
   const [naturalLanguageInput, setNaturalLanguageInput] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [suggestions, setSuggestions] = useState<AIWorkflowSuggestion[]>([]);
-  const [errors] = useState<ErrorDiagnosis[]>([]);  // TODO: Implement error handling
+  const [_errors] = useState<ErrorDiagnosis[]>([]);  // TODO: Implement error handling
   const [analysis, setAnalysis] = useState<WorkflowAnalysis | null>(null);
   const [selectedSuggestion, setSelectedSuggestion] =
     useState<AIWorkflowSuggestion | null>(null);

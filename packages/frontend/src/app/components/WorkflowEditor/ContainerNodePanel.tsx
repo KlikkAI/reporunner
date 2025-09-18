@@ -26,9 +26,6 @@ import {
   ReloadOutlined,
   ThunderboltOutlined,
   QuestionCircleOutlined,
-  ShieldOutlined,
-  InboxOutlined,
-  SettingOutlined,
   InfoCircleOutlined,
 } from '@ant-design/icons';
 import { cn } from '@/design-system/utils';
@@ -239,7 +236,7 @@ const ContainerNodePanel: React.FC<ContainerNodePanelProps> = ({
           <Title level={5} className="text-white mb-2">
             Quick Actions
           </Title>
-          
+
           <Space direction="vertical" className="w-full">
             <Button
               type="dashed"

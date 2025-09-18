@@ -6,7 +6,7 @@
  * Inspired by DataDog, New Relic, and Grafana dashboards.
  */
 
-import React, { useState, useCallback, useEffect, useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import {
   Modal,
   Tabs,
@@ -14,19 +14,13 @@ import {
   Row,
   Col,
   Statistic,
-  Progress,
   Table,
   List,
-  Alert,
   Button,
   Select,
   Switch,
-  Tooltip,
   Badge,
-  Timeline,
-  Divider,
   Empty,
-  Space,
   Tag,
 } from "antd";
 import {
@@ -34,17 +28,12 @@ import {
   DashboardOutlined,
   DollarCircleOutlined,
   BulbOutlined,
-  NodeIndexOutlined,
   ReloadOutlined,
-  SettingOutlined,
-  TrendingUpOutlined,
+  RiseOutlined,
   WarningOutlined,
   CheckCircleOutlined,
-  CloseCircleOutlined,
   ClockCircleOutlined,
   ThunderboltOutlined,
-  EyeOutlined,
-  FireOutlined,
   RobotOutlined,
 } from "@ant-design/icons";
 import {
@@ -52,17 +41,11 @@ import {
   Line,
   AreaChart,
   Area,
-  BarChart,
-  Bar,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip as RechartsTooltip,
   ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
-  Legend,
 } from "recharts";
 import {
   useAnalyticsStore,
@@ -70,14 +53,10 @@ import {
   getTopBottlenecks,
   getCostTrend,
   formatDuration,
-  formatBytes,
   formatCurrency,
 } from "../../../core/stores/analyticsStore";
 import type {
-  BottleneckAnalysis,
-  PredictiveInsight,
   NodePerformanceStats,
-  TimeSeriesPoint,
 } from "../../../core/services/analyticsService";
 
 const { TabPane } = Tabs;
@@ -106,15 +85,15 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
     reliabilityHistory,
     selectedTab,
     analyticsPeriod,
-    showPredictions,
-    showCostAnalysis,
+    // showPredictions,  // TODO: Implement predictions UI
+    // showCostAnalysis, // TODO: Implement cost analysis UI
     autoRefresh,
-    selectedNodeId,
+    // selectedNodeId,   // TODO: Implement node selection
     setSelectedTab,
     setAnalyticsPeriod,
     toggleAutoRefresh,
-    togglePredictions,
-    toggleCostAnalysis,
+    // togglePredictions,  // TODO: Implement predictions toggle
+    // toggleCostAnalysis, // TODO: Implement cost analysis toggle
     setSelectedNode,
     loadAnalytics,
     refreshAnalytics,
@@ -472,7 +451,7 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
             <Statistic
               title="Current Period Cost"
               value={costOptimization?.currentCost || 0}
-              formatter={formatCurrency}
+              formatter={(value) => formatCurrency(Number(value))}
               prefix={<DollarCircleOutlined />}
             />
           </Card>
@@ -482,8 +461,8 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
             <Statistic
               title="Potential Savings"
               value={costOptimization?.savings || 0}
-              formatter={formatCurrency}
-              prefix={<TrendingUpOutlined />}
+              formatter={(value) => formatCurrency(Number(value))}
+              prefix={<RiseOutlined />}
               valueStyle={{ color: '#3f8600' }}
             />
           </Card>
@@ -738,7 +717,7 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
 
       <Tabs
         activeKey={selectedTab}
-        onChange={setSelectedTab}
+        onChange={(key) => setSelectedTab(key as any)}
         className="analytics-tabs"
       >
         <TabPane

@@ -20,7 +20,6 @@ import {
   Space,
   Modal,
   message,
-  Tooltip,
   Progress,
   Statistic,
   List,
@@ -44,12 +43,10 @@ import {
   EditOutlined,
   CopyOutlined,
   EyeOutlined,
-  InfoCircleOutlined,
   CheckCircleOutlined,
-  ExclamationCircleOutlined,
 } from "@ant-design/icons";
 import { cn } from "@/design-system/utils";
-import { colors, spacing } from "@/design-system/tokens";
+import { colors, } from "@/design-system/tokens";
 import {
   advancedTriggerSystem,
   type TriggerConfiguration,
