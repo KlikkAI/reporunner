@@ -102,8 +102,6 @@ export class WorkflowDebugger {
   startDebugSession(
     workflowId: string,
     executionId: string,
-    nodes: WorkflowNodeInstance[],
-    edges: WorkflowEdge[],
     mode: "step" | "continue" | "auto" = "continue",
   ): DebugSession {
     const sessionId = `debug-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
@@ -301,7 +299,7 @@ export class WorkflowDebugger {
     const session = this.activeSessions.get(sessionId);
     if (!session) return;
 
-    const frame = session.frames.find((f) => f.nodeId === nodeId && !f.endTime);
+    const frame = session.frames.find((f) => f.nodeId === nodeId && !f.performance.endTime);
     if (frame) {
       frame.status = status;
       frame.outputData = outputData;

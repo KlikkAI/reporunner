@@ -1126,8 +1126,6 @@ export class IntegrationMarketplaceService {
   }
 
   private async performInstallation(
-    integration: MarketplaceIntegration,
-    config?: any,
   ): Promise<void> {
     // Simulate installation process
     await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -1140,7 +1138,7 @@ export class IntegrationMarketplaceService {
     // 5. Configure the integration
   }
 
-  private async performUninstallation(integrationId: string): Promise<void> {
+  private async performUninstallation(): Promise<void> {
     // Simulate uninstallation process
     await new Promise((resolve) => setTimeout(resolve, 500));
 

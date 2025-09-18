@@ -474,7 +474,6 @@ export const createCollaborationInvitation = (
 // Utility functions
 export const canUserEdit = (
   userPermissions: ParticipantPermissions,
-  nodeId?: string
 ): boolean => {
   return userPermissions.canEditNodes;
 };

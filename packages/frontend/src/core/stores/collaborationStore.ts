@@ -204,7 +204,7 @@ export const useCollaborationStore = create<CollaborationState>()(
 
       try {
         const newComment = await collaborationService.addComment(comment);
-        set((state) => ({
+        set(() => ({
           comments: [...state.comments, newComment],
           activeComments: newComment.resolved
             ? state.activeComments
@@ -234,7 +234,7 @@ export const useCollaborationStore = create<CollaborationState>()(
           mentions,
         );
 
-        set((state) => ({
+        set(() => ({
           comments: state.comments.map((comment) =>
             comment.id === commentId
               ? { ...comment, replies: [...comment.replies, reply] }
@@ -248,7 +248,7 @@ export const useCollaborationStore = create<CollaborationState>()(
     },
 
     resolveComment: (commentId: string) => {
-      set((state) => ({
+      set(() => ({
         comments: state.comments.map((comment) =>
           comment.id === commentId ? { ...comment, resolved: true } : comment,
         ),
@@ -271,7 +271,7 @@ export const useCollaborationStore = create<CollaborationState>()(
       try {
         await collaborationService.resolveConflict(conflictId, resolution);
 
-        set((state) => ({
+        set(() => ({
           activeConflicts: state.activeConflicts.filter(
             (conflict) => conflict.id !== conflictId,
           ),
@@ -288,25 +288,25 @@ export const useCollaborationStore = create<CollaborationState>()(
     },
 
     toggleCollaborationPanel: () => {
-      set((state) => ({
+      set(() => ({
         collaborationPanelOpen: !state.collaborationPanelOpen,
       }));
     },
 
     toggleCommentMode: () => {
-      set((state) => ({ commentMode: !state.commentMode }));
+      set(() => ({ commentMode: !state.commentMode }));
     },
 
     toggleUserCursors: () => {
-      set((state) => ({ showUserCursors: !state.showUserCursors }));
+      set(() => ({ showUserCursors: !state.showUserCursors }));
     },
 
     toggleUserSelections: () => {
-      set((state) => ({ showUserSelections: !state.showUserSelections }));
+      set(() => ({ showUserSelections: !state.showUserSelections }));
     },
 
     toggleComments: () => {
-      set((state) => ({ showComments: !state.showComments }));
+      set(() => ({ showComments: !state.showComments }));
     },
   })),
 );
@@ -314,7 +314,7 @@ export const useCollaborationStore = create<CollaborationState>()(
 // Set up collaboration event listeners
 function setupCollaborationEventListeners(
   set: (fn: (state: CollaborationState) => Partial<CollaborationState>) => void,
-  _get: () => CollaborationState,
+  // get accessor for state retrieval (used by UI components)
 ): void {
   // Connection events
   collaborationService.addEventListener("connected", () => {
@@ -350,7 +350,7 @@ function setupCollaborationEventListeners(
   );
 
   collaborationService.addEventListener("user_left", (userId: string) => {
-    set((state) => ({
+    set(() => ({
       userPresences: state.userPresences.filter(
         (presence) => presence.userId !== userId,
       ),
@@ -361,7 +361,7 @@ function setupCollaborationEventListeners(
   collaborationService.addEventListener(
     "presence_update",
     (presence: UserPresence) => {
-      set((state) => ({
+      set(() => ({
         userPresences: state.userPresences
           .map((p) => (p.userId === presence.userId ? presence : p))
           .concat(
@@ -377,7 +377,7 @@ function setupCollaborationEventListeners(
   collaborationService.addEventListener(
     "operation_received",
     (operation: CollaborationOperation) => {
-      set((state) => ({
+      set(() => ({
         operationHistory: [...state.operationHistory, operation],
         pendingOperations: state.pendingOperations.filter(
           (op) => op.id !== operation.id,
@@ -390,7 +390,7 @@ function setupCollaborationEventListeners(
   collaborationService.addEventListener(
     "operation_sent",
     (operation: CollaborationOperation) => {
-      set((state) => ({
+      set(() => ({
         pendingOperations: [...state.pendingOperations, operation],
       }));
     },
@@ -400,7 +400,7 @@ function setupCollaborationEventListeners(
   collaborationService.addEventListener(
     "conflict_detected",
     (conflict: CollaborationConflict) => {
-      set((state) => ({
+      set(() => ({
         activeConflicts: [...state.activeConflicts, conflict],
         conflictResolutionMode: true,
       }));
@@ -411,7 +411,7 @@ function setupCollaborationEventListeners(
   collaborationService.addEventListener(
     "comment_added",
     (comment: CollaborationComment) => {
-      set((state) => ({
+      set(() => ({
         comments: [...state.comments, comment],
         activeComments: comment.resolved
           ? state.activeComments
@@ -423,7 +423,7 @@ function setupCollaborationEventListeners(
   collaborationService.addEventListener(
     "comment_updated",
     (comment: CollaborationComment) => {
-      set((state) => ({
+      set(() => ({
         comments: state.comments.map((c) =>
           c.id === comment.id ? comment : c,
         ),
@@ -439,7 +439,7 @@ function setupCollaborationEventListeners(
   collaborationService.addEventListener(
     "reply_added",
     ({ commentId, reply }: any) => {
-      set((state) => ({
+      set(() => ({
         comments: state.comments.map((comment) =>
           comment.id === commentId
             ? { ...comment, replies: [...comment.replies, reply] }

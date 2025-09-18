@@ -47,7 +47,7 @@ export interface ValidationRule {
 }
 
 export interface EnhancedNodeProperty
-  extends Omit<INodeProperty, "displayOptions"> {
+  extends Omit<INodeProperty, "displayOptions" | "expressionSupport"> {
   // Enhanced display options (separate from base DisplayOptions)
   displayOptions?: {
     show?: PropertyDependency[];
@@ -61,6 +61,9 @@ export interface EnhancedNodeProperty
 
   // Property relationships
   dependencies?: string[];
+  
+  // Expression support (compatible with base interface)
+  expressionSupport?: "none" | "full" | "partial";
   affects?: string[];
 
   // AI assistance

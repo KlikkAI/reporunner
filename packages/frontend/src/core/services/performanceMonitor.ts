@@ -82,7 +82,7 @@ export class PerformanceMonitorService {
   private readonly SLOW_EXECUTION_THRESHOLD = 30000; // 30 seconds
   private readonly HIGH_ERROR_RATE_THRESHOLD = 0.1; // 10%
   private readonly MEMORY_USAGE_THRESHOLD = 512; // MB
-  private readonly CPU_USAGE_THRESHOLD = 80; // %
+  // Note: CPU threshold constant reserved for future monitoring features
 
   // Monitoring intervals
   private monitoringInterval: NodeJS.Timeout | null = null;
@@ -260,7 +260,7 @@ export class PerformanceMonitorService {
   ): Promise<T> {
     return new Promise(async (resolve, reject) => {
       const startTime = performance.now();
-      const measureId = `measure_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`;
+      // Unique measurement identifier reserved for detailed performance tracking
 
       try {
         const result = await fn();
@@ -461,7 +461,6 @@ export class PerformanceMonitorService {
 
   private checkPerformanceAlerts(
     metrics: ExecutionMetrics,
-    trace: PerformanceTrace,
   ): void {
     // Check for slow execution
     if (

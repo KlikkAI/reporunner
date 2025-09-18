@@ -6,10 +6,7 @@
  * scheduling capabilities similar to Apache Airflow and Azure Logic Apps.
  */
 
-import { analyticsService } from "./analyticsService";
 import { performanceMonitor } from "./performanceMonitor";
-import type { WorkflowNodeInstance } from "../nodes/types";
-import type { WorkflowEdge } from "../stores/leanWorkflowStore";
 
 export interface ScheduleConfiguration {
   id: string;
@@ -554,7 +551,8 @@ export class WorkflowSchedulerService {
     this.emitExecutionEvent("started", execution);
 
     // Start performance monitoring
-    const trace = performanceMonitor.startTrace(
+    // Start performance monitoring for workflow execution
+    performanceMonitor.startTrace(
       execution.id,
       execution.workflowId,
       { scheduleId: execution.scheduleId },
@@ -589,14 +587,13 @@ export class WorkflowSchedulerService {
       }
     } finally {
       // End performance monitoring
-      performanceMonitor.endTrace(execution.id, execution.status);
+      performanceMonitor.endTrace(execution.id, execution.status as "completed" | "failed" | "cancelled");
     }
 
     return execution;
   }
 
   private async simulateWorkflowExecution(
-    execution: ScheduledExecution,
   ): Promise<any> {
     // Simulate variable execution time and occasional failures
     const executionTime = 1000 + Math.random() * 5000; // 1-6 seconds
@@ -673,8 +670,6 @@ export class WorkflowSchedulerService {
   }
 
   private calculateNextCronExecution(
-    expression: string,
-    timezone: string,
   ): string {
     // Simplified cron calculation - in production, use a proper cron library
     const now = new Date();
@@ -714,7 +709,7 @@ export class WorkflowSchedulerService {
     }
   }
 
-  private checkResourceAvailability(config: any): boolean {
+  private checkResourceAvailability(): boolean {
     // Check if sufficient resources are available
     const activeCount = Array.from(this.activeExecutions.values()).filter(
       (e) => e.status === "running",
@@ -734,7 +729,7 @@ export class WorkflowSchedulerService {
     return currentHour >= startHour && currentHour <= endHour;
   }
 
-  private checkDependencies(config: any): boolean {
+  private checkDependencies(): boolean {
     // Check if dependent workflows have completed successfully
     return true; // Simplified implementation
   }
@@ -878,7 +873,7 @@ export class WorkflowSchedulerService {
     return { avgMemory, avgCpu, totalCost };
   }
 
-  private calculateTrends(executions: ScheduledExecution[]) {
+  private calculateTrends() {
     // Simplified trend calculation
     return {
       executionTrend: "stable" as const,
@@ -888,16 +883,15 @@ export class WorkflowSchedulerService {
   }
 
   private generateScheduleRecommendations(
-    schedule: ScheduleConfiguration,
-    executions: ScheduledExecution[],
   ): ScheduleRecommendation[] {
     const recommendations: ScheduleRecommendation[] = [];
 
-    // Analyze execution patterns
+    // Simplified recommendation generation - in production would analyze actual execution patterns
+    const allExecutions = Array.from(this.activeExecutions.values());
     const failureRate =
-      executions.length > 0
-        ? executions.filter((e) => e.status === "failed").length /
-          executions.length
+      allExecutions.length > 0
+        ? allExecutions.filter((e) => e.status === "failed").length /
+          allExecutions.length
         : 0;
 
     if (failureRate > 0.1) {

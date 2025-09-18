@@ -483,7 +483,6 @@ export class SecurityService {
   }
 
   private async assessDeviceRisk(
-    userId: string,
     fingerprint?: string,
   ): Promise<RiskFactor> {
     if (!fingerprint) {

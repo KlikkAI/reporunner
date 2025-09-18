@@ -1,4 +1,5 @@
-import type { INodeProperty, INodePropertyOptions } from '@/core'
+import type { INodeProperty } from '@/core'
+import type { INodePropertyOptions } from '../nodes/types'
 import type { NodeProperty, PropertyOption } from '../types/dynamicProperties'
 
 /**

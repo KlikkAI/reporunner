@@ -258,12 +258,16 @@ export const useAIAssistantStore = create<AIAssistantState>()(
           currentAnalysis: analysis,
           isAnalyzing: false,
           analysisTimestamp: new Date().toISOString(),
-          activeIssues: (analysis.issues || []).filter(
-            (issue: any) => !get().dismissedIssues.has(issue.id),
-          ),
-          activeSuggestions: (analysis.suggestions || []).filter(
-            (suggestion: any) => !get().dismissedSuggestions.has(suggestion.id),
-          ),
+          activeIssues: (analysis.reliability?.missingErrorHandling || []).map((issue, index) => ({
+            id: `issue_${index}`,
+            message: issue,
+            type: 'error_handling'
+          })).filter((issue: any) => !get().dismissedIssues.has(issue.id)),
+          activeSuggestions: (analysis.reliability?.suggestions || []).map((suggestion, index) => ({
+            id: `suggestion_${index}`,
+            message: suggestion,
+            type: 'reliability'
+          })).filter((suggestion: any) => !get().dismissedSuggestions.has(suggestion.id)),
         });
       } catch (error) {
         console.error("Workflow analysis failed:", error);
@@ -459,7 +463,7 @@ export const useAIAssistantStore = create<AIAssistantState>()(
 // Subscribe to workflow changes for auto-analysis
 if (typeof window !== "undefined") {
   // Auto-analyze workflow when nodes change (if enabled)
-  let _autoAnalyzeTimeout: NodeJS.Timeout;
+  // Auto-analyze timeout reserved for future automatic analysis features
 
   useAIAssistantStore.subscribe(
     (state) => ({
