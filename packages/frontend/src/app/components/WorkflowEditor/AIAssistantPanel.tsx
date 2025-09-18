@@ -9,33 +9,28 @@
  * - Pattern recognition and best practices
  */
 
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect } from "react";
 import {
   Card,
   Button,
   Input,
-  Space,
   Typography,
   Tabs,
   List,
   Badge,
   Tooltip,
   Modal,
-  Form,
-  Select,
   Progress,
   Alert,
   Collapse,
   Tag,
-  Divider,
-  Spin,
-} from 'antd';
+} from "antd";
 import {
   RobotOutlined,
   BulbOutlined,
   BugOutlined,
   ThunderboltOutlined,
-  PatternOutlined,
+  // PatternOutlined,
   SendOutlined,
   CheckCircleOutlined,
   ExclamationCircleOutlined,
@@ -44,16 +39,16 @@ import {
   ClockCircleOutlined,
   UserOutlined,
   SettingOutlined,
-} from '@ant-design/icons';
-import { cn } from '@/design-system/utils';
-import { aiAssistantService } from '@/core/services/aiAssistantService';
+} from "@ant-design/icons";
+import { cn } from "@/design-system/utils";
+import { aiAssistantService } from "@/core/services/aiAssistantService";
 import type {
   AIWorkflowSuggestion,
   WorkflowAnalysis,
   ErrorDiagnosis,
   NaturalLanguageRequest,
-} from '@/core/services/aiAssistantService';
-import type { WorkflowDefinition } from '@/core/types';
+} from "@/core/services/aiAssistantService";
+import type { WorkflowDefinition } from "@/core/types";
 
 const { Title, Text, Paragraph } = Typography;
 const { TextArea } = Input;
@@ -73,13 +68,14 @@ const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({
   onGenerateWorkflow,
   className,
 }) => {
-  const [activeTab, setActiveTab] = useState('suggestions');
-  const [naturalLanguageInput, setNaturalLanguageInput] = useState('');
+  const [activeTab, setActiveTab] = useState("suggestions");
+  const [naturalLanguageInput, setNaturalLanguageInput] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [suggestions, setSuggestions] = useState<AIWorkflowSuggestion[]>([]);
   const [errors, setErrors] = useState<ErrorDiagnosis[]>([]);
   const [analysis, setAnalysis] = useState<WorkflowAnalysis | null>(null);
-  const [selectedSuggestion, setSelectedSuggestion] = useState<AIWorkflowSuggestion | null>(null);
+  const [selectedSuggestion, setSelectedSuggestion] =
+    useState<AIWorkflowSuggestion | null>(null);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
 
   // Load suggestions when workflow changes
@@ -94,10 +90,11 @@ const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({
     if (!workflow) return;
 
     try {
-      const workflowSuggestions = await aiAssistantService.analyzeWorkflow(workflow);
+      const workflowSuggestions =
+        await aiAssistantService.analyzeWorkflow(workflow);
       setSuggestions(workflowSuggestions);
     } catch (error) {
-      console.error('Failed to load suggestions:', error);
+      console.error("Failed to load suggestions:", error);
     }
   }, [workflow]);
 
@@ -109,14 +106,14 @@ const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({
       const mockAnalysis: WorkflowAnalysis = {
         complexity: 0.6,
         performance: {
-          bottlenecks: ['Sequential processing', 'Large data sets'],
-          optimizationOpportunities: ['Parallel processing', 'Data caching'],
+          bottlenecks: ["Sequential processing", "Large data sets"],
+          optimizationOpportunities: ["Parallel processing", "Data caching"],
           estimatedImprovement: 0.4,
         },
         reliability: {
-          errorProneNodes: ['http-node-1', 'database-node-2'],
-          missingErrorHandling: ['http-node-1'],
-          suggestions: ['Add try-catch containers', 'Implement retry logic'],
+          errorProneNodes: ["http-node-1", "database-node-2"],
+          missingErrorHandling: ["http-node-1"],
+          suggestions: ["Add try-catch containers", "Implement retry logic"],
         },
         maintainability: {
           codeQuality: 0.7,
@@ -124,13 +121,13 @@ const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({
           modularity: 0.8,
         },
         patterns: {
-          detected: ['Sequential Pattern', 'Data Transformation Pattern'],
-          recommendations: ['Use Parallel Container', 'Add Error Handling'],
+          detected: ["Sequential Pattern", "Data Transformation Pattern"],
+          recommendations: ["Use Parallel Container", "Add Error Handling"],
         },
       };
       setAnalysis(mockAnalysis);
     } catch (error) {
-      console.error('Failed to load analysis:', error);
+      console.error("Failed to load analysis:", error);
     }
   }, [workflow]);
 
@@ -143,16 +140,16 @@ const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({
         text: naturalLanguageInput,
         context: {
           currentWorkflow: workflow,
-          userIntent: 'workflow-generation',
+          userIntent: "workflow-generation",
         },
       };
 
       const result = await aiAssistantService.generateWorkflowFromText(request);
       onGenerateWorkflow?.(result.workflow);
-      
+
       // Show success message
       Modal.success({
-        title: 'Workflow Generated Successfully',
+        title: "Workflow Generated Successfully",
         content: (
           <div>
             <p>{result.explanation}</p>
@@ -163,47 +160,63 @@ const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({
       });
     } catch (error) {
       Modal.error({
-        title: 'Generation Failed',
-        content: 'Failed to generate workflow from natural language description.',
+        title: "Generation Failed",
+        content:
+          "Failed to generate workflow from natural language description.",
       });
     } finally {
       setIsGenerating(false);
     }
   }, [naturalLanguageInput, workflow, onGenerateWorkflow]);
 
-  const handleApplySuggestion = useCallback((suggestion: AIWorkflowSuggestion) => {
-    onApplySuggestion?.(suggestion);
-    
-    // Remove applied suggestion
-    setSuggestions(prev => prev.filter(s => s.id !== suggestion.id));
-    
-    Modal.success({
-      title: 'Suggestion Applied',
-      content: `${suggestion.title} has been applied to your workflow.`,
-    });
-  }, [onApplySuggestion]);
+  const handleApplySuggestion = useCallback(
+    (suggestion: AIWorkflowSuggestion) => {
+      onApplySuggestion?.(suggestion);
 
-  const handleViewSuggestionDetails = useCallback((suggestion: AIWorkflowSuggestion) => {
-    setSelectedSuggestion(suggestion);
-    setIsDetailModalOpen(true);
-  }, []);
+      // Remove applied suggestion
+      setSuggestions((prev) => prev.filter((s) => s.id !== suggestion.id));
+
+      Modal.success({
+        title: "Suggestion Applied",
+        content: `${suggestion.title} has been applied to your workflow.`,
+      });
+    },
+    [onApplySuggestion],
+  );
+
+  const handleViewSuggestionDetails = useCallback(
+    (suggestion: AIWorkflowSuggestion) => {
+      setSelectedSuggestion(suggestion);
+      setIsDetailModalOpen(true);
+    },
+    [],
+  );
 
   const getImpactColor = (impact: string) => {
     switch (impact) {
-      case 'high': return 'red';
-      case 'medium': return 'orange';
-      case 'low': return 'green';
-      default: return 'blue';
+      case "high":
+        return "red";
+      case "medium":
+        return "orange";
+      case "low":
+        return "green";
+      default:
+        return "blue";
     }
   };
 
   const getTypeIcon = (type: string) => {
     switch (type) {
-      case 'optimization': return <ThunderboltOutlined className="text-yellow-500" />;
-      case 'error-fix': return <BugOutlined className="text-red-500" />;
-      case 'enhancement': return <StarOutlined className="text-blue-500" />;
-      case 'pattern': return <PatternOutlined className="text-purple-500" />;
-      default: return <BulbOutlined className="text-gray-500" />;
+      case "optimization":
+        return <ThunderboltOutlined className="text-yellow-500" />;
+      case "error-fix":
+        return <BugOutlined className="text-red-500" />;
+      case "enhancement":
+        return <StarOutlined className="text-blue-500" />;
+      case "pattern":
+        return <PatternOutlined className="text-purple-500" />;
+      default:
+        return <BulbOutlined className="text-gray-500" />;
     }
   };
 
@@ -237,7 +250,9 @@ const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             {getTypeIcon(suggestion.type)}
-            <span className="text-white font-medium text-sm">{suggestion.title}</span>
+            <span className="text-white font-medium text-sm">
+              {suggestion.title}
+            </span>
           </div>
           <div className="flex items-center gap-1">
             <Tag color={getImpactColor(suggestion.impact)} size="small">
@@ -245,17 +260,20 @@ const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({
             </Tag>
             <Badge
               count={`${(suggestion.confidence * 100).toFixed(0)}%`}
-              style={{ backgroundColor: '#1890ff' }}
+              style={{ backgroundColor: "#1890ff" }}
             />
           </div>
         </div>
-        
+
         <Text className="text-gray-400 text-xs">{suggestion.description}</Text>
-        
+
         <div className="flex items-center gap-2 text-xs text-gray-500">
           <span>Category: {suggestion.category}</span>
           {suggestion.estimatedBenefit.performance && (
-            <span>Performance: +{(suggestion.estimatedBenefit.performance * 100).toFixed(0)}%</span>
+            <span>
+              Performance: +
+              {(suggestion.estimatedBenefit.performance * 100).toFixed(0)}%
+            </span>
           )}
         </div>
       </div>
@@ -268,13 +286,17 @@ const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({
     return (
       <div className="space-y-4">
         <Card size="small" className="bg-gray-800 border-gray-600">
-          <Title level={5} className="text-white mb-3">Workflow Analysis</Title>
-          
+          <Title level={5} className="text-white mb-3">
+            Workflow Analysis
+          </Title>
+
           <div className="space-y-3">
             <div>
               <div className="flex justify-between text-sm mb-1">
                 <span className="text-gray-300">Complexity</span>
-                <span className="text-gray-400">{(analysis.complexity * 100).toFixed(0)}%</span>
+                <span className="text-gray-400">
+                  {(analysis.complexity * 100).toFixed(0)}%
+                </span>
               </div>
               <Progress
                 percent={analysis.complexity * 100}
@@ -287,7 +309,10 @@ const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({
             <div>
               <div className="flex justify-between text-sm mb-1">
                 <span className="text-gray-300">Performance</span>
-                <span className="text-gray-400">{(analysis.performance.estimatedImprovement * 100).toFixed(0)}% improvement possible</span>
+                <span className="text-gray-400">
+                  {(analysis.performance.estimatedImprovement * 100).toFixed(0)}
+                  % improvement possible
+                </span>
               </div>
               <Progress
                 percent={analysis.performance.estimatedImprovement * 100}
@@ -300,7 +325,9 @@ const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({
             <div>
               <div className="flex justify-between text-sm mb-1">
                 <span className="text-gray-300">Maintainability</span>
-                <span className="text-gray-400">{(analysis.maintainability.codeQuality * 100).toFixed(0)}%</span>
+                <span className="text-gray-400">
+                  {(analysis.maintainability.codeQuality * 100).toFixed(0)}%
+                </span>
               </div>
               <Progress
                 percent={analysis.maintainability.codeQuality * 100}
@@ -318,7 +345,9 @@ const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({
             description={
               <ul className="mt-2">
                 {analysis.performance.bottlenecks.map((bottleneck, index) => (
-                  <li key={index} className="text-sm">{bottleneck}</li>
+                  <li key={index} className="text-sm">
+                    {bottleneck}
+                  </li>
                 ))}
               </ul>
             }
@@ -342,11 +371,15 @@ const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({
   };
 
   return (
-    <div className={cn('h-full bg-gray-900 border-r border-gray-700', className)}>
+    <div
+      className={cn("h-full bg-gray-900 border-r border-gray-700", className)}
+    >
       <div className="p-4 border-b border-gray-700">
         <div className="flex items-center gap-2 mb-2">
           <RobotOutlined className="text-blue-400 text-lg" />
-          <Title level={4} className="text-white mb-0">AI Assistant</Title>
+          <Title level={4} className="text-white mb-0">
+            AI Assistant
+          </Title>
         </div>
         <Text className="text-gray-400 text-sm">
           Intelligent workflow optimization and generation
@@ -360,13 +393,17 @@ const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({
           className="ai-assistant-tabs"
           items={[
             {
-              key: 'suggestions',
+              key: "suggestions",
               label: (
                 <span>
                   <BulbOutlined className="mr-1" />
                   Suggestions
                   {suggestions.length > 0 && (
-                    <Badge count={suggestions.length} size="small" className="ml-2" />
+                    <Badge
+                      count={suggestions.length}
+                      size="small"
+                      className="ml-2"
+                    />
                   )}
                 </span>
               ),
@@ -377,19 +414,19 @@ const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({
                       <BulbOutlined className="text-4xl mb-2" />
                       <div>No suggestions available</div>
                       <div className="text-xs mt-2">
-                        {workflow ? 'Workflow analysis in progress...' : 'Load a workflow to get AI suggestions'}
+                        {workflow
+                          ? "Workflow analysis in progress..."
+                          : "Load a workflow to get AI suggestions"}
                       </div>
                     </div>
                   ) : (
-                    <div>
-                      {suggestions.map(renderSuggestionCard)}
-                    </div>
+                    <div>{suggestions.map(renderSuggestionCard)}</div>
                   )}
                 </div>
               ),
             },
             {
-              key: 'generate',
+              key: "generate",
               label: (
                 <span>
                   <SendOutlined className="mr-1" />
@@ -399,11 +436,15 @@ const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({
               children: (
                 <div className="space-y-4">
                   <Card size="small" className="bg-gray-800 border-gray-600">
-                    <Title level={5} className="text-white mb-3">Natural Language to Workflow</Title>
+                    <Title level={5} className="text-white mb-3">
+                      Natural Language to Workflow
+                    </Title>
                     <div className="space-y-3">
                       <TextArea
                         value={naturalLanguageInput}
-                        onChange={(e) => setNaturalLanguageInput(e.target.value)}
+                        onChange={(e) =>
+                          setNaturalLanguageInput(e.target.value)
+                        }
                         placeholder="Describe your workflow in natural language...&#10;&#10;Example: 'Send an email notification when a new order is received, then update the inventory database'"
                         rows={4}
                         className="bg-gray-700 border-gray-600 text-white"
@@ -422,13 +463,19 @@ const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({
                   </Card>
 
                   <Card size="small" className="bg-gray-800 border-gray-600">
-                    <Title level={5} className="text-white mb-3">Quick Templates</Title>
+                    <Title level={5} className="text-white mb-3">
+                      Quick Templates
+                    </Title>
                     <div className="space-y-2">
                       <Button
                         type="dashed"
                         size="small"
                         className="w-full text-left"
-                        onClick={() => setNaturalLanguageInput('Send email notification when form is submitted')}
+                        onClick={() =>
+                          setNaturalLanguageInput(
+                            "Send email notification when form is submitted",
+                          )
+                        }
                       >
                         📧 Email Notification
                       </Button>
@@ -436,7 +483,11 @@ const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({
                         type="dashed"
                         size="small"
                         className="w-full text-left"
-                        onClick={() => setNaturalLanguageInput('Process uploaded files and save to database')}
+                        onClick={() =>
+                          setNaturalLanguageInput(
+                            "Process uploaded files and save to database",
+                          )
+                        }
                       >
                         📁 File Processing
                       </Button>
@@ -444,7 +495,11 @@ const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({
                         type="dashed"
                         size="small"
                         className="w-full text-left"
-                        onClick={() => setNaturalLanguageInput('Sync data between two APIs every hour')}
+                        onClick={() =>
+                          setNaturalLanguageInput(
+                            "Sync data between two APIs every hour",
+                          )
+                        }
                       >
                         🔄 Data Synchronization
                       </Button>
@@ -454,7 +509,7 @@ const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({
               ),
             },
             {
-              key: 'analysis',
+              key: "analysis",
               label: (
                 <span>
                   <SettingOutlined className="mr-1" />
@@ -494,12 +549,16 @@ const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({
         {selectedSuggestion && (
           <div className="space-y-4">
             <div>
-              <Text className="text-gray-600">{selectedSuggestion.description}</Text>
+              <Text className="text-gray-600">
+                {selectedSuggestion.description}
+              </Text>
             </div>
 
             <div>
               <Title level={5}>Reasoning</Title>
-              <Text className="text-gray-600">{selectedSuggestion.reasoning}</Text>
+              <Text className="text-gray-600">
+                {selectedSuggestion.reasoning}
+              </Text>
             </div>
 
             {selectedSuggestion.suggestedChanges.length > 0 && (
@@ -512,7 +571,9 @@ const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({
                     <List.Item>
                       <div className="space-y-1">
                         <div className="font-medium">{change.type}</div>
-                        <div className="text-sm text-gray-600">{change.reason}</div>
+                        <div className="text-sm text-gray-600">
+                          {change.reason}
+                        </div>
                       </div>
                     </List.Item>
                   )}
@@ -528,7 +589,11 @@ const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({
                     <div className="flex justify-between">
                       <span>Performance:</span>
                       <span className="text-green-500">
-                        +{(selectedSuggestion.estimatedBenefit.performance * 100).toFixed(0)}%
+                        +
+                        {(
+                          selectedSuggestion.estimatedBenefit.performance * 100
+                        ).toFixed(0)}
+                        %
                       </span>
                     </div>
                   )}
@@ -536,7 +601,11 @@ const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({
                     <div className="flex justify-between">
                       <span>Reliability:</span>
                       <span className="text-blue-500">
-                        +{(selectedSuggestion.estimatedBenefit.reliability * 100).toFixed(0)}%
+                        +
+                        {(
+                          selectedSuggestion.estimatedBenefit.reliability * 100
+                        ).toFixed(0)}
+                        %
                       </span>
                     </div>
                   )}
@@ -544,7 +613,12 @@ const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({
                     <div className="flex justify-between">
                       <span>Maintainability:</span>
                       <span className="text-purple-500">
-                        +{(selectedSuggestion.estimatedBenefit.maintainability * 100).toFixed(0)}%
+                        +
+                        {(
+                          selectedSuggestion.estimatedBenefit.maintainability *
+                          100
+                        ).toFixed(0)}
+                        %
                       </span>
                     </div>
                   )}

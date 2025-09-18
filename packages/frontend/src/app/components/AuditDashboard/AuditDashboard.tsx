@@ -8,24 +8,19 @@ import {
   Input,
   Space,
   Tag,
-  Badge,
   Statistic,
   Row,
   Col,
   Alert,
   Modal,
-  Tooltip,
-  Dropdown,
   Typography,
-  Timeline,
-  Progress,
   Descriptions,
 } from "antd";
 import {
   AuditOutlined,
   SecurityScanOutlined,
   WarningOutlined,
-  ShieldCheckOutlined,
+  CheckCircleOutlined,
   ExportOutlined,
   FilterOutlined,
   ReloadOutlined,
@@ -34,7 +29,6 @@ import {
   AlertOutlined,
   UserOutlined,
   GlobalOutlined,
-  ClockCircleOutlined,
 } from "@ant-design/icons";
 import {
   auditService,
@@ -415,7 +409,7 @@ export const AuditDashboard: React.FC = () => {
       title: "Actions",
       key: "actions",
       width: 100,
-      render: (_, record: AuditEvent) => (
+      render: (_: unknown, record: AuditEvent) => (
         <Button
           type="link"
           icon={<EyeOutlined />}
@@ -559,7 +553,7 @@ export const AuditDashboard: React.FC = () => {
               Export
             </Button>
             <Button
-              icon={<ShieldCheckOutlined />}
+              icon={<CheckCircleOutlined />}
               onClick={generateComplianceReport}
             >
               Generate Report

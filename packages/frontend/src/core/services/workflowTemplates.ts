@@ -211,13 +211,11 @@ export class WorkflowTemplatesService {
         id: templateNode.id,
         type: templateNode.type,
         position: templateNode.position,
-        parameters: {},
-        data: {
-          ...nodeData,
-          configuration: {},
-          credentials: [],
-        },
-      };
+        parameters: nodeData.properties || {},
+        credentials: [],
+        name: nodeData.label,
+        notes: nodeData.description,
+      } as WorkflowNodeInstance;
     });
 
     // Process template edges
@@ -226,10 +224,9 @@ export class WorkflowTemplatesService {
       source: templateEdge.source,
       target: templateEdge.target,
       type: templateEdge.type || "default",
-      data: {
-        label: templateEdge.label,
-        conditions: templateEdge.conditions,
-      },
+      data: templateEdge.label
+        ? { label: templateEdge.label, conditions: templateEdge.conditions }
+        : undefined,
     }));
 
     return { nodes, edges };
@@ -244,7 +241,9 @@ export class WorkflowTemplatesService {
   ): WorkflowTemplate[] {
     const nodeTypes = new Set(existingNodes.map((node) => node.type));
     const integrations = new Set(
-      existingNodes.map((node) => node.data?.integration).filter(Boolean),
+      existingNodes
+        .map((node: any) => node?.data?.integration)
+        .filter(Boolean) as string[],
     );
 
     return this.getAllTemplates()

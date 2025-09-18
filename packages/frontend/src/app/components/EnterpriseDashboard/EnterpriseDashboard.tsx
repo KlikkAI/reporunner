@@ -6,7 +6,6 @@ import {
   Statistic,
   Progress,
   Table,
-  List,
   Alert,
   Select,
   DatePicker,
@@ -16,25 +15,19 @@ import {
   Tabs,
   Badge,
   Tag,
-  Tooltip,
   Timeline,
   Avatar,
-  Divider,
 } from "antd";
 import {
   DashboardOutlined,
   TeamOutlined,
   SecurityScanOutlined,
-  AuditOutlined,
-  TrophyOutlined,
   RiseOutlined,
   FallOutlined,
   WarningOutlined,
   CheckCircleOutlined,
   ClockCircleOutlined,
   UserOutlined,
-  GlobalOutlined,
-  ShieldCheckOutlined,
   ExportOutlined,
   ReloadOutlined,
   BugOutlined,
@@ -44,8 +37,8 @@ import {
 } from "@ant-design/icons";
 import { Line, Column, Pie, Area } from "@ant-design/plots";
 import { useRBACStore } from "@/core/stores/rbacStore";
-import { auditService } from "@/core/services/auditService";
-import { securityService } from "@/core/services/securityService";
+// import { auditService } from "@/core/services/auditService";
+// import { securityService } from "@/core/services/securityService";
 
 const { Title, Text } = Typography;
 const { RangePicker } = DatePicker;
@@ -403,7 +396,7 @@ export const EnterpriseDashboard: React.FC = () => {
                   value={metrics?.performance.systemUptime}
                   precision={2}
                   suffix="%"
-                  prefix={<ShieldCheckOutlined />}
+                  prefix={<CheckCircleOutlined />}
                   valueStyle={{ color: "#52c41a" }}
                 />
               </Card>
@@ -479,13 +472,13 @@ export const EnterpriseDashboard: React.FC = () => {
               <Card>
                 <Statistic
                   title="Error Rate"
-                  value={metrics?.performance.errorRate}
+                  value={metrics?.performance.errorRate ?? 0}
                   precision={1}
                   suffix="%"
                   prefix={<BugOutlined />}
                   valueStyle={{
                     color:
-                      metrics?.performance.errorRate > 2
+                      (metrics?.performance.errorRate ?? 0) > 2
                         ? "#cf1322"
                         : "#52c41a",
                   }}
@@ -513,15 +506,17 @@ export const EnterpriseDashboard: React.FC = () => {
                       style={{
                         fontSize: "14px",
                         color:
-                          metrics?.costs.growth < 0 ? "#52c41a" : "#cf1322",
+                          (metrics?.costs.growth ?? 0) < 0
+                            ? "#52c41a"
+                            : "#cf1322",
                       }}
                     >
-                      {metrics?.costs.growth < 0 ? (
+                      {(metrics?.costs.growth ?? 0) < 0 ? (
                         <FallOutlined />
                       ) : (
                         <RiseOutlined />
                       )}{" "}
-                      {Math.abs(metrics?.costs.growth || 0)}%
+                      {Math.abs(metrics?.costs.growth ?? 0)}%
                     </span>
                   }
                 />
@@ -544,7 +539,7 @@ export const EnterpriseDashboard: React.FC = () => {
                   xField="time"
                   yField="cpu"
                   height={300}
-                  smooth
+                  // @ts-expect-error Area config shape may differ by version
                   areaStyle={{ fill: "l(270) 0:#ffffff 0.5:#7ec2f3 1:#1890ff" }}
                 />
               </Card>
@@ -574,7 +569,7 @@ export const EnterpriseDashboard: React.FC = () => {
         <span>
           <SecurityScanOutlined />
           Security
-          {metrics?.security.alerts > 0 && (
+          {metrics?.security && metrics.security.alerts > 0 && (
             <Badge count={metrics.security.alerts} style={{ marginLeft: 8 }} />
           )}
         </span>
@@ -586,11 +581,13 @@ export const EnterpriseDashboard: React.FC = () => {
               <Card>
                 <Statistic
                   title="Active Threats"
-                  value={metrics?.security.threats}
+                  value={metrics?.security.threats ?? 0}
                   prefix={<WarningOutlined />}
                   valueStyle={{
                     color:
-                      metrics?.security.threats > 0 ? "#cf1322" : "#52c41a",
+                      (metrics?.security.threats ?? 0) > 0
+                        ? "#cf1322"
+                        : "#52c41a",
                   }}
                 />
               </Card>
@@ -599,10 +596,13 @@ export const EnterpriseDashboard: React.FC = () => {
               <Card>
                 <Statistic
                   title="Security Alerts"
-                  value={metrics?.security.alerts}
+                  value={metrics?.security.alerts ?? 0}
                   prefix={<SecurityScanOutlined />}
                   valueStyle={{
-                    color: metrics?.security.alerts > 5 ? "#fa8c16" : "#52c41a",
+                    color:
+                      (metrics?.security.alerts ?? 0) > 5
+                        ? "#fa8c16"
+                        : "#52c41a",
                   }}
                 />
               </Card>
@@ -611,9 +611,9 @@ export const EnterpriseDashboard: React.FC = () => {
               <Card>
                 <Statistic
                   title="Compliance Score"
-                  value={metrics?.security.complianceScore}
+                  value={metrics?.security.complianceScore ?? 0}
                   suffix="%"
-                  prefix={<ShieldCheckOutlined />}
+                  prefix={<CheckCircleOutlined />}
                   valueStyle={{
                     color:
                       metrics?.security.complianceScore >= 90
@@ -643,10 +643,10 @@ export const EnterpriseDashboard: React.FC = () => {
             </Col>
           </Row>
 
-          {metrics?.security.alerts > 0 && (
+          {(metrics?.security.alerts ?? 0) > 0 && (
             <Alert
               message="Security Alerts Require Attention"
-              description={`There are ${metrics.security.alerts} active security alerts that need investigation.`}
+              description={`There are ${metrics?.security.alerts ?? 0} active security alerts that need investigation.`}
               type="warning"
               showIcon
               style={{ marginBottom: 24 }}

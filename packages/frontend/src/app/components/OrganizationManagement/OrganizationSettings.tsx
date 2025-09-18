@@ -23,16 +23,14 @@ import {
   SecurityScanOutlined,
   TeamOutlined,
   AuditOutlined,
-  KeyOutlined,
   ClockCircleOutlined,
-  ShieldCheckOutlined,
+  CheckOutlined,
   GlobalOutlined,
 } from "@ant-design/icons";
 import { useRBACStore } from "@/core/stores/rbacStore";
 import type {
   Organization,
   OrganizationSettings,
-  PasswordPolicy,
   OrganizationMember,
 } from "@/core/services/rbacService";
 
@@ -197,7 +195,7 @@ export const OrganizationSettingsComponent: React.FC<
     {
       title: "Actions",
       key: "actions",
-      render: (_, record: OrganizationMember) => (
+      render: (_: unknown, record: OrganizationMember) => (
         <Space>
           {canManageUsers() && record.role !== "owner" && (
             <Button
@@ -420,7 +418,7 @@ export const OrganizationSettingsComponent: React.FC<
                 htmlType="submit"
                 loading={loading || isLoading}
                 disabled={!canManageOrganization()}
-                icon={<ShieldCheckOutlined />}
+                icon={<CheckOutlined />}
               >
                 Update Security Settings
               </Button>

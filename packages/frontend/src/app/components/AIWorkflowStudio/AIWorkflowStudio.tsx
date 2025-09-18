@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Card,
   Tabs,
@@ -7,7 +7,6 @@ import {
   Slider,
   InputNumber,
   Input,
-  Switch,
   Progress,
   Tag,
   Space,
@@ -19,11 +18,10 @@ import {
   Statistic,
   Timeline,
   Table,
-  Tooltip,
-  Badge,
   Divider,
   Upload,
   message,
+  Badge,
 } from "antd";
 import {
   RobotOutlined,
@@ -31,10 +29,7 @@ import {
   EyeOutlined,
   AudioOutlined,
   CodeOutlined,
-  BranchesOutlined,
   PlayCircleOutlined,
-  PauseCircleOutlined,
-  ReloadOutlined,
   SettingOutlined,
   ExperimentOutlined,
   BarChartOutlined,
@@ -82,7 +77,7 @@ export const AIWorkflowStudio: React.FC<AIWorkflowStudioProps> = ({
   const [isExecuting, setIsExecuting] = useState(false);
   const [activeTab, setActiveTab] = useState("builder");
   const [uploadedFiles, setUploadedFiles] = useState<any[]>([]);
-  const [workflowInputs, setWorkflowInputs] = useState<any>({});
+  const [workflowInputs, setWorkflowInputs] = useState<Record<string, any>>({});
 
   useEffect(() => {
     if (visible) {
@@ -152,7 +147,10 @@ export const AIWorkflowStudio: React.FC<AIWorkflowStudioProps> = ({
       );
 
       setCurrentExecution(execution);
-      setExecutionHistory((prev) => [execution, ...prev]);
+      setExecutionHistory((prev: AIWorkflowExecution[]) => [
+        execution,
+        ...prev,
+      ]);
       message.success("Workflow executed successfully!");
     } catch (error: any) {
       message.error(`Execution failed: ${error.message}`);
@@ -172,8 +170,8 @@ export const AIWorkflowStudio: React.FC<AIWorkflowStudioProps> = ({
         content: e.target?.result,
         timestamp: new Date(),
       };
-      setUploadedFiles((prev) => [...prev, fileData]);
-      setWorkflowInputs((prev) => ({
+      setUploadedFiles((prev: any[]) => [...prev, fileData]);
+      setWorkflowInputs((prev: Record<string, any>) => ({
         ...prev,
         files: [...(prev.files || []), fileData],
       }));
@@ -271,7 +269,7 @@ export const AIWorkflowStudio: React.FC<AIWorkflowStudioProps> = ({
       title: "Duration",
       key: "duration",
       width: 100,
-      render: (_, record: AIWorkflowExecution) => {
+      render: (_: unknown, record: AIWorkflowExecution) => {
         if (!record.endTime) return "-";
         const duration = record.endTime.getTime() - record.startTime.getTime();
         return <Text>{(duration / 1000).toFixed(1)}s</Text>;
@@ -315,8 +313,8 @@ export const AIWorkflowStudio: React.FC<AIWorkflowStudioProps> = ({
                               {getModelIcon(model)} {model.name}
                             </span>
                             <div>
-                              <Tag size="small">{model.provider}</Tag>
-                              <Tag size="small" color="blue">
+                              <Tag>{model.provider}</Tag>
+                              <Tag color="blue">
                                 ${model.costPer1kTokens}/1k
                               </Tag>
                             </div>

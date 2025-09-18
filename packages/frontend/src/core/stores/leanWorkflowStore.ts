@@ -10,7 +10,7 @@ import { workflowApiService } from "../api/WorkflowApiService";
 import type { CreateWorkflowRequest } from "../schemas/WorkflowSchemas";
 
 // Define edge structure matching React Flow
-interface WorkflowEdge {
+export interface WorkflowEdge {
   id: string;
   source: string;
   target: string;

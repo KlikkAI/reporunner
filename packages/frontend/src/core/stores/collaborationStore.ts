@@ -20,7 +20,11 @@ import type {
 export interface CollaborationState {
   // Session state
   isConnected: boolean;
-  connectionStatus: "connecting" | "connected" | "reconnecting" | "disconnected";
+  connectionStatus:
+    | "connecting"
+    | "connected"
+    | "reconnecting"
+    | "disconnected";
   currentSession: CollaborationSession | null;
   currentUser: CollaborationUser | null;
 
@@ -53,13 +57,24 @@ export interface CollaborationState {
   initializeSession: (
     workflowId: string,
     user: CollaborationUser,
-    serverUrl?: string
+    serverUrl?: string,
   ) => Promise<void>;
   leaveSession: () => Promise<void>;
   updatePresence: (presence: Partial<UserPresence>) => void;
-  sendOperation: (operation: Omit<CollaborationOperation, "id" | "timestamp">) => Promise<void>;
-  addComment: (comment: Omit<CollaborationComment, "id" | "timestamp" | "author" | "replies">) => Promise<void>;
-  replyToComment: (commentId: string, content: string, mentions?: string[]) => Promise<void>;
+  sendOperation: (
+    operation: Omit<CollaborationOperation, "id" | "timestamp">,
+  ) => Promise<void>;
+  addComment: (
+    comment: Omit<
+      CollaborationComment,
+      "id" | "timestamp" | "author" | "replies"
+    >,
+  ) => Promise<void>;
+  replyToComment: (
+    commentId: string,
+    content: string,
+    mentions?: string[],
+  ) => Promise<void>;
   resolveComment: (commentId: string) => void;
   resolveConflict: (conflictId: string, resolution: any) => Promise<void>;
   selectComment: (commentId: string | null) => void;
@@ -94,7 +109,11 @@ export const useCollaborationStore = create<CollaborationState>()(
     commentMode: false,
 
     // Actions
-    initializeSession: async (workflowId: string, user: CollaborationUser, serverUrl?: string) => {
+    initializeSession: async (
+      workflowId: string,
+      user: CollaborationUser,
+      serverUrl?: string,
+    ) => {
       set({
         connectionStatus: "connecting",
         currentUser: user,
@@ -107,7 +126,11 @@ export const useCollaborationStore = create<CollaborationState>()(
           setupCollaborationEventListeners(set, get);
         }
 
-        const session = await collaborationService.initializeSession(workflowId, user, serverUrl);
+        const session = await collaborationService.initializeSession(
+          workflowId,
+          user,
+          serverUrl,
+        );
 
         set({
           isConnected: true,
@@ -151,7 +174,9 @@ export const useCollaborationStore = create<CollaborationState>()(
       collaborationService.updatePresence(presence);
     },
 
-    sendOperation: async (operation: Omit<CollaborationOperation, "id" | "timestamp">) => {
+    sendOperation: async (
+      operation: Omit<CollaborationOperation, "id" | "timestamp">,
+    ) => {
       const state = get();
       if (!state.isConnected) {
         throw new Error("Not connected to collaboration session");
@@ -166,7 +191,12 @@ export const useCollaborationStore = create<CollaborationState>()(
       }
     },
 
-    addComment: async (comment: Omit<CollaborationComment, "id" | "timestamp" | "author" | "replies">) => {
+    addComment: async (
+      comment: Omit<
+        CollaborationComment,
+        "id" | "timestamp" | "author" | "replies"
+      >,
+    ) => {
       const state = get();
       if (!state.isConnected) {
         throw new Error("Not connected to collaboration session");
@@ -187,20 +217,28 @@ export const useCollaborationStore = create<CollaborationState>()(
       }
     },
 
-    replyToComment: async (commentId: string, content: string, mentions: string[] = []) => {
+    replyToComment: async (
+      commentId: string,
+      content: string,
+      mentions: string[] = [],
+    ) => {
       const state = get();
       if (!state.isConnected) {
         throw new Error("Not connected to collaboration session");
       }
 
       try {
-        const reply = await collaborationService.replyToComment(commentId, content, mentions);
+        const reply = await collaborationService.replyToComment(
+          commentId,
+          content,
+          mentions,
+        );
 
         set((state) => ({
           comments: state.comments.map((comment) =>
             comment.id === commentId
               ? { ...comment, replies: [...comment.replies, reply] }
-              : comment
+              : comment,
           ),
         }));
       } catch (error) {
@@ -212,14 +250,15 @@ export const useCollaborationStore = create<CollaborationState>()(
     resolveComment: (commentId: string) => {
       set((state) => ({
         comments: state.comments.map((comment) =>
-          comment.id === commentId
-            ? { ...comment, resolved: true }
-            : comment
+          comment.id === commentId ? { ...comment, resolved: true } : comment,
         ),
         activeComments: state.activeComments.filter(
-          (comment) => comment.id !== commentId
+          (comment) => comment.id !== commentId,
         ),
-        selectedCommentId: state.selectedCommentId === commentId ? null : state.selectedCommentId,
+        selectedCommentId:
+          state.selectedCommentId === commentId
+            ? null
+            : state.selectedCommentId,
       }));
     },
 
@@ -234,7 +273,7 @@ export const useCollaborationStore = create<CollaborationState>()(
 
         set((state) => ({
           activeConflicts: state.activeConflicts.filter(
-            (conflict) => conflict.id !== conflictId
+            (conflict) => conflict.id !== conflictId,
           ),
           conflictResolutionMode: state.activeConflicts.length <= 1,
         }));
@@ -249,7 +288,9 @@ export const useCollaborationStore = create<CollaborationState>()(
     },
 
     toggleCollaborationPanel: () => {
-      set((state) => ({ collaborationPanelOpen: !state.collaborationPanelOpen }));
+      set((state) => ({
+        collaborationPanelOpen: !state.collaborationPanelOpen,
+      }));
     },
 
     toggleCommentMode: () => {
@@ -267,13 +308,13 @@ export const useCollaborationStore = create<CollaborationState>()(
     toggleComments: () => {
       set((state) => ({ showComments: !state.showComments }));
     },
-  }))
+  })),
 );
 
 // Set up collaboration event listeners
 function setupCollaborationEventListeners(
   set: (fn: (state: CollaborationState) => Partial<CollaborationState>) => void,
-  get: () => CollaborationState
+  get: () => CollaborationState,
 ): void {
   // Connection events
   collaborationService.addEventListener("connected", () => {
@@ -284,95 +325,129 @@ function setupCollaborationEventListeners(
     }));
   });
 
-  collaborationService.addEventListener("disconnected", (reason: string) => {
+  collaborationService.addEventListener("disconnected", (_reason: string) => {
     set((state) => ({
       isConnected: false,
       connectionStatus: "disconnected",
     }));
-    console.warn("Collaboration session disconnected:", reason);
+    console.warn("Collaboration session disconnected");
   });
 
-  collaborationService.addEventListener("connection_error", (error: Error) => {
+  collaborationService.addEventListener("connection_error", (_error: Error) => {
     set((state) => ({
       isConnected: false,
       connectionStatus: "disconnected",
     }));
-    console.error("Collaboration connection error:", error);
+    console.error("Collaboration connection error");
   });
 
   // User events
-  collaborationService.addEventListener("user_joined", (user: CollaborationUser) => {
-    console.log("User joined collaboration:", user.name);
-  });
+  collaborationService.addEventListener(
+    "user_joined",
+    (user: CollaborationUser) => {
+      console.log("User joined collaboration:", user.name);
+    },
+  );
 
   collaborationService.addEventListener("user_left", (userId: string) => {
     set((state) => ({
-      userPresences: state.userPresences.filter((presence) => presence.userId !== userId),
+      userPresences: state.userPresences.filter(
+        (presence) => presence.userId !== userId,
+      ),
     }));
   });
 
   // Presence events
-  collaborationService.addEventListener("presence_update", (presence: UserPresence) => {
-    set((state) => ({
-      userPresences: state.userPresences.map((p) =>
-        p.userId === presence.userId ? presence : p
-      ).concat(
-        state.userPresences.find((p) => p.userId === presence.userId) ? [] : [presence]
-      ),
-    }));
-  });
+  collaborationService.addEventListener(
+    "presence_update",
+    (presence: UserPresence) => {
+      set((state) => ({
+        userPresences: state.userPresences
+          .map((p) => (p.userId === presence.userId ? presence : p))
+          .concat(
+            state.userPresences.find((p) => p.userId === presence.userId)
+              ? []
+              : [presence],
+          ),
+      }));
+    },
+  );
 
   // Operation events
-  collaborationService.addEventListener("operation_received", (operation: CollaborationOperation) => {
-    set((state) => ({
-      operationHistory: [...state.operationHistory, operation],
-      pendingOperations: state.pendingOperations.filter((op) => op.id !== operation.id),
-      lastSyncTimestamp: new Date().toISOString(),
-    }));
-  });
+  collaborationService.addEventListener(
+    "operation_received",
+    (operation: CollaborationOperation) => {
+      set((state) => ({
+        operationHistory: [...state.operationHistory, operation],
+        pendingOperations: state.pendingOperations.filter(
+          (op) => op.id !== operation.id,
+        ),
+        lastSyncTimestamp: new Date().toISOString(),
+      }));
+    },
+  );
 
-  collaborationService.addEventListener("operation_sent", (operation: CollaborationOperation) => {
-    set((state) => ({
-      pendingOperations: [...state.pendingOperations, operation],
-    }));
-  });
+  collaborationService.addEventListener(
+    "operation_sent",
+    (operation: CollaborationOperation) => {
+      set((state) => ({
+        pendingOperations: [...state.pendingOperations, operation],
+      }));
+    },
+  );
 
   // Conflict events
-  collaborationService.addEventListener("conflict_detected", (conflict: CollaborationConflict) => {
-    set((state) => ({
-      activeConflicts: [...state.activeConflicts, conflict],
-      conflictResolutionMode: true,
-    }));
-  });
+  collaborationService.addEventListener(
+    "conflict_detected",
+    (conflict: CollaborationConflict) => {
+      set((state) => ({
+        activeConflicts: [...state.activeConflicts, conflict],
+        conflictResolutionMode: true,
+      }));
+    },
+  );
 
   // Comment events
-  collaborationService.addEventListener("comment_added", (comment: CollaborationComment) => {
-    set((state) => ({
-      comments: [...state.comments, comment],
-      activeComments: comment.resolved
-        ? state.activeComments
-        : [...state.activeComments, comment],
-    }));
-  });
+  collaborationService.addEventListener(
+    "comment_added",
+    (comment: CollaborationComment) => {
+      set((state) => ({
+        comments: [...state.comments, comment],
+        activeComments: comment.resolved
+          ? state.activeComments
+          : [...state.activeComments, comment],
+      }));
+    },
+  );
 
-  collaborationService.addEventListener("comment_updated", (comment: CollaborationComment) => {
-    set((state) => ({
-      comments: state.comments.map((c) => (c.id === comment.id ? comment : c)),
-      activeComments: comment.resolved
-        ? state.activeComments.filter((c) => c.id !== comment.id)
-        : state.activeComments.map((c) => (c.id === comment.id ? comment : c)),
-    }));
-  });
+  collaborationService.addEventListener(
+    "comment_updated",
+    (comment: CollaborationComment) => {
+      set((state) => ({
+        comments: state.comments.map((c) =>
+          c.id === comment.id ? comment : c,
+        ),
+        activeComments: comment.resolved
+          ? state.activeComments.filter((c) => c.id !== comment.id)
+          : state.activeComments.map((c) =>
+              c.id === comment.id ? comment : c,
+            ),
+      }));
+    },
+  );
 
-  collaborationService.addEventListener("reply_added", ({ commentId, reply }: any) => {
-    set((state) => ({
-      comments: state.comments.map((comment) =>
-        comment.id === commentId
-          ? { ...comment, replies: [...comment.replies, reply] }
-          : comment
-      ),
-    }));
-  });
+  collaborationService.addEventListener(
+    "reply_added",
+    ({ commentId, reply }: any) => {
+      set((state) => ({
+        comments: state.comments.map((comment) =>
+          comment.id === commentId
+            ? { ...comment, replies: [...comment.replies, reply] }
+            : comment,
+        ),
+      }));
+    },
+  );
 }
 
 // Subscribe to workflow changes to send operations
@@ -399,6 +474,6 @@ if (typeof window !== "undefined") {
           }
         }, 5000);
       }
-    }
+    },
   );
 }

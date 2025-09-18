@@ -477,6 +477,7 @@ export class IntegrationMarketplaceService {
         version: "",
         message: "Integration not found",
         errors: ["Integration does not exist in marketplace"],
+        configurationRequired: false,
       };
     }
 
@@ -490,6 +491,8 @@ export class IntegrationMarketplaceService {
           version: integration.version,
           message: "Requirements not met",
           errors: requirementsCheck.errors,
+          configurationRequired:
+            integration.installation?.configurationRequired ?? false,
         };
       }
 
@@ -518,6 +521,8 @@ export class IntegrationMarketplaceService {
         version: integration.version,
         message: "Installation failed",
         errors: [error.message],
+        configurationRequired:
+          integration.installation?.configurationRequired ?? false,
       };
     }
   }
@@ -559,6 +564,7 @@ export class IntegrationMarketplaceService {
         integrationId,
         version: "",
         message: "Integration not found",
+        configurationRequired: false,
       };
     }
 

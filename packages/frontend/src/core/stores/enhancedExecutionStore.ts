@@ -230,7 +230,7 @@ export const useEnhancedExecutionStore = create<EnhancedExecutionState>()(
                 ? {
                     ...currentState.currentExecution,
                     status: "running",
-                    startedAt: event.timestamp,
+                    startTime: event.timestamp,
                   }
                 : null,
               lastUpdateTimestamp: event.timestamp,
@@ -243,7 +243,7 @@ export const useEnhancedExecutionStore = create<EnhancedExecutionState>()(
                 ? {
                     ...currentState.currentExecution,
                     status: "completed",
-                    completedAt: event.timestamp,
+                    endTime: event.timestamp,
                     duration: event.data.duration,
                   }
                 : null,
@@ -261,7 +261,7 @@ export const useEnhancedExecutionStore = create<EnhancedExecutionState>()(
                 ? {
                     ...currentState.currentExecution,
                     status: "failed",
-                    completedAt: event.timestamp,
+                    endTime: event.timestamp,
                     error: event.data.error,
                     duration: event.data.duration,
                   }

@@ -10,10 +10,10 @@
  */
 
 import type {
-  INodeProperty,
   PropertyFormState,
   PropertyValue,
-} from "../nodes/types";
+} from "../types/dynamicProperties";
+import type { NodeProperty as INodeProperty } from "../types/dynamicProperties";
 
 export interface EnhancedPropertyEvaluation {
   visible: boolean;
@@ -40,17 +40,15 @@ export interface PropertyDependency {
 }
 
 export interface ValidationRule {
-  type: "required" | "minLength" | "maxLength" | "pattern" | "custom" | "async";
+  type: "required" | "minLength" | "maxLength" | "pattern" | "custom";
   value?: any;
-  message?: string;
-  validator?: (
-    value: PropertyValue,
-    formState: PropertyFormState,
-  ) => boolean | Promise<boolean>;
+  message: string;
+  validator?: (value: PropertyValue, formState: PropertyFormState) => boolean;
 }
 
-export interface EnhancedNodeProperty extends INodeProperty {
-  // Enhanced display options
+export interface EnhancedNodeProperty
+  extends Omit<INodeProperty, "displayOptions"> {
+  // Enhanced display options (separate from base DisplayOptions)
   displayOptions?: {
     show?: PropertyDependency[];
     hide?: PropertyDependency[];
@@ -91,13 +89,11 @@ export interface EnhancedNodeProperty extends INodeProperty {
 
 export class EnhancedPropertyEvaluator {
   private formState: PropertyFormState;
-  private executionContext: any;
   private validationCache: Map<string, EnhancedPropertyEvaluation>;
   private dependencyGraph: Map<string, Set<string>>;
 
-  constructor(formState: PropertyFormState, executionContext: any = {}) {
+  constructor(formState: PropertyFormState, _executionContext: any = {}) {
     this.formState = formState;
-    this.executionContext = executionContext;
     this.validationCache = new Map();
     this.dependencyGraph = new Map();
   }
@@ -169,24 +165,7 @@ export class EnhancedPropertyEvaluator {
         warnings.set(property.name, evaluation.warning);
       }
 
-      // Run async validation if needed
-      if (property.validation) {
-        for (const rule of property.validation) {
-          if (rule.type === "async" && rule.validator) {
-            try {
-              const isValid = await rule.validator(
-                this.formState[property.name],
-                this.formState,
-              );
-              if (!isValid) {
-                errors.set(property.name, rule.message || "Validation failed");
-              }
-            } catch (error) {
-              errors.set(property.name, "Async validation error");
-            }
-          }
-        }
-      }
+      // Async validation removed to align with base types
     }
 
     return {
@@ -450,7 +429,9 @@ export class EnhancedPropertyEvaluator {
     return undefined;
   }
 
-  private calculateDefaultValue(property: EnhancedNodeProperty): PropertyValue {
+  private calculateDefaultValue(
+    property: EnhancedNodeProperty,
+  ): PropertyValue | undefined {
     // Use existing default if available
     if (property.default !== undefined) {
       return property.default;
@@ -464,14 +445,13 @@ export class EnhancedPropertyEvaluator {
         return 0;
       case "boolean":
         return false;
-      case "options":
-        return property.options?.[0]?.value;
-      case "multiOptions":
+      case "select":
+      case "multiSelect":
         return [];
       case "collection":
-        return {};
+        return undefined;
       case "fixedCollection":
-        return {};
+        return undefined;
       default:
         return undefined;
     }

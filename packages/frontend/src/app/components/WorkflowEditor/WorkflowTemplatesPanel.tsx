@@ -77,7 +77,7 @@ export const WorkflowTemplatesPanel: React.FC<WorkflowTemplatesPanelProps> = ({
   onClose,
   onCreateFromTemplate,
 }) => {
-  const { loadWorkflow } = useLeanWorkflowStore();
+  const { importWorkflow } = useLeanWorkflowStore();
   const [templates, setTemplates] = useState<WorkflowTemplate[]>([]);
   const [patterns, setPatterns] = useState<AutomationPattern[]>([]);
   const [filteredTemplates, setFilteredTemplates] = useState<
@@ -160,7 +160,13 @@ export const WorkflowTemplatesPanel: React.FC<WorkflowTemplatesPanelProps> = ({
     try {
       const result = workflowTemplates.createWorkflowFromTemplate(template.id);
       if (result) {
-        loadWorkflow(result.nodes, result.edges);
+        importWorkflow({
+          id: `template_${template.id}_${Date.now()}`,
+          name: template.name,
+          description: template.description,
+          nodes: result.nodes,
+          connections: {},
+        } as any);
         onCreateFromTemplate(template.id);
         message.success(`Created workflow from "${template.name}" template`);
         onClose();
