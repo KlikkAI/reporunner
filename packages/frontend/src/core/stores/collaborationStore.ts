@@ -123,7 +123,7 @@ export const useCollaborationStore = create<CollaborationState>()(
         // Set up event listeners before initializing
         const state = get();
         if (!state.isConnected) {
-          setupCollaborationEventListeners(set, get);
+          setupCollaborationEventListeners(set);
         }
 
         const session = await collaborationService.initializeSession(

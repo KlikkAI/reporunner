@@ -294,6 +294,7 @@ export class AIAssistantService {
     };
   }
 
+  // Reserved for future edge analysis functionality
   private generateEdgesFromAnalysis(): any[] {
     return [
       {

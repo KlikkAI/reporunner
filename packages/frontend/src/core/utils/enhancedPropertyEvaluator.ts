@@ -70,8 +70,7 @@ export interface EnhancedNodeProperty
   aiSuggestions?: boolean;
   aiPrompt?: string;
 
-  // Expression support
-  expressionSupport?: boolean;
+  // Expression language (additional property not in base interface)
   expressionLanguage?: "javascript" | "jsonpath" | "n8n";
 
   // Dynamic properties

@@ -17,7 +17,6 @@ import type {
   AuditResource,
   AuditDetails,
   SecurityPolicy,
-  SecurityRule,
   VulnerabilityScan,
   VulnerabilityFinding,
   SecretManager,
@@ -37,7 +36,6 @@ import type {
   IncidentCategory,
   IncidentSource,
   DataClassification,
-  EncryptionService,
 } from "@/core/types/security";
 
 export interface SecurityServiceConfig {
@@ -75,19 +73,7 @@ export class EnterpriseSecurityService {
       ...config,
     };
 
-    this.encryptionService = {
-      algorithm: "AES",
-      keySize: 256,
-      mode: "GCM",
-      padding: "PKCS7",
-      keyManagement: {
-        provider: "local",
-        keyId: "default-key",
-        rotationEnabled: true,
-        rotationInterval: this.config.keyRotationInterval,
-        backupEnabled: true,
-      },
-    };
+    // Encryption service configuration reserved for future implementation
 
     this.initializeDefaultPolicies();
     this.startPeriodicTasks();
@@ -111,7 +97,7 @@ export class EnterpriseSecurityService {
       userEmail,
       action,
       resource,
-      resourceId: resource.id || "",
+      resourceId: resource.identifier || "",
       details,
       ipAddress: this.getClientIP(),
       userAgent: navigator.userAgent,
@@ -254,7 +240,7 @@ export class EnterpriseSecurityService {
       for (const rule of policy.rules) {
         if (
           rule.enabled &&
-          this.evaluateRule(rule, userId, action, resource, _context)
+          this.evaluateRule(_context)
         ) {
           const allowed = rule.action.type === "allow";
           return {
@@ -382,6 +368,7 @@ export class EnterpriseSecurityService {
       },
       createdAt: Date.now(),
       updatedAt: Date.now(),
+      accessCount: 0,
     };
 
     this.secrets.set(secret.id, secret);
@@ -451,7 +438,6 @@ export class EnterpriseSecurityService {
     // Decrypt and return data
     const decryptedData = await this.decryptData(
       secret.encryptedData,
-      secret.encryptionKey,
     );
 
     await this.logAuditEvent(
@@ -486,11 +472,9 @@ export class EnterpriseSecurityService {
     const newEncryptionKey = await this.generateEncryptionKey();
     const currentData = await this.decryptData(
       secret.encryptedData,
-      secret.encryptionKey,
     );
     const newEncryptedData = await this.encryptData(
       currentData,
-      newEncryptionKey,
     );
 
     secret.encryptionKey = newEncryptionKey;
