@@ -8,7 +8,7 @@
 
 import type { WorkflowNodeInstance } from "../nodes/types";
 import type { WorkflowEdge } from "../stores/leanWorkflowStore";
-import { aiAssistant } from "./aiAssistantService";
+import { aiAssistantService } from "./aiAssistantService";
 
 export interface OptimizationRule {
   id: string;

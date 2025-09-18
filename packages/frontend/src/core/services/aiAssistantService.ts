@@ -294,7 +294,7 @@ export class AIAssistantService {
     };
   }
 
-  private generateEdgesFromAnalysis(_analysis: any): any[] {
+  private generateEdgesFromAnalysis(): any[] {
     return [
       {
         id: "edge_1",

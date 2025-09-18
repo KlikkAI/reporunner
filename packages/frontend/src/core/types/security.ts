@@ -181,6 +181,7 @@ export interface SecretManager {
   updatedAt: number;
   lastAccessedAt?: number;
   expiresAt?: number;
+  accessCount: number;
 }
 
 export interface RotationPolicy {
@@ -328,7 +329,8 @@ export type AuditActionType =
   | 'user_invited' | 'user_activated' | 'user_suspended'
   | 'api_key_created' | 'api_key_revoked'
   | 'data_exported' | 'data_imported'
-  | 'configuration_changed' | 'security_policy_updated';
+  | 'configuration_changed' | 'security_policy_updated'
+  | 'security_event';
 
 export type AuditResourceType = 
   | 'workflow' | 'execution' | 'credential' | 'user' | 'project'
@@ -405,6 +407,7 @@ export const createAuditLog = (data: Partial<AuditLog>): AuditLog => ({
     name: '',
     identifier: '',
   },
+  resourceId: '',
   details: {
     riskLevel: 'low',
     complianceFlags: [],

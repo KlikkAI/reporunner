@@ -107,7 +107,7 @@ export const useRBACStore = create<RBACState>()(
         set({ currentOrganizationId: organizationId });
         // Reload user permissions for new context
         if (organizationId) {
-          const state = get();
+          
           // In a real app, would get current user ID from auth store
           // state.refreshPermissions(currentUserId)
         }

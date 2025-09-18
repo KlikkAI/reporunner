@@ -253,7 +253,7 @@ export const TriggerPanel: React.FC<TriggerPanelProps> = ({
         };
       case "api_poll":
         return {
-          url: values.url,
+          url: values.url || "",
           method: values.method || "GET",
           headers: parseKeyValuePairs(values.headers),
           body: values.body,
@@ -262,7 +262,15 @@ export const TriggerPanel: React.FC<TriggerPanelProps> = ({
           changeThreshold: values.changeThreshold,
         };
       default:
-        return {};
+        // Fallback to webhook config for unknown types
+        return {
+          endpoint: "",
+          methods: ["POST"],
+          contentTypes: ["application/json"],
+          headers: {},
+          responseTemplate: "",
+          secretKey: "",
+        };
     }
   };
 

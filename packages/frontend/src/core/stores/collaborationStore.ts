@@ -314,11 +314,11 @@ export const useCollaborationStore = create<CollaborationState>()(
 // Set up collaboration event listeners
 function setupCollaborationEventListeners(
   set: (fn: (state: CollaborationState) => Partial<CollaborationState>) => void,
-  get: () => CollaborationState,
+  _get: () => CollaborationState,
 ): void {
   // Connection events
   collaborationService.addEventListener("connected", () => {
-    set((state) => ({
+    set(() => ({
       isConnected: true,
       connectionStatus: "connected",
       lastSyncTimestamp: new Date().toISOString(),
@@ -326,7 +326,7 @@ function setupCollaborationEventListeners(
   });
 
   collaborationService.addEventListener("disconnected", (_reason: string) => {
-    set((state) => ({
+    set(() => ({
       isConnected: false,
       connectionStatus: "disconnected",
     }));
@@ -334,7 +334,7 @@ function setupCollaborationEventListeners(
   });
 
   collaborationService.addEventListener("connection_error", (_error: Error) => {
-    set((state) => ({
+    set(() => ({
       isConnected: false,
       connectionStatus: "disconnected",
     }));

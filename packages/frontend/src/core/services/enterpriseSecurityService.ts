@@ -36,10 +36,8 @@ import type {
   IncidentStatus,
   IncidentCategory,
   IncidentSource,
-  IncidentEventType,
   DataClassification,
   EncryptionService,
-  KeyManagementConfig,
 } from "@/core/types/security";
 
 export interface SecurityServiceConfig {
@@ -61,10 +59,8 @@ export class EnterpriseSecurityService {
   private secrets = new Map<string, SecretManager>();
   private incidents = new Map<string, SecurityIncident>();
   private complianceReports = new Map<string, ComplianceReport>();
-  private encryptionService: EncryptionService;
   private securityListeners = new Set<(event: SecurityEvent) => void>();
   private failedAttempts = new Map<string, number>();
-  private lastAttempt = new Map<string, number>();
 
   constructor(config: Partial<SecurityServiceConfig> = {}) {
     this.config = {
@@ -115,6 +111,7 @@ export class EnterpriseSecurityService {
       userEmail,
       action,
       resource,
+      resourceId: resource.id || "",
       details,
       ipAddress: this.getClientIP(),
       userAgent: navigator.userAgent,
@@ -250,14 +247,14 @@ export class EnterpriseSecurityService {
     ).filter(
       (policy) =>
         policy.enabled &&
-        this.isPolicyApplicable(policy, userId, resource, context),
+        this.isPolicyApplicable(policy, userId, resource, _context),
     );
 
     for (const policy of applicablePolicies) {
       for (const rule of policy.rules) {
         if (
           rule.enabled &&
-          this.evaluateRule(rule, userId, action, resource, context)
+          this.evaluateRule(rule, userId, action, resource, _context)
         ) {
           const allowed = rule.action.type === "allow";
           return {
@@ -877,7 +874,7 @@ export class EnterpriseSecurityService {
     resource: AuditResource,
     details: AuditDetails,
   ): string[] {
-    const tags = [action.type, resource.type, details.riskLevel];
+    const tags: string[] = [action.type, resource.type, details.riskLevel];
 
     if (details.complianceFlags.length > 0) {
       tags.push("compliance");
@@ -943,24 +940,19 @@ export class EnterpriseSecurityService {
   }
 
   private evaluateRule(
-    rule: SecurityRule,
-    userId: string,
-    action: string,
-    resource: string,
     _context: Record<string, any>,
   ): boolean {
     // Simplified rule evaluation - in production, implement full condition evaluation
     return true;
   }
 
-  private async encryptData(data: string, key?: string): Promise<string> {
+  private async encryptData(data: string): Promise<string> {
     // Simulate encryption - in production, use proper encryption
     return btoa(data);
   }
 
   private async decryptData(
     encryptedData: string,
-    key: string,
   ): Promise<string> {
     // Simulate decryption - in production, use proper decryption
     return atob(encryptedData);
@@ -1000,8 +992,6 @@ export class EnterpriseSecurityService {
   }
 
   private async performComplianceCheck(
-    standard: ComplianceStandard,
-    scope: string[],
   ): Promise<ComplianceFinding[]> {
     // Simulate compliance check - in production, implement actual compliance checks
     return [

@@ -329,7 +329,7 @@ export interface MarketplaceCollection {
 export class IntegrationMarketplaceService {
   private integrations: Map<string, MarketplaceIntegration> = new Map();
   private categories: Map<string, IntegrationCategory> = new Map();
-  private authors: Map<string, IntegrationAuthor> = new Map();
+  // Note: Authors map reserved for future functionality
   private collections: Map<string, MarketplaceCollection> = new Map();
   private installedIntegrations: Set<string> = new Set();
 
@@ -451,7 +451,6 @@ export class IntegrationMarketplaceService {
   }
 
   async getRecommendedIntegrations(
-    userId?: string,
   ): Promise<MarketplaceIntegration[]> {
     // AI-powered recommendations based on user usage patterns
     // For now, return popular integrations

@@ -607,7 +607,18 @@ export class AdvancedAuthService {
     return {
       user: this.currentUser,
       session: this.currentSession,
-      permissions: this.currentUser ? this.getUserPermissions(this.currentUser.id) : [],
+      permissions: [], // Note: Async permissions need to be fetched separately
+      projects: this.currentUser?.projects || [],
+      isLoading: false,
+      error: null,
+    };
+  }
+
+  async getCurrentContextAsync(): Promise<AuthContext> {
+    return {
+      user: this.currentUser,
+      session: this.currentSession,
+      permissions: this.currentUser ? await this.getUserPermissions(this.currentUser.id) : [],
       projects: this.currentUser?.projects || [],
       isLoading: false,
       error: null,
