@@ -343,7 +343,7 @@ export class RBACService {
       switch (permission.scope) {
         case "own":
           // User can only access their own resources
-          return this.isOwnResource(userId, resource, resourceId);
+          return this.isOwnResource();
         case "team":
           // User can access team resources
           return this.isTeamResource(

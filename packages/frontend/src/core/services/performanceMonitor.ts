@@ -604,7 +604,7 @@ export class PerformanceMonitorService {
     if (this.monitoringInterval) return;
 
     this.monitoringInterval = setInterval(() => {
-      this.resourceMonitors.forEach((monitor, nodeId) => {
+      this.resourceMonitors.forEach((monitor) => {
         monitor.metrics = {
           memoryUsage: this.getMemoryUsage(),
           cpuUsage: 0, // Would need more sophisticated measurement
