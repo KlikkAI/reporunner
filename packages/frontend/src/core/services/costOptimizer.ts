@@ -656,7 +656,7 @@ export class CostOptimizerService {
     executionHistory: ExecutionMetrics[],
   ) {
     return executionHistory.flatMap((exec) =>
-      exec.nodeMetrics.filter((node) => node.nodeId === nodeId),
+      exec.nodeMetrics.filter((node) => node.nodeId === _nodeId),
     );
   }
 

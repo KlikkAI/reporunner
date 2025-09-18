@@ -11,7 +11,6 @@
 
 import type {
   WorkflowDefinition,
-  NodeDefinition,
   WorkflowNodeInstance,
 } from "@/core/nodes/types";
 import type { ExecutionMetrics } from "./analyticsService";
@@ -566,11 +565,14 @@ export class AIAssistantService {
     // Simulate error pattern identification
     return metrics
       .filter((m) => m.status === "failed")
-      .map((m) => ({
-        nodeId: m.nodeId,
-        errorType: "execution",
-        frequency: 1,
-      }));
+      .flatMap((m) => m.nodeMetrics
+        .filter((node) => node.status === "failed")
+        .map((node) => ({
+          nodeId: node.nodeId,
+          errorType: "execution",
+          frequency: 1,
+        }))
+      );
   }
 
   private generateErrorDiagnoses(
@@ -605,12 +607,14 @@ export class AIAssistantService {
 
   private identifyBottlenecks(metrics: ExecutionMetrics[]): any[] {
     return metrics
-      .filter((m) => m.duration && m.duration > 5000) // > 5 seconds
-      .map((m) => ({
-        nodeId: m.nodeId,
-        duration: m.duration,
-        type: "slow-execution",
-      }));
+      .flatMap((m) => m.nodeMetrics
+        .filter((node) => node.duration && node.duration > 5000) // > 5 seconds
+        .map((node) => ({
+          nodeId: node.nodeId,
+          duration: node.duration,
+          type: "slow-execution",
+        }))
+      );
   }
 
   private generatePerformanceOptimizations(
