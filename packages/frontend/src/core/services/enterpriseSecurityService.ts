@@ -651,7 +651,7 @@ export class EnterpriseSecurityService {
     };
 
     // Simulate compliance check
-    const findings = await this.performComplianceCheck(standard, scope);
+    const findings = await this.performComplianceCheck();
     report.findings = findings;
     report.score = this.calculateComplianceScore(findings);
     report.status = "completed";

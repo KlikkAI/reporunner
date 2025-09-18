@@ -496,7 +496,7 @@ export class IntegrationMarketplaceService {
       }
 
       // Simulate installation process
-      await this.performInstallation(integration, config);
+      await this.performInstallation();
 
       // Mark as installed
       this.installedIntegrations.add(integrationId);
