@@ -182,10 +182,8 @@ const ConditionInputPanel: React.FC<ConditionInputPanelProps> = ({
                       {/* Enhanced JSON viewer for raw data */}
                       <JsonViewer
                         data={nodeData}
-                        title={`Raw Data from ${node?.data?.label || "Node"}`}
                         maxHeight="400px"
-                        collapsible={true}
-                        showCopyButton={true}
+                        enableClipboard={true}
                       />
 
                       {/* Then show the formatted renderer */}

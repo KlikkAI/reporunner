@@ -24,7 +24,6 @@ import {
   Tree,
   Divider,
   Alert,
-  Collapse,
   Tabs,
   Table,
   Progress,
@@ -143,7 +142,7 @@ const DataInspector: React.FC<DataInspectorProps> = ({
         title={
           <div className="flex items-center gap-2">
             <span className="text-white">{node.title}</span>
-            <Tag size="small" color={getTypeColor(node.type)}>
+            <Tag color={getTypeColor(node.type)}>
               {node.type}
             </Tag>
             <span className="text-gray-400 text-xs">
@@ -281,7 +280,7 @@ const DataInspector: React.FC<DataInspectorProps> = ({
           </div>
           <div>
             <Text className="text-gray-400">Type:</Text>
-            <Tag color={getTypeColor(type)} size="small" className="ml-1">
+            <Tag color={getTypeColor(type)} className="ml-1">
               {type}
             </Tag>
           </div>
@@ -358,7 +357,7 @@ const DataInspector: React.FC<DataInspectorProps> = ({
 
         <Tabs
           activeKey={viewMode}
-          onChange={setViewMode}
+          onChange={(key) => setViewMode(key as 'tree' | 'json' | 'table')}
           items={[
             {
               key: 'tree',
@@ -434,7 +433,7 @@ const DataInspector: React.FC<DataInspectorProps> = ({
 
 // Helper functions
 
-function convertToTree(data: any, path: string, key: string): DataNode[] {
+function convertToTree(data: any, path: string, _key: string): DataNode[] {
   if (data === null || data === undefined) {
     return [{
       key: path || 'root',
@@ -545,7 +544,7 @@ function analyzeData(data: any): {
       obj.forEach(item => analyze(item, currentDepth + 1));
     } else if (obj !== null && typeof obj === 'object') {
       stats.typeDistribution.object = (stats.typeDistribution.object || 0) + 1;
-      Object.entries(obj).forEach(([key, value]) => {
+      Object.entries(obj).forEach(([_key, value]) => {
         stats.keyCount++;
         analyze(value, currentDepth + 1);
       });

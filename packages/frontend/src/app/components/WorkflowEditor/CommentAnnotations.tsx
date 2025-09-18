@@ -13,6 +13,7 @@ import {
   CheckOutlined,
 } from "@ant-design/icons";
 import { useCollaborationStore } from "../../../core/stores/collaborationStore";
+import { useLeanWorkflowStore } from "../../../core/stores/leanWorkflowStore";
 import type { CollaborationComment } from "../../../core/services/collaborationService";
 
 const { TextArea } = Input;
@@ -51,6 +52,7 @@ export const CommentAnnotations: React.FC<CommentAnnotationsProps> = ({
     addComment,
     replyToComment,
   } = useCollaborationStore();
+  const { currentWorkflow } = useLeanWorkflowStore();
 
   const [replyContents, setReplyContents] = useState<Record<string, string>>({});
   const [newCommentContent, setNewCommentContent] = useState("");
@@ -106,6 +108,7 @@ export const CommentAnnotations: React.FC<CommentAnnotationsProps> = ({
 
     try {
       await addComment({
+        workflowId: currentWorkflow?.id || '',
         content: newCommentContent,
         position: pendingCommentPosition,
         resolved: false,

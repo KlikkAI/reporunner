@@ -744,7 +744,7 @@ return (today.getTime() - itemDate.getTime()) < (24 * 60 * 60 * 1000);`}
             {condition.field} {condition.operator}{" "}
             {JSON.stringify(condition.value)}
             {condition.negate && (
-              <Tag color="orange" size="small">
+              <Tag color="orange">
                 NOT
               </Tag>
             )}

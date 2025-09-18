@@ -114,7 +114,7 @@ export const CollaborationPanel: React.FC<CollaborationPanelProps> = ({
     } catch (error) {
       console.error("Failed to add comment:", error);
     }
-  }, [newCommentContent, newCommentPosition, selectedNodes, addComment]);
+  }, [newCommentContent, newCommentPosition, selectedNodeIds, addComment]);
 
   // Handle replying to a comment
   const handleReplyToComment = useCallback(async (commentId: string) => {

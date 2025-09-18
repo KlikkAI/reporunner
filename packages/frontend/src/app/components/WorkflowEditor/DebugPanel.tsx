@@ -21,10 +21,8 @@ import {
   Input,
   Switch,
   Alert,
-  Collapse,
   Tag,
   Timeline,
-  Tree,
 } from 'antd';
 import {
   BugOutlined,
@@ -46,7 +44,6 @@ import { JsonViewer } from '@/design-system';
 import { enhancedDebuggingService } from '@/core/services/enhancedDebuggingService';
 import type {
   DebugSession,
-  DebugBreakpoint,
   CallStackFrame,
   WatchExpression,
   ExecutionStep,
@@ -72,12 +69,12 @@ const DebugPanel: React.FC<DebugPanelProps> = ({
   const [session, setSession] = useState<DebugSession | null>(null);
   const [isDebugging, setIsDebugging] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
-  const [currentStep, setCurrentStep] = useState<ExecutionStep | null>(null);
+  const [_currentStep, _setCurrentStep] = useState<ExecutionStep | null>(null);
 
-  const [watchExpressions, setWatchExpressions] = useState<WatchExpression[]>([]);
+  const [watchExpressions, _setWatchExpressions] = useState<WatchExpression[]>([]);
   const [callStack, setCallStack] = useState<CallStackFrame[]>([]);
   const [variables, setVariables] = useState<Record<string, any>>({});
-  const [executionHistory, setExecutionHistory] = useState<ExecutionStep[]>([]);
+  const [executionHistory, _setExecutionHistory] = useState<ExecutionStep[]>([]);
   const [metrics, setMetrics] = useState<DebugMetrics | null>(null);
   const [isBreakpointModalOpen, setIsBreakpointModalOpen] = useState(false);
   const [isWatchModalOpen, setIsWatchModalOpen] = useState(false);
@@ -104,7 +101,7 @@ const DebugPanel: React.FC<DebugPanelProps> = ({
         setSession(null);
         break;
       case 'step-completed':
-        setCurrentStep(event.data);
+        _setCurrentStep(event.data);
         updateSessionData();
         break;
       case 'breakpoint-hit':
@@ -545,7 +542,7 @@ const DebugPanel: React.FC<DebugPanelProps> = ({
                     step.action === 'error' ? 'red' :
                     step.action === 'breakpoint' ? 'orange' :
                     step.action === 'start' ? 'blue' : 'green'
-                  } size="small">
+                  }>
                     {step.action}
                   </Tag>
                 </div>
