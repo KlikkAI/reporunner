@@ -498,7 +498,11 @@ export const useEnhancedExecutionStore = create<EnhancedExecutionState>()(
       const totalNodes = state.nodeStates.size;
       const completedNodes = state.completedNodes.size;
       const failedNodes = state.failedNodes.size;
-      const skippedNodes = 0; // TODO: Implement skipped node tracking
+
+      // Calculate skipped nodes by checking node states
+      const skippedNodes = Array.from(state.nodeStates.values()).filter(
+        (nodeState) => nodeState.status === "skipped",
+      ).length;
 
       return {
         totalNodes,
@@ -508,7 +512,7 @@ export const useEnhancedExecutionStore = create<EnhancedExecutionState>()(
         currentNodeId: state.progress?.currentNodeId,
         progressPercentage:
           totalNodes > 0
-            ? ((completedNodes + failedNodes) / totalNodes) * 100
+            ? ((completedNodes + failedNodes + skippedNodes) / totalNodes) * 100
             : 0,
       };
     },

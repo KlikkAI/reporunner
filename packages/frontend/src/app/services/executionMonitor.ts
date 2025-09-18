@@ -1,6 +1,7 @@
 // Real-time Workflow Execution Monitoring Service
 import type { WorkflowExecution } from "@/core/schemas";
 import { configService } from "@/core/services/ConfigService";
+import { io, Socket } from "socket.io-client";
 
 export interface ExecutionEvent {
   type:
@@ -19,7 +20,7 @@ export interface ExecutionEvent {
 export type ExecutionEventHandler = (event: ExecutionEvent) => void;
 
 export class ExecutionMonitorService {
-  private ws: WebSocket | null = null;
+  private socket: Socket | null = null;
   private reconnectTimeout: NodeJS.Timeout | null = null;
   private eventHandlers: Map<string, ExecutionEventHandler[]> = new Map();
   private isConnecting = false;
@@ -30,71 +31,42 @@ export class ExecutionMonitorService {
    * Connect to WebSocket for real-time updates
    */
   async connect(): Promise<void> {
-    if (this.ws?.readyState === WebSocket.OPEN || this.isConnecting) {
-      return;
-    }
+    if (this.socket?.connected || this.isConnecting) return;
 
     this.isConnecting = true;
+    const authConfig = configService.get("auth");
+    const token = localStorage.getItem(authConfig.tokenKey);
+    const socketUrl =
+      (import.meta.env["VITE_SOCKET_URL"] as string) || "http://localhost:5000";
 
-    try {
-      const wsUrl = this.getWebSocketUrl();
-      this.ws = new WebSocket(wsUrl);
+    this.socket = io(socketUrl, {
+      transports: ["websocket", "polling"],
+      auth: token ? { token } : undefined,
+    });
 
-      this.ws.onopen = () => {
-        console.log("Execution monitor connected");
-        this.isConnecting = false;
-
-        // Resubscribe to existing subscriptions
-        this.subscriptions.forEach((executionId) => {
-          this.sendMessage({
-            type: "join_execution",
-            data: { executionId },
-          });
-        });
-      };
-
-      this.ws.onmessage = (event) => {
-        try {
-          const wsMessage = JSON.parse(event.data);
-          // Handle backend WebSocket message format
-          if (wsMessage.Type && wsMessage.Data) {
-            const executionEvent: ExecutionEvent = {
-              type: wsMessage.Type as ExecutionEvent["type"],
-              executionId:
-                wsMessage.Data.ExecutionID || wsMessage.Data.executionId || "",
-              timestamp: wsMessage.Data.Timestamp || new Date().toISOString(),
-              data: wsMessage.Data,
-            };
-            this.handleEvent(executionEvent);
-          } else {
-            // Handle direct execution event format
-            const executionEvent: ExecutionEvent = wsMessage;
-            this.handleEvent(executionEvent);
-          }
-        } catch (error) {
-          console.error("Failed to parse execution event:", error);
-        }
-      };
-
-      this.ws.onclose = () => {
-        console.log("Execution monitor disconnected");
-        this.ws = null;
-        this.isConnecting = false;
-
-        if (this.shouldReconnect) {
-          this.scheduleReconnect();
-        }
-      };
-
-      this.ws.onerror = (error) => {
-        console.error("Execution monitor error:", error);
-        this.isConnecting = false;
-      };
-    } catch (error) {
-      console.error("Failed to connect to execution monitor:", error);
+    this.socket.on("connect", () => {
+      console.log("Execution monitor connected (socket.io)");
       this.isConnecting = false;
-      throw error;
-    }
+      // Resubscribe
+      this.subscriptions.forEach((executionId) => {
+        this.socket!.emit("execution_join", { executionId });
+      });
+    });
+
+    this.socket.on("disconnect", () => {
+      console.log("Execution monitor disconnected");
+      this.isConnecting = false;
+      if (this.shouldReconnect) this.scheduleReconnect();
+    });
+
+    this.socket.on("connect_error", (err) => {
+      console.error("Execution monitor socket error:", err);
+      this.isConnecting = false;
+    });
+
+    this.socket.on("execution_event", (event: ExecutionEvent) => {
+      this.handleEvent(event);
+    });
   }
 
   /**
@@ -108,9 +80,9 @@ export class ExecutionMonitorService {
       this.reconnectTimeout = null;
     }
 
-    if (this.ws) {
-      this.ws.close();
-      this.ws = null;
+    if (this.socket) {
+      this.socket.disconnect();
+      this.socket = null;
     }
   }
 
@@ -130,15 +102,8 @@ export class ExecutionMonitorService {
     // Subscribe via WebSocket
     this.subscriptions.add(executionId);
 
-    if (this.ws?.readyState === WebSocket.OPEN) {
-      this.sendMessage({
-        type: "join_execution",
-        data: { executionId },
-      });
-    } else {
-      // Connect if not already connected
-      await this.connect();
-    }
+    if (!this.socket || !this.socket.connected) await this.connect();
+    this.socket!.emit("execution_join", { executionId });
   }
 
   /**
@@ -162,11 +127,8 @@ export class ExecutionMonitorService {
           this.eventHandlers.delete(executionId);
           this.subscriptions.delete(executionId);
 
-          if (this.ws?.readyState === WebSocket.OPEN) {
-            this.sendMessage({
-              type: "leave_execution",
-              data: { executionId },
-            });
+          if (this.socket?.connected) {
+            this.socket.emit("execution_leave", { executionId });
           }
         }
       }
@@ -175,11 +137,8 @@ export class ExecutionMonitorService {
       this.eventHandlers.delete(executionId);
       this.subscriptions.delete(executionId);
 
-      if (this.ws?.readyState === WebSocket.OPEN) {
-        this.sendMessage({
-          type: "leave_execution",
-          data: { executionId },
-        });
+      if (this.socket?.connected) {
+        this.socket.emit("execution_leave", { executionId });
       }
     }
   }
@@ -188,7 +147,7 @@ export class ExecutionMonitorService {
    * Get current connection status
    */
   getConnectionStatus(): "connected" | "connecting" | "disconnected" {
-    if (this.ws?.readyState === WebSocket.OPEN) return "connected";
+    if (this.socket?.connected) return "connected";
     if (this.isConnecting) return "connecting";
     return "disconnected";
   }
@@ -212,11 +171,8 @@ export class ExecutionMonitorService {
   /**
    * Send message to WebSocket
    */
-  private sendMessage(message: any): void {
-    if (this.ws?.readyState === WebSocket.OPEN) {
-      this.ws.send(JSON.stringify(message));
-    }
-  }
+  // Socket.IO handles messaging; retained for compatibility
+  private sendMessage(_message: any): void {}
 
   /**
    * Schedule reconnection
@@ -241,12 +197,10 @@ export class ExecutionMonitorService {
    * Get WebSocket URL
    */
   private getWebSocketUrl(): string {
-    const wsConfig = configService.get("websocket");
-    const authConfig = configService.get("auth");
-    const token = localStorage.getItem(authConfig.tokenKey);
-
-    // Use the correct WebSocket path from backend config
-    return `${wsConfig.url}/ws${token ? `?token=${token}` : ""}`;
+    // Deprecated; kept for compatibility
+    const socketUrl =
+      (import.meta.env["VITE_SOCKET_URL"] as string) || "http://localhost:5000";
+    return socketUrl;
   }
 }
 

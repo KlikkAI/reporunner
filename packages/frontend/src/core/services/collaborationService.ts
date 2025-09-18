@@ -7,6 +7,7 @@
  */
 
 import { io, Socket } from "socket.io-client";
+import { configService } from "./ConfigService";
 import type { WorkflowNodeInstance } from "../nodes/types";
 import type { WorkflowEdge } from "../stores/leanWorkflowStore";
 
@@ -134,12 +135,16 @@ export class CollaborationService {
   async initializeSession(
     workflowId: string,
     user: CollaborationUser,
-    serverUrl?: string
+    serverUrl?: string,
   ): Promise<CollaborationSession> {
     this.currentUser = user;
 
     // Connect to Socket.IO server
-    this.socket = io(serverUrl || "http://localhost:3001", {
+    const socketBase =
+      serverUrl ||
+      (import.meta.env["VITE_SOCKET_URL"] as string) ||
+      configService.get("api").baseUrl;
+    this.socket = io(socketBase, {
       auth: {
         userId: user.id,
         workflowId,
@@ -152,14 +157,18 @@ export class CollaborationService {
 
     // Join workflow room
     return new Promise((resolve, reject) => {
-      this.socket!.emit("join_workflow", { workflowId, user }, (response: any) => {
-        if (response.success) {
-          this.currentSession = response.session;
-          resolve(response.session);
-        } else {
-          reject(new Error(response.error));
-        }
-      });
+      this.socket!.emit(
+        "join_workflow",
+        { workflowId, user },
+        (response: any) => {
+          if (response.success) {
+            this.currentSession = response.session;
+            resolve(response.session);
+          } else {
+            reject(new Error(response.error));
+          }
+        },
+      );
 
       // Timeout after 10 seconds
       setTimeout(() => {
@@ -190,7 +199,9 @@ export class CollaborationService {
   /**
    * Send a collaboration operation
    */
-  async sendOperation(operation: Omit<CollaborationOperation, "id" | "timestamp">): Promise<void> {
+  async sendOperation(
+    operation: Omit<CollaborationOperation, "id" | "timestamp">,
+  ): Promise<void> {
     if (!this.socket || !this.currentUser || !this.currentSession) {
       throw new Error("Collaboration session not initialized");
     }
@@ -219,7 +230,9 @@ export class CollaborationService {
   /**
    * Update user presence (cursor, selection, viewport)
    */
-  updatePresence(presence: Partial<Omit<UserPresence, "userId" | "user">>): void {
+  updatePresence(
+    presence: Partial<Omit<UserPresence, "userId" | "user">>,
+  ): void {
     if (!this.socket || !this.currentUser) return;
 
     const fullPresence: UserPresence = {
@@ -234,7 +247,12 @@ export class CollaborationService {
   /**
    * Add a comment to the workflow
    */
-  async addComment(comment: Omit<CollaborationComment, "id" | "timestamp" | "author" | "replies">): Promise<CollaborationComment> {
+  async addComment(
+    comment: Omit<
+      CollaborationComment,
+      "id" | "timestamp" | "author" | "replies"
+    >,
+  ): Promise<CollaborationComment> {
     if (!this.socket || !this.currentUser || !this.currentSession) {
       throw new Error("Collaboration session not initialized");
     }
@@ -262,7 +280,11 @@ export class CollaborationService {
   /**
    * Reply to a comment
    */
-  async replyToComment(commentId: string, content: string, mentions: string[] = []): Promise<CollaborationReply> {
+  async replyToComment(
+    commentId: string,
+    content: string,
+    mentions: string[] = [],
+  ): Promise<CollaborationReply> {
     if (!this.socket || !this.currentUser) {
       throw new Error("Collaboration session not initialized");
     }
@@ -291,7 +313,7 @@ export class CollaborationService {
    */
   async resolveConflict(
     conflictId: string,
-    resolution: CollaborationConflict["resolution"]
+    resolution: CollaborationConflict["resolution"],
   ): Promise<void> {
     if (!this.socket || !this.currentUser) {
       throw new Error("Collaboration session not initialized");
@@ -370,19 +392,22 @@ export class CollaborationService {
     });
 
     // Collaboration operations
-    this.socket.on("operation_received", (operation: CollaborationOperation) => {
-      // Remove from pending if it's our operation
-      this.pendingOperations = this.pendingOperations.filter(
-        (pending) => pending.id !== operation.id
-      );
+    this.socket.on(
+      "operation_received",
+      (operation: CollaborationOperation) => {
+        // Remove from pending if it's our operation
+        this.pendingOperations = this.pendingOperations.filter(
+          (pending) => pending.id !== operation.id,
+        );
 
-      // Add to history if not already there
-      if (!this.operationHistory.find((op) => op.id === operation.id)) {
-        this.operationHistory.push(operation);
-      }
+        // Add to history if not already there
+        if (!this.operationHistory.find((op) => op.id === operation.id)) {
+          this.operationHistory.push(operation);
+        }
 
-      this.emitEvent("operation_received", operation);
-    });
+        this.emitEvent("operation_received", operation);
+      },
+    );
 
     // Conflict detection
     this.socket.on("conflict_detected", (conflict: CollaborationConflict) => {
@@ -398,9 +423,12 @@ export class CollaborationService {
       this.emitEvent("comment_updated", comment);
     });
 
-    this.socket.on("reply_added", (data: { commentId: string; reply: CollaborationReply }) => {
-      this.emitEvent("reply_added", data);
-    });
+    this.socket.on(
+      "reply_added",
+      (data: { commentId: string; reply: CollaborationReply }) => {
+        this.emitEvent("reply_added", data);
+      },
+    );
 
     // Connection events
     this.socket.on("connect", () => {
@@ -423,7 +451,10 @@ export class CollaborationService {
         try {
           listener(...args);
         } catch (error) {
-          console.error(`Error in collaboration event listener for ${event}:`, error);
+          console.error(
+            `Error in collaboration event listener for ${event}:`,
+            error,
+          );
         }
       });
     }
@@ -434,7 +465,7 @@ export class CollaborationService {
    */
   private transformOperation(
     operation: CollaborationOperation,
-    conflictingOperation: CollaborationOperation
+    conflictingOperation: CollaborationOperation,
   ): CollaborationOperation {
     // Simplified operational transform
     // In production, implement proper OT algorithms based on operation types
@@ -442,9 +473,12 @@ export class CollaborationService {
     switch (operation.type) {
       case "node_move":
         // If both operations move the same node, use the latest timestamp
-        if (conflictingOperation.type === "node_move" &&
-            operation.data.nodeId === conflictingOperation.data.nodeId) {
-          return new Date(operation.timestamp) > new Date(conflictingOperation.timestamp)
+        if (
+          conflictingOperation.type === "node_move" &&
+          operation.data.nodeId === conflictingOperation.data.nodeId
+        ) {
+          return new Date(operation.timestamp) >
+            new Date(conflictingOperation.timestamp)
             ? operation
             : conflictingOperation;
         }
@@ -452,8 +486,10 @@ export class CollaborationService {
 
       case "node_update":
         // For node updates, merge properties where possible
-        if (conflictingOperation.type === "node_update" &&
-            operation.data.nodeId === conflictingOperation.data.nodeId) {
+        if (
+          conflictingOperation.type === "node_update" &&
+          operation.data.nodeId === conflictingOperation.data.nodeId
+        ) {
           return {
             ...operation,
             data: {

@@ -421,11 +421,63 @@ export class EnhancedPropertyEvaluator {
     property: EnhancedNodeProperty,
     currentValue: PropertyValue,
   ): string | undefined {
-    // TODO: Implement AI suggestion generation
-    // This would integrate with an AI service to provide contextual suggestions
-    if (!currentValue && property.aiPrompt) {
+    // Generate contextual AI suggestions based on property type and current value
+    if (!property.aiPrompt && !currentValue) {
+      // Generate default suggestions based on property type
+      switch (property.type) {
+        case "string":
+          if (property.name.toLowerCase().includes("prompt")) {
+            return 'Try: "Analyze the following data and provide insights..."';
+          }
+          if (property.name.toLowerCase().includes("subject")) {
+            return 'Try: "Important update from your workflow"';
+          }
+          if (property.name.toLowerCase().includes("message")) {
+            return 'Try: "Here are the results from your automation..."';
+          }
+          break;
+
+        case "select":
+          if (property.options && property.options.length > 0) {
+            const firstOption = property.options[0];
+            return `Suggested: ${typeof firstOption === "object" ? firstOption.value : firstOption}`;
+          }
+          break;
+
+        case "number":
+          if (property.name.toLowerCase().includes("temperature")) {
+            return "Suggested: 0.7 (balanced creativity)";
+          }
+          if (property.name.toLowerCase().includes("token")) {
+            return "Suggested: 1000 (moderate length)";
+          }
+          if (property.name.toLowerCase().includes("timeout")) {
+            return "Suggested: 30000 (30 seconds)";
+          }
+          break;
+
+        case "boolean":
+          return "Suggested: true (enabled)";
+      }
+    }
+
+    // Use custom AI prompt if available
+    if (property.aiPrompt) {
       return `AI Suggestion: ${property.aiPrompt}`;
     }
+
+    // Contextual suggestions based on current value
+    if (currentValue) {
+      if (property.type === "string" && typeof currentValue === "string") {
+        if (
+          currentValue.length < 10 &&
+          property.name.toLowerCase().includes("prompt")
+        ) {
+          return "Consider adding more detail to improve AI responses";
+        }
+      }
+    }
+
     return undefined;
   }
 

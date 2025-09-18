@@ -62,7 +62,7 @@ pnpm dev
 The application will be available at:
 
 - **Frontend**: http://localhost:3000
-- **Backend API**: http://localhost:3001
+- **Backend API**: http://localhost:5000
 
 ## 📁 Project Structure
 
@@ -70,13 +70,10 @@ The application will be available at:
 reporunner/
 ├── packages/
 │   ├── core/                 # Shared types, utilities, schemas
-│   ├── backend/              # Express.js API server
-│   ├── frontend/             # React workflow editor
-│   ├── nodes-base/           # Core workflow nodes
-│   └── workflow-engine/      # Execution engine
-├── apps/
-│   ├── web/                  # Main web application
-│   └── docs/                 # Documentation site
+│   ├── backend/              # Express.js API server with Socket.IO
+│   ├── frontend/             # React workflow editor with React Flow
+│   ├── sdk/                  # JavaScript/TypeScript SDK
+│   └── cli/                  # Command-line interface
 ├── tools/
 │   ├── eslint-config/        # Shared linting configuration
 │   └── build-tools/          # Build utilities
@@ -109,28 +106,37 @@ pnpm clean                  # Clean build outputs
 #### Root (.env)
 
 ```env
-DATABASE_URL=mongodb://localhost:27017/reporunner
+MONGODB_URI=mongodb://localhost:27017/reporunner
 REDIS_URL=redis://localhost:6379
 JWT_SECRET=your_jwt_secret_here_minimum_32_chars
-ENCRYPTION_KEY=your_encryption_key_32_chars
+CREDENTIAL_ENCRYPTION_KEY=your_encryption_key_32_chars
 ```
 
 #### Backend (packages/backend/.env)
 
 ```env
-PORT=3001
+PORT=5000
+NODE_ENV=development
+CORS_ORIGIN=http://localhost:3000
+MONGODB_URI=mongodb://localhost:27017/reporunner
+CREDENTIAL_ENCRYPTION_KEY=your_encryption_key_32_chars
+
+# External APIs
 OPENAI_API_KEY=sk-your_openai_key_here
 ANTHROPIC_API_KEY=sk-ant-your_anthropic_key
-GMAIL_CLIENT_ID=your_gmail_client_id
-GMAIL_CLIENT_SECRET=your_gmail_client_secret
+GOOGLE_OAUTH_CLIENT_ID=your_gmail_client_id
+GOOGLE_OAUTH_CLIENT_SECRET=your_gmail_client_secret
+GMAIL_REDIRECT_URI=http://localhost:5000/oauth/gmail/callback
 ```
 
 #### Frontend (packages/frontend/.env)
 
 ```env
-VITE_API_BASE_URL=http://localhost:3001
-VITE_SOCKET_URL=http://localhost:3001
+VITE_API_BASE_URL=http://localhost:5000
+VITE_SOCKET_URL=http://localhost:5000
+VITE_WS_URL=ws://localhost:5000
 VITE_ENABLE_AI_FEATURES=true
+VITE_ENABLE_BETA_INTEGRATIONS=false
 ```
 
 ## 🏗 Architecture
@@ -147,9 +153,10 @@ VITE_ENABLE_AI_FEATURES=true
 ### Core Packages
 
 - **@reporunner/core** - Shared types, utilities, and validation schemas
-- **@reporunner/backend** - Express.js API server with MongoDB
-- **@reporunner/frontend** - React-based workflow editor
-- **@reporunner/workflow-engine** - Workflow execution engine
+- **@reporunner/backend** - Express.js API server with MongoDB and Socket.IO
+- **@reporunner/frontend** - React-based workflow editor with React Flow
+- **@reporunner/sdk** - JavaScript/TypeScript SDK for integration development
+- **@reporunner/cli** - Command-line interface for automation and deployment
 
 ## 🔧 Integration Development
 
