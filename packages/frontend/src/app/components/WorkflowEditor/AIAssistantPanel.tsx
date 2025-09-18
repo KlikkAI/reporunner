@@ -22,7 +22,6 @@ import {
   Modal,
   Progress,
   Alert,
-  Collapse,
   Tag,
 } from "antd";
 import {
@@ -33,11 +32,8 @@ import {
   // PatternOutlined,
   SendOutlined,
   CheckCircleOutlined,
-  ExclamationCircleOutlined,
   InfoCircleOutlined,
   StarOutlined,
-  ClockCircleOutlined,
-  UserOutlined,
   SettingOutlined,
 } from "@ant-design/icons";
 import { cn } from "@/design-system/utils";
@@ -48,12 +44,10 @@ import type {
   ErrorDiagnosis,
   NaturalLanguageRequest,
 } from "@/core/services/aiAssistantService";
-import type { WorkflowDefinition } from "@/core/types";
+import type { WorkflowDefinition } from "@/core/nodes/types";
 
-const { Title, Text, Paragraph } = Typography;
+const { Title, Text } = Typography;
 const { TextArea } = Input;
-const { TabPane } = Tabs;
-const { Panel } = Collapse;
 
 interface AIAssistantPanelProps {
   workflow?: WorkflowDefinition;
@@ -72,7 +66,7 @@ const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({
   const [naturalLanguageInput, setNaturalLanguageInput] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [suggestions, setSuggestions] = useState<AIWorkflowSuggestion[]>([]);
-  const [errors, setErrors] = useState<ErrorDiagnosis[]>([]);
+  const [errors] = useState<ErrorDiagnosis[]>([]);  // TODO: Implement error handling
   const [analysis, setAnalysis] = useState<WorkflowAnalysis | null>(null);
   const [selectedSuggestion, setSelectedSuggestion] =
     useState<AIWorkflowSuggestion | null>(null);
@@ -214,7 +208,7 @@ const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({
       case "enhancement":
         return <StarOutlined className="text-blue-500" />;
       case "pattern":
-        return <PatternOutlined className="text-purple-500" />;
+        return <BulbOutlined className="text-purple-500" />;
       default:
         return <BulbOutlined className="text-gray-500" />;
     }
@@ -255,7 +249,7 @@ const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({
             </span>
           </div>
           <div className="flex items-center gap-1">
-            <Tag color={getImpactColor(suggestion.impact)} size="small">
+            <Tag color={getImpactColor(suggestion.impact)}>
               {suggestion.impact}
             </Tag>
             <Badge

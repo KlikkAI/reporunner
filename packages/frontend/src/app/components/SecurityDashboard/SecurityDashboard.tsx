@@ -46,7 +46,6 @@ import {
   AuditOutlined,
 } from "@ant-design/icons";
 import { cn } from "@/design-system/utils";
-import { JsonViewer } from "@/design-system";
 import { enterpriseSecurityService } from "@/core/services/enterpriseSecurityService";
 import type {
   AuditLog,
@@ -57,18 +56,11 @@ import type {
   SecretManager,
   AuditSeverity,
   AuditCategory,
-  IncidentSeverity,
-  IncidentStatus,
-  VulnerabilitySeverity,
-  ComplianceStandard,
 } from "@/core/types/security";
 
 const { Title, Text } = Typography;
-const { Search } = Input;
 const { Option } = Select;
-const { TabPane } = Tabs;
 const { RangePicker } = DatePicker;
-const { Panel } = Collapse;
 
 interface SecurityDashboardProps {
   className?: string;
@@ -117,10 +109,10 @@ const SecurityDashboard: React.FC<SecurityDashboardProps> = ({ className }) => {
       ] = await Promise.all([
         enterpriseSecurityService.getSecurityMetrics(),
         enterpriseSecurityService.getAuditLogs({ limit: 100 }),
-        enterpriseSecurityService.getSecurityIncidents(),
+        Promise.resolve([]), // getSecurityIncidents - method doesn't exist yet
         enterpriseSecurityService.getVulnerabilityScans(),
-        enterpriseSecurityService.getComplianceReports(),
-        enterpriseSecurityService.getSecrets(),
+        Promise.resolve([]), // getComplianceReports - method doesn't exist yet
+        Promise.resolve([]), // getSecrets - method doesn't exist yet
       ]);
 
       setMetrics(metricsData);
@@ -186,9 +178,9 @@ const SecurityDashboard: React.FC<SecurityDashboardProps> = ({ className }) => {
     {
       title: "Timestamp",
       key: "timestamp",
-      render: (record: AuditLog) => (
+      render: (_record: AuditLog) => (
         <div className="text-gray-400 text-xs">
-          {new Date(record.timestamp).toLocaleString()}
+          {new Date(_record.timestamp).toLocaleString()}
         </div>
       ),
       sorter: (a: AuditLog, b: AuditLog) => a.timestamp - b.timestamp,
@@ -196,21 +188,21 @@ const SecurityDashboard: React.FC<SecurityDashboardProps> = ({ className }) => {
     {
       title: "User",
       key: "user",
-      render: (record: AuditLog) => (
+      render: (_record: AuditLog) => (
         <div>
-          <div className="text-white text-sm">{record.userEmail}</div>
-          <div className="text-gray-400 text-xs">{record.userId}</div>
+          <div className="text-white text-sm">{_record.userEmail}</div>
+          <div className="text-gray-400 text-xs">{_record.userId}</div>
         </div>
       ),
     },
     {
       title: "Action",
       key: "action",
-      render: (record: AuditLog) => (
+      render: (_record: AuditLog) => (
         <div>
-          <div className="text-white text-sm">{record.action.description}</div>
-          <Tag color={getSeverityColor(record.severity)}>
-            {record.action.type}
+          <div className="text-white text-sm">{_record.action.description}</div>
+          <Tag color={getSeverityColor(_record.severity)}>
+            {_record.action.type}
           </Tag>
         </div>
       ),
@@ -218,33 +210,33 @@ const SecurityDashboard: React.FC<SecurityDashboardProps> = ({ className }) => {
     {
       title: "Resource",
       key: "resource",
-      render: (record: AuditLog) => (
+      render: (_record: AuditLog) => (
         <div>
-          <div className="text-white text-sm">{record.resource.name}</div>
-          <div className="text-gray-400 text-xs">{record.resource.type}</div>
+          <div className="text-white text-sm">{_record.resource.name}</div>
+          <div className="text-gray-400 text-xs">{_record.resource.type}</div>
         </div>
       ),
     },
     {
       title: "Severity",
       key: "severity",
-      render: (record: AuditLog) => (
-        <Tag color={getSeverityColor(record.severity)}>{record.severity}</Tag>
+      render: (_record: AuditLog) => (
+        <Tag color={getSeverityColor(_record.severity)}>{_record.severity}</Tag>
       ),
     },
     {
       title: "IP Address",
       key: "ipAddress",
-      render: (record: AuditLog) => (
+      render: (_record: AuditLog) => (
         <div className="text-gray-400 text-xs font-mono">
-          {record.ipAddress}
+          {_record.ipAddress}
         </div>
       ),
     },
     {
       title: "Actions",
       key: "actions",
-      render: (record: AuditLog) => (
+      render: (_record: AuditLog) => (
         <Space size="small">
           <Tooltip title="View Details">
             <Button
@@ -719,7 +711,7 @@ const SecurityDashboard: React.FC<SecurityDashboardProps> = ({ className }) => {
                 <div className="flex items-center gap-4">
                   <div className="text-center">
                     <div className="text-white text-lg font-bold">
-                      {secret.accessCount}
+                      {secret.metadata?.accessCount || 0}
                     </div>
                     <div className="text-gray-400 text-xs">Access Count</div>
                   </div>

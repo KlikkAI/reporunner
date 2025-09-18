@@ -33,8 +33,6 @@ const AdvancedNodePanel: React.FC<AdvancedNodePanelProps> = ({
     isEnabled: isAIEnabled,
     nodeSuggestions,
     getNodeSuggestions,
-    suggestionsVisible,
-    hideSuggestions,
   } = useAIAssistantStore();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
@@ -125,16 +123,16 @@ const AdvancedNodePanel: React.FC<AdvancedNodePanelProps> = ({
 
   // Convert AI suggestions to node format for rendering
   const aiSuggestedNodes = nodeSuggestions.map((suggestion) => ({
-    id: `ai-suggestion-${suggestion.nodeType}`,
-    displayName: suggestion.displayName,
+    id: `ai-suggestion-${suggestion.id}`,
+    displayName: suggestion.title,
     description: suggestion.description,
     icon: "🤖", // AI suggestion icon
     category: "AI_SUGGESTIONS",
     color: "#3B82F6", // Blue color for AI suggestions
-    type: suggestion.nodeType,
+    type: suggestion.type,
     nodeTypeData: {
-      name: suggestion.nodeType,
-      displayName: suggestion.displayName,
+      name: suggestion.type,
+      displayName: suggestion.title,
     },
     isCore: false,
     aiSuggestion: suggestion,
@@ -143,9 +141,10 @@ const AdvancedNodePanel: React.FC<AdvancedNodePanelProps> = ({
   const handleAISuggestionAdd = useCallback(
     (suggestion: (typeof aiSuggestedNodes)[0]) => {
       if (suggestion.aiSuggestion) {
-        const { placement } = suggestion.aiSuggestion;
+        // Use default position since AIWorkflowSuggestion doesn't have placement
+        const defaultPosition = { x: 100, y: 100 };
 
-        // Create node at suggested position
+        // Create node at default position
         const newNodeId = `node-${Date.now()}-${Math.random().toString(36).substr(2, 9)}-${suggestion.type}`;
         const enhancedNodeType = nodeRegistry.getNodeTypeDescription(
           suggestion.type,
@@ -154,7 +153,7 @@ const AdvancedNodePanel: React.FC<AdvancedNodePanelProps> = ({
         const newNode = {
           id: newNodeId,
           type: suggestion.type,
-          position: placement.position,
+          position: defaultPosition,
           parameters: {
             label: suggestion.displayName,
             nodeType: suggestion.nodeTypeData.name,
@@ -169,8 +168,9 @@ const AdvancedNodePanel: React.FC<AdvancedNodePanelProps> = ({
 
         addNode(newNode);
 
-        // Auto-connect based on AI suggestion
-        placement.connections.forEach((connection) => {
+        // Skip auto-connect since AI suggestion doesn't have connections
+        const connections: any[] = [];
+        connections.forEach((connection: any) => {
           if (connection.sourceNodeId && connection.type === "input") {
             const newEdge = {
               id: `edge-${connection.sourceNodeId}-${newNodeId}`,

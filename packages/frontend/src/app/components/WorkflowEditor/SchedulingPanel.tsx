@@ -22,7 +22,6 @@ import {
   Modal,
   message,
   Tooltip,
-  Progress,
   Statistic,
   List,
   Badge,
@@ -31,17 +30,15 @@ import {
   PlayCircleOutlined,
   PauseCircleOutlined,
   ClockCircleOutlined,
-  SettingOutlined,
   CalendarOutlined,
   ThunderboltOutlined,
   BarChartOutlined,
   DeleteOutlined,
   EditOutlined,
-  PlusOutlined,
   InfoCircleOutlined,
 } from "@ant-design/icons";
 import { cn } from "@/design-system/utils";
-import { colors, spacing } from "@/design-system/tokens";
+import { colors } from "@/design-system/tokens";
 import {
   workflowScheduler,
   type ScheduleConfiguration,
@@ -201,7 +198,13 @@ export const SchedulingPanel: React.FC<SchedulingPanelProps> = ({
             values.dependencies?.split(",").map((d: string) => d.trim()) ?? [],
         };
       default:
-        return {};
+        return {
+          eventType: "",
+          eventSource: "",
+          filters: [],
+          debounceMs: 0,
+          maxEventsPerWindow: 0,
+        };
     }
   };
 
@@ -415,7 +418,7 @@ export const SchedulingPanel: React.FC<SchedulingPanelProps> = ({
         return (
           <>
             <Form.Item name="intervalMs" label="Interval (milliseconds)">
-              <InputNumber min={1000} placeholder={300000} />
+              <InputNumber min={1000} placeholder="300000" />
             </Form.Item>
             <Form.Item name="maxExecutions" label="Max Executions (optional)">
               <InputNumber min={1} />
@@ -425,7 +428,7 @@ export const SchedulingPanel: React.FC<SchedulingPanelProps> = ({
       case "once":
         return (
           <Form.Item name="executeAt" label="Execute At">
-            <TimePicker showTime />
+            <DatePicker showTime />
           </Form.Item>
         );
       case "event-driven":
@@ -446,7 +449,7 @@ export const SchedulingPanel: React.FC<SchedulingPanelProps> = ({
               <TextArea placeholder="return data.status === 'ready'" rows={3} />
             </Form.Item>
             <Form.Item name="checkIntervalMs" label="Check Interval (ms)">
-              <InputNumber min={1000} placeholder={60000} />
+              <InputNumber min={1000} placeholder="60000" />
             </Form.Item>
           </>
         );
@@ -573,7 +576,7 @@ export const SchedulingPanel: React.FC<SchedulingPanelProps> = ({
                   <div>Duration: {(execution.duration / 1000).toFixed(2)}s</div>
                 )}
                 {execution.error && (
-                  <div style={{ color: colors.red[500] }}>
+                  <div style={{ color: colors.error[500] }}>
                     Error: {execution.error}
                   </div>
                 )}
@@ -600,8 +603,8 @@ export const SchedulingPanel: React.FC<SchedulingPanelProps> = ({
             valueStyle={{
               color:
                 analytics.successRate > 90
-                  ? colors.green[600]
-                  : colors.orange[600],
+                  ? colors.success[600]
+                  : colors.warning[600],
             }}
           />
           <Statistic
@@ -620,8 +623,8 @@ export const SchedulingPanel: React.FC<SchedulingPanelProps> = ({
             valueStyle={{
               color:
                 analytics.failedExecutions > 0
-                  ? colors.red[600]
-                  : colors.green[600],
+                  ? colors.error[600]
+                  : colors.success[600],
             }}
           />
         </div>

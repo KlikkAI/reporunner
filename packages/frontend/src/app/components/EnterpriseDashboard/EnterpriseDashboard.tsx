@@ -616,7 +616,7 @@ export const EnterpriseDashboard: React.FC = () => {
                   prefix={<CheckCircleOutlined />}
                   valueStyle={{
                     color:
-                      metrics?.security.complianceScore >= 90
+                      (metrics?.security?.complianceScore ?? 0) >= 90
                         ? "#52c41a"
                         : "#fa8c16",
                   }}

@@ -25,20 +25,14 @@ import {
   Badge,
   Tooltip,
   Dropdown,
-  Menu,
   Switch,
-  Alert,
   Tabs,
   List,
   Avatar,
-  Divider,
-  Progress,
   Statistic,
 } from "antd";
 import {
   UserOutlined,
-  PlusOutlined,
-  SearchOutlined,
   EditOutlined,
   DeleteOutlined,
   KeyOutlined,
@@ -47,30 +41,24 @@ import {
   EyeOutlined,
   MoreOutlined,
   CheckCircleOutlined,
-  CloseCircleOutlined,
-  ExclamationCircleOutlined,
   TeamOutlined,
   UserAddOutlined,
   LockOutlined,
   UnlockOutlined,
-  ReloadOutlined,
 } from "@ant-design/icons";
 import { cn } from "@/design-system/utils";
-import { advancedAuthService } from "@/core/services/advancedAuthService";
+// import { advancedAuthService } from "@/core/services/advancedAuthService";
 import type {
   User,
   UserRole,
-  Permission,
   APIKey,
   UserInvitation,
   SSOProvider,
-  MFAMethod,
 } from "@/core/types/authentication";
 
 const { Title, Text } = Typography;
 const { Search } = Input;
 const { Option } = Select;
-const { TabPane } = Tabs;
 
 interface UserManagementPanelProps {
   className?: string;
@@ -90,7 +78,6 @@ const UserManagementPanel: React.FC<UserManagementPanelProps> = ({
   const [isUserModalOpen, setIsUserModalOpen] = useState(false);
   const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
   const [isAPIKeyModalOpen, setIsAPIKeyModalOpen] = useState(false);
-  const [isRoleModalOpen, setIsRoleModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -602,11 +589,11 @@ const UserManagementPanel: React.FC<UserManagementPanelProps> = ({
     {
       title: "Name",
       key: "name",
-      render: (record: APIKey) => (
+      render: (_record: APIKey) => (
         <div>
-          <div className="text-white font-medium">{record.name}</div>
+          <div className="text-white font-medium">{_record.name}</div>
           <div className="text-gray-400 text-xs">
-            {record.metadata.description}
+            {_record.metadata.description}
           </div>
         </div>
       ),
@@ -614,28 +601,28 @@ const UserManagementPanel: React.FC<UserManagementPanelProps> = ({
     {
       title: "Key",
       key: "key",
-      render: (record: APIKey) => (
+      render: (_record: APIKey) => (
         <div className="font-mono text-xs text-gray-300">
-          {record.key.substring(0, 12)}...
+          {_record.key.substring(0, 12)}...
         </div>
       ),
     },
     {
       title: "Status",
       key: "status",
-      render: (record: APIKey) => (
-        <Tag color={record.status === "active" ? "green" : "red"}>
-          {record.status}
+      render: (_record: APIKey) => (
+        <Tag color={_record.status === "active" ? "green" : "red"}>
+          {_record.status}
         </Tag>
       ),
     },
     {
       title: "Expires",
       key: "expires",
-      render: (record: APIKey) => (
+      render: (_record: APIKey) => (
         <div className="text-gray-400 text-xs">
-          {record.expiresAt
-            ? new Date(record.expiresAt).toLocaleDateString()
+          {_record.expiresAt
+            ? new Date(_record.expiresAt).toLocaleDateString()
             : "Never"}
         </div>
       ),
@@ -643,10 +630,10 @@ const UserManagementPanel: React.FC<UserManagementPanelProps> = ({
     {
       title: "Last Used",
       key: "lastUsed",
-      render: (record: APIKey) => (
+      render: (_record: APIKey) => (
         <div className="text-gray-400 text-xs">
-          {record.lastUsedAt
-            ? new Date(record.lastUsedAt).toLocaleDateString()
+          {_record.lastUsedAt
+            ? new Date(_record.lastUsedAt).toLocaleDateString()
             : "Never"}
         </div>
       ),
@@ -654,7 +641,7 @@ const UserManagementPanel: React.FC<UserManagementPanelProps> = ({
     {
       title: "Actions",
       key: "actions",
-      render: (record: APIKey) => (
+      render: (_record: APIKey) => (
         <Space size="small">
           <Tooltip title="View Details">
             <Button
@@ -867,7 +854,7 @@ const UserManagementPanel: React.FC<UserManagementPanelProps> = ({
               <div className="flex items-center gap-2">
                 <Switch
                   checked={provider.enabled}
-                  onChange={(checked) => {
+                  onChange={(_checked) => {
                     // Handle SSO provider toggle
                   }}
                 />
@@ -951,7 +938,7 @@ const UserManagementPanel: React.FC<UserManagementPanelProps> = ({
               key: "sso",
               label: (
                 <span>
-                  <ShieldOutlined className="mr-1" />
+                  <LockOutlined className="mr-1" />
                   SSO
                   <Badge
                     count={ssoProviders.filter((p) => p.enabled).length}
