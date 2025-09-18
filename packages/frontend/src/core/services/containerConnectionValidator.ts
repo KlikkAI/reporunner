@@ -354,7 +354,7 @@ export class ContainerConnectionValidator {
         action: "create_bridge",
         details: {
           bridgeType: "parent_mediated",
-          parentContainer: this.getCommonParent(sourceContext, targetContext),
+          parentContainer: this.getCommonParent(_sourceContext, _targetContext),
         },
       },
     };

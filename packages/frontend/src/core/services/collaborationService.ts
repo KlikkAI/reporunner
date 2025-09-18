@@ -487,28 +487,28 @@ export class CollaborationService {
       case "node_move":
         // If both operations move the same node, use the latest timestamp
         if (
-          conflictingOperation.type === "node_move" &&
-          operation.data.nodeId === conflictingOperation.data.nodeId
+          _conflictingOperation.type === "node_move" &&
+          operation.data.nodeId === _conflictingOperation.data.nodeId
         ) {
           return new Date(operation.timestamp) >
-            new Date(conflictingOperation.timestamp)
+            new Date(_conflictingOperation.timestamp)
             ? operation
-            : conflictingOperation;
+            : _conflictingOperation;
         }
         break;
 
       case "node_update":
         // For node updates, merge properties where possible
         if (
-          conflictingOperation.type === "node_update" &&
-          operation.data.nodeId === conflictingOperation.data.nodeId
+          _conflictingOperation.type === "node_update" &&
+          operation.data.nodeId === _conflictingOperation.data.nodeId
         ) {
           return {
             ...operation,
             data: {
               ...operation.data,
               updates: {
-                ...conflictingOperation.data.updates,
+                ..._conflictingOperation.data.updates,
                 ...operation.data.updates,
               },
             },

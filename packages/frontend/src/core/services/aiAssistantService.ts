@@ -12,8 +12,9 @@
 import type {
   WorkflowDefinition,
   NodeDefinition,
+  WorkflowNodeInstance,
 } from "@/core/nodes/types";
-import type { ExecutionMetrics } from "@/core/types/execution";
+import type { ExecutionMetrics } from "./analyticsService";
 
 export interface AIWorkflowSuggestion {
   id: string;
@@ -258,31 +259,40 @@ export class AIAssistantService {
       name: "AI Generated Workflow",
       description: "Generated from natural language description",
       nodes: this.generateNodesFromAnalysis(analysis),
-      edges: this.generateEdgesFromAnalysis(analysis),
-      triggers: [],
-      variables: {},
-      settings: {},
+      connections: this.generateConnectionsFromAnalysis(analysis),
     };
   }
 
-  private generateNodesFromAnalysis(_analysis: any): NodeDefinition[] {
+  private generateNodesFromAnalysis(_analysis: any): WorkflowNodeInstance[] {
     // Simulate node generation
     return [
       {
         id: "trigger_1",
         type: "trigger",
-        name: "Start",
         position: { x: 100, y: 100 },
         parameters: {},
       },
       {
         id: "action_1",
         type: "action",
-        name: "Process Data",
         position: { x: 300, y: 100 },
         parameters: {},
       },
     ];
+  }
+
+  private generateConnectionsFromAnalysis(_analysis: any): WorkflowDefinition['connections'] {
+    return {
+      trigger_1: {
+        "0": [
+          {
+            node: "action_1",
+            type: "main",
+            index: 0,
+          },
+        ],
+      },
+    };
   }
 
   private generateEdgesFromAnalysis(_analysis: any): any[] {
@@ -309,7 +319,7 @@ export class AIAssistantService {
 
   private calculateComplexity(workflow: WorkflowDefinition): number {
     const nodeCount = workflow.nodes.length;
-    const edgeCount = workflow.edges.length;
+    const edgeCount = Object.keys(workflow.connections || {}).length;
     return Math.min(1, (nodeCount + edgeCount) / 20); // Normalize to 0-1
   }
 
@@ -336,7 +346,7 @@ export class AIAssistantService {
 
   private calculateWorkflowComplexity(workflow: WorkflowDefinition): number {
     const nodeCount = workflow.nodes.length;
-    const edgeCount = workflow.edges.length;
+    const edgeCount = Object.keys(workflow.connections || {}).length;
     const conditionalNodes = workflow.nodes.filter(
       (node: any) => node.type === "condition",
     ).length;
@@ -664,7 +674,7 @@ export class AIAssistantService {
   private findNearbyNodes(
     workflow: WorkflowDefinition,
     position: { x: number; y: number },
-  ): NodeDefinition[] {
+  ): WorkflowNodeInstance[] {
     return workflow.nodes.filter((node) => {
       const distance = Math.sqrt(
         Math.pow(node.position.x - position.x, 2) +
@@ -707,7 +717,7 @@ export class AIAssistantService {
   }
 
   private getWorkflowCacheKey(workflow: WorkflowDefinition): string {
-    return `${workflow.id}_${workflow.nodes.length}_${workflow.edges.length}`;
+    return `${workflow.id}_${workflow.nodes.length}_${Object.keys(workflow.connections || {}).length}`;
   }
 }
 

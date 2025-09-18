@@ -539,7 +539,7 @@ export class WorkflowSchedulerService {
       this.logScheduleEvent(
         schedule.id,
         "error",
-        `Schedule execution failed: ${error.message}`,
+        `Schedule execution failed: ${error instanceof Error ? error.message : String(error)}`,
       );
     }
   }
@@ -575,13 +575,13 @@ export class WorkflowSchedulerService {
     } catch (error) {
       execution.status = "failed";
       execution.completedAt = new Date().toISOString();
-      execution.error = error.message;
+      execution.error = error instanceof Error ? error.message : String(error);
 
       // Handle retry logic
       const schedule = this.schedules.get(execution.scheduleId);
       if (
         schedule &&
-        this.shouldRetry(execution, schedule.retryPolicy, error)
+        this.shouldRetry(execution, schedule.retryPolicy, error instanceof Error ? error : new Error(String(error)))
       ) {
         await this.scheduleRetry(execution, schedule);
       } else {

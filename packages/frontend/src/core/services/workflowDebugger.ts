@@ -338,7 +338,7 @@ export class WorkflowDebugger {
       session.watchedVariables.push({
         expression,
         value: null,
-        error: error.message,
+        error: error instanceof Error ? error.message : String(error),
       });
       return false;
     }
@@ -539,7 +539,7 @@ export class WorkflowDebugger {
       );
       return func(context);
     } catch (error) {
-      throw new Error(`Expression evaluation failed: ${error.message}`);
+      throw new Error(`Expression evaluation failed: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
 

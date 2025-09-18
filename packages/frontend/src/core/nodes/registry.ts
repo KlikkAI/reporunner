@@ -185,14 +185,14 @@ class NodeRegistry {
     const enhancedNode = this.enhancedNodeTypes.get(typeName);
     if (enhancedNode) {
       return {
-        displayName: enhancedNode.displayName,
+        displayName: enhancedNode.displayName || enhancedNode.name,
         name: enhancedNode.name,
         icon: enhancedNode.icon || "fa:envelope",
         group: [enhancedNode.type === "trigger" ? "trigger" : "transform"],
         version: 1,
         description: enhancedNode.description || "",
         defaults: {
-          name: enhancedNode.displayName,
+          name: enhancedNode.displayName || enhancedNode.name,
           color: (enhancedNode as any).color || "#DD4B39",
         },
         inputs: (enhancedNode.inputs || [{ type: "main" }]).map((input) =>
@@ -242,14 +242,14 @@ class NodeRegistry {
     // Get enhanced node descriptions (convert to INodeTypeDescription format)
     const enhancedNodes = Array.from(this.enhancedNodeTypes.values()).map(
       (enhancedNode): INodeTypeDescription => ({
-        displayName: enhancedNode.displayName,
+        displayName: enhancedNode.displayName || enhancedNode.name,
         name: enhancedNode.name,
         icon: enhancedNode.icon || "fa:envelope",
         group: [enhancedNode.type === "trigger" ? "trigger" : "transform"],
         version: 1,
         description: enhancedNode.description || "",
         defaults: {
-          name: enhancedNode.displayName,
+          name: enhancedNode.displayName || enhancedNode.name,
           color: (enhancedNode as any).color || "#DD4B39",
         },
         inputs: (enhancedNode.inputs || [{ type: "main" }]).map((input) =>
