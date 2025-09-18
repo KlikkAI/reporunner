@@ -124,7 +124,7 @@ const PropertyField: React.FC<PropertyFieldProps> = ({
             className="w-full"
             style={{ backgroundColor: theme === 'dark' ? '#1f2937' : undefined }}
           >
-            {property.options?.map((option) => (
+            {property.options?.map((option: any) => (
               <Option key={option.value} value={option.value}>
                 {option.label}
               </Option>
@@ -143,7 +143,7 @@ const PropertyField: React.FC<PropertyFieldProps> = ({
             className="w-full"
             style={{ backgroundColor: theme === 'dark' ? '#1f2937' : undefined }}
           >
-            {property.options?.map((option) => (
+            {property.options?.map((option: any) => (
               <Option key={option.value} value={option.value}>
                 {option.label}
               </Option>
@@ -270,7 +270,7 @@ const PropertyField: React.FC<PropertyFieldProps> = ({
                 }
               >
                 <div className="space-y-2">
-                  {property.collectionSchema?.map((field) => (
+                  {property.collectionSchema?.map((field: any) => (
                     <div key={field.name}>
                       <label className="text-sm font-medium text-gray-300">
                         {field.label || field.name}
@@ -445,7 +445,7 @@ export const EnhancedPropertyRenderer: React.FC<EnhancedPropertyRendererProps> =
         const conditions = property.displayOptions.show;
         return Object.entries(conditions).every(([key, values]) => {
           const formValue = formState[key];
-          return values.includes(formValue);
+          return (values as any[]).includes(formValue);
         });
       }
       return true;
@@ -491,7 +491,6 @@ export const EnhancedPropertyRenderer: React.FC<EnhancedPropertyRendererProps> =
               <Alert
                 message={error}
                 type="error"
-                size="small"
                 showIcon
                 className="text-xs"
               />
