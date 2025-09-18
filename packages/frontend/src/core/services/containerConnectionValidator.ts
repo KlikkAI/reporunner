@@ -7,7 +7,13 @@
  */
 
 import type { Node, Edge } from "reactflow";
-import type { ContainerType } from "../../../app/components/WorkflowEditor/NodeTypes/ContainerNode/ContainerNode";
+// Removed invalid import - ContainerType interface should be defined locally or imported from correct path
+type ContainerType =
+  | "loop"
+  | "parallel"
+  | "conditional"
+  | "try_catch"
+  | "custom";
 
 export interface ConnectionValidationResult {
   isValid: boolean;
@@ -141,8 +147,8 @@ export class ContainerConnectionValidator {
   private validateCrossContainerConnection(
     sourceContext: ContainerContext,
     targetContext: ContainerContext,
-    sourceHandle?: string,
-    targetHandle?: string,
+    _sourceHandle?: string,
+    _targetHandle?: string,
   ): ConnectionValidationResult {
     // Check if this is a valid container boundary crossing
     const relationship = this.getContainerRelationship(
@@ -194,8 +200,8 @@ export class ContainerConnectionValidator {
   private validateLoopContainerConnection(
     sourceContext: ContainerContext,
     targetContext: ContainerContext,
-    sourceHandle?: string,
-    targetHandle?: string,
+    _sourceHandle?: string,
+    _targetHandle?: string,
   ): ConnectionValidationResult {
     // In loop containers, nodes should generally connect sequentially
     // Backward connections might create infinite loops
@@ -251,10 +257,10 @@ export class ContainerConnectionValidator {
    * Validate conditional container connections
    */
   private validateConditionalContainerConnection(
-    sourceContext: ContainerContext,
-    targetContext: ContainerContext,
-    sourceHandle?: string,
-    targetHandle?: string,
+    _sourceContext: ContainerContext,
+    _targetContext: ContainerContext,
+    _sourceHandle?: string,
+    _targetHandle?: string,
   ): ConnectionValidationResult {
     // In conditional containers, connections should respect branching logic
     return { isValid: true, severity: "info" };
@@ -264,10 +270,10 @@ export class ContainerConnectionValidator {
    * Validate subflow container connections
    */
   private validateSubflowContainerConnection(
-    sourceContext: ContainerContext,
-    targetContext: ContainerContext,
-    sourceHandle?: string,
-    targetHandle?: string,
+    _sourceContext: ContainerContext,
+    _targetContext: ContainerContext,
+    _sourceHandle?: string,
+    _targetHandle?: string,
   ): ConnectionValidationResult {
     // Subflows are most flexible - most connections are valid
     return { isValid: true, severity: "info" };
@@ -277,7 +283,7 @@ export class ContainerConnectionValidator {
    * Validate parent-to-child container connections
    */
   private validateParentToChildConnection(
-    sourceContext: ContainerContext,
+    _sourceContext: ContainerContext,
     targetContext: ContainerContext,
     relationship: any,
   ): ConnectionValidationResult {
@@ -306,7 +312,7 @@ export class ContainerConnectionValidator {
    */
   private validateChildToParentConnection(
     sourceContext: ContainerContext,
-    targetContext: ContainerContext,
+    _targetContext: ContainerContext,
     relationship: any,
   ): ConnectionValidationResult {
     // Child nodes should connect through container outputs

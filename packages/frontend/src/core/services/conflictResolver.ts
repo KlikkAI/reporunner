@@ -6,8 +6,7 @@
  * and Git's merge resolution strategies.
  */
 
-import type { WorkflowNodeInstance } from "../nodes/types";
-import type { WorkflowEdge } from "../stores/leanWorkflowStore";
+// Removed unused imports
 import type {
   CollaborationOperation,
   CollaborationConflict,
@@ -36,11 +35,11 @@ export interface ConflictResolution {
 export interface OperationalTransform {
   transform: (
     operation: CollaborationOperation,
-    conflictingOperation: CollaborationOperation
+    conflictingOperation: CollaborationOperation,
   ) => CollaborationOperation;
   isApplicable: (
     operation: CollaborationOperation,
-    conflictingOperation: CollaborationOperation
+    conflictingOperation: CollaborationOperation,
   ) => boolean;
 }
 
@@ -58,14 +57,16 @@ export class ConflictResolver {
    */
   detectConflicts(
     newOperation: CollaborationOperation,
-    existingOperations: CollaborationOperation[]
+    existingOperations: CollaborationOperation[],
   ): CollaborationConflict[] {
     const conflicts: CollaborationConflict[] = [];
     const conflictWindow = 30000; // 30 seconds
 
     for (const existing of existingOperations) {
       // Skip operations that are too old
-      const timeDiff = new Date(newOperation.timestamp).getTime() - new Date(existing.timestamp).getTime();
+      const timeDiff =
+        new Date(newOperation.timestamp).getTime() -
+        new Date(existing.timestamp).getTime();
       if (Math.abs(timeDiff) > conflictWindow) continue;
 
       // Skip operations from the same user
@@ -86,7 +87,7 @@ export class ConflictResolver {
   async resolveConflict(
     conflict: CollaborationConflict,
     strategyName: string = "smart_merge",
-    manualResolution?: any
+    manualResolution?: any,
   ): Promise<ConflictResolution> {
     const strategy = this.strategies.get(strategyName);
     if (!strategy) {
@@ -106,7 +107,7 @@ export class ConflictResolver {
       return {
         success: false,
         requiresManualReview: true,
-        explanation: `Failed to resolve conflict: ${error.message}`,
+        explanation: `Failed to resolve conflict: ${error instanceof Error ? error.message : String(error)}`,
         changesPreview: {
           before: conflict.operations,
           after: conflict.operations,
@@ -121,14 +122,17 @@ export class ConflictResolver {
    */
   applyOperationalTransform(
     operation: CollaborationOperation,
-    conflictingOperations: CollaborationOperation[]
+    conflictingOperations: CollaborationOperation[],
   ): CollaborationOperation {
     let transformedOperation = operation;
 
     for (const conflicting of conflictingOperations) {
       for (const transform of this.operationalTransforms) {
         if (transform.isApplicable(transformedOperation, conflicting)) {
-          transformedOperation = transform.transform(transformedOperation, conflicting);
+          transformedOperation = transform.transform(
+            transformedOperation,
+            conflicting,
+          );
           break;
         }
       }
@@ -149,7 +153,7 @@ export class ConflictResolver {
    */
   async previewResolution(
     conflict: CollaborationConflict,
-    strategyName: string
+    strategyName: string,
   ): Promise<ConflictResolution> {
     const strategy = this.strategies.get(strategyName);
     if (!strategy) {
@@ -181,7 +185,8 @@ export class ConflictResolver {
     // First Write Wins Strategy
     this.strategies.set("first_write_wins", {
       name: "First Write Wins",
-      description: "Keep the earliest changes and reject newer conflicting ones",
+      description:
+        "Keep the earliest changes and reject newer conflicting ones",
       automatic: true,
       handler: async (conflict) => this.firstWriteWinsStrategy(conflict),
     });
@@ -207,7 +212,8 @@ export class ConflictResolver {
     // Node Move Transform
     this.operationalTransforms.push({
       isApplicable: (op1, op2) =>
-        op1.type === "node_move" && op2.type === "node_move" &&
+        op1.type === "node_move" &&
+        op2.type === "node_move" &&
         op1.data?.nodeId === op2.data?.nodeId,
       transform: (op1, op2) => {
         // For concurrent node moves, use the average position
@@ -229,7 +235,8 @@ export class ConflictResolver {
     // Node Property Update Transform
     this.operationalTransforms.push({
       isApplicable: (op1, op2) =>
-        op1.type === "node_update" && op2.type === "node_update" &&
+        op1.type === "node_update" &&
+        op2.type === "node_update" &&
         op1.data?.nodeId === op2.data?.nodeId,
       transform: (op1, op2) => {
         // Merge property updates where possible
@@ -252,7 +259,8 @@ export class ConflictResolver {
     // Edge Creation Transform
     this.operationalTransforms.push({
       isApplicable: (op1, op2) =>
-        op1.type === "edge_add" && op2.type === "edge_add" &&
+        op1.type === "edge_add" &&
+        op2.type === "edge_add" &&
         this.edgesAreConflicting(op1.data, op2.data),
       transform: (op1, op2) => {
         // For conflicting edges, keep the one with earlier timestamp
@@ -263,7 +271,7 @@ export class ConflictResolver {
 
   private analyzeOperationConflict(
     op1: CollaborationOperation,
-    op2: CollaborationOperation
+    op2: CollaborationOperation,
   ): CollaborationConflict | null {
     const affectedNodes = this.getAffectedNodes(op1, op2);
     if (affectedNodes.length === 0) return null;
@@ -282,7 +290,7 @@ export class ConflictResolver {
 
   private getAffectedNodes(
     op1: CollaborationOperation,
-    op2: CollaborationOperation
+    op2: CollaborationOperation,
   ): string[] {
     const nodes = new Set<string>();
 
@@ -306,7 +314,7 @@ export class ConflictResolver {
 
   private determineConflictType(
     op1: CollaborationOperation,
-    op2: CollaborationOperation
+    op2: CollaborationOperation,
   ): CollaborationConflict["type"] | null {
     // Same node, different operations
     if (op1.data?.nodeId === op2.data?.nodeId) {
@@ -334,15 +342,21 @@ export class ConflictResolver {
 
   private hasEdgeDependencyConflict(
     op1: CollaborationOperation,
-    op2: CollaborationOperation
+    op2: CollaborationOperation,
   ): boolean {
     // Check if one operation removes a node that another operation creates an edge to/from
     if (op1.type === "node_remove" && op2.type === "edge_add") {
-      return op2.data?.source === op1.data?.nodeId || op2.data?.target === op1.data?.nodeId;
+      return (
+        op2.data?.source === op1.data?.nodeId ||
+        op2.data?.target === op1.data?.nodeId
+      );
     }
 
     if (op2.type === "node_remove" && op1.type === "edge_add") {
-      return op1.data?.source === op2.data?.nodeId || op1.data?.target === op2.data?.nodeId;
+      return (
+        op1.data?.source === op2.data?.nodeId ||
+        op1.data?.target === op2.data?.nodeId
+      );
     }
 
     return false;
@@ -350,7 +364,7 @@ export class ConflictResolver {
 
   private hasConcurrentEditConflict(
     op1: CollaborationOperation,
-    op2: CollaborationOperation
+    op2: CollaborationOperation,
   ): boolean {
     // Check for concurrent edits on the same node
     return op1.data?.nodeId === op2.data?.nodeId && op1.type === op2.type;
@@ -364,10 +378,11 @@ export class ConflictResolver {
   // Resolution Strategy Implementations
 
   private async lastWriteWinsStrategy(
-    conflict: CollaborationConflict
+    conflict: CollaborationConflict,
   ): Promise<ConflictResolution> {
     const operations = conflict.operations.sort(
-      (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+      (a, b) =>
+        new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
     );
 
     const winningOperation = operations[0];
@@ -386,10 +401,11 @@ export class ConflictResolver {
   }
 
   private async firstWriteWinsStrategy(
-    conflict: CollaborationConflict
+    conflict: CollaborationConflict,
   ): Promise<ConflictResolution> {
     const operations = conflict.operations.sort(
-      (a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+      (a, b) =>
+        new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime(),
     );
 
     const winningOperation = operations[0];
@@ -408,14 +424,19 @@ export class ConflictResolver {
   }
 
   private async smartMergeStrategy(
-    conflict: CollaborationConflict
+    conflict: CollaborationConflict,
   ): Promise<ConflictResolution> {
     try {
       const mergedOperations = [];
 
       for (const operation of conflict.operations) {
-        const otherOps = conflict.operations.filter(op => op.id !== operation.id);
-        const transformedOp = this.applyOperationalTransform(operation, otherOps);
+        const otherOps = conflict.operations.filter(
+          (op) => op.id !== operation.id,
+        );
+        const transformedOp = this.applyOperationalTransform(
+          operation,
+          otherOps,
+        );
         mergedOperations.push(transformedOp);
       }
 
@@ -423,7 +444,8 @@ export class ConflictResolver {
         success: true,
         mergedOperations,
         requiresManualReview: false,
-        explanation: "Successfully merged all changes using operational transforms",
+        explanation:
+          "Successfully merged all changes using operational transforms",
         changesPreview: {
           before: conflict.operations,
           after: mergedOperations,
@@ -434,7 +456,7 @@ export class ConflictResolver {
       return {
         success: false,
         requiresManualReview: true,
-        explanation: `Smart merge failed: ${error.message}`,
+        explanation: `Smart merge failed: ${error instanceof Error ? error.message : String(error)}`,
         changesPreview: {
           before: conflict.operations,
           after: conflict.operations,
@@ -445,7 +467,7 @@ export class ConflictResolver {
   }
 
   private async threeWayMergeStrategy(
-    conflict: CollaborationConflict
+    conflict: CollaborationConflict,
   ): Promise<ConflictResolution> {
     // Simplified three-way merge - in production, would need access to history
     // to find common ancestor state
@@ -462,7 +484,7 @@ export class ConflictResolver {
   }
 
   private async manualResolutionStrategy(
-    conflict: CollaborationConflict
+    conflict: CollaborationConflict,
   ): Promise<ConflictResolution> {
     return {
       success: false,
@@ -478,11 +500,11 @@ export class ConflictResolver {
 
   private async applyManualResolution(
     conflict: CollaborationConflict,
-    manualResolution: any
+    manualResolution: any,
   ): Promise<ConflictResolution> {
     // Apply user's manual resolution choices
     const resolvedOperation = conflict.operations.find(
-      op => op.id === manualResolution.chosenOperationId
+      (op) => op.id === manualResolution.chosenOperationId,
     );
 
     if (!resolvedOperation) {

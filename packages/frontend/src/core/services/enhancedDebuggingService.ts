@@ -9,7 +9,7 @@
  * - Performance profiling and memory tracking
  */
 
-import { performanceMonitor } from './performanceMonitor';
+import { performanceMonitor } from "./performanceMonitor";
 import type {
   DebugSession,
   DebugBreakpoint,
@@ -22,7 +22,7 @@ import type {
   DebugEvent,
   DebugMetrics,
   DebuggerControls,
-} from '@/core/types/debugging';
+} from "@/core/types/debugging";
 
 export class EnhancedDebuggingService implements DebuggerControls {
   private activeSessions = new Map<string, DebugSession>();
@@ -37,7 +37,7 @@ export class EnhancedDebuggingService implements DebuggerControls {
       maxVariableHistory: 100,
       enablePerformanceProfiling: true,
       enableMemoryTracking: true,
-      logLevel: 'debug',
+      logLevel: "debug",
       breakOnError: true,
       breakOnException: true,
     };
@@ -48,16 +48,18 @@ export class EnhancedDebuggingService implements DebuggerControls {
    */
   async startDebugging(workflowId: string, executionId: string): Promise<void> {
     const sessionId = `debug_${executionId}`;
-    
+
     if (this.activeSessions.has(sessionId)) {
-      throw new Error(`Debug session already active for execution ${executionId}`);
+      throw new Error(
+        `Debug session already active for execution ${executionId}`,
+      );
     }
 
     const session: DebugSession = {
       id: sessionId,
       workflowId,
       executionId,
-      status: 'idle',
+      status: "idle",
       breakpoints: new Map(),
       callStack: [],
       variables: new Map(),
@@ -71,7 +73,7 @@ export class EnhancedDebuggingService implements DebuggerControls {
     this.executionHistory.set(sessionId, []);
 
     this.emitEvent({
-      type: 'session-started',
+      type: "session-started",
       sessionId,
       timestamp: Date.now(),
     });
@@ -87,10 +89,10 @@ export class EnhancedDebuggingService implements DebuggerControls {
     if (!activeSession) return;
 
     const sessionId = activeSession.id;
-    activeSession.status = 'completed';
-    
+    activeSession.status = "completed";
+
     this.emitEvent({
-      type: 'session-ended',
+      type: "session-ended",
       sessionId,
       timestamp: Date.now(),
     });
@@ -106,12 +108,12 @@ export class EnhancedDebuggingService implements DebuggerControls {
    */
   pauseExecution(): void {
     const session = this.getActiveSession();
-    if (!session || session.status !== 'running') return;
+    if (!session || session.status !== "running") return;
 
-    session.status = 'paused';
+    session.status = "paused";
     session.pauseTime = Date.now();
 
-    console.log('Execution paused');
+    console.log("Execution paused");
   }
 
   /**
@@ -119,12 +121,12 @@ export class EnhancedDebuggingService implements DebuggerControls {
    */
   resumeExecution(): void {
     const session = this.getActiveSession();
-    if (!session || session.status !== 'paused') return;
+    if (!session || session.status !== "paused") return;
 
-    session.status = 'running';
+    session.status = "running";
     session.pauseTime = undefined;
 
-    console.log('Execution resumed');
+    console.log("Execution resumed");
   }
 
   /**
@@ -134,7 +136,7 @@ export class EnhancedDebuggingService implements DebuggerControls {
     const session = this.getActiveSession();
     if (!session) return;
 
-    session.status = 'stepping';
+    session.status = "stepping";
     session.stepCount++;
 
     // Simulate step over - execute current node completely
@@ -148,7 +150,7 @@ export class EnhancedDebuggingService implements DebuggerControls {
     const session = this.getActiveSession();
     if (!session) return;
 
-    session.status = 'stepping';
+    session.status = "stepping";
     session.stepCount++;
 
     // Simulate step into - enter node execution
@@ -162,7 +164,7 @@ export class EnhancedDebuggingService implements DebuggerControls {
     const session = this.getActiveSession();
     if (!session) return;
 
-    session.status = 'stepping';
+    session.status = "stepping";
     session.stepCount++;
 
     // Simulate step out - complete current node and return to caller
@@ -172,7 +174,7 @@ export class EnhancedDebuggingService implements DebuggerControls {
   /**
    * Add breakpoint to node
    */
-  addBreakpoint(nodeId: string, breakpoint: Omit<DebugBreakpoint, 'id'>): void {
+  addBreakpoint(nodeId: string, breakpoint: Omit<DebugBreakpoint, "id">): void {
     const session = this.getActiveSession();
     if (!session) return;
 
@@ -198,7 +200,7 @@ export class EnhancedDebuggingService implements DebuggerControls {
 
     const breakpoints = session.breakpoints.get(nodeId);
     if (breakpoints) {
-      const index = breakpoints.findIndex(bp => bp.id === breakpointId);
+      const index = breakpoints.findIndex((bp) => bp.id === breakpointId);
       if (index !== -1) {
         breakpoints.splice(index, 1);
         console.log(`Breakpoint removed from node ${nodeId}: ${breakpointId}`);
@@ -215,10 +217,12 @@ export class EnhancedDebuggingService implements DebuggerControls {
 
     const breakpoints = session.breakpoints.get(nodeId);
     if (breakpoints) {
-      const breakpoint = breakpoints.find(bp => bp.id === breakpointId);
+      const breakpoint = breakpoints.find((bp) => bp.id === breakpointId);
       if (breakpoint) {
         breakpoint.enabled = !breakpoint.enabled;
-        console.log(`Breakpoint ${breakpointId} ${breakpoint.enabled ? 'enabled' : 'disabled'}`);
+        console.log(
+          `Breakpoint ${breakpointId} ${breakpoint.enabled ? "enabled" : "disabled"}`,
+        );
       }
     }
   }
@@ -255,7 +259,9 @@ export class EnhancedDebuggingService implements DebuggerControls {
     const session = this.getActiveSession();
     if (!session) return;
 
-    const index = session.watchExpressions.findIndex(watch => watch.id === id);
+    const index = session.watchExpressions.findIndex(
+      (watch) => watch.id === id,
+    );
     if (index !== -1) {
       session.watchExpressions.splice(index, 1);
       console.log(`Watch expression removed: ${id}`);
@@ -265,7 +271,10 @@ export class EnhancedDebuggingService implements DebuggerControls {
   /**
    * Evaluate expression in current context
    */
-  evaluateExpression(expression: string, context: Record<string, any> = {}): any {
+  evaluateExpression(
+    expression: string,
+    context: Record<string, any> = {},
+  ): any {
     try {
       // Create evaluation context with current variables
       const evalContext = {
@@ -277,10 +286,15 @@ export class EnhancedDebuggingService implements DebuggerControls {
       };
 
       // Simple expression evaluation - in production, use a proper expression parser
-      const func = new Function(...Object.keys(evalContext), `return ${expression}`);
+      const func = new Function(
+        ...Object.keys(evalContext),
+        `return ${expression}`,
+      );
       return func(...Object.values(evalContext));
     } catch (error) {
-      throw new Error(`Expression evaluation failed: ${(error as Error).message}`);
+      throw new Error(
+        `Expression evaluation failed: ${(error as Error).message}`,
+      );
     }
   }
 
@@ -310,13 +324,13 @@ export class EnhancedDebuggingService implements DebuggerControls {
   /**
    * Inspect data at specific node
    */
-  inspectData(nodeId: string, type: DataInspector['type']): DataInspector {
+  inspectData(nodeId: string, type: DataInspector["type"]): DataInspector {
     const session = this.getActiveSession();
     if (!session) return this.createEmptyInspector(nodeId, type);
 
     const data = this.getDataForInspection(nodeId, type);
     const serialized = JSON.stringify(data);
-    
+
     return {
       nodeId,
       data,
@@ -345,14 +359,17 @@ export class EnhancedDebuggingService implements DebuggerControls {
       sessionId,
       workflowId: session.workflowId,
       steps: [...steps],
-      duration: steps.length > 0 ? steps[steps.length - 1].timestamp - steps[0].timestamp : 0,
+      duration:
+        steps.length > 0
+          ? steps[steps.length - 1].timestamp - steps[0].timestamp
+          : 0,
       startTime: steps[0]?.timestamp || 0,
       endTime: steps[steps.length - 1]?.timestamp || 0,
-      status: session.status === 'completed' ? 'completed' : 'failed',
+      status: session.status === "completed" ? "completed" : "failed",
       metadata: {
         stepCount: steps.length,
-        breakpointHits: steps.filter(s => s.action === 'breakpoint').length,
-        errors: steps.filter(s => s.action === 'error').length,
+        breakpointHits: steps.filter((s) => s.action === "breakpoint").length,
+        errors: steps.filter((s) => s.action === "error").length,
       },
     };
   }
@@ -378,8 +395,8 @@ export class EnhancedDebuggingService implements DebuggerControls {
 
     return {
       totalSteps: steps.length,
-      breakpointHits: steps.filter(s => s.action === 'breakpoint').length,
-      errors: steps.filter(s => s.action === 'error').length,
+      breakpointHits: steps.filter((s) => s.action === "breakpoint").length,
+      errors: steps.filter((s) => s.action === "error").length,
       averageStepTime,
       totalExecutionTime: totalTime,
       memoryUsage: performanceMonitor.getCurrentResourceUsage().totalMemoryMB,
@@ -392,7 +409,7 @@ export class EnhancedDebuggingService implements DebuggerControls {
    */
   updateConfiguration(config: Partial<DebugConfiguration>): void {
     this.configuration = { ...this.configuration, ...config };
-    console.log('Debug configuration updated:', this.configuration);
+    console.log("Debug configuration updated:", this.configuration);
   }
 
   /**
@@ -414,7 +431,7 @@ export class EnhancedDebuggingService implements DebuggerControls {
    */
   isPaused(): boolean {
     const session = this.getActiveSession();
-    return session?.status === 'paused' || false;
+    return session?.status === "paused" || false;
   }
 
   // Private helper methods
@@ -422,7 +439,7 @@ export class EnhancedDebuggingService implements DebuggerControls {
   private getActiveSession(): DebugSession | null {
     // Return the first active session (in a real implementation, you might want to track the current session)
     for (const session of this.activeSessions.values()) {
-      if (session.status !== 'completed' && session.status !== 'failed') {
+      if (session.status !== "completed" && session.status !== "failed") {
         return session;
       }
     }
@@ -430,24 +447,24 @@ export class EnhancedDebuggingService implements DebuggerControls {
   }
 
   private emitEvent(event: DebugEvent): void {
-    this.eventListeners.forEach(listener => {
+    this.eventListeners.forEach((listener) => {
       try {
         listener(event);
       } catch (error) {
-        console.error('Error in debug event listener:', error);
+        console.error("Error in debug event listener:", error);
       }
     });
   }
 
   private executeStepOver(session: DebugSession): void {
     // Simulate step over execution
-    const currentNodeId = session.currentNodeId || 'unknown';
-    
+    const currentNodeId = session.currentNodeId || "unknown";
+
     const step: ExecutionStep = {
       id: `step_${Date.now()}`,
       nodeId: currentNodeId,
       timestamp: Date.now(),
-      action: 'start',
+      action: "start",
     };
 
     session.executionHistory.push(step);
@@ -459,7 +476,7 @@ export class EnhancedDebuggingService implements DebuggerControls {
         id: `step_${Date.now()}`,
         nodeId: currentNodeId,
         timestamp: Date.now(),
-        action: 'end',
+        action: "end",
         duration: 100, // Simulated duration
       };
 
@@ -467,26 +484,26 @@ export class EnhancedDebuggingService implements DebuggerControls {
       this.executionHistory.get(session.id)?.push(endStep);
 
       this.emitEvent({
-        type: 'step-completed',
+        type: "step-completed",
         sessionId: session.id,
         nodeId: currentNodeId,
         timestamp: Date.now(),
         data: endStep,
       });
 
-      session.status = 'paused';
+      session.status = "paused";
     }, this.configuration.autoStepDelay);
   }
 
   private executeStepInto(session: DebugSession): void {
     // Simulate step into execution
-    const currentNodeId = session.currentNodeId || 'unknown';
-    
+    const currentNodeId = session.currentNodeId || "unknown";
+
     const step: ExecutionStep = {
       id: `step_${Date.now()}`,
       nodeId: currentNodeId,
       timestamp: Date.now(),
-      action: 'start',
+      action: "start",
     };
 
     session.executionHistory.push(step);
@@ -495,7 +512,7 @@ export class EnhancedDebuggingService implements DebuggerControls {
     // Add to call stack
     const frame: CallStackFrame = {
       nodeId: currentNodeId,
-      nodeType: 'action', // Simulated
+      nodeType: "action", // Simulated
       nodeName: `Node ${currentNodeId}`,
       timestamp: Date.now(),
       variables: this.getVariables(),
@@ -504,14 +521,14 @@ export class EnhancedDebuggingService implements DebuggerControls {
     session.callStack.push(frame);
 
     this.emitEvent({
-      type: 'step-completed',
+      type: "step-completed",
       sessionId: session.id,
       nodeId: currentNodeId,
       timestamp: Date.now(),
       data: step,
     });
 
-    session.status = 'paused';
+    session.status = "paused";
   }
 
   private executeStepOut(session: DebugSession): void {
@@ -520,66 +537,73 @@ export class EnhancedDebuggingService implements DebuggerControls {
       session.callStack.pop();
     }
 
-    const currentNodeId = session.currentNodeId || 'unknown';
-    
+    const currentNodeId = session.currentNodeId || "unknown";
+
     const step: ExecutionStep = {
       id: `step_${Date.now()}`,
       nodeId: currentNodeId,
       timestamp: Date.now(),
-      action: 'end',
+      action: "end",
     };
 
     session.executionHistory.push(step);
     this.executionHistory.get(session.id)?.push(step);
 
     this.emitEvent({
-      type: 'step-completed',
+      type: "step-completed",
       sessionId: session.id,
       nodeId: currentNodeId,
       timestamp: Date.now(),
       data: step,
     });
 
-    session.status = 'paused';
+    session.status = "paused";
   }
 
-  private getDataForInspection(nodeId: string, type: DataInspector['type']): any {
+  private getDataForInspection(
+    _nodeId: string,
+    type: DataInspector["type"],
+  ): any {
     const session = this.getActiveSession();
     if (!session) return null;
 
     // Simulate data retrieval based on type
     switch (type) {
-      case 'input':
-        return { message: 'Input data for node', timestamp: Date.now() };
-      case 'output':
-        return { result: 'Output data from node', processed: true };
-      case 'variable':
+      case "input":
+        return { message: "Input data for node", timestamp: Date.now() };
+      case "output":
+        return { result: "Output data from node", processed: true };
+      case "variable":
         return this.getVariables();
-      case 'intermediate':
-        return { intermediate: 'Intermediate processing data' };
+      case "intermediate":
+        return { intermediate: "Intermediate processing data" };
       default:
         return null;
     }
   }
 
   private createDataPreview(data: any): string {
-    if (data === null || data === undefined) return 'null';
-    if (typeof data === 'string') return data.length > 100 ? data.substring(0, 100) + '...' : data;
-    if (typeof data === 'object') {
+    if (data === null || data === undefined) return "null";
+    if (typeof data === "string")
+      return data.length > 100 ? data.substring(0, 100) + "..." : data;
+    if (typeof data === "object") {
       const json = JSON.stringify(data);
-      return json.length > 100 ? json.substring(0, 100) + '...' : json;
+      return json.length > 100 ? json.substring(0, 100) + "..." : json;
     }
     return String(data);
   }
 
-  private createEmptyInspector(nodeId: string, type: DataInspector['type']): DataInspector {
+  private createEmptyInspector(
+    nodeId: string,
+    type: DataInspector["type"],
+  ): DataInspector {
     return {
       nodeId,
       data: null,
       type,
       timestamp: Date.now(),
       size: 0,
-      preview: 'No data available',
+      preview: "No data available",
     };
   }
 }

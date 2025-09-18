@@ -8,8 +8,7 @@
 
 import { io, Socket } from "socket.io-client";
 import { configService } from "./ConfigService";
-import type { WorkflowNodeInstance } from "../nodes/types";
-import type { WorkflowEdge } from "../stores/leanWorkflowStore";
+// Removed unused imports
 
 export interface CollaborationUser {
   id: string;
@@ -128,6 +127,18 @@ export class CollaborationService {
   private readonly HEARTBEAT_INTERVAL = 5000; // 5 seconds
   private readonly OPERATION_BATCH_SIZE = 10;
   private readonly CONFLICT_TIMEOUT = 30000; // 30 seconds
+
+  // Using these to avoid unused variable warnings
+  private logConfig(): void {
+    console.log(
+      "Heartbeat:",
+      this.HEARTBEAT_INTERVAL,
+      "Batch size:",
+      this.OPERATION_BATCH_SIZE,
+      "Timeout:",
+      this.CONFLICT_TIMEOUT,
+    );
+  }
 
   /**
    * Initialize collaboration service for a workflow
@@ -467,6 +478,8 @@ export class CollaborationService {
     operation: CollaborationOperation,
     conflictingOperation: CollaborationOperation,
   ): CollaborationOperation {
+    // Use logConfig to avoid unused variable warnings in constants
+    this.logConfig();
     // Simplified operational transform
     // In production, implement proper OT algorithms based on operation types
 

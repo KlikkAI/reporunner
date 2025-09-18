@@ -286,7 +286,7 @@ export class AIAssistantService {
     ];
   }
 
-  private generateEdgesFromAnalysis(analysis: any): any[] {
+  private generateEdgesFromAnalysis(_analysis: any): any[] {
     return [
       {
         id: "edge_1",
@@ -304,7 +304,7 @@ export class AIAssistantService {
     return `This workflow was generated based on your description. It includes ${workflow.nodes.length} nodes and follows a ${analysis.intent} pattern.`;
   }
 
-  private suggestIntegrations(analysis: any): string[] {
+  private suggestIntegrations(_analysis: any): string[] {
     return ["Gmail", "Slack", "Google Sheets", "OpenAI"];
   }
 
@@ -339,7 +339,7 @@ export class AIAssistantService {
     const nodeCount = workflow.nodes.length;
     const edgeCount = workflow.edges.length;
     const conditionalNodes = workflow.nodes.filter(
-      (n) => n.type === "condition",
+      (node) => node.type === "condition",
     ).length;
 
     return Math.min(
@@ -381,11 +381,11 @@ export class AIAssistantService {
     const suggestions: string[] = [];
 
     // Simulate reliability analysis
-    workflow.nodes.forEach((node) => {
-      if (node.type === "http" || node.type === "database") {
-        errorProneNodes.push(node.id);
-        missingErrorHandling.push(node.id);
-        suggestions.push(`Add error handling for ${node.name}`);
+    workflow.nodes.forEach((workflowNode) => {
+      if (workflowNode.type === "http" || workflowNode.type === "database") {
+        errorProneNodes.push(workflowNode.id);
+        missingErrorHandling.push(workflowNode.id);
+        suggestions.push(`Add error handling for ${workflowNode.name}`);
       }
     });
 
@@ -397,7 +397,7 @@ export class AIAssistantService {
   }
 
   private analyzeMaintainability(
-    workflow: WorkflowDefinition,
+    _workflow: WorkflowDefinition,
   ): WorkflowAnalysis["maintainability"] {
     return {
       codeQuality: 0.7, // Simulated
@@ -427,7 +427,7 @@ export class AIAssistantService {
   }
 
   private generateSuggestions(
-    workflow: WorkflowDefinition,
+    _workflow: WorkflowDefinition,
     analysis: WorkflowAnalysis,
   ): AIWorkflowSuggestion[] {
     const suggestions: AIWorkflowSuggestion[] = [];
@@ -565,7 +565,7 @@ export class AIAssistantService {
   }
 
   private generateErrorDiagnoses(
-    workflow: WorkflowDefinition,
+    _workflow: WorkflowDefinition,
     patterns: any[],
   ): ErrorDiagnosis[] {
     return patterns.map((pattern) => ({
@@ -605,7 +605,7 @@ export class AIAssistantService {
   }
 
   private generatePerformanceOptimizations(
-    workflow: WorkflowDefinition,
+    _workflow: WorkflowDefinition,
     bottlenecks: any[],
   ): AIWorkflowSuggestion[] {
     return bottlenecks.map((bottleneck) => ({
@@ -649,35 +649,35 @@ export class AIAssistantService {
     }));
   }
 
-  private findSequentialChains(workflow: WorkflowDefinition): any[] {
+  private findSequentialChains(_workflow: WorkflowDefinition): any[] {
     // Simulate sequential chain detection
     return [];
   }
 
   private hasLoopPattern(workflow: WorkflowDefinition): boolean {
-    return workflow.nodes.some((n) => n.type === "loop");
+    return workflow.nodes.some((node) => node.type === "loop");
   }
 
   private hasParallelPattern(workflow: WorkflowDefinition): boolean {
-    return workflow.nodes.some((n) => n.type === "parallel");
+    return workflow.nodes.some((node) => node.type === "parallel");
   }
 
   private findNearbyNodes(
     workflow: WorkflowDefinition,
     position: { x: number; y: number },
   ): NodeDefinition[] {
-    return workflow.nodes.filter((n) => {
+    return workflow.nodes.filter((node) => {
       const distance = Math.sqrt(
-        Math.pow(n.position.x - position.x, 2) +
-          Math.pow(n.position.y - position.y, 2),
+        Math.pow(node.position.x - position.x, 2) +
+          Math.pow(node.position.y - position.y, 2),
       );
       return distance < 200;
     });
   }
 
   private analyzeDataFlow(
-    workflow: WorkflowDefinition,
-    previousNodes: string[],
+    _workflow: WorkflowDefinition,
+    _previousNodes: string[],
   ): string[] {
     // Simulate data flow analysis
     return ["email", "json", "text"];
@@ -702,7 +702,7 @@ export class AIAssistantService {
     return "general-automation";
   }
 
-  private extractEntities(text: string): string[] {
+  private extractEntities(_text: string): string[] {
     // Simulate entity extraction
     return [];
   }
@@ -714,9 +714,4 @@ export class AIAssistantService {
 
 // Export singleton instance
 export const aiAssistantService = new AIAssistantService();
-export type {
-  AIWorkflowSuggestion,
-  WorkflowAnalysis,
-  NaturalLanguageRequest,
-  ErrorDiagnosis,
-};
+// Export types moved to interface declarations to avoid conflicts

@@ -725,7 +725,9 @@ export class AIModelService {
     let evaluations = Array.from(this.evaluations.values());
 
     if (modelId) {
-      evaluations = evaluations.filter((eval) => eval.modelId === modelId);
+      evaluations = evaluations.filter(
+        (evaluation) => evaluation.modelId === modelId,
+      );
     }
 
     return evaluations.sort(

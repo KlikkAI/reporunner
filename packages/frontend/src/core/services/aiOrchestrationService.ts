@@ -485,7 +485,7 @@ export class AIOrchestrationService {
     }
 
     // Parallel execution optimization
-    const parallelGroups = this.identifyParallelExecutionGroups(optimized);
+    this.identifyParallelExecutionGroups(optimized);
 
     // Cost optimization
     await this.optimizeForCost(optimized);
@@ -565,7 +565,7 @@ export class AIOrchestrationService {
   private async executeNode(
     node: AIWorkflowNode,
     inputs: any,
-    execution: AIWorkflowExecution,
+    _execution: AIWorkflowExecution,
   ): Promise<AINodeExecution> {
     const nodeExecution: AINodeExecution = {
       nodeId: node.id,
@@ -660,7 +660,7 @@ export class AIOrchestrationService {
   private async callAIModel(
     model: AIModel,
     config: AINodeConfig,
-    inputs: any,
+    _inputs: any,
   ): Promise<AINodeOutput> {
     // This would integrate with actual AI model APIs
     // For now, we'll simulate the call
@@ -747,7 +747,7 @@ export class AIOrchestrationService {
     return bestModel.id !== currentModel.id ? bestModel.id : null;
   }
 
-  private scoreModel(model: AIModel, node: AIWorkflowNode): number {
+  private scoreModel(model: AIModel, _node: AIWorkflowNode): number {
     const performance = this.modelPerformanceHistory.get(model.id);
 
     // Base score from capabilities
@@ -801,7 +801,7 @@ export class AIOrchestrationService {
     return false;
   }
 
-  private hasPrivateAccess(modelId: string): boolean {
+  private hasPrivateAccess(_modelId: string): boolean {
     // Check if user has access to private models
     return true; // Simplified for demo
   }
@@ -843,23 +843,23 @@ export class AIOrchestrationService {
     return []; // Simplified for demo
   }
 
-  private async optimizeForCost(workflow: MultiModalWorkflow): Promise<void> {
+  private async optimizeForCost(_workflow: MultiModalWorkflow): Promise<void> {
     // Implement cost optimization strategies
   }
 
   private async optimizeForQuality(
-    workflow: MultiModalWorkflow,
+    _workflow: MultiModalWorkflow,
   ): Promise<void> {
     // Implement quality optimization strategies
   }
 
   private getTopologicalOrder(workflow: MultiModalWorkflow): string[] {
     // Implement topological sort based on dependencies
-    return workflow.nodes.map((n) => n.id); // Simplified for demo
+    return workflow.nodes.map((node) => node.id); // Simplified for demo
   }
 
   private async validateOutput(
-    output: AINodeOutput,
+    _output: AINodeOutput,
     config: AINodeConfig,
   ): Promise<{ isValid: boolean; errors: string[] }> {
     const errors: string[] = [];
@@ -871,7 +871,7 @@ export class AIOrchestrationService {
 
     // Apply validation rules
     if (config.validationRules) {
-      for (const rule of config.validationRules) {
+      for (const _rule of config.validationRules) {
         // Apply validation rule
       }
     }
@@ -883,8 +883,8 @@ export class AIOrchestrationService {
   }
 
   private async calculateQualityMetrics(
-    output: AINodeOutput,
-    config: AINodeConfig,
+    _output: AINodeOutput,
+    _config: AINodeConfig,
   ): Promise<QualityMetrics> {
     // Calculate quality metrics based on output and configuration
     return {
