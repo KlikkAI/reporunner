@@ -27,8 +27,7 @@ export interface DropValidation {
 }
 
 export const useContainerInteractions = () => {
-  const { getNodes, setNodes, getNode } = useReactFlow();
-  const { addNode, removeNode } = useLeanWorkflowStore();
+  const { getNodes, setNodes } = useReactFlow();
 
   const [draggedNode, setDraggedNode] = useState<Node | null>(null);
   const [hoveredContainer, setHoveredContainer] = useState<string | null>(null);
@@ -318,10 +317,10 @@ export const useContainerInteractions = () => {
         height: child.data?.height || 80,
       }));
 
-      const minX = Math.min(...childPositions.map((p) => p.x));
-      const minY = Math.min(...childPositions.map((p) => p.y));
-      const maxX = Math.max(...childPositions.map((p) => p.x + p.width));
-      const maxY = Math.max(...childPositions.map((p) => p.y + p.height));
+      const minX = Math.min(...childPositions.map((p: any) => p.x));
+      const minY = Math.min(...childPositions.map((p: any) => p.y));
+      const maxX = Math.max(...childPositions.map((p: any) => p.x + p.width));
+      const maxY = Math.max(...childPositions.map((p: any) => p.y + p.height));
 
       const padding = containerNode.data.padding || 20;
       const newWidth = Math.max(
@@ -414,7 +413,7 @@ function calculateContainerScore(
   return centerScore + depthScore;
 }
 
-function checkForCycles(targetContainerId: string, nodes: Node[]): boolean {
+function checkForCycles(_targetContainerId: string, _nodes: Node[]): boolean {
   // TODO: Implement cycle detection
   // This would check if adding a container to targetContainerId would create a circular dependency
   return false;

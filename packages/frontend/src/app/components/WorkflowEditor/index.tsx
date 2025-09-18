@@ -1267,22 +1267,37 @@ const WorkflowEditor: React.FC = () => {
       />
 
       {/* AI Assistant Panel */}
-      {isAIEnabled && (
+      {isAIEnabled && assistantPanelOpen && (
         <AIAssistantPanel
-          visible={assistantPanelOpen}
-          onClose={toggleAssistantPanel}
-          workflowNodes={localNodes}
-          workflowEdges={localEdges}
+          workflow={{
+            nodes: localNodes.map((node) => ({
+              id: node.id,
+              type: node.type || "",
+              position: node.position,
+              parameters: node.data?.parameters || {},
+              name: node.data?.name,
+            })),
+            connections: {},
+            name: "Current Workflow",
+          }}
+          onApplySuggestion={(suggestion) => {
+            // Handle suggestion application
+            console.log("Applying suggestion:", suggestion);
+          }}
+          onGenerateWorkflow={(workflow) => {
+            // Handle workflow generation
+            console.log("Generated workflow:", workflow);
+          }}
         />
       )}
 
       {/* Debug Panel */}
-      <DebugPanel
-        visible={isDebugPanelVisible}
-        onToggle={() => setIsDebugPanelVisible(!isDebugPanelVisible)}
-        position="left"
-        currentExecutionId={currentExecutionId}
-      />
+      {isDebugPanelVisible && (
+        <DebugPanel
+          workflowId={undefined}
+          executionId={currentExecutionId || undefined}
+        />
+      )}
 
       {/* Collaboration Panel */}
       <CollaborationPanel

@@ -323,8 +323,8 @@ export const ExecutionPanel: React.FC<ExecutionPanelProps> = ({
                       {execution.status.toUpperCase()}
                     </div>
                     <div className="text-xs text-gray-400 mt-1">
-                      {execution.startedAt &&
-                        new Date(execution.startedAt).toLocaleString()}
+                      {execution.startTime &&
+                        new Date(execution.startTime).toLocaleString()}
                     </div>
                   </div>
                   <div className="text-xs text-gray-500">

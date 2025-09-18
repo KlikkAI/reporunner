@@ -1,6 +1,6 @@
 // Define action interfaces locally
 type NodeExecutionContext = Record<string, any>;
-type NodeActionResult = { success: boolean; data?: any; error?: string; };
+type NodeActionResult = { success: boolean; data?: any; error?: string };
 
 interface PipelineStage {
   stageName: string;
@@ -38,7 +38,6 @@ export const mlPipelineActions = {
       pipelineConfig,
       stages,
       dataConfig,
-      modelConfig,
       deploymentConfig,
       monitoringConfig,
       experimentTracking,
@@ -184,51 +183,59 @@ export const mlPipelineActions = {
 
       return {
         success: true,
-        outputData: {
-          main: {
-            pipelineExecution,
-            summary: {
-              pipelineName: pipelineExecution.pipelineName,
-              status: pipelineExecution.status,
-              totalDuration: pipelineExecution.totalDuration,
-              stagesCompleted: pipelineExecution.stages.filter(
-                (s) => s.status === "completed",
-              ).length,
-              totalStages: pipelineExecution.stages.length,
-              overallMetrics: pipelineExecution.overallMetrics,
+        data: [
+          {
+            main: {
+              pipelineExecution,
+              summary: {
+                pipelineName: pipelineExecution.pipelineName,
+                status: pipelineExecution.status,
+                totalDuration: pipelineExecution.totalDuration,
+                stagesCompleted: pipelineExecution.stages.filter(
+                  (s) => s.status === "completed",
+                ).length,
+                totalStages: pipelineExecution.stages.length,
+                overallMetrics: pipelineExecution.overallMetrics,
+              },
+              stageResults,
             },
-            stageResults,
+            ai_model: stageResults.trainedModel || null,
+            deployment_info: deploymentInfo,
+            pipeline_metrics: {
+              executionId: pipelineExecution.id,
+              metrics: pipelineExecution.overallMetrics,
+              stages: pipelineExecution.stages.map((stage) => ({
+                name: stage.stageName,
+                status: stage.status,
+                metrics: stage.metrics,
+                duration:
+                  stage.endTime && stage.startTime
+                    ? stage.endTime.getTime() - stage.startTime.getTime()
+                    : 0,
+              })),
+            },
           },
-          ai_model: stageResults.trainedModel || null,
-          deployment_info: deploymentInfo,
-          pipeline_metrics: {
-            executionId: pipelineExecution.id,
-            metrics: pipelineExecution.overallMetrics,
-            stages: pipelineExecution.stages.map((stage) => ({
-              name: stage.stageName,
-              status: stage.status,
-              metrics: stage.metrics,
-              duration:
-                stage.endTime && stage.startTime
-                  ? stage.endTime.getTime() - stage.startTime.getTime()
-                  : 0,
-            })),
-          },
+        ],
+        metadata: {
+          executionTime: Date.now() - context.startTime,
         },
-        executionTime: Date.now() - context.startTime,
       };
     } catch (error: any) {
       return {
         success: false,
         error: error.message || "Pipeline execution failed",
-        outputData: {
-          main: {
-            error: error.message,
-            pipelineName: pipelineConfig.pipelineName,
-            timestamp: new Date().toISOString(),
+        data: [
+          {
+            main: {
+              error: error.message,
+              pipelineName: pipelineConfig.pipelineName,
+              timestamp: new Date().toISOString(),
+            },
           },
+        ],
+        metadata: {
+          executionTime: Date.now() - context.startTime,
         },
-        executionTime: Date.now() - context.startTime,
       };
     }
   },
@@ -248,17 +255,21 @@ export const mlPipelineActions = {
 
     return {
       success: allValid,
-      outputData: {
-        main: {
-          validation,
-          estimatedDuration: estimatePipelineDuration(stages),
-          resourceRequirements: estimateResourceRequirements(stages),
-          message: allValid
-            ? "Pipeline configuration is valid"
-            : "Pipeline has validation errors",
+      data: [
+        {
+          main: {
+            validation,
+            estimatedDuration: estimatePipelineDuration(stages),
+            resourceRequirements: estimateResourceRequirements(stages),
+            message: allValid
+              ? "Pipeline configuration is valid"
+              : "Pipeline has validation errors",
+          },
         },
+      ],
+      metadata: {
+        executionTime: Date.now() - context.startTime,
       },
-      executionTime: Date.now() - context.startTime,
     };
   },
 };
@@ -440,7 +451,7 @@ async function executeDAGPipeline(
 // Stage execution function
 async function executeStage(
   stage: PipelineStage,
-  context: Record<string, any>,
+  _context: Record<string, any>,
 ): Promise<any> {
   // Simulate stage execution based on stage type
   const delay = Math.random() * 3000 + 1000; // 1-4 seconds
@@ -449,27 +460,27 @@ async function executeStage(
 
   switch (stage.stageType) {
     case "data_preprocessing":
-      return executeDataPreprocessing(stage, context);
+      return executeDataPreprocessing(stage, _context);
     case "feature_engineering":
-      return executeFeatureEngineering(stage, context);
+      return executeFeatureEngineering(stage, _context);
     case "data_validation":
-      return executeDataValidation(stage, context);
+      return executeDataValidation(stage, _context);
     case "model_training":
-      return executeModelTraining(stage, context);
+      return executeModelTraining(stage, _context);
     case "model_evaluation":
-      return executeModelEvaluation(stage, context);
+      return executeModelEvaluation(stage, _context);
     case "model_validation":
-      return executeModelValidation(stage, context);
+      return executeModelValidation(stage, _context);
     case "model_deployment":
-      return executeModelDeployment(stage, context);
+      return executeModelDeployment(stage, _context);
     case "data_drift_detection":
-      return executeDataDriftDetection(stage, context);
+      return executeDataDriftDetection(stage, _context);
     case "model_monitoring":
-      return executeModelMonitoring(stage, context);
+      return executeModelMonitoring(stage, _context);
     case "ab_testing":
-      return executeABTesting(stage, context);
+      return executeABTesting(stage, _context);
     case "custom_script":
-      return executeCustomScript(stage, context);
+      return executeCustomScript(stage, _context);
     default:
       throw new Error(`Unknown stage type: ${stage.stageType}`);
   }
@@ -478,7 +489,7 @@ async function executeStage(
 // Stage-specific execution functions
 function executeDataPreprocessing(
   stage: PipelineStage,
-  context: Record<string, any>,
+  _context: Record<string, any>,
 ): any {
   stage.metrics.rowsProcessed = Array.isArray(context.inputData)
     ? context.inputData.length
@@ -495,7 +506,7 @@ function executeDataPreprocessing(
 
 function executeFeatureEngineering(
   stage: PipelineStage,
-  context: Record<string, any>,
+  _context: Record<string, any>,
 ): any {
   stage.metrics.featuresCreated = 15;
   stage.metrics.featuresSelected = 10;
@@ -514,7 +525,7 @@ function executeFeatureEngineering(
 
 function executeDataValidation(
   stage: PipelineStage,
-  context: Record<string, any>,
+  _context: Record<string, any>,
 ): any {
   stage.metrics.validationPassed = true;
   stage.metrics.qualityScore = 0.95;
@@ -530,7 +541,7 @@ function executeDataValidation(
 
 function executeModelTraining(
   stage: PipelineStage,
-  context: Record<string, any>,
+  _context: Record<string, any>,
 ): any {
   stage.metrics.trainingAccuracy = 0.92;
   stage.metrics.validationAccuracy = 0.89;
@@ -550,7 +561,7 @@ function executeModelTraining(
 
 function executeModelEvaluation(
   stage: PipelineStage,
-  context: Record<string, any>,
+  _context: Record<string, any>,
 ): any {
   stage.metrics.testAccuracy = 0.87;
   stage.metrics.precision = 0.88;
@@ -572,7 +583,7 @@ function executeModelEvaluation(
 
 function executeModelValidation(
   stage: PipelineStage,
-  context: Record<string, any>,
+  _context: Record<string, any>,
 ): any {
   stage.metrics.validationPassed = true;
   stage.metrics.biasScore = 0.05;
@@ -591,7 +602,7 @@ function executeModelValidation(
 
 function executeModelDeployment(
   stage: PipelineStage,
-  context: Record<string, any>,
+  _context: Record<string, any>,
 ): any {
   stage.metrics.deploymentSuccess = true;
   stage.metrics.deploymentTime = Math.random() * 300000 + 60000; // 1-6 minutes
@@ -607,7 +618,7 @@ function executeModelDeployment(
 
 function executeDataDriftDetection(
   stage: PipelineStage,
-  context: Record<string, any>,
+  _context: Record<string, any>,
 ): any {
   stage.metrics.driftDetected = false;
   stage.metrics.driftScore = 0.02;
@@ -626,7 +637,7 @@ function executeDataDriftDetection(
 
 function executeModelMonitoring(
   stage: PipelineStage,
-  context: Record<string, any>,
+  _context: Record<string, any>,
 ): any {
   stage.metrics.monitoringActive = true;
   stage.metrics.alertsConfigured = 5;
@@ -644,7 +655,7 @@ function executeModelMonitoring(
 
 function executeABTesting(
   stage: PipelineStage,
-  context: Record<string, any>,
+  _context: Record<string, any>,
 ): any {
   stage.metrics.testActive = true;
   stage.metrics.trafficSplit = 0.1;
@@ -663,7 +674,7 @@ function executeABTesting(
 
 function executeCustomScript(
   stage: PipelineStage,
-  context: Record<string, any>,
+  _context: Record<string, any>,
 ): any {
   stage.metrics.scriptExecuted = true;
   stage.metrics.executionTime = Math.random() * 60000 + 5000; // 5-65 seconds
@@ -682,7 +693,7 @@ function generateExecutionId(): string {
 
 async function retryStage(
   stage: PipelineStage,
-  context: Record<string, any>,
+  _context: Record<string, any>,
 ): Promise<boolean> {
   for (let attempt = 1; attempt <= stage.retryPolicy.maxRetries; attempt++) {
     try {
@@ -731,7 +742,7 @@ function groupStagesByDependencies(stages: PipelineStage[]): PipelineStage[][] {
 
 function evaluateStageConditions(
   stage: PipelineStage,
-  context: Record<string, any>,
+  _context: Record<string, any>,
 ): boolean {
   // Simple condition evaluation - in real implementation would be more sophisticated
   if (stage.stageConfig.condition) {
@@ -818,15 +829,15 @@ async function setupMonitoring(
 }
 
 async function initializeExperiment(
-  config: any,
-  pipeline: PipelineExecution,
+  _config: any,
+  _pipeline: PipelineExecution,
 ): Promise<string> {
   // Simulate experiment initialization
   return `experiment_${Date.now()}`;
 }
 
 async function finalizeExperiment(
-  config: any,
+  _config: any,
   experimentId: string,
   metrics: Record<string, any>,
 ): Promise<void> {

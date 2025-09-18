@@ -7,7 +7,6 @@
  */
 
 import type { XYPosition, Node, Edge } from "reactflow";
-import type { WorkflowNodeInstance } from "@/core/nodes/types";
 import { nodeRegistry } from "@/core/nodes";
 
 export interface ConnectionSuggestion {
@@ -34,7 +33,6 @@ export interface AutoConnectOptions {
 }
 
 export class IntelligentAutoConnectService {
-  private readonly maxSearchDistance = 500;
   private readonly defaultOptions: Required<AutoConnectOptions> = {
     maxDistance: 300,
     preferredDirection: "horizontal",
@@ -182,7 +180,7 @@ export class IntelligentAutoConnectService {
   private getCandidateNodes(
     dropPosition: XYPosition,
     existingNodes: Node[],
-    existingEdges: Edge[],
+    _existingEdges: Edge[],
     options: Required<AutoConnectOptions>,
   ): Node[] {
     return existingNodes.filter((node) => {

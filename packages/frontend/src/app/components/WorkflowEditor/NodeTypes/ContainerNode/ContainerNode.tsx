@@ -179,7 +179,7 @@ export const ContainerNode: React.FC<ContainerNodeProps> = ({
   data,
   selected = false,
 }) => {
-  const { getNodes, setNodes } = useReactFlow();
+  const { setNodes } = useReactFlow();
   const { addNode } = useLeanWorkflowStore();
   const [isDragOver, setIsDragOver] = useState(false);
 
@@ -273,7 +273,7 @@ export const ContainerNode: React.FC<ContainerNodeProps> = ({
 
   const handleDragLeave = useCallback((event: React.DragEvent) => {
     // Only hide if leaving the container entirely
-    if (!event.currentTarget.contains(event.relatedTarget as Node)) {
+    if (!event.currentTarget.contains(event.relatedTarget as HTMLElement)) {
       setIsDragOver(false);
     }
   }, []);
@@ -357,9 +357,9 @@ export const ContainerNode: React.FC<ContainerNodeProps> = ({
           position={handle.position}
           id={handle.id}
           className="!bg-gray-600 !border-2 !border-gray-400"
-          style={handle.style}
+          style={"style" in handle ? handle.style : undefined}
         >
-          {handle.label && (
+          {"label" in handle && handle.label && (
             <div className="absolute top-0 left-full ml-2 text-xs text-gray-400 whitespace-nowrap">
               {handle.label}
             </div>

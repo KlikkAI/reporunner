@@ -1,6 +1,6 @@
 // Define action interfaces locally
 type NodeExecutionContext = Record<string, any>;
-type NodeActionResult = { success: boolean; data?: any; error?: string; };
+type NodeActionResult = { success: boolean; data?: any; error?: string };
 import { aiModelService } from "@/core/services/aiModelService";
 
 export const modelTrainerActions = {
@@ -258,39 +258,47 @@ export const modelTrainerActions = {
       // Return training job information and model metadata
       return {
         success: true,
-        outputData: {
-          main: {
-            model: {
-              id: model.id,
-              name: model.name,
-              type: model.type,
-              status: model.status,
+        data: [
+          {
+            main: {
+              model: {
+                id: model.id,
+                name: model.name,
+                type: model.type,
+                status: model.status,
+              },
+              training: trainingMetadata,
+              message: `Training started for model '${model.name}' with job ID: ${trainingJob.id}`,
             },
-            training: trainingMetadata,
-            message: `Training started for model '${model.name}' with job ID: ${trainingJob.id}`,
+            ai_model: model,
+            training_metrics: {
+              jobId: trainingJob.id,
+              status: trainingJob.status,
+              progress: trainingJob.progress,
+              metrics: trainingJob.metrics,
+              logs: trainingJob.logs,
+            },
           },
-          ai_model: model,
-          training_metrics: {
-            jobId: trainingJob.id,
-            status: trainingJob.status,
-            progress: trainingJob.progress,
-            metrics: trainingJob.metrics,
-            logs: trainingJob.logs,
-          },
+        ],
+        metadata: {
+          executionTime: Date.now() - context.startTime,
         },
-        executionTime: Date.now() - context.startTime,
       };
     } catch (error: any) {
       return {
         success: false,
         error: error.message || "Failed to start model training",
-        outputData: {
-          main: {
-            error: error.message,
-            timestamp: new Date().toISOString(),
+        data: [
+          {
+            main: {
+              error: error.message,
+              timestamp: new Date().toISOString(),
+            },
           },
+        ],
+        metadata: {
+          executionTime: Date.now() - context.startTime,
         },
-        executionTime: Date.now() - context.startTime,
       };
     }
   },
@@ -309,15 +317,19 @@ export const modelTrainerActions = {
 
     return {
       success: allValid,
-      outputData: {
-        main: {
-          validation,
-          message: allValid
-            ? "Configuration is valid and ready for training"
-            : "Configuration has validation errors",
+      data: [
+        {
+          main: {
+            validation,
+            message: allValid
+              ? "Configuration is valid and ready for training"
+              : "Configuration has validation errors",
+          },
         },
+      ],
+      metadata: {
+        executionTime: Date.now() - context.startTime,
       },
-      executionTime: Date.now() - context.startTime,
     };
   },
 };

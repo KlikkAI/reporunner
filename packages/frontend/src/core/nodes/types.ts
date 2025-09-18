@@ -244,6 +244,14 @@ export interface INodeProperty {
       }>;
     };
   };
+
+  // Additional properties used in enhanced property renderer
+  collectionSchema?: any;
+  label?: string;
+  maxLength?: number;
+  minLength?: number;
+  pattern?: string;
+  expressionSupport?: "none" | "full" | "partial";
 }
 
 export interface INodeTypeDescription {
@@ -414,4 +422,39 @@ export interface WorkflowDefinition {
 // Extended node data for runtime (includes static definition)
 export interface RuntimeNode extends WorkflowNodeInstance {
   typeDefinition: INodeTypeDescription;
+}
+
+// Re-export types from dynamic properties and integration modules
+export type {
+  NodeProperty,
+  EnhancedIntegrationNodeType,
+  PropertyFormState,
+  PropertyValue,
+  PropertyType,
+  PropertyOption,
+  DisplayOptions,
+  TypeOptions,
+  ValidationRule,
+  CollectionValue,
+  NodePropertyGroup,
+  DynamicNodeConfiguration,
+  PropertyEvaluationContext,
+  ConditionalPropertyResult,
+} from "../types/dynamicProperties";
+
+export type {
+  CredentialRequirement,
+  Integration,
+  IntegrationNodeType,
+  NodeExecutionContext,
+  NodeExecutionResult,
+  NodeDefinition,
+} from "../types/integration";
+
+// Node action result interface
+export interface NodeActionResult {
+  success: boolean;
+  data?: any[];
+  error?: string | { message: string; code?: string; details?: any };
+  metadata?: Record<string, any>;
 }

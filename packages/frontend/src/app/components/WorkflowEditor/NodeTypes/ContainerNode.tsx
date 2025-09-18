@@ -5,43 +5,37 @@
  * complex execution patterns like loops, parallel processing, and conditionals.
  */
 
-import React, { useState, useCallback, useRef } from 'react';
-import { Handle, Position, NodeProps } from 'reactflow';
+import React, { useState, useCallback, useRef } from "react";
+import { Handle, Position, NodeProps } from "reactflow";
 import {
-  Card,
   Button,
   Space,
   Tooltip,
   Badge,
   Dropdown,
-  Menu,
   Modal,
   Form,
   Input,
   Select,
   InputNumber,
-  Switch,
-} from 'antd';
+} from "antd";
 import {
   PlayCircleOutlined,
   PauseCircleOutlined,
   StopOutlined,
   SettingOutlined,
-  PlusOutlined,
-  MinusOutlined,
   ExpandOutlined,
   CompressOutlined,
   MoreOutlined,
   DeleteOutlined,
-  EditOutlined,
-} from '@ant-design/icons';
-import { cn } from '@/design-system/utils';
+} from "@ant-design/icons";
+import { cn } from "@/design-system/utils";
 import type {
   ContainerNodeConfig,
   ContainerExecutionState,
   ContainerResizeEvent,
   ContainerDropEvent,
-} from '@/core/types/containerNodes';
+} from "@/core/types/containerNodes";
 
 interface ContainerNodeProps extends NodeProps {
   data: {
@@ -56,66 +50,73 @@ interface ContainerNodeProps extends NodeProps {
 }
 
 const ContainerNode: React.FC<ContainerNodeProps> = ({ data, selected }) => {
-  const { config, state, onResize, onDrop, onConfigChange, onExecute, onStop } = data;
+  const { config, state, onResize, onDrop, onConfigChange, onExecute, onStop } =
+    data;
   const [isResizing, setIsResizing] = useState(false);
   const [isConfigModalOpen, setIsConfigModalOpen] = useState(false);
   const [configForm] = Form.useForm();
   const resizeRef = useRef<HTMLDivElement>(null);
 
-  const handleMouseDown = useCallback((e: React.MouseEvent) => {
-    if (e.target !== resizeRef.current) return;
-    
-    e.preventDefault();
-    setIsResizing(true);
-    
-    const startX = e.clientX;
-    const startY = e.clientY;
-    const startWidth = config.dimensions.width;
-    const startHeight = config.dimensions.height;
+  const handleMouseDown = useCallback(
+    (e: React.MouseEvent) => {
+      if (e.target !== resizeRef.current) return;
 
-    const handleMouseMove = (e: MouseEvent) => {
-      const deltaX = e.clientX - startX;
-      const deltaY = e.clientY - startY;
-      
-      const newWidth = Math.max(200, startWidth + deltaX);
-      const newHeight = Math.max(150, startHeight + deltaY);
-      
-      onResize?.({
+      e.preventDefault();
+      setIsResizing(true);
+
+      const startX = e.clientX;
+      const startY = e.clientY;
+      const startWidth = config.dimensions.width;
+      const startHeight = config.dimensions.height;
+
+      const handleMouseMove = (e: MouseEvent) => {
+        const deltaX = e.clientX - startX;
+        const deltaY = e.clientY - startY;
+
+        const newWidth = Math.max(200, startWidth + deltaX);
+        const newHeight = Math.max(150, startHeight + deltaY);
+
+        onResize?.({
+          containerId: config.id,
+          newDimensions: { width: newWidth, height: newHeight },
+          childrenPositions: [], // Would be calculated based on children
+        });
+      };
+
+      const handleMouseUp = () => {
+        setIsResizing(false);
+        document.removeEventListener("mousemove", handleMouseMove);
+        document.removeEventListener("mouseup", handleMouseUp);
+      };
+
+      document.addEventListener("mousemove", handleMouseMove);
+      document.addEventListener("mouseup", handleMouseUp);
+    },
+    [config, onResize],
+  );
+
+  const handleDrop = useCallback(
+    (e: React.DragEvent) => {
+      e.preventDefault();
+
+      const nodeData = e.dataTransfer.getData("application/reactflow");
+      if (!nodeData) return;
+
+      const nodeInfo = JSON.parse(nodeData);
+      const rect = e.currentTarget.getBoundingClientRect();
+      const position = {
+        x: e.clientX - rect.left,
+        y: e.clientY - rect.top,
+      };
+
+      onDrop?.({
         containerId: config.id,
-        newDimensions: { width: newWidth, height: newHeight },
-        childrenPositions: [], // Would be calculated based on children
+        nodeId: nodeInfo.id,
+        position,
       });
-    };
-
-    const handleMouseUp = () => {
-      setIsResizing(false);
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleMouseUp);
-    };
-
-    document.addEventListener('mousemove', handleMouseMove);
-    document.addEventListener('mouseup', handleMouseUp);
-  }, [config, onResize]);
-
-  const handleDrop = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    
-    const nodeData = e.dataTransfer.getData('application/reactflow');
-    if (!nodeData) return;
-
-    const nodeInfo = JSON.parse(nodeData);
-    const rect = e.currentTarget.getBoundingClientRect();
-    const position = {
-      x: e.clientX - rect.left,
-      y: e.clientY - rect.top,
-    };
-
-    onDrop?.({
-      containerId: config.id,
-      nodeId: nodeInfo.id,
-      position,
-    });
-  }, [config.id, onDrop]);
+    },
+    [config.id, onDrop],
+  );
 
   const handleExecute = useCallback(() => {
     onExecute?.(config.id);
@@ -125,53 +126,60 @@ const ContainerNode: React.FC<ContainerNodeProps> = ({ data, selected }) => {
     onStop?.(config.id);
   }, [config.id, onStop]);
 
-  const handleConfigChange = useCallback((values: any) => {
-    const newConfig = { ...config, executionConfig: { ...config.executionConfig, ...values } };
-    onConfigChange?.(newConfig);
-    setIsConfigModalOpen(false);
-  }, [config, onConfigChange]);
-
-  const getStatusColor = () => {
-    switch (state.status) {
-      case 'running': return '#22c55e';
-      case 'completed': return '#3b82f6';
-      case 'failed': return '#ef4444';
-      case 'paused': return '#f59e0b';
-      default: return '#6b7280';
-    }
-  };
+  const handleConfigChange = useCallback(
+    (values: any) => {
+      const newConfig = {
+        ...config,
+        executionConfig: { ...config.executionConfig, ...values },
+      };
+      onConfigChange?.(newConfig);
+      setIsConfigModalOpen(false);
+    },
+    [config, onConfigChange],
+  );
 
   const getStatusIcon = () => {
     switch (state.status) {
-      case 'running': return <PlayCircleOutlined className="text-green-500" />;
-      case 'completed': return <PlayCircleOutlined className="text-blue-500" />;
-      case 'failed': return <StopOutlined className="text-red-500" />;
-      case 'paused': return <PauseCircleOutlined className="text-yellow-500" />;
-      default: return <PlayCircleOutlined className="text-gray-500" />;
+      case "running":
+        return <PlayCircleOutlined className="text-green-500" />;
+      case "completed":
+        return <PlayCircleOutlined className="text-blue-500" />;
+      case "failed":
+        return <StopOutlined className="text-red-500" />;
+      case "paused":
+        return <PauseCircleOutlined className="text-yellow-500" />;
+      default:
+        return <PlayCircleOutlined className="text-gray-500" />;
     }
   };
 
   const getContainerIcon = () => {
     switch (config.type) {
-      case 'loop': return '🔄';
-      case 'parallel': return '⚡';
-      case 'conditional': return '❓';
-      case 'try-catch': return '🛡️';
-      case 'batch': return '📦';
-      default: return '📁';
+      case "loop":
+        return "🔄";
+      case "parallel":
+        return "⚡";
+      case "conditional":
+        return "❓";
+      case "try-catch":
+        return "🛡️";
+      case "batch":
+        return "📦";
+      default:
+        return "📁";
     }
   };
 
   const menuItems = [
     {
-      key: 'config',
-      label: 'Configure',
+      key: "config",
+      label: "Configure",
       icon: <SettingOutlined />,
       onClick: () => setIsConfigModalOpen(true),
     },
     {
-      key: 'expand',
-      label: 'Expand',
+      key: "expand",
+      label: "Expand",
       icon: <ExpandOutlined />,
       onClick: () => {
         onResize?.({
@@ -182,8 +190,8 @@ const ContainerNode: React.FC<ContainerNodeProps> = ({ data, selected }) => {
       },
     },
     {
-      key: 'compress',
-      label: 'Compress',
+      key: "compress",
+      label: "Compress",
       icon: <CompressOutlined />,
       onClick: () => {
         onResize?.({
@@ -194,11 +202,11 @@ const ContainerNode: React.FC<ContainerNodeProps> = ({ data, selected }) => {
       },
     },
     {
-      type: 'divider' as const,
+      type: "divider" as const,
     },
     {
-      key: 'delete',
-      label: 'Delete Container',
+      key: "delete",
+      label: "Delete Container",
       icon: <DeleteOutlined />,
       danger: true,
       onClick: () => {
@@ -211,9 +219,9 @@ const ContainerNode: React.FC<ContainerNodeProps> = ({ data, selected }) => {
     <>
       <div
         className={cn(
-          'relative border-2 rounded-lg transition-all duration-200',
-          selected && 'ring-2 ring-blue-500 ring-opacity-50',
-          isResizing && 'cursor-nw-resize'
+          "relative border-2 rounded-lg transition-all duration-200",
+          selected && "ring-2 ring-blue-500 ring-opacity-50",
+          isResizing && "cursor-nw-resize",
         )}
         style={{
           width: config.dimensions.width,
@@ -233,16 +241,18 @@ const ContainerNode: React.FC<ContainerNodeProps> = ({ data, selected }) => {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <span className="text-lg">{getContainerIcon()}</span>
-              <span className="text-sm font-semibold text-white">{config.name}</span>
+              <span className="text-sm font-semibold text-white">
+                {config.name}
+              </span>
               <Badge
                 count={config.children.length}
                 size="small"
-                style={{ backgroundColor: '#1890ff' }}
+                style={{ backgroundColor: "#1890ff" }}
               />
             </div>
-            
+
             <Space size="small">
-              {state.status === 'running' ? (
+              {state.status === "running" ? (
                 <Tooltip title="Stop execution">
                   <Button
                     type="text"
@@ -263,10 +273,10 @@ const ContainerNode: React.FC<ContainerNodeProps> = ({ data, selected }) => {
                   />
                 </Tooltip>
               )}
-              
+
               <Dropdown
                 menu={{ items: menuItems }}
-                trigger={['click']}
+                trigger={["click"]}
                 placement="bottomRight"
               >
                 <Button
@@ -287,10 +297,10 @@ const ContainerNode: React.FC<ContainerNodeProps> = ({ data, selected }) => {
               {getStatusIcon()}
               <span className="text-gray-300 capitalize">{state.status}</span>
             </div>
-            
+
             {state.currentIteration !== undefined && (
               <div className="text-gray-400">
-                {state.currentIteration}/{state.totalIterations || '∞'}
+                {state.currentIteration}/{state.totalIterations || "∞"}
               </div>
             )}
           </div>
@@ -360,7 +370,7 @@ const ContainerNode: React.FC<ContainerNodeProps> = ({ data, selected }) => {
           initialValues={config.executionConfig}
           onFinish={handleConfigChange}
         >
-          {config.type === 'loop' && (
+          {config.type === "loop" && (
             <>
               <Form.Item name="loopType" label="Loop Type">
                 <Select>
@@ -369,23 +379,23 @@ const ContainerNode: React.FC<ContainerNodeProps> = ({ data, selected }) => {
                   <Select.Option value="foreach">For Each</Select.Option>
                 </Select>
               </Form.Item>
-              
+
               <Form.Item name="loopLimit" label="Maximum Iterations">
                 <InputNumber min={1} max={1000} />
               </Form.Item>
-              
+
               <Form.Item name="loopDelay" label="Delay Between Iterations (ms)">
                 <InputNumber min={0} max={10000} />
               </Form.Item>
             </>
           )}
 
-          {config.type === 'parallel' && (
+          {config.type === "parallel" && (
             <>
               <Form.Item name="maxConcurrency" label="Maximum Concurrency">
                 <InputNumber min={1} max={20} />
               </Form.Item>
-              
+
               <Form.Item name="parallelStrategy" label="Execution Strategy">
                 <Select>
                   <Select.Option value="all">Wait for All</Select.Option>
@@ -396,7 +406,7 @@ const ContainerNode: React.FC<ContainerNodeProps> = ({ data, selected }) => {
             </>
           )}
 
-          {config.type === 'conditional' && (
+          {config.type === "conditional" && (
             <Form.Item name="conditionExpression" label="Condition Expression">
               <Input.TextArea
                 placeholder="Enter JavaScript expression, e.g., $input.value > 10"
@@ -405,36 +415,38 @@ const ContainerNode: React.FC<ContainerNodeProps> = ({ data, selected }) => {
             </Form.Item>
           )}
 
-          {config.type === 'try-catch' && (
+          {config.type === "try-catch" && (
             <>
               <Form.Item name="retryAttempts" label="Retry Attempts">
                 <InputNumber min={0} max={10} />
               </Form.Item>
-              
+
               <Form.Item name="retryDelay" label="Retry Delay (ms)">
                 <InputNumber min={0} max={10000} />
               </Form.Item>
-              
+
               <Form.Item name="errorHandling" label="Error Handling">
                 <Select>
                   <Select.Option value="stop">Stop on Error</Select.Option>
-                  <Select.Option value="continue">Continue on Error</Select.Option>
+                  <Select.Option value="continue">
+                    Continue on Error
+                  </Select.Option>
                   <Select.Option value="retry">Retry on Error</Select.Option>
                 </Select>
               </Form.Item>
             </>
           )}
 
-          {config.type === 'batch' && (
+          {config.type === "batch" && (
             <>
               <Form.Item name="batchSize" label="Batch Size">
                 <InputNumber min={1} max={100} />
               </Form.Item>
-              
+
               <Form.Item name="batchDelay" label="Batch Delay (ms)">
                 <InputNumber min={0} max={10000} />
               </Form.Item>
-              
+
               <Form.Item name="batchStrategy" label="Batch Strategy">
                 <Select>
                   <Select.Option value="sequential">Sequential</Select.Option>

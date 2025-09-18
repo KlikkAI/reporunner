@@ -486,7 +486,7 @@ export class EnhancedPropertyEvaluator {
   ): PropertyValue | undefined {
     // Use existing default if available
     if (property.default !== undefined) {
-      return property.default;
+      return property.default as PropertyValue;
     }
 
     // Generate smart defaults based on property type

@@ -46,7 +46,7 @@ import {
   CheckCircleOutlined,
 } from "@ant-design/icons";
 import { cn } from "@/design-system/utils";
-import { colors, } from "@/design-system/tokens";
+import { colors } from "@/design-system/tokens";
 import {
   advancedTriggerSystem,
   type TriggerConfiguration,
@@ -305,10 +305,7 @@ export const TriggerPanel: React.FC<TriggerPanelProps> = ({
 
   const handleTestTrigger = async (triggerId: string, testData?: any) => {
     try {
-      const event = await advancedTriggerSystem.testTrigger(
-        triggerId,
-        testData,
-      );
+      await advancedTriggerSystem.testTrigger(triggerId, testData);
       message.success("Trigger test completed");
       loadRecentEvents();
       setTestModalVisible(false);
@@ -801,10 +798,10 @@ export const TriggerPanel: React.FC<TriggerPanelProps> = ({
                           <pre
                             style={{
                               marginTop: 8,
-                              background: colors.red[50],
+                              background: colors.error[50],
                               padding: 12,
                               borderRadius: 4,
-                              color: colors.red[600],
+                              color: colors.error[600],
                             }}
                           >
                             {event.error}
