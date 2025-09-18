@@ -16,22 +16,25 @@ export const mlPipelineNode: EnhancedIntegrationNodeType = {
     properties: mlPipelineProperties,
     credentials: mlPipelineCredentials,
     polling: {
-      active: true,
-      interval: 10000, // Check pipeline status every 10 seconds
+      enabled: true,
+      defaultInterval: 10000, // Check pipeline status every 10 seconds
     },
   },
   inputs: [
     {
+      name: "main",
       type: "main",
       displayName: "Raw Data",
       required: true,
     },
     {
+      name: "model",
       type: "ai_model",
       displayName: "Pre-trained Model",
       required: false,
     },
     {
+      name: "config",
       type: "main",
       displayName: "Pipeline Config",
       required: false,
@@ -39,18 +42,22 @@ export const mlPipelineNode: EnhancedIntegrationNodeType = {
   ],
   outputs: [
     {
+      name: "results",
       type: "main",
       displayName: "Pipeline Results",
     },
     {
+      name: "model",
       type: "ai_model",
       displayName: "Trained Model",
     },
     {
+      name: "deployment",
       type: "main",
       displayName: "Deployment Info",
     },
     {
+      name: "metrics",
       type: "main",
       displayName: "Pipeline Metrics",
     },

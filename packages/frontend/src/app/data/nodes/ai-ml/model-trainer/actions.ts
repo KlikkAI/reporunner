@@ -1,6 +1,11 @@
 // Define action interfaces locally
 type NodeExecutionContext = Record<string, any>;
-type NodeActionResult = { success: boolean; data?: any; error?: string };
+type NodeActionResult = {
+  success: boolean;
+  data?: any[];
+  error?: string | { message: string; code?: string; details?: any };
+  metadata?: Record<string, any>;
+};
 import { aiModelService } from "@/core/services/aiModelService";
 
 export const modelTrainerActions = {
@@ -46,7 +51,7 @@ export const modelTrainerActions = {
           modelConfig.description ||
           `${modelConfig.modelType} model trained on ${inputData.length} samples`,
         type: modelConfig.modelType,
-        provider: "custom",
+        provider: "custom" as const,
         version: "1.0.0",
         status: "draft" as const,
         configuration: {

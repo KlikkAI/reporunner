@@ -27,6 +27,12 @@ export interface PropertyOption {
   description?: string
   action?: string
   type?: string
+  required?: boolean
+  default?: unknown
+  placeholder?: string
+  options?: PropertyOption[]
+  values?: unknown
+  typeOptions?: TypeOptions
 }
 
 export interface DisplayOptions {

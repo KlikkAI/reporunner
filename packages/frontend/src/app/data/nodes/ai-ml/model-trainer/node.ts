@@ -16,17 +16,19 @@ export const modelTrainerNode: EnhancedIntegrationNodeType = {
     properties: modelTrainerProperties,
     credentials: modelTrainerCredentials,
     polling: {
-      active: true,
-      interval: 5000, // Check training status every 5 seconds
+      enabled: true,
+      defaultInterval: 5000, // Check training status every 5 seconds
     },
   },
   inputs: [
     {
+      name: "data",
       type: "main",
       displayName: "Training Data",
       required: true,
     },
     {
+      name: "dataset",
       type: "ai_dataset",
       displayName: "Dataset",
       required: false,
@@ -34,14 +36,17 @@ export const modelTrainerNode: EnhancedIntegrationNodeType = {
   ],
   outputs: [
     {
+      name: "model",
       type: "main",
       displayName: "Trained Model",
     },
     {
+      name: "ai_model",
       type: "ai_model",
       displayName: "Model Output",
     },
     {
+      name: "metrics",
       type: "main",
       displayName: "Training Metrics",
     },
