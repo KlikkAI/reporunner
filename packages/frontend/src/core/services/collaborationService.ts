@@ -476,7 +476,7 @@ export class CollaborationService {
    */
   private transformOperation(
     operation: CollaborationOperation,
-    conflictingOperation: CollaborationOperation,
+    _conflictingOperation: CollaborationOperation,
   ): CollaborationOperation {
     // Use logConfig to avoid unused variable warnings in constants
     this.logConfig();

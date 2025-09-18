@@ -91,7 +91,7 @@ export const modelTrainerActions = {
             fields: [
               {
                 name: dataConfig.inputColumn,
-                type: "string",
+                type: "string" as const,
                 required: true,
                 description: "Input data for training",
               },
@@ -102,7 +102,7 @@ export const modelTrainerActions = {
             },
           },
           outputSchema: {
-            type: "text",
+            type: "text" as const,
             format: "json",
             fields: [
               {
@@ -113,7 +113,7 @@ export const modelTrainerActions = {
               },
               {
                 name: "confidence",
-                type: "number",
+                type: "number" as const,
                 required: true,
                 description: "Prediction confidence",
               },
@@ -140,15 +140,15 @@ export const modelTrainerActions = {
           dataset: {
             id: `dataset_${Date.now()}`,
             name: "Training Dataset",
-            source: "workflow",
+            source: "upload" as const,
             location: "workflow_input",
-            format: "json",
+            format: "json" as const,
             size: JSON.stringify(inputData).length,
             samples: inputData.length,
             features: Object.keys(firstRow).length,
             preprocessingSteps: [
               {
-                type: "tokenize",
+                type: "tokenize" as const,
                 parameters: { max_length: dataConfig.maxLength || 512 },
                 order: 1,
               },
@@ -186,7 +186,7 @@ export const modelTrainerActions = {
                 metric: "validation_loss",
                 patience: advancedOptions.earlyStopping?.patience || 3,
                 minDelta: advancedOptions.earlyStopping?.minDelta || 0.001,
-                mode: "min",
+                mode: "min" as const,
                 restoreBestWeights: true,
               }
             : undefined,
@@ -194,14 +194,14 @@ export const modelTrainerActions = {
             saveFrequency: advancedOptions.checkpointFrequency || 1,
             saveOptimizer: advancedOptions.saveCheckpoints || true,
             maxToKeep: 3,
-            saveFormat: "pytorch",
+            saveFormat: "pytorch" as const,
           },
           distributedTraining: hardwareConfig.distributedTraining
             ? {
-                strategy: "data_parallel",
+                strategy: "data_parallel" as const,
                 nodes: 1,
                 gpusPerNode: hardwareConfig.numGpus || 2,
-                backend: "nccl",
+                backend: "nccl" as const,
               }
             : undefined,
         },
@@ -394,8 +394,8 @@ function getModelHeads(modelName: string): number {
   return headMap[modelName] || 12;
 }
 
-function getOutputType(modelType: string): string {
-  const typeMap: Record<string, string> = {
+function getOutputType(modelType: string): "string" | "number" | "boolean" | "array" | "object" {
+  const typeMap: Record<string, "string" | "number" | "boolean" | "array" | "object"> = {
     language_model: "string",
     classification: "string",
     regression: "number",

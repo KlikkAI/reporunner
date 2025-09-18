@@ -12,8 +12,8 @@
 import type {
   WorkflowDefinition,
   NodeDefinition,
-  ExecutionMetrics,
-} from "@/core/types";
+} from "@/core/nodes/types";
+import type { ExecutionMetrics } from "@/core/types/execution";
 
 export interface AIWorkflowSuggestion {
   id: string;
@@ -338,7 +338,7 @@ export class AIAssistantService {
     const nodeCount = workflow.nodes.length;
     const edgeCount = workflow.edges.length;
     const conditionalNodes = workflow.nodes.filter(
-      (node) => node.type === "condition",
+      (node: any) => node.type === "condition",
     ).length;
 
     return Math.min(
@@ -380,7 +380,7 @@ export class AIAssistantService {
     const suggestions: string[] = [];
 
     // Simulate reliability analysis
-    workflow.nodes.forEach((workflowNode) => {
+    workflow.nodes.forEach((workflowNode: any) => {
       if (workflowNode.type === "http" || workflowNode.type === "database") {
         errorProneNodes.push(workflowNode.id);
         missingErrorHandling.push(workflowNode.id);

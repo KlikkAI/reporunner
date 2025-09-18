@@ -193,7 +193,7 @@ export interface DynamicNodeConfiguration {
 export interface EnhancedIntegrationNodeType {
   id: string
   name: string
-  displayName: string
+  displayName?: string
   type:
     | 'trigger'
     | 'action'
@@ -208,7 +208,9 @@ export interface EnhancedIntegrationNodeType {
     | 'ai-agent'
   icon?: string
   description: string
-  version: number | number[]
+  version?: number | number[]
+  category?: string
+  subcategory?: string
 
   // Input/Output connection definitions
   inputs: Array<{

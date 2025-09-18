@@ -10,8 +10,18 @@ export * from "./api";
 
 // Node Registry System
 export { nodeRegistry } from "./nodes/registry";
-export * from "./nodes/types";
-export * from "./nodes/index";
+export type {
+  INodeTypeDescription,
+  INodeProperty,
+  INodeParameters,
+  INodeType,
+  INodeExecutionData,
+  WorkflowNodeInstance,
+  RuntimeNode,
+  NodeActionResult,
+  // Skip NodeProperty to avoid conflict - use DynamicNodeProperty below
+} from "./nodes/types";
+// nodeRegistry already exported from ./nodes/registry above
 
 // Stores (State Management)
 export { useLeanWorkflowStore } from "./stores/leanWorkflowStore";
@@ -110,13 +120,4 @@ export {
   type ExecutionStats,
 } from "./schemas";
 
-// Re-export key types for convenience
-export type {
-  INodeTypeDescription,
-  INodeProperty,
-  INodeParameters,
-  INodeType,
-  INodeExecutionData,
-  WorkflowNodeInstance,
-  RuntimeNode,
-} from "./nodes/types";
+// Key types already exported above

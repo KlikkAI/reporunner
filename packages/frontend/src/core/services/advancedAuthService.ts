@@ -702,7 +702,7 @@ export class AdvancedAuthService {
     return `otpauth://totp/Reporunner:${userId}?secret=${secret}&issuer=Reporunner`;
   }
 
-  private validateMFACode(method: MFAMethod['type'], code: string): boolean {
+  private validateMFACode(_method: MFAMethod['type'], code: string): boolean {
     // Simulate MFA validation - in production, this would validate against actual MFA service
     return code.length >= 6 && /^\d+$/.test(code);
   }

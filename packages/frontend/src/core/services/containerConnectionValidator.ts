@@ -230,10 +230,10 @@ export class ContainerConnectionValidator {
    * Validate parallel container connections
    */
   private validateParallelContainerConnection(
-    sourceContext: ContainerContext,
-    targetContext: ContainerContext,
-    sourceHandle?: string,
-    targetHandle?: string,
+    _sourceContext: ContainerContext,
+    _targetContext: ContainerContext,
+    _sourceHandle?: string,
+    _targetHandle?: string,
   ): ConnectionValidationResult {
     // In parallel containers, nodes should not depend on each other
     // Direct connections between parallel nodes are usually invalid
@@ -340,9 +340,9 @@ export class ContainerConnectionValidator {
    * Validate sibling container connections
    */
   private validateSiblingConnection(
-    sourceContext: ContainerContext,
-    targetContext: ContainerContext,
-    relationship: any,
+    _sourceContext: ContainerContext,
+    _targetContext: ContainerContext,
+    _relationship: any,
   ): ConnectionValidationResult {
     // Sibling containers should connect through their parent
     return {
@@ -364,9 +364,9 @@ export class ContainerConnectionValidator {
    * Validate distant container connections
    */
   private validateDistantConnection(
-    sourceContext: ContainerContext,
-    targetContext: ContainerContext,
-    relationship: any,
+    _sourceContext: ContainerContext,
+    _targetContext: ContainerContext,
+    _relationship: any,
   ): ConnectionValidationResult {
     return {
       isValid: false,

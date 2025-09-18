@@ -769,7 +769,7 @@ export class AdvancedTriggerSystemService {
       this.emitEvent("processed", event);
     } catch (error) {
       event.status = "failed";
-      event.error = error.message;
+      event.error = error instanceof Error ? error.message : String(error);
       this.emitEvent("failed", event);
     } finally {
       event.processingTimeMs = performance.now() - startTime;
