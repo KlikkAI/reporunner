@@ -538,7 +538,7 @@ export class IntegrationMarketplaceService {
 
     try {
       // Perform uninstallation
-      await this.performUninstallation(integrationId);
+      await this.performUninstallation();
 
       this.installedIntegrations.delete(integrationId);
 

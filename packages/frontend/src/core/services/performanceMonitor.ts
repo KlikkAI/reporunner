@@ -145,7 +145,7 @@ export class PerformanceMonitorService {
     analyticsService.recordExecutionMetrics(executionMetrics);
 
     // Check for performance alerts
-    this.checkPerformanceAlerts(executionMetrics, trace);
+    this.checkPerformanceAlerts(executionMetrics);
 
     // Cleanup
     this.activeTraces.delete(executionId);
