@@ -727,7 +727,7 @@ const WorkflowEditor: React.FC = () => {
             credentials: node.data?.credentials || [],
             disabled: node.data?.disabled || false,
             notes: node.data?.notes || "",
-            name: node.data?.name || node.data?.label || "",
+            name: node.data?.name || "",
             continueOnFail: node.data?.continueOnFail || false,
             executeOnce: node.data?.executeOnce || false,
           })),
@@ -1269,7 +1269,7 @@ const WorkflowEditor: React.FC = () => {
       {/* AI Assistant Panel */}
       {isAIEnabled && (
         <AIAssistantPanel
-          isOpen={assistantPanelOpen}
+          visible={assistantPanelOpen}
           onClose={toggleAssistantPanel}
           workflowNodes={localNodes}
           workflowEdges={localEdges}
@@ -1278,7 +1278,7 @@ const WorkflowEditor: React.FC = () => {
 
       {/* Debug Panel */}
       <DebugPanel
-        isVisible={isDebugPanelVisible}
+        visible={isDebugPanelVisible}
         onToggle={() => setIsDebugPanelVisible(!isDebugPanelVisible)}
         position="left"
         currentExecutionId={currentExecutionId}

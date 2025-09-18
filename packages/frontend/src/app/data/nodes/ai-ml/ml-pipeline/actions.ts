@@ -1,7 +1,6 @@
-import type {
-  NodeExecutionContext,
-  NodeActionResult,
-} from "@/core/nodes/types";
+// Define action interfaces locally
+type NodeExecutionContext = Record<string, any>;
+type NodeActionResult = { success: boolean; data?: any; error?: string; };
 
 interface PipelineStage {
   stageName: string;

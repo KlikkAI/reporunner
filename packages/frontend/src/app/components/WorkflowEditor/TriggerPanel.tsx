@@ -458,7 +458,7 @@ export const TriggerPanel: React.FC<TriggerPanelProps> = ({
               </Select>
             </Form.Item>
             <Form.Item name="pollIntervalMs" label="Poll Interval (ms)">
-              <InputNumber min={10000} placeholder={300000} />
+              <InputNumber min={10000} placeholder="300000" />
             </Form.Item>
             <Form.Item name="changeDetection" label="Change Detection">
               <Select>
@@ -555,7 +555,7 @@ export const TriggerPanel: React.FC<TriggerPanelProps> = ({
               <Input placeholder="https://api.example.com/data" />
             </Form.Item>
             <Form.Item name="pollIntervalMs" label="Poll Interval (ms)">
-              <InputNumber min={10000} placeholder={300000} />
+              <InputNumber min={10000} placeholder="300000" />
             </Form.Item>
             <Form.Item name="responseField" label="Response Field to Monitor">
               <Input placeholder="data.status" />
@@ -611,7 +611,7 @@ export const TriggerPanel: React.FC<TriggerPanelProps> = ({
         <Input placeholder="192.168.1.1, 10.0.0.0/8" />
       </Form.Item>
       <Form.Item name="maxPayloadSize" label="Max Payload Size (bytes)">
-        <InputNumber min={1024} placeholder={1048576} />
+        <InputNumber min={1024} placeholder="1048576" />
       </Form.Item>
 
       <Divider>Headers</Divider>
@@ -691,7 +691,7 @@ export const TriggerPanel: React.FC<TriggerPanelProps> = ({
                 </Tag>
                 <Badge
                   count={trigger.triggerCount}
-                  style={{ backgroundColor: colors.blue[500] }}
+                  style={{ backgroundColor: colors.primary[500] }}
                 />
               </Space>
             }
