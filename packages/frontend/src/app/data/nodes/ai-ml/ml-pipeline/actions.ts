@@ -1,7 +1,7 @@
 import type {
   NodeExecutionContext,
   NodeActionResult,
-} from "@/core/types/nodes";
+} from "@/core/nodes/types";
 
 interface PipelineStage {
   stageName: string;

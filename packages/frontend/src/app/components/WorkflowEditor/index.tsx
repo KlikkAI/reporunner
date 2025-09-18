@@ -330,6 +330,7 @@ const WorkflowEditor: React.FC = () => {
         try {
           await sendOperation({
             type: "node_update",
+            userId: "current-user", // Would come from auth context
             data: { nodes: leanNodes },
             workflowId: "current-workflow", // Would come from props or context
           });
@@ -916,7 +917,7 @@ const WorkflowEditor: React.FC = () => {
                   });
                 }
               }}
-              onMoveEnd={(event, viewport) => {
+              onMoveEnd={(_event, viewport) => {
                 if (isCollaborationConnected) {
                   updatePresence({
                     viewport: {
@@ -1230,7 +1231,7 @@ const WorkflowEditor: React.FC = () => {
 
               {/* User Presence Overlay */}
               <UserPresenceOverlay
-                containerRef={{ current: containerRef }}
+                containerRef={{ current: containerRef! }}
                 transform={
                   reactFlowInstance?.getViewport() || { x: 0, y: 0, zoom: 1 }
                 }
@@ -1238,7 +1239,7 @@ const WorkflowEditor: React.FC = () => {
 
               {/* Comment Annotations */}
               <CommentAnnotations
-                containerRef={{ current: containerRef }}
+                containerRef={{ current: containerRef! }}
                 transform={
                   reactFlowInstance?.getViewport() || { x: 0, y: 0, zoom: 1 }
                 }

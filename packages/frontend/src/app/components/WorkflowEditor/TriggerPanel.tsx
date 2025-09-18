@@ -833,7 +833,7 @@ export const TriggerPanel: React.FC<TriggerPanelProps> = ({
           <Statistic
             title="Processed Events"
             value={metrics.processedEvents}
-            valueStyle={{ color: colors.green[600] }}
+            valueStyle={{ color: colors.success[600] }}
           />
           <Statistic
             title="Error Rate"
@@ -842,7 +842,7 @@ export const TriggerPanel: React.FC<TriggerPanelProps> = ({
             suffix="%"
             valueStyle={{
               color:
-                metrics.errorRate > 5 ? colors.red[600] : colors.green[600],
+                metrics.errorRate > 5 ? colors.error[600] : colors.success[600],
             }}
           />
           <Statistic
@@ -977,7 +977,7 @@ export const TriggerPanel: React.FC<TriggerPanelProps> = ({
           <TabPane
             tab={
               <span>
-                <BarChartOutlined />
+                <div>📊</div>
                 Metrics
               </span>
             }

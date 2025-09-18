@@ -226,7 +226,7 @@ export const WorkflowTemplatesPanel: React.FC<WorkflowTemplatesPanelProps> = ({
               type="link"
               icon={isFavorite ? <HeartFilled /> : <HeartOutlined />}
               onClick={() => handleToggleFavorite(template.id)}
-              style={{ color: isFavorite ? colors.red[500] : undefined }}
+              style={{ color: isFavorite ? colors.error[500] : undefined }}
             />,
             <Button
               type="link"
