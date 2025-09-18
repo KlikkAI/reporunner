@@ -1,4 +1,4 @@
-import type { EnhancedIntegrationNodeType } from "@/core/types/nodes";
+import type { EnhancedIntegrationNodeType } from "@/core/nodes/types";
 import { mlPipelineProperties } from "./properties";
 import { mlPipelineCredentials } from "./credentials";
 import { mlPipelineActions } from "./actions";

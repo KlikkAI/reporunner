@@ -243,7 +243,7 @@ export class EnterpriseSecurityService {
     userId: string,
     action: string,
     resource: string,
-    context: Record<string, any>,
+    _context: Record<string, any>,
   ): Promise<{ allowed: boolean; policy?: SecurityPolicy; reason?: string }> {
     const applicablePolicies = Array.from(
       this.securityPolicies.values(),
@@ -924,7 +924,7 @@ export class EnterpriseSecurityService {
     policy: SecurityPolicy,
     userId: string,
     resource: string,
-    context: Record<string, any>,
+    _context: Record<string, any>,
   ): boolean {
     // Check if policy applies to user
     if (policy.scope.users.length > 0 && !policy.scope.users.includes(userId)) {
@@ -947,7 +947,7 @@ export class EnterpriseSecurityService {
     userId: string,
     action: string,
     resource: string,
-    context: Record<string, any>,
+    _context: Record<string, any>,
   ): boolean {
     // Simplified rule evaluation - in production, implement full condition evaluation
     return true;

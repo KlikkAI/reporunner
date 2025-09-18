@@ -1,4 +1,4 @@
-import type { CredentialRequirement } from "@/core/types/nodes";
+import type { CredentialRequirement } from "@/core/nodes/types";
 
 export const modelTrainerCredentials: CredentialRequirement[] = [
   {

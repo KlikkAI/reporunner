@@ -28,7 +28,7 @@ import {
   ExclamationCircleOutlined,
 } from '@ant-design/icons';
 import { cn } from '@/design-system/utils';
-import type { INodeProperty } from '@/core/nodes/types';
+import type { IINodeProperty } from '@/core/nodes/types';
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -43,7 +43,7 @@ export interface PropertyValidationResult {
 }
 
 export interface EnhancedPropertyRendererProps {
-  properties: NodeProperty[];
+  properties: INodeProperty[];
   formState: PropertyFormState;
   onChange: (name: string, value: any) => void;
   onValidationChange?: (result: PropertyValidationResult) => void;
@@ -52,7 +52,7 @@ export interface EnhancedPropertyRendererProps {
 }
 
 interface PropertyFieldProps {
-  property: NodeProperty;
+  property: INodeProperty;
   value: any;
   onChange: (value: any) => void;
   disabled?: boolean;
@@ -365,7 +365,7 @@ export const EnhancedPropertyRenderer: React.FC<EnhancedPropertyRendererProps> =
 }) => {
   const [validationErrors, setValidationErrors] = useState<Map<string, string>>(new Map());
 
-  const validateProperty = useCallback((property: NodeProperty, value: any): string | null => {
+  const validateProperty = useCallback((property: INodeProperty, value: any): string | null => {
     // Required validation
     if (property.required && (!value || value === '')) {
       return `${property.label || property.name} is required`;

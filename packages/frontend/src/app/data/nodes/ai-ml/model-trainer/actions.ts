@@ -1,7 +1,7 @@
 import type {
   NodeExecutionContext,
   NodeActionResult,
-} from "@/core/types/nodes";
+} from "@/core/nodes/types";
 import { aiModelService } from "@/core/services/aiModelService";
 
 export const modelTrainerActions = {

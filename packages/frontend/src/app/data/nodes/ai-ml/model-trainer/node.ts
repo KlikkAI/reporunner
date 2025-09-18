@@ -1,4 +1,4 @@
-import type { EnhancedIntegrationNodeType } from "@/core/types/nodes";
+import type { EnhancedIntegrationNodeType } from "@/core/nodes/types";
 import { modelTrainerProperties } from "./properties";
 import { modelTrainerCredentials } from "./credentials";
 import { modelTrainerActions } from "./actions";

@@ -1,4 +1,4 @@
-import type { NodeProperty } from "@/core/types/nodes";
+import type { NodeProperty } from "@/core/nodes/types";
 
 export const modelTrainerProperties: NodeProperty[] = [
   // Model Configuration Section
