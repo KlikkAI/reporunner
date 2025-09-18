@@ -28,7 +28,7 @@ import {
   ExclamationCircleOutlined,
 } from '@ant-design/icons';
 import { cn } from '@/design-system/utils';
-import type { IINodeProperty } from '@/core/nodes/types';
+import type { INodeProperty } from '@/core/nodes/types';
 
 const { TextArea } = Input;
 const { Option } = Select;
