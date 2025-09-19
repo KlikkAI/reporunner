@@ -6,8 +6,8 @@
  * Inspired by modern IDE debugging experiences and SIM's workflow debugging.
  */
 
-import type { WorkflowNodeInstance } from "../nodes/types";
-import type { WorkflowEdge } from "../stores/leanWorkflowStore";
+// import type { WorkflowNodeInstance } from "../nodes/types";
+// import type { WorkflowEdge } from "../stores/leanWorkflowStore";
 
 export interface DebugBreakpoint {
   id: string;
@@ -299,7 +299,9 @@ export class WorkflowDebugger {
     const session = this.activeSessions.get(sessionId);
     if (!session) return;
 
-    const frame = session.frames.find((f) => f.nodeId === nodeId && !f.performance.endTime);
+    const frame = session.frames.find(
+      (f) => f.nodeId === nodeId && !f.performance.endTime,
+    );
     if (frame) {
       frame.status = status;
       frame.outputData = outputData;
@@ -537,7 +539,9 @@ export class WorkflowDebugger {
       );
       return func(context);
     } catch (error) {
-      throw new Error(`Expression evaluation failed: ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `Expression evaluation failed: ${error instanceof Error ? error.message : String(error)}`,
+      );
     }
   }
 

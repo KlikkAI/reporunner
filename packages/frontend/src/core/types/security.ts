@@ -34,7 +34,7 @@ export interface AuditAction {
   type: AuditActionType;
   description: string;
   parameters?: Record<string, any>;
-  outcome: 'success' | 'failure' | 'partial';
+  outcome: "success" | "failure" | "partial";
   errorMessage?: string;
 }
 
@@ -50,7 +50,7 @@ export interface AuditDetails {
   after?: any;
   changes?: AuditChange[];
   context?: Record<string, any>;
-  riskLevel: 'low' | 'medium' | 'high' | 'critical';
+  riskLevel: "low" | "medium" | "high" | "critical";
   complianceFlags: ComplianceFlag[];
 }
 
@@ -58,13 +58,13 @@ export interface AuditChange {
   field: string;
   oldValue: any;
   newValue: any;
-  changeType: 'added' | 'modified' | 'removed';
+  changeType: "added" | "modified" | "removed";
 }
 
 export interface ComplianceFlag {
   standard: ComplianceStandard;
   requirement: string;
-  status: 'compliant' | 'non-compliant' | 'not-applicable';
+  status: "compliant" | "non-compliant" | "not-applicable";
   evidence?: string;
   remediation?: string;
 }
@@ -94,21 +94,34 @@ export interface SecurityRule {
 }
 
 export interface SecurityCondition {
-  type: 'ip_whitelist' | 'time_based' | 'user_role' | 'resource_access' | 'data_classification' | 'custom';
+  type:
+    | "ip_whitelist"
+    | "time_based"
+    | "user_role"
+    | "resource_access"
+    | "data_classification"
+    | "custom";
   parameters: Record<string, any>;
-  operator: 'and' | 'or' | 'not';
+  operator: "and" | "or" | "not";
   children?: SecurityCondition[];
 }
 
 export interface SecurityAction {
-  type: 'allow' | 'deny' | 'log' | 'alert' | 'encrypt' | 'quarantine' | 'custom';
+  type:
+    | "allow"
+    | "deny"
+    | "log"
+    | "alert"
+    | "encrypt"
+    | "quarantine"
+    | "custom";
   parameters: Record<string, any>;
   notification?: NotificationConfig;
 }
 
 export interface PolicyEnforcement {
-  mode: 'enforce' | 'audit' | 'disabled';
-  failureAction: 'block' | 'log' | 'alert';
+  mode: "enforce" | "audit" | "disabled";
+  failureAction: "block" | "log" | "alert";
   retryAttempts: number;
   timeout: number;
 }
@@ -130,7 +143,7 @@ export interface VulnerabilityScan {
   id: string;
   scanType: VulnerabilityScanType;
   target: string;
-  status: 'pending' | 'running' | 'completed' | 'failed';
+  status: "pending" | "running" | "completed" | "failed";
   startedAt: number;
   completedAt?: number;
   findings: VulnerabilityFinding[];
@@ -151,7 +164,7 @@ export interface VulnerabilityFinding {
   path: string;
   references: string[];
   remediation: string;
-  status: 'open' | 'fixed' | 'ignored' | 'false-positive';
+  status: "open" | "fixed" | "ignored" | "false-positive";
   createdAt: number;
   updatedAt: number;
 }
@@ -187,7 +200,7 @@ export interface SecretManager {
 export interface RotationPolicy {
   enabled: boolean;
   interval: number; // milliseconds
-  method: 'automatic' | 'manual' | 'scheduled';
+  method: "automatic" | "manual" | "scheduled";
   schedule?: string; // Cron expression
   notificationDays: number; // Days before expiration
   autoRotation: boolean;
@@ -222,7 +235,7 @@ export interface SecretMetadata {
 }
 
 export interface DataClassification {
-  level: 'public' | 'internal' | 'confidential' | 'restricted';
+  level: "public" | "internal" | "confidential" | "restricted";
   categories: string[];
   retentionPeriod: number; // milliseconds
   encryptionRequired: boolean;
@@ -232,7 +245,7 @@ export interface DataClassification {
 export interface ComplianceRequirement {
   standard: ComplianceStandard;
   requirement: string;
-  status: 'compliant' | 'non-compliant' | 'not-applicable';
+  status: "compliant" | "non-compliant" | "not-applicable";
   evidence: string;
   lastAudit: number;
 }
@@ -246,7 +259,7 @@ export interface EncryptionService {
 }
 
 export interface KeyManagementConfig {
-  provider: 'aws-kms' | 'azure-keyvault' | 'google-kms' | 'local' | 'custom';
+  provider: "aws-kms" | "azure-keyvault" | "google-kms" | "local" | "custom";
   keyId: string;
   region?: string;
   rotationEnabled: boolean;
@@ -298,7 +311,7 @@ export interface ComplianceReport {
   id: string;
   standard: ComplianceStandard;
   version: string;
-  status: 'in-progress' | 'completed' | 'failed';
+  status: "in-progress" | "completed" | "failed";
   scope: string[];
   findings: ComplianceFinding[];
   score: number;
@@ -312,74 +325,156 @@ export interface ComplianceFinding {
   id: string;
   requirement: string;
   description: string;
-  status: 'compliant' | 'non-compliant' | 'not-applicable';
+  status: "compliant" | "non-compliant" | "not-applicable";
   evidence: string[];
   remediation?: string;
-  riskLevel: 'low' | 'medium' | 'high' | 'critical';
+  riskLevel: "low" | "medium" | "high" | "critical";
   category: string;
 }
 
 // Enums
-export type AuditActionType = 
-  | 'create' | 'read' | 'update' | 'delete'
-  | 'login' | 'logout' | 'failed_login'
-  | 'permission_granted' | 'permission_revoked'
-  | 'workflow_executed' | 'workflow_failed'
-  | 'credential_created' | 'credential_updated' | 'credential_deleted'
-  | 'user_invited' | 'user_activated' | 'user_suspended'
-  | 'api_key_created' | 'api_key_revoked'
-  | 'data_exported' | 'data_imported'
-  | 'configuration_changed' | 'security_policy_updated'
-  | 'security_event';
+export type AuditActionType =
+  | "create"
+  | "read"
+  | "update"
+  | "delete"
+  | "login"
+  | "logout"
+  | "failed_login"
+  | "permission_granted"
+  | "permission_revoked"
+  | "workflow_executed"
+  | "workflow_failed"
+  | "credential_created"
+  | "credential_updated"
+  | "credential_deleted"
+  | "user_invited"
+  | "user_activated"
+  | "user_suspended"
+  | "api_key_created"
+  | "api_key_revoked"
+  | "data_exported"
+  | "data_imported"
+  | "configuration_changed"
+  | "security_policy_updated"
+  | "security_event";
 
-export type AuditResourceType = 
-  | 'workflow' | 'execution' | 'credential' | 'user' | 'project'
-  | 'organization' | 'integration' | 'api_key' | 'session'
-  | 'audit_log' | 'security_policy' | 'compliance_report';
+export type AuditResourceType =
+  | "workflow"
+  | "execution"
+  | "credential"
+  | "user"
+  | "project"
+  | "organization"
+  | "integration"
+  | "api_key"
+  | "session"
+  | "audit_log"
+  | "security_policy"
+  | "compliance_report";
 
-export type AuditSeverity = 'info' | 'warning' | 'error' | 'critical';
+export type AuditSeverity = "info" | "warning" | "error" | "critical";
 
-export type AuditCategory = 
-  | 'authentication' | 'authorization' | 'data_access' | 'data_modification'
-  | 'system_configuration' | 'security_event' | 'compliance' | 'administrative';
+export type AuditCategory =
+  | "authentication"
+  | "authorization"
+  | "data_access"
+  | "data_modification"
+  | "system_configuration"
+  | "security_event"
+  | "compliance"
+  | "administrative";
 
-export type ComplianceStandard = 
-  | 'SOC2' | 'GDPR' | 'CCPA' | 'HIPAA' | 'PCI-DSS' | 'ISO27001' | 'NIST';
+export type ComplianceStandard =
+  | "SOC2"
+  | "GDPR"
+  | "CCPA"
+  | "HIPAA"
+  | "PCI-DSS"
+  | "ISO27001"
+  | "NIST";
 
-export type SecurityPolicyType = 
-  | 'access_control' | 'data_protection' | 'encryption' | 'network_security'
-  | 'incident_response' | 'compliance' | 'audit' | 'retention';
+export type SecurityPolicyType =
+  | "access_control"
+  | "data_protection"
+  | "encryption"
+  | "network_security"
+  | "incident_response"
+  | "compliance"
+  | "audit"
+  | "retention";
 
-export type VulnerabilityScanType = 
-  | 'dependency' | 'container' | 'infrastructure' | 'code' | 'configuration';
+export type VulnerabilityScanType =
+  | "dependency"
+  | "container"
+  | "infrastructure"
+  | "code"
+  | "configuration";
 
-export type VulnerabilitySeverity = 'critical' | 'high' | 'medium' | 'low' | 'info';
+export type VulnerabilitySeverity =
+  | "critical"
+  | "high"
+  | "medium"
+  | "low"
+  | "info";
 
-export type SecretType = 
-  | 'api_key' | 'password' | 'certificate' | 'token' | 'database_credential'
-  | 'ssh_key' | 'encryption_key' | 'oauth_token';
+export type SecretType =
+  | "api_key"
+  | "password"
+  | "certificate"
+  | "token"
+  | "database_credential"
+  | "ssh_key"
+  | "encryption_key"
+  | "oauth_token";
 
-export type EncryptionAlgorithm = 'AES' | 'RSA' | 'ECDSA' | 'ChaCha20' | 'Blowfish';
+export type EncryptionAlgorithm =
+  | "AES"
+  | "RSA"
+  | "ECDSA"
+  | "ChaCha20"
+  | "Blowfish";
 
-export type EncryptionMode = 'CBC' | 'GCM' | 'CTR' | 'CFB' | 'OFB';
+export type EncryptionMode = "CBC" | "GCM" | "CTR" | "CFB" | "OFB";
 
-export type EncryptionPadding = 'PKCS7' | 'PKCS1' | 'OAEP' | 'None';
+export type EncryptionPadding = "PKCS7" | "PKCS1" | "OAEP" | "None";
 
-export type IncidentSeverity = 'low' | 'medium' | 'high' | 'critical';
+export type IncidentSeverity = "low" | "medium" | "high" | "critical";
 
-export type IncidentStatus = 'open' | 'investigating' | 'contained' | 'resolved' | 'closed';
+export type IncidentStatus =
+  | "open"
+  | "investigating"
+  | "contained"
+  | "resolved"
+  | "closed";
 
-export type IncidentCategory = 
-  | 'malware' | 'data_breach' | 'unauthorized_access' | 'insider_threat'
-  | 'system_compromise' | 'phishing' | 'ddos' | 'vulnerability_exploit';
+export type IncidentCategory =
+  | "malware"
+  | "data_breach"
+  | "unauthorized_access"
+  | "insider_threat"
+  | "system_compromise"
+  | "phishing"
+  | "ddos"
+  | "vulnerability_exploit";
 
-export type IncidentSource = 'automated' | 'user_report' | 'security_tool' | 'audit' | 'external';
+export type IncidentSource =
+  | "automated"
+  | "user_report"
+  | "security_tool"
+  | "audit"
+  | "external";
 
-export type IncidentEventType = 
-  | 'detected' | 'investigated' | 'contained' | 'escalated' | 'resolved' | 'closed';
+export type IncidentEventType =
+  | "detected"
+  | "investigated"
+  | "contained"
+  | "escalated"
+  | "resolved"
+  | "closed";
 
 export interface NotificationConfig {
-  channels: ('email' | 'slack' | 'webhook' | 'sms')[];
+  channels: ("email" | "slack" | "webhook" | "sms")[];
   recipients: string[];
   template: string;
   conditions: NotificationCondition[];
@@ -387,7 +482,7 @@ export interface NotificationConfig {
 
 export interface NotificationCondition {
   field: string;
-  operator: 'equals' | 'not_equals' | 'contains' | 'greater_than' | 'less_than';
+  operator: "equals" | "not_equals" | "contains" | "greater_than" | "less_than";
   value: any;
 }
 
@@ -395,43 +490,45 @@ export interface NotificationCondition {
 export const createAuditLog = (data: Partial<AuditLog>): AuditLog => ({
   id: `audit_${Date.now()}`,
   timestamp: Date.now(),
-  userId: '',
-  userEmail: '',
+  userId: "",
+  userEmail: "",
   action: {
-    type: 'read',
-    description: '',
-    outcome: 'success',
+    type: "read",
+    description: "",
+    outcome: "success",
   },
   resource: {
-    type: 'workflow',
-    name: '',
-    identifier: '',
+    type: "workflow",
+    name: "",
+    identifier: "",
   },
-  resourceId: '',
+  resourceId: "",
   details: {
-    riskLevel: 'low',
+    riskLevel: "low",
     complianceFlags: [],
   },
-  ipAddress: '127.0.0.1',
+  ipAddress: "127.0.0.1",
   userAgent: navigator.userAgent,
-  sessionId: '',
-  severity: 'info',
-  category: 'data_access',
+  sessionId: "",
+  severity: "info",
+  category: "data_access",
   tags: [],
-  hash: '',
+  hash: "",
   metadata: {},
   ...data,
 });
 
-export const createSecurityPolicy = (data: Partial<SecurityPolicy>): SecurityPolicy => ({
+export const createSecurityPolicy = (
+  data: Partial<SecurityPolicy>,
+): SecurityPolicy => ({
   id: `policy_${Date.now()}`,
-  name: '',
-  description: '',
-  type: 'access_control',
+  name: "",
+  description: "",
+  type: "access_control",
   rules: [],
   enforcement: {
-    mode: 'enforce',
-    failureAction: 'block',
+    mode: "enforce",
+    failureAction: "block",
     retryAttempts: 3,
     timeout: 30000,
   },
@@ -443,15 +540,17 @@ export const createSecurityPolicy = (data: Partial<SecurityPolicy>): SecurityPol
   createdAt: Date.now(),
   updatedAt: Date.now(),
   enabled: true,
-  version: '1.0.0',
+  version: "1.0.0",
   ...data,
 });
 
-export const createVulnerabilityScan = (data: Partial<VulnerabilityScan>): VulnerabilityScan => ({
+export const createVulnerabilityScan = (
+  data: Partial<VulnerabilityScan>,
+): VulnerabilityScan => ({
   id: `scan_${Date.now()}`,
-  scanType: 'dependency',
-  target: '',
-  status: 'pending',
+  scanType: "dependency",
+  target: "",
+  status: "pending",
   startedAt: Date.now(),
   findings: [],
   summary: {
@@ -468,17 +567,19 @@ export const createVulnerabilityScan = (data: Partial<VulnerabilityScan>): Vulne
   ...data,
 });
 
-export const createSecretManager = (data: Partial<SecretManager>): SecretManager => ({
+export const createSecretManager = (
+  data: Partial<SecretManager>,
+): SecretManager => ({
   id: `secret_${Date.now()}`,
-  name: '',
-  type: 'api_key',
-  encryptedData: '',
-  encryptionKey: '',
+  name: "",
+  type: "api_key",
+  encryptedData: "",
+  encryptionKey: "",
   keyVersion: 1,
   rotationPolicy: {
     enabled: false,
     interval: 90 * 24 * 60 * 60 * 1000, // 90 days
-    method: 'manual',
+    method: "manual",
     notificationDays: 7,
     autoRotation: false,
   },
@@ -491,33 +592,36 @@ export const createSecretManager = (data: Partial<SecretManager>): SecretManager
     accessCount: 0,
   },
   metadata: {
-    description: '',
+    description: "",
     tags: [],
     classification: {
-      level: 'internal',
+      level: "internal",
       categories: [],
       retentionPeriod: 365 * 24 * 60 * 60 * 1000, // 1 year
       encryptionRequired: true,
       accessLoggingRequired: true,
     },
-    owner: '',
-    environment: 'production',
-    application: '',
+    owner: "",
+    environment: "production",
+    application: "",
     compliance: [],
   },
   createdAt: Date.now(),
   updatedAt: Date.now(),
+  accessCount: 0,
   ...data,
 });
 
-export const createSecurityIncident = (data: Partial<SecurityIncident>): SecurityIncident => ({
+export const createSecurityIncident = (
+  data: Partial<SecurityIncident>,
+): SecurityIncident => ({
   id: `incident_${Date.now()}`,
-  title: '',
-  description: '',
-  severity: 'medium',
-  status: 'open',
-  category: 'unauthorized_access',
-  source: 'automated',
+  title: "",
+  description: "",
+  severity: "medium",
+  status: "open",
+  category: "unauthorized_access",
+  source: "automated",
   affectedResources: [],
   timeline: [],
   createdAt: Date.now(),
@@ -527,7 +631,9 @@ export const createSecurityIncident = (data: Partial<SecurityIncident>): Securit
 });
 
 // Utility functions
-export const calculateAuditHash = (log: Omit<AuditLog, 'hash' | 'previousHash'>): string => {
+export const calculateAuditHash = (
+  log: Omit<AuditLog, "hash" | "previousHash">,
+): string => {
   const data = JSON.stringify({
     id: log.id,
     timestamp: log.timestamp,
@@ -541,7 +647,7 @@ export const calculateAuditHash = (log: Omit<AuditLog, 'hash' | 'previousHash'>)
 };
 
 export const isCompliant = (finding: ComplianceFinding): boolean => {
-  return finding.status === 'compliant';
+  return finding.status === "compliant";
 };
 
 export const getRiskScore = (findings: ComplianceFinding[]): number => {
@@ -555,46 +661,55 @@ export const getRiskScore = (findings: ComplianceFinding[]): number => {
 
 export const shouldRotateSecret = (secret: SecretManager): boolean => {
   if (!secret.rotationPolicy.enabled) return false;
-  
+
   const now = Date.now();
   const lastRotation = secret.updatedAt;
   const interval = secret.rotationPolicy.interval;
-  
-  return (now - lastRotation) >= interval;
+
+  return now - lastRotation >= interval;
 };
 
-export const isAccessAllowed = (secret: SecretManager, userId: string, ipAddress: string): boolean => {
+export const isAccessAllowed = (
+  secret: SecretManager,
+  userId: string,
+  ipAddress: string,
+): boolean => {
   const policy = secret.accessPolicy;
-  
+
   // Check user access
   if (policy.users.length > 0 && !policy.users.includes(userId)) {
     return false;
   }
-  
+
   // Check IP whitelist
-  if (policy.ipWhitelist.length > 0 && !policy.ipWhitelist.includes(ipAddress)) {
+  if (
+    policy.ipWhitelist.length > 0 &&
+    !policy.ipWhitelist.includes(ipAddress)
+  ) {
     return false;
   }
-  
+
   // Check access count limit
   if (policy.maxAccessCount && policy.accessCount >= policy.maxAccessCount) {
     return false;
   }
-  
+
   // Check time restrictions
   const now = new Date();
   const currentDay = now.getDay();
   const currentTime = now.toTimeString().substring(0, 5);
-  
-  const hasTimeRestriction = policy.timeRestrictions.some(restriction => {
-    return restriction.days.includes(currentDay) &&
-           currentTime >= restriction.startTime &&
-           currentTime <= restriction.endTime;
+
+  const hasTimeRestriction = policy.timeRestrictions.some((restriction) => {
+    return (
+      restriction.days.includes(currentDay) &&
+      currentTime >= restriction.startTime &&
+      currentTime <= restriction.endTime
+    );
   });
-  
+
   if (policy.timeRestrictions.length > 0 && !hasTimeRestriction) {
     return false;
   }
-  
+
   return true;
 };

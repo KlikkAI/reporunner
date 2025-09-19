@@ -450,8 +450,7 @@ export class IntegrationMarketplaceService {
       .sort((a, b) => b.stats.monthlyDownloads - a.stats.monthlyDownloads);
   }
 
-  async getRecommendedIntegrations(
-  ): Promise<MarketplaceIntegration[]> {
+  async getRecommendedIntegrations(): Promise<MarketplaceIntegration[]> {
     // AI-powered recommendations based on user usage patterns
     // For now, return popular integrations
     return Array.from(this.integrations.values())
@@ -466,7 +465,7 @@ export class IntegrationMarketplaceService {
 
   async installIntegration(
     integrationId: string,
-    config?: any,
+    _config?: any,
   ): Promise<InstallationResult> {
     const integration = this.integrations.get(integrationId);
     if (!integration) {
@@ -1125,8 +1124,7 @@ export class IntegrationMarketplaceService {
     };
   }
 
-  private async performInstallation(
-  ): Promise<void> {
+  private async performInstallation(): Promise<void> {
     // Simulate installation process
     await new Promise((resolve) => setTimeout(resolve, 1000));
 

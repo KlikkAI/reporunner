@@ -381,11 +381,8 @@ export class WorkflowSchedulerService {
         : 100;
 
     const resourceUtilization = this.calculateResourceUtilization(executions);
-    const trends = this.calculateTrends(executions);
-    const recommendations = this.generateScheduleRecommendations(
-      schedule,
-      executions,
-    );
+    const trends = this.calculateTrends();
+    const recommendations = this.generateScheduleRecommendations();
 
     return {
       scheduleId,
@@ -552,15 +549,13 @@ export class WorkflowSchedulerService {
 
     // Start performance monitoring
     // Start performance monitoring for workflow execution
-    performanceMonitor.startTrace(
-      execution.id,
-      execution.workflowId,
-      { scheduleId: execution.scheduleId },
-    );
+    performanceMonitor.startTrace(execution.id, execution.workflowId, {
+      scheduleId: execution.scheduleId,
+    });
 
     try {
       // Simulate workflow execution (in real implementation, this would trigger actual workflow execution)
-      const result = await this.simulateWorkflowExecution(execution);
+      const result = await this.simulateWorkflowExecution();
 
       execution.status = "completed";
       execution.completedAt = new Date().toISOString();
@@ -579,7 +574,11 @@ export class WorkflowSchedulerService {
       const schedule = this.schedules.get(execution.scheduleId);
       if (
         schedule &&
-        this.shouldRetry(execution, schedule.retryPolicy, error instanceof Error ? error : new Error(String(error)))
+        this.shouldRetry(
+          execution,
+          schedule.retryPolicy,
+          error instanceof Error ? error : new Error(String(error)),
+        )
       ) {
         await this.scheduleRetry(execution, schedule);
       } else {
@@ -587,14 +586,16 @@ export class WorkflowSchedulerService {
       }
     } finally {
       // End performance monitoring
-      performanceMonitor.endTrace(execution.id, execution.status as "completed" | "failed" | "cancelled");
+      performanceMonitor.endTrace(
+        execution.id,
+        execution.status as "completed" | "failed" | "cancelled",
+      );
     }
 
     return execution;
   }
 
-  private async simulateWorkflowExecution(
-  ): Promise<any> {
+  private async simulateWorkflowExecution(): Promise<any> {
     // Simulate variable execution time and occasional failures
     const executionTime = 1000 + Math.random() * 5000; // 1-6 seconds
     const failureRate = 0.1; // 10% failure rate
@@ -642,16 +643,13 @@ export class WorkflowSchedulerService {
   private calculateNextExecution(
     scheduleType: ScheduleConfiguration["scheduleType"],
     configuration: any,
-    timezone: string,
+    _timezone: string,
   ): string | undefined {
     const now = new Date();
 
     switch (scheduleType) {
       case "cron":
-        return this.calculateNextCronExecution(
-          configuration.expression,
-          timezone,
-        );
+        return this.calculateNextCronExecution();
 
       case "interval":
         const nextTime = new Date(now.getTime() + configuration.intervalMs);
@@ -669,8 +667,7 @@ export class WorkflowSchedulerService {
     }
   }
 
-  private calculateNextCronExecution(
-  ): string {
+  private calculateNextCronExecution(): string {
     // Simplified cron calculation - in production, use a proper cron library
     const now = new Date();
     const nextExecution = new Date(now.getTime() + 60000); // Default to 1 minute from now
@@ -693,13 +690,13 @@ export class WorkflowSchedulerService {
   ): Promise<boolean> {
     switch (condition.type) {
       case "resource_availability":
-        return this.checkResourceAvailability(condition.configuration);
+        return this.checkResourceAvailability();
 
       case "time_window":
         return this.checkTimeWindow(condition.configuration);
 
       case "dependency":
-        return this.checkDependencies(condition.configuration);
+        return this.checkDependencies();
 
       case "custom":
         return this.evaluateCustomCondition(condition.configuration);
@@ -882,8 +879,7 @@ export class WorkflowSchedulerService {
     };
   }
 
-  private generateScheduleRecommendations(
-  ): ScheduleRecommendation[] {
+  private generateScheduleRecommendations(): ScheduleRecommendation[] {
     const recommendations: ScheduleRecommendation[] = [];
 
     // Simplified recommendation generation - in production would analyze actual execution patterns
@@ -907,9 +903,10 @@ export class WorkflowSchedulerService {
 
     // Check for optimization opportunities
     const avgDuration =
-      executions
-        .filter((e) => e.duration)
-        .reduce((sum, e) => sum + (e.duration || 0), 0) / executions.length;
+      allExecutions
+        .filter((e: any) => e.duration)
+        .reduce((sum: number, e: any) => sum + (e.duration || 0), 0) /
+      allExecutions.length;
 
     if (avgDuration > 300000) {
       // 5 minutes

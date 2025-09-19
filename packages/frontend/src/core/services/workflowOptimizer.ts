@@ -8,7 +8,7 @@
 
 import type { WorkflowNodeInstance } from "../nodes/types";
 import type { WorkflowEdge } from "../stores/leanWorkflowStore";
-import { aiAssistantService } from "./aiAssistantService";
+// import { aiAssistantService } from "./aiAssistantService";
 
 export interface OptimizationRule {
   id: string;
@@ -405,7 +405,7 @@ export class WorkflowOptimizer {
 
   private analyzeDuplicateOperations(
     nodes: WorkflowNodeInstance[],
-    edges: WorkflowEdge[],
+    _edges: WorkflowEdge[],
   ): OptimizationSuggestion[] {
     const suggestions: OptimizationSuggestion[] = [];
     const rule = this.optimizationRules.find(
@@ -501,7 +501,7 @@ export class WorkflowOptimizer {
 
   private analyzeSecurityImprovements(
     nodes: WorkflowNodeInstance[],
-    edges: WorkflowEdge[],
+    _edges: WorkflowEdge[],
   ): OptimizationSuggestion[] {
     const suggestions: OptimizationSuggestion[] = [];
     const rule = this.optimizationRules.find(
@@ -543,7 +543,7 @@ export class WorkflowOptimizer {
   // Helper methods
   private calculateBranchingFactor(
     nodes: WorkflowNodeInstance[],
-    edges: WorkflowEdge[],
+    _edges: WorkflowEdge[],
   ): number {
     const branchNodes = nodes.filter((node) => node.type === "condition");
     return branchNodes.length / Math.max(nodes.length, 1);
@@ -606,9 +606,9 @@ export class WorkflowOptimizer {
 
   private findConnectedIndependentNodes(
     startNode: WorkflowNodeInstance,
-    allNodes: WorkflowNodeInstance[],
-    edges: WorkflowEdge[],
-    visited: Set<string>,
+    _allNodes: WorkflowNodeInstance[],
+    _edges: WorkflowEdge[],
+    _visited: Set<string>,
   ): WorkflowNodeInstance[] {
     // Simplified implementation - in reality this would be more sophisticated
     return [startNode];
@@ -664,8 +664,8 @@ export class WorkflowOptimizer {
   }
 
   private findBatchableApiCalls(
-    apiNodes: WorkflowNodeInstance[],
-    edges: WorkflowEdge[],
+    _apiNodes: WorkflowNodeInstance[],
+    _edges: WorkflowEdge[],
   ): WorkflowNodeInstance[][] {
     // Find sequential API calls to the same service/endpoint
     const groups: WorkflowNodeInstance[][] = [];

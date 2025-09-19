@@ -409,10 +409,7 @@ export class SecurityService {
     factors.push(ipRisk);
 
     // Assess device trust
-    const deviceRisk = await this.assessDeviceRisk(
-      userId,
-      context.deviceFingerprint,
-    );
+    const deviceRisk = await this.assessDeviceRisk(context.deviceFingerprint);
     factors.push(deviceRisk);
 
     // Assess time-based risk
@@ -482,9 +479,7 @@ export class SecurityService {
     };
   }
 
-  private async assessDeviceRisk(
-    fingerprint?: string,
-  ): Promise<RiskFactor> {
+  private async assessDeviceRisk(fingerprint?: string): Promise<RiskFactor> {
     if (!fingerprint) {
       return {
         name: "Device Trust",

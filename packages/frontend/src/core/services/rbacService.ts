@@ -324,9 +324,9 @@ export class RBACService {
     permission: Permission,
     resource: string,
     action: string,
-    userId: string,
-    resourceId?: string,
-    organizationId?: string,
+    _userId: string,
+    _resourceId?: string,
+    _organizationId?: string,
   ): boolean {
     // Check resource match
     if (permission.resource !== "*" && permission.resource !== resource) {
@@ -359,15 +359,13 @@ export class RBACService {
     return true;
   }
 
-  private isOwnResource(
-  ): boolean {
+  private isOwnResource(): boolean {
     // Implementation would check if the resource belongs to the user
     // For now, we'll assume it's checking against resource ownership
     return true; // Simplified for demo
   }
 
-  private isTeamResource(
-  ): boolean {
+  private isTeamResource(): boolean {
     // Check if user has access to resource through team membership
     // Implementation simplified for demo purposes
     return true; // Simplified for demo
@@ -375,9 +373,10 @@ export class RBACService {
 
   private isOrganizationResource(
     organizationId?: string,
+    userId?: string,
   ): boolean {
     // Check if user is member of organization
-    if (!organizationId) return false;
+    if (!organizationId || !userId) return false;
     const org = this.organizations.get(organizationId);
     return org?.members.some((member) => member.userId === userId) || false;
   }

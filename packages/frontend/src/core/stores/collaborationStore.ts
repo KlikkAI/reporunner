@@ -248,7 +248,7 @@ export const useCollaborationStore = create<CollaborationState>()(
     },
 
     resolveComment: (commentId: string) => {
-      set(() => ({
+      set((state) => ({
         comments: state.comments.map((comment) =>
           comment.id === commentId ? { ...comment, resolved: true } : comment,
         ),
@@ -288,25 +288,25 @@ export const useCollaborationStore = create<CollaborationState>()(
     },
 
     toggleCollaborationPanel: () => {
-      set(() => ({
+      set((state) => ({
         collaborationPanelOpen: !state.collaborationPanelOpen,
       }));
     },
 
     toggleCommentMode: () => {
-      set(() => ({ commentMode: !state.commentMode }));
+      set((state) => ({ commentMode: !state.commentMode }));
     },
 
     toggleUserCursors: () => {
-      set(() => ({ showUserCursors: !state.showUserCursors }));
+      set((state) => ({ showUserCursors: !state.showUserCursors }));
     },
 
     toggleUserSelections: () => {
-      set(() => ({ showUserSelections: !state.showUserSelections }));
+      set((state) => ({ showUserSelections: !state.showUserSelections }));
     },
 
     toggleComments: () => {
-      set(() => ({ showComments: !state.showComments }));
+      set((state) => ({ showComments: !state.showComments }));
     },
   })),
 );
@@ -350,7 +350,7 @@ function setupCollaborationEventListeners(
   );
 
   collaborationService.addEventListener("user_left", (userId: string) => {
-    set(() => ({
+    set((state) => ({
       userPresences: state.userPresences.filter(
         (presence) => presence.userId !== userId,
       ),
@@ -361,7 +361,7 @@ function setupCollaborationEventListeners(
   collaborationService.addEventListener(
     "presence_update",
     (presence: UserPresence) => {
-      set(() => ({
+      set((state) => ({
         userPresences: state.userPresences
           .map((p) => (p.userId === presence.userId ? presence : p))
           .concat(
@@ -377,7 +377,7 @@ function setupCollaborationEventListeners(
   collaborationService.addEventListener(
     "operation_received",
     (operation: CollaborationOperation) => {
-      set(() => ({
+      set((state) => ({
         operationHistory: [...state.operationHistory, operation],
         pendingOperations: state.pendingOperations.filter(
           (op) => op.id !== operation.id,
@@ -390,7 +390,7 @@ function setupCollaborationEventListeners(
   collaborationService.addEventListener(
     "operation_sent",
     (operation: CollaborationOperation) => {
-      set(() => ({
+      set((state) => ({
         pendingOperations: [...state.pendingOperations, operation],
       }));
     },
@@ -400,7 +400,7 @@ function setupCollaborationEventListeners(
   collaborationService.addEventListener(
     "conflict_detected",
     (conflict: CollaborationConflict) => {
-      set(() => ({
+      set((state) => ({
         activeConflicts: [...state.activeConflicts, conflict],
         conflictResolutionMode: true,
       }));
@@ -411,7 +411,7 @@ function setupCollaborationEventListeners(
   collaborationService.addEventListener(
     "comment_added",
     (comment: CollaborationComment) => {
-      set(() => ({
+      set((state) => ({
         comments: [...state.comments, comment],
         activeComments: comment.resolved
           ? state.activeComments
@@ -423,7 +423,7 @@ function setupCollaborationEventListeners(
   collaborationService.addEventListener(
     "comment_updated",
     (comment: CollaborationComment) => {
-      set(() => ({
+      set((state) => ({
         comments: state.comments.map((c) =>
           c.id === comment.id ? comment : c,
         ),
@@ -439,7 +439,7 @@ function setupCollaborationEventListeners(
   collaborationService.addEventListener(
     "reply_added",
     ({ commentId, reply }: any) => {
-      set(() => ({
+      set((state) => ({
         comments: state.comments.map((comment) =>
           comment.id === commentId
             ? { ...comment, replies: [...comment.replies, reply] }

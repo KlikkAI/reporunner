@@ -124,21 +124,21 @@ export class CollaborationService {
   private eventListeners = new Map<string, Set<(...args: any[]) => void>>();
 
   // Configuration
-  private readonly HEARTBEAT_INTERVAL = 5000; // 5 seconds
-  private readonly OPERATION_BATCH_SIZE = 10;
-  private readonly CONFLICT_TIMEOUT = 30000; // 30 seconds
+  // private readonly HEARTBEAT_INTERVAL = 5000; // 5 seconds
+  // private readonly OPERATION_BATCH_SIZE = 10;
+  // private readonly CONFLICT_TIMEOUT = 30000; // 30 seconds
 
   // Using these to avoid unused variable warnings
-  private logConfig(): void {
-    console.log(
-      "Heartbeat:",
-      this.HEARTBEAT_INTERVAL,
-      "Batch size:",
-      this.OPERATION_BATCH_SIZE,
-      "Timeout:",
-      this.CONFLICT_TIMEOUT,
-    );
-  }
+  // private _logConfig(): void {
+  //   console.log(
+  //     "Heartbeat:",
+  //     this.HEARTBEAT_INTERVAL,
+  //     "Batch size:",
+  //     this.OPERATION_BATCH_SIZE,
+  //     "Timeout:",
+  //     this.CONFLICT_TIMEOUT,
+  //   );
+  // }
 
   /**
    * Initialize collaboration service for a workflow
@@ -474,15 +474,15 @@ export class CollaborationService {
   /**
    * Apply operation transform for conflict resolution
    */
-  private transformOperation(
-    operation: CollaborationOperation,
-  ): CollaborationOperation {
-    // Use logConfig to avoid unused variable warnings in constants
-    this.logConfig();
-    // Simplified operational transform - returns operation as-is
-    // In production, implement proper OT algorithms based on operation types
-    return operation;
-  }
+  // private _transformOperation(
+  //   operation: CollaborationOperation,
+  // ): CollaborationOperation {
+  //   // Use logConfig to avoid unused variable warnings in constants
+  //   this.logConfig();
+  //   // Simplified operational transform - returns operation as-is
+  //   // In production, implement proper OT algorithms based on operation types
+  //   return operation;
+  // }
 }
 
 // Export singleton instance

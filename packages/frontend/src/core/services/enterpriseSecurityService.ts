@@ -224,7 +224,7 @@ export class EnterpriseSecurityService {
 
   async evaluateSecurityPolicy(
     userId: string,
-    action: string,
+    _action: string,
     resource: string,
     _context: Record<string, any>,
   ): Promise<{ allowed: boolean; policy?: SecurityPolicy; reason?: string }> {
@@ -238,10 +238,7 @@ export class EnterpriseSecurityService {
 
     for (const policy of applicablePolicies) {
       for (const rule of policy.rules) {
-        if (
-          rule.enabled &&
-          this.evaluateRule(_context)
-        ) {
+        if (rule.enabled && this.evaluateRule(_context)) {
           const allowed = rule.action.type === "allow";
           return {
             allowed,
@@ -436,9 +433,7 @@ export class EnterpriseSecurityService {
     secret.lastAccessedAt = Date.now();
 
     // Decrypt and return data
-    const decryptedData = await this.decryptData(
-      secret.encryptedData,
-    );
+    const decryptedData = await this.decryptData(secret.encryptedData);
 
     await this.logAuditEvent(
       userId,
@@ -470,12 +465,8 @@ export class EnterpriseSecurityService {
     }
 
     const newEncryptionKey = await this.generateEncryptionKey();
-    const currentData = await this.decryptData(
-      secret.encryptedData,
-    );
-    const newEncryptedData = await this.encryptData(
-      currentData,
-    );
+    const currentData = await this.decryptData(secret.encryptedData);
+    const newEncryptedData = await this.encryptData(currentData);
 
     secret.encryptionKey = newEncryptionKey;
     secret.encryptedData = newEncryptedData;
@@ -923,9 +914,7 @@ export class EnterpriseSecurityService {
     return true;
   }
 
-  private evaluateRule(
-    _context: Record<string, any>,
-  ): boolean {
+  private evaluateRule(_context: Record<string, any>): boolean {
     // Simplified rule evaluation - in production, implement full condition evaluation
     return true;
   }
@@ -935,9 +924,7 @@ export class EnterpriseSecurityService {
     return btoa(data);
   }
 
-  private async decryptData(
-    encryptedData: string,
-  ): Promise<string> {
+  private async decryptData(encryptedData: string): Promise<string> {
     // Simulate decryption - in production, use proper decryption
     return atob(encryptedData);
   }
@@ -975,8 +962,7 @@ export class EnterpriseSecurityService {
     return true;
   }
 
-  private async performComplianceCheck(
-  ): Promise<ComplianceFinding[]> {
+  private async performComplianceCheck(): Promise<ComplianceFinding[]> {
     // Simulate compliance check - in production, implement actual compliance checks
     return [
       {

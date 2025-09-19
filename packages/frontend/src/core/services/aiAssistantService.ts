@@ -116,7 +116,6 @@ export class AIAssistantService {
   private suggestionsCache = new Map<string, AIWorkflowSuggestion[]>();
   private analysisCache = new Map<string, WorkflowAnalysis>();
 
-
   /**
    * Generate workflow from natural language description
    */
@@ -280,7 +279,9 @@ export class AIAssistantService {
     ];
   }
 
-  private generateConnectionsFromAnalysis(_analysis: any): WorkflowDefinition['connections'] {
+  private generateConnectionsFromAnalysis(
+    _analysis: any,
+  ): WorkflowDefinition["connections"] {
     return {
       trigger_1: {
         "0": [
@@ -295,16 +296,16 @@ export class AIAssistantService {
   }
 
   // Reserved for future edge analysis functionality
-  private generateEdgesFromAnalysis(): any[] {
-    return [
-      {
-        id: "edge_1",
-        source: "trigger_1",
-        target: "action_1",
-        type: "default",
-      },
-    ];
-  }
+  // private _generateEdgesFromAnalysis(): any[] {
+  //   return [
+  //     {
+  //       id: "edge_1",
+  //       source: "trigger_1",
+  //       target: "action_1",
+  //       type: "default",
+  //     },
+  //   ];
+  // }
 
   private generateExplanation(
     workflow: WorkflowDefinition,
@@ -566,13 +567,14 @@ export class AIAssistantService {
     // Simulate error pattern identification
     return metrics
       .filter((m) => m.status === "failed")
-      .flatMap((m) => m.nodeMetrics
-        .filter((node) => node.status === "failed")
-        .map((node) => ({
-          nodeId: node.nodeId,
-          errorType: "execution",
-          frequency: 1,
-        }))
+      .flatMap((m) =>
+        m.nodeMetrics
+          .filter((node) => node.status === "failed")
+          .map((node) => ({
+            nodeId: node.nodeId,
+            errorType: "execution",
+            frequency: 1,
+          })),
       );
   }
 
@@ -607,15 +609,15 @@ export class AIAssistantService {
   }
 
   private identifyBottlenecks(metrics: ExecutionMetrics[]): any[] {
-    return metrics
-      .flatMap((m) => m.nodeMetrics
+    return metrics.flatMap((m) =>
+      m.nodeMetrics
         .filter((node) => node.duration && node.duration > 5000) // > 5 seconds
         .map((node) => ({
           nodeId: node.nodeId,
           duration: node.duration,
           type: "slow-execution",
-        }))
-      );
+        })),
+    );
   }
 
   private generatePerformanceOptimizations(
