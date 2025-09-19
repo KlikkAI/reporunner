@@ -36,7 +36,7 @@ export const HeroSection: React.FC = () => {
   };
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-16">
       {/* Background Elements */}
       <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900" />
       <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-20" />

@@ -6,6 +6,7 @@
  */
 
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import {
   ArrowRight,
   Play,
@@ -15,6 +16,7 @@ import {
 } from "lucide-react";
 
 export const CallToAction: React.FC = () => {
+  const navigate = useNavigate();
   return (
     <section className="py-20 bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 relative overflow-hidden">
       {/* Background Elements */}
@@ -42,13 +44,19 @@ export const CallToAction: React.FC = () => {
 
           {/* Primary CTAs */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-            <button className="group relative px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-lg text-lg transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-blue-500/25 flex items-center justify-center gap-2">
+            <button
+              onClick={() => navigate("/register")}
+              className="group relative px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-lg text-lg transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-blue-500/25 flex items-center justify-center gap-2"
+            >
               <span>Start Free Trial</span>
               <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
               <div className="absolute inset-0 bg-gradient-to-r from-blue-700 to-purple-700 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity -z-10" />
             </button>
 
-            <button className="group px-8 py-4 bg-white/10 backdrop-blur-sm text-white font-semibold rounded-lg text-lg border border-white/20 transition-all duration-300 hover:bg-white/20 hover:scale-105 flex items-center justify-center gap-2">
+            <button
+              onClick={() => navigate("/contact")}
+              className="group px-8 py-4 bg-white/10 backdrop-blur-sm text-white font-semibold rounded-lg text-lg border border-white/20 transition-all duration-300 hover:bg-white/20 hover:scale-105 flex items-center justify-center gap-2"
+            >
               <Play className="w-5 h-5" />
               <span>Watch Demo</span>
             </button>
@@ -72,7 +80,10 @@ export const CallToAction: React.FC = () => {
 
           {/* Alternative Actions */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-3xl mx-auto">
-            <div className="group bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10 hover:bg-white/10 transition-all cursor-pointer">
+            <div
+              onClick={() => navigate("/contact")}
+              className="group bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10 hover:bg-white/10 transition-all cursor-pointer"
+            >
               <Calendar className="w-8 h-8 text-blue-400 mb-4 mx-auto" />
               <h3 className="text-white font-semibold mb-2">Schedule Demo</h3>
               <p className="text-slate-300 text-sm mb-4">
@@ -83,7 +94,10 @@ export const CallToAction: React.FC = () => {
               </div>
             </div>
 
-            <div className="group bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10 hover:bg-white/10 transition-all cursor-pointer">
+            <div
+              onClick={() => navigate("/self-hosted")}
+              className="group bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10 hover:bg-white/10 transition-all cursor-pointer"
+            >
               <Download className="w-8 h-8 text-green-400 mb-4 mx-auto" />
               <h3 className="text-white font-semibold mb-2">
                 Self-Hosted Setup
@@ -96,7 +110,10 @@ export const CallToAction: React.FC = () => {
               </div>
             </div>
 
-            <div className="group bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10 hover:bg-white/10 transition-all cursor-pointer">
+            <div
+              onClick={() => navigate("/enterprise")}
+              className="group bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10 hover:bg-white/10 transition-all cursor-pointer"
+            >
               <MessageCircle className="w-8 h-8 text-purple-400 mb-4 mx-auto" />
               <h3 className="text-white font-semibold mb-2">Talk to Sales</h3>
               <p className="text-slate-300 text-sm mb-4">
@@ -113,14 +130,14 @@ export const CallToAction: React.FC = () => {
             <p className="text-slate-400">
               Questions? Check out our{" "}
               <a
-                href="#"
+                href="/documentation"
                 className="text-blue-400 hover:text-blue-300 transition-colors underline"
               >
                 documentation
               </a>{" "}
               or{" "}
               <a
-                href="#"
+                href="/contact"
                 className="text-blue-400 hover:text-blue-300 transition-colors underline"
               >
                 join our community

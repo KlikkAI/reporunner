@@ -11,7 +11,6 @@ import {
   Users,
   Globe,
   BarChart3,
-  Lock,
   Clock,
   Zap,
   CheckCircle,

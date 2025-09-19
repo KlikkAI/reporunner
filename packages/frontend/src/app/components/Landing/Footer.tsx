@@ -23,54 +23,77 @@ export const Footer: React.FC = () => {
     {
       title: "Product",
       links: [
-        { name: "Features", href: "#features" },
-        { name: "Integrations", href: "#integrations" },
-        { name: "Pricing", href: "#pricing" },
-        { name: "Enterprise", href: "#enterprise" },
-        { name: "Self-hosted", href: "#self-hosted" },
-        { name: "Roadmap", href: "#roadmap" },
+        { name: "Features", href: "/features" },
+        { name: "Integrations", href: "/integrations" },
+        { name: "Pricing", href: "/pricing" },
+        { name: "Enterprise", href: "/enterprise" },
+        { name: "Self-hosted", href: "/self-hosted" },
+        { name: "Roadmap", href: "/roadmap" },
       ],
     },
     {
       title: "Developers",
       links: [
-        { name: "Documentation", href: "#docs" },
-        { name: "API Reference", href: "#api" },
-        { name: "Node SDK", href: "#sdk" },
-        { name: "Examples", href: "#examples" },
-        { name: "GitHub", href: "#github", external: true },
-        { name: "Community", href: "#community" },
+        { name: "Documentation", href: "/documentation" },
+        { name: "API Reference", href: "/api-reference" },
+        { name: "Node SDK", href: "/documentation" },
+        { name: "Examples", href: "/documentation" },
+        {
+          name: "GitHub",
+          href: "https://github.com/reporunner/reporunner",
+          external: true,
+        },
+        { name: "Community", href: "/contact" },
       ],
     },
     {
       title: "Resources",
       links: [
-        { name: "Blog", href: "#blog" },
-        { name: "Case Studies", href: "#case-studies" },
-        { name: "Tutorials", href: "#tutorials" },
-        { name: "Webinars", href: "#webinars" },
-        { name: "Help Center", href: "#help" },
-        { name: "Status Page", href: "#status", external: true },
+        { name: "Blog", href: "/documentation" },
+        { name: "Case Studies", href: "/about" },
+        { name: "Tutorials", href: "/documentation" },
+        { name: "Webinars", href: "/contact" },
+        { name: "Help Center", href: "/documentation" },
+        {
+          name: "Status Page",
+          href: "https://status.reporunner.dev",
+          external: true,
+        },
       ],
     },
     {
       title: "Company",
       links: [
-        { name: "About", href: "#about" },
-        { name: "Careers", href: "#careers" },
-        { name: "Contact", href: "#contact" },
-        { name: "Security", href: "#security" },
-        { name: "Privacy", href: "#privacy" },
-        { name: "Terms", href: "#terms" },
+        { name: "About", href: "/about" },
+        { name: "Careers", href: "/about" },
+        { name: "Contact", href: "/contact" },
+        { name: "Security", href: "/enterprise" },
+        { name: "Privacy", href: "/privacy" },
+        { name: "Terms", href: "/terms" },
       ],
     },
   ];
 
   const socialLinks = [
-    { name: "GitHub", icon: Github, href: "#github", followers: "2.5K" },
-    { name: "Twitter", icon: Twitter, href: "#twitter", followers: "8.2K" },
-    { name: "LinkedIn", icon: Linkedin, href: "#linkedin", followers: "5.1K" },
-    { name: "Slack", icon: Slack, href: "#slack", followers: "3.8K" },
+    {
+      name: "GitHub",
+      icon: Github,
+      href: "https://github.com/reporunner/reporunner",
+      followers: "2.5K",
+    },
+    {
+      name: "Twitter",
+      icon: Twitter,
+      href: "https://twitter.com/reporunner",
+      followers: "8.2K",
+    },
+    {
+      name: "LinkedIn",
+      icon: Linkedin,
+      href: "https://linkedin.com/company/reporunner",
+      followers: "5.1K",
+    },
+    { name: "Slack", icon: Slack, href: "/contact", followers: "3.8K" },
   ];
 
   return (
@@ -197,19 +220,19 @@ export const Footer: React.FC = () => {
               </p>
               <div className="flex gap-6 text-sm">
                 <a
-                  href="#privacy"
+                  href="/privacy"
                   className="text-gray-400 hover:text-white transition-colors"
                 >
                   Privacy Policy
                 </a>
                 <a
-                  href="#terms"
+                  href="/terms"
                   className="text-gray-400 hover:text-white transition-colors"
                 >
                   Terms of Service
                 </a>
                 <a
-                  href="#security"
+                  href="/enterprise"
                   className="text-gray-400 hover:text-white transition-colors"
                 >
                   Security
@@ -223,8 +246,10 @@ export const Footer: React.FC = () => {
                 <span>All systems operational</span>
               </div>
               <a
-                href="#status"
+                href="https://status.reporunner.dev"
                 className="text-gray-400 hover:text-white text-sm transition-colors flex items-center gap-1"
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 Status
                 <ExternalLink className="w-3 h-3" />

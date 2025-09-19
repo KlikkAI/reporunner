@@ -87,7 +87,7 @@ export const useCountUpAnimation = (
   startOnVisible: boolean = true,
 ) => {
   const elementRef = useRef<HTMLElement>(null);
-  const animationRef = useRef<number>();
+  const animationRef = useRef<number | null>(null);
 
   const animateCount = () => {
     const startTime = Date.now();

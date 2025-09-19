@@ -6,6 +6,7 @@
  */
 
 import React from "react";
+import { Header } from "../components/Landing/Header";
 import { HeroSection } from "../components/Landing/HeroSection";
 import { CompetitiveAdvantage } from "../components/Landing/CompetitiveAdvantage";
 import { FeatureShowcase } from "../components/Landing/FeatureShowcase";
@@ -20,6 +21,9 @@ import { Footer } from "../components/Landing/Footer";
 export const LandingPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+      {/* Header */}
+      <Header />
+
       {/* Hero Section */}
       <HeroSection />
 

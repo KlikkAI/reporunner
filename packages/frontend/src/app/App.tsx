@@ -11,6 +11,18 @@ import Executions from "./pages/Executions";
 import Settings from "./pages/Settings";
 import Credentials from "./pages/Credentials";
 import { LandingPage } from "./pages/LandingPage";
+import Features from "./pages/Features";
+import IntegrationsPage from "./pages/IntegrationsPage";
+import PricingPage from "./pages/PricingPage";
+import Enterprise from "./pages/Enterprise";
+import SelfHosted from "./pages/SelfHosted";
+import Roadmap from "./pages/Roadmap";
+import Documentation from "./pages/Documentation";
+import APIReference from "./pages/APIReference";
+import About from "./pages/About";
+import Contact from "./pages/Contact";
+import Privacy from "./pages/Privacy";
+import Terms from "./pages/Terms";
 
 // Node registry is now initialized in main.tsx before React starts
 import { nodeRegistry } from "@/core";
@@ -39,6 +51,28 @@ function App() {
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+
+        {/* Product Pages */}
+        <Route path="/features" element={<Features />} />
+        <Route path="/integrations" element={<IntegrationsPage />} />
+        <Route path="/pricing" element={<PricingPage />} />
+        <Route path="/enterprise" element={<Enterprise />} />
+        <Route path="/self-hosted" element={<SelfHosted />} />
+        <Route path="/roadmap" element={<Roadmap />} />
+
+        {/* Developer Pages */}
+        <Route path="/documentation" element={<Documentation />} />
+        <Route path="/docs" element={<Documentation />} />
+        <Route path="/api-reference" element={<APIReference />} />
+        <Route path="/api" element={<APIReference />} />
+
+        {/* Company Pages */}
+        <Route path="/about" element={<About />} />
+        <Route path="/contact" element={<Contact />} />
+
+        {/* Legal Pages */}
+        <Route path="/privacy" element={<Privacy />} />
+        <Route path="/terms" element={<Terms />} />
 
         {/* Protected App Routes */}
         <Route

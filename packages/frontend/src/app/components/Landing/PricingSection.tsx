@@ -6,20 +6,24 @@
  */
 
 import React, { useState } from "react";
-import {
-  Check,
-  ArrowRight,
-  Star,
-  Shield,
-  Zap,
-  Users,
-  Crown,
-} from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { Check, ArrowRight, Star, Zap, Crown } from "lucide-react";
 
 export const PricingSection: React.FC = () => {
+  const navigate = useNavigate();
   const [billingPeriod, setBillingPeriod] = useState<"monthly" | "annually">(
     "monthly",
   );
+
+  const handlePlanClick = (planName: string) => {
+    if (planName === "Community") {
+      navigate("/register");
+    } else if (planName === "Professional") {
+      navigate("/register");
+    } else if (planName === "Enterprise") {
+      navigate("/contact");
+    }
+  };
 
   const plans = [
     {
@@ -324,6 +328,7 @@ export const PricingSection: React.FC = () => {
 
                 {/* CTA Button */}
                 <button
+                  onClick={() => handlePlanClick(plan.name)}
                   className={`w-full py-3 px-6 rounded-lg font-semibold transition-all duration-300 flex items-center justify-center gap-2 ${
                     plan.popular
                       ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:scale-105 hover:shadow-lg"
@@ -537,7 +542,10 @@ export const PricingSection: React.FC = () => {
               tailored features for large organizations with specific
               requirements.
             </p>
-            <button className="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-50 transition-colors">
+            <button
+              onClick={() => navigate("/contact")}
+              className="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-50 transition-colors"
+            >
               Contact Enterprise Sales
             </button>
           </div>

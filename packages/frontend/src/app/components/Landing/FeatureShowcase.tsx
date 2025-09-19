@@ -18,10 +18,29 @@ import {
   Shield,
 } from "lucide-react";
 
+type DemoElement =
+  | { type: "node"; label: string; x: number; y: number; color: string }
+  | { type: "connection"; from: number; to: number }
+  | { type: "user"; name: string; x: number; y: number; color: string }
+  | { type: "edit"; x: number; y: number; user: string }
+  | { type: "chart"; x: number; y: number; width: number; height: number }
+  | { type: "metric"; label: string; x: number; y: number }
+  | { type: "ai-node"; label: string; x: number; y: number; color: string }
+  | { type: "insight"; label: string; x: number; y: number; color: string };
+
 export const FeatureShowcase: React.FC = () => {
   const [activeFeature, setActiveFeature] = useState(0);
 
-  const features = [
+  const features: Array<{
+    id: number;
+    icon: any;
+    title: string;
+    subtitle: string;
+    description: string;
+    image: string;
+    highlights: string[];
+    demoElements?: DemoElement[];
+  }> = [
     {
       id: 0,
       icon: Workflow,
