@@ -1,18 +1,26 @@
 # 📚 Reporunner Documentation
 
-Welcome to the comprehensive documentation for Reporunner, the open-source workflow automation platform.
+Enterprise-grade visual workflow automation platform with AI capabilities.
 
-## 📖 Table of Contents
+## 📋 Table of Contents
+
+### 🎯 Strategic Documents
+
+- **[Enterprise Scaling Plan](./ENTERPRISE_SCALING_PLAN.md)** - Comprehensive roadmap for scaling to enterprise level
+- **[Architecture Comparison](./ARCHITECTURE_COMPARISON.md)** - Comparison with n8n and SIM platforms
+- **[Database Architecture](./DATABASE_ARCHITECTURE.md)** - Hybrid MongoDB + PostgreSQL architecture
 
 ### 🏗️ Architecture Documentation
 
 - [System Overview](./diagrams/architecture/system-overview.svg) - High-level system architecture
 - [Monorepo Structure](./diagrams/architecture/monorepo-structure.svg) - Package organization and dependencies
+- [Large Scale Architecture](./LARGE_SCALE_ARCHITECTURE.md) - Scalability considerations
 
 ### 🔄 Workflow Documentation
 
 - [Execution Flow](./diagrams/workflows/execution-flow.svg) - How workflows are processed
 - [Node Types](./nodes/) - Available workflow nodes and integrations
+- [Workflow Editor Features](./WORKFLOW_EDITOR_FEATURES_ANALYSIS.md) - Editor capabilities analysis
 
 ### 🔌 API Documentation
 
