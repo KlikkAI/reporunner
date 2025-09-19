@@ -14,7 +14,6 @@ import {
   Calendar,
   Mail,
   ExternalLink,
-  ArrowRight,
   Download,
   Eye,
   Users,

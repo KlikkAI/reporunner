@@ -13,16 +13,12 @@ import {
   Copy,
   CheckCircle,
   ArrowRight,
-  Search,
   ExternalLink,
-  Terminal,
   Webhook,
-  Database,
   Settings,
   Shield,
   Users,
   GitBranch,
-  Zap,
   Clock,
 } from "lucide-react";
 import { Header } from "../components/Landing/Header";

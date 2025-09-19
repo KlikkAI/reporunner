@@ -9,8 +9,6 @@ import {
   Shield,
   Lock,
   Eye,
-  Database,
-  Globe,
   CheckCircle,
   Mail,
   ArrowRight,

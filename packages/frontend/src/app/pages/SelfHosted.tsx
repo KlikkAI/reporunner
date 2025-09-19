@@ -13,7 +13,6 @@ import {
   Shield,
   Database,
   Cloud,
-  Monitor,
   Settings,
   CheckCircle,
   ArrowRight,
@@ -438,7 +437,7 @@ export const SelfHosted: React.FC = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {Object.entries(systemRequirements).map(
-                ([tier, requirements], index) => (
+                ([tier, requirements]) => (
                   <div
                     key={tier}
                     className={`rounded-xl p-6 ${

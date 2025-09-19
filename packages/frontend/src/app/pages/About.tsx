@@ -17,7 +17,6 @@ import {
   Twitter,
   Github,
   Mail,
-  ArrowRight,
   CheckCircle,
   Rocket,
   Brain,

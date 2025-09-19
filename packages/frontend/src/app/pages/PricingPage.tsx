@@ -12,14 +12,9 @@ import {
   Star,
   ArrowRight,
   Zap,
-  Shield,
   Users,
-  Database,
   Cloud,
   Phone,
-  Mail,
-  Calculator,
-  Info,
   ChevronDown,
   ChevronUp,
 } from "lucide-react";
@@ -464,6 +459,7 @@ export const PricingPage: React.FC = () => {
                           )}
                         </div>
                         {billingCycle === "yearly" &&
+                          typeof plan.price.monthly === "number" &&
                           plan.price.monthly > 0 && (
                             <div className="text-sm text-gray-500">
                               ${plan.price.monthly}/mo billed monthly

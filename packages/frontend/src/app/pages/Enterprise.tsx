@@ -15,18 +15,14 @@ import {
   Phone,
   Cloud,
   CheckCircle,
-  ArrowRight,
   Star,
   Globe,
-  Zap,
   Settings,
   FileText,
   Award,
   TrendingUp,
   Building,
-  MessageSquare,
   Calendar,
-  Play,
   ExternalLink,
 } from "lucide-react";
 import { Header } from "../components/Landing/Header";
@@ -610,7 +606,7 @@ export const Enterprise: React.FC = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            {Object.entries(pricing).map(([key, plan], index) => (
+            {Object.entries(pricing).map(([key, plan]) => (
               <div
                 key={key}
                 className={`rounded-2xl p-8 ${

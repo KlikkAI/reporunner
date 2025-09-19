@@ -20,7 +20,6 @@ import {
   Globe,
   Calendar,
   ExternalLink,
-  Building,
   Heart,
   HelpCircle,
   Code,

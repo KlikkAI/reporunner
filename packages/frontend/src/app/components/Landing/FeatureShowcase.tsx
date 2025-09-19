@@ -103,8 +103,20 @@ export const FeatureShowcase: React.FC = () => {
           y: 100,
           color: "bg-purple-500",
         },
-        { type: "insight", text: "Optimized execution path", x: 350, y: 50 },
-        { type: "insight", text: "Error pattern detected", x: 150, y: 200 },
+        {
+          type: "insight",
+          label: "Optimized execution path",
+          x: 350,
+          y: 50,
+          color: "text-green-500",
+        },
+        {
+          type: "insight",
+          label: "Error pattern detected",
+          x: 150,
+          y: 200,
+          color: "text-red-500",
+        },
       ],
     },
     {

@@ -22,7 +22,6 @@ import {
   ArrowRight,
   Check,
   Play,
-  Star,
   ChevronRight,
 } from "lucide-react";
 import { Header } from "../components/Landing/Header";

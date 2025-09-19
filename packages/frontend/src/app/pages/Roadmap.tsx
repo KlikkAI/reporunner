@@ -11,26 +11,15 @@ import {
   Clock,
   Lightbulb,
   Star,
-  ArrowRight,
   Calendar,
-  Users,
   Brain,
   Shield,
-  Database,
-  Cloud,
-  Zap,
   Settings,
   Code,
   MessageSquare,
   TrendingUp,
-  GitBranch,
-  Smartphone,
   Globe,
-  BarChart3,
-  Lock,
   Webhook,
-  FileText,
-  Award,
   Eye,
   ThumbsUp,
   ExternalLink,
@@ -387,7 +376,7 @@ export const Roadmap: React.FC = () => {
           <div className="max-w-6xl mx-auto">
             {filteredItems.length > 0 ? (
               <div className="space-y-6">
-                {filteredItems.map((item, index) => {
+                {filteredItems.map((item) => {
                   const statusInfo =
                     statusConfig[item.status as keyof typeof statusConfig];
                   const priorityInfo =
@@ -570,7 +559,7 @@ export const Roadmap: React.FC = () => {
             {roadmapItems["2024"]
               .filter((item) => item.status === "completed")
               .slice(0, 3)
-              .map((item, index) => {
+              .map((item) => {
                 const categoryIcon = {
                   "ai-ml": Brain,
                   enterprise: Shield,
