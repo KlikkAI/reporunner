@@ -1,0 +1,43 @@
+{
+  "name": "@reporunner/db",
+  "version": "0.0.1",
+  "description": "Database layer for Reporunner - Hybrid MongoDB + PostgreSQL architecture",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "lint": "eslint src --ext ts,tsx",
+    "type-check": "tsc --noEmit",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@reporunner/api-types": "workspace:*",
+    "@reporunner/constants": "workspace:*",
+    "mongoose": "^8.11.2",
+    "pg": "^8.14.0",
+    "pgvector": "^0.2.0",
+    "redis": "^4.7.0",
+    "ioredis": "^5.5.1",
+    "typeorm": "^0.3.24",
+    "dotenv": "^16.4.7",
+    "winston": "^3.18.1",
+    "bcrypt": "^5.1.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.7",
+    "@types/bcrypt": "^5.0.3",
+    "@types/pg": "^8.11.10",
+    "typescript": "^5.3.3",
+    "vitest": "^2.2.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "license": "MIT"
+}

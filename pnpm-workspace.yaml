@@ -1,5 +1,8 @@
 packages:
   - packages/*
+  - packages/@reporunner/*
+  - packages/@reporunner/platform/*
+  - packages/@reporunner/services/*
   - tools/*
 
 onlyBuiltDependencies:

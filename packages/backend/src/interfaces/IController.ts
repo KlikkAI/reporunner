@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Request, Response } from "express";
 
 /**
  * Base controller interface with common HTTP methods
@@ -20,6 +20,9 @@ export interface IAuthenticatedRequest extends Request {
     id: string;
     email: string;
     role: string;
+    permissions: string[];
+    organizationId?: string;
+    isEmailVerified: boolean;
   };
 }
 

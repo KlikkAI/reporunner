@@ -67,36 +67,50 @@ export class ConfigService {
       }
       return defaultValue;
     }
-    return value.toLowerCase() === 'true' || value === '1';
+    return value.toLowerCase() === "true" || value === "1";
   }
 
   /**
    * Check if we're in development mode
    */
   isDevelopment(): boolean {
-    return this.get('NODE_ENV', 'development') === 'development';
+    return this.get("NODE_ENV", "development") === "development";
   }
 
   /**
    * Check if we're in production mode
    */
   isProduction(): boolean {
-    return this.get('NODE_ENV', 'development') === 'production';
+    return this.get("NODE_ENV", "development") === "production";
   }
 
   /**
    * Check if we're in test mode
    */
   isTest(): boolean {
-    return this.get('NODE_ENV', 'development') === 'test';
+    return this.get("NODE_ENV", "development") === "test";
   }
 
   /**
-   * Get database configuration
+   * Get MongoDB configuration
    */
   getDatabaseConfig() {
     return {
-      uri: this.getRequired('MONGODB_URI'),
+      uri: this.getRequired("MONGODB_URI"),
+    };
+  }
+
+  /**
+   * Get PostgreSQL configuration
+   */
+  getPostgreSQLConfig() {
+    return {
+      host: this.get("POSTGRES_HOST", "localhost"),
+      port: this.getNumber("POSTGRES_PORT", 5432),
+      database: this.getRequired("POSTGRES_DB"),
+      user: this.getRequired("POSTGRES_USER"),
+      password: this.getRequired("POSTGRES_PASSWORD"),
+      ssl: this.getBoolean("POSTGRES_SSL", false),
     };
   }
 
@@ -105,9 +119,9 @@ export class ConfigService {
    */
   getJWTConfig() {
     return {
-      secret: this.getRequired('JWT_SECRET'),
-      expiresIn: this.get('JWT_EXPIRES_IN', '7d'),
-      refreshExpiresIn: this.get('JWT_REFRESH_EXPIRES_IN', '30d'),
+      secret: this.getRequired("JWT_SECRET"),
+      expiresIn: this.get("JWT_EXPIRES_IN", "7d"),
+      refreshExpiresIn: this.get("JWT_REFRESH_EXPIRES_IN", "30d"),
     };
   }
 
@@ -116,9 +130,9 @@ export class ConfigService {
    */
   getServerConfig() {
     return {
-      port: this.getNumber('PORT', 5000),
-      nodeEnv: this.get('NODE_ENV', 'development'),
-      corsOrigin: this.get('CORS_ORIGIN', 'http://localhost:3000'),
+      port: this.getNumber("PORT", 5000),
+      nodeEnv: this.get("NODE_ENV", "development"),
+      corsOrigin: this.get("CORS_ORIGIN", "http://localhost:3000"),
     };
   }
 
@@ -127,9 +141,9 @@ export class ConfigService {
    */
   getOAuthConfig() {
     return {
-      googleClientId: this.getRequired('GOOGLE_OAUTH_CLIENT_ID'),
-      googleClientSecret: this.getRequired('GOOGLE_OAUTH_CLIENT_SECRET'),
-      protocol: this.get('OAUTH_PROTOCOL'),
+      googleClientId: this.getRequired("GOOGLE_OAUTH_CLIENT_ID"),
+      googleClientSecret: this.getRequired("GOOGLE_OAUTH_CLIENT_SECRET"),
+      protocol: this.get("OAUTH_PROTOCOL"),
     };
   }
 
@@ -138,8 +152,8 @@ export class ConfigService {
    */
   getEncryptionConfig() {
     return {
-      credentialKey: this.getRequired('CREDENTIAL_ENCRYPTION_KEY'),
-      bcryptRounds: this.getNumber('BCRYPT_SALT_ROUNDS', 12),
+      credentialKey: this.getRequired("CREDENTIAL_ENCRYPTION_KEY"),
+      bcryptRounds: this.getNumber("BCRYPT_SALT_ROUNDS", 12),
     };
   }
 }

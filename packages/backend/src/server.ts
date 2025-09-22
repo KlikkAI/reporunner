@@ -35,11 +35,17 @@ import oauthRoutes from "./domains/oauth/routes/oauthRoutes.js";
 import nodeExecutionRoutes from "./domains/executions/routes/nodeExecutionRoutes.js";
 import { errorHandler, notFoundHandler } from "./middleware/errorHandlers.js";
 
-// Connect to MongoDB
-mongoose
-  .connect(process.env.MONGODB_URI as string)
-  .then(() => console.log("MongoDB connected"))
-  .catch((err) => console.error("MongoDB connection error:", err));
+// Import hybrid database service
+import { HybridDatabaseService } from "./services/DatabaseService.js";
+
+// Initialize hybrid database service
+const hybridDb = HybridDatabaseService.getInstance();
+
+// Connect to hybrid database (MongoDB + PostgreSQL)
+hybridDb
+  .initialize()
+  .then(() => console.log("Hybrid database system connected successfully"))
+  .catch((err) => console.error("Hybrid database connection error:", err));
 
 const app: Application = express();
 
@@ -76,8 +82,24 @@ app.get("/", (req: Request, res: Response) => {
 });
 
 // Health check endpoint for frontend ApiClient
-app.get("/health", (_req: Request, res: Response) => {
-  res.json({ status: "ok", timestamp: new Date().toISOString() });
+app.get("/health", async (_req: Request, res: Response) => {
+  try {
+    const healthStatus = await hybridDb.healthCheck();
+    res.json({
+      status: healthStatus.overall ? "ok" : "degraded",
+      timestamp: new Date().toISOString(),
+      databases: {
+        mongodb: healthStatus.mongo ? "healthy" : "unhealthy",
+        postgresql: healthStatus.postgres ? "healthy" : "unhealthy",
+      },
+    });
+  } catch (error) {
+    res.status(503).json({
+      status: "error",
+      timestamp: new Date().toISOString(),
+      error: "Database health check failed",
+    });
+  }
 });
 
 // API route handlers

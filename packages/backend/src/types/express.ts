@@ -2,7 +2,7 @@
  * Express.js type extensions and augmentations
  */
 
-import { Request } from 'express';
+import { Request } from "express";
 
 declare global {
   namespace Express {
@@ -11,6 +11,9 @@ declare global {
         id: string;
         email: string;
         role: string;
+        permissions: string[];
+        organizationId?: string;
+        isEmailVerified: boolean;
       };
       correlationId?: string;
       startTime?: number;
@@ -23,6 +26,9 @@ export interface AuthenticatedRequest extends Request {
     id: string;
     email: string;
     role: string;
+    permissions: string[];
+    organizationId?: string;
+    isEmailVerified: boolean;
   };
 }
 
