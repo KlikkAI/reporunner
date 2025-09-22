@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { JwtPayload } from "jsonwebtoken";
+// Removed unused JwtPayload import
 import { JWTSessionManager } from "../jwt-session";
 import { ERROR_CODES } from "@reporunner/constants";
 
@@ -246,7 +246,7 @@ export function createLogoutMiddleware(sessionManager: JWTSessionManager) {
       const { logoutAll = false } = req.body;
 
       if (!req.user) {
-        return res.status(401).json({
+        res.status(401).json({
           success: false,
           error: {
             code: ERROR_CODES.UNAUTHORIZED,
@@ -300,7 +300,7 @@ export function createSessionManagementMiddleware(
     // Get all user sessions
     getSessions: async (req: Request, res: Response) => {
       if (!req.user) {
-        return res.status(401).json({
+        res.status(401).json({
           success: false,
           error: {
             code: ERROR_CODES.UNAUTHORIZED,
@@ -327,9 +327,9 @@ export function createSessionManagementMiddleware(
     },
 
     // Revoke a specific session
-    revokeSession: async (req: Request, res: Response) => {
+    revokeSession: async (req: Request, res: Response): Promise<void> => {
       if (!req.user) {
-        return res.status(401).json({
+        res.status(401).json({
           success: false,
           error: {
             code: ERROR_CODES.UNAUTHORIZED,

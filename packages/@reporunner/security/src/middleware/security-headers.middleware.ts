@@ -106,7 +106,7 @@ export function createCorsMiddleware(config: CorsConfig = {}): any {
   } = config;
 
   if (!enabled) {
-    return (req: Request, res: Response, next: NextFunction) => next();
+    return (_req: Request, _res: Response, next: NextFunction) => next();
   }
 
   const corsOptions: CorsOptions = {

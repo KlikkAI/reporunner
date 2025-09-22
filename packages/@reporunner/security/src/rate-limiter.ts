@@ -5,7 +5,7 @@ import {
   RateLimiterRes,
 } from "rate-limiter-flexible";
 import { createClient, RedisClientType } from "redis";
-import { ERROR_CODES } from "@reporunner/constants";
+// Removed unused ERROR_CODES import
 
 export interface RateLimiterConfig {
   redis?: {
@@ -229,7 +229,7 @@ export class AdvancedRateLimiter {
       return {
         allowed: true,
         remaining: result.remainingPoints,
-        retryAfter: new Date(Date.now() + result.msBeforeNext).toISOString(),
+        retryAfter: Math.ceil(result.msBeforeNext / 1000),
       };
     } catch (rateLimiterRes) {
       const res = rateLimiterRes as RateLimiterRes;
@@ -249,7 +249,7 @@ export class AdvancedRateLimiter {
       return {
         allowed: false,
         remaining: res.remainingPoints || 0,
-        retryAfter: new Date(Date.now() + res.msBeforeNext).toISOString(),
+        retryAfter: Math.ceil(res.msBeforeNext / 1000),
         blocked: res.remainingPoints === 0,
       };
     }

@@ -1,7 +1,7 @@
 import jwt, { JwtPayload, SignOptions, VerifyOptions } from "jsonwebtoken";
-import { randomBytes, createHash } from "crypto";
+import { randomBytes } from "crypto";
 import { promisify } from "util";
-import { ERROR_CODES } from "@reporunner/constants";
+// Removed unused ERROR_CODES import
 
 const randomBytesAsync = promisify(randomBytes);
 
@@ -95,7 +95,7 @@ export class JWTSessionManager {
 
     // Generate tokens
     const accessToken = this.signToken(accessTokenPayload, {
-      expiresIn: this.config.accessTokenExpiry,
+      expiresIn: this.config.accessTokenExpiry as string | number,
       subject: payload.userId,
     });
 
@@ -187,7 +187,7 @@ export class JWTSessionManager {
       };
 
       const newAccessToken = this.signToken(newAccessTokenPayload, {
-        expiresIn: this.config.accessTokenExpiry,
+        expiresIn: this.config.accessTokenExpiry as string | number,
         subject: decoded.userId,
       });
 
@@ -212,7 +212,7 @@ export class JWTSessionManager {
         newRefreshToken = this.signToken(
           newRefreshTokenPayload,
           {
-            expiresIn: this.config.refreshTokenExpiry,
+            expiresIn: this.config.refreshTokenExpiry as string,
             subject: decoded.userId,
           },
           true,

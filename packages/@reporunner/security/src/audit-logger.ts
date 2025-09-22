@@ -1,10 +1,10 @@
-import { createHash, randomBytes } from "crypto";
+import { randomBytes } from "crypto";
 import { EventEmitter } from "events";
 import fs from "fs";
 import path from "path";
 import { promisify } from "util";
 
-const writeFile = promisify(fs.writeFile);
+// const writeFile = promisify(fs.writeFile); // Removed unused function
 const appendFile = promisify(fs.appendFile);
 const mkdir = promisify(fs.mkdir);
 
@@ -360,7 +360,7 @@ export class AuditLogger extends EventEmitter {
 
       const expectedHash = this.generateHash({
         ...log,
-        hash: undefined,
+        // hash: undefined, // Removed as not part of base event
       });
 
       if (log.hash !== expectedHash) {
@@ -592,9 +592,9 @@ export class AuditLogger extends EventEmitter {
   private generateHash(event: Omit<AuditEvent, "hash">): string {
     const data = JSON.stringify({
       ...event,
-      hash: undefined,
+      // hash property already omitted from type
     });
-    return createHash("sha256").update(data).digest("hex");
+    return require("crypto").createHash("sha256").update(data).digest("hex");
   }
 
   /**

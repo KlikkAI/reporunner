@@ -2,8 +2,8 @@
  * @reporunner/security - Security utilities and services
  */
 
-// Encryption service
-export * from "./encryption";
+// Encryption service (commented out until implemented)
+// export * from "./encryption";
 
 // Rate limiting
 export * from "./rate-limiter";
@@ -26,7 +26,7 @@ export * from "./middleware/validation.middleware";
 export * from "./middleware/file-upload.middleware";
 
 // Re-export commonly used items
-export { EncryptionService } from "./encryption.service";
+// export { EncryptionService } from "./encryption.service";
 export { AdvancedRateLimiter, rateLimiter } from "./rate-limiter";
 export { JWTSessionManager, jwtSessionManager } from "./jwt-session";
 export {

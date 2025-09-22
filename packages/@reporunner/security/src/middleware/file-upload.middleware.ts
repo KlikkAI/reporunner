@@ -160,10 +160,10 @@ export function createFileUploadMiddleware(config: FileUploadConfig = {}) {
 
   // Configure multer storage
   const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
+    destination: (_req, _file, cb) => {
       cb(null, destination);
     },
-    filename: (req, file, cb) => {
+    filename: (_req, file, cb) => {
       const sanitized = sanitizeFilename
         ? sanitizeFilenameString(file.originalname)
         : file.originalname;
@@ -497,7 +497,7 @@ function sanitizeFilenameString(filename: string): string {
  * Create file cleanup middleware
  */
 export function createFileCleanupMiddleware() {
-  return async (err: any, req: Request, res: Response, next: NextFunction) => {
+  return async (err: any, req: Request, res: Response, next: NextFunction): Promise<void> => {
     // Clean up uploaded files on error
     if (err) {
       const files = req.file
