@@ -37,7 +37,7 @@ export class DatabaseService {
   private redisClient: RedisClientType | null = null;
   private logger: Logger;
   private config: DatabaseConfig;
-  private isConnected: boolean = false;
+  // private isConnected: boolean = false; // Removed unused variable
 
   constructor(config: DatabaseConfig, logger: Logger) {
     this.config = config;
@@ -431,7 +431,7 @@ export class DatabaseService {
         this.logger.info("Redis disconnected");
       }
 
-      this.isConnected = false;
+      // this.isConnected = false; // Removed isConnected tracking
     } catch (error) {
       this.logger.error("Error disconnecting databases", error);
       throw error;

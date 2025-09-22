@@ -1,4 +1,4 @@
-import { Schema, model, Document } from "mongoose";
+import { Schema, model } from "mongoose";
 import { IWorkflow, WorkflowStatus, NodeType } from "@reporunner/api-types";
 
 const NodeSchema = new Schema({

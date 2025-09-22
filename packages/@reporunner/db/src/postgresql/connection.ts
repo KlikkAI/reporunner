@@ -1,4 +1,4 @@
-import { Pool, PoolClient, PoolConfig, QueryResult } from "pg";
+import { Pool, PoolClient, PoolConfig, QueryResult, QueryResultRow } from "pg";
 import { EventEmitter } from "events";
 
 export interface PostgreSQLConfig extends PoolConfig {
@@ -80,7 +80,7 @@ export class PostgreSQLConnection extends EventEmitter {
       this.emit("clientAcquired", client);
     });
 
-    this.pool.on("error", (error, client) => {
+    this.pool.on("error", (error, _client) => {
       console.error("PostgreSQL pool error:", error);
       this.emit("error", error);
       this.handleConnectionError();
@@ -165,7 +165,7 @@ export class PostgreSQLConnection extends EventEmitter {
   /**
    * Execute a query
    */
-  async query<T = any>(text: string, params?: any[]): Promise<QueryResult<T>> {
+  async query<T extends QueryResultRow = any>(text: string, params?: any[]): Promise<QueryResult<T>> {
     if (!this.pool) {
       throw new Error("PostgreSQL not connected. Call connect() first.");
     }

@@ -96,11 +96,11 @@ export class MongoDBConnection extends EventEmitter {
       console.log("MongoDB server closed");
     });
 
-    this.client.on("serverDescriptionChanged", (event) => {
-      console.log("MongoDB server description changed:", event);
+    this.client.on("serverDescriptionChanged", (_event: any) => {
+      console.log("MongoDB server description changed:", _event);
     });
 
-    this.client.on("error", (error) => {
+    this.client.on("error", (error: any) => {
       console.error("MongoDB client error:", error);
       this.emit("error", error);
       this.handleConnectionError();

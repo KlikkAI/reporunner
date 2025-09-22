@@ -68,6 +68,13 @@ export interface IUser {
   updatedAt: Date;
   settings?: IUserSettings;
   metadata?: Record<string, any>;
+  
+  // Additional fields for database implementation (optional to keep interface clean)
+  password?: string;
+  passwordChangedAt?: Date;
+  loginAttempts?: number;
+  lockUntil?: Date;
+  emailVerificationToken?: string;
 }
 
 // User Settings

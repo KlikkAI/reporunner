@@ -33,6 +33,7 @@
     "@types/node": "^22.13.7",
     "@types/bcrypt": "^5.0.2",
     "@types/pg": "^8.11.10",
+    "@types/mongodb": "^4.0.7",
     "typescript": "^5.3.3",
     "vitest": "^2.1.9"
   },
