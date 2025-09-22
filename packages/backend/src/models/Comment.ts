@@ -295,7 +295,7 @@ commentSchema.methods.addReaction = function (
   reactionType: string,
 ) {
   // Remove existing reaction from this user
-  this.reactions = this.reactions.filter((r) => r.userId !== userId);
+  this.reactions = this.reactions.filter((r: any) => r.userId !== userId);
 
   // Add new reaction
   this.reactions.push({
@@ -308,7 +308,7 @@ commentSchema.methods.addReaction = function (
 };
 
 commentSchema.methods.removeReaction = function (userId: string) {
-  this.reactions = this.reactions.filter((r) => r.userId !== userId);
+  this.reactions = this.reactions.filter((r: any) => r.userId !== userId);
   return this.save();
 };
 

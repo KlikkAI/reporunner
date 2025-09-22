@@ -26,7 +26,7 @@ export * from "./middleware/validation.middleware";
 export * from "./middleware/file-upload.middleware";
 
 // Re-export commonly used items
-export { EncryptionService } from "./encryption";
+export { EncryptionService } from "./encryption.service";
 export { AdvancedRateLimiter, rateLimiter } from "./rate-limiter";
 export { JWTSessionManager, jwtSessionManager } from "./jwt-session";
 export {
