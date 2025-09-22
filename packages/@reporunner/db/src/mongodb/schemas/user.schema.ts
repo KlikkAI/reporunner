@@ -1,6 +1,18 @@
-import { Schema, model } from "mongoose";
+import { Schema, model, Document } from "mongoose";
 import { IUser, UserRole, PermissionType } from "@reporunner/api-types";
 import bcrypt from "bcrypt";
+
+// Create a Document interface that extends IUser
+interface IUserDocument extends Omit<IUser, "id">, Document {
+  // Virtual properties
+  fullName?: string;
+  isLocked?: boolean;
+  // Methods
+  comparePassword(candidatePassword: string): Promise<boolean>;
+  changedPasswordAfter(JWTTimestamp: number): boolean;
+  incLoginAttempts(): Promise<any>;
+  resetLoginAttempts(): Promise<any>;
+}
 
 const UserSettingsSchema = new Schema({
   timezone: { type: String, default: "UTC" },
@@ -21,7 +33,7 @@ const UserSettingsSchema = new Schema({
   },
 });
 
-export const UserSchema = new Schema<IUser>(
+export const UserSchema = new Schema<IUserDocument>(
   {
     id: { type: String, required: true, unique: true, index: true },
     email: {
@@ -79,7 +91,7 @@ UserSchema.index({ organizationId: 1, isActive: 1 });
 UserSchema.index({ email: 1, isActive: 1 });
 
 // Virtual for full name
-UserSchema.virtual("fullName").get(function () {
+UserSchema.virtual("fullName").get(function (this: IUserDocument) {
   if (this.firstName && this.lastName) {
     return `${this.firstName} ${this.lastName}`;
   }
@@ -87,13 +99,13 @@ UserSchema.virtual("fullName").get(function () {
 });
 
 // Password hashing middleware
-UserSchema.pre("save", async function (next) {
+UserSchema.pre("save", async function (this: IUserDocument, next) {
   // Only hash the password if it has been modified
   if (!this.isModified("password")) return next();
 
   try {
     const salt = await bcrypt.genSalt(12);
-    this.password = await bcrypt.hash(this.password, salt);
+    this.password = await bcrypt.hash(this.password!, salt);
     this.passwordChangedAt = new Date();
     next();
   } catch (error: any) {
@@ -147,8 +159,8 @@ UserSchema.methods.resetLoginAttempts = function () {
 };
 
 // Virtual to check if account is locked
-UserSchema.virtual("isLocked").get(function () {
-  return !!(this.lockUntil && this.lockUntil > Date.now());
+UserSchema.virtual("isLocked").get(function (this: IUserDocument) {
+  return !!(this.lockUntil && this.lockUntil.getTime() > Date.now());
 });
 
-export const UserModel = model<IUser>("User", UserSchema);
+export const UserModel = model<IUserDocument>("User", UserSchema);

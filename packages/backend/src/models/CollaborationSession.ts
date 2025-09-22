@@ -18,6 +18,7 @@ export interface ICollaborationSession extends Document {
     avatar?: string;
     joinedAt: Date;
     lastSeen: Date;
+    lastActivity: Date;
     role: "owner" | "editor" | "viewer";
     cursor?: {
       x: number;
@@ -29,6 +30,8 @@ export interface ICollaborationSession extends Document {
       edgeIds: string[];
     };
   }>;
+  isActive: boolean;
+  endedAt?: Date;
   currentVersion: number;
   lastActivity: Date;
   settings: {
@@ -95,6 +98,10 @@ const collaborationSessionSchema = new Schema<ICollaborationSession>(
           type: Date,
           default: Date.now,
         },
+        lastActivity: {
+          type: Date,
+          default: Date.now,
+        },
         role: {
           type: String,
           enum: ["owner", "editor", "viewer"],
@@ -111,6 +118,13 @@ const collaborationSessionSchema = new Schema<ICollaborationSession>(
         },
       },
     ],
+    isActive: {
+      type: Boolean,
+      default: true,
+    },
+    endedAt: {
+      type: Date,
+    },
     currentVersion: {
       type: Number,
       default: 0,

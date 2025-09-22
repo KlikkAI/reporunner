@@ -37,7 +37,7 @@ export class DatabaseService {
   private redisClient: RedisClientType | null = null;
   private logger: Logger;
   private config: DatabaseConfig;
-  // private isConnected: boolean = false; // Removed unused variable
+  public isConnected: boolean = false;
 
   constructor(config: DatabaseConfig, logger: Logger) {
     this.config = config;
@@ -342,7 +342,7 @@ export class DatabaseService {
   /**
    * Redis Operations
    */
-  get redis() {
+  get redis(): any {
     if (!this.redisClient) {
       throw new Error("Redis not connected");
     }

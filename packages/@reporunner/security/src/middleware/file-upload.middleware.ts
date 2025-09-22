@@ -145,12 +145,7 @@ export function createFileUploadMiddleware(config: FileUploadConfig = {}) {
     blockedExtensions = DANGEROUS_EXTENSIONS,
     preserveExtension = true,
     generateUniqueName = true,
-    scanForVirus = false,
-    clamavPath = "/usr/bin/clamscan",
-    validateMagicNumbers = true,
     sanitizeFilename = true,
-    metadata = true,
-    hashAlgorithm = "sha256",
   } = config;
 
   // Ensure upload directory exists
@@ -180,7 +175,7 @@ export function createFileUploadMiddleware(config: FileUploadConfig = {}) {
 
   // File filter
   const fileFilter = (
-    req: Request,
+    _req: Request,
     file: Express.Multer.File,
     cb: FileFilterCallback,
   ) => {
@@ -497,7 +492,12 @@ function sanitizeFilenameString(filename: string): string {
  * Create file cleanup middleware
  */
 export function createFileCleanupMiddleware() {
-  return async (err: any, req: Request, res: Response, next: NextFunction): Promise<void> => {
+  return async (
+    err: any,
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> => {
     // Clean up uploaded files on error
     if (err) {
       const files = req.file
@@ -529,7 +529,7 @@ export function createFileCleanupMiddleware() {
           break;
       }
 
-      return res.status(400).json({
+      res.status(400).json({
         success: false,
         error: {
           code: ERROR_CODES.FILE_UPLOAD_ERROR,
@@ -537,6 +537,7 @@ export function createFileCleanupMiddleware() {
           details: err.message,
         },
       });
+      return;
     }
 
     next(err);
@@ -549,7 +550,7 @@ export function createFileCleanupMiddleware() {
 export function createFileTypeValidator(
   allowedTypes: Record<string, string[]>,
 ) {
-  return (req: Request, res: Response, next: NextFunction) => {
+  return (req: Request, res: Response, next: NextFunction): void => {
     const files = req.file
       ? [req.file]
       : (req.files as Express.Multer.File[]) || [];
@@ -558,23 +559,25 @@ export function createFileTypeValidator(
       const fieldTypes = allowedTypes[file.fieldname];
 
       if (!fieldTypes) {
-        return res.status(400).json({
+        res.status(400).json({
           success: false,
           error: {
             code: ERROR_CODES.VALIDATION_ERROR,
             message: `Unexpected file field: ${file.fieldname}`,
           },
         });
+        return;
       }
 
       if (!fieldTypes.includes(file.mimetype)) {
-        return res.status(400).json({
+        res.status(400).json({
           success: false,
           error: {
             code: ERROR_CODES.VALIDATION_ERROR,
             message: `Invalid file type for ${file.fieldname}. Allowed types: ${fieldTypes.join(", ")}`,
           },
         });
+        return;
       }
     }
 
@@ -586,7 +589,7 @@ export function createFileTypeValidator(
  * Create file size limiter per field
  */
 export function createFieldSizeLimiter(limits: Record<string, number>) {
-  return (req: Request, res: Response, next: NextFunction) => {
+  return (req: Request, res: Response, next: NextFunction): void => {
     const files = req.file
       ? [req.file]
       : (req.files as Express.Multer.File[]) || [];
@@ -595,13 +598,14 @@ export function createFieldSizeLimiter(limits: Record<string, number>) {
       const limit = limits[file.fieldname];
 
       if (limit && file.size > limit) {
-        return res.status(400).json({
+        res.status(400).json({
           success: false,
           error: {
             code: ERROR_CODES.FILE_TOO_LARGE,
             message: `File ${file.originalname} exceeds size limit for ${file.fieldname}`,
           },
         });
+        return;
       }
     }
 
@@ -620,41 +624,48 @@ export function createSecureDownloadMiddleware(
     logDownloads?: boolean;
   } = { basePath: "/uploads" },
 ) {
-  return async (req: Request, res: Response, next: NextFunction) => {
+  return async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> => {
     try {
       // Check authentication if required
       if (options.requireAuth && !(req as any).user) {
-        return res.status(401).json({
+        res.status(401).json({
           success: false,
           error: {
             code: ERROR_CODES.UNAUTHORIZED,
             message: "Authentication required",
           },
         });
+        return;
       }
 
       // Get requested file path
       const filename = req.params.filename || req.query.filename;
 
       if (!filename || typeof filename !== "string") {
-        return res.status(400).json({
+        res.status(400).json({
           success: false,
           error: {
             code: ERROR_CODES.VALIDATION_ERROR,
             message: "Filename is required",
           },
         });
+        return;
       }
 
       // Prevent path traversal
       if (filename.includes("../") || filename.includes("..\\")) {
-        return res.status(400).json({
+        res.status(400).json({
           success: false,
           error: {
             code: ERROR_CODES.SECURITY_VIOLATION,
             message: "Invalid filename",
           },
         });
+        return;
       }
 
       const filePath = path.join(options.basePath, filename);
@@ -664,26 +675,28 @@ export function createSecureDownloadMiddleware(
       const resolvedBase = path.resolve(options.basePath);
 
       if (!resolvedPath.startsWith(resolvedBase)) {
-        return res.status(403).json({
+        res.status(403).json({
           success: false,
           error: {
             code: ERROR_CODES.FORBIDDEN,
             message: "Access denied",
           },
         });
+        return;
       }
 
       // Check if file exists
       try {
         await statAsync(resolvedPath);
       } catch (error) {
-        return res.status(404).json({
+        res.status(404).json({
           success: false,
           error: {
             code: ERROR_CODES.NOT_FOUND,
             message: "File not found",
           },
         });
+        return;
       }
 
       // Log download if enabled

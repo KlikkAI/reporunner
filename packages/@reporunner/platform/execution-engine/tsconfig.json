@@ -11,8 +11,8 @@
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist", "**/*.spec.ts", "**/*.test.ts"],
   "references": [
-    { "path": "../../../api-types" },
-    { "path": "../../../constants" },
-    { "path": "../../../db" }
+    { "path": "../../api-types" },
+    { "path": "../../constants" },
+    { "path": "../../db" }
   ]
 }

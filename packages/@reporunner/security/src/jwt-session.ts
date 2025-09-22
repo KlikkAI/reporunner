@@ -95,14 +95,14 @@ export class JWTSessionManager {
 
     // Generate tokens
     const accessToken = this.signToken(accessTokenPayload, {
-      expiresIn: this.config.accessTokenExpiry as string | number,
+      expiresIn: this.config.accessTokenExpiry as any,
       subject: payload.userId,
     });
 
     const refreshToken = this.signToken(
       refreshTokenPayload,
       {
-        expiresIn: this.config.refreshTokenExpiry,
+        expiresIn: this.config.refreshTokenExpiry as any,
         subject: payload.userId,
       },
       true,
@@ -187,7 +187,7 @@ export class JWTSessionManager {
       };
 
       const newAccessToken = this.signToken(newAccessTokenPayload, {
-        expiresIn: this.config.accessTokenExpiry as string | number,
+        expiresIn: this.config.accessTokenExpiry as any,
         subject: decoded.userId,
       });
 
@@ -212,7 +212,7 @@ export class JWTSessionManager {
         newRefreshToken = this.signToken(
           newRefreshTokenPayload,
           {
-            expiresIn: String(this.config.refreshTokenExpiry),
+            expiresIn: this.config.refreshTokenExpiry as any,
             subject: decoded.userId,
           },
           true,

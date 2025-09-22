@@ -33,13 +33,22 @@ import workflowRoutes from "./domains/workflows/routes/workflowRoutes.js";
 import credentialRoutes from "./domains/credentials/routes/credentialRoutes.js";
 import oauthRoutes from "./domains/oauth/routes/oauthRoutes.js";
 import nodeExecutionRoutes from "./domains/executions/routes/nodeExecutionRoutes.js";
+import collaborationRoutes from "./domains/collaboration/routes/collaborationRoutes.js";
 import { errorHandler, notFoundHandler } from "./middleware/errorHandlers.js";
 
 // Import hybrid database service
 import { HybridDatabaseService } from "./services/DatabaseService.js";
+import { CollaborationService } from "./services/CollaborationService.js";
+import { CursorTrackingService } from "./services/CursorTrackingService.js";
 
 // Initialize hybrid database service
 const hybridDb = HybridDatabaseService.getInstance();
+
+// Initialize collaboration service
+const collaborationService = CollaborationService.getInstance();
+
+// Initialize cursor tracking service
+const cursorTrackingService = CursorTrackingService.getInstance();
 
 // Connect to hybrid database (MongoDB + PostgreSQL)
 hybridDb
@@ -77,6 +86,9 @@ app.get("/", (req: Request, res: Response) => {
       auth: "/auth",
       workflows: "/workflows",
       credentials: "/credentials",
+      collaboration: "/collaboration",
+      oauth: "/oauth",
+      nodes: "/nodes",
     },
   });
 });
@@ -108,6 +120,7 @@ app.use("/workflows", workflowRoutes);
 app.use("/credentials", credentialRoutes);
 app.use("/oauth", oauthRoutes);
 app.use("/nodes", nodeExecutionRoutes);
+app.use("/collaboration", collaborationRoutes);
 
 // Error Handling Middleware
 app.use(notFoundHandler);
@@ -123,10 +136,12 @@ export const io = new Server(server, {
     methods: ["GET", "POST"],
   },
 });
-// In-memory collaboration session tracking (dev only)
-type CollaborationUser = { id: string; name?: string };
-const workflowParticipants = new Map<string, Set<string>>(); // workflowId -> socketIds
-const socketToWorkflow = new Map<string, string>(); // socketId -> workflowId
+
+// Initialize collaboration service with Socket.IO
+collaborationService.initialize(io);
+
+// Initialize cursor tracking service with Socket.IO
+cursorTrackingService.initialize(io);
 
 io.on("connection", (socket) => {
   console.log("A client connected", socket.id);
@@ -135,113 +150,21 @@ io.on("connection", (socket) => {
   socket.on("execution_join", ({ executionId }: { executionId: string }) => {
     if (!executionId) return;
     socket.join(`execution:${executionId}`);
+    console.log(`Socket ${socket.id} joined execution room: ${executionId}`);
   });
 
   socket.on("execution_leave", ({ executionId }: { executionId: string }) => {
     if (!executionId) return;
     socket.leave(`execution:${executionId}`);
+    console.log(`Socket ${socket.id} left execution room: ${executionId}`);
   });
 
-  // Collaboration: join a workflow room
-  socket.on(
-    "join_workflow",
-    (
-      { workflowId, user }: { workflowId: string; user: CollaborationUser },
-      ack?: (response: any) => void,
-    ) => {
-      if (!workflowId) {
-        return ack?.({ success: false, error: "workflowId is required" });
-      }
-      socket.join(`workflow:${workflowId}`);
-      socketToWorkflow.set(socket.id, workflowId);
-      const set = workflowParticipants.get(workflowId) || new Set<string>();
-      set.add(socket.id);
-      workflowParticipants.set(workflowId, set);
-      // Notify others
-      socket
-        .to(`workflow:${workflowId}`)
-        .emit("user_joined", user || { id: socket.id });
-      ack?.({
-        success: true,
-        session: { id: `session:${workflowId}`, workflowId },
-      });
-    },
-  );
-
-  // Collaboration: leave workflow
-  socket.on(
-    "leave_workflow",
-    ({ workflowId, userId }: { workflowId: string; userId?: string }) => {
-      if (!workflowId) return;
-      socket.leave(`workflow:${workflowId}`);
-      const set = workflowParticipants.get(workflowId);
-      if (set) {
-        set.delete(socket.id);
-        if (set.size === 0) workflowParticipants.delete(workflowId);
-      }
-      socket
-        .to(`workflow:${workflowId}`)
-        .emit("user_left", userId || socket.id);
-    },
-  );
-
-  // Collaboration: presence updates
-  socket.on("user_presence", (presence: any) => {
-    const workflowId = socketToWorkflow.get(socket.id);
-    if (!workflowId) return;
-    socket.to(`workflow:${workflowId}`).emit("presence_update", presence);
-  });
-
-  // Collaboration: operations
-  socket.on("collaboration_operation", (operation: any) => {
-    const workflowId = operation?.workflowId || socketToWorkflow.get(socket.id);
-    if (!workflowId) return;
-    socket.to(`workflow:${workflowId}`).emit("operation_received", operation);
-  });
-
-  // Collaboration: comments
-  socket.on("add_comment", (comment: any, ack?: (response: any) => void) => {
-    const workflowId = comment?.workflowId || socketToWorkflow.get(socket.id);
-    if (!workflowId) return ack?.({ success: false, error: "No workflow" });
-    io.to(`workflow:${workflowId}`).emit("comment_added", comment);
-    ack?.({ success: true, comment });
-  });
-
-  socket.on(
-    "add_reply",
-    ({ commentId, reply }: any, ack?: (response: any) => void) => {
-      const workflowId = socketToWorkflow.get(socket.id);
-      if (!workflowId) return ack?.({ success: false, error: "No workflow" });
-      io.to(`workflow:${workflowId}`).emit("reply_added", { commentId, reply });
-      ack?.({ success: true, reply });
-    },
-  );
-
-  socket.on("resolve_conflict", ({ conflictId, resolution }: any) => {
-    const workflowId = socketToWorkflow.get(socket.id);
-    if (!workflowId) return;
-    io.to(`workflow:${workflowId}`).emit("conflict_detected", {
-      id: conflictId,
-      operations: [],
-      type: "manual",
-      affectedNodes: [],
-      timestamp: new Date().toISOString(),
-      resolution,
-    });
-  });
+  // Enhanced collaboration handlers are managed by CollaborationService
+  // The service automatically sets up all collaboration event handlers
 
   socket.on("disconnect", () => {
-    const workflowId = socketToWorkflow.get(socket.id);
-    if (workflowId) {
-      socket.to(`workflow:${workflowId}`).emit("user_left", socket.id);
-      const set = workflowParticipants.get(workflowId);
-      if (set) {
-        set.delete(socket.id);
-        if (set.size === 0) workflowParticipants.delete(workflowId);
-      }
-      socketToWorkflow.delete(socket.id);
-    }
     console.log("Client disconnected", socket.id);
+    // CollaborationService handles cleanup automatically via its event handlers
   });
 });
 

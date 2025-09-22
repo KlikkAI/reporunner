@@ -1,0 +1,24 @@
+{
+  "id": "snapshot_test-snapshot_1758535881637",
+  "name": "test-snapshot",
+  "timestamp": 1758535881637,
+  "memory": {
+    "rss": 106934272,
+    "heapTotal": 59547648,
+    "heapUsed": 27506720,
+    "external": 20911733,
+    "arrayBuffers": 18282100
+  },
+  "heap": {
+    "used": 27507456,
+    "total": 59547648,
+    "percentage": 46.194026000825424,
+    "external": 20911733
+  },
+  "gc": {
+    "enabled": false,
+    "lastCollection": 1758535881637
+  },
+  "activeHandles": 4,
+  "activeRequests": 1
+}

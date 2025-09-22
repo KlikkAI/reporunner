@@ -157,7 +157,7 @@ export function createCSPMiddleware(
     blockAllMixedContent = true,
   } = config;
 
-  return (req: Request, res: Response, next: NextFunction) => {
+  return (_req: Request, res: Response, next: NextFunction) => {
     if (!enabled) {
       return next();
     }
@@ -227,7 +227,7 @@ export function createSecurityHeadersMiddleware(
     ...additionalHeaders,
   };
 
-  return (req: Request, res: Response, next: NextFunction) => {
+  return (_req: Request, res: Response, next: NextFunction) => {
     // Apply security headers
     for (const [header, value] of Object.entries(defaultHeaders)) {
       res.setHeader(header, value);
@@ -368,7 +368,7 @@ export function generateNonce(): string {
  * Middleware to add nonce to res.locals for CSP
  */
 export function createNonceMiddleware() {
-  return (req: Request, res: Response, next: NextFunction) => {
+  return (_req: Request, res: Response, next: NextFunction) => {
     res.locals.nonce = generateNonce();
     next();
   };

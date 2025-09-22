@@ -332,7 +332,11 @@ export function createMultiRateLimiter(
   rateLimiter: AdvancedRateLimiter,
   limits: Array<{ type: string; points?: number; message?: string }>,
 ) {
-  return async (req: Request, res: Response, next: NextFunction) => {
+  return async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> => {
     try {
       const key = defaultKeyGenerator(req);
       const result = await rateLimiter.checkMultipleLimits(
@@ -344,7 +348,7 @@ export function createMultiRateLimiter(
         const failedLimitConfig = limits.find(
           (l) => l.type === result.failedLimit,
         );
-        return res.status(429).json({
+        res.status(429).json({
           success: false,
           error: {
             code: ERROR_CODES.RATE_LIMIT_EXCEEDED,
@@ -352,6 +356,7 @@ export function createMultiRateLimiter(
             limitType: result.failedLimit,
           },
         });
+        return;
       }
 
       next();

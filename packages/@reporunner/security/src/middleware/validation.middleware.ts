@@ -105,7 +105,11 @@ const COMMAND_INJECTION_PATTERNS = [
  * Create validation middleware
  */
 export function createValidationMiddleware(schema: ValidationSchema) {
-  return async (req: Request, res: Response, next: NextFunction) => {
+  return async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> => {
     const errors: ValidationError[] = [];
     const validatedData: any = {};
 
@@ -218,7 +222,7 @@ export function createValidationMiddleware(schema: ValidationSchema) {
 
     // Return errors if any
     if (errors.length > 0) {
-      return res.status(400).json({
+      res.status(400).json({
         success: false,
         error: {
           code: ERROR_CODES.VALIDATION_ERROR,
@@ -226,6 +230,7 @@ export function createValidationMiddleware(schema: ValidationSchema) {
           details: errors,
         },
       });
+      return;
     }
 
     // Attach validated data to request
@@ -395,7 +400,7 @@ function sanitizeInput(value: any, rule: ValidationRule): any {
  * Create SQL injection prevention middleware
  */
 export function createSQLInjectionProtection() {
-  return (req: Request, res: Response, next: NextFunction) => {
+  return (req: Request, res: Response, next: NextFunction): void => {
     const checkValue = (value: any, field: string): boolean => {
       if (typeof value !== "string") return true;
 
@@ -414,13 +419,14 @@ export function createSQLInjectionProtection() {
       if (source && typeof source === "object") {
         for (const [key, value] of Object.entries(source)) {
           if (!checkValue(value, `${location}.${key}`)) {
-            return res.status(400).json({
+            res.status(400).json({
               success: false,
               error: {
                 code: ERROR_CODES.SECURITY_VIOLATION,
                 message: "Potentially malicious input detected",
               },
             });
+            return;
           }
         }
       }
@@ -434,7 +440,7 @@ export function createSQLInjectionProtection() {
  * Create NoSQL injection prevention middleware
  */
 export function createNoSQLInjectionProtection() {
-  return (req: Request, res: Response, next: NextFunction) => {
+  return (req: Request, res: Response, next: NextFunction): void => {
     const checkValue = (value: any): boolean => {
       const valueStr = JSON.stringify(value);
 
@@ -459,13 +465,14 @@ export function createNoSQLInjectionProtection() {
     // Check body for NoSQL injection
     if (req.body && !checkValue(req.body)) {
       console.warn("NoSQL injection attempt detected");
-      return res.status(400).json({
+      res.status(400).json({
         success: false,
         error: {
           code: ERROR_CODES.SECURITY_VIOLATION,
           message: "Invalid input detected",
         },
       });
+      return;
     }
 
     next();
@@ -476,7 +483,7 @@ export function createNoSQLInjectionProtection() {
  * Create XSS prevention middleware
  */
 export function createXSSProtection() {
-  return (req: Request, res: Response, next: NextFunction) => {
+  return (req: Request, _res: Response, next: NextFunction) => {
     const sanitizeValue = (value: any): any => {
       if (typeof value === "string") {
         // Check for XSS patterns
@@ -516,7 +523,7 @@ export function createXSSProtection() {
  * Create path traversal prevention middleware
  */
 export function createPathTraversalProtection() {
-  return (req: Request, res: Response, next: NextFunction) => {
+  return (req: Request, res: Response, next: NextFunction): void => {
     const checkPath = (value: string): boolean => {
       for (const pattern of PATH_TRAVERSAL_PATTERNS) {
         if (pattern.test(value)) {
@@ -529,13 +536,14 @@ export function createPathTraversalProtection() {
     // Check URL path
     if (!checkPath(req.path)) {
       console.warn(`Path traversal attempt detected: ${req.path}`);
-      return res.status(400).json({
+      res.status(400).json({
         success: false,
         error: {
           code: ERROR_CODES.SECURITY_VIOLATION,
           message: "Invalid path",
         },
       });
+      return;
     }
 
     // Check query parameters that might be file paths
@@ -546,13 +554,14 @@ export function createPathTraversalProtection() {
       ) {
         if (!checkPath(value)) {
           console.warn(`Path traversal attempt in query parameter: ${key}`);
-          return res.status(400).json({
+          res.status(400).json({
             success: false,
             error: {
               code: ERROR_CODES.SECURITY_VIOLATION,
               message: "Invalid file path",
             },
           });
+          return;
         }
       }
     }
@@ -565,7 +574,7 @@ export function createPathTraversalProtection() {
  * Create command injection prevention middleware
  */
 export function createCommandInjectionProtection() {
-  return (req: Request, res: Response, next: NextFunction) => {
+  return (req: Request, res: Response, next: NextFunction): void => {
     const checkValue = (value: any): boolean => {
       if (typeof value !== "string") return true;
 
@@ -589,13 +598,14 @@ export function createCommandInjectionProtection() {
           ) {
             if (!checkValue(value)) {
               console.warn(`Command injection attempt detected in: ${key}`);
-              return res.status(400).json({
+              res.status(400).json({
                 success: false,
                 error: {
                   code: ERROR_CODES.SECURITY_VIOLATION,
                   message: "Invalid command",
                 },
               });
+              return;
             }
           }
         }

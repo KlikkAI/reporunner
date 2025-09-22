@@ -177,7 +177,7 @@ export function createAuthMiddleware(
 export function createRefreshTokenMiddleware(
   sessionManager: JWTSessionManager,
 ) {
-  return async (req: Request, res: Response, next: NextFunction) => {
+  return async (req: Request, res: Response) => {
     try {
       const refreshToken = req.body.refreshToken || req.cookies?.refresh_token;
 
@@ -221,7 +221,7 @@ export function createRefreshTokenMiddleware(
         });
       }
 
-      res.json({
+      return res.json({
         success: true,
         data: tokens,
       });
@@ -241,12 +241,12 @@ export function createRefreshTokenMiddleware(
  * Create logout middleware
  */
 export function createLogoutMiddleware(sessionManager: JWTSessionManager) {
-  return async (req: Request, res: Response, next: NextFunction) => {
+  return async (req: Request, res: Response) => {
     try {
       const { logoutAll = false } = req.body;
 
       if (!req.user) {
-        res.status(401).json({
+        return res.status(401).json({
           success: false,
           error: {
             code: ERROR_CODES.UNAUTHORIZED,
@@ -261,7 +261,7 @@ export function createLogoutMiddleware(sessionManager: JWTSessionManager) {
       } else if (req.sessionId) {
         // Revoke current session
         sessionManager.revokeSession(req.sessionId);
-      } else if (req.user.tokenId) {
+      } else if (req.user?.tokenId) {
         // Revoke current token
         sessionManager.revokeToken(req.user.tokenId);
       }
@@ -272,7 +272,7 @@ export function createLogoutMiddleware(sessionManager: JWTSessionManager) {
         res.clearCookie("refresh_token");
       }
 
-      res.json({
+      return res.json({
         success: true,
         message: logoutAll
           ? "All sessions have been terminated"
@@ -300,7 +300,7 @@ export function createSessionManagementMiddleware(
     // Get all user sessions
     getSessions: async (req: Request, res: Response) => {
       if (!req.user) {
-        res.status(401).json({
+        return res.status(401).json({
           success: false,
           error: {
             code: ERROR_CODES.UNAUTHORIZED,
@@ -311,7 +311,7 @@ export function createSessionManagementMiddleware(
 
       const sessions = sessionManager.getUserSessions(req.user.id);
 
-      res.json({
+      return res.json({
         success: true,
         data: sessions.map((session) => ({
           sessionId: session.sessionId,
@@ -329,7 +329,7 @@ export function createSessionManagementMiddleware(
     // Revoke a specific session
     revokeSession: async (req: Request, res: Response) => {
       if (!req.user) {
-        res.status(401).json({
+        return res.status(401).json({
           success: false,
           error: {
             code: ERROR_CODES.UNAUTHORIZED,
@@ -354,7 +354,7 @@ export function createSessionManagementMiddleware(
 
       sessionManager.revokeSession(sessionId);
 
-      res.json({
+      return res.json({
         success: true,
         message: "Session revoked successfully",
       });
@@ -366,28 +366,30 @@ export function createSessionManagementMiddleware(
  * Role-based access control middleware
  */
 export function requireRole(...requiredRoles: string[]) {
-  return (req: Request, res: Response, next: NextFunction) => {
+  return (req: Request, res: Response, next: NextFunction): void => {
     if (!req.user) {
-      return res.status(401).json({
+      res.status(401).json({
         success: false,
         error: {
           code: ERROR_CODES.UNAUTHORIZED,
           message: "Authentication required",
         },
       });
+      return;
     }
 
     if (
       !req.user.roles ||
       !requiredRoles.some((role) => req.user!.roles!.includes(role))
     ) {
-      return res.status(403).json({
+      res.status(403).json({
         success: false,
         error: {
           code: ERROR_CODES.FORBIDDEN,
           message: `One of the following roles is required: ${requiredRoles.join(", ")}`,
         },
       });
+      return;
     }
 
     next();
@@ -398,28 +400,30 @@ export function requireRole(...requiredRoles: string[]) {
  * Permission-based access control middleware
  */
 export function requirePermission(...requiredPermissions: string[]) {
-  return (req: Request, res: Response, next: NextFunction) => {
+  return (req: Request, res: Response, next: NextFunction): void => {
     if (!req.user) {
-      return res.status(401).json({
+      res.status(401).json({
         success: false,
         error: {
           code: ERROR_CODES.UNAUTHORIZED,
           message: "Authentication required",
         },
       });
+      return;
     }
 
     if (
       !req.user.permissions ||
       !requiredPermissions.some((perm) => req.user!.permissions!.includes(perm))
     ) {
-      return res.status(403).json({
+      res.status(403).json({
         success: false,
         error: {
           code: ERROR_CODES.FORBIDDEN,
           message: `One of the following permissions is required: ${requiredPermissions.join(", ")}`,
         },
       });
+      return;
     }
 
     next();

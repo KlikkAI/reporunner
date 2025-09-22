@@ -2,6 +2,7 @@ import {
   MongoClient,
   Db,
   Collection,
+  Document,
   MongoClientOptions,
   ServerApiVersion,
 } from "mongodb";
@@ -174,7 +175,7 @@ export class MongoDBConnection extends EventEmitter {
   /**
    * Get collection
    */
-  getCollection<T = any>(name: string): Collection<T> {
+  getCollection<T extends Document = Document>(name: string): Collection<T> {
     if (!this.db) {
       throw new Error("MongoDB not connected. Call connect() first.");
     }
