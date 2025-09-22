@@ -5,18 +5,18 @@
  * designed to compete with n8n and SIM with superior UX/UI
  */
 
-import React from "react";
-import { Header } from "../components/Landing/Header";
-import { HeroSection } from "../components/Landing/HeroSection";
-import { CompetitiveAdvantage } from "../components/Landing/CompetitiveAdvantage";
-import { FeatureShowcase } from "../components/Landing/FeatureShowcase";
-import { IntegrationEcosystem } from "../components/Landing/IntegrationEcosystem";
-import { EnterpriseFeatures } from "../components/Landing/EnterpriseFeatures";
-import { PricingSection } from "../components/Landing/PricingSection";
-import { SocialProof } from "../components/Landing/SocialProof";
-import { ComparisonTable } from "../components/Landing/ComparisonTable";
-import { CallToAction } from "../components/Landing/CallToAction";
-import { Footer } from "../components/Landing/Footer";
+import type React from 'react';
+import { CallToAction } from '../components/Landing/CallToAction';
+import { ComparisonTable } from '../components/Landing/ComparisonTable';
+import { CompetitiveAdvantage } from '../components/Landing/CompetitiveAdvantage';
+import { EnterpriseFeatures } from '../components/Landing/EnterpriseFeatures';
+import { FeatureShowcase } from '../components/Landing/FeatureShowcase';
+import { Footer } from '../components/Landing/Footer';
+import { Header } from '../components/Landing/Header';
+import { HeroSection } from '../components/Landing/HeroSection';
+import { IntegrationEcosystem } from '../components/Landing/IntegrationEcosystem';
+import { PricingSection } from '../components/Landing/PricingSection';
+import { SocialProof } from '../components/Landing/SocialProof';
 
 export const LandingPage: React.FC = () => {
   return (

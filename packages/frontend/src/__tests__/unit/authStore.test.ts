@@ -1,15 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
-import { useAuthStore } from "@/core/stores/authStore";
-import { authApiService } from "@/core";
-import type {
-  LoginCredentials,
-  RegisterRequest,
-  UserProfile,
-} from "@/core/schemas";
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { authApiService } from '@/core';
+import type { LoginCredentials, RegisterRequest, UserProfile } from '@/core/schemas';
+import { useAuthStore } from '@/core/stores/authStore';
 
 // Mock the auth API service
-vi.mock("@/core", () => ({
+vi.mock('@/core', () => ({
   authApiService: {
     login: vi.fn(),
     register: vi.fn(),
@@ -24,35 +20,35 @@ vi.mock("@/core", () => ({
 
 // Mock data
 const mockUser: UserProfile = {
-  id: "507f1f77bcf86cd799439011",
-  email: "test@example.com",
-  firstName: "Test",
-  lastName: "User",
-  fullName: "Test User",
-  role: "user",
+  id: '507f1f77bcf86cd799439011',
+  email: 'test@example.com',
+  firstName: 'Test',
+  lastName: 'User',
+  fullName: 'Test User',
+  role: 'user',
 };
 
 const mockLoginCredentials: LoginCredentials = {
-  email: "test@example.com",
-  password: "TestPass123",
+  email: 'test@example.com',
+  password: 'TestPass123',
   rememberMe: false,
 };
 
 const mockRegisterData: RegisterRequest = {
-  email: "test@example.com",
-  password: "TestPass123",
-  firstName: "Test",
-  lastName: "User",
+  email: 'test@example.com',
+  password: 'TestPass123',
+  firstName: 'Test',
+  lastName: 'User',
   acceptTerms: true,
 };
 
 const mockAuthResponse = {
   user: mockUser,
-  token: "mock-jwt-token",
-  refreshToken: "mock-refresh-token",
+  token: 'mock-jwt-token',
+  refreshToken: 'mock-refresh-token',
 };
 
-describe("AuthStore", () => {
+describe('AuthStore', () => {
   beforeEach(() => {
     // Reset the store state before each test
     useAuthStore.getState().logout();
@@ -64,8 +60,8 @@ describe("AuthStore", () => {
     vi.clearAllTimers();
   });
 
-  describe("Initial State", () => {
-    it("should have correct initial state", () => {
+  describe('Initial State', () => {
+    it('should have correct initial state', () => {
       const state = useAuthStore.getState();
 
       expect(state.user).toBeNull();
@@ -75,8 +71,8 @@ describe("AuthStore", () => {
     });
   });
 
-  describe("login", () => {
-    it("should login successfully with valid credentials", async () => {
+  describe('login', () => {
+    it('should login successfully with valid credentials', async () => {
       // Mock successful login response
       vi.mocked(authApiService.login).mockResolvedValue(mockAuthResponse);
 
@@ -96,11 +92,9 @@ describe("AuthStore", () => {
       expect(newState.error).toBeNull();
     });
 
-    it("should handle login failure", async () => {
-      const errorMessage = "Invalid email or password";
-      vi.mocked(authApiService.login).mockRejectedValue(
-        new Error(errorMessage),
-      );
+    it('should handle login failure', async () => {
+      const errorMessage = 'Invalid email or password';
+      vi.mocked(authApiService.login).mockRejectedValue(new Error(errorMessage));
 
       const store = useAuthStore.getState();
 
@@ -118,13 +112,9 @@ describe("AuthStore", () => {
       expect(newState.error).toBe(errorMessage);
     });
 
-    it("should set loading state during login", async () => {
+    it('should set loading state during login', async () => {
       // Create a promise that we can control
-      let resolveLogin: (value: {
-        user: UserProfile;
-        token: string;
-        refreshToken: string;
-      }) => void;
+      let resolveLogin: (value: { user: UserProfile; token: string; refreshToken: string }) => void;
       const loginPromise = new Promise<{
         user: UserProfile;
         token: string;
@@ -152,8 +142,8 @@ describe("AuthStore", () => {
     });
   });
 
-  describe("register", () => {
-    it("should register successfully", async () => {
+  describe('register', () => {
+    it('should register successfully', async () => {
       vi.mocked(authApiService.register).mockResolvedValue(mockAuthResponse);
 
       const store = useAuthStore.getState();
@@ -169,11 +159,9 @@ describe("AuthStore", () => {
       expect(newState.error).toBeNull();
     });
 
-    it("should handle registration failure", async () => {
-      const errorMessage = "User already exists with this email";
-      vi.mocked(authApiService.register).mockRejectedValue(
-        new Error(errorMessage),
-      );
+    it('should handle registration failure', async () => {
+      const errorMessage = 'User already exists with this email';
+      vi.mocked(authApiService.register).mockRejectedValue(new Error(errorMessage));
 
       const store = useAuthStore.getState();
 
@@ -186,8 +174,8 @@ describe("AuthStore", () => {
     });
   });
 
-  describe("logout", () => {
-    it("should logout successfully", async () => {
+  describe('logout', () => {
+    it('should logout successfully', async () => {
       // First set an authenticated state
       useAuthStore.setState({
         user: mockUser,
@@ -196,8 +184,8 @@ describe("AuthStore", () => {
       });
 
       vi.mocked(authApiService.logout).mockResolvedValue({
-        message: "Logged out successfully",
-        sessionId: "test-session",
+        message: 'Logged out successfully',
+        sessionId: 'test-session',
       });
 
       const store = useAuthStore.getState();
@@ -213,16 +201,14 @@ describe("AuthStore", () => {
       expect(newState.error).toBeNull();
     });
 
-    it("should handle logout failure gracefully", async () => {
+    it('should handle logout failure gracefully', async () => {
       // Set authenticated state
       useAuthStore.setState({
         user: mockUser,
         isAuthenticated: true,
       });
 
-      vi.mocked(authApiService.logout).mockRejectedValue(
-        new Error("Network error"),
-      );
+      vi.mocked(authApiService.logout).mockRejectedValue(new Error('Network error'));
 
       const store = useAuthStore.getState();
 
@@ -235,8 +221,8 @@ describe("AuthStore", () => {
     });
   });
 
-  describe("getCurrentUser", () => {
-    it("should get current user successfully", async () => {
+  describe('getCurrentUser', () => {
+    it('should get current user successfully', async () => {
       vi.mocked(authApiService.getProfile).mockResolvedValue(mockUser);
 
       const store = useAuthStore.getState();
@@ -251,11 +237,11 @@ describe("AuthStore", () => {
       expect(newState.error).toBeNull();
     });
 
-    it("should handle unauthorized getCurrentUser", async () => {
+    it('should handle unauthorized getCurrentUser', async () => {
       const unauthorizedError = {
         status: 401,
-        code: "TOKEN_REFRESH_ERROR",
-        message: "Invalid token",
+        code: 'TOKEN_REFRESH_ERROR',
+        message: 'Invalid token',
       };
 
       vi.mocked(authApiService.getProfile).mockRejectedValue(unauthorizedError);
@@ -278,10 +264,10 @@ describe("AuthStore", () => {
       expect(authApiService.clearAuthData).toHaveBeenCalled();
     });
 
-    it("should handle non-auth errors gracefully", async () => {
+    it('should handle non-auth errors gracefully', async () => {
       const networkError = {
         status: 500,
-        message: "Network error",
+        message: 'Network error',
       };
 
       vi.mocked(authApiService.getProfile).mockRejectedValue(networkError);
@@ -304,14 +290,14 @@ describe("AuthStore", () => {
     });
   });
 
-  describe("updateProfile", () => {
-    it("should update profile successfully", async () => {
+  describe('updateProfile', () => {
+    it('should update profile successfully', async () => {
       const updatedUser = {
         ...mockUser,
-        firstName: "Updated",
-        lastName: "Name",
+        firstName: 'Updated',
+        lastName: 'Name',
       };
-      const profileUpdates = { firstName: "Updated", lastName: "Name" };
+      const profileUpdates = { firstName: 'Updated', lastName: 'Name' };
 
       // Start with authenticated state
       useAuthStore.setState({
@@ -332,21 +318,19 @@ describe("AuthStore", () => {
       expect(newState.error).toBeNull();
     });
 
-    it("should handle profile update failure", async () => {
-      const errorMessage = "Validation failed";
+    it('should handle profile update failure', async () => {
+      const errorMessage = 'Validation failed';
 
       useAuthStore.setState({
         user: mockUser,
         isAuthenticated: true,
       });
 
-      vi.mocked(authApiService.updateProfile).mockRejectedValue(
-        new Error(errorMessage),
-      );
+      vi.mocked(authApiService.updateProfile).mockRejectedValue(new Error(errorMessage));
 
       const store = useAuthStore.getState();
 
-      await store.updateProfile({ firstName: "Updated" });
+      await store.updateProfile({ firstName: 'Updated' });
 
       const newState = useAuthStore.getState();
       expect(newState.error).toBe(errorMessage);
@@ -354,32 +338,32 @@ describe("AuthStore", () => {
     });
   });
 
-  describe("changePassword", () => {
-    it("should change password successfully", async () => {
+  describe('changePassword', () => {
+    it('should change password successfully', async () => {
       useAuthStore.setState({
         user: mockUser,
         isAuthenticated: true,
       });
 
       vi.mocked(authApiService.changePassword).mockResolvedValue({
-        message: "Password changed successfully",
+        message: 'Password changed successfully',
       });
 
       const store = useAuthStore.getState();
 
-      await store.changePassword("currentPass123", "newPass123");
+      await store.changePassword('currentPass123', 'newPass123');
 
       expect(authApiService.changePassword).toHaveBeenCalledWith({
-        currentPassword: "currentPass123",
-        newPassword: "newPass123",
+        currentPassword: 'currentPass123',
+        newPassword: 'newPass123',
       });
 
       const newState = useAuthStore.getState();
       expect(newState.error).toBeNull();
     });
 
-    it("should handle password change failure", async () => {
-      const errorMessage = "Current password is incorrect";
+    it('should handle password change failure', async () => {
+      const errorMessage = 'Current password is incorrect';
 
       useAuthStore.setState({
         user: mockUser,
@@ -387,22 +371,22 @@ describe("AuthStore", () => {
       });
 
       vi.mocked(authApiService.changePassword).mockResolvedValue({
-        message: "Password changed successfully",
+        message: 'Password changed successfully',
       });
 
       const store = useAuthStore.getState();
 
-      await store.changePassword("wrongPass", "newPass123");
+      await store.changePassword('wrongPass', 'newPass123');
 
       const newState = useAuthStore.getState();
       expect(newState.error).toBe(errorMessage);
     });
   });
 
-  describe("clearError", () => {
-    it("should clear error state", () => {
+  describe('clearError', () => {
+    it('should clear error state', () => {
       // Set error state
-      useAuthStore.setState({ error: "Some error" });
+      useAuthStore.setState({ error: 'Some error' });
 
       const store = useAuthStore.getState();
       store.clearError();
@@ -412,12 +396,12 @@ describe("AuthStore", () => {
     });
   });
 
-  describe("Error handling", () => {
-    it("should handle API errors with proper error extraction", async () => {
+  describe('Error handling', () => {
+    it('should handle API errors with proper error extraction', async () => {
       const apiError = {
         response: {
           data: {
-            message: "Detailed error message",
+            message: 'Detailed error message',
           },
         },
       };
@@ -433,8 +417,8 @@ describe("AuthStore", () => {
       expect(newState.error).toBeTruthy();
     });
 
-    it("should handle network errors without response", async () => {
-      const networkError = new Error("Network Error");
+    it('should handle network errors without response', async () => {
+      const networkError = new Error('Network Error');
 
       vi.mocked(authApiService.login).mockRejectedValue(networkError);
 
@@ -443,12 +427,12 @@ describe("AuthStore", () => {
       await store.login(mockLoginCredentials);
 
       const newState = useAuthStore.getState();
-      expect(newState.error).toBe("Network Error");
+      expect(newState.error).toBe('Network Error');
     });
   });
 
-  describe("Persistence", () => {
-    it("should persist authentication state", () => {
+  describe('Persistence', () => {
+    it('should persist authentication state', () => {
       // Set authenticated state
       useAuthStore.setState({
         user: mockUser,

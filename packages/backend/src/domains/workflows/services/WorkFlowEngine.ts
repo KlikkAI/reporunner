@@ -1,21 +1,12 @@
-import { EventEmitter } from "events";
-import { io } from "@/server";
-import PQueue from "p-queue";
-import {
-  IWorkflow,
-  IWorkflowNode,
-  IWorkflowEdge,
-} from "../../../models/Workflow.js";
-import {
-  IExecution,
-  INodeExecution,
-  Execution,
-} from "../../../models/Execution.js";
-import { Credential } from "../../../models/Credentials.js";
-import { logger } from "../../../utils/logger.js";
-import GmailService, {
-  SendEmailOptions,
-} from "../../oauth/services/GmailService.js";
+import { EventEmitter } from 'events';
+import PQueue from 'p-queue';
+import { io } from '@/server';
+import { Credential } from '../../../models/Credentials.js';
+import { Execution, type IExecution, type INodeExecution } from '../../../models/Execution.js';
+import type { IWorkflow, IWorkflowEdge, IWorkflowNode } from '../../../models/Workflow.js';
+import { logger } from '../../../utils/logger.js';
+import GmailService, { type SendEmailOptions } from '../../oauth/services/GmailService.js';
+
 // import { IntegrationRegistry } from '@/integrations/IntegrationRegistry';
 
 interface ExecutionContext {
@@ -44,8 +35,8 @@ export class WorkflowEngine extends EventEmitter {
 
     // Simple in-memory queue for development (no Redis needed)
     this.executionQueue = new PQueue({
-      concurrency: parseInt(process.env.WORKER_CONCURRENCY || "5"),
-      timeout: parseInt(process.env.MAX_WORKFLOW_EXECUTION_TIME || "300000"),
+      concurrency: parseInt(process.env.WORKER_CONCURRENCY || '5'),
+      timeout: parseInt(process.env.MAX_WORKFLOW_EXECUTION_TIME || '300000'),
     });
 
     // this.integrationRegistry = new IntegrationRegistry();
@@ -53,25 +44,16 @@ export class WorkflowEngine extends EventEmitter {
 
   async executeWorkflow(
     workflow: IWorkflow,
-    triggerType: "manual" | "webhook" | "schedule" | "api",
+    triggerType: 'manual' | 'webhook' | 'schedule' | 'api',
     triggerData?: Record<string, any>,
-    userId?: string,
+    userId?: string
   ): Promise<string> {
-    const executionId = await this.createExecution(
-      workflow,
-      triggerType,
-      triggerData,
-      userId,
-    );
+    const executionId = await this.createExecution(workflow, triggerType, triggerData, userId);
 
     // Add to in-memory queue for processing (no Redis needed)
     this.executionQueue.add(async () => {
       try {
-        await this.executeWorkflowInternal(
-          workflow._id,
-          executionId,
-          triggerData,
-        );
+        await this.executeWorkflowInternal(workflow._id, executionId, triggerData);
         logger.info(`Workflow execution completed: ${executionId}`);
       } catch (error) {
         logger.error(`Workflow execution failed: ${executionId}`, error);
@@ -86,28 +68,28 @@ export class WorkflowEngine extends EventEmitter {
 
   private async createExecution(
     workflow: IWorkflow,
-    triggerType: "manual" | "webhook" | "schedule" | "api",
+    triggerType: 'manual' | 'webhook' | 'schedule' | 'api',
     triggerData?: Record<string, any>,
-    userId?: string,
+    userId?: string
   ): Promise<string> {
     const nodeExecutions: INodeExecution[] = workflow.nodes.map((node) => ({
       nodeId: node.id,
       nodeName: node.data.label,
-      status: "pending",
+      status: 'pending',
       retryAttempt: 0,
     }));
 
     const execution = new Execution({
       workflowId: workflow._id,
       userId: userId || workflow.userId,
-      status: "pending",
+      status: 'pending',
       triggerType,
       triggerData,
       nodeExecutions,
       totalNodes: workflow.nodes.length,
       metadata: {
         version: workflow.version,
-        environment: process.env.NODE_ENV || "development",
+        environment: process.env.NODE_ENV || 'development',
       },
     });
 
@@ -118,7 +100,7 @@ export class WorkflowEngine extends EventEmitter {
   private async executeWorkflowInternal(
     workflowId: string,
     executionId: string,
-    triggerData?: Record<string, any>,
+    triggerData?: Record<string, any>
   ): Promise<void> {
     const execution = await Execution.findById(executionId);
     if (!execution) {
@@ -134,12 +116,12 @@ export class WorkflowEngine extends EventEmitter {
     this.currentWorkflow = workflow;
 
     try {
-      execution.status = "running";
+      execution.status = 'running';
       await execution.save();
 
-      this.emit("execution:started", { executionId, workflowId });
-      io.to(`execution:${executionId}`).emit("execution_event", {
-        type: "execution_started",
+      this.emit('execution:started', { executionId, workflowId });
+      io.to(`execution:${executionId}`).emit('execution_event', {
+        type: 'execution_started',
         executionId,
         timestamp: new Date().toISOString(),
         data: { workflowId },
@@ -158,13 +140,13 @@ export class WorkflowEngine extends EventEmitter {
       await this.executeNodes(workflow, execution, context);
 
       // Mark execution as completed
-      execution.status = "success";
+      execution.status = 'success';
       execution.endTime = new Date();
       await execution.save();
 
-      this.emit("execution:completed", { executionId, workflowId });
-      io.to(`execution:${executionId}`).emit("execution_event", {
-        type: "execution_completed",
+      this.emit('execution:completed', { executionId, workflowId });
+      io.to(`execution:${executionId}`).emit('execution_event', {
+        type: 'execution_completed',
         executionId,
         timestamp: new Date().toISOString(),
         data: { workflowId },
@@ -172,15 +154,14 @@ export class WorkflowEngine extends EventEmitter {
     } catch (error) {
       logger.error(`Workflow execution error: ${executionId}`, error);
 
-      execution.status = "error";
-      execution.errorMessage =
-        error instanceof Error ? error.message : "Unknown error";
+      execution.status = 'error';
+      execution.errorMessage = error instanceof Error ? error.message : 'Unknown error';
       execution.endTime = new Date();
       await execution.save();
 
-      this.emit("execution:failed", { executionId, workflowId, error });
-      io.to(`execution:${executionId}`).emit("execution_event", {
-        type: "execution_failed",
+      this.emit('execution:failed', { executionId, workflowId, error });
+      io.to(`execution:${executionId}`).emit('execution_event', {
+        type: 'execution_failed',
         executionId,
         timestamp: new Date().toISOString(),
         data: {
@@ -198,7 +179,7 @@ export class WorkflowEngine extends EventEmitter {
   private async executeNodes(
     workflow: IWorkflow,
     execution: IExecution,
-    context: ExecutionContext,
+    context: ExecutionContext
   ): Promise<void> {
     const nodeMap = new Map(workflow.nodes.map((node) => [node.id, node]));
     const edgeMap = this.buildEdgeMap(workflow.edges);
@@ -207,11 +188,11 @@ export class WorkflowEngine extends EventEmitter {
 
     // Find start nodes (nodes with no incoming edges)
     const startNodes = workflow.nodes.filter(
-      (node) => !workflow.edges.some((edge) => edge.target === node.id),
+      (node) => !workflow.edges.some((edge) => edge.target === node.id)
     );
 
     if (startNodes.length === 0) {
-      throw new Error("No start nodes found in workflow");
+      throw new Error('No start nodes found in workflow');
     }
 
     // Execute nodes in topological order
@@ -225,12 +206,8 @@ export class WorkflowEngine extends EventEmitter {
       }
 
       // Check if all dependencies are satisfied
-      const incomingEdges = workflow.edges.filter(
-        (edge) => edge.target === currentNode.id,
-      );
-      const dependenciesSatisfied = incomingEdges.every((edge) =>
-        executedNodes.has(edge.source),
-      );
+      const incomingEdges = workflow.edges.filter((edge) => edge.target === currentNode.id);
+      const dependenciesSatisfied = incomingEdges.every((edge) => executedNodes.has(edge.source));
 
       if (!dependenciesSatisfied) {
         // Put back in queue and continue
@@ -239,24 +216,17 @@ export class WorkflowEngine extends EventEmitter {
       }
 
       // Execute the node
-      io.to(`execution:${context.executionId}`).emit("execution_event", {
-        type: "node_started",
+      io.to(`execution:${context.executionId}`).emit('execution_event', {
+        type: 'node_started',
         executionId: context.executionId,
         timestamp: new Date().toISOString(),
         data: { nodeId: currentNode.id, nodeName: currentNode.data?.label },
       });
 
-      const result = await this.executeNode(
-        currentNode,
-        context,
-        nodeOutputs,
-        execution,
-      );
+      const result = await this.executeNode(currentNode, context, nodeOutputs, execution);
 
-      if (!result.success && workflow.settings.errorHandling === "stop") {
-        throw (
-          result.error || new Error(`Node execution failed: ${currentNode.id}`)
-        );
+      if (!result.success && workflow.settings.errorHandling === 'stop') {
+        throw result.error || new Error(`Node execution failed: ${currentNode.id}`);
       }
 
       executedNodes.add(currentNode.id);
@@ -268,40 +238,36 @@ export class WorkflowEngine extends EventEmitter {
       const outgoingEdges = edgeMap.get(currentNode.id) || [];
 
       // Handle conditional routing for condition nodes
-      if (currentNode.type === "condition" && result.output?.outputPath) {
+      if (currentNode.type === 'condition' && result.output?.outputPath) {
         // Only follow the edge that matches the condition result
         const matchingEdge = outgoingEdges.find(
           (edge) =>
             edge.sourceHandle === result.output?.outputPath ||
             edge.sourceHandle === result.output?.matchedRule ||
-            edge.sourceHandle === "default",
+            edge.sourceHandle === 'default'
         );
 
         if (matchingEdge) {
           const nextNode = nodeMap.get(matchingEdge.target);
           if (nextNode && !executedNodes.has(nextNode.id)) {
             logger.info(
-              `Condition routing: ${currentNode.id} -> ${nextNode.id} via ${result.output.outputPath}`,
+              `Condition routing: ${currentNode.id} -> ${nextNode.id} via ${result.output.outputPath}`
             );
             executeQueue.push(nextNode);
           }
         } else {
-          logger.warn(
-            `No matching edge found for condition output: ${result.output.outputPath}`,
-          );
+          logger.warn(`No matching edge found for condition output: ${result.output.outputPath}`);
           // Try to find default edge if specific output path not found
           const defaultEdge = outgoingEdges.find(
             (edge) =>
-              edge.sourceHandle === "default" ||
+              edge.sourceHandle === 'default' ||
               edge.sourceHandle === result.output?.defaultOutput ||
-              !edge.sourceHandle, // Fallback for edges without specific handles
+              !edge.sourceHandle // Fallback for edges without specific handles
           );
           if (defaultEdge) {
             const nextNode = nodeMap.get(defaultEdge.target);
             if (nextNode && !executedNodes.has(nextNode.id)) {
-              logger.info(
-                `Using default routing: ${currentNode.id} -> ${nextNode.id}`,
-              );
+              logger.info(`Using default routing: ${currentNode.id} -> ${nextNode.id}`);
               executeQueue.push(nextNode);
             }
           }
@@ -318,13 +284,13 @@ export class WorkflowEngine extends EventEmitter {
 
       // Emit progress and node completion update
       const progress = (executedNodes.size / workflow.nodes.length) * 100;
-      this.emit("execution:progress", {
+      this.emit('execution:progress', {
         executionId: context.executionId,
         nodeId: currentNode.id,
         progress,
       });
-      io.to(`execution:${context.executionId}`).emit("execution_event", {
-        type: result.success ? "node_completed" : "node_failed",
+      io.to(`execution:${context.executionId}`).emit('execution_event', {
+        type: result.success ? 'node_completed' : 'node_failed',
         executionId: context.executionId,
         timestamp: new Date().toISOString(),
         data: {
@@ -343,14 +309,14 @@ export class WorkflowEngine extends EventEmitter {
     node: IWorkflowNode,
     context: ExecutionContext,
     nodeOutputs: Map<string, any>,
-    execution: IExecution,
+    execution: IExecution
   ): Promise<NodeExecutionResult> {
     const startTime = Date.now();
 
     try {
       // Update node execution status
       await execution.updateNodeExecution(node.id, {
-        status: "running",
+        status: 'running',
         startTime: new Date(),
       });
 
@@ -364,7 +330,7 @@ export class WorkflowEngine extends EventEmitter {
 
       // Update node execution with success
       await execution.updateNodeExecution(node.id, {
-        status: "success",
+        status: 'success',
         endTime: new Date(),
         duration,
         input: nodeInputs,
@@ -378,12 +344,11 @@ export class WorkflowEngine extends EventEmitter {
       };
     } catch (error) {
       const duration = Date.now() - startTime;
-      const errorObj =
-        error instanceof Error ? error : new Error(String(error));
+      const errorObj = error instanceof Error ? error : new Error(String(error));
 
       // Update node execution with error
       await execution.updateNodeExecution(node.id, {
-        status: "error",
+        status: 'error',
         endTime: new Date(),
         duration,
         error: {
@@ -413,10 +378,7 @@ export class WorkflowEngine extends EventEmitter {
     return edgeMap;
   }
 
-  private buildNodeInputs(
-    node: IWorkflowNode,
-    nodeOutputs: Map<string, any>,
-  ): Record<string, any> {
+  private buildNodeInputs(node: IWorkflowNode, nodeOutputs: Map<string, any>): Record<string, any> {
     const inputs: Record<string, any> = {};
 
     // Add outputs from all previous nodes to inputs
@@ -426,7 +388,7 @@ export class WorkflowEngine extends EventEmitter {
       inputs[nodeId] = output;
 
       // Also flatten common properties to root level for easier access
-      if (output && typeof output === "object") {
+      if (output && typeof output === 'object') {
         // If output has common properties, make them accessible at root level
         if (output.output !== undefined) inputs.output = output.output;
         if (output.data !== undefined) inputs.data = output.data;
@@ -460,8 +422,8 @@ export class WorkflowEngine extends EventEmitter {
   private sanitizeNodeName(name: string): string {
     return name
       .toLowerCase()
-      .replace(/[^a-z0-9]/g, "")
-      .replace(/\s+/g, "");
+      .replace(/[^a-z0-9]/g, '')
+      .replace(/\s+/g, '');
   }
 
   // Store workflow context for node name resolution
@@ -474,7 +436,7 @@ export class WorkflowEngine extends EventEmitter {
     const credentials = await Credential.find({
       userId,
       isActive: true,
-    }).select("+data");
+    }).select('+data');
     const credentialMap: Record<string, any> = {};
 
     for (const credential of credentials) {
@@ -485,7 +447,7 @@ export class WorkflowEngine extends EventEmitter {
   }
 
   private async getWorkflow(workflowId: string): Promise<IWorkflow | null> {
-    const { Workflow } = await import("@/models/Workflow");
+    const { Workflow } = await import('@/models/Workflow');
     return Workflow.findById(workflowId);
   }
 
@@ -493,12 +455,12 @@ export class WorkflowEngine extends EventEmitter {
     if (this.activeExecutions.has(executionId)) {
       const execution = await Execution.findById(executionId);
       if (execution) {
-        execution.status = "cancelled";
+        execution.status = 'cancelled';
         execution.endTime = new Date();
         await execution.save();
 
         this.activeExecutions.delete(executionId);
-        this.emit("execution:cancelled", { executionId });
+        this.emit('execution:cancelled', { executionId });
       }
     }
   }
@@ -510,12 +472,9 @@ export class WorkflowEngine extends EventEmitter {
   async getExecutionHistory(
     workflowId: string,
     limit: number = 50,
-    offset: number = 0,
+    offset: number = 0
   ): Promise<IExecution[]> {
-    return Execution.find({ workflowId })
-      .sort({ startTime: -1 })
-      .limit(limit)
-      .skip(offset);
+    return Execution.find({ workflowId }).sort({ startTime: -1 }).limit(limit).skip(offset);
   }
 
   /**
@@ -524,7 +483,7 @@ export class WorkflowEngine extends EventEmitter {
   private async executeNodeByType(
     node: IWorkflowNode,
     context: ExecutionContext,
-    inputs: Record<string, any>,
+    inputs: Record<string, any>
   ): Promise<any> {
     const nodeType = node.type;
     const nodeData = node.data || {};
@@ -532,22 +491,22 @@ export class WorkflowEngine extends EventEmitter {
     logger.info(`Executing node: ${nodeType} (${node.id})`);
 
     switch (nodeType) {
-      case "gmail-trigger":
+      case 'gmail-trigger':
         return this.executeGmailTrigger(node, context, inputs);
 
-      case "gmail-send":
+      case 'gmail-send':
         return this.executeGmailSend(node, context, inputs);
 
-      case "webhook":
+      case 'webhook':
         return this.executeWebhook(node, context, inputs);
 
-      case "condition":
+      case 'condition':
         return this.executeCondition(node, context, inputs);
 
-      case "delay":
+      case 'delay':
         return this.executeDelay(node, context, inputs);
 
-      case "transform":
+      case 'transform':
         return this.executeTransform(node, context, inputs);
 
       default:
@@ -566,7 +525,7 @@ export class WorkflowEngine extends EventEmitter {
   private async executeGmailTrigger(
     node: IWorkflowNode,
     context: ExecutionContext,
-    inputs: Record<string, any>,
+    inputs: Record<string, any>
   ): Promise<any> {
     try {
       const credentials = await this.getGmailCredentials(context.userId);
@@ -580,35 +539,35 @@ export class WorkflowEngine extends EventEmitter {
       const maxResults = options.maxResults || 1;
 
       // Build Gmail query from filters
-      let query = "";
+      let query = '';
       if (filters.length > 0) {
         const queryParts: string[] = [];
         filters.forEach((filter: any) => {
           switch (filter.field) {
-            case "from":
+            case 'from':
               queryParts.push(`from:${filter.value}`);
               break;
-            case "to":
+            case 'to':
               queryParts.push(`to:${filter.value}`);
               break;
-            case "subject":
+            case 'subject':
               queryParts.push(`subject:${filter.value}`);
               break;
-            case "body":
+            case 'body':
               queryParts.push(`${filter.value}`);
               break;
-            case "hasAttachment":
-              queryParts.push("has:attachment");
+            case 'hasAttachment':
+              queryParts.push('has:attachment');
               break;
-            case "isUnread":
-              queryParts.push("is:unread");
+            case 'isUnread':
+              queryParts.push('is:unread');
               break;
-            case "label":
+            case 'label':
               queryParts.push(`label:${filter.value}`);
               break;
           }
         });
-        query = queryParts.join(" ");
+        query = queryParts.join(' ');
       }
 
       // Get messages with configurable limit
@@ -632,7 +591,7 @@ export class WorkflowEngine extends EventEmitter {
   private async executeGmailSend(
     node: IWorkflowNode,
     context: ExecutionContext,
-    inputs: Record<string, any>,
+    inputs: Record<string, any>
   ): Promise<any> {
     try {
       const credentials = await this.getGmailCredentials(context.userId);
@@ -645,9 +604,9 @@ export class WorkflowEngine extends EventEmitter {
         to: this.processEmailList(nodeConfig.to || inputs.to),
         cc: nodeConfig.cc ? this.processEmailList(nodeConfig.cc) : undefined,
         bcc: nodeConfig.bcc ? this.processEmailList(nodeConfig.bcc) : undefined,
-        subject: nodeConfig.subject || inputs.subject || "No Subject",
-        body: nodeConfig.message || inputs.message || "",
-        isHtml: nodeConfig.emailType === "html",
+        subject: nodeConfig.subject || inputs.subject || 'No Subject',
+        body: nodeConfig.message || inputs.message || '',
+        isHtml: nodeConfig.emailType === 'html',
         replyToMessageId: inputs.replyToMessageId,
       };
 
@@ -673,11 +632,11 @@ export class WorkflowEngine extends EventEmitter {
   private async executeWebhook(
     node: IWorkflowNode,
     context: ExecutionContext,
-    inputs: Record<string, any>,
+    inputs: Record<string, any>
   ): Promise<any> {
     // Webhook execution logic
     return {
-      message: "Webhook executed",
+      message: 'Webhook executed',
       nodeId: node.id,
       inputs,
     };
@@ -689,16 +648,14 @@ export class WorkflowEngine extends EventEmitter {
   private async executeCondition(
     node: IWorkflowNode,
     context: ExecutionContext,
-    inputs: Record<string, any>,
+    inputs: Record<string, any>
   ): Promise<any> {
     // Use the new conditionRules format from the frontend
     const conditionRules =
       node.data.configuration?.conditionRules || node.data.conditionRules || [];
 
     const defaultOutput =
-      node.data.configuration?.defaultOutput ||
-      node.data.defaultOutput ||
-      "default";
+      node.data.configuration?.defaultOutput || node.data.defaultOutput || 'default';
 
     logger.info(`Executing condition node: ${node.id}`, {
       rulesCount: conditionRules.length,
@@ -726,11 +683,7 @@ export class WorkflowEngine extends EventEmitter {
 
       try {
         const fieldValue = this.getFieldValue(inputs, rule.field);
-        const conditionMet = this.evaluateCondition(
-          fieldValue,
-          rule.operator,
-          rule.value,
-        );
+        const conditionMet = this.evaluateCondition(fieldValue, rule.operator, rule.value);
 
         results.push({
           ruleId: rule.id,
@@ -761,7 +714,7 @@ export class WorkflowEngine extends EventEmitter {
             expectedValue: rule.value,
             operator: rule.operator,
             allResults: results,
-            executionFlow: "condition_met",
+            executionFlow: 'condition_met',
           };
         }
       } catch (error: any) {
@@ -785,7 +738,7 @@ export class WorkflowEngine extends EventEmitter {
       outputPath: defaultOutput,
       conditionMet: false,
       allResults: results,
-      executionFlow: "default_path",
+      executionFlow: 'default_path',
       message: `No conditions matched, using default output: ${defaultOutput}`,
     };
   }
@@ -799,7 +752,7 @@ export class WorkflowEngine extends EventEmitter {
     }
 
     try {
-      const pathParts = fieldPath.split(".");
+      const pathParts = fieldPath.split('.');
       let currentValue = inputs;
 
       for (let i = 0; i < pathParts.length; i++) {
@@ -810,12 +763,9 @@ export class WorkflowEngine extends EventEmitter {
         }
 
         // Handle array index notation (e.g., "messages.0" or "emails[1]")
-        if (key.includes("[") && key.includes("]")) {
-          const arrayKey = key.substring(0, key.indexOf("["));
-          const indexStr = key.substring(
-            key.indexOf("[") + 1,
-            key.indexOf("]"),
-          );
+        if (key.includes('[') && key.includes(']')) {
+          const arrayKey = key.substring(0, key.indexOf('['));
+          const indexStr = key.substring(key.indexOf('[') + 1, key.indexOf(']'));
           const index = parseInt(indexStr, 10);
 
           if (arrayKey && !isNaN(index)) {
@@ -826,16 +776,13 @@ export class WorkflowEngine extends EventEmitter {
         }
 
         // If we hit a JSON string and there are more path parts, try to parse it
-        if (typeof currentValue === "string" && i < pathParts.length - 1) {
+        if (typeof currentValue === 'string' && i < pathParts.length - 1) {
           const parsed = this.tryParseJsonString(currentValue);
           if (parsed !== null) {
             currentValue = parsed;
             // Continue with the remaining path parts in the parsed object
-            const remainingPath = pathParts.slice(i + 1).join(".");
-            return this.getFieldValue(
-              { parsed: currentValue },
-              "parsed." + remainingPath,
-            );
+            const remainingPath = pathParts.slice(i + 1).join('.');
+            return this.getFieldValue({ parsed: currentValue }, 'parsed.' + remainingPath);
           }
         }
       }
@@ -851,26 +798,26 @@ export class WorkflowEngine extends EventEmitter {
    * Try to parse a JSON string
    */
   private tryParseJsonString(str: string): any {
-    if (typeof str !== "string") return null;
+    if (typeof str !== 'string') return null;
 
     let cleanStr = str.trim();
 
     // Handle markdown-wrapped JSON (```json ... ```)
-    if (cleanStr.includes("```json")) {
+    if (cleanStr.includes('```json')) {
       const jsonMatch = cleanStr.match(/```json\s*([\s\S]*?)\s*```/);
       if (jsonMatch) {
         cleanStr = jsonMatch[1].trim();
       }
     }
     // Handle code-wrapped JSON (``` ... ```)
-    else if (cleanStr.startsWith("```") && cleanStr.endsWith("```")) {
+    else if (cleanStr.startsWith('```') && cleanStr.endsWith('```')) {
       cleanStr = cleanStr.slice(3, -3).trim();
     }
 
     // Check if it looks like JSON
     if (
-      (cleanStr.startsWith("{") && cleanStr.endsWith("}")) ||
-      (cleanStr.startsWith("[") && cleanStr.endsWith("]"))
+      (cleanStr.startsWith('{') && cleanStr.endsWith('}')) ||
+      (cleanStr.startsWith('[') && cleanStr.endsWith(']'))
     ) {
       try {
         return JSON.parse(cleanStr);
@@ -885,19 +832,15 @@ export class WorkflowEngine extends EventEmitter {
   /**
    * Evaluate condition with comprehensive operator support
    */
-  private evaluateCondition(
-    fieldValue: any,
-    operator: string,
-    compareValue: any,
-  ): boolean {
+  private evaluateCondition(fieldValue: any, operator: string, compareValue: any): boolean {
     try {
       // Handle null/undefined field values
       if (fieldValue === null || fieldValue === undefined) {
         switch (operator) {
-          case "is_empty":
-          case "is_null":
+          case 'is_empty':
+          case 'is_null':
             return true;
-          case "is_not_empty":
+          case 'is_not_empty':
             return false;
           default:
             return false;
@@ -906,7 +849,7 @@ export class WorkflowEngine extends EventEmitter {
 
       // Type-aware comparisons
       switch (operator) {
-        case "equals":
+        case 'equals':
           // Handle different types intelligently
           if (typeof fieldValue === typeof compareValue) {
             return fieldValue === compareValue;
@@ -914,53 +857,49 @@ export class WorkflowEngine extends EventEmitter {
           // Loose equality for mixed types
           return fieldValue == compareValue;
 
-        case "not_equals":
+        case 'not_equals':
           if (typeof fieldValue === typeof compareValue) {
             return fieldValue !== compareValue;
           }
           return fieldValue != compareValue;
 
-        case "contains":
+        case 'contains':
           if (Array.isArray(fieldValue)) {
             return fieldValue.includes(compareValue);
           }
           return String(fieldValue).includes(String(compareValue));
 
-        case "not_contains":
+        case 'not_contains':
           if (Array.isArray(fieldValue)) {
             return !fieldValue.includes(compareValue);
           }
           return !String(fieldValue).includes(String(compareValue));
 
-        case "starts_with":
+        case 'starts_with':
           return String(fieldValue).startsWith(String(compareValue));
 
-        case "ends_with":
+        case 'ends_with':
           return String(fieldValue).endsWith(String(compareValue));
 
-        case "greater":
-        case "greater_equal":
+        case 'greater':
+        case 'greater_equal': {
           const numField = Number(fieldValue);
           const numCompare = Number(compareValue);
           if (isNaN(numField) || isNaN(numCompare)) return false;
-          return operator === "greater"
-            ? numField > numCompare
-            : numField >= numCompare;
+          return operator === 'greater' ? numField > numCompare : numField >= numCompare;
+        }
 
-        case "less":
-        case "less_equal":
+        case 'less':
+        case 'less_equal': {
           const numField2 = Number(fieldValue);
           const numCompare2 = Number(compareValue);
           if (isNaN(numField2) || isNaN(numCompare2)) return false;
-          return operator === "less"
-            ? numField2 < numCompare2
-            : numField2 <= numCompare2;
+          return operator === 'less' ? numField2 < numCompare2 : numField2 <= numCompare2;
+        }
 
-        case "between":
-          if (typeof compareValue === "string" && compareValue.includes(",")) {
-            const [min, max] = compareValue
-              .split(",")
-              .map((v) => Number(v.trim()));
+        case 'between':
+          if (typeof compareValue === 'string' && compareValue.includes(',')) {
+            const [min, max] = compareValue.split(',').map((v) => Number(v.trim()));
             const num = Number(fieldValue);
             if (!isNaN(num) && !isNaN(min) && !isNaN(max)) {
               return num >= min && num <= max;
@@ -968,52 +907,41 @@ export class WorkflowEngine extends EventEmitter {
           }
           return false;
 
-        case "is_empty":
+        case 'is_empty':
           if (Array.isArray(fieldValue)) return fieldValue.length === 0;
-          if (typeof fieldValue === "object")
-            return Object.keys(fieldValue).length === 0;
-          return !fieldValue || fieldValue === "";
+          if (typeof fieldValue === 'object') return Object.keys(fieldValue).length === 0;
+          return !fieldValue || fieldValue === '';
 
-        case "is_not_empty":
+        case 'is_not_empty':
           if (Array.isArray(fieldValue)) return fieldValue.length > 0;
-          if (typeof fieldValue === "object")
-            return Object.keys(fieldValue).length > 0;
-          return fieldValue && fieldValue !== "";
+          if (typeof fieldValue === 'object') return Object.keys(fieldValue).length > 0;
+          return fieldValue && fieldValue !== '';
 
-        case "length_equals":
-        case "length_greater":
-          if (Array.isArray(fieldValue) || typeof fieldValue === "string") {
+        case 'length_equals':
+        case 'length_greater':
+          if (Array.isArray(fieldValue) || typeof fieldValue === 'string') {
             const length = fieldValue.length;
             const compareNum = Number(compareValue);
             if (!isNaN(compareNum)) {
-              return operator === "length_equals"
-                ? length === compareNum
-                : length > compareNum;
+              return operator === 'length_equals' ? length === compareNum : length > compareNum;
             }
           }
           return false;
 
-        case "is_true":
-          return (
-            fieldValue === true || fieldValue === "true" || fieldValue === 1
-          );
+        case 'is_true':
+          return fieldValue === true || fieldValue === 'true' || fieldValue === 1;
 
-        case "is_false":
-          return (
-            fieldValue === false || fieldValue === "false" || fieldValue === 0
-          );
+        case 'is_false':
+          return fieldValue === false || fieldValue === 'false' || fieldValue === 0;
 
-        case "is_null":
+        case 'is_null':
           return fieldValue === null;
 
-        case "regex":
+        case 'regex':
           try {
             // Handle regex patterns like /pattern/flags
-            if (
-              typeof compareValue === "string" &&
-              compareValue.startsWith("/")
-            ) {
-              const lastSlash = compareValue.lastIndexOf("/");
+            if (typeof compareValue === 'string' && compareValue.startsWith('/')) {
+              const lastSlash = compareValue.lastIndexOf('/');
               const pattern = compareValue.slice(1, lastSlash);
               const flags = compareValue.slice(lastSlash + 1);
               const regex = new RegExp(pattern, flags);
@@ -1031,7 +959,7 @@ export class WorkflowEngine extends EventEmitter {
           return false;
       }
     } catch (error) {
-      logger.warn("Error evaluating condition:", {
+      logger.warn('Error evaluating condition:', {
         fieldValue,
         operator,
         compareValue,
@@ -1047,7 +975,7 @@ export class WorkflowEngine extends EventEmitter {
   private async executeDelay(
     node: IWorkflowNode,
     context: ExecutionContext,
-    inputs: Record<string, any>,
+    inputs: Record<string, any>
   ): Promise<any> {
     const delayMs = node.data.configuration?.delay || 1000;
 
@@ -1066,7 +994,7 @@ export class WorkflowEngine extends EventEmitter {
   private async executeTransform(
     node: IWorkflowNode,
     context: ExecutionContext,
-    inputs: Record<string, any>,
+    inputs: Record<string, any>
   ): Promise<any> {
     const transformations = node.data.configuration?.transformations || [];
     const output = { ...inputs };
@@ -1075,17 +1003,17 @@ export class WorkflowEngine extends EventEmitter {
       const { operation, field, value } = transform;
 
       switch (operation) {
-        case "set":
+        case 'set':
           output[field] = value;
           break;
-        case "append":
-          output[field] = (output[field] || "") + value;
+        case 'append':
+          output[field] = (output[field] || '') + value;
           break;
-        case "uppercase":
-          output[field] = String(output[field] || "").toUpperCase();
+        case 'uppercase':
+          output[field] = String(output[field] || '').toUpperCase();
           break;
-        case "lowercase":
-          output[field] = String(output[field] || "").toLowerCase();
+        case 'lowercase':
+          output[field] = String(output[field] || '').toLowerCase();
           break;
       }
     });
@@ -1099,12 +1027,12 @@ export class WorkflowEngine extends EventEmitter {
   private async getGmailCredentials(userId: string): Promise<any> {
     const credential = await Credential.findOne({
       userId,
-      integration: { $in: ["gmail", "gmailOAuth2"] },
+      integration: { $in: ['gmail', 'gmailOAuth2'] },
       isActive: true,
-    }).select("+data");
+    }).select('+data');
 
     if (!credential) {
-      throw new Error("No valid Gmail credentials found for user");
+      throw new Error('No valid Gmail credentials found for user');
     }
 
     return credential.getDecryptedData();
@@ -1116,7 +1044,7 @@ export class WorkflowEngine extends EventEmitter {
   private processEmailList(emailString: string): string[] {
     if (!emailString) return [];
     return emailString
-      .split(",")
+      .split(',')
       .map((email) => email.trim())
       .filter((email) => email.length > 0);
   }

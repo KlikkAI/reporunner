@@ -2,21 +2,18 @@
  * Migration utilities and helpers
  */
 
-import fs from "fs/promises";
-import path from "path";
-import crypto from "crypto";
-import { IMigration, IMigrationRecord } from "./types.js";
+import crypto from 'crypto';
+import fs from 'fs/promises';
+import path from 'path';
+import type { IMigration, IMigrationRecord } from './types.js';
 
 export class MigrationUtils {
   /**
    * Generate a migration filename with timestamp
    */
   static generateMigrationFilename(name: string): string {
-    const timestamp = new Date()
-      .toISOString()
-      .replace(/[-:.]/g, "")
-      .substring(0, 15);
-    const kebabName = name.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+    const timestamp = new Date().toISOString().replace(/[-:.]/g, '').substring(0, 15);
+    const kebabName = name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
     return `${timestamp}_${kebabName}.ts`;
   }
 
@@ -24,7 +21,7 @@ export class MigrationUtils {
    * Generate migration version from timestamp
    */
   static generateVersion(): string {
-    return new Date().toISOString().replace(/[-:.]/g, "").substring(0, 15);
+    return new Date().toISOString().replace(/[-:.]/g, '').substring(0, 15);
   }
 
   /**
@@ -34,7 +31,7 @@ export class MigrationUtils {
     try {
       const files = await fs.readdir(migrationsDir);
       const migrationFiles = files
-        .filter((file) => file.endsWith(".ts") || file.endsWith(".js"))
+        .filter((file) => file.endsWith('.ts') || file.endsWith('.js'))
         .sort(); // Ensure chronological order
 
       const migrations: IMigration[] = [];
@@ -48,8 +45,8 @@ export class MigrationUtils {
 
         if (
           migration &&
-          typeof migration.up === "function" &&
-          typeof migration.down === "function"
+          typeof migration.up === 'function' &&
+          typeof migration.down === 'function'
         ) {
           migrations.push(migration);
         } else {
@@ -59,7 +56,7 @@ export class MigrationUtils {
 
       return migrations;
     } catch (error) {
-      if ((error as any).code === "ENOENT") {
+      if ((error as any).code === 'ENOENT') {
         // Migrations directory doesn't exist yet
         await fs.mkdir(migrationsDir, { recursive: true });
         return [];
@@ -78,9 +75,7 @@ export class MigrationUtils {
       if (migration.dependencies) {
         for (const depId of migration.dependencies) {
           if (!migrationIds.has(depId)) {
-            throw new Error(
-              `Migration ${migration.id} has unresolved dependency: ${depId}`,
-            );
+            throw new Error(`Migration ${migration.id} has unresolved dependency: ${depId}`);
           }
         }
       }
@@ -97,9 +92,7 @@ export class MigrationUtils {
 
     const visit = (migration: IMigration) => {
       if (visiting.has(migration.id)) {
-        throw new Error(
-          `Circular dependency detected involving migration: ${migration.id}`,
-        );
+        throw new Error(`Circular dependency detected involving migration: ${migration.id}`);
       }
 
       if (visited.has(migration.id)) {
@@ -124,9 +117,7 @@ export class MigrationUtils {
     };
 
     // Sort by version first, then resolve dependencies
-    const versionSorted = [...migrations].sort((a, b) =>
-      a.version.localeCompare(b.version),
-    );
+    const versionSorted = [...migrations].sort((a, b) => a.version.localeCompare(b.version));
 
     for (const migration of versionSorted) {
       visit(migration);
@@ -148,11 +139,7 @@ export class MigrationUtils {
       downContent: migration.down.toString(),
     });
 
-    return crypto
-      .createHash("sha256")
-      .update(content)
-      .digest("hex")
-      .substring(0, 16);
+    return crypto.createHash('sha256').update(content).digest('hex').substring(0, 16);
   }
 
   /**
@@ -173,17 +160,17 @@ export class MigrationUtils {
    */
   static createMigrationTemplate(
     name: string,
-    database: "mongodb" | "postgresql" | "both",
-    version: string,
+    database: 'mongodb' | 'postgresql' | 'both',
+    version: string
   ): string {
     const className = name
-      .split("-")
+      .split('-')
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-      .join("");
+      .join('');
 
     return `import { BaseMigration } from '../types.js';
-${database === "mongodb" || database === "both" ? "import mongoose from 'mongoose';" : ""}
-${database === "postgresql" || database === "both" ? "import { PostgreSQLConfig } from '../../config/postgresql.js';" : ""}
+${database === 'mongodb' || database === 'both' ? "import mongoose from 'mongoose';" : ''}
+${database === 'postgresql' || database === 'both' ? "import { PostgreSQLConfig } from '../../config/postgresql.js';" : ''}
 
 /**
  * Migration: ${name}
@@ -194,7 +181,7 @@ ${database === "postgresql" || database === "both" ? "import { PostgreSQLConfig 
  * Add your migration description here
  */
 export class ${className}Migration extends BaseMigration {
-  id = '${version}_${name.replace(/[^a-z0-9]+/g, "_")}';
+  id = '${version}_${name.replace(/[^a-z0-9]+/g, '_')}';
   name = '${name}';
   version = '${version}';
   database = '${database}' as const;
@@ -205,7 +192,7 @@ export class ${className}Migration extends BaseMigration {
     
     try {
       ${
-        database === "mongodb" || database === "both"
+        database === 'mongodb' || database === 'both'
           ? `
       // MongoDB operations
       if (this.database === 'mongodb' || this.database === 'both') {
@@ -213,11 +200,11 @@ export class ${className}Migration extends BaseMigration {
         // Example:
         // await mongoose.connection.db.collection('users').createIndex({ email: 1 });
       }`
-          : ""
+          : ''
       }
       
       ${
-        database === "postgresql" || database === "both"
+        database === 'postgresql' || database === 'both'
           ? `
       // PostgreSQL operations
       if (this.database === 'postgresql' || this.database === 'both') {
@@ -233,7 +220,7 @@ export class ${className}Migration extends BaseMigration {
         //   )
         // \`);
       }`
-          : ""
+          : ''
       }
       
       this.log('Migration completed successfully');
@@ -248,7 +235,7 @@ export class ${className}Migration extends BaseMigration {
     
     try {
       ${
-        database === "mongodb" || database === "both"
+        database === 'mongodb' || database === 'both'
           ? `
       // MongoDB rollback operations
       if (this.database === 'mongodb' || this.database === 'both') {
@@ -256,11 +243,11 @@ export class ${className}Migration extends BaseMigration {
         // Example:
         // await mongoose.connection.db.collection('users').dropIndex({ email: 1 });
       }`
-          : ""
+          : ''
       }
       
       ${
-        database === "postgresql" || database === "both"
+        database === 'postgresql' || database === 'both'
           ? `
       // PostgreSQL rollback operations
       if (this.database === 'postgresql' || this.database === 'both') {
@@ -270,7 +257,7 @@ export class ${className}Migration extends BaseMigration {
         // Example:
         // await pg.query('DROP TABLE IF EXISTS example_table');
       }`
-          : ""
+          : ''
       }
       
       this.log('Rollback completed successfully');
@@ -307,11 +294,8 @@ export default new ${className}Migration();
   /**
    * Validate migration record integrity
    */
-  static validateMigrationIntegrity(
-    migration: IMigration,
-    record: IMigrationRecord,
-  ): boolean {
-    const currentChecksum = this.calculateChecksum(migration);
+  static validateMigrationIntegrity(migration: IMigration, record: IMigrationRecord): boolean {
+    const currentChecksum = MigrationUtils.calculateChecksum(migration);
     return !record.checksum || record.checksum === currentChecksum;
   }
 }

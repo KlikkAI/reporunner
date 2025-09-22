@@ -1,0 +1,295 @@
+# Default values for reporunner
+# This is a YAML-formatted file.
+
+# Global configuration
+global:
+  imageRegistry: ""
+  imagePullSecrets: []
+  storageClass: ""
+
+# Reporunner configuration
+reporunner:
+  # Image configuration
+  image:
+    registry: docker.io
+    repository: reporunner/reporunner
+    tag: "1.0.0"
+    pullPolicy: IfNotPresent
+    pullSecrets: []
+
+  # Environment variables
+  env:
+    NODE_ENV: production
+    LOG_LEVEL: info
+    CORS_ORIGIN: "*"
+    JWT_SECRET: "your-jwt-secret-here"
+    JWT_REFRESH_SECRET: "your-jwt-refresh-secret-here"
+
+  # Service configuration
+  service:
+    type: ClusterIP
+    port: 80
+    targetPort: 3001
+    annotations: {}
+
+  # Backend configuration
+  backend:
+    replicaCount: 3
+    image:
+      repository: reporunner/backend
+      tag: "1.0.0"
+    resources:
+      limits:
+        cpu: 1000m
+        memory: 1Gi
+      requests:
+        cpu: 500m
+        memory: 512Mi
+    autoscaling:
+      enabled: true
+      minReplicas: 2
+      maxReplicas: 10
+      targetCPUUtilizationPercentage: 70
+    nodeSelector: {}
+    tolerations: []
+    affinity: {}
+
+  # Frontend configuration
+  frontend:
+    replicaCount: 2
+    image:
+      repository: reporunner/frontend
+      tag: "1.0.0"
+    resources:
+      limits:
+        cpu: 500m
+        memory: 512Mi
+      requests:
+        cpu: 250m
+        memory: 256Mi
+    autoscaling:
+      enabled: true
+      minReplicas: 2
+      maxReplicas: 5
+      targetCPUUtilizationPercentage: 70
+
+  # Worker configuration
+  worker:
+    replicaCount: 3
+    image:
+      repository: reporunner/worker
+      tag: "1.0.0"
+    resources:
+      limits:
+        cpu: 2000m
+        memory: 2Gi
+      requests:
+        cpu: 1000m
+        memory: 1Gi
+    autoscaling:
+      enabled: true
+      minReplicas: 2
+      maxReplicas: 20
+      targetCPUUtilizationPercentage: 80
+    concurrency: 10
+
+# PostgreSQL configuration (AI Database)
+postgresql:
+  enabled: true
+  auth:
+    postgresPassword: "postgres-password"
+    username: "reporunner"
+    password: "reporunner-password"
+    database: "reporunner"
+  image:
+    registry: docker.io
+    repository: pgvector/pgvector
+    tag: "pg16"
+  primary:
+    persistence:
+      enabled: true
+      size: 20Gi
+    resources:
+      limits:
+        cpu: 2000m
+        memory: 4Gi
+      requests:
+        cpu: 1000m
+        memory: 2Gi
+    extendedConfiguration: |
+      shared_preload_libraries = 'vector'
+      max_connections = 200
+      shared_buffers = 1GB
+      effective_cache_size = 3GB
+      work_mem = 16MB
+      maintenance_work_mem = 512MB
+
+# MongoDB configuration (Primary Database)
+mongodb:
+  enabled: true
+  auth:
+    enabled: true
+    rootUser: root
+    rootPassword: "mongodb-root-password"
+    username: "reporunner"
+    password: "reporunner-password"
+    database: "reporunner"
+  image:
+    registry: docker.io
+    repository: bitnami/mongodb
+    tag: "7.0"
+  persistence:
+    enabled: true
+    size: 50Gi
+  resources:
+    limits:
+      cpu: 2000m
+      memory: 4Gi
+    requests:
+      cpu: 1000m
+      memory: 2Gi
+  replicaSetName: "reporunner-rs"
+  replicaCount: 3
+
+# Redis configuration (Cache & Sessions)
+redis:
+  enabled: true
+  auth:
+    enabled: true
+    password: "redis-password"
+  master:
+    persistence:
+      enabled: true
+      size: 10Gi
+    resources:
+      limits:
+        cpu: 1000m
+        memory: 2Gi
+      requests:
+        cpu: 500m
+        memory: 1Gi
+  replica:
+    replicaCount: 2
+    persistence:
+      enabled: true
+      size: 10Gi
+
+# Ingress configuration
+ingress:
+  enabled: true
+  className: "nginx"
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/proxy-body-size: "100m"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "300"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "300"
+    nginx.ingress.kubernetes.io/websocket-services: "reporunner-backend"
+  hosts:
+    - host: app.reporunner.com
+      paths:
+        - path: /
+          pathType: Prefix
+          service: reporunner-frontend
+        - path: /api
+          pathType: Prefix
+          service: reporunner-backend
+        - path: /ws
+          pathType: Prefix
+          service: reporunner-backend
+  tls:
+    - secretName: reporunner-tls
+      hosts:
+        - app.reporunner.com
+
+# Monitoring configuration
+monitoring:
+  enabled: true
+  serviceMonitor:
+    enabled: true
+    interval: 30s
+    scrapeTimeout: 10s
+  prometheusRule:
+    enabled: true
+
+# Security configuration
+security:
+  podSecurityContext:
+    runAsNonRoot: true
+    runAsUser: 1001
+    fsGroup: 1001
+  containerSecurityContext:
+    allowPrivilegeEscalation: false
+    readOnlyRootFilesystem: true
+    capabilities:
+      drop:
+        - ALL
+
+# Network policies
+networkPolicy:
+  enabled: true
+  ingress:
+    enabled: true
+  egress:
+    enabled: true
+
+# Persistence configuration
+persistence:
+  logs:
+    enabled: true
+    size: 10Gi
+    accessMode: ReadWriteMany
+  uploads:
+    enabled: true
+    size: 50Gi
+    accessMode: ReadWriteMany
+
+# External services
+externalServices:
+  # External PostgreSQL
+  externalPostgreSQL:
+    enabled: false
+    host: ""
+    port: 5432
+    database: "reporunner"
+    username: "reporunner"
+    password: ""
+
+  # External MongoDB
+  externalMongoDB:
+    enabled: false
+    uri: ""
+
+  # External Redis
+  externalRedis:
+    enabled: false
+    host: ""
+    port: 6379
+    password: ""
+
+# Backup configuration
+backup:
+  enabled: true
+  schedule: "0 2 * * *"
+  retention: "30d"
+  storage:
+    type: s3
+    bucket: "reporunner-backups"
+    region: "us-east-1"
+    accessKeyId: ""
+    secretAccessKey: ""
+
+# Migration configuration
+migration:
+  enabled: true
+  image:
+    repository: reporunner/migrations
+    tag: "1.0.0"
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 250m
+      memory: 256Mi

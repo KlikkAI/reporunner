@@ -8,24 +8,17 @@ export interface AIModel {
   name: string;
   description: string;
   type:
-    | "language_model"
-    | "embedding"
-    | "classification"
-    | "regression"
-    | "clustering"
-    | "computer_vision"
-    | "time_series"
-    | "anomaly_detection";
-  provider:
-    | "openai"
-    | "anthropic"
-    | "google"
-    | "azure"
-    | "aws"
-    | "huggingface"
-    | "custom";
+    | 'language_model'
+    | 'embedding'
+    | 'classification'
+    | 'regression'
+    | 'clustering'
+    | 'computer_vision'
+    | 'time_series'
+    | 'anomaly_detection';
+  provider: 'openai' | 'anthropic' | 'google' | 'azure' | 'aws' | 'huggingface' | 'custom';
   version: string;
-  status: "draft" | "training" | "ready" | "deployed" | "deprecated" | "error";
+  status: 'draft' | 'training' | 'ready' | 'deployed' | 'deprecated' | 'error';
   configuration: ModelConfiguration;
   metrics: ModelMetrics;
   training: TrainingConfiguration;
@@ -61,7 +54,7 @@ export interface ModelParameters {
 }
 
 export interface DataSchema {
-  type: "text" | "image" | "audio" | "video" | "tabular" | "time_series";
+  type: 'text' | 'image' | 'audio' | 'video' | 'tabular' | 'time_series';
   format: string;
   fields: DataField[];
   validation: ValidationRules;
@@ -69,7 +62,7 @@ export interface DataSchema {
 
 export interface DataField {
   name: string;
-  type: "string" | "number" | "boolean" | "array" | "object";
+  type: 'string' | 'number' | 'boolean' | 'array' | 'object';
   required: boolean;
   description: string;
   constraints?: FieldConstraints;
@@ -128,9 +121,9 @@ export interface TrainingConfiguration {
 export interface DatasetConfiguration {
   id: string;
   name: string;
-  source: "upload" | "api" | "database" | "cloud_storage";
+  source: 'upload' | 'api' | 'database' | 'cloud_storage';
   location: string;
-  format: "csv" | "json" | "parquet" | "tfrecord" | "hdf5";
+  format: 'csv' | 'json' | 'parquet' | 'tfrecord' | 'hdf5';
   size: number;
   samples: number;
   features: number;
@@ -138,13 +131,7 @@ export interface DatasetConfiguration {
 }
 
 export interface PreprocessingStep {
-  type:
-    | "normalize"
-    | "tokenize"
-    | "encode"
-    | "augment"
-    | "filter"
-    | "transform";
+  type: 'normalize' | 'tokenize' | 'encode' | 'augment' | 'filter' | 'transform';
   parameters: Record<string, any>;
   order: number;
 }
@@ -156,19 +143,13 @@ export interface DataAugmentation {
 }
 
 export interface AugmentationTechnique {
-  type:
-    | "rotation"
-    | "flip"
-    | "noise"
-    | "crop"
-    | "paraphrase"
-    | "backtranslation";
+  type: 'rotation' | 'flip' | 'noise' | 'crop' | 'paraphrase' | 'backtranslation';
   parameters: Record<string, any>;
   weight: number;
 }
 
 export interface OptimizerConfig {
-  type: "adam" | "sgd" | "rmsprop" | "adagrad" | "adamw";
+  type: 'adam' | 'sgd' | 'rmsprop' | 'adagrad' | 'adamw';
   learningRate: number;
   momentum?: number;
   weightDecay?: number;
@@ -178,7 +159,7 @@ export interface OptimizerConfig {
 }
 
 export interface SchedulerConfig {
-  type: "step" | "exponential" | "cosine" | "plateau";
+  type: 'step' | 'exponential' | 'cosine' | 'plateau';
   stepSize?: number;
   gamma?: number;
   patience?: number;
@@ -189,7 +170,7 @@ export interface EarlyStoppingConfig {
   metric: string;
   patience: number;
   minDelta: number;
-  mode: "min" | "max";
+  mode: 'min' | 'max';
   restoreBestWeights: boolean;
 }
 
@@ -197,18 +178,18 @@ export interface CheckpointConfig {
   saveFrequency: number;
   saveOptimizer: boolean;
   maxToKeep: number;
-  saveFormat: "pytorch" | "tensorflow" | "onnx" | "huggingface";
+  saveFormat: 'pytorch' | 'tensorflow' | 'onnx' | 'huggingface';
 }
 
 export interface DistributedConfig {
-  strategy: "data_parallel" | "model_parallel" | "pipeline_parallel";
+  strategy: 'data_parallel' | 'model_parallel' | 'pipeline_parallel';
   nodes: number;
   gpusPerNode: number;
-  backend: "nccl" | "gloo" | "mpi";
+  backend: 'nccl' | 'gloo' | 'mpi';
 }
 
 export interface DeploymentConfiguration {
-  environment: "development" | "staging" | "production";
+  environment: 'development' | 'staging' | 'production';
   infrastructure: InfrastructureConfig;
   scaling: ScalingConfig;
   monitoring: MonitoringConfig;
@@ -217,7 +198,7 @@ export interface DeploymentConfiguration {
 }
 
 export interface InfrastructureConfig {
-  provider: "aws" | "gcp" | "azure" | "kubernetes" | "docker" | "on_premise";
+  provider: 'aws' | 'gcp' | 'azure' | 'kubernetes' | 'docker' | 'on_premise';
   region: string;
   instanceType: string;
   gpuEnabled: boolean;
@@ -244,7 +225,7 @@ export interface ScalingConfig {
 
 export interface MonitoringConfig {
   metricsCollection: boolean;
-  loggingLevel: "debug" | "info" | "warn" | "error";
+  loggingLevel: 'debug' | 'info' | 'warn' | 'error';
   alerting: AlertingConfig;
   dashboard: boolean;
   tracing: boolean;
@@ -263,9 +244,9 @@ export interface EscalationPolicy {
 }
 
 export interface EscalationLevel {
-  severity: "low" | "medium" | "high" | "critical";
+  severity: 'low' | 'medium' | 'high' | 'critical';
   recipients: string[];
-  methods: ("email" | "sms" | "slack" | "webhook")[];
+  methods: ('email' | 'sms' | 'slack' | 'webhook')[];
 }
 
 export interface SecurityConfig {
@@ -285,14 +266,14 @@ export interface RateLimitConfig {
 }
 
 export interface VersioningConfig {
-  strategy: "blue_green" | "canary" | "rolling" | "shadow";
+  strategy: 'blue_green' | 'canary' | 'rolling' | 'shadow';
   rollbackEnabled: boolean;
   healthChecks: HealthCheckConfig[];
   trafficSplitting?: TrafficSplittingConfig;
 }
 
 export interface HealthCheckConfig {
-  type: "http" | "tcp" | "grpc" | "custom";
+  type: 'http' | 'tcp' | 'grpc' | 'custom';
   endpoint: string;
   interval: number;
   timeout: number;
@@ -315,7 +296,7 @@ export interface SuccessCriteria {
 export interface TrainingJob {
   id: string;
   modelId: string;
-  status: "pending" | "running" | "completed" | "failed" | "cancelled";
+  status: 'pending' | 'running' | 'completed' | 'failed' | 'cancelled';
   progress: number;
   currentEpoch: number;
   totalEpochs: number;
@@ -339,7 +320,7 @@ export interface TrainingMetrics {
 
 export interface TrainingLog {
   timestamp: Date;
-  level: "debug" | "info" | "warn" | "error";
+  level: 'debug' | 'info' | 'warn' | 'error';
   message: string;
   details?: Record<string, any>;
 }
@@ -356,7 +337,7 @@ export interface ResourceUsage {
 export interface ModelEvaluation {
   id: string;
   modelId: string;
-  evaluationType: "validation" | "test" | "benchmark" | "a_b_test";
+  evaluationType: 'validation' | 'test' | 'benchmark' | 'a_b_test';
   dataset: DatasetConfiguration;
   metrics: ModelMetrics;
   results: EvaluationResults;
@@ -396,9 +377,7 @@ export class AIModelService {
   private evaluations: Map<string, ModelEvaluation> = new Map();
 
   // Model management
-  async createModel(
-    modelData: Omit<AIModel, "id" | "createdAt" | "updatedAt">,
-  ): Promise<AIModel> {
+  async createModel(modelData: Omit<AIModel, 'id' | 'createdAt' | 'updatedAt'>): Promise<AIModel> {
     const model: AIModel = {
       ...modelData,
       id: this.generateId(),
@@ -410,10 +389,7 @@ export class AIModelService {
     return model;
   }
 
-  async updateModel(
-    modelId: string,
-    updates: Partial<AIModel>,
-  ): Promise<AIModel> {
+  async updateModel(modelId: string, updates: Partial<AIModel>): Promise<AIModel> {
     const model = this.models.get(modelId);
     if (!model) {
       throw new Error(`Model ${modelId} not found`);
@@ -435,8 +411,8 @@ export class AIModelService {
       throw new Error(`Model ${modelId} not found`);
     }
 
-    if (model.status === "deployed") {
-      throw new Error("Cannot delete deployed model. Please undeploy first.");
+    if (model.status === 'deployed') {
+      throw new Error('Cannot delete deployed model. Please undeploy first.');
     }
 
     this.models.delete(modelId);
@@ -447,9 +423,9 @@ export class AIModelService {
   }
 
   async listModels(filter?: {
-    type?: AIModel["type"];
-    provider?: AIModel["provider"];
-    status?: AIModel["status"];
+    type?: AIModel['type'];
+    provider?: AIModel['provider'];
+    status?: AIModel['status'];
     organizationId?: string;
     tags?: string[];
   }): Promise<AIModel[]> {
@@ -466,14 +442,10 @@ export class AIModelService {
         models = models.filter((m) => m.status === filter.status);
       }
       if (filter.organizationId) {
-        models = models.filter(
-          (m) => m.organizationId === filter.organizationId,
-        );
+        models = models.filter((m) => m.organizationId === filter.organizationId);
       }
       if (filter.tags && filter.tags.length > 0) {
-        models = models.filter((m) =>
-          filter.tags!.some((tag) => m.tags.includes(tag)),
-        );
+        models = models.filter((m) => filter.tags!.some((tag) => m.tags.includes(tag)));
       }
     }
 
@@ -483,25 +455,23 @@ export class AIModelService {
   // Training management
   async startTraining(
     modelId: string,
-    config?: Partial<TrainingConfiguration>,
+    config?: Partial<TrainingConfiguration>
   ): Promise<TrainingJob> {
     const model = await this.getModel(modelId);
     if (!model) {
       throw new Error(`Model ${modelId} not found`);
     }
 
-    if (model.status === "training") {
-      throw new Error("Model is already being trained");
+    if (model.status === 'training') {
+      throw new Error('Model is already being trained');
     }
 
-    const trainingConfig = config
-      ? { ...model.training, ...config }
-      : model.training;
+    const trainingConfig = config ? { ...model.training, ...config } : model.training;
 
     const job: TrainingJob = {
       id: this.generateId(),
       modelId,
-      status: "running",
+      status: 'running',
       progress: 0,
       currentEpoch: 0,
       totalEpochs: trainingConfig.epochs,
@@ -529,7 +499,7 @@ export class AIModelService {
     this.trainingJobs.set(job.id, job);
 
     // Update model status
-    await this.updateModel(modelId, { status: "training" });
+    await this.updateModel(modelId, { status: 'training' });
 
     // Simulate training process (in real implementation, this would trigger actual training)
     this.simulateTraining(job);
@@ -553,14 +523,8 @@ export class AIModelService {
         job.currentEpoch = epoch;
 
         // Simulate metrics
-        const loss = Math.max(
-          0.1,
-          2.0 - epoch * 0.1 + (Math.random() - 0.5) * 0.2,
-        );
-        const accuracy = Math.min(
-          0.95,
-          0.5 + epoch * 0.05 + (Math.random() - 0.5) * 0.1,
-        );
+        const loss = Math.max(0.1, 2.0 - epoch * 0.1 + (Math.random() - 0.5) * 0.2);
+        const accuracy = Math.min(0.95, 0.5 + epoch * 0.05 + (Math.random() - 0.5) * 0.1);
         const valLoss = loss + (Math.random() - 0.5) * 0.1;
         const valAccuracy = accuracy - Math.random() * 0.05;
 
@@ -568,7 +532,7 @@ export class AIModelService {
         job.metrics.accuracy.push(accuracy);
         job.metrics.validationLoss.push(valLoss);
         job.metrics.validationAccuracy.push(valAccuracy);
-        job.metrics.learningRate.push(0.001 * Math.pow(0.95, epoch));
+        job.metrics.learningRate.push(0.001 * 0.95 ** epoch);
         job.metrics.epoch.push(epoch);
         job.metrics.timestamp.push(new Date());
 
@@ -588,7 +552,7 @@ export class AIModelService {
       // Log epoch completion
       job.logs.push({
         timestamp: new Date(),
-        level: "info",
+        level: 'info',
         message: `Epoch ${epoch} completed`,
         details: {
           loss: job.metrics.loss[job.metrics.loss.length - 1],
@@ -598,14 +562,14 @@ export class AIModelService {
     }
 
     // Complete training
-    job.status = "completed";
+    job.status = 'completed';
     job.progress = 100;
     job.completedAt = new Date();
 
     job.logs.push({
       timestamp: new Date(),
-      level: "info",
-      message: "Training completed successfully",
+      level: 'info',
+      message: 'Training completed successfully',
     });
 
     this.trainingJobs.set(job.id, job);
@@ -624,7 +588,7 @@ export class AIModelService {
     };
 
     await this.updateModel(job.modelId, {
-      status: "ready",
+      status: 'ready',
       metrics: finalMetrics,
     });
   }
@@ -635,22 +599,22 @@ export class AIModelService {
       throw new Error(`Training job ${jobId} not found`);
     }
 
-    if (job.status !== "running") {
-      throw new Error("Training job is not running");
+    if (job.status !== 'running') {
+      throw new Error('Training job is not running');
     }
 
-    job.status = "cancelled";
+    job.status = 'cancelled';
     job.completedAt = new Date();
     job.logs.push({
       timestamp: new Date(),
-      level: "warn",
-      message: "Training cancelled by user",
+      level: 'warn',
+      message: 'Training cancelled by user',
     });
 
     this.trainingJobs.set(jobId, job);
 
     // Update model status
-    await this.updateModel(job.modelId, { status: "draft" });
+    await this.updateModel(job.modelId, { status: 'draft' });
   }
 
   async getTrainingJob(jobId: string): Promise<TrainingJob | null> {
@@ -664,24 +628,22 @@ export class AIModelService {
       jobs = jobs.filter((job) => job.modelId === modelId);
     }
 
-    return jobs.sort(
-      (a, b) => (b.startedAt?.getTime() || 0) - (a.startedAt?.getTime() || 0),
-    );
+    return jobs.sort((a, b) => (b.startedAt?.getTime() || 0) - (a.startedAt?.getTime() || 0));
   }
 
   // Model evaluation
   async evaluateModel(
     modelId: string,
-    evaluationType: ModelEvaluation["evaluationType"],
-    dataset: DatasetConfiguration,
+    evaluationType: ModelEvaluation['evaluationType'],
+    dataset: DatasetConfiguration
   ): Promise<ModelEvaluation> {
     const model = await this.getModel(modelId);
     if (!model) {
       throw new Error(`Model ${modelId} not found`);
     }
 
-    if (model.status !== "ready" && model.status !== "deployed") {
-      throw new Error("Model must be ready or deployed for evaluation");
+    if (model.status !== 'ready' && model.status !== 'deployed') {
+      throw new Error('Model must be ready or deployed for evaluation');
     }
 
     // Simulate evaluation (in real implementation, this would run actual evaluation)
@@ -710,7 +672,7 @@ export class AIModelService {
       },
       results,
       timestamp: new Date(),
-      evaluatedBy: "current-user",
+      evaluatedBy: 'current-user',
     };
 
     this.evaluations.set(evaluation.id, evaluation);
@@ -725,33 +687,26 @@ export class AIModelService {
     let evaluations = Array.from(this.evaluations.values());
 
     if (modelId) {
-      evaluations = evaluations.filter(
-        (evaluation) => evaluation.modelId === modelId,
-      );
+      evaluations = evaluations.filter((evaluation) => evaluation.modelId === modelId);
     }
 
-    return evaluations.sort(
-      (a, b) => b.timestamp.getTime() - a.timestamp.getTime(),
-    );
+    return evaluations.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
   }
 
   // Model deployment
-  async deployModel(
-    modelId: string,
-    config: DeploymentConfiguration,
-  ): Promise<void> {
+  async deployModel(modelId: string, config: DeploymentConfiguration): Promise<void> {
     const model = await this.getModel(modelId);
     if (!model) {
       throw new Error(`Model ${modelId} not found`);
     }
 
-    if (model.status !== "ready") {
-      throw new Error("Model must be ready for deployment");
+    if (model.status !== 'ready') {
+      throw new Error('Model must be ready for deployment');
     }
 
     // Simulate deployment process
     await this.updateModel(modelId, {
-      status: "deployed",
+      status: 'deployed',
       deployment: config,
     });
   }
@@ -762,12 +717,12 @@ export class AIModelService {
       throw new Error(`Model ${modelId} not found`);
     }
 
-    if (model.status !== "deployed") {
-      throw new Error("Model is not deployed");
+    if (model.status !== 'deployed') {
+      throw new Error('Model is not deployed');
     }
 
     await this.updateModel(modelId, {
-      status: "ready",
+      status: 'ready',
       deployment: undefined,
     });
   }
@@ -779,8 +734,8 @@ export class AIModelService {
       throw new Error(`Model ${modelId} not found`);
     }
 
-    if (model.status !== "deployed") {
-      throw new Error("Model must be deployed for inference");
+    if (model.status !== 'deployed') {
+      throw new Error('Model must be deployed for inference');
     }
 
     // Simulate prediction (in real implementation, this would call the deployed model)
@@ -803,13 +758,13 @@ export class AIModelService {
   getModelTemplates(): Partial<AIModel>[] {
     return [
       {
-        name: "Text Classification Model",
-        type: "classification",
-        provider: "huggingface",
+        name: 'Text Classification Model',
+        type: 'classification',
+        provider: 'huggingface',
         configuration: {
-          architecture: "transformer",
+          architecture: 'transformer',
           parameters: {
-            model_size: "base",
+            model_size: 'base',
             hidden_size: 768,
             num_layers: 12,
             num_attention_heads: 12,
@@ -823,63 +778,59 @@ export class AIModelService {
             weight_decay: 0.01,
           },
           inputSchema: {
-            type: "text",
-            format: "string",
+            type: 'text',
+            format: 'string',
             fields: [
               {
-                name: "text",
-                type: "string",
+                name: 'text',
+                type: 'string',
                 required: true,
-                description: "Input text to classify",
+                description: 'Input text to classify',
               },
             ],
-            validation: { required: ["text"] },
+            validation: { required: ['text'] },
           },
           outputSchema: {
-            type: "text",
-            format: "json",
+            type: 'text',
+            format: 'json',
             fields: [
               {
-                name: "label",
-                type: "string",
+                name: 'label',
+                type: 'string',
                 required: true,
-                description: "Predicted class label",
+                description: 'Predicted class label',
               },
               {
-                name: "confidence",
-                type: "number",
+                name: 'confidence',
+                type: 'number',
                 required: true,
-                description: "Prediction confidence",
+                description: 'Prediction confidence',
               },
             ],
-            validation: { required: ["label", "confidence"] },
+            validation: { required: ['label', 'confidence'] },
           },
-          capabilities: [
-            "text_classification",
-            "sentiment_analysis",
-            "intent_detection",
-          ],
+          capabilities: ['text_classification', 'sentiment_analysis', 'intent_detection'],
         },
         training: {
           dataset: {
-            id: "default",
-            name: "Training Dataset",
-            source: "upload",
-            location: "",
-            format: "csv",
+            id: 'default',
+            name: 'Training Dataset',
+            source: 'upload',
+            location: '',
+            format: 'csv',
             size: 0,
             samples: 10000,
             features: 2,
             preprocessingSteps: [
-              { type: "tokenize", parameters: { max_length: 512 }, order: 1 },
-              { type: "encode", parameters: { encoding: "utf-8" }, order: 2 },
+              { type: 'tokenize', parameters: { max_length: 512 }, order: 1 },
+              { type: 'encode', parameters: { encoding: 'utf-8' }, order: 2 },
             ],
           },
           splitRatio: { train: 0.8, validation: 0.1, test: 0.1 },
           epochs: 3,
           batchSize: 16,
           optimizer: {
-            type: "adamw",
+            type: 'adamw',
             learningRate: 2e-5,
             weightDecay: 0.01,
           },
@@ -887,18 +838,18 @@ export class AIModelService {
             saveFrequency: 1,
             saveOptimizer: true,
             maxToKeep: 3,
-            saveFormat: "pytorch",
+            saveFormat: 'pytorch',
           },
         },
       },
       {
-        name: "Image Classification Model",
-        type: "computer_vision",
-        provider: "huggingface",
+        name: 'Image Classification Model',
+        type: 'computer_vision',
+        provider: 'huggingface',
         configuration: {
-          architecture: "resnet",
+          architecture: 'resnet',
           parameters: {
-            model_size: "resnet50",
+            model_size: 'resnet50',
             hidden_size: 2048,
             num_layers: 50,
             num_attention_heads: 0,
@@ -912,42 +863,38 @@ export class AIModelService {
             num_classes: 1000,
           },
           inputSchema: {
-            type: "image",
-            format: "jpeg",
+            type: 'image',
+            format: 'jpeg',
             fields: [
               {
-                name: "image",
-                type: "object",
+                name: 'image',
+                type: 'object',
                 required: true,
-                description: "Input image",
+                description: 'Input image',
               },
             ],
-            validation: { required: ["image"] },
+            validation: { required: ['image'] },
           },
           outputSchema: {
-            type: "text",
-            format: "json",
+            type: 'text',
+            format: 'json',
             fields: [
               {
-                name: "class",
-                type: "string",
+                name: 'class',
+                type: 'string',
                 required: true,
-                description: "Predicted class",
+                description: 'Predicted class',
               },
               {
-                name: "confidence",
-                type: "number",
+                name: 'confidence',
+                type: 'number',
                 required: true,
-                description: "Prediction confidence",
+                description: 'Prediction confidence',
               },
             ],
-            validation: { required: ["class", "confidence"] },
+            validation: { required: ['class', 'confidence'] },
           },
-          capabilities: [
-            "image_classification",
-            "object_detection",
-            "feature_extraction",
-          ],
+          capabilities: ['image_classification', 'object_detection', 'feature_extraction'],
         },
       },
     ];

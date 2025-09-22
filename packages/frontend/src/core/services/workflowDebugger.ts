@@ -29,7 +29,7 @@ export interface DebugVariable {
   type: string;
   path: string; // JSONPath to the variable
   nodeId: string;
-  scope: "input" | "output" | "parameters" | "context";
+  scope: 'input' | 'output' | 'parameters' | 'context';
 }
 
 export interface DebugFrame {
@@ -38,7 +38,7 @@ export interface DebugFrame {
   nodeName: string;
   nodeType: string;
   timestamp: string;
-  status: "pending" | "running" | "completed" | "failed" | "paused";
+  status: 'pending' | 'running' | 'completed' | 'failed' | 'paused';
   variables: DebugVariable[];
   inputData?: any;
   outputData?: any;
@@ -61,8 +61,8 @@ export interface DebugSession {
   executionId: string;
   startTime: string;
   endTime?: string;
-  status: "running" | "paused" | "completed" | "failed" | "stopped";
-  mode: "step" | "continue" | "auto";
+  status: 'running' | 'paused' | 'completed' | 'failed' | 'stopped';
+  mode: 'step' | 'continue' | 'auto';
   currentNodeId?: string;
   frames: DebugFrame[];
   callStack: string[]; // Node IDs in execution order
@@ -75,16 +75,12 @@ export interface DebugSession {
 }
 
 export interface DebugStep {
-  type: "step_into" | "step_over" | "step_out" | "continue" | "pause" | "stop";
+  type: 'step_into' | 'step_over' | 'step_out' | 'continue' | 'pause' | 'stop';
   targetNodeId?: string;
 }
 
 export interface DebugEvent {
-  type:
-    | "breakpoint_hit"
-    | "execution_paused"
-    | "variable_changed"
-    | "error_occurred";
+  type: 'breakpoint_hit' | 'execution_paused' | 'variable_changed' | 'error_occurred';
   sessionId: string;
   nodeId: string;
   timestamp: string;
@@ -102,7 +98,7 @@ export class WorkflowDebugger {
   startDebugSession(
     workflowId: string,
     executionId: string,
-    mode: "step" | "continue" | "auto" = "continue",
+    mode: 'step' | 'continue' | 'auto' = 'continue'
   ): DebugSession {
     const sessionId = `debug-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
@@ -111,13 +107,11 @@ export class WorkflowDebugger {
       workflowId,
       executionId,
       startTime: new Date().toISOString(),
-      status: "running",
+      status: 'running',
       mode,
       frames: [],
       callStack: [],
-      breakpoints: Array.from(this.breakpoints.values()).filter(
-        (bp) => bp.enabled,
-      ),
+      breakpoints: Array.from(this.breakpoints.values()).filter((bp) => bp.enabled),
       watchedVariables: [],
     };
 
@@ -131,7 +125,7 @@ export class WorkflowDebugger {
   stopDebugSession(sessionId: string): void {
     const session = this.activeSessions.get(sessionId);
     if (session) {
-      session.status = "stopped";
+      session.status = 'stopped';
       session.endTime = new Date().toISOString();
       this.activeSessions.delete(sessionId);
     }
@@ -178,9 +172,7 @@ export class WorkflowDebugger {
     if (removed) {
       // Remove from active sessions
       this.activeSessions.forEach((session) => {
-        session.breakpoints = session.breakpoints.filter(
-          (bp) => bp.nodeId !== nodeId,
-        );
+        session.breakpoints = session.breakpoints.filter((bp) => bp.nodeId !== nodeId);
       });
     }
 
@@ -207,32 +199,32 @@ export class WorkflowDebugger {
    */
   executeStep(sessionId: string, step: DebugStep): boolean {
     const session = this.activeSessions.get(sessionId);
-    if (!session || session.status !== "paused") {
+    if (!session || session.status !== 'paused') {
       return false;
     }
 
     switch (step.type) {
-      case "step_into":
-        session.mode = "step";
-        session.status = "running";
+      case 'step_into':
+        session.mode = 'step';
+        session.status = 'running';
         break;
 
-      case "step_over":
-        session.mode = "step";
-        session.status = "running";
+      case 'step_over':
+        session.mode = 'step';
+        session.status = 'running';
         // TODO: Implement step over logic
         break;
 
-      case "continue":
-        session.mode = "continue";
-        session.status = "running";
+      case 'continue':
+        session.mode = 'continue';
+        session.status = 'running';
         break;
 
-      case "pause":
-        session.status = "paused";
+      case 'pause':
+        session.status = 'paused';
         break;
 
-      case "stop":
+      case 'stop':
         this.stopDebugSession(sessionId);
         break;
     }
@@ -248,7 +240,7 @@ export class WorkflowDebugger {
     nodeId: string,
     nodeName: string,
     nodeType: string,
-    inputData?: any,
+    inputData?: any
   ): DebugFrame {
     const session = this.activeSessions.get(sessionId);
     if (!session) {
@@ -262,7 +254,7 @@ export class WorkflowDebugger {
       nodeName,
       nodeType,
       timestamp: new Date().toISOString(),
-      status: "running",
+      status: 'running',
       variables: this.extractVariables(nodeId, inputData),
       inputData,
       performance: {
@@ -292,29 +284,24 @@ export class WorkflowDebugger {
   updateDebugFrame(
     sessionId: string,
     nodeId: string,
-    status: "completed" | "failed",
+    status: 'completed' | 'failed',
     outputData?: any,
-    error?: any,
+    error?: any
   ): void {
     const session = this.activeSessions.get(sessionId);
     if (!session) return;
 
-    const frame = session.frames.find(
-      (f) => f.nodeId === nodeId && !f.performance.endTime,
-    );
+    const frame = session.frames.find((f) => f.nodeId === nodeId && !f.performance.endTime);
     if (frame) {
       frame.status = status;
       frame.outputData = outputData;
       frame.error = error;
       frame.performance.endTime = Date.now();
-      frame.performance.duration =
-        frame.performance.endTime - frame.performance.startTime;
+      frame.performance.duration = frame.performance.endTime - frame.performance.startTime;
 
       // Update variables with output data
       if (outputData) {
-        frame.variables.push(
-          ...this.extractVariables(nodeId, outputData, "output"),
-        );
+        frame.variables.push(...this.extractVariables(nodeId, outputData, 'output'));
       }
     }
   }
@@ -351,9 +338,7 @@ export class WorkflowDebugger {
     const session = this.activeSessions.get(sessionId);
     if (!session) return false;
 
-    const index = session.watchedVariables.findIndex(
-      (w) => w.expression === expression,
-    );
+    const index = session.watchedVariables.findIndex((w) => w.expression === expression);
     if (index >= 0) {
       session.watchedVariables.splice(index, 1);
       return true;
@@ -417,41 +402,38 @@ export class WorkflowDebugger {
   private extractVariables(
     nodeId: string,
     data: any,
-    scope: "input" | "output" | "parameters" | "context" = "input",
+    scope: 'input' | 'output' | 'parameters' | 'context' = 'input'
   ): DebugVariable[] {
     const variables: DebugVariable[] = [];
 
     if (!data) return variables;
 
     const extractFromObject = (obj: any, path: string) => {
-      if (typeof obj === "object" && obj !== null) {
+      if (typeof obj === 'object' && obj !== null) {
         Object.entries(obj).forEach(([key, value]) => {
           const variablePath = path ? `${path}.${key}` : key;
           variables.push({
             name: key,
             value,
-            type: Array.isArray(value) ? "array" : typeof value,
+            type: Array.isArray(value) ? 'array' : typeof value,
             path: variablePath,
             nodeId,
             scope,
           });
 
           // Recursively extract nested objects (limited depth)
-          if (typeof value === "object" && path.split(".").length < 3) {
+          if (typeof value === 'object' && path.split('.').length < 3) {
             extractFromObject(value, variablePath);
           }
         });
       }
     };
 
-    extractFromObject(data, "");
+    extractFromObject(data, '');
     return variables;
   }
 
-  private evaluateBreakpointCondition(
-    breakpoint: DebugBreakpoint,
-    frame: DebugFrame,
-  ): boolean {
+  private evaluateBreakpointCondition(breakpoint: DebugBreakpoint, frame: DebugFrame): boolean {
     if (!breakpoint.condition) return true;
 
     try {
@@ -465,22 +447,15 @@ export class WorkflowDebugger {
       };
 
       // Simple evaluation - in production, use a safer evaluation method
-      const func = new Function(
-        "context",
-        `with(context) { return ${breakpoint.condition}; }`,
-      );
+      const func = new Function('context', `with(context) { return ${breakpoint.condition}; }`);
       return !!func(context);
     } catch (error) {
-      console.warn("Breakpoint condition evaluation failed:", error);
+      console.warn('Breakpoint condition evaluation failed:', error);
       return false; // Don't break on condition errors
     }
   }
 
-  private hitBreakpoint(
-    sessionId: string,
-    breakpoint: DebugBreakpoint,
-    frame: DebugFrame,
-  ): void {
+  private hitBreakpoint(sessionId: string, breakpoint: DebugBreakpoint, frame: DebugFrame): void {
     const session = this.activeSessions.get(sessionId);
     if (!session) return;
 
@@ -495,17 +470,17 @@ export class WorkflowDebugger {
           acc[v.name] = v.value;
           return acc;
         },
-        {} as Record<string, any>,
+        {} as Record<string, any>
       ),
     });
 
     // Pause the session
-    session.status = "paused";
+    session.status = 'paused';
     session.currentNodeId = frame.nodeId;
 
     // Emit breakpoint event
     this.emitEvent({
-      type: "breakpoint_hit",
+      type: 'breakpoint_hit',
       sessionId,
       nodeId: frame.nodeId,
       timestamp: new Date().toISOString(),
@@ -527,20 +502,17 @@ export class WorkflowDebugger {
           acc[v.name] = v.value;
           return acc;
         },
-        {} as Record<string, any>,
+        {} as Record<string, any>
       ),
     };
 
     try {
       // Simple evaluation - in production, use a safer evaluation method
-      const func = new Function(
-        "context",
-        `with(context) { return ${expression}; }`,
-      );
+      const func = new Function('context', `with(context) { return ${expression}; }`);
       return func(context);
     } catch (error) {
       throw new Error(
-        `Expression evaluation failed: ${error instanceof Error ? error.message : String(error)}`,
+        `Expression evaluation failed: ${error instanceof Error ? error.message : String(error)}`
       );
     }
   }
@@ -557,18 +529,16 @@ export class WorkflowDebugger {
           stats[frame.nodeType] = (stats[frame.nodeType] || 0) + 1;
           return stats;
         },
-        {} as Record<string, number>,
+        {} as Record<string, number>
       ),
     };
   }
 
   private analyzePerformance(session: DebugSession): any {
-    const completedFrames = session.frames.filter(
-      (f) => f.performance.duration,
-    );
+    const completedFrames = session.frames.filter((f) => f.performance.duration);
 
     if (completedFrames.length === 0) {
-      return { message: "No completed nodes to analyze" };
+      return { message: 'No completed nodes to analyze' };
     }
 
     const durations = completedFrames.map((f) => f.performance.duration!);
@@ -578,15 +548,10 @@ export class WorkflowDebugger {
       totalExecutionTime: totalTime,
       averageNodeTime: totalTime / durations.length,
       slowestNode: completedFrames.reduce((slowest, frame) =>
-        frame.performance.duration! > (slowest?.performance.duration || 0)
-          ? frame
-          : slowest,
+        frame.performance.duration! > (slowest?.performance.duration || 0) ? frame : slowest
       ),
       fastestNode: completedFrames.reduce((fastest, frame) =>
-        frame.performance.duration! <
-        (fastest?.performance.duration || Infinity)
-          ? frame
-          : fastest,
+        frame.performance.duration! < (fastest?.performance.duration || Infinity) ? frame : fastest
       ),
       nodePerformance: completedFrames
         .map((f) => ({
@@ -624,7 +589,7 @@ export class WorkflowDebugger {
       try {
         listener(event);
       } catch (error) {
-        console.error("Debug event listener error:", error);
+        console.error('Debug event listener error:', error);
       }
     });
   }

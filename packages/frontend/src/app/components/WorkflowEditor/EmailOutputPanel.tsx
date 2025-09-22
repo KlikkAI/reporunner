@@ -1,42 +1,32 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState, useMemo } from "react";
-import {
-  Search,
-  CheckCircle,
-  Pin,
-  Edit,
-  ChevronDown,
-  ChevronRight,
-} from "lucide-react";
 
-type DisplayMode = "schema" | "table" | "json";
+import { CheckCircle, ChevronDown, ChevronRight, Edit, Pin, Search } from 'lucide-react';
+import type React from 'react';
+import { useMemo, useState } from 'react';
+
+type DisplayMode = 'schema' | 'table' | 'json';
 
 interface EmailOutputPanelProps {
   selectedEmail?: any;
   isVisible?: boolean;
 }
 
-const EmailOutputPanel: React.FC<EmailOutputPanelProps> = ({
-  selectedEmail,
-  isVisible = true,
-}) => {
-  const [displayMode, setDisplayMode] = useState<DisplayMode>("schema");
-  const [searchTerm, setSearchTerm] = useState("");
+const EmailOutputPanel: React.FC<EmailOutputPanelProps> = ({ selectedEmail, isVisible = true }) => {
+  const [displayMode, setDisplayMode] = useState<DisplayMode>('schema');
+  const [searchTerm, setSearchTerm] = useState('');
   const [expandedItems, setExpandedItems] = useState<Set<string>>(
-    new Set(["labelIds", "headers", "from", "to"]),
+    new Set(['labelIds', 'headers', 'from', 'to'])
   );
 
   // Filter data based on search term
   const filteredData = useMemo(() => {
     if (!searchTerm || !selectedEmail) return selectedEmail;
 
-    const filterObject = (obj: any, path = ""): any => {
-      if (typeof obj === "string") {
-        return obj.toLowerCase().includes(searchTerm.toLowerCase())
-          ? obj
-          : null;
+    const filterObject = (obj: any, path = ''): any => {
+      if (typeof obj === 'string') {
+        return obj.toLowerCase().includes(searchTerm.toLowerCase()) ? obj : null;
       }
-      if (typeof obj === "number") {
+      if (typeof obj === 'number') {
         return obj.toString().includes(searchTerm) ? obj : null;
       }
       if (Array.isArray(obj)) {
@@ -46,7 +36,7 @@ const EmailOutputPanel: React.FC<EmailOutputPanelProps> = ({
         });
         return filtered.length > 0 ? filtered : null;
       }
-      if (typeof obj === "object" && obj !== null) {
+      if (typeof obj === 'object' && obj !== null) {
         const filtered: any = {};
         for (const [key, value] of Object.entries(obj)) {
           const newPath = path ? `${path}.${key}` : key;
@@ -79,36 +69,30 @@ const EmailOutputPanel: React.FC<EmailOutputPanelProps> = ({
 
   // Get data type icon
   const getTypeIcon = (value: any) => {
-    if (typeof value === "string") {
+    if (typeof value === 'string') {
       return <span className="text-blue-400">Aa</span>;
     }
-    if (typeof value === "number") {
+    if (typeof value === 'number') {
       return <span className="text-green-400">#</span>;
     }
     if (Array.isArray(value)) {
       return <span className="text-purple-400">[]</span>;
     }
-    if (typeof value === "object") {
+    if (typeof value === 'object') {
       return <span className="text-yellow-400">{}</span>;
     }
     return <span className="text-gray-400">?</span>;
   };
 
   // Render schema view
-  const renderSchemaItem = (
-    key: string,
-    value: any,
-    path: string,
-    nestLevel: number = 0,
-  ) => {
+  const renderSchemaItem = (key: string, value: any, path: string, nestLevel: number = 0) => {
     const isExpanded = expandedItems.has(path);
-    const hasChildren =
-      Array.isArray(value) || (typeof value === "object" && value !== null);
+    const hasChildren = Array.isArray(value) || (typeof value === 'object' && value !== null);
 
     return (
       <div key={path} className="border-b border-gray-700 last:border-b-0">
         <div
-          className={`flex items-center py-2 px-3 hover:bg-gray-700 transition-colors ${nestLevel > 0 ? "pl-8" : ""}`}
+          className={`flex items-center py-2 px-3 hover:bg-gray-700 transition-colors ${nestLevel > 0 ? 'pl-8' : ''}`}
           style={{ paddingLeft: `${nestLevel * 24 + 12}px` }}
         >
           {/* Toggle button for expandable items */}
@@ -138,7 +122,7 @@ const EmailOutputPanel: React.FC<EmailOutputPanelProps> = ({
           <div className="flex-1 min-w-0">
             {!hasChildren ? (
               <span className="text-sm text-gray-300 break-all">
-                {typeof value === "string" && value.includes("\n") ? (
+                {typeof value === 'string' && value.includes('\n') ? (
                   <div className="whitespace-pre-wrap">{value}</div>
                 ) : (
                   String(value)
@@ -146,9 +130,7 @@ const EmailOutputPanel: React.FC<EmailOutputPanelProps> = ({
               </span>
             ) : (
               <span className="text-sm text-gray-400">
-                {Array.isArray(value)
-                  ? `Array (${value.length} items)`
-                  : "Object"}
+                {Array.isArray(value) ? `Array (${value.length} items)` : 'Object'}
               </span>
             )}
           </div>
@@ -159,20 +141,10 @@ const EmailOutputPanel: React.FC<EmailOutputPanelProps> = ({
           <div>
             {Array.isArray(value)
               ? value.map((item, index) =>
-                  renderSchemaItem(
-                    `[${index}]`,
-                    item,
-                    `${path}[${index}]`,
-                    nestLevel + 1,
-                  ),
+                  renderSchemaItem(`[${index}]`, item, `${path}[${index}]`, nestLevel + 1)
                 )
               : Object.entries(value).map(([childKey, childValue]) =>
-                  renderSchemaItem(
-                    childKey,
-                    childValue,
-                    `${path}.${childKey}`,
-                    nestLevel + 1,
-                  ),
+                  renderSchemaItem(childKey, childValue, `${path}.${childKey}`, nestLevel + 1)
                 )}
           </div>
         )}
@@ -183,19 +155,17 @@ const EmailOutputPanel: React.FC<EmailOutputPanelProps> = ({
   // Render table view
   const renderTableView = () => {
     if (!selectedEmail)
-      return (
-        <div className="text-gray-400 text-center py-8">No email selected</div>
-      );
+      return <div className="text-gray-400 text-center py-8">No email selected</div>;
 
-    const flattenObject = (obj: any, prefix = ""): Record<string, any> => {
+    const flattenObject = (obj: any, prefix = ''): Record<string, any> => {
       const result: Record<string, any> = {};
 
       for (const [key, value] of Object.entries(obj)) {
         const newKey = prefix ? `${prefix}.${key}` : key;
 
         if (Array.isArray(value)) {
-          result[newKey] = value.join(", ");
-        } else if (typeof value === "object" && value !== null) {
+          result[newKey] = value.join(', ');
+        } else if (typeof value === 'object' && value !== null) {
           // For nested objects, show a preview
           result[newKey] = `Object (${Object.keys(value).length} properties)`;
         } else {
@@ -213,34 +183,21 @@ const EmailOutputPanel: React.FC<EmailOutputPanelProps> = ({
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-gray-600">
-              <th className="text-left py-2 px-3 text-gray-300 font-medium">
-                Property
-              </th>
-              <th className="text-left py-2 px-3 text-gray-300 font-medium">
-                Value
-              </th>
-              <th className="text-left py-2 px-3 text-gray-300 font-medium">
-                Type
-              </th>
+              <th className="text-left py-2 px-3 text-gray-300 font-medium">Property</th>
+              <th className="text-left py-2 px-3 text-gray-300 font-medium">Value</th>
+              <th className="text-left py-2 px-3 text-gray-300 font-medium">Type</th>
             </tr>
           </thead>
           <tbody>
             {Object.entries(flatData).map(([key, value]) => (
-              <tr
-                key={key}
-                className="border-b border-gray-700 hover:bg-gray-700"
-              >
-                <td className="py-2 px-3 text-blue-300 font-mono text-xs">
-                  {key}
-                </td>
+              <tr key={key} className="border-b border-gray-700 hover:bg-gray-700">
+                <td className="py-2 px-3 text-blue-300 font-mono text-xs">{key}</td>
                 <td className="py-2 px-3 text-gray-300 break-all">
-                  {typeof value === "string" && value.length > 100
+                  {typeof value === 'string' && value.length > 100
                     ? `${value.substring(0, 100)}...`
                     : String(value)}
                 </td>
-                <td className="py-2 px-3 text-gray-400 text-xs">
-                  {typeof value}
-                </td>
+                <td className="py-2 px-3 text-gray-400 text-xs">{typeof value}</td>
               </tr>
             ))}
           </tbody>
@@ -252,9 +209,7 @@ const EmailOutputPanel: React.FC<EmailOutputPanelProps> = ({
   // Render JSON view
   const renderJsonView = () => {
     if (!selectedEmail)
-      return (
-        <div className="text-gray-400 text-center py-8">No email selected</div>
-      );
+      return <div className="text-gray-400 text-center py-8">No email selected</div>;
 
     return (
       <div className="overflow-auto">
@@ -281,23 +236,19 @@ const EmailOutputPanel: React.FC<EmailOutputPanelProps> = ({
     }
 
     switch (displayMode) {
-      case "schema":
+      case 'schema':
         return (
           <div className="overflow-auto max-h-full">
             {filteredData ? (
-              Object.entries(filteredData).map(([key, value]) =>
-                renderSchemaItem(key, value, key),
-              )
+              Object.entries(filteredData).map(([key, value]) => renderSchemaItem(key, value, key))
             ) : (
-              <div className="text-gray-400 text-center py-8">
-                No matching data found
-              </div>
+              <div className="text-gray-400 text-center py-8">No matching data found</div>
             )}
           </div>
         );
-      case "table":
+      case 'table':
         return renderTableView();
-      case "json":
+      case 'json':
         return renderJsonView();
       default:
         return null;
@@ -317,9 +268,7 @@ const EmailOutputPanel: React.FC<EmailOutputPanelProps> = ({
             {selectedEmail && (
               <div className="ml-2 flex items-center space-x-1">
                 <CheckCircle className="w-4 h-4 text-green-400" />
-                <span className="text-xs text-gray-400 ml-1">
-                  Email selected
-                </span>
+                <span className="text-xs text-gray-400 ml-1">Email selected</span>
               </div>
             )}
           </h3>
@@ -343,17 +292,17 @@ const EmailOutputPanel: React.FC<EmailOutputPanelProps> = ({
             {/* Display mode tabs */}
             <div className="flex bg-gray-700 rounded overflow-hidden">
               {[
-                { key: "schema", label: "Schema" },
-                { key: "table", label: "Table" },
-                { key: "json", label: "JSON" },
+                { key: 'schema', label: 'Schema' },
+                { key: 'table', label: 'Table' },
+                { key: 'json', label: 'JSON' },
               ].map(({ key, label }) => (
                 <button
                   key={key}
                   onClick={() => setDisplayMode(key as DisplayMode)}
                   className={`px-3 py-2 text-sm font-medium transition-colors ${
                     displayMode === key
-                      ? "bg-gray-600 text-white"
-                      : "text-gray-300 hover:text-white hover:bg-gray-600"
+                      ? 'bg-gray-600 text-white'
+                      : 'text-gray-300 hover:text-white hover:bg-gray-600'
                   }`}
                 >
                   {label}
@@ -378,12 +327,11 @@ const EmailOutputPanel: React.FC<EmailOutputPanelProps> = ({
         {selectedEmail && (
           <div className="mt-3 flex items-center justify-between">
             <div className="text-sm text-gray-300">
-              <span className="text-blue-300">From:</span>{" "}
-              {selectedEmail.from || "Unknown"}
+              <span className="text-blue-300">From:</span> {selectedEmail.from || 'Unknown'}
             </div>
             <div className="text-sm text-gray-300">
-              <span className="text-blue-300">Subject:</span>{" "}
-              {selectedEmail.subject || "No subject"}
+              <span className="text-blue-300">Subject:</span>{' '}
+              {selectedEmail.subject || 'No subject'}
             </div>
           </div>
         )}

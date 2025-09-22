@@ -35,11 +35,11 @@ export class ValidationUtils {
   static validatePagination(page?: string | number, limit?: string | number) {
     const pageNum = typeof page === 'string' ? parseInt(page, 10) : page || 1;
     const limitNum = typeof limit === 'string' ? parseInt(limit, 10) : limit || 20;
-    
+
     return {
       page: Math.max(1, pageNum),
       limit: Math.min(100, Math.max(1, limitNum)),
-      skip: (Math.max(1, pageNum) - 1) * Math.min(100, Math.max(1, limitNum))
+      skip: (Math.max(1, pageNum) - 1) * Math.min(100, Math.max(1, limitNum)),
     };
   }
 

@@ -5,16 +5,13 @@
  * providing contextual commenting system similar to Figma's comments.
  */
 
-import React, { useState, useCallback } from "react";
-import { Avatar, Badge, Button, Input, Card, Popover } from "antd";
-import {
-  CommentOutlined,
-  SendOutlined,
-  CheckOutlined,
-} from "@ant-design/icons";
-import { useCollaborationStore } from "../../../core/stores/collaborationStore";
-import { useLeanWorkflowStore } from "../../../core/stores/leanWorkflowStore";
-import type { CollaborationComment } from "../../../core/services/collaborationService";
+import { CheckOutlined, CommentOutlined, SendOutlined } from '@ant-design/icons';
+import { Avatar, Badge, Button, Card, Input, Popover } from 'antd';
+import type React from 'react';
+import { useCallback, useState } from 'react';
+import type { CollaborationComment } from '../../../core/services/collaborationService';
+import { useCollaborationStore } from '../../../core/stores/collaborationStore';
+import { useLeanWorkflowStore } from '../../../core/stores/leanWorkflowStore';
 
 const { TextArea } = Input;
 
@@ -55,8 +52,11 @@ export const CommentAnnotations: React.FC<CommentAnnotationsProps> = ({
   const { currentWorkflow } = useLeanWorkflowStore();
 
   const [replyContents, setReplyContents] = useState<Record<string, string>>({});
-  const [newCommentContent, setNewCommentContent] = useState("");
-  const [pendingCommentPosition, setPendingCommentPosition] = useState<{ x: number; y: number } | null>(null);
+  const [newCommentContent, setNewCommentContent] = useState('');
+  const [pendingCommentPosition, setPendingCommentPosition] = useState<{
+    x: number;
+    y: number;
+  } | null>(null);
 
   // Convert workflow coordinates to screen coordinates
   const workflowToScreen = useCallback(
@@ -79,10 +79,18 @@ export const CommentAnnotations: React.FC<CommentAnnotationsProps> = ({
   // Generate user colors
   const getUserColor = useCallback((userId: string): string => {
     const colors = [
-      "#1890ff", "#52c41a", "#faad14", "#f5222d", "#722ed1",
-      "#13c2c2", "#eb2f96", "#fa541c", "#2f54eb", "#a0d911"
+      '#1890ff',
+      '#52c41a',
+      '#faad14',
+      '#f5222d',
+      '#722ed1',
+      '#13c2c2',
+      '#eb2f96',
+      '#fa541c',
+      '#2f54eb',
+      '#a0d911',
     ];
-    const hash = userId.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0);
+    const hash = userId.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
     return colors[hash % colors.length];
   }, []);
 
@@ -115,10 +123,10 @@ export const CommentAnnotations: React.FC<CommentAnnotationsProps> = ({
         mentions: [], // TODO: Parse mentions from content
       });
 
-      setNewCommentContent("");
+      setNewCommentContent('');
       setPendingCommentPosition(null);
     } catch (error) {
-      console.error("Failed to add comment:", error);
+      console.error('Failed to add comment:', error);
     }
   }, [newCommentContent, pendingCommentPosition, addComment]);
 
@@ -130,9 +138,9 @@ export const CommentAnnotations: React.FC<CommentAnnotationsProps> = ({
 
       try {
         await replyToComment(commentId, content);
-        setReplyContents({ ...replyContents, [commentId]: "" });
+        setReplyContents({ ...replyContents, [commentId]: '' });
       } catch (error) {
-        console.error("Failed to reply to comment:", error);
+        console.error('Failed to reply to comment:', error);
       }
     },
     [replyContents, replyToComment]
@@ -150,20 +158,12 @@ export const CommentAnnotations: React.FC<CommentAnnotationsProps> = ({
     const userColor = getUserColor(comment.author.id);
 
     const commentThread = (
-      <Card
-        size="small"
-        className="w-80 max-h-96 overflow-auto"
-        bodyStyle={{ padding: 12 }}
-      >
+      <Card size="small" className="w-80 max-h-96 overflow-auto" bodyStyle={{ padding: 12 }}>
         <div className="space-y-3">
           {/* Comment header */}
           <div className="flex items-start justify-between">
             <div className="flex items-center space-x-2">
-              <Avatar
-                size={24}
-                src={comment.author.avatar}
-                style={{ backgroundColor: userColor }}
-              >
+              <Avatar size={24} src={comment.author.avatar} style={{ backgroundColor: userColor }}>
                 {comment.author.name.charAt(0).toUpperCase()}
               </Avatar>
               <div>
@@ -190,9 +190,7 @@ export const CommentAnnotations: React.FC<CommentAnnotationsProps> = ({
           </div>
 
           {/* Comment content */}
-          <div className="text-sm text-gray-700 dark:text-gray-300">
-            {comment.content}
-          </div>
+          <div className="text-sm text-gray-700 dark:text-gray-300">{comment.content}</div>
 
           {/* Replies */}
           {comment.replies.length > 0 && (
@@ -228,7 +226,7 @@ export const CommentAnnotations: React.FC<CommentAnnotationsProps> = ({
               <Input
                 size="small"
                 placeholder="Reply..."
-                value={replyContents[comment.id] || ""}
+                value={replyContents[comment.id] || ''}
                 onChange={(e) =>
                   setReplyContents({
                     ...replyContents,
@@ -260,7 +258,7 @@ export const CommentAnnotations: React.FC<CommentAnnotationsProps> = ({
       >
         <div
           className={`absolute cursor-pointer transform -translate-x-1/2 -translate-y-1/2 transition-all duration-200 z-40 ${
-            isSelected ? "scale-110" : "scale-100"
+            isSelected ? 'scale-110' : 'scale-100'
           }`}
           style={{
             left: screenPosition.x,
@@ -273,13 +271,11 @@ export const CommentAnnotations: React.FC<CommentAnnotationsProps> = ({
           {/* Comment pin */}
           <div
             className={`relative w-8 h-8 rounded-full border-2 border-white shadow-lg flex items-center justify-center ${
-              isSelected || isHovered ? "transform scale-110" : ""
+              isSelected || isHovered ? 'transform scale-110' : ''
             }`}
             style={{
               backgroundColor: userColor,
-              boxShadow: isSelected
-                ? `0 0 0 3px ${userColor}40`
-                : "0 2px 8px rgba(0,0,0,0.15)",
+              boxShadow: isSelected ? `0 0 0 3px ${userColor}40` : '0 2px 8px rgba(0,0,0,0.15)',
             }}
           >
             <CommentOutlined className="text-white text-sm" />
@@ -319,9 +315,7 @@ export const CommentAnnotations: React.FC<CommentAnnotationsProps> = ({
   };
 
   // Pending comment input
-  const PendingCommentInput: React.FC<{ position: { x: number; y: number } }> = ({
-    position,
-  }) => {
+  const PendingCommentInput: React.FC<{ position: { x: number; y: number } }> = ({ position }) => {
     const screenPos = workflowToScreen(position.x, position.y);
 
     return (
@@ -339,12 +333,10 @@ export const CommentAnnotations: React.FC<CommentAnnotationsProps> = ({
                 size={24}
                 src={currentUser?.avatar}
                 style={{
-                  backgroundColor: currentUser
-                    ? getUserColor(currentUser.id)
-                    : "#ccc",
+                  backgroundColor: currentUser ? getUserColor(currentUser.id) : '#ccc',
                 }}
               >
-                {currentUser?.name.charAt(0).toUpperCase() || "?"}
+                {currentUser?.name.charAt(0).toUpperCase() || '?'}
               </Avatar>
               <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
                 Add a comment
@@ -364,7 +356,7 @@ export const CommentAnnotations: React.FC<CommentAnnotationsProps> = ({
                 size="small"
                 onClick={() => {
                   setPendingCommentPosition(null);
-                  setNewCommentContent("");
+                  setNewCommentContent('');
                 }}
               >
                 Cancel
@@ -388,9 +380,7 @@ export const CommentAnnotations: React.FC<CommentAnnotationsProps> = ({
           style={{
             left: -20,
             top: 20,
-            backgroundColor: currentUser
-              ? getUserColor(currentUser.id)
-              : "#ccc",
+            backgroundColor: currentUser ? getUserColor(currentUser.id) : '#ccc',
           }}
         >
           <CommentOutlined className="text-white text-xs" />
@@ -410,8 +400,8 @@ export const CommentAnnotations: React.FC<CommentAnnotationsProps> = ({
           onClick={handleCanvasClick}
           style={{
             background: commentMode
-              ? "linear-gradient(45deg, transparent 40%, rgba(24, 144, 255, 0.1) 50%, transparent 60%)"
-              : "transparent",
+              ? 'linear-gradient(45deg, transparent 40%, rgba(24, 144, 255, 0.1) 50%, transparent 60%)'
+              : 'transparent',
           }}
         />
       )}
@@ -433,9 +423,7 @@ export const CommentAnnotations: React.FC<CommentAnnotationsProps> = ({
       })}
 
       {/* Pending comment input */}
-      {pendingCommentPosition && (
-        <PendingCommentInput position={pendingCommentPosition} />
-      )}
+      {pendingCommentPosition && <PendingCommentInput position={pendingCommentPosition} />}
 
       {/* Comment mode instructions */}
       {commentMode && (

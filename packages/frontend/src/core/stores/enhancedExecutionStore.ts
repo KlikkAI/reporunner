@@ -6,18 +6,18 @@
  * enterprise-grade execution tracking.
  */
 
-import { create } from "zustand";
-import { subscribeWithSelector } from "zustand/middleware";
-import type { WorkflowExecution } from "@/core/schemas";
+import { create } from 'zustand';
+import { subscribeWithSelector } from 'zustand/middleware';
 import {
-  executionMonitor,
   type ExecutionEvent,
   type ExecutionEventHandler,
-} from "@/app/services/executionMonitor";
+  executionMonitor,
+} from '@/app/services/executionMonitor';
+import type { WorkflowExecution } from '@/core/schemas';
 
 export interface NodeExecutionState {
   nodeId: string;
-  status: "idle" | "pending" | "running" | "completed" | "failed" | "skipped";
+  status: 'idle' | 'pending' | 'running' | 'completed' | 'failed' | 'skipped';
   startTime?: string;
   endTime?: string;
   duration?: number;
@@ -37,7 +37,7 @@ export interface NodeExecutionState {
     breakpoint?: boolean;
     watchedVariables?: Record<string, any>;
     logs?: Array<{
-      level: "debug" | "info" | "warn" | "error";
+      level: 'debug' | 'info' | 'warn' | 'error';
       message: string;
       timestamp: string;
     }>;
@@ -153,14 +153,14 @@ export const useEnhancedExecutionStore = create<EnhancedExecutionState>()(
         get().clearNodeStates();
 
         // Start execution via API
-        const response = await fetch("/api/executions", {
-          method: "POST",
+        const response = await fetch('/api/executions', {
+          method: 'POST',
           headers: {
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
           },
           body: JSON.stringify({
             workflowId,
-            mode: testMode ? "test" : "production",
+            mode: testMode ? 'test' : 'production',
             debugMode: get().debugMode,
           }),
         });
@@ -187,7 +187,7 @@ export const useEnhancedExecutionStore = create<EnhancedExecutionState>()(
 
         return execution.id;
       } catch (error) {
-        console.error("Failed to start execution:", error);
+        console.error('Failed to start execution:', error);
         throw error;
       }
     },
@@ -195,18 +195,18 @@ export const useEnhancedExecutionStore = create<EnhancedExecutionState>()(
     stopExecution: async (executionId: string) => {
       try {
         await fetch(`/api/executions/${executionId}/stop`, {
-          method: "POST",
+          method: 'POST',
         });
 
         // Update local state
         set((state) => ({
           currentExecution:
             state.currentExecution?.id === executionId
-              ? { ...state.currentExecution, status: "cancelled" as const }
+              ? { ...state.currentExecution, status: 'cancelled' as const }
               : state.currentExecution,
         }));
       } catch (error) {
-        console.error("Failed to stop execution:", error);
+        console.error('Failed to stop execution:', error);
         throw error;
       }
     },
@@ -218,18 +218,16 @@ export const useEnhancedExecutionStore = create<EnhancedExecutionState>()(
         return; // Already subscribed
       }
 
-      const handleExecutionEvent: ExecutionEventHandler = (
-        event: ExecutionEvent,
-      ) => {
+      const handleExecutionEvent: ExecutionEventHandler = (event: ExecutionEvent) => {
         const currentState = get();
 
         switch (event.type) {
-          case "execution_started":
+          case 'execution_started':
             set({
               currentExecution: currentState.currentExecution
                 ? {
                     ...currentState.currentExecution,
-                    status: "running",
+                    status: 'running',
                     startTime: event.timestamp,
                   }
                 : null,
@@ -237,12 +235,12 @@ export const useEnhancedExecutionStore = create<EnhancedExecutionState>()(
             });
             break;
 
-          case "execution_completed":
+          case 'execution_completed':
             set({
               currentExecution: currentState.currentExecution
                 ? {
                     ...currentState.currentExecution,
-                    status: "completed",
+                    status: 'completed',
                     endTime: event.timestamp,
                     duration: event.data.duration,
                   }
@@ -255,12 +253,12 @@ export const useEnhancedExecutionStore = create<EnhancedExecutionState>()(
             }
             break;
 
-          case "execution_failed":
+          case 'execution_failed':
             set({
               currentExecution: currentState.currentExecution
                 ? {
                     ...currentState.currentExecution,
-                    status: "failed",
+                    status: 'failed',
                     endTime: event.timestamp,
                     error: event.data.error,
                     duration: event.data.duration,
@@ -274,9 +272,9 @@ export const useEnhancedExecutionStore = create<EnhancedExecutionState>()(
             }
             break;
 
-          case "node_started":
+          case 'node_started':
             get().updateNodeState(event.data.nodeId, {
-              status: "running",
+              status: 'running',
               startTime: event.timestamp,
               inputData: event.data.inputData,
             });
@@ -284,9 +282,7 @@ export const useEnhancedExecutionStore = create<EnhancedExecutionState>()(
             set((state) => ({
               activeNodes: new Set([...state.activeNodes, event.data.nodeId]),
               pendingNodes: new Set(
-                [...state.pendingNodes].filter(
-                  (id) => id !== event.data.nodeId,
-                ),
+                [...state.pendingNodes].filter((id) => id !== event.data.nodeId)
               ),
               progress: {
                 ...state.progress!,
@@ -295,7 +291,7 @@ export const useEnhancedExecutionStore = create<EnhancedExecutionState>()(
             }));
             break;
 
-          case "node_completed":
+          case 'node_completed': {
             const completionTime = Date.now();
             const nodeState = currentState.nodeStates.get(event.data.nodeId);
             const executionTime = nodeState?.startTime
@@ -303,7 +299,7 @@ export const useEnhancedExecutionStore = create<EnhancedExecutionState>()(
               : 0;
 
             get().updateNodeState(event.data.nodeId, {
-              status: "completed",
+              status: 'completed',
               endTime: event.timestamp,
               duration: executionTime,
               outputData: event.data.outputData,
@@ -313,15 +309,10 @@ export const useEnhancedExecutionStore = create<EnhancedExecutionState>()(
               const newActiveNodes = new Set(state.activeNodes);
               newActiveNodes.delete(event.data.nodeId);
 
-              const newCompletedNodes = new Set([
-                ...state.completedNodes,
-                event.data.nodeId,
-              ]);
+              const newCompletedNodes = new Set([...state.completedNodes, event.data.nodeId]);
 
               // Update performance metrics
-              const newNodeExecutionTimes = new Map(
-                state.performanceMetrics.nodeExecutionTimes,
-              );
+              const newNodeExecutionTimes = new Map(state.performanceMetrics.nodeExecutionTimes);
               newNodeExecutionTimes.set(event.data.nodeId, executionTime);
 
               return {
@@ -335,10 +326,11 @@ export const useEnhancedExecutionStore = create<EnhancedExecutionState>()(
               };
             });
             break;
+          }
 
-          case "node_failed":
+          case 'node_failed':
             get().updateNodeState(event.data.nodeId, {
-              status: "failed",
+              status: 'failed',
               endTime: event.timestamp,
               error: event.data.error,
             });
@@ -347,10 +339,7 @@ export const useEnhancedExecutionStore = create<EnhancedExecutionState>()(
               const newActiveNodes = new Set(state.activeNodes);
               newActiveNodes.delete(event.data.nodeId);
 
-              const newFailedNodes = new Set([
-                ...state.failedNodes,
-                event.data.nodeId,
-              ]);
+              const newFailedNodes = new Set([...state.failedNodes, event.data.nodeId]);
 
               return {
                 activeNodes: newActiveNodes,
@@ -360,12 +349,10 @@ export const useEnhancedExecutionStore = create<EnhancedExecutionState>()(
             });
             break;
 
-          case "log_entry":
+          case 'log_entry':
             // Handle log entries for debugging
             if (event.data.nodeId) {
-              const currentNodeState = currentState.nodeStates.get(
-                event.data.nodeId,
-              );
+              const currentNodeState = currentState.nodeStates.get(event.data.nodeId);
               if (currentNodeState) {
                 get().updateNodeState(event.data.nodeId, {
                   debugInfo: {
@@ -373,7 +360,7 @@ export const useEnhancedExecutionStore = create<EnhancedExecutionState>()(
                     logs: [
                       ...(currentNodeState.debugInfo?.logs || []),
                       {
-                        level: event.data.level || "info",
+                        level: event.data.level || 'info',
                         message: event.data.message,
                         timestamp: event.timestamp,
                       },
@@ -388,14 +375,11 @@ export const useEnhancedExecutionStore = create<EnhancedExecutionState>()(
         set({ lastUpdateTimestamp: event.timestamp });
       };
 
-      await executionMonitor.subscribeToExecution(
-        executionId,
-        handleExecutionEvent,
-      );
+      await executionMonitor.subscribeToExecution(executionId, handleExecutionEvent);
 
       set((state) => ({
         subscriptions: new Set([...state.subscriptions, executionId]),
-        isConnected: executionMonitor.getConnectionStatus() === "connected",
+        isConnected: executionMonitor.getConnectionStatus() === 'connected',
       }));
     },
 
@@ -408,21 +392,18 @@ export const useEnhancedExecutionStore = create<EnhancedExecutionState>()(
 
         return {
           subscriptions: newSubscriptions,
-          isConnected: executionMonitor.getConnectionStatus() === "connected",
+          isConnected: executionMonitor.getConnectionStatus() === 'connected',
         };
       });
     },
 
     // Node state management
-    updateNodeState: (
-      nodeId: string,
-      stateUpdate: Partial<NodeExecutionState>,
-    ) => {
+    updateNodeState: (nodeId: string, stateUpdate: Partial<NodeExecutionState>) => {
       set((state) => {
         const newNodeStates = new Map(state.nodeStates);
         const currentState = newNodeStates.get(nodeId) || {
           nodeId,
-          status: "idle" as const,
+          status: 'idle' as const,
         };
 
         newNodeStates.set(nodeId, { ...currentState, ...stateUpdate });
@@ -487,9 +468,7 @@ export const useEnhancedExecutionStore = create<EnhancedExecutionState>()(
 
     getExecutionById: (executionId: string) => {
       const state = get();
-      return (
-        state.executionHistory.find((exec) => exec.id === executionId) || null
-      );
+      return state.executionHistory.find((exec) => exec.id === executionId) || null;
     },
 
     // Utility methods
@@ -501,7 +480,7 @@ export const useEnhancedExecutionStore = create<EnhancedExecutionState>()(
 
       // Calculate skipped nodes by checking node states
       const skippedNodes = Array.from(state.nodeStates.values()).filter(
-        (nodeState) => nodeState.status === "skipped",
+        (nodeState) => nodeState.status === 'skipped'
       ).length;
 
       return {
@@ -511,9 +490,7 @@ export const useEnhancedExecutionStore = create<EnhancedExecutionState>()(
         skippedNodes,
         currentNodeId: state.progress?.currentNodeId,
         progressPercentage:
-          totalNodes > 0
-            ? ((completedNodes + failedNodes + skippedNodes) / totalNodes) * 100
-            : 0,
+          totalNodes > 0 ? ((completedNodes + failedNodes + skippedNodes) / totalNodes) * 100 : 0,
       };
     },
 
@@ -521,12 +498,9 @@ export const useEnhancedExecutionStore = create<EnhancedExecutionState>()(
       const state = get();
       const totalExecutions = state.executionHistory.length;
       const successfulExecutions = state.executionHistory.filter(
-        (exec) => exec.status === "completed",
+        (exec) => exec.status === 'completed'
       ).length;
-      const successRate =
-        totalExecutions > 0
-          ? (successfulExecutions / totalExecutions) * 100
-          : 0;
+      const successRate = totalExecutions > 0 ? (successfulExecutions / totalExecutions) * 100 : 0;
 
       const executionTimes = state.executionHistory
         .filter((exec) => exec.duration)
@@ -534,16 +508,15 @@ export const useEnhancedExecutionStore = create<EnhancedExecutionState>()(
 
       const averageExecutionTime =
         executionTimes.length > 0
-          ? executionTimes.reduce((sum, time) => sum + time, 0) /
-            executionTimes.length
+          ? executionTimes.reduce((sum, time) => sum + time, 0) / executionTimes.length
           : 0;
 
       // Find most failed node
       const nodeFailureCounts = new Map<string, number>();
       state.executionHistory.forEach((exec) => {
-        if (exec.status === "failed" && Array.isArray(exec.results)) {
+        if (exec.status === 'failed' && Array.isArray(exec.results)) {
           exec.results.forEach((result) => {
-            if (result.status === "failed") {
+            if (result.status === 'failed') {
               const count = nodeFailureCounts.get(result.nodeId) || 0;
               nodeFailureCounts.set(result.nodeId, count + 1);
             }
@@ -567,12 +540,12 @@ export const useEnhancedExecutionStore = create<EnhancedExecutionState>()(
         mostFailedNode,
       };
     },
-  })),
+  }))
 );
 
 // Monitor connection status
 setInterval(() => {
   useEnhancedExecutionStore.setState({
-    isConnected: executionMonitor.getConnectionStatus() === "connected",
+    isConnected: executionMonitor.getConnectionStatus() === 'connected',
   });
 }, 1000);

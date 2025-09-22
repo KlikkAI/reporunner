@@ -1,279 +1,354 @@
-# 🚀 Reporunner
+# Reporunner 🚀
 
-> Open-source workflow automation platform with native AI capabilities - The n8n alternative
+> **Open-source workflow automation platform powered by AI**  
+> The next-generation alternative to n8n with built-in AI/ML capabilities, modern architecture, and enterprise-grade scaling.
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Node.js](https://img.shields.io/badge/Node.js-18+-green.svg)](https://nodejs.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.3+-blue.svg)](https://www.typescriptlang.org/)
-[![React](https://img.shields.io/badge/React-19+-61DAFB.svg)](https://reactjs.org/)
+[![CI/CD](https://github.com/reporunner/reporunner/actions/workflows/ci.yml/badge.svg)](https://github.com/reporunner/reporunner/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![React](https://img.shields.io/badge/React-20232A?logo=react&logoColor=61DAFB)](https://reactjs.org/)
+[![Docker](https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=white)](https://www.docker.com/)
 
-Reporunner is a powerful, open-source workflow automation platform that combines visual workflow building with native AI capabilities. Built from the ground up with TypeScript, React, and modern web technologies.
+## ✨ Key Features
 
-## ✨ Features
+### 🤖 AI-First Design
+- **Native LLM Integration**: OpenAI, Anthropic, Google AI, and Ollama support
+- **Vector Search**: PostgreSQL with pgvector for semantic workflows
+- **AI Agents**: Intelligent automation with memory and tools
+- **Smart Suggestions**: AI-powered workflow recommendations
 
-- 🎨 **Visual Workflow Editor** - Drag & drop interface powered by React Flow
-- 🤖 **Native AI Integration** - Built-in support for OpenAI, Anthropic, Google AI
-- 🔧 **400+ Integrations** - Gmail, databases, webhooks, and more
-- 🏢 **Enterprise Ready** - Self-hosted with advanced security features
-- 🚀 **High Performance** - Built with modern stack for speed and reliability
-- 🌐 **Open Source** - MIT licensed with active community
+### 🏗️ Enterprise Architecture  
+- **Hybrid Database**: PostgreSQL + MongoDB for optimal performance
+- **Queue-Based Execution**: BullMQ with Redis for scalable processing
+- **Real-time Monitoring**: WebSocket-based execution tracking
+- **Multi-tenancy**: Organization-based isolation and resource quotas
 
-## 🎯 Why Reporunner?
+### 🎨 Modern Developer Experience
+- **React 19** with concurrent features
+- **TypeScript** throughout with strict type checking
+- **Turborepo** monorepo with optimized builds
+- **Hot Reload** development environment
 
-| Feature          | n8n         | Reporunner                |
-| ---------------- | ----------- | ------------------------- |
-| **Modern Stack** | Vue 2       | React 19 + TypeScript 5.3 |
-| **AI Native**    | Third-party | Built-in AI capabilities  |
-| **Performance**  | Good        | Optimized for scale       |
-| **Type Safety**  | Partial     | 100% TypeScript           |
-| **Monorepo**     | No          | Yes (Turborepo + pnpm)    |
+### 🔧 Extensible Integration System
+- **27+ Built-in Nodes**: Gmail, databases, AI services, and more  
+- **Dynamic Property System**: n8n-inspired conditional forms
+- **Custom Node Development**: CLI tools and hot reload support
+- **Multi-language SDKs**: TypeScript, Python, Go, Rust, Java, PHP, and .NET
 
 ## 🚀 Quick Start
 
 ### Prerequisites
+- **Node.js** 18+ and **pnpm** 9+
+- **Docker** and **Docker Compose**
+- **Git**
 
-- Node.js 18+
-- pnpm 8+
-- MongoDB 4.4+
-- Redis 6+ (optional)
-
-### Installation
+### Development Setup
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-org/reporunner.git
+git clone https://github.com/reporunner/reporunner.git
 cd reporunner
 
-# Install dependencies and setup environment
-pnpm setup
+# Install dependencies
+pnpm install
 
-# Configure environment variables
-cp .env.example .env
-cp packages/backend/.env.example packages/backend/.env
-cp packages/frontend/.env.example packages/frontend/.env
+# Start development environment
+docker-compose up -d
 
-# Edit the .env files with your configuration
-# Add your API keys, database URLs, etc.
-
-# Start the development environment
-pnpm dev
+# Start frontend and backend
+pnpm run dev
 ```
 
-The application will be available at:
+Visit [http://localhost:3000](http://localhost:3000) to access the web interface.
 
-- **Frontend**: http://localhost:3000
-- **Backend API**: http://localhost:5000
+### Production Deployment
+
+```bash
+# Using Docker Compose
+docker-compose -f docker-compose.prod.yml up -d
+
+# Using Kubernetes with Helm
+helm install reporunner ./helm/reporunner \
+  --set ingress.hosts[0].host=your-domain.com \
+  --set postgresql.auth.password=your-secure-password
+```
 
 ## 📁 Project Structure
 
 ```
 reporunner/
 ├── packages/
-│   ├── core/                 # Shared types, utilities, schemas
-│   ├── backend/              # Express.js API server with Socket.IO
-│   ├── frontend/             # React workflow editor with React Flow
-│   ├── sdk/                  # JavaScript/TypeScript SDK
-│   └── cli/                  # Command-line interface
-├── tools/
-│   ├── eslint-config/        # Shared linting configuration
-│   └── build-tools/          # Build utilities
-└── docs/                     # Project documentation
+│   ├── frontend/          # React 19 web application
+│   ├── backend/           # Express.js API server  
+│   ├── core/              # Shared business logic
+│   ├── cli/               # Developer CLI tools
+│   ├── sdk/               # TypeScript SDK
+│   └── @reporunner/       # Scoped packages
+│       ├── ai/            # AI/ML capabilities
+│       ├── workflow/      # Workflow execution engine
+│       ├── nodes/         # Node type definitions
+│       ├── design-system/ # UI component library
+│       └── python-sdk/    # Python SDK
+├── helm/                  # Kubernetes deployment
+├── docker-compose.yml     # Development environment  
+└── docs/                  # Documentation
 ```
 
-## 🛠 Development
+## 🛠️ Development
 
-### Available Scripts
+### Package Scripts
 
 ```bash
 # Development
-pnpm dev                      # Start all services in development mode
-pnpm build                    # Build all packages
-pnpm test                     # Run all tests
+pnpm run dev              # Start all services
+pnpm run dev:frontend     # Frontend only
+pnpm run dev:backend      # Backend only
 
-# Package-specific development
-pnpm build:backend           # Build only backend
-pnpm build:frontend          # Build only frontend
-pnpm dev --filter=@reporunner/backend    # Start only backend
+# Building
+pnpm run build            # Build all packages
+pnpm run build:frontend   # Build frontend
+pnpm run build:backend    # Build backend
 
-# Quality & Maintenance
-pnpm lint                    # Lint all packages
-pnpm type-check             # TypeScript type checking
-pnpm clean                  # Clean build outputs
+# Testing
+pnpm run test             # Run all tests
+pnpm run test:unit        # Unit tests only
+pnpm run test:e2e         # E2E tests with Playwright
+
+# Code Quality
+pnpm run lint             # ESLint
+pnpm run type-check       # TypeScript checking
+pnpm run format           # Prettier formatting
 ```
 
-### Environment Variables
+### Adding New Integrations
 
-#### Root (.env)
-
-```env
-MONGODB_URI=mongodb://localhost:27017/reporunner
-REDIS_URL=redis://localhost:6379
-JWT_SECRET=your_jwt_secret_here_minimum_32_chars
-CREDENTIAL_ENCRYPTION_KEY=your_encryption_key_32_chars
+1. **Generate Node Scaffold**
+```bash
+pnpm reporunner generate node --name MyService --category communication
 ```
 
-#### Backend (packages/backend/.env)
-
-```env
-PORT=5000
-NODE_ENV=development
-CORS_ORIGIN=http://localhost:3000
-MONGODB_URI=mongodb://localhost:27017/reporunner
-CREDENTIAL_ENCRYPTION_KEY=your_encryption_key_32_chars
-
-# External APIs
-OPENAI_API_KEY=sk-your_openai_key_here
-ANTHROPIC_API_KEY=sk-ant-your_anthropic_key
-GOOGLE_OAUTH_CLIENT_ID=your_gmail_client_id
-GOOGLE_OAUTH_CLIENT_SECRET=your_gmail_client_secret
-GMAIL_REDIRECT_URI=http://localhost:5000/oauth/gmail/callback
-```
-
-#### Frontend (packages/frontend/.env)
-
-```env
-VITE_API_BASE_URL=http://localhost:5000
-VITE_SOCKET_URL=http://localhost:5000
-VITE_WS_URL=ws://localhost:5000
-VITE_ENABLE_AI_FEATURES=true
-VITE_ENABLE_BETA_INTEGRATIONS=false
-```
-
-## 🏗 Architecture
-
-### Tech Stack
-
-- **Frontend**: React 19, TypeScript, Vite, Tailwind CSS, Ant Design
-- **Backend**: Node.js, Express, TypeScript, MongoDB, Socket.IO
-- **Workflow Engine**: Custom execution engine with queue-based processing
-- **AI Integration**: OpenAI, Anthropic, Google AI native support
-- **Build System**: Turborepo, pnpm workspaces
-- **Testing**: Vitest, Testing Library
-
-### Core Packages
-
-- **@reporunner/core** - Shared types, utilities, and validation schemas
-- **@reporunner/backend** - Express.js API server with MongoDB and Socket.IO
-- **@reporunner/frontend** - React-based workflow editor with React Flow
-- **@reporunner/sdk** - JavaScript/TypeScript SDK for integration development
-- **@reporunner/cli** - Command-line interface for automation and deployment
-
-## 🔧 Integration Development
-
-### Creating a New Integration
-
-1. **Define the node type**:
-
+2. **Define Node Properties**
 ```typescript
-// packages/nodes-base/src/my-integration/node.ts
-export const myIntegrationNode: NodeType = {
-  id: "my-integration",
-  name: "My Integration",
-  type: "action",
-  properties: [
-    {
-      name: "apiKey",
-      displayName: "API Key",
-      type: "credentials",
-      required: true,
-    },
-  ],
-};
-```
-
-2. **Implement the execution logic**:
-
-```typescript
-// packages/nodes-base/src/my-integration/actions.ts
-export async function execute(node: WorkflowNode, context: ExecutionContext) {
-  // Your integration logic here
-}
-```
-
-3. **Register the integration**:
-
-```typescript
-// packages/nodes-base/src/index.ts
-import { myIntegrationNode } from "./my-integration";
-
-export const integrations = [
-  myIntegrationNode,
-  // ... other integrations
+// packages/@reporunner/nodes/src/communication/myservice/properties.ts
+export const myServiceProperties: NodeProperty[] = [
+  {
+    displayName: 'API Key',
+    name: 'apiKey',
+    type: 'string',
+    required: true,
+    typeOptions: { password: true }
+  }
 ];
 ```
 
-## 🚀 Deployment
-
-### Docker Deployment
-
-```bash
-# Build production images
-docker build --target backend -t reporunner-backend .
-docker build --target frontend -t reporunner-frontend .
-
-# Run with Docker Compose
-docker-compose up -d
+3. **Implement Execution Logic**
+```typescript  
+// packages/@reporunner/nodes/src/communication/myservice/actions.ts
+export async function execute(node: NodeData, context: ExecutionContext) {
+  // Your integration logic here
+  return { success: true, data: result };
+}
 ```
 
-### Selective Deployment
+## 🧪 Testing
+
+We maintain comprehensive test coverage across all packages:
+
+- **Unit Tests**: Vitest with Testing Library
+- **Integration Tests**: Real database and API testing
+- **E2E Tests**: Playwright for full workflow testing
+- **Performance Tests**: Load testing for scalability
 
 ```bash
-# Deploy only backend (faster for API changes)
-pnpm deploy:backend
+# Run specific test suites
+pnpm run test:unit --filter=@reporunner/backend
+pnpm run test:integration --filter=@reporunner/workflow
+pnpm run test:e2e --headed
+```
 
-# Deploy only frontend (faster for UI changes)
-pnpm deploy:frontend
+## 🐳 Docker & Kubernetes
 
-# Deploy everything
-pnpm deploy:all
+### Local Development
+```bash
+docker-compose up -d        # Start all services
+docker-compose logs -f      # View logs
+docker-compose down -v      # Stop and cleanup
+```
+
+### Production Deployment
+```bash
+# Helm deployment
+helm repo add reporunner https://charts.reporunner.com
+helm install reporunner reporunner/reporunner
+```
+
+## 📊 Monitoring & Observability
+
+Reporunner includes comprehensive monitoring out of the box:
+
+- **Prometheus** for metrics collection
+- **Grafana** for visualization and alerting  
+- **Jaeger** for distributed tracing
+- **Winston** for structured logging
+
+Access monitoring dashboards:
+- Grafana: [http://localhost:3030](http://localhost:3030)
+- Prometheus: [http://localhost:9090](http://localhost:9090)
+- Jaeger: [http://localhost:16686](http://localhost:16686)
+
+## 🌐 API & SDK Ecosystem
+
+### REST API
+```bash
+# Get workflows
+GET /api/workflows
+
+# Execute workflow
+POST /api/executions
+{
+  "workflowId": "workflow-123",
+  "inputData": { "email": "user@example.com" }
+}
+```
+
+### Multi-Language SDK Support
+
+| Language | Package | Installation |
+|----------|---------|--------------|
+| **TypeScript/Node.js** | `@reporunner/sdk` | `npm install @reporunner/sdk` |
+| **Python** | `reporunner-sdk` | `pip install reporunner-sdk` |
+| **Go** | `go-sdk` | `go get github.com/reporunner/reporunner/go-sdk` |
+| **Rust** | `reporunner-sdk` | `cargo add reporunner-sdk` |
+| **Java** | `reporunner-java-sdk` | Maven/Gradle |
+| **PHP** | `reporunner/php-sdk` | `composer require reporunner/php-sdk` |
+| **.NET** | `Reporunner.Sdk` | `dotnet add package Reporunner.Sdk` |
+
+### TypeScript SDK
+```typescript
+import { ReporunnerClient } from '@reporunner/sdk';
+
+const client = new ReporunnerClient({
+  apiUrl: 'http://localhost:3001',
+  apiKey: 'your-api-key'
+});
+
+const execution = await client.executeWorkflow('workflow-123', {
+  email: 'user@example.com'
+});
+```
+
+### Python SDK
+```python
+from reporunner import ReporunnerClient
+
+async with ReporunnerClient(
+    base_url='http://localhost:3001',
+    api_key='your-api-key'
+) as client:
+    execution = await client.execute_workflow('workflow-123', {
+        'email': 'user@example.com'
+    })
+```
+
+### Go SDK
+```go
+client := reporunner.NewClient(reporunner.ClientOptions{
+    BaseURL: "http://localhost:3001",
+    APIKey:  "your-api-key",
+})
+
+execution, err := client.ExecuteWorkflow(ctx, "workflow-123", 
+    map[string]interface{}{
+        "email": "user@example.com",
+    }, true)
+```
+
+### Rust SDK
+```rust
+let client = Client::new("http://localhost:3001")
+    .with_api_key("your-api-key");
+
+let execution = client.execute_workflow(
+    "workflow-123",
+    HashMap::from([("email".to_string(), "user@example.com".into())]),
+    true
+).await?;
+```
+
+### Java SDK
+```java
+ReporunnerClient client = new ReporunnerClient(
+    "http://localhost:3001", 
+    "your-api-key"
+);
+
+ExecutionResult execution = client.executeWorkflow(
+    "workflow-123",
+    Map.of("email", "user@example.com")
+);
+```
+
+### PHP SDK
+```php
+$client = new ReporunnerClient(
+    'http://localhost:3001',
+    'your-api-key'
+);
+
+$execution = $client->executeWorkflow('workflow-123', [
+    'email' => 'user@example.com'
+]);
+```
+
+### .NET SDK
+```csharp
+var client = new ReporunnerClient(httpClient, options, logger);
+
+var execution = await client.ExecuteWorkflowAsync("workflow-123", 
+    new Dictionary<string, object> {
+        ["email"] = "user@example.com"
+    });
 ```
 
 ## 🤝 Contributing
 
 We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
 
-### Quick Contribution Setup
+### Development Workflow
 
-1. Fork the repository
-2. Create your feature branch: `git checkout -b feature/amazing-feature`
-3. Install dependencies: `pnpm install`
-4. Make your changes
-5. Run tests: `pnpm test`
-6. Commit your changes: `git commit -m 'Add amazing feature'`
-7. Push to the branch: `git push origin feature/amazing-feature`
-8. Open a Pull Request
+1. **Fork** the repository
+2. **Create** a feature branch: `git checkout -b feature/amazing-feature`
+3. **Commit** changes: `git commit -m 'Add amazing feature'`
+4. **Push** to branch: `git push origin feature/amazing-feature`
+5. **Open** a Pull Request
 
-## 📚 Documentation
+### Code Standards
 
-- [Getting Started Guide](docs/getting-started.md)
-- [Development Guide](docs/development.md)
-- [API Documentation](docs/api/)
-- [Integration Development](docs/integrations.md)
-- [Deployment Guide](docs/deployment.md)
+- **TypeScript**: Strict mode enabled
+- **ESLint**: Comprehensive linting rules
+- **Prettier**: Consistent code formatting
+- **Conventional Commits**: Standardized commit messages
 
-## 🔒 Security
-
-Please report security vulnerabilities to [security@reporunner.dev](mailto:security@reporunner.dev). See our [Security Policy](SECURITY.md) for details.
-
-## 📄 License
+## 📝 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🌟 Acknowledgments
+## 🙏 Acknowledgments
 
-- Inspired by [n8n](https://n8n.io/) for workflow automation concepts
-- Built with amazing open-source technologies
-- Thanks to all our contributors
+- [n8n](https://n8n.io) for workflow automation inspiration
+- [LangChain](https://langchain.com) for AI integration patterns
+- [React Flow](https://reactflow.dev) for visual workflow editor
+- [Turborepo](https://turbo.build) for monorepo architecture
 
-## 📞 Support
+## 📞 Support & Community
 
-- 📖 [Documentation](https://docs.reporunner.dev)
-- 💬 [Discord Community](https://discord.gg/reporunner)
-- 🐛 [GitHub Issues](https://github.com/your-org/reporunner/issues)
-- 📧 [Email Support](mailto:support@reporunner.dev)
+- **Documentation**: [docs.reporunner.com](https://docs.reporunner.com)
+- **GitHub Issues**: [Bug reports and features](https://github.com/reporunner/reporunner/issues)
+- **Discord**: [Community chat](https://discord.gg/reporunner)
+- **Twitter**: [@reporunner](https://twitter.com/reporunner)
 
 ---
 
-<div align="center">
-  <strong>⭐ Star us on GitHub if you find Reporunner useful!</strong>
-</div>
+<p align="center">
+  <strong>⭐ If you find Reporunner helpful, please star the repository!</strong>
+</p>

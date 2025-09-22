@@ -1,15 +1,15 @@
-import { z } from "zod";
+import { z } from 'zod';
 import {
-  IdSchema,
-  OptionalIdSchema,
-  TimestampSchema,
-  StatusSchema,
-  ExecutionStatusSchema,
-  NodeParametersSchema,
-  MetadataSchema,
   ApiResponseSchema,
+  ExecutionStatusSchema,
+  IdSchema,
+  MetadataSchema,
+  NodeParametersSchema,
+  OptionalIdSchema,
   PaginatedResponseSchema,
-} from "./BaseSchemas";
+  StatusSchema,
+  TimestampSchema,
+} from './BaseSchemas';
 
 // Node schemas
 export const WorkflowNodeSchema = z.object({
@@ -67,7 +67,7 @@ export const WorkflowDefinitionSchema = z.object({
           retryDelay: z.number().int().min(1000).max(60000).default(5000),
         })
         .optional(),
-      errorHandling: z.enum(["stop", "continue", "retry"]).default("stop"),
+      errorHandling: z.enum(['stop', 'continue', 'retry']).default('stop'),
     })
     .optional(),
   tags: z.array(z.string()).default([]),
@@ -115,14 +115,14 @@ export const WorkflowSchema = WorkflowDefinitionSchema.and(
       .optional(), // Backend returns "statistics" instead of "executionStats"
     version: z.union([z.string(), z.number()]).optional(), // Handle both string and number versions
     __v: z.number().optional(), // MongoDB version field
-  }),
+  })
 );
 
 // Node execution details
 export const NodeExecutionSchema = z.object({
   nodeId: IdSchema,
   nodeName: z.string(),
-  status: z.enum(["pending", "running", "completed", "failed", "skipped"]),
+  status: z.enum(['pending', 'running', 'completed', 'failed', 'skipped']),
   output: z.unknown().optional(),
   error: z.string().optional(),
   executedAt: TimestampSchema,
@@ -138,7 +138,7 @@ export const WorkflowExecutionSchema = z.object({
   startTime: TimestampSchema,
   endTime: TimestampSchema.optional(),
   duration: z.number().int().min(0).optional(),
-  triggerType: z.enum(["manual", "webhook", "schedule", "event"]),
+  triggerType: z.enum(['manual', 'webhook', 'schedule', 'event']),
   triggerData: z.record(z.string(), z.unknown()).optional(),
   results: z
     .union([
@@ -159,11 +159,11 @@ export const WorkflowExecutionSchema = z.object({
     .array(
       z.object({
         timestamp: TimestampSchema,
-        level: z.enum(["debug", "info", "warn", "error"]),
+        level: z.enum(['debug', 'info', 'warn', 'error']),
         message: z.string(),
         nodeId: z.string().optional(),
         data: z.record(z.string(), z.unknown()).optional(),
-      }),
+      })
     )
     .default([]),
 });
@@ -202,9 +202,7 @@ export const ExecutionStatsSchema = z
       // Calculate success rate if not provided
       successRate:
         data.successRate ||
-        (data.totalExecutions > 0
-          ? (data.successfulExecutions / data.totalExecutions) * 100
-          : 0),
+        (data.totalExecutions > 0 ? (data.successfulExecutions / data.totalExecutions) * 100 : 0),
     };
   });
 
@@ -217,12 +215,11 @@ export const CreateWorkflowRequestSchema = WorkflowDefinitionSchema.omit({
   version: z.number().int().min(1).default(1),
 });
 
-export const UpdateWorkflowRequestSchema =
-  WorkflowDefinitionSchema.partial().and(
-    z.object({
-      id: IdSchema,
-    }),
-  );
+export const UpdateWorkflowRequestSchema = WorkflowDefinitionSchema.partial().and(
+  z.object({
+    id: IdSchema,
+  })
+);
 
 // Backend workflow format for execution (n8n-style)
 export const BackendWorkflowNodeSchema = z.object({
@@ -252,7 +249,7 @@ export const BackendWorkflowSchema = z.object({
     z.string(),
     z.object({
       main: z.array(z.array(BackendWorkflowEdgeSchema)),
-    }),
+    })
   ),
   pinData: z.record(z.string(), z.unknown()),
   meta: z.object({
@@ -269,9 +266,7 @@ export const BackendWorkflowSchema = z.object({
 
 export const ExecuteWorkflowRequestSchema = z.object({
   workflowId: OptionalIdSchema,
-  workflow: z
-    .union([WorkflowDefinitionSchema, BackendWorkflowSchema])
-    .optional(), // Support both formats
+  workflow: z.union([WorkflowDefinitionSchema, BackendWorkflowSchema]).optional(), // Support both formats
   triggerData: z.record(z.string(), z.unknown()).default({}),
   options: z
     .object({
@@ -291,7 +286,7 @@ export const WorkflowFilterSchema = z.object({
 export const ExecutionFilterSchema = z.object({
   workflowId: IdSchema.optional(),
   status: ExecutionStatusSchema.optional(),
-  triggerType: z.enum(["manual", "webhook", "schedule", "event"]).optional(),
+  triggerType: z.enum(['manual', 'webhook', 'schedule', 'event']).optional(),
   startDate: TimestampSchema.optional(),
   endDate: TimestampSchema.optional(),
   limit: z.number().int().min(1).max(100).optional(),
@@ -303,19 +298,16 @@ export const ExecutionFilterSchema = z.object({
 export const WorkflowResponseSchema = ApiResponseSchema(
   z.object({
     workflow: WorkflowSchema,
-  }),
+  })
 );
 export const WorkflowListResponseSchema = ApiResponseSchema(
-  PaginatedResponseSchema(WorkflowSchema),
+  PaginatedResponseSchema(WorkflowSchema)
 );
-export const ExecutionResponseSchema = ApiResponseSchema(
-  WorkflowExecutionSchema,
-);
+export const ExecutionResponseSchema = ApiResponseSchema(WorkflowExecutionSchema);
 export const ExecutionListResponseSchema = ApiResponseSchema(
-  PaginatedResponseSchema(WorkflowExecutionSchema),
+  PaginatedResponseSchema(WorkflowExecutionSchema)
 );
-export const ExecutionStatsResponseSchema =
-  ApiResponseSchema(ExecutionStatsSchema);
+export const ExecutionStatsResponseSchema = ApiResponseSchema(ExecutionStatsSchema);
 
 // Type exports for TypeScript
 export type WorkflowNode = z.infer<typeof WorkflowNodeSchema>;
@@ -330,15 +322,11 @@ export type WorkflowExecution = z.infer<typeof WorkflowExecutionSchema>;
 export type ExecutionStats = z.infer<typeof ExecutionStatsSchema>;
 export type CreateWorkflowRequest = z.infer<typeof CreateWorkflowRequestSchema>;
 export type UpdateWorkflowRequest = z.infer<typeof UpdateWorkflowRequestSchema>;
-export type ExecuteWorkflowRequest = z.infer<
-  typeof ExecuteWorkflowRequestSchema
->;
+export type ExecuteWorkflowRequest = z.infer<typeof ExecuteWorkflowRequestSchema>;
 export type WorkflowFilter = z.infer<typeof WorkflowFilterSchema>;
 export type ExecutionFilter = z.infer<typeof ExecutionFilterSchema>;
 export type WorkflowResponse = z.infer<typeof WorkflowResponseSchema>;
 export type WorkflowListResponse = z.infer<typeof WorkflowListResponseSchema>;
 export type ExecutionResponse = z.infer<typeof ExecutionResponseSchema>;
 export type ExecutionListResponse = z.infer<typeof ExecutionListResponseSchema>;
-export type ExecutionStatsResponse = z.infer<
-  typeof ExecutionStatsResponseSchema
->;
+export type ExecutionStatsResponse = z.infer<typeof ExecutionStatsResponseSchema>;

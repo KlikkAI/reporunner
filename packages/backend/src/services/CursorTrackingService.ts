@@ -3,7 +3,7 @@
  * Manages cursor positions, user presence, and visual collaboration indicators
  */
 
-import { Server as SocketIOServer } from "socket.io";
+import type { Server as SocketIOServer } from 'socket.io';
 
 export interface CursorPosition {
   x: number;
@@ -36,22 +36,22 @@ export interface UserPresence {
     };
   };
   activeArea?: {
-    type: "canvas" | "property_panel" | "node_panel" | "toolbar";
+    type: 'canvas' | 'property_panel' | 'node_panel' | 'toolbar';
     details?: Record<string, any>;
   };
-  status: "active" | "idle" | "away";
+  status: 'active' | 'idle' | 'away';
   lastActivity: Date;
   sessionStartTime: Date;
 }
 
 export interface PresenceEvent {
   type:
-    | "cursor_move"
-    | "selection_change"
-    | "area_change"
-    | "status_change"
-    | "user_join"
-    | "user_leave";
+    | 'cursor_move'
+    | 'selection_change'
+    | 'area_change'
+    | 'status_change'
+    | 'user_join'
+    | 'user_leave';
   userId: string;
   workflowId: string;
   data: any;
@@ -69,21 +69,21 @@ export class CursorTrackingService {
 
   // User color assignments for visual distinction
   private userColors = [
-    "#FF6B6B",
-    "#4ECDC4",
-    "#45B7D1",
-    "#96CEB4",
-    "#FECA57",
-    "#FF9FF3",
-    "#54A0FF",
-    "#5F27CD",
-    "#00D2D3",
-    "#FF9F43",
-    "#10AC84",
-    "#EE5A24",
-    "#0ABDE3",
-    "#3867D6",
-    "#8854D0",
+    '#FF6B6B',
+    '#4ECDC4',
+    '#45B7D1',
+    '#96CEB4',
+    '#FECA57',
+    '#FF9FF3',
+    '#54A0FF',
+    '#5F27CD',
+    '#00D2D3',
+    '#FF9F43',
+    '#10AC84',
+    '#EE5A24',
+    '#0ABDE3',
+    '#3867D6',
+    '#8854D0',
   ];
   private workflowColorAssignments = new Map<string, Map<string, string>>(); // workflowId -> userId -> color
 
@@ -119,7 +119,7 @@ export class CursorTrackingService {
     userInfo: {
       userName: string;
       userAvatar?: string;
-    },
+    }
   ): Promise<UserPresence[]> {
     if (!this.workflowPresence.has(workflowId)) {
       this.workflowPresence.set(workflowId, new Map());
@@ -144,7 +144,7 @@ export class CursorTrackingService {
       userName: userInfo.userName,
       userAvatar: userInfo.userAvatar,
       userColor: colorAssignments.get(userId),
-      status: "active",
+      status: 'active',
       lastActivity: new Date(),
       sessionStartTime: new Date(),
     };
@@ -157,13 +157,13 @@ export class CursorTrackingService {
     this.broadcastPresenceEvent(
       workflowId,
       {
-        type: "user_join",
+        type: 'user_join',
         userId,
         workflowId,
         data: { userPresence },
         timestamp: new Date(),
       },
-      socketId,
+      socketId
     );
 
     return Array.from(workflowUsers.values());
@@ -186,13 +186,13 @@ export class CursorTrackingService {
       this.broadcastPresenceEvent(
         workflowId,
         {
-          type: "user_leave",
+          type: 'user_leave',
           userId,
           workflowId,
           data: { userId },
           timestamp: new Date(),
         },
-        socketId,
+        socketId
       );
 
       // Clean up if no more users
@@ -209,10 +209,7 @@ export class CursorTrackingService {
   /**
    * Update user cursor position
    */
-  public async updateCursorPosition(
-    socketId: string,
-    cursor: CursorPosition,
-  ): Promise<void> {
+  public async updateCursorPosition(socketId: string, cursor: CursorPosition): Promise<void> {
     const workflowId = this.socketToWorkflow.get(socketId);
     const userId = this.socketToUser.get(socketId);
 
@@ -224,13 +221,13 @@ export class CursorTrackingService {
     if (userPresence) {
       userPresence.cursor = { ...cursor, timestamp: new Date() };
       userPresence.lastActivity = new Date();
-      userPresence.status = "active";
+      userPresence.status = 'active';
 
       // Broadcast cursor update (throttled on client side)
       this.broadcastPresenceEvent(
         workflowId,
         {
-          type: "cursor_move",
+          type: 'cursor_move',
           userId,
           workflowId,
           data: {
@@ -240,7 +237,7 @@ export class CursorTrackingService {
           },
           timestamp: new Date(),
         },
-        socketId,
+        socketId
       );
     }
   }
@@ -250,7 +247,7 @@ export class CursorTrackingService {
    */
   public async updateSelection(
     socketId: string,
-    selection: UserPresence["selection"],
+    selection: UserPresence['selection']
   ): Promise<void> {
     const workflowId = this.socketToWorkflow.get(socketId);
     const userId = this.socketToUser.get(socketId);
@@ -263,12 +260,12 @@ export class CursorTrackingService {
     if (userPresence) {
       userPresence.selection = selection;
       userPresence.lastActivity = new Date();
-      userPresence.status = "active";
+      userPresence.status = 'active';
 
       this.broadcastPresenceEvent(
         workflowId,
         {
-          type: "selection_change",
+          type: 'selection_change',
           userId,
           workflowId,
           data: {
@@ -278,7 +275,7 @@ export class CursorTrackingService {
           },
           timestamp: new Date(),
         },
-        socketId,
+        socketId
       );
     }
   }
@@ -288,7 +285,7 @@ export class CursorTrackingService {
    */
   public async updateActiveArea(
     socketId: string,
-    activeArea: UserPresence["activeArea"],
+    activeArea: UserPresence['activeArea']
   ): Promise<void> {
     const workflowId = this.socketToWorkflow.get(socketId);
     const userId = this.socketToUser.get(socketId);
@@ -305,7 +302,7 @@ export class CursorTrackingService {
       this.broadcastPresenceEvent(
         workflowId,
         {
-          type: "area_change",
+          type: 'area_change',
           userId,
           workflowId,
           data: {
@@ -314,7 +311,7 @@ export class CursorTrackingService {
           },
           timestamp: new Date(),
         },
-        socketId,
+        socketId
       );
     }
   }
@@ -330,10 +327,7 @@ export class CursorTrackingService {
   /**
    * Get specific user presence
    */
-  public getUserPresence(
-    workflowId: string,
-    userId: string,
-  ): UserPresence | null {
+  public getUserPresence(workflowId: string, userId: string): UserPresence | null {
     const workflowUsers = this.workflowPresence.get(workflowId);
     return workflowUsers?.get(userId) || null;
   }
@@ -381,7 +375,7 @@ export class CursorTrackingService {
         totalSessionTime: 0,
         mostActiveUser: null as string | null,
         mostActiveScore: Infinity,
-      },
+      }
     );
 
     return {
@@ -389,9 +383,7 @@ export class CursorTrackingService {
       activeUsers: stats.statusCounts.active,
       idleUsers: stats.statusCounts.idle,
       awayUsers: stats.statusCounts.away,
-      averageSessionTime: Math.round(
-        stats.totalSessionTime / users.length / (1000 * 60),
-      ), // minutes
+      averageSessionTime: Math.round(stats.totalSessionTime / users.length / (1000 * 60)), // minutes
       mostActiveUser: stats.mostActiveUser,
     };
   }
@@ -402,57 +394,48 @@ export class CursorTrackingService {
   private setupEventHandlers(): void {
     if (!this.io) return;
 
-    this.io.on("connection", (socket) => {
+    this.io.on('connection', (socket) => {
       // Join workflow presence
-      socket.on("join_presence", async (data) => {
+      socket.on('join_presence', async (data) => {
         const { workflowId, userId, userName, userAvatar } = data;
         try {
-          const allUsers = await this.joinWorkflowPresence(
-            workflowId,
-            userId,
-            socket.id,
-            {
-              userName,
-              userAvatar,
-            },
-          );
+          const allUsers = await this.joinWorkflowPresence(workflowId, userId, socket.id, {
+            userName,
+            userAvatar,
+          });
 
-          socket.emit("presence_joined", {
+          socket.emit('presence_joined', {
             success: true,
             users: allUsers,
-            yourColor: this.workflowColorAssignments
-              .get(workflowId)
-              ?.get(userId),
+            yourColor: this.workflowColorAssignments.get(workflowId)?.get(userId),
           });
         } catch (error) {
-          socket.emit("presence_error", { error: "Failed to join presence" });
+          socket.emit('presence_error', { error: 'Failed to join presence' });
         }
       });
 
       // Cursor movement
-      socket.on("cursor_move", async (data) => {
+      socket.on('cursor_move', async (data) => {
         await this.updateCursorPosition(socket.id, data.cursor);
       });
 
       // Selection change
-      socket.on("selection_change", async (data) => {
+      socket.on('selection_change', async (data) => {
         await this.updateSelection(socket.id, data.selection);
       });
 
       // Active area change
-      socket.on("active_area_change", async (data) => {
+      socket.on('active_area_change', async (data) => {
         await this.updateActiveArea(socket.id, data.activeArea);
       });
 
       // Manual status update
-      socket.on("status_change", async (data) => {
+      socket.on('status_change', async (data) => {
         const workflowId = this.socketToWorkflow.get(socket.id);
         const userId = this.socketToUser.get(socket.id);
 
         if (workflowId && userId) {
-          const userPresence = this.workflowPresence
-            .get(workflowId)
-            ?.get(userId);
+          const userPresence = this.workflowPresence.get(workflowId)?.get(userId);
           if (userPresence) {
             userPresence.status = data.status;
             userPresence.lastActivity = new Date();
@@ -460,20 +443,20 @@ export class CursorTrackingService {
             this.broadcastPresenceEvent(
               workflowId,
               {
-                type: "status_change",
+                type: 'status_change',
                 userId,
                 workflowId,
                 data: { userId, status: data.status },
                 timestamp: new Date(),
               },
-              socket.id,
+              socket.id
             );
           }
         }
       });
 
       // Disconnect cleanup
-      socket.on("disconnect", async () => {
+      socket.on('disconnect', async () => {
         await this.leaveWorkflowPresence(socket.id);
       });
     });
@@ -485,15 +468,15 @@ export class CursorTrackingService {
   private broadcastPresenceEvent(
     workflowId: string,
     event: PresenceEvent,
-    excludeSocketId?: string,
+    excludeSocketId?: string
   ): void {
     if (!this.io) return;
 
     const room = `workflow-${workflowId}`;
     if (excludeSocketId) {
-      this.io.to(room).except(excludeSocketId).emit("presence_event", event);
+      this.io.to(room).except(excludeSocketId).emit('presence_event', event);
     } else {
-      this.io.to(room).emit("presence_event", event);
+      this.io.to(room).emit('presence_event', event);
     }
   }
 
@@ -519,11 +502,11 @@ export class CursorTrackingService {
           usersToRemove.push(userId);
           continue;
         } else if (inactiveTime > AWAY_THRESHOLD) {
-          newStatus = "away";
+          newStatus = 'away';
         } else if (inactiveTime > IDLE_THRESHOLD) {
-          newStatus = "idle";
+          newStatus = 'idle';
         } else {
-          newStatus = "active";
+          newStatus = 'active';
         }
 
         // Update status if changed
@@ -531,7 +514,7 @@ export class CursorTrackingService {
           userPresence.status = newStatus;
 
           this.broadcastPresenceEvent(workflowId, {
-            type: "status_change",
+            type: 'status_change',
             userId,
             workflowId,
             data: { userId, status: newStatus },
@@ -545,10 +528,10 @@ export class CursorTrackingService {
         workflowUsers.delete(userId);
 
         this.broadcastPresenceEvent(workflowId, {
-          type: "user_leave",
+          type: 'user_leave',
           userId,
           workflowId,
-          data: { userId, reason: "inactive" },
+          data: { userId, reason: 'inactive' },
           timestamp: new Date(),
         });
       }

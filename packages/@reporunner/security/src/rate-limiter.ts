@@ -1,10 +1,10 @@
 import {
-  RateLimiterRedis,
+  type IRateLimiterOptions,
   RateLimiterMemory,
-  IRateLimiterOptions,
-  RateLimiterRes,
-} from "rate-limiter-flexible";
-import { createClient, RedisClientType } from "redis";
+  RateLimiterRedis,
+  type RateLimiterRes,
+} from 'rate-limiter-flexible';
+import { createClient, type RedisClientType } from 'redis';
 // Removed unused ERROR_CODES import
 
 export interface RateLimiterConfig {
@@ -33,8 +33,7 @@ export interface DDoSMetrics {
 
 export class AdvancedRateLimiter {
   private redisClient?: RedisClientType;
-  private limiters: Map<string, RateLimiterRedis | RateLimiterMemory> =
-    new Map();
+  private limiters: Map<string, RateLimiterRedis | RateLimiterMemory> = new Map();
   private memoryLimiters: Map<string, RateLimiterMemory> = new Map();
   private ddosMetrics: DDoSMetrics;
   private config: RateLimiterConfig;
@@ -64,9 +63,7 @@ export class AdvancedRateLimiter {
   /**
    * Initialize Redis connection
    */
-  private async initializeRedis(
-    redisConfig: NonNullable<RateLimiterConfig["redis"]>,
-  ) {
+  private async initializeRedis(redisConfig: NonNullable<RateLimiterConfig['redis']>) {
     this.redisClient = createClient({
       socket: {
         host: redisConfig.host,
@@ -75,8 +72,8 @@ export class AdvancedRateLimiter {
       password: redisConfig.password,
     });
 
-    this.redisClient.on("error", (err) => {
-      console.error("Redis Client Error:", err);
+    this.redisClient.on('error', (err) => {
+      console.error('Redis Client Error:', err);
       // Fallback to memory limiters if Redis fails
       if (this.config.useMemoryFallback) {
         this.switchToMemoryLimiters();
@@ -91,35 +88,35 @@ export class AdvancedRateLimiter {
    */
   private setupDefaultLimiters() {
     // API rate limiter (general)
-    this.createLimiter("api", {
+    this.createLimiter('api', {
       points: 100, // 100 requests
       duration: 60, // per minute
       blockDuration: 300, // block for 5 minutes
     });
 
     // Authentication rate limiter (strict)
-    this.createLimiter("auth", {
+    this.createLimiter('auth', {
       points: 5,
       duration: 900, // 15 minutes
       blockDuration: 3600, // 1 hour block
     });
 
     // Login attempts limiter (very strict)
-    this.createLimiter("login", {
+    this.createLimiter('login', {
       points: 3,
       duration: 900,
       blockDuration: 7200, // 2 hour block
     });
 
     // Password reset limiter
-    this.createLimiter("password-reset", {
+    this.createLimiter('password-reset', {
       points: 2,
       duration: 3600, // 1 hour
       blockDuration: 86400, // 24 hour block
     });
 
     // Workflow execution limiter
-    this.createLimiter("execution", {
+    this.createLimiter('execution', {
       points: 10,
       duration: 60,
       blockDuration: 600,
@@ -127,35 +124,35 @@ export class AdvancedRateLimiter {
     });
 
     // API key generation limiter
-    this.createLimiter("api-key", {
+    this.createLimiter('api-key', {
       points: 5,
       duration: 86400, // per day
       blockDuration: 86400,
     });
 
     // File upload limiter
-    this.createLimiter("upload", {
+    this.createLimiter('upload', {
       points: 10,
       duration: 3600, // per hour
       blockDuration: 3600,
     });
 
     // Webhook limiter
-    this.createLimiter("webhook", {
+    this.createLimiter('webhook', {
       points: 1000,
       duration: 60,
       blockDuration: 60,
     });
 
     // Export limiter
-    this.createLimiter("export", {
+    this.createLimiter('export', {
       points: 5,
       duration: 3600,
       blockDuration: 3600,
     });
 
     // DDoS protection limiter (very aggressive)
-    this.createLimiter("ddos", {
+    this.createLimiter('ddos', {
       points: 1000,
       duration: 1, // per second
       blockDuration: 86400, // 24 hour block for DDoS
@@ -180,7 +177,7 @@ export class AdvancedRateLimiter {
         new RateLimiterRedis({
           storeClient: this.redisClient as any,
           ...limiterOptions,
-        }),
+        })
       );
     } else {
       this.limiters.set(name, new RateLimiterMemory(limiterOptions));
@@ -198,7 +195,7 @@ export class AdvancedRateLimiter {
   async checkLimit(
     type: string,
     identifier: string,
-    points: number = 1,
+    points: number = 1
   ): Promise<{
     allowed: boolean;
     remaining?: number;
@@ -260,14 +257,10 @@ export class AdvancedRateLimiter {
    */
   async checkMultipleLimits(
     limits: Array<{ type: string; points?: number }>,
-    identifier: string,
+    identifier: string
   ): Promise<{ allowed: boolean; failedLimit?: string }> {
     for (const limit of limits) {
-      const result = await this.checkLimit(
-        limit.type,
-        identifier,
-        limit.points,
-      );
+      const result = await this.checkLimit(limit.type, identifier, limit.points);
       if (!result.allowed) {
         return { allowed: false, failedLimit: limit.type };
       }
@@ -290,7 +283,7 @@ export class AdvancedRateLimiter {
    */
   async getCurrentConsumption(
     type: string,
-    identifier: string,
+    identifier: string
   ): Promise<{ consumed: number; remaining: number } | null> {
     const limiter = this.limiters.get(type);
     if (!limiter) return null;
@@ -304,7 +297,7 @@ export class AdvancedRateLimiter {
         };
       }
     } catch (error) {
-      console.error("Error getting consumption:", error);
+      console.error('Error getting consumption:', error);
     }
 
     return null;
@@ -316,7 +309,7 @@ export class AdvancedRateLimiter {
   private async handleSuspiciousActivity(
     type: string,
     identifier: string,
-    rateLimiterRes: RateLimiterRes,
+    rateLimiterRes: RateLimiterRes
   ): Promise<void> {
     console.warn(`Suspicious activity detected: ${type} from ${identifier}`);
 
@@ -331,14 +324,12 @@ export class AdvancedRateLimiter {
     // Auto-blacklist after repeated violations
     if (count >= 5) {
       await this.addToBlacklist(identifier, 86400); // 24 hour ban
-      console.error(
-        `Auto-blacklisted ${identifier} due to repeated violations`,
-      );
+      console.error(`Auto-blacklisted ${identifier} due to repeated violations`);
     }
 
     // Log to security monitoring
     await this.logSecurityEvent({
-      type: "RATE_LIMIT_EXCEEDED",
+      type: 'RATE_LIMIT_EXCEEDED',
       identifier,
       limiterType: type,
       timestamp: new Date(),
@@ -352,10 +343,7 @@ export class AdvancedRateLimiter {
   /**
    * Check for DDoS patterns
    */
-  private async checkDDoSPattern(
-    identifier: string,
-    type: string,
-  ): Promise<void> {
+  private async checkDDoSPattern(identifier: string, type: string): Promise<void> {
     const pattern = `${type}:${identifier}`;
     const violations = this.ddosMetrics.attackPatterns.get(pattern) || 0;
 
@@ -386,7 +374,7 @@ export class AdvancedRateLimiter {
     await this.addToBlacklist(identifier, 86400 * 7); // 7 day ban
 
     // Apply stricter limits globally
-    this.createLimiter("emergency", {
+    this.createLimiter('emergency', {
       points: 10,
       duration: 60,
       blockDuration: 3600,
@@ -400,14 +388,14 @@ export class AdvancedRateLimiter {
    * Trigger distributed DDoS protection
    */
   private async triggerDistributedDDoSProtection(): Promise<void> {
-    console.error("Distributed DDoS attack detected");
+    console.error('Distributed DDoS attack detected');
 
     // Enable CAPTCHA or proof-of-work
     // This would integrate with your authentication system
 
     // Reduce all limits by 50%
     for (const [name, limiter] of this.limiters) {
-      if (name !== "ddos") {
+      if (name !== 'ddos') {
         const currentPoints = (limiter as any).points;
         this.createLimiter(name, {
           points: Math.floor(currentPoints / 2),
@@ -421,18 +409,11 @@ export class AdvancedRateLimiter {
   /**
    * Add identifier to blacklist
    */
-  async addToBlacklist(
-    identifier: string,
-    durationSeconds?: number,
-  ): Promise<void> {
+  async addToBlacklist(identifier: string, durationSeconds?: number): Promise<void> {
     this.blacklist.add(identifier);
 
     if (this.redisClient && durationSeconds) {
-      await this.redisClient.setEx(
-        `blacklist:${identifier}`,
-        durationSeconds,
-        "1",
-      );
+      await this.redisClient.setEx(`blacklist:${identifier}`, durationSeconds, '1');
     }
 
     // Schedule removal if duration specified
@@ -465,7 +446,7 @@ export class AdvancedRateLimiter {
    * Switch to memory limiters (fallback)
    */
   private switchToMemoryLimiters(): void {
-    console.warn("Switching to memory-based rate limiters");
+    console.warn('Switching to memory-based rate limiters');
     this.limiters = new Map(this.memoryLimiters);
   }
 
@@ -475,12 +456,9 @@ export class AdvancedRateLimiter {
   private startDDoSMonitoring(): void {
     // Reset metrics every minute
     setInterval(() => {
-      const totalRequests =
-        this.ddosMetrics.requestCount + this.ddosMetrics.blockedCount;
+      const totalRequests = this.ddosMetrics.requestCount + this.ddosMetrics.blockedCount;
       const blockRate =
-        totalRequests > 0
-          ? (this.ddosMetrics.blockedCount / totalRequests) * 100
-          : 0;
+        totalRequests > 0 ? (this.ddosMetrics.blockedCount / totalRequests) * 100 : 0;
 
       if (blockRate > 50) {
         console.warn(`High block rate detected: ${blockRate.toFixed(2)}%`);
@@ -512,7 +490,7 @@ export class AdvancedRateLimiter {
    */
   private async logSecurityEvent(event: any): Promise<void> {
     // This would integrate with your logging system
-    console.log("Security Event:", event);
+    console.log('Security Event:', event);
   }
 
   /**

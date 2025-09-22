@@ -115,7 +115,13 @@ export interface DebugConfiguration {
 }
 
 export interface DebugEvent {
-  type: 'breakpoint-hit' | 'step-completed' | 'variable-changed' | 'error-occurred' | 'session-started' | 'session-ended';
+  type:
+    | 'breakpoint-hit'
+    | 'step-completed'
+    | 'variable-changed'
+    | 'error-occurred'
+    | 'session-started'
+    | 'session-ended';
   sessionId: string;
   nodeId?: string;
   timestamp: number;

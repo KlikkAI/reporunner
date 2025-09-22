@@ -1,128 +1,130 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useMemo } from 'react'
-import { Tree, Tag, Typography, Space } from 'antd'
+
 import {
+  BranchesOutlined,
+  CalendarOutlined,
+  CheckSquareOutlined,
+  DatabaseOutlined,
   FileTextOutlined,
   NumberOutlined,
-  CheckSquareOutlined,
-  CalendarOutlined,
   TableOutlined,
-  BranchesOutlined,
-  DatabaseOutlined,
-} from '@ant-design/icons'
+} from '@ant-design/icons';
+import { Space, Tag, Tree, Typography } from 'antd';
+import type React from 'react';
+import { useMemo } from 'react';
 
-const { Text } = Typography
+const { Text } = Typography;
 
 interface SchemaNode {
-  key: string
-  title: React.ReactNode
-  children?: SchemaNode[]
-  isLeaf?: boolean
-  type: string
-  nullable: boolean
-  path: string
+  key: string;
+  title: React.ReactNode;
+  children?: SchemaNode[];
+  isLeaf?: boolean;
+  type: string;
+  nullable: boolean;
+  path: string;
 }
 
 interface SchemaViewProps {
-  data: any
-  onFieldClick?: (fieldPath: string) => void
-  compact?: boolean
+  data: any;
+  onFieldClick?: (fieldPath: string) => void;
+  compact?: boolean;
 }
 
 const getTypeIcon = (type: string) => {
   switch (type) {
     case 'string':
-      return <FileTextOutlined className="text-green-400" />
+      return <FileTextOutlined className="text-green-400" />;
     case 'number':
-      return <NumberOutlined className="text-blue-400" />
+      return <NumberOutlined className="text-blue-400" />;
     case 'boolean':
-      return <CheckSquareOutlined className="text-purple-400" />
+      return <CheckSquareOutlined className="text-purple-400" />;
     case 'date':
-      return <CalendarOutlined className="text-orange-400" />
+      return <CalendarOutlined className="text-orange-400" />;
     case 'array':
-      return <TableOutlined className="text-red-400" />
+      return <TableOutlined className="text-red-400" />;
     case 'object':
-      return <BranchesOutlined className="text-yellow-400" />
+      return <BranchesOutlined className="text-yellow-400" />;
     case 'null':
-      return <DatabaseOutlined className="text-gray-400" />
+      return <DatabaseOutlined className="text-gray-400" />;
     default:
-      return <FileTextOutlined className="text-gray-400" />
+      return <FileTextOutlined className="text-gray-400" />;
   }
-}
+};
 
 const getTypeColor = (type: string) => {
   switch (type) {
     case 'string':
-      return 'green'
+      return 'green';
     case 'number':
-      return 'blue'
+      return 'blue';
     case 'boolean':
-      return 'purple'
+      return 'purple';
     case 'date':
-      return 'orange'
+      return 'orange';
     case 'array':
-      return 'red'
+      return 'red';
     case 'object':
-      return 'yellow'
+      return 'yellow';
     case 'null':
-      return 'gray'
+      return 'gray';
     default:
-      return 'default'
+      return 'default';
   }
-}
+};
 
 const inferType = (value: any): string => {
-  if (value === null) return 'null'
-  if (value === undefined) return 'undefined'
-  if (Array.isArray(value)) return 'array'
-  if (typeof value === 'object') return 'object'
+  if (value === null) return 'null';
+  if (value === undefined) return 'undefined';
+  if (Array.isArray(value)) return 'array';
+  if (typeof value === 'object') return 'object';
   if (typeof value === 'string') {
     // Check if it's a date string
     if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/.test(value)) {
-      return 'date'
+      return 'date';
     }
     // Check if it's an email
     if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-      return 'email'
+      return 'email';
     }
     // Check if it's a URL
     if (/^https?:\/\//.test(value)) {
-      return 'url'
+      return 'url';
     }
-    return 'string'
+    return 'string';
   }
-  return typeof value
-}
+  return typeof value;
+};
 
 const getValuePreview = (value: any, type: string): string => {
-  if (value === null || value === undefined) return ''
+  if (value === null || value === undefined) return '';
 
   switch (type) {
     case 'string':
-      return value.length > 50 ? `"${value.substring(0, 47)}..."` : `"${value}"`
+      return value.length > 50 ? `"${value.substring(0, 47)}..."` : `"${value}"`;
     case 'array':
-      return `[${value.length} items]`
+      return `[${value.length} items]`;
     case 'object':
-      return `{${Object.keys(value).length} fields}`
+      return `{${Object.keys(value).length} fields}`;
     case 'date':
-      return new Date(value).toLocaleDateString()
+      return new Date(value).toLocaleDateString();
     default:
-      return String(value)
+      return String(value);
   }
-}
+};
 
 const buildSchemaTree = (
   obj: any,
   path: string = '',
   onFieldClick?: (fieldPath: string) => void
 ): SchemaNode[] => {
-  if (!obj || typeof obj !== 'object') return []
+  if (!obj || typeof obj !== 'object') return [];
 
   return Object.entries(obj).map(([key, value]) => {
-    const currentPath = path ? `${path}.${key}` : key
-    const type = inferType(value)
-    const nullable = value === null || value === undefined
-    const preview = getValuePreview(value, type)
+    const currentPath = path ? `${path}.${key}` : key;
+    const type = inferType(value);
+    const nullable = value === null || value === undefined;
+    const preview = getValuePreview(value, type);
 
     const nodeTitle = (
       <div
@@ -135,13 +137,9 @@ const buildSchemaTree = (
           <Tag color={getTypeColor(type)}>{type}</Tag>
           {nullable && <Tag color="red">nullable</Tag>}
         </Space>
-        {preview && (
-          <Text className="text-gray-400 text-xs ml-2 max-w-xs truncate">
-            {preview}
-          </Text>
-        )}
+        {preview && <Text className="text-gray-400 text-xs ml-2 max-w-xs truncate">{preview}</Text>}
       </div>
-    )
+    );
 
     const node: SchemaNode = {
       key: currentPath,
@@ -150,55 +148,47 @@ const buildSchemaTree = (
       nullable,
       path: currentPath,
       isLeaf: type !== 'object' && type !== 'array',
-    }
+    };
 
     // Add children for objects and arrays
     if (type === 'object' && value && Object.keys(value).length > 0) {
-      node.children = buildSchemaTree(value, currentPath, onFieldClick)
+      node.children = buildSchemaTree(value, currentPath, onFieldClick);
     } else if (type === 'array' && Array.isArray(value) && value.length > 0) {
       // For arrays, show the schema of the first item
-      const firstItem = value[0]
+      const firstItem = value[0];
       if (firstItem && typeof firstItem === 'object') {
-        node.children = buildSchemaTree(
-          firstItem,
-          `${currentPath}[0]`,
-          onFieldClick
-        )
+        node.children = buildSchemaTree(firstItem, `${currentPath}[0]`, onFieldClick);
       }
     }
 
-    return node
-  })
-}
+    return node;
+  });
+};
 
-const SchemaView: React.FC<SchemaViewProps> = ({
-  data,
-  onFieldClick,
-  compact = false,
-}) => {
+const SchemaView: React.FC<SchemaViewProps> = ({ data, onFieldClick, compact = false }) => {
   const schemaTree = useMemo(() => {
-    return buildSchemaTree(data, '', onFieldClick)
-  }, [data, onFieldClick])
+    return buildSchemaTree(data, '', onFieldClick);
+  }, [data, onFieldClick]);
 
   const schemaStats = useMemo(() => {
     const countTypes = (nodes: SchemaNode[]): Record<string, number> => {
-      const counts: Record<string, number> = {}
+      const counts: Record<string, number> = {};
 
       const traverse = (nodeList: SchemaNode[]) => {
-        nodeList.forEach(node => {
-          counts[node.type] = (counts[node.type] || 0) + 1
+        nodeList.forEach((node) => {
+          counts[node.type] = (counts[node.type] || 0) + 1;
           if (node.children) {
-            traverse(node.children)
+            traverse(node.children);
           }
-        })
-      }
+        });
+      };
 
-      traverse(nodes)
-      return counts
-    }
+      traverse(nodes);
+      return counts;
+    };
 
-    return countTypes(schemaTree)
-  }, [schemaTree])
+    return countTypes(schemaTree);
+  }, [schemaTree]);
 
   if (!data) {
     return (
@@ -206,7 +196,7 @@ const SchemaView: React.FC<SchemaViewProps> = ({
         <DatabaseOutlined className="text-4xl mb-2" />
         <div>No data to analyze</div>
       </div>
-    )
+    );
   }
 
   return (
@@ -238,9 +228,7 @@ const SchemaView: React.FC<SchemaViewProps> = ({
       )}
 
       {/* Schema Tree */}
-      <div
-        className={`${compact ? 'p-2' : 'p-4'} flex-1 overflow-hidden bg-gray-900`}
-      >
+      <div className={`${compact ? 'p-2' : 'p-4'} flex-1 overflow-hidden bg-gray-900`}>
         <Tree
           treeData={schemaTree}
           defaultExpandAll={!compact}
@@ -250,7 +238,7 @@ const SchemaView: React.FC<SchemaViewProps> = ({
         />
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default SchemaView
+export default SchemaView;

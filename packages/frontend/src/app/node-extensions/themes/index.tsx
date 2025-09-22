@@ -3,34 +3,33 @@
  * Centralized exports for the node theme system
  */
 
-export { defaultTheme } from "./defaultTheme";
-export { darkTheme } from "./darkTheme";
 export {
   default as gmailTheme,
   gmailAnimations,
-  gmailClasses,
-  gmailVisualStates,
   gmailBadges,
+  gmailClasses,
   gmailToolbarTheme,
-} from "../../../design-system/themes/gmailTheme";
-export { themeManager, ThemeManager } from "./ThemeManager";
-
+  gmailVisualStates,
+} from '../../../design-system/themes/gmailTheme';
 // Re-export types for convenience
 export type {
-  NodeTheme,
-  NodeColorScheme,
-  NodeTypography,
-  NodeSpacing,
   NodeAnimationConfig,
-  ThemeVariant,
+  NodeColorScheme,
+  NodeSpacing,
+  NodeTheme,
+  NodeTypography,
   ThemeManager as IThemeManager,
-} from "../types";
+  ThemeVariant,
+} from '../types';
+export { darkTheme } from './darkTheme';
+export { defaultTheme } from './defaultTheme';
+export { ThemeManager, themeManager } from './ThemeManager';
 
 // CSS variables hook for React components
-import { useState, useEffect } from "react";
-import type { NodeTheme } from "../types";
-import { themeManager } from "./ThemeManager";
-import { defaultTheme } from "./defaultTheme";
+import { useEffect, useState } from 'react';
+import type { NodeTheme } from '../types';
+import { defaultTheme } from './defaultTheme';
+import { themeManager } from './ThemeManager';
 
 /**
  * React hook for accessing current node theme
@@ -43,7 +42,7 @@ export function useNodeTheme(): {
   variant: string;
 } {
   const [theme, setThemeState] = useState<NodeTheme>(
-    themeManager.getCurrentTheme() || defaultTheme,
+    themeManager.getCurrentTheme() || defaultTheme
   );
   const [variant, setVariant] = useState(themeManager.getThemeVariant());
 
@@ -76,7 +75,7 @@ export function useNodeTheme(): {
 /**
  * Higher-order component for theme context
  */
-import { createContext, useContext, ReactNode } from "react";
+import { createContext, type ReactNode, useContext } from 'react';
 
 const NodeThemeContext = createContext<{
   theme: NodeTheme;
@@ -90,10 +89,7 @@ export function NodeThemeProvider({ children }: { children: ReactNode }) {
 
   return (
     <NodeThemeContext.Provider value={themeData}>
-      <div
-        className={themeManager.getThemeClass()}
-        {...themeManager.getThemeDataAttribute()}
-      >
+      <div className={themeManager.getThemeClass()} {...themeManager.getThemeDataAttribute()}>
         {children}
       </div>
     </NodeThemeContext.Provider>
@@ -103,9 +99,7 @@ export function NodeThemeProvider({ children }: { children: ReactNode }) {
 export function useNodeThemeContext() {
   const context = useContext(NodeThemeContext);
   if (!context) {
-    throw new Error(
-      "useNodeThemeContext must be used within NodeThemeProvider",
-    );
+    throw new Error('useNodeThemeContext must be used within NodeThemeProvider');
   }
   return context;
 }

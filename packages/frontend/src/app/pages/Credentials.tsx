@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useEffect, useState } from "react";
-import { useCredentialStore } from "@/core/stores/credentialStore";
-import { CredentialApiService } from "@/core";
-import type { CredentialTypeDefinition, Credential } from "@/core/schemas";
+import type React from 'react';
+import { useEffect, useState } from 'react';
+import { CredentialApiService } from '@/core';
+import type { Credential, CredentialTypeDefinition } from '@/core/schemas';
+import { useCredentialStore } from '@/core/stores/credentialStore';
 
 const credentialApiService = new CredentialApiService();
 
@@ -22,13 +23,10 @@ const Credentials: React.FC = () => {
   } = useCredentialStore();
 
   const [showCreateForm, setShowCreateForm] = useState(false);
-  const [selectedType, setSelectedType] =
-    useState<CredentialTypeDefinition | null>(null);
-  const [editingCredential, setEditingCredential] = useState<Credential | null>(
-    null,
-  );
+  const [selectedType, setSelectedType] = useState<CredentialTypeDefinition | null>(null);
+  const [editingCredential, setEditingCredential] = useState<Credential | null>(null);
   const [formData, setFormData] = useState<Record<string, unknown>>({});
-  const [credentialName, setCredentialName] = useState("");
+  const [credentialName, setCredentialName] = useState('');
 
   useEffect(() => {
     loadCredentials();
@@ -38,23 +36,19 @@ const Credentials: React.FC = () => {
   // Handle OAuth callback results
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
-    const credentialStatus = urlParams.get("credential");
-    const credentialId = urlParams.get("id");
-    const credentialName = urlParams.get("name");
-    const errorMessage = urlParams.get("message");
+    const credentialStatus = urlParams.get('credential');
+    const credentialId = urlParams.get('id');
+    const credentialName = urlParams.get('name');
+    const errorMessage = urlParams.get('message');
 
-    if (credentialStatus === "success" && credentialId && credentialName) {
-      alert(
-        `Gmail credential "${decodeURIComponent(credentialName)}" created successfully!`,
-      );
+    if (credentialStatus === 'success' && credentialId && credentialName) {
+      alert(`Gmail credential "${decodeURIComponent(credentialName)}" created successfully!`);
       // Reload credentials to show the new one
       loadCredentials();
       // Clean up URL
       window.history.replaceState({}, document.title, window.location.pathname);
-    } else if (credentialStatus === "error") {
-      alert(
-        `OAuth error: ${errorMessage ? decodeURIComponent(errorMessage) : "Unknown error"}`,
-      );
+    } else if (credentialStatus === 'error') {
+      alert(`OAuth error: ${errorMessage ? decodeURIComponent(errorMessage) : 'Unknown error'}`);
       // Clean up URL
       window.history.replaceState({}, document.title, window.location.pathname);
     }
@@ -76,7 +70,7 @@ const Credentials: React.FC = () => {
 
     try {
       // Handle Gmail OAuth2 differently - initiate OAuth flow
-      if (selectedType.name === "gmailOAuth2" && !editingCredential) {
+      if (selectedType.name === 'gmailOAuth2' && !editingCredential) {
         // Start OAuth flow - this will redirect the user to Google
         // No client ID/secret needed - using app's shared OAuth credentials
         await credentialApiService.startGmailOAuthFlow(credentialName);
@@ -93,11 +87,11 @@ const Credentials: React.FC = () => {
       setShowCreateForm(false);
       setSelectedType(null);
       setFormData({});
-      setCredentialName("");
+      setCredentialName('');
       setEditingCredential(null);
     } catch (error: any) {
-      console.error("Failed to save credential:", error);
-      alert(error.message || "Failed to save credential");
+      console.error('Failed to save credential:', error);
+      alert(error.message || 'Failed to save credential');
     }
   };
 
@@ -108,34 +102,27 @@ const Credentials: React.FC = () => {
   };
 
   const handleDelete = async (credentialId: string, credentialName: string) => {
-    if (
-      confirm(
-        `Are you sure you want to delete the credential "${credentialName}"?`,
-      )
-    ) {
+    if (confirm(`Are you sure you want to delete the credential "${credentialName}"?`)) {
       try {
         await deleteCredential(credentialId);
-        alert("Credential deleted successfully");
+        alert('Credential deleted successfully');
       } catch (error: any) {
-        alert(error.message || "Failed to delete credential");
+        alert(error.message || 'Failed to delete credential');
       }
     }
   };
 
-  const handleRevokeGmail = async (
-    credentialId: string,
-    credentialName: string,
-  ) => {
+  const handleRevokeGmail = async (credentialId: string, credentialName: string) => {
     if (
       confirm(
-        `Are you sure you want to revoke Gmail access for "${credentialName}"? This will also delete the credential and cannot be undone.`,
+        `Are you sure you want to revoke Gmail access for "${credentialName}"? This will also delete the credential and cannot be undone.`
       )
     ) {
       try {
         await revokeGmailCredential(credentialId);
-        alert("Gmail access revoked and credential deleted successfully");
+        alert('Gmail access revoked and credential deleted successfully');
       } catch (error: any) {
-        alert(error.message || "Failed to revoke Gmail access");
+        alert(error.message || 'Failed to revoke Gmail access');
       }
     }
   };
@@ -145,10 +132,10 @@ const Credentials: React.FC = () => {
   };
 
   const renderField = (property: any) => {
-    const value = formData[property.name] ?? property.default ?? "";
+    const value = formData[property.name] ?? property.default ?? '';
 
     switch (property.type) {
-      case "string":
+      case 'string':
         return (
           <input
             type="text"
@@ -159,7 +146,7 @@ const Credentials: React.FC = () => {
           />
         );
 
-      case "password":
+      case 'password':
         return (
           <input
             type="password"
@@ -170,38 +157,32 @@ const Credentials: React.FC = () => {
           />
         );
 
-      case "number":
+      case 'number':
         return (
           <input
             type="number"
             value={Number(value)}
-            onChange={(e) =>
-              handleFieldChange(property.name, Number(e.target.value))
-            }
+            onChange={(e) => handleFieldChange(property.name, Number(e.target.value))}
             placeholder={property.placeholder}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           />
         );
 
-      case "boolean":
+      case 'boolean':
         return (
           <div className="flex items-center">
             <input
               aria-label="Select an option"
               type="checkbox"
               checked={Boolean(value)}
-              onChange={(e) =>
-                handleFieldChange(property.name, e.target.checked)
-              }
+              onChange={(e) => handleFieldChange(property.name, e.target.checked)}
               className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
             />
-            <span className="ml-2 text-sm text-gray-600">
-              {property.description}
-            </span>
+            <span className="ml-2 text-sm text-gray-600">{property.description}</span>
           </div>
         );
 
-      case "options":
+      case 'options':
         return (
           <select
             aria-label="Select an option"
@@ -227,9 +208,7 @@ const Credentials: React.FC = () => {
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-gray-900">Credentials</h1>
-        <p className="text-gray-600">
-          Manage authentication credentials for your integrations
-        </p>
+        <p className="text-gray-600">Manage authentication credentials for your integrations</p>
       </div>
 
       {/* Stats */}
@@ -238,12 +217,8 @@ const Credentials: React.FC = () => {
           <div className="flex items-center">
             <div className="text-2xl mr-4">🔐</div>
             <div>
-              <p className="text-sm font-medium text-gray-600">
-                Total Credentials
-              </p>
-              <p className="text-2xl font-semibold text-gray-900">
-                {credentials.length}
-              </p>
+              <p className="text-sm font-medium text-gray-600">Total Credentials</p>
+              <p className="text-2xl font-semibold text-gray-900">{credentials.length}</p>
             </div>
           </div>
         </div>
@@ -262,12 +237,8 @@ const Credentials: React.FC = () => {
           <div className="flex items-center">
             <div className="text-2xl mr-4">🔗</div>
             <div>
-              <p className="text-sm font-medium text-gray-600">
-                Types Available
-              </p>
-              <p className="text-2xl font-semibold text-gray-900">
-                {credentialTypes.length}
-              </p>
+              <p className="text-sm font-medium text-gray-600">Types Available</p>
+              <p className="text-2xl font-semibold text-gray-900">{credentialTypes.length}</p>
             </div>
           </div>
         </div>
@@ -276,9 +247,7 @@ const Credentials: React.FC = () => {
       {/* Existing Credentials */}
       <div className="bg-white rounded-lg shadow">
         <div className="p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">
-            Your Credentials
-          </h2>
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">Your Credentials</h2>
 
           {isLoading ? (
             <div className="text-center py-8">
@@ -295,24 +264,15 @@ const Credentials: React.FC = () => {
           ) : (
             <div className="space-y-4">
               {credentials.map((credential) => {
-                const type = credentialTypes.find(
-                  (t) => t.name === credential.type,
-                );
+                const type = credentialTypes.find((t) => t.name === credential.type);
                 return (
-                  <div
-                    key={credential.id}
-                    className="border border-gray-200 rounded-lg p-4"
-                  >
+                  <div key={credential.id} className="border border-gray-200 rounded-lg p-4">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-3">
-                        <span className="text-2xl">{type?.icon || "🔐"}</span>
+                        <span className="text-2xl">{type?.icon || '🔐'}</span>
                         <div>
-                          <h3 className="font-medium text-gray-900">
-                            {credential.name}
-                          </h3>
-                          <p className="text-sm text-gray-600">
-                            {type?.displayName}
-                          </p>
+                          <h3 className="font-medium text-gray-900">{credential.name}</h3>
+                          <p className="text-sm text-gray-600">{type?.displayName}</p>
                         </div>
                         {credential.isValid && (
                           <span className="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
@@ -327,11 +287,9 @@ const Credentials: React.FC = () => {
                           disabled={testingCredential === credential.id}
                           className="text-blue-600 hover:text-blue-800 text-sm disabled:opacity-50"
                         >
-                          {testingCredential === credential.id
-                            ? "Testing..."
-                            : "Test"}
+                          {testingCredential === credential.id ? 'Testing...' : 'Test'}
                         </button>
-                        {credential.type !== "gmailOAuth2" && (
+                        {credential.type !== 'gmailOAuth2' && (
                           <button
                             onClick={() => handleEdit(credential)}
                             className="text-gray-600 hover:text-gray-800 text-sm"
@@ -339,21 +297,17 @@ const Credentials: React.FC = () => {
                             Edit
                           </button>
                         )}
-                        {credential.type === "gmailOAuth2" ||
-                        credential?.integration === "gmailOAuth2" ? (
+                        {credential.type === 'gmailOAuth2' ||
+                        credential?.integration === 'gmailOAuth2' ? (
                           <button
-                            onClick={() =>
-                              handleRevokeGmail(credential.id, credential.name)
-                            }
+                            onClick={() => handleRevokeGmail(credential.id, credential.name)}
                             className="text-red-600 hover:text-red-800 text-sm font-medium"
                           >
                             🔐 Revoke Access
                           </button>
                         ) : (
                           <button
-                            onClick={() =>
-                              handleDelete(credential.id, credential.name)
-                            }
+                            onClick={() => handleDelete(credential.id, credential.name)}
                             className="text-red-600 hover:text-red-800 text-sm"
                           >
                             Delete
@@ -363,14 +317,10 @@ const Credentials: React.FC = () => {
                     </div>
 
                     <div className="mt-2 text-xs text-gray-500">
-                      Created:{" "}
-                      {new Date(credential.createdAt).toLocaleDateString()}
+                      Created: {new Date(credential.createdAt).toLocaleDateString()}
                       {credential.lastTestedAt && (
                         <span className="ml-4">
-                          Last tested:{" "}
-                          {new Date(
-                            credential.lastTestedAt,
-                          ).toLocaleDateString()}
+                          Last tested: {new Date(credential.lastTestedAt).toLocaleDateString()}
                         </span>
                       )}
                     </div>
@@ -388,8 +338,7 @@ const Credentials: React.FC = () => {
           <div className="bg-white rounded-lg shadow-xl max-w-md w-full max-h-96 overflow-y-auto">
             <div className="p-6">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">
-                {editingCredential ? "Edit" : "Create"}{" "}
-                {selectedType.displayName} Credential
+                {editingCredential ? 'Edit' : 'Create'} {selectedType.displayName} Credential
               </h2>
 
               {/* Credential Name */}
@@ -412,15 +361,11 @@ const Credentials: React.FC = () => {
                   <div key={property.name}>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       {property.displayName}
-                      {property.required && (
-                        <span className="text-red-500 ml-1">*</span>
-                      )}
+                      {property.required && <span className="text-red-500 ml-1">*</span>}
                     </label>
                     {renderField(property)}
                     {property.description && (
-                      <p className="text-xs text-gray-500 mt-1">
-                        {property.description}
-                      </p>
+                      <p className="text-xs text-gray-500 mt-1">{property.description}</p>
                     )}
                   </div>
                 ))}
@@ -433,11 +378,11 @@ const Credentials: React.FC = () => {
                   disabled={!credentialName.trim()}
                   className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {selectedType.name === "gmailOAuth2" && !editingCredential
-                    ? "Connect with Google"
+                  {selectedType.name === 'gmailOAuth2' && !editingCredential
+                    ? 'Connect with Google'
                     : editingCredential
-                      ? "Update"
-                      : "Create"}{" "}
+                      ? 'Update'
+                      : 'Create'}{' '}
                   Credential
                 </button>
                 <button

@@ -1,38 +1,39 @@
-import React, { useState, useEffect } from "react";
 import {
+  AuditOutlined,
+  CheckOutlined,
+  ClockCircleOutlined,
+  GlobalOutlined,
+  SecurityScanOutlined,
+  SettingOutlined,
+  TeamOutlined,
+} from '@ant-design/icons';
+import {
+  Alert,
+  Button,
   Card,
+  Divider,
   Form,
   Input,
-  Switch,
   InputNumber,
-  Select,
-  Button,
-  Divider,
-  Space,
-  Alert,
-  Tag,
-  Tabs,
-  Table,
   Modal,
   message,
-  Typography,
+  Select,
+  Space,
+  Switch,
+  Table,
+  Tabs,
+  Tag,
   Tooltip,
-} from "antd";
-import {
-  SettingOutlined,
-  SecurityScanOutlined,
-  TeamOutlined,
-  AuditOutlined,
-  ClockCircleOutlined,
-  CheckOutlined,
-  GlobalOutlined,
-} from "@ant-design/icons";
-import { useRBACStore } from "@/core/stores/rbacStore";
+  Typography,
+} from 'antd';
+import type React from 'react';
+import { useEffect, useState } from 'react';
 import type {
   Organization,
-  OrganizationSettings,
   OrganizationMember,
-} from "@/core/services/rbacService";
+  OrganizationSettings,
+} from '@/core/services/rbacService';
+import { useRBACStore } from '@/core/stores/rbacStore';
 
 const { Title, Text, Paragraph } = Typography;
 const { TextArea } = Input;
@@ -42,9 +43,9 @@ interface OrganizationSettingsProps {
   organization: Organization;
 }
 
-export const OrganizationSettingsComponent: React.FC<
-  OrganizationSettingsProps
-> = ({ organization }) => {
+export const OrganizationSettingsComponent: React.FC<OrganizationSettingsProps> = ({
+  organization,
+}) => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [showAdvancedSettings, setShowAdvancedSettings] = useState(false);
@@ -82,7 +83,7 @@ export const OrganizationSettingsComponent: React.FC<
         enableAuditLogging: values.enableAuditLogging,
         enableSSOIntegration: values.enableSSOIntegration,
         allowedDomains: values.allowedDomains
-          ?.split(",")
+          ?.split(',')
           .map((d: string) => d.trim())
           .filter(Boolean),
         sessionTimeout: values.sessionTimeout,
@@ -104,9 +105,9 @@ export const OrganizationSettingsComponent: React.FC<
         settings,
       });
 
-      message.success("Organization settings updated successfully");
+      message.success('Organization settings updated successfully');
     } catch (error: any) {
-      message.error(error.message || "Failed to update organization settings");
+      message.error(error.message || 'Failed to update organization settings');
     } finally {
       setLoading(false);
     }
@@ -119,44 +120,41 @@ export const OrganizationSettingsComponent: React.FC<
       setInviteModalVisible(false);
       inviteForm.resetFields();
     } catch (error: any) {
-      message.error(error.message || "Failed to send invitation");
+      message.error(error.message || 'Failed to send invitation');
     }
   };
 
   const handleRemoveUser = async (userId: string, userName: string) => {
     Modal.confirm({
-      title: "Remove User",
+      title: 'Remove User',
       content: `Are you sure you want to remove ${userName} from this organization?`,
-      okText: "Remove",
-      okType: "danger",
+      okText: 'Remove',
+      okType: 'danger',
       onOk: async () => {
         try {
           await removeUser(organization.id, userId);
-          message.success("User removed successfully");
+          message.success('User removed successfully');
         } catch (error: any) {
-          message.error(error.message || "Failed to remove user");
+          message.error(error.message || 'Failed to remove user');
         }
       },
     });
   };
 
-  const handleUpdateUserRole = async (
-    userId: string,
-    newRole: OrganizationMember["role"],
-  ) => {
+  const handleUpdateUserRole = async (userId: string, newRole: OrganizationMember['role']) => {
     try {
       await updateUserRole(organization.id, userId, newRole);
-      message.success("User role updated successfully");
+      message.success('User role updated successfully');
     } catch (error: any) {
-      message.error(error.message || "Failed to update user role");
+      message.error(error.message || 'Failed to update user role');
     }
   };
 
   const memberColumns = [
     {
-      title: "User",
-      dataIndex: "userId",
-      key: "userId",
+      title: 'User',
+      dataIndex: 'userId',
+      key: 'userId',
       render: (userId: string) => (
         <div>
           <Text strong>{userId}</Text>
@@ -166,17 +164,14 @@ export const OrganizationSettingsComponent: React.FC<
       ),
     },
     {
-      title: "Role",
-      dataIndex: "role",
-      key: "role",
-      render: (
-        role: OrganizationMember["role"],
-        record: OrganizationMember,
-      ) => (
+      title: 'Role',
+      dataIndex: 'role',
+      key: 'role',
+      render: (role: OrganizationMember['role'], record: OrganizationMember) => (
         <Select
           value={role}
           onChange={(newRole) => handleUpdateUserRole(record.userId, newRole)}
-          disabled={!canManageUsers() || record.role === "owner"}
+          disabled={!canManageUsers() || record.role === 'owner'}
           style={{ width: 120 }}
         >
           <Option value="owner">Owner</Option>
@@ -187,17 +182,17 @@ export const OrganizationSettingsComponent: React.FC<
       ),
     },
     {
-      title: "Joined",
-      dataIndex: "joinedAt",
-      key: "joinedAt",
+      title: 'Joined',
+      dataIndex: 'joinedAt',
+      key: 'joinedAt',
       render: (date: Date) => new Date(date).toLocaleDateString(),
     },
     {
-      title: "Actions",
-      key: "actions",
+      title: 'Actions',
+      key: 'actions',
       render: (_: unknown, record: OrganizationMember) => (
         <Space>
-          {canManageUsers() && record.role !== "owner" && (
+          {canManageUsers() && record.role !== 'owner' && (
             <Button
               type="link"
               danger
@@ -214,7 +209,7 @@ export const OrganizationSettingsComponent: React.FC<
 
   const tabs = [
     {
-      key: "general",
+      key: 'general',
       label: (
         <span>
           <SettingOutlined />
@@ -232,9 +227,7 @@ export const OrganizationSettingsComponent: React.FC<
             <Form.Item
               name="name"
               label="Organization Name"
-              rules={[
-                { required: true, message: "Please enter organization name" },
-              ]}
+              rules={[{ required: true, message: 'Please enter organization name' }]}
             >
               <Input placeholder="Enter organization name" />
             </Form.Item>
@@ -265,18 +258,12 @@ export const OrganizationSettingsComponent: React.FC<
               <Switch />
             </Form.Item>
 
-            <Form.Item
-              name="maxWorkflowsPerUser"
-              label="Max Workflows per User"
-            >
-              <InputNumber min={1} max={1000} style={{ width: "100%" }} />
+            <Form.Item name="maxWorkflowsPerUser" label="Max Workflows per User">
+              <InputNumber min={1} max={1000} style={{ width: '100%' }} />
             </Form.Item>
 
-            <Form.Item
-              name="maxExecutionsPerMonth"
-              label="Max Executions per Month"
-            >
-              <InputNumber min={100} max={1000000} style={{ width: "100%" }} />
+            <Form.Item name="maxExecutionsPerMonth" label="Max Executions per Month">
+              <InputNumber min={100} max={1000000} style={{ width: '100%' }} />
             </Form.Item>
 
             <Form.Item>
@@ -289,11 +276,8 @@ export const OrganizationSettingsComponent: React.FC<
                 >
                   Save Settings
                 </Button>
-                <Button
-                  type="link"
-                  onClick={() => setShowAdvancedSettings(!showAdvancedSettings)}
-                >
-                  {showAdvancedSettings ? "Hide" : "Show"} Advanced Settings
+                <Button type="link" onClick={() => setShowAdvancedSettings(!showAdvancedSettings)}>
+                  {showAdvancedSettings ? 'Hide' : 'Show'} Advanced Settings
                 </Button>
               </Space>
             </Form.Item>
@@ -302,7 +286,7 @@ export const OrganizationSettingsComponent: React.FC<
       ),
     },
     {
-      key: "security",
+      key: 'security',
       label: (
         <span>
           <SecurityScanOutlined />
@@ -356,7 +340,7 @@ export const OrganizationSettingsComponent: React.FC<
               <InputNumber
                 min={5}
                 max={1440}
-                style={{ width: "100%" }}
+                style={{ width: '100%' }}
                 addonAfter={<ClockCircleOutlined />}
               />
             </Form.Item>
@@ -364,10 +348,10 @@ export const OrganizationSettingsComponent: React.FC<
             <Divider>Password Policy</Divider>
 
             <Form.Item name="passwordMinLength" label="Minimum Length">
-              <InputNumber min={6} max={32} style={{ width: "100%" }} />
+              <InputNumber min={6} max={32} style={{ width: '100%' }} />
             </Form.Item>
 
-            <Space direction="vertical" style={{ width: "100%" }}>
+            <Space direction="vertical" style={{ width: '100%' }}>
               <Form.Item
                 name="passwordRequireUppercase"
                 label="Require Uppercase Letters"
@@ -405,11 +389,11 @@ export const OrganizationSettingsComponent: React.FC<
               name="passwordPreventReuse"
               label="Prevent Password Reuse (last N passwords)"
             >
-              <InputNumber min={0} max={10} style={{ width: "100%" }} />
+              <InputNumber min={0} max={10} style={{ width: '100%' }} />
             </Form.Item>
 
             <Form.Item name="passwordMaxAge" label="Password Expiry (days)">
-              <InputNumber min={30} max={365} style={{ width: "100%" }} />
+              <InputNumber min={30} max={365} style={{ width: '100%' }} />
             </Form.Item>
 
             <Form.Item>
@@ -428,7 +412,7 @@ export const OrganizationSettingsComponent: React.FC<
       ),
     },
     {
-      key: "members",
+      key: 'members',
       label: (
         <span>
           <TeamOutlined />
@@ -447,9 +431,7 @@ export const OrganizationSettingsComponent: React.FC<
               >
                 Invite User
               </Button>
-              <Text type="secondary">
-                Manage organization members and their roles
-              </Text>
+              <Text type="secondary">Manage organization members and their roles</Text>
             </Space>
           </div>
 
@@ -464,7 +446,7 @@ export const OrganizationSettingsComponent: React.FC<
       ),
     },
     {
-      key: "audit",
+      key: 'audit',
       label: (
         <span>
           <AuditOutlined />
@@ -481,11 +463,11 @@ export const OrganizationSettingsComponent: React.FC<
             style={{ marginBottom: 24 }}
           />
 
-          <Space direction="vertical" style={{ width: "100%" }} size="large">
+          <Space direction="vertical" style={{ width: '100%' }} size="large">
             <Card size="small" title="Data Retention">
               <Paragraph>
-                Audit logs are retained for 90 days. Execution logs are retained
-                for 30 days. Contact support for longer retention periods.
+                Audit logs are retained for 90 days. Execution logs are retained for 30 days.
+                Contact support for longer retention periods.
               </Paragraph>
             </Card>
 
@@ -547,8 +529,8 @@ export const OrganizationSettingsComponent: React.FC<
             name="email"
             label="Email Address"
             rules={[
-              { required: true, message: "Please enter email address" },
-              { type: "email", message: "Please enter a valid email address" },
+              { required: true, message: 'Please enter email address' },
+              { type: 'email', message: 'Please enter a valid email address' },
             ]}
           >
             <Input placeholder="user@example.com" />
@@ -557,7 +539,7 @@ export const OrganizationSettingsComponent: React.FC<
           <Form.Item
             name="role"
             label="Role"
-            rules={[{ required: true, message: "Please select a role" }]}
+            rules={[{ required: true, message: 'Please select a role' }]}
             initialValue="member"
           >
             <Select>
@@ -572,9 +554,7 @@ export const OrganizationSettingsComponent: React.FC<
               <Button type="primary" htmlType="submit" loading={isLoading}>
                 Send Invitation
               </Button>
-              <Button onClick={() => setInviteModalVisible(false)}>
-                Cancel
-              </Button>
+              <Button onClick={() => setInviteModalVisible(false)}>Cancel</Button>
             </Space>
           </Form.Item>
         </Form>

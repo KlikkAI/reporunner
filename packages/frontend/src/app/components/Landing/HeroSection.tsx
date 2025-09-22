@@ -5,10 +5,11 @@
  * and clear value proposition for enterprise customers
  */
 
-import React, { useState, useEffect } from "react";
-import { ArrowRight, Play, Shield, Zap, Database } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-import { useAuthStore } from "@/core/stores/authStore";
+import { ArrowRight, Database, Play, Shield, Zap } from 'lucide-react';
+import type React from 'react';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuthStore } from '@/core/stores/authStore';
 
 export const HeroSection: React.FC = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -21,17 +22,17 @@ export const HeroSection: React.FC = () => {
 
   const handleGetStarted = () => {
     if (isAuthenticated) {
-      navigate("/app/dashboard");
+      navigate('/app/dashboard');
     } else {
-      navigate("/register");
+      navigate('/register');
     }
   };
 
   const handleWatchDemo = () => {
     // Scroll to demo section or open modal
-    const demoSection = document.getElementById("demo-section");
+    const demoSection = document.getElementById('demo-section');
     if (demoSection) {
-      demoSection.scrollIntoView({ behavior: "smooth" });
+      demoSection.scrollIntoView({ behavior: 'smooth' });
     }
   };
 
@@ -49,42 +50,33 @@ export const HeroSection: React.FC = () => {
         <div className="max-w-6xl mx-auto text-center">
           {/* Main Headline */}
           <div
-            className={`transition-all duration-1000 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}
+            className={`transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
           >
             <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
-              The{" "}
+              The{' '}
               <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
                 Self-Hosted
               </span>
               <br />
               Workflow Platform
               <br />
-              That{" "}
+              That{' '}
               <span className="bg-gradient-to-r from-orange-400 to-red-400 bg-clip-text text-transparent">
                 Scales
-              </span>{" "}
+              </span>{' '}
               With Your Enterprise
             </h1>
           </div>
 
           {/* Subheadline */}
           <div
-            className={`transition-all duration-1000 delay-300 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}
+            className={`transition-all duration-1000 delay-300 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
           >
             <p className="text-xl md:text-2xl text-slate-200 mb-8 max-w-4xl mx-auto leading-relaxed">
-              Beyond Zapier's simplicity, Make.com's visuals, and n8n's
-              self-hosting—get{" "}
-              <span className="text-blue-300 font-semibold">
-                enterprise-grade AI
-              </span>
-              ,{" "}
-              <span className="text-green-300 font-semibold">
-                complete data sovereignty
-              </span>
-              , and{" "}
-              <span className="text-purple-300 font-semibold">
-                cost-effective scaling
-              </span>
+              Beyond Zapier's simplicity, Make.com's visuals, and n8n's self-hosting—get{' '}
+              <span className="text-blue-300 font-semibold">enterprise-grade AI</span>,{' '}
+              <span className="text-green-300 font-semibold">complete data sovereignty</span>, and{' '}
+              <span className="text-purple-300 font-semibold">cost-effective scaling</span>
               .
               <br />
               Deploy anywhere, control everything.
@@ -93,14 +85,12 @@ export const HeroSection: React.FC = () => {
 
           {/* Key Features Pills */}
           <div
-            className={`transition-all duration-1000 delay-500 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}
+            className={`transition-all duration-1000 delay-500 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
           >
             <div className="flex flex-wrap justify-center gap-4 mb-10">
               <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2 border border-white/20">
                 <Shield className="w-5 h-5 text-green-400" />
-                <span className="text-white font-medium">
-                  Enterprise Security
-                </span>
+                <span className="text-white font-medium">Enterprise Security</span>
               </div>
               <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2 border border-white/20">
                 <Zap className="w-5 h-5 text-yellow-400" />
@@ -115,7 +105,7 @@ export const HeroSection: React.FC = () => {
 
           {/* CTA Buttons */}
           <div
-            className={`transition-all duration-1000 delay-700 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}
+            className={`transition-all duration-1000 delay-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
           >
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
               <button
@@ -139,16 +129,12 @@ export const HeroSection: React.FC = () => {
 
           {/* Social Proof Preview */}
           <div
-            className={`transition-all duration-1000 delay-900 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}
+            className={`transition-all duration-1000 delay-900 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
           >
-            <p className="text-slate-400 text-sm mb-4">
-              Trusted by enterprises worldwide
-            </p>
+            <p className="text-slate-400 text-sm mb-4">Trusted by enterprises worldwide</p>
             <div className="flex flex-wrap justify-center items-center gap-8 opacity-60">
               <div className="h-8 bg-white/20 rounded px-4 flex items-center">
-                <span className="text-white font-semibold">
-                  Enterprise Corp
-                </span>
+                <span className="text-white font-semibold">Enterprise Corp</span>
               </div>
               <div className="h-8 bg-white/20 rounded px-4 flex items-center">
                 <span className="text-white font-semibold">TechStart Inc</span>

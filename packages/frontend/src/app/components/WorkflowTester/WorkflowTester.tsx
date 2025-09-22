@@ -1,31 +1,23 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // Workflow Tester Component - Test workflows before execution
-import React, { useState } from "react";
+
 import {
-  Card,
-  Button,
-  Alert,
-  Steps,
-  Timeline,
-  Tag,
-  Space,
-  Input,
-  Form,
-  Modal,
-  Spin,
-} from "antd";
-import {
-  PlayCircleOutlined,
+  BugOutlined,
   CheckCircleOutlined,
   ExclamationCircleOutlined,
-  BugOutlined,
-} from "@ant-design/icons";
-import { WorkflowApiService } from "@/core";
+  PlayCircleOutlined,
+} from '@ant-design/icons';
+import { Alert, Button, Card, Form, Input, Modal, Space, Spin, Steps, Tag, Timeline } from 'antd';
+import type React from 'react';
+import { useState } from 'react';
+import { WorkflowApiService } from '@/core';
+
 const workflowApiService = new WorkflowApiService();
-import { exportWorkflowToBackend } from "@/core/utils/workflowExporter";
-import { useExecutionMonitor } from "@/app/services/executionMonitor";
-import type { Node, Edge } from "reactflow";
-import type { WorkflowExecution } from "@/core/types/execution";
+
+import type { Edge, Node } from 'reactflow';
+import { useExecutionMonitor } from '@/app/services/executionMonitor';
+import type { WorkflowExecution } from '@/core/types/execution';
+import { exportWorkflowToBackend } from '@/core/utils/workflowExporter';
 
 const { TextArea } = Input;
 const { Step } = Steps;
@@ -38,10 +30,8 @@ export const WorkflowTester: React.FC<{
   const [testResult, setTestResult] = useState<any>(null);
   const [testing, setTesting] = useState(false);
   const [executionId, setExecutionId] = useState<string | null>(null);
-  const [triggerData, setTriggerData] = useState("");
-  const [testMode, setTestMode] = useState<
-    "validate" | "dry_run" | "full_test"
-  >("validate");
+  const [triggerData, setTriggerData] = useState('');
+  const [testMode, setTestMode] = useState<'validate' | 'dry_run' | 'full_test'>('validate');
 
   const { execution, isConnected } = useExecutionMonitor(executionId);
 
@@ -52,7 +42,7 @@ export const WorkflowTester: React.FC<{
     try {
       const workflowJson = exportWorkflowToBackend(nodes, edges);
 
-      if (testMode === "validate") {
+      if (testMode === 'validate') {
         // Just validate the workflow structure
         // Convert BackendWorkflow to WorkflowDefinition format
         const workflowDefinition = {
@@ -66,7 +56,7 @@ export const WorkflowTester: React.FC<{
               label: node.name,
               parameters: node.parameters,
               credentials:
-                typeof node.credentials === "object" && node.credentials
+                typeof node.credentials === 'object' && node.credentials
                   ? Object.keys(node.credentials)[0] || undefined
                   : (node.credentials as string | undefined),
               disabled: node.disabled,
@@ -74,16 +64,15 @@ export const WorkflowTester: React.FC<{
             },
           })),
           edges: [], // Convert connections to edges if needed
-          tags: ["test"],
+          tags: ['test'],
           isActive: true,
         };
-        const result =
-          await workflowApiService.testWorkflow(workflowDefinition);
+        const result = await workflowApiService.testWorkflow(workflowDefinition);
         setTestResult({
-          type: "validation",
+          type: 'validation',
           ...result,
         });
-      } else if (testMode === "dry_run") {
+      } else if (testMode === 'dry_run') {
         // Dry run - validate and simulate execution
         // Convert BackendWorkflow to WorkflowDefinition format
         const workflowDefinition = {
@@ -97,7 +86,7 @@ export const WorkflowTester: React.FC<{
               label: node.name,
               parameters: node.parameters,
               credentials:
-                typeof node.credentials === "object" && node.credentials
+                typeof node.credentials === 'object' && node.credentials
                   ? Object.keys(node.credentials)[0] || undefined
                   : (node.credentials as string | undefined),
               disabled: node.disabled,
@@ -105,20 +94,17 @@ export const WorkflowTester: React.FC<{
             },
           })),
           edges: [], // Convert connections to edges if needed
-          tags: ["test"],
+          tags: ['test'],
           isActive: true,
         };
-        const result =
-          await workflowApiService.testWorkflow(workflowDefinition);
+        const result = await workflowApiService.testWorkflow(workflowDefinition);
         setTestResult({
-          type: "dry_run",
+          type: 'dry_run',
           ...result,
         });
       } else {
         // Full test execution
-        const triggerPayload = triggerData
-          ? JSON.parse(triggerData)
-          : undefined;
+        const triggerPayload = triggerData ? JSON.parse(triggerData) : undefined;
         const result = await workflowApiService.executeWorkflow({
           workflow: workflowJson,
           triggerData: triggerPayload,
@@ -129,14 +115,14 @@ export const WorkflowTester: React.FC<{
 
         setExecutionId(result.id);
         setTestResult({
-          type: "full_execution",
+          type: 'full_execution',
           execution: result,
         });
       }
     } catch (error: any) {
       setTestResult({
-        type: "error",
-        error: error.message || "Test execution failed",
+        type: 'error',
+        error: error.message || 'Test execution failed',
       });
     } finally {
       setTesting(false);
@@ -148,7 +134,7 @@ export const WorkflowTester: React.FC<{
       try {
         await workflowApiService.stopExecution(executionId);
       } catch (error) {
-        console.error("Failed to stop test execution:", error);
+        console.error('Failed to stop test execution:', error);
       }
     }
   };
@@ -156,10 +142,8 @@ export const WorkflowTester: React.FC<{
   const renderValidationResult = (result: any) => (
     <div>
       <Alert
-        type={result.isValid ? "success" : "error"}
-        message={
-          result.isValid ? "Workflow is valid" : "Workflow validation failed"
-        }
+        type={result.isValid ? 'success' : 'error'}
+        message={result.isValid ? 'Workflow is valid' : 'Workflow validation failed'}
         description={
           <div>
             {result.errors.length > 0 && (
@@ -188,8 +172,7 @@ export const WorkflowTester: React.FC<{
             )}
             {result.estimatedDuration && (
               <div className="mt-2">
-                <strong>Estimated Duration:</strong>{" "}
-                {Math.round(result.estimatedDuration / 1000)}s
+                <strong>Estimated Duration:</strong> {Math.round(result.estimatedDuration / 1000)}s
               </div>
             )}
           </div>
@@ -203,31 +186,20 @@ export const WorkflowTester: React.FC<{
       <div className="mb-4">
         <Alert
           type={
-            exec.status === "completed"
-              ? "success"
-              : exec.status === "failed"
-                ? "error"
-                : "info"
+            exec.status === 'completed' ? 'success' : exec.status === 'failed' ? 'error' : 'info'
           }
           message={`Execution ${exec.status}`}
           description={
             <div>
               <div>
-                Started:{" "}
-                {exec.startedAt
-                  ? new Date(exec.startedAt).toLocaleString()
-                  : "N/A"}
+                Started: {exec.startedAt ? new Date(exec.startedAt).toLocaleString() : 'N/A'}
               </div>
               {exec.completedAt && (
-                <div>
-                  Completed: {new Date(exec.completedAt).toLocaleString()}
-                </div>
+                <div>Completed: {new Date(exec.completedAt).toLocaleString()}</div>
               )}
-              {exec.duration && (
-                <div>Duration: {Math.round(exec.duration / 1000)}s</div>
-              )}
+              {exec.duration && <div>Duration: {Math.round(exec.duration / 1000)}s</div>}
               <div>
-                Progress: {exec.progress?.completedNodes?.length || 0} /{" "}
+                Progress: {exec.progress?.completedNodes?.length || 0} /{' '}
                 {exec.progress?.totalNodes || 0} nodes
               </div>
             </div>
@@ -241,16 +213,12 @@ export const WorkflowTester: React.FC<{
             <Timeline.Item
               key={result.nodeId}
               color={
-                result.status === "success"
-                  ? "green"
-                  : result.status === "error"
-                    ? "red"
-                    : "gray"
+                result.status === 'success' ? 'green' : result.status === 'error' ? 'red' : 'gray'
               }
               dot={
-                result.status === "success" ? (
+                result.status === 'success' ? (
                   <CheckCircleOutlined />
-                ) : result.status === "error" ? (
+                ) : result.status === 'error' ? (
                   <ExclamationCircleOutlined />
                 ) : undefined
               }
@@ -258,19 +226,11 @@ export const WorkflowTester: React.FC<{
               <div>
                 <Space>
                   <strong>{result.nodeName}</strong>
-                  <Tag color={result.status === "success" ? "green" : "red"}>
-                    {result.status}
-                  </Tag>
-                  <span className="text-gray-500">
-                    {Math.round(result.duration)}ms
-                  </span>
+                  <Tag color={result.status === 'success' ? 'green' : 'red'}>{result.status}</Tag>
+                  <span className="text-gray-500">{Math.round(result.duration)}ms</span>
                 </Space>
 
-                {result.error && (
-                  <div className="text-red-500 text-sm mt-1">
-                    {result.error}
-                  </div>
-                )}
+                {result.error && <div className="text-red-500 text-sm mt-1">{result.error}</div>}
 
                 {result.output && Object.keys(result.output).length > 0 && (
                   <details className="mt-1">
@@ -286,13 +246,11 @@ export const WorkflowTester: React.FC<{
             </Timeline.Item>
           ))}
 
-          {exec.progress?.currentNodeId && exec.status === "running" && (
+          {exec.progress?.currentNodeId && exec.status === 'running' && (
             <Timeline.Item color="blue" dot={<Spin size="small" />}>
               <div>
                 <strong>Currently executing...</strong>
-                <div className="text-gray-500 text-sm">
-                  Node: {exec.progress?.currentNodeId}
-                </div>
+                <div className="text-gray-500 text-sm">Node: {exec.progress?.currentNodeId}</div>
               </div>
             </Timeline.Item>
           )}
@@ -332,9 +290,7 @@ export const WorkflowTester: React.FC<{
         <Space>
           <BugOutlined />
           Workflow Tester
-          {!isConnected && executionId && (
-            <Tag color="orange">Disconnected</Tag>
-          )}
+          {!isConnected && executionId && <Tag color="orange">Disconnected</Tag>}
         </Space>
       }
       open={true}
@@ -344,7 +300,7 @@ export const WorkflowTester: React.FC<{
         <Button key="close" onClick={onClose}>
           Close
         </Button>,
-        currentExecution?.status === "running" ? (
+        currentExecution?.status === 'running' ? (
           <Button key="stop" danger onClick={stopTest}>
             Stop Test
           </Button>
@@ -364,33 +320,31 @@ export const WorkflowTester: React.FC<{
       <div className="workflow-tester">
         <div className="mb-4">
           <Steps
-            current={
-              testMode === "validate" ? 0 : testMode === "dry_run" ? 1 : 2
-            }
+            current={testMode === 'validate' ? 0 : testMode === 'dry_run' ? 1 : 2}
             size="small"
           >
             <Step
               title="Validate"
               description="Check workflow structure"
-              onClick={() => setTestMode("validate")}
-              style={{ cursor: "pointer" }}
+              onClick={() => setTestMode('validate')}
+              style={{ cursor: 'pointer' }}
             />
             <Step
               title="Dry Run"
               description="Simulate execution"
-              onClick={() => setTestMode("dry_run")}
-              style={{ cursor: "pointer" }}
+              onClick={() => setTestMode('dry_run')}
+              style={{ cursor: 'pointer' }}
             />
             <Step
               title="Full Test"
               description="Real execution"
-              onClick={() => setTestMode("full_test")}
-              style={{ cursor: "pointer" }}
+              onClick={() => setTestMode('full_test')}
+              style={{ cursor: 'pointer' }}
             />
           </Steps>
         </div>
 
-        {testMode === "full_test" && (
+        {testMode === 'full_test' && (
           <Card title="Test Configuration" size="small" className="mb-4">
             <Form layout="vertical">
               <Form.Item
@@ -412,11 +366,7 @@ export const WorkflowTester: React.FC<{
           </Card>
         )}
 
-        <Card
-          title="Test Results"
-          size="small"
-          extra={testing && <Spin size="small" />}
-        >
+        <Card title="Test Results" size="small" extra={testing && <Spin size="small" />}>
           {!testResult && !testing && (
             <div className="text-gray-500 text-center py-8">
               Configure your test settings and click "Run Test" to begin
@@ -427,29 +377,24 @@ export const WorkflowTester: React.FC<{
             <div className="text-center py-8">
               <Spin size="large" />
               <div className="mt-2">
-                {testMode === "validate"
-                  ? "Validating workflow..."
-                  : testMode === "dry_run"
-                    ? "Running simulation..."
-                    : "Executing workflow..."}
+                {testMode === 'validate'
+                  ? 'Validating workflow...'
+                  : testMode === 'dry_run'
+                    ? 'Running simulation...'
+                    : 'Executing workflow...'}
               </div>
             </div>
           )}
 
-          {testResult && testResult.type === "error" && (
-            <Alert
-              type="error"
-              message="Test Failed"
-              description={testResult.error}
-            />
+          {testResult && testResult.type === 'error' && (
+            <Alert type="error" message="Test Failed" description={testResult.error} />
           )}
 
           {testResult &&
-            (testResult.type === "validation" ||
-              testResult.type === "dry_run") &&
+            (testResult.type === 'validation' || testResult.type === 'dry_run') &&
             renderValidationResult(testResult)}
 
-          {(testResult?.type === "full_execution" || currentExecution) &&
+          {(testResult?.type === 'full_execution' || currentExecution) &&
             renderExecutionResult(currentExecution)}
         </Card>
       </div>

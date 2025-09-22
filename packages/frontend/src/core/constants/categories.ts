@@ -16,7 +16,7 @@ export const UNIFIED_CATEGORIES = {
   SOCIAL_MEDIA: 'Social Media',
   ECOMMERCE: 'E-commerce',
   SECURITY_AUTH: 'Security & Auth',
-} as const
+} as const;
 
 export const CATEGORY_ICONS: Record<string, string> = {
   [UNIFIED_CATEGORIES.TRIGGERS_EVENTS]: '🚀',
@@ -36,42 +36,27 @@ export const CATEGORY_ICONS: Record<string, string> = {
   [UNIFIED_CATEGORIES.SOCIAL_MEDIA]: '📱',
   [UNIFIED_CATEGORIES.ECOMMERCE]: '🛒',
   [UNIFIED_CATEGORIES.SECURITY_AUTH]: '🔑',
-}
+};
 
 export const CATEGORY_DESCRIPTIONS: Record<string, string> = {
-  [UNIFIED_CATEGORIES.TRIGGERS_EVENTS]:
-    'Schedule triggers, webhooks, and external events',
-  [UNIFIED_CATEGORIES.COMMUNICATION]:
-    'Email, messaging, and video communication tools',
-  [UNIFIED_CATEGORIES.DATA_STORAGE]:
-    'Databases, file storage, and cloud services',
-  [UNIFIED_CATEGORIES.DATA_TRANSFORMATION]:
-    'Transform, filter, and manipulate data',
-  [UNIFIED_CATEGORIES.DEVELOPMENT_APIS]:
-    'GitHub, APIs, webhooks, and development tools',
-  [UNIFIED_CATEGORIES.DEVELOPER_TOOLS]:
-    'Development tools, version control, and code management',
-  [UNIFIED_CATEGORIES.BUSINESS_PRODUCTIVITY]:
-    'CRM, project management, and business tools',
-  [UNIFIED_CATEGORIES.PRODUCTIVITY]:
-    'Task management, note-taking, and productivity apps',
-  [UNIFIED_CATEGORIES.COMMERCE_MARKETING]:
-    'E-commerce, payments, marketing, and analytics',
-  [UNIFIED_CATEGORIES.AI_AUTOMATION]:
-    'AI services, data processing, and automation logic',
-  [UNIFIED_CATEGORIES.SECURITY_MONITORING]:
-    'Authentication, security, and monitoring tools',
+  [UNIFIED_CATEGORIES.TRIGGERS_EVENTS]: 'Schedule triggers, webhooks, and external events',
+  [UNIFIED_CATEGORIES.COMMUNICATION]: 'Email, messaging, and video communication tools',
+  [UNIFIED_CATEGORIES.DATA_STORAGE]: 'Databases, file storage, and cloud services',
+  [UNIFIED_CATEGORIES.DATA_TRANSFORMATION]: 'Transform, filter, and manipulate data',
+  [UNIFIED_CATEGORIES.DEVELOPMENT_APIS]: 'GitHub, APIs, webhooks, and development tools',
+  [UNIFIED_CATEGORIES.DEVELOPER_TOOLS]: 'Development tools, version control, and code management',
+  [UNIFIED_CATEGORIES.BUSINESS_PRODUCTIVITY]: 'CRM, project management, and business tools',
+  [UNIFIED_CATEGORIES.PRODUCTIVITY]: 'Task management, note-taking, and productivity apps',
+  [UNIFIED_CATEGORIES.COMMERCE_MARKETING]: 'E-commerce, payments, marketing, and analytics',
+  [UNIFIED_CATEGORIES.AI_AUTOMATION]: 'AI services, data processing, and automation logic',
+  [UNIFIED_CATEGORIES.SECURITY_MONITORING]: 'Authentication, security, and monitoring tools',
   [UNIFIED_CATEGORIES.ANALYTICS]: 'Web analytics, data tracking, and insights',
   [UNIFIED_CATEGORIES.CRM]: 'Customer relationship management and sales tools',
-  [UNIFIED_CATEGORIES.CLOUD_SERVICES]:
-    'AWS, Azure, GCP and other cloud platforms',
-  [UNIFIED_CATEGORIES.SOCIAL_MEDIA]:
-    'Twitter, Facebook, Instagram and social platforms',
-  [UNIFIED_CATEGORIES.ECOMMERCE]:
-    'Online stores, payments, and retail platforms',
-  [UNIFIED_CATEGORIES.SECURITY_AUTH]:
-    'Authentication, authorization, and security services',
-}
+  [UNIFIED_CATEGORIES.CLOUD_SERVICES]: 'AWS, Azure, GCP and other cloud platforms',
+  [UNIFIED_CATEGORIES.SOCIAL_MEDIA]: 'Twitter, Facebook, Instagram and social platforms',
+  [UNIFIED_CATEGORIES.ECOMMERCE]: 'Online stores, payments, and retail platforms',
+  [UNIFIED_CATEGORIES.SECURITY_AUTH]: 'Authentication, authorization, and security services',
+};
 
 export const CATEGORY_COLORS: Record<string, string> = {
   [UNIFIED_CATEGORIES.TRIGGERS_EVENTS]: '#10b981',
@@ -91,12 +76,12 @@ export const CATEGORY_COLORS: Record<string, string> = {
   [UNIFIED_CATEGORIES.SOCIAL_MEDIA]: '#f59e0b',
   [UNIFIED_CATEGORIES.ECOMMERCE]: '#16a34a',
   [UNIFIED_CATEGORIES.SECURITY_AUTH]: '#7c3aed',
-}
+};
 
 // Helper function to get all unified categories
 export const getUnifiedCategoryList = () => {
-  return Object.values(UNIFIED_CATEGORIES)
-}
+  return Object.values(UNIFIED_CATEGORIES);
+};
 
 // Helper function to get category metadata
 export const getCategoryMetadata = (category: string) => {
@@ -105,5 +90,5 @@ export const getCategoryMetadata = (category: string) => {
     icon: CATEGORY_ICONS[category],
     description: CATEGORY_DESCRIPTIONS[category],
     color: CATEGORY_COLORS[category],
-  }
-}
+  };
+};

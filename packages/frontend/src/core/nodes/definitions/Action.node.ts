@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import type { INodeType, INodeTypeDescription } from '../types'
+import type { INodeType, INodeTypeDescription } from '../types';
 
 export class ActionNode implements INodeType {
   description: INodeTypeDescription = {
@@ -143,23 +143,19 @@ export class ActionNode implements INodeType {
     ],
     subtitle:
       '={{$parameter["actionType"] === "http" ? $parameter["method"] + " " + $parameter["url"] : $parameter["actionType"]}}',
-  }
+  };
 
   async execute(this: any): Promise<any> {
-    const actionType = this.getNodeParameter('actionType', 'transform')
-    const inputData = this.getInputData()
+    const actionType = this.getNodeParameter('actionType', 'transform');
+    const inputData = this.getInputData();
 
     switch (actionType) {
       case 'http': {
-        const url = this.getNodeParameter('url', '') as string
-        const method = this.getNodeParameter('method', 'GET') as string
-        const headers = JSON.parse(
-          this.getNodeParameter('headers', '{}') as string
-        )
+        const url = this.getNodeParameter('url', '') as string;
+        const method = this.getNodeParameter('method', 'GET') as string;
+        const headers = JSON.parse(this.getNodeParameter('headers', '{}') as string);
         const body =
-          method !== 'GET'
-            ? JSON.parse(this.getNodeParameter('body', '{}') as string)
-            : undefined
+          method !== 'GET' ? JSON.parse(this.getNodeParameter('body', '{}') as string) : undefined;
 
         // Mock HTTP request for now
         return [
@@ -173,14 +169,11 @@ export class ActionNode implements INodeType {
               timestamp: new Date().toISOString(),
             },
           },
-        ]
+        ];
       }
 
       case 'transform': {
-        const expression = this.getNodeParameter(
-          'expression',
-          '{{$json}}'
-        ) as string
+        const expression = this.getNodeParameter('expression', '{{$json}}') as string;
         // Mock transformation - in real implementation, would evaluate expression
         return inputData.map((item: any) => ({
           json: {
@@ -189,29 +182,23 @@ export class ActionNode implements INodeType {
             expression,
             timestamp: new Date().toISOString(),
           },
-        }))
+        }));
       }
 
       case 'log': {
-        console.log('Action Node Log:', inputData)
+        console.log('Action Node Log:', inputData);
         return inputData.map((item: any) => ({
           json: {
             ...item.json,
             logged: true,
             timestamp: new Date().toISOString(),
           },
-        }))
+        }));
       }
 
       case 'set': {
-        const variableName = this.getNodeParameter(
-          'variableName',
-          'myVariable'
-        ) as string
-        const variableValue = this.getNodeParameter(
-          'variableValue',
-          '{{$json}}'
-        ) as string
+        const variableName = this.getNodeParameter('variableName', 'myVariable') as string;
+        const variableValue = this.getNodeParameter('variableValue', '{{$json}}') as string;
 
         return inputData.map((item: any) => ({
           json: {
@@ -219,11 +206,11 @@ export class ActionNode implements INodeType {
             [variableName]: variableValue,
             timestamp: new Date().toISOString(),
           },
-        }))
+        }));
       }
 
       default:
-        return inputData
+        return inputData;
     }
   }
 }

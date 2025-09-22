@@ -7,24 +7,24 @@
  * - OUTPUT column: Real-time preview and execution results
  */
 
-import React, { useState, useMemo, useCallback } from "react";
-import { Drawer, Tabs, Button, Card, Space, Badge, Tooltip } from "antd";
 import {
-  CloseOutlined,
-  SettingOutlined,
-  PlayCircleOutlined,
   BugOutlined,
-  SaveOutlined,
+  CloseOutlined,
   CopyOutlined,
   FullscreenOutlined,
+  PlayCircleOutlined,
+  SaveOutlined,
+  SettingOutlined,
   SyncOutlined,
-} from "@ant-design/icons";
-import { cn, JsonViewer } from "@/design-system";
-import { useLeanWorkflowStore } from "@/core/stores/leanWorkflowStore";
-import { useEnhancedExecutionStore } from "@/core/stores/enhancedExecutionStore";
-import { nodeRegistry } from "@/core/nodes";
-import EnhancedPropertyRenderer from './EnhancedPropertyRenderer';
+} from '@ant-design/icons';
+import { Badge, Button, Card, Drawer, Space, Tabs, Tooltip } from 'antd';
+import React, { useCallback, useMemo, useState } from 'react';
+import { nodeRegistry } from '@/core/nodes';
+import { useEnhancedExecutionStore } from '@/core/stores/enhancedExecutionStore';
+import { useLeanWorkflowStore } from '@/core/stores/leanWorkflowStore';
+import { cn, JsonViewer } from '@/design-system';
 import type { PropertyValidationResult } from './EnhancedPropertyRenderer';
+import EnhancedPropertyRenderer from './EnhancedPropertyRenderer';
 
 // Simple type definition for property form state
 type PropertyFormState = Record<string, any>;
@@ -66,7 +66,7 @@ const ResizablePanel: React.FC<ResizablePanelProps> = ({
       setStartX(e.clientX);
       setStartWidth(width);
     },
-    [width],
+    [width]
   );
 
   const handleMouseMove = useCallback(
@@ -74,13 +74,10 @@ const ResizablePanel: React.FC<ResizablePanelProps> = ({
       if (!isResizing) return;
 
       const deltaX = e.clientX - startX;
-      const newWidth = Math.max(
-        minWidth,
-        Math.min(maxWidth, startWidth + deltaX),
-      );
+      const newWidth = Math.max(minWidth, Math.min(maxWidth, startWidth + deltaX));
       onResize?.(newWidth);
     },
-    [isResizing, startX, startWidth, minWidth, maxWidth, onResize],
+    [isResizing, startX, startWidth, minWidth, maxWidth, onResize]
   );
 
   const handleMouseUp = useCallback(() => {
@@ -89,31 +86,24 @@ const ResizablePanel: React.FC<ResizablePanelProps> = ({
 
   React.useEffect(() => {
     if (isResizing) {
-      document.addEventListener("mousemove", handleMouseMove);
-      document.addEventListener("mouseup", handleMouseUp);
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
 
       return () => {
-        document.removeEventListener("mousemove", handleMouseMove);
-        document.removeEventListener("mouseup", handleMouseUp);
+        document.removeEventListener('mousemove', handleMouseMove);
+        document.removeEventListener('mouseup', handleMouseUp);
       };
     }
   }, [isResizing, handleMouseMove, handleMouseUp]);
 
   return (
-    <div
-      className="h-full border-r border-gray-700 bg-gray-800 flex flex-col"
-      style={{ width }}
-    >
+    <div className="h-full border-r border-gray-700 bg-gray-800 flex flex-col" style={{ width }}>
       {/* Panel Header */}
       <div className="flex items-center justify-between p-3 border-b border-gray-700 bg-gray-900">
         <div className="flex items-center gap-2">
           <h3 className="text-sm font-semibold text-white">{title}</h3>
           {badge && (
-            <Badge
-              count={badge}
-              className="text-xs"
-              style={{ backgroundColor: "#1890ff" }}
-            />
+            <Badge count={badge} className="text-xs" style={{ backgroundColor: '#1890ff' }} />
           )}
         </div>
         {actions && <Space size="small">{actions}</Space>}
@@ -126,8 +116,8 @@ const ResizablePanel: React.FC<ResizablePanelProps> = ({
       {onResize && (
         <div
           className={cn(
-            "absolute top-0 right-0 w-1 h-full cursor-col-resize bg-transparent hover:bg-blue-500 transition-colors",
-            isResizing && "bg-blue-500",
+            'absolute top-0 right-0 w-1 h-full cursor-col-resize bg-transparent hover:bg-blue-500 transition-colors',
+            isResizing && 'bg-blue-500'
           )}
           onMouseDown={handleMouseDown}
         />
@@ -208,12 +198,7 @@ const InputDataPanel: React.FC<{
                 title={`From: ${sourceNodeId}`}
                 className="bg-gray-900 border-gray-600"
               >
-                <JsonViewer
-                  data={data}
-                  theme="dark"
-                  collapsed={1}
-                  enableClipboard
-                />
+                <JsonViewer data={data} theme="dark" collapsed={1} enableClipboard />
               </Card>
             ))}
           </div>
@@ -225,15 +210,13 @@ const InputDataPanel: React.FC<{
 
 const ConfigurationPanel: React.FC<{ nodeId: string }> = ({ nodeId }) => {
   const { getNodeById, updateNodeParameters } = useLeanWorkflowStore();
-  const [activeTab, setActiveTab] = useState("properties");
+  const [activeTab, setActiveTab] = useState('properties');
   const [formState, setFormState] = useState<PropertyFormState>({});
   const [isValid, setIsValid] = useState(true);
   const [errors, setErrors] = useState<Map<string, string>>(new Map());
 
   const node = getNodeById(nodeId);
-  const nodeDefinition = node
-    ? nodeRegistry.getNodeTypeDescription(node.type)
-    : null;
+  const nodeDefinition = node ? nodeRegistry.getNodeTypeDescription(node.type) : null;
 
   // Get enhanced properties for this node
   const enhancedProperties = useMemo(() => {
@@ -251,11 +234,14 @@ const ConfigurationPanel: React.FC<{ nodeId: string }> = ({ nodeId }) => {
   }, [node]);
 
   // Property change handlers
-  const handlePropertyChange = useCallback((name: string, value: any) => {
-    const newFormState = { ...formState, [name]: value };
-    setFormState(newFormState);
-    updateNodeParameters(nodeId, { [name]: value });
-  }, [formState, nodeId, updateNodeParameters]);
+  const handlePropertyChange = useCallback(
+    (name: string, value: any) => {
+      const newFormState = { ...formState, [name]: value };
+      setFormState(newFormState);
+      updateNodeParameters(nodeId, { [name]: value });
+    },
+    [formState, nodeId, updateNodeParameters]
+  );
 
   const handleValidationChange = useCallback((result: PropertyValidationResult) => {
     setIsValid(result.isValid);
@@ -264,12 +250,12 @@ const ConfigurationPanel: React.FC<{ nodeId: string }> = ({ nodeId }) => {
 
   const handleTest = useCallback(async () => {
     // Implement node testing
-    console.log("Testing node:", nodeId, "with parameters:", formState);
+    console.log('Testing node:', nodeId, 'with parameters:', formState);
   }, [nodeId, formState]);
 
   const handleSave = useCallback(async () => {
     // Save node configuration
-    console.log("Saving node configuration:", nodeId);
+    console.log('Saving node configuration:', nodeId);
   }, [nodeId]);
 
   const actions = [
@@ -295,18 +281,13 @@ const ConfigurationPanel: React.FC<{ nodeId: string }> = ({ nodeId }) => {
       />
     </Tooltip>,
     <Tooltip key="save" title="Save configuration">
-      <Button
-        type="text"
-        size="small"
-        icon={<SaveOutlined />}
-        onClick={handleSave}
-      />
+      <Button type="text" size="small" icon={<SaveOutlined />} onClick={handleSave} />
     </Tooltip>,
   ];
 
   const tabItems = [
     {
-      key: "properties",
+      key: 'properties',
       label: (
         <span>
           Properties
@@ -314,7 +295,7 @@ const ConfigurationPanel: React.FC<{ nodeId: string }> = ({ nodeId }) => {
             <Badge
               count={errors.size}
               size="small"
-              style={{ backgroundColor: "#ff4d4f", marginLeft: 8 }}
+              style={{ backgroundColor: '#ff4d4f', marginLeft: 8 }}
             />
           )}
         </span>
@@ -342,23 +323,21 @@ const ConfigurationPanel: React.FC<{ nodeId: string }> = ({ nodeId }) => {
       ),
     },
     {
-      key: "credentials",
-      label: "Credentials",
+      key: 'credentials',
+      label: 'Credentials',
       children: (
         <div className="p-4">
           <div className="text-center text-gray-500 py-8">
             <div className="text-2xl mb-2">🔐</div>
             <div>Credential management</div>
-            <div className="text-xs mt-2">
-              Configure authentication for this node
-            </div>
+            <div className="text-xs mt-2">Configure authentication for this node</div>
           </div>
         </div>
       ),
     },
     {
-      key: "settings",
-      label: "Settings",
+      key: 'settings',
+      label: 'Settings',
       children: (
         <div className="p-4">
           <div className="text-center text-gray-500 py-8">
@@ -396,9 +375,7 @@ const OutputPreviewPanel: React.FC<{ nodeId: string }> = ({ nodeId }) => {
         icon={<CopyOutlined />}
         onClick={() => {
           if (nodeState?.outputData) {
-            navigator.clipboard.writeText(
-              JSON.stringify(nodeState.outputData, null, 2),
-            );
+            navigator.clipboard.writeText(JSON.stringify(nodeState.outputData, null, 2));
           }
         }}
         disabled={!nodeState?.outputData}
@@ -424,25 +401,17 @@ const OutputPreviewPanel: React.FC<{ nodeId: string }> = ({ nodeId }) => {
       title="Output Preview"
       width={400}
       actions={actions}
-      badge={hasOutput ? "✓" : hasError ? "✗" : undefined}
+      badge={hasOutput ? '✓' : hasError ? '✗' : undefined}
     >
       <div className="p-4">
         {hasError && nodeState?.error ? (
-          <Card
-            className="bg-red-900 border-red-600"
-            title="Execution Error"
-            size="small"
-          >
+          <Card className="bg-red-900 border-red-600" title="Execution Error" size="small">
             <div className="text-red-200 text-sm">
-              <div className="font-semibold mb-2">
-                {nodeState.error.message}
-              </div>
+              <div className="font-semibold mb-2">{nodeState.error.message}</div>
               {nodeState.error.stack && (
                 <details className="mt-2">
                   <summary className="cursor-pointer">Stack Trace</summary>
-                  <pre className="text-xs mt-2 overflow-x-auto">
-                    {nodeState.error.stack}
-                  </pre>
+                  <pre className="text-xs mt-2 overflow-x-auto">{nodeState.error.stack}</pre>
                 </details>
               )}
             </div>
@@ -450,9 +419,7 @@ const OutputPreviewPanel: React.FC<{ nodeId: string }> = ({ nodeId }) => {
         ) : hasOutput ? (
           <div>
             <div className="flex items-center justify-between mb-3">
-              <span className="text-sm font-medium text-green-400">
-                Output Data
-              </span>
+              <span className="text-sm font-medium text-green-400">Output Data</span>
               {nodeState.duration && (
                 <span className="text-xs text-gray-500">
                   {nodeState.duration < 1000
@@ -461,20 +428,13 @@ const OutputPreviewPanel: React.FC<{ nodeId: string }> = ({ nodeId }) => {
                 </span>
               )}
             </div>
-            <JsonViewer
-              data={nodeState.outputData}
-              theme="dark"
-              collapsed={1}
-              enableClipboard
-            />
+            <JsonViewer data={nodeState.outputData} theme="dark" collapsed={1} enableClipboard />
           </div>
         ) : (
           <div className="text-center text-gray-500 py-8">
             <div className="text-2xl mb-2">📤</div>
             <div>No output data</div>
-            <div className="text-xs mt-2">
-              Execute this node to see output data
-            </div>
+            <div className="text-xs mt-2">Execute this node to see output data</div>
           </div>
         )}
       </div>
@@ -505,12 +465,7 @@ export const AdvancedPropertyPanel: React.FC<AdvancedPropertyPanelProps> = ({
             <span>{node.name || node.type}</span>
             <Badge status="processing" text={node.type} />
           </div>
-          <Button
-            type="text"
-            icon={<CloseOutlined />}
-            onClick={onClose}
-            size="small"
-          />
+          <Button type="text" icon={<CloseOutlined />} onClick={onClose} size="small" />
         </div>
       }
       placement="bottom"
@@ -523,11 +478,7 @@ export const AdvancedPropertyPanel: React.FC<AdvancedPropertyPanelProps> = ({
     >
       <div className="flex h-full bg-gray-800">
         {/* INPUT Column */}
-        <InputDataPanel
-          nodeId={nodeId}
-          width={inputPanelWidth}
-          onResize={setInputPanelWidth}
-        />
+        <InputDataPanel nodeId={nodeId} width={inputPanelWidth} onResize={setInputPanelWidth} />
 
         {/* CONFIGURATION Column */}
         <ConfigurationPanel nodeId={nodeId} />

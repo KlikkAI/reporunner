@@ -2,21 +2,21 @@
 // Handles conditional property display, validation, and dynamic option loading
 
 import type {
-  NodeProperty,
-  DisplayOptions,
-  PropertyFormState,
-  PropertyEvaluationContext,
   ConditionalPropertyResult,
-  ValidationRule,
+  DisplayOptions,
+  NodeProperty,
+  PropertyEvaluationContext,
+  PropertyFormState,
   PropertyValue,
-} from "../types/dynamicProperties";
+  ValidationRule,
+} from '../types/dynamicProperties';
 
 /**
  * Evaluates display conditions for a property based on current form state
  */
 export function evaluateDisplayOptions(
   displayOptions: DisplayOptions | undefined,
-  context: PropertyEvaluationContext,
+  context: PropertyEvaluationContext
 ): { visible: boolean; disabled: boolean } {
   if (!displayOptions) {
     return { visible: true, disabled: false };
@@ -29,9 +29,7 @@ export function evaluateDisplayOptions(
   // Handle 'show' conditions
   if (displayOptions.show) {
     visible = false;
-    for (const [propertyName, allowedValues] of Object.entries(
-      displayOptions.show,
-    )) {
+    for (const [propertyName, allowedValues] of Object.entries(displayOptions.show)) {
       const currentValue = formState[propertyName];
       if (allowedValues.includes(currentValue as any)) {
         visible = true;
@@ -42,9 +40,7 @@ export function evaluateDisplayOptions(
 
   // Handle 'hide' conditions
   if (displayOptions.hide && visible) {
-    for (const [propertyName, hiddenValues] of Object.entries(
-      displayOptions.hide,
-    )) {
+    for (const [propertyName, hiddenValues] of Object.entries(displayOptions.hide)) {
       const currentValue = formState[propertyName];
       if (hiddenValues.includes(currentValue as any)) {
         visible = false;
@@ -62,15 +58,12 @@ export function evaluateDisplayOptions(
 export function validateProperty(
   property: NodeProperty,
   value: PropertyValue,
-  _context: PropertyEvaluationContext,
+  _context: PropertyEvaluationContext
 ): { isValid: boolean; errors: string[] } {
   const errors: string[] = [];
 
   // Check required validation
-  if (
-    property.required &&
-    (value === null || value === undefined || value === "")
-  ) {
+  if (property.required && (value === null || value === undefined || value === '')) {
     errors.push(`${property.displayName} is required`);
   }
 
@@ -85,7 +78,7 @@ export function validateProperty(
   }
 
   // Type-specific validation
-  if (value !== null && value !== undefined && value !== "") {
+  if (value !== null && value !== undefined && value !== '') {
     const typeError = validatePropertyType(property, value);
     if (typeError) {
       errors.push(typeError);
@@ -104,43 +97,37 @@ export function validateProperty(
 function validateRule(
   rule: ValidationRule,
   value: PropertyValue,
-  displayName: string,
+  displayName: string
 ): string | null {
   switch (rule.type) {
-    case "required":
-      if (value === null || value === undefined || value === "") {
+    case 'required':
+      if (value === null || value === undefined || value === '') {
         return rule.message || `${displayName} is required`;
       }
       break;
 
-    case "minLength":
+    case 'minLength':
       if (
-        typeof value === "string" &&
-        typeof rule.value === "number" &&
+        typeof value === 'string' &&
+        typeof rule.value === 'number' &&
         value.length < rule.value
       ) {
-        return (
-          rule.message ||
-          `${displayName} must be at least ${rule.value} characters`
-        );
+        return rule.message || `${displayName} must be at least ${rule.value} characters`;
       }
       break;
 
-    case "maxLength":
+    case 'maxLength':
       if (
-        typeof value === "string" &&
-        typeof rule.value === "number" &&
+        typeof value === 'string' &&
+        typeof rule.value === 'number' &&
         value.length > rule.value
       ) {
-        return (
-          rule.message ||
-          `${displayName} must be no more than ${rule.value} characters`
-        );
+        return rule.message || `${displayName} must be no more than ${rule.value} characters`;
       }
       break;
 
-    case "pattern":
-      if (typeof value === "string" && typeof rule.value === "string") {
+    case 'pattern':
+      if (typeof value === 'string' && typeof rule.value === 'string') {
         const regex = new RegExp(rule.value);
         if (!regex.test(value)) {
           return rule.message || `${displayName} format is invalid`;
@@ -148,7 +135,7 @@ function validateRule(
       }
       break;
 
-    case "custom":
+    case 'custom':
       // Custom validation would be handled by external validators
       break;
   }
@@ -159,15 +146,12 @@ function validateRule(
 /**
  * Validates property value against its type constraints
  */
-function validatePropertyType(
-  property: NodeProperty,
-  value: PropertyValue,
-): string | null {
+function validatePropertyType(property: NodeProperty, value: PropertyValue): string | null {
   const { type, min, max, displayName } = property;
 
   switch (type) {
-    case "number":
-      if (typeof value !== "number") {
+    case 'number':
+      if (typeof value !== 'number') {
         try {
           const numValue = Number(value);
           if (isNaN(numValue)) {
@@ -188,14 +172,14 @@ function validatePropertyType(
       }
       break;
 
-    case "boolean":
-      if (typeof value !== "boolean") {
+    case 'boolean':
+      if (typeof value !== 'boolean') {
         return `${displayName} must be true or false`;
       }
       break;
 
-    case "json":
-      if (typeof value === "string") {
+    case 'json':
+      if (typeof value === 'string') {
         try {
           JSON.parse(value);
         } catch {
@@ -204,7 +188,7 @@ function validatePropertyType(
       }
       break;
 
-    case "select":
+    case 'select':
       if (property.options) {
         const validOptions = property.options.map((opt) => opt.value);
         if (!validOptions.includes(value as any)) {
@@ -213,17 +197,15 @@ function validatePropertyType(
       }
       break;
 
-    case "multiSelect":
+    case 'multiSelect':
       if (!Array.isArray(value)) {
         return `${displayName} must be an array`;
       }
       if (property.options) {
         const validOptions = property.options.map((opt) => opt.value);
-        const invalidValues = (value as any[]).filter(
-          (v) => !validOptions.includes(v),
-        );
+        const invalidValues = (value as any[]).filter((v) => !validOptions.includes(v));
         if (invalidValues.length > 0) {
-          return `${displayName} contains invalid options: ${invalidValues.join(", ")}`;
+          return `${displayName} contains invalid options: ${invalidValues.join(', ')}`;
         }
       }
       break;
@@ -237,12 +219,9 @@ function validatePropertyType(
  */
 export function evaluateProperty(
   property: NodeProperty,
-  context: PropertyEvaluationContext,
+  context: PropertyEvaluationContext
 ): ConditionalPropertyResult {
-  const { visible, disabled } = evaluateDisplayOptions(
-    property.displayOptions,
-    context,
-  );
+  const { visible, disabled } = evaluateDisplayOptions(property.displayOptions, context);
   const currentValue = context.formState[property.name];
   validateProperty(property, currentValue, context);
 
@@ -271,27 +250,27 @@ export function getPropertyDefaultValue(property: NodeProperty): PropertyValue {
   }
 
   switch (property.type) {
-    case "string":
-    case "text":
-    case "expression":
-      return "";
-    case "number":
+    case 'string':
+    case 'text':
+    case 'expression':
+      return '';
+    case 'number':
       return property.min || 0;
-    case "boolean":
+    case 'boolean':
       return false;
-    case "select":
-      return property.options?.[0]?.value || "";
-    case "multiSelect":
+    case 'select':
+      return property.options?.[0]?.value || '';
+    case 'multiSelect':
       return [];
-    case "collection":
-    case "fixedCollection":
+    case 'collection':
+    case 'fixedCollection':
       return property.typeOptions?.multipleValues ? [] : {};
-    case "json":
-      return "{}";
-    case "dateTime":
+    case 'json':
+      return '{}';
+    case 'dateTime':
       return new Date().toISOString();
-    case "color":
-      return "#000000";
+    case 'color':
+      return '#000000';
     default:
       return null;
   }
@@ -300,9 +279,7 @@ export function getPropertyDefaultValue(property: NodeProperty): PropertyValue {
 /**
  * Initializes form state for a set of properties
  */
-export function initializeFormState(
-  properties: NodeProperty[],
-): PropertyFormState {
+export function initializeFormState(properties: NodeProperty[]): PropertyFormState {
   const formState: PropertyFormState = {};
 
   for (const property of properties) {
@@ -317,13 +294,10 @@ export function initializeFormState(
  */
 export function getVisibleProperties(
   properties: NodeProperty[],
-  context: PropertyEvaluationContext,
+  context: PropertyEvaluationContext
 ): NodeProperty[] {
   return properties.filter((property) => {
-    const { visible } = evaluateDisplayOptions(
-      property.displayOptions,
-      context,
-    );
+    const { visible } = evaluateDisplayOptions(property.displayOptions, context);
     return visible;
   });
 }
@@ -333,23 +307,16 @@ export function getVisibleProperties(
  */
 export function validateFormState(
   properties: NodeProperty[],
-  context: PropertyEvaluationContext,
+  context: PropertyEvaluationContext
 ): Record<string, string[]> {
   const errors: Record<string, string[]> = {};
 
   for (const property of properties) {
-    const { visible } = evaluateDisplayOptions(
-      property.displayOptions,
-      context,
-    );
+    const { visible } = evaluateDisplayOptions(property.displayOptions, context);
     if (!visible) continue;
 
     const value = context.formState[property.name];
-    const { errors: propertyErrors } = validateProperty(
-      property,
-      value,
-      context,
-    );
+    const { errors: propertyErrors } = validateProperty(property, value, context);
 
     if (propertyErrors.length > 0) {
       errors[property.name] = propertyErrors;
@@ -364,7 +331,7 @@ export function validateFormState(
  */
 export function isFormValid(
   properties: NodeProperty[],
-  context: PropertyEvaluationContext,
+  context: PropertyEvaluationContext
 ): boolean {
   const errors = validateFormState(properties, context);
   return Object.keys(errors).length === 0;
@@ -377,7 +344,7 @@ export function createPropertyContext(
   nodeType: string,
   parameters: Record<string, any>,
   credentials?: any,
-  workflow?: any,
+  workflow?: any
 ): Record<string, any> {
   return {
     nodeType,
@@ -387,6 +354,6 @@ export function createPropertyContext(
     // Add runtime context variables
     $now: new Date().toISOString(),
     $timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-    $env: "development", // Could be configured
+    $env: 'development', // Could be configured
   };
 }

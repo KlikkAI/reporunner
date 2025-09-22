@@ -1,4 +1,4 @@
-export { DatabaseService, DatabaseConfig } from "./database-service";
+export { DatabaseConfig, DatabaseService } from './database-service';
 
 // Export MongoDB schemas (to be added)
 // export * from './mongodb/schemas';

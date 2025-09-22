@@ -13,7 +13,7 @@ export interface ExecutionMetrics {
   workflowId: string;
   startTime: string;
   endTime?: string;
-  status: "running" | "completed" | "failed" | "cancelled";
+  status: 'running' | 'completed' | 'failed' | 'cancelled';
   totalDuration?: number;
   nodeMetrics: NodeMetrics[];
   resourceUsage: ResourceUsage;
@@ -27,7 +27,7 @@ export interface NodeMetrics {
   startTime: string;
   endTime?: string;
   duration?: number;
-  status: "pending" | "running" | "completed" | "failed" | "skipped";
+  status: 'pending' | 'running' | 'completed' | 'failed' | 'skipped';
   inputSize?: number;
   outputSize?: number;
   memoryUsage?: number;
@@ -60,7 +60,7 @@ export interface ResourceUsage {
 export interface ExecutionError {
   nodeId: string;
   timestamp: string;
-  type: "timeout" | "network" | "auth" | "validation" | "runtime";
+  type: 'timeout' | 'network' | 'auth' | 'validation' | 'runtime';
   message: string;
   stack?: string;
   retry?: {
@@ -102,8 +102,8 @@ export interface WorkflowAnalytics {
 }
 
 export interface BottleneckAnalysis {
-  type: "slow_node" | "memory_pressure" | "network_latency" | "api_limits";
-  severity: "low" | "medium" | "high" | "critical";
+  type: 'slow_node' | 'memory_pressure' | 'network_latency' | 'api_limits';
+  severity: 'low' | 'medium' | 'high' | 'critical';
   nodeId?: string;
   description: string;
   impact: string;
@@ -119,7 +119,7 @@ export interface NodePerformanceStats {
   averageDuration: number;
   failureRate: number;
   resourceScore: number;
-  trend: "improving" | "stable" | "degrading";
+  trend: 'improving' | 'stable' | 'degrading';
   lastExecuted: string;
 }
 
@@ -130,11 +130,7 @@ export interface TimeSeriesPoint {
 }
 
 export interface PredictiveInsight {
-  type:
-    | "performance_degradation"
-    | "cost_spike"
-    | "failure_risk"
-    | "optimization_opportunity";
+  type: 'performance_degradation' | 'cost_spike' | 'failure_risk' | 'optimization_opportunity';
   confidence: number; // 0-1
   timeframe: string;
   description: string;
@@ -152,25 +148,19 @@ export interface CostOptimization {
 }
 
 export interface CostRecommendation {
-  type:
-    | "node_optimization"
-    | "resource_right_sizing"
-    | "caching"
-    | "scheduling";
+  type: 'node_optimization' | 'resource_right_sizing' | 'caching' | 'scheduling';
   nodeId?: string;
   description: string;
   estimatedSavings: number;
   implementation: string;
-  impact: "low" | "medium" | "high";
+  impact: 'low' | 'medium' | 'high';
 }
 
 export class AnalyticsService {
   private executionHistory = new Map<string, ExecutionMetrics>();
   private workflowAnalytics = new Map<string, WorkflowAnalytics>();
   private metricsBuffer: ExecutionMetrics[] = [];
-  private analyticsListeners = new Set<
-    (analytics: WorkflowAnalytics) => void
-  >();
+  private analyticsListeners = new Set<(analytics: WorkflowAnalytics) => void>();
 
   // Configuration
   private readonly BUFFER_SIZE = 100;
@@ -205,7 +195,7 @@ export class AnalyticsService {
     const execution = this.executionHistory.get(executionId);
     if (execution) {
       const existingIndex = execution.nodeMetrics.findIndex(
-        (nm) => nm.nodeId === nodeMetrics.nodeId,
+        (nm) => nm.nodeId === nodeMetrics.nodeId
       );
 
       if (existingIndex >= 0) {
@@ -222,22 +212,15 @@ export class AnalyticsService {
   /**
    * Generate comprehensive workflow analytics
    */
-  generateWorkflowAnalytics(
-    workflowId: string,
-    periodDays: number = 7,
-  ): WorkflowAnalytics {
+  generateWorkflowAnalytics(workflowId: string, periodDays: number = 7): WorkflowAnalytics {
     const endTime = new Date();
-    const startTime = new Date(
-      endTime.getTime() - periodDays * 24 * 60 * 60 * 1000,
-    );
+    const startTime = new Date(endTime.getTime() - periodDays * 24 * 60 * 60 * 1000);
 
-    const relevantExecutions = Array.from(
-      this.executionHistory.values(),
-    ).filter(
+    const relevantExecutions = Array.from(this.executionHistory.values()).filter(
       (exec) =>
         exec.workflowId === workflowId &&
         new Date(exec.startTime) >= startTime &&
-        new Date(exec.startTime) <= endTime,
+        new Date(exec.startTime) <= endTime
     );
 
     const analytics: WorkflowAnalytics = {
@@ -273,8 +256,8 @@ export class AnalyticsService {
 
     slowNodes.forEach((node) => {
       bottlenecks.push({
-        type: "slow_node",
-        severity: node.averageDuration > 30000 ? "critical" : "high",
+        type: 'slow_node',
+        severity: node.averageDuration > 30000 ? 'critical' : 'high',
         nodeId: node.nodeId,
         description: `Node "${node.nodeName}" is executing slowly`,
         impact: `Average execution time: ${(node.averageDuration / 1000).toFixed(2)}s`,
@@ -290,13 +273,12 @@ export class AnalyticsService {
 
     unreliableNodes.forEach((node) => {
       bottlenecks.push({
-        type: "api_limits",
-        severity: node.failureRate > 0.3 ? "critical" : "high",
+        type: 'api_limits',
+        severity: node.failureRate > 0.3 ? 'critical' : 'high',
         nodeId: node.nodeId,
         description: `Node "${node.nodeName}" has high failure rate`,
         impact: `${(node.failureRate * 100).toFixed(1)}% of executions fail`,
-        recommendation:
-          "Review error patterns, add retry logic, or check API limits",
+        recommendation: 'Review error patterns, add retry logic, or check API limits',
         estimatedImprovement: `Potential ${(node.failureRate * 100).toFixed(1)}% reliability improvement`,
       });
     });
@@ -314,45 +296,41 @@ export class AnalyticsService {
     const insights: PredictiveInsight[] = [];
 
     // Predict performance degradation
-    const degradingNodes = analytics.nodePerformance.filter(
-      (node) => node.trend === "degrading",
-    );
+    const degradingNodes = analytics.nodePerformance.filter((node) => node.trend === 'degrading');
 
     if (degradingNodes.length > 0) {
       insights.push({
-        type: "performance_degradation",
+        type: 'performance_degradation',
         confidence: 0.75,
-        timeframe: "next 7 days",
+        timeframe: 'next 7 days',
         description: `${degradingNodes.length} nodes showing performance degradation`,
-        predictedImpact: "15-25% increase in execution time",
+        predictedImpact: '15-25% increase in execution time',
         recommendedActions: [
-          "Review recent changes to affected nodes",
-          "Monitor resource usage patterns",
-          "Consider optimization or caching strategies",
+          'Review recent changes to affected nodes',
+          'Monitor resource usage patterns',
+          'Consider optimization or caching strategies',
         ],
-        basedOn: ["Historical performance trends", "Resource usage patterns"],
+        basedOn: ['Historical performance trends', 'Resource usage patterns'],
       });
     }
 
     // Predict cost spikes
-    const costTrend = this.calculateCostTrend(
-      analytics.resourceTrends.costTrend,
-    );
+    const costTrend = this.calculateCostTrend(analytics.resourceTrends.costTrend);
     if (costTrend > 0.2) {
       // 20% increase trend
       insights.push({
-        type: "cost_spike",
+        type: 'cost_spike',
         confidence: 0.8,
-        timeframe: "next 14 days",
-        description: "Cost trending upward based on resource usage",
+        timeframe: 'next 14 days',
+        description: 'Cost trending upward based on resource usage',
         predictedImpact: `${(costTrend * 100).toFixed(1)}% cost increase`,
         recommendedActions: [
-          "Review resource-intensive nodes",
-          "Implement caching strategies",
-          "Optimize API call patterns",
-          "Consider execution scheduling",
+          'Review resource-intensive nodes',
+          'Implement caching strategies',
+          'Optimize API call patterns',
+          'Consider execution scheduling',
         ],
-        basedOn: ["Resource usage trends", "Historical cost data"],
+        basedOn: ['Resource usage trends', 'Historical cost data'],
       });
     }
 
@@ -377,10 +355,7 @@ export class AnalyticsService {
     const currentCost = this.calculateCurrentCost(analytics);
     const recommendations = this.generateCostRecommendations(analytics);
 
-    const totalSavings = recommendations.reduce(
-      (sum, rec) => sum + rec.estimatedSavings,
-      0,
-    );
+    const totalSavings = recommendations.reduce((sum, rec) => sum + rec.estimatedSavings, 0);
 
     return {
       currentCost,
@@ -401,9 +376,7 @@ export class AnalyticsService {
   /**
    * Subscribe to analytics updates
    */
-  subscribeToAnalytics(
-    callback: (analytics: WorkflowAnalytics) => void,
-  ): () => void {
+  subscribeToAnalytics(callback: (analytics: WorkflowAnalytics) => void): () => void {
     this.analyticsListeners.add(callback);
     return () => this.analyticsListeners.delete(callback);
   }
@@ -411,9 +384,9 @@ export class AnalyticsService {
   // Private helper methods
 
   private calculateExecutionStats(executions: ExecutionMetrics[]) {
-    const completed = executions.filter((e) => e.status === "completed");
-    const failed = executions.filter((e) => e.status === "failed");
-    const cancelled = executions.filter((e) => e.status === "cancelled");
+    const completed = executions.filter((e) => e.status === 'completed');
+    const failed = executions.filter((e) => e.status === 'failed');
+    const cancelled = executions.filter((e) => e.status === 'cancelled');
 
     const durations = completed
       .map((e) => e.totalDuration)
@@ -426,30 +399,16 @@ export class AnalyticsService {
       failed: failed.length,
       cancelled: cancelled.length,
       averageDuration:
-        durations.length > 0
-          ? durations.reduce((sum, d) => sum + d, 0) / durations.length
-          : 0,
-      p50Duration:
-        durations.length > 0
-          ? durations[Math.floor(durations.length * 0.5)]
-          : 0,
-      p95Duration:
-        durations.length > 0
-          ? durations[Math.floor(durations.length * 0.95)]
-          : 0,
-      p99Duration:
-        durations.length > 0
-          ? durations[Math.floor(durations.length * 0.99)]
-          : 0,
+        durations.length > 0 ? durations.reduce((sum, d) => sum + d, 0) / durations.length : 0,
+      p50Duration: durations.length > 0 ? durations[Math.floor(durations.length * 0.5)] : 0,
+      p95Duration: durations.length > 0 ? durations[Math.floor(durations.length * 0.95)] : 0,
+      p99Duration: durations.length > 0 ? durations[Math.floor(durations.length * 0.99)] : 0,
     };
   }
 
   private calculatePerformanceMetrics(executions: ExecutionMetrics[]) {
-    const completed = executions.filter((e) => e.status === "completed");
-    const reliability =
-      executions.length > 0
-        ? (completed.length / executions.length) * 100
-        : 100;
+    const completed = executions.filter((e) => e.status === 'completed');
+    const reliability = executions.length > 0 ? (completed.length / executions.length) * 100 : 100;
 
     const bottlenecks = this.analyzeBottlenecks(executions);
 
@@ -462,8 +421,8 @@ export class AnalyticsService {
   }
 
   private calculateResourceTrends(
-    executions: ExecutionMetrics[],
-  ): WorkflowAnalytics["resourceTrends"] {
+    executions: ExecutionMetrics[]
+  ): WorkflowAnalytics['resourceTrends'] {
     // Group executions by time buckets (e.g., hourly)
     const timeBuckets = new Map<string, ExecutionMetrics[]>();
 
@@ -484,43 +443,34 @@ export class AnalyticsService {
       .sort(([a], [b]) => a.localeCompare(b))
       .forEach(([timestamp, bucketExecutions]) => {
         const avgMemory =
-          bucketExecutions.reduce(
-            (sum, e) => sum + e.resourceUsage.totalMemoryMB,
-            0,
-          ) / bucketExecutions.length;
+          bucketExecutions.reduce((sum, e) => sum + e.resourceUsage.totalMemoryMB, 0) /
+          bucketExecutions.length;
 
         const avgCpu =
-          bucketExecutions.reduce(
-            (sum, e) => sum + e.resourceUsage.totalCpuMs,
-            0,
-          ) / bucketExecutions.length;
+          bucketExecutions.reduce((sum, e) => sum + e.resourceUsage.totalCpuMs, 0) /
+          bucketExecutions.length;
 
         const avgNetwork =
           bucketExecutions.reduce(
-            (sum, e) =>
-              sum +
-              e.resourceUsage.networkBytesIn +
-              e.resourceUsage.networkBytesOut,
-            0,
+            (sum, e) => sum + e.resourceUsage.networkBytesIn + e.resourceUsage.networkBytesOut,
+            0
           ) / bucketExecutions.length;
 
         const avgCost =
-          bucketExecutions.reduce(
-            (sum, e) => sum + (e.resourceUsage.cost?.total || 0),
-            0,
-          ) / bucketExecutions.length;
+          bucketExecutions.reduce((sum, e) => sum + (e.resourceUsage.cost?.total || 0), 0) /
+          bucketExecutions.length;
 
         memoryTrend.push({
-          timestamp: timestamp + ":00:00.000Z",
+          timestamp: timestamp + ':00:00.000Z',
           value: avgMemory,
         });
-        cpuTrend.push({ timestamp: timestamp + ":00:00.000Z", value: avgCpu });
+        cpuTrend.push({ timestamp: timestamp + ':00:00.000Z', value: avgCpu });
         networkTrend.push({
-          timestamp: timestamp + ":00:00.000Z",
+          timestamp: timestamp + ':00:00.000Z',
           value: avgNetwork,
         });
         costTrend.push({
-          timestamp: timestamp + ":00:00.000Z",
+          timestamp: timestamp + ':00:00.000Z',
           value: avgCost,
         });
       });
@@ -528,9 +478,7 @@ export class AnalyticsService {
     return { memoryTrend, cpuTrend, networkTrend, costTrend };
   }
 
-  private calculateNodePerformanceStats(
-    executions: ExecutionMetrics[],
-  ): NodePerformanceStats[] {
+  private calculateNodePerformanceStats(executions: ExecutionMetrics[]): NodePerformanceStats[] {
     const nodeStats = new Map<string, NodePerformanceStats>();
 
     executions.forEach((exec) => {
@@ -544,7 +492,7 @@ export class AnalyticsService {
             averageDuration: 0,
             failureRate: 0,
             resourceScore: 0,
-            trend: "stable",
+            trend: 'stable',
             lastExecuted: nodeMetric.endTime || nodeMetric.startTime,
           });
         }
@@ -554,19 +502,16 @@ export class AnalyticsService {
 
         if (nodeMetric.duration) {
           stats.averageDuration =
-            (stats.averageDuration * (stats.executionCount - 1) +
-              nodeMetric.duration) /
+            (stats.averageDuration * (stats.executionCount - 1) + nodeMetric.duration) /
             stats.executionCount;
         }
 
-        if (nodeMetric.status === "failed") {
+        if (nodeMetric.status === 'failed') {
           stats.failureRate =
-            (stats.failureRate * (stats.executionCount - 1) + 1) /
-            stats.executionCount;
+            (stats.failureRate * (stats.executionCount - 1) + 1) / stats.executionCount;
         } else {
           stats.failureRate =
-            (stats.failureRate * (stats.executionCount - 1)) /
-            stats.executionCount;
+            (stats.failureRate * (stats.executionCount - 1)) / stats.executionCount;
         }
 
         if (nodeMetric.endTime && nodeMetric.endTime > stats.lastExecuted) {
@@ -578,9 +523,7 @@ export class AnalyticsService {
     return Array.from(nodeStats.values());
   }
 
-  private analyzeBottlenecks(
-    _executions: ExecutionMetrics[],
-  ): BottleneckAnalysis[] {
+  private analyzeBottlenecks(_executions: ExecutionMetrics[]): BottleneckAnalysis[] {
     // This is a simplified implementation
     // In production, this would use more sophisticated analysis
     return [];
@@ -589,8 +532,7 @@ export class AnalyticsService {
   private calculateThroughput(executions: ExecutionMetrics[]): number {
     if (executions.length === 0) return 0;
 
-    const timespan =
-      new Date().getTime() - new Date(executions[0].startTime).getTime();
+    const timespan = new Date().getTime() - new Date(executions[0].startTime).getTime();
     const hours = timespan / (1000 * 60 * 60);
     return hours > 0 ? executions.length / hours : 0;
   }
@@ -599,18 +541,13 @@ export class AnalyticsService {
     // Calculate efficiency based on resource utilization
     // This is a simplified scoring system
     const avgMemoryUsage =
-      executions.reduce((sum, e) => sum + e.resourceUsage.totalMemoryMB, 0) /
-      executions.length;
+      executions.reduce((sum, e) => sum + e.resourceUsage.totalMemoryMB, 0) / executions.length;
 
     const avgCpuUsage =
-      executions.reduce((sum, e) => sum + e.resourceUsage.totalCpuMs, 0) /
-      executions.length;
+      executions.reduce((sum, e) => sum + e.resourceUsage.totalCpuMs, 0) / executions.length;
 
     // Simple efficiency score based on resource usage patterns
-    return Math.min(
-      100,
-      Math.max(0, 100 - avgMemoryUsage / 1000 - avgCpuUsage / 10000),
-    );
+    return Math.min(100, Math.max(0, 100 - avgMemoryUsage / 1000 - avgCpuUsage / 10000));
   }
 
   private calculateCostTrend(costTrend: TimeSeriesPoint[]): number {
@@ -619,8 +556,7 @@ export class AnalyticsService {
     const recent = costTrend.slice(-7); // Last 7 points
     const older = costTrend.slice(-14, -7); // Previous 7 points
 
-    const recentAvg =
-      recent.reduce((sum, p) => sum + p.value, 0) / recent.length;
+    const recentAvg = recent.reduce((sum, p) => sum + p.value, 0) / recent.length;
     const olderAvg = older.reduce((sum, p) => sum + p.value, 0) / older.length;
 
     return olderAvg > 0 ? (recentAvg - olderAvg) / olderAvg : 0;
@@ -631,9 +567,7 @@ export class AnalyticsService {
     return latest ? latest.value : 0;
   }
 
-  private generateCostRecommendations(
-    analytics: WorkflowAnalytics,
-  ): CostRecommendation[] {
+  private generateCostRecommendations(analytics: WorkflowAnalytics): CostRecommendation[] {
     const recommendations: CostRecommendation[] = [];
 
     // Find resource-intensive nodes
@@ -644,40 +578,35 @@ export class AnalyticsService {
 
     expensiveNodes.forEach((node) => {
       recommendations.push({
-        type: "node_optimization",
+        type: 'node_optimization',
         nodeId: node.nodeId,
         description: `Optimize "${node.nodeName}" node for better resource efficiency`,
         estimatedSavings: 10, // Simplified calculation
-        implementation: "Review node configuration and add caching",
-        impact: "medium",
+        implementation: 'Review node configuration and add caching',
+        impact: 'medium',
       });
     });
 
     return recommendations;
   }
 
-  private getNodeOptimizationRecommendation(
-    _node: NodePerformanceStats,
-  ): string {
+  private getNodeOptimizationRecommendation(_node: NodePerformanceStats): string {
     const recommendations = [
-      "Add caching to reduce API calls",
-      "Optimize data processing logic",
-      "Review timeout configurations",
-      "Consider parallel processing",
-      "Implement request batching",
+      'Add caching to reduce API calls',
+      'Optimize data processing logic',
+      'Review timeout configurations',
+      'Consider parallel processing',
+      'Implement request batching',
     ];
 
     return recommendations[Math.floor(Math.random() * recommendations.length)];
   }
 
-  private updateResourceUsage(
-    execution: ExecutionMetrics,
-    nodeMetrics: NodeMetrics,
-  ): void {
+  private updateResourceUsage(execution: ExecutionMetrics, nodeMetrics: NodeMetrics): void {
     if (nodeMetrics.memoryUsage) {
       execution.resourceUsage.totalMemoryMB = Math.max(
         execution.resourceUsage.totalMemoryMB,
-        nodeMetrics.memoryUsage,
+        nodeMetrics.memoryUsage
       );
     }
 
@@ -703,7 +632,7 @@ export class AnalyticsService {
     setInterval(() => {
       // Generate analytics for all workflows
       const uniqueWorkflowIds = new Set(
-        Array.from(this.executionHistory.values()).map((e) => e.workflowId),
+        Array.from(this.executionHistory.values()).map((e) => e.workflowId)
       );
 
       uniqueWorkflowIds.forEach((workflowId) => {
@@ -726,7 +655,7 @@ export class AnalyticsService {
           }
         });
       },
-      24 * 60 * 60 * 1000,
+      24 * 60 * 60 * 1000
     ); // Daily cleanup
   }
 }

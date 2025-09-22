@@ -4,68 +4,68 @@
  * bulk operations, and comprehensive expression support
  */
 
-import React, { useState, useCallback, useEffect, useMemo } from "react";
 import {
-  DndContext,
+  AppstoreAddOutlined,
+  CheckCircleOutlined,
+  ClearOutlined,
+  CodeOutlined,
+  DeleteOutlined,
+  DragOutlined,
+  EyeOutlined,
+  InfoCircleOutlined,
+  PlusOutlined,
+  SettingOutlined,
+  ThunderboltOutlined,
+  WarningOutlined,
+} from '@ant-design/icons';
+import {
   closestCenter,
+  DndContext,
+  type DragEndEvent,
+  DragOverlay,
+  type DragStartEvent,
   KeyboardSensor,
   PointerSensor,
   useSensor,
   useSensors,
-  DragEndEvent,
-  DragStartEvent,
-  DragOverlay,
-} from "@dnd-kit/core";
+} from '@dnd-kit/core';
 import {
   arrayMove,
   SortableContext,
   sortableKeyboardCoordinates,
-  verticalListSortingStrategy,
   useSortable,
-} from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 import {
-  Button,
-  Select,
-  Input,
-  Switch,
-  Tooltip,
-  Card,
-  Space,
-  Typography,
-  Tag,
-  Dropdown,
-  Menu,
-  Modal,
   Alert,
-  Row,
+  Badge,
+  Button,
+  Card,
   Col,
   Collapse,
-  Badge,
-  Progress,
+  Dropdown,
   Empty,
-} from "antd";
+  Input,
+  Menu,
+  Modal,
+  Progress,
+  Row,
+  Select,
+  Space,
+  Switch,
+  Tag,
+  Tooltip,
+  Typography,
+} from 'antd';
+import type React from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { ExpressionUtils } from '../../../core/utils/expressionEvaluator';
 import {
-  PlusOutlined,
-  DeleteOutlined,
-  DragOutlined,
-  ClearOutlined,
-  AppstoreAddOutlined,
-  EyeOutlined,
-  SettingOutlined,
-  ThunderboltOutlined,
-  CodeOutlined,
-  InfoCircleOutlined,
-  WarningOutlined,
-  CheckCircleOutlined,
-} from "@ant-design/icons";
-
-import {
-  TypeInferenceEngine,
   AdvancedTypeValidator,
   AssignmentValidator,
-} from "../../../core/utils/typeValidation";
-import { ExpressionUtils } from "../../../core/utils/expressionEvaluator";
+  TypeInferenceEngine,
+} from '../../../core/utils/typeValidation';
 
 const { Text, Title } = Typography;
 const { Option } = Select;
@@ -75,13 +75,7 @@ const { Panel } = Collapse;
 interface IAdvancedAssignment {
   id: string;
   name: string;
-  type:
-    | "stringValue"
-    | "numberValue"
-    | "booleanValue"
-    | "arrayValue"
-    | "objectValue"
-    | "dateValue";
+  type: 'stringValue' | 'numberValue' | 'booleanValue' | 'arrayValue' | 'objectValue' | 'dateValue';
   value: any;
   expression?: boolean;
   validation?: {
@@ -138,12 +132,12 @@ const AdvancedAssignmentItem: React.FC<{
   disabled,
   autoDetectTypes = true,
   allowedTypes = [
-    "stringValue",
-    "numberValue",
-    "booleanValue",
-    "arrayValue",
-    "objectValue",
-    "dateValue",
+    'stringValue',
+    'numberValue',
+    'booleanValue',
+    'arrayValue',
+    'objectValue',
+    'dateValue',
   ],
   showTypeSelector = true,
   enableExpressionEditor = true,
@@ -152,18 +146,13 @@ const AdvancedAssignmentItem: React.FC<{
 }) => {
   const [localExpanded, setLocalExpanded] = useState(false);
   const [validationStatus, setValidationStatus] = useState<
-    "idle" | "validating" | "valid" | "invalid"
-  >("idle");
+    'idle' | 'validating' | 'valid' | 'invalid'
+  >('idle');
   const [showExpressionHelp, setShowExpressionHelp] = useState(false);
 
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({ id: assignment.id });
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+    id: assignment.id,
+  });
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -173,44 +162,35 @@ const AdvancedAssignmentItem: React.FC<{
 
   // Auto-detect type when value changes
   useEffect(() => {
-    if (autoDetectTypes && assignment.value && assignment.value !== "") {
+    if (autoDetectTypes && assignment.value && assignment.value !== '') {
       const inferredType = TypeInferenceEngine.inferType(assignment.value);
       if (inferredType !== assignment.type) {
         onUpdate(assignment.id, {
           inferredType,
           type: inferredType as
-            | "stringValue"
-            | "numberValue"
-            | "booleanValue"
-            | "arrayValue"
-            | "objectValue"
-            | "dateValue", // Auto-apply inferred type
+            | 'stringValue'
+            | 'numberValue'
+            | 'booleanValue'
+            | 'arrayValue'
+            | 'objectValue'
+            | 'dateValue', // Auto-apply inferred type
         });
       }
     }
-  }, [
-    assignment.value,
-    autoDetectTypes,
-    assignment.id,
-    assignment.type,
-    onUpdate,
-  ]);
+  }, [assignment.value, autoDetectTypes, assignment.id, assignment.type, onUpdate]);
 
   // Validate assignment
   useEffect(() => {
-    if (enableValidation && assignment.name && assignment.value !== "") {
-      setValidationStatus("validating");
+    if (enableValidation && assignment.name && assignment.value !== '') {
+      setValidationStatus('validating');
 
       const validator = new AssignmentValidator({
         ignoreConversionErrors: true,
         strictMode: false,
       });
-      const result = validator.validateAssignment(
-        assignment,
-        expressionContext,
-      );
+      const result = validator.validateAssignment(assignment, expressionContext);
 
-      setValidationStatus(result.valid ? "valid" : "invalid");
+      setValidationStatus(result.valid ? 'valid' : 'invalid');
       onUpdate(assignment.id, {
         validation: {
           valid: result.valid,
@@ -225,7 +205,7 @@ const AdvancedAssignmentItem: React.FC<{
     (field: keyof IAdvancedAssignment, value: any) => {
       onUpdate(assignment.id, { [field]: value });
     },
-    [assignment.id, onUpdate],
+    [assignment.id, onUpdate]
   );
 
   const handleTypeChange = useCallback(
@@ -236,10 +216,7 @@ const AdvancedAssignmentItem: React.FC<{
           ignoreConversionErrors: true,
           strictMode: false,
         });
-        const convertedValue = validator.convertToType(
-          assignment.value,
-          newType,
-        );
+        const convertedValue = validator.convertToType(assignment.value, newType);
         onUpdate(assignment.id, {
           type: newType as any,
           value: convertedValue,
@@ -248,7 +225,7 @@ const AdvancedAssignmentItem: React.FC<{
         onUpdate(assignment.id, { type: newType as any });
       }
     },
-    [assignment.id, assignment.value, onUpdate],
+    [assignment.id, assignment.value, onUpdate]
   );
 
   const isExpression = ExpressionUtils.hasExpressions(assignment.value);
@@ -257,24 +234,19 @@ const AdvancedAssignmentItem: React.FC<{
     const commonProps = {
       value: assignment.value,
       onChange: (e: any) =>
-        handleFieldChange(
-          "value",
-          typeof e === "object" ? e.target?.value || e : e,
-        ),
+        handleFieldChange('value', typeof e === 'object' ? e.target?.value || e : e),
       disabled,
       placeholder: getPlaceholderForType(assignment.type),
     };
 
     switch (assignment.type) {
-      case "stringValue":
+      case 'stringValue':
         return (
-          <Space.Compact style={{ width: "100%" }}>
+          <Space.Compact style={{ width: '100%' }}>
             <Input
               {...commonProps}
               addonBefore={
-                isExpression ? (
-                  <ThunderboltOutlined style={{ color: "#1890ff" }} />
-                ) : null
+                isExpression ? <ThunderboltOutlined style={{ color: '#1890ff' }} /> : null
               }
             />
             {enableExpressionEditor && (
@@ -288,38 +260,32 @@ const AdvancedAssignmentItem: React.FC<{
           </Space.Compact>
         );
 
-      case "numberValue":
+      case 'numberValue':
         return (
           <Input
             {...commonProps}
             type="number"
-            addonBefore={
-              isExpression ? (
-                <ThunderboltOutlined style={{ color: "#1890ff" }} />
-              ) : null
-            }
+            addonBefore={isExpression ? <ThunderboltOutlined style={{ color: '#1890ff' }} /> : null}
           />
         );
 
-      case "booleanValue":
+      case 'booleanValue':
         return (
           <Select
             value={assignment.value}
-            onChange={(value) => handleFieldChange("value", value)}
+            onChange={(value) => handleFieldChange('value', value)}
             disabled={disabled}
-            style={{ width: "100%" }}
+            style={{ width: '100%' }}
           >
             <Option value={true}>True</Option>
             <Option value={false}>False</Option>
             {isExpression && (
-              <Option value={assignment.value}>
-                Expression: {assignment.value}
-              </Option>
+              <Option value={assignment.value}>Expression: {assignment.value}</Option>
             )}
           </Select>
         );
 
-      case "arrayValue":
+      case 'arrayValue':
         return (
           <Input.TextArea
             {...commonProps}
@@ -328,7 +294,7 @@ const AdvancedAssignmentItem: React.FC<{
           />
         );
 
-      case "objectValue":
+      case 'objectValue':
         return (
           <Input.TextArea
             {...commonProps}
@@ -337,7 +303,7 @@ const AdvancedAssignmentItem: React.FC<{
           />
         );
 
-      case "dateValue":
+      case 'dateValue':
         return (
           <Input
             {...commonProps}
@@ -353,14 +319,12 @@ const AdvancedAssignmentItem: React.FC<{
 
   const getValidationIcon = () => {
     switch (validationStatus) {
-      case "validating":
-        return (
-          <Progress type="circle" size={16} percent={50} showInfo={false} />
-        );
-      case "valid":
-        return <CheckCircleOutlined style={{ color: "#52c41a" }} />;
-      case "invalid":
-        return <WarningOutlined style={{ color: "#ff4d4f" }} />;
+      case 'validating':
+        return <Progress type="circle" size={16} percent={50} showInfo={false} />;
+      case 'valid':
+        return <CheckCircleOutlined style={{ color: '#52c41a' }} />;
+      case 'invalid':
+        return <WarningOutlined style={{ color: '#ff4d4f' }} />;
       default:
         return null;
     }
@@ -372,8 +336,8 @@ const AdvancedAssignmentItem: React.FC<{
         ref={setNodeRef}
         style={style}
         size="small"
-        className={`assignment-item ${isDragging ? "dragging" : ""}`}
-        bodyStyle={{ padding: "16px" }}
+        className={`assignment-item ${isDragging ? 'dragging' : ''}`}
+        bodyStyle={{ padding: '16px' }}
         extra={
           <Space>
             {enableValidation && getValidationIcon()}
@@ -393,7 +357,7 @@ const AdvancedAssignmentItem: React.FC<{
                     icon={<SettingOutlined />}
                     onClick={() => setLocalExpanded(!localExpanded)}
                   >
-                    {localExpanded ? "Collapse" : "Advanced Options"}
+                    {localExpanded ? 'Collapse' : 'Advanced Options'}
                   </Menu.Item>
                   <Menu.Divider />
                   <Menu.Item
@@ -413,32 +377,21 @@ const AdvancedAssignmentItem: React.FC<{
         }
       >
         {/* Header with drag handle and assignment info */}
-        <div style={{ marginBottom: "12px" }}>
+        <div style={{ marginBottom: '12px' }}>
           <Row align="middle" justify="space-between">
             <Col>
               <Space align="center">
-                <div
-                  {...attributes}
-                  {...listeners}
-                  style={{ cursor: "grab", color: "#8c8c8c" }}
-                >
+                <div {...attributes} {...listeners} style={{ cursor: 'grab', color: '#8c8c8c' }}>
                   <DragOutlined />
                 </div>
-                <Badge
-                  count={index + 1}
-                  size="small"
-                  style={{ backgroundColor: "#1890ff" }}
-                >
-                  <Text strong style={{ fontSize: "13px" }}>
+                <Badge count={index + 1} size="small" style={{ backgroundColor: '#1890ff' }}>
+                  <Text strong style={{ fontSize: '13px' }}>
                     Assignment
                   </Text>
                 </Badge>
-                {assignment.inferredType &&
-                  assignment.inferredType !== assignment.type && (
-                    <Tag color="blue">
-                      Auto: {assignment.inferredType.replace("Value", "")}
-                    </Tag>
-                  )}
+                {assignment.inferredType && assignment.inferredType !== assignment.type && (
+                  <Tag color="blue">Auto: {assignment.inferredType.replace('Value', '')}</Tag>
+                )}
                 {isExpression && (
                   <Tag color="purple">
                     <ThunderboltOutlined /> Expression
@@ -450,28 +403,26 @@ const AdvancedAssignmentItem: React.FC<{
         </div>
 
         {/* Main fields */}
-        <Space direction="vertical" style={{ width: "100%" }} size="small">
+        <Space direction="vertical" style={{ width: '100%' }} size="small">
           {/* Field Name with smart suggestions */}
           <div>
             <Text
               type="secondary"
               style={{
-                fontSize: "11px",
-                marginBottom: "4px",
-                display: "block",
+                fontSize: '11px',
+                marginBottom: '4px',
+                display: 'block',
               }}
             >
               Field Name
               <Tooltip title="Use dot notation for nested objects (e.g., user.profile.name)">
-                <InfoCircleOutlined
-                  style={{ marginLeft: "4px", fontSize: "10px" }}
-                />
+                <InfoCircleOutlined style={{ marginLeft: '4px', fontSize: '10px' }} />
               </Tooltip>
             </Text>
             <Input
               placeholder="e.g. user.name, address.city, items[0].value"
               value={assignment.name}
-              onChange={(e) => handleFieldChange("name", e.target.value)}
+              onChange={(e) => handleFieldChange('name', e.target.value)}
               disabled={disabled}
             />
           </div>
@@ -482,20 +433,18 @@ const AdvancedAssignmentItem: React.FC<{
               <Text
                 type="secondary"
                 style={{
-                  fontSize: "11px",
-                  marginBottom: "4px",
-                  display: "block",
+                  fontSize: '11px',
+                  marginBottom: '4px',
+                  display: 'block',
                 }}
               >
                 Field Type
-                {autoDetectTypes && (
-                  <Tag style={{ marginLeft: "8px" }}>Auto-detect</Tag>
-                )}
+                {autoDetectTypes && <Tag style={{ marginLeft: '8px' }}>Auto-detect</Tag>}
               </Text>
               <Select
                 value={assignment.type}
                 onChange={handleTypeChange}
-                style={{ width: "100%" }}
+                style={{ width: '100%' }}
                 disabled={disabled}
               >
                 {allowedTypes.map((type) => (
@@ -515,14 +464,14 @@ const AdvancedAssignmentItem: React.FC<{
             <Text
               type="secondary"
               style={{
-                fontSize: "11px",
-                marginBottom: "4px",
-                display: "block",
+                fontSize: '11px',
+                marginBottom: '4px',
+                display: 'block',
               }}
             >
               Value
               {isExpression && (
-                <Space style={{ marginLeft: "8px" }}>
+                <Space style={{ marginLeft: '8px' }}>
                   <Tag color="purple">Expression Mode</Tag>
                 </Space>
               )}
@@ -532,41 +481,30 @@ const AdvancedAssignmentItem: React.FC<{
 
           {/* Validation feedback */}
           {assignment.validation && !assignment.validation.valid && (
+            <Alert message={assignment.validation.error} type="error" showIcon />
+          )}
+
+          {assignment.validation?.warnings && assignment.validation.warnings.length > 0 && (
             <Alert
-              message={assignment.validation.error}
-              type="error"
+              message={`Warnings: ${assignment.validation.warnings.join(', ')}`}
+              type="warning"
               showIcon
             />
           )}
-
-          {assignment.validation?.warnings &&
-            assignment.validation.warnings.length > 0 && (
-              <Alert
-                message={`Warnings: ${assignment.validation.warnings.join(", ")}`}
-                type="warning"
-                showIcon
-              />
-            )}
 
           {/* Advanced options (collapsible) */}
           {localExpanded && (
             <Collapse size="small" ghost>
               <Panel header="Advanced Options" key="advanced">
-                <Space
-                  direction="vertical"
-                  style={{ width: "100%" }}
-                  size="small"
-                >
+                <Space direction="vertical" style={{ width: '100%' }} size="small">
                   <div>
-                    <Text type="secondary" style={{ fontSize: "11px" }}>
+                    <Text type="secondary" style={{ fontSize: '11px' }}>
                       Description
                     </Text>
                     <Input
                       placeholder="Optional description for this assignment"
-                      value={assignment.description || ""}
-                      onChange={(e) =>
-                        handleFieldChange("description", e.target.value)
-                      }
+                      value={assignment.description || ''}
+                      onChange={(e) => handleFieldChange('description', e.target.value)}
                       disabled={disabled}
                     />
                   </div>
@@ -575,12 +513,10 @@ const AdvancedAssignmentItem: React.FC<{
                     <Switch
                       size="small"
                       checked={assignment.expression || false}
-                      onChange={(checked) =>
-                        handleFieldChange("expression", checked)
-                      }
+                      onChange={(checked) => handleFieldChange('expression', checked)}
                       disabled={disabled}
                     />
-                    <Text style={{ marginLeft: "8px", fontSize: "12px" }}>
+                    <Text style={{ marginLeft: '8px', fontSize: '12px' }}>
                       Force Expression Mode
                     </Text>
                   </div>
@@ -607,7 +543,7 @@ const AdvancedAssignmentItem: React.FC<{
 
 // Expression Help Component
 const ExpressionHelpContent: React.FC<{ context?: any }> = () => (
-  <Space direction="vertical" style={{ width: "100%" }}>
+  <Space direction="vertical" style={{ width: '100%' }}>
     <Alert
       message="Expression Syntax"
       description="Use {{ }} to wrap expressions. You can access input data and perform operations."
@@ -617,7 +553,7 @@ const ExpressionHelpContent: React.FC<{ context?: any }> = () => (
 
     <Collapse>
       <Panel header="Common Expressions" key="common">
-        <ul style={{ paddingLeft: "20px" }}>
+        <ul style={{ paddingLeft: '20px' }}>
           <li>
             <code>{`{{ $json.fieldName }}`}</code> - Access input field
           </li>
@@ -631,13 +567,13 @@ const ExpressionHelpContent: React.FC<{ context?: any }> = () => (
             <code>{`{{ $json.price * 1.2 }}`}</code> - Mathematical operations
           </li>
           <li>
-            <code>{`{{ $json.status === 'active' ? 'enabled' : 'disabled' }}`}</code>{" "}
-            - Conditional logic
+            <code>{`{{ $json.status === 'active' ? 'enabled' : 'disabled' }}`}</code> - Conditional
+            logic
           </li>
         </ul>
       </Panel>
       <Panel header="Built-in Functions" key="functions">
-        <ul style={{ paddingLeft: "20px" }}>
+        <ul style={{ paddingLeft: '20px' }}>
           <li>
             <code>{`{{ now() }}`}</code> - Current date and time
           </li>
@@ -660,21 +596,19 @@ const ExpressionHelpContent: React.FC<{ context?: any }> = () => (
 );
 
 // Main Advanced Assignment Collection Component
-const AdvancedAssignmentCollection: React.FC<
-  AdvancedAssignmentCollectionProps
-> = ({
+const AdvancedAssignmentCollection: React.FC<AdvancedAssignmentCollectionProps> = ({
   assignments,
   onChange,
   inputData = [],
   disabled = false,
   autoDetectTypes = true,
   allowedTypes = [
-    "stringValue",
-    "numberValue",
-    "booleanValue",
-    "arrayValue",
-    "objectValue",
-    "dateValue",
+    'stringValue',
+    'numberValue',
+    'booleanValue',
+    'arrayValue',
+    'objectValue',
+    'dateValue',
   ],
   showTypeSelector = true,
   enableBulkOperations = true,
@@ -684,8 +618,7 @@ const AdvancedAssignmentCollection: React.FC<
   onAssignmentTest,
   onBulkTest,
 }) => {
-  const [draggedAssignment, setDraggedAssignment] =
-    useState<IAdvancedAssignment | null>(null);
+  const [draggedAssignment, setDraggedAssignment] = useState<IAdvancedAssignment | null>(null);
   const [bulkOperationProgress, setBulkOperationProgress] = useState<{
     visible: boolean;
     current: number;
@@ -697,7 +630,7 @@ const AdvancedAssignmentCollection: React.FC<
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
-    }),
+    })
   );
 
   const generateId = useCallback(() => {
@@ -707,9 +640,9 @@ const AdvancedAssignmentCollection: React.FC<
   const handleAddAssignment = useCallback(() => {
     const newAssignment: IAdvancedAssignment = {
       id: generateId(),
-      name: "",
-      type: "stringValue",
-      value: "",
+      name: '',
+      type: 'stringValue',
+      value: '',
     };
     onChange([...assignments, newAssignment]);
   }, [assignments, generateId, onChange]);
@@ -717,21 +650,19 @@ const AdvancedAssignmentCollection: React.FC<
   const handleUpdateAssignment = useCallback(
     (id: string, updates: Partial<IAdvancedAssignment>) => {
       const updatedAssignments = assignments.map((assignment) =>
-        assignment.id === id ? { ...assignment, ...updates } : assignment,
+        assignment.id === id ? { ...assignment, ...updates } : assignment
       );
       onChange(updatedAssignments);
     },
-    [assignments, onChange],
+    [assignments, onChange]
   );
 
   const handleDeleteAssignment = useCallback(
     (id: string) => {
-      const filteredAssignments = assignments.filter(
-        (assignment) => assignment.id !== id,
-      );
+      const filteredAssignments = assignments.filter((assignment) => assignment.id !== id);
       onChange(filteredAssignments);
     },
-    [assignments, onChange],
+    [assignments, onChange]
   );
 
   const handleClearAll = useCallback(() => {
@@ -745,7 +676,7 @@ const AdvancedAssignmentCollection: React.FC<
       visible: true,
       current: 0,
       total: 0,
-      operation: "Analyzing input data...",
+      operation: 'Analyzing input data...',
     });
 
     try {
@@ -755,15 +686,15 @@ const AdvancedAssignmentCollection: React.FC<
       for (let i = 0; i < Math.min(inputData.length, 100); i++) {
         // Sample first 100 items
         const item = inputData[i];
-        if (item.json && typeof item.json === "object") {
-          extractFieldNames(item.json, "", fieldNames, 3); // Max depth 3
+        if (item.json && typeof item.json === 'object') {
+          extractFieldNames(item.json, '', fieldNames, 3); // Max depth 3
         }
 
         setBulkOperationProgress({
           visible: true,
           current: i + 1,
           total: Math.min(inputData.length, 100),
-          operation: "Analyzing input data...",
+          operation: 'Analyzing input data...',
         });
 
         // Yield control periodically
@@ -776,7 +707,7 @@ const AdvancedAssignmentCollection: React.FC<
         visible: true,
         current: 0,
         total: fieldNames.size,
-        operation: "Creating assignments...",
+        operation: 'Creating assignments...',
       });
 
       // Create assignments for each field with auto-detected type
@@ -787,7 +718,7 @@ const AdvancedAssignmentCollection: React.FC<
         const fieldName = fieldArray[i];
 
         // Auto-detect type from sample data
-        let detectedType: string = "stringValue";
+        let detectedType: string = 'stringValue';
         for (const item of inputData.slice(0, 10)) {
           // Check first 10 items
           if (item.json) {
@@ -811,7 +742,7 @@ const AdvancedAssignmentCollection: React.FC<
           visible: true,
           current: i + 1,
           total: fieldNames.size,
-          operation: "Creating assignments...",
+          operation: 'Creating assignments...',
         });
 
         // Yield control periodically
@@ -822,9 +753,7 @@ const AdvancedAssignmentCollection: React.FC<
 
       // Merge with existing assignments (avoid duplicates)
       const existingNames = new Set(assignments.map((a) => a.name));
-      const filteredNewAssignments = newAssignments.filter(
-        (a) => !existingNames.has(a.name),
-      );
+      const filteredNewAssignments = newAssignments.filter((a) => !existingNames.has(a.name));
 
       onChange([...assignments, ...filteredNewAssignments]);
     } finally {
@@ -837,7 +766,7 @@ const AdvancedAssignmentCollection: React.FC<
       const assignment = assignments.find((a) => a.id === event.active.id);
       setDraggedAssignment(assignment || null);
     },
-    [assignments],
+    [assignments]
   );
 
   const handleDragEnd = useCallback(
@@ -852,17 +781,17 @@ const AdvancedAssignmentCollection: React.FC<
         onChange(reorderedAssignments);
       }
     },
-    [assignments, onChange],
+    [assignments, onChange]
   );
 
   const validAssignments = useMemo(
     () => assignments.filter((a) => a.validation?.valid !== false),
-    [assignments],
+    [assignments]
   );
 
   const invalidAssignments = useMemo(
     () => assignments.filter((a) => a.validation?.valid === false),
-    [assignments],
+    [assignments]
   );
 
   return (
@@ -886,20 +815,13 @@ const AdvancedAssignmentCollection: React.FC<
 
       {/* Enhanced Header with Statistics */}
       <div className="bulk-operations">
-        <Row
-          justify="space-between"
-          align="middle"
-          style={{ marginBottom: "12px" }}
-        >
+        <Row justify="space-between" align="middle" style={{ marginBottom: '12px' }}>
           <Col>
             <Space align="center">
               <Title level={5} style={{ margin: 0 }}>
                 Field Assignments
               </Title>
-              <Badge
-                count={assignments.length}
-                style={{ backgroundColor: "#1890ff" }}
-              />
+              <Badge count={assignments.length} style={{ backgroundColor: '#1890ff' }} />
               {validAssignments.length > 0 && (
                 <Tag color="success">{validAssignments.length} valid</Tag>
               )}
@@ -955,12 +877,12 @@ const AdvancedAssignmentCollection: React.FC<
           </Col>
         </Row>
 
-        <Text type="secondary" style={{ fontSize: "12px" }}>
-          Configure field assignments with type validation, expression support,
-          and drag-and-drop reordering.
+        <Text type="secondary" style={{ fontSize: '12px' }}>
+          Configure field assignments with type validation, expression support, and drag-and-drop
+          reordering.
           {enableExpressionEditor && (
             <>
-              {" "}
+              {' '}
               Use <Tag>{`{{ expression }}`}</Tag> syntax for dynamic values.
             </>
           )}
@@ -969,18 +891,15 @@ const AdvancedAssignmentCollection: React.FC<
 
       {/* Bulk Operation Progress */}
       {bulkOperationProgress?.visible && (
-        <div style={{ marginBottom: "16px" }}>
+        <div style={{ marginBottom: '16px' }}>
           <Progress
             percent={Math.round(
-              (bulkOperationProgress.current / bulkOperationProgress.total) *
-                100,
+              (bulkOperationProgress.current / bulkOperationProgress.total) * 100
             )}
             status="active"
-            format={() =>
-              `${bulkOperationProgress.current}/${bulkOperationProgress.total}`
-            }
+            format={() => `${bulkOperationProgress.current}/${bulkOperationProgress.total}`}
           />
-          <Text type="secondary" style={{ fontSize: "12px" }}>
+          <Text type="secondary" style={{ fontSize: '12px' }}>
             {bulkOperationProgress.operation}
           </Text>
         </div>
@@ -998,7 +917,7 @@ const AdvancedAssignmentCollection: React.FC<
             items={assignments.map((a) => a.id)}
             strategy={verticalListSortingStrategy}
           >
-            <Space direction="vertical" style={{ width: "100%" }} size="middle">
+            <Space direction="vertical" style={{ width: '100%' }} size="middle">
               {assignments.map((assignment, index) => (
                 <AdvancedAssignmentItem
                   key={assignment.id}
@@ -1025,13 +944,11 @@ const AdvancedAssignmentCollection: React.FC<
                 size="small"
                 style={{
                   opacity: 0.8,
-                  transform: "rotate(5deg)",
-                  boxShadow: "0 8px 24px rgba(0, 0, 0, 0.3)",
+                  transform: 'rotate(5deg)',
+                  boxShadow: '0 8px 24px rgba(0, 0, 0, 0.3)',
                 }}
               >
-                <Text strong>
-                  {draggedAssignment.name || "Untitled Assignment"}
-                </Text>
+                <Text strong>{draggedAssignment.name || 'Untitled Assignment'}</Text>
               </Card>
             )}
           </DragOverlay>
@@ -1041,29 +958,29 @@ const AdvancedAssignmentCollection: React.FC<
           description={
             <Space direction="vertical" align="center">
               <Text type="secondary">No field assignments configured</Text>
-              <Text type="secondary" style={{ fontSize: "12px" }}>
+              <Text type="secondary" style={{ fontSize: '12px' }}>
                 Click "Add Assignment" or "Add All Fields" to get started
               </Text>
             </Space>
           }
           style={{
-            padding: "40px 20px",
-            backgroundColor: "#fafafa",
-            borderRadius: "8px",
-            border: "1px dashed #d9d9d9",
+            padding: '40px 20px',
+            backgroundColor: '#fafafa',
+            borderRadius: '8px',
+            border: '1px dashed #d9d9d9',
           }}
         />
       )}
 
       {/* Add Assignment Button */}
-      <div style={{ marginTop: "16px", textAlign: "center" }}>
+      <div style={{ marginTop: '16px', textAlign: 'center' }}>
         <Button
           type="dashed"
           onClick={handleAddAssignment}
           icon={<PlusOutlined />}
           disabled={disabled}
           size="large"
-          style={{ width: "100%" }}
+          style={{ width: '100%' }}
         >
           Add Field Assignment
         </Button>
@@ -1075,40 +992,37 @@ const AdvancedAssignmentCollection: React.FC<
 // Utility functions
 function getPlaceholderForType(type: string): string {
   const placeholders: Record<string, string> = {
-    stringValue: "Enter text or {{ expression }}",
-    numberValue: "Enter number or {{ expression }}",
-    booleanValue: "true/false or {{ expression }}",
+    stringValue: 'Enter text or {{ expression }}',
+    numberValue: 'Enter number or {{ expression }}',
+    booleanValue: 'true/false or {{ expression }}',
     arrayValue: '["item1", "item2"] or {{ expression }}',
     objectValue: '{"key": "value"} or {{ expression }}',
-    dateValue: "2024-01-01 or {{ expression }}",
+    dateValue: '2024-01-01 or {{ expression }}',
   };
-  return placeholders[type] || "Enter value";
+  return placeholders[type] || 'Enter value';
 }
 
 function getTypeIcon(type: string): React.ReactNode {
   const icons: Record<string, React.ReactNode> = {
-    stringValue: "📝",
-    numberValue: "🔢",
-    booleanValue: "✓",
-    arrayValue: "📋",
-    objectValue: "📦",
-    dateValue: "📅",
+    stringValue: '📝',
+    numberValue: '🔢',
+    booleanValue: '✓',
+    arrayValue: '📋',
+    objectValue: '📦',
+    dateValue: '📅',
   };
-  return icons[type] || "📝";
+  return icons[type] || '📝';
 }
 
 function formatTypeName(type: string): string {
-  return (
-    type.replace("Value", "").charAt(0).toUpperCase() +
-    type.replace("Value", "").slice(1)
-  );
+  return type.replace('Value', '').charAt(0).toUpperCase() + type.replace('Value', '').slice(1);
 }
 
 function extractFieldNames(
   obj: any,
   prefix: string,
   fieldNames: Set<string>,
-  maxDepth: number,
+  maxDepth: number
 ): void {
   if (maxDepth <= 0) return;
 
@@ -1117,18 +1031,14 @@ function extractFieldNames(
     fieldNames.add(fullPath);
 
     // Recursively extract nested field names
-    if (
-      typeof obj[key] === "object" &&
-      obj[key] !== null &&
-      !Array.isArray(obj[key])
-    ) {
+    if (typeof obj[key] === 'object' && obj[key] !== null && !Array.isArray(obj[key])) {
       extractFieldNames(obj[key], fullPath, fieldNames, maxDepth - 1);
     }
   });
 }
 
 function getNestedValue(obj: any, path: string): any {
-  return path.split(".").reduce((current, key) => current?.[key], obj);
+  return path.split('.').reduce((current, key) => current?.[key], obj);
 }
 
 export default AdvancedAssignmentCollection;

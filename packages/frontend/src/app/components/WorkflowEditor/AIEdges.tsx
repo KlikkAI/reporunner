@@ -1,18 +1,13 @@
-import React from 'react'
-import {
-  BaseEdge,
-  EdgeLabelRenderer,
-  getBezierPath,
-  type EdgeProps,
-} from 'reactflow'
-import type { CustomEdgeData } from '@/core/types/edge'
+import type React from 'react';
+import { BaseEdge, EdgeLabelRenderer, type EdgeProps, getBezierPath } from 'reactflow';
+import type { CustomEdgeData } from '@/core/types/edge';
 
 // Base AI Edge component with shared styling
 const BaseAIEdge: React.FC<
   EdgeProps<CustomEdgeData> & {
-    strokeColor: string
-    label?: string
-    animated?: boolean
+    strokeColor: string;
+    label?: string;
+    animated?: boolean;
   }
 > = ({
   id,
@@ -33,7 +28,7 @@ const BaseAIEdge: React.FC<
     targetX,
     targetY,
     targetPosition,
-  })
+  });
 
   return (
     <>
@@ -62,42 +57,40 @@ const BaseAIEdge: React.FC<
         </EdgeLabelRenderer>
       )}
     </>
-  )
-}
+  );
+};
 
 /**
  * AI Language Model Edge - LLM to AI Agent connections
  * Color: Blue (#3B82F6)
  */
-export const AILanguageModelEdge: React.FC<
-  EdgeProps<CustomEdgeData>
-> = props => (
+export const AILanguageModelEdge: React.FC<EdgeProps<CustomEdgeData>> = (props) => (
   <BaseAIEdge {...props} strokeColor="#3B82F6" label="LLM" animated={true} />
-)
+);
 
 /**
  * AI Embedding Edge - Embeddings to Vector Store connections
  * Color: Indigo (#6366F1)
  */
-export const AIEmbeddingEdge: React.FC<EdgeProps<CustomEdgeData>> = props => (
+export const AIEmbeddingEdge: React.FC<EdgeProps<CustomEdgeData>> = (props) => (
   <BaseAIEdge {...props} strokeColor="#6366F1" label="Embeddings" />
-)
+);
 
 /**
  * AI Vector Store Edge - Vector Store to Tool connections
  * Color: Purple (#8B5CF6)
  */
-export const AIVectorStoreEdge: React.FC<EdgeProps<CustomEdgeData>> = props => (
+export const AIVectorStoreEdge: React.FC<EdgeProps<CustomEdgeData>> = (props) => (
   <BaseAIEdge {...props} strokeColor="#8B5CF6" label="Vector DB" />
-)
+);
 
 /**
  * AI Tool Edge - Tool to AI Agent connections
  * Color: Teal (#14B8A6)
  */
-export const AIToolEdge: React.FC<EdgeProps<CustomEdgeData>> = props => (
+export const AIToolEdge: React.FC<EdgeProps<CustomEdgeData>> = (props) => (
   <BaseAIEdge {...props} strokeColor="#14B8A6" label="Tool" animated={true} />
-)
+);
 
 /**
  * AI Edge Markers - Custom arrow markers for AI connections
@@ -114,12 +107,7 @@ export const AIEdgeMarkers: React.FC = () => (
       orient="auto"
       markerUnits="strokeWidth"
     >
-      <polygon
-        points="0,0 0,6 9,3"
-        fill="#3B82F6"
-        stroke="#3B82F6"
-        strokeWidth="1"
-      />
+      <polygon points="0,0 0,6 9,3" fill="#3B82F6" stroke="#3B82F6" strokeWidth="1" />
     </marker>
 
     {/* Indigo marker for Embedding connections */}
@@ -132,12 +120,7 @@ export const AIEdgeMarkers: React.FC = () => (
       orient="auto"
       markerUnits="strokeWidth"
     >
-      <polygon
-        points="0,0 0,6 9,3"
-        fill="#6366F1"
-        stroke="#6366F1"
-        strokeWidth="1"
-      />
+      <polygon points="0,0 0,6 9,3" fill="#6366F1" stroke="#6366F1" strokeWidth="1" />
     </marker>
 
     {/* Purple marker for Vector Store connections */}
@@ -150,12 +133,7 @@ export const AIEdgeMarkers: React.FC = () => (
       orient="auto"
       markerUnits="strokeWidth"
     >
-      <polygon
-        points="0,0 0,6 9,3"
-        fill="#8B5CF6"
-        stroke="#8B5CF6"
-        strokeWidth="1"
-      />
+      <polygon points="0,0 0,6 9,3" fill="#8B5CF6" stroke="#8B5CF6" strokeWidth="1" />
     </marker>
 
     {/* Teal marker for Tool connections */}
@@ -168,15 +146,10 @@ export const AIEdgeMarkers: React.FC = () => (
       orient="auto"
       markerUnits="strokeWidth"
     >
-      <polygon
-        points="0,0 0,6 9,3"
-        fill="#14B8A6"
-        stroke="#14B8A6"
-        strokeWidth="1"
-      />
+      <polygon points="0,0 0,6 9,3" fill="#14B8A6" stroke="#14B8A6" strokeWidth="1" />
     </marker>
   </defs>
-)
+);
 
 // CSS for animated edges
 export const AIEdgeStyles = `
@@ -185,4 +158,4 @@ export const AIEdgeStyles = `
       stroke-dashoffset: -10;
     }
   }
-`
+`;

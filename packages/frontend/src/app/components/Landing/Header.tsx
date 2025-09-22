@@ -5,21 +5,22 @@
  * Similar to headers used by Zapier, Make, n8n, etc.
  */
 
-import React, { useState, useEffect } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
-import { useAuthStore } from "@/core/stores/authStore";
 import {
-  Menu,
-  X,
-  ChevronDown,
   ArrowRight,
-  Play,
-  Zap,
+  ChevronDown,
   ExternalLink,
-  User,
   LogIn,
+  Menu,
+  Play,
   Settings,
-} from "lucide-react";
+  User,
+  X,
+  Zap,
+} from 'lucide-react';
+import type React from 'react';
+import { useEffect, useState } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useAuthStore } from '@/core/stores/authStore';
 
 export const Header: React.FC = () => {
   const navigate = useNavigate();
@@ -34,8 +35,8 @@ export const Header: React.FC = () => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
     };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   // Close mobile menu on route change
@@ -46,131 +47,131 @@ export const Header: React.FC = () => {
 
   const handleAuth = () => {
     if (isAuthenticated) {
-      navigate("/app/dashboard");
+      navigate('/app/dashboard');
     } else {
-      navigate("/login");
+      navigate('/login');
     }
   };
 
   const handleGetStarted = () => {
     if (isAuthenticated) {
-      navigate("/app/dashboard");
+      navigate('/app/dashboard');
     } else {
-      navigate("/register");
+      navigate('/register');
     }
   };
 
   const menuItems = [
     {
-      label: "Product",
+      label: 'Product',
       items: [
         {
-          name: "Features",
-          href: "/features",
-          description: "Comprehensive automation features",
+          name: 'Features',
+          href: '/features',
+          description: 'Comprehensive automation features',
         },
         {
-          name: "Integrations",
-          href: "/integrations",
-          description: "150+ integrations available",
+          name: 'Integrations',
+          href: '/integrations',
+          description: '150+ integrations available',
         },
         {
-          name: "Pricing",
-          href: "/pricing",
-          description: "Transparent pricing plans",
+          name: 'Pricing',
+          href: '/pricing',
+          description: 'Transparent pricing plans',
         },
         {
-          name: "Enterprise",
-          href: "/enterprise",
-          description: "Enterprise-grade solutions",
+          name: 'Enterprise',
+          href: '/enterprise',
+          description: 'Enterprise-grade solutions',
         },
         {
-          name: "Self-hosted",
-          href: "/self-hosted",
-          description: "Deploy anywhere",
+          name: 'Self-hosted',
+          href: '/self-hosted',
+          description: 'Deploy anywhere',
         },
         {
-          name: "Roadmap",
-          href: "/roadmap",
-          description: "Product development roadmap",
+          name: 'Roadmap',
+          href: '/roadmap',
+          description: 'Product development roadmap',
         },
       ],
     },
     {
-      label: "Developers",
+      label: 'Developers',
       items: [
         {
-          name: "Documentation",
-          href: "/documentation",
-          description: "Complete guides and tutorials",
+          name: 'Documentation',
+          href: '/documentation',
+          description: 'Complete guides and tutorials',
         },
         {
-          name: "API Reference",
-          href: "/api-reference",
-          description: "REST API documentation",
+          name: 'API Reference',
+          href: '/api-reference',
+          description: 'REST API documentation',
         },
         {
-          name: "Node SDK",
-          href: "/documentation",
-          description: "Build custom nodes",
+          name: 'Node SDK',
+          href: '/documentation',
+          description: 'Build custom nodes',
         },
         {
-          name: "Examples",
-          href: "/documentation",
-          description: "Code examples and templates",
+          name: 'Examples',
+          href: '/documentation',
+          description: 'Code examples and templates',
         },
         {
-          name: "GitHub",
-          href: "https://github.com/reporunner/reporunner",
-          description: "Open source repository",
+          name: 'GitHub',
+          href: 'https://github.com/reporunner/reporunner',
+          description: 'Open source repository',
           external: true,
         },
         {
-          name: "Community",
-          href: "/contact",
-          description: "Join our community",
+          name: 'Community',
+          href: '/contact',
+          description: 'Join our community',
         },
       ],
     },
     {
-      label: "Resources",
+      label: 'Resources',
       items: [
         {
-          name: "Blog",
-          href: "/documentation",
-          description: "Latest insights and tutorials",
+          name: 'Blog',
+          href: '/documentation',
+          description: 'Latest insights and tutorials',
         },
         {
-          name: "Case Studies",
-          href: "/about",
-          description: "Customer success stories",
+          name: 'Case Studies',
+          href: '/about',
+          description: 'Customer success stories',
         },
         {
-          name: "Help Center",
-          href: "/documentation",
-          description: "Support documentation",
+          name: 'Help Center',
+          href: '/documentation',
+          description: 'Support documentation',
         },
         {
-          name: "Status",
-          href: "https://status.reporunner.dev",
-          description: "System status",
+          name: 'Status',
+          href: 'https://status.reporunner.dev',
+          description: 'System status',
           external: true,
         },
       ],
     },
     {
-      label: "Company",
+      label: 'Company',
       items: [
-        { name: "About", href: "/about", description: "Our story and mission" },
-        { name: "Contact", href: "/contact", description: "Get in touch" },
-        { name: "Careers", href: "/about", description: "Join our team" },
+        { name: 'About', href: '/about', description: 'Our story and mission' },
+        { name: 'Contact', href: '/contact', description: 'Get in touch' },
+        { name: 'Careers', href: '/about', description: 'Join our team' },
       ],
     },
   ];
 
   const isActivePage = (href: string) => {
-    if (href === "/" && location.pathname === "/") return true;
-    if (href !== "/" && location.pathname.startsWith(href)) return true;
+    if (href === '/' && location.pathname === '/') return true;
+    if (href !== '/' && location.pathname.startsWith(href)) return true;
     return false;
   };
 
@@ -178,8 +179,8 @@ export const Header: React.FC = () => {
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isScrolled
-          ? "bg-white/95 backdrop-blur-md shadow-lg border-b border-gray-200/50"
-          : "bg-white/80 backdrop-blur-sm"
+          ? 'bg-white/95 backdrop-blur-md shadow-lg border-b border-gray-200/50'
+          : 'bg-white/80 backdrop-blur-sm'
       }`}
     >
       <div className="container mx-auto px-6">
@@ -212,16 +213,14 @@ export const Header: React.FC = () => {
                 {activeDropdown === menu.label && (
                   <div className="absolute top-full left-0 mt-2 w-80 bg-white rounded-xl shadow-xl border border-gray-200 py-4 z-50">
                     <div className="px-4 pb-2 mb-2 border-b border-gray-100">
-                      <h3 className="font-semibold text-gray-900">
-                        {menu.label}
-                      </h3>
+                      <h3 className="font-semibold text-gray-900">{menu.label}</h3>
                     </div>
                     {menu.items.map((item, itemIndex) => (
                       <Link
                         key={itemIndex}
                         to={item.href}
-                        target={item.external ? "_blank" : undefined}
-                        rel={item.external ? "noopener noreferrer" : undefined}
+                        target={item.external ? '_blank' : undefined}
+                        rel={item.external ? 'noopener noreferrer' : undefined}
                         className="flex items-start gap-3 px-4 py-3 hover:bg-gray-50 transition-colors group"
                       >
                         <div className="flex-1">
@@ -229,13 +228,9 @@ export const Header: React.FC = () => {
                             <span className="font-medium text-gray-900 group-hover:text-blue-600">
                               {item.name}
                             </span>
-                            {item.external && (
-                              <ExternalLink className="w-3 h-3 text-gray-400" />
-                            )}
+                            {item.external && <ExternalLink className="w-3 h-3 text-gray-400" />}
                           </div>
-                          <p className="text-sm text-gray-500 mt-1">
-                            {item.description}
-                          </p>
+                          <p className="text-sm text-gray-500 mt-1">{item.description}</p>
                         </div>
                         <ArrowRight className="w-4 h-4 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity mt-1" />
                       </Link>
@@ -251,14 +246,14 @@ export const Header: React.FC = () => {
             {isAuthenticated ? (
               <div className="flex items-center gap-3">
                 <button
-                  onClick={() => navigate("/app/dashboard")}
+                  onClick={() => navigate('/app/dashboard')}
                   className="flex items-center gap-2 px-4 py-2 text-gray-700 hover:text-blue-600 font-medium transition-colors"
                 >
                   <User className="w-4 h-4" />
                   Dashboard
                 </button>
                 <button
-                  onClick={() => navigate("/app/settings")}
+                  onClick={() => navigate('/app/settings')}
                   className="p-2 text-gray-500 hover:text-gray-700 transition-colors"
                   title="Settings"
                 >
@@ -290,11 +285,7 @@ export const Header: React.FC = () => {
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             className="lg:hidden p-2 text-gray-700 hover:text-blue-600 transition-colors"
           >
-            {isMobileMenuOpen ? (
-              <X className="w-6 h-6" />
-            ) : (
-              <Menu className="w-6 h-6" />
-            )}
+            {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
         </div>
 
@@ -307,14 +298,14 @@ export const Header: React.FC = () => {
                 {isAuthenticated ? (
                   <div className="space-y-3">
                     <button
-                      onClick={() => navigate("/app/dashboard")}
+                      onClick={() => navigate('/app/dashboard')}
                       className="w-full flex items-center gap-2 px-4 py-3 text-left text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"
                     >
                       <User className="w-5 h-5" />
                       Dashboard
                     </button>
                     <button
-                      onClick={() => navigate("/app/settings")}
+                      onClick={() => navigate('/app/settings')}
                       className="w-full flex items-center gap-2 px-4 py-3 text-left text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"
                     >
                       <Settings className="w-5 h-5" />
@@ -352,23 +343,19 @@ export const Header: React.FC = () => {
                       <Link
                         key={itemIndex}
                         to={item.href}
-                        target={item.external ? "_blank" : undefined}
-                        rel={item.external ? "noopener noreferrer" : undefined}
+                        target={item.external ? '_blank' : undefined}
+                        rel={item.external ? 'noopener noreferrer' : undefined}
                         className={`block px-4 py-3 rounded-lg transition-colors ${
                           isActivePage(item.href)
-                            ? "bg-blue-50 text-blue-600 font-medium"
-                            : "text-gray-700 hover:bg-gray-50"
+                            ? 'bg-blue-50 text-blue-600 font-medium'
+                            : 'text-gray-700 hover:bg-gray-50'
                         }`}
                       >
                         <div className="flex items-center gap-2">
                           {item.name}
-                          {item.external && (
-                            <ExternalLink className="w-3 h-3 text-gray-400" />
-                          )}
+                          {item.external && <ExternalLink className="w-3 h-3 text-gray-400" />}
                         </div>
-                        <div className="text-sm text-gray-500 mt-1">
-                          {item.description}
-                        </div>
+                        <div className="text-sm text-gray-500 mt-1">{item.description}</div>
                       </Link>
                     ))}
                   </div>

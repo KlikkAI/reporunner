@@ -1,4 +1,4 @@
-import { EventEmitter } from "events";
+import { EventEmitter } from 'events';
 
 export interface EventPayload {
   source: string;
@@ -55,7 +55,7 @@ export class IntegrationEventBus extends EventEmitter {
     source: string,
     event: string,
     data: any,
-    metadata?: Record<string, any>,
+    metadata?: Record<string, any>
   ): Promise<void> {
     const payload: EventPayload = {
       source,
@@ -73,7 +73,7 @@ export class IntegrationEventBus extends EventEmitter {
 
     // Log event
     if (this.config.enableLogging) {
-      this.logEvent("published", payload);
+      this.logEvent('published', payload);
     }
 
     // Add to processing queue
@@ -85,7 +85,7 @@ export class IntegrationEventBus extends EventEmitter {
     }
 
     // Emit for direct listeners
-    this.emit("event:published", payload);
+    this.emit('event:published', payload);
   }
 
   /**
@@ -98,7 +98,7 @@ export class IntegrationEventBus extends EventEmitter {
       filter?: EventFilter;
       once?: boolean;
       priority?: number;
-    } = {},
+    } = {}
   ): string {
     const subscriptionId = this.generateSubscriptionId();
 
@@ -114,7 +114,7 @@ export class IntegrationEventBus extends EventEmitter {
 
     this.subscriptions.set(subscriptionId, subscription);
 
-    this.emit("subscription:created", {
+    this.emit('subscription:created', {
       id: subscriptionId,
       pattern: pattern.toString(),
     });
@@ -129,7 +129,7 @@ export class IntegrationEventBus extends EventEmitter {
     const existed = this.subscriptions.delete(subscriptionId);
 
     if (existed) {
-      this.emit("subscription:removed", { id: subscriptionId });
+      this.emit('subscription:removed', { id: subscriptionId });
     }
 
     return existed;
@@ -158,10 +158,7 @@ export class IntegrationEventBus extends EventEmitter {
     const eventKey = `${payload.source}:${payload.event}`;
 
     // Get matching subscriptions
-    const matchingSubscriptions = this.getMatchingSubscriptions(
-      eventKey,
-      payload,
-    );
+    const matchingSubscriptions = this.getMatchingSubscriptions(eventKey, payload);
 
     // Sort by priority (higher priority first)
     matchingSubscriptions.sort((a, b) => (b.priority || 0) - (a.priority || 0));
@@ -184,21 +181,18 @@ export class IntegrationEventBus extends EventEmitter {
   /**
    * Get matching subscriptions for an event
    */
-  private getMatchingSubscriptions(
-    eventKey: string,
-    payload: EventPayload,
-  ): EventSubscription[] {
+  private getMatchingSubscriptions(eventKey: string, payload: EventPayload): EventSubscription[] {
     const matching: EventSubscription[] = [];
 
     this.subscriptions.forEach((subscription) => {
       // Check pattern match
       let matches = false;
 
-      if (typeof subscription.pattern === "string") {
+      if (typeof subscription.pattern === 'string') {
         // Exact match or wildcard pattern
-        if (subscription.pattern === "*" || subscription.pattern === "**") {
+        if (subscription.pattern === '*' || subscription.pattern === '**') {
           matches = true;
-        } else if (subscription.pattern.includes("*")) {
+        } else if (subscription.pattern.includes('*')) {
           matches = this.matchWildcard(eventKey, subscription.pattern);
         } else {
           matches = eventKey === subscription.pattern;
@@ -226,9 +220,9 @@ export class IntegrationEventBus extends EventEmitter {
   private matchWildcard(text: string, pattern: string): boolean {
     // Convert wildcard pattern to regex
     const regexPattern = pattern
-      .replace(/[.+^${}()|[\]\\]/g, "\\$&")
-      .replace(/\*/g, ".*")
-      .replace(/\?/g, ".");
+      .replace(/[.+^${}()|[\]\\]/g, '\\$&')
+      .replace(/\*/g, '.*')
+      .replace(/\?/g, '.');
 
     const regex = new RegExp(`^${regexPattern}$`);
     return regex.test(text);
@@ -239,7 +233,7 @@ export class IntegrationEventBus extends EventEmitter {
    */
   private async executeHandler(
     subscription: EventSubscription,
-    payload: EventPayload,
+    payload: EventPayload
   ): Promise<void> {
     const startTime = Date.now();
 
@@ -247,7 +241,7 @@ export class IntegrationEventBus extends EventEmitter {
 
     const duration = Date.now() - startTime;
 
-    this.emit("handler:executed", {
+    this.emit('handler:executed', {
       subscriptionId: subscription.id,
       eventKey: `${payload.source}:${payload.event}`,
       duration,
@@ -255,7 +249,7 @@ export class IntegrationEventBus extends EventEmitter {
     });
 
     if (this.config.enableLogging) {
-      this.logEvent("handled", payload, {
+      this.logEvent('handled', payload, {
         subscriptionId: subscription.id,
         duration,
       });
@@ -265,12 +259,8 @@ export class IntegrationEventBus extends EventEmitter {
   /**
    * Handle handler error
    */
-  private handleError(
-    subscription: EventSubscription,
-    payload: EventPayload,
-    error: Error,
-  ): void {
-    this.emit("handler:error", {
+  private handleError(subscription: EventSubscription, payload: EventPayload, error: Error): void {
+    this.emit('handler:error', {
       subscriptionId: subscription.id,
       eventKey: `${payload.source}:${payload.event}`,
       error: error.message,
@@ -278,7 +268,7 @@ export class IntegrationEventBus extends EventEmitter {
     });
 
     if (this.config.enableLogging) {
-      console.error("Event handler error:", {
+      console.error('Event handler error:', {
         subscriptionId: subscription.id,
         event: `${payload.source}:${payload.event}`,
         error: error.message,
@@ -294,9 +284,7 @@ export class IntegrationEventBus extends EventEmitter {
 
     // Trim history if needed
     if (this.eventHistory.length > this.config.maxEventHistory!) {
-      this.eventHistory = this.eventHistory.slice(
-        -this.config.maxEventHistory!,
-      );
+      this.eventHistory = this.eventHistory.slice(-this.config.maxEventHistory!);
     }
   }
 
@@ -335,12 +323,12 @@ export class IntegrationEventBus extends EventEmitter {
   async waitForEvent(
     pattern: string | RegExp,
     timeout: number = 30000,
-    filter?: EventFilter,
+    filter?: EventFilter
   ): Promise<EventPayload> {
     return new Promise((resolve, reject) => {
       const timer = setTimeout(() => {
         this.unsubscribe(subscriptionId);
-        reject(new Error("Event wait timeout"));
+        reject(new Error('Event wait timeout'));
       }, timeout);
 
       const subscriptionId = this.subscribe(
@@ -350,7 +338,7 @@ export class IntegrationEventBus extends EventEmitter {
           this.unsubscribe(subscriptionId);
           resolve(payload);
         },
-        { filter, once: true },
+        { filter, once: true }
       );
     });
   }
@@ -365,11 +353,7 @@ export class IntegrationEventBus extends EventEmitter {
   /**
    * Log event
    */
-  private logEvent(
-    action: string,
-    payload: EventPayload,
-    extra?: Record<string, any>,
-  ): void {
+  private logEvent(action: string, payload: EventPayload, extra?: Record<string, any>): void {
     console.log(`[EventBus] ${action}:`, {
       source: payload.source,
       event: payload.event,
@@ -411,8 +395,7 @@ export class IntegrationEventBus extends EventEmitter {
 
     this.subscriptions.forEach((sub) => {
       const pattern = sub.pattern.toString();
-      stats.subscriptionsByPattern[pattern] =
-        (stats.subscriptionsByPattern[pattern] || 0) + 1;
+      stats.subscriptionsByPattern[pattern] = (stats.subscriptionsByPattern[pattern] || 0) + 1;
     });
 
     return stats;
@@ -435,17 +418,13 @@ export class IntegrationEventBus extends EventEmitter {
 export class EventChannel {
   constructor(
     private bus: IntegrationEventBus,
-    private namespace: string,
+    private namespace: string
   ) {}
 
   /**
    * Publish event to channel
    */
-  async publish(
-    event: string,
-    data: any,
-    metadata?: Record<string, any>,
-  ): Promise<void> {
+  async publish(event: string, data: any, metadata?: Record<string, any>): Promise<void> {
     await this.bus.publish(this.namespace, event, data, metadata);
   }
 
@@ -459,11 +438,11 @@ export class EventChannel {
       filter?: EventFilter;
       once?: boolean;
       priority?: number;
-    },
+    }
   ): string {
     // Prefix pattern with namespace
     const namespacedPattern =
-      typeof pattern === "string"
+      typeof pattern === 'string'
         ? `${this.namespace}:${pattern}`
         : new RegExp(`^${this.namespace}:${pattern.source}$`, pattern.flags);
 
@@ -476,10 +455,10 @@ export class EventChannel {
   async waitForEvent(
     pattern: string | RegExp,
     timeout?: number,
-    filter?: EventFilter,
+    filter?: EventFilter
   ): Promise<EventPayload> {
     const namespacedPattern =
-      typeof pattern === "string"
+      typeof pattern === 'string'
         ? `${this.namespace}:${pattern}`
         : new RegExp(`^${this.namespace}:${pattern.source}$`, pattern.flags);
 

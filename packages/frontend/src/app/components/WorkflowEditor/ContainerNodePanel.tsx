@@ -6,37 +6,38 @@
  * try-catch, and batch containers.
  */
 
-import React, { useState } from 'react';
 import {
-  Card,
+  InfoCircleOutlined,
+  PlusOutlined,
+  QuestionCircleOutlined,
+  ReloadOutlined,
+  ThunderboltOutlined,
+} from '@ant-design/icons';
+import {
+  Badge,
   Button,
+  Card,
+  Collapse,
+  Form,
+  Input,
+  InputNumber,
+  Modal,
+  Select,
   Space,
   Tooltip,
   Typography,
-  Collapse,
-  Badge,
-  Modal,
-  Form,
-  Input,
-  Select,
-  InputNumber,
 } from 'antd';
+import type React from 'react';
+import { useState } from 'react';
 import {
-  PlusOutlined,
-  ReloadOutlined,
-  ThunderboltOutlined,
-  QuestionCircleOutlined,
-  InfoCircleOutlined,
-} from '@ant-design/icons';
-import { cn } from '@/design-system/utils';
-import {
+  type ContainerNodeConfig,
+  createBatchContainer,
+  createConditionalContainer,
   createLoopContainer,
   createParallelContainer,
-  createConditionalContainer,
   createTryCatchContainer,
-  createBatchContainer,
-  type ContainerNodeConfig,
 } from '@/core/types/containerNodes';
+import { cn } from '@/design-system/utils';
 
 const { Title, Text } = Typography;
 const { Panel } = Collapse;
@@ -52,13 +53,14 @@ interface ContainerTemplate {
   description: string;
   icon: string;
   color: string;
-  createFunction: (id: string, name: string, position: { x: number; y: number }) => ContainerNodeConfig;
+  createFunction: (
+    id: string,
+    name: string,
+    position: { x: number; y: number }
+  ) => ContainerNodeConfig;
 }
 
-const ContainerNodePanel: React.FC<ContainerNodePanelProps> = ({
-  onAddContainer,
-  className,
-}) => {
+const ContainerNodePanel: React.FC<ContainerNodePanelProps> = ({ onAddContainer, className }) => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState<ContainerTemplate | null>(null);
   const [createForm] = Form.useForm();
@@ -107,11 +109,14 @@ const ContainerNodePanel: React.FC<ContainerNodePanelProps> = ({
   ];
 
   const handleDragStart = (event: React.DragEvent, template: ContainerTemplate) => {
-    event.dataTransfer.setData('application/reactflow', JSON.stringify({
-      type: 'container',
-      template: template.id,
-      name: template.name,
-    }));
+    event.dataTransfer.setData(
+      'application/reactflow',
+      JSON.stringify({
+        type: 'container',
+        template: template.id,
+        name: template.name,
+      })
+    );
     event.dataTransfer.effectAllowed = 'move';
   };
 
@@ -163,11 +168,7 @@ const ContainerNodePanel: React.FC<ContainerNodePanelProps> = ({
       </div>
 
       <div className="p-4 space-y-4">
-        <Collapse
-          ghost
-          defaultActiveKey={['containers']}
-          className="bg-transparent"
-        >
+        <Collapse ghost defaultActiveKey={['containers']} className="bg-transparent">
           <Panel
             header={
               <div className="flex items-center gap-2">
@@ -196,12 +197,8 @@ const ContainerNodePanel: React.FC<ContainerNodePanelProps> = ({
                       {template.icon}
                     </div>
                     <div className="flex-1">
-                      <div className="text-white font-medium text-sm">
-                        {template.name}
-                      </div>
-                      <div className="text-gray-400 text-xs">
-                        {template.description}
-                      </div>
+                      <div className="text-white font-medium text-sm">{template.name}</div>
+                      <div className="text-gray-400 text-xs">{template.description}</div>
                     </div>
                     <div className="flex gap-1">
                       <Tooltip title="Drag to canvas">
@@ -243,11 +240,10 @@ const ContainerNodePanel: React.FC<ContainerNodePanelProps> = ({
               className="w-full text-left h-auto p-3"
               onClick={() => {
                 // Create a simple loop container
-                const container = createLoopContainer(
-                  `loop_${Date.now()}`,
-                  'Quick Loop',
-                  { x: 200, y: 200 }
-                );
+                const container = createLoopContainer(`loop_${Date.now()}`, 'Quick Loop', {
+                  x: 200,
+                  y: 200,
+                });
                 onAddContainer(container);
               }}
             >
@@ -325,11 +321,7 @@ const ContainerNodePanel: React.FC<ContainerNodePanelProps> = ({
         onOk={() => createForm.submit()}
         width={500}
       >
-        <Form
-          form={createForm}
-          layout="vertical"
-          onFinish={handleCreateContainer}
-        >
+        <Form form={createForm} layout="vertical" onFinish={handleCreateContainer}>
           <Form.Item
             name="name"
             label="Container Name"
@@ -344,9 +336,7 @@ const ContainerNodePanel: React.FC<ContainerNodePanelProps> = ({
                 <span className="text-lg">{selectedTemplate.icon}</span>
                 <span className="font-medium">{selectedTemplate.name}</span>
               </div>
-              <div className="text-gray-600 text-sm">
-                {selectedTemplate.description}
-              </div>
+              <div className="text-gray-600 text-sm">{selectedTemplate.description}</div>
             </div>
           )}
 

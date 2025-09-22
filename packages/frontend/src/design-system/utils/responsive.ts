@@ -1,6 +1,6 @@
 /**
  * Responsive Utilities
- * 
+ *
  * Utilities for handling responsive design and breakpoints
  */
 
@@ -24,6 +24,6 @@ export function mediaQuery(breakpoint: keyof typeof breakpoints) {
  */
 export function useBreakpoint(breakpoint: keyof typeof breakpoints): boolean {
   if (typeof window === 'undefined') return false;
-  
+
   return window.matchMedia(`(min-width: ${breakpoints[breakpoint]})`).matches;
 }

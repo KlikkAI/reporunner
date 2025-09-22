@@ -3,7 +3,7 @@
  * Stores session data in PostgreSQL for persistence and scaling
  */
 
-import mongoose, { Document, Schema } from "mongoose";
+import mongoose, { type Document, Schema } from 'mongoose';
 
 export interface ICollaborationSession extends Document {
   _id: string;
@@ -19,7 +19,7 @@ export interface ICollaborationSession extends Document {
     joinedAt: Date;
     lastSeen: Date;
     lastActivity: Date;
-    role: "owner" | "editor" | "viewer";
+    role: 'owner' | 'editor' | 'viewer';
     cursor?: {
       x: number;
       y: number;
@@ -39,9 +39,9 @@ export interface ICollaborationSession extends Document {
     maxParticipants: number;
     autoSave: boolean;
     autoSaveInterval: number; // minutes
-    conflictResolution: "last-write-wins" | "operational-transform" | "manual";
+    conflictResolution: 'last-write-wins' | 'operational-transform' | 'manual';
   };
-  status: "active" | "paused" | "ended";
+  status: 'active' | 'paused' | 'ended';
   metadata: {
     totalOperations: number;
     totalConflicts: number;
@@ -56,7 +56,7 @@ const collaborationSessionSchema = new Schema<ICollaborationSession>(
     workflowId: {
       type: String,
       required: true,
-      ref: "Workflow",
+      ref: 'Workflow',
     },
     sessionId: {
       type: String,
@@ -66,18 +66,18 @@ const collaborationSessionSchema = new Schema<ICollaborationSession>(
     ownerId: {
       type: String,
       required: true,
-      ref: "User",
+      ref: 'User',
     },
     organizationId: {
       type: String,
-      ref: "Organization",
+      ref: 'Organization',
     },
     participants: [
       {
         userId: {
           type: String,
           required: true,
-          ref: "User",
+          ref: 'User',
         },
         socketId: {
           type: String,
@@ -104,8 +104,8 @@ const collaborationSessionSchema = new Schema<ICollaborationSession>(
         },
         role: {
           type: String,
-          enum: ["owner", "editor", "viewer"],
-          default: "editor",
+          enum: ['owner', 'editor', 'viewer'],
+          default: 'editor',
         },
         cursor: {
           x: { type: Number },
@@ -152,14 +152,14 @@ const collaborationSessionSchema = new Schema<ICollaborationSession>(
       },
       conflictResolution: {
         type: String,
-        enum: ["last-write-wins", "operational-transform", "manual"],
-        default: "operational-transform",
+        enum: ['last-write-wins', 'operational-transform', 'manual'],
+        default: 'operational-transform',
       },
     },
     status: {
       type: String,
-      enum: ["active", "paused", "ended"],
-      default: "active",
+      enum: ['active', 'paused', 'ended'],
+      default: 'active',
     },
     metadata: {
       totalOperations: {
@@ -180,7 +180,7 @@ const collaborationSessionSchema = new Schema<ICollaborationSession>(
     timestamps: true,
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
-  },
+  }
 );
 
 // Indexes for performance
@@ -192,24 +192,17 @@ collaborationSessionSchema.index({ status: 1 });
 collaborationSessionSchema.index({ lastActivity: 1 });
 
 // TTL index to automatically cleanup old sessions (7 days)
-collaborationSessionSchema.index(
-  { lastActivity: 1 },
-  { expireAfterSeconds: 7 * 24 * 60 * 60 },
-);
+collaborationSessionSchema.index({ lastActivity: 1 }, { expireAfterSeconds: 7 * 24 * 60 * 60 });
 
 // Virtual for active participants
-collaborationSessionSchema.virtual("activeParticipants").get(function () {
+collaborationSessionSchema.virtual('activeParticipants').get(function () {
   const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
   return this.participants.filter((p) => p.lastSeen > fiveMinutesAgo);
 });
 
 // Methods
-collaborationSessionSchema.methods.addParticipant = function (
-  participant: any,
-) {
-  const existingIndex = this.participants.findIndex(
-    (p: any) => p.userId === participant.userId,
-  );
+collaborationSessionSchema.methods.addParticipant = function (participant: any) {
+  const existingIndex = this.participants.findIndex((p: any) => p.userId === participant.userId);
 
   if (existingIndex >= 0) {
     // Update existing participant
@@ -231,9 +224,7 @@ collaborationSessionSchema.methods.addParticipant = function (
   return this.save();
 };
 
-collaborationSessionSchema.methods.removeParticipant = function (
-  userId: string,
-) {
+collaborationSessionSchema.methods.removeParticipant = function (userId: string) {
   this.participants = this.participants.filter((p: any) => p.userId !== userId);
   this.lastActivity = new Date();
   return this.save();
@@ -241,7 +232,7 @@ collaborationSessionSchema.methods.removeParticipant = function (
 
 collaborationSessionSchema.methods.updateParticipantPresence = function (
   userId: string,
-  presence: any,
+  presence: any
 ) {
   const participant = this.participants.find((p: any) => p.userId === userId);
   if (participant) {
@@ -262,6 +253,6 @@ collaborationSessionSchema.methods.incrementVersion = function () {
 };
 
 export const CollaborationSession = mongoose.model<ICollaborationSession>(
-  "CollaborationSession",
-  collaborationSessionSchema,
+  'CollaborationSession',
+  collaborationSessionSchema
 );

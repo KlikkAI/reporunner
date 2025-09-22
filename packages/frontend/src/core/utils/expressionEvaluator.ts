@@ -25,7 +25,7 @@ export interface IExpressionContext {
   };
   $execution: {
     id: string;
-    mode: "manual" | "trigger" | "webhook";
+    mode: 'manual' | 'trigger' | 'webhook';
   };
   $now: Date;
   $today: Date;
@@ -48,11 +48,11 @@ export interface IExpressionOptions {
 
 // Expression Type Detection
 enum ExpressionType {
-  SIMPLE = "simple", // {{ $json.field }}
-  COMPLEX = "complex", // {{ $json.field1 + $json.field2 }}
-  CONDITIONAL = "conditional", // {{ $json.status === 'active' ? 'enabled' : 'disabled' }}
-  FUNCTION_CALL = "function", // {{ $json.date.toDate() }}
-  STRING = "string", // Regular string, no expression
+  SIMPLE = 'simple', // {{ $json.field }}
+  COMPLEX = 'complex', // {{ $json.field1 + $json.field2 }}
+  CONDITIONAL = 'conditional', // {{ $json.status === 'active' ? 'enabled' : 'disabled' }}
+  FUNCTION_CALL = 'function', // {{ $json.date.toDate() }}
+  STRING = 'string', // Regular string, no expression
 }
 
 // Built-in Expression Functions
@@ -67,27 +67,24 @@ class ExpressionFunctions {
     return new Date(now.getFullYear(), now.getMonth(), now.getDate());
   }
 
-  static formatDate(
-    date: Date | string,
-    _format: string = "yyyy-MM-dd",
-  ): string {
-    const d = typeof date === "string" ? new Date(date) : date;
+  static formatDate(date: Date | string, _format: string = 'yyyy-MM-dd'): string {
+    const d = typeof date === 'string' ? new Date(date) : date;
     // Basic date formatting - in production would use a proper date library
     // TODO: Implement actual format support
-    return d.toISOString().split("T")[0];
+    return d.toISOString().split('T')[0];
   }
 
   // String Functions
   static trim(str: string): string {
-    return str?.trim() || "";
+    return str?.trim() || '';
   }
 
   static upper(str: string): string {
-    return str?.toUpperCase() || "";
+    return str?.toUpperCase() || '';
   }
 
   static lower(str: string): string {
-    return str?.toLowerCase() || "";
+    return str?.toLowerCase() || '';
   }
 
   static length(str: string | any[]): number {
@@ -100,9 +97,7 @@ class ExpressionFunctions {
   }
 
   static round(num: number, decimals: number = 0): number {
-    return Number(
-      Math.round(parseFloat(num + "e" + decimals)) + "e-" + decimals,
-    );
+    return Number(Math.round(parseFloat(num + 'e' + decimals)) + 'e-' + decimals);
   }
 
   static min(...args: number[]): number {
@@ -123,15 +118,11 @@ class ExpressionFunctions {
   }
 
   static sum(arr: number[]): number {
-    return Array.isArray(arr)
-      ? arr.reduce((sum, val) => sum + (Number(val) || 0), 0)
-      : 0;
+    return Array.isArray(arr) ? arr.reduce((sum, val) => sum + (Number(val) || 0), 0) : 0;
   }
 
   static average(arr: number[]): number {
-    return Array.isArray(arr) && arr.length > 0
-      ? this.sum(arr) / arr.length
-      : 0;
+    return Array.isArray(arr) && arr.length > 0 ? ExpressionFunctions.sum(arr) / arr.length : 0;
   }
 
   // Object Functions
@@ -146,19 +137,19 @@ class ExpressionFunctions {
   // Utility Functions
   static isEmpty(value: any): boolean {
     if (value === null || value === undefined) return true;
-    if (typeof value === "string") return value.trim() === "";
+    if (typeof value === 'string') return value.trim() === '';
     if (Array.isArray(value)) return value.length === 0;
-    if (typeof value === "object") return Object.keys(value).length === 0;
+    if (typeof value === 'object') return Object.keys(value).length === 0;
     return false;
   }
 
   static isNotEmpty(value: any): boolean {
-    return !this.isEmpty(value);
+    return !ExpressionFunctions.isEmpty(value);
   }
 
   static typeOf(value: any): string {
-    if (Array.isArray(value)) return "array";
-    if (value === null) return "null";
+    if (Array.isArray(value)) return 'array';
+    if (value === null) return 'null';
     return typeof value;
   }
 }
@@ -166,7 +157,7 @@ class ExpressionFunctions {
 // Main Expression Evaluator Class
 class ExpressionEvaluator {
   private context: IExpressionContext;
-  // @ts-ignore: Reserved for future expression options implementation
+  // @ts-expect-error: Reserved for future expression options implementation
   private _options: IExpressionOptions;
 
   constructor(context: IExpressionContext, options: IExpressionOptions = {}) {
@@ -176,19 +167,19 @@ class ExpressionEvaluator {
 
   // Detect expression type and patterns
   static detectExpressionType(expression: string): ExpressionType {
-    if (!this.isExpression(expression)) {
+    if (!ExpressionEvaluator.isExpression(expression)) {
       return ExpressionType.STRING;
     }
 
-    const content = this.extractExpressionContent(expression);
+    const content = ExpressionEvaluator.extractExpressionContent(expression);
 
     // Check for conditional (ternary) operator
-    if (content.includes("?") && content.includes(":")) {
+    if (content.includes('?') && content.includes(':')) {
       return ExpressionType.CONDITIONAL;
     }
 
     // Check for function calls
-    if (content.includes("(") && content.includes(")")) {
+    if (content.includes('(') && content.includes(')')) {
       return ExpressionType.FUNCTION_CALL;
     }
 
@@ -202,9 +193,7 @@ class ExpressionEvaluator {
   }
 
   static isExpression(value: string): boolean {
-    return (
-      typeof value === "string" && value.includes("{{") && value.includes("}}")
-    );
+    return typeof value === 'string' && value.includes('{{') && value.includes('}}');
   }
 
   static extractExpressionContent(expression: string): string {
@@ -247,7 +236,7 @@ class ExpressionEvaluator {
           return this.evaluateGenericExpression(content);
       }
     } catch (error) {
-      console.warn("Expression evaluation error:", error);
+      console.warn('Expression evaluation error:', error);
       return expression; // Return original if evaluation fails
     }
   }
@@ -270,11 +259,8 @@ class ExpressionEvaluator {
       const value = this.resolvePath(variable);
       const serializedValue = this.serializeValue(value);
       processedContent = processedContent.replace(
-        new RegExp(
-          "\\$" + variable.replace(/[.*+?^${}()|[\\]\\\\]/g, "\\\\$&"),
-          "g",
-        ),
-        serializedValue,
+        new RegExp('\\$' + variable.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\\\$&'), 'g'),
+        serializedValue
       );
     }
 
@@ -284,11 +270,11 @@ class ExpressionEvaluator {
 
   // Evaluate conditional expressions: condition ? true : false
   private evaluateConditionalExpression(content: string): any {
-    const parts = content.split("?");
+    const parts = content.split('?');
     if (parts.length !== 2) return content;
 
     const condition = parts[0].trim();
-    const branches = parts[1].split(":");
+    const branches = parts[1].split(':');
     if (branches.length !== 2) return content;
 
     const trueValue = branches[0].trim();
@@ -319,8 +305,8 @@ class ExpressionEvaluator {
 
   // Resolve dot-notation paths: json.user.name
   private resolvePath(path: string): any {
-    const cleanPath = path.replace(/^\$/, ""); // Remove leading $
-    const parts = cleanPath.split(".");
+    const cleanPath = path.replace(/^\$/, ''); // Remove leading $
+    const parts = cleanPath.split('.');
 
     let current: any = this.context;
 
@@ -348,7 +334,7 @@ class ExpressionEvaluator {
 
   // Extract variable references from expression content
   private extractVariableReferences(content: string): string[] {
-    const regex = /\$([a-zA-Z_][a-zA-Z0-9_.\[\]]*)/g;
+    const regex = /\$([a-zA-Z_][a-zA-Z0-9_.[\]]*)/g;
     const variables: string[] = [];
     let match;
 
@@ -361,14 +347,14 @@ class ExpressionEvaluator {
 
   // Serialize values for safe evaluation
   private serializeValue(value: any): string {
-    if (typeof value === "string") {
+    if (typeof value === 'string') {
       return JSON.stringify(value);
     }
-    if (typeof value === "number" || typeof value === "boolean") {
+    if (typeof value === 'number' || typeof value === 'boolean') {
       return String(value);
     }
     if (value === null || value === undefined) {
-      return "null";
+      return 'null';
     }
     return JSON.stringify(value);
   }
@@ -390,13 +376,10 @@ class ExpressionEvaluator {
       };
 
       // Create function with limited scope
-      const func = new Function(
-        ...Object.keys(safeContext),
-        `return ${expression}`,
-      );
+      const func = new Function(...Object.keys(safeContext), `return ${expression}`);
       return func(...Object.values(safeContext));
     } catch (error) {
-      console.warn("Safe evaluation failed:", error);
+      console.warn('Safe evaluation failed:', error);
       return expression;
     }
   }
@@ -404,11 +387,11 @@ class ExpressionEvaluator {
   // Check if value is truthy for conditional evaluation
   private isTruthy(value: any): boolean {
     if (value === null || value === undefined) return false;
-    if (typeof value === "boolean") return value;
-    if (typeof value === "number") return value !== 0;
-    if (typeof value === "string") return value.trim() !== "";
+    if (typeof value === 'boolean') return value;
+    if (typeof value === 'number') return value !== 0;
+    if (typeof value === 'string') return value.trim() !== '';
     if (Array.isArray(value)) return value.length > 0;
-    if (typeof value === "object") return Object.keys(value).length > 0;
+    if (typeof value === 'object') return Object.keys(value).length > 0;
     return Boolean(value);
   }
 
@@ -418,25 +401,16 @@ class ExpressionEvaluator {
     let processed = content;
 
     // Handle .toDate(), .toString(), etc.
-    processed = processed.replace(
-      /(\\$[a-zA-Z0-9_.]+)\\.toDate\\(\\)/g,
-      "new Date($1)",
-    );
-    processed = processed.replace(
-      /(\\$[a-zA-Z0-9_.]+)\\.toString\\(\\)/g,
-      "String($1)",
-    );
-    processed = processed.replace(
-      /(\\$[a-zA-Z0-9_.]+)\\.toNumber\\(\\)/g,
-      "Number($1)",
-    );
+    processed = processed.replace(/(\\$[a-zA-Z0-9_.]+)\\.toDate\\(\\)/g, 'new Date($1)');
+    processed = processed.replace(/(\\$[a-zA-Z0-9_.]+)\\.toString\\(\\)/g, 'String($1)');
+    processed = processed.replace(/(\\$[a-zA-Z0-9_.]+)\\.toNumber\\(\\)/g, 'Number($1)');
 
     return processed;
   }
 
   // Batch evaluate multiple expressions
   evaluateObject(obj: any): any {
-    if (typeof obj === "string" && ExpressionEvaluator.isExpression(obj)) {
+    if (typeof obj === 'string' && ExpressionEvaluator.isExpression(obj)) {
       return this.evaluate(obj);
     }
 
@@ -444,7 +418,7 @@ class ExpressionEvaluator {
       return obj.map((item) => this.evaluateObject(item));
     }
 
-    if (obj && typeof obj === "object") {
+    if (obj && typeof obj === 'object') {
       const result: any = {};
       for (const [key, value] of Object.entries(obj)) {
         result[key] = this.evaluateObject(value);
@@ -460,7 +434,7 @@ class ExpressionEvaluator {
 class ExpressionUtils {
   // Check if a string contains expressions
   static hasExpressions(value: any): boolean {
-    return typeof value === "string" && ExpressionEvaluator.isExpression(value);
+    return typeof value === 'string' && ExpressionEvaluator.isExpression(value);
   }
 
   // Extract all variable names used in expressions
@@ -495,22 +469,22 @@ class ExpressionUtils {
       const content = ExpressionEvaluator.extractExpressionContent(expression);
 
       // Basic syntax validation
-      if (content.includes("{{") || content.includes("}}")) {
-        return { valid: false, error: "Nested expressions are not allowed" };
+      if (content.includes('{{') || content.includes('}}')) {
+        return { valid: false, error: 'Nested expressions are not allowed' };
       }
 
       // Check for balanced parentheses
       let parentheses = 0;
       for (const char of content) {
-        if (char === "(") parentheses++;
-        if (char === ")") parentheses--;
+        if (char === '(') parentheses++;
+        if (char === ')') parentheses--;
         if (parentheses < 0) {
-          return { valid: false, error: "Unmatched closing parenthesis" };
+          return { valid: false, error: 'Unmatched closing parenthesis' };
         }
       }
 
       if (parentheses !== 0) {
-        return { valid: false, error: "Unmatched opening parenthesis" };
+        return { valid: false, error: 'Unmatched opening parenthesis' };
       }
 
       return { valid: true };
@@ -538,7 +512,7 @@ class ExpressionUtils {
           label: `$json.${key}`,
           value: `{{ $json.${key} }}`,
           description: `Access ${key} field from input data`,
-          type: "field",
+          type: 'field',
         });
       });
     }
@@ -546,35 +520,35 @@ class ExpressionUtils {
     // Add built-in functions
     suggestions.push(
       {
-        label: "now()",
-        value: "{{ now() }}",
-        description: "Current date and time",
-        type: "function",
+        label: 'now()',
+        value: '{{ now() }}',
+        description: 'Current date and time',
+        type: 'function',
       },
       {
-        label: "today()",
-        value: "{{ today() }}",
-        description: "Current date (no time)",
-        type: "function",
+        label: 'today()',
+        value: '{{ today() }}',
+        description: 'Current date (no time)',
+        type: 'function',
       },
       {
-        label: "trim()",
-        value: "{{ trim($json.field) }}",
-        description: "Remove whitespace",
-        type: "function",
+        label: 'trim()',
+        value: '{{ trim($json.field) }}',
+        description: 'Remove whitespace',
+        type: 'function',
       },
       {
-        label: "upper()",
-        value: "{{ upper($json.field) }}",
-        description: "Convert to uppercase",
-        type: "function",
+        label: 'upper()',
+        value: '{{ upper($json.field) }}',
+        description: 'Convert to uppercase',
+        type: 'function',
       },
       {
-        label: "lower()",
-        value: "{{ lower($json.field) }}",
-        description: "Convert to lowercase",
-        type: "function",
-      },
+        label: 'lower()',
+        value: '{{ lower($json.field) }}',
+        description: 'Convert to lowercase',
+        type: 'function',
+      }
     );
 
     return suggestions;
@@ -582,9 +556,4 @@ class ExpressionUtils {
 }
 
 // Export everything
-export {
-  ExpressionEvaluator,
-  ExpressionFunctions,
-  ExpressionUtils,
-  ExpressionType,
-};
+export { ExpressionEvaluator, ExpressionFunctions, ExpressionUtils, ExpressionType };

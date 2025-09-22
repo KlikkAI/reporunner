@@ -10,12 +10,7 @@
     "packages/sdk"
   ],
   "out": "docs/api",
-  "exclude": [
-    "**/*+(test|spec|e2e).ts",
-    "**/node_modules/**",
-    "**/dist/**",
-    "**/coverage/**"
-  ],
+  "exclude": ["**/*+(test|spec|e2e).ts", "**/node_modules/**", "**/dist/**", "**/coverage/**"],
   "excludeExternals": true,
   "excludePrivate": true,
   "excludeProtected": false,

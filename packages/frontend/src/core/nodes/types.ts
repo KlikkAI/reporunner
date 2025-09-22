@@ -40,69 +40,63 @@ export type DisplayCondition =
   | { _cnd: { regex: string } }
   | { _cnd: { exists: true } };
 
-export type NodeParameterValue =
-  | string
-  | number
-  | boolean
-  | object
-  | null
-  | undefined;
+export type NodeParameterValue = string | number | boolean | object | null | undefined;
 
 export interface IDisplayOptions {
   show?: {
-    "@version"?: Array<number | DisplayCondition>;
+    '@version'?: Array<number | DisplayCondition>;
     [key: string]: Array<NodeParameterValue | DisplayCondition> | undefined;
   };
   hide?: {
-    "@version"?: Array<number | DisplayCondition>;
+    '@version'?: Array<number | DisplayCondition>;
     [key: string]: Array<NodeParameterValue | DisplayCondition> | undefined;
   };
 }
 
 export type NodePropertyType =
   // Basic Input Types
-  | "string"
-  | "number"
-  | "boolean"
-  | "dateTime"
-  | "color"
-  | "file"
-  | "hidden"
+  | 'string'
+  | 'number'
+  | 'boolean'
+  | 'dateTime'
+  | 'color'
+  | 'file'
+  | 'hidden'
 
   // Selection Types
-  | "options"
-  | "multiOptions"
-  | "select"
-  | "multiSelect"
+  | 'options'
+  | 'multiOptions'
+  | 'select'
+  | 'multiSelect'
 
   // Text Types
-  | "text"
-  | "json"
-  | "expression"
+  | 'text'
+  | 'json'
+  | 'expression'
 
   // Advanced Input Types
-  | "assignmentCollection" // Key n8n EditFields feature
-  | "resourceLocator"
-  | "resourceMapper"
-  | "filter"
-  | "curlImport"
-  | "workflowSelector"
+  | 'assignmentCollection' // Key n8n EditFields feature
+  | 'resourceLocator'
+  | 'resourceMapper'
+  | 'filter'
+  | 'curlImport'
+  | 'workflowSelector'
 
   // Collection Types
-  | "collection"
-  | "fixedCollection"
+  | 'collection'
+  | 'fixedCollection'
 
   // Display Types
-  | "notice"
-  | "callout"
-  | "button"
+  | 'notice'
+  | 'callout'
+  | 'button'
 
   // Authentication Types
-  | "credentials"
-  | "credentialsSelect"
+  | 'credentials'
+  | 'credentialsSelect'
 
   // Legacy/Compatibility
-  | "authentication";
+  | 'authentication';
 
 export interface INodePropertyCollection {
   displayName: string;
@@ -119,7 +113,7 @@ export interface INodePropertyTypeOptions {
 
   // Editor Options
   codeAutocomplete?: string;
-  editor?: "json" | "javascript" | "html" | "css" | "sql" | "expression";
+  editor?: 'json' | 'javascript' | 'html' | 'css' | 'sql' | 'expression';
 
   // Number Options
   maxValue?: number;
@@ -167,7 +161,7 @@ export interface INodePropertyTypeOptions {
   loadOptionsMethod?: string;
 
   // Display Options
-  displaySize?: "small" | "medium" | "large";
+  displaySize?: 'small' | 'medium' | 'large';
   placeholder?: string;
 
   // Validation Options
@@ -188,7 +182,7 @@ export interface INodePropertyTypeOptions {
 
   // Resource Mapper Options
   resourceMapper?: {
-    mode: "add" | "upsert" | "update";
+    mode: 'add' | 'upsert' | 'update';
     fieldDependencies: string[];
     resourceMapperField: {
       resource: string;
@@ -204,7 +198,7 @@ export interface INodePropertyTypeOptions {
 
   // Color Options
   colorOptions?: {
-    format?: "hex" | "rgb" | "hsl";
+    format?: 'hex' | 'rgb' | 'hsl';
     presets?: string[];
   };
 }
@@ -251,7 +245,7 @@ export interface INodeProperty {
   maxLength?: number;
   minLength?: number;
   pattern?: string;
-  expressionSupport?: "none" | "full" | "partial";
+  expressionSupport?: 'none' | 'full' | 'partial';
 }
 
 export interface INodeTypeDescription {
@@ -267,8 +261,8 @@ export interface INodeTypeDescription {
     name: string;
     color?: string;
   };
-  inputs: string[] | Array<"main" | "trigger">;
-  outputs: string[] | Array<"main">;
+  inputs: string[] | Array<'main' | 'trigger'>;
+  outputs: string[] | Array<'main'>;
   credentials?: Array<{
     name: string;
     required?: boolean;
@@ -285,7 +279,7 @@ export interface INodeTypeDescription {
   webhooks?: Array<{
     name: string;
     httpMethod: string;
-    responseMode: string | "onReceived";
+    responseMode: string | 'onReceived';
     path: string;
     restartWebhook?: boolean;
   }>;
@@ -392,22 +386,18 @@ export interface WorkflowDefinition {
     [sourceNodeId: string]: {
       [outputIndex: string]: Array<{
         node: string;
-        type: "main" | string;
+        type: 'main' | string;
         index: number;
       }>;
     };
   };
   settings?: {
     errorWorkflow?: string;
-    saveDataErrorExecution?: "all" | "none";
-    saveDataSuccessExecution?: "all" | "none";
+    saveDataErrorExecution?: 'all' | 'none';
+    saveDataSuccessExecution?: 'all' | 'none';
     executionTimeout?: number;
     maxExecutionTimeout?: number;
-    callerPolicy?:
-      | "any"
-      | "none"
-      | "workflowsFromAList"
-      | "workflowsFromSameOwner";
+    callerPolicy?: 'any' | 'none' | 'workflowsFromAList' | 'workflowsFromSameOwner';
   };
   staticData?: {
     [key: string]: any;
@@ -426,30 +416,30 @@ export interface RuntimeNode extends WorkflowNodeInstance {
 
 // Re-export types from dynamic properties and integration modules
 export type {
-  NodeProperty,
-  EnhancedIntegrationNodeType,
-  PropertyFormState,
-  PropertyValue,
-  PropertyType,
-  PropertyOption,
+  CollectionValue,
+  ConditionalPropertyResult,
   DisplayOptions,
+  DynamicNodeConfiguration,
+  EnhancedIntegrationNodeType,
+  NodeProperty,
+  NodePropertyGroup,
+  PropertyEvaluationContext,
+  PropertyFormState,
+  PropertyOption,
+  PropertyType,
+  PropertyValue,
   TypeOptions,
   ValidationRule,
-  CollectionValue,
-  NodePropertyGroup,
-  DynamicNodeConfiguration,
-  PropertyEvaluationContext,
-  ConditionalPropertyResult,
-} from "../types/dynamicProperties";
+} from '../types/dynamicProperties';
 
 export type {
   CredentialRequirement,
   Integration,
   IntegrationNodeType,
+  NodeDefinition,
   NodeExecutionContext,
   NodeExecutionResult,
-  NodeDefinition,
-} from "../types/integration";
+} from '../types/integration';
 
 // Node action result interface
 export interface NodeActionResult {

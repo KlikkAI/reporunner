@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
-import { AuthApiService } from "@/core";
+import type React from 'react';
+import { useEffect, useState } from 'react';
+import { AuthApiService } from '@/core';
 
 const authApiService = new AuthApiService();
 
@@ -21,18 +22,18 @@ interface SettingsData {
     apiAccess: boolean;
   };
   preferences: {
-    theme: "light" | "dark" | "auto";
+    theme: 'light' | 'dark' | 'auto';
     language: string;
-    defaultWorkflowPrivacy: "private" | "team" | "public";
+    defaultWorkflowPrivacy: 'private' | 'team' | 'public';
   };
 }
 
 const Settings: React.FC = () => {
   const [settings, setSettings] = useState<SettingsData>({
     profile: {
-      name: "",
-      email: "",
-      timezone: "UTC-5",
+      name: '',
+      email: '',
+      timezone: 'UTC-5',
     },
     notifications: {
       emailNotifications: true,
@@ -46,15 +47,15 @@ const Settings: React.FC = () => {
       apiAccess: true,
     },
     preferences: {
-      theme: "light",
-      language: "en",
-      defaultWorkflowPrivacy: "private",
+      theme: 'light',
+      language: 'en',
+      defaultWorkflowPrivacy: 'private',
     },
   });
 
   const [activeTab, setActiveTab] = useState<
-    "profile" | "notifications" | "security" | "preferences"
-  >("profile");
+    'profile' | 'notifications' | 'security' | 'preferences'
+  >('profile');
   const [isSaving, setIsSaving] = useState(false);
   const [_isLoading, setIsLoading] = useState(false);
 
@@ -71,11 +72,11 @@ const Settings: React.FC = () => {
         profile: {
           name: `${user.firstName} ${user.lastName}`,
           email: user.email,
-          timezone: "UTC-5", // Default, could be stored in user profile
+          timezone: 'UTC-5', // Default, could be stored in user profile
         },
       }));
     } catch (error) {
-      console.error("Failed to load user profile:", error);
+      console.error('Failed to load user profile:', error);
     } finally {
       setIsLoading(false);
     }
@@ -85,30 +86,26 @@ const Settings: React.FC = () => {
     setIsSaving(true);
     try {
       // Update profile information
-      if (activeTab === "profile") {
-        const names = settings.profile.name.split(" ");
+      if (activeTab === 'profile') {
+        const names = settings.profile.name.split(' ');
         await authApiService.updateProfile({
-          firstName: names[0] || "",
-          lastName: names.slice(1).join(" ") || "",
+          firstName: names[0] || '',
+          lastName: names.slice(1).join(' ') || '',
         });
       }
 
       // For other settings, you would call appropriate API endpoints
       // For now, just show success message
-      alert("Settings saved successfully!");
+      alert('Settings saved successfully!');
     } catch (error) {
-      console.error("Failed to save settings:", error);
-      alert("Failed to save settings. Please try again.");
+      console.error('Failed to save settings:', error);
+      alert('Failed to save settings. Please try again.');
     } finally {
       setIsSaving(false);
     }
   };
 
-  const updateSetting = (
-    section: keyof SettingsData,
-    key: string,
-    value: any,
-  ) => {
+  const updateSetting = (section: keyof SettingsData, key: string, value: any) => {
     setSettings((prev) => ({
       ...prev,
       [section]: {
@@ -119,10 +116,10 @@ const Settings: React.FC = () => {
   };
 
   const tabs = [
-    { id: "profile", name: "Profile", icon: "👤" },
-    { id: "notifications", name: "Notifications", icon: "🔔" },
-    { id: "security", name: "Security", icon: "🔒" },
-    { id: "preferences", name: "Preferences", icon: "⚙️" },
+    { id: 'profile', name: 'Profile', icon: '👤' },
+    { id: 'notifications', name: 'Notifications', icon: '🔔' },
+    { id: 'security', name: 'Security', icon: '🔒' },
+    { id: 'preferences', name: 'Preferences', icon: '⚙️' },
   ];
 
   return (
@@ -130,9 +127,7 @@ const Settings: React.FC = () => {
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-gray-900">Settings</h1>
-        <p className="text-gray-600">
-          Manage your account and application preferences
-        </p>
+        <p className="text-gray-600">Manage your account and application preferences</p>
       </div>
 
       <div className="flex gap-8">
@@ -145,8 +140,8 @@ const Settings: React.FC = () => {
                 onClick={() => setActiveTab(tab.id as any)}
                 className={`w-full flex items-center px-4 py-3 text-left rounded-lg transition-colors ${
                   activeTab === tab.id
-                    ? "bg-blue-50 text-blue-700 border border-blue-200"
-                    : "text-gray-600 hover:bg-gray-50"
+                    ? 'bg-blue-50 text-blue-700 border border-blue-200'
+                    : 'text-gray-600 hover:bg-gray-50'
                 }`}
               >
                 <span className="mr-3 text-lg">{tab.icon}</span>
@@ -160,11 +155,9 @@ const Settings: React.FC = () => {
         <div className="flex-1">
           <div className="bg-white rounded-lg shadow">
             {/* Profile Tab */}
-            {activeTab === "profile" && (
+            {activeTab === 'profile' && (
               <div className="p-6">
-                <h2 className="text-lg font-medium text-gray-900 mb-6">
-                  Profile Information
-                </h2>
+                <h2 className="text-lg font-medium text-gray-900 mb-6">Profile Information</h2>
                 <div className="space-y-6">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -174,9 +167,7 @@ const Settings: React.FC = () => {
                       aria-label="Profile Name"
                       type="text"
                       value={settings.profile.name}
-                      onChange={(e) =>
-                        updateSetting("profile", "name", e.target.value)
-                      }
+                      onChange={(e) => updateSetting('profile', 'name', e.target.value)}
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                     />
                   </div>
@@ -188,22 +179,16 @@ const Settings: React.FC = () => {
                       aria-label="email"
                       type="email"
                       value={settings.profile.email}
-                      onChange={(e) =>
-                        updateSetting("profile", "email", e.target.value)
-                      }
+                      onChange={(e) => updateSetting('profile', 'email', e.target.value)}
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Timezone
-                    </label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Timezone</label>
                     <select
                       aria-label="timezone"
                       value={settings.profile.timezone}
-                      onChange={(e) =>
-                        updateSetting("profile", "timezone", e.target.value)
-                      }
+                      onChange={(e) => updateSetting('profile', 'timezone', e.target.value)}
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                     >
                       <option value="UTC-8">UTC-8 (Pacific)</option>
@@ -217,61 +202,46 @@ const Settings: React.FC = () => {
             )}
 
             {/* Notifications Tab */}
-            {activeTab === "notifications" && (
+            {activeTab === 'notifications' && (
               <div className="p-6">
-                <h2 className="text-lg font-medium text-gray-900 mb-6">
-                  Notification Preferences
-                </h2>
+                <h2 className="text-lg font-medium text-gray-900 mb-6">Notification Preferences</h2>
                 <div className="space-y-6">
                   {[
                     {
-                      key: "emailNotifications",
-                      label: "Email Notifications",
-                      description: "Receive notifications via email",
+                      key: 'emailNotifications',
+                      label: 'Email Notifications',
+                      description: 'Receive notifications via email',
                     },
                     {
-                      key: "workflowFailures",
-                      label: "Workflow Failures",
-                      description: "Get notified when workflows fail",
+                      key: 'workflowFailures',
+                      label: 'Workflow Failures',
+                      description: 'Get notified when workflows fail',
                     },
                     {
-                      key: "weeklyReports",
-                      label: "Weekly Reports",
-                      description: "Receive weekly summary reports",
+                      key: 'weeklyReports',
+                      label: 'Weekly Reports',
+                      description: 'Receive weekly summary reports',
                     },
                     {
-                      key: "maintenanceUpdates",
-                      label: "Maintenance Updates",
-                      description: "System maintenance notifications",
+                      key: 'maintenanceUpdates',
+                      label: 'Maintenance Updates',
+                      description: 'System maintenance notifications',
                     },
                   ].map((item) => (
-                    <div
-                      key={item.key}
-                      className="flex items-center justify-between"
-                    >
+                    <div key={item.key} className="flex items-center justify-between">
                       <div>
-                        <h3 className="text-sm font-medium text-gray-900">
-                          {item.label}
-                        </h3>
-                        <p className="text-sm text-gray-600">
-                          {item.description}
-                        </p>
+                        <h3 className="text-sm font-medium text-gray-900">{item.label}</h3>
+                        <p className="text-sm text-gray-600">{item.description}</p>
                       </div>
                       <label className="relative inline-flex items-center cursor-pointer">
                         <input
                           aria-label="notifications"
                           type="checkbox"
                           checked={
-                            settings.notifications[
-                              item.key as keyof typeof settings.notifications
-                            ]
+                            settings.notifications[item.key as keyof typeof settings.notifications]
                           }
                           onChange={(e) =>
-                            updateSetting(
-                              "notifications",
-                              item.key,
-                              e.target.checked,
-                            )
+                            updateSetting('notifications', item.key, e.target.checked)
                           }
                           className="sr-only peer"
                         />
@@ -284,11 +254,9 @@ const Settings: React.FC = () => {
             )}
 
             {/* Security Tab */}
-            {activeTab === "security" && (
+            {activeTab === 'security' && (
               <div className="p-6">
-                <h2 className="text-lg font-medium text-gray-900 mb-6">
-                  Security Settings
-                </h2>
+                <h2 className="text-lg font-medium text-gray-900 mb-6">Security Settings</h2>
                 <div className="space-y-6">
                   <div className="flex items-center justify-between">
                     <div>
@@ -305,11 +273,7 @@ const Settings: React.FC = () => {
                         type="checkbox"
                         checked={settings.security.twoFactorAuth}
                         onChange={(e) =>
-                          updateSetting(
-                            "security",
-                            "twoFactorAuth",
-                            e.target.checked,
-                          )
+                          updateSetting('security', 'twoFactorAuth', e.target.checked)
                         }
                         className="sr-only peer"
                       />
@@ -324,11 +288,7 @@ const Settings: React.FC = () => {
                       aria-label="security-session time out"
                       value={settings.security.sessionTimeout}
                       onChange={(e) =>
-                        updateSetting(
-                          "security",
-                          "sessionTimeout",
-                          parseInt(e.target.value),
-                        )
+                        updateSetting('security', 'sessionTimeout', parseInt(e.target.value))
                       }
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                     >
@@ -340,25 +300,15 @@ const Settings: React.FC = () => {
                   </div>
                   <div className="flex items-center justify-between">
                     <div>
-                      <h3 className="text-sm font-medium text-gray-900">
-                        API Access
-                      </h3>
-                      <p className="text-sm text-gray-600">
-                        Allow API access to your account
-                      </p>
+                      <h3 className="text-sm font-medium text-gray-900">API Access</h3>
+                      <p className="text-sm text-gray-600">Allow API access to your account</p>
                     </div>
                     <label className="relative inline-flex items-center cursor-pointer">
                       <input
                         aria-label="api access"
                         type="checkbox"
                         checked={settings.security.apiAccess}
-                        onChange={(e) =>
-                          updateSetting(
-                            "security",
-                            "apiAccess",
-                            e.target.checked,
-                          )
-                        }
+                        onChange={(e) => updateSetting('security', 'apiAccess', e.target.checked)}
                         className="sr-only peer"
                       />
                       <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
@@ -369,22 +319,16 @@ const Settings: React.FC = () => {
             )}
 
             {/* Preferences Tab */}
-            {activeTab === "preferences" && (
+            {activeTab === 'preferences' && (
               <div className="p-6">
-                <h2 className="text-lg font-medium text-gray-900 mb-6">
-                  Application Preferences
-                </h2>
+                <h2 className="text-lg font-medium text-gray-900 mb-6">Application Preferences</h2>
                 <div className="space-y-6">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Theme
-                    </label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Theme</label>
                     <select
                       aria-label="performance"
                       value={settings.preferences.theme}
-                      onChange={(e) =>
-                        updateSetting("preferences", "theme", e.target.value)
-                      }
+                      onChange={(e) => updateSetting('preferences', 'theme', e.target.value)}
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                     >
                       <option value="light">Light</option>
@@ -393,15 +337,11 @@ const Settings: React.FC = () => {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Language
-                    </label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Language</label>
                     <select
                       aria-label="language"
                       value={settings.preferences.language}
-                      onChange={(e) =>
-                        updateSetting("preferences", "language", e.target.value)
-                      }
+                      onChange={(e) => updateSetting('preferences', 'language', e.target.value)}
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                     >
                       <option value="en">English</option>
@@ -418,11 +358,7 @@ const Settings: React.FC = () => {
                       aria-label="preferences"
                       value={settings.preferences.defaultWorkflowPrivacy}
                       onChange={(e) =>
-                        updateSetting(
-                          "preferences",
-                          "defaultWorkflowPrivacy",
-                          e.target.value,
-                        )
+                        updateSetting('preferences', 'defaultWorkflowPrivacy', e.target.value)
                       }
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                     >
@@ -449,7 +385,7 @@ const Settings: React.FC = () => {
                   disabled={isSaving}
                   className="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 disabled:opacity-50"
                 >
-                  {isSaving ? "Saving..." : "Save Changes"}
+                  {isSaving ? 'Saving...' : 'Save Changes'}
                 </button>
               </div>
             </div>

@@ -5,14 +5,14 @@ export interface WorkflowExecution {
   workflowId: string;
   workflowName?: string;
   status:
-    | "pending"
-    | "running"
-    | "completed"
-    | "failed"
-    | "cancelled"
-    | "success"
-    | "error"
-    | "timeout";
+    | 'pending'
+    | 'running'
+    | 'completed'
+    | 'failed'
+    | 'cancelled'
+    | 'success'
+    | 'error'
+    | 'timeout';
   startedAt?: string;
   startTime?: string;
   endTime?: string;
@@ -31,7 +31,7 @@ export interface WorkflowExecution {
   nodeExecutions?: {
     nodeId: string;
     nodeName: string;
-    status: "pending" | "running" | "completed" | "failed" | "skipped";
+    status: 'pending' | 'running' | 'completed' | 'failed' | 'skipped';
     startedAt?: string;
     completedAt?: string;
     duration?: number;
@@ -42,7 +42,7 @@ export interface WorkflowExecution {
   results?: {
     nodeId: string;
     nodeName: string;
-    status: "success" | "error" | "skipped";
+    status: 'success' | 'error' | 'skipped';
     output?: any;
     error?: string;
     executedAt: string;
@@ -71,14 +71,14 @@ export interface ExecutionRequest {
 export interface WorkflowExecutionFilter {
   status?:
     | (
-        | "running"
-        | "completed"
-        | "failed"
-        | "pending"
-        | "cancelled"
-        | "success"
-        | "error"
-        | "timeout"
+        | 'running'
+        | 'completed'
+        | 'failed'
+        | 'pending'
+        | 'cancelled'
+        | 'success'
+        | 'error'
+        | 'timeout'
       )[]
     | string;
   workflowId?: string;
@@ -106,7 +106,7 @@ export interface NodeExecutionDetails {
   nodeId: string;
   nodeName: string;
   nodeType: string;
-  status: "pending" | "running" | "completed" | "failed" | "skipped";
+  status: 'pending' | 'running' | 'completed' | 'failed' | 'skipped';
   startedAt?: string;
   completedAt?: string;
   duration?: number;
@@ -119,7 +119,7 @@ export interface NodeExecutionDetails {
   };
   logs: {
     timestamp: string;
-    level: "info" | "warn" | "error" | "debug";
+    level: 'info' | 'warn' | 'error' | 'debug';
     message: string;
     data?: any;
   }[];

@@ -6,9 +6,9 @@
  * All 17 node types now registered in the lean n8n-inspired architecture
  */
 
-import './definitions' // Auto-registers all node types
+import './definitions'; // Auto-registers all node types
 
+export * from './definitions';
 // Export registry and types for use in other parts of the application
-export { nodeRegistry } from './registry'
-export * from './types'
-export * from './definitions'
+export { nodeRegistry } from './registry';
+export * from './types';

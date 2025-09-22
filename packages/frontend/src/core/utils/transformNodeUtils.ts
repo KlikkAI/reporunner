@@ -21,34 +21,31 @@ interface ITransformOptions {
 
 // Type validation and conversion utilities
 class TransformTypeValidator {
-  static validateAndConvertType(
-    value: any,
-    type: string,
-    options: ITransformOptions,
-  ): any {
+  static validateAndConvertType(value: any, type: string, options: ITransformOptions): any {
     try {
       switch (type) {
-        case "stringValue":
+        case 'stringValue':
           return String(value);
 
-        case "numberValue":
+        case 'numberValue': {
           const num = Number(value);
           if (isNaN(num) && !options.ignoreConversionErrors) {
             throw new Error(`Cannot convert "${value}" to number`);
           }
           return isNaN(num) ? 0 : num;
+        }
 
-        case "booleanValue":
-          if (typeof value === "boolean") return value;
-          if (typeof value === "string") {
+        case 'booleanValue':
+          if (typeof value === 'boolean') return value;
+          if (typeof value === 'string') {
             const lower = value.toLowerCase();
-            return lower === "true" || lower === "1" || lower === "yes";
+            return lower === 'true' || lower === '1' || lower === 'yes';
           }
           return Boolean(value);
 
-        case "arrayValue":
+        case 'arrayValue':
           if (Array.isArray(value)) return value;
-          if (typeof value === "string") {
+          if (typeof value === 'string') {
             try {
               const parsed = JSON.parse(value);
               return Array.isArray(parsed) ? parsed : [value];
@@ -58,9 +55,9 @@ class TransformTypeValidator {
           }
           return [value];
 
-        case "objectValue":
-          if (typeof value === "object" && value !== null) return value;
-          if (typeof value === "string") {
+        case 'objectValue':
+          if (typeof value === 'object' && value !== null) return value;
+          if (typeof value === 'string') {
             try {
               return JSON.parse(value);
             } catch {
@@ -74,7 +71,7 @@ class TransformTypeValidator {
       }
     } catch (error) {
       if (options.ignoreConversionErrors) {
-        return this.getDefaultValueForType(type);
+        return TransformTypeValidator.getDefaultValueForType(type);
       }
       throw error;
     }
@@ -82,15 +79,15 @@ class TransformTypeValidator {
 
   static getDefaultValueForType(type: string): any {
     switch (type) {
-      case "stringValue":
-        return "";
-      case "numberValue":
+      case 'stringValue':
+        return '';
+      case 'numberValue':
         return 0;
-      case "booleanValue":
+      case 'booleanValue':
         return false;
-      case "arrayValue":
+      case 'arrayValue':
         return [];
-      case "objectValue":
+      case 'objectValue':
         return {};
       default:
         return null;
@@ -98,27 +95,23 @@ class TransformTypeValidator {
   }
 
   static detectTypeFromValue(value: any): string {
-    if (typeof value === "number") return "numberValue";
-    if (typeof value === "boolean") return "booleanValue";
-    if (Array.isArray(value)) return "arrayValue";
-    if (typeof value === "object" && value !== null) return "objectValue";
-    return "stringValue";
+    if (typeof value === 'number') return 'numberValue';
+    if (typeof value === 'boolean') return 'booleanValue';
+    if (Array.isArray(value)) return 'arrayValue';
+    if (typeof value === 'object' && value !== null) return 'objectValue';
+    return 'stringValue';
   }
 }
 
 // Nested object manipulation utilities
 class NestedObjectUtils {
   static setNestedValue(obj: any, path: string, value: any): void {
-    const keys = path.split(".");
+    const keys = path.split('.');
     let current = obj;
 
     for (let i = 0; i < keys.length - 1; i++) {
       const key = keys[i];
-      if (
-        !(key in current) ||
-        typeof current[key] !== "object" ||
-        current[key] === null
-      ) {
+      if (!(key in current) || typeof current[key] !== 'object' || current[key] === null) {
         current[key] = {};
       }
       current = current[key];
@@ -128,7 +121,7 @@ class NestedObjectUtils {
   }
 
   static getNestedValue(obj: any, path: string): any {
-    const keys = path.split(".");
+    const keys = path.split('.');
     let current = obj;
 
     for (const key of keys) {
@@ -140,7 +133,7 @@ class NestedObjectUtils {
   }
 
   static hasNestedPath(obj: any, path: string): boolean {
-    const keys = path.split(".");
+    const keys = path.split('.');
     let current = obj;
 
     for (const key of keys) {
@@ -154,7 +147,7 @@ class NestedObjectUtils {
   }
 
   static deleteNestedValue(obj: any, path: string): boolean {
-    const keys = path.split(".");
+    const keys = path.split('.');
     if (keys.length === 1) {
       if (path in obj) {
         delete obj[path];
@@ -163,11 +156,11 @@ class NestedObjectUtils {
       return false;
     }
 
-    const parentPath = keys.slice(0, -1).join(".");
+    const parentPath = keys.slice(0, -1).join('.');
     const lastKey = keys[keys.length - 1];
-    const parent = this.getNestedValue(obj, parentPath);
+    const parent = NestedObjectUtils.getNestedValue(obj, parentPath);
 
-    if (parent && typeof parent === "object" && lastKey in parent) {
+    if (parent && typeof parent === 'object' && lastKey in parent) {
       delete parent[lastKey];
       return true;
     }
@@ -182,66 +175,64 @@ class InputFieldManager {
     const fieldNames = new Set<string>();
 
     inputData.forEach((item) => {
-      if (item.json && typeof item.json === "object") {
-        this.extractFieldNames(item.json, "", fieldNames);
+      if (item.json && typeof item.json === 'object') {
+        InputFieldManager.extractFieldNames(item.json, '', fieldNames);
       }
     });
 
     return Array.from(fieldNames).sort();
   }
 
-  private static extractFieldNames(
-    obj: any,
-    prefix: string,
-    fieldNames: Set<string>,
-  ): void {
+  private static extractFieldNames(obj: any, prefix: string, fieldNames: Set<string>): void {
     Object.keys(obj).forEach((key) => {
       const fullPath = prefix ? `${prefix}.${key}` : key;
       fieldNames.add(fullPath);
 
       // Recursively extract nested field names (limited depth to avoid performance issues)
       if (
-        typeof obj[key] === "object" &&
+        typeof obj[key] === 'object' &&
         obj[key] !== null &&
         !Array.isArray(obj[key]) &&
-        prefix.split(".").length < 3
+        prefix.split('.').length < 3
       ) {
-        this.extractFieldNames(obj[key], fullPath, fieldNames);
+        InputFieldManager.extractFieldNames(obj[key], fullPath, fieldNames);
       }
     });
   }
 
   static applyInputFieldInclusion(
     inputData: any,
-    includeMode: "all" | "none" | "selected" | "except",
-    selectedFields: string[] = [],
+    includeMode: 'all' | 'none' | 'selected' | 'except',
+    selectedFields: string[] = []
   ): any {
     switch (includeMode) {
-      case "all":
+      case 'all':
         return { ...inputData };
 
-      case "none":
+      case 'none':
         return {};
 
-      case "selected":
+      case 'selected': {
         const selectedData: any = {};
         selectedFields.forEach((fieldPath) => {
           if (NestedObjectUtils.hasNestedPath(inputData, fieldPath)) {
             NestedObjectUtils.setNestedValue(
               selectedData,
               fieldPath,
-              NestedObjectUtils.getNestedValue(inputData, fieldPath),
+              NestedObjectUtils.getNestedValue(inputData, fieldPath)
             );
           }
         });
         return selectedData;
+      }
 
-      case "except":
+      case 'except': {
         const exceptData = { ...inputData };
         selectedFields.forEach((fieldPath) => {
           NestedObjectUtils.deleteNestedValue(exceptData, fieldPath);
         });
         return exceptData;
+      }
 
       default:
         return { ...inputData };
@@ -263,9 +254,7 @@ class TransformExpressionEvaluator {
   }
 
   static isExpression(value: string): boolean {
-    return (
-      typeof value === "string" && value.includes("{{") && value.includes("}}")
-    );
+    return typeof value === 'string' && value.includes('{{') && value.includes('}}');
   }
 
   static extractExpressionVariables(expression: string): string[] {
@@ -274,9 +263,7 @@ class TransformExpressionEvaluator {
     if (!matches) return [];
 
     return matches.map((match) => {
-      const variable = match
-        .replace(/\{\{\s*\$json\./, "")
-        .replace(/\s*\}\}/, "");
+      const variable = match.replace(/\{\{\s*\$json\./, '').replace(/\s*\}\}/, '');
       return variable;
     });
   }
@@ -289,9 +276,9 @@ class ConfigurationValidator {
     errors: string[];
   } {
     const errors: string[] = [];
-    const mode = parameters.mode || "manual";
+    const mode = parameters.mode || 'manual';
 
-    if (mode === "manual") {
+    if (mode === 'manual') {
       // Validate assignments
       const assignments = parameters.assignments?.values || [];
       assignments.forEach((assignment: any, index: number) => {
@@ -299,7 +286,7 @@ class ConfigurationValidator {
           errors.push(`Assignment ${index + 1}: Field name is required`);
         }
 
-        if (assignment.name?.includes("..")) {
+        if (assignment.name?.includes('..')) {
           errors.push(`Assignment ${index + 1}: Invalid dot notation syntax`);
         }
 
@@ -309,34 +296,29 @@ class ConfigurationValidator {
       });
 
       // Check for duplicate field names
-      const fieldNames = assignments
-        .map((a: any) => a.name)
-        .filter((name: string) => name?.trim());
+      const fieldNames = assignments.map((a: any) => a.name).filter((name: string) => name?.trim());
       const uniqueNames = new Set(fieldNames);
       if (fieldNames.length !== uniqueNames.size) {
-        errors.push("Duplicate field names are not allowed");
+        errors.push('Duplicate field names are not allowed');
       }
 
       // Validate selected fields if needed
       const includeInputFields = parameters.includeInputFields;
       const selectedInputFields = parameters.selectedInputFields;
       if (
-        (includeInputFields === "selected" ||
-          includeInputFields === "except") &&
+        (includeInputFields === 'selected' || includeInputFields === 'except') &&
         !selectedInputFields?.trim()
       ) {
-        errors.push(
-          "Selected input fields list is required for this inclusion mode",
-        );
+        errors.push('Selected input fields list is required for this inclusion mode');
       }
-    } else if (mode === "json") {
+    } else if (mode === 'json') {
       // Validate JSON syntax
       const jsonObject = parameters.jsonObject;
       if (jsonObject) {
         try {
           JSON.parse(jsonObject);
         } catch (e) {
-          errors.push("Invalid JSON syntax in JSON Object");
+          errors.push('Invalid JSON syntax in JSON Object');
         }
       }
     }
@@ -365,9 +347,9 @@ class TransformPerformanceUtils {
   static async processInChunks<T, R>(
     items: T[],
     processor: (item: T, index: number) => R,
-    chunkSize: number = 100,
+    chunkSize: number = 100
   ): Promise<R[]> {
-    const chunks = this.chunkArray(items, chunkSize);
+    const chunks = TransformPerformanceUtils.chunkArray(items, chunkSize);
     const results: R[] = [];
 
     for (const chunk of chunks) {

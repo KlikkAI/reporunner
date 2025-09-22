@@ -1,7 +1,7 @@
-import { WorkflowRepository } from '../repositories/WorkflowRepository.js';
-import { ExecutionRepository } from '../../executions/repositories/ExecutionRepository.js';
-import { WorkflowEngine } from './WorkFlowEngine.js';
 import { AppError } from '../../../middleware/errorHandlers.js';
+import { ExecutionRepository } from '../../executions/repositories/ExecutionRepository.js';
+import { WorkflowRepository } from '../repositories/WorkflowRepository.js';
+import { WorkflowEngine } from './WorkFlowEngine.js';
 
 export interface WorkflowFilters {
   page: number;
@@ -56,7 +56,7 @@ export class WorkflowService {
     }
 
     if (filters.tags) {
-      const tagArray = filters.tags.split(',').map(tag => tag.trim());
+      const tagArray = filters.tags.split(',').map((tag) => tag.trim());
       query.tags = { $in: tagArray };
     }
 
@@ -273,11 +273,12 @@ export class WorkflowService {
 
     return {
       ...stats,
-      successRate: stats.totalExecutions > 0
-        ? Math.round((stats.successfulExecutions / stats.totalExecutions) * 100)
-        : 0,
+      successRate:
+        stats.totalExecutions > 0
+          ? Math.round((stats.successfulExecutions / stats.totalExecutions) * 100)
+          : 0,
       averageDurationMinutes: stats.averageDuration
-        ? Math.round(stats.averageDuration / 60000 * 100) / 100
+        ? Math.round((stats.averageDuration / 60000) * 100) / 100
         : 0,
     };
   }
@@ -341,11 +342,13 @@ export class WorkflowService {
     if (workflowId) query.workflowId = workflowId;
 
     const stats = await this.executionRepository.getExecutionStatistics(query);
-    return stats[0] || {
-      totalExecutions: 0,
-      successfulExecutions: 0,
-      failedExecutions: 0,
-      averageDuration: 0,
-    };
+    return (
+      stats[0] || {
+        totalExecutions: 0,
+        successfulExecutions: 0,
+        failedExecutions: 0,
+        averageDuration: 0,
+      }
+    );
   }
 }

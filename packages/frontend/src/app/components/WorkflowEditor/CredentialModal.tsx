@@ -1,9 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState } from "react";
-import { CredentialApiService } from "@/core";
+import React, { useState } from 'react';
+import { CredentialApiService } from '@/core';
+
 const credentialApiService = new CredentialApiService();
-import { useLeanWorkflowStore } from "@/core";
-import type { CredentialTypeApiResponse } from "@/core/types/credentials";
+
+import { useLeanWorkflowStore } from '@/core';
+import type { CredentialTypeApiResponse } from '@/core/types/credentials';
 
 interface CredentialModalProps {
   isOpen: boolean;
@@ -21,17 +23,12 @@ const CredentialModal: React.FC<CredentialModalProps> = ({
   editingCredential,
 }) => {
   // Debug logging
-  console.log(
-    "🔧 CredentialModal render - isOpen:",
-    isOpen,
-    "credentialType:",
-    credentialType,
-  );
-  const [credentialName, setCredentialName] = useState("");
-  const [authType, setAuthType] = useState("oAuth2");
-  const [clientId, setClientId] = useState("");
-  const [clientSecret, setClientSecret] = useState("");
-  const [activeTab, setActiveTab] = useState("connection");
+  console.log('🔧 CredentialModal render - isOpen:', isOpen, 'credentialType:', credentialType);
+  const [credentialName, setCredentialName] = useState('');
+  const [authType, setAuthType] = useState('oAuth2');
+  const [clientId, setClientId] = useState('');
+  const [clientSecret, setClientSecret] = useState('');
+  const [activeTab, setActiveTab] = useState('connection');
   const [isConnecting, setIsConnecting] = useState(false);
   const [credentialData, setCredentialData] = useState<Record<string, any>>({});
   const [isTesting, setIsTesting] = useState(false);
@@ -45,13 +42,12 @@ const CredentialModal: React.FC<CredentialModalProps> = ({
   const { nodes, edges, saveWorkflow } = useLeanWorkflowStore();
 
   // Check if this is Gmail OAuth2 which uses shared app credentials
-  const isGmailOAuth =
-    credentialType === "gmail" || credentialType === "gmailOAuth2";
+  const isGmailOAuth = credentialType === 'gmail' || credentialType === 'gmailOAuth2';
 
   // Get credential type definition
-  const [credentialTypeDef, setCredentialTypeDef] = useState<
-    CredentialTypeApiResponse | undefined
-  >(undefined);
+  const [credentialTypeDef, setCredentialTypeDef] = useState<CredentialTypeApiResponse | undefined>(
+    undefined
+  );
 
   React.useEffect(() => {
     const fetchCredentialType = async () => {
@@ -62,21 +58,21 @@ const CredentialModal: React.FC<CredentialModalProps> = ({
   }, [credentialType]);
 
   const isAIProvider = [
-    "openaiApi",
-    "anthropicApi",
-    "googleAiApi",
-    "azureOpenAiApi",
-    "awsBedrockApi",
+    'openaiApi',
+    'anthropicApi',
+    'googleAiApi',
+    'azureOpenAiApi',
+    'awsBedrockApi',
   ].includes(credentialType);
 
   // Populate form when editing existing credential
   React.useEffect(() => {
     if (editingCredential) {
-      console.log("Editing credential:", editingCredential);
-      console.log("Is AI Provider:", isAIProvider);
-      console.log("Credential data:", editingCredential.data);
+      console.log('Editing credential:', editingCredential);
+      console.log('Is AI Provider:', isAIProvider);
+      console.log('Credential data:', editingCredential.data);
 
-      setCredentialName(editingCredential.name || "");
+      setCredentialName(editingCredential.name || '');
       if (isAIProvider && editingCredential.data) {
         // For AI providers, populate form data
         // Note: Password fields may not be returned for security, they'll show placeholders
@@ -86,7 +82,7 @@ const CredentialModal: React.FC<CredentialModalProps> = ({
         // The placeholder will indicate this to the user
         if (credentialTypeDef?.fields) {
           credentialTypeDef.fields.forEach((prop) => {
-            if (prop.type === "password" && !populatedData[prop.name]) {
+            if (prop.type === 'password' && !populatedData[prop.name]) {
               // Leave empty so placeholder shows
               delete populatedData[prop.name];
             }
@@ -94,56 +90,46 @@ const CredentialModal: React.FC<CredentialModalProps> = ({
         }
 
         setCredentialData(populatedData);
-        console.log(
-          "Populated credential data for AI provider:",
-          populatedData,
-        );
+        console.log('Populated credential data for AI provider:', populatedData);
       } else if (editingCredential.data) {
-        setAuthType(editingCredential.data.authType || "oAuth2");
-        setClientId(editingCredential.data.clientId || "");
+        setAuthType(editingCredential.data.authType || 'oAuth2');
+        setClientId(editingCredential.data.clientId || '');
         // Don't populate clientSecret if it's not returned for security
-        setClientSecret(editingCredential.data.clientSecret || "");
+        setClientSecret(editingCredential.data.clientSecret || '');
       }
     } else {
       // Reset form for new credential
-      setCredentialName("");
-      setAuthType("oAuth2");
-      setClientId("");
-      setClientSecret("");
+      setCredentialName('');
+      setAuthType('oAuth2');
+      setClientId('');
+      setClientSecret('');
       setCredentialData({});
     }
   }, [editingCredential, isAIProvider, credentialTypeDef]);
 
   if (!isOpen) {
-    console.log("🔧 CredentialModal early return - not open");
+    console.log('🔧 CredentialModal early return - not open');
     return null;
   }
 
   const handleSave = async () => {
     if (!credentialName.trim()) {
-      alert("Please enter a credential name");
+      alert('Please enter a credential name');
       return;
     }
 
     if (isAIProvider) {
       // Validate required fields for AI providers
-      const requiredFields =
-        credentialTypeDef?.fields.filter((p) => p.required) || [];
-      let missingFields = requiredFields.filter(
-        (field) => !credentialData[field.name],
-      );
+      const requiredFields = credentialTypeDef?.fields.filter((p) => p.required) || [];
+      let missingFields = requiredFields.filter((field) => !credentialData[field.name]);
 
       // When editing, password fields are optional (keep existing values)
       if (editingCredential) {
-        missingFields = missingFields.filter(
-          (field) => field.type !== "password",
-        );
+        missingFields = missingFields.filter((field) => field.type !== 'password');
       }
 
       if (missingFields.length > 0) {
-        alert(
-          `Please fill in required fields: ${missingFields.map((f) => f.name).join(", ")}`,
-        );
+        alert(`Please fill in required fields: ${missingFields.map((f) => f.name).join(', ')}`);
         return;
       }
     }
@@ -153,31 +139,28 @@ const CredentialModal: React.FC<CredentialModalProps> = ({
         name: credentialName.trim(),
         type: credentialType as any, // Cast to bypass enum validation
         integration: credentialType, // Use credential type as integration for AI providers
-        data: isAIProvider
-          ? credentialData
-          : { authType, clientId, clientSecret },
+        data: isAIProvider ? credentialData : { authType, clientId, clientSecret },
         testOnCreate: true,
       };
 
-      console.log(
-        `${editingCredential ? "Updating" : "Creating"} credential:`,
-        { ...credentialPayload, data: "***encrypted***" },
-      );
+      console.log(`${editingCredential ? 'Updating' : 'Creating'} credential:`, {
+        ...credentialPayload,
+        data: '***encrypted***',
+      });
 
       let savedCredential;
       if (editingCredential) {
         // Update existing credential
         savedCredential = await credentialApiService.updateCredential(
           editingCredential.id,
-          credentialPayload,
+          credentialPayload
         );
       } else {
         // Create new credential
-        savedCredential =
-          await credentialApiService.createCredential(credentialPayload);
+        savedCredential = await credentialApiService.createCredential(credentialPayload);
       }
 
-      console.log("Credential saved successfully:", savedCredential.id);
+      console.log('Credential saved successfully:', savedCredential.id);
 
       // Create the credential object for the UI
       const credentialForUI = {
@@ -187,28 +170,26 @@ const CredentialModal: React.FC<CredentialModalProps> = ({
         data: credentialPayload.data,
         isConnected: true,
         createdAt:
-          editingCredential?.createdAt ||
-          savedCredential.createdAt ||
-          new Date().toISOString(),
+          editingCredential?.createdAt || savedCredential.createdAt || new Date().toISOString(),
         updatedAt: savedCredential.updatedAt || new Date().toISOString(),
       };
 
       // Show success message
       alert(
-        `${credentialTypeDef?.name || "Credential"} ${editingCredential ? "updated" : "saved"} successfully!`,
+        `${credentialTypeDef?.name || 'Credential'} ${editingCredential ? 'updated' : 'saved'} successfully!`
       );
 
       onSave(credentialForUI);
       onClose();
 
       // Reset form
-      setCredentialName("");
-      setClientId("");
-      setClientSecret("");
+      setCredentialName('');
+      setClientId('');
+      setClientSecret('');
       setCredentialData({});
       setTestResult(null);
     } catch (error: any) {
-      console.error("Failed to save credential:", error);
+      console.error('Failed to save credential:', error);
       alert(`Failed to save credential: ${error.message}`);
     }
   };
@@ -221,22 +202,17 @@ const CredentialModal: React.FC<CredentialModalProps> = ({
 
   const handleTestCredential = async () => {
     if (!credentialName.trim()) {
-      alert("Please enter a credential name first");
+      alert('Please enter a credential name first');
       return;
     }
 
     if (isAIProvider) {
       // Validate required fields for AI providers
-      const requiredFields =
-        credentialTypeDef?.fields.filter((p) => p.required) || [];
-      const missingFields = requiredFields.filter(
-        (field) => !credentialData[field.name],
-      );
+      const requiredFields = credentialTypeDef?.fields.filter((p) => p.required) || [];
+      const missingFields = requiredFields.filter((field) => !credentialData[field.name]);
 
       if (missingFields.length > 0) {
-        alert(
-          `Please fill in required fields: ${missingFields.map((f) => f.name).join(", ")}`,
-        );
+        alert(`Please fill in required fields: ${missingFields.map((f) => f.name).join(', ')}`);
         return;
       }
     }
@@ -250,21 +226,16 @@ const CredentialModal: React.FC<CredentialModalProps> = ({
         name: `${credentialName.trim()}_test_${Date.now()}`,
         type: credentialType as any, // Cast to bypass enum validation
         integration: credentialType,
-        data: isAIProvider
-          ? credentialData
-          : { authType, clientId, clientSecret },
+        data: isAIProvider ? credentialData : { authType, clientId, clientSecret },
         testOnCreate: true,
       };
 
-      const testCredential = await credentialApiService.createCredential(
-        testCredentialPayload,
-      );
+      const testCredential = await credentialApiService.createCredential(testCredentialPayload);
       const testCredentialId = testCredential.id;
 
       try {
         // Test the credential
-        const result =
-          await credentialApiService.testCredential(testCredentialId);
+        const result = await credentialApiService.testCredential(testCredentialId);
         setTestResult((result as any).data || result); // Handle both response formats
 
         // Always delete the test credential after testing
@@ -274,19 +245,19 @@ const CredentialModal: React.FC<CredentialModalProps> = ({
         try {
           await credentialApiService.deleteCredential(testCredentialId);
         } catch (deleteError) {
-          console.warn("Failed to delete test credential:", deleteError);
+          console.warn('Failed to delete test credential:', deleteError);
         }
 
         setTestResult({
           success: false,
-          message: testError.message || "Credential test failed",
+          message: testError.message || 'Credential test failed',
         });
       }
     } catch (error: any) {
-      console.error("Failed to test credential:", error);
+      console.error('Failed to test credential:', error);
       setTestResult({
         success: false,
-        message: error.message || "Failed to test credential",
+        message: error.message || 'Failed to test credential',
       });
     } finally {
       setIsTesting(false);
@@ -295,7 +266,7 @@ const CredentialModal: React.FC<CredentialModalProps> = ({
 
   const handleGmailConnect = async () => {
     if (!credentialName.trim()) {
-      alert("Please enter a credential name first");
+      alert('Please enter a credential name first');
       return;
     }
 
@@ -304,28 +275,25 @@ const CredentialModal: React.FC<CredentialModalProps> = ({
 
       // Auto-save workflow before OAuth redirect to prevent node loss
       if (
-        window.location.pathname.includes("/workflow/") &&
+        window.location.pathname.includes('/workflow/') &&
         (nodes.length > 0 || edges.length > 0)
       ) {
-        console.log("Auto-saving workflow before OAuth redirect...");
+        console.log('Auto-saving workflow before OAuth redirect...');
         try {
           await saveWorkflow();
-          console.log("Workflow auto-saved successfully");
+          console.log('Workflow auto-saved successfully');
         } catch (saveError) {
-          console.warn("Failed to auto-save workflow:", saveError);
+          console.warn('Failed to auto-save workflow:', saveError);
           // Continue with OAuth even if save fails
         }
       }
 
       // Start Gmail OAuth flow - this will redirect the user but return to current URL
-      await credentialApiService.startGmailOAuthFlow(
-        credentialName,
-        window.location.href,
-      );
+      await credentialApiService.startGmailOAuthFlow(credentialName, window.location.href);
       // User will be redirected, so we don't need to do anything else
     } catch (error: any) {
-      console.error("Failed to start Gmail OAuth:", error);
-      alert(error.message || "Failed to connect with Gmail");
+      console.error('Failed to start Gmail OAuth:', error);
+      alert(error.message || 'Failed to connect with Gmail');
       setIsConnecting(false);
     }
   };
@@ -335,22 +303,22 @@ const CredentialModal: React.FC<CredentialModalProps> = ({
       return credentialTypeDef.icon;
     }
     switch (type) {
-      case "gmail":
-        return "📧";
-      case "google":
-        return "🔍";
-      case "openaiApi":
-        return "🤖";
-      case "anthropicApi":
-        return "🧠";
-      case "googleAiApi":
-        return "🔷";
-      case "azureOpenAiApi":
-        return "☁️";
-      case "awsBedrockApi":
-        return "🟠";
+      case 'gmail':
+        return '📧';
+      case 'google':
+        return '🔍';
+      case 'openaiApi':
+        return '🤖';
+      case 'anthropicApi':
+        return '🧠';
+      case 'googleAiApi':
+        return '🔷';
+      case 'azureOpenAiApi':
+        return '☁️';
+      case 'awsBedrockApi':
+        return '🟠';
       default:
-        return "🔑";
+        return '🔑';
     }
   };
 
@@ -366,15 +334,13 @@ const CredentialModal: React.FC<CredentialModalProps> = ({
               </div>
               <div>
                 <h2 className="text-lg font-semibold text-white">
-                  {editingCredential ? "Edit" : "Create"}{" "}
-                  {credentialName ||
-                    credentialTypeDef?.name ||
-                    `${credentialType} account`}
+                  {editingCredential ? 'Edit' : 'Create'}{' '}
+                  {credentialName || credentialTypeDef?.name || `${credentialType} account`}
                 </h2>
                 <p className="text-sm text-gray-400">
-                  {editingCredential ? "Update your" : "Create new"}{" "}
+                  {editingCredential ? 'Update your' : 'Create new'}{' '}
                   {credentialTypeDef?.description?.toLowerCase() ||
-                    `${credentialType} ${isGmailOAuth ? "OAuth2" : "API"}`}
+                    `${credentialType} ${isGmailOAuth ? 'OAuth2' : 'API'}`}
                 </p>
               </div>
             </div>
@@ -385,9 +351,7 @@ const CredentialModal: React.FC<CredentialModalProps> = ({
                 className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
               >
                 <span>🔗</span>
-                <span>
-                  {isConnecting ? "Connecting..." : "Connect with Google"}
-                </span>
+                <span>{isConnecting ? 'Connecting...' : 'Connect with Google'}</span>
               </button>
             ) : (
               <button
@@ -395,21 +359,12 @@ const CredentialModal: React.FC<CredentialModalProps> = ({
                 disabled={isAIProvider && !credentialName.trim()}
                 className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Save {credentialTypeDef?.name || "Credential"}
+                Save {credentialTypeDef?.name || 'Credential'}
               </button>
             )}
           </div>
-          <button
-            onClick={onClose}
-            className="text-gray-400 hover:text-white"
-            aria-label="Close"
-          >
-            <svg
-              className="w-6 h-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
+          <button onClick={onClose} className="text-gray-400 hover:text-white" aria-label="Close">
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -426,31 +381,31 @@ const CredentialModal: React.FC<CredentialModalProps> = ({
           <div className="w-48 bg-gray-800 border-r border-gray-700 p-4">
             <nav className="space-y-1">
               <button
-                onClick={() => setActiveTab("connection")}
+                onClick={() => setActiveTab('connection')}
                 className={`w-full text-left px-3 py-2 rounded text-sm ${
-                  activeTab === "connection"
-                    ? "bg-orange-600 text-white"
-                    : "text-gray-300 hover:bg-gray-700"
+                  activeTab === 'connection'
+                    ? 'bg-orange-600 text-white'
+                    : 'text-gray-300 hover:bg-gray-700'
                 }`}
               >
                 Connection
               </button>
               <button
-                onClick={() => setActiveTab("sharing")}
+                onClick={() => setActiveTab('sharing')}
                 className={`w-full text-left px-3 py-2 rounded text-sm ${
-                  activeTab === "sharing"
-                    ? "bg-orange-600 text-white"
-                    : "text-gray-300 hover:bg-gray-700"
+                  activeTab === 'sharing'
+                    ? 'bg-orange-600 text-white'
+                    : 'text-gray-300 hover:bg-gray-700'
                 }`}
               >
                 Sharing
               </button>
               <button
-                onClick={() => setActiveTab("details")}
+                onClick={() => setActiveTab('details')}
                 className={`w-full text-left px-3 py-2 rounded text-sm ${
-                  activeTab === "details"
-                    ? "bg-orange-600 text-white"
-                    : "text-gray-300 hover:bg-gray-700"
+                  activeTab === 'details'
+                    ? 'bg-orange-600 text-white'
+                    : 'text-gray-300 hover:bg-gray-700'
                 }`}
               >
                 Details
@@ -460,7 +415,7 @@ const CredentialModal: React.FC<CredentialModalProps> = ({
 
           {/* Main Content */}
           <div className="flex-1 p-6 overflow-y-auto">
-            {activeTab === "connection" && (
+            {activeTab === 'connection' && (
               <div className="space-y-6">
                 {isGmailOAuth ? (
                   /* Gmail OAuth2 Simplified UI */
@@ -481,26 +436,21 @@ const CredentialModal: React.FC<CredentialModalProps> = ({
                         </svg>
                         <div>
                           <p className="text-sm text-blue-300">
-                            <strong>Easy Setup!</strong> No technical
-                            configuration required. We'll connect to Gmail using
-                            secure OAuth2 authentication.
+                            <strong>Easy Setup!</strong> No technical configuration required. We'll
+                            connect to Gmail using secure OAuth2 authentication.
                           </p>
                         </div>
                       </div>
                     </div>
 
                     <div className="space-y-4">
-                      <h3 className="text-lg font-medium text-white">
-                        Connect your Gmail account
-                      </h3>
+                      <h3 className="text-lg font-medium text-white">Connect your Gmail account</h3>
                       <div className="space-y-3">
                         <div className="flex items-center space-x-3 p-3 bg-gray-800 border border-gray-600">
                           <div className="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-bold">
                             1
                           </div>
-                          <span className="text-gray-300">
-                            Enter a name for this credential
-                          </span>
+                          <span className="text-gray-300">Enter a name for this credential</span>
                         </div>
                         <div className="flex items-center space-x-3 p-3 bg-gray-800 border border-gray-600">
                           <div className="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-bold">
@@ -544,11 +494,7 @@ const CredentialModal: React.FC<CredentialModalProps> = ({
                         className="w-full py-3 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2 text-sm font-medium"
                       >
                         <span>🔗</span>
-                        <span>
-                          {isConnecting
-                            ? "Connecting..."
-                            : "Connect with Google"}
-                        </span>
+                        <span>{isConnecting ? 'Connecting...' : 'Connect with Google'}</span>
                       </button>
                     </div>
                   </>
@@ -570,7 +516,7 @@ const CredentialModal: React.FC<CredentialModalProps> = ({
                         </svg>
                         <div>
                           <p className="text-sm text-blue-300">
-                            <strong>{credentialTypeDef.name} Connection</strong>{" "}
+                            <strong>{credentialTypeDef.name} Connection</strong>{' '}
                             {credentialTypeDef.description}
                           </p>
                         </div>
@@ -590,8 +536,7 @@ const CredentialModal: React.FC<CredentialModalProps> = ({
                         placeholder={`e.g., ${credentialTypeDef.name} Account`}
                       />
                       <p className="text-xs text-gray-400 mt-1">
-                        Choose a name to identify this {credentialTypeDef.name}{" "}
-                        connection
+                        Choose a name to identify this {credentialTypeDef.name} connection
                       </p>
                     </div>
 
@@ -599,36 +544,27 @@ const CredentialModal: React.FC<CredentialModalProps> = ({
                     {credentialTypeDef.fields.map((property) => (
                       <div key={property.name}>
                         <label className="block text-sm font-medium text-gray-300 mb-2">
-                          {property.name}{" "}
-                          {property.required && (
-                            <span className="text-red-400">*</span>
-                          )}
+                          {property.name}{' '}
+                          {property.required && <span className="text-red-400">*</span>}
                         </label>
                         <input
-                          type={
-                            property.type === "password" ? "password" : "text"
-                          }
-                          value={credentialData[property.name] || ""}
+                          type={property.type === 'password' ? 'password' : 'text'}
+                          value={credentialData[property.name] || ''}
                           onChange={(e) =>
-                            handleCredentialDataChange(
-                              property.name,
-                              e.target.value,
-                            )
+                            handleCredentialDataChange(property.name, e.target.value)
                           }
                           className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                           placeholder={
-                            property.type === "password" &&
+                            property.type === 'password' &&
                             editingCredential &&
                             !credentialData[property.name]
-                              ? "••••••••••• (hidden - enter new value to update)"
+                              ? '••••••••••• (hidden - enter new value to update)'
                               : property.placeholder
                           }
                           required={property.required && !editingCredential} // Not required when editing (keep existing value)
                         />
                         {property.description && (
-                          <p className="text-xs text-gray-400 mt-1">
-                            {property.description}
-                          </p>
+                          <p className="text-xs text-gray-400 mt-1">{property.description}</p>
                         )}
                       </div>
                     ))}
@@ -640,12 +576,8 @@ const CredentialModal: React.FC<CredentialModalProps> = ({
                         disabled={isTesting}
                         className="w-full py-2 px-4 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2 text-sm font-medium mb-4"
                       >
-                        <span>{isTesting ? "⏳" : "🧪"}</span>
-                        <span>
-                          {isTesting
-                            ? "Testing Connection..."
-                            : "Test Connection"}
-                        </span>
+                        <span>{isTesting ? '⏳' : '🧪'}</span>
+                        <span>{isTesting ? 'Testing Connection...' : 'Test Connection'}</span>
                       </button>
                     </div>
 
@@ -654,19 +586,15 @@ const CredentialModal: React.FC<CredentialModalProps> = ({
                       <div
                         className={`p-4 rounded border ${
                           testResult.success
-                            ? "bg-green-900/20 border-green-600/30 text-green-300"
-                            : "bg-red-900/20 border-red-600/30 text-red-300"
+                            ? 'bg-green-900/20 border-green-600/30 text-green-300'
+                            : 'bg-red-900/20 border-red-600/30 text-red-300'
                         }`}
                       >
                         <div className="flex items-start space-x-2">
-                          <span className="text-lg">
-                            {testResult.success ? "✅" : "❌"}
-                          </span>
+                          <span className="text-lg">{testResult.success ? '✅' : '❌'}</span>
                           <div className="flex-1">
                             <p className="text-sm font-medium">
-                              {testResult.success
-                                ? "Connection Successful!"
-                                : "Connection Failed"}
+                              {testResult.success ? 'Connection Successful!' : 'Connection Failed'}
                             </p>
                             <p className="text-sm mt-1">{testResult.message}</p>
                             {testResult.details && (
@@ -703,7 +631,7 @@ const CredentialModal: React.FC<CredentialModalProps> = ({
                         </svg>
                         <div>
                           <p className="text-sm text-orange-300">
-                            Need help filling out these fields?{" "}
+                            Need help filling out these fields?{' '}
                             <a
                               href="https://docs.n8n.io/integrations/builtin/credentials/google/oauth-single-service/"
                               rel="noopener"
@@ -727,19 +655,17 @@ const CredentialModal: React.FC<CredentialModalProps> = ({
                           <input
                             type="radio"
                             value="oAuth2"
-                            checked={authType === "oAuth2"}
+                            checked={authType === 'oAuth2'}
                             onChange={(e) => setAuthType(e.target.value)}
                             className="text-orange-600 focus:ring-orange-500"
                           />
-                          <span className="text-white">
-                            OAuth2 (recommended)
-                          </span>
+                          <span className="text-white">OAuth2 (recommended)</span>
                         </label>
                         <label className="flex items-center space-x-3 p-3 border border-gray-600 rounded cursor-pointer hover:bg-gray-800">
                           <input
                             type="radio"
                             value="serviceAccount"
-                            checked={authType === "serviceAccount"}
+                            checked={authType === 'serviceAccount'}
                             onChange={(e) => setAuthType(e.target.value)}
                             className="text-orange-600 focus:ring-orange-500"
                           />
@@ -760,7 +686,7 @@ const CredentialModal: React.FC<CredentialModalProps> = ({
                         <button
                           onClick={() =>
                             navigator.clipboard.writeText(
-                              "https://workflow.lxroot.net/rest/oauth2-credential/callback",
+                              'https://workflow.lxroot.net/rest/oauth2-credential/callback'
                             )
                           }
                           className="px-3 py-1 bg-gray-700 text-white rounded text-xs hover:bg-gray-600"
@@ -769,8 +695,8 @@ const CredentialModal: React.FC<CredentialModalProps> = ({
                         </button>
                       </div>
                       <p className="text-xs text-gray-400 mt-1">
-                        In {credentialType}, use the URL above when prompted to
-                        enter an OAuth callback or redirect URL
+                        In {credentialType}, use the URL above when prompted to enter an OAuth
+                        callback or redirect URL
                       </p>
                     </div>
 
@@ -818,8 +744,7 @@ const CredentialModal: React.FC<CredentialModalProps> = ({
                         </svg>
                         <div>
                           <p className="text-sm text-blue-300">
-                            Enterprise plan users can pull in credentials from
-                            external vaults.{" "}
+                            Enterprise plan users can pull in credentials from external vaults.{' '}
                             <a
                               href="https://docs.n8n.io/external-secrets/"
                               target="_blank"
@@ -837,15 +762,13 @@ const CredentialModal: React.FC<CredentialModalProps> = ({
               </div>
             )}
 
-            {activeTab === "sharing" && (
+            {activeTab === 'sharing' && (
               <div className="text-center py-12">
-                <p className="text-gray-400">
-                  Sharing settings will be available here
-                </p>
+                <p className="text-gray-400">Sharing settings will be available here</p>
               </div>
             )}
 
-            {activeTab === "details" && (
+            {activeTab === 'details' && (
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-300 mb-2">

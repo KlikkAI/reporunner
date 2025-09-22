@@ -1,46 +1,232 @@
 {
   "$schema": "https://turbo.build/schema.json",
+  "envMode": "loose",
+  "remoteCache": {
+    "signature": true
+  },
+  "globalDependencies": [
+    "**/.env*",
+    "pnpm-workspace.yaml",
+    "package.json",
+    "tsconfig.base.json",
+    ".github/workflows/**"
+  ],
+  "globalEnv": [
+    "NODE_ENV",
+    "CI",
+    "VERCEL",
+    "DATABASE_URL",
+    "MONGODB_URI",
+    "POSTGRES_URL",
+    "REDIS_URL",
+    "JWT_SECRET",
+    "OPENAI_API_KEY",
+    "ANTHROPIC_API_KEY"
+  ],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": ["dist/**", ".next/**", "build/**"]
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "!**/*.test.{js,ts,tsx}",
+        "!**/*.spec.{js,ts,tsx}",
+        "!**/coverage/**",
+        "!**/node_modules/**",
+        "!**/.next/cache/**"
+      ],
+      "outputs": ["dist/**", ".next/**", "build/**", "lib/**", "es/**"],
+      "env": ["NODE_ENV", "DATABASE_URL", "API_URL", "VITE_API_URL"]
+    },
+    "build:core": {
+      "inputs": [
+        "packages/core/src/**",
+        "packages/core/package.json",
+        "packages/core/tsconfig.json"
+      ],
+      "outputs": ["packages/core/dist/**", "packages/core/lib/**"]
     },
     "build:backend": {
-      "dependsOn": ["@reporunner/core#build"],
-      "outputs": ["packages/backend/dist/**"]
+      "dependsOn": ["@reporunner/core#build", "@reporunner/workflow#build"],
+      "inputs": [
+        "packages/backend/src/**",
+        "packages/backend/package.json",
+        "packages/backend/tsconfig.json"
+      ],
+      "outputs": ["packages/backend/dist/**"],
+      "env": ["NODE_ENV", "DATABASE_URL", "MONGODB_URI", "JWT_SECRET"]
     },
     "build:frontend": {
+      "dependsOn": ["@reporunner/core#build", "@reporunner/design-system#build"],
+      "inputs": [
+        "packages/frontend/src/**",
+        "packages/frontend/public/**",
+        "packages/frontend/package.json",
+        "packages/frontend/vite.config.ts",
+        "packages/frontend/tsconfig.json"
+      ],
+      "outputs": ["packages/frontend/dist/**", "packages/frontend/build/**"],
+      "env": ["NODE_ENV", "API_URL", "VITE_API_URL"]
+    },
+    "build:cli": {
       "dependsOn": ["@reporunner/core#build"],
-      "outputs": ["packages/frontend/dist/**"]
+      "inputs": ["packages/cli/src/**", "packages/cli/package.json"],
+      "outputs": ["packages/cli/dist/**"]
+    },
+    "build:sdk": {
+      "dependsOn": ["@reporunner/core#build"],
+      "inputs": ["packages/sdk/src/**", "packages/sdk/package.json"],
+      "outputs": ["packages/sdk/dist/**"]
+    },
+    "build:go-sdk": {
+      "dependsOn": ["@reporunner/core#build"],
+      "inputs": ["packages/@reporunner/go-sdk/**/*.go", "packages/@reporunner/go-sdk/go.mod"],
+      "outputs": ["packages/@reporunner/go-sdk/dist/**"]
+    },
+    "build:rust-sdk": {
+      "dependsOn": ["@reporunner/core#build"],
+      "inputs": [
+        "packages/@reporunner/rust-sdk/src/**",
+        "packages/@reporunner/rust-sdk/Cargo.toml"
+      ],
+      "outputs": ["packages/@reporunner/rust-sdk/target/**"]
+    },
+    "build:java-sdk": {
+      "dependsOn": ["@reporunner/core#build"],
+      "inputs": ["packages/@reporunner/java-sdk/src/**", "packages/@reporunner/java-sdk/pom.xml"],
+      "outputs": ["packages/@reporunner/java-sdk/target/**"]
+    },
+    "build:php-sdk": {
+      "dependsOn": ["@reporunner/core#build"],
+      "inputs": [
+        "packages/@reporunner/php-sdk/src/**",
+        "packages/@reporunner/php-sdk/composer.json"
+      ],
+      "outputs": ["packages/@reporunner/php-sdk/vendor/**"]
+    },
+    "build:dotnet-sdk": {
+      "dependsOn": ["@reporunner/core#build"],
+      "inputs": [
+        "packages/@reporunner/dotnet-sdk/src/**",
+        "packages/@reporunner/dotnet-sdk/src/**/*.csproj"
+      ],
+      "outputs": [
+        "packages/@reporunner/dotnet-sdk/src/**/bin/**",
+        "packages/@reporunner/dotnet-sdk/src/**/obj/**"
+      ]
+    },
+    "build:nodes": {
+      "dependsOn": ["@reporunner/core#build", "@reporunner/workflow#build"],
+      "inputs": ["packages/@reporunner/nodes/**", "!packages/@reporunner/nodes/**/*.test.{js,ts}"],
+      "outputs": ["packages/@reporunner/nodes/dist/**"]
+    },
+    "build:design-system": {
+      "inputs": [
+        "packages/@reporunner/design-system/src/**",
+        "packages/@reporunner/design-system/package.json"
+      ],
+      "outputs": ["packages/@reporunner/design-system/dist/**"]
+    },
+    "build:ai": {
+      "dependsOn": ["@reporunner/core#build"],
+      "inputs": ["packages/@reporunner/ai/src/**", "packages/@reporunner/ai/package.json"],
+      "outputs": ["packages/@reporunner/ai/dist/**"]
+    },
+    "build:workflow": {
+      "dependsOn": ["@reporunner/core#build"],
+      "inputs": [
+        "packages/@reporunner/workflow/src/**",
+        "packages/@reporunner/workflow/package.json"
+      ],
+      "outputs": ["packages/@reporunner/workflow/dist/**"]
     },
     "dev": {
       "cache": false,
-      "persistent": true
+      "persistent": true,
+      "dependsOn": ["^build"]
+    },
+    "dev:backend": {
+      "cache": false,
+      "persistent": true,
+      "dependsOn": ["@reporunner/core#build", "@reporunner/workflow#build"]
+    },
+    "dev:frontend": {
+      "cache": false,
+      "persistent": true,
+      "dependsOn": ["@reporunner/design-system#build", "@reporunner/core#build"]
     },
     "test": {
       "dependsOn": ["^build"],
-      "outputs": []
+      "inputs": [
+        "src/**/*.{js,ts,tsx}",
+        "test/**/*.{js,ts,tsx}",
+        "**/*.test.{js,ts,tsx}",
+        "**/*.spec.{js,ts,tsx}",
+        "jest.config.{js,ts}",
+        "vitest.config.{js,ts}"
+      ],
+      "outputs": ["coverage/**", "test-results/**"]
     },
-    "test:coverage": {
+    "test:unit": {
       "dependsOn": ["^build"],
-      "outputs": ["coverage/**"]
+      "outputs": ["coverage/unit/**"]
+    },
+    "test:integration": {
+      "dependsOn": ["^build"],
+      "outputs": ["coverage/integration/**"]
+    },
+    "test:e2e": {
+      "dependsOn": ["build"],
+      "outputs": ["test-results/**", "playwright-report/**"]
     },
     "lint": {
+      "inputs": ["src/**/*.{js,ts,tsx,vue,json,css}", "*.{js,ts,json}", "biome.json", ".biome.json"]
+    },
+    "lint:fix": {
+      "cache": false,
+      "inputs": [
+        "src/**/*.{js,ts,tsx,vue,json,css}",
+        "*.{js,ts,json}",
+        "biome.json",
+        ".biome.json"
+      ],
       "outputs": []
     },
     "type-check": {
       "dependsOn": ["^build"],
+      "inputs": ["src/**/*.{ts,tsx}", "types/**/*.ts", "tsconfig.json", "tsconfig.*.json"],
+      "outputs": ["*.tsbuildinfo"]
+    },
+    "format": {
+      "cache": false,
+      "inputs": [
+        "src/**/*.{js,ts,tsx,vue,json,css,md}",
+        "*.{js,ts,json,md}",
+        "biome.json",
+        ".biome.json"
+      ]
+    },
+    "format:check": {
+      "inputs": [
+        "src/**/*.{js,ts,tsx,vue,json,css,md}",
+        "*.{js,ts,json,md}",
+        "biome.json",
+        ".biome.json"
+      ],
       "outputs": []
     },
     "clean": {
       "cache": false
     },
-    "deploy:backend": {
-      "dependsOn": ["build:backend"]
+    "security:audit": {
+      "inputs": ["package.json", "pnpm-lock.yaml"]
     },
-    "deploy:frontend": {
-      "dependsOn": ["build:frontend"]
+    "docs:build": {
+      "dependsOn": ["^build"],
+      "outputs": ["docs/api/**", "docs/build/**"]
+    },
+    "bundle-analysis": {
+      "dependsOn": ["build"],
+      "outputs": ["bundle-analysis/**"]
     }
-  },
-  "globalDependencies": ["**/.env*"]
+  }
 }

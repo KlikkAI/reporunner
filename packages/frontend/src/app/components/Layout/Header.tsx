@@ -1,38 +1,39 @@
-import React, { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import toast from 'react-hot-toast'
-import { useAuthStore } from '@/core/stores/authStore'
-import { useLeanWorkflowStore } from '@/core/stores/leanWorkflowStore'
+import type React from 'react';
+import { useState } from 'react';
+import toast from 'react-hot-toast';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuthStore } from '@/core/stores/authStore';
+import { useLeanWorkflowStore } from '@/core/stores/leanWorkflowStore';
 
 const Header: React.FC = () => {
-  const navigate = useNavigate()
-  const { user, logout } = useAuthStore()
-  const { createNewWorkflow } = useLeanWorkflowStore()
-  const [showUserMenu, setShowUserMenu] = useState(false)
+  const navigate = useNavigate();
+  const { user, logout } = useAuthStore();
+  const { createNewWorkflow } = useLeanWorkflowStore();
+  const [showUserMenu, setShowUserMenu] = useState(false);
 
   const handleCreateWorkflow = async () => {
-    const name = prompt('Enter workflow name:')
+    const name = prompt('Enter workflow name:');
     if (name) {
       if (name.trim().length === 0) {
-        toast.error('Please enter a valid workflow name.')
-        return
+        toast.error('Please enter a valid workflow name.');
+        return;
       }
-      
+
       try {
-        await createNewWorkflow(name.trim(), navigate)
-        toast.success('Workflow created successfully!')
+        await createNewWorkflow(name.trim(), navigate);
+        toast.success('Workflow created successfully!');
       } catch (error) {
-        console.error('Failed to create workflow:', error)
-        const errorMessage = error instanceof Error ? error.message : 'Failed to create workflow'
-        toast.error(errorMessage)
+        console.error('Failed to create workflow:', error);
+        const errorMessage = error instanceof Error ? error.message : 'Failed to create workflow';
+        toast.error(errorMessage);
       }
     }
-  }
+  };
 
   const handleLogout = async () => {
-    await logout()
-    setShowUserMenu(false)
-  }
+    await logout();
+    setShowUserMenu(false);
+  };
 
   return (
     <header className="bg-white border-b border-gray-200 px-6 py-4">
@@ -44,22 +45,13 @@ const Header: React.FC = () => {
         </div>
 
         <nav className="flex items-center space-x-6">
-          <Link
-            to="/dashboard"
-            className="text-gray-600 hover:text-gray-900 font-medium"
-          >
+          <Link to="/dashboard" className="text-gray-600 hover:text-gray-900 font-medium">
             Dashboard
           </Link>
-          <Link
-            to="/credentials"
-            className="text-gray-600 hover:text-gray-900 font-medium"
-          >
+          <Link to="/credentials" className="text-gray-600 hover:text-gray-900 font-medium">
             Credentials
           </Link>
-          <Link
-            to="/executions"
-            className="text-gray-600 hover:text-gray-900 font-medium"
-          >
+          <Link to="/executions" className="text-gray-600 hover:text-gray-900 font-medium">
             Executions
           </Link>
         </nav>
@@ -117,7 +109,7 @@ const Header: React.FC = () => {
         </div>
       </div>
     </header>
-  )
-}
+  );
+};
 
-export default Header
+export default Header;

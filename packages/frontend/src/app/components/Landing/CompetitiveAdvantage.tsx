@@ -5,52 +5,52 @@
  * with modern card-based design and animations
  */
 
-import React from "react";
-import { Shield, Brain, Home, ArrowRight } from "lucide-react";
+import { ArrowRight, Brain, Home, Shield } from 'lucide-react';
+import type React from 'react';
 
 export const CompetitiveAdvantage: React.FC = () => {
   const advantages = [
     {
       icon: Shield,
-      title: "Enterprise-First Security",
+      title: 'Enterprise-First Security',
       description:
         "Built-in SSO, RBAC, audit logging, and compliance features. Security isn't an afterthought—it's the foundation.",
       features: [
-        "Custom JWT + Enterprise SSO",
-        "RBAC with granular permissions",
-        "SOC2, GDPR, HIPAA compliance",
-        "Advanced audit logging",
+        'Custom JWT + Enterprise SSO',
+        'RBAC with granular permissions',
+        'SOC2, GDPR, HIPAA compliance',
+        'Advanced audit logging',
       ],
-      gradient: "from-green-500 to-emerald-500",
-      bgGradient: "from-green-50 to-emerald-50",
+      gradient: 'from-green-500 to-emerald-500',
+      bgGradient: 'from-green-50 to-emerald-50',
     },
     {
       icon: Brain,
-      title: "Native AI Integration",
+      title: 'Native AI Integration',
       description:
-        "Hybrid database with vector search, intelligent automation, and AI agents. The future of workflow automation.",
+        'Hybrid database with vector search, intelligent automation, and AI agents. The future of workflow automation.',
       features: [
-        "PostgreSQL + pgvector for AI",
-        "Semantic search & embeddings",
-        "Intelligent error recovery",
-        "AI-powered optimizations",
+        'PostgreSQL + pgvector for AI',
+        'Semantic search & embeddings',
+        'Intelligent error recovery',
+        'AI-powered optimizations',
       ],
-      gradient: "from-blue-500 to-purple-500",
-      bgGradient: "from-blue-50 to-purple-50",
+      gradient: 'from-blue-500 to-purple-500',
+      bgGradient: 'from-blue-50 to-purple-50',
     },
     {
       icon: Home,
-      title: "Complete Self-Hosting",
+      title: 'Complete Self-Hosting',
       description:
-        "Full control over your data and infrastructure. No vendor lock-in, complete sovereignty, and regulatory compliance.",
+        'Full control over your data and infrastructure. No vendor lock-in, complete sovereignty, and regulatory compliance.',
       features: [
-        "Deploy on any infrastructure",
-        "Complete data sovereignty",
-        "No external dependencies",
-        "Kubernetes & Docker ready",
+        'Deploy on any infrastructure',
+        'Complete data sovereignty',
+        'No external dependencies',
+        'Kubernetes & Docker ready',
       ],
-      gradient: "from-orange-500 to-red-500",
-      bgGradient: "from-orange-50 to-red-50",
+      gradient: 'from-orange-500 to-red-500',
+      bgGradient: 'from-orange-50 to-red-50',
     },
   ];
 
@@ -60,16 +60,15 @@ export const CompetitiveAdvantage: React.FC = () => {
         {/* Section Header */}
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-            Why Enterprises Choose{" "}
+            Why Enterprises Choose{' '}
             <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
               Reporunner
             </span>
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            While Zapier and Make.com excel at ease-of-use, and n8n offers
-            self-hosting, only Reporunner combines enterprise-grade security,
-            native AI capabilities, complete self-hosting control, and
-            cost-effective scaling in one unified platform.
+            While Zapier and Make.com excel at ease-of-use, and n8n offers self-hosting, only
+            Reporunner combines enterprise-grade security, native AI capabilities, complete
+            self-hosting control, and cost-effective scaling in one unified platform.
           </p>
         </div>
 
@@ -97,22 +96,15 @@ export const CompetitiveAdvantage: React.FC = () => {
                   </div>
 
                   {/* Title */}
-                  <h3 className="text-2xl font-bold text-gray-900 mb-4">
-                    {advantage.title}
-                  </h3>
+                  <h3 className="text-2xl font-bold text-gray-900 mb-4">{advantage.title}</h3>
 
                   {/* Description */}
-                  <p className="text-gray-600 mb-6 leading-relaxed">
-                    {advantage.description}
-                  </p>
+                  <p className="text-gray-600 mb-6 leading-relaxed">{advantage.description}</p>
 
                   {/* Features List */}
                   <ul className="space-y-3">
                     {advantage.features.map((feature, featureIndex) => (
-                      <li
-                        key={featureIndex}
-                        className="flex items-center text-sm text-gray-700"
-                      >
+                      <li key={featureIndex} className="flex items-center text-sm text-gray-700">
                         <div
                           className={`w-2 h-2 rounded-full bg-gradient-to-r ${advantage.gradient} mr-3 flex-shrink-0`}
                         />
@@ -137,9 +129,7 @@ export const CompetitiveAdvantage: React.FC = () => {
         {/* Bottom CTA */}
         <div className="text-center">
           <div className="inline-flex items-center gap-4 bg-gray-50 rounded-full px-6 py-3 border border-gray-200">
-            <span className="text-gray-600 font-medium">
-              Ready to see the difference?
-            </span>
+            <span className="text-gray-600 font-medium">Ready to see the difference?</span>
             <button className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2 rounded-full font-medium transition-all hover:scale-105 hover:shadow-lg">
               Compare Features
             </button>

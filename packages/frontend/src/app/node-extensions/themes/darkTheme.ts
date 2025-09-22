@@ -3,7 +3,7 @@
  * Modern dark theme optimized for low-light environments
  */
 
-import type { NodeTheme } from '../types'
+import type { NodeTheme } from '../types';
 
 export const darkTheme: NodeTheme = {
   name: 'dark',
@@ -21,7 +21,8 @@ export const darkTheme: NodeTheme = {
     info: '#40a9ff',
   },
   typography: {
-    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+    fontFamily:
+      '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
     fontSize: {
       xs: '10px',
       sm: '12px',
@@ -75,4 +76,4 @@ export const darkTheme: NodeTheme = {
     lg: '8px',
     full: '9999px',
   },
-}
+};

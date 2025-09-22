@@ -1,49 +1,102 @@
-name: Release
+name: Release Pipeline
 
 on:
   push:
-    branches: [main]
+    tags:
+      - 'v*.*.*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to release (e.g., 1.2.3)'
+        required: true
+        type: string
+      prerelease:
+        description: 'Mark as pre-release'
+        required: false
+        default: false
+        type: boolean
 
-concurrency: ${{ github.workflow }}-${{ github.ref }}
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
 
 env:
+  NODE_VERSION: '20'
+  PNPM_VERSION: '9'
   TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
   TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
 
 jobs:
-  release:
-    name: Release
+  # Validate release
+  validate:
+    name: Validate Release
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      is-prerelease: ${{ steps.version.outputs.prerelease }}
+
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v4
         with:
-          # This makes Actions fetch all Git history so Changesets can generate changelogs
           fetch-depth: 0
+
+      - name: Determine version
+        id: version
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            VERSION="${{ github.event.inputs.version }}"
+            PRERELEASE="${{ github.event.inputs.prerelease }}"
+          else
+            VERSION=${GITHUB_REF#refs/tags/v}
+            if [[ "$VERSION" =~ -[a-zA-Z] ]]; then
+              PRERELEASE=true
+            else
+              PRERELEASE=false
+            fi
+          fi
+
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "prerelease=$PRERELEASE" >> $GITHUB_OUTPUT
+          echo "Version: $VERSION, Pre-release: $PRERELEASE"
+
+      - name: Validate version format
+        run: |
+          if [[ ! "${{ steps.version.outputs.version }}" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9]+(\.[a-zA-Z0-9]+)*)?$ ]]; then
+            echo "Invalid version format: ${{ steps.version.outputs.version }}"
+            exit 1
+          fi
+
+  # Build release assets
+  build-assets:
+    name: Build Release Assets
+    runs-on: ubuntu-latest
+    needs: validate
+
+    strategy:
+      matrix:
+        target: [
+          { os: 'linux', arch: 'x64' },
+          { os: 'linux', arch: 'arm64' },
+          { os: 'darwin', arch: 'x64' },
+          { os: 'darwin', arch: 'arm64' },
+          { os: 'win32', arch: 'x64' }
+        ]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "18"
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
 
-      - name: Setup pnpm
+      - name: Install pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: 8
-
-      - name: Get pnpm store directory
-        shell: bash
-        run: |
-          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
-
-      - name: Setup pnpm cache
-        uses: actions/cache@v4
-        with:
-          path: ${{ env.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
+          version: ${{ env.PNPM_VERSION }}
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -51,20 +104,289 @@ jobs:
       - name: Build packages
         run: pnpm build
 
-      - name: Create Release Pull Request or Publish
-        id: changesets
-        uses: changesets/action@v1
+      - name: Build CLI binary
+        run: |
+          pnpm --filter=@reporunner/cli build:binary --target=${{ matrix.target.os }}-${{ matrix.target.arch }}
+
+      - name: Create release archive
+        run: |
+          mkdir -p dist/releases
+
+          if [[ "${{ matrix.target.os }}" == "win32" ]]; then
+            BINARY_NAME="reporunner.exe"
+            ARCHIVE_NAME="reporunner-v${{ needs.validate.outputs.version }}-${{ matrix.target.os }}-${{ matrix.target.arch }}.zip"
+            cd packages/@reporunner/cli/dist
+            zip -r "../../../../dist/releases/$ARCHIVE_NAME" "$BINARY_NAME" ../README.md ../LICENSE
+          else
+            BINARY_NAME="reporunner"
+            ARCHIVE_NAME="reporunner-v${{ needs.validate.outputs.version }}-${{ matrix.target.os }}-${{ matrix.target.arch }}.tar.gz"
+            cd packages/@reporunner/cli/dist
+            tar -czf "../../../../dist/releases/$ARCHIVE_NAME" "$BINARY_NAME" ../README.md ../LICENSE
+          fi
+
+      - name: Generate checksums
+        run: |
+          cd dist/releases
+          if [[ "${{ matrix.target.os }}" == "win32" ]]; then
+            sha256sum *.zip > "reporunner-v${{ needs.validate.outputs.version }}-${{ matrix.target.os }}-${{ matrix.target.arch }}.sha256"
+          else
+            sha256sum *.tar.gz > "reporunner-v${{ needs.validate.outputs.version }}-${{ matrix.target.os }}-${{ matrix.target.arch }}.sha256"
+          fi
+
+      - name: Upload release assets
+        uses: actions/upload-artifact@v4
         with:
-          # This expects you to have a script called release which does a build for your packages and calls changeset publish
-          publish: pnpm release
-          commit: "chore: release packages"
-          title: "chore: release packages"
+          name: release-${{ matrix.target.os }}-${{ matrix.target.arch }}
+          path: dist/releases/
+
+  # Build Docker images for release
+  build-release-images:
+    name: Build Release Docker Images
+    runs-on: ubuntu-latest
+    needs: validate
+
+    strategy:
+      matrix:
+        service: [backend, frontend, worker]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: |
+            ghcr.io/${{ github.repository }}/${{ matrix.service }}
+            reporunner/${{ matrix.service }}
+          tags: |
+            type=semver,pattern={{version}},value=v${{ needs.validate.outputs.version }}
+            type=semver,pattern={{major}}.{{minor}},value=v${{ needs.validate.outputs.version }}
+            type=semver,pattern={{major}},value=v${{ needs.validate.outputs.version }},enable={{is_default_branch}}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./docker/${{ matrix.service }}/Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          platforms: linux/amd64,linux/arm64
+
+  # Publish NPM packages
+  publish-npm:
+    name: Publish NPM Packages
+    runs-on: ubuntu-latest
+    needs: validate
+
+    strategy:
+      matrix:
+        package: [
+          '@reporunner/ai-core',
+          '@reporunner/auth',
+          '@reporunner/workflow-engine',
+          '@reporunner/database',
+          '@reporunner/api',
+          '@reporunner/cli'
+        ]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build package
+        run: pnpm --filter=${{ matrix.package }} build
+
+      - name: Update package version
+        run: |
+          cd packages/$(echo ${{ matrix.package }} | sed 's/@reporunner\///')
+          npm version ${{ needs.validate.outputs.version }} --no-git-tag-version
+
+      - name: Publish to NPM
+        run: |
+          cd packages/$(echo ${{ matrix.package }} | sed 's/@reporunner\///')
+          if [[ "${{ needs.validate.outputs.is-prerelease }}" == "true" ]]; then
+            npm publish --tag beta
+          else
+            npm publish
+          fi
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+  # Generate changelog
+  changelog:
+    name: Generate Changelog
+    runs-on: ubuntu-latest
+    needs: validate
+    outputs:
+      changelog: ${{ steps.changelog.outputs.changelog }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Generate changelog
+        id: changelog
+        run: |
+          # Get the previous tag
+          PREVIOUS_TAG=$(git tag --sort=-version:refname | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | head -2 | tail -1)
+          if [[ -z "$PREVIOUS_TAG" ]]; then
+            PREVIOUS_TAG=$(git rev-list --max-parents=0 HEAD)
+          fi
+
+          echo "Generating changelog from $PREVIOUS_TAG to HEAD"
+
+          # Generate changelog
+          CHANGELOG=$(git log $PREVIOUS_TAG..HEAD --pretty=format:"* %s (%h)" --grep="feat:" --grep="fix:" --grep="perf:" --grep="BREAKING CHANGE:" | sed 's/feat:/✨ Feature:/' | sed 's/fix:/🐛 Fix:/' | sed 's/perf:/⚡ Performance:/')
+
+          if [[ -z "$CHANGELOG" ]]; then
+            CHANGELOG="* Initial release"
+          fi
+
+          echo "changelog<<EOF" >> $GITHUB_OUTPUT
+          echo "$CHANGELOG" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+  # Create GitHub release
+  release:
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+    needs: [validate, build-assets, build-release-images, publish-npm, changelog]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download all release assets
+        uses: actions/download-artifact@v4
+        with:
+          pattern: release-*
+          path: release-assets/
+          merge-multiple: true
+
+      - name: Create or update tag
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            git tag v${{ needs.validate.outputs.version }}
+            git push origin v${{ needs.validate.outputs.version }}
+          fi
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ needs.validate.outputs.version }}
+          name: Release v${{ needs.validate.outputs.version }}
+          body: |
+            ## 🚀 Release v${{ needs.validate.outputs.version }}
+
+            ### 📋 Changes
+            ${{ needs.changelog.outputs.changelog }}
+
+            ### 📦 Installation
+
+            **NPM Packages:**
+            ```bash
+            npm install @reporunner/cli@${{ needs.validate.outputs.version }}
+            ```
+
+            **Docker Images:**
+            ```bash
+            docker pull reporunner/backend:${{ needs.validate.outputs.version }}
+            docker pull reporunner/frontend:${{ needs.validate.outputs.version }}
+            docker pull reporunner/worker:${{ needs.validate.outputs.version }}
+            ```
+
+            **Kubernetes Deployment:**
+            ```bash
+            helm upgrade --install reporunner ./k8s/helm --set image.tag=${{ needs.validate.outputs.version }}
+            ```
+
+            ### ✅ Checksums
+            All binary checksums are included in the release assets.
+
+            ### 🔗 Links
+            - [Documentation](https://docs.reporunner.com)
+            - [Docker Hub](https://hub.docker.com/u/reporunner)
+            - [NPM Packages](https://www.npmjs.com/search?q=%40reporunner)
+
+          files: release-assets/**/*
+          prerelease: ${{ needs.validate.outputs.is-prerelease }}
+          draft: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - name: Send a Slack notification if a publish happens
-        if: steps.changesets.outputs.published == 'true'
-        run: |
-          echo "Packages published! 🎉"
-          echo "Published packages: ${{ steps.changesets.outputs.publishedPackages }}"
+  # Notify release
+  notify:
+    name: Notify Release
+    runs-on: ubuntu-latest
+    needs: [validate, release]
+    if: always()
+
+    steps:
+      - name: Notify Slack
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          channel: '#releases'
+          webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+          custom_payload: |
+            {
+              text: "🎉 New Release v${{ needs.validate.outputs.version }}",
+              attachments: [{
+                color: "${{ job.status == 'success' && 'good' || 'danger' }}",
+                fields: [{
+                  title: "Version",
+                  value: "v${{ needs.validate.outputs.version }}",
+                  short: true
+                }, {
+                  title: "Type",
+                  value: "${{ needs.validate.outputs.is-prerelease == 'true' && 'Pre-release' || 'Release' }}",
+                  short: true
+                }, {
+                  title: "Repository",
+                  value: "${{ github.repository }}",
+                  short: true
+                }, {
+                  title: "Release Notes",
+                  value: "https://github.com/${{ github.repository }}/releases/tag/v${{ needs.validate.outputs.version }}",
+                  short: false
+                }]
+              }]
+            }

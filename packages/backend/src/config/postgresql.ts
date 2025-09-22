@@ -2,8 +2,8 @@
  * PostgreSQL configuration with pgvector support
  */
 
-import { Pool, PoolConfig } from "pg";
-import { ConfigService } from "./ConfigService.js";
+import { Pool, type PoolConfig } from 'pg';
+import { ConfigService } from './ConfigService.js';
 
 export class PostgreSQLConfig {
   private static instance: PostgreSQLConfig;
@@ -44,12 +44,12 @@ export class PostgreSQLConfig {
       const client = await this.pool.connect();
 
       // Enable pgvector extension
-      await client.query("CREATE EXTENSION IF NOT EXISTS vector");
-      console.log("PostgreSQL connected successfully with pgvector extension");
+      await client.query('CREATE EXTENSION IF NOT EXISTS vector');
+      console.log('PostgreSQL connected successfully with pgvector extension');
 
       client.release();
     } catch (error) {
-      console.error("PostgreSQL connection error:", error);
+      console.error('PostgreSQL connection error:', error);
       throw error;
     }
   }
@@ -59,24 +59,24 @@ export class PostgreSQLConfig {
       if (this.pool) {
         await this.pool.end();
         this.pool = null;
-        console.log("PostgreSQL disconnected successfully");
+        console.log('PostgreSQL disconnected successfully');
       }
     } catch (error) {
-      console.error("PostgreSQL disconnection error:", error);
+      console.error('PostgreSQL disconnection error:', error);
       throw error;
     }
   }
 
   public getPool(): Pool {
     if (!this.pool) {
-      throw new Error("PostgreSQL pool not initialized. Call connect() first.");
+      throw new Error('PostgreSQL pool not initialized. Call connect() first.');
     }
     return this.pool;
   }
 
   public async query(text: string, params?: any[]): Promise<any> {
     if (!this.pool) {
-      throw new Error("PostgreSQL pool not initialized. Call connect() first.");
+      throw new Error('PostgreSQL pool not initialized. Call connect() first.');
     }
     return this.pool.query(text, params);
   }
@@ -87,7 +87,7 @@ export class PostgreSQLConfig {
     embeddingColumn: string,
     queryVector: number[],
     limit: number = 10,
-    threshold: number = 0.8,
+    threshold: number = 0.8
   ): Promise<any[]> {
     const query = `
       SELECT *,
@@ -98,11 +98,7 @@ export class PostgreSQLConfig {
       LIMIT $3
     `;
 
-    const result = await this.query(query, [
-      JSON.stringify(queryVector),
-      threshold,
-      limit,
-    ]);
+    const result = await this.query(query, [JSON.stringify(queryVector), threshold, limit]);
     return result.rows;
   }
 }

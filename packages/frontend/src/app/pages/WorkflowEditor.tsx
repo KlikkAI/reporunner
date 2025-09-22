@@ -1,30 +1,30 @@
-import React, { useEffect } from 'react'
-import { useParams } from 'react-router-dom'
-import WorkflowEditorComponent from '../components/WorkflowEditor'
-import { useLeanWorkflowStore } from '@/core'
+import type React from 'react';
+import { useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+import { useLeanWorkflowStore } from '@/core';
+import WorkflowEditorComponent from '../components/WorkflowEditor';
 
 const WorkflowEditor: React.FC = () => {
-  const { id } = useParams<{ id: string }>()
-  const { currentWorkflow, saveWorkflow, loadWorkflow, isLoading } =
-    useLeanWorkflowStore()
+  const { id } = useParams<{ id: string }>();
+  const { currentWorkflow, saveWorkflow, loadWorkflow, isLoading } = useLeanWorkflowStore();
   // Integration loading removed - Pure Registry System handles this automatically
 
   useEffect(() => {
     if (id) {
       // Load specific workflow from API
-      loadWorkflow(id).catch(error => {
-        console.error('Failed to load workflow:', error)
+      loadWorkflow(id).catch((error) => {
+        console.error('Failed to load workflow:', error);
         // If workflow not found, redirect to dashboard or show error
-      })
+      });
     } else {
       // Create new workflow - handled by lean store internally
-      console.log('Creating new workflow...')
+      console.log('Creating new workflow...');
     }
-  }, [id, loadWorkflow])
+  }, [id, loadWorkflow]);
 
   const handleSave = async () => {
-    await saveWorkflow()
-  }
+    await saveWorkflow();
+  };
 
   return (
     <div className="h-full flex flex-col">
@@ -36,8 +36,7 @@ const WorkflowEditor: React.FC = () => {
               {currentWorkflow?.name || 'New Workflow'}
             </h1>
             <p className="text-sm text-gray-600">
-              {(currentWorkflow as any)?.description ||
-                'Design your automation workflow'}
+              {(currentWorkflow as any)?.description || 'Design your automation workflow'}
             </p>
           </div>
 
@@ -62,7 +61,7 @@ const WorkflowEditor: React.FC = () => {
         <WorkflowEditorComponent />
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default WorkflowEditor
+export default WorkflowEditor;

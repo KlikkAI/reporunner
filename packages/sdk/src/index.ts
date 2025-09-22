@@ -1,10 +1,10 @@
 // Main SDK exports
-export { ReporunnerClient } from "./client/ReporunnerClient.js";
-export { WebSocketClient } from "./client/WebSocketClient.js";
-export type { ReporunnerClientConfig } from "./client/ReporunnerClient.js";
 
 // Re-export core types
-export * from "@reporunner/core";
+export * from '@reporunner/core';
+export type { ReporunnerClientConfig } from './client/ReporunnerClient.js';
+export { ReporunnerClient } from './client/ReporunnerClient.js';
+export { WebSocketClient } from './client/WebSocketClient.js';
 
 // SDK-specific types
 export interface SDKConfig {
@@ -16,7 +16,7 @@ export interface SDKConfig {
 }
 
 // Convenience factory function
-import { ReporunnerClient } from "./client/ReporunnerClient.js";
+import { ReporunnerClient } from './client/ReporunnerClient.js';
 export function createClient(config?: SDKConfig) {
   return new ReporunnerClient(config);
 }

@@ -1,8 +1,8 @@
-import { Request, Response } from 'express';
-import { AuthService } from '../services/AuthService.js';
-import { logger } from '../../../utils/logger.js';
+import type { Request, Response } from 'express';
 import { BaseController } from '../../../base/BaseController.js';
 import { AppError } from '../../../middleware/errorHandlers.js';
+import { logger } from '../../../utils/logger.js';
+import { AuthService } from '../services/AuthService.js';
 
 export class AuthController extends BaseController {
   private authService: AuthService;
@@ -56,11 +56,15 @@ export class AuthController extends BaseController {
   logout = async (req: Request, res: Response) => {
     // Generate a simple session ID for the response
     const sessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-    
-    this.sendSuccess(res, { 
-      message: 'Logout successful', 
-      sessionId 
-    }, 'Logout successful');
+
+    this.sendSuccess(
+      res,
+      {
+        message: 'Logout successful',
+        sessionId,
+      },
+      'Logout successful'
+    );
   };
 
   /**

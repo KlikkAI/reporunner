@@ -1,10 +1,6 @@
-import axios, { AxiosInstance, AxiosRequestConfig } from "axios";
-import {
-  WorkflowDefinition,
-  ExecutionResult,
-  ApiResponse,
-} from "@reporunner/core";
-import { WebSocketClient } from "./WebSocketClient.js";
+import type { ApiResponse, ExecutionResult, WorkflowDefinition } from '@reporunner/core';
+import axios, { type AxiosInstance, AxiosRequestConfig } from 'axios';
+import { WebSocketClient } from './WebSocketClient.js';
 
 export interface ReporunnerClientConfig {
   apiUrl?: string;
@@ -21,18 +17,18 @@ export class ReporunnerClient {
 
   constructor(config: ReporunnerClientConfig = {}) {
     this.config = {
-      apiUrl: config.apiUrl || "http://localhost:5000",
-      apiKey: config.apiKey || "",
+      apiUrl: config.apiUrl || 'http://localhost:5000',
+      apiKey: config.apiKey || '',
       timeout: config.timeout || 30000,
       enableWebSocket: config.enableWebSocket ?? false,
-      wsUrl: config.wsUrl || "ws://localhost:5000",
+      wsUrl: config.wsUrl || 'ws://localhost:5000',
     };
 
     this.http = axios.create({
       baseURL: this.config.apiUrl,
       timeout: this.config.timeout,
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
         ...(this.config.apiKey && {
           Authorization: `Bearer ${this.config.apiKey}`,
         }),
@@ -42,24 +38,19 @@ export class ReporunnerClient {
     // Request interceptor for logging
     this.http.interceptors.request.use(
       (config) => {
-        console.debug(
-          `[Reporunner SDK] ${config.method?.toUpperCase()} ${config.url}`,
-        );
+        console.debug(`[Reporunner SDK] ${config.method?.toUpperCase()} ${config.url}`);
         return config;
       },
-      (error) => Promise.reject(error),
+      (error) => Promise.reject(error)
     );
 
     // Response interceptor for error handling
     this.http.interceptors.response.use(
       (response) => response,
       (error) => {
-        console.error(
-          "[Reporunner SDK] Request failed:",
-          error.response?.data || error.message,
-        );
+        console.error('[Reporunner SDK] Request failed:', error.response?.data || error.message);
         return Promise.reject(error);
-      },
+      }
     );
 
     if (this.config.enableWebSocket) {
@@ -69,15 +60,12 @@ export class ReporunnerClient {
 
   // Workflow Management
   async getWorkflows(): Promise<WorkflowDefinition[]> {
-    const response =
-      await this.http.get<ApiResponse<WorkflowDefinition[]>>("/api/workflows");
+    const response = await this.http.get<ApiResponse<WorkflowDefinition[]>>('/api/workflows');
     return response.data.data || [];
   }
 
   async getWorkflow(id: string): Promise<WorkflowDefinition> {
-    const response = await this.http.get<ApiResponse<WorkflowDefinition>>(
-      `/api/workflows/${id}`,
-    );
+    const response = await this.http.get<ApiResponse<WorkflowDefinition>>(`/api/workflows/${id}`);
     if (!response.data.data) {
       throw new Error(`Workflow ${id} not found`);
     }
@@ -85,25 +73,25 @@ export class ReporunnerClient {
   }
 
   async createWorkflow(
-    workflow: Omit<WorkflowDefinition, "id" | "createdAt" | "updatedAt">,
+    workflow: Omit<WorkflowDefinition, 'id' | 'createdAt' | 'updatedAt'>
   ): Promise<WorkflowDefinition> {
     const response = await this.http.post<ApiResponse<WorkflowDefinition>>(
-      "/api/workflows",
-      workflow,
+      '/api/workflows',
+      workflow
     );
     if (!response.data.data) {
-      throw new Error("Failed to create workflow");
+      throw new Error('Failed to create workflow');
     }
     return response.data.data;
   }
 
   async updateWorkflow(
     id: string,
-    workflow: Partial<WorkflowDefinition>,
+    workflow: Partial<WorkflowDefinition>
   ): Promise<WorkflowDefinition> {
     const response = await this.http.put<ApiResponse<WorkflowDefinition>>(
       `/api/workflows/${id}`,
-      workflow,
+      workflow
     );
     if (!response.data.data) {
       throw new Error(`Failed to update workflow ${id}`);
@@ -116,13 +104,10 @@ export class ReporunnerClient {
   }
 
   // Workflow Execution
-  async executeWorkflow(
-    id: string,
-    input?: Record<string, any>,
-  ): Promise<ExecutionResult> {
+  async executeWorkflow(id: string, input?: Record<string, any>): Promise<ExecutionResult> {
     const response = await this.http.post<ApiResponse<ExecutionResult>>(
       `/api/workflows/${id}/execute`,
-      { input },
+      { input }
     );
     if (!response.data.data) {
       throw new Error(`Failed to execute workflow ${id}`);
@@ -131,9 +116,7 @@ export class ReporunnerClient {
   }
 
   async getExecution(id: string): Promise<ExecutionResult> {
-    const response = await this.http.get<ApiResponse<ExecutionResult>>(
-      `/api/executions/${id}`,
-    );
+    const response = await this.http.get<ApiResponse<ExecutionResult>>(`/api/executions/${id}`);
     if (!response.data.data) {
       throw new Error(`Execution ${id} not found`);
     }
@@ -142,10 +125,9 @@ export class ReporunnerClient {
 
   async getExecutions(workflowId?: string): Promise<ExecutionResult[]> {
     const params = workflowId ? { workflowId } : {};
-    const response = await this.http.get<ApiResponse<ExecutionResult[]>>(
-      "/api/executions",
-      { params },
-    );
+    const response = await this.http.get<ApiResponse<ExecutionResult[]>>('/api/executions', {
+      params,
+    });
     return response.data.data || [];
   }
 
@@ -155,27 +137,20 @@ export class ReporunnerClient {
 
   // Credential Management
   async getCredentials(): Promise<any[]> {
-    const response =
-      await this.http.get<ApiResponse<any[]>>("/api/credentials");
+    const response = await this.http.get<ApiResponse<any[]>>('/api/credentials');
     return response.data.data || [];
   }
 
   async createCredential(credential: any): Promise<any> {
-    const response = await this.http.post<ApiResponse<any>>(
-      "/api/credentials",
-      credential,
-    );
+    const response = await this.http.post<ApiResponse<any>>('/api/credentials', credential);
     if (!response.data.data) {
-      throw new Error("Failed to create credential");
+      throw new Error('Failed to create credential');
     }
     return response.data.data;
   }
 
   async updateCredential(id: string, credential: any): Promise<any> {
-    const response = await this.http.put<ApiResponse<any>>(
-      `/api/credentials/${id}`,
-      credential,
-    );
+    const response = await this.http.put<ApiResponse<any>>(`/api/credentials/${id}`, credential);
     if (!response.data.data) {
       throw new Error(`Failed to update credential ${id}`);
     }
@@ -198,26 +173,22 @@ export class ReporunnerClient {
   // WebSocket Methods
   onExecutionUpdate(callback: (execution: ExecutionResult) => void): void {
     if (!this.ws) {
-      throw new Error(
-        "WebSocket is not enabled. Set enableWebSocket: true in config.",
-      );
+      throw new Error('WebSocket is not enabled. Set enableWebSocket: true in config.');
     }
-    this.ws.on("execution:update", callback);
+    this.ws.on('execution:update', callback);
   }
 
   onWorkflowUpdate(callback: (workflow: WorkflowDefinition) => void): void {
     if (!this.ws) {
-      throw new Error(
-        "WebSocket is not enabled. Set enableWebSocket: true in config.",
-      );
+      throw new Error('WebSocket is not enabled. Set enableWebSocket: true in config.');
     }
-    this.ws.on("workflow:update", callback);
+    this.ws.on('workflow:update', callback);
   }
 
   // Utility Methods
   async ping(): Promise<boolean> {
     try {
-      await this.http.get("/api/health");
+      await this.http.get('/api/health');
       return true;
     } catch {
       return false;
@@ -225,9 +196,8 @@ export class ReporunnerClient {
   }
 
   async getVersion(): Promise<string> {
-    const response =
-      await this.http.get<ApiResponse<{ version: string }>>("/api/version");
-    return response.data.data?.version || "unknown";
+    const response = await this.http.get<ApiResponse<{ version: string }>>('/api/version');
+    return response.data.data?.version || 'unknown';
   }
 
   // Cleanup

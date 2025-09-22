@@ -1,43 +1,38 @@
-import React, { useState, useEffect, useMemo } from 'react'
-import {
-  getBezierPath,
-  getSmoothStepPath,
-  Position,
-  ConnectionLineType,
-} from 'reactflow'
-import { ConnectionType, type ConnectionTypeValue } from '@/core/types/edge'
+import type React from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { type ConnectionLineType, getBezierPath, getSmoothStepPath, Position } from 'reactflow';
+import { ConnectionType, type ConnectionTypeValue } from '@/core/types/edge';
 
 // Connection line
-const EDGE_PADDING_BOTTOM = 130
-const EDGE_PADDING_X = 40
-const EDGE_BORDER_RADIUS = 16
-const HANDLE_SIZE = 20
+const EDGE_PADDING_BOTTOM = 130;
+const EDGE_PADDING_X = 40;
+const EDGE_BORDER_RADIUS = 16;
+const HANDLE_SIZE = 20;
 
 interface ConnectionLineProps {
-  fromX: number
-  fromY: number
-  toX: number
-  toY: number
-  fromPosition: Position
-  toPosition: Position
-  connectionLineType?: ConnectionLineType
-  connectionLineStyle?: React.CSSProperties
-  connectionType?: ConnectionTypeValue
+  fromX: number;
+  fromY: number;
+  toX: number;
+  toY: number;
+  fromPosition: Position;
+  toPosition: Position;
+  connectionLineType?: ConnectionLineType;
+  connectionLineStyle?: React.CSSProperties;
+  connectionType?: ConnectionTypeValue;
 }
 
 // Check if connection is backwards (target is to the left of source)
-const isRightOfSourceHandle = (sourceX: number, targetX: number) =>
-  sourceX - HANDLE_SIZE > targetX
+const isRightOfSourceHandle = (sourceX: number, targetX: number) => sourceX - HANDLE_SIZE > targetX;
 
 // Get connection line render data with path selection logic
 const getConnectionLineRenderData = (props: {
-  sourceX: number
-  sourceY: number
-  sourcePosition: Position
-  targetX: number
-  targetY: number
-  targetPosition: Position
-  connectionType?: ConnectionTypeValue
+  sourceX: number;
+  sourceY: number;
+  sourcePosition: Position;
+  targetX: number;
+  targetY: number;
+  targetPosition: Position;
+  connectionType?: ConnectionTypeValue;
 }) => {
   const {
     targetX,
@@ -47,26 +42,23 @@ const getConnectionLineRenderData = (props: {
     sourcePosition,
     targetPosition,
     connectionType = ConnectionType.Main,
-  } = props
-  const isConnectorStraight = sourceY === targetY
+  } = props;
+  const isConnectorStraight = sourceY === targetY;
 
   // Use Bezier path for normal connections or non-main connections
-  if (
-    !isRightOfSourceHandle(sourceX, targetX) ||
-    connectionType !== ConnectionType.Main
-  ) {
-    const segment = getBezierPath(props)
+  if (!isRightOfSourceHandle(sourceX, targetX) || connectionType !== ConnectionType.Main) {
+    const segment = getBezierPath(props);
     return {
       segments: [segment],
       labelPosition: [segment[1], segment[2]],
       isConnectorStraight,
-    }
+    };
   }
 
   // Connection is backwards and the source is on the right side
   // Use smooth step path to avoid overlapping the source node
-  const firstSegmentTargetX = (sourceX + targetX) / 2
-  const firstSegmentTargetY = sourceY + EDGE_PADDING_BOTTOM
+  const firstSegmentTargetX = (sourceX + targetX) / 2;
+  const firstSegmentTargetY = sourceY + EDGE_PADDING_BOTTOM;
   const firstSegment = getSmoothStepPath({
     sourceX,
     sourceY,
@@ -76,7 +68,7 @@ const getConnectionLineRenderData = (props: {
     targetPosition: Position.Right,
     borderRadius: EDGE_BORDER_RADIUS,
     offset: EDGE_PADDING_X,
-  })
+  });
 
   const secondSegment = getSmoothStepPath({
     sourceX: firstSegmentTargetX,
@@ -87,14 +79,14 @@ const getConnectionLineRenderData = (props: {
     targetPosition,
     borderRadius: EDGE_BORDER_RADIUS,
     offset: EDGE_PADDING_X,
-  })
+  });
 
   return {
     segments: [firstSegment, secondSegment],
     labelPosition: [firstSegmentTargetX, firstSegmentTargetY],
     isConnectorStraight,
-  }
-}
+  };
+};
 
 const ConnectionLine: React.FC<ConnectionLineProps> = ({
   fromX,
@@ -106,16 +98,16 @@ const ConnectionLine: React.FC<ConnectionLineProps> = ({
   connectionLineStyle = {},
   connectionType = ConnectionType.Main,
 }) => {
-  const [isVisible, setIsVisible] = useState(false)
+  const [isVisible, setIsVisible] = useState(false);
 
   // Implement visibility delay to prevent flickering
   useEffect(() => {
     const timeout = setTimeout(() => {
-      setIsVisible(true)
-    }, 300)
+      setIsVisible(true);
+    }, 300);
 
-    return () => clearTimeout(timeout)
-  }, [])
+    return () => clearTimeout(timeout);
+  }, []);
 
   // Calculate connection line render data
   const renderData = useMemo(
@@ -130,10 +122,10 @@ const ConnectionLine: React.FC<ConnectionLineProps> = ({
         connectionType,
       }),
     [fromX, fromY, fromPosition, toX, toY, toPosition, connectionType]
-  )
+  );
 
-  const { segments } = renderData
-  const isMainConnection = connectionType === ConnectionType.Main
+  const { segments } = renderData;
+  const isMainConnection = connectionType === ConnectionType.Main;
 
   // Dynamic styling based on connection type
   const getConnectionLineStyle = () => ({
@@ -144,7 +136,7 @@ const ConnectionLine: React.FC<ConnectionLineProps> = ({
     fill: 'none',
     transition: 'opacity 300ms ease',
     opacity: isVisible ? 1 : 0,
-  })
+  });
 
   return (
     <g>
@@ -177,7 +169,7 @@ const ConnectionLine: React.FC<ConnectionLineProps> = ({
         />
       ))}
     </g>
-  )
-}
+  );
+};
 
-export default ConnectionLine
+export default ConnectionLine;

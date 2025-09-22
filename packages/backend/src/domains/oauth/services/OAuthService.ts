@@ -1,18 +1,21 @@
-import { Request } from 'express';
-import { google } from 'googleapis';
 import crypto from 'crypto';
-import { CredentialRepository } from '../../credentials/repositories/CredentialRepository.js';
+import type { Request } from 'express';
+import { google } from 'googleapis';
 import { AppError } from '../../../middleware/errorHandlers.js';
+import { CredentialRepository } from '../../credentials/repositories/CredentialRepository.js';
 
 // In-memory state store (in production, use Redis)
-const oauthStates = new Map<string, {
-  userId: string;
-  credentialName: string;
-  clientId: string;
-  clientSecret: string;
-  returnUrl?: string;
-  createdAt: Date;
-}>();
+const oauthStates = new Map<
+  string,
+  {
+    userId: string;
+    credentialName: string;
+    clientId: string;
+    clientSecret: string;
+    returnUrl?: string;
+    createdAt: Date;
+  }
+>();
 
 export class OAuthService {
   private credentialRepository: CredentialRepository;
@@ -24,7 +27,12 @@ export class OAuthService {
   /**
    * Initiate Gmail OAuth2 flow
    */
-  async initiateGmailOAuth(userId: string, credentialName: string, returnUrl: string | undefined, req: Request) {
+  async initiateGmailOAuth(
+    userId: string,
+    credentialName: string,
+    returnUrl: string | undefined,
+    req: Request
+  ) {
     // Use your app's OAuth credentials (from environment variables)
     const clientId = process.env.GOOGLE_OAUTH_CLIENT_ID;
     const clientSecret = process.env.GOOGLE_OAUTH_CLIENT_SECRET;
@@ -34,14 +42,12 @@ export class OAuthService {
     }
 
     // Use HTTPS in production, detect protocol properly
-    const protocol = process.env.OAUTH_PROTOCOL || (process.env.NODE_ENV === 'production' ? 'https' : req.protocol);
+    const protocol =
+      process.env.OAUTH_PROTOCOL ||
+      (process.env.NODE_ENV === 'production' ? 'https' : req.protocol);
     const redirectUri = `${protocol}://${req.get('host')}/oauth/gmail/callback`;
 
-    const oauth2Client = new google.auth.OAuth2(
-      clientId,
-      clientSecret,
-      redirectUri
-    );
+    const oauth2Client = new google.auth.OAuth2(clientId, clientSecret, redirectUri);
 
     // Generate secure random state for CSRF protection
     const state = crypto.randomBytes(32).toString('hex');
@@ -53,7 +59,7 @@ export class OAuthService {
       clientId,
       clientSecret,
       returnUrl,
-      createdAt: new Date()
+      createdAt: new Date(),
     });
 
     // Clean up old states (older than 10 minutes)
@@ -70,24 +76,32 @@ export class OAuthService {
         'https://www.googleapis.com/auth/gmail.readonly',
         'https://www.googleapis.com/auth/gmail.send',
         'https://www.googleapis.com/auth/gmail.compose',
-        'https://www.googleapis.com/auth/gmail.modify'
+        'https://www.googleapis.com/auth/gmail.modify',
       ],
       state,
-      prompt: 'consent' // Always show consent screen to get refresh token
+      prompt: 'consent', // Always show consent screen to get refresh token
     });
 
     return {
       authUrl,
-      state
+      state,
     };
   }
 
   /**
    * Exchange authorization code for tokens
    */
-  async exchangeCodeForTokens(code: string, clientId: string, clientSecret: string, redirectUri: string | undefined, req: Request) {
+  async exchangeCodeForTokens(
+    code: string,
+    clientId: string,
+    clientSecret: string,
+    redirectUri: string | undefined,
+    req: Request
+  ) {
     // Use HTTPS in production, detect protocol properly
-    const protocol = process.env.OAUTH_PROTOCOL || (process.env.NODE_ENV === 'production' ? 'https' : req.protocol);
+    const protocol =
+      process.env.OAUTH_PROTOCOL ||
+      (process.env.NODE_ENV === 'production' ? 'https' : req.protocol);
     const defaultRedirectUri = `${protocol}://${req.get('host')}/oauth/gmail/callback`;
 
     const oauth2Client = new google.auth.OAuth2(
@@ -118,15 +132,12 @@ export class OAuthService {
         userInfo: {
           emailAddress: profile.data.emailAddress,
           messagesTotal: profile.data.messagesTotal,
-          threadsTotal: profile.data.threadsTotal
-        }
+          threadsTotal: profile.data.threadsTotal,
+        },
       };
     } catch (error: any) {
       console.error('OAuth token exchange error:', error);
-      throw new AppError(
-        error.message || 'Failed to exchange authorization code for tokens',
-        400
-      );
+      throw new AppError(error.message || 'Failed to exchange authorization code for tokens', 400);
     }
   }
 
@@ -152,14 +163,12 @@ export class OAuthService {
 
     try {
       // Use HTTPS in production, detect protocol properly
-      const protocol = process.env.OAUTH_PROTOCOL || (process.env.NODE_ENV === 'production' ? 'https' : req.protocol);
+      const protocol =
+        process.env.OAUTH_PROTOCOL ||
+        (process.env.NODE_ENV === 'production' ? 'https' : req.protocol);
       const redirectUri = `${protocol}://${req.get('host')}/oauth/gmail/callback`;
 
-      const oauth2Client = new google.auth.OAuth2(
-        clientId,
-        clientSecret,
-        redirectUri
-      );
+      const oauth2Client = new google.auth.OAuth2(clientId, clientSecret, redirectUri);
 
       // Exchange authorization code for tokens
       const { tokens } = await oauth2Client.getToken(code);
@@ -186,7 +195,7 @@ export class OAuthService {
           accessToken: tokens.access_token,
           expiryDate: tokens.expiry_date,
           tokenType: tokens.token_type,
-          scope: tokens.scope
+          scope: tokens.scope,
         },
         expiresAt: tokens.expiry_date ? new Date(tokens.expiry_date) : undefined,
         isValid: true,
@@ -194,8 +203,8 @@ export class OAuthService {
         metadata: {
           emailAddress: profile.data.emailAddress,
           messagesTotal: profile.data.messagesTotal,
-          threadsTotal: profile.data.threadsTotal
-        }
+          threadsTotal: profile.data.threadsTotal,
+        },
       });
 
       // Clean up state
@@ -211,7 +220,6 @@ export class OAuthService {
       urlObj.searchParams.set('name', credentialName);
 
       return urlObj.toString();
-
     } catch (error: any) {
       console.error('OAuth callback error:', error);
 
@@ -233,13 +241,10 @@ export class OAuthService {
    * Refresh Gmail access token
    */
   async refreshGmailToken(refreshToken: string, clientId: string, clientSecret: string) {
-    const oauth2Client = new google.auth.OAuth2(
-      clientId,
-      clientSecret
-    );
+    const oauth2Client = new google.auth.OAuth2(clientId, clientSecret);
 
     oauth2Client.setCredentials({
-      refresh_token: refreshToken
+      refresh_token: refreshToken,
     });
 
     try {
@@ -249,14 +254,11 @@ export class OAuthService {
         accessToken: credentials.access_token,
         expiryDate: credentials.expiry_date,
         tokenType: credentials.token_type,
-        scope: credentials.scope
+        scope: credentials.scope,
       };
     } catch (error: any) {
       console.error('Token refresh error:', error);
-      throw new AppError(
-        error.message || 'Failed to refresh access token',
-        400
-      );
+      throw new AppError(error.message || 'Failed to refresh access token', 400);
     }
   }
 
@@ -264,13 +266,10 @@ export class OAuthService {
    * Test Gmail connection with credentials
    */
   async testGmailConnection(clientId: string, clientSecret: string, refreshToken: string) {
-    const oauth2Client = new google.auth.OAuth2(
-      clientId,
-      clientSecret
-    );
+    const oauth2Client = new google.auth.OAuth2(clientId, clientSecret);
 
     oauth2Client.setCredentials({
-      refresh_token: refreshToken
+      refresh_token: refreshToken,
     });
 
     try {
@@ -284,7 +283,7 @@ export class OAuthService {
       // Test basic functionality by listing a few messages
       const messages = await gmail.users.messages.list({
         userId: 'me',
-        maxResults: 1
+        maxResults: 1,
       });
 
       return {
@@ -292,19 +291,19 @@ export class OAuthService {
         userInfo: {
           emailAddress: profile.data.emailAddress,
           messagesTotal: profile.data.messagesTotal,
-          threadsTotal: profile.data.threadsTotal
+          threadsTotal: profile.data.threadsTotal,
         },
         testResults: {
           canReadMessages: messages.data.messages ? messages.data.messages.length >= 0 : false,
-          messageCount: messages.data.resultSizeEstimate || 0
-        }
+          messageCount: messages.data.resultSizeEstimate || 0,
+        },
       };
     } catch (error: any) {
       console.error('Gmail connection test error:', error);
 
       return {
         connected: false,
-        error: error.message || 'Connection test failed'
+        error: error.message || 'Connection test failed',
       };
     }
   }

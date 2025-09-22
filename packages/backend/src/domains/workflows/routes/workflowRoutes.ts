@@ -1,8 +1,8 @@
-import express, { Router } from 'express';
-import { body, query, param } from 'express-validator';
-import { WorkflowController } from '../controllers/WorkflowController.js';
-import { catchAsync } from '../../../middleware/errorHandlers.js';
+import express, { type Router } from 'express';
+import { body, param, query } from 'express-validator';
 import { authenticate } from '../../../middleware/auth.js';
+import { catchAsync } from '../../../middleware/errorHandlers.js';
+import { WorkflowController } from '../controllers/WorkflowController.js';
 
 const router: Router = express.Router();
 const workflowController = new WorkflowController();
@@ -111,10 +111,7 @@ router.post(
 router.post(
   '/:id/execute',
   authenticate,
-  [
-    param('id').isMongoId(),
-    body('triggerData').optional().isObject(),
-  ],
+  [param('id').isMongoId(), body('triggerData').optional().isObject()],
   catchAsync(workflowController.executeWorkflow)
 );
 
@@ -138,10 +135,7 @@ router.post(
 router.get(
   '/:id/statistics',
   authenticate,
-  [
-    param('id').isMongoId(),
-    query('days').optional().isInt({ min: 1, max: 365 }).toInt(),
-  ],
+  [param('id').isMongoId(), query('days').optional().isInt({ min: 1, max: 365 }).toInt()],
   catchAsync(workflowController.getWorkflowStatistics)
 );
 

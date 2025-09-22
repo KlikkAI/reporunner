@@ -6,7 +6,7 @@
  * Provides enterprise-grade triggering capabilities like Zapier and Microsoft Power Automate.
  */
 
-import { workflowScheduler } from "./workflowScheduler";
+import { workflowScheduler } from './workflowScheduler';
 
 export interface TriggerConfiguration {
   id: string;
@@ -15,17 +15,17 @@ export interface TriggerConfiguration {
   description?: string;
   enabled: boolean;
   triggerType:
-    | "webhook"
-    | "http_request"
-    | "email"
-    | "file_change"
-    | "database_change"
-    | "api_poll"
-    | "calendar_event"
-    | "form_submission"
-    | "social_media"
-    | "iot_sensor"
-    | "custom_event";
+    | 'webhook'
+    | 'http_request'
+    | 'email'
+    | 'file_change'
+    | 'database_change'
+    | 'api_poll'
+    | 'calendar_event'
+    | 'form_submission'
+    | 'social_media'
+    | 'iot_sensor'
+    | 'custom_event';
   configuration: TriggerConfig;
   filters: TriggerFilter[];
   transformations: DataTransformation[];
@@ -55,7 +55,7 @@ export type TriggerConfig =
 
 export interface WebhookConfig {
   endpoint: string; // Auto-generated webhook URL
-  methods: ("GET" | "POST" | "PUT" | "DELETE" | "PATCH")[];
+  methods: ('GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH')[];
   contentTypes: string[];
   headers: Record<string, string>;
   responseTemplate?: string;
@@ -64,15 +64,15 @@ export interface WebhookConfig {
 
 export interface HttpRequestConfig {
   url: string;
-  method: "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
+  method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
   headers: Record<string, string>;
   body?: string;
   pollIntervalMs: number;
-  changeDetection: "hash" | "content" | "headers" | "size";
+  changeDetection: 'hash' | 'content' | 'headers' | 'size';
 }
 
 export interface EmailConfig {
-  provider: "gmail" | "outlook" | "imap" | "exchange";
+  provider: 'gmail' | 'outlook' | 'imap' | 'exchange';
   mailbox: string;
   filters: {
     from?: string[];
@@ -87,7 +87,7 @@ export interface EmailConfig {
 export interface FileChangeConfig {
   path: string;
   recursive: boolean;
-  events: ("created" | "modified" | "deleted" | "moved")[];
+  events: ('created' | 'modified' | 'deleted' | 'moved')[];
   patterns: string[]; // Glob patterns
   ignorePatterns: string[];
   debounceMs: number;
@@ -97,7 +97,7 @@ export interface DatabaseConfig {
   connectionString: string;
   database: string;
   table: string;
-  operation: "insert" | "update" | "delete" | "any";
+  operation: 'insert' | 'update' | 'delete' | 'any';
   columns?: string[];
   conditions?: Record<string, any>;
   pollIntervalMs: number;
@@ -105,7 +105,7 @@ export interface DatabaseConfig {
 
 export interface ApiPollConfig {
   url: string;
-  method: "GET" | "POST";
+  method: 'GET' | 'POST';
   headers: Record<string, string>;
   body?: string;
   pollIntervalMs: number;
@@ -114,31 +114,31 @@ export interface ApiPollConfig {
 }
 
 export interface CalendarConfig {
-  provider: "google" | "outlook" | "ical";
+  provider: 'google' | 'outlook' | 'ical';
   calendarId: string;
-  eventTypes: ("created" | "updated" | "deleted" | "started" | "ended")[];
+  eventTypes: ('created' | 'updated' | 'deleted' | 'started' | 'ended')[];
   timeWindow: number; // Minutes before event to trigger
 }
 
 export interface FormConfig {
   formId: string;
-  provider: "typeform" | "google_forms" | "jotform" | "custom";
+  provider: 'typeform' | 'google_forms' | 'jotform' | 'custom';
   webhook?: string;
   fields?: string[]; // Specific fields to monitor
 }
 
 export interface SocialMediaConfig {
-  platform: "twitter" | "linkedin" | "facebook" | "instagram" | "youtube";
+  platform: 'twitter' | 'linkedin' | 'facebook' | 'instagram' | 'youtube';
   account?: string;
   hashtags?: string[];
   mentions?: string[];
-  eventTypes: ("post" | "comment" | "like" | "share" | "mention")[];
+  eventTypes: ('post' | 'comment' | 'like' | 'share' | 'mention')[];
 }
 
 export interface IoTSensorConfig {
   deviceId: string;
   sensorType: string;
-  protocol: "mqtt" | "http" | "websocket" | "coap";
+  protocol: 'mqtt' | 'http' | 'websocket' | 'coap';
   endpoint: string;
   dataField: string;
   conditions: SensorCondition[];
@@ -153,7 +153,7 @@ export interface CustomEventConfig {
 
 export interface SensorCondition {
   field: string;
-  operator: ">" | "<" | "=" | "!=" | ">=" | "<=";
+  operator: '>' | '<' | '=' | '!=' | '>=' | '<=';
   value: number;
   unit?: string;
 }
@@ -161,20 +161,20 @@ export interface SensorCondition {
 export interface TriggerFilter {
   field: string; // JSONPath to field in trigger data
   operator:
-    | "equals"
-    | "contains"
-    | "starts_with"
-    | "ends_with"
-    | "regex"
-    | "greater_than"
-    | "less_than"
-    | "in_array";
+    | 'equals'
+    | 'contains'
+    | 'starts_with'
+    | 'ends_with'
+    | 'regex'
+    | 'greater_than'
+    | 'less_than'
+    | 'in_array';
   value: any;
   negate?: boolean;
 }
 
 export interface DataTransformation {
-  type: "map" | "filter" | "reduce" | "format" | "extract" | "enrich";
+  type: 'map' | 'filter' | 'reduce' | 'format' | 'extract' | 'enrich';
   configuration: TransformationConfig;
 }
 
@@ -195,13 +195,13 @@ export interface FilterTransformation {
 }
 
 export interface ReduceTransformation {
-  operation: "sum" | "avg" | "min" | "max" | "count";
+  operation: 'sum' | 'avg' | 'min' | 'max' | 'count';
   field: string;
 }
 
 export interface FormatTransformation {
   field: string;
-  format: "date" | "currency" | "percentage" | "custom";
+  format: 'date' | 'currency' | 'percentage' | 'custom';
   options?: Record<string, any>;
 }
 
@@ -212,12 +212,12 @@ export interface ExtractTransformation {
 }
 
 export interface EnrichTransformation {
-  source: "api" | "database" | "cache" | "static";
+  source: 'api' | 'database' | 'cache' | 'static';
   configuration: Record<string, any>;
 }
 
 export interface AuthenticationConfig {
-  type: "none" | "api_key" | "oauth2" | "basic" | "bearer" | "custom";
+  type: 'none' | 'api_key' | 'oauth2' | 'basic' | 'bearer' | 'custom';
   credentials: Record<string, any>;
 }
 
@@ -257,7 +257,7 @@ export interface TriggerEvent {
     ip?: string;
     headers?: Record<string, string>;
   };
-  status: "received" | "filtered" | "processed" | "failed" | "rate_limited";
+  status: 'received' | 'filtered' | 'processed' | 'failed' | 'rate_limited';
   error?: string;
   processingTimeMs: number;
 }
@@ -274,8 +274,8 @@ export interface TriggerMetrics {
   errorRate: number;
   topSources: Array<{ source: string; count: number }>;
   trends: {
-    eventVolume: "increasing" | "stable" | "decreasing";
-    errorTrend: "improving" | "stable" | "worsening";
+    eventVolume: 'increasing' | 'stable' | 'decreasing';
+    errorTrend: 'improving' | 'stable' | 'worsening';
   };
 }
 
@@ -284,10 +284,7 @@ export class AdvancedTriggerSystemService {
   private activeTriggers = new Map<string, any>(); // Active monitors/listeners
   private eventHistory = new Map<string, TriggerEvent[]>();
   private rateLimiters = new Map<string, RateLimiter>();
-  private eventListeners = new Map<
-    string,
-    Set<(event: TriggerEvent) => void>
-  >();
+  private eventListeners = new Map<string, Set<(event: TriggerEvent) => void>>();
 
   // Webhook server endpoints
   private webhookEndpoints = new Map<string, string>();
@@ -300,10 +297,7 @@ export class AdvancedTriggerSystemService {
    * Create a new trigger configuration
    */
   createTrigger(
-    config: Omit<
-      TriggerConfiguration,
-      "id" | "createdAt" | "updatedAt" | "triggerCount"
-    >,
+    config: Omit<TriggerConfiguration, 'id' | 'createdAt' | 'updatedAt' | 'triggerCount'>
   ): TriggerConfiguration {
     const trigger: TriggerConfiguration = {
       ...config,
@@ -314,7 +308,7 @@ export class AdvancedTriggerSystemService {
     };
 
     // Generate webhook endpoint if needed
-    if (trigger.triggerType === "webhook") {
+    if (trigger.triggerType === 'webhook') {
       const webhookConfig = trigger.configuration as WebhookConfig;
       webhookConfig.endpoint = this.generateWebhookEndpoint(trigger.id);
       this.webhookEndpoints.set(trigger.id, webhookConfig.endpoint);
@@ -332,10 +326,7 @@ export class AdvancedTriggerSystemService {
   /**
    * Update existing trigger configuration
    */
-  updateTrigger(
-    triggerId: string,
-    updates: Partial<TriggerConfiguration>,
-  ): TriggerConfiguration {
+  updateTrigger(triggerId: string, updates: Partial<TriggerConfiguration>): TriggerConfiguration {
     const existing = this.triggers.get(triggerId);
     if (!existing) {
       throw new Error(`Trigger ${triggerId} not found`);
@@ -410,10 +401,10 @@ export class AdvancedTriggerSystemService {
       rawData: testData || this.generateTestData(trigger.triggerType),
       processedData: null,
       metadata: {
-        source: "manual_test",
-        userAgent: "Trigger Test",
+        source: 'manual_test',
+        userAgent: 'Trigger Test',
       },
-      status: "received",
+      status: 'received',
       processingTimeMs: 0,
     };
 
@@ -430,35 +421,22 @@ export class AdvancedTriggerSystemService {
     }
 
     const endDate = new Date();
-    const startDate = new Date(
-      endDate.getTime() - periodDays * 24 * 60 * 60 * 1000,
-    );
+    const startDate = new Date(endDate.getTime() - periodDays * 24 * 60 * 60 * 1000);
 
     const events = this.eventHistory.get(triggerId) || [];
     const periodEvents = events.filter(
-      (event) =>
-        new Date(event.timestamp) >= startDate &&
-        new Date(event.timestamp) <= endDate,
+      (event) => new Date(event.timestamp) >= startDate && new Date(event.timestamp) <= endDate
     );
 
     const totalEvents = periodEvents.length;
-    const processedEvents = periodEvents.filter(
-      (e) => e.status === "processed",
-    ).length;
-    const filteredEvents = periodEvents.filter(
-      (e) => e.status === "filtered",
-    ).length;
-    const failedEvents = periodEvents.filter(
-      (e) => e.status === "failed",
-    ).length;
-    const rateLimitedEvents = periodEvents.filter(
-      (e) => e.status === "rate_limited",
-    ).length;
+    const processedEvents = periodEvents.filter((e) => e.status === 'processed').length;
+    const filteredEvents = periodEvents.filter((e) => e.status === 'filtered').length;
+    const failedEvents = periodEvents.filter((e) => e.status === 'failed').length;
+    const rateLimitedEvents = periodEvents.filter((e) => e.status === 'rate_limited').length;
 
     const averageProcessingTime =
       periodEvents.length > 0
-        ? periodEvents.reduce((sum, e) => sum + e.processingTimeMs, 0) /
-          periodEvents.length
+        ? periodEvents.reduce((sum, e) => sum + e.processingTimeMs, 0) / periodEvents.length
         : 0;
 
     const errorRate = totalEvents > 0 ? (failedEvents / totalEvents) * 100 : 0;
@@ -512,8 +490,8 @@ export class AdvancedTriggerSystemService {
    * Subscribe to trigger events
    */
   subscribeToEvents(
-    event: "received" | "processed" | "failed",
-    callback: (event: TriggerEvent) => void,
+    event: 'received' | 'processed' | 'failed',
+    callback: (event: TriggerEvent) => void
   ): () => void {
     if (!this.eventListeners.has(event)) {
       this.eventListeners.set(event, new Set());
@@ -529,25 +507,25 @@ export class AdvancedTriggerSystemService {
 
   private activateTrigger(trigger: TriggerConfiguration): void {
     switch (trigger.triggerType) {
-      case "webhook":
+      case 'webhook':
         this.activateWebhookTrigger(trigger);
         break;
-      case "http_request":
+      case 'http_request':
         this.activateHttpTrigger(trigger);
         break;
-      case "email":
+      case 'email':
         this.activateEmailTrigger(trigger);
         break;
-      case "file_change":
+      case 'file_change':
         this.activateFileWatcher(trigger);
         break;
-      case "database_change":
+      case 'database_change':
         this.activateDatabaseWatcher(trigger);
         break;
-      case "api_poll":
+      case 'api_poll':
         this.activateApiPoller(trigger);
         break;
-      case "calendar_event":
+      case 'calendar_event':
         this.activateCalendarWatcher(trigger);
         break;
       default:
@@ -665,8 +643,8 @@ export class AdvancedTriggerSystemService {
         // Check threshold if configured
         if (
           config.changeThreshold &&
-          typeof fieldValue === "number" &&
-          typeof lastValue === "number"
+          typeof fieldValue === 'number' &&
+          typeof lastValue === 'number'
         ) {
           const change = Math.abs(fieldValue - lastValue);
           if (change < config.changeThreshold) {
@@ -686,7 +664,7 @@ export class AdvancedTriggerSystemService {
           previousValue: lastValue,
           currentValue: fieldValue,
           change:
-            typeof fieldValue === "number" && typeof lastValue === "number"
+            typeof fieldValue === 'number' && typeof lastValue === 'number'
               ? fieldValue - lastValue
               : null,
           timestamp: new Date().toISOString(),
@@ -708,10 +686,7 @@ export class AdvancedTriggerSystemService {
     console.log(`Calendar watcher activated for ${trigger.id}`);
   }
 
-  private async handleTriggerEvent(
-    trigger: TriggerConfiguration,
-    data: any,
-  ): Promise<void> {
+  private async handleTriggerEvent(trigger: TriggerConfiguration, data: any): Promise<void> {
     const event: TriggerEvent = {
       id: `event_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
       triggerId: trigger.id,
@@ -722,7 +697,7 @@ export class AdvancedTriggerSystemService {
       metadata: {
         source: trigger.triggerType,
       },
-      status: "received",
+      status: 'received',
       processingTimeMs: 0,
     };
 
@@ -731,7 +706,7 @@ export class AdvancedTriggerSystemService {
 
   private async processEvent(
     event: TriggerEvent,
-    trigger: TriggerConfiguration,
+    trigger: TriggerConfiguration
   ): Promise<TriggerEvent> {
     const startTime = performance.now();
 
@@ -739,24 +714,21 @@ export class AdvancedTriggerSystemService {
       // Check rate limits
       const rateLimiter = this.rateLimiters.get(trigger.id);
       if (rateLimiter && !rateLimiter.canTrigger()) {
-        event.status = "rate_limited";
-        event.error = "Rate limit exceeded";
+        event.status = 'rate_limited';
+        event.error = 'Rate limit exceeded';
         this.recordEvent(event);
         return event;
       }
 
       // Apply filters
       if (!this.applyFilters(event.rawData, trigger.filters)) {
-        event.status = "filtered";
+        event.status = 'filtered';
         this.recordEvent(event);
         return event;
       }
 
       // Apply transformations
-      event.processedData = await this.applyTransformations(
-        event.rawData,
-        trigger.transformations,
-      );
+      event.processedData = await this.applyTransformations(event.rawData, trigger.transformations);
 
       // Trigger workflow execution
       await workflowScheduler.triggerSchedule(trigger.workflowId, true);
@@ -765,12 +737,12 @@ export class AdvancedTriggerSystemService {
       trigger.triggerCount++;
       trigger.lastTriggered = event.timestamp;
 
-      event.status = "processed";
-      this.emitEvent("processed", event);
+      event.status = 'processed';
+      this.emitEvent('processed', event);
     } catch (error) {
-      event.status = "failed";
+      event.status = 'failed';
       event.error = error instanceof Error ? error.message : String(error);
-      this.emitEvent("failed", event);
+      this.emitEvent('failed', event);
     } finally {
       event.processingTimeMs = performance.now() - startTime;
       this.recordEvent(event);
@@ -793,21 +765,21 @@ export class AdvancedTriggerSystemService {
 
   private evaluateFilter(value: any, filter: TriggerFilter): boolean {
     switch (filter.operator) {
-      case "equals":
+      case 'equals':
         return value === filter.value;
-      case "contains":
+      case 'contains':
         return String(value).includes(String(filter.value));
-      case "starts_with":
+      case 'starts_with':
         return String(value).startsWith(String(filter.value));
-      case "ends_with":
+      case 'ends_with':
         return String(value).endsWith(String(filter.value));
-      case "regex":
+      case 'regex':
         return new RegExp(filter.value).test(String(value));
-      case "greater_than":
+      case 'greater_than':
         return Number(value) > Number(filter.value);
-      case "less_than":
+      case 'less_than':
         return Number(value) < Number(filter.value);
-      case "in_array":
+      case 'in_array':
         return Array.isArray(filter.value) && filter.value.includes(value);
       default:
         return false;
@@ -816,7 +788,7 @@ export class AdvancedTriggerSystemService {
 
   private async applyTransformations(
     data: any,
-    transformations: DataTransformation[],
+    transformations: DataTransformation[]
   ): Promise<any> {
     let result = data;
 
@@ -827,25 +799,19 @@ export class AdvancedTriggerSystemService {
     return result;
   }
 
-  private async applyTransformation(
-    data: any,
-    transformation: DataTransformation,
-  ): Promise<any> {
+  private async applyTransformation(data: any, transformation: DataTransformation): Promise<any> {
     switch (transformation.type) {
-      case "map":
-        return this.applyMapTransformation(
-          data,
-          transformation.configuration as MapTransformation,
-        );
-      case "filter":
+      case 'map':
+        return this.applyMapTransformation(data, transformation.configuration as MapTransformation);
+      case 'filter':
         return this.applyFilterTransformation(
           data,
-          transformation.configuration as FilterTransformation,
+          transformation.configuration as FilterTransformation
         );
-      case "format":
+      case 'format':
         return this.applyFormatTransformation(
           data,
-          transformation.configuration as FormatTransformation,
+          transformation.configuration as FormatTransformation
         );
       default:
         return data;
@@ -863,32 +829,26 @@ export class AdvancedTriggerSystemService {
     return result;
   }
 
-  private applyFilterTransformation(
-    data: any,
-    config: FilterTransformation,
-  ): any {
+  private applyFilterTransformation(data: any, config: FilterTransformation): any {
     // Apply filters and return filtered data
     return this.applyFilters(data, config.conditions) ? data : null;
   }
 
-  private applyFormatTransformation(
-    data: any,
-    config: FormatTransformation,
-  ): any {
+  private applyFormatTransformation(data: any, config: FormatTransformation): any {
     const value = this.getNestedValue(data, config.field);
     let formattedValue = value;
 
     switch (config.format) {
-      case "date":
+      case 'date':
         formattedValue = new Date(value).toISOString();
         break;
-      case "currency":
-        formattedValue = new Intl.NumberFormat("en-US", {
-          style: "currency",
-          currency: "USD",
+      case 'currency':
+        formattedValue = new Intl.NumberFormat('en-US', {
+          style: 'currency',
+          currency: 'USD',
         }).format(Number(value));
         break;
-      case "percentage":
+      case 'percentage':
         formattedValue = `${(Number(value) * 100).toFixed(2)}%`;
         break;
     }
@@ -899,11 +859,11 @@ export class AdvancedTriggerSystemService {
   }
 
   private getNestedValue(obj: any, path: string): any {
-    return path.split(".").reduce((current, key) => current?.[key], obj);
+    return path.split('.').reduce((current, key) => current?.[key], obj);
   }
 
   private setNestedValue(obj: any, path: string, value: any): void {
-    const keys = path.split(".");
+    const keys = path.split('.');
     const lastKey = keys.pop()!;
     const target = keys.reduce((current, key) => {
       if (!current[key]) current[key] = {};
@@ -930,21 +890,21 @@ export class AdvancedTriggerSystemService {
   private generateTestData(triggerType: string): any {
     const testData = {
       webhook: {
-        message: "Test webhook trigger",
+        message: 'Test webhook trigger',
         timestamp: new Date().toISOString(),
       },
-      http_request: { status: "success", data: "Test HTTP response" },
+      http_request: { status: 'success', data: 'Test HTTP response' },
       email: {
-        from: "test@example.com",
-        subject: "Test Email",
-        body: "This is a test email",
+        from: 'test@example.com',
+        subject: 'Test Email',
+        body: 'This is a test email',
       },
       file_change: {
-        path: "/test/file.txt",
-        event: "created",
+        path: '/test/file.txt',
+        event: 'created',
         timestamp: new Date().toISOString(),
       },
-      database_change: { table: "users", operation: "insert", recordId: "123" },
+      database_change: { table: 'users', operation: 'insert', recordId: '123' },
       api_poll: { value: 42, previous: 38, change: 4 },
     };
 
@@ -961,13 +921,11 @@ export class AdvancedTriggerSystemService {
     }
 
     this.eventHistory.set(event.triggerId, events);
-    this.emitEvent("received", event);
+    this.emitEvent('received', event);
   }
 
-  private calculateVolumetrend(
-    events: TriggerEvent[],
-  ): "increasing" | "stable" | "decreasing" {
-    if (events.length < 10) return "stable";
+  private calculateVolumetrend(events: TriggerEvent[]): 'increasing' | 'stable' | 'decreasing' {
+    if (events.length < 10) return 'stable';
 
     const mid = Math.floor(events.length / 2);
     const firstHalf = events.slice(0, mid);
@@ -978,35 +936,32 @@ export class AdvancedTriggerSystemService {
 
     const ratio = secondRate / firstRate;
 
-    if (ratio > 1.2) return "increasing";
-    if (ratio < 0.8) return "decreasing";
-    return "stable";
+    if (ratio > 1.2) return 'increasing';
+    if (ratio < 0.8) return 'decreasing';
+    return 'stable';
   }
 
-  private calculateErrorTrend(
-    events: TriggerEvent[],
-  ): "improving" | "stable" | "worsening" {
-    if (events.length < 10) return "stable";
+  private calculateErrorTrend(events: TriggerEvent[]): 'improving' | 'stable' | 'worsening' {
+    if (events.length < 10) return 'stable';
 
     const mid = Math.floor(events.length / 2);
     const firstHalf = events.slice(0, mid);
     const secondHalf = events.slice(mid);
 
-    const firstErrors = firstHalf.filter((e) => e.status === "failed").length;
-    const secondErrors = secondHalf.filter((e) => e.status === "failed").length;
+    const firstErrors = firstHalf.filter((e) => e.status === 'failed').length;
+    const secondErrors = secondHalf.filter((e) => e.status === 'failed').length;
 
     const firstRate = firstHalf.length > 0 ? firstErrors / firstHalf.length : 0;
-    const secondRate =
-      secondHalf.length > 0 ? secondErrors / secondHalf.length : 0;
+    const secondRate = secondHalf.length > 0 ? secondErrors / secondHalf.length : 0;
 
-    if (secondRate < firstRate * 0.8) return "improving";
-    if (secondRate > firstRate * 1.2) return "worsening";
-    return "stable";
+    if (secondRate < firstRate * 0.8) return 'improving';
+    if (secondRate > firstRate * 1.2) return 'worsening';
+    return 'stable';
   }
 
   private initializeWebhookServer(): void {
     // In a real implementation, this would set up Express/HTTP server endpoints
-    console.log("Webhook server initialized");
+    console.log('Webhook server initialized');
   }
 
   private emitEvent(event: string, triggerEvent: TriggerEvent): void {

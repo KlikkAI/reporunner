@@ -1,6 +1,6 @@
 /**
  * Theme Utilities
- * 
+ *
  * Utilities for working with themes and design tokens
  */
 
@@ -12,11 +12,11 @@ import { colors, spacing, typography } from '../tokens';
 export function getColor(path: string): string {
   const keys = path.split('.');
   let value: any = colors;
-  
+
   for (const key of keys) {
     value = value?.[key];
   }
-  
+
   return value || path;
 }
 

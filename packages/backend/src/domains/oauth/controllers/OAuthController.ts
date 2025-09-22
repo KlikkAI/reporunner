@@ -1,7 +1,7 @@
-import { Request, Response } from 'express';
+import type { Request, Response } from 'express';
 import { validationResult } from 'express-validator';
-import { OAuthService } from '../services/OAuthService.js';
 import { AppError } from '../../../middleware/errorHandlers.js';
+import { OAuthService } from '../services/OAuthService.js';
 
 export class OAuthController {
   private oauthService: OAuthService;
@@ -22,7 +22,12 @@ export class OAuthController {
     const userId = (req as any).user?.id || 'anonymous';
     const { credentialName, returnUrl } = req.body;
 
-    const result = await this.oauthService.initiateGmailOAuth(userId, credentialName, returnUrl, req);
+    const result = await this.oauthService.initiateGmailOAuth(
+      userId,
+      credentialName,
+      returnUrl,
+      req
+    );
 
     res.json({
       status: 'success',
@@ -40,7 +45,13 @@ export class OAuthController {
     }
 
     const { code, clientId, clientSecret, redirectUri, state } = req.body;
-    const result = await this.oauthService.exchangeCodeForTokens(code, clientId, clientSecret, redirectUri, req);
+    const result = await this.oauthService.exchangeCodeForTokens(
+      code,
+      clientId,
+      clientSecret,
+      redirectUri,
+      req
+    );
 
     res.json({
       status: 'success',
@@ -57,17 +68,25 @@ export class OAuthController {
     if (error) {
       const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
       const defaultReturnUrl = `${frontendUrl}/workflows`;
-      return res.redirect(`${defaultReturnUrl}?credential=error&message=${encodeURIComponent(error as string)}`);
+      return res.redirect(
+        `${defaultReturnUrl}?credential=error&message=${encodeURIComponent(error as string)}`
+      );
     }
 
     if (!code || !state) {
       const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
       const defaultReturnUrl = `${frontendUrl}/workflows`;
-      return res.redirect(`${defaultReturnUrl}?credential=error&message=Missing authorization code or state`);
+      return res.redirect(
+        `${defaultReturnUrl}?credential=error&message=Missing authorization code or state`
+      );
     }
 
     try {
-      const redirectUrl = await this.oauthService.handleGmailCallback(code as string, state as string, req);
+      const redirectUrl = await this.oauthService.handleGmailCallback(
+        code as string,
+        state as string,
+        req
+      );
       res.redirect(redirectUrl);
     } catch (error: any) {
       console.error('OAuth callback error:', error);
@@ -108,7 +127,11 @@ export class OAuthController {
     }
 
     const { clientId, clientSecret, refreshToken } = req.body;
-    const result = await this.oauthService.testGmailConnection(clientId, clientSecret, refreshToken);
+    const result = await this.oauthService.testGmailConnection(
+      clientId,
+      clientSecret,
+      refreshToken
+    );
 
     res.json({
       status: result.connected ? 'success' : 'error',

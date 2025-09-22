@@ -1,4 +1,4 @@
-import { EventEmitter } from "events";
+import { EventEmitter } from 'events';
 
 export interface IntegrationConfig {
   name: string;
@@ -9,7 +9,7 @@ export interface IntegrationConfig {
   color?: string;
   categories: string[];
   documentationUrl?: string;
-  authType: "none" | "apiKey" | "oauth2" | "basic" | "custom";
+  authType: 'none' | 'apiKey' | 'oauth2' | 'basic' | 'custom';
   baseUrl?: string;
   rateLimit?: {
     requests: number;
@@ -34,7 +34,7 @@ export interface IntegrationContext {
 }
 
 export interface RequestOptions {
-  method?: "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
+  method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
   headers?: Record<string, string>;
   body?: any;
   queryParams?: Record<string, any>;
@@ -70,17 +70,17 @@ export abstract class BaseIntegration extends EventEmitter {
     this.credentials = context.credentials;
 
     // Validate credentials if required
-    if (this.config.authType !== "none" && !this.credentials) {
+    if (this.config.authType !== 'none' && !this.credentials) {
       throw this.createError(
-        "MISSING_CREDENTIALS",
-        "Credentials are required for this integration",
+        'MISSING_CREDENTIALS',
+        'Credentials are required for this integration'
       );
     }
 
     // Perform any integration-specific initialization
     await this.onInitialize();
 
-    this.emit("initialized", { integration: this.config.name, context });
+    this.emit('initialized', { integration: this.config.name, context });
   }
 
   /**
@@ -111,10 +111,7 @@ export abstract class BaseIntegration extends EventEmitter {
   /**
    * Make an authenticated request to the integration
    */
-  protected async makeRequest(
-    endpoint: string,
-    options: RequestOptions = {},
-  ): Promise<any> {
+  protected async makeRequest(endpoint: string, options: RequestOptions = {}): Promise<any> {
     // Check rate limits
     await this.checkRateLimit();
 
@@ -133,7 +130,7 @@ export abstract class BaseIntegration extends EventEmitter {
         });
       },
       options.retryCount || 3,
-      options.retryDelay || 1000,
+      options.retryDelay || 1000
     );
 
     // Update rate limit counters
@@ -145,12 +142,9 @@ export abstract class BaseIntegration extends EventEmitter {
   /**
    * Build full URL with query parameters
    */
-  private buildUrl(
-    endpoint: string,
-    queryParams?: Record<string, any>,
-  ): string {
-    const baseUrl = this.config.baseUrl || "";
-    let url = endpoint.startsWith("http") ? endpoint : `${baseUrl}${endpoint}`;
+  private buildUrl(endpoint: string, queryParams?: Record<string, any>): string {
+    const baseUrl = this.config.baseUrl || '';
+    let url = endpoint.startsWith('http') ? endpoint : `${baseUrl}${endpoint}`;
 
     if (queryParams) {
       const params = new URLSearchParams();
@@ -161,7 +155,7 @@ export abstract class BaseIntegration extends EventEmitter {
       });
       const queryString = params.toString();
       if (queryString) {
-        url += `${url.includes("?") ? "&" : "?"}${queryString}`;
+        url += `${url.includes('?') ? '&' : '?'}${queryString}`;
       }
     }
 
@@ -172,10 +166,10 @@ export abstract class BaseIntegration extends EventEmitter {
    * Get authentication headers based on auth type
    */
   protected async getAuthHeaders(
-    additionalHeaders?: Record<string, string>,
+    additionalHeaders?: Record<string, string>
   ): Promise<Record<string, string>> {
     const headers: Record<string, string> = {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
       ...additionalHeaders,
     };
 
@@ -184,30 +178,27 @@ export abstract class BaseIntegration extends EventEmitter {
     }
 
     switch (this.config.authType) {
-      case "apiKey":
-        headers["Authorization"] = `Bearer ${this.credentials.data.apiKey}`;
+      case 'apiKey':
+        headers['Authorization'] = `Bearer ${this.credentials.data.apiKey}`;
         break;
 
-      case "oauth2":
+      case 'oauth2':
         // Check if token needs refresh
-        if (
-          this.credentials.expiresAt &&
-          new Date() >= this.credentials.expiresAt
-        ) {
+        if (this.credentials.expiresAt && new Date() >= this.credentials.expiresAt) {
           await this.refreshOAuth2Token();
         }
-        headers["Authorization"] =
-          `Bearer ${this.credentials.data.accessToken}`;
+        headers['Authorization'] = `Bearer ${this.credentials.data.accessToken}`;
         break;
 
-      case "basic":
+      case 'basic': {
         const auth = Buffer.from(
-          `${this.credentials.data.username}:${this.credentials.data.password}`,
-        ).toString("base64");
-        headers["Authorization"] = `Basic ${auth}`;
+          `${this.credentials.data.username}:${this.credentials.data.password}`
+        ).toString('base64');
+        headers['Authorization'] = `Basic ${auth}`;
         break;
+      }
 
-      case "custom":
+      case 'custom':
         // Let the specific integration handle custom auth
         await this.applyCustomAuth(headers);
         break;
@@ -219,9 +210,7 @@ export abstract class BaseIntegration extends EventEmitter {
   /**
    * Apply custom authentication (to be overridden if needed)
    */
-  protected async applyCustomAuth(
-    headers: Record<string, string>,
-  ): Promise<void> {
+  protected async applyCustomAuth(headers: Record<string, string>): Promise<void> {
     // Default implementation - does nothing
     // Override in specific integrations for custom auth
   }
@@ -231,23 +220,17 @@ export abstract class BaseIntegration extends EventEmitter {
    */
   protected async refreshOAuth2Token(): Promise<void> {
     if (!this.credentials?.refreshToken) {
-      throw this.createError(
-        "TOKEN_REFRESH_FAILED",
-        "No refresh token available",
-      );
+      throw this.createError('TOKEN_REFRESH_FAILED', 'No refresh token available');
     }
 
     // This should be implemented by OAuth2-based integrations
-    throw this.createError("NOT_IMPLEMENTED", "Token refresh not implemented");
+    throw this.createError('NOT_IMPLEMENTED', 'Token refresh not implemented');
   }
 
   /**
    * Perform the actual HTTP request
    */
-  private async performRequest(
-    url: string,
-    options: RequestOptions,
-  ): Promise<any> {
+  private async performRequest(url: string, options: RequestOptions): Promise<any> {
     const controller = new AbortController();
     const timeout = options.timeout || 30000;
 
@@ -255,7 +238,7 @@ export abstract class BaseIntegration extends EventEmitter {
 
     try {
       const response = await fetch(url, {
-        method: options.method || "GET",
+        method: options.method || 'GET',
         headers: options.headers,
         body: options.body ? JSON.stringify(options.body) : undefined,
         signal: controller.signal,
@@ -267,8 +250,8 @@ export abstract class BaseIntegration extends EventEmitter {
         throw await this.handleResponseError(response);
       }
 
-      const contentType = response.headers.get("content-type");
-      if (contentType?.includes("application/json")) {
+      const contentType = response.headers.get('content-type');
+      if (contentType?.includes('application/json')) {
         return await response.json();
       }
 
@@ -276,11 +259,8 @@ export abstract class BaseIntegration extends EventEmitter {
     } catch (error: any) {
       clearTimeout(timeoutId);
 
-      if (error.name === "AbortError") {
-        throw this.createError(
-          "TIMEOUT",
-          `Request timed out after ${timeout}ms`,
-        );
+      if (error.name === 'AbortError') {
+        throw this.createError('TIMEOUT', `Request timed out after ${timeout}ms`);
       }
 
       throw error;
@@ -290,9 +270,7 @@ export abstract class BaseIntegration extends EventEmitter {
   /**
    * Handle HTTP response errors
    */
-  private async handleResponseError(
-    response: Response,
-  ): Promise<IntegrationError> {
+  private async handleResponseError(response: Response): Promise<IntegrationError> {
     let errorBody: any;
 
     try {
@@ -305,7 +283,7 @@ export abstract class BaseIntegration extends EventEmitter {
       `HTTP_${response.status}`,
       errorBody?.message || `Request failed with status ${response.status}`,
       response.status,
-      errorBody,
+      errorBody
     );
 
     // Determine if error is retryable
@@ -320,7 +298,7 @@ export abstract class BaseIntegration extends EventEmitter {
   private async executeWithRetry<T>(
     fn: () => Promise<T>,
     maxRetries: number = 3,
-    delay: number = 1000,
+    delay: number = 1000
   ): Promise<T> {
     let lastError: any;
 
@@ -335,7 +313,7 @@ export abstract class BaseIntegration extends EventEmitter {
         }
 
         // Exponential backoff
-        const waitTime = delay * Math.pow(2, attempt);
+        const waitTime = delay * 2 ** attempt;
         await this.sleep(waitTime);
       }
     }
@@ -364,9 +342,9 @@ export abstract class BaseIntegration extends EventEmitter {
     if (this.requestCount >= this.config.rateLimit.requests) {
       const waitTime = periodMs - (now - this.requestResetTime);
       throw this.createError(
-        "RATE_LIMIT_EXCEEDED",
+        'RATE_LIMIT_EXCEEDED',
         `Rate limit exceeded. Try again in ${Math.ceil(waitTime / 1000)} seconds`,
-        429,
+        429
       );
     }
   }
@@ -385,13 +363,13 @@ export abstract class BaseIntegration extends EventEmitter {
     code: string,
     message: string,
     statusCode?: number,
-    details?: any,
+    details?: any
   ): IntegrationError {
     const error = new Error(message) as IntegrationError;
     error.code = code;
     error.statusCode = statusCode;
     error.details = details;
-    error.name = "IntegrationError";
+    error.name = 'IntegrationError';
     return error;
   }
 
@@ -431,7 +409,7 @@ export interface IntegrationTrigger {
   name: string;
   displayName: string;
   description: string;
-  type: "webhook" | "polling" | "manual";
+  type: 'webhook' | 'polling' | 'manual';
   parameters: TriggerParameter[];
   outputs: TriggerOutput[];
 }
@@ -439,7 +417,7 @@ export interface IntegrationTrigger {
 export interface ActionParameter {
   name: string;
   displayName: string;
-  type: "string" | "number" | "boolean" | "json" | "options" | "file";
+  type: 'string' | 'number' | 'boolean' | 'json' | 'options' | 'file';
   required: boolean;
   default?: any;
   description?: string;

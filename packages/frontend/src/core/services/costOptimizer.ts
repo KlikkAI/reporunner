@@ -7,12 +7,12 @@
  */
 
 import type {
-  ExecutionMetrics,
-  WorkflowAnalytics,
   CostOptimization,
   CostRecommendation,
+  ExecutionMetrics,
   NodePerformanceStats,
-} from "./analyticsService";
+  WorkflowAnalytics,
+} from './analyticsService';
 
 export interface CostBreakdown {
   workflowId: string;
@@ -51,17 +51,13 @@ export interface CostDriver {
   percentage: number;
   executions: number;
   avgCostPerExecution: number;
-  trend: "increasing" | "stable" | "decreasing";
+  trend: 'increasing' | 'stable' | 'decreasing';
 }
 
 export interface CostAlert {
   id: string;
-  type:
-    | "budget_exceeded"
-    | "cost_spike"
-    | "inefficient_usage"
-    | "waste_detected";
-  severity: "info" | "warning" | "critical";
+  type: 'budget_exceeded' | 'cost_spike' | 'inefficient_usage' | 'waste_detected';
+  severity: 'info' | 'warning' | 'critical';
   title: string;
   description: string;
   workflowId: string;
@@ -75,7 +71,7 @@ export interface CostAlert {
 
 export interface CostBudget {
   workflowId: string;
-  period: "daily" | "weekly" | "monthly";
+  period: 'daily' | 'weekly' | 'monthly';
   limit: number;
   alertThreshold: number; // percentage of limit
   currentSpend: number;
@@ -118,7 +114,7 @@ export class CostOptimizerService {
 
   // Method to use costHistory to avoid unused variable warning
   private logCostHistory(): void {
-    console.log("Cost history entries:", this.costHistory.size);
+    console.log('Cost history entries:', this.costHistory.size);
   }
   private budgets = new Map<string, CostBudget>();
   private alertListeners = new Set<(alert: CostAlert) => void>();
@@ -138,18 +134,16 @@ export class CostOptimizerService {
   analyzeCostBreakdown(
     workflowId: string,
     executionHistory: ExecutionMetrics[],
-    periodDays: number = 30,
+    periodDays: number = 30
   ): CostBreakdown {
     const endDate = new Date();
-    const startDate = new Date(
-      endDate.getTime() - periodDays * 24 * 60 * 60 * 1000,
-    );
+    const startDate = new Date(endDate.getTime() - periodDays * 24 * 60 * 60 * 1000);
 
     const relevantExecutions = executionHistory.filter(
       (exec) =>
         exec.workflowId === workflowId &&
         new Date(exec.startTime) >= startDate &&
-        new Date(exec.startTime) <= endDate,
+        new Date(exec.startTime) <= endDate
     );
 
     const totalCost = relevantExecutions.reduce((sum, exec) => {
@@ -178,18 +172,12 @@ export class CostOptimizerService {
    */
   generateCostOptimization(
     workflowAnalytics: WorkflowAnalytics,
-    executionHistory: ExecutionMetrics[],
+    executionHistory: ExecutionMetrics[]
   ): CostOptimization {
     const currentCost = this.calculateCurrentPeriodCost(executionHistory);
-    const recommendations = this.generateRecommendations(
-      workflowAnalytics,
-      executionHistory,
-    );
+    const recommendations = this.generateRecommendations(workflowAnalytics, executionHistory);
 
-    const totalSavings = recommendations.reduce(
-      (sum, rec) => sum + rec.estimatedSavings,
-      0,
-    );
+    const totalSavings = recommendations.reduce((sum, rec) => sum + rec.estimatedSavings, 0);
 
     return {
       currentCost,
@@ -205,15 +193,12 @@ export class CostOptimizerService {
    */
   generateRightsizingRecommendations(
     nodePerformanceStats: NodePerformanceStats[],
-    executionHistory: ExecutionMetrics[],
+    executionHistory: ExecutionMetrics[]
   ): ResourceRightsizing[] {
     const recommendations: ResourceRightsizing[] = [];
 
     nodePerformanceStats.forEach((nodeStats) => {
-      const nodeExecutions = this.getNodeExecutions(
-        nodeStats.nodeId,
-        executionHistory,
-      );
+      const nodeExecutions = this.getNodeExecutions(nodeStats.nodeId, executionHistory);
       const utilizationStats = this.calculateUtilizationStats(nodeExecutions);
       const rightsizing = this.calculateRightsizing(utilizationStats);
 
@@ -227,9 +212,7 @@ export class CostOptimizerService {
       }
     });
 
-    return recommendations.sort(
-      (a, b) => b.costImpact.savings - a.costImpact.savings,
-    );
+    return recommendations.sort((a, b) => b.costImpact.savings - a.costImpact.savings);
   }
 
   /**
@@ -237,9 +220,9 @@ export class CostOptimizerService {
    */
   setBudget(
     workflowId: string,
-    period: "daily" | "weekly" | "monthly",
+    period: 'daily' | 'weekly' | 'monthly',
     limit: number,
-    alertThreshold: number = 80,
+    alertThreshold: number = 80
   ): CostBudget {
     const budget: CostBudget = {
       workflowId,
@@ -275,10 +258,7 @@ export class CostOptimizerService {
   /**
    * Detect cost anomalies and waste
    */
-  detectCostAnomalies(
-    _workflowId: string,
-    executionHistory: ExecutionMetrics[],
-  ): CostAlert[] {
+  detectCostAnomalies(_workflowId: string, executionHistory: ExecutionMetrics[]): CostAlert[] {
     // Use logCostHistory to avoid unused variable warning
     this.logCostHistory();
     const alerts: CostAlert[] = [];
@@ -304,7 +284,7 @@ export class CostOptimizerService {
   calculateOptimizationROI(
     recommendation: CostRecommendation,
     implementationCost: number,
-    timeToImplement: number, // hours
+    timeToImplement: number // hours
   ): {
     monthlyROI: number;
     paybackPeriod: number; // months
@@ -350,18 +330,14 @@ export class CostOptimizerService {
         storage += exec.resourceUsage.cost.storage;
         network += exec.resourceUsage.cost.network;
         apis += exec.resourceUsage.cost.apis;
-        other +=
-          exec.resourceUsage.cost.total - (compute + storage + network + apis);
+        other += exec.resourceUsage.cost.total - (compute + storage + network + apis);
       }
     });
 
     return { compute, storage, network, apis, other };
   }
 
-  private calculateCostTrends(
-    executions: ExecutionMetrics[],
-    _periodDays: number,
-  ) {
+  private calculateCostTrends(executions: ExecutionMetrics[], _periodDays: number) {
     // Group executions by time periods
     const dailyTrends = this.groupExecutionsByDay(executions);
     const weeklyTrends = this.groupExecutionsByWeek(executions);
@@ -404,10 +380,7 @@ export class CostOptimizerService {
       });
     });
 
-    const totalCost = Array.from(nodeStats.values()).reduce(
-      (sum, stats) => sum + stats.cost,
-      0,
-    );
+    const totalCost = Array.from(nodeStats.values()).reduce((sum, stats) => sum + stats.cost, 0);
 
     return Array.from(nodeStats.entries())
       .map(
@@ -419,8 +392,8 @@ export class CostOptimizerService {
           percentage: totalCost > 0 ? (stats.cost / totalCost) * 100 : 0,
           executions: stats.executions,
           avgCostPerExecution: stats.cost / stats.executions,
-          trend: "stable", // Would calculate based on historical data
-        }),
+          trend: 'stable', // Would calculate based on historical data
+        })
       )
       .sort((a, b) => b.cost - a.cost)
       .slice(0, 10);
@@ -428,7 +401,7 @@ export class CostOptimizerService {
 
   private generateRecommendations(
     analytics: WorkflowAnalytics,
-    _executionHistory: ExecutionMetrics[],
+    _executionHistory: ExecutionMetrics[]
   ): CostRecommendation[] {
     const recommendations: CostRecommendation[] = [];
 
@@ -440,12 +413,12 @@ export class CostOptimizerService {
 
     expensiveNodes.forEach((node) => {
       recommendations.push({
-        type: "caching",
+        type: 'caching',
         nodeId: node.nodeId,
         description: `Implement caching for "${node.nodeName}" to reduce repeated computations`,
         estimatedSavings: this.estimateCachingSavings(node),
-        implementation: "Add result caching with appropriate TTL",
-        impact: "high",
+        implementation: 'Add result caching with appropriate TTL',
+        impact: 'high',
       });
     });
 
@@ -456,38 +429,33 @@ export class CostOptimizerService {
 
     resourceIntensiveNodes.forEach((node) => {
       recommendations.push({
-        type: "node_optimization",
+        type: 'node_optimization',
         nodeId: node.nodeId,
         description: `Optimize "${node.nodeName}" for better resource efficiency`,
         estimatedSavings: this.estimateOptimizationSavings(node),
-        implementation:
-          "Review and optimize node logic, reduce memory allocations",
-        impact: "medium",
+        implementation: 'Review and optimize node logic, reduce memory allocations',
+        impact: 'medium',
       });
     });
 
     // Recommend scheduling optimization
     if (analytics.executionStats.total > 100) {
       recommendations.push({
-        type: "scheduling",
-        description:
-          "Optimize workflow scheduling to reduce peak resource usage",
+        type: 'scheduling',
+        description: 'Optimize workflow scheduling to reduce peak resource usage',
         estimatedSavings:
           analytics.resourceTrends.costTrend
             .slice(-7)
             .reduce((sum, point) => sum + point.value, 0) * 0.15, // 15% savings
-        implementation:
-          "Implement intelligent scheduling to spread execution load",
-        impact: "medium",
+        implementation: 'Implement intelligent scheduling to spread execution load',
+        impact: 'medium',
       });
     }
 
     return recommendations;
   }
 
-  private calculateCurrentPeriodCost(
-    executionHistory: ExecutionMetrics[],
-  ): number {
+  private calculateCurrentPeriodCost(executionHistory: ExecutionMetrics[]): number {
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
@@ -523,9 +491,7 @@ export class CostOptimizerService {
     return currentCost * node.executionCount * optimizationFactor;
   }
 
-  private groupExecutionsByDay(
-    executions: ExecutionMetrics[],
-  ): CostDataPoint[] {
+  private groupExecutionsByDay(executions: ExecutionMetrics[]): CostDataPoint[] {
     const dailyData = new Map<string, { cost: number; executions: number }>();
 
     executions.forEach((exec) => {
@@ -545,16 +511,12 @@ export class CostOptimizerService {
       .sort((a, b) => a.date.localeCompare(b.date));
   }
 
-  private groupExecutionsByWeek(
-    executions: ExecutionMetrics[],
-  ): CostDataPoint[] {
+  private groupExecutionsByWeek(executions: ExecutionMetrics[]): CostDataPoint[] {
     // Similar to daily grouping but by week
     return this.groupExecutionsByDay(executions); // Simplified
   }
 
-  private groupExecutionsByMonth(
-    executions: ExecutionMetrics[],
-  ): CostDataPoint[] {
+  private groupExecutionsByMonth(executions: ExecutionMetrics[]): CostDataPoint[] {
     // Similar to daily grouping but by month
     return this.groupExecutionsByDay(executions); // Simplified
   }
@@ -566,23 +528,21 @@ export class CostOptimizerService {
       .map((exec) => exec.resourceUsage.cost?.total || 0);
 
     if (recentCosts.length >= 5) {
-      const avgCost =
-        recentCosts.reduce((sum, cost) => sum + cost, 0) / recentCosts.length;
+      const avgCost = recentCosts.reduce((sum, cost) => sum + cost, 0) / recentCosts.length;
       const latestCost = recentCosts[recentCosts.length - 1];
 
       if (latestCost > avgCost * 2) {
         // 100% increase
         alerts.push({
           id: `cost_spike_${Date.now()}`,
-          type: "cost_spike",
-          severity: "warning",
-          title: "Cost Spike Detected",
+          type: 'cost_spike',
+          severity: 'warning',
+          title: 'Cost Spike Detected',
           description: `Recent execution cost (${latestCost.toFixed(2)}) is significantly higher than average (${avgCost.toFixed(2)})`,
-          workflowId: executionHistory[0]?.workflowId || "unknown",
+          workflowId: executionHistory[0]?.workflowId || 'unknown',
           currentCost: latestCost,
           threshold: avgCost * 1.5,
-          recommendation:
-            "Review recent changes and check for resource-intensive operations",
+          recommendation: 'Review recent changes and check for resource-intensive operations',
           potentialSavings: latestCost - avgCost,
           timestamp: new Date().toISOString(),
         });
@@ -592,32 +552,27 @@ export class CostOptimizerService {
     return alerts;
   }
 
-  private detectResourceWaste(
-    _executionHistory: ExecutionMetrics[],
-  ): CostAlert[] {
+  private detectResourceWaste(_executionHistory: ExecutionMetrics[]): CostAlert[] {
     // Detect patterns that indicate waste (simplified)
     return [];
   }
 
-  private detectInefficiencies(
-    _executionHistory: ExecutionMetrics[],
-  ): CostAlert[] {
+  private detectInefficiencies(_executionHistory: ExecutionMetrics[]): CostAlert[] {
     // Detect inefficient patterns (simplified)
     return [];
   }
 
-  private getDaysRemaining(period: "daily" | "weekly" | "monthly"): number {
+  private getDaysRemaining(period: 'daily' | 'weekly' | 'monthly'): number {
     const now = new Date();
     switch (period) {
-      case "daily":
+      case 'daily':
         return 1;
-      case "weekly":
+      case 'weekly':
         return 7 - now.getDay();
-      case "monthly":
+      case 'monthly': {
         const nextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
-        return Math.ceil(
-          (nextMonth.getTime() - now.getTime()) / (1000 * 60 * 60 * 24),
-        );
+        return Math.ceil((nextMonth.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+      }
       default:
         return 1;
     }
@@ -634,15 +589,14 @@ export class CostOptimizerService {
     if (spendPercentage >= budget.alertThreshold) {
       const alert: CostAlert = {
         id: `budget_alert_${budget.workflowId}_${Date.now()}`,
-        type: "budget_exceeded",
-        severity: spendPercentage > 100 ? "critical" : "warning",
+        type: 'budget_exceeded',
+        severity: spendPercentage > 100 ? 'critical' : 'warning',
         title: `Budget Alert: ${spendPercentage.toFixed(1)}% of budget used`,
         description: `Current spend: $${budget.currentSpend.toFixed(2)} / $${budget.limit.toFixed(2)} (${budget.period})`,
         workflowId: budget.workflowId,
         currentCost: budget.currentSpend,
         threshold: budget.limit,
-        recommendation:
-          "Review recent executions and consider optimization strategies",
+        recommendation: 'Review recent executions and consider optimization strategies',
         timestamp: new Date().toISOString(),
       };
 
@@ -651,12 +605,9 @@ export class CostOptimizerService {
     }
   }
 
-  private getNodeExecutions(
-    _nodeId: string,
-    executionHistory: ExecutionMetrics[],
-  ) {
+  private getNodeExecutions(_nodeId: string, executionHistory: ExecutionMetrics[]) {
     return executionHistory.flatMap((exec) =>
-      exec.nodeMetrics.filter((node) => node.nodeId === _nodeId),
+      exec.nodeMetrics.filter((node) => node.nodeId === _nodeId)
     );
   }
 
@@ -702,7 +653,7 @@ export class CostOptimizerService {
       try {
         listener(alert);
       } catch (error) {
-        console.error("Error in cost alert listener:", error);
+        console.error('Error in cost alert listener:', error);
       }
     });
   }

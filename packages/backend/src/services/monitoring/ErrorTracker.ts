@@ -3,9 +3,9 @@
  * Comprehensive error monitoring, reporting, and recovery
  */
 
-import { logger, LogContext } from "../logging/Logger.js";
-import { performanceMonitor } from "./PerformanceMonitor.js";
-import { EventEmitter } from "events";
+import { EventEmitter } from 'events';
+import { type LogContext, logger } from '../logging/Logger.js';
+import { performanceMonitor } from './PerformanceMonitor.js';
 
 export interface ErrorInfo {
   id: string;
@@ -15,7 +15,7 @@ export interface ErrorInfo {
   code?: string | number;
   timestamp: number;
   context?: LogContext;
-  severity: "low" | "medium" | "high" | "critical";
+  severity: 'low' | 'medium' | 'high' | 'critical';
   fingerprint: string;
   occurrences: number;
   firstSeen: number;
@@ -60,10 +60,8 @@ class ErrorTrackingService extends EventEmitter {
   private errors: Map<string, ErrorInfo> = new Map();
   private patterns: Map<string, ErrorPattern> = new Map();
   private errorRateWindows: Map<string, number[]> = new Map();
-  private circuitBreakers: Map<
-    string,
-    { isOpen: boolean; failures: number; lastFailure: number }
-  > = new Map();
+  private circuitBreakers: Map<string, { isOpen: boolean; failures: number; lastFailure: number }> =
+    new Map();
 
   constructor() {
     super();
@@ -75,8 +73,8 @@ class ErrorTrackingService extends EventEmitter {
   public trackError(
     error: Error,
     context?: LogContext,
-    severity: "low" | "medium" | "high" | "critical" = "medium",
-    request?: any,
+    severity: 'low' | 'medium' | 'high' | 'critical' = 'medium',
+    request?: any
   ): string {
     const errorId = this.generateErrorId();
     const fingerprint = this.generateFingerprint(error, context);
@@ -122,17 +120,17 @@ class ErrorTrackingService extends EventEmitter {
     logger.error(`Error tracked: ${error.message}`, context, error);
 
     // Record performance metric
-    performanceMonitor.incrementCounter("errors_total", 1, {
+    performanceMonitor.incrementCounter('errors_total', 1, {
       severity,
       fingerprint: fingerprint.substring(0, 8),
       type: error.name,
     });
 
     // Emit event
-    this.emit("error", errorInfo);
+    this.emit('error', errorInfo);
 
     // Handle critical errors
-    if (severity === "critical") {
+    if (severity === 'critical') {
       this.handleCriticalError(errorInfo);
     }
 
@@ -143,8 +141,8 @@ class ErrorTrackingService extends EventEmitter {
     name: string,
     message: string,
     context?: LogContext,
-    severity: "low" | "medium" | "high" | "critical" = "medium",
-    metadata?: Record<string, any>,
+    severity: 'low' | 'medium' | 'high' | 'critical' = 'medium',
+    metadata?: Record<string, any>
   ): string {
     const customError = new Error(message);
     customError.name = name;
@@ -153,11 +151,7 @@ class ErrorTrackingService extends EventEmitter {
   }
 
   // Error pattern analysis
-  private updateErrorPattern(
-    fingerprint: string,
-    severity: string,
-    timestamp: number,
-  ): void {
+  private updateErrorPattern(fingerprint: string, severity: string, timestamp: number): void {
     let pattern = this.patterns.get(fingerprint);
 
     if (pattern) {
@@ -187,7 +181,7 @@ class ErrorTrackingService extends EventEmitter {
         fingerprint: fingerprint.substring(0, 8),
         count: pattern.count,
         severity: pattern.severity,
-        component: "error-tracker",
+        component: 'error-tracker',
       });
     }
   }
@@ -209,8 +203,8 @@ class ErrorTrackingService extends EventEmitter {
       logger.error(`High error rate detected`, {
         fingerprint: fingerprint.substring(0, 8),
         errorCount: recentErrors.length,
-        timeWindow: "1 hour",
-        component: "error-tracker",
+        timeWindow: '1 hour',
+        component: 'error-tracker',
       });
     }
   }
@@ -232,7 +226,7 @@ class ErrorTrackingService extends EventEmitter {
       logger.warn(`Circuit breaker opened for error pattern`, {
         fingerprint: fingerprint.substring(0, 8),
         failures: breaker.failures,
-        component: "error-tracker",
+        component: 'error-tracker',
       });
     }
 
@@ -242,7 +236,7 @@ class ErrorTrackingService extends EventEmitter {
   // Critical error handling
   private handleCriticalError(errorInfo: ErrorInfo): void {
     // Log to security events
-    logger.logSecurityEvent(`Critical error: ${errorInfo.name}`, "critical", {
+    logger.logSecurityEvent(`Critical error: ${errorInfo.name}`, 'critical', {
       errorId: errorInfo.id,
       fingerprint: errorInfo.fingerprint.substring(0, 8),
       userId: errorInfo.user?.id,
@@ -252,7 +246,7 @@ class ErrorTrackingService extends EventEmitter {
     // Could integrate with external alerting systems here
     // e.g., Slack, PagerDuty, email alerts
 
-    this.emit("criticalError", errorInfo);
+    this.emit('criticalError', errorInfo);
   }
 
   // Utility methods
@@ -262,7 +256,7 @@ class ErrorTrackingService extends EventEmitter {
 
   private generateFingerprint(error: Error, context?: LogContext): string {
     // Create a unique fingerprint for error grouping
-    const key = `${error.name}:${error.message}:${context?.component || "unknown"}`;
+    const key = `${error.name}:${error.message}:${context?.component || 'unknown'}`;
 
     // Simple hash function
     let hash = 0;
@@ -275,15 +269,15 @@ class ErrorTrackingService extends EventEmitter {
     return Math.abs(hash).toString(16);
   }
 
-  private extractRequestInfo(req: any): ErrorInfo["request"] {
+  private extractRequestInfo(req: any): ErrorInfo['request'] {
     return {
-      id: req.id || "unknown",
+      id: req.id || 'unknown',
       method: req.method,
       url: req.originalUrl || req.url,
       headers: this.sanitizeHeaders(req.headers),
       body: this.sanitizeBody(req.body),
       ip: req.ip || req.connection?.remoteAddress,
-      userAgent: req.get("User-Agent") || "unknown",
+      userAgent: req.get('User-Agent') || 'unknown',
     };
   }
 
@@ -293,7 +287,7 @@ class ErrorTrackingService extends EventEmitter {
     // Remove sensitive headers
     delete sanitized.authorization;
     delete sanitized.cookie;
-    delete sanitized["x-api-key"];
+    delete sanitized['x-api-key'];
 
     return sanitized;
   }
@@ -312,35 +306,29 @@ class ErrorTrackingService extends EventEmitter {
     return sanitized;
   }
 
-  private getEnvironmentInfo(): ErrorInfo["environment"] {
+  private getEnvironmentInfo(): ErrorInfo['environment'] {
     return {
       nodeVersion: process.version,
       platform: process.platform,
-      hostname: require("os").hostname(),
+      hostname: require('os').hostname(),
       memory: process.memoryUsage(),
       uptime: process.uptime(),
     };
   }
 
-  private extractTags(
-    error: Error,
-    context?: LogContext,
-  ): Record<string, string> {
+  private extractTags(error: Error, context?: LogContext): Record<string, string> {
     return {
       errorType: error.name,
-      component: context?.component || "unknown",
-      module: context?.module || "unknown",
-      environment: process.env.NODE_ENV || "development",
+      component: context?.component || 'unknown',
+      module: context?.module || 'unknown',
+      environment: process.env.NODE_ENV || 'development',
     };
   }
 
-  private extractMetadata(
-    error: Error,
-    context?: LogContext,
-  ): Record<string, any> {
+  private extractMetadata(error: Error, context?: LogContext): Record<string, any> {
     return {
       hasStack: !!error.stack,
-      stackLines: error.stack?.split("\n").length || 0,
+      stackLines: error.stack?.split('\n').length || 0,
       errorCode: (error as any).code,
       context: context || {},
     };
@@ -359,9 +347,9 @@ class ErrorTrackingService extends EventEmitter {
   // Global error handlers
   private setupGlobalErrorHandlers(): void {
     // Uncaught exceptions
-    process.on("uncaughtException", (error) => {
-      this.trackError(error, { component: "global" }, "critical");
-      logger.error("Uncaught exception", { component: "global" }, error);
+    process.on('uncaughtException', (error) => {
+      this.trackError(error, { component: 'global' }, 'critical');
+      logger.error('Uncaught exception', { component: 'global' }, error);
 
       // Give time to log before exiting
       setTimeout(() => {
@@ -370,25 +358,20 @@ class ErrorTrackingService extends EventEmitter {
     });
 
     // Unhandled rejections
-    process.on("unhandledRejection", (reason, promise) => {
-      const error =
-        reason instanceof Error ? reason : new Error(String(reason));
-      this.trackError(
-        error,
-        { component: "global", promise: promise.toString() },
-        "high",
-      );
-      logger.error("Unhandled rejection", { component: "global" }, error);
+    process.on('unhandledRejection', (reason, promise) => {
+      const error = reason instanceof Error ? reason : new Error(String(reason));
+      this.trackError(error, { component: 'global', promise: promise.toString() }, 'high');
+      logger.error('Unhandled rejection', { component: 'global' }, error);
     });
 
     // Warning events
-    process.on("warning", (warning) => {
+    process.on('warning', (warning) => {
       this.trackCustomError(
-        "NodeWarning",
+        'NodeWarning',
         warning.message,
-        { component: "global", warningName: warning.name },
-        "low",
-        { stack: warning.stack },
+        { component: 'global', warningName: warning.name },
+        'low',
+        { stack: warning.stack }
       );
     });
   }
@@ -446,7 +429,7 @@ class ErrorTrackingService extends EventEmitter {
         acc[error.severity] = (acc[error.severity] || 0) + 1;
         return acc;
       },
-      {} as Record<string, number>,
+      {} as Record<string, number>
     );
 
     const patternCounts = new Map<string, number>();
@@ -486,7 +469,7 @@ class ErrorTrackingService extends EventEmitter {
     logger.info(`Error pattern resolved`, {
       fingerprint: fingerprint.substring(0, 8),
       resolvedBy,
-      component: "error-tracker",
+      component: 'error-tracker',
     });
 
     return true;
@@ -500,19 +483,19 @@ class ErrorTrackingService extends EventEmitter {
         {
           requestId: req.id,
           userId: req.user?.id,
-          component: "express",
+          component: 'express',
           method: req.method,
           url: req.originalUrl,
         },
-        "high",
-        req,
+        'high',
+        req
       );
 
       // Don't expose internal error details in production
-      if (process.env.NODE_ENV === "production") {
+      if (process.env.NODE_ENV === 'production') {
         res.status(500).json({
           success: false,
-          message: "Internal server error",
+          message: 'Internal server error',
           errorId,
         });
       } else {
@@ -533,7 +516,7 @@ class ErrorTrackingService extends EventEmitter {
       () => {
         this.cleanupOldErrors();
       },
-      60 * 60 * 1000,
+      60 * 60 * 1000
     );
   }
 
@@ -546,8 +529,8 @@ class ErrorTrackingService extends EventEmitter {
       }
     }
 
-    logger.debug("Cleaned up old errors", {
-      component: "error-tracker",
+    logger.debug('Cleaned up old errors', {
+      component: 'error-tracker',
       remainingErrors: this.errors.size,
     });
   }

@@ -2,88 +2,88 @@
 // Defines the complete data structure returned by Gmail trigger node
 
 export interface GmailAttachment {
-  cid?: string | null
-  contentDisposition: string
-  contentId?: string | null
-  contentType: string
-  filename: string
-  size: number
-  data?: string // Base64 encoded attachment data (if downloaded)
+  cid?: string | null;
+  contentDisposition: string;
+  contentId?: string | null;
+  contentType: string;
+  filename: string;
+  size: number;
+  data?: string; // Base64 encoded attachment data (if downloaded)
 }
 
 export interface GmailAddress {
-  address: string
-  name?: string
+  address: string;
+  name?: string;
 }
 
 export interface GmailAddressValue {
-  value: GmailAddress[]
-  html: string
-  text: string
+  value: GmailAddress[];
+  html: string;
+  text: string;
 }
 
 export interface GmailHeaders {
-  [key: string]: string
+  [key: string]: string;
 }
 
 export interface GmailTriggerOutput {
   // Core email identifiers
-  id: string
-  threadId: string
-  labelIds: string[]
-  snippet: string
+  id: string;
+  threadId: string;
+  labelIds: string[];
+  snippet: string;
 
   // Email addresses
-  from: GmailAddressValue
-  to: GmailAddressValue
-  cc?: GmailAddressValue
-  bcc?: GmailAddressValue
-  replyTo?: GmailAddressValue
+  from: GmailAddressValue;
+  to: GmailAddressValue;
+  cc?: GmailAddressValue;
+  bcc?: GmailAddressValue;
+  replyTo?: GmailAddressValue;
 
   // Email content
-  subject: string
-  text: string
-  html?: string
-  textAsHtml?: string
+  subject: string;
+  text: string;
+  html?: string;
+  textAsHtml?: string;
 
   // Headers and metadata
-  date: string
-  receivedAt: string
-  messageId: string
-  inReplyTo?: string
-  references?: string[]
-  headers: GmailHeaders
+  date: string;
+  receivedAt: string;
+  messageId: string;
+  inReplyTo?: string;
+  references?: string[];
+  headers: GmailHeaders;
 
   // Attachments
-  attachments: GmailAttachment[]
-  hasAttachments: boolean
+  attachments: GmailAttachment[];
+  hasAttachments: boolean;
 
   // Gmail specific
-  historyId: string
-  internalDate: string
-  sizeEstimate: number
+  historyId: string;
+  internalDate: string;
+  sizeEstimate: number;
 
   // Processing metadata
-  isUnread: boolean
-  isImportant: boolean
-  isStarred: boolean
-  isDraft: boolean
-  isSpam: boolean
-  isTrash: boolean
+  isUnread: boolean;
+  isImportant: boolean;
+  isStarred: boolean;
+  isDraft: boolean;
+  isSpam: boolean;
+  isTrash: boolean;
 
   // Custom labels and categories
-  customLabels: string[]
-  category?: 'primary' | 'social' | 'promotions' | 'updates' | 'forums'
+  customLabels: string[];
+  category?: 'primary' | 'social' | 'promotions' | 'updates' | 'forums';
 
   // Rich content indicators
-  hasImages: boolean
-  hasLinks: boolean
-  linkCount: number
-  imageCount: number
+  hasImages: boolean;
+  hasLinks: boolean;
+  linkCount: number;
+  imageCount: number;
 
   // Processing timestamps
-  triggeredAt: string
-  processedAt?: string
+  triggeredAt: string;
+  processedAt?: string;
 }
 
 // Sample data for development and testing
@@ -192,8 +192,7 @@ Phone: (555) 123-4567`,
     From: 'Sarah Johnson <customer@example.com>',
     To: 'RepoRunner Support <support@reporunner.com>',
     Subject: 'Urgent: Damaged Package - Order #12345 - Need Return/Exchange',
-    'Content-Type':
-      'multipart/alternative; boundary="000000000000a1b2c3d4e5f6"',
+    'Content-Type': 'multipart/alternative; boundary="000000000000a1b2c3d4e5f6"',
   },
 
   attachments: [
@@ -234,7 +233,7 @@ Phone: (555) 123-4567`,
   imageCount: 0,
 
   triggeredAt: '2025-01-04T09:16:00.000Z',
-}
+};
 
 // Schema validation and type guards
 export const isGmailTriggerOutput = (data: any): data is GmailTriggerOutput => {
@@ -248,16 +247,16 @@ export const isGmailTriggerOutput = (data: any): data is GmailTriggerOutput => {
     typeof data.from === 'object' &&
     Array.isArray(data.from.value) &&
     Array.isArray(data.attachments)
-  )
-}
+  );
+};
 
 // Helper functions for data transformation
 export const extractEmailAddresses = (output: GmailTriggerOutput) => ({
-  from: output.from.value.map(addr => addr.address),
-  to: output.to.value.map(addr => addr.address),
-  cc: output.cc?.value.map(addr => addr.address) || [],
-  bcc: output.bcc?.value.map(addr => addr.address) || [],
-})
+  from: output.from.value.map((addr) => addr.address),
+  to: output.to.value.map((addr) => addr.address),
+  cc: output.cc?.value.map((addr) => addr.address) || [],
+  bcc: output.bcc?.value.map((addr) => addr.address) || [],
+});
 
 export const getEmailMetadata = (output: GmailTriggerOutput) => ({
   messageId: output.id,
@@ -270,7 +269,7 @@ export const getEmailMetadata = (output: GmailTriggerOutput) => ({
   sizeEstimate: output.sizeEstimate,
   labelIds: output.labelIds,
   category: output.category,
-})
+});
 
 export const getEmailContent = (output: GmailTriggerOutput) => ({
   subject: output.subject,
@@ -282,4 +281,4 @@ export const getEmailContent = (output: GmailTriggerOutput) => ({
   linkCount: output.linkCount,
   wordCount: output.text.split(/\s+/).length,
   characterCount: output.text.length,
-})
+});

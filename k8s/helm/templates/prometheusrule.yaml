@@ -1,0 +1,93 @@
+{{- if .Values.monitoring.enabled }}
+{{- if .Values.monitoring.prometheusRule.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: {{ include "reporunner.fullname" . }}
+  labels:
+    {{- include "reporunner.labels" . | nindent 4 }}
+spec:
+  groups:
+    - name: reporunner.rules
+      rules:
+        # High CPU usage
+        - alert: ReporunnerHighCPU
+          expr: rate(container_cpu_usage_seconds_total{pod=~"{{ include "reporunner.fullname" . }}-.*"}[5m]) > 0.8
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "High CPU usage detected"
+            description: "Pod {{ "{{ $labels.pod }}" }} is using {{ "{{ $value | humanizePercentage }}" }} CPU"
+
+        # High memory usage
+        - alert: ReporunnerHighMemory
+          expr: container_memory_usage_bytes{pod=~"{{ include "reporunner.fullname" . }}-.*"} / container_spec_memory_limit_bytes > 0.8
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "High memory usage detected"
+            description: "Pod {{ "{{ $labels.pod }}" }} is using {{ "{{ $value | humanizePercentage }}" }} of available memory"
+
+        # Pod restart rate
+        - alert: ReporunnerHighRestartRate
+          expr: rate(kube_pod_container_status_restarts_total{pod=~"{{ include "reporunner.fullname" . }}-.*"}[15m]) > 0
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "High pod restart rate"
+            description: "Pod {{ "{{ $labels.pod }}" }} is restarting frequently"
+
+        # Workflow execution failures
+        - alert: ReporunnerHighWorkflowFailureRate
+          expr: rate(reporunner_workflow_executions_total{status="failed"}[5m]) / rate(reporunner_workflow_executions_total[5m]) > 0.1
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: "High workflow failure rate"
+            description: "{{ "{{ $value | humanizePercentage }}" }} of workflows are failing"
+
+        # Database connection issues
+        - alert: ReporunnerDatabaseConnectionDown
+          expr: reporunner_database_connections{status="connected"} == 0
+          for: 1m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Database connection down"
+            description: "{{ "{{ $labels.database }}" }} connection is down"
+
+        # Queue depth alert
+        - alert: ReporunnerHighQueueDepth
+          expr: reporunner_queue_depth > 1000
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "High queue depth"
+            description: "Queue {{ "{{ $labels.queue }}" }} has {{ "{{ $value }}" }} pending jobs"
+
+        # Response time alert
+        - alert: ReporunnerHighResponseTime
+          expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket{job=~"{{ include "reporunner.fullname" . }}-.*"}[5m])) > 2
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "High response time"
+            description: "95th percentile response time is {{ "{{ $value }}" }}s"
+
+        # Error rate alert
+        - alert: ReporunnerHighErrorRate
+          expr: rate(http_requests_total{job=~"{{ include "reporunner.fullname" . }}-.*",code=~"5.."}[5m]) / rate(http_requests_total{job=~"{{ include "reporunner.fullname" . }}-.*"}[5m]) > 0.05
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: "High error rate"
+            description: "{{ "{{ $value | humanizePercentage }}" }} of requests are returning 5xx errors"
+{{- end }}
+{{- end }}

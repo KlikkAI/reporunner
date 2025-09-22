@@ -3,8 +3,8 @@
  * Implements the hybrid database architecture from the roadmap
  */
 
-import { DatabaseConfig } from "../config/database.js";
-import { PostgreSQLConfig } from "../config/postgresql.js";
+import { DatabaseConfig } from '../config/database.js';
+import { PostgreSQLConfig } from '../config/postgresql.js';
 
 export interface DatabaseService {
   mongo: {
@@ -46,7 +46,7 @@ export class HybridDatabaseService {
    */
   public async initialize(): Promise<void> {
     try {
-      console.log("Initializing hybrid database connections...");
+      console.log('Initializing hybrid database connections...');
 
       // Connect to MongoDB (primary database)
       await this.mongoConfig.connect();
@@ -58,9 +58,9 @@ export class HybridDatabaseService {
       await this.createPostgresTables();
 
       this.isConnected = true;
-      console.log("Hybrid database service initialized successfully");
+      console.log('Hybrid database service initialized successfully');
     } catch (error) {
-      console.error("Failed to initialize hybrid database service:", error);
+      console.error('Failed to initialize hybrid database service:', error);
       throw error;
     }
   }
@@ -73,9 +73,9 @@ export class HybridDatabaseService {
       await this.mongoConfig.disconnect();
       await this.postgresConfig.disconnect();
       this.isConnected = false;
-      console.log("Hybrid database service disconnected successfully");
+      console.log('Hybrid database service disconnected successfully');
     } catch (error) {
-      console.error("Failed to disconnect hybrid database service:", error);
+      console.error('Failed to disconnect hybrid database service:', error);
       throw error;
     }
   }
@@ -85,9 +85,7 @@ export class HybridDatabaseService {
    */
   public getMongo(): DatabaseConfig {
     if (!this.isConnected) {
-      throw new Error(
-        "Database service not initialized. Call initialize() first.",
-      );
+      throw new Error('Database service not initialized. Call initialize() first.');
     }
     return this.mongoConfig;
   }
@@ -97,9 +95,7 @@ export class HybridDatabaseService {
    */
   public getPostgres(): PostgreSQLConfig {
     if (!this.isConnected) {
-      throw new Error(
-        "Database service not initialized. Call initialize() first.",
-      );
+      throw new Error('Database service not initialized. Call initialize() first.');
     }
     return this.postgresConfig;
   }
@@ -171,7 +167,7 @@ export class HybridDatabaseService {
       )
     `);
 
-    console.log("PostgreSQL tables created successfully");
+    console.log('PostgreSQL tables created successfully');
   }
 
   /**
@@ -190,15 +186,15 @@ export class HybridDatabaseService {
       await this.mongoConfig.getConnectionString();
       mongoHealth = true;
     } catch (error) {
-      console.error("MongoDB health check failed:", error);
+      console.error('MongoDB health check failed:', error);
     }
 
     try {
       // Test PostgreSQL connection
-      await this.postgresConfig.query("SELECT 1");
+      await this.postgresConfig.query('SELECT 1');
       postgresHealth = true;
     } catch (error) {
-      console.error("PostgreSQL health check failed:", error);
+      console.error('PostgreSQL health check failed:', error);
     }
 
     return {
@@ -214,6 +210,6 @@ export class HybridDatabaseService {
   public async migrateData(): Promise<void> {
     // This method can be used for future data migrations
     // between MongoDB and PostgreSQL
-    console.log("Data migration completed");
+    console.log('Data migration completed');
   }
 }

@@ -18,182 +18,182 @@ export type PropertyType =
   | 'resourceLocator'
   | 'resourceMapper'
   | 'expression'
-  | 'credentialsSelect'
+  | 'credentialsSelect';
 
 export interface PropertyOption {
-  name: string
-  displayName?: string
-  value?: string | number | boolean
-  description?: string
-  action?: string
-  type?: string
-  required?: boolean
-  default?: unknown
-  placeholder?: string
-  options?: PropertyOption[]
-  values?: unknown
-  typeOptions?: TypeOptions
-  displayOptions?: DisplayOptions
+  name: string;
+  displayName?: string;
+  value?: string | number | boolean;
+  description?: string;
+  action?: string;
+  type?: string;
+  required?: boolean;
+  default?: unknown;
+  placeholder?: string;
+  options?: PropertyOption[];
+  values?: unknown;
+  typeOptions?: TypeOptions;
+  displayOptions?: DisplayOptions;
 }
 
 export interface DisplayOptions {
-  show?: Record<string, Array<string | number | boolean>>
-  hide?: Record<string, Array<string | number | boolean>>
+  show?: Record<string, Array<string | number | boolean>>;
+  hide?: Record<string, Array<string | number | boolean>>;
 }
 
 export interface TypeOptions {
-  multipleValues?: boolean
-  multipleValueButtonText?: string
-  minValue?: number
-  maxValue?: number
-  numberStepSize?: number
-  numberPrecision?: number
-  alwaysOpenEditWindow?: boolean
-  showAlpha?: boolean
-  password?: boolean
-  multiline?: boolean
-  loadOptionsMethod?: string
+  multipleValues?: boolean;
+  multipleValueButtonText?: string;
+  minValue?: number;
+  maxValue?: number;
+  numberStepSize?: number;
+  numberPrecision?: number;
+  alwaysOpenEditWindow?: boolean;
+  showAlpha?: boolean;
+  password?: boolean;
+  multiline?: boolean;
+  loadOptionsMethod?: string;
   loadOptions?: {
     routing: {
       request: {
-        method: string
-        url: string
-      }
+        method: string;
+        url: string;
+      };
       output: {
         postReceive: {
-          type: string
+          type: string;
           properties: {
-            value: string
-            name: string
-          }
-        }[]
-      }
-    }
-  }
+            value: string;
+            name: string;
+          };
+        }[];
+      };
+    };
+  };
 }
 
 export interface ValidationRule {
-  type: 'required' | 'minLength' | 'maxLength' | 'pattern' | 'custom'
-  value?: string | number
-  message: string
+  type: 'required' | 'minLength' | 'maxLength' | 'pattern' | 'custom';
+  value?: string | number;
+  message: string;
 }
 
 export interface CollectionValue {
-  name: string
-  displayName: string
-  type: PropertyType
-  description?: string
-  placeholder?: string
-  default?: unknown
-  options?: PropertyOption[]
-  values?: CollectionValue[]
-  required?: boolean
-  displayOptions?: DisplayOptions
-  typeOptions?: TypeOptions
-  validation?: ValidationRule[]
-  rows?: number
-  min?: number
-  max?: number
+  name: string;
+  displayName: string;
+  type: PropertyType;
+  description?: string;
+  placeholder?: string;
+  default?: unknown;
+  options?: PropertyOption[];
+  values?: CollectionValue[];
+  required?: boolean;
+  displayOptions?: DisplayOptions;
+  typeOptions?: TypeOptions;
+  validation?: ValidationRule[];
+  rows?: number;
+  min?: number;
+  max?: number;
 }
 
 export interface NodeProperty {
-  name: string
-  displayName: string
-  type: PropertyType
-  description?: string
-  placeholder?: string
-  default?: unknown
-  required?: boolean
-  noDataExpression?: boolean
+  name: string;
+  displayName: string;
+  type: PropertyType;
+  description?: string;
+  placeholder?: string;
+  default?: unknown;
+  required?: boolean;
+  noDataExpression?: boolean;
 
   // Options for select/multiSelect types
-  options?: PropertyOption[]
+  options?: PropertyOption[];
 
   // For credential selection
-  credentialTypes?: string[]
+  credentialTypes?: string[];
 
   // Conditional display logic
-  displayOptions?: DisplayOptions
+  displayOptions?: DisplayOptions;
 
   // Type-specific options
-  typeOptions?: TypeOptions
+  typeOptions?: TypeOptions;
 
   // For collection/fixedCollection types
-  values?: CollectionValue[]
+  values?: CollectionValue[];
 
   // For resource locator
   modes?: Array<{
-    displayName: string
-    name: string
-    type: 'list' | 'id' | 'url'
-  }>
+    displayName: string;
+    name: string;
+    type: 'list' | 'id' | 'url';
+  }>;
 
   // Validation rules
-  validation?: ValidationRule[]
+  validation?: ValidationRule[];
 
   // For text areas
-  rows?: number
+  rows?: number;
 
   // For numbers
-  min?: number
-  max?: number
-  step?: number
+  min?: number;
+  max?: number;
+  step?: number;
 
   // For expressions
-  expressionSupport?: 'full' | 'partial' | 'none'
+  expressionSupport?: 'full' | 'partial' | 'none';
 
   // Custom routing for dynamic options
   routing?: {
     request: {
-      method: string
-      url: string
-      headers?: Record<string, string>
-      body?: Record<string, any>
-    }
+      method: string;
+      url: string;
+      headers?: Record<string, string>;
+      body?: Record<string, any>;
+    };
     output: {
       postReceive: Array<{
-        type: string
-        properties: Record<string, string>
-      }>
-    }
-  }
+        type: string;
+        properties: Record<string, string>;
+      }>;
+    };
+  };
 }
 
 export interface NodePropertyGroup {
-  name: string
-  displayName: string
-  properties: NodeProperty[]
-  collapsible?: boolean
-  collapsed?: boolean
+  name: string;
+  displayName: string;
+  properties: NodeProperty[];
+  collapsible?: boolean;
+  collapsed?: boolean;
 }
 
 export interface DynamicNodeConfiguration {
-  properties: NodeProperty[]
-  groups?: NodePropertyGroup[]
+  properties: NodeProperty[];
+  groups?: NodePropertyGroup[];
   webhooks?: Array<{
-    name: string
-    httpMethod: string
-    responseMode: 'onReceived' | 'lastNode'
-    path: string
-  }>
+    name: string;
+    httpMethod: string;
+    responseMode: 'onReceived' | 'lastNode';
+    path: string;
+  }>;
   credentials?: Array<{
-    name: string
-    required: boolean
-    displayOptions?: DisplayOptions
-  }>
+    name: string;
+    required: boolean;
+    displayOptions?: DisplayOptions;
+  }>;
   polling?: {
-    enabled: boolean
-    defaultInterval: number
-    minInterval?: number
-    maxInterval?: number
-  }
+    enabled: boolean;
+    defaultInterval: number;
+    minInterval?: number;
+    maxInterval?: number;
+  };
 }
 
 // Enhanced Integration Node Type with dynamic properties
 export interface EnhancedIntegrationNodeType {
-  id: string
-  name: string
-  displayName?: string
+  id: string;
+  name: string;
+  displayName?: string;
   type:
     | 'trigger'
     | 'action'
@@ -205,52 +205,52 @@ export interface EnhancedIntegrationNodeType {
     | 'database'
     | 'email'
     | 'file'
-    | 'ai-agent'
-  icon?: string
-  description: string
-  version?: number | number[]
-  category?: string
-  subcategory?: string
+    | 'ai-agent';
+  icon?: string;
+  description: string;
+  version?: number | number[];
+  category?: string;
+  subcategory?: string;
 
   // Input/Output connection definitions
   inputs: Array<{
-    name: string
-    type: string
-    displayName?: string
-    description?: string
-    required?: boolean
-    maxConnections?: number
-  }>
+    name: string;
+    type: string;
+    displayName?: string;
+    description?: string;
+    required?: boolean;
+    maxConnections?: number;
+  }>;
 
   outputs: Array<{
-    name: string
-    type: string
-    displayName?: string
-    description?: string
-    maxConnections?: number
-  }>
+    name: string;
+    type: string;
+    displayName?: string;
+    description?: string;
+    maxConnections?: number;
+  }>;
 
   // Dynamic property configuration
-  configuration: DynamicNodeConfiguration
+  configuration: DynamicNodeConfiguration;
 
   // Execution settings
-  continueOnFail?: boolean
-  retryOnFail?: boolean
-  maxTries?: number
-  waitBetweenTries?: number
+  continueOnFail?: boolean;
+  retryOnFail?: boolean;
+  maxTries?: number;
+  waitBetweenTries?: number;
 
   // UI settings
   codex?: {
-    categories: string[]
-    subcategories?: Record<string, string[]>
-  }
+    categories: string[];
+    subcategories?: Record<string, string[]>;
+  };
 
   // Custom styling
   styling?: {
-    backgroundColor?: string
-    borderColor?: string
-    fontColor?: string
-  }
+    backgroundColor?: string;
+    borderColor?: string;
+    fontColor?: string;
+  };
 }
 
 // Property value types for form state management
@@ -261,34 +261,34 @@ export type PropertyValue =
   | unknown[]
   | Record<string, unknown>
   | null
-  | undefined
+  | undefined;
 
 export interface PropertyFormState {
-  [propertyName: string]: PropertyValue
+  [propertyName: string]: PropertyValue;
 }
 
 // Utility types for property evaluation
 export interface PropertyEvaluationContext {
-  formState: PropertyFormState
-  nodeData?: Record<string, unknown>
-  credentials?: Array<Record<string, unknown>> // Array of available credentials
-  credentialTypes?: Array<Record<string, unknown>> // Available credential type definitions
+  formState: PropertyFormState;
+  nodeData?: Record<string, unknown>;
+  credentials?: Array<Record<string, unknown>>; // Array of available credentials
+  credentialTypes?: Array<Record<string, unknown>>; // Available credential type definitions
   workflow?: {
-    id: string
-    nodes: Array<Record<string, unknown>>
-    connections: Array<Record<string, unknown>>
-  }
+    id: string;
+    nodes: Array<Record<string, unknown>>;
+    connections: Array<Record<string, unknown>>;
+  };
   // Callback functions for credential management
-  onCredentialSelect?: (credential: Record<string, unknown>) => void
-  onCreateCredential?: (credentialType: string) => void
-  onEditCredential?: (credential: Record<string, unknown>) => void
-  onDeleteCredential?: (credential: Record<string, unknown>) => void
-  onCredentialChange?: (credentialId: string) => void
+  onCredentialSelect?: (credential: Record<string, unknown>) => void;
+  onCreateCredential?: (credentialType: string) => void;
+  onEditCredential?: (credential: Record<string, unknown>) => void;
+  onDeleteCredential?: (credential: Record<string, unknown>) => void;
+  onCredentialChange?: (credentialId: string) => void;
 }
 
 export interface ConditionalPropertyResult {
-  visible: boolean
-  disabled: boolean
-  required: boolean
-  options?: PropertyOption[]
+  visible: boolean;
+  disabled: boolean;
+  required: boolean;
+  options?: PropertyOption[];
 }

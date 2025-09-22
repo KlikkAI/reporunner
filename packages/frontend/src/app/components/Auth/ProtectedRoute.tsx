@@ -1,22 +1,28 @@
-import React, { useEffect } from 'react'
-import { Navigate, useLocation } from 'react-router-dom'
-import { useAuthStore } from '@/core/stores/authStore'
+import type React from 'react';
+import { useEffect } from 'react';
+import { Navigate, useLocation } from 'react-router-dom';
+import { useAuthStore } from '@/core/stores/authStore';
 
 interface ProtectedRouteProps {
-  children: React.ReactNode
+  children: React.ReactNode;
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
-  const { isAuthenticated, getCurrentUser, isLoading, user } = useAuthStore()
-  const location = useLocation()
+  const { isAuthenticated, getCurrentUser, isLoading, user } = useAuthStore();
+  const location = useLocation();
 
   useEffect(() => {
     // Try to get current user on mount if we have a token
-    console.log('ProtectedRoute: getCurrentUser called, isAuthenticated:', isAuthenticated)
-    getCurrentUser()
-  }, [getCurrentUser])
+    console.log('ProtectedRoute: getCurrentUser called, isAuthenticated:', isAuthenticated);
+    getCurrentUser();
+  }, [getCurrentUser]);
 
-  console.log('ProtectedRoute render:', { isAuthenticated, isLoading, hasUser: !!user, pathname: location.pathname })
+  console.log('ProtectedRoute render:', {
+    isAuthenticated,
+    isLoading,
+    hasUser: !!user,
+    pathname: location.pathname,
+  });
 
   if (isLoading) {
     return (
@@ -28,15 +34,15 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
           </div>
         </div>
       </div>
-    )
+    );
   }
 
   if (!isAuthenticated) {
     // Redirect to login page with return url
-    return <Navigate to="/login" state={{ from: location }} replace />
+    return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  return <>{children}</>
-}
+  return <>{children}</>;
+};
 
-export default ProtectedRoute
+export default ProtectedRoute;

@@ -1,0 +1,76 @@
+{
+  "name": "@reporunner/workflow",
+  "version": "1.0.0",
+  "description": "Core workflow execution engine - Similar to n8n-workflow",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.js"
+    },
+    "./common": {
+      "types": "./dist/common/index.d.ts",
+      "import": "./dist/common/index.js",
+      "require": "./dist/common/index.js"
+    },
+    "./nodes": {
+      "types": "./dist/nodes/index.d.ts",
+      "import": "./dist/nodes/index.js",
+      "require": "./dist/nodes/index.js"
+    },
+    "./execution": {
+      "types": "./dist/execution/index.d.ts",
+      "import": "./dist/execution/index.js",
+      "require": "./dist/execution/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc && tsc-alias",
+    "dev": "tsc --watch",
+    "clean": "rm -rf dist",
+    "test": "vitest",
+    "test:watch": "vitest --watch",
+    "lint": "eslint src",
+    "lint:fix": "eslint src --fix",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@reporunner/core": "workspace:*",
+    "axios": "catalog:",
+    "lodash": "^4.17.21",
+    "luxon": "^3.4.4",
+    "uuid": "^9.0.1",
+    "zod": "catalog:",
+    "winston": "catalog:"
+  },
+  "devDependencies": {
+    "@types/lodash": "catalog:",
+    "@types/luxon": "^3.4.2",
+    "@types/node": "catalog:",
+    "@types/uuid": "^9.0.8",
+    "eslint": "catalog:",
+    "@typescript-eslint/eslint-plugin": "catalog:",
+    "@typescript-eslint/parser": "catalog:",
+    "tsc-alias": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "keywords": [
+    "workflow",
+    "execution",
+    "automation",
+    "nodes",
+    "engine",
+    "n8n",
+    "competitor"
+  ],
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

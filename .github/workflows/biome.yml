@@ -1,0 +1,234 @@
+name: Biome Quality Check
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: '18'
+  PNPM_VERSION: '9.15.2'
+
+jobs:
+  biome-check:
+    name: Biome Quality Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+        id: pnpm-cache
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Biome CI Check
+        run: pnpm biome ci .
+
+      - name: Upload Biome Report
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: biome-report
+          path: |
+            biome-report.json
+            biome-report.html
+          retention-days: 5
+
+  biome-format:
+    name: Format Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile --prefer-offline
+
+      - name: Check formatting
+        run: pnpm biome format .
+
+      - name: Generate diff on failure
+        if: failure()
+        run: |
+          echo "::group::Formatting diff"
+          pnpm biome format . --write
+          git --no-pager diff
+          echo "::endgroup::"
+
+  biome-lint:
+    name: Lint Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile --prefer-offline
+
+      - name: Lint check
+        run: pnpm lint:check
+
+      - name: Generate lint report
+        if: always()
+        run: |
+          pnpm biome check . --reporter=json > biome-lint-report.json || true
+          pnpm biome check . --reporter=github || true
+
+      - name: Upload lint report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: lint-report
+          path: biome-lint-report.json
+          retention-days: 5
+
+  import-sorting:
+    name: Import Organization Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile --prefer-offline
+
+      - name: Check import organization
+        run: pnpm biome check .
+
+      - name: Generate organized imports diff
+        if: failure()
+        run: |
+          echo "::group::Import organization diff"
+          pnpm biome check --write .
+          git --no-pager diff
+          echo "::endgroup::"
+
+  security-linting:
+    name: Security Linting
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile --prefer-offline
+
+      - name: Security audit with pnpm
+        run: pnpm audit --audit-level moderate
+
+      - name: Check for security issues in linting
+        run: pnpm biome check . --only=lint --verbose
+
+      - name: Run custom security checks
+        run: |
+          # Check for hardcoded secrets, API keys, etc.
+          pnpm biome check . | grep -E "(password|secret|key|token)" || true
+          
+          # Check for console.log in production files
+          if pnpm biome check packages/backend | grep -q "noConsoleLog"; then
+            echo "⚠️ Console statements found in backend production code"
+          fi
+
+  performance-check:
+    name: Performance Impact Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Biome performance benchmark
+        run: |
+          echo "::group::Biome Performance Benchmark"
+          time pnpm biome check . --max-diagnostics=0
+          time pnpm biome format . --write
+          echo "::endgroup::"
+
+      - name: Bundle size impact check
+        run: |
+          echo "::group::Bundle Size Check"
+          # Check if any performance-impacting rules are violated
+          pnpm biome check . --only=performance --verbose
+          echo "::endgroup::"

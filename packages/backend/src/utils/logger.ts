@@ -1,6 +1,6 @@
-import winston from 'winston';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import winston from 'winston';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -29,9 +29,7 @@ winston.addColors(colors);
 const format = winston.format.combine(
   winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss:ms' }),
   winston.format.colorize({ all: true }),
-  winston.format.printf(
-    (info) => `${info.timestamp} ${info.level}: ${info.message}`
-  )
+  winston.format.printf((info) => `${info.timestamp} ${info.level}: ${info.message}`)
 );
 
 // Define transports
@@ -44,18 +42,12 @@ const transports = [
   new winston.transports.File({
     filename: path.join(__dirname, '../../logs/error.log'),
     level: 'error',
-    format: winston.format.combine(
-      winston.format.timestamp(),
-      winston.format.json()
-    ),
+    format: winston.format.combine(winston.format.timestamp(), winston.format.json()),
   }),
   // File transport for all logs
   new winston.transports.File({
     filename: path.join(__dirname, '../../logs/combined.log'),
-    format: winston.format.combine(
-      winston.format.timestamp(),
-      winston.format.json()
-    ),
+    format: winston.format.combine(winston.format.timestamp(), winston.format.json()),
   }),
 ];
 

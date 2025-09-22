@@ -1,6 +1,6 @@
-import { Request, Response } from 'express';
-import { WorkflowService } from '../services/WorkflowService.js';
+import type { Request, Response } from 'express';
 import { BaseController } from '../../../base/BaseController.js';
+import { WorkflowService } from '../services/WorkflowService.js';
 
 export class WorkflowController extends BaseController {
   private workflowService: WorkflowService;

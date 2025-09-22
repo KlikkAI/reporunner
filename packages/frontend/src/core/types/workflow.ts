@@ -1,4 +1,4 @@
-import type { Node } from "reactflow";
+import type { Node } from 'reactflow';
 
 export interface WorkflowConnection {
   id: string;
@@ -84,11 +84,11 @@ export interface Workflow {
   createdAt: string;
   updatedAt: string;
   lastRun?: string;
-  status: "active" | "inactive" | "error" | "draft";
+  status: 'active' | 'inactive' | 'error' | 'draft';
   tags?: string[];
   version?: string | number;
   settings?: {
-    errorHandling?: "stop" | "continue";
+    errorHandling?: 'stop' | 'continue';
     timeout?: number;
     retryAttempts?: number;
     concurrent?: boolean;
@@ -96,10 +96,7 @@ export interface Workflow {
 }
 
 export interface WorkflowTemplate
-  extends Omit<
-    Workflow,
-    "id" | "isActive" | "createdAt" | "updatedAt" | "lastRun" | "status"
-  > {
+  extends Omit<Workflow, 'id' | 'isActive' | 'createdAt' | 'updatedAt' | 'lastRun' | 'status'> {
   id: string;
   category: string;
   version: string;
@@ -125,7 +122,7 @@ export interface WorkflowData {
   edges: WorkflowEdge[];
   isActive?: boolean;
   settings?: {
-    errorHandling?: "stop" | "continue";
+    errorHandling?: 'stop' | 'continue';
     timeout?: number;
     retryAttempts?: number;
   };

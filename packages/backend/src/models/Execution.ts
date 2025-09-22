@@ -1,4 +1,4 @@
-import mongoose, { Document, Schema } from 'mongoose';
+import mongoose, { type Document, Schema } from 'mongoose';
 
 export interface INodeExecution {
   nodeId: string;
@@ -164,8 +164,8 @@ executionSchema.methods.updateNodeExecution = function (
 
     // Update completed nodes count
     if (update.status === 'success' || update.status === 'error' || update.status === 'skipped') {
-      this.completedNodes = this.nodeExecutions.filter(
-        (ne: INodeExecution) => ['success', 'error', 'skipped'].includes(ne.status)
+      this.completedNodes = this.nodeExecutions.filter((ne: INodeExecution) =>
+        ['success', 'error', 'skipped'].includes(ne.status)
       ).length;
     }
   }
@@ -195,12 +195,14 @@ executionSchema.statics.getStatistics = async function (workflowId: string, days
     },
   ]);
 
-  return stats[0] || {
-    totalExecutions: 0,
-    successfulExecutions: 0,
-    failedExecutions: 0,
-    averageDuration: 0,
-  };
+  return (
+    stats[0] || {
+      totalExecutions: 0,
+      successfulExecutions: 0,
+      failedExecutions: 0,
+      averageDuration: 0,
+    }
+  );
 };
 
 export const Execution = mongoose.model<IExecution>('Execution', executionSchema);

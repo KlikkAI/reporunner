@@ -1,13 +1,14 @@
-import React, { useState } from 'react'
-import { Outlet } from 'react-router-dom'
-import Sidebar from './Sidebar'
+import type React from 'react';
+import { useState } from 'react';
+import { Outlet } from 'react-router-dom';
+import Sidebar from './Sidebar';
 
 const Layout: React.FC = () => {
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
   const toggleSidebar = () => {
-    setIsSidebarCollapsed(!isSidebarCollapsed)
-  }
+    setIsSidebarCollapsed(!isSidebarCollapsed);
+  };
 
   return (
     <div className="h-screen flex bg-gray-50">
@@ -16,7 +17,7 @@ const Layout: React.FC = () => {
         <Outlet />
       </main>
     </div>
-  )
-}
+  );
+};
 
-export default Layout
+export default Layout;

@@ -5,54 +5,55 @@
  * file monitoring, email triggers, and event-driven workflow execution.
  */
 
-import React, { useState, useEffect } from "react";
 import {
+  ApiOutlined,
+  CalendarOutlined,
+  CheckCircleOutlined,
+  CopyOutlined,
+  DatabaseOutlined,
+  DeleteOutlined,
+  EditOutlined,
+  EyeOutlined,
+  FileTextOutlined,
+  GlobalOutlined,
+  MailOutlined,
+  PlayCircleOutlined,
+  SettingOutlined,
+  ThunderboltOutlined,
+} from '@ant-design/icons';
+import {
+  Alert,
+  Badge,
   Button,
   Card,
+  Collapse,
+  Divider,
   Form,
   Input,
-  Switch,
-  Select,
   InputNumber,
-  Tabs,
-  Tag,
-  Divider,
-  Space,
+  List,
   Modal,
   message,
   Progress,
+  Select,
+  Space,
   Statistic,
-  List,
-  Badge,
-  Typography,
-  Alert,
-  Collapse,
+  Switch,
   Table,
-} from "antd";
-import {
-  ThunderboltOutlined,
-  GlobalOutlined,
-  MailOutlined,
-  FileTextOutlined,
-  DatabaseOutlined,
-  ApiOutlined,
-  CalendarOutlined,
-  SettingOutlined,
-  PlayCircleOutlined,
-  DeleteOutlined,
-  EditOutlined,
-  CopyOutlined,
-  EyeOutlined,
-  CheckCircleOutlined,
-} from "@ant-design/icons";
-import { cn } from "@/design-system/utils";
-import { colors } from "@/design-system/tokens";
+  Tabs,
+  Tag,
+  Typography,
+} from 'antd';
+import type React from 'react';
+import { useEffect, useState } from 'react';
 import {
   advancedTriggerSystem,
   type TriggerConfiguration,
   type TriggerEvent,
   type TriggerMetrics,
-} from "@/core/services/advancedTriggerSystem";
+} from '@/core/services/advancedTriggerSystem';
+import { colors } from '@/design-system/tokens';
+import { cn } from '@/design-system/utils';
 
 const { TabPane } = Tabs;
 const { Option } = Select;
@@ -66,22 +67,17 @@ interface TriggerPanelProps {
   onClose: () => void;
 }
 
-export const TriggerPanel: React.FC<TriggerPanelProps> = ({
-  workflowId,
-  visible,
-  onClose,
-}) => {
+export const TriggerPanel: React.FC<TriggerPanelProps> = ({ workflowId, visible, onClose }) => {
   const [triggers, setTriggers] = useState<TriggerConfiguration[]>([]);
   const [recentEvents, setRecentEvents] = useState<TriggerEvent[]>([]);
-  const [selectedTrigger, setSelectedTrigger] =
-    useState<TriggerConfiguration | null>(null);
+  const [selectedTrigger, setSelectedTrigger] = useState<TriggerConfiguration | null>(null);
   const [metrics, setMetrics] = useState<TriggerMetrics | null>(null);
-  const [activeTab, setActiveTab] = useState("triggers");
+  const [activeTab, setActiveTab] = useState('triggers');
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [editingTrigger, setEditingTrigger] = useState<string | null>(null);
   const [testModalVisible, setTestModalVisible] = useState(false);
-  const [webhookUrl, setWebhookUrl] = useState("");
+  const [webhookUrl, setWebhookUrl] = useState('');
 
   useEffect(() => {
     if (visible) {
@@ -98,32 +94,22 @@ export const TriggerPanel: React.FC<TriggerPanelProps> = ({
 
   const loadTriggers = () => {
     const allTriggers = advancedTriggerSystem.getAllTriggers();
-    const workflowTriggers = allTriggers.filter(
-      (t) => t.workflowId === workflowId,
-    );
+    const workflowTriggers = allTriggers.filter((t) => t.workflowId === workflowId);
     setTriggers(workflowTriggers);
   };
 
   const loadRecentEvents = () => {
     const allTriggers = advancedTriggerSystem.getAllTriggers();
-    const workflowTriggers = allTriggers.filter(
-      (t) => t.workflowId === workflowId,
-    );
+    const workflowTriggers = allTriggers.filter((t) => t.workflowId === workflowId);
 
     const events: TriggerEvent[] = [];
     workflowTriggers.forEach((trigger) => {
-      const triggerEvents = advancedTriggerSystem.getRecentEvents(
-        trigger.id,
-        50,
-      );
+      const triggerEvents = advancedTriggerSystem.getRecentEvents(trigger.id, 50);
       events.push(...triggerEvents);
     });
 
     // Sort by timestamp descending
-    events.sort(
-      (a, b) =>
-        new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
-    );
+    events.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
     setRecentEvents(events.slice(0, 100));
   };
 
@@ -132,7 +118,7 @@ export const TriggerPanel: React.FC<TriggerPanelProps> = ({
       const triggerMetrics = advancedTriggerSystem.getTriggerMetrics(triggerId);
       setMetrics(triggerMetrics);
     } catch (error) {
-      console.error("Failed to load metrics:", error);
+      console.error('Failed to load metrics:', error);
     }
   };
 
@@ -163,10 +149,8 @@ export const TriggerPanel: React.FC<TriggerPanelProps> = ({
           exponentialBackoff: values.exponentialBackoff ?? true,
         },
         security: {
-          allowedIPs:
-            values.allowedIPs?.split(",").map((ip: string) => ip.trim()) ?? [],
-          blockedIPs:
-            values.blockedIPs?.split(",").map((ip: string) => ip.trim()) ?? [],
+          allowedIPs: values.allowedIPs?.split(',').map((ip: string) => ip.trim()) ?? [],
+          blockedIPs: values.blockedIPs?.split(',').map((ip: string) => ip.trim()) ?? [],
           requireHttps: values.requireHttps ?? true,
           validateSignature: values.validateSignature ?? false,
           maxPayloadSize: values.maxPayloadSize ?? 1048576, // 1MB
@@ -176,17 +160,17 @@ export const TriggerPanel: React.FC<TriggerPanelProps> = ({
 
       const created = advancedTriggerSystem.createTrigger(triggerConfig);
 
-      if (created.triggerType === "webhook") {
+      if (created.triggerType === 'webhook') {
         const config = created.configuration as any;
         setWebhookUrl(config.endpoint);
       }
 
-      message.success("Trigger created successfully");
+      message.success('Trigger created successfully');
       loadTriggers();
       form.resetFields();
       setEditingTrigger(null);
     } catch (error) {
-      message.error("Failed to create trigger");
+      message.error('Failed to create trigger');
       console.error(error);
     } finally {
       setLoading(false);
@@ -195,32 +179,32 @@ export const TriggerPanel: React.FC<TriggerPanelProps> = ({
 
   const buildTriggerConfiguration = (values: any) => {
     switch (values.triggerType) {
-      case "webhook":
+      case 'webhook':
         return {
-          endpoint: "", // Auto-generated
-          methods: values.methods || ["POST"],
-          contentTypes: values.contentTypes
-            ?.split(",")
-            .map((t: string) => t.trim()) || ["application/json"],
+          endpoint: '', // Auto-generated
+          methods: values.methods || ['POST'],
+          contentTypes: values.contentTypes?.split(',').map((t: string) => t.trim()) || [
+            'application/json',
+          ],
           headers: parseKeyValuePairs(values.headers),
           responseTemplate: values.responseTemplate,
           secretKey: values.secretKey,
         };
-      case "http_request":
+      case 'http_request':
         return {
           url: values.url,
-          method: values.method || "GET",
+          method: values.method || 'GET',
           headers: parseKeyValuePairs(values.headers),
           body: values.body,
           pollIntervalMs: values.pollIntervalMs || 300000,
-          changeDetection: values.changeDetection || "hash",
+          changeDetection: values.changeDetection || 'hash',
         };
-      case "email":
+      case 'email':
         return {
-          provider: values.provider || "gmail",
-          mailbox: values.mailbox || "INBOX",
+          provider: values.provider || 'gmail',
+          mailbox: values.mailbox || 'INBOX',
           filters: {
-            from: values.fromEmails?.split(",").map((e: string) => e.trim()),
+            from: values.fromEmails?.split(',').map((e: string) => e.trim()),
             subject: values.subjectFilter,
             body: values.bodyFilter,
             hasAttachment: values.hasAttachment,
@@ -228,33 +212,29 @@ export const TriggerPanel: React.FC<TriggerPanelProps> = ({
           markAsRead: values.markAsRead ?? false,
           moveToFolder: values.moveToFolder,
         };
-      case "file_change":
+      case 'file_change':
         return {
           path: values.path,
           recursive: values.recursive ?? true,
-          events: values.events || ["created", "modified"],
-          patterns: values.patterns
-            ?.split(",")
-            .map((p: string) => p.trim()) || ["*"],
-          ignorePatterns:
-            values.ignorePatterns?.split(",").map((p: string) => p.trim()) ||
-            [],
+          events: values.events || ['created', 'modified'],
+          patterns: values.patterns?.split(',').map((p: string) => p.trim()) || ['*'],
+          ignorePatterns: values.ignorePatterns?.split(',').map((p: string) => p.trim()) || [],
           debounceMs: values.debounceMs || 1000,
         };
-      case "database_change":
+      case 'database_change':
         return {
           connectionString: values.connectionString,
           database: values.database,
           table: values.table,
-          operation: values.operation || "any",
-          columns: values.columns?.split(",").map((c: string) => c.trim()),
+          operation: values.operation || 'any',
+          columns: values.columns?.split(',').map((c: string) => c.trim()),
           conditions: parseKeyValuePairs(values.conditions),
           pollIntervalMs: values.pollIntervalMs || 60000,
         };
-      case "api_poll":
+      case 'api_poll':
         return {
-          url: values.url || "",
-          method: values.method || "GET",
+          url: values.url || '',
+          method: values.method || 'GET',
           headers: parseKeyValuePairs(values.headers),
           body: values.body,
           pollIntervalMs: values.pollIntervalMs || 300000,
@@ -264,12 +244,12 @@ export const TriggerPanel: React.FC<TriggerPanelProps> = ({
       default:
         // Fallback to webhook config for unknown types
         return {
-          endpoint: "",
-          methods: ["POST"],
-          contentTypes: ["application/json"],
+          endpoint: '',
+          methods: ['POST'],
+          contentTypes: ['application/json'],
           headers: {},
-          responseTemplate: "",
-          secretKey: "",
+          responseTemplate: '',
+          secretKey: '',
         };
     }
   };
@@ -278,10 +258,10 @@ export const TriggerPanel: React.FC<TriggerPanelProps> = ({
     if (!input) return {};
 
     const pairs: Record<string, string> = {};
-    input.split("\n").forEach((line) => {
-      const [key, ...valueParts] = line.split(":");
+    input.split('\n').forEach((line) => {
+      const [key, ...valueParts] = line.split(':');
       if (key && valueParts.length > 0) {
-        pairs[key.trim()] = valueParts.join(":").trim();
+        pairs[key.trim()] = valueParts.join(':').trim();
       }
     });
     return pairs;
@@ -290,35 +270,35 @@ export const TriggerPanel: React.FC<TriggerPanelProps> = ({
   const handleToggleTrigger = (triggerId: string, enabled: boolean) => {
     try {
       advancedTriggerSystem.toggleTrigger(triggerId, enabled);
-      message.success(`Trigger ${enabled ? "enabled" : "disabled"}`);
+      message.success(`Trigger ${enabled ? 'enabled' : 'disabled'}`);
       loadTriggers();
     } catch (error) {
-      message.error("Failed to toggle trigger");
+      message.error('Failed to toggle trigger');
     }
   };
 
   const handleDeleteTrigger = (triggerId: string) => {
     try {
       advancedTriggerSystem.deleteTrigger(triggerId);
-      message.success("Trigger deleted");
+      message.success('Trigger deleted');
       loadTriggers();
       if (selectedTrigger?.id === triggerId) {
         setSelectedTrigger(null);
         setMetrics(null);
       }
     } catch (error) {
-      message.error("Failed to delete trigger");
+      message.error('Failed to delete trigger');
     }
   };
 
   const handleTestTrigger = async (triggerId: string, testData?: any) => {
     try {
       await advancedTriggerSystem.testTrigger(triggerId, testData);
-      message.success("Trigger test completed");
+      message.success('Trigger test completed');
       loadRecentEvents();
       setTestModalVisible(false);
     } catch (error) {
-      message.error("Trigger test failed");
+      message.error('Trigger test failed');
     }
   };
 
@@ -329,7 +309,7 @@ export const TriggerPanel: React.FC<TriggerPanelProps> = ({
       onFinish={handleCreateTrigger}
       initialValues={{
         enabled: true,
-        triggerType: "webhook",
+        triggerType: 'webhook',
         rateLimitEnabled: false,
         retryEnabled: false,
         requireHttps: true,
@@ -338,7 +318,7 @@ export const TriggerPanel: React.FC<TriggerPanelProps> = ({
       <Form.Item
         name="name"
         label="Trigger Name"
-        rules={[{ required: true, message: "Please enter a name" }]}
+        rules={[{ required: true, message: 'Please enter a name' }]}
       >
         <Input placeholder="API webhook trigger" />
       </Form.Item>
@@ -352,7 +332,7 @@ export const TriggerPanel: React.FC<TriggerPanelProps> = ({
       </Form.Item>
 
       <Form.Item name="triggerType" label="Trigger Type">
-        <Select onChange={() => form.resetFields(["configuration"])}>
+        <Select onChange={() => form.resetFields(['configuration'])}>
           <Option value="webhook">
             <Space>
               <GlobalOutlined />
@@ -392,9 +372,9 @@ export const TriggerPanel: React.FC<TriggerPanelProps> = ({
         </Select>
       </Form.Item>
 
-      <Form.Item dependencies={["triggerType"]} noStyle>
+      <Form.Item dependencies={['triggerType']} noStyle>
         {({ getFieldValue }) => {
-          const triggerType = getFieldValue("triggerType");
+          const triggerType = getFieldValue('triggerType');
           return renderTriggerTypeFields(triggerType);
         }}
       </Form.Item>
@@ -408,7 +388,7 @@ export const TriggerPanel: React.FC<TriggerPanelProps> = ({
       <Form.Item>
         <Space>
           <Button type="primary" htmlType="submit" loading={loading}>
-            {editingTrigger ? "Update Trigger" : "Create Trigger"}
+            {editingTrigger ? 'Update Trigger' : 'Create Trigger'}
           </Button>
           <Button
             onClick={() => {
@@ -425,7 +405,7 @@ export const TriggerPanel: React.FC<TriggerPanelProps> = ({
 
   const renderTriggerTypeFields = (triggerType: string) => {
     switch (triggerType) {
-      case "webhook":
+      case 'webhook':
         return (
           <>
             <Form.Item name="methods" label="HTTP Methods">
@@ -437,10 +417,7 @@ export const TriggerPanel: React.FC<TriggerPanelProps> = ({
                 <Option value="PATCH">PATCH</Option>
               </Select>
             </Form.Item>
-            <Form.Item
-              name="contentTypes"
-              label="Content Types (comma-separated)"
-            >
+            <Form.Item name="contentTypes" label="Content Types (comma-separated)">
               <Input placeholder="application/json, application/xml" />
             </Form.Item>
             <Form.Item name="secretKey" label="Secret Key (optional)">
@@ -448,7 +425,7 @@ export const TriggerPanel: React.FC<TriggerPanelProps> = ({
             </Form.Item>
           </>
         );
-      case "http_request":
+      case 'http_request':
         return (
           <>
             <Form.Item name="url" label="URL" rules={[{ required: true }]}>
@@ -475,7 +452,7 @@ export const TriggerPanel: React.FC<TriggerPanelProps> = ({
             </Form.Item>
           </>
         );
-      case "email":
+      case 'email':
         return (
           <>
             <Form.Item name="provider" label="Email Provider">
@@ -497,21 +474,13 @@ export const TriggerPanel: React.FC<TriggerPanelProps> = ({
             </Form.Item>
           </>
         );
-      case "file_change":
+      case 'file_change':
         return (
           <>
-            <Form.Item
-              name="path"
-              label="Path to Monitor"
-              rules={[{ required: true }]}
-            >
+            <Form.Item name="path" label="Path to Monitor" rules={[{ required: true }]}>
               <Input placeholder="/data/uploads" />
             </Form.Item>
-            <Form.Item
-              name="recursive"
-              label="Recursive"
-              valuePropName="checked"
-            >
+            <Form.Item name="recursive" label="Recursive" valuePropName="checked">
               <Switch />
             </Form.Item>
             <Form.Item name="events" label="File Events">
@@ -527,7 +496,7 @@ export const TriggerPanel: React.FC<TriggerPanelProps> = ({
             </Form.Item>
           </>
         );
-      case "database_change":
+      case 'database_change':
         return (
           <>
             <Form.Item
@@ -553,7 +522,7 @@ export const TriggerPanel: React.FC<TriggerPanelProps> = ({
             </Form.Item>
           </>
         );
-      case "api_poll":
+      case 'api_poll':
         return (
           <>
             <Form.Item name="url" label="API URL" rules={[{ required: true }]}>
@@ -565,10 +534,7 @@ export const TriggerPanel: React.FC<TriggerPanelProps> = ({
             <Form.Item name="responseField" label="Response Field to Monitor">
               <Input placeholder="data.status" />
             </Form.Item>
-            <Form.Item
-              name="changeThreshold"
-              label="Change Threshold (for numbers)"
-            >
+            <Form.Item name="changeThreshold" label="Change Threshold (for numbers)">
               <InputNumber min={0} step={0.1} />
             </Form.Item>
           </>
@@ -579,18 +545,14 @@ export const TriggerPanel: React.FC<TriggerPanelProps> = ({
   };
 
   const renderAdvancedFields = () => (
-    <Space direction="vertical" size="middle" style={{ width: "100%" }}>
+    <Space direction="vertical" size="middle" style={{ width: '100%' }}>
       <Divider>Rate Limiting</Divider>
-      <Form.Item
-        name="rateLimitEnabled"
-        label="Enable Rate Limiting"
-        valuePropName="checked"
-      >
+      <Form.Item name="rateLimitEnabled" label="Enable Rate Limiting" valuePropName="checked">
         <Switch />
       </Form.Item>
-      <Form.Item dependencies={["rateLimitEnabled"]} noStyle>
+      <Form.Item dependencies={['rateLimitEnabled']} noStyle>
         {({ getFieldValue }) => {
-          if (!getFieldValue("rateLimitEnabled")) return null;
+          if (!getFieldValue('rateLimitEnabled')) return null;
           return (
             <div className="grid grid-cols-2 gap-4">
               <Form.Item name="maxTriggersPerMinute" label="Max/Minute">
@@ -605,11 +567,7 @@ export const TriggerPanel: React.FC<TriggerPanelProps> = ({
       </Form.Item>
 
       <Divider>Security</Divider>
-      <Form.Item
-        name="requireHttps"
-        label="Require HTTPS"
-        valuePropName="checked"
-      >
+      <Form.Item name="requireHttps" label="Require HTTPS" valuePropName="checked">
         <Switch />
       </Form.Item>
       <Form.Item name="allowedIPs" label="Allowed IPs (comma-separated)">
@@ -651,14 +609,14 @@ export const TriggerPanel: React.FC<TriggerPanelProps> = ({
             >
               Test
             </Button>,
-            trigger.triggerType === "webhook" && (
+            trigger.triggerType === 'webhook' && (
               <Button
                 type="link"
                 icon={<CopyOutlined />}
                 onClick={() => {
                   const config = trigger.configuration as any;
                   navigator.clipboard.writeText(config.endpoint);
-                  message.success("Webhook URL copied");
+                  message.success('Webhook URL copied');
                 }}
               >
                 Copy URL
@@ -691,9 +649,7 @@ export const TriggerPanel: React.FC<TriggerPanelProps> = ({
               <Space>
                 {getTriggerIcon(trigger.triggerType)}
                 {trigger.name}
-                <Tag color={trigger.enabled ? "green" : "default"}>
-                  {trigger.triggerType}
-                </Tag>
+                <Tag color={trigger.enabled ? 'green' : 'default'}>{trigger.triggerType}</Tag>
                 <Badge
                   count={trigger.triggerCount}
                   style={{ backgroundColor: colors.primary[500] }}
@@ -704,16 +660,16 @@ export const TriggerPanel: React.FC<TriggerPanelProps> = ({
               <Space direction="vertical" size="small">
                 {trigger.description}
                 <Space>
-                  <Badge status={trigger.enabled ? "success" : "default"} />
-                  {trigger.enabled ? "Active" : "Inactive"}
+                  <Badge status={trigger.enabled ? 'success' : 'default'} />
+                  {trigger.enabled ? 'Active' : 'Inactive'}
                   {trigger.lastTriggered && (
                     <span style={{ color: colors.gray[500] }}>
                       Last: {new Date(trigger.lastTriggered).toLocaleString()}
                     </span>
                   )}
                 </Space>
-                {trigger.triggerType === "webhook" && (
-                  <Text code style={{ fontSize: "12px" }}>
+                {trigger.triggerType === 'webhook' && (
+                  <Text code style={{ fontSize: '12px' }}>
                     {(trigger.configuration as any).endpoint}
                   </Text>
                 )}
@@ -722,7 +678,7 @@ export const TriggerPanel: React.FC<TriggerPanelProps> = ({
           />
         </List.Item>
       )}
-      locale={{ emptyText: "No triggers configured" }}
+      locale={{ emptyText: 'No triggers configured' }}
     />
   );
 
@@ -733,16 +689,16 @@ export const TriggerPanel: React.FC<TriggerPanelProps> = ({
       pagination={{ pageSize: 20 }}
       columns={[
         {
-          title: "Time",
-          dataIndex: "timestamp",
-          key: "timestamp",
+          title: 'Time',
+          dataIndex: 'timestamp',
+          key: 'timestamp',
           width: 150,
           render: (timestamp) => new Date(timestamp).toLocaleString(),
         },
         {
-          title: "Trigger",
-          dataIndex: "triggerId",
-          key: "triggerId",
+          title: 'Trigger',
+          dataIndex: 'triggerId',
+          key: 'triggerId',
           width: 200,
           render: (triggerId) => {
             const trigger = triggers.find((t) => t.id === triggerId);
@@ -750,30 +706,28 @@ export const TriggerPanel: React.FC<TriggerPanelProps> = ({
           },
         },
         {
-          title: "Status",
-          dataIndex: "status",
-          key: "status",
+          title: 'Status',
+          dataIndex: 'status',
+          key: 'status',
           width: 100,
-          render: (status) => (
-            <Tag color={getEventStatusColor(status)}>{status}</Tag>
-          ),
+          render: (status) => <Tag color={getEventStatusColor(status)}>{status}</Tag>,
         },
         {
-          title: "Processing Time",
-          dataIndex: "processingTimeMs",
-          key: "processingTimeMs",
+          title: 'Processing Time',
+          dataIndex: 'processingTimeMs',
+          key: 'processingTimeMs',
           width: 120,
           render: (time) => `${time.toFixed(2)}ms`,
         },
         {
-          title: "Source",
-          dataIndex: ["metadata", "source"],
-          key: "source",
+          title: 'Source',
+          dataIndex: ['metadata', 'source'],
+          key: 'source',
           width: 120,
         },
         {
-          title: "Actions",
-          key: "actions",
+          title: 'Actions',
+          key: 'actions',
           width: 100,
           render: (_, event) => (
             <Button
@@ -781,7 +735,7 @@ export const TriggerPanel: React.FC<TriggerPanelProps> = ({
               icon={<EyeOutlined />}
               onClick={() => {
                 Modal.info({
-                  title: "Event Details",
+                  title: 'Event Details',
                   content: (
                     <div>
                       <Paragraph>
@@ -832,7 +786,7 @@ export const TriggerPanel: React.FC<TriggerPanelProps> = ({
     if (!metrics) return <div>Select a trigger to view metrics</div>;
 
     return (
-      <Space direction="vertical" size="large" style={{ width: "100%" }}>
+      <Space direction="vertical" size="large" style={{ width: '100%' }}>
         <div className="grid grid-cols-2 gap-4">
           <Statistic title="Total Events" value={metrics.totalEvents} />
           <Statistic
@@ -846,8 +800,7 @@ export const TriggerPanel: React.FC<TriggerPanelProps> = ({
             precision={1}
             suffix="%"
             valueStyle={{
-              color:
-                metrics.errorRate > 5 ? colors.error[600] : colors.success[600],
+              color: metrics.errorRate > 5 ? colors.error[600] : colors.success[600],
             }}
           />
           <Statistic
@@ -864,10 +817,7 @@ export const TriggerPanel: React.FC<TriggerPanelProps> = ({
               dataSource={metrics.topSources}
               renderItem={(source) => (
                 <List.Item>
-                  <List.Item.Meta
-                    title={source.source}
-                    description={`${source.count} events`}
-                  />
+                  <List.Item.Meta title={source.source} description={`${source.count} events`} />
                   <Progress
                     percent={(source.count / metrics.totalEvents) * 100}
                     size="small"
@@ -897,16 +847,16 @@ export const TriggerPanel: React.FC<TriggerPanelProps> = ({
 
   const getEventStatusColor = (status: string) => {
     switch (status) {
-      case "processed":
-        return "green";
-      case "failed":
-        return "red";
-      case "filtered":
-        return "orange";
-      case "rate_limited":
-        return "purple";
+      case 'processed':
+        return 'green';
+      case 'failed':
+        return 'red';
+      case 'filtered':
+        return 'orange';
+      case 'rate_limited':
+        return 'purple';
       default:
-        return "default";
+        return 'default';
     }
   };
 
@@ -923,7 +873,7 @@ export const TriggerPanel: React.FC<TriggerPanelProps> = ({
         onCancel={onClose}
         width={1200}
         footer={null}
-        className={cn("trigger-management-panel")}
+        className={cn('trigger-management-panel')}
       >
         <Tabs activeKey={activeTab} onChange={setActiveTab}>
           <TabPane
@@ -949,7 +899,7 @@ export const TriggerPanel: React.FC<TriggerPanelProps> = ({
                           icon={<CopyOutlined />}
                           onClick={() => {
                             navigator.clipboard.writeText(webhookUrl);
-                            message.success("URL copied");
+                            message.success('URL copied');
                           }}
                         >
                           Copy URL
@@ -1027,7 +977,7 @@ export const TriggerPanel: React.FC<TriggerPanelProps> = ({
               placeholder={JSON.stringify(
                 { test: true, timestamp: new Date().toISOString() },
                 null,
-                2,
+                2
               )}
             />
           </Form.Item>

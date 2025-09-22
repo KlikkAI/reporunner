@@ -4,9 +4,9 @@
  */
 
 // Gmail Node Components
-export * from './GmailNode'
+export * from './GmailNode';
 
 // Transform Node Components - Now in app/node-extensions/custom-nodes/TransformNodeBody.tsx
 
 // Database Node Components
-export * from './DatabaseNode'
+export * from './DatabaseNode';

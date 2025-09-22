@@ -3,23 +3,23 @@
  * Manages multi-user workflow editing with operational transforms and conflict resolution
  */
 
-import { Server as SocketIOServer } from "socket.io";
+import type { Server as SocketIOServer } from 'socket.io';
 import {
   CollaborationSession,
-  ICollaborationSession,
-} from "../models/CollaborationSession.js";
-import { Operation, IOperation } from "../models/Operation.js";
-import { Comment, IComment } from "../models/Comment.js";
+  type ICollaborationSession,
+} from '../models/CollaborationSession.js';
+import { Comment, type IComment } from '../models/Comment.js';
+import { type IOperation, Operation } from '../models/Operation.js';
 import {
   OperationalTransformService,
-  TransformResult,
-} from "./OperationalTransformService.js";
+  type TransformResult,
+} from './OperationalTransformService.js';
 
 export interface ParticipantData {
   userId: string;
   socketId: string;
   userName: string;
-  role: "owner" | "editor" | "viewer";
+  role: 'owner' | 'editor' | 'viewer';
   cursor?: {
     x: number;
     y: number;
@@ -35,10 +35,10 @@ export interface ParticipantData {
 
 export interface SessionConfig {
   maxParticipants: number;
-  conflictResolution: "last-write-wins" | "operational-transform" | "manual";
+  conflictResolution: 'last-write-wins' | 'operational-transform' | 'manual';
   permissions: {
     allowAnonymous: boolean;
-    defaultRole: "viewer" | "editor";
+    defaultRole: 'viewer' | 'editor';
     requireApproval: boolean;
   };
   features: {
@@ -83,7 +83,7 @@ export class CollaborationService {
   public async joinSession(
     workflowId: string,
     participant: ParticipantData,
-    sessionConfig?: Partial<SessionConfig>,
+    sessionConfig?: Partial<SessionConfig>
   ): Promise<{
     session: ICollaborationSession;
     isNewSession: boolean;
@@ -94,11 +94,7 @@ export class CollaborationService {
 
     if (!session) {
       // Create new session
-      session = await this.createSession(
-        workflowId,
-        participant,
-        sessionConfig,
-      );
+      session = await this.createSession(workflowId, participant, sessionConfig);
       isNewSession = true;
     } else {
       // Join existing session
@@ -140,9 +136,7 @@ export class CollaborationService {
     if (!session) return;
 
     // Remove participant from session
-    session.participants = session.participants.filter(
-      (p) => p.socketId !== socketId,
-    );
+    session.participants = session.participants.filter((p) => p.socketId !== socketId);
 
     // Clean up tracking maps
     this.participantSockets.get(workflowId)?.delete(socketId);
@@ -156,7 +150,7 @@ export class CollaborationService {
       await this.updateSession(session);
 
       // Notify remaining participants
-      this.broadcastToSession(workflowId, "participant_left", {
+      this.broadcastToSession(workflowId, 'participant_left', {
         socketId,
         remainingParticipants: session.participants.length,
       });
@@ -177,11 +171,11 @@ export class CollaborationService {
   public async handleOperation(
     workflowId: string,
     authorSocketId: string,
-    operationData: Partial<IOperation>,
+    operationData: Partial<IOperation>
   ): Promise<{
     success: boolean;
     operation?: IOperation;
-    conflicts?: TransformResult["conflicts"];
+    conflicts?: TransformResult['conflicts'];
     requiresManualResolution?: boolean;
   }> {
     const session = this.activeSessions.get(workflowId);
@@ -197,48 +191,47 @@ export class CollaborationService {
         sessionId: session.sessionId,
         authorId: this.getParticipantUserId(session, authorSocketId),
         timestamp: new Date(),
-        status: "pending",
+        status: 'pending',
       });
 
       // Get recent operations for conflict resolution
       const recentOperations = await Operation.find({
         workflowId,
         timestamp: { $gte: new Date(Date.now() - 30000) }, // Last 30 seconds
-        status: { $in: ["applied", "transformed"] },
+        status: { $in: ['applied', 'transformed'] },
       }).sort({ timestamp: 1 });
 
       let transformResult: TransformResult | undefined;
 
       if (
-        session.settings.conflictResolution === "operational-transform" &&
+        session.settings.conflictResolution === 'operational-transform' &&
         recentOperations.length > 0
       ) {
         // Apply operational transform
-        transformResult =
-          await this.operationalTransform.transformOperationSequence(
-            operation,
-            recentOperations,
-            "server",
-          );
+        transformResult = await this.operationalTransform.transformOperationSequence(
+          operation,
+          recentOperations,
+          'server'
+        );
 
         operation.set(transformResult.transformedOperation);
         operation.conflicts = transformResult.conflicts.map((c) => ({
-          conflictingOperationId: "", // Will be set by transform service
-          resolutionStrategy: c.autoResolvable ? "auto" : "manual",
+          conflictingOperationId: '', // Will be set by transform service
+          resolutionStrategy: c.autoResolvable ? 'auto' : 'manual',
         }));
 
         if (transformResult.requiresManualResolution) {
-          operation.status = "pending";
+          operation.status = 'pending';
 
           // Notify participants about conflict requiring manual resolution
           this.broadcastToSession(
             workflowId,
-            "operation_conflict",
+            'operation_conflict',
             {
               operation: operation.toObject(),
               conflicts: transformResult.conflicts,
             },
-            authorSocketId,
+            authorSocketId
           );
 
           await operation.save();
@@ -252,7 +245,7 @@ export class CollaborationService {
       }
 
       // Apply operation
-      operation.status = "applied";
+      operation.status = 'applied';
       operation.version = session.currentVersion + 1;
       await operation.save();
 
@@ -264,12 +257,12 @@ export class CollaborationService {
       // Broadcast operation to all participants except author
       this.broadcastToSession(
         workflowId,
-        "operation_applied",
+        'operation_applied',
         {
           operation: operation.toObject(),
           conflicts: transformResult?.conflicts || [],
         },
-        authorSocketId,
+        authorSocketId
       );
 
       return {
@@ -279,7 +272,7 @@ export class CollaborationService {
         requiresManualResolution: false,
       };
     } catch (error) {
-      console.error("Error handling operation:", error);
+      console.error('Error handling operation:', error);
       return { success: false };
     }
   }
@@ -290,15 +283,13 @@ export class CollaborationService {
   public async updateCursor(
     workflowId: string,
     socketId: string,
-    cursor: ParticipantData["cursor"],
+    cursor: ParticipantData['cursor']
   ): Promise<void> {
     const session = this.activeSessions.get(workflowId);
     if (!session) return;
 
     // Update participant cursor in session
-    const participant = session.participants.find(
-      (p) => p.socketId === socketId,
-    );
+    const participant = session.participants.find((p) => p.socketId === socketId);
     if (participant) {
       participant.cursor = cursor;
       participant.lastActivity = new Date();
@@ -307,13 +298,13 @@ export class CollaborationService {
       // Broadcast cursor update to other participants
       this.broadcastToSession(
         workflowId,
-        "cursor_update",
+        'cursor_update',
         {
           userId: participant.userId,
           socketId,
           cursor,
         },
-        socketId,
+        socketId
       );
     }
   }
@@ -324,14 +315,12 @@ export class CollaborationService {
   public async updateSelection(
     workflowId: string,
     socketId: string,
-    selection: ParticipantData["selection"],
+    selection: ParticipantData['selection']
   ): Promise<void> {
     const session = this.activeSessions.get(workflowId);
     if (!session) return;
 
-    const participant = session.participants.find(
-      (p) => p.socketId === socketId,
-    );
+    const participant = session.participants.find((p) => p.socketId === socketId);
     if (participant) {
       participant.selection = selection;
       participant.lastActivity = new Date();
@@ -340,13 +329,13 @@ export class CollaborationService {
       // Broadcast selection update
       this.broadcastToSession(
         workflowId,
-        "selection_update",
+        'selection_update',
         {
           userId: participant.userId,
           socketId,
           selection,
         },
-        socketId,
+        socketId
       );
     }
   }
@@ -357,7 +346,7 @@ export class CollaborationService {
   public async addComment(
     workflowId: string,
     authorSocketId: string,
-    commentData: Partial<IComment>,
+    commentData: Partial<IComment>
   ): Promise<IComment | null> {
     const session = this.activeSessions.get(workflowId);
     if (!session) return null;
@@ -373,13 +362,13 @@ export class CollaborationService {
       await comment.save();
 
       // Broadcast comment to all participants
-      this.broadcastToSession(workflowId, "comment_added", {
+      this.broadcastToSession(workflowId, 'comment_added', {
         comment: comment.toObject(),
       });
 
       return comment;
     } catch (error) {
-      console.error("Error adding comment:", error);
+      console.error('Error adding comment:', error);
       return null;
     }
   }
@@ -394,7 +383,7 @@ export class CollaborationService {
     return session.participants.map((p) => ({
       userId: p.userId,
       socketId: p.socketId,
-      userName: p.userName || "Unknown User",
+      userName: p.userName || 'Unknown User',
       role: p.role,
       cursor: p.cursor,
       selection: p.selection,
@@ -411,9 +400,7 @@ export class CollaborationService {
     comments: number;
     sessionDuration: number; // minutes
   }> {
-    const session =
-      this.activeSessions.get(workflowId) ||
-      (await this.getSession(workflowId));
+    const session = this.activeSessions.get(workflowId) || (await this.getSession(workflowId));
     if (!session) {
       return {
         participants: 0,
@@ -429,7 +416,7 @@ export class CollaborationService {
     ]);
 
     const sessionDuration = Math.round(
-      (new Date().getTime() - session.createdAt.getTime()) / (1000 * 60),
+      (new Date().getTime() - session.createdAt.getTime()) / (1000 * 60)
     );
 
     return {
@@ -446,8 +433,8 @@ export class CollaborationService {
   private setupSocketHandlers(): void {
     if (!this.io) return;
 
-    this.io.on("connection", (socket) => {
-      socket.on("join_collaboration", async (data) => {
+    this.io.on('connection', (socket) => {
+      socket.on('join_collaboration', async (data) => {
         const { workflowId, participant } = data;
         try {
           const result = await this.joinSession(workflowId, {
@@ -456,7 +443,7 @@ export class CollaborationService {
             lastActivity: new Date(),
           });
 
-          socket.emit("collaboration_joined", {
+          socket.emit('collaboration_joined', {
             success: true,
             session: result.session.toObject(),
             isNewSession: result.isNewSession,
@@ -466,31 +453,27 @@ export class CollaborationService {
           // Notify other participants
           this.broadcastToSession(
             workflowId,
-            "participant_joined",
+            'participant_joined',
             {
               participant: participant,
               participantCount: result.participantCount,
             },
-            socket.id,
+            socket.id
           );
         } catch (error) {
-          socket.emit("collaboration_error", {
-            error: "Failed to join collaboration session",
+          socket.emit('collaboration_error', {
+            error: 'Failed to join collaboration session',
           });
         }
       });
 
-      socket.on("collaboration_operation", async (data) => {
+      socket.on('collaboration_operation', async (data) => {
         const workflowId = this.socketToWorkflow.get(socket.id);
         if (!workflowId) return;
 
-        const result = await this.handleOperation(
-          workflowId,
-          socket.id,
-          data.operation,
-        );
+        const result = await this.handleOperation(workflowId, socket.id, data.operation);
 
-        socket.emit("operation_result", {
+        socket.emit('operation_result', {
           success: result.success,
           operation: result.operation?.toObject(),
           conflicts: result.conflicts,
@@ -498,28 +481,28 @@ export class CollaborationService {
         });
       });
 
-      socket.on("cursor_move", async (data) => {
+      socket.on('cursor_move', async (data) => {
         const workflowId = this.socketToWorkflow.get(socket.id);
         if (workflowId) {
           await this.updateCursor(workflowId, socket.id, data.cursor);
         }
       });
 
-      socket.on("selection_change", async (data) => {
+      socket.on('selection_change', async (data) => {
         const workflowId = this.socketToWorkflow.get(socket.id);
         if (workflowId) {
           await this.updateSelection(workflowId, socket.id, data.selection);
         }
       });
 
-      socket.on("add_comment", async (data) => {
+      socket.on('add_comment', async (data) => {
         const workflowId = this.socketToWorkflow.get(socket.id);
         if (workflowId) {
           await this.addComment(workflowId, socket.id, data.comment);
         }
       });
 
-      socket.on("disconnect", async () => {
+      socket.on('disconnect', async () => {
         await this.leaveSession(socket.id);
       });
     });
@@ -531,14 +514,14 @@ export class CollaborationService {
   private async createSession(
     workflowId: string,
     creator: ParticipantData,
-    config?: Partial<SessionConfig>,
+    config?: Partial<SessionConfig>
   ): Promise<ICollaborationSession> {
     const defaultConfig: SessionConfig = {
       maxParticipants: 10,
-      conflictResolution: "operational-transform",
+      conflictResolution: 'operational-transform',
       permissions: {
         allowAnonymous: false,
-        defaultRole: "viewer",
+        defaultRole: 'viewer',
         requireApproval: false,
       },
       features: {
@@ -560,7 +543,7 @@ export class CollaborationService {
           userId: creator.userId,
           socketId: creator.socketId,
           userName: creator.userName,
-          role: creator.role || "owner",
+          role: creator.role || 'owner',
           joinedAt: new Date(),
           lastSeen: new Date(),
           lastActivity: new Date(),
@@ -585,12 +568,10 @@ export class CollaborationService {
    */
   private async addParticipant(
     session: ICollaborationSession,
-    participant: ParticipantData,
+    participant: ParticipantData
   ): Promise<ICollaborationSession> {
     // Check if participant already exists (reconnection)
-    const existingIndex = session.participants.findIndex(
-      (p) => p.userId === participant.userId,
-    );
+    const existingIndex = session.participants.findIndex((p) => p.userId === participant.userId);
 
     if (existingIndex >= 0) {
       // Update existing participant
@@ -605,7 +586,7 @@ export class CollaborationService {
         userId: participant.userId,
         socketId: participant.socketId,
         userName: participant.userName,
-        role: participant.role || "editor",
+        role: participant.role || 'editor',
         joinedAt: new Date(),
         lastSeen: new Date(),
         lastActivity: new Date(),
@@ -619,9 +600,7 @@ export class CollaborationService {
   /**
    * Get collaboration session
    */
-  private async getSession(
-    workflowId: string,
-  ): Promise<ICollaborationSession | null> {
+  private async getSession(workflowId: string): Promise<ICollaborationSession | null> {
     return await CollaborationSession.findOne({
       workflowId,
       isActive: true,
@@ -655,14 +634,9 @@ export class CollaborationService {
   /**
    * Get participant user ID by socket ID
    */
-  private getParticipantUserId(
-    session: ICollaborationSession,
-    socketId: string,
-  ): string {
-    const participant = session.participants.find(
-      (p) => p.socketId === socketId,
-    );
-    return participant?.userId || "";
+  private getParticipantUserId(session: ICollaborationSession, socketId: string): string {
+    const participant = session.participants.find((p) => p.socketId === socketId);
+    return participant?.userId || '';
   }
 
   /**
@@ -672,7 +646,7 @@ export class CollaborationService {
     workflowId: string,
     event: string,
     data: any,
-    excludeSocketId?: string,
+    excludeSocketId?: string
   ): void {
     if (!this.io) return;
 

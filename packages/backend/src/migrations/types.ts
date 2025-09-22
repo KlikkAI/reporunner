@@ -7,7 +7,7 @@ export interface IMigration {
   name: string;
   description?: string;
   version: string;
-  database: "mongodb" | "postgresql" | "both";
+  database: 'mongodb' | 'postgresql' | 'both';
   dependencies?: string[]; // Migration IDs that must run before this one
   up(): Promise<void>;
   down(): Promise<void>;
@@ -17,7 +17,7 @@ export interface IMigrationRecord {
   id: string;
   name: string;
   version: string;
-  database: "mongodb" | "postgresql" | "both";
+  database: 'mongodb' | 'postgresql' | 'both';
   executedAt: Date;
   executionTime: number; // in milliseconds
   checksum?: string; // For integrity verification
@@ -32,7 +32,7 @@ export interface IMigrationResult {
 
 export interface IMigrationStatus {
   migration: IMigration;
-  status: "pending" | "executed" | "error" | "rollback";
+  status: 'pending' | 'executed' | 'error' | 'rollback';
   executedAt?: Date;
   error?: string;
 }
@@ -41,7 +41,7 @@ export abstract class BaseMigration implements IMigration {
   abstract id: string;
   abstract name: string;
   abstract version: string;
-  abstract database: "mongodb" | "postgresql" | "both";
+  abstract database: 'mongodb' | 'postgresql' | 'both';
 
   description?: string;
   dependencies?: string[];
@@ -60,11 +60,7 @@ export abstract class BaseMigration implements IMigration {
   // Generate checksum for migration integrity
   getChecksum(): string {
     const content = `${this.id}-${this.name}-${this.version}-${this.up.toString()}-${this.down.toString()}`;
-    return require("crypto")
-      .createHash("sha256")
-      .update(content)
-      .digest("hex")
-      .substring(0, 16);
+    return require('crypto').createHash('sha256').update(content).digest('hex').substring(0, 16);
   }
 }
 
@@ -76,10 +72,7 @@ export interface IMigrationManager {
   runMigrations(targetVersion?: string): Promise<IMigrationResult[]>;
   rollbackMigrations(targetVersion: string): Promise<IMigrationResult[]>;
   getStatus(): Promise<IMigrationStatus[]>;
-  createMigration(
-    name: string,
-    database: "mongodb" | "postgresql" | "both",
-  ): Promise<string>;
+  createMigration(name: string, database: 'mongodb' | 'postgresql' | 'both'): Promise<string>;
 }
 
 // Migration configuration
@@ -101,14 +94,14 @@ export interface IMigrationConfig {
 export const DEFAULT_MIGRATION_CONFIG: IMigrationConfig = {
   mongodb: {
     enabled: true,
-    migrationsCollection: "migrations",
+    migrationsCollection: 'migrations',
   },
   postgresql: {
     enabled: true,
-    migrationsTable: "migrations",
-    schema: "public",
+    migrationsTable: 'migrations',
+    schema: 'public',
   },
-  migrationsDir: "./src/migrations/versions",
+  migrationsDir: './src/migrations/versions',
   lockTimeout: 300000, // 5 minutes
   autoBackup: false,
 };

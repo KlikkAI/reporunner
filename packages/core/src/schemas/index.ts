@@ -6,14 +6,16 @@ export const WorkflowNodeSchema = z.object({
   type: z.string(),
   position: z.object({
     x: z.number(),
-    y: z.number()
+    y: z.number(),
   }),
   data: z.record(z.string(), z.any()),
-  integrationData: z.object({
-    id: z.string(),
-    category: z.string(),
-    subcategory: z.string().optional()
-  }).optional()
+  integrationData: z
+    .object({
+      id: z.string(),
+      category: z.string(),
+      subcategory: z.string().optional(),
+    })
+    .optional(),
 });
 
 export const WorkflowEdgeSchema = z.object({
@@ -21,7 +23,7 @@ export const WorkflowEdgeSchema = z.object({
   source: z.string(),
   target: z.string(),
   sourceHandle: z.string().optional(),
-  targetHandle: z.string().optional()
+  targetHandle: z.string().optional(),
 });
 
 export const WorkflowDefinitionSchema = z.object({
@@ -32,19 +34,19 @@ export const WorkflowDefinitionSchema = z.object({
   edges: z.array(WorkflowEdgeSchema),
   active: z.boolean(),
   createdAt: z.date(),
-  updatedAt: z.date()
+  updatedAt: z.date(),
 });
 
 // Auth schemas
 export const LoginSchema = z.object({
   email: z.string().email('Invalid email address'),
-  password: z.string().min(6, 'Password must be at least 6 characters')
+  password: z.string().min(6, 'Password must be at least 6 characters'),
 });
 
 export const RegisterSchema = z.object({
   email: z.string().email('Invalid email address'),
   password: z.string().min(6, 'Password must be at least 6 characters'),
-  name: z.string().min(1, 'Name is required')
+  name: z.string().min(1, 'Name is required'),
 });
 
 // Credential schemas
@@ -54,7 +56,7 @@ export const CredentialSchema = z.object({
   type: z.string(),
   data: z.record(z.string(), z.any()),
   createdAt: z.date(),
-  updatedAt: z.date()
+  updatedAt: z.date(),
 });
 
 // API response schema
@@ -62,7 +64,7 @@ export const ApiResponseSchema = z.object({
   success: z.boolean(),
   data: z.any().optional(),
   error: z.string().optional(),
-  message: z.string().optional()
+  message: z.string().optional(),
 });
 
 // Environment variable schema
@@ -70,5 +72,5 @@ export const EnvSchema = z.object({
   NODE_ENV: z.enum(['development', 'production', 'test']),
   DATABASE_URL: z.string().url(),
   JWT_SECRET: z.string().min(32),
-  PORT: z.string().transform(Number).optional()
+  PORT: z.string().transform(Number).optional(),
 });

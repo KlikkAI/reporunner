@@ -1,7 +1,7 @@
-import { EventEmitter } from "events";
-import crypto from "crypto";
-import axios, { AxiosInstance } from "axios";
-import { URL, URLSearchParams } from "url";
+import axios, { type AxiosInstance } from 'axios';
+import crypto from 'crypto';
+import { EventEmitter } from 'events';
+import { URL, URLSearchParams } from 'url';
 
 export interface OAuth2Config {
   clientId: string;
@@ -12,8 +12,8 @@ export interface OAuth2Config {
   scopes: string[];
   usePKCE?: boolean;
   useStateParameter?: boolean;
-  accessType?: "online" | "offline";
-  prompt?: "none" | "consent" | "select_account";
+  accessType?: 'online' | 'offline';
+  prompt?: 'none' | 'consent' | 'select_account';
   additionalParams?: Record<string, string>;
 }
 
@@ -61,7 +61,7 @@ export class OAuth2Handler extends EventEmitter {
     this.httpClient = axios.create({
       timeout: 30000,
       headers: {
-        "User-Agent": "Reporunner-OAuth2-Client/1.0",
+        'User-Agent': 'Reporunner-OAuth2-Client/1.0',
       },
     });
   }
@@ -73,7 +73,7 @@ export class OAuth2Handler extends EventEmitter {
     integrationName: string,
     userId: string,
     additionalScopes?: string[],
-    additionalParams?: Record<string, string>,
+    additionalParams?: Record<string, string>
   ): Promise<AuthorizationRequest> {
     const url = new URL(this.config.authorizationUrl);
     const state = this.generateState();
@@ -83,8 +83,8 @@ export class OAuth2Handler extends EventEmitter {
     const params: Record<string, string> = {
       client_id: this.config.clientId,
       redirect_uri: this.config.redirectUri,
-      response_type: "code",
-      scope: [...this.config.scopes, ...(additionalScopes || [])].join(" "),
+      response_type: 'code',
+      scope: [...this.config.scopes, ...(additionalScopes || [])].join(' '),
       state,
       nonce,
       ...this.config.additionalParams,
@@ -109,7 +109,7 @@ export class OAuth2Handler extends EventEmitter {
       codeVerifier = this.generateCodeVerifier();
       codeChallenge = await this.generateCodeChallenge(codeVerifier);
       params.code_challenge = codeChallenge;
-      params.code_challenge_method = "S256";
+      params.code_challenge_method = 'S256';
     }
 
     // Add parameters to URL
@@ -133,10 +133,10 @@ export class OAuth2Handler extends EventEmitter {
       () => {
         this.pendingAuthorizations.delete(state);
       },
-      10 * 60 * 1000,
+      10 * 60 * 1000
     );
 
-    this.emit("authorization:generated", {
+    this.emit('authorization:generated', {
       integrationName,
       userId,
       state,
@@ -152,17 +152,17 @@ export class OAuth2Handler extends EventEmitter {
     code: string,
     state: string,
     integrationName: string,
-    userId: string,
+    userId: string
   ): Promise<OAuth2Token> {
     // Verify state
     const pendingAuth = this.pendingAuthorizations.get(state);
     if (!pendingAuth) {
-      throw new Error("Invalid or expired state parameter");
+      throw new Error('Invalid or expired state parameter');
     }
 
     try {
       const params: Record<string, string> = {
-        grant_type: "authorization_code",
+        grant_type: 'authorization_code',
         code,
         client_id: this.config.clientId,
         client_secret: this.config.clientSecret,
@@ -180,9 +180,9 @@ export class OAuth2Handler extends EventEmitter {
         new URLSearchParams(params),
         {
           headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
+            'Content-Type': 'application/x-www-form-urlencoded',
           },
-        },
+        }
       );
 
       const tokenData = response.data;
@@ -191,7 +191,7 @@ export class OAuth2Handler extends EventEmitter {
       const token: OAuth2Token = {
         accessToken: tokenData.access_token,
         refreshToken: tokenData.refresh_token,
-        tokenType: tokenData.token_type || "Bearer",
+        tokenType: tokenData.token_type || 'Bearer',
         expiresIn: tokenData.expires_in,
         expiresAt: tokenData.expires_in
           ? new Date(Date.now() + tokenData.expires_in * 1000)
@@ -221,7 +221,7 @@ export class OAuth2Handler extends EventEmitter {
       // Clean up pending authorization
       this.pendingAuthorizations.delete(state);
 
-      this.emit("token:obtained", {
+      this.emit('token:obtained', {
         sessionId,
         integrationName,
         userId,
@@ -229,7 +229,7 @@ export class OAuth2Handler extends EventEmitter {
 
       return token;
     } catch (error: any) {
-      this.emit("token:error", {
+      this.emit('token:error', {
         integrationName,
         userId,
         error: error.message,
@@ -245,16 +245,16 @@ export class OAuth2Handler extends EventEmitter {
   async refreshAccessToken(sessionId: string): Promise<OAuth2Token> {
     const session = this.sessions.get(sessionId);
     if (!session) {
-      throw new Error("Session not found");
+      throw new Error('Session not found');
     }
 
     if (!session.token.refreshToken) {
-      throw new Error("No refresh token available");
+      throw new Error('No refresh token available');
     }
 
     try {
       const params: Record<string, string> = {
-        grant_type: "refresh_token",
+        grant_type: 'refresh_token',
         refresh_token: session.token.refreshToken,
         client_id: this.config.clientId,
         client_secret: this.config.clientSecret,
@@ -265,9 +265,9 @@ export class OAuth2Handler extends EventEmitter {
         new URLSearchParams(params),
         {
           headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
+            'Content-Type': 'application/x-www-form-urlencoded',
           },
-        },
+        }
       );
 
       const tokenData = response.data;
@@ -276,7 +276,7 @@ export class OAuth2Handler extends EventEmitter {
       session.token = {
         accessToken: tokenData.access_token,
         refreshToken: tokenData.refresh_token || session.token.refreshToken,
-        tokenType: tokenData.token_type || "Bearer",
+        tokenType: tokenData.token_type || 'Bearer',
         expiresIn: tokenData.expires_in,
         expiresAt: tokenData.expires_in
           ? new Date(Date.now() + tokenData.expires_in * 1000)
@@ -288,7 +288,7 @@ export class OAuth2Handler extends EventEmitter {
 
       session.updatedAt = new Date();
 
-      this.emit("token:refreshed", {
+      this.emit('token:refreshed', {
         sessionId,
         integrationName: session.integrationName,
         userId: session.userId,
@@ -296,7 +296,7 @@ export class OAuth2Handler extends EventEmitter {
 
       return session.token;
     } catch (error: any) {
-      this.emit("token:refresh_error", {
+      this.emit('token:refresh_error', {
         sessionId,
         error: error.message,
       });
@@ -311,7 +311,7 @@ export class OAuth2Handler extends EventEmitter {
   async revokeToken(sessionId: string, revokeUrl?: string): Promise<void> {
     const session = this.sessions.get(sessionId);
     if (!session) {
-      throw new Error("Session not found");
+      throw new Error('Session not found');
     }
 
     if (revokeUrl) {
@@ -320,15 +320,15 @@ export class OAuth2Handler extends EventEmitter {
           revokeUrl,
           new URLSearchParams({
             token: session.token.accessToken,
-            token_type_hint: "access_token",
+            token_type_hint: 'access_token',
             client_id: this.config.clientId,
             client_secret: this.config.clientSecret,
           }),
           {
             headers: {
-              "Content-Type": "application/x-www-form-urlencoded",
+              'Content-Type': 'application/x-www-form-urlencoded',
             },
-          },
+          }
         );
 
         // Also revoke refresh token if available
@@ -337,26 +337,26 @@ export class OAuth2Handler extends EventEmitter {
             revokeUrl,
             new URLSearchParams({
               token: session.token.refreshToken,
-              token_type_hint: "refresh_token",
+              token_type_hint: 'refresh_token',
               client_id: this.config.clientId,
               client_secret: this.config.clientSecret,
             }),
             {
               headers: {
-                "Content-Type": "application/x-www-form-urlencoded",
+                'Content-Type': 'application/x-www-form-urlencoded',
               },
-            },
+            }
           );
         }
       } catch (error: any) {
-        console.error("Failed to revoke token at provider:", error.message);
+        console.error('Failed to revoke token at provider:', error.message);
       }
     }
 
     // Remove session
     this.sessions.delete(sessionId);
 
-    this.emit("token:revoked", {
+    this.emit('token:revoked', {
       sessionId,
       integrationName: session.integrationName,
       userId: session.userId,
@@ -369,7 +369,7 @@ export class OAuth2Handler extends EventEmitter {
   async getValidAccessToken(sessionId: string): Promise<string> {
     const session = this.sessions.get(sessionId);
     if (!session) {
-      throw new Error("Session not found");
+      throw new Error('Session not found');
     }
 
     // Check if token is expired or about to expire (5 minutes buffer)
@@ -385,7 +385,7 @@ export class OAuth2Handler extends EventEmitter {
         const newToken = await this.refreshAccessToken(sessionId);
         return newToken.accessToken;
       } else {
-        throw new Error("Token expired and no refresh token available");
+        throw new Error('Token expired and no refresh token available');
       }
     }
 
@@ -401,7 +401,7 @@ export class OAuth2Handler extends EventEmitter {
     return axios.create({
       headers: {
         Authorization: `Bearer ${accessToken}`,
-        "User-Agent": "Reporunner-OAuth2-Client/1.0",
+        'User-Agent': 'Reporunner-OAuth2-Client/1.0',
       },
     });
   }
@@ -417,9 +417,7 @@ export class OAuth2Handler extends EventEmitter {
    * Get sessions by user
    */
   getSessionsByUser(userId: string): OAuth2Session[] {
-    return Array.from(this.sessions.values()).filter(
-      (session) => session.userId === userId,
-    );
+    return Array.from(this.sessions.values()).filter((session) => session.userId === userId);
   }
 
   /**
@@ -427,7 +425,7 @@ export class OAuth2Handler extends EventEmitter {
    */
   getSessionsByIntegration(integrationName: string): OAuth2Session[] {
     return Array.from(this.sessions.values()).filter(
-      (session) => session.integrationName === integrationName,
+      (session) => session.integrationName === integrationName
     );
   }
 
@@ -435,37 +433,37 @@ export class OAuth2Handler extends EventEmitter {
    * Generate state parameter
    */
   private generateState(): string {
-    return crypto.randomBytes(32).toString("hex");
+    return crypto.randomBytes(32).toString('hex');
   }
 
   /**
    * Generate nonce
    */
   private generateNonce(): string {
-    return crypto.randomBytes(16).toString("hex");
+    return crypto.randomBytes(16).toString('hex');
   }
 
   /**
    * Generate PKCE code verifier
    */
   private generateCodeVerifier(): string {
-    return crypto.randomBytes(32).toString("base64url");
+    return crypto.randomBytes(32).toString('base64url');
   }
 
   /**
    * Generate PKCE code challenge
    */
   private async generateCodeChallenge(verifier: string): Promise<string> {
-    const hash = crypto.createHash("sha256");
+    const hash = crypto.createHash('sha256');
     hash.update(verifier);
-    return hash.digest("base64url");
+    return hash.digest('base64url');
   }
 
   /**
    * Generate session ID
    */
   private generateSessionId(): string {
-    return `oauth2_session_${Date.now()}_${crypto.randomBytes(8).toString("hex")}`;
+    return `oauth2_session_${Date.now()}_${crypto.randomBytes(8).toString('hex')}`;
   }
 
   /**
@@ -491,8 +489,7 @@ export class OAuth2Handler extends EventEmitter {
     this.sessions.forEach((session) => {
       sessionsByIntegration[session.integrationName] =
         (sessionsByIntegration[session.integrationName] || 0) + 1;
-      sessionsByUser[session.userId] =
-        (sessionsByUser[session.userId] || 0) + 1;
+      sessionsByUser[session.userId] = (sessionsByUser[session.userId] || 0) + 1;
     });
 
     return {

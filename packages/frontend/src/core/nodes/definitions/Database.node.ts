@@ -1,212 +1,207 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import type {
-  INodeType,
-  INodeTypeDescription,
-  INodeExecutionData,
-} from "../types";
+import type { INodeExecutionData, INodeType, INodeTypeDescription } from '../types';
 
 export class DatabaseNode implements INodeType {
   description: INodeTypeDescription = {
-    displayName: "Database",
-    name: "database",
-    icon: "🗄️",
-    group: ["database"],
+    displayName: 'Database',
+    name: 'database',
+    icon: '🗄️',
+    group: ['database'],
     version: 1,
-    description:
-      "Execute database operations like SELECT, INSERT, UPDATE, DELETE",
+    description: 'Execute database operations like SELECT, INSERT, UPDATE, DELETE',
     defaults: {
-      name: "Database",
-      color: "#059669",
+      name: 'Database',
+      color: '#059669',
     },
-    inputs: ["main"],
-    outputs: ["main"],
+    inputs: ['main'],
+    outputs: ['main'],
     credentials: [
       {
-        name: "postgres",
+        name: 'postgres',
         required: false,
         displayOptions: {
           show: {
-            database: ["postgres"],
+            database: ['postgres'],
           },
         },
       },
       {
-        name: "mysql",
+        name: 'mysql',
         required: false,
         displayOptions: {
           show: {
-            database: ["mysql"],
+            database: ['mysql'],
           },
         },
       },
       {
-        name: "mongodb",
+        name: 'mongodb',
         required: false,
         displayOptions: {
           show: {
-            database: ["mongodb"],
+            database: ['mongodb'],
           },
         },
       },
     ],
     properties: [
       {
-        displayName: "Database Type",
-        name: "database",
-        type: "options",
-        default: "postgres",
+        displayName: 'Database Type',
+        name: 'database',
+        type: 'options',
+        default: 'postgres',
         required: true,
         options: [
           {
-            name: "PostgreSQL",
-            value: "postgres",
+            name: 'PostgreSQL',
+            value: 'postgres',
           },
           {
-            name: "MySQL",
-            value: "mysql",
+            name: 'MySQL',
+            value: 'mysql',
           },
           {
-            name: "MongoDB",
-            value: "mongodb",
+            name: 'MongoDB',
+            value: 'mongodb',
           },
           {
-            name: "SQLite",
-            value: "sqlite",
+            name: 'SQLite',
+            value: 'sqlite',
           },
         ],
-        description: "Type of database to connect to",
+        description: 'Type of database to connect to',
       },
       {
-        displayName: "Operation",
-        name: "operation",
-        type: "options",
-        default: "select",
+        displayName: 'Operation',
+        name: 'operation',
+        type: 'options',
+        default: 'select',
         required: true,
         options: [
           {
-            name: "Select",
-            value: "select",
-            description: "Execute a SELECT query",
+            name: 'Select',
+            value: 'select',
+            description: 'Execute a SELECT query',
           },
           {
-            name: "Insert",
-            value: "insert",
-            description: "Insert new records",
+            name: 'Insert',
+            value: 'insert',
+            description: 'Insert new records',
           },
           {
-            name: "Update",
-            value: "update",
-            description: "Update existing records",
+            name: 'Update',
+            value: 'update',
+            description: 'Update existing records',
           },
           {
-            name: "Delete",
-            value: "delete",
-            description: "Delete records",
+            name: 'Delete',
+            value: 'delete',
+            description: 'Delete records',
           },
           {
-            name: "Custom Query",
-            value: "query",
-            description: "Execute custom SQL/query",
+            name: 'Custom Query',
+            value: 'query',
+            description: 'Execute custom SQL/query',
           },
         ],
-        description: "Database operation to perform",
+        description: 'Database operation to perform',
       },
       {
-        displayName: "Table/Collection",
-        name: "table",
-        type: "string",
-        default: "",
+        displayName: 'Table/Collection',
+        name: 'table',
+        type: 'string',
+        default: '',
         required: true,
         displayOptions: {
           show: {
-            operation: ["select", "insert", "update", "delete"],
+            operation: ['select', 'insert', 'update', 'delete'],
           },
         },
-        description: "Name of the table (SQL) or collection (MongoDB)",
+        description: 'Name of the table (SQL) or collection (MongoDB)',
       },
       {
-        displayName: "Query",
-        name: "query",
-        type: "text",
-        default: "",
+        displayName: 'Query',
+        name: 'query',
+        type: 'text',
+        default: '',
         required: true,
         displayOptions: {
           show: {
-            operation: ["query"],
+            operation: ['query'],
           },
         },
-        description: "Custom SQL query or MongoDB query",
-        placeholder: "SELECT * FROM users WHERE active = true",
+        description: 'Custom SQL query or MongoDB query',
+        placeholder: 'SELECT * FROM users WHERE active = true',
       },
       {
-        displayName: "Columns",
-        name: "columns",
-        type: "string",
-        default: "*",
+        displayName: 'Columns',
+        name: 'columns',
+        type: 'string',
+        default: '*',
         displayOptions: {
           show: {
-            operation: ["select"],
+            operation: ['select'],
           },
         },
-        description: "Columns to select (comma-separated)",
-        placeholder: "id, name, email",
+        description: 'Columns to select (comma-separated)',
+        placeholder: 'id, name, email',
       },
       {
-        displayName: "Where Condition",
-        name: "where",
-        type: "string",
-        default: "",
+        displayName: 'Where Condition',
+        name: 'where',
+        type: 'string',
+        default: '',
         displayOptions: {
           show: {
-            operation: ["select", "update", "delete"],
+            operation: ['select', 'update', 'delete'],
           },
         },
-        description: "WHERE condition for the query",
-        placeholder: "id = 1 OR active = true",
+        description: 'WHERE condition for the query',
+        placeholder: 'id = 1 OR active = true',
       },
       {
-        displayName: "Data",
-        name: "data",
-        type: "json",
-        default: "{}",
+        displayName: 'Data',
+        name: 'data',
+        type: 'json',
+        default: '{}',
         displayOptions: {
           show: {
-            operation: ["insert", "update"],
+            operation: ['insert', 'update'],
           },
         },
-        description: "Data to insert or update (JSON format)",
+        description: 'Data to insert or update (JSON format)',
         placeholder: '{"name": "John", "email": "john@example.com"}',
       },
       {
-        displayName: "Limit",
-        name: "limit",
-        type: "number",
+        displayName: 'Limit',
+        name: 'limit',
+        type: 'number',
         default: 100,
         min: 1,
         displayOptions: {
           show: {
-            operation: ["select"],
+            operation: ['select'],
           },
         },
-        description: "Maximum number of records to return",
+        description: 'Maximum number of records to return',
       },
     ],
-    categories: ["Data"],
+    categories: ['Data'],
   };
 
   async execute(this: any): Promise<INodeExecutionData[][]> {
-    const database = this.getNodeParameter("database", "postgres") as string;
-    const operation = this.getNodeParameter("operation", "select") as string;
+    const database = this.getNodeParameter('database', 'postgres') as string;
+    const operation = this.getNodeParameter('operation', 'select') as string;
 
     // Mock database operations - in real implementation would connect to actual databases
     const mockResults: INodeExecutionData[] = [];
 
     switch (operation) {
-      case "select": {
-        const table = this.getNodeParameter("table", "") as string;
-        const columns = this.getNodeParameter("columns", "*") as string;
-        const where = this.getNodeParameter("where", "") as string;
-        const limit = this.getNodeParameter("limit", 100) as number;
+      case 'select': {
+        const table = this.getNodeParameter('table', '') as string;
+        const columns = this.getNodeParameter('columns', '*') as string;
+        const where = this.getNodeParameter('where', '') as string;
+        const limit = this.getNodeParameter('limit', 100) as number;
 
         // Mock SELECT results
         for (let i = 0; i < Math.min(5, limit); i++) {
@@ -217,7 +212,7 @@ export class DatabaseNode implements INodeType {
               columns: columns,
               where: where,
               database: database,
-              operation: "select",
+              operation: 'select',
               mockData: `Sample record ${i + 1}`,
               timestamp: new Date().toISOString(),
             },
@@ -226,20 +221,20 @@ export class DatabaseNode implements INodeType {
         break;
       }
 
-      case "insert": {
-        const table = this.getNodeParameter("table", "") as string;
-        const data = this.getNodeParameter("data", "{}") as string;
+      case 'insert': {
+        const table = this.getNodeParameter('table', '') as string;
+        const data = this.getNodeParameter('data', '{}') as string;
 
         let parsedData;
         try {
           parsedData = JSON.parse(data);
         } catch (err) {
-          parsedData = { error: "Invalid JSON data", err };
+          parsedData = { error: 'Invalid JSON data', err };
         }
 
         mockResults.push({
           json: {
-            operation: "insert",
+            operation: 'insert',
             table: table,
             database: database,
             insertedData: parsedData,
@@ -251,21 +246,21 @@ export class DatabaseNode implements INodeType {
         break;
       }
 
-      case "update": {
-        const table = this.getNodeParameter("table", "") as string;
-        const data = this.getNodeParameter("data", "{}") as string;
-        const where = this.getNodeParameter("where", "") as string;
+      case 'update': {
+        const table = this.getNodeParameter('table', '') as string;
+        const data = this.getNodeParameter('data', '{}') as string;
+        const where = this.getNodeParameter('where', '') as string;
 
         let parsedData;
         try {
           parsedData = JSON.parse(data);
         } catch (err) {
-          parsedData = { error: "Invalid JSON data", err };
+          parsedData = { error: 'Invalid JSON data', err };
         }
 
         mockResults.push({
           json: {
-            operation: "update",
+            operation: 'update',
             table: table,
             database: database,
             updatedData: parsedData,
@@ -277,13 +272,13 @@ export class DatabaseNode implements INodeType {
         break;
       }
 
-      case "delete": {
-        const table = this.getNodeParameter("table", "") as string;
-        const where = this.getNodeParameter("where", "") as string;
+      case 'delete': {
+        const table = this.getNodeParameter('table', '') as string;
+        const where = this.getNodeParameter('where', '') as string;
 
         mockResults.push({
           json: {
-            operation: "delete",
+            operation: 'delete',
             table: table,
             database: database,
             where: where,
@@ -294,15 +289,15 @@ export class DatabaseNode implements INodeType {
         break;
       }
 
-      case "query": {
-        const query = this.getNodeParameter("query", "") as string;
+      case 'query': {
+        const query = this.getNodeParameter('query', '') as string;
 
         mockResults.push({
           json: {
-            operation: "query",
+            operation: 'query',
             database: database,
             query: query,
-            result: "Custom query executed successfully",
+            result: 'Custom query executed successfully',
             rowsAffected: Math.floor(Math.random() * 10),
             timestamp: new Date().toISOString(),
           },

@@ -1,0 +1,45 @@
+pre-commit:
+  parallel: true
+  commands:
+    lint:
+      glob: '*.{js,ts,tsx,vue}'
+      run: pnpm lint:fix {staged_files}
+      stage_fixed: true
+    format:
+      glob: '*.{js,ts,tsx,vue,json,md}'
+      run: pnpm format {staged_files}
+      stage_fixed: true
+    type-check:
+      run: pnpm type-check
+    test:
+      run: pnpm test:unit --passWithNoTests
+
+pre-push:
+  commands:
+    test:
+      run: pnpm test:ci
+    security:
+      run: pnpm security:audit
+
+commit-msg:
+  commands:
+    commitlint:
+      run: npx commitlint --edit {1}
+
+post-checkout:
+  commands:
+    install:
+      run: |
+        if [ -f "pnpm-lock.yaml" ]; then
+          echo "📦 Installing dependencies..."
+          pnpm install --frozen-lockfile
+        fi
+
+post-merge:
+  commands:
+    install:
+      run: |
+        if [ -f "pnpm-lock.yaml" ]; then
+          echo "📦 Installing dependencies after merge..."
+          pnpm install --frozen-lockfile
+        fi

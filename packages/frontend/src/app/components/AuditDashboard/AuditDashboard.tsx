@@ -1,42 +1,43 @@
-import React, { useState, useEffect } from "react";
 import {
-  Card,
-  Table,
-  Button,
-  DatePicker,
-  Select,
-  Input,
-  Space,
-  Tag,
-  Statistic,
-  Row,
-  Col,
-  Alert,
-  Modal,
-  Typography,
-  Descriptions,
-} from "antd";
-import {
-  AuditOutlined,
-  SecurityScanOutlined,
-  WarningOutlined,
-  CheckCircleOutlined,
-  ExportOutlined,
-  FilterOutlined,
-  ReloadOutlined,
-  EyeOutlined,
-  DownloadOutlined,
   AlertOutlined,
-  UserOutlined,
+  AuditOutlined,
+  CheckCircleOutlined,
+  DownloadOutlined,
+  ExportOutlined,
+  EyeOutlined,
+  FilterOutlined,
   GlobalOutlined,
-} from "@ant-design/icons";
+  ReloadOutlined,
+  SecurityScanOutlined,
+  UserOutlined,
+  WarningOutlined,
+} from '@ant-design/icons';
 import {
-  auditService,
+  Alert,
+  Button,
+  Card,
+  Col,
+  DatePicker,
+  Descriptions,
+  Input,
+  Modal,
+  Row,
+  Select,
+  Space,
+  Statistic,
+  Table,
+  Tag,
+  Typography,
+} from 'antd';
+import type React from 'react';
+import { useEffect, useState } from 'react';
+import {
   type AuditEvent,
   type AuditFilter,
+  auditService,
   type ComplianceReport,
   type SecurityAlert,
-} from "@/core/services/auditService";
+} from '@/core/services/auditService';
 
 const { RangePicker } = DatePicker;
 const { Option } = Select;
@@ -47,9 +48,7 @@ export const AuditDashboard: React.FC = () => {
   const [events, setEvents] = useState<AuditEvent[]>([]);
   const [filteredEvents, setFilteredEvents] = useState<AuditEvent[]>([]);
   const [securityAlerts, setSecurityAlerts] = useState<SecurityAlert[]>([]);
-  const [complianceReports, setComplianceReports] = useState<
-    ComplianceReport[]
-  >([]);
+  const [complianceReports, setComplianceReports] = useState<ComplianceReport[]>([]);
   const [loading, setLoading] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState<AuditEvent | null>(null);
   const [filter, setFilter] = useState<AuditFilter>({});
@@ -62,7 +61,7 @@ export const AuditDashboard: React.FC = () => {
   const [selectedResource, setSelectedResource] = useState<string>();
   const [selectedSeverity, setSelectedSeverity] = useState<string>();
   const [selectedCategory, setSelectedCategory] = useState<string>();
-  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [searchTerm, setSearchTerm] = useState<string>('');
 
   useEffect(() => {
     loadAuditData();
@@ -88,89 +87,88 @@ export const AuditDashboard: React.FC = () => {
       // In a real app, these would be API calls
       const mockEvents: AuditEvent[] = [
         {
-          id: "1",
+          id: '1',
           timestamp: new Date(Date.now() - 3600000),
-          userId: "user1",
-          userName: "John Doe",
-          action: "login",
-          resource: "authentication",
+          userId: 'user1',
+          userName: 'John Doe',
+          action: 'login',
+          resource: 'authentication',
           details: { success: true },
-          ipAddress: "192.168.1.100",
-          userAgent: "Mozilla/5.0...",
-          organizationId: "org1",
-          severity: "low",
-          category: "authentication",
-          result: "success",
+          ipAddress: '192.168.1.100',
+          userAgent: 'Mozilla/5.0...',
+          organizationId: 'org1',
+          severity: 'low',
+          category: 'authentication',
+          result: 'success',
         },
         {
-          id: "2",
+          id: '2',
           timestamp: new Date(Date.now() - 7200000),
-          userId: "user2",
-          userName: "Jane Smith",
-          action: "execute",
-          resource: "workflow",
-          resourceId: "wf123",
-          details: { workflowName: "Data Pipeline", executionId: "exec456" },
-          ipAddress: "192.168.1.101",
-          userAgent: "Mozilla/5.0...",
-          organizationId: "org1",
-          severity: "medium",
-          category: "workflow",
-          result: "success",
+          userId: 'user2',
+          userName: 'Jane Smith',
+          action: 'execute',
+          resource: 'workflow',
+          resourceId: 'wf123',
+          details: { workflowName: 'Data Pipeline', executionId: 'exec456' },
+          ipAddress: '192.168.1.101',
+          userAgent: 'Mozilla/5.0...',
+          organizationId: 'org1',
+          severity: 'medium',
+          category: 'workflow',
+          result: 'success',
         },
         {
-          id: "3",
+          id: '3',
           timestamp: new Date(Date.now() - 10800000),
-          userId: "user3",
-          userName: "Bob Wilson",
-          action: "delete",
-          resource: "workflow",
-          resourceId: "wf789",
-          details: { workflowName: "Legacy Process" },
-          ipAddress: "192.168.1.102",
-          userAgent: "Mozilla/5.0...",
-          organizationId: "org1",
-          severity: "high",
-          category: "workflow",
-          result: "success",
+          userId: 'user3',
+          userName: 'Bob Wilson',
+          action: 'delete',
+          resource: 'workflow',
+          resourceId: 'wf789',
+          details: { workflowName: 'Legacy Process' },
+          ipAddress: '192.168.1.102',
+          userAgent: 'Mozilla/5.0...',
+          organizationId: 'org1',
+          severity: 'high',
+          category: 'workflow',
+          result: 'success',
         },
         {
-          id: "4",
+          id: '4',
           timestamp: new Date(Date.now() - 14400000),
-          userId: "user1",
-          userName: "John Doe",
-          action: "login",
-          resource: "authentication",
+          userId: 'user1',
+          userName: 'John Doe',
+          action: 'login',
+          resource: 'authentication',
           details: { success: false },
-          ipAddress: "192.168.1.100",
-          userAgent: "Mozilla/5.0...",
-          organizationId: "org1",
-          severity: "medium",
-          category: "authentication",
-          result: "failure",
+          ipAddress: '192.168.1.100',
+          userAgent: 'Mozilla/5.0...',
+          organizationId: 'org1',
+          severity: 'medium',
+          category: 'authentication',
+          result: 'failure',
         },
       ];
 
       const mockAlerts: SecurityAlert[] = [
         {
-          id: "alert1",
-          type: "failed_login_attempts",
-          severity: "high",
-          title: "Multiple Failed Login Attempts",
-          description:
-            "User john.doe@example.com has 5 failed login attempts in the last hour",
+          id: 'alert1',
+          type: 'failed_login_attempts',
+          severity: 'high',
+          title: 'Multiple Failed Login Attempts',
+          description: 'User john.doe@example.com has 5 failed login attempts in the last hour',
           triggeredAt: new Date(Date.now() - 1800000),
-          userId: "user1",
-          organizationId: "org1",
+          userId: 'user1',
+          organizationId: 'org1',
           events: [mockEvents[3]],
-          status: "open",
+          status: 'open',
         },
       ];
 
       setEvents(mockEvents);
       setSecurityAlerts(mockAlerts);
     } catch (error) {
-      console.error("Failed to load audit data:", error);
+      console.error('Failed to load audit data:', error);
     } finally {
       setLoading(false);
     }
@@ -195,36 +193,27 @@ export const AuditDashboard: React.FC = () => {
         filtered.length > 0
           ? filtered
           : events.filter((event) => {
-              if (newFilter.startDate && event.timestamp < newFilter.startDate)
-                return false;
-              if (newFilter.endDate && event.timestamp > newFilter.endDate)
-                return false;
-              if (newFilter.userId && event.userId !== newFilter.userId)
-                return false;
-              if (newFilter.action && !event.action.includes(newFilter.action))
-                return false;
-              if (newFilter.resource && event.resource !== newFilter.resource)
-                return false;
-              if (newFilter.severity && event.severity !== newFilter.severity)
-                return false;
-              if (newFilter.category && event.category !== newFilter.category)
-                return false;
+              if (newFilter.startDate && event.timestamp < newFilter.startDate) return false;
+              if (newFilter.endDate && event.timestamp > newFilter.endDate) return false;
+              if (newFilter.userId && event.userId !== newFilter.userId) return false;
+              if (newFilter.action && !event.action.includes(newFilter.action)) return false;
+              if (newFilter.resource && event.resource !== newFilter.resource) return false;
+              if (newFilter.severity && event.severity !== newFilter.severity) return false;
+              if (newFilter.category && event.category !== newFilter.category) return false;
               if (newFilter.searchTerm) {
                 const searchLower = newFilter.searchTerm.toLowerCase();
                 const matchesSearch =
                   event.action.toLowerCase().includes(searchLower) ||
                   event.resource.toLowerCase().includes(searchLower) ||
                   event.userName.toLowerCase().includes(searchLower) ||
-                  JSON.stringify(event.details)
-                    .toLowerCase()
-                    .includes(searchLower);
+                  JSON.stringify(event.details).toLowerCase().includes(searchLower);
                 if (!matchesSearch) return false;
               }
               return true;
-            }),
+            })
       );
     } catch (error) {
-      console.error("Failed to apply filters:", error);
+      console.error('Failed to apply filters:', error);
       setFilteredEvents(events);
     }
   };
@@ -236,32 +225,25 @@ export const AuditDashboard: React.FC = () => {
     setSelectedResource(undefined);
     setSelectedSeverity(undefined);
     setSelectedCategory(undefined);
-    setSearchTerm("");
+    setSearchTerm('');
     setFilter({});
   };
 
-  const exportData = async (format: "json" | "csv") => {
+  const exportData = async (format: 'json' | 'csv') => {
     try {
-      const startDate =
-        dateRange?.[0]?.toDate() ||
-        new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+      const startDate = dateRange?.[0]?.toDate() || new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
       const endDate = dateRange?.[1]?.toDate() || new Date();
 
-      const data = await auditService.exportAuditData(
-        "org1",
-        startDate,
-        endDate,
-        format,
-      );
+      const data = await auditService.exportAuditData('org1', startDate, endDate, format);
 
       const blob = new Blob([data], {
-        type: format === "json" ? "application/json" : "text/csv",
+        type: format === 'json' ? 'application/json' : 'text/csv',
       });
 
       const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
+      const a = document.createElement('a');
       a.href = url;
-      a.download = `audit-log-${startDate.toISOString().split("T")[0]}-${endDate.toISOString().split("T")[0]}.${format}`;
+      a.download = `audit-log-${startDate.toISOString().split('T')[0]}-${endDate.toISOString().split('T')[0]}.${format}`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -269,7 +251,7 @@ export const AuditDashboard: React.FC = () => {
 
       setExportModalVisible(false);
     } catch (error) {
-      console.error("Failed to export data:", error);
+      console.error('Failed to export data:', error);
     }
   };
 
@@ -279,56 +261,56 @@ export const AuditDashboard: React.FC = () => {
       const endDate = new Date();
 
       const report = await auditService.generateComplianceReport(
-        "org1",
+        'org1',
         startDate,
         endDate,
-        "current-user",
+        'current-user'
       );
       setComplianceReports([...complianceReports, report]);
 
       Modal.info({
-        title: "Compliance Report Generated",
+        title: 'Compliance Report Generated',
         content: `Report "${report.name}" has been generated successfully. Status: ${report.status}`,
         width: 600,
       });
     } catch (error) {
-      console.error("Failed to generate compliance report:", error);
+      console.error('Failed to generate compliance report:', error);
     }
   };
 
   const getSeverityColor = (severity: string) => {
     switch (severity) {
-      case "critical":
-        return "red";
-      case "high":
-        return "orange";
-      case "medium":
-        return "gold";
-      case "low":
-        return "green";
+      case 'critical':
+        return 'red';
+      case 'high':
+        return 'orange';
+      case 'medium':
+        return 'gold';
+      case 'low':
+        return 'green';
       default:
-        return "default";
+        return 'default';
     }
   };
 
   const getResultColor = (result: string) => {
     switch (result) {
-      case "success":
-        return "green";
-      case "failure":
-        return "red";
-      case "error":
-        return "orange";
+      case 'success':
+        return 'green';
+      case 'failure':
+        return 'red';
+      case 'error':
+        return 'orange';
       default:
-        return "default";
+        return 'default';
     }
   };
 
   const columns = [
     {
-      title: "Timestamp",
-      dataIndex: "timestamp",
-      key: "timestamp",
+      title: 'Timestamp',
+      dataIndex: 'timestamp',
+      key: 'timestamp',
       width: 180,
       render: (timestamp: Date) => (
         <div>
@@ -336,43 +318,42 @@ export const AuditDashboard: React.FC = () => {
           <Text type="secondary">{timestamp.toLocaleTimeString()}</Text>
         </div>
       ),
-      sorter: (a: AuditEvent, b: AuditEvent) =>
-        b.timestamp.getTime() - a.timestamp.getTime(),
-      defaultSortOrder: "descend" as const,
+      sorter: (a: AuditEvent, b: AuditEvent) => b.timestamp.getTime() - a.timestamp.getTime(),
+      defaultSortOrder: 'descend' as const,
     },
     {
-      title: "User",
-      dataIndex: "userName",
-      key: "userName",
+      title: 'User',
+      dataIndex: 'userName',
+      key: 'userName',
       width: 150,
       render: (userName: string, record: AuditEvent) => (
         <div>
           <UserOutlined /> {userName}
           <br />
-          <Text type="secondary" style={{ fontSize: "12px" }}>
+          <Text type="secondary" style={{ fontSize: '12px' }}>
             {record.ipAddress}
           </Text>
         </div>
       ),
     },
     {
-      title: "Action",
-      dataIndex: "action",
-      key: "action",
+      title: 'Action',
+      dataIndex: 'action',
+      key: 'action',
       width: 120,
       render: (action: string) => <Tag color="blue">{action}</Tag>,
     },
     {
-      title: "Resource",
-      dataIndex: "resource",
-      key: "resource",
+      title: 'Resource',
+      dataIndex: 'resource',
+      key: 'resource',
       width: 120,
       render: (resource: string, record: AuditEvent) => (
         <div>
           <Tag color="purple">{resource}</Tag>
           {record.resourceId && (
             <div>
-              <Text type="secondary" style={{ fontSize: "12px" }}>
+              <Text type="secondary" style={{ fontSize: '12px' }}>
                 ID: {record.resourceId}
               </Text>
             </div>
@@ -381,40 +362,32 @@ export const AuditDashboard: React.FC = () => {
       ),
     },
     {
-      title: "Result",
-      dataIndex: "result",
-      key: "result",
+      title: 'Result',
+      dataIndex: 'result',
+      key: 'result',
       width: 100,
-      render: (result: string) => (
-        <Tag color={getResultColor(result)}>{result}</Tag>
-      ),
+      render: (result: string) => <Tag color={getResultColor(result)}>{result}</Tag>,
     },
     {
-      title: "Severity",
-      dataIndex: "severity",
-      key: "severity",
+      title: 'Severity',
+      dataIndex: 'severity',
+      key: 'severity',
       width: 100,
-      render: (severity: string) => (
-        <Tag color={getSeverityColor(severity)}>{severity}</Tag>
-      ),
+      render: (severity: string) => <Tag color={getSeverityColor(severity)}>{severity}</Tag>,
     },
     {
-      title: "Category",
-      dataIndex: "category",
-      key: "category",
+      title: 'Category',
+      dataIndex: 'category',
+      key: 'category',
       width: 120,
       render: (category: string) => <Tag>{category}</Tag>,
     },
     {
-      title: "Actions",
-      key: "actions",
+      title: 'Actions',
+      key: 'actions',
       width: 100,
       render: (_: unknown, record: AuditEvent) => (
-        <Button
-          type="link"
-          icon={<EyeOutlined />}
-          onClick={() => setSelectedEvent(record)}
-        >
+        <Button type="link" icon={<EyeOutlined />} onClick={() => setSelectedEvent(record)}>
           View
         </Button>
       ),
@@ -429,27 +402,23 @@ export const AuditDashboard: React.FC = () => {
     totalEvents: filteredEvents.length,
     securityEvents: filteredEvents.filter(
       (e) =>
-        e.category === "authentication" ||
-        e.category === "authorization" ||
-        e.severity === "high" ||
-        e.severity === "critical",
+        e.category === 'authentication' ||
+        e.category === 'authorization' ||
+        e.severity === 'high' ||
+        e.severity === 'critical'
     ).length,
-    failedLogins: filteredEvents.filter(
-      (e) => e.action === "login" && e.result === "failure",
-    ).length,
-    criticalEvents: filteredEvents.filter((e) => e.severity === "critical")
+    failedLogins: filteredEvents.filter((e) => e.action === 'login' && e.result === 'failure')
       .length,
+    criticalEvents: filteredEvents.filter((e) => e.severity === 'critical').length,
   };
 
   return (
-    <div style={{ padding: "24px" }}>
+    <div style={{ padding: '24px' }}>
       <div style={{ marginBottom: 24 }}>
         <Title level={2}>
           <AuditOutlined /> Audit & Security Dashboard
         </Title>
-        <Text type="secondary">
-          Monitor security events, audit trails, and compliance status
-        </Text>
+        <Text type="secondary">Monitor security events, audit trails, and compliance status</Text>
       </div>
 
       {/* Security Metrics */}
@@ -469,7 +438,7 @@ export const AuditDashboard: React.FC = () => {
               title="Security Events"
               value={securityMetrics.securityEvents}
               prefix={<SecurityScanOutlined />}
-              valueStyle={{ color: "#faad14" }}
+              valueStyle={{ color: '#faad14' }}
             />
           </Card>
         </Col>
@@ -479,7 +448,7 @@ export const AuditDashboard: React.FC = () => {
               title="Failed Logins"
               value={securityMetrics.failedLogins}
               prefix={<WarningOutlined />}
-              valueStyle={{ color: "#cf1322" }}
+              valueStyle={{ color: '#cf1322' }}
             />
           </Card>
         </Col>
@@ -489,7 +458,7 @@ export const AuditDashboard: React.FC = () => {
               title="Critical Events"
               value={securityMetrics.criticalEvents}
               prefix={<AlertOutlined />}
-              valueStyle={{ color: "#cf1322" }}
+              valueStyle={{ color: '#cf1322' }}
             />
           </Card>
         </Col>
@@ -511,11 +480,11 @@ export const AuditDashboard: React.FC = () => {
               message={alert.title}
               description={alert.description}
               type={
-                alert.severity === "critical"
-                  ? "error"
-                  : alert.severity === "high"
-                    ? "warning"
-                    : "info"
+                alert.severity === 'critical'
+                  ? 'error'
+                  : alert.severity === 'high'
+                    ? 'warning'
+                    : 'info'
               }
               showIcon
               style={{ marginBottom: 8 }}
@@ -539,23 +508,13 @@ export const AuditDashboard: React.FC = () => {
         style={{ marginBottom: 24 }}
         extra={
           <Space>
-            <Button
-              icon={<ReloadOutlined />}
-              onClick={loadAuditData}
-              loading={loading}
-            >
+            <Button icon={<ReloadOutlined />} onClick={loadAuditData} loading={loading}>
               Refresh
             </Button>
-            <Button
-              icon={<ExportOutlined />}
-              onClick={() => setExportModalVisible(true)}
-            >
+            <Button icon={<ExportOutlined />} onClick={() => setExportModalVisible(true)}>
               Export
             </Button>
-            <Button
-              icon={<CheckCircleOutlined />}
-              onClick={generateComplianceReport}
-            >
+            <Button icon={<CheckCircleOutlined />} onClick={generateComplianceReport}>
               Generate Report
             </Button>
           </Space>
@@ -567,7 +526,7 @@ export const AuditDashboard: React.FC = () => {
             onChange={setDateRange}
             showTime
             format="YYYY-MM-DD HH:mm"
-            placeholder={["Start Date", "End Date"]}
+            placeholder={['Start Date', 'End Date']}
           />
 
           <Select
@@ -668,8 +627,7 @@ export const AuditDashboard: React.FC = () => {
             pageSize: 50,
             showSizeChanger: true,
             showQuickJumper: true,
-            showTotal: (total, range) =>
-              `${range[0]}-${range[1]} of ${total} events`,
+            showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} events`,
           }}
           scroll={{ x: 1200 }}
         />
@@ -699,14 +657,10 @@ export const AuditDashboard: React.FC = () => {
               {selectedEvent.resourceId && ` (${selectedEvent.resourceId})`}
             </Descriptions.Item>
             <Descriptions.Item label="Result">
-              <Tag color={getResultColor(selectedEvent.result)}>
-                {selectedEvent.result}
-              </Tag>
+              <Tag color={getResultColor(selectedEvent.result)}>{selectedEvent.result}</Tag>
             </Descriptions.Item>
             <Descriptions.Item label="Severity">
-              <Tag color={getSeverityColor(selectedEvent.severity)}>
-                {selectedEvent.severity}
-              </Tag>
+              <Tag color={getSeverityColor(selectedEvent.severity)}>{selectedEvent.severity}</Tag>
             </Descriptions.Item>
             <Descriptions.Item label="Category">
               <Tag>{selectedEvent.category}</Tag>
@@ -715,22 +669,22 @@ export const AuditDashboard: React.FC = () => {
               <GlobalOutlined /> {selectedEvent.ipAddress}
             </Descriptions.Item>
             <Descriptions.Item label="Organization" span={2}>
-              {selectedEvent.organizationId || "N/A"}
+              {selectedEvent.organizationId || 'N/A'}
             </Descriptions.Item>
             <Descriptions.Item label="Details" span={2}>
               <pre
                 style={{
-                  fontSize: "12px",
-                  background: "#f5f5f5",
-                  padding: "8px",
-                  borderRadius: "4px",
+                  fontSize: '12px',
+                  background: '#f5f5f5',
+                  padding: '8px',
+                  borderRadius: '4px',
                 }}
               >
                 {JSON.stringify(selectedEvent.details, null, 2)}
               </pre>
             </Descriptions.Item>
             <Descriptions.Item label="User Agent" span={2}>
-              <Text type="secondary" style={{ fontSize: "12px" }}>
+              <Text type="secondary" style={{ fontSize: '12px' }}>
                 {selectedEvent.userAgent}
               </Text>
             </Descriptions.Item>
@@ -745,20 +699,13 @@ export const AuditDashboard: React.FC = () => {
         onCancel={() => setExportModalVisible(false)}
         footer={null}
       >
-        <Space direction="vertical" style={{ width: "100%" }}>
+        <Space direction="vertical" style={{ width: '100%' }}>
           <Text>Select export format:</Text>
           <Space>
-            <Button
-              icon={<DownloadOutlined />}
-              onClick={() => exportData("json")}
-              type="primary"
-            >
+            <Button icon={<DownloadOutlined />} onClick={() => exportData('json')} type="primary">
               Export as JSON
             </Button>
-            <Button
-              icon={<DownloadOutlined />}
-              onClick={() => exportData("csv")}
-            >
+            <Button icon={<DownloadOutlined />} onClick={() => exportData('csv')}>
               Export as CSV
             </Button>
           </Space>

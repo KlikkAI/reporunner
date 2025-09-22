@@ -226,66 +226,60 @@
 
 // export default JsonView
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState, useMemo } from 'react'
-import { Button, Space, Typography, Tooltip, Input, Switch } from 'antd'
 import {
-  CopyOutlined,
   CompressOutlined,
+  CopyOutlined,
   ExpandOutlined,
   FormatPainterOutlined,
   SearchOutlined,
-} from '@ant-design/icons'
+} from '@ant-design/icons';
+import { Button, Input, Space, Switch, Tooltip, Typography } from 'antd';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import type React from 'react';
+import { useMemo, useState } from 'react';
 
-const { Text } = Typography
+const { Text } = Typography;
 
 interface JsonViewProps {
-  data: any
-  onFieldClick?: (fieldPath: string) => void
-  compact?: boolean
-  highlightPath?: string
+  data: any;
+  onFieldClick?: (fieldPath: string) => void;
+  compact?: boolean;
+  highlightPath?: string;
 }
 
 interface JsonLineProps {
-  line: string
-  lineNumber: number
-  isHighlighted: boolean
-  onFieldClick?: (fieldPath: string) => void
+  line: string;
+  lineNumber: number;
+  isHighlighted: boolean;
+  onFieldClick?: (fieldPath: string) => void;
 }
 
 interface LineWithIndex {
-  line: string
-  index: number
+  line: string;
+  index: number;
 }
 
-const JsonLine: React.FC<JsonLineProps> = ({
-  line,
-  lineNumber,
-  isHighlighted,
-  onFieldClick,
-}) => {
+const JsonLine: React.FC<JsonLineProps> = ({ line, lineNumber, isHighlighted, onFieldClick }) => {
   const handleClick = () => {
     // Extract field path from JSON line (simplified)
-    const fieldMatch = line.match(/"([^"]+)":\s*/)
+    const fieldMatch = line.match(/"([^"]+)":\s*/);
     if (fieldMatch && onFieldClick) {
-      onFieldClick(fieldMatch[1])
+      onFieldClick(fieldMatch[1]);
     }
-  }
+  };
 
   return (
     <div
       className={`flex items-start hover:bg-gray-700 ${isHighlighted ? 'bg-yellow-900' : ''}`}
       onClick={handleClick}
     >
-      <span className="text-gray-500 text-xs mr-4 select-none w-8 text-right">
-        {lineNumber}
-      </span>
+      <span className="text-gray-500 text-xs mr-4 select-none w-8 text-right">{lineNumber}</span>
       <pre className="text-sm text-gray-300 font-mono flex-1 whitespace-pre-wrap cursor-pointer">
         <code dangerouslySetInnerHTML={{ __html: syntaxHighlight(line) }} />
       </pre>
     </div>
-  )
-}
+  );
+};
 
 const syntaxHighlight = (json: string): string => {
   return json
@@ -294,23 +288,23 @@ const syntaxHighlight = (json: string): string => {
     .replace(/>/g, '&gt;')
     .replace(
       /("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+-]?\d+)?)/g,
-      function (match) {
-        let cls = 'text-yellow-400' // numbers
+      (match) => {
+        let cls = 'text-yellow-400'; // numbers
         if (/^"/.test(match)) {
           if (/:$/.test(match)) {
-            cls = 'text-blue-400' // keys
+            cls = 'text-blue-400'; // keys
           } else {
-            cls = 'text-green-400' // strings
+            cls = 'text-green-400'; // strings
           }
         } else if (/true|false/.test(match)) {
-          cls = 'text-purple-400' // booleans
+          cls = 'text-purple-400'; // booleans
         } else if (/null/.test(match)) {
-          cls = 'text-red-400' // null
+          cls = 'text-red-400'; // null
         }
-        return `<span class="${cls}">${match}</span>`
+        return `<span class="${cls}">${match}</span>`;
       }
-    )
-}
+    );
+};
 
 const JsonView: React.FC<JsonViewProps> = ({
   data,
@@ -318,39 +312,39 @@ const JsonView: React.FC<JsonViewProps> = ({
   compact = false,
   highlightPath,
 }) => {
-  const [collapsed, setCollapsed] = useState(compact)
-  const [searchTerm, setSearchTerm] = useState('')
-  const [showLineNumbers, setShowLineNumbers] = useState(true)
+  const [collapsed, setCollapsed] = useState(compact);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [showLineNumbers, setShowLineNumbers] = useState(true);
 
   const formattedJson = useMemo(() => {
-    if (!data) return ''
-    return JSON.stringify(data, null, collapsed ? 0 : 2)
-  }, [data, collapsed])
+    if (!data) return '';
+    return JSON.stringify(data, null, collapsed ? 0 : 2);
+  }, [data, collapsed]);
 
   const jsonLines = useMemo(() => {
-    return formattedJson.split('\n')
-  }, [formattedJson])
+    return formattedJson.split('\n');
+  }, [formattedJson]);
 
   // Fix: Always return the same type structure
   const filteredLines = useMemo((): LineWithIndex[] => {
-    const linesWithIndex = jsonLines.map((line, index) => ({ line, index }))
+    const linesWithIndex = jsonLines.map((line, index) => ({ line, index }));
 
     if (!searchTerm) {
-      return linesWithIndex
+      return linesWithIndex;
     }
 
     return linesWithIndex.filter(({ line }) =>
       line.toLowerCase().includes(searchTerm.toLowerCase())
-    )
-  }, [jsonLines, searchTerm])
+    );
+  }, [jsonLines, searchTerm]);
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(formattedJson)
-  }
+    navigator.clipboard.writeText(formattedJson);
+  };
 
   const handleFormat = () => {
-    setCollapsed(!collapsed)
-  }
+    setCollapsed(!collapsed);
+  };
 
   if (!data) {
     return (
@@ -358,7 +352,7 @@ const JsonView: React.FC<JsonViewProps> = ({
         <FormatPainterOutlined className="text-4xl mb-2" />
         <div>No JSON data to display</div>
       </div>
-    )
+    );
   }
 
   return (
@@ -372,18 +366,14 @@ const JsonView: React.FC<JsonViewProps> = ({
             <Input
               placeholder="Search JSON..."
               value={searchTerm}
-              onChange={e => setSearchTerm(e.target.value)}
+              onChange={(e) => setSearchTerm(e.target.value)}
               style={{ width: compact ? 150 : 200 }}
               size="small"
               prefix={<SearchOutlined />}
             />
             {!compact && (
               <>
-                <Switch
-                  checked={showLineNumbers}
-                  onChange={setShowLineNumbers}
-                  size="small"
-                />
+                <Switch checked={showLineNumbers} onChange={setShowLineNumbers} size="small" />
                 <Text className="text-gray-400 text-xs">Line numbers</Text>
               </>
             )}
@@ -411,9 +401,7 @@ const JsonView: React.FC<JsonViewProps> = ({
 
         {searchTerm && (
           <div className="mt-2">
-            <Text className="text-gray-400 text-xs">
-              {filteredLines.length} matches found
-            </Text>
+            <Text className="text-gray-400 text-xs">{filteredLines.length} matches found</Text>
           </div>
         )}
       </div>
@@ -426,9 +414,7 @@ const JsonView: React.FC<JsonViewProps> = ({
               key={index}
               line={line}
               lineNumber={showLineNumbers ? index + 1 : 0}
-              isHighlighted={
-                highlightPath ? line.includes(highlightPath) : false
-              }
+              isHighlighted={highlightPath ? line.includes(highlightPath) : false}
               onFieldClick={onFieldClick}
             />
           ))}
@@ -446,7 +432,7 @@ const JsonView: React.FC<JsonViewProps> = ({
         </div>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default JsonView
+export default JsonView;

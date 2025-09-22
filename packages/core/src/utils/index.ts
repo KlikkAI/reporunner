@@ -15,7 +15,7 @@ export const formatDate = (date: Date): string => {
     month: 'short',
     day: 'numeric',
     hour: '2-digit',
-    minute: '2-digit'
+    minute: '2-digit',
   }).format(date);
 };
 
@@ -36,8 +36,11 @@ export const validateWorkflow = (workflow: any): boolean => {
   return !!(workflow.name && workflow.nodes && workflow.edges);
 };
 
-export const getNodeConnections = (nodeId: string, edges: any[]): { inputs: string[]; outputs: string[] } => {
-  const inputs = edges.filter(edge => edge.target === nodeId).map(edge => edge.source);
-  const outputs = edges.filter(edge => edge.source === nodeId).map(edge => edge.target);
+export const getNodeConnections = (
+  nodeId: string,
+  edges: any[]
+): { inputs: string[]; outputs: string[] } => {
+  const inputs = edges.filter((edge) => edge.target === nodeId).map((edge) => edge.source);
+  const outputs = edges.filter((edge) => edge.source === nodeId).map((edge) => edge.target);
   return { inputs, outputs };
 };

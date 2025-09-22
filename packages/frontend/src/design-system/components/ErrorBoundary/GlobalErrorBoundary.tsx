@@ -1,5 +1,5 @@
-import { Component, ErrorInfo, ReactNode } from "react";
-import { logger } from "@/core/services/LoggingService";
+import { Component, type ErrorInfo, type ReactNode } from 'react';
+import { logger } from '@/core/services/LoggingService';
 
 interface Props {
   children: ReactNode;
@@ -20,7 +20,7 @@ export class GlobalErrorBoundary extends Component<Props, State> {
       hasError: false,
       error: null,
       errorInfo: null,
-      errorId: "",
+      errorId: '',
     };
   }
 
@@ -35,7 +35,7 @@ export class GlobalErrorBoundary extends Component<Props, State> {
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     // Log error details
-    logger.error("Global Error Boundary caught an error", error, {
+    logger.error('Global Error Boundary caught an error', error, {
       componentStack: errorInfo.componentStack,
     });
 
@@ -64,7 +64,7 @@ export class GlobalErrorBoundary extends Component<Props, State> {
 
     // In development, log to console
     if (import.meta.env.DEV) {
-      logger.error("🚨 Error Boundary Report", undefined, errorReport);
+      logger.error('🚨 Error Boundary Report', undefined, errorReport);
     }
 
     // TODO: In production, send to monitoring service
@@ -72,26 +72,24 @@ export class GlobalErrorBoundary extends Component<Props, State> {
 
     // Store in localStorage for debugging
     try {
-      const existingErrors = JSON.parse(
-        localStorage.getItem("app_errors") || "[]",
-      );
+      const existingErrors = JSON.parse(localStorage.getItem('app_errors') || '[]');
       existingErrors.push(errorReport);
       // Keep only last 10 errors
       if (existingErrors.length > 10) {
         existingErrors.splice(0, existingErrors.length - 10);
       }
-      localStorage.setItem("app_errors", JSON.stringify(existingErrors));
+      localStorage.setItem('app_errors', JSON.stringify(existingErrors));
     } catch (_e) {
-      logger.warn("Failed to store error in localStorage");
+      logger.warn('Failed to store error in localStorage');
     }
   };
 
   private getUserId = (): string | null => {
     try {
       // Try to get user ID from auth store or localStorage
-      const authToken = localStorage.getItem("auth_token");
+      const authToken = localStorage.getItem('auth_token');
       if (authToken) {
-        const decoded = JSON.parse(atob(authToken.split(".")[1]));
+        const decoded = JSON.parse(atob(authToken.split('.')[1]));
         return decoded.userId || decoded.sub || null;
       }
     } catch (_e) {
@@ -109,7 +107,7 @@ export class GlobalErrorBoundary extends Component<Props, State> {
       hasError: false,
       error: null,
       errorInfo: null,
-      errorId: "",
+      errorId: '',
     });
   };
 
@@ -141,9 +139,7 @@ export class GlobalErrorBoundary extends Component<Props, State> {
                     />
                   </svg>
                 </div>
-                <h2 className="mt-4 text-lg font-medium text-gray-900">
-                  Something went wrong
-                </h2>
+                <h2 className="mt-4 text-lg font-medium text-gray-900">Something went wrong</h2>
                 <p className="mt-2 text-sm text-gray-600">
                   An unexpected error occurred. Our team has been notified.
                 </p>
@@ -162,9 +158,7 @@ export class GlobalErrorBoundary extends Component<Props, State> {
                       </div>
                       <div>
                         <strong>Stack:</strong>
-                        <pre className="whitespace-pre-wrap mt-1">
-                          {this.state.error.stack}
-                        </pre>
+                        <pre className="whitespace-pre-wrap mt-1">{this.state.error.stack}</pre>
                       </div>
                     </div>
                   </details>

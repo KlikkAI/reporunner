@@ -1,4 +1,4 @@
-import type { INodeType, INodeTypeDescription } from '../types'
+import type { INodeType, INodeTypeDescription } from '../types';
 
 export class TriggerNode implements INodeType {
   description: INodeTypeDescription = {
@@ -93,7 +93,7 @@ export class TriggerNode implements INodeType {
     ],
     subtitle:
       '={{$parameter["triggerType"] === "webhook" ? "Webhook: " + $parameter["webhookPath"] : $parameter["triggerType"]}}',
-  }
+  };
 
   async execute(this: any): Promise<any> {
     // Trigger nodes don't execute in the traditional sense
@@ -106,6 +106,6 @@ export class TriggerNode implements INodeType {
           trigger: true,
         },
       },
-    ]
+    ];
   }
 }

@@ -54,26 +54,21 @@ export interface ICredentialData {
   [key: string]: any;
 }
 
-export type NodeType = 
-  | 'trigger' 
-  | 'action' 
-  | 'condition' 
-  | 'transform' 
-  | 'ai-agent' 
-  | 'gmail-trigger' 
-  | 'gmail-send' 
-  | 'database' 
-  | 'webhook' 
-  | 'delay' 
-  | 'loop' 
+export type NodeType =
+  | 'trigger'
+  | 'action'
+  | 'condition'
+  | 'transform'
+  | 'ai-agent'
+  | 'gmail-trigger'
+  | 'gmail-send'
+  | 'database'
+  | 'webhook'
+  | 'delay'
+  | 'loop'
   | 'file';
 
-export type ExecutionStatus = 
-  | 'pending' 
-  | 'running' 
-  | 'success' 
-  | 'error' 
-  | 'cancelled';
+export type ExecutionStatus = 'pending' | 'running' | 'success' | 'error' | 'cancelled';
 
 export type AIProvider = 'openai' | 'anthropic' | 'google' | 'ollama';
 

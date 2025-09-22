@@ -1,7 +1,7 @@
 /**
  * Organization model for multi-tenant architecture
  */
-import mongoose, { Document, Schema } from "mongoose";
+import mongoose, { type Document, Schema } from 'mongoose';
 
 export interface IOrganization extends Document {
   _id: string;
@@ -11,8 +11,8 @@ export interface IOrganization extends Document {
   logo?: string;
   website?: string;
   industry?: string;
-  size: "startup" | "small" | "medium" | "large" | "enterprise";
-  plan: "free" | "pro" | "business" | "enterprise";
+  size: 'startup' | 'small' | 'medium' | 'large' | 'enterprise';
+  plan: 'free' | 'pro' | 'business' | 'enterprise';
   settings: {
     allowUserRegistration: boolean;
     enforceEmailVerification: boolean;
@@ -38,7 +38,7 @@ export interface IOrganization extends Document {
     subscriptionId?: string;
     currentPeriodStart?: Date;
     currentPeriodEnd?: Date;
-    status: "active" | "inactive" | "suspended" | "cancelled";
+    status: 'active' | 'inactive' | 'suspended' | 'cancelled';
   };
   isActive: boolean;
   ownerId: string; // User ID of organization owner
@@ -50,25 +50,22 @@ const organizationSchema = new Schema<IOrganization>(
   {
     name: {
       type: String,
-      required: [true, "Organization name is required"],
+      required: [true, 'Organization name is required'],
       trim: true,
-      maxlength: [100, "Organization name cannot be more than 100 characters"],
+      maxlength: [100, 'Organization name cannot be more than 100 characters'],
     },
     slug: {
       type: String,
-      required: [true, "Organization slug is required"],
+      required: [true, 'Organization slug is required'],
       unique: true,
       lowercase: true,
       trim: true,
-      match: [
-        /^[a-z0-9-]+$/,
-        "Slug can only contain lowercase letters, numbers, and hyphens",
-      ],
+      match: [/^[a-z0-9-]+$/, 'Slug can only contain lowercase letters, numbers, and hyphens'],
     },
     description: {
       type: String,
       trim: true,
-      maxlength: [500, "Description cannot be more than 500 characters"],
+      maxlength: [500, 'Description cannot be more than 500 characters'],
     },
     logo: {
       type: String,
@@ -84,13 +81,13 @@ const organizationSchema = new Schema<IOrganization>(
     },
     size: {
       type: String,
-      enum: ["startup", "small", "medium", "large", "enterprise"],
-      default: "small",
+      enum: ['startup', 'small', 'medium', 'large', 'enterprise'],
+      default: 'small',
     },
     plan: {
       type: String,
-      enum: ["free", "pro", "business", "enterprise"],
-      default: "free",
+      enum: ['free', 'pro', 'business', 'enterprise'],
+      default: 'free',
     },
     settings: {
       allowUserRegistration: {
@@ -142,7 +139,7 @@ const organizationSchema = new Schema<IOrganization>(
       },
       ssoProvider: {
         type: String,
-        enum: ["google", "microsoft", "okta", "auth0"],
+        enum: ['google', 'microsoft', 'okta', 'auth0'],
       },
       ssoSettings: {
         type: Schema.Types.Mixed,
@@ -163,7 +160,7 @@ const organizationSchema = new Schema<IOrganization>(
       },
       features: {
         type: [String],
-        default: ["workflows", "integrations", "basic_auth"],
+        default: ['workflows', 'integrations', 'basic_auth'],
       },
     },
     billing: {
@@ -181,8 +178,8 @@ const organizationSchema = new Schema<IOrganization>(
       },
       status: {
         type: String,
-        enum: ["active", "inactive", "suspended", "cancelled"],
-        default: "active",
+        enum: ['active', 'inactive', 'suspended', 'cancelled'],
+        default: 'active',
       },
     },
     isActive: {
@@ -191,29 +188,29 @@ const organizationSchema = new Schema<IOrganization>(
     },
     ownerId: {
       type: String,
-      ref: "User",
-      required: [true, "Organization owner is required"],
+      ref: 'User',
+      required: [true, 'Organization owner is required'],
     },
   },
   {
     timestamps: true,
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
-  },
+  }
 );
 
 // Indexes for performance
 organizationSchema.index({ slug: 1 }, { unique: true });
 organizationSchema.index({ isActive: 1 });
 organizationSchema.index({ ownerId: 1 });
-organizationSchema.index({ "billing.status": 1 });
+organizationSchema.index({ 'billing.status': 1 });
 organizationSchema.index({ plan: 1 });
 
 // Virtual for user count (would need to be populated separately)
-organizationSchema.virtual("userCount", {
-  ref: "User",
-  localField: "_id",
-  foreignField: "organizationId",
+organizationSchema.virtual('userCount', {
+  ref: 'User',
+  localField: '_id',
+  foreignField: 'organizationId',
   count: true,
 });
 
@@ -223,22 +220,15 @@ organizationSchema.methods.hasFeature = function (feature: string): boolean {
 };
 
 // Method to check if organization can add more users
-organizationSchema.methods.canAddUsers = function (
-  currentUserCount: number,
-): boolean {
+organizationSchema.methods.canAddUsers = function (currentUserCount: number): boolean {
   if (!this.settings.maxUsers) return true;
   return currentUserCount < this.settings.maxUsers;
 };
 
 // Method to check if organization can add more workflows
-organizationSchema.methods.canAddWorkflows = function (
-  currentWorkflowCount: number,
-): boolean {
+organizationSchema.methods.canAddWorkflows = function (currentWorkflowCount: number): boolean {
   if (!this.settings.maxWorkflows) return true;
   return currentWorkflowCount < this.settings.maxWorkflows;
 };
 
-export const Organization = mongoose.model<IOrganization>(
-  "Organization",
-  organizationSchema,
-);
+export const Organization = mongoose.model<IOrganization>('Organization', organizationSchema);

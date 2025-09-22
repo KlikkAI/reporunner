@@ -1,11 +1,11 @@
-import crypto from "crypto";
-import { EventEmitter } from "events";
+import crypto from 'crypto';
+import { EventEmitter } from 'events';
 
 export interface Credential {
   id: string;
   integrationName: string;
   userId: string;
-  type: "api_key" | "oauth_token" | "password" | "certificate" | "custom";
+  type: 'api_key' | 'oauth_token' | 'password' | 'certificate' | 'custom';
   name: string;
   value: string; // Encrypted
   metadata?: Record<string, any>;
@@ -28,7 +28,7 @@ export interface EncryptedData {
 export interface CredentialFilter {
   integrationName?: string;
   userId?: string;
-  type?: Credential["type"];
+  type?: Credential['type'];
   tags?: string[];
   isActive?: boolean;
   includeExpired?: boolean;
@@ -44,7 +44,7 @@ export interface CredentialRotationPolicy {
 export class CredentialManager extends EventEmitter {
   private credentials: Map<string, Credential> = new Map();
   private encryptionKey: Buffer;
-  private algorithm: string = "aes-256-gcm";
+  private algorithm: string = 'aes-256-gcm';
   private rotationPolicies: Map<string, CredentialRotationPolicy> = new Map();
   private accessLog: Array<{
     credentialId: string;
@@ -63,7 +63,7 @@ export class CredentialManager extends EventEmitter {
       // In production, this should be loaded from secure storage
       this.encryptionKey = crypto.randomBytes(32);
       console.warn(
-        "Using auto-generated encryption key. In production, use a persistent master key.",
+        'Using auto-generated encryption key. In production, use a persistent master key.'
       );
     }
 
@@ -74,8 +74,8 @@ export class CredentialManager extends EventEmitter {
    * Derive encryption key from master key
    */
   private deriveKey(masterKey: string): Buffer {
-    const salt = "reporunner-credential-salt"; // In production, use a random salt stored securely
-    return crypto.pbkdf2Sync(masterKey, salt, 100000, 32, "sha256");
+    const salt = 'reporunner-credential-salt'; // In production, use a random salt stored securely
+    return crypto.pbkdf2Sync(masterKey, salt, 100000, 32, 'sha256');
   }
 
   /**
@@ -83,21 +83,17 @@ export class CredentialManager extends EventEmitter {
    */
   private encrypt(data: string): EncryptedData {
     const iv = crypto.randomBytes(16);
-    const cipher = crypto.createCipheriv(
-      this.algorithm,
-      this.encryptionKey,
-      iv,
-    );
+    const cipher = crypto.createCipheriv(this.algorithm, this.encryptionKey, iv);
 
-    let encrypted = cipher.update(data, "utf8", "hex");
-    encrypted += cipher.final("hex");
+    let encrypted = cipher.update(data, 'utf8', 'hex');
+    encrypted += cipher.final('hex');
 
     const authTag = cipher.getAuthTag();
 
     return {
       encrypted,
-      iv: iv.toString("hex"),
-      authTag: authTag.toString("hex"),
+      iv: iv.toString('hex'),
+      authTag: authTag.toString('hex'),
       algorithm: this.algorithm,
     };
   }
@@ -109,13 +105,13 @@ export class CredentialManager extends EventEmitter {
     const decipher = crypto.createDecipheriv(
       encryptedData.algorithm,
       this.encryptionKey,
-      Buffer.from(encryptedData.iv, "hex"),
+      Buffer.from(encryptedData.iv, 'hex')
     );
 
-    decipher.setAuthTag(Buffer.from(encryptedData.authTag, "hex"));
+    decipher.setAuthTag(Buffer.from(encryptedData.authTag, 'hex'));
 
-    let decrypted = decipher.update(encryptedData.encrypted, "hex", "utf8");
-    decrypted += decipher.final("utf8");
+    let decrypted = decipher.update(encryptedData.encrypted, 'hex', 'utf8');
+    decrypted += decipher.final('utf8');
 
     return decrypted;
   }
@@ -126,12 +122,12 @@ export class CredentialManager extends EventEmitter {
   async storeCredential(
     integrationName: string,
     userId: string,
-    type: Credential["type"],
+    type: Credential['type'],
     name: string,
     value: string,
     metadata?: Record<string, any>,
     expiresAt?: Date,
-    tags?: string[],
+    tags?: string[]
   ): Promise<string> {
     const id = this.generateCredentialId();
 
@@ -158,9 +154,9 @@ export class CredentialManager extends EventEmitter {
     this.credentials.set(id, credential);
 
     // Log the action
-    this.logAccess(id, "create", userId);
+    this.logAccess(id, 'create', userId);
 
-    this.emit("credential:created", {
+    this.emit('credential:created', {
       id,
       integrationName,
       userId,
@@ -177,7 +173,7 @@ export class CredentialManager extends EventEmitter {
   async retrieveCredential(
     id: string,
     userId?: string,
-    decrypt: boolean = true,
+    decrypt: boolean = true
   ): Promise<Partial<Credential> | null> {
     const credential = this.credentials.get(id);
 
@@ -187,7 +183,7 @@ export class CredentialManager extends EventEmitter {
 
     // Check if credential is expired
     if (credential.expiresAt && new Date() > credential.expiresAt) {
-      this.emit("credential:expired", {
+      this.emit('credential:expired', {
         id,
         integrationName: credential.integrationName,
       });
@@ -199,7 +195,7 @@ export class CredentialManager extends EventEmitter {
     credential.accessCount++;
 
     // Log the access
-    this.logAccess(id, "retrieve", userId);
+    this.logAccess(id, 'retrieve', userId);
 
     // Return credential with decrypted value if requested
     const result = { ...credential };
@@ -209,7 +205,7 @@ export class CredentialManager extends EventEmitter {
         const encryptedData = JSON.parse(credential.value);
         result.value = this.decrypt(encryptedData);
       } catch (error: any) {
-        this.emit("credential:decrypt_error", { id, error: error.message });
+        this.emit('credential:decrypt_error', { id, error: error.message });
         throw new Error(`Failed to decrypt credential: ${error.message}`);
       }
     } else {
@@ -230,7 +226,7 @@ export class CredentialManager extends EventEmitter {
       metadata?: Record<string, any>;
       expiresAt?: Date;
       tags?: string[];
-    },
+    }
   ): Promise<boolean> {
     const credential = this.credentials.get(id);
 
@@ -258,9 +254,9 @@ export class CredentialManager extends EventEmitter {
     credential.updatedAt = new Date();
 
     // Log the action
-    this.logAccess(id, "update");
+    this.logAccess(id, 'update');
 
-    this.emit("credential:updated", {
+    this.emit('credential:updated', {
       id,
       integrationName: credential.integrationName,
     });
@@ -283,17 +279,17 @@ export class CredentialManager extends EventEmitter {
     credential.updatedAt = new Date();
 
     // Log the action
-    this.logAccess(id, "delete");
+    this.logAccess(id, 'delete');
 
     // Optionally, permanently delete after a delay
     setTimeout(
       () => {
         this.credentials.delete(id);
       },
-      7 * 24 * 60 * 60 * 1000,
+      7 * 24 * 60 * 60 * 1000
     ); // Delete after 7 days
 
-    this.emit("credential:deleted", {
+    this.emit('credential:deleted', {
       id,
       integrationName: credential.integrationName,
     });
@@ -308,7 +304,7 @@ export class CredentialManager extends EventEmitter {
     const oldCredential = this.credentials.get(id);
 
     if (!oldCredential) {
-      throw new Error("Credential not found");
+      throw new Error('Credential not found');
     }
 
     // Create new credential with same metadata
@@ -320,7 +316,7 @@ export class CredentialManager extends EventEmitter {
       newValue,
       oldCredential.metadata,
       oldCredential.expiresAt,
-      oldCredential.tags,
+      oldCredential.tags
     );
 
     // Mark old credential as rotated
@@ -331,7 +327,7 @@ export class CredentialManager extends EventEmitter {
       rotatedAt: new Date(),
     };
 
-    this.emit("credential:rotated", {
+    this.emit('credential:rotated', {
       oldId: id,
       newId,
       integrationName: oldCredential.integrationName,
@@ -348,10 +344,7 @@ export class CredentialManager extends EventEmitter {
 
     this.credentials.forEach((credential) => {
       // Apply filters
-      if (
-        filter.integrationName &&
-        credential.integrationName !== filter.integrationName
-      ) {
+      if (filter.integrationName && credential.integrationName !== filter.integrationName) {
         return;
       }
       if (filter.userId && credential.userId !== filter.userId) {
@@ -360,23 +353,14 @@ export class CredentialManager extends EventEmitter {
       if (filter.type && credential.type !== filter.type) {
         return;
       }
-      if (
-        filter.isActive !== undefined &&
-        credential.isActive !== filter.isActive
-      ) {
+      if (filter.isActive !== undefined && credential.isActive !== filter.isActive) {
         return;
       }
-      if (
-        !filter.includeExpired &&
-        credential.expiresAt &&
-        new Date() > credential.expiresAt
-      ) {
+      if (!filter.includeExpired && credential.expiresAt && new Date() > credential.expiresAt) {
         return;
       }
       if (filter.tags && filter.tags.length > 0) {
-        const hasAllTags = filter.tags.every((tag) =>
-          credential.tags?.includes(tag),
-        );
+        const hasAllTags = filter.tags.every((tag) => credential.tags?.includes(tag));
         if (!hasAllTags) {
           return;
         }
@@ -394,13 +378,10 @@ export class CredentialManager extends EventEmitter {
   /**
    * Set rotation policy
    */
-  setRotationPolicy(
-    integrationName: string,
-    policy: CredentialRotationPolicy,
-  ): void {
+  setRotationPolicy(integrationName: string, policy: CredentialRotationPolicy): void {
     this.rotationPolicies.set(integrationName, policy);
 
-    this.emit("policy:set", {
+    this.emit('policy:set', {
       integrationName,
       policy,
     });
@@ -420,18 +401,14 @@ export class CredentialManager extends EventEmitter {
           }
 
           const daysUntilExpiry = Math.ceil(
-            (credential.expiresAt.getTime() - now.getTime()) /
-              (1000 * 60 * 60 * 24),
+            (credential.expiresAt.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)
           );
 
           // Check rotation policy
           const policy = this.rotationPolicies.get(credential.integrationName);
 
-          if (
-            policy?.notifyBeforeExpiry &&
-            daysUntilExpiry <= policy.notifyBeforeExpiry
-          ) {
-            this.emit("credential:expiring_soon", {
+          if (policy?.notifyBeforeExpiry && daysUntilExpiry <= policy.notifyBeforeExpiry) {
+            this.emit('credential:expiring_soon', {
               id: credential.id,
               integrationName: credential.integrationName,
               daysUntilExpiry,
@@ -442,25 +419,21 @@ export class CredentialManager extends EventEmitter {
           // Check if credential has expired
           if (daysUntilExpiry <= 0) {
             credential.isActive = false;
-            this.emit("credential:expired", {
+            this.emit('credential:expired', {
               id: credential.id,
               integrationName: credential.integrationName,
             });
           }
         });
       },
-      60 * 60 * 1000,
+      60 * 60 * 1000
     ); // Check every hour
   }
 
   /**
    * Log access
    */
-  private logAccess(
-    credentialId: string,
-    action: string,
-    userId?: string,
-  ): void {
+  private logAccess(credentialId: string, action: string, userId?: string): void {
     this.accessLog.push({
       credentialId,
       timestamp: new Date(),
@@ -479,9 +452,7 @@ export class CredentialManager extends EventEmitter {
    */
   getAccessLog(credentialId?: string): typeof this.accessLog {
     if (credentialId) {
-      return this.accessLog.filter(
-        (entry) => entry.credentialId === credentialId,
-      );
+      return this.accessLog.filter((entry) => entry.credentialId === credentialId);
     }
     return [...this.accessLog];
   }
@@ -490,7 +461,7 @@ export class CredentialManager extends EventEmitter {
    * Generate credential ID
    */
   private generateCredentialId(): string {
-    return `cred_${Date.now()}_${crypto.randomBytes(8).toString("hex")}`;
+    return `cred_${Date.now()}_${crypto.randomBytes(8).toString('hex')}`;
   }
 
   /**
@@ -529,7 +500,7 @@ export class CredentialManager extends EventEmitter {
         this.rotationPolicies.set(name, policy);
       }
 
-      this.emit("credentials:imported", { count: imported });
+      this.emit('credentials:imported', { count: imported });
 
       return imported;
     } catch (error: any) {
@@ -557,9 +528,7 @@ export class CredentialManager extends EventEmitter {
       expiredCredentials: 0,
       credentialsByType: {} as Record<string, number>,
       credentialsByIntegration: {} as Record<string, number>,
-      recentAccesses: this.accessLog.filter(
-        (entry) => entry.timestamp > oneDayAgo,
-      ).length,
+      recentAccesses: this.accessLog.filter((entry) => entry.timestamp > oneDayAgo).length,
     };
 
     this.credentials.forEach((credential) => {

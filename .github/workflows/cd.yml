@@ -1,0 +1,360 @@
+name: CD Pipeline
+
+on:
+  push:
+    branches: [ main ]
+    tags: [ 'v*.*.*' ]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+          - staging
+          - production
+      force_deploy:
+        description: 'Force deployment (skip some checks)'
+        required: false
+        default: false
+        type: boolean
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+  NODE_VERSION: '20'
+  PNPM_VERSION: '9'
+
+jobs:
+  # Build and push Docker images
+  build-images:
+    name: Build & Push Docker Images
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' || github.event.inputs.environment != ''
+    outputs:
+      image-tag: ${{ steps.meta.outputs.tags }}
+      image-digest: ${{ steps.build.outputs.digest }}
+
+    strategy:
+      matrix:
+        service: [backend, frontend, worker]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/${{ matrix.service }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=sha,prefix=sha-
+
+      - name: Build and push Docker image
+        id: build
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./docker/${{ matrix.service }}/Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          platforms: linux/amd64,linux/arm64
+
+      - name: Generate SBOM
+        uses: anchore/sbom-action@v0
+        with:
+          image: ${{ steps.meta.outputs.tags }}
+          format: spdx-json
+          output-file: "${{ matrix.service }}-sbom.spdx.json"
+
+      - name: Upload SBOM
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.service }}-sbom
+          path: "${{ matrix.service }}-sbom.spdx.json"
+
+  # Security scanning of images
+  security-scan:
+    name: Container Security Scan
+    runs-on: ubuntu-latest
+    needs: build-images
+
+    strategy:
+      matrix:
+        service: [backend, frontend, worker]
+
+    steps:
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/${{ matrix.service }}:${{ github.sha }}
+          format: 'sarif'
+          output: 'trivy-${{ matrix.service }}.sarif'
+
+      - name: Upload Trivy scan results
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: 'trivy-${{ matrix.service }}.sarif'
+
+  # Deploy to staging
+  deploy-staging:
+    name: Deploy to Staging
+    runs-on: ubuntu-latest
+    needs: [build-images, security-scan]
+    if: github.ref == 'refs/heads/main' || (github.event.inputs.environment == 'staging')
+    environment:
+      name: staging
+      url: https://staging.reporunner.com
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure kubectl
+        uses: azure/k8s-set-context@v3
+        with:
+          method: kubeconfig
+          kubeconfig: ${{ secrets.KUBE_CONFIG_STAGING }}
+
+      - name: Deploy with Helm
+        run: |
+          helm upgrade --install reporunner-staging ./k8s/helm \
+            --namespace reporunner-staging \
+            --create-namespace \
+            --set reporunner.backend.image.tag=${{ github.sha }} \
+            --set reporunner.frontend.image.tag=${{ github.sha }} \
+            --set reporunner.worker.image.tag=${{ github.sha }} \
+            --set reporunner.env.NODE_ENV=staging \
+            --set ingress.hosts[0].host=staging.reporunner.com \
+            --values ./k8s/helm/values-staging.yaml \
+            --wait --timeout=10m
+
+      - name: Run deployment tests
+        run: |
+          kubectl wait --for=condition=ready pod -l app.kubernetes.io/name=reporunner -n reporunner-staging --timeout=300s
+          kubectl get pods -n reporunner-staging
+
+          # Health check
+          curl -f https://staging.reporunner.com/health || exit 1
+
+      - name: Notify deployment
+        uses: 8398a7/action-slack@v3
+        if: always()
+        with:
+          status: ${{ job.status }}
+          channel: '#deployments'
+          webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+          fields: repo,message,commit,author,action,eventName,ref,workflow
+
+  # Deploy to production
+  deploy-production:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    needs: [build-images, security-scan, deploy-staging]
+    if: startsWith(github.ref, 'refs/tags/v') || (github.event.inputs.environment == 'production')
+    environment:
+      name: production
+      url: https://app.reporunner.com
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure kubectl
+        uses: azure/k8s-set-context@v3
+        with:
+          method: kubeconfig
+          kubeconfig: ${{ secrets.KUBE_CONFIG_PRODUCTION }}
+
+      - name: Pre-deployment backup
+        run: |
+          kubectl create job backup-pre-deploy-$(date +%Y%m%d-%H%M%S) \
+            --from=cronjob/reporunner-backup \
+            -n reporunner-production
+
+      - name: Blue-Green Deployment Setup
+        run: |
+          # Create blue-green deployment
+          helm upgrade --install reporunner-blue ./k8s/helm \
+            --namespace reporunner-production \
+            --set reporunner.backend.image.tag=${{ github.sha }} \
+            --set reporunner.frontend.image.tag=${{ github.sha }} \
+            --set reporunner.worker.image.tag=${{ github.sha }} \
+            --set reporunner.env.NODE_ENV=production \
+            --set ingress.hosts[0].host=blue.reporunner.com \
+            --values ./k8s/helm/values-production.yaml \
+            --wait --timeout=15m
+
+      - name: Production Smoke Tests
+        run: |
+          # Wait for deployment
+          kubectl wait --for=condition=ready pod -l app.kubernetes.io/name=reporunner-blue -n reporunner-production --timeout=600s
+
+          # Run smoke tests
+          curl -f https://blue.reporunner.com/health || exit 1
+          curl -f https://blue.reporunner.com/api/health || exit 1
+
+          # Test workflow execution
+          ./scripts/smoke-test-workflows.sh https://blue.reporunner.com
+
+      - name: Switch Traffic (Blue-Green)
+        run: |
+          # Update ingress to point to blue deployment
+          kubectl patch ingress reporunner-ingress -n reporunner-production \
+            --type='json' \
+            -p='[{"op": "replace", "path": "/spec/rules/0/http/paths/0/backend/service/name", "value": "reporunner-blue"}]'
+
+          # Wait for traffic switch
+          sleep 30
+
+          # Verify production traffic
+          curl -f https://app.reporunner.com/health || exit 1
+
+      - name: Cleanup Old Deployment
+        run: |
+          # Remove old green deployment after successful blue deployment
+          helm uninstall reporunner-green -n reporunner-production || true
+
+          # Rename blue to green for next deployment
+          helm upgrade reporunner-green ./k8s/helm \
+            --namespace reporunner-production \
+            --reuse-values \
+            --wait
+
+      - name: Post-deployment verification
+        run: |
+          # Extended health checks
+          ./scripts/production-health-check.sh
+
+          # Performance baseline check
+          ./scripts/performance-check.sh https://app.reporunner.com
+
+      - name: Notify production deployment
+        uses: 8398a7/action-slack@v3
+        if: always()
+        with:
+          status: ${{ job.status }}
+          channel: '#production-deployments'
+          webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+          fields: repo,message,commit,author,action,eventName,ref,workflow
+
+  # Database migrations
+  migrate:
+    name: Database Migrations
+    runs-on: ubuntu-latest
+    needs: build-images
+    if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')
+
+    strategy:
+      matrix:
+        environment: [staging, production]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure kubectl
+        uses: azure/k8s-set-context@v3
+        with:
+          method: kubeconfig
+          kubeconfig: ${{ matrix.environment == 'staging' && secrets.KUBE_CONFIG_STAGING || secrets.KUBE_CONFIG_PRODUCTION }}
+
+      - name: Run migrations
+        run: |
+          kubectl create job migration-$(date +%Y%m%d-%H%M%S) \
+            --from=cronjob/reporunner-migration \
+            -n reporunner-${{ matrix.environment }}
+
+          # Wait for migration to complete
+          kubectl wait --for=condition=complete job/migration-$(date +%Y%m%d-%H%M%S) \
+            -n reporunner-${{ matrix.environment }} \
+            --timeout=600s
+
+  # Performance monitoring
+  performance-monitoring:
+    name: Performance Monitoring
+    runs-on: ubuntu-latest
+    needs: deploy-production
+    if: startsWith(github.ref, 'refs/tags/v')
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run performance tests
+        run: |
+          # Load testing with k6
+          ./scripts/load-test.sh https://app.reporunner.com
+
+      - name: Upload performance results
+        uses: actions/upload-artifact@v4
+        with:
+          name: performance-monitoring
+          path: performance-results/
+
+  # Rollback capability
+  rollback:
+    name: Emergency Rollback
+    runs-on: ubuntu-latest
+    if: failure() && (startsWith(github.ref, 'refs/tags/v') || github.event.inputs.environment == 'production')
+    needs: [deploy-production]
+
+    steps:
+      - name: Configure kubectl
+        uses: azure/k8s-set-context@v3
+        with:
+          method: kubeconfig
+          kubeconfig: ${{ secrets.KUBE_CONFIG_PRODUCTION }}
+
+      - name: Rollback deployment
+        run: |
+          helm rollback reporunner -n reporunner-production
+
+          # Wait for rollback
+          kubectl wait --for=condition=ready pod -l app.kubernetes.io/name=reporunner -n reporunner-production --timeout=300s
+
+      - name: Notify rollback
+        uses: 8398a7/action-slack@v3
+        with:
+          status: 'warning'
+          channel: '#production-deployments'
+          webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+          custom_payload: |
+            {
+              text: "🚨 EMERGENCY ROLLBACK EXECUTED",
+              attachments: [{
+                color: "warning",
+                fields: [{
+                  title: "Repository",
+                  value: "${{ github.repository }}",
+                  short: true
+                }, {
+                  title: "Commit",
+                  value: "${{ github.sha }}",
+                  short: true
+                }]
+              }]
+            }

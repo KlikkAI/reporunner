@@ -3,8 +3,8 @@
  * Tracks application performance metrics and provides insights
  */
 
-import { logger } from "../logging/Logger.js";
-import { EventEmitter } from "events";
+import { EventEmitter } from 'events';
+import { logger } from '../logging/Logger.js';
 
 export interface PerformanceMetric {
   name: string;
@@ -78,7 +78,7 @@ class PerformanceMonitorService extends EventEmitter {
   public endTimer(timerId: string): number | null {
     const timer = this.timers.get(timerId);
     if (!timer) {
-      logger.warn("Timer not found", { timerId });
+      logger.warn('Timer not found', { timerId });
       return null;
     }
 
@@ -89,7 +89,7 @@ class PerformanceMonitorService extends EventEmitter {
     this.recordMetric({
       name: `${timer.name}_duration`,
       value: duration,
-      unit: "ms",
+      unit: 'ms',
       timestamp: Date.now(),
       metadata: timer.context,
     });
@@ -99,7 +99,7 @@ class PerformanceMonitorService extends EventEmitter {
       logger.debug(`Operation ${timer.name} completed`, {
         duration,
         context: timer.context,
-        component: "performance",
+        component: 'performance',
       });
     }
 
@@ -109,7 +109,7 @@ class PerformanceMonitorService extends EventEmitter {
   public measureOperation<T>(
     name: string,
     operation: () => Promise<T>,
-    context?: Record<string, any>,
+    context?: Record<string, any>
   ): Promise<T> {
     return new Promise(async (resolve, reject) => {
       const timerId = this.startTimer(name, context);
@@ -124,7 +124,7 @@ class PerformanceMonitorService extends EventEmitter {
         this.recordMetric({
           name: `${name}_memory_delta`,
           value: endMemory.heapUsed - startMemory.heapUsed,
-          unit: "bytes",
+          unit: 'bytes',
           timestamp: Date.now(),
           metadata: { ...context, duration },
         });
@@ -135,7 +135,7 @@ class PerformanceMonitorService extends EventEmitter {
         this.recordMetric({
           name: `${name}_error`,
           value: 1,
-          unit: "count",
+          unit: 'count',
           timestamp: Date.now(),
           metadata: {
             ...context,
@@ -150,7 +150,7 @@ class PerformanceMonitorService extends EventEmitter {
   // Metric recording
   public recordMetric(metric: PerformanceMetric): void {
     this.metrics.push(metric);
-    this.emit("metric", metric);
+    this.emit('metric', metric);
 
     // Log performance metrics to specialized logger
     logger.logPerformanceMetrics(
@@ -160,11 +160,11 @@ class PerformanceMonitorService extends EventEmitter {
         timestamp: metric.timestamp,
       },
       {
-        component: "performance",
+        component: 'performance',
         unit: metric.unit,
         tags: metric.tags,
         ...metric.metadata,
-      },
+      }
     );
 
     // Keep metrics buffer manageable
@@ -173,15 +173,11 @@ class PerformanceMonitorService extends EventEmitter {
     }
   }
 
-  public incrementCounter(
-    name: string,
-    value: number = 1,
-    tags?: Record<string, string>,
-  ): void {
+  public incrementCounter(name: string, value: number = 1, tags?: Record<string, string>): void {
     this.recordMetric({
       name,
       value,
-      unit: "count",
+      unit: 'count',
       timestamp: Date.now(),
       tags,
     });
@@ -190,8 +186,8 @@ class PerformanceMonitorService extends EventEmitter {
   public recordGauge(
     name: string,
     value: number,
-    unit: string = "units",
-    tags?: Record<string, string>,
+    unit: string = 'units',
+    tags?: Record<string, string>
   ): void {
     this.recordMetric({
       name,
@@ -214,22 +210,18 @@ class PerformanceMonitorService extends EventEmitter {
     const cpuUsage = process.cpuUsage();
 
     // Memory metrics
-    this.recordGauge("system_memory_heap_used", memoryUsage.heapUsed, "bytes");
-    this.recordGauge(
-      "system_memory_heap_total",
-      memoryUsage.heapTotal,
-      "bytes",
-    );
-    this.recordGauge("system_memory_rss", memoryUsage.rss, "bytes");
-    this.recordGauge("system_memory_external", memoryUsage.external, "bytes");
+    this.recordGauge('system_memory_heap_used', memoryUsage.heapUsed, 'bytes');
+    this.recordGauge('system_memory_heap_total', memoryUsage.heapTotal, 'bytes');
+    this.recordGauge('system_memory_rss', memoryUsage.rss, 'bytes');
+    this.recordGauge('system_memory_external', memoryUsage.external, 'bytes');
 
     // CPU metrics
-    this.recordGauge("system_cpu_user", cpuUsage.user, "microseconds");
-    this.recordGauge("system_cpu_system", cpuUsage.system, "microseconds");
+    this.recordGauge('system_cpu_user', cpuUsage.user, 'microseconds');
+    this.recordGauge('system_cpu_system', cpuUsage.system, 'microseconds');
 
     // Event loop lag
     this.measureEventLoopLag().then((lag) => {
-      this.recordGauge("system_event_loop_lag", lag, "ms");
+      this.recordGauge('system_event_loop_lag', lag, 'ms');
     });
 
     // Check for memory leaks
@@ -268,8 +260,8 @@ class PerformanceMonitorService extends EventEmitter {
       const trend = this.calculateMemoryTrend(samples);
       if (trend > 0.8) {
         // 80% of samples show growth
-        logger.warn("Potential memory leak detected", {
-          component: "performance",
+        logger.warn('Potential memory leak detected', {
+          component: 'performance',
           memoryTrend: trend,
           currentHeapUsed: currentHeapUsed,
           samples: samples.length,
@@ -302,9 +294,9 @@ class PerformanceMonitorService extends EventEmitter {
         this.gcStats.duration += duration;
 
         this.recordMetric({
-          name: "gc_collection_duration",
+          name: 'gc_collection_duration',
           value: duration,
-          unit: "ms",
+          unit: 'ms',
           timestamp: Date.now(),
         });
       };
@@ -334,11 +326,7 @@ class PerformanceMonitorService extends EventEmitter {
     return sum / metrics.length;
   }
 
-  public getPercentile(
-    name: string,
-    percentile: number,
-    since?: number,
-  ): number {
+  public getPercentile(name: string, percentile: number, since?: number): number {
     const metrics = this.getMetrics(name, since);
     if (metrics.length === 0) return 0;
 
@@ -379,19 +367,17 @@ class PerformanceMonitorService extends EventEmitter {
       const startMemory = process.memoryUsage();
 
       // Add request ID for tracking
-      req.id =
-        req.id ||
-        `req_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      req.id = req.id || `req_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
-      res.on("finish", () => {
+      res.on('finish', () => {
         const duration = performance.now() - startTime;
         const endMemory = process.memoryUsage();
 
         // Record request metrics
         this.recordMetric({
-          name: "http_request_duration",
+          name: 'http_request_duration',
           value: duration,
-          unit: "ms",
+          unit: 'ms',
           timestamp: Date.now(),
           tags: {
             method: req.method,
@@ -400,8 +386,8 @@ class PerformanceMonitorService extends EventEmitter {
           },
           metadata: {
             requestId: req.id,
-            userAgent: req.get("User-Agent"),
-            contentLength: res.get("Content-Length"),
+            userAgent: req.get('User-Agent'),
+            contentLength: res.get('Content-Length'),
             memoryDelta: endMemory.heapUsed - startMemory.heapUsed,
           },
         });

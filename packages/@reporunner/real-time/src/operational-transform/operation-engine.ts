@@ -1,35 +1,35 @@
-import { EventEmitter } from "events";
+import { EventEmitter } from 'events';
 
 /**
  * Operation types for workflow transformations
  */
 export enum OperationType {
   // Node operations
-  NODE_ADD = "node:add",
-  NODE_UPDATE = "node:update",
-  NODE_DELETE = "node:delete",
-  NODE_MOVE = "node:move",
+  NODE_ADD = 'node:add',
+  NODE_UPDATE = 'node:update',
+  NODE_DELETE = 'node:delete',
+  NODE_MOVE = 'node:move',
 
   // Edge operations
-  EDGE_ADD = "edge:add",
-  EDGE_UPDATE = "edge:update",
-  EDGE_DELETE = "edge:delete",
+  EDGE_ADD = 'edge:add',
+  EDGE_UPDATE = 'edge:update',
+  EDGE_DELETE = 'edge:delete',
 
   // Property operations
-  PROPERTY_SET = "property:set",
-  PROPERTY_DELETE = "property:delete",
+  PROPERTY_SET = 'property:set',
+  PROPERTY_DELETE = 'property:delete',
 
   // Array operations
-  ARRAY_INSERT = "array:insert",
-  ARRAY_DELETE = "array:delete",
-  ARRAY_MOVE = "array:move",
+  ARRAY_INSERT = 'array:insert',
+  ARRAY_DELETE = 'array:delete',
+  ARRAY_MOVE = 'array:move',
 
   // Text operations
-  TEXT_INSERT = "text:insert",
-  TEXT_DELETE = "text:delete",
+  TEXT_INSERT = 'text:insert',
+  TEXT_DELETE = 'text:delete',
 
   // Workflow metadata
-  WORKFLOW_UPDATE = "workflow:update",
+  WORKFLOW_UPDATE = 'workflow:update',
 }
 
 export interface Operation {
@@ -90,7 +90,7 @@ export class OperationalTransform extends EventEmitter {
     transformedOp.version = this.currentVersion;
 
     // Emit operation for synchronization
-    this.emit("operation:applied", transformedOp);
+    this.emit('operation:applied', transformedOp);
 
     return transformedOp;
   }
@@ -145,10 +145,7 @@ export class OperationalTransform extends EventEmitter {
   /**
    * Transform operations of different types
    */
-  private transformDifferentTypes(
-    op1: Operation,
-    op2: Operation,
-  ): TransformResult {
+  private transformDifferentTypes(op1: Operation, op2: Operation): TransformResult {
     // Node delete vs any other operation on that node
     if (op1.type === OperationType.NODE_DELETE) {
       if (this.isOperationOnNode(op2, op1.path[0])) {
@@ -191,7 +188,7 @@ export class OperationalTransform extends EventEmitter {
     // Same node being updated
     if (op1.path[0] === op2.path[0]) {
       // Same property - last write wins based on timestamp
-      if (op1.path.join(".") === op2.path.join(".")) {
+      if (op1.path.join('.') === op2.path.join('.')) {
         if (op1.timestamp > op2.timestamp) {
           return {
             operation1: op1,
@@ -264,7 +261,7 @@ export class OperationalTransform extends EventEmitter {
    * Transform TEXT_INSERT operations
    */
   private transformTextInsert(op1: Operation, op2: Operation): TransformResult {
-    if (op1.path.join(".") !== op2.path.join(".")) {
+    if (op1.path.join('.') !== op2.path.join('.')) {
       return { operation1: op1, operation2: op2, conflict: false };
     }
 
@@ -295,7 +292,7 @@ export class OperationalTransform extends EventEmitter {
    * Transform TEXT_DELETE operations
    */
   private transformTextDelete(op1: Operation, op2: Operation): TransformResult {
-    if (op1.path.join(".") !== op2.path.join(".")) {
+    if (op1.path.join('.') !== op2.path.join('.')) {
       return { operation1: op1, operation2: op2, conflict: false };
     }
 
@@ -334,11 +331,8 @@ export class OperationalTransform extends EventEmitter {
   /**
    * Transform ARRAY_INSERT operations
    */
-  private transformArrayInsert(
-    op1: Operation,
-    op2: Operation,
-  ): TransformResult {
-    if (op1.path.join(".") !== op2.path.join(".")) {
+  private transformArrayInsert(op1: Operation, op2: Operation): TransformResult {
+    if (op1.path.join('.') !== op2.path.join('.')) {
       return { operation1: op1, operation2: op2, conflict: false };
     }
 
@@ -364,11 +358,8 @@ export class OperationalTransform extends EventEmitter {
   /**
    * Transform ARRAY_DELETE operations
    */
-  private transformArrayDelete(
-    op1: Operation,
-    op2: Operation,
-  ): TransformResult {
-    if (op1.path.join(".") !== op2.path.join(".")) {
+  private transformArrayDelete(op1: Operation, op2: Operation): TransformResult {
+    if (op1.path.join('.') !== op2.path.join('.')) {
       return { operation1: op1, operation2: op2, conflict: false };
     }
 
@@ -411,7 +402,7 @@ export class OperationalTransform extends EventEmitter {
       transformedOp = result.operation1;
 
       if (result.conflict) {
-        this.emit("conflict:detected", {
+        this.emit('conflict:detected', {
           operation1: transformedOp,
           operation2: pendingOp,
           userId: operation.userId,
@@ -476,10 +467,7 @@ export class OperationalTransform extends EventEmitter {
   /**
    * Add operation to history
    */
-  private addToHistory(
-    operation: Operation,
-    inverseOperation: Operation,
-  ): void {
+  private addToHistory(operation: Operation, inverseOperation: Operation): void {
     this.operationHistory.push({
       operation,
       inverseOperation,
@@ -498,15 +486,15 @@ export class OperationalTransform extends EventEmitter {
    */
   private validateOperation(operation: Operation): void {
     if (!operation.id) {
-      throw new Error("Operation must have an ID");
+      throw new Error('Operation must have an ID');
     }
 
     if (!operation.type) {
-      throw new Error("Operation must have a type");
+      throw new Error('Operation must have a type');
     }
 
     if (!operation.userId) {
-      throw new Error("Operation must have a user ID");
+      throw new Error('Operation must have a user ID');
     }
 
     if (!operation.timestamp) {
@@ -530,9 +518,7 @@ export class OperationalTransform extends EventEmitter {
    */
   undo(userId: string): Operation | null {
     // Find last operation by user
-    const lastOpIndex = this.operationHistory.findLastIndex(
-      (entry) => entry.userId === userId,
-    );
+    const lastOpIndex = this.operationHistory.findLastIndex((entry) => entry.userId === userId);
 
     if (lastOpIndex === -1) {
       return null;

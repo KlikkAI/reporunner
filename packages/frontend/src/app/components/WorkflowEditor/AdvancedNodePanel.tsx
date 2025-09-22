@@ -1,16 +1,15 @@
-import React, { useState, useCallback, useEffect } from "react";
-import { useLeanWorkflowStore, nodeRegistry } from "@/core";
-import { useAIAssistantStore } from "@/core/stores/aiAssistantStore";
-import { VirtualizedList } from "@/design-system";
+import type React from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import { CONTAINER_TEMPLATES, ContainerFactory } from '@/app/services/containerFactory';
+import { nodeRegistry, useLeanWorkflowStore } from '@/core';
 import {
-  UNIFIED_CATEGORIES,
-  CATEGORY_ICONS,
   CATEGORY_DESCRIPTIONS,
-} from "@/core/constants/categories";
-import {
-  CONTAINER_TEMPLATES,
-  ContainerFactory,
-} from "@/app/services/containerFactory";
+  CATEGORY_ICONS,
+  UNIFIED_CATEGORIES,
+} from '@/core/constants/categories';
+import { useAIAssistantStore } from '@/core/stores/aiAssistantStore';
+import { VirtualizedList } from '@/design-system';
+
 interface AdvancedNodePanelProps {
   isCollapsed: boolean;
   onToggle: () => void;
@@ -19,23 +18,15 @@ interface AdvancedNodePanelProps {
 // Helper function to get category metadata
 const getCategoryMetadata = (category: string) => {
   const icon = CATEGORY_ICONS[category as keyof typeof CATEGORY_ICONS];
-  const info =
-    CATEGORY_DESCRIPTIONS[category as keyof typeof CATEGORY_DESCRIPTIONS];
+  const info = CATEGORY_DESCRIPTIONS[category as keyof typeof CATEGORY_DESCRIPTIONS];
   return { icon, info };
 };
 
-const AdvancedNodePanel: React.FC<AdvancedNodePanelProps> = ({
-  isCollapsed,
-  onToggle,
-}) => {
+const AdvancedNodePanel: React.FC<AdvancedNodePanelProps> = ({ isCollapsed, onToggle }) => {
   const { addNode, addEdge, nodes, edges } = useLeanWorkflowStore();
-  const {
-    isEnabled: isAIEnabled,
-    nodeSuggestions,
-    getNodeSuggestions,
-  } = useAIAssistantStore();
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const { isEnabled: isAIEnabled, nodeSuggestions, getNodeSuggestions } = useAIAssistantStore();
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [showAISuggestions, setShowAISuggestions] = useState(true);
 
   // Get all nodes from the registry (replacing hardcoded array)
@@ -43,23 +34,20 @@ const AdvancedNodePanel: React.FC<AdvancedNodePanelProps> = ({
 
   const registryNodes = allRegistryDescriptions
     .map((description) => ({
-      id: `registry-${description.name || "unknown"}`,
-      displayName:
-        description.displayName || description.name || "Unknown Node",
-      description: description.description || "No description available",
-      icon: description.icon || "⚡",
-      category:
-        description.categories?.[0] || UNIFIED_CATEGORIES.BUSINESS_PRODUCTIVITY,
-      color: description.defaults?.color || "#6B7280",
-      type: description.name || "unknown",
+      id: `registry-${description.name || 'unknown'}`,
+      displayName: description.displayName || description.name || 'Unknown Node',
+      description: description.description || 'No description available',
+      icon: description.icon || '⚡',
+      category: description.categories?.[0] || UNIFIED_CATEGORIES.BUSINESS_PRODUCTIVITY,
+      color: description.defaults?.color || '#6B7280',
+      type: description.name || 'unknown',
       nodeTypeData: {
-        name: description.name || "unknown",
-        displayName:
-          description.displayName || description.name || "Unknown Node",
+        name: description.name || 'unknown',
+        displayName: description.displayName || description.name || 'Unknown Node',
       },
       isCore: true, // All registry nodes are core nodes
     }))
-    .filter((node) => node.type !== "unknown"); // Filter out malformed nodes
+    .filter((node) => node.type !== 'unknown'); // Filter out malformed nodes
 
   // Add container nodes
   const containerNodes = Object.values(CONTAINER_TEMPLATES).map((template) => ({
@@ -68,11 +56,11 @@ const AdvancedNodePanel: React.FC<AdvancedNodePanelProps> = ({
     description: template.description,
     icon: template.icon,
     category: template.category,
-    color: "#8B5CF6", // Purple color for containers
-    type: "container",
+    color: '#8B5CF6', // Purple color for containers
+    type: 'container',
     containerType: template.type,
     nodeTypeData: {
-      name: "container",
+      name: 'container',
       displayName: template.label,
       containerType: template.type,
     },
@@ -96,14 +84,14 @@ const AdvancedNodePanel: React.FC<AdvancedNodePanelProps> = ({
 
   // Only log in development mode and only if there are issues
   if (import.meta.env.DEV && registryNodes.length === 0) {
-    console.warn("⚠️ AdvancedNodePanel - No registry nodes found");
+    console.warn('⚠️ AdvancedNodePanel - No registry nodes found');
   }
 
   // Pure Registry System - use only registry nodes, no integration duplicates
   const allAvailableNodes = [...registryNodes, ...containerNodes];
 
   // Use unified categories
-  const categories = ["all", ...Object.values(UNIFIED_CATEGORIES).sort()];
+  const categories = ['all', ...Object.values(UNIFIED_CATEGORIES).sort()];
 
   // AI-powered node suggestions
   useEffect(() => {
@@ -112,9 +100,9 @@ const AdvancedNodePanel: React.FC<AdvancedNodePanelProps> = ({
         getNodeSuggestions({
           currentNodes: nodes,
           currentEdges: edges,
-          lastAction: "node_added",
+          lastAction: 'node_added',
         }).catch((error) => {
-          console.error("Failed to get AI node suggestions:", error);
+          console.error('Failed to get AI node suggestions:', error);
         });
       }, 500); // Debounce suggestions
       return () => clearTimeout(timeoutId);
@@ -126,9 +114,9 @@ const AdvancedNodePanel: React.FC<AdvancedNodePanelProps> = ({
     id: `ai-suggestion-${suggestion.id}`,
     displayName: suggestion.title,
     description: suggestion.description,
-    icon: "🤖", // AI suggestion icon
-    category: "AI_SUGGESTIONS",
-    color: "#3B82F6", // Blue color for AI suggestions
+    icon: '🤖', // AI suggestion icon
+    category: 'AI_SUGGESTIONS',
+    color: '#3B82F6', // Blue color for AI suggestions
     type: suggestion.type,
     nodeTypeData: {
       name: suggestion.type,
@@ -146,9 +134,7 @@ const AdvancedNodePanel: React.FC<AdvancedNodePanelProps> = ({
 
         // Create node at default position
         const newNodeId = `node-${Date.now()}-${Math.random().toString(36).substr(2, 9)}-${suggestion.type}`;
-        const enhancedNodeType = nodeRegistry.getNodeTypeDescription(
-          suggestion.type,
-        );
+        const enhancedNodeType = nodeRegistry.getNodeTypeDescription(suggestion.type);
 
         const newNode = {
           id: newNodeId,
@@ -171,65 +157,56 @@ const AdvancedNodePanel: React.FC<AdvancedNodePanelProps> = ({
         // Skip auto-connect since AI suggestion doesn't have connections
         const connections: any[] = [];
         connections.forEach((connection: any) => {
-          if (connection.sourceNodeId && connection.type === "input") {
+          if (connection.sourceNodeId && connection.type === 'input') {
             const newEdge = {
               id: `edge-${connection.sourceNodeId}-${newNodeId}`,
               source: connection.sourceNodeId,
               target: newNodeId,
-              type: "default",
+              type: 'default',
             };
             addEdge(newEdge);
-          } else if (connection.targetNodeId && connection.type === "output") {
+          } else if (connection.targetNodeId && connection.type === 'output') {
             const newEdge = {
               id: `edge-${newNodeId}-${connection.targetNodeId}`,
               source: newNodeId,
               target: connection.targetNodeId,
-              type: "default",
+              type: 'default',
             };
             addEdge(newEdge);
           }
         });
       }
     },
-    [addNode, addEdge],
+    [addNode, addEdge]
   );
 
   // Filter and sort nodes in ascending order
   const filteredNodes = allAvailableNodes
     .filter((node) => {
       const matchesSearch =
-        (node.displayName?.toLowerCase().includes(searchTerm.toLowerCase()) ??
-          false) ||
-        (node.description?.toLowerCase().includes(searchTerm.toLowerCase()) ??
-          false);
-      const matchesCategory =
-        selectedCategory === "all" || node.category === selectedCategory;
+        (node.displayName?.toLowerCase().includes(searchTerm.toLowerCase()) ?? false) ||
+        (node.description?.toLowerCase().includes(searchTerm.toLowerCase()) ?? false);
+      const matchesCategory = selectedCategory === 'all' || node.category === selectedCategory;
       return matchesSearch && matchesCategory;
     })
-    .sort((a, b) => (a.displayName || "").localeCompare(b.displayName || ""));
+    .sort((a, b) => (a.displayName || '').localeCompare(b.displayName || ''));
 
-  const onDragStart = useCallback(
-    (event: React.DragEvent, node: (typeof allAvailableNodes)[0]) => {
-      try {
-        const dragData = {
-          type: node.type,
-          nodeTypeData: node.nodeTypeData,
-          ...(node.type === "container" && {
-            containerType: (node as any).containerType,
-          }),
-        };
+  const onDragStart = useCallback((event: React.DragEvent, node: (typeof allAvailableNodes)[0]) => {
+    try {
+      const dragData = {
+        type: node.type,
+        nodeTypeData: node.nodeTypeData,
+        ...(node.type === 'container' && {
+          containerType: (node as any).containerType,
+        }),
+      };
 
-        event.dataTransfer.setData(
-          "application/reactflow",
-          JSON.stringify(dragData),
-        );
-        event.dataTransfer.effectAllowed = "move";
-      } catch (error) {
-        console.error("Error in onDragStart:", error);
-      }
-    },
-    [],
-  );
+      event.dataTransfer.setData('application/reactflow', JSON.stringify(dragData));
+      event.dataTransfer.effectAllowed = 'move';
+    } catch (error) {
+      console.error('Error in onDragStart:', error);
+    }
+  }, []);
 
   // Helper function to find the rightmost node (last in sequence)
   const findLastNode = useCallback(() => {
@@ -237,20 +214,18 @@ const AdvancedNodePanel: React.FC<AdvancedNodePanelProps> = ({
 
     // Find node with no outgoing connections (target but no source edges)
     const nodesWithOutgoing = new Set(edges.map((edge) => edge.source));
-    const candidateNodes = nodes.filter(
-      (node) => !nodesWithOutgoing.has(node.id),
-    );
+    const candidateNodes = nodes.filter((node) => !nodesWithOutgoing.has(node.id));
 
     if (candidateNodes.length === 0) {
       // If all nodes have outgoing connections, use the rightmost positioned node
       return nodes.reduce((rightmost, current) =>
-        current.position.x > rightmost.position.x ? current : rightmost,
+        current.position.x > rightmost.position.x ? current : rightmost
       );
     }
 
     // Among candidates with no outgoing connections, pick the rightmost
     return candidateNodes.reduce((rightmost, current) =>
-      current.position.x > rightmost.position.x ? current : rightmost,
+      current.position.x > rightmost.position.x ? current : rightmost
     );
   }, [nodes, edges]);
 
@@ -267,18 +242,18 @@ const AdvancedNodePanel: React.FC<AdvancedNodePanelProps> = ({
       let newNode;
 
       // Handle container nodes differently
-      if (node.type === "container") {
+      if (node.type === 'container') {
         const containerNode = ContainerFactory.createContainer(
           (node as any).containerType,
           newPosition,
           undefined,
-          node.displayName,
+          node.displayName
         );
 
         // Convert to WorkflowNodeInstance format
         newNode = {
           id: containerNode.id,
-          type: containerNode.type || "container",
+          type: containerNode.type || 'container',
           position: containerNode.position,
           parameters: containerNode.data || {},
         };
@@ -317,12 +292,12 @@ const AdvancedNodePanel: React.FC<AdvancedNodePanelProps> = ({
           id: `edge-${lastNode.id}-${newNode.id}`,
           source: lastNode.id,
           target: newNode.id,
-          type: "default",
+          type: 'default',
         };
         addEdge(newEdge);
       }
     },
-    [addNode, addEdge, findLastNode],
+    [addNode, addEdge, findLastNode]
   );
 
   // Render function for AI suggestion items
@@ -351,9 +326,7 @@ const AdvancedNodePanel: React.FC<AdvancedNodePanelProps> = ({
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center justify-between">
-              <p className="text-sm font-medium text-blue-900 truncate">
-                {suggestion.displayName}
-              </p>
+              <p className="text-sm font-medium text-blue-900 truncate">{suggestion.displayName}</p>
               <span className="bg-blue-200 text-blue-800 text-xs px-1.5 py-0.5 rounded-full font-medium">
                 AI
               </span>
@@ -367,8 +340,7 @@ const AdvancedNodePanel: React.FC<AdvancedNodePanelProps> = ({
                   💡 {suggestion.aiSuggestion.reasoning}
                 </p>
                 <span className="bg-blue-200 text-blue-700 text-xs px-1.5 py-0.5 rounded mt-1 inline-block">
-                  Confidence:{" "}
-                  {Math.round(suggestion.aiSuggestion.confidence * 100)}%
+                  Confidence: {Math.round(suggestion.aiSuggestion.confidence * 100)}%
                 </span>
               </div>
             )}
@@ -376,7 +348,7 @@ const AdvancedNodePanel: React.FC<AdvancedNodePanelProps> = ({
         </div>
       </div>
     ),
-    [onDragStart, handleAISuggestionAdd],
+    [onDragStart, handleAISuggestionAdd]
   );
 
   // Render function for node items in virtualized list
@@ -408,38 +380,35 @@ const AdvancedNodePanel: React.FC<AdvancedNodePanelProps> = ({
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center justify-between">
-              <p className="text-sm font-medium text-gray-900 truncate">
-                {node.displayName}
-              </p>
+              <p className="text-sm font-medium text-gray-900 truncate">{node.displayName}</p>
             </div>
             <p className="text-xs text-gray-500 truncate mt-0.5 leading-tight">
               {node.description}
             </p>
             <div className="mt-1.5">
               <span className="bg-gray-100 text-gray-600 text-xs px-1.5 py-0.5 rounded">
-                {getCategoryMetadata(node.category || "")?.icon || ""}{" "}
-                {node.category}
+                {getCategoryMetadata(node.category || '')?.icon || ''} {node.category}
               </span>
             </div>
           </div>
         </div>
       </div>
     ),
-    [onDragStart, handleAddNode],
+    [onDragStart, handleAddNode]
   );
 
   return (
     <div
-      className={`${isCollapsed ? "w-16" : "w-80"} h-full bg-white border-r border-gray-200 flex flex-col transition-all duration-300 ease-in-out`}
+      className={`${isCollapsed ? 'w-16' : 'w-80'} h-full bg-white border-r border-gray-200 flex flex-col transition-all duration-300 ease-in-out`}
     >
       {/* Toggle Button */}
       <div className="flex justify-end p-4">
         <button
           onClick={onToggle}
           className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
-          title={isCollapsed ? "Expand node panel" : "Collapse node panel"}
+          title={isCollapsed ? 'Expand node panel' : 'Collapse node panel'}
         >
-          <span className="text-lg">{isCollapsed ? "→" : "←"}</span>
+          <span className="text-lg">{isCollapsed ? '→' : '←'}</span>
         </button>
       </div>
 
@@ -475,13 +444,10 @@ const AdvancedNodePanel: React.FC<AdvancedNodePanelProps> = ({
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
           >
             {categories.map((category) => {
-              const metadata =
-                category !== "all" ? getCategoryMetadata(category) : null;
+              const metadata = category !== 'all' ? getCategoryMetadata(category) : null;
               return (
                 <option key={category} value={category}>
-                  {category === "all"
-                    ? "All Categories"
-                    : `${metadata?.icon || ""} ${category}`}
+                  {category === 'all' ? 'All Categories' : `${metadata?.icon || ''} ${category}`}
                 </option>
               );
             })}
@@ -490,43 +456,36 @@ const AdvancedNodePanel: React.FC<AdvancedNodePanelProps> = ({
       )}
 
       {/* AI Suggestions Section */}
-      {!isCollapsed &&
-        isAIEnabled &&
-        aiSuggestedNodes.length > 0 &&
-        showAISuggestions && (
-          <div className="border-b border-gray-200">
-            <div className="px-4 py-3 bg-blue-50">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-2">
-                  <div className="w-5 h-5 rounded-full bg-blue-500 flex items-center justify-center">
-                    <span className="text-white text-xs">🤖</span>
-                  </div>
-                  <h3 className="text-sm font-medium text-blue-900">
-                    AI Suggestions
-                  </h3>
-                  <span className="bg-blue-200 text-blue-800 text-xs px-2 py-1 rounded-full font-medium">
-                    {aiSuggestedNodes.length}
-                  </span>
+      {!isCollapsed && isAIEnabled && aiSuggestedNodes.length > 0 && showAISuggestions && (
+        <div className="border-b border-gray-200">
+          <div className="px-4 py-3 bg-blue-50">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <div className="w-5 h-5 rounded-full bg-blue-500 flex items-center justify-center">
+                  <span className="text-white text-xs">🤖</span>
                 </div>
-                <button
-                  onClick={() => setShowAISuggestions(false)}
-                  className="text-blue-600 hover:text-blue-800 text-xs"
-                  title="Hide AI suggestions"
-                >
-                  ✕
-                </button>
+                <h3 className="text-sm font-medium text-blue-900">AI Suggestions</h3>
+                <span className="bg-blue-200 text-blue-800 text-xs px-2 py-1 rounded-full font-medium">
+                  {aiSuggestedNodes.length}
+                </span>
               </div>
-              <p className="text-xs text-blue-700 mt-1">
-                Smart suggestions based on your current workflow
-              </p>
+              <button
+                onClick={() => setShowAISuggestions(false)}
+                className="text-blue-600 hover:text-blue-800 text-xs"
+                title="Hide AI suggestions"
+              >
+                ✕
+              </button>
             </div>
-            <div className="px-4 py-2 max-h-48 overflow-y-auto">
-              {aiSuggestedNodes.map((suggestion, index) =>
-                renderAISuggestionItem(suggestion, index),
-              )}
-            </div>
+            <p className="text-xs text-blue-700 mt-1">
+              Smart suggestions based on your current workflow
+            </p>
           </div>
-        )}
+          <div className="px-4 py-2 max-h-48 overflow-y-auto">
+            {aiSuggestedNodes.map((suggestion, index) => renderAISuggestionItem(suggestion, index))}
+          </div>
+        </div>
+      )}
 
       {/* Node List */}
       {!isCollapsed && (
@@ -536,9 +495,7 @@ const AdvancedNodePanel: React.FC<AdvancedNodePanelProps> = ({
               <div className="text-center">
                 <div className="text-gray-400 text-4xl mb-2">🔍</div>
                 <p className="text-gray-500 text-sm">No nodes found</p>
-                <p className="text-gray-400 text-xs mt-1">
-                  Try adjusting your search or filter
-                </p>
+                <p className="text-gray-400 text-xs mt-1">Try adjusting your search or filter</p>
               </div>
             </div>
           ) : (
@@ -555,8 +512,8 @@ const AdvancedNodePanel: React.FC<AdvancedNodePanelProps> = ({
                   <div className="text-center py-8">
                     <p className="text-gray-500 text-sm">
                       {searchTerm
-                        ? "No nodes match your search"
-                        : "No nodes available in this category"}
+                        ? 'No nodes match your search'
+                        : 'No nodes available in this category'}
                     </p>
                   </div>
                 }

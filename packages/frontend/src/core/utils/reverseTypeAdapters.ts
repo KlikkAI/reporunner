@@ -1,6 +1,6 @@
-import type { INodeProperty } from '@/core'
-import type { INodePropertyOptions } from '../nodes/types'
-import type { NodeProperty, PropertyOption } from '../types/dynamicProperties'
+import type { INodeProperty } from '@/core';
+import type { INodePropertyOptions } from '../nodes/types';
+import type { NodeProperty, PropertyOption } from '../types/dynamicProperties';
 
 /**
  * Reverse Type adapters to convert from dynamic properties back to n8n-inspired types
@@ -13,13 +13,13 @@ import type { NodeProperty, PropertyOption } from '../types/dynamicProperties'
 function convertPropertyOptionToNodePropertyOptions(
   options: PropertyOption[]
 ): INodePropertyOptions[] {
-  return options.map(option => ({
+  return options.map((option) => ({
     name: option.name,
     displayName: option.displayName || option.name,
     value: option.value || option.name,
     description: option.description,
     action: option.action,
-  }))
+  }));
 }
 
 /**
@@ -43,17 +43,15 @@ function convertPropertyTypeToINodeType(type: string): string {
     resourceLocator: 'resourceLocator',
     credentialsSelect: 'credentialsSelect',
     expression: 'string', // expressions are stored as strings
-  }
+  };
 
-  return typeMap[type] || type
+  return typeMap[type] || type;
 }
 
 /**
  * Convert NodeProperty to INodeProperty
  */
-export function convertNodePropertyToINodeProperty(
-  nodeProperty: NodeProperty
-): INodeProperty {
+export function convertNodePropertyToINodeProperty(nodeProperty: NodeProperty): INodeProperty {
   const property: INodeProperty = {
     name: nodeProperty.name,
     displayName: nodeProperty.displayName,
@@ -64,13 +62,11 @@ export function convertNodePropertyToINodeProperty(
     required: nodeProperty.required,
     noDataExpression: nodeProperty.noDataExpression,
     displayOptions: nodeProperty.displayOptions as any,
-  }
+  };
 
   // Convert options if present
   if (nodeProperty.options) {
-    property.options = convertPropertyOptionToNodePropertyOptions(
-      nodeProperty.options
-    )
+    property.options = convertPropertyOptionToNodePropertyOptions(nodeProperty.options);
   }
 
   // Handle type-specific conversions
@@ -85,59 +81,53 @@ export function convertNodePropertyToINodeProperty(
       alwaysOpenEditWindow: nodeProperty.typeOptions.alwaysOpenEditWindow,
       showAlpha: nodeProperty.typeOptions.showAlpha,
       loadOptionsMethod: nodeProperty.typeOptions.loadOptionsMethod,
-    }
+    };
   }
 
   // Handle collection properties
   if (nodeProperty.values) {
     // For collection type, put sub-properties in 'values' NOT 'options'
     if (nodeProperty.type === 'collection') {
-      property.values = nodeProperty.values.map(
-        convertNodePropertyToINodeProperty
-      )
+      property.values = nodeProperty.values.map(convertNodePropertyToINodeProperty);
     } else {
       // For other types, use the standard collection mapping
-      property.collection = nodeProperty.values.map(collection => ({
+      property.collection = nodeProperty.values.map((collection) => ({
         name: collection.name,
         displayName: collection.displayName,
-        values:
-          collection.values?.map(convertNodePropertyToINodeProperty) || [],
-      }))
+        values: collection.values?.map(convertNodePropertyToINodeProperty) || [],
+      }));
     }
   }
 
   // Handle routing
   if (nodeProperty.routing) {
-    property.routing = nodeProperty.routing as any
+    property.routing = nodeProperty.routing as any;
   }
 
   // Handle credential types (specific to credentialsSelect)
-  if (
-    nodeProperty.type === 'credentialsSelect' &&
-    (nodeProperty as any).credentialTypes
-  ) {
-    ;(property as any).credentialTypes = (nodeProperty as any).credentialTypes
+  if (nodeProperty.type === 'credentialsSelect' && (nodeProperty as any).credentialTypes) {
+    (property as any).credentialTypes = (nodeProperty as any).credentialTypes;
   }
 
   // Handle min/max for number types
   if (nodeProperty.type === 'number') {
     if ((nodeProperty as any).min !== undefined) {
-      property.typeOptions = property.typeOptions || {}
-      property.typeOptions.minValue = (nodeProperty as any).min
+      property.typeOptions = property.typeOptions || {};
+      property.typeOptions.minValue = (nodeProperty as any).min;
     }
     if ((nodeProperty as any).max !== undefined) {
-      property.typeOptions = property.typeOptions || {}
-      property.typeOptions.maxValue = (nodeProperty as any).max
+      property.typeOptions = property.typeOptions || {};
+      property.typeOptions.maxValue = (nodeProperty as any).max;
     }
   }
 
   // Handle rows for text type
   if (nodeProperty.type === 'text' && (nodeProperty as any).rows) {
-    property.typeOptions = property.typeOptions || {}
-    property.typeOptions.rows = (nodeProperty as any).rows
+    property.typeOptions = property.typeOptions || {};
+    property.typeOptions.rows = (nodeProperty as any).rows;
   }
 
-  return property
+  return property;
 }
 
 /**
@@ -146,5 +136,5 @@ export function convertNodePropertyToINodeProperty(
 export function convertNodePropertiesToINodeProperties(
   nodeProperties: NodeProperty[]
 ): INodeProperty[] {
-  return nodeProperties.map(convertNodePropertyToINodeProperty)
+  return nodeProperties.map(convertNodePropertyToINodeProperty);
 }

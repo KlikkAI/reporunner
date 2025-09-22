@@ -1,8 +1,5 @@
-import { User, IUser } from "../../../models/User.js";
-import {
-  RegisterUserData,
-  UpdateProfileData,
-} from "../services/AuthService.js";
+import { type IUser, User } from '../../../models/User.js';
+import type { RegisterUserData, UpdateProfileData } from '../services/AuthService.js';
 
 export class UserRepository {
   /**
@@ -16,7 +13,7 @@ export class UserRepository {
    * Find user by email with password included
    */
   async findByEmailWithPassword(email: string): Promise<IUser | null> {
-    return User.findOne({ email, isActive: true }).select("+password");
+    return User.findOne({ email, isActive: true }).select('+password');
   }
 
   /**
@@ -30,7 +27,7 @@ export class UserRepository {
    * Find user by ID with password included
    */
   async findByIdWithPassword(id: string): Promise<IUser | null> {
-    return User.findById(id).select("+password");
+    return User.findById(id).select('+password');
   }
 
   /**
@@ -51,13 +48,10 @@ export class UserRepository {
   /**
    * Update user profile
    */
-  async updateProfile(
-    userId: string,
-    updateData: UpdateProfileData,
-  ): Promise<IUser> {
+  async updateProfile(userId: string, updateData: UpdateProfileData): Promise<IUser> {
     const user = await User.findById(userId);
     if (!user) {
-      throw new Error("User not found");
+      throw new Error('User not found');
     }
 
     // Update fields if provided
@@ -74,7 +68,7 @@ export class UserRepository {
   async updatePassword(userId: string, newPassword: string): Promise<void> {
     const user = await User.findById(userId);
     if (!user) {
-      throw new Error("User not found");
+      throw new Error('User not found');
     }
 
     user.password = newPassword;
@@ -95,7 +89,7 @@ export class UserRepository {
     return User.findOne({
       emailVerificationToken: token,
       isActive: true,
-    }).select("+emailVerificationToken +emailVerificationTokenExpires");
+    }).select('+emailVerificationToken +emailVerificationTokenExpires');
   }
 
   /**
@@ -105,16 +99,13 @@ export class UserRepository {
     return User.findOne({
       passwordResetToken: token,
       isActive: true,
-    }).select("+passwordResetToken +passwordResetTokenExpires");
+    }).select('+passwordResetToken +passwordResetTokenExpires');
   }
 
   /**
    * Update user permissions
    */
-  async updatePermissions(
-    userId: string,
-    permissions: string[],
-  ): Promise<void> {
+  async updatePermissions(userId: string, permissions: string[]): Promise<void> {
     await User.findByIdAndUpdate(userId, { permissions });
   }
 }

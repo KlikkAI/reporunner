@@ -7,10 +7,7 @@
  */
 
 // Removed unused imports
-import type {
-  CollaborationOperation,
-  CollaborationConflict,
-} from "./collaborationService";
+import type { CollaborationConflict, CollaborationOperation } from './collaborationService';
 
 export interface ConflictResolutionStrategy {
   name: string;
@@ -35,11 +32,11 @@ export interface ConflictResolution {
 export interface OperationalTransform {
   transform: (
     operation: CollaborationOperation,
-    conflictingOperation: CollaborationOperation,
+    conflictingOperation: CollaborationOperation
   ) => CollaborationOperation;
   isApplicable: (
     operation: CollaborationOperation,
-    conflictingOperation: CollaborationOperation,
+    conflictingOperation: CollaborationOperation
   ) => boolean;
 }
 
@@ -57,7 +54,7 @@ export class ConflictResolver {
    */
   detectConflicts(
     newOperation: CollaborationOperation,
-    existingOperations: CollaborationOperation[],
+    existingOperations: CollaborationOperation[]
   ): CollaborationConflict[] {
     const conflicts: CollaborationConflict[] = [];
     const conflictWindow = 30000; // 30 seconds
@@ -65,8 +62,7 @@ export class ConflictResolver {
     for (const existing of existingOperations) {
       // Skip operations that are too old
       const timeDiff =
-        new Date(newOperation.timestamp).getTime() -
-        new Date(existing.timestamp).getTime();
+        new Date(newOperation.timestamp).getTime() - new Date(existing.timestamp).getTime();
       if (Math.abs(timeDiff) > conflictWindow) continue;
 
       // Skip operations from the same user
@@ -86,8 +82,8 @@ export class ConflictResolver {
    */
   async resolveConflict(
     conflict: CollaborationConflict,
-    strategyName: string = "smart_merge",
-    manualResolution?: any,
+    strategyName: string = 'smart_merge',
+    manualResolution?: any
   ): Promise<ConflictResolution> {
     const strategy = this.strategies.get(strategyName);
     if (!strategy) {
@@ -122,17 +118,14 @@ export class ConflictResolver {
    */
   applyOperationalTransform(
     operation: CollaborationOperation,
-    conflictingOperations: CollaborationOperation[],
+    conflictingOperations: CollaborationOperation[]
   ): CollaborationOperation {
     let transformedOperation = operation;
 
     for (const conflicting of conflictingOperations) {
       for (const transform of this.operationalTransforms) {
         if (transform.isApplicable(transformedOperation, conflicting)) {
-          transformedOperation = transform.transform(
-            transformedOperation,
-            conflicting,
-          );
+          transformedOperation = transform.transform(transformedOperation, conflicting);
           break;
         }
       }
@@ -153,7 +146,7 @@ export class ConflictResolver {
    */
   async previewResolution(
     conflict: CollaborationConflict,
-    strategyName: string,
+    strategyName: string
   ): Promise<ConflictResolution> {
     const strategy = this.strategies.get(strategyName);
     if (!strategy) {
@@ -167,42 +160,41 @@ export class ConflictResolver {
 
   private initializeStrategies(): void {
     // Last Write Wins Strategy
-    this.strategies.set("last_write_wins", {
-      name: "Last Write Wins",
-      description: "Keep the most recent changes and discard older ones",
+    this.strategies.set('last_write_wins', {
+      name: 'Last Write Wins',
+      description: 'Keep the most recent changes and discard older ones',
       automatic: true,
       handler: async (conflict) => this.lastWriteWinsStrategy(conflict),
     });
 
     // Smart Merge Strategy
-    this.strategies.set("smart_merge", {
-      name: "Smart Merge",
-      description: "Automatically merge compatible changes",
+    this.strategies.set('smart_merge', {
+      name: 'Smart Merge',
+      description: 'Automatically merge compatible changes',
       automatic: true,
       handler: async (conflict) => this.smartMergeStrategy(conflict),
     });
 
     // First Write Wins Strategy
-    this.strategies.set("first_write_wins", {
-      name: "First Write Wins",
-      description:
-        "Keep the earliest changes and reject newer conflicting ones",
+    this.strategies.set('first_write_wins', {
+      name: 'First Write Wins',
+      description: 'Keep the earliest changes and reject newer conflicting ones',
       automatic: true,
       handler: async (conflict) => this.firstWriteWinsStrategy(conflict),
     });
 
     // Manual Resolution Strategy
-    this.strategies.set("manual", {
-      name: "Manual Resolution",
-      description: "Review each change individually and decide manually",
+    this.strategies.set('manual', {
+      name: 'Manual Resolution',
+      description: 'Review each change individually and decide manually',
       automatic: false,
       handler: async (conflict) => this.manualResolutionStrategy(conflict),
     });
 
     // Three-Way Merge Strategy
-    this.strategies.set("three_way_merge", {
-      name: "Three-Way Merge",
-      description: "Merge changes using a common ancestor as reference",
+    this.strategies.set('three_way_merge', {
+      name: 'Three-Way Merge',
+      description: 'Merge changes using a common ancestor as reference',
       automatic: true,
       handler: async (conflict) => this.threeWayMergeStrategy(conflict),
     });
@@ -212,8 +204,8 @@ export class ConflictResolver {
     // Node Move Transform
     this.operationalTransforms.push({
       isApplicable: (op1, op2) =>
-        op1.type === "node_move" &&
-        op2.type === "node_move" &&
+        op1.type === 'node_move' &&
+        op2.type === 'node_move' &&
         op1.data?.nodeId === op2.data?.nodeId,
       transform: (op1, op2) => {
         // For concurrent node moves, use the average position
@@ -235,8 +227,8 @@ export class ConflictResolver {
     // Node Property Update Transform
     this.operationalTransforms.push({
       isApplicable: (op1, op2) =>
-        op1.type === "node_update" &&
-        op2.type === "node_update" &&
+        op1.type === 'node_update' &&
+        op2.type === 'node_update' &&
         op1.data?.nodeId === op2.data?.nodeId,
       transform: (op1, op2) => {
         // Merge property updates where possible
@@ -259,8 +251,8 @@ export class ConflictResolver {
     // Edge Creation Transform
     this.operationalTransforms.push({
       isApplicable: (op1, op2) =>
-        op1.type === "edge_add" &&
-        op2.type === "edge_add" &&
+        op1.type === 'edge_add' &&
+        op2.type === 'edge_add' &&
         this.edgesAreConflicting(op1.data, op2.data),
       transform: (op1, op2) => {
         // For conflicting edges, keep the one with earlier timestamp
@@ -271,7 +263,7 @@ export class ConflictResolver {
 
   private analyzeOperationConflict(
     op1: CollaborationOperation,
-    op2: CollaborationOperation,
+    op2: CollaborationOperation
   ): CollaborationConflict | null {
     const affectedNodes = this.getAffectedNodes(op1, op2);
     if (affectedNodes.length === 0) return null;
@@ -288,10 +280,7 @@ export class ConflictResolver {
     };
   }
 
-  private getAffectedNodes(
-    op1: CollaborationOperation,
-    op2: CollaborationOperation,
-  ): string[] {
+  private getAffectedNodes(op1: CollaborationOperation, op2: CollaborationOperation): string[] {
     const nodes = new Set<string>();
 
     // Extract node IDs from operations
@@ -299,12 +288,12 @@ export class ConflictResolver {
     if (op2.data?.nodeId) nodes.add(op2.data.nodeId);
 
     // For edge operations, include source and target nodes
-    if (op1.type.includes("edge") && op1.data) {
+    if (op1.type.includes('edge') && op1.data) {
       if (op1.data.source) nodes.add(op1.data.source);
       if (op1.data.target) nodes.add(op1.data.target);
     }
 
-    if (op2.type.includes("edge") && op2.data) {
+    if (op2.type.includes('edge') && op2.data) {
       if (op2.data.source) nodes.add(op2.data.source);
       if (op2.data.target) nodes.add(op2.data.target);
     }
@@ -314,27 +303,27 @@ export class ConflictResolver {
 
   private determineConflictType(
     op1: CollaborationOperation,
-    op2: CollaborationOperation,
-  ): CollaborationConflict["type"] | null {
+    op2: CollaborationOperation
+  ): CollaborationConflict['type'] | null {
     // Same node, different operations
     if (op1.data?.nodeId === op2.data?.nodeId) {
       if (op1.type !== op2.type) {
-        return "concurrent_edit";
+        return 'concurrent_edit';
       }
 
-      if (op1.type === "node_remove" || op2.type === "node_remove") {
-        return "deletion_conflict";
+      if (op1.type === 'node_remove' || op2.type === 'node_remove') {
+        return 'deletion_conflict';
       }
     }
 
     // Edge dependency conflicts
     if (this.hasEdgeDependencyConflict(op1, op2)) {
-      return "dependency_conflict";
+      return 'dependency_conflict';
     }
 
     // Concurrent edits on related elements
     if (this.hasConcurrentEditConflict(op1, op2)) {
-      return "concurrent_edit";
+      return 'concurrent_edit';
     }
 
     return null;
@@ -342,21 +331,15 @@ export class ConflictResolver {
 
   private hasEdgeDependencyConflict(
     op1: CollaborationOperation,
-    op2: CollaborationOperation,
+    op2: CollaborationOperation
   ): boolean {
     // Check if one operation removes a node that another operation creates an edge to/from
-    if (op1.type === "node_remove" && op2.type === "edge_add") {
-      return (
-        op2.data?.source === op1.data?.nodeId ||
-        op2.data?.target === op1.data?.nodeId
-      );
+    if (op1.type === 'node_remove' && op2.type === 'edge_add') {
+      return op2.data?.source === op1.data?.nodeId || op2.data?.target === op1.data?.nodeId;
     }
 
-    if (op2.type === "node_remove" && op1.type === "edge_add") {
-      return (
-        op1.data?.source === op2.data?.nodeId ||
-        op1.data?.target === op2.data?.nodeId
-      );
+    if (op2.type === 'node_remove' && op1.type === 'edge_add') {
+      return op1.data?.source === op2.data?.nodeId || op1.data?.target === op2.data?.nodeId;
     }
 
     return false;
@@ -364,7 +347,7 @@ export class ConflictResolver {
 
   private hasConcurrentEditConflict(
     op1: CollaborationOperation,
-    op2: CollaborationOperation,
+    op2: CollaborationOperation
   ): boolean {
     // Check for concurrent edits on the same node
     return op1.data?.nodeId === op2.data?.nodeId && op1.type === op2.type;
@@ -378,11 +361,10 @@ export class ConflictResolver {
   // Resolution Strategy Implementations
 
   private async lastWriteWinsStrategy(
-    conflict: CollaborationConflict,
+    conflict: CollaborationConflict
   ): Promise<ConflictResolution> {
     const operations = conflict.operations.sort(
-      (a, b) =>
-        new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
+      (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
     );
 
     const winningOperation = operations[0];
@@ -401,11 +383,10 @@ export class ConflictResolver {
   }
 
   private async firstWriteWinsStrategy(
-    conflict: CollaborationConflict,
+    conflict: CollaborationConflict
   ): Promise<ConflictResolution> {
     const operations = conflict.operations.sort(
-      (a, b) =>
-        new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime(),
+      (a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
     );
 
     const winningOperation = operations[0];
@@ -423,20 +404,13 @@ export class ConflictResolver {
     };
   }
 
-  private async smartMergeStrategy(
-    conflict: CollaborationConflict,
-  ): Promise<ConflictResolution> {
+  private async smartMergeStrategy(conflict: CollaborationConflict): Promise<ConflictResolution> {
     try {
       const mergedOperations = [];
 
       for (const operation of conflict.operations) {
-        const otherOps = conflict.operations.filter(
-          (op) => op.id !== operation.id,
-        );
-        const transformedOp = this.applyOperationalTransform(
-          operation,
-          otherOps,
-        );
+        const otherOps = conflict.operations.filter((op) => op.id !== operation.id);
+        const transformedOp = this.applyOperationalTransform(operation, otherOps);
         mergedOperations.push(transformedOp);
       }
 
@@ -444,8 +418,7 @@ export class ConflictResolver {
         success: true,
         mergedOperations,
         requiresManualReview: false,
-        explanation:
-          "Successfully merged all changes using operational transforms",
+        explanation: 'Successfully merged all changes using operational transforms',
         changesPreview: {
           before: conflict.operations,
           after: mergedOperations,
@@ -467,14 +440,14 @@ export class ConflictResolver {
   }
 
   private async threeWayMergeStrategy(
-    conflict: CollaborationConflict,
+    conflict: CollaborationConflict
   ): Promise<ConflictResolution> {
     // Simplified three-way merge - in production, would need access to history
     // to find common ancestor state
     return {
       success: false,
       requiresManualReview: true,
-      explanation: "Three-way merge requires historical state information",
+      explanation: 'Three-way merge requires historical state information',
       changesPreview: {
         before: conflict.operations,
         after: conflict.operations,
@@ -484,12 +457,12 @@ export class ConflictResolver {
   }
 
   private async manualResolutionStrategy(
-    conflict: CollaborationConflict,
+    conflict: CollaborationConflict
   ): Promise<ConflictResolution> {
     return {
       success: false,
       requiresManualReview: true,
-      explanation: "This conflict requires manual review and resolution",
+      explanation: 'This conflict requires manual review and resolution',
       changesPreview: {
         before: conflict.operations,
         after: conflict.operations,
@@ -500,22 +473,22 @@ export class ConflictResolver {
 
   private async applyManualResolution(
     conflict: CollaborationConflict,
-    manualResolution: any,
+    manualResolution: any
   ): Promise<ConflictResolution> {
     // Apply user's manual resolution choices
     const resolvedOperation = conflict.operations.find(
-      (op) => op.id === manualResolution.chosenOperationId,
+      (op) => op.id === manualResolution.chosenOperationId
     );
 
     if (!resolvedOperation) {
-      throw new Error("Invalid manual resolution: operation not found");
+      throw new Error('Invalid manual resolution: operation not found');
     }
 
     return {
       success: true,
       resolvedOperation,
       requiresManualReview: false,
-      explanation: "Applied manual resolution choice",
+      explanation: 'Applied manual resolution choice',
       changesPreview: {
         before: conflict.operations,
         after: [resolvedOperation],

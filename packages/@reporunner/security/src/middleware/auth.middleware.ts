@@ -1,7 +1,7 @@
-import { Request, Response, NextFunction } from "express";
+import { ERROR_CODES } from '@reporunner/constants';
+import type { NextFunction, Request, Response } from 'express';
 // Removed unused JwtPayload import
-import { JWTSessionManager } from "../jwt-session";
-import { ERROR_CODES } from "@reporunner/constants";
+import type { JWTSessionManager } from '../jwt-session';
 
 // Extend Express Request type
 declare global {
@@ -37,14 +37,14 @@ export interface AuthMiddlewareOptions {
  */
 export function createAuthMiddleware(
   sessionManager: JWTSessionManager,
-  options: AuthMiddlewareOptions = {},
+  options: AuthMiddlewareOptions = {}
 ) {
   const {
     required = true,
     roles = [],
     permissions = [],
     skipPaths = [],
-    cookieName = "access_token",
+    cookieName = 'access_token',
     extractFromCookie = false,
   } = options;
 
@@ -56,9 +56,7 @@ export function createAuthMiddleware(
       }
 
       // Extract token from request
-      let token = sessionManager.extractTokenFromHeader(
-        req.headers.authorization as string,
-      );
+      let token = sessionManager.extractTokenFromHeader(req.headers.authorization as string);
 
       // Try cookie if enabled and no header token
       if (!token && extractFromCookie && req.cookies) {
@@ -76,7 +74,7 @@ export function createAuthMiddleware(
             success: false,
             error: {
               code: ERROR_CODES.UNAUTHORIZED,
-              message: "No authentication token provided",
+              message: 'No authentication token provided',
             },
           });
         }
@@ -87,12 +85,12 @@ export function createAuthMiddleware(
       const decoded = sessionManager.verifyToken(token, false);
 
       // Check if it's an access token
-      if (decoded.type !== "access") {
+      if (decoded.type !== 'access') {
         return res.status(401).json({
           success: false,
           error: {
             code: ERROR_CODES.UNAUTHORIZED,
-            message: "Invalid token type",
+            message: 'Invalid token type',
           },
         });
       }
@@ -108,29 +106,23 @@ export function createAuthMiddleware(
       };
 
       // Check role requirements
-      if (
-        roles.length > 0 &&
-        !roles.some((role) => user.roles?.includes(role))
-      ) {
+      if (roles.length > 0 && !roles.some((role) => user.roles?.includes(role))) {
         return res.status(403).json({
           success: false,
           error: {
             code: ERROR_CODES.FORBIDDEN,
-            message: "Insufficient role privileges",
+            message: 'Insufficient role privileges',
           },
         });
       }
 
       // Check permission requirements
-      if (
-        permissions.length > 0 &&
-        !permissions.some((perm) => user.permissions?.includes(perm))
-      ) {
+      if (permissions.length > 0 && !permissions.some((perm) => user.permissions?.includes(perm))) {
         return res.status(403).json({
           success: false,
           error: {
             code: ERROR_CODES.FORBIDDEN,
-            message: "Insufficient permissions",
+            message: 'Insufficient permissions',
           },
         });
       }
@@ -142,20 +134,20 @@ export function createAuthMiddleware(
 
       next();
     } catch (error: any) {
-      if (error.message === "Token has expired") {
+      if (error.message === 'Token has expired') {
         return res.status(401).json({
           success: false,
           error: {
             code: ERROR_CODES.TOKEN_EXPIRED,
-            message: "Access token has expired",
+            message: 'Access token has expired',
           },
         });
-      } else if (error.message === "Token has been revoked") {
+      } else if (error.message === 'Token has been revoked') {
         return res.status(401).json({
           success: false,
           error: {
             code: ERROR_CODES.TOKEN_REVOKED,
-            message: "Access token has been revoked",
+            message: 'Access token has been revoked',
           },
         });
       }
@@ -164,7 +156,7 @@ export function createAuthMiddleware(
         success: false,
         error: {
           code: ERROR_CODES.UNAUTHORIZED,
-          message: "Invalid authentication token",
+          message: 'Invalid authentication token',
         },
       });
     }
@@ -174,9 +166,7 @@ export function createAuthMiddleware(
 /**
  * Create refresh token middleware
  */
-export function createRefreshTokenMiddleware(
-  sessionManager: JWTSessionManager,
-) {
+export function createRefreshTokenMiddleware(sessionManager: JWTSessionManager) {
   return async (req: Request, res: Response) => {
     try {
       const refreshToken = req.body.refreshToken || req.cookies?.refresh_token;
@@ -186,37 +176,32 @@ export function createRefreshTokenMiddleware(
           success: false,
           error: {
             code: ERROR_CODES.BAD_REQUEST,
-            message: "Refresh token is required",
+            message: 'Refresh token is required',
           },
         });
       }
 
       // Get IP and user agent for tracking
       const ipAddress =
-        (req.headers["x-forwarded-for"] as string)?.split(",")[0] ||
-        req.socket.remoteAddress;
-      const userAgent = req.headers["user-agent"];
+        (req.headers['x-forwarded-for'] as string)?.split(',')[0] || req.socket.remoteAddress;
+      const userAgent = req.headers['user-agent'];
 
       // Refresh the token
-      const tokens = await sessionManager.refreshAccessToken(
-        refreshToken,
-        ipAddress,
-        userAgent,
-      );
+      const tokens = await sessionManager.refreshAccessToken(refreshToken, ipAddress, userAgent);
 
       // Set cookies if enabled
       if (req.cookies) {
-        res.cookie("access_token", tokens.accessToken, {
+        res.cookie('access_token', tokens.accessToken, {
           httpOnly: true,
-          secure: process.env.NODE_ENV === "production",
-          sameSite: "strict",
+          secure: process.env.NODE_ENV === 'production',
+          sameSite: 'strict',
           maxAge: 15 * 60 * 1000, // 15 minutes
         });
 
-        res.cookie("refresh_token", tokens.refreshToken, {
+        res.cookie('refresh_token', tokens.refreshToken, {
           httpOnly: true,
-          secure: process.env.NODE_ENV === "production",
-          sameSite: "strict",
+          secure: process.env.NODE_ENV === 'production',
+          sameSite: 'strict',
           maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
         });
       }
@@ -250,7 +235,7 @@ export function createLogoutMiddleware(sessionManager: JWTSessionManager) {
           success: false,
           error: {
             code: ERROR_CODES.UNAUTHORIZED,
-            message: "Not authenticated",
+            message: 'Not authenticated',
           },
         });
       }
@@ -268,22 +253,20 @@ export function createLogoutMiddleware(sessionManager: JWTSessionManager) {
 
       // Clear cookies
       if (req.cookies) {
-        res.clearCookie("access_token");
-        res.clearCookie("refresh_token");
+        res.clearCookie('access_token');
+        res.clearCookie('refresh_token');
       }
 
       return res.json({
         success: true,
-        message: logoutAll
-          ? "All sessions have been terminated"
-          : "Logged out successfully",
+        message: logoutAll ? 'All sessions have been terminated' : 'Logged out successfully',
       });
     } catch (error: any) {
       return res.status(500).json({
         success: false,
         error: {
           code: ERROR_CODES.INTERNAL_ERROR,
-          message: "Failed to logout",
+          message: 'Failed to logout',
         },
       });
     }
@@ -293,9 +276,7 @@ export function createLogoutMiddleware(sessionManager: JWTSessionManager) {
 /**
  * Create session management middleware
  */
-export function createSessionManagementMiddleware(
-  sessionManager: JWTSessionManager,
-) {
+export function createSessionManagementMiddleware(sessionManager: JWTSessionManager) {
   return {
     // Get all user sessions
     getSessions: async (req: Request, res: Response) => {
@@ -304,7 +285,7 @@ export function createSessionManagementMiddleware(
           success: false,
           error: {
             code: ERROR_CODES.UNAUTHORIZED,
-            message: "Not authenticated",
+            message: 'Not authenticated',
           },
         });
       }
@@ -333,7 +314,7 @@ export function createSessionManagementMiddleware(
           success: false,
           error: {
             code: ERROR_CODES.UNAUTHORIZED,
-            message: "Not authenticated",
+            message: 'Not authenticated',
           },
         });
       }
@@ -347,7 +328,7 @@ export function createSessionManagementMiddleware(
           success: false,
           error: {
             code: ERROR_CODES.FORBIDDEN,
-            message: "Cannot revoke session that does not belong to you",
+            message: 'Cannot revoke session that does not belong to you',
           },
         });
       }
@@ -356,7 +337,7 @@ export function createSessionManagementMiddleware(
 
       return res.json({
         success: true,
-        message: "Session revoked successfully",
+        message: 'Session revoked successfully',
       });
     },
   };
@@ -372,21 +353,18 @@ export function requireRole(...requiredRoles: string[]) {
         success: false,
         error: {
           code: ERROR_CODES.UNAUTHORIZED,
-          message: "Authentication required",
+          message: 'Authentication required',
         },
       });
       return;
     }
 
-    if (
-      !req.user.roles ||
-      !requiredRoles.some((role) => req.user!.roles!.includes(role))
-    ) {
+    if (!req.user.roles || !requiredRoles.some((role) => req.user!.roles!.includes(role))) {
       res.status(403).json({
         success: false,
         error: {
           code: ERROR_CODES.FORBIDDEN,
-          message: `One of the following roles is required: ${requiredRoles.join(", ")}`,
+          message: `One of the following roles is required: ${requiredRoles.join(', ')}`,
         },
       });
       return;
@@ -406,7 +384,7 @@ export function requirePermission(...requiredPermissions: string[]) {
         success: false,
         error: {
           code: ERROR_CODES.UNAUTHORIZED,
-          message: "Authentication required",
+          message: 'Authentication required',
         },
       });
       return;
@@ -420,7 +398,7 @@ export function requirePermission(...requiredPermissions: string[]) {
         success: false,
         error: {
           code: ERROR_CODES.FORBIDDEN,
-          message: `One of the following permissions is required: ${requiredPermissions.join(", ")}`,
+          message: `One of the following permissions is required: ${requiredPermissions.join(', ')}`,
         },
       });
       return;

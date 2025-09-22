@@ -5,49 +5,50 @@
  * and quick workflow creation from pre-built templates.
  */
 
-import React, { useState, useEffect } from "react";
 import {
+  AppstoreOutlined,
+  BranchesOutlined,
+  ClockCircleOutlined,
+  DownloadOutlined,
+  EyeOutlined,
+  HeartFilled,
+  HeartOutlined,
+  InfoCircleOutlined,
+  OrderedListOutlined,
+  StarOutlined,
+  ThunderboltOutlined,
+} from '@ant-design/icons';
+import {
+  Avatar,
   Button,
   Card,
+  Col,
+  Empty,
   Input,
-  Select,
-  Tabs,
-  Tag,
-  Space,
+  List,
   Modal,
   message,
-  List,
-  Rate,
-  Typography,
-  Avatar,
   Progress,
+  Rate,
   Row,
-  Col,
+  Select,
+  Space,
   Statistic,
-  Empty,
-} from "antd";
+  Tabs,
+  Tag,
+  Typography,
+} from 'antd';
+import type React from 'react';
+import { useEffect, useState } from 'react';
 import {
-  HeartOutlined,
-  HeartFilled,
-  ClockCircleOutlined,
-  StarOutlined,
-  EyeOutlined,
-  DownloadOutlined,
-  InfoCircleOutlined,
-  AppstoreOutlined,
-  OrderedListOutlined,
-  ThunderboltOutlined,
-  BranchesOutlined,
-} from "@ant-design/icons";
-import { cn } from "@/design-system/utils";
-import { colors } from "@/design-system/tokens";
-import {
-  workflowTemplates,
-  type WorkflowTemplate,
-  type TemplateCategory,
   type AutomationPattern,
-} from "@/core/services/workflowTemplates";
-import { useLeanWorkflowStore } from "@/core/stores/leanWorkflowStore";
+  type TemplateCategory,
+  type WorkflowTemplate,
+  workflowTemplates,
+} from '@/core/services/workflowTemplates';
+import { useLeanWorkflowStore } from '@/core/stores/leanWorkflowStore';
+import { colors } from '@/design-system/tokens';
+import { cn } from '@/design-system/utils';
 
 const { TabPane } = Tabs;
 const { Option } = Select;
@@ -58,10 +59,7 @@ const { Meta } = Card;
 interface WorkflowTemplatesPanelProps {
   visible: boolean;
   onClose: () => void;
-  onCreateFromTemplate: (
-    templateId: string,
-    variables?: Record<string, any>,
-  ) => void;
+  onCreateFromTemplate: (templateId: string, variables?: Record<string, any>) => void;
 }
 
 export const WorkflowTemplatesPanel: React.FC<WorkflowTemplatesPanelProps> = ({
@@ -72,21 +70,14 @@ export const WorkflowTemplatesPanel: React.FC<WorkflowTemplatesPanelProps> = ({
   const { importWorkflow } = useLeanWorkflowStore();
   const [templates, setTemplates] = useState<WorkflowTemplate[]>([]);
   const [patterns, setPatterns] = useState<AutomationPattern[]>([]);
-  const [filteredTemplates, setFilteredTemplates] = useState<
-    WorkflowTemplate[]
-  >([]);
-  const [selectedCategory, setSelectedCategory] = useState<
-    TemplateCategory | "all"
-  >("all");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedTemplate, setSelectedTemplate] =
-    useState<WorkflowTemplate | null>(null);
+  const [filteredTemplates, setFilteredTemplates] = useState<WorkflowTemplate[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<TemplateCategory | 'all'>('all');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedTemplate, setSelectedTemplate] = useState<WorkflowTemplate | null>(null);
   const [templateModalVisible, setTemplateModalVisible] = useState(false);
-  const [activeTab, setActiveTab] = useState("browse");
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
-  const [sortBy, setSortBy] = useState<"name" | "rating" | "usage" | "recent">(
-    "rating",
-  );
+  const [activeTab, setActiveTab] = useState('browse');
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [sortBy, setSortBy] = useState<'name' | 'rating' | 'usage' | 'recent'>('rating');
 
   useEffect(() => {
     if (visible) {
@@ -110,35 +101,30 @@ export const WorkflowTemplatesPanel: React.FC<WorkflowTemplatesPanelProps> = ({
     let filtered = [...templates];
 
     // Category filter
-    if (selectedCategory !== "all") {
-      filtered = filtered.filter(
-        (template) => template.category === selectedCategory,
-      );
+    if (selectedCategory !== 'all') {
+      filtered = filtered.filter((template) => template.category === selectedCategory);
     }
 
     // Search filter
     if (searchQuery) {
       filtered = workflowTemplates.searchTemplates(searchQuery);
-      if (selectedCategory !== "all") {
-        filtered = filtered.filter(
-          (template) => template.category === selectedCategory,
-        );
+      if (selectedCategory !== 'all') {
+        filtered = filtered.filter((template) => template.category === selectedCategory);
       }
     }
 
     // Sort
     filtered.sort((a, b) => {
       switch (sortBy) {
-        case "name":
+        case 'name':
           return a.name.localeCompare(b.name);
-        case "rating":
+        case 'rating':
           return b.metadata.rating - a.metadata.rating;
-        case "usage":
+        case 'usage':
           return b.metadata.usageCount - a.metadata.usageCount;
-        case "recent":
+        case 'recent':
           return (
-            new Date(b.metadata.updatedAt).getTime() -
-            new Date(a.metadata.updatedAt).getTime()
+            new Date(b.metadata.updatedAt).getTime() - new Date(a.metadata.updatedAt).getTime()
           );
         default:
           return 0;
@@ -164,7 +150,7 @@ export const WorkflowTemplatesPanel: React.FC<WorkflowTemplatesPanelProps> = ({
         onClose();
       }
     } catch (error) {
-      message.error("Failed to create workflow from template");
+      message.error('Failed to create workflow from template');
       console.error(error);
     }
   };
@@ -175,10 +161,10 @@ export const WorkflowTemplatesPanel: React.FC<WorkflowTemplatesPanelProps> = ({
 
     if (isFavorite) {
       workflowTemplates.removeFromFavorites(templateId);
-      message.success("Removed from favorites");
+      message.success('Removed from favorites');
     } else {
       workflowTemplates.addToFavorites(templateId);
-      message.success("Added to favorites");
+      message.success('Added to favorites');
     }
 
     loadTemplatesAndPatterns(); // Refresh to update favorites
@@ -186,30 +172,30 @@ export const WorkflowTemplatesPanel: React.FC<WorkflowTemplatesPanelProps> = ({
 
   const getCategoryIcon = (category: TemplateCategory) => {
     const iconMap = {
-      communication: "💬",
-      "data-processing": "📊",
-      automation: "🤖",
-      "ai-ml": "🧠",
-      business: "💼",
-      development: "⚙️",
-      monitoring: "📈",
-      integration: "🔗",
-      "social-media": "📱",
-      ecommerce: "🛒",
+      communication: '💬',
+      'data-processing': '📊',
+      automation: '🤖',
+      'ai-ml': '🧠',
+      business: '💼',
+      development: '⚙️',
+      monitoring: '📈',
+      integration: '🔗',
+      'social-media': '📱',
+      ecommerce: '🛒',
     };
-    return iconMap[category] || "📄";
+    return iconMap[category] || '📄';
   };
 
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
-      case "beginner":
-        return "green";
-      case "intermediate":
-        return "orange";
-      case "advanced":
-        return "red";
+      case 'beginner':
+        return 'green';
+      case 'intermediate':
+        return 'orange';
+      case 'advanced':
+        return 'red';
       default:
-        return "default";
+        return 'default';
     }
   };
 
@@ -217,7 +203,7 @@ export const WorkflowTemplatesPanel: React.FC<WorkflowTemplatesPanelProps> = ({
     const favorites = workflowTemplates.getFavoriteTemplates();
     const isFavorite = favorites.some((t) => t.id === template.id);
 
-    if (viewMode === "list") {
+    if (viewMode === 'list') {
       return (
         <List.Item
           key={template.id}
@@ -252,9 +238,7 @@ export const WorkflowTemplatesPanel: React.FC<WorkflowTemplatesPanelProps> = ({
             title={
               <Space>
                 {template.name}
-                <Tag color={getDifficultyColor(template.difficulty)}>
-                  {template.difficulty}
-                </Tag>
+                <Tag color={getDifficultyColor(template.difficulty)}>{template.difficulty}</Tag>
                 <Rate disabled defaultValue={template.metadata.rating} />
               </Space>
             }
@@ -314,18 +298,14 @@ export const WorkflowTemplatesPanel: React.FC<WorkflowTemplatesPanelProps> = ({
             <Space direction="vertical" size="small">
               <Text strong>{template.name}</Text>
               <Space>
-                <Tag color={getDifficultyColor(template.difficulty)}>
-                  {template.difficulty}
-                </Tag>
+                <Tag color={getDifficultyColor(template.difficulty)}>{template.difficulty}</Tag>
                 <Rate disabled defaultValue={template.metadata.rating} />
               </Space>
             </Space>
           }
           description={
             <Space direction="vertical" size="small">
-              <Text ellipsis={{ tooltip: template.description }}>
-                {template.description}
-              </Text>
+              <Text ellipsis={{ tooltip: template.description }}>{template.description}</Text>
               <Space>
                 <Text type="secondary">
                   <ClockCircleOutlined /> {template.estimatedSetupTime} min
@@ -367,7 +347,7 @@ export const WorkflowTemplatesPanel: React.FC<WorkflowTemplatesPanelProps> = ({
         ]}
         width={800}
       >
-        <Space direction="vertical" size="large" style={{ width: "100%" }}>
+        <Space direction="vertical" size="large" style={{ width: '100%' }}>
           <div>
             <Paragraph>{selectedTemplate.description}</Paragraph>
             <Space wrap>
@@ -406,26 +386,22 @@ export const WorkflowTemplatesPanel: React.FC<WorkflowTemplatesPanelProps> = ({
           <div>
             <Title level={5}>Required Integrations</Title>
             <Space wrap>
-              {selectedTemplate.configuration.requiredIntegrations.map(
-                (integration) => (
-                  <Tag key={integration} color="blue">
-                    {integration}
-                  </Tag>
-                ),
-              )}
+              {selectedTemplate.configuration.requiredIntegrations.map((integration) => (
+                <Tag key={integration} color="blue">
+                  {integration}
+                </Tag>
+              ))}
             </Space>
           </div>
 
           <div>
             <Title level={5}>Workflow Structure</Title>
             <Text>
-              {selectedTemplate.nodes.length} nodes,{" "}
-              {selectedTemplate.edges.length} connections
+              {selectedTemplate.nodes.length} nodes, {selectedTemplate.edges.length} connections
             </Text>
             {selectedTemplate.configuration.conditionalBranches > 0 && (
               <Tag color="orange" style={{ marginLeft: 8 }}>
-                <BranchesOutlined />{" "}
-                {selectedTemplate.configuration.conditionalBranches} branches
+                <BranchesOutlined /> {selectedTemplate.configuration.conditionalBranches} branches
               </Tag>
             )}
             {selectedTemplate.configuration.schedulingRequired && (
@@ -442,16 +418,14 @@ export const WorkflowTemplatesPanel: React.FC<WorkflowTemplatesPanelProps> = ({
 
           <div>
             <Title level={5}>Resource Requirements</Title>
-            <Space direction="vertical" style={{ width: "100%" }}>
+            <Space direction="vertical" style={{ width: '100%' }}>
               <div>
                 <Text>Memory: </Text>
                 <Progress
                   percent={
-                    selectedTemplate.configuration.resourceRequirements
-                      .memory === "low"
+                    selectedTemplate.configuration.resourceRequirements.memory === 'low'
                       ? 25
-                      : selectedTemplate.configuration.resourceRequirements
-                            .memory === "medium"
+                      : selectedTemplate.configuration.resourceRequirements.memory === 'medium'
                         ? 50
                         : 75
                   }
@@ -463,11 +437,9 @@ export const WorkflowTemplatesPanel: React.FC<WorkflowTemplatesPanelProps> = ({
                 <Text>CPU: </Text>
                 <Progress
                   percent={
-                    selectedTemplate.configuration.resourceRequirements.cpu ===
-                    "low"
+                    selectedTemplate.configuration.resourceRequirements.cpu === 'low'
                       ? 25
-                      : selectedTemplate.configuration.resourceRequirements
-                            .cpu === "medium"
+                      : selectedTemplate.configuration.resourceRequirements.cpu === 'medium'
                         ? 50
                         : 75
                   }
@@ -515,11 +487,11 @@ export const WorkflowTemplatesPanel: React.FC<WorkflowTemplatesPanelProps> = ({
           <List.Item.Meta
             avatar={
               <Avatar>
-                {pattern.pattern === "sequential"
-                  ? "→"
-                  : pattern.pattern === "parallel"
-                    ? "⚡"
-                    : "🔀"}
+                {pattern.pattern === 'sequential'
+                  ? '→'
+                  : pattern.pattern === 'parallel'
+                    ? '⚡'
+                    : '🔀'}
               </Avatar>
             }
             title={pattern.name}
@@ -529,18 +501,16 @@ export const WorkflowTemplatesPanel: React.FC<WorkflowTemplatesPanelProps> = ({
                 <Space>
                   <Tag
                     color={
-                      pattern.complexity === "simple"
-                        ? "green"
-                        : pattern.complexity === "moderate"
-                          ? "orange"
-                          : "red"
+                      pattern.complexity === 'simple'
+                        ? 'green'
+                        : pattern.complexity === 'moderate'
+                          ? 'orange'
+                          : 'red'
                     }
                   >
                     {pattern.complexity}
                   </Tag>
-                  <Text type="secondary">
-                    Applicable to: {pattern.applicableNodes.join(", ")}
-                  </Text>
+                  <Text type="secondary">Applicable to: {pattern.applicableNodes.join(', ')}</Text>
                 </Space>
                 <div>
                   <Text strong>Benefits: </Text>
@@ -558,20 +528,19 @@ export const WorkflowTemplatesPanel: React.FC<WorkflowTemplatesPanelProps> = ({
     />
   );
 
-  const categories: Array<{ value: TemplateCategory | "all"; label: string }> =
-    [
-      { value: "all", label: "All Categories" },
-      { value: "communication", label: "Communication" },
-      { value: "data-processing", label: "Data Processing" },
-      { value: "automation", label: "Automation" },
-      { value: "ai-ml", label: "AI & ML" },
-      { value: "business", label: "Business" },
-      { value: "development", label: "Development" },
-      { value: "monitoring", label: "Monitoring" },
-      { value: "integration", label: "Integration" },
-      { value: "social-media", label: "Social Media" },
-      { value: "ecommerce", label: "E-commerce" },
-    ];
+  const categories: Array<{ value: TemplateCategory | 'all'; label: string }> = [
+    { value: 'all', label: 'All Categories' },
+    { value: 'communication', label: 'Communication' },
+    { value: 'data-processing', label: 'Data Processing' },
+    { value: 'automation', label: 'Automation' },
+    { value: 'ai-ml', label: 'AI & ML' },
+    { value: 'business', label: 'Business' },
+    { value: 'development', label: 'Development' },
+    { value: 'monitoring', label: 'Monitoring' },
+    { value: 'integration', label: 'Integration' },
+    { value: 'social-media', label: 'Social Media' },
+    { value: 'ecommerce', label: 'E-commerce' },
+  ];
 
   return (
     <Modal
@@ -585,7 +554,7 @@ export const WorkflowTemplatesPanel: React.FC<WorkflowTemplatesPanelProps> = ({
       onCancel={onClose}
       width={1200}
       footer={null}
-      className={cn("workflow-templates-panel")}
+      className={cn('workflow-templates-panel')}
     >
       <Tabs activeKey={activeTab} onChange={setActiveTab}>
         <TabPane
@@ -597,7 +566,7 @@ export const WorkflowTemplatesPanel: React.FC<WorkflowTemplatesPanelProps> = ({
           }
           key="browse"
         >
-          <Space direction="vertical" size="middle" style={{ width: "100%" }}>
+          <Space direction="vertical" size="middle" style={{ width: '100%' }}>
             {/* Filters and Search */}
             <Row gutter={16} align="middle">
               <Col flex="auto">
@@ -605,7 +574,7 @@ export const WorkflowTemplatesPanel: React.FC<WorkflowTemplatesPanelProps> = ({
                   placeholder="Search templates..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  style={{ width: "100%" }}
+                  style={{ width: '100%' }}
                 />
               </Col>
               <Col>
@@ -622,11 +591,7 @@ export const WorkflowTemplatesPanel: React.FC<WorkflowTemplatesPanelProps> = ({
                 </Select>
               </Col>
               <Col>
-                <Select
-                  value={sortBy}
-                  onChange={setSortBy}
-                  style={{ width: 120 }}
-                >
+                <Select value={sortBy} onChange={setSortBy} style={{ width: 120 }}>
                   <Option value="rating">Rating</Option>
                   <Option value="usage">Usage</Option>
                   <Option value="name">Name</Option>
@@ -637,13 +602,13 @@ export const WorkflowTemplatesPanel: React.FC<WorkflowTemplatesPanelProps> = ({
                 <Button.Group>
                   <Button
                     icon={<AppstoreOutlined />}
-                    type={viewMode === "grid" ? "primary" : "default"}
-                    onClick={() => setViewMode("grid")}
+                    type={viewMode === 'grid' ? 'primary' : 'default'}
+                    onClick={() => setViewMode('grid')}
                   />
                   <Button
                     icon={<OrderedListOutlined />}
-                    type={viewMode === "list" ? "primary" : "default"}
-                    onClick={() => setViewMode("list")}
+                    type={viewMode === 'list' ? 'primary' : 'default'}
+                    onClick={() => setViewMode('list')}
                   />
                 </Button.Group>
               </Col>
@@ -651,11 +616,8 @@ export const WorkflowTemplatesPanel: React.FC<WorkflowTemplatesPanelProps> = ({
 
             {/* Templates Grid/List */}
             {filteredTemplates.length === 0 ? (
-              <Empty
-                description="No templates found"
-                image={Empty.PRESENTED_IMAGE_SIMPLE}
-              />
-            ) : viewMode === "grid" ? (
+              <Empty description="No templates found" image={Empty.PRESENTED_IMAGE_SIMPLE} />
+            ) : viewMode === 'grid' ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {filteredTemplates.map(renderTemplateCard)}
               </div>
@@ -696,9 +658,7 @@ export const WorkflowTemplatesPanel: React.FC<WorkflowTemplatesPanelProps> = ({
           key="recent"
         >
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {workflowTemplates
-              .getRecentlyUsedTemplates()
-              .map(renderTemplateCard)}
+            {workflowTemplates.getRecentlyUsedTemplates().map(renderTemplateCard)}
           </div>
         </TabPane>
 

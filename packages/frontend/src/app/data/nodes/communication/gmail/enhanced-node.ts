@@ -2,16 +2,16 @@
 // Gmail Unified Node - Registry Pattern Implementation
 // Complete n8n feature parity with enterprise-grade registry architecture
 
-import { UNIFIED_CATEGORIES } from "@/core/constants/categories";
-import { gmailEnhancedProperties } from "./enhanced-properties";
-import { gmailCredentials } from "./credentials";
+import { UNIFIED_CATEGORIES } from '@/core/constants/categories';
+import type { EnhancedIntegrationNodeType } from '@/core/types/dynamicProperties';
 import {
-  executeGmailTrigger,
-  executeGmailSend,
   executeGmailCreateDraft,
+  executeGmailSend,
+  executeGmailTrigger,
   testGmailConnection,
-} from "./actions";
-import { EnhancedIntegrationNodeType } from "@/core/types/dynamicProperties";
+} from './actions';
+import { gmailCredentials } from './credentials';
+import { gmailEnhancedProperties } from './enhanced-properties';
 
 /**
  * Unified Gmail Node - Enterprise Registry Pattern
@@ -25,18 +25,18 @@ import { EnhancedIntegrationNodeType } from "@/core/types/dynamicProperties";
  * - Progressive disclosure UI
  */
 export const gmailEnhancedNode: EnhancedIntegrationNodeType = {
-  id: "gmail-enhanced",
-  name: "gmail-enhanced",
-  displayName: "Gmail",
+  id: 'gmail-enhanced',
+  name: 'gmail-enhanced',
+  displayName: 'Gmail',
 
   // Hybrid node type - can be trigger OR action based on context
-  type: "hybrid" as any, // Extended type for unified nodes
+  type: 'hybrid' as any, // Extended type for unified nodes
 
   description:
-    "Unified Gmail integration with smart mode detection - automatically adapts for trigger or action use based on workflow context",
+    'Unified Gmail integration with smart mode detection - automatically adapts for trigger or action use based on workflow context',
   version: [1, 2], // Support multiple versions for compatibility
 
-  icon: "https://upload.wikimedia.org/wikipedia/commons/7/7e/Gmail_icon_%282020%29.svg",
+  icon: 'https://upload.wikimedia.org/wikipedia/commons/7/7e/Gmail_icon_%282020%29.svg',
 
   // Dynamic input/output configuration based on detected mode
   inputs: [], // Will be dynamically resolved by registry
@@ -61,59 +61,47 @@ export const gmailEnhancedNode: EnhancedIntegrationNodeType = {
     // Webhook support for real-time triggers
     webhooks: [
       {
-        name: "gmail-webhook",
-        httpMethod: "POST",
-        responseMode: "onReceived",
-        path: "/webhook/gmail/{{nodeId}}",
+        name: 'gmail-webhook',
+        httpMethod: 'POST',
+        responseMode: 'onReceived',
+        path: '/webhook/gmail/{{nodeId}}',
       },
     ],
 
     // Property groups for progressive disclosure
     groups: [
       {
-        name: "basic",
-        displayName: "Basic Configuration",
+        name: 'basic',
+        displayName: 'Basic Configuration',
         properties: gmailEnhancedProperties.filter((prop) =>
-          ["credential", "resource", "operation"].includes(prop.name),
+          ['credential', 'resource', 'operation'].includes(prop.name)
         ),
         collapsible: false,
         collapsed: false,
       },
       {
-        name: "filters",
-        displayName: "Filters & Conditions",
+        name: 'filters',
+        displayName: 'Filters & Conditions',
         properties: gmailEnhancedProperties.filter((prop) =>
-          ["event", "pollTimes", "filters"].includes(prop.name),
+          ['event', 'pollTimes', 'filters'].includes(prop.name)
         ),
         collapsible: true,
         collapsed: false,
       },
       {
-        name: "content",
-        displayName: "Message Content",
+        name: 'content',
+        displayName: 'Message Content',
         properties: gmailEnhancedProperties.filter((prop) =>
-          [
-            "sendTo",
-            "sendCc",
-            "sendBcc",
-            "subject",
-            "message",
-            "emailType",
-          ].includes(prop.name),
+          ['sendTo', 'sendCc', 'sendBcc', 'subject', 'message', 'emailType'].includes(prop.name)
         ),
         collapsible: true,
         collapsed: false,
       },
       {
-        name: "advanced",
-        displayName: "Advanced Options",
+        name: 'advanced',
+        displayName: 'Advanced Options',
         properties: gmailEnhancedProperties.filter((prop) =>
-          [
-            "simplify",
-            "downloadAttachments",
-            "maxResults",
-            "attachments",
-          ].includes(prop.name),
+          ['simplify', 'downloadAttachments', 'maxResults', 'attachments'].includes(prop.name)
         ),
         collapsible: true,
         collapsed: true,
@@ -129,13 +117,9 @@ export const gmailEnhancedNode: EnhancedIntegrationNodeType = {
 
   // UI categorization for node library
   codex: {
-    categories: [UNIFIED_CATEGORIES.COMMUNICATION, "email"],
+    categories: [UNIFIED_CATEGORIES.COMMUNICATION, 'email'],
     subcategories: {
-      [UNIFIED_CATEGORIES.COMMUNICATION]: [
-        "email",
-        "messaging",
-        "notifications",
-      ],
+      [UNIFIED_CATEGORIES.COMMUNICATION]: ['email', 'messaging', 'notifications'],
     },
   },
 
@@ -145,9 +129,9 @@ export const gmailEnhancedNode: EnhancedIntegrationNodeType = {
 
   // Enhanced visual styling for Gmail branding
   styling: {
-    backgroundColor: "#ffffff",
-    borderColor: "#ea4335",
-    fontColor: "#1f2937",
+    backgroundColor: '#ffffff',
+    borderColor: '#ea4335',
+    fontColor: '#1f2937',
   },
 };
 
@@ -156,51 +140,42 @@ export const gmailEnhancedNode: EnhancedIntegrationNodeType = {
  * Defines what this node can do in different contexts
  */
 export const gmailNodeCapabilities = {
-  id: "gmail-enhanced",
+  id: 'gmail-enhanced',
 
   // Supported operational modes
-  supportedModes: ["trigger", "action", "webhook", "poll"] as const,
+  supportedModes: ['trigger', 'action', 'webhook', 'poll'] as const,
 
   // Resource types this node can work with
-  resources: ["email", "label", "draft", "thread"],
+  resources: ['email', 'label', 'draft', 'thread'],
 
   // Operations supported per resource
   operations: {
     email: {
-      trigger: ["messageReceived"],
+      trigger: ['messageReceived'],
       action: [
-        "send",
-        "reply",
-        "forward",
-        "get",
-        "getAll",
-        "delete",
-        "markAsRead",
-        "markAsUnread",
-        "addLabels",
-        "removeLabels",
+        'send',
+        'reply',
+        'forward',
+        'get',
+        'getAll',
+        'delete',
+        'markAsRead',
+        'markAsUnread',
+        'addLabels',
+        'removeLabels',
       ],
     },
     label: {
       trigger: [],
-      action: ["create", "delete", "get", "getAll"],
+      action: ['create', 'delete', 'get', 'getAll'],
     },
     draft: {
       trigger: [],
-      action: ["create", "get", "delete", "getAll", "send"],
+      action: ['create', 'get', 'delete', 'getAll', 'send'],
     },
     thread: {
       trigger: [],
-      action: [
-        "get",
-        "getAll",
-        "reply",
-        "delete",
-        "trash",
-        "untrash",
-        "addLabels",
-        "removeLabels",
-      ],
+      action: ['get', 'getAll', 'reply', 'delete', 'trash', 'untrash', 'addLabels', 'removeLabels'],
     },
   },
 
@@ -218,7 +193,7 @@ export const gmailNodeCapabilities = {
 
   // Performance and scaling configuration
   scaling: {
-    profile: "enterprise",
+    profile: 'enterprise',
     maxConcurrentExecutions: 100,
     rateLimiting: {
       requestsPerMinute: 250, // Gmail API limits
@@ -236,8 +211,8 @@ export const gmailNodeCapabilities = {
   // Monitoring and observability
   monitoring: {
     enabled: true,
-    metrics: ["execution_time", "success_rate", "error_rate", "throughput"],
-    alerts: ["high_error_rate", "rate_limit_reached", "credential_expiry"],
+    metrics: ['execution_time', 'success_rate', 'error_rate', 'throughput'],
+    alerts: ['high_error_rate', 'rate_limit_reached', 'credential_expiry'],
   },
 };
 
@@ -247,25 +222,25 @@ export const gmailNodeCapabilities = {
 export async function executeGmailEnhanced(
   context: any, // Workflow execution context
   nodeParameters: any, // Resolved node parameters
-  credentials: any, // Node credentials
+  credentials: any // Node credentials
 ): Promise<any[]> {
   const { resource, operation } = nodeParameters;
 
-  console.log("🚀 Executing unified Gmail node:", {
+  console.log('🚀 Executing unified Gmail node:', {
     resource,
     operation,
-    mode: context.mode || "action",
+    mode: context.mode || 'action',
   });
 
   // Route execution based on resource and operation
   switch (resource) {
-    case "email":
+    case 'email':
       return executeEmailOperations(operation, nodeParameters, credentials);
-    case "label":
+    case 'label':
       return executeLabelOperations(operation, nodeParameters, credentials);
-    case "draft":
+    case 'draft':
       return executeDraftOperations(operation, nodeParameters, credentials);
-    case "thread":
+    case 'thread':
       return executeThreadOperations(operation, nodeParameters, credentials);
     default:
       throw new Error(`Unsupported Gmail resource: ${resource}`);
@@ -276,29 +251,30 @@ export async function executeGmailEnhanced(
 async function executeEmailOperations(
   operation: string,
   parameters: any,
-  credentials: any,
+  credentials: any
 ): Promise<any[]> {
   switch (operation) {
-    case "messageReceived":
+    case 'messageReceived':
       return executeGmailTrigger(parameters, credentials);
-    case "send":
+    case 'send': {
       const result = await executeGmailSend(parameters, credentials);
       return [result];
-    case "reply":
+    }
+    case 'reply':
       return executeEmailReply(parameters, credentials);
-    case "forward":
+    case 'forward':
       return executeEmailForward(parameters, credentials);
-    case "get":
+    case 'get':
       return executeEmailGet(parameters, credentials);
-    case "getAll":
+    case 'getAll':
       return executeEmailGetAll(parameters, credentials);
-    case "delete":
+    case 'delete':
       return executeEmailDelete(parameters, credentials);
-    case "markAsRead":
-    case "markAsUnread":
+    case 'markAsRead':
+    case 'markAsUnread':
       return executeEmailMarkRead(operation, parameters, credentials);
-    case "addLabels":
-    case "removeLabels":
+    case 'addLabels':
+    case 'removeLabels':
       return executeEmailLabelManagement(operation, parameters, credentials);
     default:
       throw new Error(`Unsupported email operation: ${operation}`);
@@ -308,95 +284,81 @@ async function executeEmailOperations(
 async function executeLabelOperations(
   operation: string,
   parameters: any,
-  _credentials: any,
+  _credentials: any
 ): Promise<any[]> {
   // TODO: Implement label operations
-  console.log("📋 Executing label operation:", operation);
-  return [{ operation, status: "mock_implementation", parameters }];
+  console.log('📋 Executing label operation:', operation);
+  return [{ operation, status: 'mock_implementation', parameters }];
 }
 
 async function executeDraftOperations(
   operation: string,
   parameters: any,
-  credentials: any,
+  credentials: any
 ): Promise<any[]> {
   switch (operation) {
-    case "create":
+    case 'create': {
       const result = await executeGmailCreateDraft(parameters, credentials);
       return [result];
+    }
     default:
-      console.log("📝 Executing draft operation:", operation);
-      return [{ operation, status: "mock_implementation", parameters }];
+      console.log('📝 Executing draft operation:', operation);
+      return [{ operation, status: 'mock_implementation', parameters }];
   }
 }
 
 async function executeThreadOperations(
   operation: string,
   parameters: any,
-  _credentials: any,
+  _credentials: any
 ): Promise<any[]> {
   // TODO: Implement thread operations
-  console.log("🧵 Executing thread operation:", operation);
-  return [{ operation, status: "mock_implementation", parameters }];
+  console.log('🧵 Executing thread operation:', operation);
+  return [{ operation, status: 'mock_implementation', parameters }];
 }
 
 // Mock implementations for new email operations (to be implemented)
-async function executeEmailReply(
-  _parameters: any,
-  _credentials: any,
-): Promise<any[]> {
-  console.log("↩️ Mock: Email reply operation");
-  return [{ operation: "reply", status: "mock_implementation" }];
+async function executeEmailReply(_parameters: any, _credentials: any): Promise<any[]> {
+  console.log('↩️ Mock: Email reply operation');
+  return [{ operation: 'reply', status: 'mock_implementation' }];
 }
 
-async function executeEmailForward(
-  _parameters: any,
-  _credentials: any,
-): Promise<any[]> {
-  console.log("➡️ Mock: Email forward operation");
-  return [{ operation: "forward", status: "mock_implementation" }];
+async function executeEmailForward(_parameters: any, _credentials: any): Promise<any[]> {
+  console.log('➡️ Mock: Email forward operation');
+  return [{ operation: 'forward', status: 'mock_implementation' }];
 }
 
-async function executeEmailGet(
-  _parameters: any,
-  _credentials: any,
-): Promise<any[]> {
-  console.log("📧 Mock: Email get operation");
-  return [{ operation: "get", status: "mock_implementation" }];
+async function executeEmailGet(_parameters: any, _credentials: any): Promise<any[]> {
+  console.log('📧 Mock: Email get operation');
+  return [{ operation: 'get', status: 'mock_implementation' }];
 }
 
-async function executeEmailGetAll(
-  _parameters: any,
-  _credentials: any,
-): Promise<any[]> {
-  console.log("📬 Mock: Email getAll operation");
-  return [{ operation: "getAll", status: "mock_implementation" }];
+async function executeEmailGetAll(_parameters: any, _credentials: any): Promise<any[]> {
+  console.log('📬 Mock: Email getAll operation');
+  return [{ operation: 'getAll', status: 'mock_implementation' }];
 }
 
-async function executeEmailDelete(
-  _parameters: any,
-  _credentials: any,
-): Promise<any[]> {
-  console.log("🗑️ Mock: Email delete operation");
-  return [{ operation: "delete", status: "mock_implementation" }];
+async function executeEmailDelete(_parameters: any, _credentials: any): Promise<any[]> {
+  console.log('🗑️ Mock: Email delete operation');
+  return [{ operation: 'delete', status: 'mock_implementation' }];
 }
 
 async function executeEmailMarkRead(
   operation: string,
   _parameters: any,
-  _credentials: any,
+  _credentials: any
 ): Promise<any[]> {
   console.log(`👁️ Mock: Email ${operation} operation`);
-  return [{ operation, status: "mock_implementation" }];
+  return [{ operation, status: 'mock_implementation' }];
 }
 
 async function executeEmailLabelManagement(
   operation: string,
   _parameters: any,
-  _credentials: any,
+  _credentials: any
 ): Promise<any[]> {
   console.log(`🏷️ Mock: Email ${operation} operation`);
-  return [{ operation, status: "mock_implementation" }];
+  return [{ operation, status: 'mock_implementation' }];
 }
 
 /**
@@ -404,7 +366,7 @@ async function executeEmailLabelManagement(
  */
 export async function testGmailEnhancedConnection(
   credentials: any,
-  parameters?: any,
+  parameters?: any
 ): Promise<{ success: boolean; message: string; data?: any }> {
   try {
     // Test basic Gmail connection
@@ -421,7 +383,7 @@ export async function testGmailEnhancedConnection(
 
     return {
       success: true,
-      message: "Gmail unified node connection successful",
+      message: 'Gmail unified node connection successful',
       data: {
         nodeVersion: gmailEnhancedNode.version,
         capabilities: Object.keys(gmailNodeCapabilities.operations),

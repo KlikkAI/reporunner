@@ -1,11 +1,11 @@
-import { EventEmitter } from "events";
-import express, { Express, Request, Response } from "express";
-import { Server } from "http";
-import {
+import { EventEmitter } from 'events';
+import express, { type Express, type Request, type Response } from 'express';
+import type { Server } from 'http';
+import type {
   BaseIntegration,
   IntegrationConfig,
   IntegrationContext,
-} from "../core/base-integration";
+} from '../core/base-integration';
 
 export interface MockServerConfig {
   port?: number;
@@ -44,8 +44,8 @@ export class MockServer extends EventEmitter {
     super();
     this.config = {
       port: config.port || 3333,
-      host: config.host || "localhost",
-      basePath: config.basePath || "",
+      host: config.host || 'localhost',
+      basePath: config.basePath || '',
       responseDelay: config.responseDelay || 0,
       errorRate: config.errorRate || 0,
       logRequests: config.logRequests !== false,
@@ -76,7 +76,7 @@ export class MockServer extends EventEmitter {
         };
 
         this.requestLogs.push(log);
-        this.emit("request:logged", log);
+        this.emit('request:logged', log);
 
         next();
       });
@@ -86,7 +86,7 @@ export class MockServer extends EventEmitter {
     if (this.config.errorRate && this.config.errorRate > 0) {
       this.app.use((req: Request, res: Response, next) => {
         if (Math.random() < this.config.errorRate!) {
-          return res.status(500).json({ error: "Simulated server error" });
+          return res.status(500).json({ error: 'Simulated server error' });
         }
         next();
       });
@@ -104,7 +104,7 @@ export class MockServer extends EventEmitter {
    * Setup routes
    */
   private setupRoutes(): void {
-    this.app.all("*", (req: Request, res: Response) => {
+    this.app.all('*', (req: Request, res: Response) => {
       const key = `${req.method}:${req.path}`;
       const mockResponse = this.responses.get(key);
 
@@ -124,7 +124,7 @@ export class MockServer extends EventEmitter {
           res.status(mockResponse.status).json(mockResponse.body);
         }, delay);
       } else {
-        res.status(404).json({ error: "Mock response not configured" });
+        res.status(404).json({ error: 'Mock response not configured' });
       }
     });
   }
@@ -136,7 +136,7 @@ export class MockServer extends EventEmitter {
     const key = `${method.toUpperCase()}:${path}`;
     this.responses.set(key, response);
 
-    this.emit("response:set", { method, path, response });
+    this.emit('response:set', { method, path, response });
   }
 
   /**
@@ -150,14 +150,14 @@ export class MockServer extends EventEmitter {
     return new Promise((resolve, reject) => {
       this.server = this.app.listen(this.config.port, this.config.host!, () => {
         this.isRunning = true;
-        this.emit("server:started", {
+        this.emit('server:started', {
           host: this.config.host,
           port: this.config.port,
         });
         resolve();
       });
 
-      this.server.on("error", (error) => {
+      this.server.on('error', (error) => {
         this.isRunning = false;
         reject(error);
       });
@@ -175,7 +175,7 @@ export class MockServer extends EventEmitter {
     return new Promise((resolve) => {
       this.server!.close(() => {
         this.isRunning = false;
-        this.emit("server:stopped");
+        this.emit('server:stopped');
         resolve();
       });
     });
@@ -243,7 +243,7 @@ export class IntegrationTester extends EventEmitter {
     integrationName: string,
     IntegrationClass: typeof BaseIntegration,
     config: IntegrationConfig,
-    useMockServer: boolean = true,
+    useMockServer: boolean = true
   ): IntegrationTestHarness {
     // Create mock server if needed
     let mockServer: MockServer | undefined;
@@ -252,15 +252,13 @@ export class IntegrationTester extends EventEmitter {
     }
 
     // Create integration instance
-    const integration = new (IntegrationClass as any)(
-      config,
-    ) as BaseIntegration;
+    const integration = new (IntegrationClass as any)(config) as BaseIntegration;
 
     // Create test context
     const context: IntegrationContext = {
-      userId: "test-user",
-      workspaceId: "test-workspace",
-      environment: "test",
+      userId: 'test-user',
+      workspaceId: 'test-workspace',
+      environment: 'test',
       settings: {},
     };
 
@@ -273,7 +271,7 @@ export class IntegrationTester extends EventEmitter {
 
     this.harnesses.set(integrationName, harness);
 
-    this.emit("harness:created", { integrationName });
+    this.emit('harness:created', { integrationName });
 
     return harness;
   }
@@ -284,7 +282,7 @@ export class IntegrationTester extends EventEmitter {
   async runTest(
     integrationName: string,
     testName: string,
-    testFn: (harness: IntegrationTestHarness) => Promise<void>,
+    testFn: (harness: IntegrationTestHarness) => Promise<void>
   ): Promise<TestAssertion> {
     const harness = this.harnesses.get(integrationName);
     if (!harness) {
@@ -310,7 +308,7 @@ export class IntegrationTester extends EventEmitter {
       await testFn(harness);
 
       assertion.passed = true;
-      assertion.message = "Test passed successfully";
+      assertion.message = 'Test passed successfully';
     } catch (error: any) {
       assertion.passed = false;
       assertion.message = error.message;
@@ -329,7 +327,7 @@ export class IntegrationTester extends EventEmitter {
 
     harness.assertions.push(assertion);
 
-    this.emit("test:completed", {
+    this.emit('test:completed', {
       integrationName,
       testName,
       assertion,
@@ -346,7 +344,7 @@ export class IntegrationTester extends EventEmitter {
     tests: Array<{
       name: string;
       fn: (harness: IntegrationTestHarness) => Promise<void>;
-    }>,
+    }>
   ): Promise<{ passed: number; failed: number; assertions: TestAssertion[] }> {
     const results: TestAssertion[] = [];
     let passed = 0;
@@ -363,7 +361,7 @@ export class IntegrationTester extends EventEmitter {
       }
     }
 
-    this.emit("suite:completed", {
+    this.emit('suite:completed', {
       integrationName,
       passed,
       failed,
@@ -424,7 +422,7 @@ export class IntegrationTester extends EventEmitter {
   async assertThrows(
     fn: () => Promise<any>,
     expectedError?: string | RegExp,
-    message?: string,
+    message?: string
   ): Promise<void> {
     let thrown = false;
     let error: any;
@@ -437,24 +435,22 @@ export class IntegrationTester extends EventEmitter {
     }
 
     if (!thrown) {
-      throw new Error(message || "Expected function to throw");
+      throw new Error(message || 'Expected function to throw');
     }
 
     if (expectedError) {
-      const errorMessage = error?.message || "";
+      const errorMessage = error?.message || '';
 
-      if (typeof expectedError === "string") {
+      if (typeof expectedError === 'string') {
         if (!errorMessage.includes(expectedError)) {
           throw new Error(
-            message ||
-              `Expected error to contain "${expectedError}" but got "${errorMessage}"`,
+            message || `Expected error to contain "${expectedError}" but got "${errorMessage}"`
           );
         }
       } else if (expectedError instanceof RegExp) {
         if (!expectedError.test(errorMessage)) {
           throw new Error(
-            message ||
-              `Expected error to match ${expectedError} but got "${errorMessage}"`,
+            message || `Expected error to match ${expectedError} but got "${errorMessage}"`
           );
         }
       }

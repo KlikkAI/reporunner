@@ -1,17 +1,17 @@
-import type { EnhancedIntegrationNodeType } from "@/core/nodes/types";
-import { mlPipelineProperties } from "./properties";
-import { mlPipelineCredentials } from "./credentials";
-import { mlPipelineActions } from "./actions";
+import type { EnhancedIntegrationNodeType } from '@/core/nodes/types';
+import { mlPipelineActions } from './actions';
+import { mlPipelineCredentials } from './credentials';
+import { mlPipelineProperties } from './properties';
 
 export const mlPipelineNode: EnhancedIntegrationNodeType = {
-  id: "ml-pipeline",
-  name: "ML Pipeline Orchestrator",
+  id: 'ml-pipeline',
+  name: 'ML Pipeline Orchestrator',
   description:
-    "Orchestrate end-to-end machine learning pipelines with data preprocessing, training, validation, and deployment",
-  type: "ai-agent",
-  category: "AI/ML",
-  subcategory: "MLOps",
-  icon: "🔄",
+    'Orchestrate end-to-end machine learning pipelines with data preprocessing, training, validation, and deployment',
+  type: 'ai-agent',
+  category: 'AI/ML',
+  subcategory: 'MLOps',
+  icon: '🔄',
   configuration: {
     properties: mlPipelineProperties,
     credentials: mlPipelineCredentials,
@@ -22,51 +22,51 @@ export const mlPipelineNode: EnhancedIntegrationNodeType = {
   },
   inputs: [
     {
-      name: "main",
-      type: "main",
-      displayName: "Raw Data",
+      name: 'main',
+      type: 'main',
+      displayName: 'Raw Data',
       required: true,
     },
     {
-      name: "model",
-      type: "ai_model",
-      displayName: "Pre-trained Model",
+      name: 'model',
+      type: 'ai_model',
+      displayName: 'Pre-trained Model',
       required: false,
     },
     {
-      name: "config",
-      type: "main",
-      displayName: "Pipeline Config",
+      name: 'config',
+      type: 'main',
+      displayName: 'Pipeline Config',
       required: false,
     },
   ],
   outputs: [
     {
-      name: "results",
-      type: "main",
-      displayName: "Pipeline Results",
+      name: 'results',
+      type: 'main',
+      displayName: 'Pipeline Results',
     },
     {
-      name: "model",
-      type: "ai_model",
-      displayName: "Trained Model",
+      name: 'model',
+      type: 'ai_model',
+      displayName: 'Trained Model',
     },
     {
-      name: "deployment",
-      type: "main",
-      displayName: "Deployment Info",
+      name: 'deployment',
+      type: 'main',
+      displayName: 'Deployment Info',
     },
     {
-      name: "metrics",
-      type: "main",
-      displayName: "Pipeline Metrics",
+      name: 'metrics',
+      type: 'main',
+      displayName: 'Pipeline Metrics',
     },
   ],
   codex: {
-    categories: ["AI/ML", "MLOps", "Pipelines"],
+    categories: ['AI/ML', 'MLOps', 'Pipelines'],
     subcategories: {
-      "AI/ML": ["Pipelines", "Automation", "Orchestration"],
-      MLOps: ["CI/CD", "Deployment", "Monitoring"],
+      'AI/ML': ['Pipelines', 'Automation', 'Orchestration'],
+      MLOps: ['CI/CD', 'Deployment', 'Monitoring'],
     },
   },
   ...mlPipelineActions,

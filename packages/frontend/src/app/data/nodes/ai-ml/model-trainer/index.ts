@@ -1,4 +1,4 @@
-export { modelTrainerNode } from "./node";
-export { modelTrainerProperties } from "./properties";
-export { modelTrainerCredentials } from "./credentials";
-export { modelTrainerActions } from "./actions";
+export { modelTrainerActions } from './actions';
+export { modelTrainerCredentials } from './credentials';
+export { modelTrainerNode } from './node';
+export { modelTrainerProperties } from './properties';

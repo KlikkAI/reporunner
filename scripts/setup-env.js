@@ -21,7 +21,7 @@ if (fs.existsSync(rootEnvExample) && !fs.existsSync(rootEnv)) {
 }
 
 // Setup package-specific .env files
-packages.forEach(pkg => {
+packages.forEach((pkg) => {
   const examplePath = `packages/${pkg}/.env.example`;
   const envPath = `packages/${pkg}/.env`;
 

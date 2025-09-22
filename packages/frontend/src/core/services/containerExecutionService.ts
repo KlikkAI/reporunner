@@ -5,12 +5,12 @@
  * loops, parallel processing, conditionals, try-catch, and batch operations.
  */
 
-import { performanceMonitor } from "./performanceMonitor";
 import type {
-  ContainerNodeConfig,
   ContainerExecutionState,
   ContainerMetrics,
-} from "@/core/types/containerNodes";
+  ContainerNodeConfig,
+} from '@/core/types/containerNodes';
+import { performanceMonitor } from './performanceMonitor';
 
 export interface ContainerExecutionContext {
   containerId: string;
@@ -31,9 +31,7 @@ export interface ContainerExecutionResult {
 
 export class ContainerExecutionService {
   private activeExecutions = new Map<string, ContainerExecutionState>();
-  private executionListeners = new Set<
-    (state: ContainerExecutionState) => void
-  >();
+  private executionListeners = new Set<(state: ContainerExecutionState) => void>();
 
   /**
    * Execute a container node based on its type and configuration
@@ -41,7 +39,7 @@ export class ContainerExecutionService {
   async executeContainer(
     config: ContainerNodeConfig,
     context: ContainerExecutionContext,
-    childExecutor: (nodeId: string, inputData: any) => Promise<any>,
+    childExecutor: (nodeId: string, inputData: any) => Promise<any>
   ): Promise<ContainerExecutionResult> {
     const startTime = performance.now();
     performanceMonitor.startTrace(context.executionId, context.workflowId, {
@@ -53,7 +51,7 @@ export class ContainerExecutionService {
       // Initialize execution state
       const state: ContainerExecutionState = {
         containerId: config.id,
-        status: "running",
+        status: 'running',
         activeChildren: [],
         completedChildren: [],
         failedChildren: [],
@@ -76,52 +74,27 @@ export class ContainerExecutionService {
 
       // Execute based on container type
       switch (config.type) {
-        case "loop":
-          result = await this.executeLoopContainer(
-            config,
-            context,
-            childExecutor,
-            state,
-          );
+        case 'loop':
+          result = await this.executeLoopContainer(config, context, childExecutor, state);
           break;
-        case "parallel":
-          result = await this.executeParallelContainer(
-            config,
-            context,
-            childExecutor,
-            state,
-          );
+        case 'parallel':
+          result = await this.executeParallelContainer(config, context, childExecutor, state);
           break;
-        case "conditional":
-          result = await this.executeConditionalContainer(
-            config,
-            context,
-            childExecutor,
-            state,
-          );
+        case 'conditional':
+          result = await this.executeConditionalContainer(config, context, childExecutor, state);
           break;
-        case "try-catch":
-          result = await this.executeTryCatchContainer(
-            config,
-            context,
-            childExecutor,
-            state,
-          );
+        case 'try-catch':
+          result = await this.executeTryCatchContainer(config, context, childExecutor, state);
           break;
-        case "batch":
-          result = await this.executeBatchContainer(
-            config,
-            context,
-            childExecutor,
-            state,
-          );
+        case 'batch':
+          result = await this.executeBatchContainer(config, context, childExecutor, state);
           break;
         default:
           throw new Error(`Unsupported container type: ${config.type}`);
       }
 
       // Update final state
-      state.status = result.success ? "completed" : "failed";
+      state.status = result.success ? 'completed' : 'failed';
       state.endTime = performance.now();
       state.metrics = result.metrics;
 
@@ -129,22 +102,19 @@ export class ContainerExecutionService {
       this.notifyListeners(state);
 
       // End performance trace
-      performanceMonitor.endTrace(
-        context.executionId,
-        result.success ? "completed" : "failed",
-      );
+      performanceMonitor.endTrace(context.executionId, result.success ? 'completed' : 'failed');
 
       return result;
     } catch (error) {
       const state = this.activeExecutions.get(config.id);
       if (state) {
-        state.status = "failed";
+        state.status = 'failed';
         state.error = error as Error;
         state.endTime = performance.now();
         this.notifyListeners(state);
       }
 
-      performanceMonitor.endTrace(context.executionId, "failed");
+      performanceMonitor.endTrace(context.executionId, 'failed');
       throw error;
     }
   }
@@ -156,7 +126,7 @@ export class ContainerExecutionService {
     config: ContainerNodeConfig,
     context: ContainerExecutionContext,
     childExecutor: (nodeId: string, inputData: any) => Promise<any>,
-    state: ContainerExecutionState,
+    state: ContainerExecutionState
   ): Promise<ContainerExecutionResult> {
     const { loopType, loopLimit, loopDelay } = config.executionConfig;
     const results: any[] = [];
@@ -177,7 +147,7 @@ export class ContainerExecutionService {
           config.children,
           context,
           childExecutor,
-          state,
+          state
         );
 
         results.push(...iterationResults.results);
@@ -185,7 +155,7 @@ export class ContainerExecutionService {
 
         // Check loop condition for while loops
         if (
-          loopType === "while" &&
+          loopType === 'while' &&
           !this.evaluateCondition(config.executionConfig.loopCondition, context)
         ) {
           break;
@@ -224,7 +194,7 @@ export class ContainerExecutionService {
     config: ContainerNodeConfig,
     context: ContainerExecutionContext,
     childExecutor: (nodeId: string, inputData: any) => Promise<any>,
-    state: ContainerExecutionState,
+    state: ContainerExecutionState
   ): Promise<ContainerExecutionResult> {
     const { maxConcurrency, parallelStrategy } = config.executionConfig;
     const startTime = performance.now();
@@ -236,21 +206,21 @@ export class ContainerExecutionService {
         context,
         childExecutor,
         maxConcurrency || 5,
-        state,
+        state
       );
 
       // Apply parallel strategy
       let finalResults: any[];
       switch (parallelStrategy) {
-        case "race":
+        case 'race':
           // Return first successful result
           finalResults = results.filter((r) => r.success).slice(0, 1);
           break;
-        case "any":
+        case 'any':
           // Return any successful result
           finalResults = results.filter((r) => r.success);
           break;
-        case "all":
+        case 'all':
         default:
           // Return all results
           finalResults = results;
@@ -287,7 +257,7 @@ export class ContainerExecutionService {
     config: ContainerNodeConfig,
     context: ContainerExecutionContext,
     childExecutor: (nodeId: string, inputData: any) => Promise<any>,
-    state: ContainerExecutionState,
+    state: ContainerExecutionState
   ): Promise<ContainerExecutionResult> {
     const startTime = performance.now();
 
@@ -295,7 +265,7 @@ export class ContainerExecutionService {
       // Evaluate condition
       const conditionMet = this.evaluateCondition(
         config.executionConfig.conditionExpression,
-        context,
+        context
       );
 
       if (conditionMet) {
@@ -304,7 +274,7 @@ export class ContainerExecutionService {
           config.children,
           context,
           childExecutor,
-          state,
+          state
         );
 
         return {
@@ -341,7 +311,7 @@ export class ContainerExecutionService {
     config: ContainerNodeConfig,
     context: ContainerExecutionContext,
     childExecutor: (nodeId: string, inputData: any) => Promise<any>,
-    state: ContainerExecutionState,
+    state: ContainerExecutionState
   ): Promise<ContainerExecutionResult> {
     const { errorHandling } = config.executionConfig;
     const startTime = performance.now();
@@ -349,12 +319,7 @@ export class ContainerExecutionService {
 
     try {
       // Try to execute child nodes
-      const results = await this.executeChildNodes(
-        config.children,
-        context,
-        childExecutor,
-        state,
-      );
+      const results = await this.executeChildNodes(config.children, context, childExecutor, state);
 
       if (results.errors.length === 0) {
         return {
@@ -369,10 +334,10 @@ export class ContainerExecutionService {
       lastError = results.errors[0];
 
       switch (errorHandling) {
-        case "retry":
+        case 'retry':
           // Retry logic would be implemented here
           break;
-        case "continue":
+        case 'continue':
           // Continue with partial results
           return {
             success: true,
@@ -381,7 +346,7 @@ export class ContainerExecutionService {
             errors: results.errors,
             metrics: this.calculateMetrics(state),
           };
-        case "stop":
+        case 'stop':
         default:
           // Stop execution
           throw lastError;
@@ -412,16 +377,14 @@ export class ContainerExecutionService {
     config: ContainerNodeConfig,
     context: ContainerExecutionContext,
     childExecutor: (nodeId: string, inputData: any) => Promise<any>,
-    state: ContainerExecutionState,
+    state: ContainerExecutionState
   ): Promise<ContainerExecutionResult> {
     const { batchSize, batchDelay } = config.executionConfig;
     const startTime = performance.now();
 
     try {
       // Process input data in batches
-      const inputData = Array.isArray(context.inputData)
-        ? context.inputData
-        : [context.inputData];
+      const inputData = Array.isArray(context.inputData) ? context.inputData : [context.inputData];
       const batches = this.createBatches(inputData, batchSize || 10);
       const results: any[] = [];
       const errors: Error[] = [];
@@ -446,7 +409,7 @@ export class ContainerExecutionService {
           config.children,
           batchContext,
           childExecutor,
-          state,
+          state
         );
 
         results.push(...batchResults.results);
@@ -483,7 +446,7 @@ export class ContainerExecutionService {
     childIds: string[],
     context: ContainerExecutionContext,
     childExecutor: (nodeId: string, inputData: any) => Promise<any>,
-    state: ContainerExecutionState,
+    state: ContainerExecutionState
   ): Promise<{ results: any[]; errors: Error[] }> {
     const results: any[] = [];
     const errors: Error[] = [];
@@ -496,15 +459,11 @@ export class ContainerExecutionService {
         const result = await childExecutor(childId, context.inputData);
         results.push(result);
 
-        state.activeChildren = state.activeChildren.filter(
-          (id) => id !== childId,
-        );
+        state.activeChildren = state.activeChildren.filter((id) => id !== childId);
         state.completedChildren.push(childId);
         state.metrics.successfulExecutions++;
       } catch (error) {
-        state.activeChildren = state.activeChildren.filter(
-          (id) => id !== childId,
-        );
+        state.activeChildren = state.activeChildren.filter((id) => id !== childId);
         state.failedChildren.push(childId);
         state.metrics.failedExecutions++;
         errors.push(error as Error);
@@ -525,10 +484,9 @@ export class ContainerExecutionService {
     context: ContainerExecutionContext,
     childExecutor: (nodeId: string, inputData: any) => Promise<any>,
     maxConcurrency: number,
-    state: ContainerExecutionState,
+    state: ContainerExecutionState
   ): Promise<Array<{ success: boolean; result?: any; error?: Error }>> {
-    const results: Array<{ success: boolean; result?: any; error?: Error }> =
-      [];
+    const results: Array<{ success: boolean; result?: any; error?: Error }> = [];
     const executing = new Set<string>();
 
     const executeNext = async (): Promise<void> => {
@@ -552,9 +510,7 @@ export class ContainerExecutionService {
         state.metrics.failedExecutions++;
       } finally {
         executing.delete(childId);
-        state.activeChildren = state.activeChildren.filter(
-          (id) => id !== childId,
-        );
+        state.activeChildren = state.activeChildren.filter((id) => id !== childId);
         state.metrics.totalExecutions++;
         this.notifyListeners(state);
 
@@ -566,9 +522,8 @@ export class ContainerExecutionService {
     };
 
     // Start initial executions
-    const promises = Array.from(
-      { length: Math.min(maxConcurrency, childIds.length) },
-      () => executeNext(),
+    const promises = Array.from({ length: Math.min(maxConcurrency, childIds.length) }, () =>
+      executeNext()
     );
     await Promise.all(promises);
 
@@ -580,16 +535,16 @@ export class ContainerExecutionService {
    */
   private evaluateCondition(
     expression: string | undefined,
-    context: ContainerExecutionContext,
+    context: ContainerExecutionContext
   ): boolean {
     if (!expression) return true;
 
     try {
       // Simple expression evaluation - in production, use a proper expression parser
-      const func = new Function("$input", "$context", `return ${expression}`);
+      const func = new Function('$input', '$context', `return ${expression}`);
       return func(context.inputData, context.globalVariables);
     } catch (error) {
-      console.error("Error evaluating condition:", error);
+      console.error('Error evaluating condition:', error);
       return false;
     }
   }
@@ -609,8 +564,7 @@ export class ContainerExecutionService {
    * Calculate execution metrics
    */
   private calculateMetrics(state: ContainerExecutionState): ContainerMetrics {
-    const totalTime =
-      (state.endTime || performance.now()) - (state.startTime || 0);
+    const totalTime = (state.endTime || performance.now()) - (state.startTime || 0);
 
     return {
       ...state.metrics,
@@ -647,7 +601,7 @@ export class ContainerExecutionService {
       try {
         listener(state);
       } catch (error) {
-        console.error("Error in execution listener:", error);
+        console.error('Error in execution listener:', error);
       }
     });
   }
@@ -664,8 +618,8 @@ export class ContainerExecutionService {
    */
   stopExecution(containerId: string): void {
     const state = this.activeExecutions.get(containerId);
-    if (state && state.status === "running") {
-      state.status = "paused";
+    if (state && state.status === 'running') {
+      state.status = 'paused';
       this.notifyListeners(state);
     }
   }

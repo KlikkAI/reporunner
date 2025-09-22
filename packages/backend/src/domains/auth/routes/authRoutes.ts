@@ -1,13 +1,13 @@
-import express, { Router } from 'express';
-import { AuthController } from '../controllers/AuthController.js';
-import { enhancedCatchAsync } from '../../../middleware/enhancedErrorHandlers.js';
+import express, { type Router } from 'express';
 import { authenticate } from '../../../middleware/auth.js';
+import { enhancedCatchAsync } from '../../../middleware/enhancedErrorHandlers.js';
+import { AuthController } from '../controllers/AuthController.js';
 import {
-  registerValidation,
+  changePasswordValidation,
   loginValidation,
   refreshTokenValidation,
+  registerValidation,
   updateProfileValidation,
-  changePasswordValidation,
 } from '../validators/authValidators.js';
 
 const router: Router = express.Router();
@@ -18,33 +18,21 @@ const authController = new AuthController();
  * @desc    Register a new user
  * @access  Public
  */
-router.post(
-  '/register',
-  registerValidation,
-  enhancedCatchAsync(authController.register)
-);
+router.post('/register', registerValidation, enhancedCatchAsync(authController.register));
 
 /**
  * @route   POST /auth/login
  * @desc    Login user
  * @access  Public
  */
-router.post(
-  '/login',
-  loginValidation,
-  enhancedCatchAsync(authController.login)
-);
+router.post('/login', loginValidation, enhancedCatchAsync(authController.login));
 
 /**
  * @route   POST /auth/refresh
  * @desc    Refresh access token
  * @access  Public
  */
-router.post(
-  '/refresh',
-  refreshTokenValidation,
-  enhancedCatchAsync(authController.refreshToken)
-);
+router.post('/refresh', refreshTokenValidation, enhancedCatchAsync(authController.refreshToken));
 
 /**
  * @route   POST /auth/logout

@@ -1,9 +1,5 @@
-import { EventEmitter } from "events";
-import {
-  BaseIntegration,
-  IntegrationConfig,
-  IntegrationContext,
-} from "./base-integration";
+import { EventEmitter } from 'events';
+import type { BaseIntegration, IntegrationConfig, IntegrationContext } from './base-integration';
 
 export interface IntegrationDefinition {
   name: string;
@@ -57,9 +53,7 @@ export class IntegrationRegistry extends EventEmitter {
     if (definition.dependencies) {
       for (const dep of definition.dependencies) {
         if (!this.definitions.has(dep)) {
-          throw new Error(
-            `Dependency ${dep} for ${definition.name} is not registered`,
-          );
+          throw new Error(`Dependency ${dep} for ${definition.name} is not registered`);
         }
       }
     }
@@ -75,12 +69,10 @@ export class IntegrationRegistry extends EventEmitter {
       definition.config.tags.forEach((tag) => this.tags.add(tag));
     }
     if (definition.config.supportedFeatures) {
-      definition.config.supportedFeatures.forEach((cap) =>
-        this.capabilities.add(cap),
-      );
+      definition.config.supportedFeatures.forEach((cap) => this.capabilities.add(cap));
     }
 
-    this.emit("definition:registered", {
+    this.emit('definition:registered', {
       name: definition.name,
       version: definition.version,
     });
@@ -98,9 +90,7 @@ export class IntegrationRegistry extends EventEmitter {
     // Check if any other integrations depend on this one
     for (const [otherName, otherDef] of this.definitions.entries()) {
       if (otherDef.dependencies?.includes(name)) {
-        throw new Error(
-          `Cannot unregister ${name}: ${otherName} depends on it`,
-        );
+        throw new Error(`Cannot unregister ${name}: ${otherName} depends on it`);
       }
     }
 
@@ -119,7 +109,7 @@ export class IntegrationRegistry extends EventEmitter {
     // Remove definition
     this.definitions.delete(name);
 
-    this.emit("definition:unregistered", { name });
+    this.emit('definition:unregistered', { name });
 
     return true;
   }
@@ -151,9 +141,7 @@ export class IntegrationRegistry extends EventEmitter {
       }
 
       if (filter.tags && filter.tags.length > 0) {
-        const hasTag = filter.tags.some((tag) =>
-          definition.config.tags?.includes(tag),
-        );
+        const hasTag = filter.tags.some((tag) => definition.config.tags?.includes(tag));
         if (!hasTag) {
           return;
         }
@@ -161,24 +149,18 @@ export class IntegrationRegistry extends EventEmitter {
 
       if (filter.capabilities && filter.capabilities.length > 0) {
         const hasCap = filter.capabilities.some((cap) =>
-          definition.config.supportedFeatures?.includes(cap),
+          definition.config.supportedFeatures?.includes(cap)
         );
         if (!hasCap) {
           return;
         }
       }
 
-      if (
-        filter.isEnabled !== undefined &&
-        definition.isEnabled !== filter.isEnabled
-      ) {
+      if (filter.isEnabled !== undefined && definition.isEnabled !== filter.isEnabled) {
         return;
       }
 
-      if (
-        filter.isBuiltIn !== undefined &&
-        definition.isBuiltIn !== filter.isBuiltIn
-      ) {
+      if (filter.isBuiltIn !== undefined && definition.isBuiltIn !== filter.isBuiltIn) {
         return;
       }
 
@@ -191,10 +173,7 @@ export class IntegrationRegistry extends EventEmitter {
   /**
    * Create integration instance
    */
-  async createInstance(
-    name: string,
-    context: IntegrationContext,
-  ): Promise<string> {
+  async createInstance(name: string, context: IntegrationContext): Promise<string> {
     const definition = this.definitions.get(name);
     if (!definition) {
       throw new Error(`Integration ${name} is not registered`);
@@ -217,9 +196,7 @@ export class IntegrationRegistry extends EventEmitter {
     try {
       // Create integration instance
       const IntegrationClass = definition.constructor as any;
-      const integration = new IntegrationClass(
-        definition.config,
-      ) as BaseIntegration;
+      const integration = new IntegrationClass(definition.config) as BaseIntegration;
 
       // Initialize integration
       await integration.initialize(context);
@@ -241,7 +218,7 @@ export class IntegrationRegistry extends EventEmitter {
       // Set up event listeners
       this.setupInstanceListeners(instanceId, integration);
 
-      this.emit("instance:created", {
+      this.emit('instance:created', {
         id: instanceId,
         name: definition.name,
         userId: context.userId,
@@ -249,7 +226,7 @@ export class IntegrationRegistry extends EventEmitter {
 
       return instanceId;
     } catch (error: any) {
-      this.emit("instance:creation_failed", {
+      this.emit('instance:creation_failed', {
         name,
         error: error.message,
       });
@@ -260,25 +237,22 @@ export class IntegrationRegistry extends EventEmitter {
   /**
    * Setup instance event listeners
    */
-  private setupInstanceListeners(
-    instanceId: string,
-    integration: BaseIntegration,
-  ): void {
+  private setupInstanceListeners(instanceId: string, integration: BaseIntegration): void {
     // Forward integration events
-    integration.on("state:changed", (data) => {
-      this.emit("instance:state_changed", { instanceId, ...data });
+    integration.on('state:changed', (data) => {
+      this.emit('instance:state_changed', { instanceId, ...data });
     });
 
-    integration.on("error", (data) => {
-      this.emit("instance:error", { instanceId, ...data });
+    integration.on('error', (data) => {
+      this.emit('instance:error', { instanceId, ...data });
     });
 
-    integration.on("action:executed", (data) => {
+    integration.on('action:executed', (data) => {
       const instance = this.instances.get(instanceId);
       if (instance) {
         instance.lastActivity = new Date();
       }
-      this.emit("instance:action_executed", { instanceId, ...data });
+      this.emit('instance:action_executed', { instanceId, ...data });
     });
   }
 
@@ -301,7 +275,7 @@ export class IntegrationRegistry extends EventEmitter {
    */
   getInstancesByName(name: string): IntegrationInstance[] {
     return Array.from(this.instances.values()).filter(
-      (instance) => instance.definition.name === name,
+      (instance) => instance.definition.name === name
     );
   }
 
@@ -310,18 +284,14 @@ export class IntegrationRegistry extends EventEmitter {
    */
   getInstancesByUser(userId: string): IntegrationInstance[] {
     return Array.from(this.instances.values()).filter(
-      (instance) => instance.context.userId === userId,
+      (instance) => instance.context.userId === userId
     );
   }
 
   /**
    * Execute action on instance
    */
-  async executeAction(
-    instanceId: string,
-    action: string,
-    params: any,
-  ): Promise<any> {
+  async executeAction(instanceId: string, action: string, params: any): Promise<any> {
     const instance = this.instances.get(instanceId);
     if (!instance) {
       throw new Error(`Instance ${instanceId} not found`);
@@ -330,7 +300,7 @@ export class IntegrationRegistry extends EventEmitter {
     try {
       const result = await instance.integration.execute(action, params);
 
-      this.emit("instance:action_executed", {
+      this.emit('instance:action_executed', {
         instanceId,
         action,
         params,
@@ -338,7 +308,7 @@ export class IntegrationRegistry extends EventEmitter {
 
       return result;
     } catch (error: any) {
-      this.emit("instance:action_failed", {
+      this.emit('instance:action_failed', {
         instanceId,
         action,
         error: error.message,
@@ -363,14 +333,14 @@ export class IntegrationRegistry extends EventEmitter {
       // Remove instance
       this.instances.delete(instanceId);
 
-      this.emit("instance:destroyed", {
+      this.emit('instance:destroyed', {
         id: instanceId,
         name: instance.definition.name,
       });
 
       return true;
     } catch (error: any) {
-      this.emit("instance:destroy_failed", {
+      this.emit('instance:destroy_failed', {
         id: instanceId,
         error: error.message,
       });
@@ -389,7 +359,7 @@ export class IntegrationRegistry extends EventEmitter {
 
     instance.integration.suspend();
 
-    this.emit("instance:suspended", {
+    this.emit('instance:suspended', {
       id: instanceId,
       name: instance.definition.name,
     });
@@ -408,7 +378,7 @@ export class IntegrationRegistry extends EventEmitter {
 
     await instance.integration.resume();
 
-    this.emit("instance:resumed", {
+    this.emit('instance:resumed', {
       id: instanceId,
       name: instance.definition.name,
     });
@@ -427,7 +397,7 @@ export class IntegrationRegistry extends EventEmitter {
 
     definition.isEnabled = true;
 
-    this.emit("definition:enabled", { name });
+    this.emit('definition:enabled', { name });
 
     return true;
   }
@@ -455,7 +425,7 @@ export class IntegrationRegistry extends EventEmitter {
 
     definition.isEnabled = false;
 
-    this.emit("definition:disabled", { name });
+    this.emit('definition:disabled', { name });
 
     return true;
   }
@@ -513,8 +483,7 @@ export class IntegrationRegistry extends EventEmitter {
 
     this.instances.forEach((instance) => {
       const name = instance.definition.name;
-      stats.instancesByIntegration[name] =
-        (stats.instancesByIntegration[name] || 0) + 1;
+      stats.instancesByIntegration[name] = (stats.instancesByIntegration[name] || 0) + 1;
 
       const userId = instance.context.userId;
       stats.instancesByUser[userId] = (stats.instancesByUser[userId] || 0) + 1;

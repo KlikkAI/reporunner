@@ -4,10 +4,7 @@
  */
 
 // import type { NodeParameterValue } from '../nodes/types'
-import {
-  ExpressionEvaluator,
-  type IExpressionContext,
-} from "./expressionEvaluator";
+import { ExpressionEvaluator, type IExpressionContext } from './expressionEvaluator';
 
 // Use the existing IExpressionContext from ExpressionEvaluator
 
@@ -44,16 +41,16 @@ export interface ITypeConversionOptions {
 
 // Field Type Definitions
 enum FieldType {
-  STRING = "stringValue",
-  NUMBER = "numberValue",
-  BOOLEAN = "booleanValue",
-  ARRAY = "arrayValue",
-  OBJECT = "objectValue",
-  DATE = "dateValue",
-  NULL = "nullValue",
-  UNDEFINED = "undefinedValue",
-  BINARY = "binaryValue",
-  FUNCTION = "functionValue",
+  STRING = 'stringValue',
+  NUMBER = 'numberValue',
+  BOOLEAN = 'booleanValue',
+  ARRAY = 'arrayValue',
+  OBJECT = 'objectValue',
+  DATE = 'dateValue',
+  NULL = 'nullValue',
+  UNDEFINED = 'undefinedValue',
+  BINARY = 'binaryValue',
+  FUNCTION = 'functionValue',
 }
 
 // Type Inference Engine
@@ -65,30 +62,30 @@ class TypeInferenceEngine {
     const type = typeof value;
 
     switch (type) {
-      case "string":
+      case 'string':
         // Check for date strings
-        if (this.isDateString(value)) {
+        if (TypeInferenceEngine.isDateString(value)) {
           return FieldType.DATE;
         }
         return FieldType.STRING;
 
-      case "number":
+      case 'number':
         return FieldType.NUMBER;
 
-      case "boolean":
+      case 'boolean':
         return FieldType.BOOLEAN;
 
-      case "function":
+      case 'function':
         return FieldType.FUNCTION;
 
-      case "object":
+      case 'object':
         if (Array.isArray(value)) {
           return FieldType.ARRAY;
         }
         if (value instanceof Date) {
           return FieldType.DATE;
         }
-        if (value instanceof Buffer || value?.constructor?.name === "Buffer") {
+        if (value instanceof Buffer || value?.constructor?.name === 'Buffer') {
           return FieldType.BINARY;
         }
         return FieldType.OBJECT;
@@ -99,7 +96,7 @@ class TypeInferenceEngine {
   }
 
   static isDateString(value: string): boolean {
-    if (typeof value !== "string") return false;
+    if (typeof value !== 'string') return false;
 
     // Common date patterns
     const datePatterns = [
@@ -110,28 +107,21 @@ class TypeInferenceEngine {
       /^\d{2}-\d{2}-\d{4}$/, // MM-DD-YYYY
     ];
 
-    return (
-      datePatterns.some((pattern) => pattern.test(value)) &&
-      !isNaN(Date.parse(value))
-    );
+    return datePatterns.some((pattern) => pattern.test(value)) && !isNaN(Date.parse(value));
   }
 
   static inferFromContext(value: any, context?: IExpressionContext): FieldType {
-    const basicType = this.inferType(value);
+    const basicType = TypeInferenceEngine.inferType(value);
 
     // If we have context, we can make smarter inferences
     if (context) {
       // Check if value looks like an expression
-      if (
-        typeof value === "string" &&
-        value.includes("{{") &&
-        value.includes("}}")
-      ) {
+      if (typeof value === 'string' && value.includes('{{') && value.includes('}}')) {
         // Try to evaluate and infer from result
         try {
           const evaluator = new ExpressionEvaluator(context);
           const evaluated = evaluator.evaluate(value);
-          return this.inferType(evaluated);
+          return TypeInferenceEngine.inferType(evaluated);
         } catch {
           return basicType;
         }
@@ -143,22 +133,9 @@ class TypeInferenceEngine {
 
   static getCompatibleTypes(primaryType: FieldType): FieldType[] {
     const compatibilityMap: Record<FieldType, FieldType[]> = {
-      [FieldType.STRING]: [
-        FieldType.STRING,
-        FieldType.NUMBER,
-        FieldType.BOOLEAN,
-        FieldType.DATE,
-      ],
-      [FieldType.NUMBER]: [
-        FieldType.NUMBER,
-        FieldType.STRING,
-        FieldType.BOOLEAN,
-      ],
-      [FieldType.BOOLEAN]: [
-        FieldType.BOOLEAN,
-        FieldType.STRING,
-        FieldType.NUMBER,
-      ],
+      [FieldType.STRING]: [FieldType.STRING, FieldType.NUMBER, FieldType.BOOLEAN, FieldType.DATE],
+      [FieldType.NUMBER]: [FieldType.NUMBER, FieldType.STRING, FieldType.BOOLEAN],
+      [FieldType.BOOLEAN]: [FieldType.BOOLEAN, FieldType.STRING, FieldType.NUMBER],
       [FieldType.ARRAY]: [FieldType.ARRAY, FieldType.STRING],
       [FieldType.OBJECT]: [FieldType.OBJECT, FieldType.STRING],
       [FieldType.DATE]: [FieldType.DATE, FieldType.STRING, FieldType.NUMBER],
@@ -180,26 +157,17 @@ class AdvancedTypeValidator {
     options: ITypeConversionOptions = {
       ignoreConversionErrors: false,
       strictMode: false,
-    },
+    }
   ) {
     this.options = options;
   }
 
-  validate(
-    value: any,
-    targetType: string,
-    context?: IExpressionContext,
-  ): ITypeValidationResult {
+  validate(value: any, targetType: string, context?: IExpressionContext): ITypeValidationResult {
     const originalValue = value;
     let processedValue = value;
 
     // Handle expressions first
-    if (
-      context &&
-      typeof value === "string" &&
-      value.includes("{{") &&
-      value.includes("}}")
-    ) {
+    if (context && typeof value === 'string' && value.includes('{{') && value.includes('}}')) {
       try {
         const evaluator = new ExpressionEvaluator(context);
         processedValue = evaluator.evaluate(value);
@@ -218,10 +186,7 @@ class AdvancedTypeValidator {
 
     try {
       const convertedValue = this.convertToType(processedValue, targetType);
-      const validationResult = this.validateConvertedValue(
-        convertedValue,
-        targetType,
-      );
+      const validationResult = this.validateConvertedValue(convertedValue, targetType);
 
       return {
         valid: validationResult.valid,
@@ -287,14 +252,14 @@ class AdvancedTypeValidator {
 
   private convertToString(value: any): string {
     if (value === null || value === undefined) {
-      return "";
+      return '';
     }
 
-    if (typeof value === "string") {
+    if (typeof value === 'string') {
       return value;
     }
 
-    if (typeof value === "object") {
+    if (typeof value === 'object') {
       return JSON.stringify(value);
     }
 
@@ -302,17 +267,17 @@ class AdvancedTypeValidator {
   }
 
   private convertToNumber(value: any): number {
-    if (typeof value === "number") {
+    if (typeof value === 'number') {
       return value;
     }
 
-    if (typeof value === "boolean") {
+    if (typeof value === 'boolean') {
       return value ? 1 : 0;
     }
 
-    if (typeof value === "string") {
+    if (typeof value === 'string') {
       // Handle different number formats
-      const cleaned = value.replace(/[^0-9.-]/g, "");
+      const cleaned = value.replace(/[^0-9.-]/g, '');
       const parsed = parseFloat(cleaned);
 
       if (isNaN(parsed)) {
@@ -335,24 +300,24 @@ class AdvancedTypeValidator {
   }
 
   private convertToBoolean(value: any): boolean {
-    if (typeof value === "boolean") {
+    if (typeof value === 'boolean') {
       return value;
     }
 
-    if (typeof value === "number") {
+    if (typeof value === 'number') {
       return value !== 0;
     }
 
-    if (typeof value === "string") {
+    if (typeof value === 'string') {
       const lower = value.toLowerCase().trim();
-      const truthyStrings = ["true", "1", "yes", "on", "enabled"];
-      const falsyStrings = ["false", "0", "no", "off", "disabled", ""];
+      const truthyStrings = ['true', '1', 'yes', 'on', 'enabled'];
+      const falsyStrings = ['false', '0', 'no', 'off', 'disabled', ''];
 
       if (truthyStrings.includes(lower)) return true;
       if (falsyStrings.includes(lower)) return false;
 
       // For other strings, check if empty
-      return lower !== "";
+      return lower !== '';
     }
 
     return Boolean(value);
@@ -363,7 +328,7 @@ class AdvancedTypeValidator {
       return value;
     }
 
-    if (typeof value === "string") {
+    if (typeof value === 'string') {
       // Try to parse as JSON first
       try {
         const parsed = JSON.parse(value);
@@ -372,7 +337,7 @@ class AdvancedTypeValidator {
         }
       } catch {
         // If JSON parsing fails, split by comma
-        return value.split(",").map((item) => item.trim());
+        return value.split(',').map((item) => item.trim());
       }
     }
 
@@ -389,14 +354,14 @@ class AdvancedTypeValidator {
       return {};
     }
 
-    if (typeof value === "object" && !Array.isArray(value)) {
+    if (typeof value === 'object' && !Array.isArray(value)) {
       return value;
     }
 
-    if (typeof value === "string") {
+    if (typeof value === 'string') {
       try {
         const parsed = JSON.parse(value);
-        if (typeof parsed === "object" && !Array.isArray(parsed)) {
+        if (typeof parsed === 'object' && !Array.isArray(parsed)) {
           return parsed;
         }
       } catch {
@@ -414,11 +379,11 @@ class AdvancedTypeValidator {
       return value;
     }
 
-    if (typeof value === "number") {
+    if (typeof value === 'number') {
       return new Date(value);
     }
 
-    if (typeof value === "string") {
+    if (typeof value === 'string') {
       const parsed = new Date(value);
       if (isNaN(parsed.getTime())) {
         throw new Error(`Cannot convert "${value}" to date`);
@@ -431,36 +396,32 @@ class AdvancedTypeValidator {
 
   private validateConvertedValue(
     value: any,
-    targetType: string,
+    targetType: string
   ): { valid: boolean; error?: string; warnings?: string[] } {
     const warnings: string[] = [];
 
     switch (targetType) {
       case FieldType.NUMBER:
-        if (typeof value !== "number" || isNaN(value) || !isFinite(value)) {
-          return { valid: false, error: "Invalid number value" };
+        if (typeof value !== 'number' || isNaN(value) || !isFinite(value)) {
+          return { valid: false, error: 'Invalid number value' };
         }
         break;
 
       case FieldType.DATE:
         if (!(value instanceof Date) || isNaN(value.getTime())) {
-          return { valid: false, error: "Invalid date value" };
+          return { valid: false, error: 'Invalid date value' };
         }
         break;
 
       case FieldType.ARRAY:
         if (!Array.isArray(value)) {
-          return { valid: false, error: "Value is not an array" };
+          return { valid: false, error: 'Value is not an array' };
         }
         break;
 
       case FieldType.OBJECT:
-        if (
-          typeof value !== "object" ||
-          Array.isArray(value) ||
-          value === null
-        ) {
-          return { valid: false, error: "Value is not an object" };
+        if (typeof value !== 'object' || Array.isArray(value) || value === null) {
+          return { valid: false, error: 'Value is not an object' };
         }
         break;
     }
@@ -473,7 +434,7 @@ class AdvancedTypeValidator {
 
   getDefaultValue(targetType: string): any {
     const defaults: Record<string, any> = {
-      [FieldType.STRING]: "",
+      [FieldType.STRING]: '',
       [FieldType.NUMBER]: 0,
       [FieldType.BOOLEAN]: false,
       [FieldType.ARRAY]: [],
@@ -499,22 +460,18 @@ class AssignmentValidator {
 
   validateAssignment(
     assignment: IAssignmentValue,
-    context?: IExpressionContext,
+    context?: IExpressionContext
   ): ITypeValidationResult {
     // Extract the appropriate value based on type
     const value = this.extractAssignmentValue(assignment);
 
     // Validate and convert
-    return this.typeValidator.validate(
-      value,
-      assignment.type || "auto",
-      context,
-    );
+    return this.typeValidator.validate(value, assignment.type || 'auto', context);
   }
 
   validateAssignments(
     assignments: IAssignmentValue[],
-    context?: IExpressionContext,
+    context?: IExpressionContext
   ): {
     valid: boolean;
     results: Array<ITypeValidationResult & { fieldName: string }>;
@@ -548,15 +505,15 @@ class AssignmentValidator {
   private extractAssignmentValue(assignment: IAssignmentValue): any {
     // For backward compatibility with the enhanced assignment structure
     switch (assignment.type) {
-      case "stringValue":
+      case 'stringValue':
         return assignment.value;
-      case "numberValue":
+      case 'numberValue':
         return assignment.value;
-      case "booleanValue":
+      case 'booleanValue':
         return assignment.value;
-      case "arrayValue":
+      case 'arrayValue':
         return assignment.value;
-      case "objectValue":
+      case 'objectValue':
         return assignment.value;
       default:
         return assignment.value;
@@ -575,7 +532,7 @@ class BatchTypeValidator {
   async validateBatch(
     items: Array<{ value: any; type: string; id: string }>,
     context?: IExpressionContext,
-    batchSize: number = 100,
+    batchSize: number = 100
   ): Promise<Map<string, ITypeValidationResult>> {
     const results = new Map<string, ITypeValidationResult>();
 
@@ -619,11 +576,8 @@ class TypeCompatibilityChecker {
     return compatibilityMatrix[sourceType]?.includes(targetType) ?? false;
   }
 
-  static getConversionRisk(
-    sourceType: string,
-    targetType: string,
-  ): "low" | "medium" | "high" {
-    if (sourceType === targetType) return "low";
+  static getConversionRisk(sourceType: string, targetType: string): 'low' | 'medium' | 'high' {
+    if (sourceType === targetType) return 'low';
 
     const lowRiskConversions = [
       [FieldType.STRING, FieldType.NUMBER],
@@ -641,21 +595,15 @@ class TypeCompatibilityChecker {
     // Conversion key for future extensibility
     // const _conversionKey = [sourceType, targetType];
 
-    if (
-      lowRiskConversions.some(([s, t]) => s === sourceType && t === targetType)
-    ) {
-      return "low";
+    if (lowRiskConversions.some(([s, t]) => s === sourceType && t === targetType)) {
+      return 'low';
     }
 
-    if (
-      mediumRiskConversions.some(
-        ([s, t]) => s === sourceType && t === targetType,
-      )
-    ) {
-      return "medium";
+    if (mediumRiskConversions.some(([s, t]) => s === sourceType && t === targetType)) {
+      return 'medium';
     }
 
-    return "high";
+    return 'high';
   }
 }
 

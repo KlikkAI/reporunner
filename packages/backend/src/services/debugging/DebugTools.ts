@@ -3,11 +3,11 @@
  * Provides debugging capabilities for development and troubleshooting
  */
 
-import { logger } from "../logging/Logger.js";
-import { performanceMonitor } from "../monitoring/PerformanceMonitor.js";
-import { errorTracker } from "../monitoring/ErrorTracker.js";
-import fs from "fs";
-import path from "path";
+import fs from 'fs';
+import path from 'path';
+import { logger } from '../logging/Logger.js';
+import { errorTracker } from '../monitoring/ErrorTracker.js';
+import { performanceMonitor } from '../monitoring/PerformanceMonitor.js';
 
 export interface DebugSession {
   id: string;
@@ -20,8 +20,8 @@ export interface DebugSession {
 
 export interface DebugEvent {
   timestamp: number;
-  type: "log" | "error" | "performance" | "database" | "custom";
-  level: "debug" | "info" | "warn" | "error";
+  type: 'log' | 'error' | 'performance' | 'database' | 'custom';
+  level: 'debug' | 'info' | 'warn' | 'error';
   message: string;
   data: any;
   stackTrace?: string;
@@ -87,16 +87,16 @@ class DebugToolsService {
 
     this.addDebugEvent(sessionId, {
       timestamp: Date.now(),
-      type: "log",
-      level: "info",
-      message: "Debug session started",
+      type: 'log',
+      level: 'info',
+      message: 'Debug session started',
       data: { sessionId, context },
     });
 
-    logger.debug("Debug session started", {
+    logger.debug('Debug session started', {
       sessionId,
       context,
-      component: "debug-tools",
+      component: 'debug-tools',
     });
 
     return sessionId;
@@ -110,20 +110,20 @@ class DebugToolsService {
 
     this.addDebugEvent(sessionId, {
       timestamp: Date.now(),
-      type: "log",
-      level: "info",
-      message: "Debug session ended",
+      type: 'log',
+      level: 'info',
+      message: 'Debug session ended',
       data: {
         duration: session.endTime - session.startTime,
         eventCount: session.events.length,
       },
     });
 
-    logger.debug("Debug session ended", {
+    logger.debug('Debug session ended', {
       sessionId,
       duration: session.endTime - session.startTime,
       eventCount: session.events.length,
-      component: "debug-tools",
+      component: 'debug-tools',
     });
 
     return session;
@@ -141,11 +141,11 @@ class DebugToolsService {
       try {
         hook(event, session);
       } catch (error) {
-        logger.warn("Debug hook failed", {
+        logger.warn('Debug hook failed', {
           sessionId,
           hookType: event.type,
           error: error instanceof Error ? error.message : String(error),
-          component: "debug-tools",
+          component: 'debug-tools',
         });
       }
     });
@@ -154,7 +154,7 @@ class DebugToolsService {
   // Performance profiling
   public startProfiling(
     name: string,
-    options: { sampleInterval?: number; duration?: number } = {},
+    options: { sampleInterval?: number; duration?: number } = {}
   ): string {
     const profileId = `profile_${name}_${Date.now()}`;
 
@@ -186,11 +186,11 @@ class DebugToolsService {
       profile.sampleInterval = sampleInterval;
     }
 
-    logger.debug("Performance profiling started", {
+    logger.debug('Performance profiling started', {
       profileId,
       name,
       options,
-      component: "debug-tools",
+      component: 'debug-tools',
     });
 
     return profileId;
@@ -209,11 +209,11 @@ class DebugToolsService {
 
     this.performanceProfiler.delete(profileId);
 
-    logger.debug("Performance profiling stopped", {
+    logger.debug('Performance profiling stopped', {
       profileId,
       duration: profile.duration,
       sampleCount: profile.samples.length,
-      component: "debug-tools",
+      component: 'debug-tools',
     });
 
     return profile;
@@ -267,14 +267,14 @@ class DebugToolsService {
         const trend = this.analyzeMemoryTrend(memoryHistory);
         if (trend.isIncreasing && trend.rate > 1024 * 1024) {
           // 1MB/sample increase
-          logger.warn("Potential memory leak detected", {
+          logger.warn('Potential memory leak detected', {
             trend,
             currentMemory: memory,
-            component: "debug-tools",
+            component: 'debug-tools',
           });
 
           // Take detailed snapshot
-          this.takeMemorySnapshot("memory-leak-detection");
+          this.takeMemorySnapshot('memory-leak-detection');
         }
       }
     }, interval);
@@ -287,9 +287,7 @@ class DebugToolsService {
     }
   }
 
-  private analyzeMemoryTrend(
-    history: Array<{ timestamp: number; memory: NodeJS.MemoryUsage }>,
-  ): {
+  private analyzeMemoryTrend(history: Array<{ timestamp: number; memory: NodeJS.MemoryUsage }>): {
     isIncreasing: boolean;
     rate: number;
     confidence: number;
@@ -339,11 +337,11 @@ class DebugToolsService {
       this.saveSnapshotToFile(snapshot);
     }
 
-    logger.debug("Memory snapshot taken", {
+    logger.debug('Memory snapshot taken', {
       snapshotId,
       name,
       memory: snapshot.memory,
-      component: "debug-tools",
+      component: 'debug-tools',
     });
 
     return snapshotId;
@@ -363,14 +361,14 @@ class DebugToolsService {
   private getGCStats(): any {
     // GC stats would be more detailed with --expose-gc flag
     return {
-      enabled: typeof global.gc === "function",
+      enabled: typeof global.gc === 'function',
       lastCollection: Date.now(), // Would track actual GC events
     };
   }
 
   private saveSnapshotToFile(snapshot: any): void {
     try {
-      const debugDir = path.join(process.cwd(), "debug");
+      const debugDir = path.join(process.cwd(), 'debug');
       if (!fs.existsSync(debugDir)) {
         fs.mkdirSync(debugDir, { recursive: true });
       }
@@ -380,23 +378,20 @@ class DebugToolsService {
 
       fs.writeFileSync(filepath, JSON.stringify(snapshot, null, 2));
 
-      logger.debug("Snapshot saved to file", {
+      logger.debug('Snapshot saved to file', {
         filepath,
-        component: "debug-tools",
+        component: 'debug-tools',
       });
     } catch (error) {
-      logger.warn("Failed to save snapshot to file", {
+      logger.warn('Failed to save snapshot to file', {
         error: error instanceof Error ? error.message : String(error),
-        component: "debug-tools",
+        component: 'debug-tools',
       });
     }
   }
 
   // Workflow debugging
-  public createWorkflowDebugger(
-    workflowId: string,
-    executionId: string,
-  ): WorkflowDebugger {
+  public createWorkflowDebugger(workflowId: string, executionId: string): WorkflowDebugger {
     return new WorkflowDebugger(workflowId, executionId, this);
   }
 
@@ -421,8 +416,8 @@ class DebugToolsService {
   // Debug utilities
   public setGlobalDebugMode(enabled: boolean): void {
     this.globalDebugMode = enabled;
-    logger.info(`Global debug mode ${enabled ? "enabled" : "disabled"}`, {
-      component: "debug-tools",
+    logger.info(`Global debug mode ${enabled ? 'enabled' : 'disabled'}`, {
+      component: 'debug-tools',
     });
   }
 
@@ -435,10 +430,7 @@ class DebugToolsService {
       uptime: process.uptime(),
       activeProfiles: this.performanceProfiler.size,
       recentErrors: errorTracker.getErrors({ limit: 10 }),
-      recentMetrics: performanceMonitor.getMetrics(
-        undefined,
-        Date.now() - 60000,
-      ), // Last minute
+      recentMetrics: performanceMonitor.getMetrics(undefined, Date.now() - 60000), // Last minute
     };
 
     if (sessionId) {
@@ -448,19 +440,16 @@ class DebugToolsService {
     return state;
   }
 
-  public exportDebugSession(
-    sessionId: string,
-    format: "json" | "csv" = "json",
-  ): string | null {
+  public exportDebugSession(sessionId: string, format: 'json' | 'csv' = 'json'): string | null {
     const session = this.activeSessions.get(sessionId);
     if (!session) return null;
 
-    if (format === "json") {
+    if (format === 'json') {
       return JSON.stringify(session, null, 2);
     }
 
     // CSV export for events
-    const headers = ["timestamp", "type", "level", "message", "data"];
+    const headers = ['timestamp', 'type', 'level', 'message', 'data'];
     const rows = session.events.map((event) => [
       event.timestamp,
       event.type,
@@ -469,7 +458,7 @@ class DebugToolsService {
       JSON.stringify(event.data),
     ]);
 
-    return [headers, ...rows].map((row) => row.join(",")).join("\n");
+    return [headers, ...rows].map((row) => row.join(',')).join('\n');
   }
 
   // Express middleware for debugging
@@ -491,9 +480,9 @@ class DebugToolsService {
       // Log request details
       this.addDebugEvent(sessionId, {
         timestamp: Date.now(),
-        type: "log",
-        level: "debug",
-        message: "HTTP request received",
+        type: 'log',
+        level: 'debug',
+        message: 'HTTP request received',
         data: {
           method: req.method,
           url: req.originalUrl,
@@ -509,9 +498,9 @@ class DebugToolsService {
         if (req.debugSession) {
           debugTools.addDebugEvent(req.debugSession, {
             timestamp: Date.now(),
-            type: "log",
-            level: "debug",
-            message: "HTTP response sent",
+            type: 'log',
+            level: 'debug',
+            message: 'HTTP response sent',
             data: {
               statusCode: res.statusCode,
               headers: res.getHeaders(),
@@ -532,21 +521,18 @@ class DebugToolsService {
   // Setup and cleanup
   private setupDebugEnvironment(): void {
     // Set up global error tracking for debug mode
-    this.addDebugHook("error", (event: DebugEvent, session: DebugSession) => {
-      if (event.level === "error") {
-        console.error(
-          `[DEBUG SESSION ${session.id}] ${event.message}`,
-          event.data,
-        );
+    this.addDebugHook('error', (event: DebugEvent, session: DebugSession) => {
+      if (event.level === 'error') {
+        console.error(`[DEBUG SESSION ${session.id}] ${event.message}`, event.data);
       }
     });
 
     // Check for debug environment variables
-    if (process.env.DEBUG_MODE === "true") {
+    if (process.env.DEBUG_MODE === 'true') {
       this.setGlobalDebugMode(true);
     }
 
-    if (process.env.MEMORY_LEAK_DETECTION === "true") {
+    if (process.env.MEMORY_LEAK_DETECTION === 'true') {
       this.startMemoryLeakDetection();
     }
   }
@@ -566,7 +552,7 @@ export class WorkflowDebugger {
   constructor(
     workflowId: string,
     executionId: string,
-    private debugTools: DebugToolsService,
+    private debugTools: DebugToolsService
   ) {
     this.info = {
       workflowId,
@@ -583,7 +569,7 @@ export class WorkflowDebugger {
     action: string,
     data: any,
     duration?: number,
-    error?: string,
+    error?: string
   ): void {
     this.info.executionLog.push({
       timestamp: Date.now(),

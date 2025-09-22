@@ -1,6 +1,6 @@
-import { EventEmitter } from "events";
-import crypto from "crypto";
-import { Router, Request, Response, NextFunction } from "express";
+import crypto from 'crypto';
+import { EventEmitter } from 'events';
+import { type NextFunction, type Request, type Response, Router } from 'express';
 
 export interface WebhookConfig {
   path: string;
@@ -8,7 +8,7 @@ export interface WebhookConfig {
   headers?: Record<string, string>;
   validateSignature?: boolean;
   signatureHeader?: string;
-  signatureAlgorithm?: "sha1" | "sha256" | "sha512";
+  signatureAlgorithm?: 'sha1' | 'sha256' | 'sha512';
   maxPayloadSize?: number;
   timeout?: number;
   retryOnError?: boolean;
@@ -23,7 +23,7 @@ export interface WebhookRegistration {
   createdAt: Date;
   lastTriggered?: Date;
   triggerCount: number;
-  status: "active" | "paused" | "error";
+  status: 'active' | 'paused' | 'error';
   error?: string;
 }
 
@@ -64,11 +64,11 @@ export class WebhookManager extends EventEmitter {
     this.router.use((req: Request, res: Response, next: NextFunction) => {
       const chunks: Buffer[] = [];
 
-      req.on("data", (chunk: Buffer) => {
+      req.on('data', (chunk: Buffer) => {
         chunks.push(chunk);
       });
 
-      req.on("end", () => {
+      req.on('end', () => {
         (req as any).rawBody = Buffer.concat(chunks);
         next();
       });
@@ -78,11 +78,7 @@ export class WebhookManager extends EventEmitter {
   /**
    * Register a webhook
    */
-  registerWebhook(
-    integrationName: string,
-    config: WebhookConfig,
-    handler: WebhookHandler,
-  ): string {
+  registerWebhook(integrationName: string, config: WebhookConfig, handler: WebhookHandler): string {
     const id = this.generateWebhookId();
 
     const registration: WebhookRegistration = {
@@ -92,7 +88,7 @@ export class WebhookManager extends EventEmitter {
       handler,
       createdAt: new Date(),
       triggerCount: 0,
-      status: "active",
+      status: 'active',
     };
 
     this.webhooks.set(id, registration);
@@ -100,7 +96,7 @@ export class WebhookManager extends EventEmitter {
     // Setup route
     this.setupWebhookRoute(registration);
 
-    this.emit("webhook:registered", { id, integrationName, path: config.path });
+    this.emit('webhook:registered', { id, integrationName, path: config.path });
 
     return id;
   }
@@ -109,71 +105,65 @@ export class WebhookManager extends EventEmitter {
    * Setup webhook route
    */
   private setupWebhookRoute(registration: WebhookRegistration): void {
-    this.router.post(
-      registration.config.path,
-      async (req: Request, res: Response) => {
-        try {
-          // Create webhook event
-          const event: WebhookEvent = {
-            id: this.generateEventId(),
-            webhookId: registration.id,
-            headers: req.headers as Record<string, string>,
-            body: req.body,
-            query: req.query as Record<string, string>,
-            timestamp: new Date(),
-            verified: false,
-            processed: false,
-          };
+    this.router.post(registration.config.path, async (req: Request, res: Response) => {
+      try {
+        // Create webhook event
+        const event: WebhookEvent = {
+          id: this.generateEventId(),
+          webhookId: registration.id,
+          headers: req.headers as Record<string, string>,
+          body: req.body,
+          query: req.query as Record<string, string>,
+          timestamp: new Date(),
+          verified: false,
+          processed: false,
+        };
 
-          // Verify signature if required
-          if (
-            registration.config.validateSignature &&
-            registration.config.secret
-          ) {
-            const signature = req.headers[
-              registration.config.signatureHeader || "x-signature"
-            ] as string;
-            event.signature = signature;
-            event.verified = this.verifySignature(
-              (req as any).rawBody,
-              signature,
-              registration.config.secret,
-              registration.config.signatureAlgorithm,
-            );
+        // Verify signature if required
+        if (registration.config.validateSignature && registration.config.secret) {
+          const signature = req.headers[
+            registration.config.signatureHeader || 'x-signature'
+          ] as string;
+          event.signature = signature;
+          event.verified = this.verifySignature(
+            (req as any).rawBody,
+            signature,
+            registration.config.secret,
+            registration.config.signatureAlgorithm
+          );
 
-            if (!event.verified) {
-              this.emit("webhook:verification_failed", {
-                webhookId: registration.id,
-                event,
-              });
-              return res.status(401).json({ error: "Invalid signature" });
-            }
-          } else {
-            event.verified = true;
+          if (!event.verified) {
+            this.emit('webhook:verification_failed', {
+              webhookId: registration.id,
+              event,
+            });
+            return res.status(401).json({ error: 'Invalid signature' });
           }
-
-          // Update registration stats
-          registration.lastTriggered = new Date();
-          registration.triggerCount++;
-
-          // Add to queue for processing
-          this.queueEvent(event);
-
-          // Send immediate response
-          res.status(200).json({ received: true, eventId: event.id });
-
-          this.emit("webhook:received", { webhookId: registration.id, event });
-        } catch (error: any) {
-          console.error("Webhook error:", error);
-          registration.status = "error";
-          registration.error = error.message;
-
-          this.emit("webhook:error", { webhookId: registration.id, error });
-
-          res.status(500).json({ error: "Webhook processing failed" });
+        } else {
+          event.verified = true;
         }
-      },
-    );
+
+        // Update registration stats
+        registration.lastTriggered = new Date();
+        registration.triggerCount++;
+
+        // Add to queue for processing
+        this.queueEvent(event);
+
+        // Send immediate response
+        res.status(200).json({ received: true, eventId: event.id });
+
+        this.emit('webhook:received', { webhookId: registration.id, event });
+      } catch (error: any) {
+        console.error('Webhook error:', error);
+        registration.status = 'error';
+        registration.error = error.message;
+
+        this.emit('webhook:error', { webhookId: registration.id, error });
+
+        res.status(500).json({ error: 'Webhook processing failed' });
+      }
+    });
   }
 
   /**
@@ -183,22 +173,16 @@ export class WebhookManager extends EventEmitter {
     payload: Buffer,
     signature: string,
     secret: string,
-    algorithm: "sha1" | "sha256" | "sha512" = "sha256",
+    algorithm: 'sha1' | 'sha256' | 'sha512' = 'sha256'
   ): boolean {
     if (!signature) {
       return false;
     }
 
-    const expectedSignature = crypto
-      .createHmac(algorithm, secret)
-      .update(payload)
-      .digest("hex");
+    const expectedSignature = crypto.createHmac(algorithm, secret).update(payload).digest('hex');
 
     // Use timing-safe comparison
-    return crypto.timingSafeEqual(
-      Buffer.from(signature),
-      Buffer.from(expectedSignature),
-    );
+    return crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(expectedSignature));
   }
 
   /**
@@ -208,7 +192,7 @@ export class WebhookManager extends EventEmitter {
     if (this.eventQueue.length >= this.maxQueueSize) {
       // Remove oldest event if queue is full
       const removed = this.eventQueue.shift();
-      this.emit("webhook:queue_overflow", { removedEvent: removed });
+      this.emit('webhook:queue_overflow', { removedEvent: removed });
     }
 
     this.eventQueue.push(event);
@@ -236,37 +220,33 @@ export class WebhookManager extends EventEmitter {
       if (!event) continue;
 
       const webhook = this.webhooks.get(event.webhookId);
-      if (!webhook || webhook.status !== "active") {
+      if (!webhook || webhook.status !== 'active') {
         continue;
       }
 
       try {
         // Execute handler with retry logic
-        await this.executeWithRetry(
-          () => webhook.handler(event),
-          webhook.config.maxRetries || 3,
-        );
+        await this.executeWithRetry(() => webhook.handler(event), webhook.config.maxRetries || 3);
 
         event.processed = true;
 
-        this.emit("webhook:processed", { webhookId: event.webhookId, event });
+        this.emit('webhook:processed', { webhookId: event.webhookId, event });
       } catch (error: any) {
         event.error = error.message;
 
-        this.emit("webhook:processing_failed", {
+        this.emit('webhook:processing_failed', {
           webhookId: event.webhookId,
           event,
           error,
         });
 
         // Mark webhook as error if too many failures
-        if (webhook.triggerCount > 10 && webhook.status === "active") {
+        if (webhook.triggerCount > 10 && webhook.status === 'active') {
           const failureRate =
-            (webhook.triggerCount - this.getSuccessCount(webhook.id)) /
-            webhook.triggerCount;
+            (webhook.triggerCount - this.getSuccessCount(webhook.id)) / webhook.triggerCount;
           if (failureRate > 0.5) {
-            webhook.status = "error";
-            webhook.error = "Too many processing failures";
+            webhook.status = 'error';
+            webhook.error = 'Too many processing failures';
           }
         }
       }
@@ -281,7 +261,7 @@ export class WebhookManager extends EventEmitter {
   private async executeWithRetry<T>(
     fn: () => Promise<T>,
     maxRetries: number = 3,
-    delay: number = 1000,
+    delay: number = 1000
   ): Promise<T> {
     let lastError: any;
 
@@ -292,7 +272,7 @@ export class WebhookManager extends EventEmitter {
         lastError = error;
 
         if (attempt < maxRetries) {
-          await this.sleep(delay * Math.pow(2, attempt));
+          await this.sleep(delay * 2 ** attempt);
         }
       }
     }
@@ -313,15 +293,13 @@ export class WebhookManager extends EventEmitter {
 
     // Remove route
     const routes = this.router.stack;
-    const index = routes.findIndex(
-      (layer: any) => layer.route?.path === webhook.config.path,
-    );
+    const index = routes.findIndex((layer: any) => layer.route?.path === webhook.config.path);
 
     if (index !== -1) {
       routes.splice(index, 1);
     }
 
-    this.emit("webhook:unregistered", {
+    this.emit('webhook:unregistered', {
       id,
       integrationName: webhook.integrationName,
     });
@@ -338,8 +316,8 @@ export class WebhookManager extends EventEmitter {
       return false;
     }
 
-    webhook.status = "paused";
-    this.emit("webhook:paused", { id });
+    webhook.status = 'paused';
+    this.emit('webhook:paused', { id });
 
     return true;
   }
@@ -353,9 +331,9 @@ export class WebhookManager extends EventEmitter {
       return false;
     }
 
-    webhook.status = "active";
+    webhook.status = 'active';
     webhook.error = undefined;
-    this.emit("webhook:resumed", { id });
+    this.emit('webhook:resumed', { id });
 
     return true;
   }
@@ -379,7 +357,7 @@ export class WebhookManager extends EventEmitter {
    */
   getWebhooksByIntegration(integrationName: string): WebhookRegistration[] {
     return Array.from(this.webhooks.values()).filter(
-      (webhook) => webhook.integrationName === integrationName,
+      (webhook) => webhook.integrationName === integrationName
     );
   }
 
@@ -398,9 +376,9 @@ export class WebhookManager extends EventEmitter {
 
     return {
       totalWebhooks: webhooksArray.length,
-      activeWebhooks: webhooksArray.filter((w) => w.status === "active").length,
-      pausedWebhooks: webhooksArray.filter((w) => w.status === "paused").length,
-      errorWebhooks: webhooksArray.filter((w) => w.status === "error").length,
+      activeWebhooks: webhooksArray.filter((w) => w.status === 'active').length,
+      pausedWebhooks: webhooksArray.filter((w) => w.status === 'paused').length,
+      errorWebhooks: webhooksArray.filter((w) => w.status === 'error').length,
       queueSize: this.eventQueue.length,
       totalEvents: webhooksArray.reduce((sum, w) => sum + w.triggerCount, 0),
     };
@@ -418,14 +396,14 @@ export class WebhookManager extends EventEmitter {
    * Generate webhook ID
    */
   private generateWebhookId(): string {
-    return `webhook_${Date.now()}_${crypto.randomBytes(8).toString("hex")}`;
+    return `webhook_${Date.now()}_${crypto.randomBytes(8).toString('hex')}`;
   }
 
   /**
    * Generate event ID
    */
   private generateEventId(): string {
-    return `event_${Date.now()}_${crypto.randomBytes(8).toString("hex")}`;
+    return `event_${Date.now()}_${crypto.randomBytes(8).toString('hex')}`;
   }
 
   /**

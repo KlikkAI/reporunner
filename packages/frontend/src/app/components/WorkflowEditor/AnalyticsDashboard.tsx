@@ -6,58 +6,57 @@
  * Inspired by DataDog, New Relic, and Grafana dashboards.
  */
 
-import React, { useEffect, useMemo } from "react";
-import {
-  Modal,
-  Tabs,
-  Card,
-  Row,
-  Col,
-  Statistic,
-  Table,
-  List,
-  Button,
-  Select,
-  Switch,
-  Badge,
-  Empty,
-  Tag,
-} from "antd";
 import {
   BarChartOutlined,
-  DashboardOutlined,
-  DollarCircleOutlined,
   BulbOutlined,
-  ReloadOutlined,
-  RiseOutlined,
-  WarningOutlined,
   CheckCircleOutlined,
   ClockCircleOutlined,
-  ThunderboltOutlined,
+  DashboardOutlined,
+  DollarCircleOutlined,
+  ReloadOutlined,
+  RiseOutlined,
   RobotOutlined,
-} from "@ant-design/icons";
+  ThunderboltOutlined,
+  WarningOutlined,
+} from '@ant-design/icons';
 import {
-  LineChart,
-  Line,
-  AreaChart,
+  Badge,
+  Button,
+  Card,
+  Col,
+  Empty,
+  List,
+  Modal,
+  Row,
+  Select,
+  Statistic,
+  Switch,
+  Table,
+  Tabs,
+  Tag,
+} from 'antd';
+import type React from 'react';
+import { useEffect, useMemo } from 'react';
+import {
   Area,
-  XAxis,
-  YAxis,
+  AreaChart,
   CartesianGrid,
+  Line,
+  LineChart,
   Tooltip as RechartsTooltip,
   ResponsiveContainer,
-} from "recharts";
+  XAxis,
+  YAxis,
+} from 'recharts';
+import type { NodePerformanceStats } from '../../../core/services/analyticsService';
 import {
-  useAnalyticsStore,
+  formatCurrency,
+  formatDuration,
+  getCostTrend,
   getExecutionSummary,
   getTopBottlenecks,
-  getCostTrend,
-  formatDuration,
-  formatCurrency,
-} from "../../../core/stores/analyticsStore";
-import type {
-  NodePerformanceStats,
-} from "../../../core/services/analyticsService";
+  useAnalyticsStore,
+} from '../../../core/stores/analyticsStore';
 
 const { TabPane } = Tabs;
 const { Option } = Select;
@@ -106,29 +105,20 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
     }
   }, [isOpen, workflowId, loadAnalytics, currentAnalytics?.workflowId]);
 
-  const executionSummary = useMemo(
-    () => getExecutionSummary(currentAnalytics),
-    [currentAnalytics]
-  );
+  const executionSummary = useMemo(() => getExecutionSummary(currentAnalytics), [currentAnalytics]);
 
-  const topBottlenecks = useMemo(
-    () => getTopBottlenecks(bottlenecks, 5),
-    [bottlenecks]
-  );
+  const topBottlenecks = useMemo(() => getTopBottlenecks(bottlenecks, 5), [bottlenecks]);
 
-  const costTrend = useMemo(
-    () => getCostTrend(costHistory),
-    [costHistory]
-  );
+  const costTrend = useMemo(() => getCostTrend(costHistory), [costHistory]);
 
   // Chart colors
   const chartColors = {
-    primary: "#1890ff",
-    success: "#52c41a",
-    warning: "#faad14",
-    danger: "#ff4d4f",
-    purple: "#722ed1",
-    cyan: "#13c2c2",
+    primary: '#1890ff',
+    success: '#52c41a',
+    warning: '#faad14',
+    danger: '#ff4d4f',
+    purple: '#722ed1',
+    cyan: '#13c2c2',
   };
 
   // Overview Tab Component
@@ -154,7 +144,7 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
               precision={1}
               prefix={<CheckCircleOutlined />}
               valueStyle={{
-                color: (executionSummary?.successRate || 0) >= 95 ? '#3f8600' : '#cf1322'
+                color: (executionSummary?.successRate || 0) >= 95 ? '#3f8600' : '#cf1322',
               }}
             />
           </Card>
@@ -177,7 +167,7 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
               precision={0}
               prefix={<BarChartOutlined />}
               valueStyle={{
-                color: (executionSummary?.efficiency || 0) >= 80 ? '#3f8600' : '#faad14'
+                color: (executionSummary?.efficiency || 0) >= 80 ? '#3f8600' : '#faad14',
               }}
             />
           </Card>
@@ -222,20 +212,18 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
                   <List.Item>
                     <List.Item.Meta
                       avatar={
-                        <Badge
-                          status={bottleneck.severity === "critical" ? "error" : "warning"}
-                        />
+                        <Badge status={bottleneck.severity === 'critical' ? 'error' : 'warning'} />
                       }
                       title={
                         <span>
                           {bottleneck.description}
                           <Tag
                             color={
-                              bottleneck.severity === "critical"
-                                ? "red"
-                                : bottleneck.severity === "high"
-                                ? "orange"
-                                : "yellow"
+                              bottleneck.severity === 'critical'
+                                ? 'red'
+                                : bottleneck.severity === 'high'
+                                  ? 'orange'
+                                  : 'yellow'
                             }
                             className="ml-2"
                           >
@@ -246,9 +234,7 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
                       description={
                         <div className="text-sm">
                           <div className="text-gray-600">{bottleneck.impact}</div>
-                          <div className="text-blue-600 mt-1">
-                            💡 {bottleneck.recommendation}
-                          </div>
+                          <div className="text-blue-600 mt-1">💡 {bottleneck.recommendation}</div>
                         </div>
                       }
                     />
@@ -282,12 +268,8 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
                       }
                       description={
                         <div className="text-sm">
-                          <div className="text-gray-600">
-                            Impact: {insight.predictedImpact}
-                          </div>
-                          <div className="text-green-600 mt-1">
-                            Timeframe: {insight.timeframe}
-                          </div>
+                          <div className="text-gray-600">Impact: {insight.predictedImpact}</div>
+                          <div className="text-green-600 mt-1">Timeframe: {insight.timeframe}</div>
                         </div>
                       }
                     />
@@ -413,10 +395,7 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
               key: 'trend',
               render: (trend: string) => (
                 <Tag
-                  color={
-                    trend === 'improving' ? 'green' :
-                    trend === 'degrading' ? 'red' : 'blue'
-                  }
+                  color={trend === 'improving' ? 'green' : trend === 'degrading' ? 'red' : 'blue'}
                 >
                   {trend}
                 </Tag>
@@ -426,11 +405,7 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
               title: 'Actions',
               key: 'actions',
               render: (_, record: NodePerformanceStats) => (
-                <Button
-                  type="link"
-                  size="small"
-                  onClick={() => setSelectedNode(record.nodeId)}
-                >
+                <Button type="link" size="small" onClick={() => setSelectedNode(record.nodeId)}>
                   Analyze
                 </Button>
               ),
@@ -528,8 +503,11 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
                       <div className="text-gray-600">{recommendation.implementation}</div>
                       <Tag
                         color={
-                          recommendation.impact === 'high' ? 'red' :
-                          recommendation.impact === 'medium' ? 'orange' : 'blue'
+                          recommendation.impact === 'high'
+                            ? 'red'
+                            : recommendation.impact === 'medium'
+                              ? 'orange'
+                              : 'blue'
                         }
                         className="mt-1"
                       >
@@ -563,9 +541,7 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
                         <RobotOutlined className="text-blue-500 mr-2" />
                         {insight.type.replace('_', ' ').toUpperCase()}
                       </h4>
-                      <Tag color="blue">
-                        {Math.round(insight.confidence * 100)}% confidence
-                      </Tag>
+                      <Tag color="blue">{Math.round(insight.confidence * 100)}% confidence</Tag>
                     </div>
 
                     <div className="text-gray-700">{insight.description}</div>
@@ -618,17 +594,22 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
                       <h4 className="font-medium flex items-center">
                         <WarningOutlined
                           className={`mr-2 ${
-                            bottleneck.severity === 'critical' ? 'text-red-500' :
-                            bottleneck.severity === 'high' ? 'text-orange-500' :
-                            'text-yellow-500'
+                            bottleneck.severity === 'critical'
+                              ? 'text-red-500'
+                              : bottleneck.severity === 'high'
+                                ? 'text-orange-500'
+                                : 'text-yellow-500'
                           }`}
                         />
                         {bottleneck.type.replace('_', ' ').toUpperCase()}
                       </h4>
                       <Tag
                         color={
-                          bottleneck.severity === 'critical' ? 'red' :
-                          bottleneck.severity === 'high' ? 'orange' : 'yellow'
+                          bottleneck.severity === 'critical'
+                            ? 'red'
+                            : bottleneck.severity === 'high'
+                              ? 'orange'
+                              : 'yellow'
                         }
                       >
                         {bottleneck.severity}
@@ -668,11 +649,7 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
   const AnalyticsHeader: React.FC = () => (
     <div className="flex items-center justify-between mb-4">
       <div className="flex items-center space-x-4">
-        <Select
-          value={analyticsPeriod}
-          onChange={setAnalyticsPeriod}
-          style={{ width: 120 }}
-        >
+        <Select value={analyticsPeriod} onChange={setAnalyticsPeriod} style={{ width: 120 }}>
           <Option value={1}>Last 24h</Option>
           <Option value={7}>Last 7 days</Option>
           <Option value={30}>Last 30 days</Option>

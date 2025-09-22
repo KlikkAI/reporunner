@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useEffect, useState, useMemo } from 'react'
-import { nodeRegistry } from '@/core'
+import React, { useEffect, useMemo, useState } from 'react';
+import { nodeRegistry } from '@/core';
 
 const Integrations: React.FC = () => {
   // Generate integrations from node registry (Pure Registry System)
   const integrations = useMemo(() => {
-    const nodeTypes = nodeRegistry.getAllNodeTypeDescriptions()
-    return nodeTypes.map(nodeType => ({
+    const nodeTypes = nodeRegistry.getAllNodeTypeDescriptions();
+    return nodeTypes.map((nodeType) => ({
       id: nodeType.name,
       name: nodeType.displayName,
       description: nodeType.description,
@@ -23,61 +23,54 @@ const Integrations: React.FC = () => {
           type: 'action',
         },
       ],
-    }))
-  }, [])
+    }));
+  }, []);
 
-  const connectedIntegrations = integrations.filter(i => i.isConnected)
-  const isLoading = false // No loading needed for registry data
+  const connectedIntegrations = integrations.filter((i) => i.isConnected);
+  const isLoading = false; // No loading needed for registry data
 
-  const [selectedCategory, setSelectedCategory] = useState<string>('All')
-  const [searchTerm, setSearchTerm] = useState('')
-  const [filteredIntegrationsState, setFilteredIntegrationsState] = useState<
-    any[]
-  >([])
+  const [selectedCategory, setSelectedCategory] = useState<string>('All');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filteredIntegrationsState, setFilteredIntegrationsState] = useState<any[]>([]);
 
   const categories = React.useMemo(
-    () => [
-      'All',
-      ...Array.from(new Set(integrations.map(i => i.category))).sort(),
-    ],
+    () => ['All', ...Array.from(new Set(integrations.map((i) => i.category))).sort()],
     [integrations]
-  )
+  );
 
   // Update filtered integrations when dependencies change
   useEffect(() => {
-    const filtered = integrations.filter(integration => {
+    const filtered = integrations.filter((integration) => {
       const matchesCategory =
-        selectedCategory === 'All' || integration.category === selectedCategory
+        selectedCategory === 'All' || integration.category === selectedCategory;
       const matchesSearch =
         integration.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (integration.description || '')
-          .toLowerCase()
-          .includes(searchTerm.toLowerCase())
+        (integration.description || '').toLowerCase().includes(searchTerm.toLowerCase());
 
-      return matchesCategory && matchesSearch
-    })
+      return matchesCategory && matchesSearch;
+    });
 
-    setFilteredIntegrationsState(filtered)
-  }, [integrations, selectedCategory, searchTerm])
+    setFilteredIntegrationsState(filtered);
+  }, [integrations, selectedCategory, searchTerm]);
 
-  const filteredIntegrations = filteredIntegrationsState
+  const filteredIntegrations = filteredIntegrationsState;
 
   const handleConnect = async (integration: any) => {
     // Mock connection config - Pure Registry System handles this automatically
     const config = {
       apiKey: 'mock-api-key',
       connectedAt: new Date().toISOString(),
-    }
+    };
     // Note: In Pure Registry System, connections are handled by credential management
-    console.log('Mock connecting integration:', integration.id, config)
-  }
+    console.log('Mock connecting integration:', integration.id, config);
+  };
 
   const handleDisconnect = async (integrationId: string) => {
     if (confirm('Are you sure you want to disconnect this integration?')) {
       // Note: In Pure Registry System, disconnections are handled by credential management
-      console.log('Mock disconnecting integration:', integrationId)
+      console.log('Mock disconnecting integration:', integrationId);
     }
-  }
+  };
 
   return (
     <div className="p-6">
@@ -94,9 +87,7 @@ const Integrations: React.FC = () => {
             <div className="text-2xl mr-4">🔗</div>
             <div>
               <p className="text-sm font-medium text-gray-600">Available</p>
-              <p className="text-2xl font-semibold text-gray-900">
-                {integrations.length}
-              </p>
+              <p className="text-2xl font-semibold text-gray-900">{integrations.length}</p>
             </div>
           </div>
         </div>
@@ -105,9 +96,7 @@ const Integrations: React.FC = () => {
             <div className="text-2xl mr-4">✅</div>
             <div>
               <p className="text-sm font-medium text-gray-600">Connected</p>
-              <p className="text-2xl font-semibold text-gray-900">
-                {connectedIntegrations.length}
-              </p>
+              <p className="text-2xl font-semibold text-gray-900">{connectedIntegrations.length}</p>
             </div>
           </div>
         </div>
@@ -115,9 +104,7 @@ const Integrations: React.FC = () => {
           <div className="flex items-center">
             <div className="text-2xl mr-4">📈</div>
             <div>
-              <p className="text-sm font-medium text-gray-600">
-                Active Workflows
-              </p>
+              <p className="text-sm font-medium text-gray-600">Active Workflows</p>
               <p className="text-2xl font-semibold text-gray-900">8</p>
             </div>
           </div>
@@ -133,18 +120,18 @@ const Integrations: React.FC = () => {
                 type="text"
                 placeholder="Search integrations..."
                 value={searchTerm}
-                onChange={e => setSearchTerm(e.target.value)}
+                onChange={(e) => setSearchTerm(e.target.value)}
                 className="border border-gray-300 rounded-lg px-4 py-4 mb-4 w-full focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
 
             <div className="flex flex-wrap items-center space-x-2 space-y-2 justify-between">
-              {categories.map(category => (
+              {categories.map((category) => (
                 <button
                   key={category}
                   onClick={() => {
-                    setSelectedCategory(category || '')
-                    setSearchTerm('') // Clear search when switching categories
+                    setSelectedCategory(category || '');
+                    setSearchTerm(''); // Clear search when switching categories
                   }}
                   className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                     selectedCategory === category
@@ -173,7 +160,7 @@ const Integrations: React.FC = () => {
               className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
               key={`${selectedCategory}-${searchTerm}`}
             >
-              {filteredIntegrations.map(integration => (
+              {filteredIntegrations.map((integration) => (
                 <div
                   key={`${selectedCategory}-${integration.id}`}
                   className="border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow"
@@ -182,12 +169,8 @@ const Integrations: React.FC = () => {
                     <div className="flex items-center">
                       <div className="text-3xl mr-3">{integration.icon}</div>
                       <div>
-                        <h3 className="font-semibold text-gray-900">
-                          {integration.name}
-                        </h3>
-                        <p className="text-sm text-gray-500">
-                          {integration.category}
-                        </p>
+                        <h3 className="font-semibold text-gray-900">{integration.name}</h3>
+                        <p className="text-sm text-gray-500">{integration.category}</p>
                       </div>
                     </div>
                     {integration.isConnected && (
@@ -197,9 +180,7 @@ const Integrations: React.FC = () => {
                     )}
                   </div>
 
-                  <p className="text-gray-600 text-sm mb-4">
-                    {integration.description}
-                  </p>
+                  <p className="text-gray-600 text-sm mb-4">{integration.description}</p>
 
                   <div className="mb-4">
                     <p className="text-xs text-gray-500 mb-2">
@@ -207,16 +188,14 @@ const Integrations: React.FC = () => {
                       {integration.nodeTypes.length !== 1 ? 's' : ''} available
                     </p>
                     <div className="flex flex-wrap gap-1">
-                      {integration.nodeTypes
-                        .slice(0, 3)
-                        .map((nodeType: any) => (
-                          <span
-                            key={nodeType.id}
-                            className="bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded"
-                          >
-                            {nodeType.name}
-                          </span>
-                        ))}
+                      {integration.nodeTypes.slice(0, 3).map((nodeType: any) => (
+                        <span
+                          key={nodeType.id}
+                          className="bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded"
+                        >
+                          {nodeType.name}
+                        </span>
+                      ))}
                       {integration.nodeTypes.length > 3 && (
                         <span className="text-xs text-gray-500">
                           +{integration.nodeTypes.length - 3} more
@@ -249,15 +228,13 @@ const Integrations: React.FC = () => {
 
           {!isLoading && filteredIntegrations.length === 0 && (
             <div className="text-center py-8">
-              <p className="text-gray-600">
-                No integrations found matching your criteria
-              </p>
+              <p className="text-gray-600">No integrations found matching your criteria</p>
             </div>
           )}
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Integrations
+export default Integrations;

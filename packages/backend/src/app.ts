@@ -1,29 +1,28 @@
 // Test-friendly Express app configuration without server startup
-import express, { Application, Request, Response } from 'express';
-import cors from 'cors';
-import helmet from 'helmet';
+
 import compression from 'compression';
+import cors from 'cors';
+import express, { type Application, type Request, type Response } from 'express';
+import helmet from 'helmet';
 import morgan from 'morgan';
 
 // Import routes (domain-based structure)
 import authRoutes from './domains/auth/routes/authRoutes.js';
-import workflowRoutes from './domains/workflows/routes/workflowRoutes.js';
 import credentialRoutes from './domains/credentials/routes/credentialRoutes.js';
-import oauthRoutes from './domains/oauth/routes/oauthRoutes.js';
 import nodeExecutionRoutes from './domains/executions/routes/nodeExecutionRoutes.js';
+import oauthRoutes from './domains/oauth/routes/oauthRoutes.js';
+import workflowRoutes from './domains/workflows/routes/workflowRoutes.js';
 import { errorHandler, notFoundHandler } from './middleware/errorHandlers.js';
 
 const app: Application = express();
 
 // Middleware
-app.use(cors({
-  origin: [
-    'https://app.klikk.ai',
-    'http://localhost:3000',
-    'http://localhost:5173'
-  ],
-  credentials: true
-}));
+app.use(
+  cors({
+    origin: ['https://app.klikk.ai', 'http://localhost:3000', 'http://localhost:5173'],
+    credentials: true,
+  })
+);
 app.use(helmet());
 app.use(compression());
 // Increase payload limits for AI Agent executions with large context
@@ -44,8 +43,8 @@ app.get('/', (req: Request, res: Response) => {
     endpoints: {
       auth: '/auth',
       workflows: '/workflows',
-      credentials: '/credentials'
-    }
+      credentials: '/credentials',
+    },
   });
 });
 

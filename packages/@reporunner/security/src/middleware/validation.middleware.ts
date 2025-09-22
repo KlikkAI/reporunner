@@ -1,22 +1,13 @@
-import { Request, Response, NextFunction } from "express";
-import validator from "validator";
-import DOMPurify from "isomorphic-dompurify";
-import { ERROR_CODES } from "@reporunner/constants";
+import { ERROR_CODES } from '@reporunner/constants';
+import type { NextFunction, Request, Response } from 'express';
+import DOMPurify from 'isomorphic-dompurify';
+import validator from 'validator';
 
 export interface ValidationRule {
   field: string;
-  location?: "body" | "query" | "params" | "headers";
+  location?: 'body' | 'query' | 'params' | 'headers';
   required?: boolean;
-  type?:
-    | "string"
-    | "number"
-    | "boolean"
-    | "email"
-    | "url"
-    | "uuid"
-    | "json"
-    | "array"
-    | "object";
+  type?: 'string' | 'number' | 'boolean' | 'email' | 'url' | 'uuid' | 'json' | 'array' | 'object';
   min?: number;
   max?: number;
   minLength?: number;
@@ -54,7 +45,7 @@ export interface ValidationError {
 const SQL_INJECTION_PATTERNS = [
   /(\b(SELECT|INSERT|UPDATE|DELETE|DROP|UNION|CREATE|ALTER|EXEC|EXECUTE|SCRIPT|JAVASCRIPT|ALERT|CONFIRM|PROMPT)\b)/gi,
   /(--|#|\/\*|\*\/|;|\||\\x[0-9a-f]{2}|\\u[0-9a-f]{4})/gi,
-  /('|(\')|"|(\")|(--)|(\|)|(\|\|)|(;))/gi,
+  /('|(')|"|(")|(--)|(\|)|(\|\|)|(;))/gi,
   /(UNION\s+SELECT|SELECT\s+\*|DROP\s+TABLE|INSERT\s+INTO)/gi,
 ];
 
@@ -82,48 +73,29 @@ const XSS_PATTERNS = [
 /**
  * Path traversal patterns to detect
  */
-const PATH_TRAVERSAL_PATTERNS = [
-  /\.\.\//g,
-  /\.\.\\/,
-  /%2e%2e%2f/gi,
-  /%252e%252e%252f/gi,
-  /\.\./g,
-];
+const PATH_TRAVERSAL_PATTERNS = [/\.\.\//g, /\.\.\\/, /%2e%2e%2f/gi, /%252e%252e%252f/gi, /\.\./g];
 
 /**
  * Command injection patterns to detect
  */
-const COMMAND_INJECTION_PATTERNS = [
-  /[;&|`$()]/g,
-  /\$\(/g,
-  /`[^`]*`/g,
-  /\|\|/g,
-  /&&/g,
-];
+const COMMAND_INJECTION_PATTERNS = [/[;&|`$()]/g, /\$\(/g, /`[^`]*`/g, /\|\|/g, /&&/g];
 
 /**
  * Create validation middleware
  */
 export function createValidationMiddleware(schema: ValidationSchema) {
-  return async (
-    req: Request,
-    res: Response,
-    next: NextFunction,
-  ): Promise<void> => {
+  return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const errors: ValidationError[] = [];
     const validatedData: any = {};
 
     // Process each rule
     for (const rule of schema.rules) {
-      const location = rule.location || "body";
+      const location = rule.location || 'body';
       const source = req[location as keyof Request] as any;
       let value = source?.[rule.field];
 
       // Check required fields
-      if (
-        rule.required &&
-        (value === undefined || value === null || value === "")
-      ) {
+      if (rule.required && (value === undefined || value === null || value === '')) {
         errors.push({
           field: rule.field,
           message: `${rule.field} is required`,
@@ -138,8 +110,7 @@ export function createValidationMiddleware(schema: ValidationSchema) {
 
       // Apply default value if not present
       if (value === undefined && rule.default !== undefined) {
-        value =
-          typeof rule.default === "function" ? rule.default() : rule.default;
+        value = typeof rule.default === 'function' ? rule.default() : rule.default;
       }
 
       // Skip validation if value is not present and not required
@@ -177,7 +148,7 @@ export function createValidationMiddleware(schema: ValidationSchema) {
             message: error,
             value,
             location,
-          })),
+          }))
         );
 
         if (schema.abortEarly) {
@@ -197,11 +168,11 @@ export function createValidationMiddleware(schema: ValidationSchema) {
 
     // Handle unknown fields
     if (schema.stripUnknown) {
-      for (const location of ["body", "query", "params"]) {
+      for (const location of ['body', 'query', 'params']) {
         const source = req[location as keyof Request] as any;
-        if (source && typeof source === "object") {
+        if (source && typeof source === 'object') {
           const knownFields = schema.rules
-            .filter((r) => (r.location || "body") === location)
+            .filter((r) => (r.location || 'body') === location)
             .map((r) => r.field);
 
           for (const key of Object.keys(source)) {
@@ -226,7 +197,7 @@ export function createValidationMiddleware(schema: ValidationSchema) {
         success: false,
         error: {
           code: ERROR_CODES.VALIDATION_ERROR,
-          message: "Validation failed",
+          message: 'Validation failed',
           details: errors,
         },
       });
@@ -246,59 +217,59 @@ function validateType(value: any, type?: string): string | null {
   if (!type) return null;
 
   switch (type) {
-    case "string":
-      if (typeof value !== "string") {
+    case 'string':
+      if (typeof value !== 'string') {
         return `Expected string, got ${typeof value}`;
       }
       break;
 
-    case "number":
-      if (typeof value !== "number" || isNaN(value)) {
+    case 'number':
+      if (typeof value !== 'number' || isNaN(value)) {
         return `Expected number, got ${typeof value}`;
       }
       break;
 
-    case "boolean":
-      if (typeof value !== "boolean") {
+    case 'boolean':
+      if (typeof value !== 'boolean') {
         return `Expected boolean, got ${typeof value}`;
       }
       break;
 
-    case "email":
+    case 'email':
       if (!validator.isEmail(value)) {
-        return "Invalid email address";
+        return 'Invalid email address';
       }
       break;
 
-    case "url":
+    case 'url':
       if (!validator.isURL(value)) {
-        return "Invalid URL";
+        return 'Invalid URL';
       }
       break;
 
-    case "uuid":
+    case 'uuid':
       if (!validator.isUUID(value)) {
-        return "Invalid UUID";
+        return 'Invalid UUID';
       }
       break;
 
-    case "json":
+    case 'json':
       try {
         JSON.parse(value);
       } catch {
-        return "Invalid JSON";
+        return 'Invalid JSON';
       }
       break;
 
-    case "array":
+    case 'array':
       if (!Array.isArray(value)) {
-        return "Expected array";
+        return 'Expected array';
       }
       break;
 
-    case "object":
-      if (typeof value !== "object" || Array.isArray(value)) {
-        return "Expected object";
+    case 'object':
+      if (typeof value !== 'object' || Array.isArray(value)) {
+        return 'Expected object';
       }
       break;
   }
@@ -313,7 +284,7 @@ function validateConstraints(value: any, rule: ValidationRule): string[] {
   const errors: string[] = [];
 
   // Min/Max for numbers
-  if (typeof value === "number") {
+  if (typeof value === 'number') {
     if (rule.min !== undefined && value < rule.min) {
       errors.push(`Value must be at least ${rule.min}`);
     }
@@ -323,7 +294,7 @@ function validateConstraints(value: any, rule: ValidationRule): string[] {
   }
 
   // Length for strings and arrays
-  if (typeof value === "string" || Array.isArray(value)) {
+  if (typeof value === 'string' || Array.isArray(value)) {
     const length = value.length;
     if (rule.minLength !== undefined && length < rule.minLength) {
       errors.push(`Length must be at least ${rule.minLength}`);
@@ -334,7 +305,7 @@ function validateConstraints(value: any, rule: ValidationRule): string[] {
   }
 
   // Pattern matching
-  if (rule.pattern && typeof value === "string") {
+  if (rule.pattern && typeof value === 'string') {
     if (!rule.pattern.test(value)) {
       errors.push(`Value does not match required pattern`);
     }
@@ -342,16 +313,16 @@ function validateConstraints(value: any, rule: ValidationRule): string[] {
 
   // Enum validation
   if (rule.enum && !rule.enum.includes(value)) {
-    errors.push(`Value must be one of: ${rule.enum.join(", ")}`);
+    errors.push(`Value must be one of: ${rule.enum.join(', ')}`);
   }
 
   // Custom validation
   if (rule.custom) {
     const result = rule.custom(value);
-    if (typeof result === "string") {
+    if (typeof result === 'string') {
       errors.push(result);
     } else if (!result) {
-      errors.push("Custom validation failed");
+      errors.push('Custom validation failed');
     }
   }
 
@@ -362,7 +333,7 @@ function validateConstraints(value: any, rule: ValidationRule): string[] {
  * Sanitize input based on rules
  */
 function sanitizeInput(value: any, rule: ValidationRule): any {
-  if (typeof value !== "string") return value;
+  if (typeof value !== 'string') return value;
 
   let sanitized = value;
 
@@ -383,7 +354,7 @@ function sanitizeInput(value: any, rule: ValidationRule): any {
     sanitized = validator.escape(sanitized);
   }
 
-  if (rule.normalizeEmail && rule.type === "email") {
+  if (rule.normalizeEmail && rule.type === 'email') {
     sanitized = validator.normalizeEmail(sanitized) || sanitized;
   }
 
@@ -402,7 +373,7 @@ function sanitizeInput(value: any, rule: ValidationRule): any {
 export function createSQLInjectionProtection() {
   return (req: Request, res: Response, next: NextFunction): void => {
     const checkValue = (value: any, field: string): boolean => {
-      if (typeof value !== "string") return true;
+      if (typeof value !== 'string') return true;
 
       for (const pattern of SQL_INJECTION_PATTERNS) {
         if (pattern.test(value)) {
@@ -414,16 +385,16 @@ export function createSQLInjectionProtection() {
     };
 
     // Check all input sources
-    for (const location of ["body", "query", "params"]) {
+    for (const location of ['body', 'query', 'params']) {
       const source = req[location as keyof Request] as any;
-      if (source && typeof source === "object") {
+      if (source && typeof source === 'object') {
         for (const [key, value] of Object.entries(source)) {
           if (!checkValue(value, `${location}.${key}`)) {
             res.status(400).json({
               success: false,
               error: {
                 code: ERROR_CODES.SECURITY_VIOLATION,
-                message: "Potentially malicious input detected",
+                message: 'Potentially malicious input detected',
               },
             });
             return;
@@ -451,9 +422,9 @@ export function createNoSQLInjectionProtection() {
       }
 
       // Check for operator injection
-      if (typeof value === "object" && value !== null) {
+      if (typeof value === 'object' && value !== null) {
         for (const key of Object.keys(value)) {
-          if (key.startsWith("$")) {
+          if (key.startsWith('$')) {
             return false;
           }
         }
@@ -464,12 +435,12 @@ export function createNoSQLInjectionProtection() {
 
     // Check body for NoSQL injection
     if (req.body && !checkValue(req.body)) {
-      console.warn("NoSQL injection attempt detected");
+      console.warn('NoSQL injection attempt detected');
       res.status(400).json({
         success: false,
         error: {
           code: ERROR_CODES.SECURITY_VIOLATION,
-          message: "Invalid input detected",
+          message: 'Invalid input detected',
         },
       });
       return;
@@ -485,22 +456,22 @@ export function createNoSQLInjectionProtection() {
 export function createXSSProtection() {
   return (req: Request, _res: Response, next: NextFunction) => {
     const sanitizeValue = (value: any): any => {
-      if (typeof value === "string") {
+      if (typeof value === 'string') {
         // Check for XSS patterns
         for (const pattern of XSS_PATTERNS) {
           if (pattern.test(value)) {
-            console.warn("XSS attempt detected and sanitized");
+            console.warn('XSS attempt detected and sanitized');
           }
         }
 
         // Sanitize HTML
         return DOMPurify.sanitize(value, {
-          ALLOWED_TAGS: ["b", "i", "em", "strong", "a", "p", "br"],
-          ALLOWED_ATTR: ["href"],
+          ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'a', 'p', 'br'],
+          ALLOWED_ATTR: ['href'],
         });
       } else if (Array.isArray(value)) {
         return value.map(sanitizeValue);
-      } else if (value && typeof value === "object") {
+      } else if (value && typeof value === 'object') {
         const sanitized: any = {};
         for (const [key, val] of Object.entries(value)) {
           sanitized[key] = sanitizeValue(val);
@@ -540,7 +511,7 @@ export function createPathTraversalProtection() {
         success: false,
         error: {
           code: ERROR_CODES.SECURITY_VIOLATION,
-          message: "Invalid path",
+          message: 'Invalid path',
         },
       });
       return;
@@ -548,17 +519,14 @@ export function createPathTraversalProtection() {
 
     // Check query parameters that might be file paths
     for (const [key, value] of Object.entries(req.query)) {
-      if (
-        typeof value === "string" &&
-        (key.includes("path") || key.includes("file"))
-      ) {
+      if (typeof value === 'string' && (key.includes('path') || key.includes('file'))) {
         if (!checkPath(value)) {
           console.warn(`Path traversal attempt in query parameter: ${key}`);
           res.status(400).json({
             success: false,
             error: {
               code: ERROR_CODES.SECURITY_VIOLATION,
-              message: "Invalid file path",
+              message: 'Invalid file path',
             },
           });
           return;
@@ -576,7 +544,7 @@ export function createPathTraversalProtection() {
 export function createCommandInjectionProtection() {
   return (req: Request, res: Response, next: NextFunction): void => {
     const checkValue = (value: any): boolean => {
-      if (typeof value !== "string") return true;
+      if (typeof value !== 'string') return true;
 
       for (const pattern of COMMAND_INJECTION_PATTERNS) {
         if (pattern.test(value)) {
@@ -587,22 +555,18 @@ export function createCommandInjectionProtection() {
     };
 
     // Check all input that might be used in commands
-    for (const location of ["body", "query", "params"]) {
+    for (const location of ['body', 'query', 'params']) {
       const source = req[location as keyof Request] as any;
-      if (source && typeof source === "object") {
+      if (source && typeof source === 'object') {
         for (const [key, value] of Object.entries(source)) {
-          if (
-            key.includes("cmd") ||
-            key.includes("command") ||
-            key.includes("exec")
-          ) {
+          if (key.includes('cmd') || key.includes('command') || key.includes('exec')) {
             if (!checkValue(value)) {
               console.warn(`Command injection attempt detected in: ${key}`);
               res.status(400).json({
                 success: false,
                 error: {
                   code: ERROR_CODES.SECURITY_VIOLATION,
-                  message: "Invalid command",
+                  message: 'Invalid command',
                 },
               });
               return;
@@ -626,7 +590,7 @@ export function createSecurityValidationMiddleware(
     enableXSSProtection?: boolean;
     enablePathTraversalProtection?: boolean;
     enableCommandInjectionProtection?: boolean;
-  } = {},
+  } = {}
 ) {
   const middlewares: any[] = [];
 
@@ -660,16 +624,16 @@ export const CommonSchemas = {
   login: {
     rules: [
       {
-        field: "email",
-        type: "email",
+        field: 'email',
+        type: 'email',
         required: true,
         normalizeEmail: true,
         toLowerCase: true,
         sanitize: true,
       },
       {
-        field: "password",
-        type: "string",
+        field: 'password',
+        type: 'string',
         required: true,
         minLength: 8,
         maxLength: 128,
@@ -680,25 +644,24 @@ export const CommonSchemas = {
   registration: {
     rules: [
       {
-        field: "email",
-        type: "email",
+        field: 'email',
+        type: 'email',
         required: true,
         normalizeEmail: true,
         toLowerCase: true,
         sanitize: true,
       },
       {
-        field: "password",
-        type: "string",
+        field: 'password',
+        type: 'string',
         required: true,
         minLength: 8,
         maxLength: 128,
-        pattern:
-          /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/,
+        pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/,
       },
       {
-        field: "name",
-        type: "string",
+        field: 'name',
+        type: 'string',
         required: true,
         minLength: 2,
         maxLength: 100,
@@ -711,28 +674,28 @@ export const CommonSchemas = {
   pagination: {
     rules: [
       {
-        field: "page",
-        location: "query",
-        type: "number",
+        field: 'page',
+        location: 'query',
+        type: 'number',
         min: 1,
         default: 1,
         transform: (v: any) => parseInt(v),
       },
       {
-        field: "limit",
-        location: "query",
-        type: "number",
+        field: 'limit',
+        location: 'query',
+        type: 'number',
         min: 1,
         max: 100,
         default: 20,
         transform: (v: any) => parseInt(v),
       },
       {
-        field: "sort",
-        location: "query",
-        type: "string",
-        enum: ["asc", "desc"],
-        default: "desc",
+        field: 'sort',
+        location: 'query',
+        type: 'string',
+        enum: ['asc', 'desc'],
+        default: 'desc',
         toLowerCase: true,
       },
     ],

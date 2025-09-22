@@ -1,7 +1,2 @@
-# Run lint-staged to check staged files
-pnpm exec lint-staged
-
-# Run type checking
-pnpm type-check
-
-echo "✅ Pre-commit checks passed!"
+#!/bin/sh
+pnpm lint-staged

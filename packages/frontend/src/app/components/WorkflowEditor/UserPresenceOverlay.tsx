@@ -5,11 +5,11 @@
  * Shows collaborative user activity with smooth animations and clear visual cues.
  */
 
-import React, { useCallback } from "react";
-import { Avatar, Tooltip } from "antd";
-import { useCollaborationStore } from "../../../core/stores/collaborationStore";
-import { useLeanWorkflowStore } from "../../../core/stores/leanWorkflowStore";
-import type { UserPresence } from "../../../core/services/collaborationService";
+import { Avatar, Tooltip } from 'antd';
+import React, { useCallback } from 'react';
+import type { UserPresence } from '../../../core/services/collaborationService';
+import { useCollaborationStore } from '../../../core/stores/collaborationStore';
+import { useLeanWorkflowStore } from '../../../core/stores/leanWorkflowStore';
 
 interface UserPresenceOverlayProps {
   containerRef: React.RefObject<HTMLDivElement>;
@@ -24,21 +24,25 @@ export const UserPresenceOverlay: React.FC<UserPresenceOverlayProps> = ({
   containerRef,
   transform,
 }) => {
-  const {
-    userPresences,
-    showUserCursors,
-    showUserSelections,
-  } = useCollaborationStore();
+  const { userPresences, showUserCursors, showUserSelections } = useCollaborationStore();
 
   const { nodes } = useLeanWorkflowStore();
 
   // Generate consistent user colors
   const getUserColor = useCallback((userId: string): string => {
     const colors = [
-      "#1890ff", "#52c41a", "#faad14", "#f5222d", "#722ed1",
-      "#13c2c2", "#eb2f96", "#fa541c", "#2f54eb", "#a0d911"
+      '#1890ff',
+      '#52c41a',
+      '#faad14',
+      '#f5222d',
+      '#722ed1',
+      '#13c2c2',
+      '#eb2f96',
+      '#fa541c',
+      '#2f54eb',
+      '#a0d911',
     ];
-    const hash = userId.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0);
+    const hash = userId.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
     return colors[hash % colors.length];
   }, []);
 
@@ -83,23 +87,17 @@ export const UserPresenceOverlay: React.FC<UserPresenceOverlayProps> = ({
           style={{
             left: screenPos.x,
             top: screenPos.y,
-            transform: "translate(-2px, -2px)",
+            transform: 'translate(-2px, -2px)',
           }}
         >
           {/* Cursor pointer */}
           <div
             className="relative"
             style={{
-              filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.2))",
+              filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.2))',
             }}
           >
-            <svg
-              width="16"
-              height="20"
-              viewBox="0 0 16 20"
-              fill="none"
-              className="cursor-pointer"
-            >
+            <svg width="16" height="20" viewBox="0 0 16 20" fill="none" className="cursor-pointer">
               <path
                 d="M0 0L0 16L4.5 11.5L7 16.5L9.5 15L7 10L12 10L0 0Z"
                 fill={userColor}
@@ -113,7 +111,7 @@ export const UserPresenceOverlay: React.FC<UserPresenceOverlayProps> = ({
               className="absolute top-5 left-4 px-2 py-1 rounded text-xs font-medium text-white whitespace-nowrap"
               style={{
                 backgroundColor: userColor,
-                boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
+                boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
               }}
             >
               {presence.user.name}
@@ -147,7 +145,7 @@ export const UserPresenceOverlay: React.FC<UserPresenceOverlayProps> = ({
                 width: bounds.width + 4,
                 height: bounds.height + 4,
                 border: `2px solid ${userColor}`,
-                borderRadius: "8px",
+                borderRadius: '8px',
                 backgroundColor: `${userColor}20`,
                 boxShadow: `0 0 0 1px ${userColor}40`,
               }}
@@ -156,7 +154,7 @@ export const UserPresenceOverlay: React.FC<UserPresenceOverlayProps> = ({
               <div
                 className="absolute -top-3 -right-3"
                 style={{
-                  filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.1))",
+                  filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.1))',
                 }}
               >
                 <Tooltip title={`${presence.user.name} selected this node`}>
@@ -165,8 +163,8 @@ export const UserPresenceOverlay: React.FC<UserPresenceOverlayProps> = ({
                     src={presence.user.avatar}
                     style={{
                       backgroundColor: userColor,
-                      border: "2px solid white",
-                      fontSize: "10px",
+                      border: '2px solid white',
+                      fontSize: '10px',
                     }}
                   >
                     {presence.user.name.charAt(0).toUpperCase()}
@@ -205,7 +203,7 @@ export const UserPresenceOverlay: React.FC<UserPresenceOverlayProps> = ({
             width: viewportWidth * viewport.zoom * transform.zoom,
             height: viewportHeight * viewport.zoom * transform.zoom,
             border: `1px dashed ${userColor}60`,
-            borderRadius: "4px",
+            borderRadius: '4px',
           }}
         >
           {/* User label for viewport */}
@@ -249,7 +247,7 @@ export const UserPresenceOverlay: React.FC<UserPresenceOverlayProps> = ({
                   src={presence.user.avatar}
                   style={{
                     backgroundColor: getUserColor(presence.userId),
-                    border: "2px solid white",
+                    border: '2px solid white',
                   }}
                   className="shadow-sm"
                 >
@@ -260,9 +258,9 @@ export const UserPresenceOverlay: React.FC<UserPresenceOverlayProps> = ({
                 <Avatar
                   size={24}
                   style={{
-                    backgroundColor: "#f0f0f0",
-                    color: "#666",
-                    border: "2px solid white",
+                    backgroundColor: '#f0f0f0',
+                    color: '#666',
+                    border: '2px solid white',
                   }}
                   className="shadow-sm"
                 >
@@ -271,7 +269,7 @@ export const UserPresenceOverlay: React.FC<UserPresenceOverlayProps> = ({
               )}
             </div>
             <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-              {userPresences.length} other{userPresences.length !== 1 ? "s" : ""} online
+              {userPresences.length} other{userPresences.length !== 1 ? 's' : ''} online
             </span>
           </div>
         </div>

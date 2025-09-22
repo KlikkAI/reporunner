@@ -6,12 +6,12 @@
  */
 
 // Base API client
-export { apiClient, ApiClientError, ApiClient } from "./ApiClient";
+export { ApiClient, ApiClientError, apiClient } from './ApiClient';
 
 // API service clients - Both classes and singleton instances
-export { AuthApiService, authApiService } from "./AuthApiService";
+export { AuthApiService, authApiService } from './AuthApiService';
 export {
   CredentialApiService,
   credentialApiService,
-} from "./CredentialApiService";
-export { WorkflowApiService, workflowApiService } from "./WorkflowApiService";
+} from './CredentialApiService';
+export { WorkflowApiService, workflowApiService } from './WorkflowApiService';

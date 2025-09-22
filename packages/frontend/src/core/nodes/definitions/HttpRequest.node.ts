@@ -1,4 +1,4 @@
-import type { INodeType, INodeTypeDescription } from '../types'
+import type { INodeType, INodeTypeDescription } from '../types';
 
 export class HttpRequestNode implements INodeType {
   description: INodeTypeDescription = {
@@ -160,64 +160,58 @@ export class HttpRequestNode implements INodeType {
       },
     ],
     subtitle: '={{$parameter["method"] + " " + $parameter["url"]}}',
-  }
+  };
 
   async execute(this: any): Promise<any> {
-    const method = this.getNodeParameter('method', 'GET') as string
-    const url = this.getNodeParameter('url', '') as string
-    const authentication = this.getNodeParameter(
-      'authentication',
-      'none'
-    ) as string
+    const method = this.getNodeParameter('method', 'GET') as string;
+    const url = this.getNodeParameter('url', '') as string;
+    const authentication = this.getNodeParameter('authentication', 'none') as string;
     const headers = this.getNodeParameter('headers', []) as Array<{
-      name: string
-      value: string
-    }>
-    const timeout = this.getNodeParameter('timeout', 30000) as number
-    const responseFormat = this.getNodeParameter(
-      'responseFormat',
-      'json'
-    ) as string
+      name: string;
+      value: string;
+    }>;
+    const timeout = this.getNodeParameter('timeout', 30000) as number;
+    const responseFormat = this.getNodeParameter('responseFormat', 'json') as string;
 
     // Build headers
-    const requestHeaders: Record<string, string> = {}
-    headers.forEach(header => {
+    const requestHeaders: Record<string, string> = {};
+    headers.forEach((header) => {
       if (header.name && header.value) {
-        requestHeaders[header.name] = header.value
+        requestHeaders[header.name] = header.value;
       }
-    })
+    });
 
     // Add authentication headers
     switch (authentication) {
       case 'basicAuth': {
-        const username = this.getNodeParameter('username', '') as string
-        const password = this.getNodeParameter('password', '') as string
-        const credentials = btoa(`${username}:${password}`)
-        requestHeaders['Authorization'] = `Basic ${credentials}`
-        break
+        const username = this.getNodeParameter('username', '') as string;
+        const password = this.getNodeParameter('password', '') as string;
+        const credentials = btoa(`${username}:${password}`);
+        requestHeaders['Authorization'] = `Basic ${credentials}`;
+        break;
       }
       case 'bearerToken': {
-        const token = this.getNodeParameter('token', '') as string
-        requestHeaders['Authorization'] = `Bearer ${token}`
-        break
+        const token = this.getNodeParameter('token', '') as string;
+        requestHeaders['Authorization'] = `Bearer ${token}`;
+        break;
       }
       case 'apiKey': {
-        const apiKey = this.getNodeParameter('apiKey', '') as string
-        requestHeaders['X-API-Key'] = apiKey
-        break
+        const apiKey = this.getNodeParameter('apiKey', '') as string;
+        requestHeaders['X-API-Key'] = apiKey;
+        break;
       }
     }
 
     // Build request body for POST/PUT/PATCH
-    let body: any = undefined
+    let body: any;
     if (['POST', 'PUT', 'PATCH'].includes(method)) {
-      const bodyParam = this.getNodeParameter('body', '{}') as string
+      const bodyParam = this.getNodeParameter('body', '{}') as string;
       try {
-        body = JSON.parse(bodyParam)
-        requestHeaders['Content-Type'] = 'application/json'
+        body = JSON.parse(bodyParam);
+        requestHeaders['Content-Type'] = 'application/json';
       } catch (error) {
-        body = bodyParam
-        requestHeaders['Content-Type'] = 'text/plain'
+        body = bodyParam;
+        requestHeaders['Content-Type'] = 'text/plain';
       }
     }
 
@@ -253,6 +247,6 @@ export class HttpRequestNode implements INodeType {
           timestamp: new Date().toISOString(),
         },
       },
-    ]
+    ];
   }
 }

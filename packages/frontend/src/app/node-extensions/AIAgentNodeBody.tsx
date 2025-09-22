@@ -1,9 +1,10 @@
-import React, { useState, useRef } from "react";
-import { Handle, Position } from "reactflow";
-import type { CustomNodeBodyProps } from "./nodeUiRegistry";
-import { NodeIcon, StatusBadge, NodeLabel } from "./shared";
-import NodeToolbar from "../components/WorkflowEditor/NodeTypes/BaseNode/NodeToolbar";
-import { useSmartMenuPosition } from "../hooks/useSmartMenuPosition";
+import type React from 'react';
+import { useRef, useState } from 'react';
+import { Handle, Position } from 'reactflow';
+import NodeToolbar from '../components/WorkflowEditor/NodeTypes/BaseNode/NodeToolbar';
+import { useSmartMenuPosition } from '../hooks/useSmartMenuPosition';
+import type { CustomNodeBodyProps } from './nodeUiRegistry';
+import { NodeIcon, NodeLabel, StatusBadge } from './shared';
 
 /**
  * Custom AI Agent Node Body Component
@@ -20,9 +21,9 @@ const AIAgentNodeBody: React.FC<CustomNodeBodyProps> = ({
 
   onOpenProperties,
 }) => {
-  const displayName = nodeData.name || nodeData.label || "AI Agent";
-  const provider = nodeData.parameters?.provider || "Google (Gemini)";
-  const icon = "🤖"; // Simple robot emoji like old frontend
+  const displayName = nodeData.name || nodeData.label || 'AI Agent';
+  const provider = nodeData.parameters?.provider || 'Google (Gemini)';
+  const icon = '🤖'; // Simple robot emoji like old frontend
 
   // Menu state for NodeToolbar
   const [showLocalMenu, setShowLocalMenu] = useState(false);
@@ -52,8 +53,8 @@ const AIAgentNodeBody: React.FC<CustomNodeBodyProps> = ({
             className={`
               relative flex items-center justify-center bg-gray-800 p-4 shadow-lg transition-all duration-200
               rounded-md min-w-[80px] max-w-[150px] min-h-[60px]
-              ${selected ? "ring-2 ring-offset-2 ring-offset-gray-900 ring-purple-400" : ""}
-              ${isHovered ? "hover:shadow-xl hover:scale-105 ring-2 ring-offset-2 ring-offset-gray-900 ring-purple-400" : ""}
+              ${selected ? 'ring-2 ring-offset-2 ring-offset-gray-900 ring-purple-400' : ''}
+              ${isHovered ? 'hover:shadow-xl hover:scale-105 ring-2 ring-offset-2 ring-offset-gray-900 ring-purple-400' : ''}
             `}
             onMouseEnter={onMouseEnter}
             onMouseLeave={onMouseLeave}
@@ -65,11 +66,11 @@ const AIAgentNodeBody: React.FC<CustomNodeBodyProps> = ({
               position={Position.Left}
               id="input_0"
               style={{
-                background: "#555",
+                background: '#555',
                 width: 10,
                 height: 10,
                 left: -5,
-                top: "25%",
+                top: '25%',
               }}
             />
 
@@ -79,11 +80,11 @@ const AIAgentNodeBody: React.FC<CustomNodeBodyProps> = ({
               position={Position.Left}
               id="ai_languageModel"
               style={{
-                background: "#8b5cf6",
+                background: '#8b5cf6',
                 width: 8,
                 height: 8,
                 left: -4,
-                top: "45%",
+                top: '45%',
               }}
             />
 
@@ -93,11 +94,11 @@ const AIAgentNodeBody: React.FC<CustomNodeBodyProps> = ({
               position={Position.Left}
               id="ai_memory"
               style={{
-                background: "#f59e0b",
+                background: '#f59e0b',
                 width: 8,
                 height: 8,
                 left: -4,
-                top: "65%",
+                top: '65%',
               }}
             />
 
@@ -107,11 +108,11 @@ const AIAgentNodeBody: React.FC<CustomNodeBodyProps> = ({
               position={Position.Left}
               id="ai_tool"
               style={{
-                background: "#ef4444",
+                background: '#ef4444',
                 width: 8,
                 height: 8,
                 left: -4,
-                top: "85%",
+                top: '85%',
               }}
             />
 
@@ -121,7 +122,7 @@ const AIAgentNodeBody: React.FC<CustomNodeBodyProps> = ({
               position={Position.Right}
               id="output_0"
               style={{
-                background: "#555",
+                background: '#555',
                 width: 10,
                 height: 10,
                 right: -5,
@@ -134,8 +135,8 @@ const AIAgentNodeBody: React.FC<CustomNodeBodyProps> = ({
             {/* Shared NodeToolbar */}
             <NodeToolbar
               visible={isHovered}
-              onPlay={() => console.log("Play AI Agent:", nodeId)}
-              onStop={() => console.log("Stop AI Agent:", nodeId)}
+              onPlay={() => console.log('Play AI Agent:', nodeId)}
+              onStop={() => console.log('Stop AI Agent:', nodeId)}
               onDelete={(e) => {
                 e.stopPropagation();
                 onDelete?.();
@@ -165,7 +166,7 @@ const AIAgentNodeBody: React.FC<CustomNodeBodyProps> = ({
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
-                    console.log("Test AI Agent:", nodeId);
+                    console.log('Test AI Agent:', nodeId);
                     setShowLocalMenu(false);
                   }}
                   className="w-full px-3 py-1.5 text-left text-sm text-gray-200 hover:bg-gray-700 flex items-center gap-2"
@@ -175,7 +176,7 @@ const AIAgentNodeBody: React.FC<CustomNodeBodyProps> = ({
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
-                    console.log("Copy AI Agent:", nodeId);
+                    console.log('Copy AI Agent:', nodeId);
                     setShowLocalMenu(false);
                   }}
                   className="w-full px-3 py-1.5 text-left text-sm text-gray-200 hover:bg-gray-700 flex items-center gap-2"
@@ -185,7 +186,7 @@ const AIAgentNodeBody: React.FC<CustomNodeBodyProps> = ({
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
-                    console.log("Duplicate AI Agent:", nodeId);
+                    console.log('Duplicate AI Agent:', nodeId);
                     setShowLocalMenu(false);
                   }}
                   className="w-full px-3 py-1.5 text-left text-sm text-gray-200 hover:bg-gray-700 flex items-center gap-2"
@@ -207,9 +208,7 @@ const AIAgentNodeBody: React.FC<CustomNodeBodyProps> = ({
             )}
 
             {/* Status Badge */}
-            {nodeData.disabled && (
-              <StatusBadge type="disabled" position="top-right" />
-            )}
+            {nodeData.disabled && <StatusBadge type="disabled" position="top-right" />}
           </div>
         </div>
       </div>

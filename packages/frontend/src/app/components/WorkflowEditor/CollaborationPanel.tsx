@@ -6,39 +6,38 @@
  * Figma's collaboration features and Google Docs comments.
  */
 
-import React, { useState, useCallback } from "react";
 import {
-  Drawer,
-  Tabs,
-  Button,
-  Card,
-  Avatar,
-  Badge,
-  Alert,
-  Tooltip,
-  Input,
-  Switch,
-  Divider,
-  Tag,
-  Timeline,
-  Empty,
-  Modal,
-  Radio,
-} from "antd";
-import {
-  TeamOutlined,
-  CommentOutlined,
-  WarningOutlined,
-  SendOutlined,
   CheckOutlined,
   ClockCircleOutlined,
+  CommentOutlined,
   ExclamationCircleOutlined,
-} from "@ant-design/icons";
-import { useCollaborationStore } from "../../../core/stores/collaborationStore";
-import { useLeanWorkflowStore } from "../../../core/stores/leanWorkflowStore";
-import type {
-  CollaborationConflict,
-} from "../../../core/services/collaborationService";
+  SendOutlined,
+  TeamOutlined,
+  WarningOutlined,
+} from '@ant-design/icons';
+import {
+  Alert,
+  Avatar,
+  Badge,
+  Button,
+  Card,
+  Divider,
+  Drawer,
+  Empty,
+  Input,
+  Modal,
+  Radio,
+  Switch,
+  Tabs,
+  Tag,
+  Timeline,
+  Tooltip,
+} from 'antd';
+import type React from 'react';
+import { useCallback, useState } from 'react';
+import type { CollaborationConflict } from '../../../core/services/collaborationService';
+import { useCollaborationStore } from '../../../core/stores/collaborationStore';
+import { useLeanWorkflowStore } from '../../../core/stores/leanWorkflowStore';
 
 const { TextArea } = Input;
 const { TabPane } = Tabs;
@@ -48,13 +47,12 @@ interface CollaborationPanelProps {
   onToggle: () => void;
 }
 
-export const CollaborationPanel: React.FC<CollaborationPanelProps> = ({
-  isVisible,
-  onToggle,
-}) => {
-  const [activeTab, setActiveTab] = useState("users");
-  const [newCommentContent, setNewCommentContent] = useState("");
-  const [newCommentPosition, setNewCommentPosition] = useState<{ x: number; y: number } | null>(null);
+export const CollaborationPanel: React.FC<CollaborationPanelProps> = ({ isVisible, onToggle }) => {
+  const [activeTab, setActiveTab] = useState('users');
+  const [newCommentContent, setNewCommentContent] = useState('');
+  const [newCommentPosition, setNewCommentPosition] = useState<{ x: number; y: number } | null>(
+    null
+  );
   const [replyContents, setReplyContents] = useState<Record<string, string>>({});
   const [conflictModalVisible, setConflictModalVisible] = useState(false);
   const [selectedConflict, setSelectedConflict] = useState<CollaborationConflict | null>(null);
@@ -88,10 +86,18 @@ export const CollaborationPanel: React.FC<CollaborationPanelProps> = ({
   // Generate user colors for consistent display
   const getUserColor = useCallback((userId: string): string => {
     const colors = [
-      "#1890ff", "#52c41a", "#faad14", "#f5222d", "#722ed1",
-      "#13c2c2", "#eb2f96", "#fa541c", "#2f54eb", "#a0d911"
+      '#1890ff',
+      '#52c41a',
+      '#faad14',
+      '#f5222d',
+      '#722ed1',
+      '#13c2c2',
+      '#eb2f96',
+      '#fa541c',
+      '#2f54eb',
+      '#a0d911',
     ];
-    const hash = userId.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0);
+    const hash = userId.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
     return colors[hash % colors.length];
   }, []);
 
@@ -109,39 +115,42 @@ export const CollaborationPanel: React.FC<CollaborationPanelProps> = ({
         mentions: [], // TODO: Parse mentions from content
       });
 
-      setNewCommentContent("");
+      setNewCommentContent('');
       setNewCommentPosition(null);
     } catch (error) {
-      console.error("Failed to add comment:", error);
+      console.error('Failed to add comment:', error);
     }
   }, [newCommentContent, newCommentPosition, selectedNodeIds, addComment]);
 
   // Handle replying to a comment
-  const handleReplyToComment = useCallback(async (commentId: string) => {
-    const content = replyContents[commentId];
-    if (!content?.trim()) return;
+  const handleReplyToComment = useCallback(
+    async (commentId: string) => {
+      const content = replyContents[commentId];
+      if (!content?.trim()) return;
 
-    try {
-      await replyToComment(commentId, content);
-      setReplyContents({ ...replyContents, [commentId]: "" });
-    } catch (error) {
-      console.error("Failed to reply to comment:", error);
-    }
-  }, [replyContents, replyToComment]);
+      try {
+        await replyToComment(commentId, content);
+        setReplyContents({ ...replyContents, [commentId]: '' });
+      } catch (error) {
+        console.error('Failed to reply to comment:', error);
+      }
+    },
+    [replyContents, replyToComment]
+  );
 
   // Handle conflict resolution
-  const handleResolveConflict = useCallback(async (
-    conflict: CollaborationConflict,
-    resolution: any
-  ) => {
-    try {
-      await resolveConflict(conflict.id, resolution);
-      setConflictModalVisible(false);
-      setSelectedConflict(null);
-    } catch (error) {
-      console.error("Failed to resolve conflict:", error);
-    }
-  }, [resolveConflict]);
+  const handleResolveConflict = useCallback(
+    async (conflict: CollaborationConflict, resolution: any) => {
+      try {
+        await resolveConflict(conflict.id, resolution);
+        setConflictModalVisible(false);
+        setSelectedConflict(null);
+      } catch (error) {
+        console.error('Failed to resolve conflict:', error);
+      }
+    },
+    [resolveConflict]
+  );
 
   // Users Tab
   const UsersTab: React.FC = () => (
@@ -151,7 +160,7 @@ export const CollaborationPanel: React.FC<CollaborationPanelProps> = ({
           Active Users ({userPresences.length + (currentUser ? 1 : 0)})
         </h3>
         <Badge
-          status={isConnected ? "processing" : "error"}
+          status={isConnected ? 'processing' : 'error'}
           text={connectionStatus}
           className="capitalize"
         />
@@ -173,9 +182,7 @@ export const CollaborationPanel: React.FC<CollaborationPanelProps> = ({
                 <div className="font-medium text-gray-900 dark:text-gray-100">
                   {currentUser.name} (You)
                 </div>
-                <div className="text-sm text-gray-600 dark:text-gray-400">
-                  {currentUser.email}
-                </div>
+                <div className="text-sm text-gray-600 dark:text-gray-400">{currentUser.email}</div>
               </div>
               <Badge status="processing" />
             </div>
@@ -203,7 +210,7 @@ export const CollaborationPanel: React.FC<CollaborationPanelProps> = ({
               </div>
               <div className="flex flex-col items-end">
                 <Badge
-                  status={presence.user.status === "online" ? "success" : "default"}
+                  status={presence.user.status === 'online' ? 'success' : 'default'}
                   text={presence.user.status}
                 />
                 {presence.cursor && (
@@ -218,10 +225,7 @@ export const CollaborationPanel: React.FC<CollaborationPanelProps> = ({
       </div>
 
       {userPresences.length === 0 && !currentUser && (
-        <Empty
-          description="No active users"
-          image={Empty.PRESENTED_IMAGE_SIMPLE}
-        />
+        <Empty description="No active users" image={Empty.PRESENTED_IMAGE_SIMPLE} />
       )}
 
       <Divider />
@@ -230,25 +234,13 @@ export const CollaborationPanel: React.FC<CollaborationPanelProps> = ({
         <h4 className="font-medium text-gray-900 dark:text-gray-100">Presence Settings</h4>
 
         <div className="flex items-center justify-between">
-          <span className="text-sm text-gray-600 dark:text-gray-400">
-            Show User Cursors
-          </span>
-          <Switch
-            size="small"
-            checked={showUserCursors}
-            onChange={toggleUserCursors}
-          />
+          <span className="text-sm text-gray-600 dark:text-gray-400">Show User Cursors</span>
+          <Switch size="small" checked={showUserCursors} onChange={toggleUserCursors} />
         </div>
 
         <div className="flex items-center justify-between">
-          <span className="text-sm text-gray-600 dark:text-gray-400">
-            Show User Selections
-          </span>
-          <Switch
-            size="small"
-            checked={showUserSelections}
-            onChange={toggleUserSelections}
-          />
+          <span className="text-sm text-gray-600 dark:text-gray-400">Show User Selections</span>
+          <Switch size="small" checked={showUserSelections} onChange={toggleUserSelections} />
         </div>
       </div>
     </div>
@@ -264,11 +256,11 @@ export const CollaborationPanel: React.FC<CollaborationPanelProps> = ({
         <div className="flex space-x-2">
           <Button
             size="small"
-            type={commentMode ? "primary" : "default"}
+            type={commentMode ? 'primary' : 'default'}
             icon={<CommentOutlined />}
             onClick={toggleCommentMode}
           >
-            {commentMode ? "Cancel" : "Add Comment"}
+            {commentMode ? 'Cancel' : 'Add Comment'}
           </Button>
           <Switch
             size="small"
@@ -316,20 +308,13 @@ export const CollaborationPanel: React.FC<CollaborationPanelProps> = ({
 
       <div className="space-y-3">
         {activeComments.length === 0 ? (
-          <Empty
-            description="No active comments"
-            image={Empty.PRESENTED_IMAGE_SIMPLE}
-          />
+          <Empty description="No active comments" image={Empty.PRESENTED_IMAGE_SIMPLE} />
         ) : (
           activeComments.map((comment) => (
             <Card
               key={comment.id}
               size="small"
-              className={
-                selectedCommentId === comment.id
-                  ? "border-blue-500 shadow-md"
-                  : ""
-              }
+              className={selectedCommentId === comment.id ? 'border-blue-500 shadow-md' : ''}
               onClick={() => selectComment(comment.id)}
             >
               <div className="space-y-2">
@@ -353,11 +338,7 @@ export const CollaborationPanel: React.FC<CollaborationPanelProps> = ({
                     </div>
                   </div>
                   <div className="flex space-x-1">
-                    {comment.nodeId && (
-                      <Tag color="blue">
-                        Node Comment
-                      </Tag>
-                    )}
+                    {comment.nodeId && <Tag color="blue">Node Comment</Tag>}
                     <Tooltip title="Resolve Comment">
                       <Button
                         type="text"
@@ -413,7 +394,7 @@ export const CollaborationPanel: React.FC<CollaborationPanelProps> = ({
                     <Input
                       size="small"
                       placeholder="Reply..."
-                      value={replyContents[comment.id] || ""}
+                      value={replyContents[comment.id] || ''}
                       onChange={(e) =>
                         setReplyContents({
                           ...replyContents,
@@ -446,17 +427,13 @@ export const CollaborationPanel: React.FC<CollaborationPanelProps> = ({
         <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
           Conflicts ({activeConflicts.length})
         </h3>
-        {activeConflicts.length > 0 && (
-          <Badge count={activeConflicts.length} status="error" />
-        )}
+        {activeConflicts.length > 0 && <Badge count={activeConflicts.length} status="error" />}
       </div>
 
       {activeConflicts.length === 0 ? (
         <div className="text-center py-8">
           <CheckOutlined className="text-4xl text-green-500 mb-2" />
-          <div className="text-gray-600 dark:text-gray-400">
-            No conflicts detected
-          </div>
+          <div className="text-gray-600 dark:text-gray-400">No conflicts detected</div>
         </div>
       ) : (
         <div className="space-y-3">
@@ -472,11 +449,11 @@ export const CollaborationPanel: React.FC<CollaborationPanelProps> = ({
                     <div className="flex items-center space-x-2">
                       <ExclamationCircleOutlined className="text-red-500" />
                       <span className="font-medium text-red-700 dark:text-red-300">
-                        {conflict.type.replace("_", " ").toUpperCase()}
+                        {conflict.type.replace('_', ' ').toUpperCase()}
                       </span>
                     </div>
                     <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                      Affected nodes: {conflict.affectedNodes.join(", ")}
+                      Affected nodes: {conflict.affectedNodes.join(', ')}
                     </div>
                     <div className="text-xs text-gray-500 mt-1">
                       {new Date(conflict.timestamp).toLocaleString()}
@@ -511,9 +488,7 @@ export const CollaborationPanel: React.FC<CollaborationPanelProps> = ({
   // Activity Tab
   const ActivityTab: React.FC = () => (
     <div className="p-4 space-y-4">
-      <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-        Recent Activity
-      </h3>
+      <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Recent Activity</h3>
 
       <Timeline className="mt-4">
         {operationHistory
@@ -523,17 +498,14 @@ export const CollaborationPanel: React.FC<CollaborationPanelProps> = ({
             <Timeline.Item
               key={operation.id}
               dot={
-                <Avatar
-                  size={20}
-                  style={{ backgroundColor: getUserColor(operation.userId) }}
-                >
+                <Avatar size={20} style={{ backgroundColor: getUserColor(operation.userId) }}>
                   {operation.userId.charAt(0).toUpperCase()}
                 </Avatar>
               }
             >
               <div className="space-y-1">
                 <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                  {operation.type.replace("_", " ")}
+                  {operation.type.replace('_', ' ')}
                 </div>
                 <div className="text-xs text-gray-500">
                   {new Date(operation.timestamp).toLocaleString()}
@@ -549,10 +521,7 @@ export const CollaborationPanel: React.FC<CollaborationPanelProps> = ({
       </Timeline>
 
       {operationHistory.length === 0 && (
-        <Empty
-          description="No recent activity"
-          image={Empty.PRESENTED_IMAGE_SIMPLE}
-        />
+        <Empty description="No recent activity" image={Empty.PRESENTED_IMAGE_SIMPLE} />
       )}
     </div>
   );
@@ -567,11 +536,7 @@ export const CollaborationPanel: React.FC<CollaborationPanelProps> = ({
         width={400}
         className="collaboration-drawer"
       >
-        <Tabs
-          activeKey={activeTab}
-          onChange={setActiveTab}
-          className="h-full"
-        >
+        <Tabs activeKey={activeTab} onChange={setActiveTab} className="h-full">
           <TabPane
             tab={
               <span>
@@ -590,11 +555,7 @@ export const CollaborationPanel: React.FC<CollaborationPanelProps> = ({
                 <CommentOutlined />
                 Comments
                 {activeComments.length > 0 && (
-                  <Badge
-                    count={activeComments.length}
-                    size="small"
-                    style={{ marginLeft: 4 }}
-                  />
+                  <Badge count={activeComments.length} size="small" style={{ marginLeft: 4 }} />
                 )}
               </span>
             }
@@ -652,7 +613,7 @@ export const CollaborationPanel: React.FC<CollaborationPanelProps> = ({
           <div className="space-y-4">
             <Alert
               type="warning"
-              message={`${selectedConflict.type.replace("_", " ")} Conflict`}
+              message={`${selectedConflict.type.replace('_', ' ')} Conflict`}
               description={`This conflict involves ${selectedConflict.operations.length} operations affecting ${selectedConflict.affectedNodes.length} nodes.`}
             />
 
@@ -690,14 +651,12 @@ export const CollaborationPanel: React.FC<CollaborationPanelProps> = ({
             </div>
 
             <div className="flex justify-end space-x-2 pt-4 border-t">
-              <Button onClick={() => setConflictModalVisible(false)}>
-                Cancel
-              </Button>
+              <Button onClick={() => setConflictModalVisible(false)}>Cancel</Button>
               <Button
                 type="primary"
                 onClick={() =>
                   handleResolveConflict(selectedConflict, {
-                    strategy: "last_write_wins",
+                    strategy: 'last_write_wins',
                   })
                 }
               >

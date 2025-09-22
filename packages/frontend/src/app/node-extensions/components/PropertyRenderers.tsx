@@ -4,37 +4,22 @@
  * Comprehensive implementation matching n8n's exact functionality
  */
 
-import React, { useState, useCallback, useMemo } from "react";
-import {
-  Input,
-  Select,
-  Switch,
-  DatePicker,
-  Upload,
-  Button,
-  Tag,
-  Collapse,
-} from "antd";
-import {
-  PlusOutlined,
-  DeleteOutlined,
-  FilterOutlined,
-} from "@ant-design/icons";
+import { DeleteOutlined, FilterOutlined, PlusOutlined } from '@ant-design/icons';
+import { Button, Collapse, DatePicker, Input, Select, Switch, Tag, Upload } from 'antd';
+import type React from 'react';
+import { useCallback, useMemo, useState } from 'react';
 // Simplified version without drag-and-drop for now
 // TODO: Add back @dnd-kit when needed for advanced assignment collection
-import type {
-  NodePropertyType,
-  INodePropertyTypeOptions,
-} from "@/core/nodes/types";
+import type { INodePropertyTypeOptions, NodePropertyType } from '@/core/nodes/types';
 
 // Define interfaces locally to avoid circular imports
 
 import {
+  type IExpressionContext as CoreExpressionContext,
   ExpressionEvaluator,
   ExpressionUtils,
-  type IExpressionContext as CoreExpressionContext,
-} from "@/core/utils/expressionEvaluator";
-import { cn } from "@/design-system/utils";
+} from '@/core/utils/expressionEvaluator';
+import { cn } from '@/design-system/utils';
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -80,23 +65,17 @@ export const StringRenderer: React.FC<PropertyRendererProps> = ({
   return (
     <div className="space-y-2">
       <div className="flex justify-between items-center">
-        <label className="block text-sm font-medium text-gray-200">
-          {property.displayName}
-        </label>
+        <label className="block text-sm font-medium text-gray-200">{property.displayName}</label>
         {isExpression && <Tag color="blue">Expression</Tag>}
       </div>
       <Input
-        value={value || ""}
+        value={value || ''}
         onChange={(e) => onChange(e.target.value)}
-        placeholder={
-          property.placeholder || `Enter ${property.displayName.toLowerCase()}`
-        }
+        placeholder={property.placeholder || `Enter ${property.displayName.toLowerCase()}`}
         disabled={disabled}
         className="bg-gray-800 border-gray-600 text-gray-200"
       />
-      {property.description && (
-        <p className="text-xs text-gray-400">{property.description}</p>
-      )}
+      {property.description && <p className="text-xs text-gray-400">{property.description}</p>}
     </div>
   );
 };
@@ -112,15 +91,11 @@ export const NumberRenderer: React.FC<PropertyRendererProps> = ({
 
   return (
     <div className="space-y-2">
-      <label className="block text-sm font-medium text-gray-200">
-        {property.displayName}
-      </label>
+      <label className="block text-sm font-medium text-gray-200">{property.displayName}</label>
       <Input
         type="number"
-        value={value ?? ""}
-        onChange={(e) =>
-          onChange(e.target.value ? Number(e.target.value) : undefined)
-        }
+        value={value ?? ''}
+        onChange={(e) => onChange(e.target.value ? Number(e.target.value) : undefined)}
         placeholder={property.placeholder}
         disabled={disabled}
         min={typeOptions?.minValue}
@@ -128,9 +103,7 @@ export const NumberRenderer: React.FC<PropertyRendererProps> = ({
         step={typeOptions?.numberStepSize || 1}
         className="bg-gray-800 border-gray-600 text-gray-200"
       />
-      {property.description && (
-        <p className="text-xs text-gray-400">{property.description}</p>
-      )}
+      {property.description && <p className="text-xs text-gray-400">{property.description}</p>}
     </div>
   );
 };
@@ -145,18 +118,10 @@ export const BooleanRenderer: React.FC<PropertyRendererProps> = ({
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between">
-        <label className="text-sm font-medium text-gray-200">
-          {property.displayName}
-        </label>
-        <Switch
-          checked={Boolean(value)}
-          onChange={onChange}
-          disabled={disabled}
-        />
+        <label className="text-sm font-medium text-gray-200">{property.displayName}</label>
+        <Switch checked={Boolean(value)} onChange={onChange} disabled={disabled} />
       </div>
-      {property.description && (
-        <p className="text-xs text-gray-400">{property.description}</p>
-      )}
+      {property.description && <p className="text-xs text-gray-400">{property.description}</p>}
     </div>
   );
 };
@@ -173,40 +138,28 @@ export const OptionsRenderer: React.FC<PropertyRendererProps> = ({
 
   return (
     <div className="space-y-2">
-      <label className="block text-sm font-medium text-gray-200">
-        {property.displayName}
-      </label>
+      <label className="block text-sm font-medium text-gray-200">{property.displayName}</label>
       <Select
         value={value}
         onChange={onChange}
-        placeholder={
-          property.placeholder || `Select ${property.displayName.toLowerCase()}`
-        }
+        placeholder={property.placeholder || `Select ${property.displayName.toLowerCase()}`}
         disabled={disabled}
         className="w-full [&_.ant-select-selector]:bg-gray-800 [&_.ant-select-selector]:border-gray-600"
         showSearch={typeOptions?.searchable !== false}
         allowClear={!property.required}
       >
         {options.map((option) => (
-          <Option
-            key={String(option.value)}
-            value={option.value}
-            title={option.description}
-          >
+          <Option key={String(option.value)} value={option.value} title={option.description}>
             <div>
               <div className="text-gray-200">{option.name}</div>
               {option.description && (
-                <div className="text-xs text-gray-400">
-                  {option.description}
-                </div>
+                <div className="text-xs text-gray-400">{option.description}</div>
               )}
             </div>
           </Option>
         ))}
       </Select>
-      {property.description && (
-        <p className="text-xs text-gray-400">{property.description}</p>
-      )}
+      {property.description && <p className="text-xs text-gray-400">{property.description}</p>}
     </div>
   );
 };
@@ -223,41 +176,29 @@ export const MultiOptionsRenderer: React.FC<PropertyRendererProps> = ({
 
   return (
     <div className="space-y-2">
-      <label className="block text-sm font-medium text-gray-200">
-        {property.displayName}
-      </label>
+      <label className="block text-sm font-medium text-gray-200">{property.displayName}</label>
       <Select
         mode="multiple"
         value={currentValues}
         onChange={onChange}
-        placeholder={
-          property.placeholder || `Select ${property.displayName.toLowerCase()}`
-        }
+        placeholder={property.placeholder || `Select ${property.displayName.toLowerCase()}`}
         disabled={disabled}
         className="w-full [&_.ant-select-selector]:bg-gray-800 [&_.ant-select-selector]:border-gray-600"
         showSearch
         allowClear
       >
         {options.map((option) => (
-          <Option
-            key={String(option.value)}
-            value={option.value}
-            title={option.description}
-          >
+          <Option key={String(option.value)} value={option.value} title={option.description}>
             <div>
               <div className="text-gray-200">{option.name}</div>
               {option.description && (
-                <div className="text-xs text-gray-400">
-                  {option.description}
-                </div>
+                <div className="text-xs text-gray-400">{option.description}</div>
               )}
             </div>
           </Option>
         ))}
       </Select>
-      {property.description && (
-        <p className="text-xs text-gray-400">{property.description}</p>
-      )}
+      {property.description && <p className="text-xs text-gray-400">{property.description}</p>}
     </div>
   );
 };
@@ -274,22 +215,16 @@ export const TextRenderer: React.FC<PropertyRendererProps> = ({
 
   return (
     <div className="space-y-2">
-      <label className="block text-sm font-medium text-gray-200">
-        {property.displayName}
-      </label>
+      <label className="block text-sm font-medium text-gray-200">{property.displayName}</label>
       <TextArea
-        value={value || ""}
+        value={value || ''}
         onChange={(e) => onChange(e.target.value)}
-        placeholder={
-          property.placeholder || `Enter ${property.displayName.toLowerCase()}`
-        }
+        placeholder={property.placeholder || `Enter ${property.displayName.toLowerCase()}`}
         disabled={disabled}
         rows={rows}
         className="bg-gray-800 border-gray-600 text-gray-200"
       />
-      {property.description && (
-        <p className="text-xs text-gray-400">{property.description}</p>
-      )}
+      {property.description && <p className="text-xs text-gray-400">{property.description}</p>}
     </div>
   );
 };
@@ -303,9 +238,7 @@ export const DateTimeRenderer: React.FC<PropertyRendererProps> = ({
 }) => {
   return (
     <div className="space-y-2">
-      <label className="block text-sm font-medium text-gray-200">
-        {property.displayName}
-      </label>
+      <label className="block text-sm font-medium text-gray-200">{property.displayName}</label>
       <DatePicker
         value={value ? new Date(value) : null}
         onChange={(date) => onChange(date?.toISOString())}
@@ -314,9 +247,7 @@ export const DateTimeRenderer: React.FC<PropertyRendererProps> = ({
         disabled={disabled}
         className="w-full bg-gray-800 border-gray-600"
       />
-      {property.description && (
-        <p className="text-xs text-gray-400">{property.description}</p>
-      )}
+      {property.description && <p className="text-xs text-gray-400">{property.description}</p>}
     </div>
   );
 };
@@ -330,28 +261,24 @@ export const ColorRenderer: React.FC<PropertyRendererProps> = ({
 }) => {
   return (
     <div className="space-y-2">
-      <label className="block text-sm font-medium text-gray-200">
-        {property.displayName}
-      </label>
+      <label className="block text-sm font-medium text-gray-200">{property.displayName}</label>
       <div className="flex items-center space-x-2">
         <input
           type="color"
-          value={value || "#000000"}
+          value={value || '#000000'}
           onChange={(e) => onChange(e.target.value)}
           disabled={disabled}
           className="w-12 h-8 rounded border-2 border-gray-600 cursor-pointer disabled:cursor-not-allowed"
         />
         <Input
-          value={value || ""}
+          value={value || ''}
           onChange={(e) => onChange(e.target.value)}
           placeholder="#000000"
           disabled={disabled}
           className="flex-1 bg-gray-800 border-gray-600 text-gray-200"
         />
       </div>
-      {property.description && (
-        <p className="text-xs text-gray-400">{property.description}</p>
-      )}
+      {property.description && <p className="text-xs text-gray-400">{property.description}</p>}
     </div>
   );
 };
@@ -379,21 +306,14 @@ export const FileRenderer: React.FC<PropertyRendererProps> = ({
 
   return (
     <div className="space-y-2">
-      <label className="block text-sm font-medium text-gray-200">
-        {property.displayName}
-      </label>
-      <Upload
-        beforeUpload={handleUpload}
-        maxCount={1}
-        disabled={disabled}
-        className="w-full"
-      >
+      <label className="block text-sm font-medium text-gray-200">{property.displayName}</label>
+      <Upload beforeUpload={handleUpload} maxCount={1} disabled={disabled} className="w-full">
         <Button
           icon={<PlusOutlined />}
           disabled={disabled}
           className="w-full bg-gray-700 border-gray-600 text-gray-200 hover:bg-gray-600"
         >
-          {value ? "Replace File" : "Upload File"}
+          {value ? 'Replace File' : 'Upload File'}
         </Button>
       </Upload>
       {value && (
@@ -401,9 +321,7 @@ export const FileRenderer: React.FC<PropertyRendererProps> = ({
           Selected: {value.name} ({Math.round(value.size / 1024)}KB)
         </div>
       )}
-      {property.description && (
-        <p className="text-xs text-gray-400">{property.description}</p>
-      )}
+      {property.description && <p className="text-xs text-gray-400">{property.description}</p>}
     </div>
   );
 };
@@ -417,9 +335,9 @@ export const JsonRenderer: React.FC<PropertyRendererProps> = ({
 }) => {
   const [jsonString, setJsonString] = useState(() => {
     try {
-      return typeof value === "string" ? value : JSON.stringify(value, null, 2);
+      return typeof value === 'string' ? value : JSON.stringify(value, null, 2);
     } catch {
-      return value || "";
+      return value || '';
     }
   });
 
@@ -439,33 +357,27 @@ export const JsonRenderer: React.FC<PropertyRendererProps> = ({
         onChange(newValue);
       }
     },
-    [onChange],
+    [onChange]
   );
 
   return (
     <div className="space-y-2">
       <div className="flex justify-between items-center">
-        <label className="block text-sm font-medium text-gray-200">
-          {property.displayName}
-        </label>
-        <Tag color={isValid ? "green" : "red"}>
-          {isValid ? "Valid JSON" : "Invalid JSON"}
-        </Tag>
+        <label className="block text-sm font-medium text-gray-200">{property.displayName}</label>
+        <Tag color={isValid ? 'green' : 'red'}>{isValid ? 'Valid JSON' : 'Invalid JSON'}</Tag>
       </div>
       <TextArea
         value={jsonString}
         onChange={(e) => handleChange(e.target.value)}
-        placeholder={property.placeholder || "Enter valid JSON"}
+        placeholder={property.placeholder || 'Enter valid JSON'}
         disabled={disabled}
         rows={6}
         className={cn(
-          "bg-gray-800 border-gray-600 text-gray-200 font-mono",
-          !isValid && "border-red-500",
+          'bg-gray-800 border-gray-600 text-gray-200 font-mono',
+          !isValid && 'border-red-500'
         )}
       />
-      {property.description && (
-        <p className="text-xs text-gray-400">{property.description}</p>
-      )}
+      {property.description && <p className="text-xs text-gray-400">{property.description}</p>}
     </div>
   );
 };
@@ -479,13 +391,10 @@ export const ExpressionRenderer: React.FC<PropertyRendererProps> = ({
   disabled,
 }) => {
   const [showExpressionMode, setShowExpressionMode] = useState(
-    ExpressionUtils.hasExpressions(value),
+    ExpressionUtils.hasExpressions(value)
   );
 
-  const evaluator = useMemo(
-    () => (context ? new ExpressionEvaluator(context) : null),
-    [context],
-  );
+  const evaluator = useMemo(() => (context ? new ExpressionEvaluator(context) : null), [context]);
 
   const [previewValue, setPreviewValue] = useState<any>(null);
 
@@ -507,13 +416,11 @@ export const ExpressionRenderer: React.FC<PropertyRendererProps> = ({
   return (
     <div className="space-y-2">
       <div className="flex justify-between items-center">
-        <label className="block text-sm font-medium text-gray-200">
-          {property.displayName}
-        </label>
+        <label className="block text-sm font-medium text-gray-200">{property.displayName}</label>
         <div className="flex items-center space-x-2">
           <Button
             size="small"
-            type={showExpressionMode ? "primary" : "default"}
+            type={showExpressionMode ? 'primary' : 'default'}
             onClick={() => setShowExpressionMode(!showExpressionMode)}
             className="text-xs"
           >
@@ -534,7 +441,7 @@ export const ExpressionRenderer: React.FC<PropertyRendererProps> = ({
 
       {showExpressionMode ? (
         <TextArea
-          value={value || ""}
+          value={value || ''}
           onChange={(e) => onChange(e.target.value)}
           placeholder="{{ $json.field }}"
           disabled={disabled}
@@ -543,7 +450,7 @@ export const ExpressionRenderer: React.FC<PropertyRendererProps> = ({
         />
       ) : (
         <Input
-          value={value || ""}
+          value={value || ''}
           onChange={(e) => onChange(e.target.value)}
           placeholder={property.placeholder}
           disabled={disabled}
@@ -555,16 +462,14 @@ export const ExpressionRenderer: React.FC<PropertyRendererProps> = ({
         <div className="text-xs bg-gray-700 p-2 rounded border border-gray-600">
           <div className="text-gray-400 mb-1">Preview:</div>
           <div className="text-gray-200 font-mono">
-            {typeof previewValue === "object"
+            {typeof previewValue === 'object'
               ? JSON.stringify(previewValue, null, 2)
               : String(previewValue)}
           </div>
         </div>
       )}
 
-      {property.description && (
-        <p className="text-xs text-gray-400">{property.description}</p>
-      )}
+      {property.description && <p className="text-xs text-gray-400">{property.description}</p>}
     </div>
   );
 };
@@ -576,12 +481,12 @@ export const ResourceLocatorRenderer: React.FC<PropertyRendererProps> = ({
   onChange,
   disabled,
 }) => {
-  const [mode, setMode] = useState(value?.mode || "list");
-  const currentValue = value || { mode: "list", value: "" };
+  const [mode, setMode] = useState(value?.mode || 'list');
+  const currentValue = value || { mode: 'list', value: '' };
 
   const handleModeChange = (newMode: string) => {
     setMode(newMode);
-    onChange({ ...currentValue, mode: newMode, value: "" });
+    onChange({ ...currentValue, mode: newMode, value: '' });
   };
 
   const handleValueChange = (newValue: any) => {
@@ -590,9 +495,7 @@ export const ResourceLocatorRenderer: React.FC<PropertyRendererProps> = ({
 
   return (
     <div className="space-y-2">
-      <label className="block text-sm font-medium text-gray-200">
-        {property.displayName}
-      </label>
+      <label className="block text-sm font-medium text-gray-200">{property.displayName}</label>
 
       <div className="flex space-x-2">
         <Select
@@ -606,7 +509,7 @@ export const ResourceLocatorRenderer: React.FC<PropertyRendererProps> = ({
           <Option value="url">URL</Option>
         </Select>
 
-        {mode === "list" ? (
+        {mode === 'list' ? (
           <Select
             value={currentValue.value}
             onChange={handleValueChange}
@@ -623,18 +526,14 @@ export const ResourceLocatorRenderer: React.FC<PropertyRendererProps> = ({
           <Input
             value={currentValue.value}
             onChange={(e) => handleValueChange(e.target.value)}
-            placeholder={
-              mode === "id" ? "Enter resource ID" : "Enter resource URL"
-            }
+            placeholder={mode === 'id' ? 'Enter resource ID' : 'Enter resource URL'}
             disabled={disabled}
             className="flex-1 bg-gray-800 border-gray-600 text-gray-200"
           />
         )}
       </div>
 
-      {property.description && (
-        <p className="text-xs text-gray-400">{property.description}</p>
-      )}
+      {property.description && <p className="text-xs text-gray-400">{property.description}</p>}
     </div>
   );
 };
@@ -648,23 +547,17 @@ export const AssignmentCollectionRenderer: React.FC<PropertyRendererProps> = ({
 
   return (
     <div className="space-y-2">
-      <label className="block text-sm font-medium text-gray-200">
-        {property.displayName}
-      </label>
+      <label className="block text-sm font-medium text-gray-200">{property.displayName}</label>
 
       {/* Import the AdvancedAssignmentCollection component we created */}
       <div className="border border-gray-600 rounded-lg p-4 bg-gray-800">
         <div className="text-sm text-gray-400 mb-2">
           Assignment collection component would be rendered here
         </div>
-        <div className="text-xs text-gray-500">
-          Current assignments: {assignments.length}
-        </div>
+        <div className="text-xs text-gray-500">Current assignments: {assignments.length}</div>
       </div>
 
-      {property.description && (
-        <p className="text-xs text-gray-400">{property.description}</p>
-      )}
+      {property.description && <p className="text-xs text-gray-400">{property.description}</p>}
     </div>
   );
 };
@@ -679,15 +572,11 @@ export const ResourceMapperRenderer: React.FC<PropertyRendererProps> = ({
 
   return (
     <div className="space-y-2">
-      <label className="block text-sm font-medium text-gray-200">
-        {property.displayName}
-      </label>
+      <label className="block text-sm font-medium text-gray-200">{property.displayName}</label>
 
       <div className="border border-gray-600 rounded-lg p-4 bg-gray-800">
         <div className="flex justify-between items-center mb-3">
-          <div className="text-sm font-medium text-gray-200">
-            Field Mappings
-          </div>
+          <div className="text-sm font-medium text-gray-200">Field Mappings</div>
           <Button
             size="small"
             icon={<PlusOutlined />}
@@ -699,16 +588,11 @@ export const ResourceMapperRenderer: React.FC<PropertyRendererProps> = ({
         </div>
 
         {mappings.length === 0 ? (
-          <div className="text-center py-4 text-gray-400">
-            No field mappings configured
-          </div>
+          <div className="text-center py-4 text-gray-400">No field mappings configured</div>
         ) : (
           <div className="space-y-2">
             {mappings.map((mapping: any, index: number) => (
-              <div
-                key={index}
-                className="flex items-center space-x-2 p-2 bg-gray-700 rounded"
-              >
+              <div key={index} className="flex items-center space-x-2 p-2 bg-gray-700 rounded">
                 <Input
                   placeholder="Source field"
                   value={mapping.source}
@@ -731,32 +615,22 @@ export const ResourceMapperRenderer: React.FC<PropertyRendererProps> = ({
         )}
       </div>
 
-      {property.description && (
-        <p className="text-xs text-gray-400">{property.description}</p>
-      )}
+      {property.description && <p className="text-xs text-gray-400">{property.description}</p>}
     </div>
   );
 };
 
 // 15. Filter Property Renderer
-export const FilterRenderer: React.FC<PropertyRendererProps> = ({
-  property,
-  value,
-  disabled,
-}) => {
+export const FilterRenderer: React.FC<PropertyRendererProps> = ({ property, value, disabled }) => {
   const conditions = value?.conditions || [];
 
   return (
     <div className="space-y-2">
-      <label className="block text-sm font-medium text-gray-200">
-        {property.displayName}
-      </label>
+      <label className="block text-sm font-medium text-gray-200">{property.displayName}</label>
 
       <div className="border border-gray-600 rounded-lg p-4 bg-gray-800">
         <div className="flex justify-between items-center mb-3">
-          <div className="text-sm font-medium text-gray-200">
-            Filter Conditions
-          </div>
+          <div className="text-sm font-medium text-gray-200">Filter Conditions</div>
           <Button
             size="small"
             icon={<FilterOutlined />}
@@ -768,16 +642,11 @@ export const FilterRenderer: React.FC<PropertyRendererProps> = ({
         </div>
 
         {conditions.length === 0 ? (
-          <div className="text-center py-4 text-gray-400">
-            No filter conditions set
-          </div>
+          <div className="text-center py-4 text-gray-400">No filter conditions set</div>
         ) : (
           <div className="space-y-2">
             {conditions.map((condition: any, index: number) => (
-              <div
-                key={index}
-                className="flex items-center space-x-2 p-2 bg-gray-700 rounded"
-              >
+              <div key={index} className="flex items-center space-x-2 p-2 bg-gray-700 rounded">
                 <Select value={condition.field} className="w-32">
                   <Option value="field1">Field 1</Option>
                   <Option value="field2">Field 2</Option>
@@ -803,9 +672,7 @@ export const FilterRenderer: React.FC<PropertyRendererProps> = ({
         )}
       </div>
 
-      {property.description && (
-        <p className="text-xs text-gray-400">{property.description}</p>
-      )}
+      {property.description && <p className="text-xs text-gray-400">{property.description}</p>}
     </div>
   );
 };
@@ -819,11 +686,9 @@ export const CurlImportRenderer: React.FC<PropertyRendererProps> = ({
 }) => {
   return (
     <div className="space-y-2">
-      <label className="block text-sm font-medium text-gray-200">
-        {property.displayName}
-      </label>
+      <label className="block text-sm font-medium text-gray-200">{property.displayName}</label>
       <TextArea
-        value={value || ""}
+        value={value || ''}
         onChange={(e) => onChange(e.target.value)}
         placeholder="curl -X GET https://api.example.com/data"
         rows={4}
@@ -833,9 +698,7 @@ export const CurlImportRenderer: React.FC<PropertyRendererProps> = ({
       <Button size="small" disabled={!value || disabled}>
         Import from cURL
       </Button>
-      {property.description && (
-        <p className="text-xs text-gray-400">{property.description}</p>
-      )}
+      {property.description && <p className="text-xs text-gray-400">{property.description}</p>}
     </div>
   );
 };
@@ -848,9 +711,7 @@ export const WorkflowSelectorRenderer: React.FC<PropertyRendererProps> = ({
 }) => {
   return (
     <div className="space-y-2">
-      <label className="block text-sm font-medium text-gray-200">
-        {property.displayName}
-      </label>
+      <label className="block text-sm font-medium text-gray-200">{property.displayName}</label>
       <Select
         value={value}
         onChange={onChange}
@@ -862,9 +723,7 @@ export const WorkflowSelectorRenderer: React.FC<PropertyRendererProps> = ({
         <Option value="workflow1">Sample Workflow 1</Option>
         <Option value="workflow2">Sample Workflow 2</Option>
       </Select>
-      {property.description && (
-        <p className="text-xs text-gray-400">{property.description}</p>
-      )}
+      {property.description && <p className="text-xs text-gray-400">{property.description}</p>}
     </div>
   );
 };
@@ -877,9 +736,7 @@ export const NodeSelectorRenderer: React.FC<PropertyRendererProps> = ({
 }) => {
   return (
     <div className="space-y-2">
-      <label className="block text-sm font-medium text-gray-200">
-        {property.displayName}
-      </label>
+      <label className="block text-sm font-medium text-gray-200">{property.displayName}</label>
       <Select
         value={value}
         onChange={onChange}
@@ -891,9 +748,7 @@ export const NodeSelectorRenderer: React.FC<PropertyRendererProps> = ({
         <Option value="node1">Transform Node</Option>
         <Option value="node2">HTTP Request Node</Option>
       </Select>
-      {property.description && (
-        <p className="text-xs text-gray-400">{property.description}</p>
-      )}
+      {property.description && <p className="text-xs text-gray-400">{property.description}</p>}
     </div>
   );
 };
@@ -906,9 +761,7 @@ export const CredentialsSelectRenderer: React.FC<PropertyRendererProps> = ({
 }) => {
   return (
     <div className="space-y-2">
-      <label className="block text-sm font-medium text-gray-200">
-        {property.displayName}
-      </label>
+      <label className="block text-sm font-medium text-gray-200">{property.displayName}</label>
       <div className="flex space-x-2">
         <Select
           value={value}
@@ -930,9 +783,7 @@ export const CredentialsSelectRenderer: React.FC<PropertyRendererProps> = ({
           New
         </Button>
       </div>
-      {property.description && (
-        <p className="text-xs text-gray-400">{property.description}</p>
-      )}
+      {property.description && <p className="text-xs text-gray-400">{property.description}</p>}
     </div>
   );
 };
@@ -949,9 +800,7 @@ export const CollectionRenderer: React.FC<PropertyRendererProps> = ({
 
   return (
     <div className="space-y-2">
-      <label className="block text-sm font-medium text-gray-200">
-        {property.displayName}
-      </label>
+      <label className="block text-sm font-medium text-gray-200">{property.displayName}</label>
       <Collapse>
         <Panel header={`${items.length} items configured`} key="1">
           <div className="space-y-2">
@@ -972,9 +821,7 @@ export const CollectionRenderer: React.FC<PropertyRendererProps> = ({
           </div>
         </Panel>
       </Collapse>
-      {property.description && (
-        <p className="text-xs text-gray-400">{property.description}</p>
-      )}
+      {property.description && <p className="text-xs text-gray-400">{property.description}</p>}
     </div>
   );
 };
@@ -984,48 +831,48 @@ export const PropertyRenderer: React.FC<PropertyRendererProps> = (props) => {
   const { property } = props;
 
   switch (property.type) {
-    case "string":
+    case 'string':
       return <StringRenderer {...props} />;
-    case "number":
+    case 'number':
       return <NumberRenderer {...props} />;
-    case "boolean":
+    case 'boolean':
       return <BooleanRenderer {...props} />;
-    case "options":
-    case "select":
+    case 'options':
+    case 'select':
       return <OptionsRenderer {...props} />;
-    case "multiOptions":
-    case "multiSelect":
+    case 'multiOptions':
+    case 'multiSelect':
       return <MultiOptionsRenderer {...props} />;
-    case "text":
+    case 'text':
       return <TextRenderer {...props} />;
-    case "dateTime":
+    case 'dateTime':
       return <DateTimeRenderer {...props} />;
-    case "color":
+    case 'color':
       return <ColorRenderer {...props} />;
-    case "file":
+    case 'file':
       return <FileRenderer {...props} />;
-    case "json":
+    case 'json':
       return <JsonRenderer {...props} />;
-    case "expression":
+    case 'expression':
       return <ExpressionRenderer {...props} />;
-    case "resourceLocator":
+    case 'resourceLocator':
       return <ResourceLocatorRenderer {...props} />;
-    case "assignmentCollection":
+    case 'assignmentCollection':
       return <AssignmentCollectionRenderer {...props} />;
-    case "resourceMapper":
+    case 'resourceMapper':
       return <ResourceMapperRenderer {...props} />;
-    case "filter":
+    case 'filter':
       return <FilterRenderer {...props} />;
-    case "curlImport":
+    case 'curlImport':
       return <CurlImportRenderer {...props} />;
-    case "workflowSelector":
+    case 'workflowSelector':
       return <WorkflowSelectorRenderer {...props} />;
-    case "credentialsSelect":
+    case 'credentialsSelect':
       return <CredentialsSelectRenderer {...props} />;
-    case "hidden":
+    case 'hidden':
       return <HiddenRenderer {...props} />;
-    case "collection":
-    case "fixedCollection":
+    case 'collection':
+    case 'fixedCollection':
       return <CollectionRenderer {...props} />;
     default:
       return <StringRenderer {...props} />;

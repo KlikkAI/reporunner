@@ -5,37 +5,38 @@
  * complex execution patterns like loops, parallel processing, and conditionals.
  */
 
-import React, { useState, useCallback, useRef } from "react";
-import { Handle, Position, NodeProps } from "reactflow";
 import {
-  Button,
-  Space,
-  Tooltip,
+  CompressOutlined,
+  DeleteOutlined,
+  ExpandOutlined,
+  MoreOutlined,
+  PauseCircleOutlined,
+  PlayCircleOutlined,
+  SettingOutlined,
+  StopOutlined,
+} from '@ant-design/icons';
+import {
   Badge,
+  Button,
   Dropdown,
-  Modal,
   Form,
   Input,
-  Select,
   InputNumber,
-} from "antd";
-import {
-  PlayCircleOutlined,
-  PauseCircleOutlined,
-  StopOutlined,
-  SettingOutlined,
-  ExpandOutlined,
-  CompressOutlined,
-  MoreOutlined,
-  DeleteOutlined,
-} from "@ant-design/icons";
-import { cn } from "@/design-system/utils";
+  Modal,
+  Select,
+  Space,
+  Tooltip,
+} from 'antd';
+import type React from 'react';
+import { useCallback, useRef, useState } from 'react';
+import { Handle, type NodeProps, Position } from 'reactflow';
 import type {
-  ContainerNodeConfig,
-  ContainerExecutionState,
-  ContainerResizeEvent,
   ContainerDropEvent,
-} from "@/core/types/containerNodes";
+  ContainerExecutionState,
+  ContainerNodeConfig,
+  ContainerResizeEvent,
+} from '@/core/types/containerNodes';
+import { cn } from '@/design-system/utils';
 
 interface ContainerNodeProps extends NodeProps {
   data: {
@@ -50,8 +51,7 @@ interface ContainerNodeProps extends NodeProps {
 }
 
 const ContainerNode: React.FC<ContainerNodeProps> = ({ data, selected }) => {
-  const { config, state, onResize, onDrop, onConfigChange, onExecute, onStop } =
-    data;
+  const { config, state, onResize, onDrop, onConfigChange, onExecute, onStop } = data;
   const [isResizing, setIsResizing] = useState(false);
   const [isConfigModalOpen, setIsConfigModalOpen] = useState(false);
   const [configForm] = Form.useForm();
@@ -85,21 +85,21 @@ const ContainerNode: React.FC<ContainerNodeProps> = ({ data, selected }) => {
 
       const handleMouseUp = () => {
         setIsResizing(false);
-        document.removeEventListener("mousemove", handleMouseMove);
-        document.removeEventListener("mouseup", handleMouseUp);
+        document.removeEventListener('mousemove', handleMouseMove);
+        document.removeEventListener('mouseup', handleMouseUp);
       };
 
-      document.addEventListener("mousemove", handleMouseMove);
-      document.addEventListener("mouseup", handleMouseUp);
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
     },
-    [config, onResize],
+    [config, onResize]
   );
 
   const handleDrop = useCallback(
     (e: React.DragEvent) => {
       e.preventDefault();
 
-      const nodeData = e.dataTransfer.getData("application/reactflow");
+      const nodeData = e.dataTransfer.getData('application/reactflow');
       if (!nodeData) return;
 
       const nodeInfo = JSON.parse(nodeData);
@@ -115,7 +115,7 @@ const ContainerNode: React.FC<ContainerNodeProps> = ({ data, selected }) => {
         position,
       });
     },
-    [config.id, onDrop],
+    [config.id, onDrop]
   );
 
   const handleExecute = useCallback(() => {
@@ -135,18 +135,18 @@ const ContainerNode: React.FC<ContainerNodeProps> = ({ data, selected }) => {
       onConfigChange?.(newConfig);
       setIsConfigModalOpen(false);
     },
-    [config, onConfigChange],
+    [config, onConfigChange]
   );
 
   const getStatusIcon = () => {
     switch (state.status) {
-      case "running":
+      case 'running':
         return <PlayCircleOutlined className="text-green-500" />;
-      case "completed":
+      case 'completed':
         return <PlayCircleOutlined className="text-blue-500" />;
-      case "failed":
+      case 'failed':
         return <StopOutlined className="text-red-500" />;
-      case "paused":
+      case 'paused':
         return <PauseCircleOutlined className="text-yellow-500" />;
       default:
         return <PlayCircleOutlined className="text-gray-500" />;
@@ -155,31 +155,31 @@ const ContainerNode: React.FC<ContainerNodeProps> = ({ data, selected }) => {
 
   const getContainerIcon = () => {
     switch (config.type) {
-      case "loop":
-        return "🔄";
-      case "parallel":
-        return "⚡";
-      case "conditional":
-        return "❓";
-      case "try-catch":
-        return "🛡️";
-      case "batch":
-        return "📦";
+      case 'loop':
+        return '🔄';
+      case 'parallel':
+        return '⚡';
+      case 'conditional':
+        return '❓';
+      case 'try-catch':
+        return '🛡️';
+      case 'batch':
+        return '📦';
       default:
-        return "📁";
+        return '📁';
     }
   };
 
   const menuItems = [
     {
-      key: "config",
-      label: "Configure",
+      key: 'config',
+      label: 'Configure',
       icon: <SettingOutlined />,
       onClick: () => setIsConfigModalOpen(true),
     },
     {
-      key: "expand",
-      label: "Expand",
+      key: 'expand',
+      label: 'Expand',
       icon: <ExpandOutlined />,
       onClick: () => {
         onResize?.({
@@ -190,8 +190,8 @@ const ContainerNode: React.FC<ContainerNodeProps> = ({ data, selected }) => {
       },
     },
     {
-      key: "compress",
-      label: "Compress",
+      key: 'compress',
+      label: 'Compress',
       icon: <CompressOutlined />,
       onClick: () => {
         onResize?.({
@@ -202,11 +202,11 @@ const ContainerNode: React.FC<ContainerNodeProps> = ({ data, selected }) => {
       },
     },
     {
-      type: "divider" as const,
+      type: 'divider' as const,
     },
     {
-      key: "delete",
-      label: "Delete Container",
+      key: 'delete',
+      label: 'Delete Container',
       icon: <DeleteOutlined />,
       danger: true,
       onClick: () => {
@@ -219,9 +219,9 @@ const ContainerNode: React.FC<ContainerNodeProps> = ({ data, selected }) => {
     <>
       <div
         className={cn(
-          "relative border-2 rounded-lg transition-all duration-200",
-          selected && "ring-2 ring-blue-500 ring-opacity-50",
-          isResizing && "cursor-nw-resize",
+          'relative border-2 rounded-lg transition-all duration-200',
+          selected && 'ring-2 ring-blue-500 ring-opacity-50',
+          isResizing && 'cursor-nw-resize'
         )}
         style={{
           width: config.dimensions.width,
@@ -241,18 +241,16 @@ const ContainerNode: React.FC<ContainerNodeProps> = ({ data, selected }) => {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <span className="text-lg">{getContainerIcon()}</span>
-              <span className="text-sm font-semibold text-white">
-                {config.name}
-              </span>
+              <span className="text-sm font-semibold text-white">{config.name}</span>
               <Badge
                 count={config.children.length}
                 size="small"
-                style={{ backgroundColor: "#1890ff" }}
+                style={{ backgroundColor: '#1890ff' }}
               />
             </div>
 
             <Space size="small">
-              {state.status === "running" ? (
+              {state.status === 'running' ? (
                 <Tooltip title="Stop execution">
                   <Button
                     type="text"
@@ -274,11 +272,7 @@ const ContainerNode: React.FC<ContainerNodeProps> = ({ data, selected }) => {
                 </Tooltip>
               )}
 
-              <Dropdown
-                menu={{ items: menuItems }}
-                trigger={["click"]}
-                placement="bottomRight"
-              >
+              <Dropdown menu={{ items: menuItems }} trigger={['click']} placement="bottomRight">
                 <Button
                   type="text"
                   size="small"
@@ -300,7 +294,7 @@ const ContainerNode: React.FC<ContainerNodeProps> = ({ data, selected }) => {
 
             {state.currentIteration !== undefined && (
               <div className="text-gray-400">
-                {state.currentIteration}/{state.totalIterations || "∞"}
+                {state.currentIteration}/{state.totalIterations || '∞'}
               </div>
             )}
           </div>
@@ -320,10 +314,7 @@ const ContainerNode: React.FC<ContainerNodeProps> = ({ data, selected }) => {
             ) : (
               <div className="space-y-1">
                 {config.children.map((childId) => (
-                  <div
-                    key={childId}
-                    className="p-1 bg-gray-700 rounded text-xs text-gray-300"
-                  >
+                  <div key={childId} className="p-1 bg-gray-700 rounded text-xs text-gray-300">
                     {childId}
                   </div>
                 ))}
@@ -370,7 +361,7 @@ const ContainerNode: React.FC<ContainerNodeProps> = ({ data, selected }) => {
           initialValues={config.executionConfig}
           onFinish={handleConfigChange}
         >
-          {config.type === "loop" && (
+          {config.type === 'loop' && (
             <>
               <Form.Item name="loopType" label="Loop Type">
                 <Select>
@@ -390,7 +381,7 @@ const ContainerNode: React.FC<ContainerNodeProps> = ({ data, selected }) => {
             </>
           )}
 
-          {config.type === "parallel" && (
+          {config.type === 'parallel' && (
             <>
               <Form.Item name="maxConcurrency" label="Maximum Concurrency">
                 <InputNumber min={1} max={20} />
@@ -406,7 +397,7 @@ const ContainerNode: React.FC<ContainerNodeProps> = ({ data, selected }) => {
             </>
           )}
 
-          {config.type === "conditional" && (
+          {config.type === 'conditional' && (
             <Form.Item name="conditionExpression" label="Condition Expression">
               <Input.TextArea
                 placeholder="Enter JavaScript expression, e.g., $input.value > 10"
@@ -415,7 +406,7 @@ const ContainerNode: React.FC<ContainerNodeProps> = ({ data, selected }) => {
             </Form.Item>
           )}
 
-          {config.type === "try-catch" && (
+          {config.type === 'try-catch' && (
             <>
               <Form.Item name="retryAttempts" label="Retry Attempts">
                 <InputNumber min={0} max={10} />
@@ -428,16 +419,14 @@ const ContainerNode: React.FC<ContainerNodeProps> = ({ data, selected }) => {
               <Form.Item name="errorHandling" label="Error Handling">
                 <Select>
                   <Select.Option value="stop">Stop on Error</Select.Option>
-                  <Select.Option value="continue">
-                    Continue on Error
-                  </Select.Option>
+                  <Select.Option value="continue">Continue on Error</Select.Option>
                   <Select.Option value="retry">Retry on Error</Select.Option>
                 </Select>
               </Form.Item>
             </>
           )}
 
-          {config.type === "batch" && (
+          {config.type === 'batch' && (
             <>
               <Form.Item name="batchSize" label="Batch Size">
                 <InputNumber min={1} max={100} />

@@ -1,12 +1,7 @@
-import jwt from "jsonwebtoken";
-import { v4 as uuidv4 } from "uuid";
-import { createHash } from "crypto";
-import {
-  IJwtPayload,
-  IUser,
-  UserRole,
-  PermissionType,
-} from "@reporunner/api-types";
+import { type IJwtPayload, type IUser, PermissionType, UserRole } from '@reporunner/api-types';
+import { createHash } from 'crypto';
+import jwt from 'jsonwebtoken';
+import { v4 as uuidv4 } from 'uuid';
 
 export interface TokenConfig {
   accessTokenSecret: string;
@@ -50,11 +45,7 @@ export class TokenManager {
     const accessToken = await this.generateAccessToken(user, sessionId);
 
     // Generate refresh token
-    const refreshToken = await this.generateRefreshToken(
-      user.id,
-      sessionId,
-      tokenFamily,
-    );
+    const refreshToken = await this.generateRefreshToken(user.id, sessionId, tokenFamily);
 
     return {
       accessToken,
@@ -66,10 +57,7 @@ export class TokenManager {
   /**
    * Generate access token with user claims
    */
-  private async generateAccessToken(
-    user: IUser,
-    sessionId: string,
-  ): Promise<string> {
+  private async generateAccessToken(user: IUser, sessionId: string): Promise<string> {
     const payload: IJwtPayload = {
       sub: user.id,
       email: user.email,
@@ -83,7 +71,7 @@ export class TokenManager {
       expiresIn: this.config.accessTokenExpiry,
       issuer: this.config.issuer,
       audience: this.config.audience,
-      algorithm: "RS256",
+      algorithm: 'RS256',
     };
 
     return jwt.sign(payload, this.config.accessTokenSecret, options);
@@ -95,13 +83,12 @@ export class TokenManager {
   private async generateRefreshToken(
     userId: string,
     sessionId: string,
-    tokenFamily: string,
+    tokenFamily: string
   ): Promise<string> {
     const tokenId = uuidv4();
     const expiresAt = new Date();
     expiresAt.setSeconds(
-      expiresAt.getSeconds() +
-        this.getExpiryInSeconds(this.config.refreshTokenExpiry),
+      expiresAt.getSeconds() + this.getExpiryInSeconds(this.config.refreshTokenExpiry)
     );
 
     const payload = {
@@ -109,13 +96,13 @@ export class TokenManager {
       sub: userId,
       sessionId,
       tokenFamily,
-      type: "refresh",
+      type: 'refresh',
     };
 
     const options: jwt.SignOptions = {
       expiresIn: this.config.refreshTokenExpiry,
       issuer: this.config.issuer,
-      algorithm: "RS256",
+      algorithm: 'RS256',
     };
 
     const token = jwt.sign(payload, this.config.refreshTokenSecret, options);
@@ -141,16 +128,16 @@ export class TokenManager {
       const decoded = jwt.verify(token, this.config.accessTokenSecret, {
         issuer: this.config.issuer,
         audience: this.config.audience,
-        algorithms: ["RS256"],
+        algorithms: ['RS256'],
       }) as IJwtPayload;
 
       return decoded;
     } catch (error) {
       if (error instanceof jwt.TokenExpiredError) {
-        throw new Error("Access token expired");
+        throw new Error('Access token expired');
       }
       if (error instanceof jwt.JsonWebTokenError) {
-        throw new Error("Invalid access token");
+        throw new Error('Invalid access token');
       }
       throw error;
     }
@@ -159,31 +146,28 @@ export class TokenManager {
   /**
    * Refresh token rotation for enhanced security
    */
-  async refreshTokenRotation(
-    refreshToken: string,
-    user: IUser,
-  ): Promise<TokenPair> {
+  async refreshTokenRotation(refreshToken: string, user: IUser): Promise<TokenPair> {
     try {
       // Verify refresh token
       const decoded = jwt.verify(refreshToken, this.config.refreshTokenSecret, {
         issuer: this.config.issuer,
-        algorithms: ["RS256"],
+        algorithms: ['RS256'],
       }) as any;
 
       const tokenData = this.refreshTokenStore.get(decoded.jti);
 
       if (!tokenData) {
-        throw new Error("Refresh token not found");
+        throw new Error('Refresh token not found');
       }
 
       if (tokenData.used) {
         // Token reuse detected - potential attack
         this.revokeTokenFamily(tokenData.tokenFamily);
-        throw new Error("Refresh token reuse detected - all tokens revoked");
+        throw new Error('Refresh token reuse detected - all tokens revoked');
       }
 
       if (tokenData.userId !== user.id) {
-        throw new Error("Token user mismatch");
+        throw new Error('Token user mismatch');
       }
 
       // Mark current token as used
@@ -200,7 +184,7 @@ export class TokenManager {
       const newRefreshToken = await this.generateRefreshToken(
         user.id,
         newSessionId,
-        newTokenFamily,
+        newTokenFamily
       );
 
       return {
@@ -210,10 +194,10 @@ export class TokenManager {
       };
     } catch (error) {
       if (error instanceof jwt.TokenExpiredError) {
-        throw new Error("Refresh token expired");
+        throw new Error('Refresh token expired');
       }
       if (error instanceof jwt.JsonWebTokenError) {
-        throw new Error("Invalid refresh token");
+        throw new Error('Invalid refresh token');
       }
       throw error;
     }
@@ -280,8 +264,8 @@ export class TokenManager {
    * Generate API key
    */
   generateApiKey(): { key: string; hash: string; prefix: string } {
-    const key = `rr_${uuidv4().replace(/-/g, "")}`;
-    const hash = createHash("sha256").update(key).digest("hex");
+    const key = `rr_${uuidv4().replace(/-/g, '')}`;
+    const hash = createHash('sha256').update(key).digest('hex');
     const prefix = key.substring(0, 7);
 
     return { key, hash, prefix };
@@ -291,7 +275,7 @@ export class TokenManager {
    * Verify API key
    */
   verifyApiKey(key: string, hash: string): boolean {
-    const keyHash = createHash("sha256").update(key).digest("hex");
+    const keyHash = createHash('sha256').update(key).digest('hex');
     return keyHash === hash;
   }
 }

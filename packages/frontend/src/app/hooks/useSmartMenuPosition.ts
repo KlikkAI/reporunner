@@ -1,4 +1,4 @@
-import { useState, useEffect, useLayoutEffect, RefObject } from "react";
+import { type RefObject, useEffect, useLayoutEffect, useState } from 'react';
 
 interface MenuPosition {
   top?: number;
@@ -24,9 +24,9 @@ export const useSmartMenuPosition = ({
   onClose,
 }: UseSmartMenuPositionProps) => {
   const [position, setPosition] = useState<MenuPosition>({});
-  const [positionStrategy, setPositionStrategy] = useState<
-    "right" | "left" | "below" | "above"
-  >("right");
+  const [positionStrategy, setPositionStrategy] = useState<'right' | 'left' | 'below' | 'above'>(
+    'right'
+  );
   const [isPositioned, setIsPositioned] = useState(false);
 
   // Handle click outside to close menu - centralized handler with delay
@@ -46,12 +46,12 @@ export const useSmartMenuPosition = ({
     if (isOpen) {
       // Delay adding the click-outside handler to prevent immediate closure
       const timeoutId = setTimeout(() => {
-        document.addEventListener("mousedown", handleClickOutside, true);
+        document.addEventListener('mousedown', handleClickOutside, true);
       }, 100); // 100ms delay to prevent race condition
 
       return () => {
         clearTimeout(timeoutId);
-        document.removeEventListener("mousedown", handleClickOutside, true);
+        document.removeEventListener('mousedown', handleClickOutside, true);
       };
     }
   }, [isOpen, triggerRef, menuRef, onClose]);
@@ -81,25 +81,25 @@ export const useSmartMenuPosition = ({
       const spaceBelow = viewport.height - triggerRect.bottom;
 
       let newPosition: MenuPosition = {};
-      let strategy: typeof positionStrategy = "right";
+      let strategy: typeof positionStrategy = 'right';
 
       // Try positioning to the right of the button (preferred)
       if (spaceRight >= estimatedMenuWidth + offset) {
         newPosition = {
           left: triggerRect.right + offset,
           top: triggerRect.top + triggerRect.height / 2,
-          transform: "translateY(-50%)",
+          transform: 'translateY(-50%)',
         };
-        strategy = "right";
+        strategy = 'right';
       }
       // Try positioning to the left of the button
       else if (spaceLeft >= estimatedMenuWidth + offset) {
         newPosition = {
           right: viewport.width - triggerRect.left + offset,
           top: triggerRect.top + triggerRect.height / 2,
-          transform: "translateY(-50%)",
+          transform: 'translateY(-50%)',
         };
-        strategy = "left";
+        strategy = 'left';
       }
       // Try positioning below the button
       else if (spaceBelow >= estimatedMenuHeight + offset) {
@@ -108,12 +108,12 @@ export const useSmartMenuPosition = ({
             8,
             Math.min(
               triggerRect.left + triggerRect.width / 2 - estimatedMenuWidth / 2,
-              viewport.width - estimatedMenuWidth - 8,
-            ),
+              viewport.width - estimatedMenuWidth - 8
+            )
           ),
           top: triggerRect.bottom + offset,
         };
-        strategy = "below";
+        strategy = 'below';
       }
       // Position above the button as last resort
       else {
@@ -122,12 +122,12 @@ export const useSmartMenuPosition = ({
             8,
             Math.min(
               triggerRect.left + triggerRect.width / 2 - estimatedMenuWidth / 2,
-              viewport.width - estimatedMenuWidth - 8,
-            ),
+              viewport.width - estimatedMenuWidth - 8
+            )
           ),
           bottom: viewport.height - triggerRect.top + offset,
         };
-        strategy = "above";
+        strategy = 'above';
       }
 
       setPosition(newPosition);
@@ -160,25 +160,25 @@ export const useSmartMenuPosition = ({
       const spaceBelow = viewport.height - triggerRect.bottom;
 
       let newPosition: MenuPosition = {};
-      let strategy: typeof positionStrategy = "right";
+      let strategy: typeof positionStrategy = 'right';
 
       // Try positioning to the right of the button (preferred)
       if (spaceRight >= menuRect.width + offset) {
         newPosition = {
           left: triggerRect.right + offset,
           top: triggerRect.top + triggerRect.height / 2,
-          transform: "translateY(-50%)",
+          transform: 'translateY(-50%)',
         };
-        strategy = "right";
+        strategy = 'right';
       }
       // Try positioning to the left of the button
       else if (spaceLeft >= menuRect.width + offset) {
         newPosition = {
           right: viewport.width - triggerRect.left + offset,
           top: triggerRect.top + triggerRect.height / 2,
-          transform: "translateY(-50%)",
+          transform: 'translateY(-50%)',
         };
-        strategy = "left";
+        strategy = 'left';
       }
       // Try positioning below the button
       else if (spaceBelow >= menuRect.height + offset) {
@@ -187,12 +187,12 @@ export const useSmartMenuPosition = ({
             8,
             Math.min(
               triggerRect.left + triggerRect.width / 2 - menuRect.width / 2,
-              viewport.width - menuRect.width - 8,
-            ),
+              viewport.width - menuRect.width - 8
+            )
           ),
           top: triggerRect.bottom + offset,
         };
-        strategy = "below";
+        strategy = 'below';
       }
       // Position above the button as last resort
       else {
@@ -201,12 +201,12 @@ export const useSmartMenuPosition = ({
             8,
             Math.min(
               triggerRect.left + triggerRect.width / 2 - menuRect.width / 2,
-              viewport.width - menuRect.width - 8,
-            ),
+              viewport.width - menuRect.width - 8
+            )
           ),
           bottom: viewport.height - triggerRect.top + offset,
         };
-        strategy = "above";
+        strategy = 'above';
       }
 
       // Only update if position actually changed to avoid unnecessary re-renders
@@ -224,28 +224,28 @@ export const useSmartMenuPosition = ({
       requestAnimationFrame(refinePosition);
     };
 
-    window.addEventListener("scroll", handleReposition, true);
-    window.addEventListener("resize", handleReposition);
+    window.addEventListener('scroll', handleReposition, true);
+    window.addEventListener('resize', handleReposition);
 
     return () => {
       clearTimeout(timeoutId);
-      window.removeEventListener("scroll", handleReposition, true);
-      window.removeEventListener("resize", handleReposition);
+      window.removeEventListener('scroll', handleReposition, true);
+      window.removeEventListener('resize', handleReposition);
     };
   }, [isOpen, isPositioned, triggerRef, menuRef, offset, position]);
 
   // Generate CSS classes based on position strategy
   const getPositionClasses = () => {
-    const baseClasses = "fixed z-50";
+    const baseClasses = 'fixed z-50';
 
     switch (positionStrategy) {
-      case "right":
+      case 'right':
         return `${baseClasses}`;
-      case "left":
+      case 'left':
         return `${baseClasses}`;
-      case "below":
+      case 'below':
         return `${baseClasses}`;
-      case "above":
+      case 'above':
         return `${baseClasses}`;
       default:
         return baseClasses;
@@ -255,14 +255,14 @@ export const useSmartMenuPosition = ({
   const getPositionStyles = (): React.CSSProperties => {
     // Fallback position if calculation fails
     const fallbackStyles: React.CSSProperties = {
-      position: "fixed",
-      top: "50px",
-      left: "50px",
+      position: 'fixed',
+      top: '50px',
+      left: '50px',
       zIndex: 9999,
     };
 
     const calculatedStyles: React.CSSProperties = {
-      position: "fixed",
+      position: 'fixed',
       ...position,
       zIndex: 9999,
     };

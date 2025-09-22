@@ -1,0 +1,122 @@
+# Dependencies
+node_modules/
+*/node_modules/
+**/node_modules/**
+
+# Build outputs
+dist/
+build/
+*/dist/
+*/build/
+**/dist/**
+**/build/**
+
+# Cache directories
+.cache/
+.turbo/
+.next/
+**/.cache/**
+**/.turbo/**
+**/.next/**
+
+# Coverage reports  
+coverage/
+**/coverage/**
+
+# Generated files
+generated/
+__generated__/
+**/generated/**
+**/__generated__/**
+
+# Compiled binaries
+target/
+**/target/**
+
+# Vendor directories
+vendor/
+**/vendor/**
+
+# Log files
+*.log
+**/*.log
+logs/
+**/logs/**
+
+# Environment files
+.env
+.env.*
+**/.env
+**/.env.*
+
+# OS files
+.DS_Store
+Thumbs.db
+**/.DS_Store
+**/Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Lock files
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+**/package-lock.json
+**/yarn.lock
+**/pnpm-lock.yaml
+
+# Minified files
+*.min.js
+*.bundle.js
+**/*.min.js
+**/*.bundle.js
+
+# Source maps
+*.map
+**/*.map
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+**/*.db
+**/*.sqlite
+**/*.sqlite3
+
+# Docker files
+Dockerfile*
+docker-compose*.yml
+docker-compose*.yaml
+
+# Git files
+.git/
+.gitignore
+.gitattributes
+**/.git/**
+
+# Configuration files that shouldn't be formatted
+biome.json
+.biome.json
+**/biome.json
+**/.biome.json
+
+# Documentation that might have special formatting
+CHANGELOG.md
+HISTORY.md
+**/CHANGELOG.md
+**/HISTORY.md
+
+# Migration files
+migrations/
+**/migrations/**
+
+# Public assets that shouldn't be processed
+public/
+**/public/**
+assets/
+**/assets/**

@@ -1,13 +1,10 @@
-import jwt, { SignOptions } from "jsonwebtoken";
-import crypto from "crypto";
-import { UserRepository } from "../repositories/UserRepository.js";
-import { AppError } from "../../../middleware/errorHandlers.js";
-import {
-  PermissionService,
-  Permission,
-} from "../../../services/PermissionService.js";
-import { IUser } from "../../../models/User.js";
-import { IOrganization } from "../../../models/Organization.js";
+import crypto from 'crypto';
+import jwt, { type SignOptions } from 'jsonwebtoken';
+import { AppError } from '../../../middleware/errorHandlers.js';
+import type { IOrganization } from '../../../models/Organization.js';
+import type { IUser } from '../../../models/User.js';
+import { type Permission, PermissionService } from '../../../services/PermissionService.js';
+import { UserRepository } from '../repositories/UserRepository.js';
 
 export interface RegisterUserData {
   email: string;
@@ -27,7 +24,7 @@ export interface UpdateProfileData {
   preferences?: {
     language?: string;
     timezone?: string;
-    theme?: "light" | "dark" | "system";
+    theme?: 'light' | 'dark' | 'system';
     notifications?: {
       email?: boolean;
       push?: boolean;
@@ -66,7 +63,7 @@ export interface LoginResponse {
 }
 
 export interface SSOLoginData {
-  provider: "google" | "microsoft" | "okta" | "auth0";
+  provider: 'google' | 'microsoft' | 'okta' | 'auth0';
   ssoId: string;
   email: string;
   firstName: string;
@@ -89,13 +86,10 @@ export class AuthService {
   private generateToken(user: IUser, organization?: IOrganization): string {
     const secret = process.env.JWT_SECRET;
     if (!secret) {
-      throw new Error("JWT_SECRET is not defined");
+      throw new Error('JWT_SECRET is not defined');
     }
 
-    const permissions = this.permissionService.getEffectivePermissions(
-      user.role,
-      user.permissions,
-    );
+    const permissions = this.permissionService.getEffectivePermissions(user.role, user.permissions);
 
     const payload = {
       userId: user._id.toString(),
@@ -108,7 +102,7 @@ export class AuthService {
     };
 
     return jwt.sign(payload, secret, {
-      expiresIn: process.env.JWT_EXPIRES_IN || "7d",
+      expiresIn: process.env.JWT_EXPIRES_IN || '7d',
     } as SignOptions);
   }
 
@@ -118,17 +112,17 @@ export class AuthService {
   private generateRefreshToken(userId: string): string {
     const secret = process.env.JWT_SECRET;
     if (!secret) {
-      throw new Error("JWT_SECRET is not defined");
+      throw new Error('JWT_SECRET is not defined');
     }
 
     const payload = {
       userId,
-      type: "refresh",
+      type: 'refresh',
       iat: Math.floor(Date.now() / 1000),
     };
 
     return jwt.sign(payload, secret, {
-      expiresIn: process.env.JWT_REFRESH_EXPIRES_IN || "30d",
+      expiresIn: process.env.JWT_REFRESH_EXPIRES_IN || '30d',
     } as SignOptions);
   }
 
@@ -136,7 +130,7 @@ export class AuthService {
    * Generate email verification token
    */
   private generateEmailVerificationToken(): { token: string; expires: Date } {
-    const token = crypto.randomBytes(32).toString("hex");
+    const token = crypto.randomBytes(32).toString('hex');
     const expires = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
     return { token, expires };
   }
@@ -145,7 +139,7 @@ export class AuthService {
    * Generate password reset token
    */
   private generatePasswordResetToken(): { token: string; expires: Date } {
-    const token = crypto.randomBytes(32).toString("hex");
+    const token = crypto.randomBytes(32).toString('hex');
     const expires = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
     return { token, expires };
   }
@@ -157,20 +151,19 @@ export class AuthService {
     // Check if user already exists
     const existingUser = await this.userRepository.findByEmail(userData.email);
     if (existingUser) {
-      throw new AppError("User already exists with this email", 409);
+      throw new AppError('User already exists with this email', 409);
     }
 
     // Set default role if not provided
     if (!userData.role) {
-      userData.role = "member";
+      userData.role = 'member';
     }
 
     // Create new user
     const user = await this.userRepository.create(userData);
 
     // Generate email verification token if email verification is required
-    const { token: emailToken, expires: emailExpires } =
-      this.generateEmailVerificationToken();
+    const { token: emailToken, expires: emailExpires } = this.generateEmailVerificationToken();
     user.emailVerificationToken = emailToken;
     user.emailVerificationTokenExpires = emailExpires;
     await user.save();
@@ -183,10 +176,7 @@ export class AuthService {
     user.refreshTokens.push(refreshToken);
     await user.save();
 
-    const permissions = this.permissionService.getEffectivePermissions(
-      user.role,
-      user.permissions,
-    );
+    const permissions = this.permissionService.getEffectivePermissions(user.role, user.permissions);
     const expiresIn = 7 * 24 * 60 * 60; // 7 days in seconds
 
     return {
@@ -205,7 +195,7 @@ export class AuthService {
       },
       accessToken,
       refreshToken,
-      tokenType: "Bearer",
+      tokenType: 'Bearer',
       expiresIn,
       expiresAt: new Date(Date.now() + expiresIn * 1000).toISOString(),
     };
@@ -218,23 +208,20 @@ export class AuthService {
     // Find user and include password
     const user = await this.userRepository.findByEmailWithPassword(email);
     if (!user) {
-      throw new AppError("Invalid email or password", 401);
+      throw new AppError('Invalid email or password', 401);
     }
 
     // Check if account is locked
     if (user.isLocked()) {
       throw new AppError(
-        "Account is temporarily locked due to failed login attempts. Please try again later.",
-        423,
+        'Account is temporarily locked due to failed login attempts. Please try again later.',
+        423
       );
     }
 
     // Check if account is active
     if (!user.isActive) {
-      throw new AppError(
-        "Account is deactivated. Please contact your administrator.",
-        403,
-      );
+      throw new AppError('Account is deactivated. Please contact your administrator.', 403);
     }
 
     // Verify password
@@ -242,7 +229,7 @@ export class AuthService {
     if (!isPasswordValid) {
       // Increment failed login attempts
       await user.incLoginAttempts();
-      throw new AppError("Invalid email or password", 401);
+      throw new AppError('Invalid email or password', 401);
     }
 
     // Reset failed login attempts on successful login
@@ -264,10 +251,7 @@ export class AuthService {
     }
     await user.save();
 
-    const permissions = this.permissionService.getEffectivePermissions(
-      user.role,
-      user.permissions,
-    );
+    const permissions = this.permissionService.getEffectivePermissions(user.role, user.permissions);
     const expiresIn = 7 * 24 * 60 * 60; // 7 days in seconds
 
     return {
@@ -287,7 +271,7 @@ export class AuthService {
       },
       accessToken,
       refreshToken,
-      tokenType: "Bearer",
+      tokenType: 'Bearer',
       expiresIn,
       expiresAt: new Date(Date.now() + expiresIn * 1000).toISOString(),
     };
@@ -298,14 +282,11 @@ export class AuthService {
    */
   async refreshToken(refreshToken: string) {
     try {
-      const decoded = jwt.verify(
-        refreshToken,
-        process.env.JWT_SECRET as string,
-      ) as any;
+      const decoded = jwt.verify(refreshToken, process.env.JWT_SECRET as string) as any;
       const user = await this.userRepository.findById(decoded.userId);
 
       if (!user || !user.isActive) {
-        throw new AppError("Invalid refresh token", 401);
+        throw new AppError('Invalid refresh token', 401);
       }
 
       const newToken = this.generateToken(user);
@@ -314,13 +295,13 @@ export class AuthService {
       return {
         accessToken: newToken,
         refreshToken: newRefreshToken,
-        tokenType: "Bearer",
+        tokenType: 'Bearer',
         expiresIn: 7 * 24 * 60 * 60, // 7 days in seconds
         expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
         scope: [],
       };
     } catch (error) {
-      throw new AppError("Invalid refresh token", 401);
+      throw new AppError('Invalid refresh token', 401);
     }
   }
 
@@ -330,7 +311,7 @@ export class AuthService {
   async getUserProfile(userId: string) {
     const user = await this.userRepository.findById(userId);
     if (!user) {
-      throw new AppError("User not found", 404);
+      throw new AppError('User not found', 404);
     }
 
     return {
@@ -351,13 +332,10 @@ export class AuthService {
   async updateProfile(userId: string, updateData: UpdateProfileData) {
     const user = await this.userRepository.findById(userId);
     if (!user) {
-      throw new AppError("User not found", 404);
+      throw new AppError('User not found', 404);
     }
 
-    const updatedUser = await this.userRepository.updateProfile(
-      userId,
-      updateData,
-    );
+    const updatedUser = await this.userRepository.updateProfile(userId, updateData);
 
     return {
       id: updatedUser._id.toString(),
@@ -372,14 +350,10 @@ export class AuthService {
   /**
    * Change user password
    */
-  async changePassword(
-    userId: string,
-    currentPassword: string,
-    newPassword: string,
-  ) {
+  async changePassword(userId: string, currentPassword: string, newPassword: string) {
     const user = await this.userRepository.findByIdWithPassword(userId);
     if (!user || !(await user.comparePassword(currentPassword))) {
-      throw new AppError("Current password is incorrect", 400);
+      throw new AppError('Current password is incorrect', 400);
     }
 
     await this.userRepository.updatePassword(userId, newPassword);
@@ -390,10 +364,7 @@ export class AuthService {
    */
   async ssoLogin(ssoData: SSOLoginData): Promise<LoginResponse> {
     // Find user by SSO ID and provider
-    let user = await this.userRepository.findBySSOId(
-      ssoData.provider,
-      ssoData.ssoId,
-    );
+    let user = await this.userRepository.findBySSOId(ssoData.provider, ssoData.ssoId);
 
     if (!user) {
       // Find user by email to link existing account
@@ -409,10 +380,10 @@ export class AuthService {
         // Create new user from SSO data
         const userData: RegisterUserData = {
           email: ssoData.email,
-          password: crypto.randomBytes(32).toString("hex"), // Random password for SSO users
+          password: crypto.randomBytes(32).toString('hex'), // Random password for SSO users
           firstName: ssoData.firstName,
           lastName: ssoData.lastName,
-          role: "member",
+          role: 'member',
         };
 
         user = await this.userRepository.create(userData);
@@ -425,10 +396,7 @@ export class AuthService {
 
     // Check if account is active
     if (!user.isActive) {
-      throw new AppError(
-        "Account is deactivated. Please contact your administrator.",
-        403,
-      );
+      throw new AppError('Account is deactivated. Please contact your administrator.', 403);
     }
 
     // Update last login
@@ -445,10 +413,7 @@ export class AuthService {
     }
     await user.save();
 
-    const permissions = this.permissionService.getEffectivePermissions(
-      user.role,
-      user.permissions,
-    );
+    const permissions = this.permissionService.getEffectivePermissions(user.role, user.permissions);
     const expiresIn = 7 * 24 * 60 * 60;
 
     return {
@@ -468,7 +433,7 @@ export class AuthService {
       },
       accessToken,
       refreshToken,
-      tokenType: "Bearer",
+      tokenType: 'Bearer',
       expiresIn,
       expiresAt: new Date(Date.now() + expiresIn * 1000).toISOString(),
     };
@@ -485,7 +450,7 @@ export class AuthService {
       !user.emailVerificationTokenExpires ||
       user.emailVerificationTokenExpires < new Date()
     ) {
-      throw new AppError("Invalid or expired verification token", 400);
+      throw new AppError('Invalid or expired verification token', 400);
     }
 
     user.isEmailVerified = true;
@@ -519,12 +484,8 @@ export class AuthService {
   async resetPassword(token: string, newPassword: string): Promise<void> {
     const user = await this.userRepository.findByPasswordResetToken(token);
 
-    if (
-      !user ||
-      !user.passwordResetTokenExpires ||
-      user.passwordResetTokenExpires < new Date()
-    ) {
-      throw new AppError("Invalid or expired reset token", 400);
+    if (!user || !user.passwordResetTokenExpires || user.passwordResetTokenExpires < new Date()) {
+      throw new AppError('Invalid or expired reset token', 400);
     }
 
     user.password = newPassword;
@@ -540,9 +501,7 @@ export class AuthService {
   async logout(userId: string, refreshToken: string): Promise<void> {
     const user = await this.userRepository.findById(userId);
     if (user) {
-      user.refreshTokens = user.refreshTokens.filter(
-        (token) => token !== refreshToken,
-      );
+      user.refreshTokens = user.refreshTokens.filter((token) => token !== refreshToken);
       await user.save();
     }
   }
@@ -561,20 +520,13 @@ export class AuthService {
   /**
    * Check if user has specific permission
    */
-  async hasPermission(
-    userId: string,
-    permission: Permission,
-  ): Promise<boolean> {
+  async hasPermission(userId: string, permission: Permission): Promise<boolean> {
     const user = await this.userRepository.findById(userId);
     if (!user) {
       return false;
     }
 
-    return this.permissionService.canAccessResource(
-      user.role,
-      user.permissions,
-      permission,
-    );
+    return this.permissionService.canAccessResource(user.role, user.permissions, permission);
   }
 
   /**
@@ -586,22 +538,14 @@ export class AuthService {
       return [];
     }
 
-    return this.permissionService.getEffectivePermissions(
-      user.role,
-      user.permissions,
-    );
+    return this.permissionService.getEffectivePermissions(user.role, user.permissions);
   }
 
   /**
    * Update user permissions (admin only)
    */
-  async updateUserPermissions(
-    userId: string,
-    permissions: string[],
-  ): Promise<void> {
-    const validPermissions = permissions.filter((p) =>
-      this.permissionService.isValidPermission(p),
-    );
+  async updateUserPermissions(userId: string, permissions: string[]): Promise<void> {
+    const validPermissions = permissions.filter((p) => this.permissionService.isValidPermission(p));
     await this.userRepository.updatePermissions(userId, validPermissions);
   }
 
@@ -611,7 +555,7 @@ export class AuthService {
   async deactivateUser(userId: string): Promise<void> {
     const user = await this.userRepository.findById(userId);
     if (!user) {
-      throw new AppError("User not found", 404);
+      throw new AppError('User not found', 404);
     }
 
     user.isActive = false;
@@ -625,7 +569,7 @@ export class AuthService {
   async reactivateUser(userId: string): Promise<void> {
     const user = await this.userRepository.findById(userId);
     if (!user) {
-      throw new AppError("User not found", 404);
+      throw new AppError('User not found', 404);
     }
 
     user.isActive = true;

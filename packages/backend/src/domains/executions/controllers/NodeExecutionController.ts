@@ -1,7 +1,7 @@
-import { Request, Response } from 'express';
+import type { Request, Response } from 'express';
 import { validationResult } from 'express-validator';
-import { NodeExecutionService } from '../services/NodeExecutionService.js';
 import { AppError } from '../../../middleware/errorHandlers.js';
+import { NodeExecutionService } from '../services/NodeExecutionService.js';
 
 export class NodeExecutionController {
   private nodeExecutionService: NodeExecutionService;
@@ -35,7 +35,7 @@ export class NodeExecutionController {
       res.status(400).json({
         status: 'error',
         message: error.message || 'Failed to execute node',
-        nodeId
+        nodeId,
       });
     }
   };

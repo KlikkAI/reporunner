@@ -5,7 +5,7 @@
  * and intersection observer effects
  */
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef } from 'react';
 
 interface UseScrollAnimationsOptions {
   threshold?: number;
@@ -14,19 +14,17 @@ interface UseScrollAnimationsOptions {
   animationClass?: string;
 }
 
-export const useScrollAnimations = (
-  options: UseScrollAnimationsOptions = {},
-) => {
+export const useScrollAnimations = (options: UseScrollAnimationsOptions = {}) => {
   const {
     threshold = 0.1,
-    rootMargin = "0px 0px -50px 0px",
+    rootMargin = '0px 0px -50px 0px',
     triggerOnce = true,
-    animationClass = "visible",
+    animationClass = 'visible',
   } = options;
 
   useEffect(() => {
     const animatedElements = document.querySelectorAll(
-      ".fade-in-on-scroll, .slide-in-left-on-scroll, .slide-in-right-on-scroll",
+      '.fade-in-on-scroll, .slide-in-left-on-scroll, .slide-in-right-on-scroll'
     );
 
     if (!animatedElements.length) return;
@@ -48,7 +46,7 @@ export const useScrollAnimations = (
       {
         threshold,
         rootMargin,
-      },
+      }
     );
 
     animatedElements.forEach((element) => {
@@ -67,16 +65,13 @@ export const useParallaxEffect = () => {
   useEffect(() => {
     const handleScroll = () => {
       const scrollY = window.scrollY;
-      document.documentElement.style.setProperty(
-        "--scroll-y",
-        scrollY.toString(),
-      );
+      document.documentElement.style.setProperty('--scroll-y', scrollY.toString());
     };
 
-    window.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener('scroll', handleScroll, { passive: true });
 
     return () => {
-      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener('scroll', handleScroll);
     };
   }, []);
 };
@@ -84,7 +79,7 @@ export const useParallaxEffect = () => {
 export const useCountUpAnimation = (
   targetValue: number,
   duration: number = 2000,
-  startOnVisible: boolean = true,
+  startOnVisible: boolean = true
 ) => {
   const elementRef = useRef<HTMLElement>(null);
   const animationRef = useRef<number | null>(null);
@@ -98,10 +93,8 @@ export const useCountUpAnimation = (
       const progress = Math.min((currentTime - startTime) / duration, 1);
 
       // Easing function for smooth animation
-      const easeOutQuart = 1 - Math.pow(1 - progress, 4);
-      const currentValue = Math.floor(
-        startValue + (targetValue - startValue) * easeOutQuart,
-      );
+      const easeOutQuart = 1 - (1 - progress) ** 4;
+      const currentValue = Math.floor(startValue + (targetValue - startValue) * easeOutQuart);
 
       if (elementRef.current) {
         elementRef.current.textContent = currentValue.toLocaleString();
@@ -133,7 +126,7 @@ export const useCountUpAnimation = (
           }
         });
       },
-      { threshold: 0.5 },
+      { threshold: 0.5 }
     );
 
     observer.observe(element);
@@ -149,11 +142,7 @@ export const useCountUpAnimation = (
   return elementRef;
 };
 
-export const useTypewriterEffect = (
-  text: string,
-  speed: number = 50,
-  startDelay: number = 0,
-) => {
+export const useTypewriterEffect = (text: string, speed: number = 50, startDelay: number = 0) => {
   const elementRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -161,7 +150,7 @@ export const useTypewriterEffect = (
     if (!element) return;
 
     let index = 0;
-    element.textContent = "";
+    element.textContent = '';
 
     const timeoutId = setTimeout(() => {
       const intervalId = setInterval(() => {
@@ -185,7 +174,7 @@ export const useTypewriterEffect = (
 export const useStaggeredAnimation = (
   selector: string,
   delay: number = 100,
-  animationClass: string = "animate-fade-in-up",
+  animationClass: string = 'animate-fade-in-up'
 ) => {
   useEffect(() => {
     const elements = document.querySelectorAll(selector);
@@ -210,21 +199,21 @@ export const useGlowEffect = (intensity: number = 0.5) => {
       const x = e.clientX - rect.left;
       const y = e.clientY - rect.top;
 
-      element.style.setProperty("--mouse-x", `${x}px`);
-      element.style.setProperty("--mouse-y", `${y}px`);
-      element.style.setProperty("--glow-intensity", intensity.toString());
+      element.style.setProperty('--mouse-x', `${x}px`);
+      element.style.setProperty('--mouse-y', `${y}px`);
+      element.style.setProperty('--glow-intensity', intensity.toString());
     };
 
     const handleMouseLeave = () => {
-      element.style.setProperty("--glow-intensity", "0");
+      element.style.setProperty('--glow-intensity', '0');
     };
 
-    element.addEventListener("mousemove", handleMouseMove);
-    element.addEventListener("mouseleave", handleMouseLeave);
+    element.addEventListener('mousemove', handleMouseMove);
+    element.addEventListener('mouseleave', handleMouseLeave);
 
     return () => {
-      element.removeEventListener("mousemove", handleMouseMove);
-      element.removeEventListener("mouseleave", handleMouseLeave);
+      element.removeEventListener('mousemove', handleMouseMove);
+      element.removeEventListener('mouseleave', handleMouseLeave);
     };
   }, [intensity]);
 
@@ -234,7 +223,7 @@ export const useGlowEffect = (intensity: number = 0.5) => {
 export const useMorphingText = (
   texts: string[],
   interval: number = 3000,
-  morphDuration: number = 300,
+  morphDuration: number = 300
 ) => {
   const elementRef = useRef<HTMLElement>(null);
 
@@ -247,16 +236,16 @@ export const useMorphingText = (
 
     const intervalId = setInterval(() => {
       // Fade out
-      element.style.opacity = "0";
-      element.style.transform = "translateY(-10px)";
+      element.style.opacity = '0';
+      element.style.transform = 'translateY(-10px)';
 
       setTimeout(() => {
         currentIndex = (currentIndex + 1) % texts.length;
         element.textContent = texts[currentIndex];
 
         // Fade in
-        element.style.opacity = "1";
-        element.style.transform = "translateY(0)";
+        element.style.opacity = '1';
+        element.style.transform = 'translateY(0)';
       }, morphDuration);
     }, interval);
 

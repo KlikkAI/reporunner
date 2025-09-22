@@ -1,25 +1,24 @@
-import React from "react";
-import ReactDOM from "react-dom/client";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter } from "react-router-dom";
-import App from "./app/App.tsx";
-import "./app/styles/global.css";
-import "./app/styles/landing-animations.css";
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import { BrowserRouter } from 'react-router-dom';
+import App from './app/App.tsx';
+import './app/styles/global.css';
+import './app/styles/landing-animations.css';
 
 // Initialize node registry and extensions BEFORE React app starts
-import "@/app/node-extensions"; // Initialize component factory and registry
-import "@/core/nodes/definitions"; // Register core node definitions (includes unified Transform node)
-import "@/app/data/nodes/communication/gmail"; // Register Gmail node - CRITICAL: Must be before React
+import '@/app/node-extensions'; // Initialize component factory and registry
+import '@/core/nodes/definitions'; // Register core node definitions (includes unified Transform node)
+import '@/app/data/nodes/communication/gmail'; // Register Gmail node - CRITICAL: Must be before React
 
 // Debug logging for node registration timing
-import { nodeRegistry } from "@/core";
+import { nodeRegistry } from '@/core';
+
+console.log('🚀 main.tsx - Node registration completed before React initialization');
+console.log('📊 Registry stats:', nodeRegistry.getStatistics());
 console.log(
-  "🚀 main.tsx - Node registration completed before React initialization",
-);
-console.log("📊 Registry stats:", nodeRegistry.getStatistics());
-console.log(
-  "📋 Registered nodes:",
-  nodeRegistry.getAllNodeTypeDescriptions().map((n) => n.name),
+  '📋 Registered nodes:',
+  nodeRegistry.getAllNodeTypeDescriptions().map((n) => n.name)
 );
 
 const queryClient = new QueryClient({
@@ -31,12 +30,12 @@ const queryClient = new QueryClient({
   },
 });
 
-ReactDOM.createRoot(document.getElementById("root")!).render(
+ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
         <App />
       </BrowserRouter>
     </QueryClientProvider>
-  </React.StrictMode>,
+  </React.StrictMode>
 );

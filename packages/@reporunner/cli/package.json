@@ -1,0 +1,55 @@
+{
+  "name": "@reporunner/cli",
+  "version": "1.0.0",
+  "description": "Command line interface for Reporunner development",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "reporunner": "dist/cli.js",
+    "rr": "dist/cli.js"
+  },
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "type-check": "tsc --noEmit",
+    "lint": "eslint src/**/*.ts",
+    "lint:fix": "eslint src/**/*.ts --fix"
+  },
+  "dependencies": {
+    "@reporunner/core": "workspace:*",
+    "@reporunner/shared": "workspace:*",
+    "@reporunner/workflow-engine": "workspace:*",
+    "commander": "^11.1.0",
+    "inquirer": "^9.2.0",
+    "chalk": "^5.3.0",
+    "ora": "^7.0.0",
+    "boxen": "^7.1.0",
+    "figlet": "^1.7.0",
+    "update-notifier": "^7.0.0",
+    "fs-extra": "^11.2.0",
+    "execa": "^8.0.0",
+    "listr2": "^7.0.0",
+    "conf": "^12.0.0",
+    "open": "^10.0.0",
+    "semver": "^7.5.0",
+    "mustache": "^4.2.0",
+    "glob": "^10.3.0",
+    "chokidar": "^3.5.0",
+    "zod": "^3.22.0"
+  },
+  "devDependencies": {
+    "@types/inquirer": "^9.0.0",
+    "@types/figlet": "^1.5.0",
+    "@types/fs-extra": "^11.0.0",
+    "@types/mustache": "^4.2.0",
+    "@types/semver": "^7.5.0",
+    "typescript": "catalog:",
+    "@types/node": "catalog:",
+    "jest": "catalog:",
+    "@types/jest": "catalog:",
+    "tsup": "^7.0.0",
+    "eslint": "catalog:"
+  }
+}

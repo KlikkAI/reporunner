@@ -1,29 +1,29 @@
-import { z } from "zod";
+import { z } from 'zod';
 import {
-  IdSchema,
-  TimestampSchema,
-  StatusSchema,
-  MetadataSchema,
   ApiResponseSchema,
-} from "./BaseSchemas";
+  IdSchema,
+  MetadataSchema,
+  StatusSchema,
+  TimestampSchema,
+} from './BaseSchemas';
 
 // Credential type definitions
 export const CredentialTypeSchema = z.enum([
-  "gmailOAuth2",
-  "openaiApi",
-  "anthropicApi",
-  "googleAiApi",
-  "azureOpenAiApi",
-  "awsBedrockApi",
-  "ollamaApi",
-  "postgres",
-  "mongodb",
-  "mysql",
-  "redis",
-  "slack",
-  "discord",
-  "webhook",
-  "custom",
+  'gmailOAuth2',
+  'openaiApi',
+  'anthropicApi',
+  'googleAiApi',
+  'azureOpenAiApi',
+  'awsBedrockApi',
+  'ollamaApi',
+  'postgres',
+  'mongodb',
+  'mysql',
+  'redis',
+  'slack',
+  'discord',
+  'webhook',
+  'custom',
 ]);
 
 // OAuth2 specific schemas
@@ -32,7 +32,7 @@ export const OAuth2CredentialDataSchema = z.object({
   clientSecret: z.string().min(1),
   accessToken: z.string().optional(),
   refreshToken: z.string().optional(),
-  tokenType: z.string().default("Bearer"),
+  tokenType: z.string().default('Bearer'),
   expiresAt: TimestampSchema.optional(),
   scope: z.array(z.string()).optional(),
   redirectUri: z.string().url().optional(),
@@ -61,10 +61,7 @@ export const DatabaseCredentialDataSchema = z.object({
 });
 
 // Generic credential data (for custom/webhook types)
-export const GenericCredentialDataSchema = z.record(
-  z.string(),
-  z.union([z.string(), z.unknown()]),
-);
+export const GenericCredentialDataSchema = z.record(z.string(), z.union([z.string(), z.unknown()]));
 
 // Main credential schema - matches actual backend response
 export const CredentialSchema = z.object({
@@ -107,7 +104,7 @@ export const CredentialConfigSchema = z.object({
 // Credential test request/response
 export const CredentialTestRequestSchema = z.object({
   credentialId: IdSchema,
-  testType: z.enum(["connection", "auth", "permissions"]).default("connection"),
+  testType: z.enum(['connection', 'auth', 'permissions']).default('connection'),
   additionalParams: z.record(z.string(), z.unknown()).optional(),
 });
 
@@ -150,7 +147,7 @@ export const OAuth2CallbackRequestSchema = z.object({
 export const OAuth2TokenResponseSchema = z.object({
   access_token: z.string(),
   refresh_token: z.string().optional(),
-  token_type: z.string().default("Bearer"),
+  token_type: z.string().default('Bearer'),
   expires_in: z.number().int().min(0).optional(),
   scope: z.string().optional(),
 });
@@ -159,7 +156,7 @@ export const OAuth2TokenResponseSchema = z.object({
 export const CredentialPermissionSchema = z.object({
   userId: z.string(),
   userName: z.string().optional(),
-  permissions: z.array(z.enum(["read", "use", "modify", "delete"])),
+  permissions: z.array(z.enum(['read', 'use', 'modify', 'delete'])),
   grantedAt: TimestampSchema,
   grantedBy: z.string(),
 });
@@ -169,7 +166,7 @@ export const CredentialWithPermissionsSchema = CredentialSchema.and(
     permissions: z.array(CredentialPermissionSchema).default([]),
     isShared: z.boolean().default(false),
     ownerId: z.string(),
-  }),
+  })
 );
 
 // Credential filter schemas
@@ -185,12 +182,11 @@ export const CredentialFilterSchema = z.object({
 // API request schemas
 export const CreateCredentialRequestSchema = CredentialConfigSchema;
 
-export const UpdateCredentialRequestSchema =
-  CredentialConfigSchema.partial().and(
-    z.object({
-      id: IdSchema,
-    }),
-  );
+export const UpdateCredentialRequestSchema = CredentialConfigSchema.partial().and(
+  z.object({
+    id: IdSchema,
+  })
+);
 
 export const CredentialUsageLogSchema = z.object({
   id: IdSchema,
@@ -198,7 +194,7 @@ export const CredentialUsageLogSchema = z.object({
   workflowId: IdSchema.optional(),
   nodeId: z.string().optional(),
   usedAt: TimestampSchema,
-  action: z.enum(["authenticate", "api_call", "test", "refresh"]),
+  action: z.enum(['authenticate', 'api_call', 'test', 'refresh']),
   success: z.boolean(),
   details: z.record(z.string(), z.unknown()).optional(),
 });
@@ -208,16 +204,14 @@ export const CredentialResponseSchema = ApiResponseSchema(CredentialSchema);
 export const CredentialListResponseSchema = ApiResponseSchema(
   z.object({
     credentials: z.array(CredentialSchema),
-  }),
+  })
 );
-export const CredentialTestResponseSchema = ApiResponseSchema(
-  CredentialTestResultSchema,
-);
+export const CredentialTestResponseSchema = ApiResponseSchema(CredentialTestResultSchema);
 export const OAuth2InitResponseSchema = ApiResponseSchema(
   z.object({
     authorizationUrl: z.string().url(),
     state: z.string(),
-  }),
+  })
 );
 export const OAuth2TokenSchema = ApiResponseSchema(OAuth2TokenResponseSchema);
 
@@ -232,9 +226,7 @@ export const CredentialStatsSchema = z.object({
   needsTesting: z.number().int().min(0),
 });
 
-export const CredentialStatsResponseSchema = ApiResponseSchema(
-  CredentialStatsSchema,
-);
+export const CredentialStatsResponseSchema = ApiResponseSchema(CredentialStatsSchema);
 
 // Credential type definition with UI properties
 export const CredentialTypeDefinitionSchema = z.object({
@@ -251,21 +243,17 @@ export const CredentialTypeDefinitionSchema = z.object({
         required: z.boolean().optional(),
         placeholder: z.string().optional(),
         description: z.string().optional(),
-      }),
+      })
     )
     .optional(),
 });
 
 // Type exports
 export type CredentialType = z.infer<typeof CredentialTypeSchema>;
-export type CredentialTypeDefinition = z.infer<
-  typeof CredentialTypeDefinitionSchema
->;
+export type CredentialTypeDefinition = z.infer<typeof CredentialTypeDefinitionSchema>;
 export type OAuth2CredentialData = z.infer<typeof OAuth2CredentialDataSchema>;
 export type ApiKeyCredentialData = z.infer<typeof ApiKeyCredentialDataSchema>;
-export type DatabaseCredentialData = z.infer<
-  typeof DatabaseCredentialDataSchema
->;
+export type DatabaseCredentialData = z.infer<typeof DatabaseCredentialDataSchema>;
 export type GenericCredentialData = z.infer<typeof GenericCredentialDataSchema>;
 export type Credential = z.infer<typeof CredentialSchema>;
 export type CredentialConfig = z.infer<typeof CredentialConfigSchema>;
@@ -275,27 +263,15 @@ export type OAuth2InitRequest = z.infer<typeof OAuth2InitRequestSchema>;
 export type OAuth2CallbackRequest = z.infer<typeof OAuth2CallbackRequestSchema>;
 export type OAuth2TokenResponse = z.infer<typeof OAuth2TokenResponseSchema>;
 export type CredentialPermission = z.infer<typeof CredentialPermissionSchema>;
-export type CredentialWithPermissions = z.infer<
-  typeof CredentialWithPermissionsSchema
->;
+export type CredentialWithPermissions = z.infer<typeof CredentialWithPermissionsSchema>;
 export type CredentialFilter = z.infer<typeof CredentialFilterSchema>;
-export type CreateCredentialRequest = z.infer<
-  typeof CreateCredentialRequestSchema
->;
-export type UpdateCredentialRequest = z.infer<
-  typeof UpdateCredentialRequestSchema
->;
+export type CreateCredentialRequest = z.infer<typeof CreateCredentialRequestSchema>;
+export type UpdateCredentialRequest = z.infer<typeof UpdateCredentialRequestSchema>;
 export type CredentialUsageLog = z.infer<typeof CredentialUsageLogSchema>;
 export type CredentialResponse = z.infer<typeof CredentialResponseSchema>;
-export type CredentialListResponse = z.infer<
-  typeof CredentialListResponseSchema
->;
-export type CredentialTestResponse = z.infer<
-  typeof CredentialTestResponseSchema
->;
+export type CredentialListResponse = z.infer<typeof CredentialListResponseSchema>;
+export type CredentialTestResponse = z.infer<typeof CredentialTestResponseSchema>;
 export type OAuth2InitResponse = z.infer<typeof OAuth2InitResponseSchema>;
 export type OAuth2Token = z.infer<typeof OAuth2TokenSchema>;
 export type CredentialStats = z.infer<typeof CredentialStatsSchema>;
-export type CredentialStatsResponse = z.infer<
-  typeof CredentialStatsResponseSchema
->;
+export type CredentialStatsResponse = z.infer<typeof CredentialStatsResponseSchema>;

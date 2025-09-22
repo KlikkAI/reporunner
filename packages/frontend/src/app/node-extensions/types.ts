@@ -4,43 +4,22 @@
  * Extends base n8n types with advanced UI customization capabilities
  */
 
-import type { INodeTypeDescription } from "@/core/nodes/types";
-import type { ComponentType, CSSProperties } from "react";
+import type { ComponentType, CSSProperties } from 'react';
+import type { INodeTypeDescription } from '@/core/nodes/types';
 
 // ============================================================================
 // Visual Enhancement Types
 // ============================================================================
 
-export type NodeShape =
-  | "rectangle"
-  | "circle"
-  | "diamond"
-  | "hexagon"
-  | "octagon";
-export type NodeAnimation =
-  | "pulse"
-  | "glow"
-  | "flow"
-  | "bounce"
-  | "shake"
-  | "none";
-export type BadgePosition =
-  | "top-left"
-  | "top-right"
-  | "bottom-left"
-  | "bottom-right";
-export type HandleStyle = "circle" | "square" | "diamond" | "triangle";
+export type NodeShape = 'rectangle' | 'circle' | 'diamond' | 'hexagon' | 'octagon';
+export type NodeAnimation = 'pulse' | 'glow' | 'flow' | 'bounce' | 'shake' | 'none';
+export type BadgePosition = 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
+export type HandleStyle = 'circle' | 'square' | 'diamond' | 'triangle';
 
 export interface NodeGradient {
   from: string;
   to: string;
-  direction?:
-    | "to-right"
-    | "to-left"
-    | "to-top"
-    | "to-bottom"
-    | "to-top-right"
-    | "to-bottom-left";
+  direction?: 'to-right' | 'to-left' | 'to-top' | 'to-bottom' | 'to-top-right' | 'to-bottom-left';
 }
 
 export interface NodeBadge {
@@ -64,8 +43,8 @@ export interface ToolbarAction {
 
 export interface CustomHandle {
   id: string;
-  type: "source" | "target";
-  position: "top" | "right" | "bottom" | "left";
+  type: 'source' | 'target';
+  position: 'top' | 'right' | 'bottom' | 'left';
   style: HandleStyle;
   color: string;
   size?: number;
@@ -118,7 +97,7 @@ export interface NodeSpacing {
   md: string;
   lg: string;
   xl: string;
-  "2xl": string;
+  '2xl': string;
 }
 
 export interface NodeAnimationConfig {
@@ -176,10 +155,10 @@ export interface NodeVisualConfig {
     maxHeight?: number | string;
   };
   handles?: CustomHandle[];
-  shadow?: "none" | "sm" | "md" | "lg" | "xl";
+  shadow?: 'none' | 'sm' | 'md' | 'lg' | 'xl';
   border?: {
     width?: number;
-    style?: "solid" | "dashed" | "dotted";
+    style?: 'solid' | 'dashed' | 'dotted';
     color?: string;
   };
 }
@@ -282,31 +261,15 @@ export interface EnhancedNodeTypeDescription extends INodeTypeDescription {
 
 export interface UIComponentFactory {
   createNodeBody(type: string): ComponentType<CustomNodeBodyProps> | null;
-  createPropertiesPanel(
-    type: string,
-  ): ComponentType<CustomPropertiesPanelProps> | null;
-  createHandleRenderer(
-    type: string,
-  ): ComponentType<CustomHandleRendererProps> | null;
+  createPropertiesPanel(type: string): ComponentType<CustomPropertiesPanelProps> | null;
+  createHandleRenderer(type: string): ComponentType<CustomHandleRendererProps> | null;
   createToolbar(type: string): ComponentType<CustomToolbarProps> | null;
 
   // Registration methods
-  registerBodyComponent(
-    name: string,
-    component: ComponentType<CustomNodeBodyProps>,
-  ): void;
-  registerPropertiesPanel(
-    name: string,
-    component: ComponentType<CustomPropertiesPanelProps>,
-  ): void;
-  registerHandleRenderer(
-    name: string,
-    component: ComponentType<CustomHandleRendererProps>,
-  ): void;
-  registerToolbar(
-    name: string,
-    component: ComponentType<CustomToolbarProps>,
-  ): void;
+  registerBodyComponent(name: string, component: ComponentType<CustomNodeBodyProps>): void;
+  registerPropertiesPanel(name: string, component: ComponentType<CustomPropertiesPanelProps>): void;
+  registerHandleRenderer(name: string, component: ComponentType<CustomHandleRendererProps>): void;
+  registerToolbar(name: string, component: ComponentType<CustomToolbarProps>): void;
 
   // Utility methods
   hasCustomBody(type: string): boolean;
@@ -337,24 +300,14 @@ export interface ThemeManager {
 
 export interface EnhancedNodeRegistry {
   // Basic registry operations
-  registerNodeType(nodeType: {
-    description: EnhancedNodeTypeDescription;
-  }): void;
-  getNodeType(
-    typeName: string,
-  ): { description: EnhancedNodeTypeDescription } | undefined;
+  registerNodeType(nodeType: { description: EnhancedNodeTypeDescription }): void;
+  getNodeType(typeName: string): { description: EnhancedNodeTypeDescription } | undefined;
   getAllNodeTypes(): Array<{ description: EnhancedNodeTypeDescription }>;
 
   // UI component operations
-  getCustomBodyComponent(
-    typeName: string,
-  ): ComponentType<CustomNodeBodyProps> | null;
-  getCustomPropertiesPanel(
-    typeName: string,
-  ): ComponentType<CustomPropertiesPanelProps> | null;
-  getCustomHandleRenderer(
-    typeName: string,
-  ): ComponentType<CustomHandleRendererProps> | null;
+  getCustomBodyComponent(typeName: string): ComponentType<CustomNodeBodyProps> | null;
+  getCustomPropertiesPanel(typeName: string): ComponentType<CustomPropertiesPanelProps> | null;
+  getCustomHandleRenderer(typeName: string): ComponentType<CustomHandleRendererProps> | null;
   getCustomToolbar(typeName: string): ComponentType<CustomToolbarProps> | null;
 
   // Theme operations
@@ -362,9 +315,7 @@ export interface EnhancedNodeRegistry {
   getVisualConfig(typeName: string): NodeVisualConfig | null;
 
   // Search and filtering
-  searchByFeature(
-    feature: keyof EnhancedNodeTypeDescription["features"],
-  ): string[];
+  searchByFeature(feature: keyof EnhancedNodeTypeDescription['features']): string[];
   searchByCategory(category: string): string[];
   searchByProvider(provider: string): string[];
 
@@ -384,9 +335,7 @@ export interface NodeUIEvent {
   timestamp: number;
 }
 
-export interface NodeUIEventHandler {
-  (event: NodeUIEvent): void;
-}
+export type NodeUIEventHandler = (event: NodeUIEvent) => void;
 
 export interface NodeUIEventManager {
   on(eventType: string, handler: NodeUIEventHandler): void;
@@ -410,7 +359,7 @@ export type DeepPartial<T> = {
 
 export type NodeUIConfig = DeepPartial<NodeVisualConfig>;
 
-export type ThemeVariant = "light" | "dark" | "auto";
+export type ThemeVariant = 'light' | 'dark' | 'auto';
 
 export interface ResponsiveValue<T> {
   xs?: T;

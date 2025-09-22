@@ -1,19 +1,19 @@
 import {
-  IUser,
+  type ILoginRequest,
+  type ILoginResponse,
   IOrganization,
-  ILoginRequest,
-  ILoginResponse,
-  IRegisterRequest,
-  UserRole,
+  type IRegisterRequest,
+  type IUser,
   PermissionType,
-} from "@reporunner/api-types";
-import { AUTH, ERROR_CODES, MESSAGES } from "@reporunner/constants";
-import { DatabaseService } from "@reporunner/db";
-import { TokenManager, TokenPair } from "../jwt/token-manager";
-import { PermissionEngine } from "../rbac/permission-engine";
-import { createHash, randomBytes } from "crypto";
-import bcrypt from "bcrypt";
-import { v4 as uuidv4 } from "uuid";
+  UserRole,
+} from '@reporunner/api-types';
+import { AUTH, ERROR_CODES, MESSAGES } from '@reporunner/constants';
+import type { DatabaseService } from '@reporunner/db';
+import bcrypt from 'bcrypt';
+import { createHash, randomBytes } from 'crypto';
+import { v4 as uuidv4 } from 'uuid';
+import { type TokenManager, TokenPair } from '../jwt/token-manager';
+import { PermissionEngine } from '../rbac/permission-engine';
 
 export interface AuthServiceConfig {
   database: DatabaseService;
@@ -27,7 +27,7 @@ export interface RegisterUserData extends IRegisterRequest {
 }
 
 export interface SSOLoginData {
-  provider: "google" | "microsoft" | "okta" | "auth0";
+  provider: 'google' | 'microsoft' | 'okta' | 'auth0';
   ssoId: string;
   email: string;
   firstName: string;
@@ -57,8 +57,8 @@ export class AuthService {
       });
       if (existingUser) {
         throw new AuthError(
-          "User already exists with this email",
-          ERROR_CODES.RESOURCE_ALREADY_EXISTS,
+          'User already exists with this email',
+          ERROR_CODES.RESOURCE_ALREADY_EXISTS
         );
       }
 
@@ -66,10 +66,7 @@ export class AuthService {
       const userId = uuidv4();
 
       // Hash password
-      const hashedPassword = await bcrypt.hash(
-        userData.password,
-        AUTH.PASSWORD_SALT_ROUNDS,
-      );
+      const hashedPassword = await bcrypt.hash(userData.password, AUTH.PASSWORD_SALT_ROUNDS);
 
       // Get default role and permissions
       const role = userData.role || UserRole.VIEWER;
@@ -103,10 +100,7 @@ export class AuthService {
       const sessionId = uuidv4();
 
       // Generate tokens
-      const tokenPair = await this.tokenManager.generateTokenPair(
-        newUser,
-        sessionId,
-      );
+      const tokenPair = await this.tokenManager.generateTokenPair(newUser, sessionId);
 
       // Save session
       await this.saveSession(userId, sessionId, tokenPair.refreshToken);
@@ -115,7 +109,7 @@ export class AuthService {
       this.sendVerificationEmail(newUser.email, newUser.firstName);
 
       // Log analytics event
-      await this.db.postgres.logEvent("user.registered", userId, {
+      await this.db.postgres.logEvent('user.registered', userId, {
         email: newUser.email,
         role: newUser.role,
       });
@@ -130,7 +124,7 @@ export class AuthService {
       if (error instanceof AuthError) {
         throw error;
       }
-      throw new AuthError("Registration failed", ERROR_CODES.SYSTEM_ERROR);
+      throw new AuthError('Registration failed', ERROR_CODES.SYSTEM_ERROR);
     }
   }
 
@@ -142,68 +136,47 @@ export class AuthService {
       // Find user with password field
       const userDoc = await this.db.mongo.users.findOne(
         { email: credentials.email.toLowerCase() },
-        { projection: { password: 1 } },
+        { projection: { password: 1 } }
       );
 
       if (!userDoc) {
-        throw new AuthError(
-          "Invalid credentials",
-          ERROR_CODES.AUTH_INVALID_CREDENTIALS,
-        );
+        throw new AuthError('Invalid credentials', ERROR_CODES.AUTH_INVALID_CREDENTIALS);
       }
 
       // Verify password
-      const isValidPassword = await bcrypt.compare(
-        credentials.password,
-        userDoc.password,
-      );
+      const isValidPassword = await bcrypt.compare(credentials.password, userDoc.password);
       if (!isValidPassword) {
         // Increment login attempts
         await this.incrementLoginAttempts(userDoc.id);
-        throw new AuthError(
-          "Invalid credentials",
-          ERROR_CODES.AUTH_INVALID_CREDENTIALS,
-        );
+        throw new AuthError('Invalid credentials', ERROR_CODES.AUTH_INVALID_CREDENTIALS);
       }
 
       // Get full user data (without password)
       const user = (await this.db.mongo.users.findOne(
         { id: userDoc.id },
-        { projection: { password: 0 } },
+        { projection: { password: 0 } }
       )) as IUser;
 
       // Check if account is locked
       if (userDoc.lockUntil && userDoc.lockUntil > new Date()) {
-        throw new AuthError(
-          "Account is temporarily locked",
-          ERROR_CODES.AUTH_ACCOUNT_LOCKED,
-        );
+        throw new AuthError('Account is temporarily locked', ERROR_CODES.AUTH_ACCOUNT_LOCKED);
       }
 
       // Check if email is verified (if required)
-      if (
-        !user.isEmailVerified &&
-        process.env.REQUIRE_EMAIL_VERIFICATION === "true"
-      ) {
-        throw new AuthError(
-          "Please verify your email first",
-          ERROR_CODES.AUTH_EMAIL_NOT_VERIFIED,
-        );
+      if (!user.isEmailVerified && process.env.REQUIRE_EMAIL_VERIFICATION === 'true') {
+        throw new AuthError('Please verify your email first', ERROR_CODES.AUTH_EMAIL_NOT_VERIFIED);
       }
 
       // Check if MFA is required
       if (user.mfaEnabled && !credentials.mfaCode) {
-        throw new AuthError("MFA code required", ERROR_CODES.AUTH_MFA_REQUIRED);
+        throw new AuthError('MFA code required', ERROR_CODES.AUTH_MFA_REQUIRED);
       }
 
       // Verify MFA if provided
       if (user.mfaEnabled && credentials.mfaCode) {
-        const isValidMFA = await this.verifyMFACode(
-          user.id,
-          credentials.mfaCode,
-        );
+        const isValidMFA = await this.verifyMFACode(user.id, credentials.mfaCode);
         if (!isValidMFA) {
-          throw new AuthError("Invalid MFA code", ERROR_CODES.AUTH_MFA_INVALID);
+          throw new AuthError('Invalid MFA code', ERROR_CODES.AUTH_MFA_INVALID);
         }
       }
 
@@ -211,10 +184,7 @@ export class AuthService {
       const sessionId = uuidv4();
 
       // Generate tokens
-      const tokenPair = await this.tokenManager.generateTokenPair(
-        user,
-        sessionId,
-      );
+      const tokenPair = await this.tokenManager.generateTokenPair(user, sessionId);
 
       // Reset login attempts
       await this.resetLoginAttempts(user.id);
@@ -228,16 +198,16 @@ export class AuthService {
             loginAttempts: 0,
             lockUntil: null,
           },
-        },
+        }
       );
 
       // Save session
       await this.saveSession(user.id, sessionId, tokenPair.refreshToken);
 
       // Log analytics event
-      await this.db.postgres.logEvent("user.login", user.id, {
+      await this.db.postgres.logEvent('user.login', user.id, {
         email: user.email,
-        method: "password",
+        method: 'password',
       });
 
       return {
@@ -250,7 +220,7 @@ export class AuthService {
       if (error instanceof AuthError) {
         throw error;
       }
-      throw new AuthError("Login failed", ERROR_CODES.SYSTEM_ERROR);
+      throw new AuthError('Login failed', ERROR_CODES.SYSTEM_ERROR);
     }
   }
 
@@ -301,24 +271,21 @@ export class AuthService {
               ssoId: ssoData.ssoId,
               lastLogin: new Date(),
             },
-          },
+          }
         );
       }
 
       // Generate session and tokens
       const sessionId = uuidv4();
-      const tokenPair = await this.tokenManager.generateTokenPair(
-        user,
-        sessionId,
-      );
+      const tokenPair = await this.tokenManager.generateTokenPair(user, sessionId);
 
       // Save session
       await this.saveSession(user.id, sessionId, tokenPair.refreshToken);
 
       // Log event
-      await this.db.postgres.logEvent("user.login", user.id, {
+      await this.db.postgres.logEvent('user.login', user.id, {
         email: user.email,
-        method: "sso",
+        method: 'sso',
         provider: ssoData.provider,
       });
 
@@ -329,10 +296,7 @@ export class AuthService {
         user,
       };
     } catch (error) {
-      throw new AuthError(
-        "SSO login failed",
-        ERROR_CODES.AUTH_INVALID_CREDENTIALS,
-      );
+      throw new AuthError('SSO login failed', ERROR_CODES.AUTH_INVALID_CREDENTIALS);
     }
   }
 
@@ -344,10 +308,7 @@ export class AuthService {
       // Get user from refresh token
       const session = await this.getSessionByRefreshToken(refreshToken);
       if (!session) {
-        throw new AuthError(
-          "Invalid refresh token",
-          ERROR_CODES.AUTH_TOKEN_INVALID,
-        );
+        throw new AuthError('Invalid refresh token', ERROR_CODES.AUTH_TOKEN_INVALID);
       }
 
       // Get user
@@ -355,14 +316,11 @@ export class AuthService {
         id: session.userId,
       })) as IUser;
       if (!user) {
-        throw new AuthError("User not found", ERROR_CODES.RESOURCE_NOT_FOUND);
+        throw new AuthError('User not found', ERROR_CODES.RESOURCE_NOT_FOUND);
       }
 
       // Rotate tokens
-      const tokenPair = await this.tokenManager.refreshTokenRotation(
-        refreshToken,
-        user,
-      );
+      const tokenPair = await this.tokenManager.refreshTokenRotation(refreshToken, user);
 
       // Update session with new refresh token
       await this.updateSessionRefreshToken(session.id, tokenPair.refreshToken);
@@ -377,10 +335,7 @@ export class AuthService {
       if (error instanceof AuthError) {
         throw error;
       }
-      throw new AuthError(
-        "Token refresh failed",
-        ERROR_CODES.AUTH_TOKEN_INVALID,
-      );
+      throw new AuthError('Token refresh failed', ERROR_CODES.AUTH_TOKEN_INVALID);
     }
   }
 
@@ -393,15 +348,15 @@ export class AuthService {
       this.tokenManager.revokeSession(sessionId);
 
       // Remove session from database
-      await this.db.mongo.db.collection("sessions").deleteOne({
+      await this.db.mongo.db.collection('sessions').deleteOne({
         userId,
         sessionId,
       });
 
       // Log event
-      await this.db.postgres.logEvent("user.logout", userId, { sessionId });
+      await this.db.postgres.logEvent('user.logout', userId, { sessionId });
     } catch (error) {
-      throw new AuthError("Logout failed", ERROR_CODES.SYSTEM_ERROR);
+      throw new AuthError('Logout failed', ERROR_CODES.SYSTEM_ERROR);
     }
   }
 
@@ -431,14 +386,14 @@ export class AuthService {
             passwordResetToken: resetToken,
             passwordResetExpires: resetExpires,
           },
-        },
+        }
       );
 
       // Send reset email
       await this.sendPasswordResetEmail(user.email, user.firstName, resetToken);
     } catch (error) {
       // Silent fail for security
-      console.error("Password reset request failed:", error);
+      console.error('Password reset request failed:', error);
     }
   }
 
@@ -454,17 +409,11 @@ export class AuthService {
       });
 
       if (!user) {
-        throw new AuthError(
-          "Invalid or expired reset token",
-          ERROR_CODES.AUTH_TOKEN_INVALID,
-        );
+        throw new AuthError('Invalid or expired reset token', ERROR_CODES.AUTH_TOKEN_INVALID);
       }
 
       // Hash new password
-      const hashedPassword = await bcrypt.hash(
-        newPassword,
-        AUTH.PASSWORD_SALT_ROUNDS,
-      );
+      const hashedPassword = await bcrypt.hash(newPassword, AUTH.PASSWORD_SALT_ROUNDS);
 
       // Update password and clear reset token
       await this.db.mongo.users.updateOne(
@@ -478,19 +427,19 @@ export class AuthService {
             passwordResetToken: 1,
             passwordResetExpires: 1,
           },
-        },
+        }
       );
 
       // Revoke all existing sessions
       await this.revokeAllUserSessions(user.id);
 
       // Log event
-      await this.db.postgres.logEvent("user.password_reset", user.id, {});
+      await this.db.postgres.logEvent('user.password_reset', user.id, {});
     } catch (error) {
       if (error instanceof AuthError) {
         throw error;
       }
-      throw new AuthError("Password reset failed", ERROR_CODES.SYSTEM_ERROR);
+      throw new AuthError('Password reset failed', ERROR_CODES.SYSTEM_ERROR);
     }
   }
 
@@ -506,8 +455,8 @@ export class AuthService {
 
       if (!user) {
         throw new AuthError(
-          "Invalid or expired verification token",
-          ERROR_CODES.AUTH_TOKEN_INVALID,
+          'Invalid or expired verification token',
+          ERROR_CODES.AUTH_TOKEN_INVALID
         );
       }
 
@@ -523,33 +472,30 @@ export class AuthService {
             emailVerificationToken: 1,
             emailVerificationExpires: 1,
           },
-        },
+        }
       );
 
       // Log event
-      await this.db.postgres.logEvent("user.email_verified", user.id, {});
+      await this.db.postgres.logEvent('user.email_verified', user.id, {});
     } catch (error) {
       if (error instanceof AuthError) {
         throw error;
       }
-      throw new AuthError(
-        "Email verification failed",
-        ERROR_CODES.SYSTEM_ERROR,
-      );
+      throw new AuthError('Email verification failed', ERROR_CODES.SYSTEM_ERROR);
     }
   }
 
   // Helper methods
   private generateVerificationToken(): string {
-    return randomBytes(32).toString("hex");
+    return randomBytes(32).toString('hex');
   }
 
   private async saveSession(
     userId: string,
     sessionId: string,
-    refreshToken: string,
+    refreshToken: string
   ): Promise<void> {
-    await this.db.mongo.db.collection("sessions").insertOne({
+    await this.db.mongo.db.collection('sessions').insertOne({
       id: sessionId,
       userId,
       refreshToken,
@@ -559,38 +505,36 @@ export class AuthService {
   }
 
   private async getSessionByRefreshToken(refreshToken: string): Promise<any> {
-    return await this.db.mongo.db
-      .collection("sessions")
-      .findOne({ refreshToken });
+    return await this.db.mongo.db.collection('sessions').findOne({ refreshToken });
   }
 
   private async updateSessionRefreshToken(
     sessionId: string,
-    newRefreshToken: string,
+    newRefreshToken: string
   ): Promise<void> {
     await this.db.mongo.db
-      .collection("sessions")
+      .collection('sessions')
       .updateOne(
         { id: sessionId },
-        { $set: { refreshToken: newRefreshToken, updatedAt: new Date() } },
+        { $set: { refreshToken: newRefreshToken, updatedAt: new Date() } }
       );
   }
 
   private async revokeAllUserSessions(userId: string): Promise<void> {
-    await this.db.mongo.db.collection("sessions").deleteMany({ userId });
+    await this.db.mongo.db.collection('sessions').deleteMany({ userId });
   }
 
   private async incrementLoginAttempts(userId: string): Promise<void> {
     const result = await this.db.mongo.users.findOneAndUpdate(
       { id: userId },
       { $inc: { loginAttempts: 1 } },
-      { returnDocument: "after" },
+      { returnDocument: 'after' }
     );
 
     if (result && result.loginAttempts >= AUTH.MAX_LOGIN_ATTEMPTS) {
       await this.db.mongo.users.updateOne(
         { id: userId },
-        { $set: { lockUntil: new Date(Date.now() + AUTH.LOCK_TIME) } },
+        { $set: { lockUntil: new Date(Date.now() + AUTH.LOCK_TIME) } }
       );
     }
   }
@@ -601,7 +545,7 @@ export class AuthService {
       {
         $set: { loginAttempts: 0 },
         $unset: { lockUntil: 1 },
-      },
+      }
     );
   }
 
@@ -610,10 +554,7 @@ export class AuthService {
     return true;
   }
 
-  private async sendVerificationEmail(
-    email: string,
-    firstName: string,
-  ): Promise<void> {
+  private async sendVerificationEmail(email: string, firstName: string): Promise<void> {
     // TODO: Implement email sending
     if (this.emailService) {
       await this.emailService.sendVerificationEmail(email, firstName);
@@ -623,7 +564,7 @@ export class AuthService {
   private async sendPasswordResetEmail(
     email: string,
     firstName: string,
-    token: string,
+    token: string
   ): Promise<void> {
     // TODO: Implement email sending
     if (this.emailService) {
@@ -637,10 +578,10 @@ export class AuthError extends Error {
   constructor(
     message: string,
     public code: number,
-    public statusCode: number = 401,
+    public statusCode: number = 401
   ) {
     super(message);
-    this.name = "AuthError";
+    this.name = 'AuthError';
   }
 }
 

@@ -3,8 +3,8 @@
  * Implements semantic search and AI-powered content discovery
  */
 
-import { PostgreSQLConfig } from "../config/postgresql.js";
-import { HybridDatabaseService } from "./DatabaseService.js";
+import type { PostgreSQLConfig } from '../config/postgresql.js';
+import { HybridDatabaseService } from './DatabaseService.js';
 
 export interface EmbeddingDocument {
   id?: number;
@@ -43,7 +43,7 @@ export class EmbeddingsService {
    */
   public async storeEmbedding(document: EmbeddingDocument): Promise<number> {
     if (!document.embedding) {
-      throw new Error("Embedding vector is required");
+      throw new Error('Embedding vector is required');
     }
 
     const query = `
@@ -67,10 +67,7 @@ export class EmbeddingsService {
   /**
    * Update existing embedding
    */
-  public async updateEmbedding(
-    id: number,
-    document: Partial<EmbeddingDocument>,
-  ): Promise<void> {
+  public async updateEmbedding(id: number, document: Partial<EmbeddingDocument>): Promise<void> {
     const updateFields: string[] = [];
     const values: any[] = [];
     let valueIndex = 1;
@@ -100,7 +97,7 @@ export class EmbeddingsService {
     values.push(id);
     const query = `
       UPDATE embeddings
-      SET ${updateFields.join(", ")}
+      SET ${updateFields.join(', ')}
       WHERE id = $${valueIndex}
     `;
 
@@ -117,12 +114,12 @@ export class EmbeddingsService {
       limit?: number;
       threshold?: number;
       metadata?: Record<string, any>;
-    } = {},
+    } = {}
   ): Promise<SearchResult[]> {
     const { contentType, limit = 10, threshold = 0.7, metadata } = options;
 
-    let whereConditions = ["1 - (embedding <=> $1::vector) > $2"];
-    let values: any[] = [JSON.stringify(queryEmbedding), threshold];
+    const whereConditions = ['1 - (embedding <=> $1::vector) > $2'];
+    const values: any[] = [JSON.stringify(queryEmbedding), threshold];
     let valueIndex = 3;
 
     if (contentType) {
@@ -148,7 +145,7 @@ export class EmbeddingsService {
         updated_at,
         1 - (embedding <=> $1::vector) as similarity
       FROM embeddings
-      WHERE ${whereConditions.join(" AND ")}
+      WHERE ${whereConditions.join(' AND ')}
       ORDER BY embedding <=> $1::vector
       LIMIT $${valueIndex}
     `;
@@ -172,7 +169,7 @@ export class EmbeddingsService {
   public async findSimilarDocuments(
     contentId: string,
     limit: number = 5,
-    threshold: number = 0.8,
+    threshold: number = 0.8
   ): Promise<SearchResult[]> {
     // First, get the embedding of the source document
     const sourceQuery = `
@@ -204,12 +201,7 @@ export class EmbeddingsService {
       LIMIT $4
     `;
 
-    const result = await this.postgres.query(query, [
-      sourceEmbedding,
-      contentId,
-      threshold,
-      limit,
-    ]);
+    const result = await this.postgres.query(query, [sourceEmbedding, contentId, threshold, limit]);
 
     return result.rows.map((row: any) => ({
       id: row.id,
@@ -227,16 +219,14 @@ export class EmbeddingsService {
    * Delete embedding by content ID
    */
   public async deleteEmbedding(contentId: string): Promise<void> {
-    const query = "DELETE FROM embeddings WHERE content_id = $1";
+    const query = 'DELETE FROM embeddings WHERE content_id = $1';
     await this.postgres.query(query, [contentId]);
   }
 
   /**
    * Get embedding by content ID
    */
-  public async getEmbedding(
-    contentId: string,
-  ): Promise<EmbeddingDocument | null> {
+  public async getEmbedding(contentId: string): Promise<EmbeddingDocument | null> {
     const query = `
       SELECT
         id,
@@ -271,9 +261,7 @@ export class EmbeddingsService {
   /**
    * Batch store embeddings for performance
    */
-  public async batchStoreEmbeddings(
-    documents: EmbeddingDocument[],
-  ): Promise<number[]> {
+  public async batchStoreEmbeddings(documents: EmbeddingDocument[]): Promise<number[]> {
     if (documents.length === 0) {
       return [];
     }
@@ -283,14 +271,12 @@ export class EmbeddingsService {
 
     documents.forEach((doc, index) => {
       if (!doc.embedding) {
-        throw new Error(
-          `Embedding vector is required for document at index ${index}`,
-        );
+        throw new Error(`Embedding vector is required for document at index ${index}`);
       }
 
       const baseIndex = index * 5;
       placeholders.push(
-        `($${baseIndex + 1}, $${baseIndex + 2}, $${baseIndex + 3}, $${baseIndex + 4}::vector, $${baseIndex + 5})`,
+        `($${baseIndex + 1}, $${baseIndex + 2}, $${baseIndex + 3}, $${baseIndex + 4}::vector, $${baseIndex + 5})`
       );
 
       values.push(
@@ -298,13 +284,13 @@ export class EmbeddingsService {
         doc.contentType,
         doc.textContent,
         JSON.stringify(doc.embedding),
-        JSON.stringify(doc.metadata || {}),
+        JSON.stringify(doc.metadata || {})
       );
     });
 
     const query = `
       INSERT INTO embeddings (content_id, content_type, text_content, embedding, metadata)
-      VALUES ${placeholders.join(", ")}
+      VALUES ${placeholders.join(', ')}
       RETURNING id
     `;
 
@@ -321,9 +307,7 @@ export class EmbeddingsService {
     avgSimilarityThreshold: number;
   }> {
     // Total documents
-    const totalResult = await this.postgres.query(
-      "SELECT COUNT(*) as count FROM embeddings",
-    );
+    const totalResult = await this.postgres.query('SELECT COUNT(*) as count FROM embeddings');
     const totalDocuments = parseInt(totalResult.rows[0].count);
 
     // Documents by type

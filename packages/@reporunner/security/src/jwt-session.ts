@@ -1,6 +1,7 @@
-import jwt, { JwtPayload, SignOptions, VerifyOptions } from "jsonwebtoken";
-import { randomBytes } from "crypto";
-import { promisify } from "util";
+import { randomBytes } from 'crypto';
+import jwt, { type JwtPayload, type SignOptions, type VerifyOptions } from 'jsonwebtoken';
+import { promisify } from 'util';
+
 // Removed unused ERROR_CODES import
 
 const randomBytesAsync = promisify(randomBytes);
@@ -54,11 +55,11 @@ export class JWTSessionManager {
 
   constructor(config: JWTConfig) {
     this.config = {
-      accessTokenExpiry: "15m",
-      refreshTokenExpiry: "7d",
-      issuer: "reporunner",
-      audience: "reporunner-api",
-      algorithm: "HS256" as jwt.Algorithm,
+      accessTokenExpiry: '15m',
+      refreshTokenExpiry: '7d',
+      issuer: 'reporunner',
+      audience: 'reporunner-api',
+      algorithm: 'HS256' as jwt.Algorithm,
       enableBlacklist: true,
       enableRotation: true,
       maxRefreshCount: 10,
@@ -81,7 +82,7 @@ export class JWTSessionManager {
       ...payload,
       sessionId,
       tokenId,
-      type: "access",
+      type: 'access',
     };
 
     // Prepare refresh token payload
@@ -89,7 +90,7 @@ export class JWTSessionManager {
       userId: payload.userId,
       sessionId,
       tokenId,
-      type: "refresh",
+      type: 'refresh',
       refreshCount: 0,
     };
 
@@ -105,14 +106,12 @@ export class JWTSessionManager {
         expiresIn: this.config.refreshTokenExpiry as any,
         subject: payload.userId,
       },
-      true,
+      true
     );
 
     // Calculate expiry dates
     const accessTokenExpiry = this.getExpiryDate(this.config.accessTokenExpiry);
-    const refreshTokenExpiry = this.getExpiryDate(
-      this.config.refreshTokenExpiry,
-    );
+    const refreshTokenExpiry = this.getExpiryDate(this.config.refreshTokenExpiry);
 
     // Store refresh token data
     const refreshTokenData: RefreshTokenData = {
@@ -143,31 +142,31 @@ export class JWTSessionManager {
   async refreshAccessToken(
     refreshToken: string,
     ipAddress?: string,
-    userAgent?: string,
+    userAgent?: string
   ): Promise<TokenPair> {
     try {
       // Verify refresh token
       const decoded = this.verifyToken(refreshToken, true) as JwtPayload;
 
-      if (decoded.type !== "refresh") {
-        throw new Error("Invalid token type");
+      if (decoded.type !== 'refresh') {
+        throw new Error('Invalid token type');
       }
 
       const tokenId = decoded.tokenId;
       const refreshTokenData = this.refreshTokenStore.get(tokenId);
 
       if (!refreshTokenData) {
-        throw new Error("Refresh token not found or expired");
+        throw new Error('Refresh token not found or expired');
       }
 
       // Check if token is blacklisted
       if (this.config.enableBlacklist && this.blacklistedTokens.has(tokenId)) {
-        throw new Error("Token has been revoked");
+        throw new Error('Token has been revoked');
       }
 
       // Check refresh count
       if (refreshTokenData.refreshCount >= this.config.maxRefreshCount) {
-        throw new Error("Maximum refresh count exceeded");
+        throw new Error('Maximum refresh count exceeded');
       }
 
       // Update refresh token data
@@ -180,10 +179,8 @@ export class JWTSessionManager {
       const newAccessTokenPayload: SessionPayload = {
         userId: decoded.userId,
         sessionId: decoded.sessionId,
-        tokenId: this.config.enableRotation
-          ? await this.generateTokenId()
-          : tokenId,
-        type: "access",
+        tokenId: this.config.enableRotation ? await this.generateTokenId() : tokenId,
+        type: 'access',
       };
 
       const newAccessToken = this.signToken(newAccessTokenPayload, {
@@ -191,9 +188,7 @@ export class JWTSessionManager {
         subject: decoded.userId,
       });
 
-      const accessTokenExpiry = this.getExpiryDate(
-        this.config.accessTokenExpiry,
-      );
+      const accessTokenExpiry = this.getExpiryDate(this.config.accessTokenExpiry);
 
       // Rotate refresh token if enabled
       let newRefreshToken = refreshToken;
@@ -205,7 +200,7 @@ export class JWTSessionManager {
           userId: decoded.userId,
           sessionId: decoded.sessionId,
           tokenId: newTokenId,
-          type: "refresh",
+          type: 'refresh',
           refreshCount: refreshTokenData.refreshCount,
         };
 
@@ -215,7 +210,7 @@ export class JWTSessionManager {
             expiresIn: this.config.refreshTokenExpiry as any,
             subject: decoded.userId,
           },
-          true,
+          true
         );
 
         refreshTokenExpiry = this.getExpiryDate(this.config.refreshTokenExpiry);
@@ -268,16 +263,16 @@ export class JWTSessionManager {
       // Check if token is blacklisted
       if (this.config.enableBlacklist && decoded.tokenId) {
         if (this.blacklistedTokens.has(decoded.tokenId)) {
-          throw new Error("Token has been revoked");
+          throw new Error('Token has been revoked');
         }
       }
 
       return decoded;
     } catch (error: any) {
-      if (error.name === "TokenExpiredError") {
-        throw new Error("Token has expired");
-      } else if (error.name === "JsonWebTokenError") {
-        throw new Error("Invalid token");
+      if (error.name === 'TokenExpiredError') {
+        throw new Error('Token has expired');
+      } else if (error.name === 'JsonWebTokenError') {
+        throw new Error('Invalid token');
       }
       throw error;
     }
@@ -356,7 +351,7 @@ export class JWTSessionManager {
    */
   async validateToken(
     token: string,
-    isRefreshToken: boolean = false,
+    isRefreshToken: boolean = false
   ): Promise<{
     valid: boolean;
     payload?: JwtPayload;
@@ -376,8 +371,8 @@ export class JWTSessionManager {
   extractTokenFromHeader(authHeader?: string): string | null {
     if (!authHeader) return null;
 
-    const parts = authHeader.split(" ");
-    if (parts.length === 2 && parts[0].toLowerCase() === "bearer") {
+    const parts = authHeader.split(' ');
+    if (parts.length === 2 && parts[0].toLowerCase() === 'bearer') {
       return parts[1];
     }
 
@@ -387,14 +382,8 @@ export class JWTSessionManager {
   /**
    * Sign a token
    */
-  private signToken(
-    payload: any,
-    options: SignOptions,
-    isRefreshToken: boolean = false,
-  ): string {
-    const secret = isRefreshToken
-      ? this.config.refreshTokenSecret
-      : this.config.accessTokenSecret;
+  private signToken(payload: any, options: SignOptions, isRefreshToken: boolean = false): string {
+    const secret = isRefreshToken ? this.config.refreshTokenSecret : this.config.accessTokenSecret;
 
     const signOptions: SignOptions = {
       ...options,
@@ -411,7 +400,7 @@ export class JWTSessionManager {
    */
   private async generateSessionId(): Promise<string> {
     const bytes = await randomBytesAsync(32);
-    return bytes.toString("hex");
+    return bytes.toString('hex');
   }
 
   /**
@@ -419,7 +408,7 @@ export class JWTSessionManager {
    */
   private async generateTokenId(): Promise<string> {
     const bytes = await randomBytesAsync(16);
-    return bytes.toString("hex");
+    return bytes.toString('hex');
   }
 
   /**
@@ -436,16 +425,16 @@ export class JWTSessionManager {
     const now = new Date();
 
     switch (unit) {
-      case "s":
+      case 's':
         now.setSeconds(now.getSeconds() + value);
         break;
-      case "m":
+      case 'm':
         now.setMinutes(now.getMinutes() + value);
         break;
-      case "h":
+      case 'h':
         now.setHours(now.getHours() + value);
         break;
-      case "d":
+      case 'd':
         now.setDate(now.getDate() + value);
         break;
     }
@@ -497,7 +486,7 @@ export class JWTSessionManager {
           this.blacklistedTokens = new Set(tokensArray.slice(-1000));
         }
       },
-      60 * 60 * 1000,
+      60 * 60 * 1000
     ); // Run every hour
   }
 
@@ -522,8 +511,7 @@ export class JWTSessionManager {
       totalSessions: sessionCount,
       totalUsers: this.userSessions.size,
       blacklistedTokens: this.blacklistedTokens.size,
-      averageRefreshCount:
-        sessionCount > 0 ? totalRefreshCount / sessionCount : 0,
+      averageRefreshCount: sessionCount > 0 ? totalRefreshCount / sessionCount : 0,
     };
   }
 
@@ -539,11 +527,10 @@ export class JWTSessionManager {
 
 // Export singleton instance with default config
 export const jwtSessionManager = new JWTSessionManager({
-  accessTokenSecret: process.env.JWT_ACCESS_SECRET || "change-this-secret",
-  refreshTokenSecret:
-    process.env.JWT_REFRESH_SECRET || "change-this-refresh-secret",
-  accessTokenExpiry: process.env.JWT_ACCESS_EXPIRY || "15m",
-  refreshTokenExpiry: process.env.JWT_REFRESH_EXPIRY || "7d",
+  accessTokenSecret: process.env.JWT_ACCESS_SECRET || 'change-this-secret',
+  refreshTokenSecret: process.env.JWT_REFRESH_SECRET || 'change-this-refresh-secret',
+  accessTokenExpiry: process.env.JWT_ACCESS_EXPIRY || '15m',
+  refreshTokenExpiry: process.env.JWT_REFRESH_EXPIRY || '7d',
 });
 
 export default JWTSessionManager;

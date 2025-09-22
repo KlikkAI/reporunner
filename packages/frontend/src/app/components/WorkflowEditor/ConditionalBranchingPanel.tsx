@@ -5,51 +5,51 @@
  * dynamic routing, expression builder, and complex condition handling.
  */
 
-import React, { useState, useEffect } from "react";
-import {
-  Button,
-  Card,
-  Form,
-  Input,
-  Switch,
-  Select,
-  InputNumber,
-  Tabs,
-  Tag,
-  Space,
-  Modal,
-  message,
-  List,
-  Typography,
-  Alert,
-  Tree,
-  Divider,
-  Radio,
-  Row,
-  Col,
-} from "antd";
 import {
   BranchesOutlined,
-  PlusOutlined,
-  DeleteOutlined,
-  EditOutlined,
-  CodeOutlined,
-  QuestionCircleOutlined,
   CheckCircleOutlined,
   CloseCircleOutlined,
-  SettingOutlined,
+  CodeOutlined,
+  DeleteOutlined,
+  EditOutlined,
   PlayCircleOutlined,
-} from "@ant-design/icons";
-import { cn } from "@/design-system/utils";
-import { colors } from "@/design-system/tokens";
-import { useLeanWorkflowStore } from "@/core/stores/leanWorkflowStore";
-import type { WorkflowNodeInstance } from "@/core/nodes/types";
+  PlusOutlined,
+  QuestionCircleOutlined,
+  SettingOutlined,
+} from '@ant-design/icons';
+import {
+  Alert,
+  Button,
+  Card,
+  Col,
+  Divider,
+  Form,
+  Input,
+  InputNumber,
+  List,
+  Modal,
+  message,
+  Radio,
+  Row,
+  Select,
+  Space,
+  Switch,
+  Tabs,
+  Tag,
+  Tree,
+  Typography,
+} from 'antd';
+import type React from 'react';
+import { useEffect, useState } from 'react';
+import type { WorkflowNodeInstance } from '@/core/nodes/types';
+import { useLeanWorkflowStore } from '@/core/stores/leanWorkflowStore';
+import { colors } from '@/design-system/tokens';
+import { cn } from '@/design-system/utils';
 
 const { TabPane } = Tabs;
 const { Option } = Select;
 const { TextArea } = Input;
 const { Text } = Typography;
-
 
 interface ConditionalBranchingPanelProps {
   workflowId: string;
@@ -64,7 +64,7 @@ export interface BranchConfiguration {
   description?: string;
   sourceNodeId: string;
   conditions: BranchCondition[];
-  logicalOperator: "AND" | "OR";
+  logicalOperator: 'AND' | 'OR';
   defaultBranch: boolean;
   priority: number;
   targetNodes: string[];
@@ -76,42 +76,43 @@ export interface BranchCondition {
   field: string;
   operator: ComparisonOperator;
   value: any;
-  dataType: "string" | "number" | "boolean" | "date" | "array" | "object";
+  dataType: 'string' | 'number' | 'boolean' | 'date' | 'array' | 'object';
   negate?: boolean;
   caseSensitive?: boolean;
 }
 
 type ComparisonOperator =
-  | "equals"
-  | "not_equals"
-  | "greater_than"
-  | "less_than"
-  | "greater_equal"
-  | "less_equal"
-  | "contains"
-  | "starts_with"
-  | "ends_with"
-  | "regex"
-  | "in_array"
-  | "is_empty"
-  | "is_not_empty"
-  | "exists"
-  | "not_exists";
+  | 'equals'
+  | 'not_equals'
+  | 'greater_than'
+  | 'less_than'
+  | 'greater_equal'
+  | 'less_equal'
+  | 'contains'
+  | 'starts_with'
+  | 'ends_with'
+  | 'regex'
+  | 'in_array'
+  | 'is_empty'
+  | 'is_not_empty'
+  | 'exists'
+  | 'not_exists';
 
-export const ConditionalBranchingPanel: React.FC<
-  ConditionalBranchingPanelProps
-> = ({ workflowId, visible, onClose, onAddBranch }) => {
+export const ConditionalBranchingPanel: React.FC<ConditionalBranchingPanelProps> = ({
+  workflowId,
+  visible,
+  onClose,
+  onAddBranch,
+}) => {
   const { nodes, edges } = useLeanWorkflowStore();
   const [branches, setBranches] = useState<BranchConfiguration[]>([]);
-  const [selectedBranch, setSelectedBranch] =
-    useState<BranchConfiguration | null>(null);
-  const [activeTab, setActiveTab] = useState("builder");
+  const [selectedBranch, setSelectedBranch] = useState<BranchConfiguration | null>(null);
+  const [activeTab, setActiveTab] = useState('builder');
   const [form] = Form.useForm();
   const [conditionForm] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [editingBranch, setEditingBranch] = useState<string | null>(null);
   const [testModalVisible, setTestModalVisible] = useState(false);
-
 
   useEffect(() => {
     if (visible) {
@@ -123,32 +124,28 @@ export const ConditionalBranchingPanel: React.FC<
     // Extract conditional branches from existing workflow
     const conditionNodes = nodes.filter(
       (node) =>
-        node.parameters?.type === "condition" ||
-        node.parameters?.integrationData?.id === "condition" ||
-        node.type === "condition",
+        node.parameters?.type === 'condition' ||
+        node.parameters?.integrationData?.id === 'condition' ||
+        node.type === 'condition'
     );
 
-    const extractedBranches: BranchConfiguration[] = conditionNodes.map(
-      (node) => ({
-        id: node.id,
-        name: node.parameters?.name || node.name || `Branch from ${node.id}`,
-        description: node.parameters?.description || "",
-        sourceNodeId: node.id,
-        conditions: extractConditionsFromNode(node),
-        logicalOperator: "AND",
-        defaultBranch: false,
-        priority: 1,
-        targetNodes: getTargetNodes(node.id),
-        metadata: {},
-      }),
-    );
+    const extractedBranches: BranchConfiguration[] = conditionNodes.map((node) => ({
+      id: node.id,
+      name: node.parameters?.name || node.name || `Branch from ${node.id}`,
+      description: node.parameters?.description || '',
+      sourceNodeId: node.id,
+      conditions: extractConditionsFromNode(node),
+      logicalOperator: 'AND',
+      defaultBranch: false,
+      priority: 1,
+      targetNodes: getTargetNodes(node.id),
+      metadata: {},
+    }));
 
     setBranches(extractedBranches);
   };
 
-  const extractConditionsFromNode = (
-    node: WorkflowNodeInstance,
-  ): BranchCondition[] => {
+  const extractConditionsFromNode = (node: WorkflowNodeInstance): BranchCondition[] => {
     const properties = node.parameters?.properties || node.parameters || {};
     const conditions: BranchCondition[] = [];
 
@@ -157,10 +154,10 @@ export const ConditionalBranchingPanel: React.FC<
       // Simple condition
       conditions.push({
         id: `condition_${Date.now()}`,
-        field: properties.field || "data",
-        operator: properties.operator || "equals",
+        field: properties.field || 'data',
+        operator: properties.operator || 'equals',
         value: properties.value,
-        dataType: properties.dataType || "string",
+        dataType: properties.dataType || 'string',
         negate: properties.negate || false,
         caseSensitive: properties.caseSensitive !== false,
       });
@@ -172,7 +169,7 @@ export const ConditionalBranchingPanel: React.FC<
           field: cond.field,
           operator: cond.operator,
           value: cond.value,
-          dataType: cond.dataType || "string",
+          dataType: cond.dataType || 'string',
           negate: cond.negate || false,
           caseSensitive: cond.caseSensitive !== false,
         });
@@ -183,23 +180,19 @@ export const ConditionalBranchingPanel: React.FC<
   };
 
   const getTargetNodes = (sourceNodeId: string): string[] => {
-    return edges
-      .filter((edge) => edge.source === sourceNodeId)
-      .map((edge) => edge.target);
+    return edges.filter((edge) => edge.source === sourceNodeId).map((edge) => edge.target);
   };
 
   const handleCreateBranch = async (values: any) => {
     setLoading(true);
     try {
       const branchConfig: BranchConfiguration = {
-        id:
-          editingBranch ||
-          `branch_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`,
+        id: editingBranch || `branch_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`,
         name: values.name,
         description: values.description,
         sourceNodeId: values.sourceNodeId,
         conditions: values.conditions || [],
-        logicalOperator: values.logicalOperator || "AND",
+        logicalOperator: values.logicalOperator || 'AND',
         defaultBranch: values.defaultBranch || false,
         priority: values.priority || 1,
         targetNodes: values.targetNodes || [],
@@ -210,20 +203,18 @@ export const ConditionalBranchingPanel: React.FC<
       };
 
       if (editingBranch) {
-        setBranches((prev) =>
-          prev.map((b) => (b.id === editingBranch ? branchConfig : b)),
-        );
-        message.success("Branch updated successfully");
+        setBranches((prev) => prev.map((b) => (b.id === editingBranch ? branchConfig : b)));
+        message.success('Branch updated successfully');
       } else {
         setBranches((prev) => [...prev, branchConfig]);
-        message.success("Branch created successfully");
+        message.success('Branch created successfully');
       }
 
       onAddBranch(branchConfig);
       form.resetFields();
       setEditingBranch(null);
     } catch (error) {
-      message.error("Failed to create branch");
+      message.error('Failed to create branch');
       console.error(error);
     } finally {
       setLoading(false);
@@ -241,76 +232,63 @@ export const ConditionalBranchingPanel: React.FC<
       caseSensitive: values.caseSensitive !== false,
     };
 
-    const currentConditions = form.getFieldValue("conditions") || [];
+    const currentConditions = form.getFieldValue('conditions') || [];
     form.setFieldsValue({ conditions: [...currentConditions, condition] });
     conditionForm.resetFields();
   };
 
   const handleRemoveCondition = (conditionId: string) => {
-    const currentConditions = form.getFieldValue("conditions") || [];
+    const currentConditions = form.getFieldValue('conditions') || [];
     const updatedConditions = currentConditions.filter(
-      (c: BranchCondition) => c.id !== conditionId,
+      (c: BranchCondition) => c.id !== conditionId
     );
     form.setFieldsValue({ conditions: updatedConditions });
   };
 
-  const handleTestBranch = async (
-    branch: BranchConfiguration,
-    testData: any,
-  ) => {
+  const handleTestBranch = async (branch: BranchConfiguration, testData: any) => {
     try {
       const result = evaluateBranchConditions(branch, testData);
-      message.success(`Branch evaluation result: ${result ? "TRUE" : "FALSE"}`);
+      message.success(`Branch evaluation result: ${result ? 'TRUE' : 'FALSE'}`);
       return result;
     } catch (error) {
-      message.error("Branch test failed");
+      message.error('Branch test failed');
       console.error(error);
       return false;
     }
   };
 
-  const evaluateBranchConditions = (
-    branch: BranchConfiguration,
-    data: any,
-  ): boolean => {
+  const evaluateBranchConditions = (branch: BranchConfiguration, data: any): boolean => {
     if (branch.conditions.length === 0) return true;
 
-    const results = branch.conditions.map((condition) =>
-      evaluateCondition(condition, data),
-    );
+    const results = branch.conditions.map((condition) => evaluateCondition(condition, data));
 
-    return branch.logicalOperator === "AND"
-      ? results.every(Boolean)
-      : results.some(Boolean);
+    return branch.logicalOperator === 'AND' ? results.every(Boolean) : results.some(Boolean);
   };
 
-  const evaluateCondition = (
-    condition: BranchCondition,
-    data: any,
-  ): boolean => {
+  const evaluateCondition = (condition: BranchCondition, data: any): boolean => {
     const fieldValue = getNestedValue(data, condition.field);
     let result = false;
 
     switch (condition.operator) {
-      case "equals":
+      case 'equals':
         result = fieldValue === condition.value;
         break;
-      case "not_equals":
+      case 'not_equals':
         result = fieldValue !== condition.value;
         break;
-      case "greater_than":
+      case 'greater_than':
         result = Number(fieldValue) > Number(condition.value);
         break;
-      case "less_than":
+      case 'less_than':
         result = Number(fieldValue) < Number(condition.value);
         break;
-      case "greater_equal":
+      case 'greater_equal':
         result = Number(fieldValue) >= Number(condition.value);
         break;
-      case "less_equal":
+      case 'less_equal':
         result = Number(fieldValue) <= Number(condition.value);
         break;
-      case "contains":
+      case 'contains': {
         const searchValue = condition.caseSensitive
           ? condition.value
           : condition.value.toLowerCase();
@@ -319,36 +297,35 @@ export const ConditionalBranchingPanel: React.FC<
           : String(fieldValue).toLowerCase();
         result = searchIn.includes(searchValue);
         break;
-      case "starts_with":
+      }
+      case 'starts_with':
         result = String(fieldValue).startsWith(String(condition.value));
         break;
-      case "ends_with":
+      case 'ends_with':
         result = String(fieldValue).endsWith(String(condition.value));
         break;
-      case "regex":
+      case 'regex':
         result = new RegExp(condition.value).test(String(fieldValue));
         break;
-      case "in_array":
-        result =
-          Array.isArray(condition.value) &&
-          condition.value.includes(fieldValue);
+      case 'in_array':
+        result = Array.isArray(condition.value) && condition.value.includes(fieldValue);
         break;
-      case "is_empty":
+      case 'is_empty':
         result =
           !fieldValue ||
-          fieldValue === "" ||
+          fieldValue === '' ||
           (Array.isArray(fieldValue) && fieldValue.length === 0);
         break;
-      case "is_not_empty":
+      case 'is_not_empty':
         result =
           !!fieldValue &&
-          fieldValue !== "" &&
+          fieldValue !== '' &&
           (!Array.isArray(fieldValue) || fieldValue.length > 0);
         break;
-      case "exists":
+      case 'exists':
         result = fieldValue !== undefined && fieldValue !== null;
         break;
-      case "not_exists":
+      case 'not_exists':
         result = fieldValue === undefined || fieldValue === null;
         break;
       default:
@@ -359,7 +336,7 @@ export const ConditionalBranchingPanel: React.FC<
   };
 
   const getNestedValue = (obj: any, path: string): any => {
-    return path.split(".").reduce((current, key) => current?.[key], obj);
+    return path.split('.').reduce((current, key) => current?.[key], obj);
   };
 
   const renderBranchBuilder = () => (
@@ -370,7 +347,7 @@ export const ConditionalBranchingPanel: React.FC<
           layout="vertical"
           onFinish={handleCreateBranch}
           initialValues={{
-            logicalOperator: "AND",
+            logicalOperator: 'AND',
             defaultBranch: false,
             priority: 1,
             conditions: [],
@@ -379,7 +356,7 @@ export const ConditionalBranchingPanel: React.FC<
           <Form.Item
             name="name"
             label="Branch Name"
-            rules={[{ required: true, message: "Please enter a branch name" }]}
+            rules={[{ required: true, message: 'Please enter a branch name' }]}
           >
             <Input placeholder="Success path" />
           </Form.Item>
@@ -391,7 +368,7 @@ export const ConditionalBranchingPanel: React.FC<
           <Form.Item
             name="sourceNodeId"
             label="Source Node"
-            rules={[{ required: true, message: "Please select a source node" }]}
+            rules={[{ required: true, message: 'Please select a source node' }]}
           >
             <Select placeholder="Select node to branch from">
               {nodes.map((node) => (
@@ -411,27 +388,20 @@ export const ConditionalBranchingPanel: React.FC<
 
           <Divider>Conditions</Divider>
 
-          <Form.Item dependencies={["conditions"]} noStyle>
+          <Form.Item dependencies={['conditions']} noStyle>
             {({ getFieldValue }) => {
-              const conditions: BranchCondition[] =
-                getFieldValue("conditions") || [];
+              const conditions: BranchCondition[] = getFieldValue('conditions') || [];
               return (
                 <div className="space-y-2">
                   {conditions.map((condition) => (
-                    <Card
-                      key={condition.id}
-                      size="small"
-                      className="border-l-4 border-l-blue-500"
-                    >
+                    <Card key={condition.id} size="small" className="border-l-4 border-l-blue-500">
                       <div className="flex justify-between items-start">
                         <div className="flex-1">
                           <Space direction="vertical" size="small">
                             <Text strong>{condition.field}</Text>
                             <Tag color="blue">{condition.operator}</Tag>
                             <Text code>{JSON.stringify(condition.value)}</Text>
-                            {condition.negate && (
-                              <Tag color="orange">NEGATED</Tag>
-                            )}
+                            {condition.negate && <Tag color="orange">NEGATED</Tag>}
                           </Space>
                         </div>
                         <Button
@@ -457,27 +427,15 @@ export const ConditionalBranchingPanel: React.FC<
           </Form.Item>
 
           <Card title="Add Condition" size="small" className="mt-4">
-            <Form
-              form={conditionForm}
-              layout="vertical"
-              onFinish={handleAddCondition}
-            >
+            <Form form={conditionForm} layout="vertical" onFinish={handleAddCondition}>
               <Row gutter={16}>
                 <Col span={12}>
-                  <Form.Item
-                    name="field"
-                    label="Field Path"
-                    rules={[{ required: true }]}
-                  >
+                  <Form.Item name="field" label="Field Path" rules={[{ required: true }]}>
                     <Input placeholder="data.status" />
                   </Form.Item>
                 </Col>
                 <Col span={12}>
-                  <Form.Item
-                    name="dataType"
-                    label="Data Type"
-                    rules={[{ required: true }]}
-                  >
+                  <Form.Item name="dataType" label="Data Type" rules={[{ required: true }]}>
                     <Select>
                       <Option value="string">String</Option>
                       <Option value="number">Number</Option>
@@ -492,11 +450,7 @@ export const ConditionalBranchingPanel: React.FC<
 
               <Row gutter={16}>
                 <Col span={12}>
-                  <Form.Item
-                    name="operator"
-                    label="Operator"
-                    rules={[{ required: true }]}
-                  >
+                  <Form.Item name="operator" label="Operator" rules={[{ required: true }]}>
                     <Select>
                       <Option value="equals">Equals (=)</Option>
                       <Option value="not_equals">Not Equals (≠)</Option>
@@ -517,11 +471,7 @@ export const ConditionalBranchingPanel: React.FC<
                   </Form.Item>
                 </Col>
                 <Col span={12}>
-                  <Form.Item
-                    name="value"
-                    label="Value"
-                    rules={[{ required: true }]}
-                  >
+                  <Form.Item name="value" label="Value" rules={[{ required: true }]}>
                     <Input placeholder="success" />
                   </Form.Item>
                 </Col>
@@ -530,33 +480,18 @@ export const ConditionalBranchingPanel: React.FC<
               <Row gutter={16}>
                 <Col span={12}>
                   <Form.Item name="negate" valuePropName="checked">
-                    <Switch
-                      checkedChildren="Negate"
-                      unCheckedChildren="Normal"
-                    />
+                    <Switch checkedChildren="Negate" unCheckedChildren="Normal" />
                   </Form.Item>
                 </Col>
                 <Col span={12}>
-                  <Form.Item
-                    name="caseSensitive"
-                    valuePropName="checked"
-                    initialValue={true}
-                  >
-                    <Switch
-                      checkedChildren="Case Sensitive"
-                      unCheckedChildren="Ignore Case"
-                    />
+                  <Form.Item name="caseSensitive" valuePropName="checked" initialValue={true}>
+                    <Switch checkedChildren="Case Sensitive" unCheckedChildren="Ignore Case" />
                   </Form.Item>
                 </Col>
               </Row>
 
               <Form.Item>
-                <Button
-                  type="dashed"
-                  htmlType="submit"
-                  icon={<PlusOutlined />}
-                  block
-                >
+                <Button type="dashed" htmlType="submit" icon={<PlusOutlined />} block>
                   Add Condition
                 </Button>
               </Form.Item>
@@ -572,11 +507,7 @@ export const ConditionalBranchingPanel: React.FC<
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item
-                name="defaultBranch"
-                label="Default Branch"
-                valuePropName="checked"
-              >
+              <Form.Item name="defaultBranch" label="Default Branch" valuePropName="checked">
                 <Switch />
               </Form.Item>
             </Col>
@@ -585,7 +516,7 @@ export const ConditionalBranchingPanel: React.FC<
           <Form.Item>
             <Space>
               <Button type="primary" htmlType="submit" loading={loading}>
-                {editingBranch ? "Update Branch" : "Create Branch"}
+                {editingBranch ? 'Update Branch' : 'Create Branch'}
               </Button>
               <Button
                 onClick={() => {
@@ -629,10 +560,8 @@ export const ConditionalBranchingPanel: React.FC<
                   danger
                   icon={<DeleteOutlined />}
                   onClick={() => {
-                    setBranches((prev) =>
-                      prev.filter((b) => b.id !== branch.id),
-                    );
-                    message.success("Branch deleted");
+                    setBranches((prev) => prev.filter((b) => b.id !== branch.id));
+                    message.success('Branch deleted');
                   }}
                 />,
               ]}
@@ -642,7 +571,7 @@ export const ConditionalBranchingPanel: React.FC<
                   <Space>
                     <BranchesOutlined />
                     {branch.name}
-                    <Tag color={branch.defaultBranch ? "gold" : "blue"}>
+                    <Tag color={branch.defaultBranch ? 'gold' : 'blue'}>
                       {branch.logicalOperator}
                     </Tag>
                     {branch.defaultBranch && <Tag color="gold">DEFAULT</Tag>}
@@ -652,18 +581,12 @@ export const ConditionalBranchingPanel: React.FC<
                   <Space direction="vertical" size="small">
                     {branch.description}
                     <Text type="secondary">
-                      {branch.conditions.length} condition(s) • Priority:{" "}
-                      {branch.priority}
+                      {branch.conditions.length} condition(s) • Priority: {branch.priority}
                     </Text>
                     <div>
                       {branch.conditions.map((condition) => (
-                        <Tag
-                          key={condition.id}
-                          color="geekblue"
-                          style={{ marginBottom: 4 }}
-                        >
-                          {condition.field} {condition.operator}{" "}
-                          {JSON.stringify(condition.value)}
+                        <Tag key={condition.id} color="geekblue" style={{ marginBottom: 4 }}>
+                          {condition.field} {condition.operator} {JSON.stringify(condition.value)}
                         </Tag>
                       ))}
                     </div>
@@ -672,7 +595,7 @@ export const ConditionalBranchingPanel: React.FC<
               />
             </List.Item>
           )}
-          locale={{ emptyText: "No branches configured" }}
+          locale={{ emptyText: 'No branches configured' }}
         />
       </Card>
     </div>
@@ -708,7 +631,7 @@ return data.items.filter(item => item.active).length > 0;
 const today = new Date();
 const itemDate = new Date(data.createdAt);
 return (today.getTime() - itemDate.getTime()) < (24 * 60 * 60 * 1000);`}
-            style={{ fontFamily: "monospace" }}
+            style={{ fontFamily: 'monospace' }}
           />
         </Form.Item>
 
@@ -731,7 +654,7 @@ return (today.getTime() - itemDate.getTime()) < (24 * 60 * 60 * 1000);`}
         <Space>
           <BranchesOutlined />
           {branch.name}
-          <Tag color={branch.defaultBranch ? "gold" : "blue"}>
+          <Tag color={branch.defaultBranch ? 'gold' : 'blue'}>
             {branch.conditions.length} conditions
           </Tag>
         </Space>
@@ -741,21 +664,12 @@ return (today.getTime() - itemDate.getTime()) < (24 * 60 * 60 * 1000);`}
         title: (
           <Space>
             <QuestionCircleOutlined />
-            {condition.field} {condition.operator}{" "}
-            {JSON.stringify(condition.value)}
-            {condition.negate && (
-              <Tag color="orange">
-                NOT
-              </Tag>
-            )}
+            {condition.field} {condition.operator} {JSON.stringify(condition.value)}
+            {condition.negate && <Tag color="orange">NOT</Tag>}
           </Space>
         ),
         key: condition.id,
-        icon: condition.negate ? (
-          <CloseCircleOutlined />
-        ) : (
-          <CheckCircleOutlined />
-        ),
+        icon: condition.negate ? <CloseCircleOutlined /> : <CheckCircleOutlined />,
       })),
     }));
 
@@ -784,7 +698,7 @@ return (today.getTime() - itemDate.getTime()) < (24 * 60 * 60 * 1000);`}
         onCancel={onClose}
         width={1400}
         footer={null}
-        className={cn("conditional-branching-panel")}
+        className={cn('conditional-branching-panel')}
       >
         <Tabs activeKey={activeTab} onChange={setActiveTab}>
           <TabPane
@@ -831,7 +745,7 @@ return (today.getTime() - itemDate.getTime()) < (24 * 60 * 60 * 1000);`}
         onCancel={() => setTestModalVisible(false)}
         onOk={() => {
           if (selectedBranch) {
-            const testData = { status: "success", count: 15 }; // Example test data
+            const testData = { status: 'success', count: 15 }; // Example test data
             handleTestBranch(selectedBranch, testData);
             setTestModalVisible(false);
           }
@@ -843,13 +757,13 @@ return (today.getTime() - itemDate.getTime()) < (24 * 60 * 60 * 1000);`}
               rows={8}
               placeholder={JSON.stringify(
                 {
-                  status: "success",
+                  status: 'success',
                   count: 15,
-                  user: { role: "admin" },
+                  user: { role: 'admin' },
                   timestamp: new Date().toISOString(),
                 },
                 null,
-                2,
+                2
               )}
             />
           </Form.Item>

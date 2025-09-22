@@ -1,13 +1,13 @@
 // Integration Types for the Pure Registry System
 
 import type {
-  NodeProperty,
   EnhancedIntegrationNodeType,
+  NodeProperty,
   PropertyFormState,
-} from "./dynamicProperties";
+} from './dynamicProperties';
 
 // Re-export NodeProperty for backward compatibility
-export type { NodeProperty, PropertyFormState } from "./dynamicProperties";
+export type { NodeProperty, PropertyFormState } from './dynamicProperties';
 
 /**
  * Integration interface used in the Pure Registry System
@@ -24,7 +24,7 @@ export interface Integration {
 
   // Node type definitions
   nodeTypes?: IntegrationNodeType[];
-  authType?: "oauth" | "api_key" | "basic" | "none";
+  authType?: 'oauth' | 'api_key' | 'basic' | 'none';
   configuration?: NodeProperty[];
 
   // Additional fields found in usage
@@ -42,17 +42,17 @@ export interface IntegrationNodeType {
   name: string;
   displayName?: string; // Made optional to match actual usage
   type:
-    | "trigger"
-    | "action"
-    | "condition"
-    | "delay"
-    | "loop"
-    | "transform"
-    | "webhook"
-    | "database"
-    | "email"
-    | "file"
-    | "ai-agent";
+    | 'trigger'
+    | 'action'
+    | 'condition'
+    | 'delay'
+    | 'loop'
+    | 'transform'
+    | 'webhook'
+    | 'database'
+    | 'email'
+    | 'file'
+    | 'ai-agent';
   icon?: string;
   description?: string;
   inputs?: Array<{

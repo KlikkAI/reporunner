@@ -5,85 +5,78 @@
  * to build credibility and demonstrate enterprise adoption
  */
 
-import React from "react";
-import {
-  Star,
-  Quote,
-  ArrowRight,
-  TrendingUp,
-  Shield,
-  Users,
-} from "lucide-react";
+import { ArrowRight, Quote, Shield, Star, TrendingUp, Users } from 'lucide-react';
+import type React from 'react';
 
 export const SocialProof: React.FC = () => {
   const testimonials = [
     {
       quote:
         "Reporunner's hybrid database architecture and enterprise security features made it the perfect choice for our financial services workflows. The self-hosted deployment gives us complete control over our sensitive data.",
-      author: "Sarah Chen",
-      title: "Head of Digital Operations",
-      company: "FinTech Solutions",
-      avatar: "/api/placeholder/60/60",
+      author: 'Sarah Chen',
+      title: 'Head of Digital Operations',
+      company: 'FinTech Solutions',
+      avatar: '/api/placeholder/60/60',
       rating: 5,
-      highlight: "Enterprise Security",
+      highlight: 'Enterprise Security',
     },
     {
       quote:
-        "The AI-powered automation capabilities have transformed how we handle customer onboarding. What used to take hours now happens in minutes, with intelligent error handling that we never had before.",
-      author: "Michael Rodriguez",
-      title: "VP of Technology",
-      company: "Customer Success Corp",
-      avatar: "/api/placeholder/60/60",
+        'The AI-powered automation capabilities have transformed how we handle customer onboarding. What used to take hours now happens in minutes, with intelligent error handling that we never had before.',
+      author: 'Michael Rodriguez',
+      title: 'VP of Technology',
+      company: 'Customer Success Corp',
+      avatar: '/api/placeholder/60/60',
       rating: 5,
-      highlight: "AI Automation",
+      highlight: 'AI Automation',
     },
     {
       quote:
-        "Moving from n8n to Reporunner was seamless, and the advanced collaboration features have revolutionized how our distributed team builds workflows. The real-time editing is game-changing.",
-      author: "Emma Thompson",
-      title: "DevOps Lead",
-      company: "Global Tech Inc",
-      avatar: "/api/placeholder/60/60",
+        'Moving from n8n to Reporunner was seamless, and the advanced collaboration features have revolutionized how our distributed team builds workflows. The real-time editing is game-changing.',
+      author: 'Emma Thompson',
+      title: 'DevOps Lead',
+      company: 'Global Tech Inc',
+      avatar: '/api/placeholder/60/60',
       rating: 5,
-      highlight: "Team Collaboration",
+      highlight: 'Team Collaboration',
     },
   ];
 
   const companyLogos = [
-    { name: "TechCorp", logo: "/api/placeholder/120/40" },
-    { name: "DataFlow", logo: "/api/placeholder/120/40" },
-    { name: "CloudSys", logo: "/api/placeholder/120/40" },
-    { name: "AutoTech", logo: "/api/placeholder/120/40" },
-    { name: "DevOps Pro", logo: "/api/placeholder/120/40" },
-    { name: "AI Solutions", logo: "/api/placeholder/120/40" },
+    { name: 'TechCorp', logo: '/api/placeholder/120/40' },
+    { name: 'DataFlow', logo: '/api/placeholder/120/40' },
+    { name: 'CloudSys', logo: '/api/placeholder/120/40' },
+    { name: 'AutoTech', logo: '/api/placeholder/120/40' },
+    { name: 'DevOps Pro', logo: '/api/placeholder/120/40' },
+    { name: 'AI Solutions', logo: '/api/placeholder/120/40' },
   ];
 
   const stats = [
     {
       icon: Users,
-      value: "10,000+",
-      label: "Active Users",
-      description: "Developers and teams worldwide",
+      value: '10,000+',
+      label: 'Active Users',
+      description: 'Developers and teams worldwide',
     },
     {
       icon: TrendingUp,
-      value: "99.9%",
-      label: "Uptime",
-      description: "Enterprise-grade reliability",
+      value: '99.9%',
+      label: 'Uptime',
+      description: 'Enterprise-grade reliability',
     },
     {
       icon: Shield,
-      value: "SOC2",
-      label: "Compliant",
-      description: "Enterprise security certified",
+      value: 'SOC2',
+      label: 'Compliant',
+      description: 'Enterprise security certified',
     },
   ];
 
   const certifications = [
-    { name: "SOC2 Type II", badge: "/api/placeholder/80/80" },
-    { name: "ISO 27001", badge: "/api/placeholder/80/80" },
-    { name: "GDPR Ready", badge: "/api/placeholder/80/80" },
-    { name: "HIPAA Compliant", badge: "/api/placeholder/80/80" },
+    { name: 'SOC2 Type II', badge: '/api/placeholder/80/80' },
+    { name: 'ISO 27001', badge: '/api/placeholder/80/80' },
+    { name: 'GDPR Ready', badge: '/api/placeholder/80/80' },
+    { name: 'HIPAA Compliant', badge: '/api/placeholder/80/80' },
   ];
 
   return (
@@ -92,15 +85,15 @@ export const SocialProof: React.FC = () => {
         {/* Section Header */}
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-            Trusted by{" "}
+            Trusted by{' '}
             <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
               Enterprises
-            </span>{" "}
+            </span>{' '}
             Worldwide
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Join thousands of companies who trust Reporunner for their
-            mission-critical workflow automation needs.
+            Join thousands of companies who trust Reporunner for their mission-critical workflow
+            automation needs.
           </p>
         </div>
 
@@ -114,12 +107,8 @@ export const SocialProof: React.FC = () => {
                   <div className="bg-gradient-to-r from-blue-500 to-purple-500 w-16 h-16 rounded-xl flex items-center justify-center mx-auto mb-4">
                     <Icon className="w-8 h-8 text-white" />
                   </div>
-                  <div className="text-3xl font-bold text-gray-900 mb-2">
-                    {stat.value}
-                  </div>
-                  <div className="text-lg font-semibold text-gray-800 mb-1">
-                    {stat.label}
-                  </div>
+                  <div className="text-3xl font-bold text-gray-900 mb-2">{stat.value}</div>
+                  <div className="text-lg font-semibold text-gray-800 mb-1">{stat.label}</div>
                   <div className="text-gray-600">{stat.description}</div>
                 </div>
               </div>
@@ -138,9 +127,7 @@ export const SocialProof: React.FC = () => {
                 key={index}
                 className="h-12 bg-gray-200 rounded-lg px-6 flex items-center justify-center transition-opacity hover:opacity-100"
               >
-                <span className="font-semibold text-gray-600">
-                  {company.name}
-                </span>
+                <span className="font-semibold text-gray-600">{company.name}</span>
               </div>
             ))}
           </div>
@@ -163,10 +150,7 @@ export const SocialProof: React.FC = () => {
               {/* Rating */}
               <div className="flex gap-1 mb-4 mt-2">
                 {[...Array(testimonial.rating)].map((_, i) => (
-                  <Star
-                    key={i}
-                    className="w-5 h-5 fill-yellow-400 text-yellow-400"
-                  />
+                  <Star key={i} className="w-5 h-5 fill-yellow-400 text-yellow-400" />
                 ))}
               </div>
 
@@ -184,20 +168,14 @@ export const SocialProof: React.FC = () => {
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center text-white font-bold">
                   {testimonial.author
-                    .split(" ")
+                    .split(' ')
                     .map((n) => n[0])
-                    .join("")}
+                    .join('')}
                 </div>
                 <div>
-                  <div className="font-semibold text-gray-900">
-                    {testimonial.author}
-                  </div>
-                  <div className="text-sm text-gray-600">
-                    {testimonial.title}
-                  </div>
-                  <div className="text-sm text-gray-500">
-                    {testimonial.company}
-                  </div>
+                  <div className="font-semibold text-gray-900">{testimonial.author}</div>
+                  <div className="text-sm text-gray-600">{testimonial.title}</div>
+                  <div className="text-sm text-gray-500">{testimonial.company}</div>
                 </div>
               </div>
             </div>
@@ -211,8 +189,8 @@ export const SocialProof: React.FC = () => {
               Enterprise Security & Compliance
             </h3>
             <p className="text-gray-600 max-w-2xl mx-auto">
-              Reporunner meets the highest standards for enterprise security and
-              compliance, ensuring your data and workflows are always protected.
+              Reporunner meets the highest standards for enterprise security and compliance,
+              ensuring your data and workflows are always protected.
             </p>
           </div>
 
@@ -242,8 +220,8 @@ export const SocialProof: React.FC = () => {
               Join the Growing Community of Successful Teams
             </h3>
             <p className="text-blue-100 mb-6 max-w-2xl mx-auto">
-              See how Reporunner can transform your workflow automation and
-              drive enterprise success for your organization.
+              See how Reporunner can transform your workflow automation and drive enterprise success
+              for your organization.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button className="bg-white text-blue-600 px-6 py-3 rounded-lg font-semibold hover:bg-gray-50 transition-colors">

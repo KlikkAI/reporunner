@@ -5,105 +5,96 @@
  * compliance features for large organizations
  */
 
-import React from "react";
-import {
-  Shield,
-  Users,
-  Globe,
-  BarChart3,
-  Clock,
-  Zap,
-  CheckCircle,
-} from "lucide-react";
+import { BarChart3, CheckCircle, Clock, Globe, Shield, Users, Zap } from 'lucide-react';
+import type React from 'react';
 
 export const EnterpriseFeatures: React.FC = () => {
   const features = [
     {
       icon: Shield,
-      title: "Security & Compliance",
+      title: 'Security & Compliance',
       description:
-        "Enterprise-grade security with SOC2, GDPR, and HIPAA compliance out of the box.",
+        'Enterprise-grade security with SOC2, GDPR, and HIPAA compliance out of the box.',
       details: [
-        "End-to-end encryption",
-        "Regular security audits",
-        "Compliance reporting",
-        "Data residency controls",
+        'End-to-end encryption',
+        'Regular security audits',
+        'Compliance reporting',
+        'Data residency controls',
       ],
-      gradient: "from-green-500 to-emerald-500",
+      gradient: 'from-green-500 to-emerald-500',
     },
     {
       icon: Users,
-      title: "Advanced User Management",
+      title: 'Advanced User Management',
       description:
-        "Sophisticated RBAC, SSO integration, and user provisioning for enterprise teams.",
+        'Sophisticated RBAC, SSO integration, and user provisioning for enterprise teams.',
       details: [
-        "SAML/SSO integration",
-        "Granular permissions",
-        "User provisioning",
-        "Audit trails",
+        'SAML/SSO integration',
+        'Granular permissions',
+        'User provisioning',
+        'Audit trails',
       ],
-      gradient: "from-blue-500 to-cyan-500",
+      gradient: 'from-blue-500 to-cyan-500',
     },
     {
       icon: Globe,
-      title: "Multi-Tenant Architecture",
+      title: 'Multi-Tenant Architecture',
       description:
-        "Complete isolation between organizations with dedicated resources and configurations.",
+        'Complete isolation between organizations with dedicated resources and configurations.',
       details: [
-        "Organization isolation",
-        "Resource quotas",
-        "Custom branding",
-        "Dedicated environments",
+        'Organization isolation',
+        'Resource quotas',
+        'Custom branding',
+        'Dedicated environments',
       ],
-      gradient: "from-purple-500 to-pink-500",
+      gradient: 'from-purple-500 to-pink-500',
     },
     {
       icon: BarChart3,
-      title: "Enterprise Analytics",
-      description:
-        "Deep insights into usage patterns, performance metrics, and cost optimization.",
+      title: 'Enterprise Analytics',
+      description: 'Deep insights into usage patterns, performance metrics, and cost optimization.',
       details: [
-        "Usage analytics",
-        "Performance monitoring",
-        "Cost optimization",
-        "Custom reporting",
+        'Usage analytics',
+        'Performance monitoring',
+        'Cost optimization',
+        'Custom reporting',
       ],
-      gradient: "from-orange-500 to-red-500",
+      gradient: 'from-orange-500 to-red-500',
     },
   ];
 
   const capabilities = [
     {
-      category: "Deployment & Infrastructure",
+      category: 'Deployment & Infrastructure',
       items: [
-        { name: "Kubernetes Support", included: true },
-        { name: "Auto-scaling", included: true },
-        { name: "High Availability", included: true },
-        { name: "Disaster Recovery", included: true },
-        { name: "Multi-region Deployment", included: true },
-        { name: "Custom Infrastructure", included: true },
+        { name: 'Kubernetes Support', included: true },
+        { name: 'Auto-scaling', included: true },
+        { name: 'High Availability', included: true },
+        { name: 'Disaster Recovery', included: true },
+        { name: 'Multi-region Deployment', included: true },
+        { name: 'Custom Infrastructure', included: true },
       ],
     },
     {
-      category: "Security & Compliance",
+      category: 'Security & Compliance',
       items: [
-        { name: "SOC2 Type II", included: true },
-        { name: "GDPR Compliance", included: true },
-        { name: "HIPAA Compliance", included: true },
-        { name: "ISO 27001", included: true },
-        { name: "Data Encryption", included: true },
-        { name: "Audit Logging", included: true },
+        { name: 'SOC2 Type II', included: true },
+        { name: 'GDPR Compliance', included: true },
+        { name: 'HIPAA Compliance', included: true },
+        { name: 'ISO 27001', included: true },
+        { name: 'Data Encryption', included: true },
+        { name: 'Audit Logging', included: true },
       ],
     },
     {
-      category: "Support & Services",
+      category: 'Support & Services',
       items: [
-        { name: "24/7 Priority Support", included: true },
-        { name: "Dedicated Success Manager", included: true },
-        { name: "Custom Training", included: true },
-        { name: "Professional Services", included: true },
-        { name: "SLA Guarantees", included: true },
-        { name: "Priority Bug Fixes", included: true },
+        { name: '24/7 Priority Support', included: true },
+        { name: 'Dedicated Success Manager', included: true },
+        { name: 'Custom Training', included: true },
+        { name: 'Professional Services', included: true },
+        { name: 'SLA Guarantees', included: true },
+        { name: 'Priority Bug Fixes', included: true },
       ],
     },
   ];
@@ -114,15 +105,14 @@ export const EnterpriseFeatures: React.FC = () => {
         {/* Section Header */}
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-            Built for{" "}
+            Built for{' '}
             <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
               Enterprise Scale
             </span>
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Enterprise-grade features, security, and support that scales with
-            your organization. Everything you need to deploy mission-critical
-            workflows with confidence.
+            Enterprise-grade features, security, and support that scales with your organization.
+            Everything you need to deploy mission-critical workflows with confidence.
           </p>
         </div>
 
@@ -143,12 +133,8 @@ export const EnterpriseFeatures: React.FC = () => {
                     <Icon className="w-8 h-8 text-white" />
                   </div>
                   <div>
-                    <h3 className="text-2xl font-bold text-gray-900 mb-2">
-                      {feature.title}
-                    </h3>
-                    <p className="text-gray-600 leading-relaxed">
-                      {feature.description}
-                    </p>
+                    <h3 className="text-2xl font-bold text-gray-900 mb-2">{feature.title}</h3>
+                    <p className="text-gray-600 leading-relaxed">{feature.description}</p>
                   </div>
                 </div>
 
@@ -174,10 +160,7 @@ export const EnterpriseFeatures: React.FC = () => {
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {capabilities.map((category, categoryIndex) => (
-              <div
-                key={categoryIndex}
-                className="bg-white rounded-xl p-6 border border-gray-200"
-              >
+              <div key={categoryIndex} className="bg-white rounded-xl p-6 border border-gray-200">
                 <h4 className="font-bold text-gray-900 mb-4 pb-3 border-b border-gray-100">
                   {category.category}
                 </h4>
@@ -197,19 +180,17 @@ export const EnterpriseFeatures: React.FC = () => {
         {/* Performance Metrics */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-16">
           {[
-            { metric: "99.9%", label: "Uptime SLA", icon: Clock },
-            { metric: "<100ms", label: "API Response Time", icon: Zap },
-            { metric: "10M+", label: "Workflows Executed", icon: BarChart3 },
-            { metric: "24/7", label: "Enterprise Support", icon: Shield },
+            { metric: '99.9%', label: 'Uptime SLA', icon: Clock },
+            { metric: '<100ms', label: 'API Response Time', icon: Zap },
+            { metric: '10M+', label: 'Workflows Executed', icon: BarChart3 },
+            { metric: '24/7', label: 'Enterprise Support', icon: Shield },
           ].map((stat, index) => {
             const Icon = stat.icon;
             return (
               <div key={index} className="text-center">
                 <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm hover:shadow-lg transition-all">
                   <Icon className="w-8 h-8 text-blue-600 mx-auto mb-3" />
-                  <div className="text-3xl font-bold text-gray-900 mb-1">
-                    {stat.metric}
-                  </div>
+                  <div className="text-3xl font-bold text-gray-900 mb-1">{stat.metric}</div>
                   <div className="text-gray-600">{stat.label}</div>
                 </div>
               </div>
@@ -219,13 +200,10 @@ export const EnterpriseFeatures: React.FC = () => {
 
         {/* Enterprise CTA */}
         <div className="mt-16 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-8 text-white text-center">
-          <h3 className="text-2xl font-bold mb-4">
-            Ready to Scale Your Enterprise Workflows?
-          </h3>
+          <h3 className="text-2xl font-bold mb-4">Ready to Scale Your Enterprise Workflows?</h3>
           <p className="text-blue-100 mb-6 max-w-2xl mx-auto">
-            Join enterprise customers who trust Reporunner for their
-            mission-critical automation needs. Get dedicated support and custom
-            deployment options.
+            Join enterprise customers who trust Reporunner for their mission-critical automation
+            needs. Get dedicated support and custom deployment options.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button className="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-50 transition-colors">

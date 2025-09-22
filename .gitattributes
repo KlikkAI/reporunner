@@ -1,0 +1,93 @@
+# Set default behavior for text files
+* text=auto eol=lf
+
+# Explicitly declare text files you want to always be normalized and converted
+*.ts text eol=lf
+*.tsx text eol=lf
+*.js text eol=lf
+*.jsx text eol=lf
+*.json text eol=lf
+*.jsonc text eol=lf
+*.css text eol=lf
+*.scss text eol=lf
+*.sass text eol=lf
+*.less text eol=lf
+*.html text eol=lf
+*.xml text eol=lf
+*.md text eol=lf
+*.mdx text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.toml text eol=lf
+*.sh text eol=lf
+*.bash text eol=lf
+*.zsh text eol=lf
+*.fish text eol=lf
+*.py text eol=lf
+*.go text eol=lf
+*.rs text eol=lf
+*.java text eol=lf
+*.cs text eol=lf
+*.php text eol=lf
+*.rb text eol=lf
+*.pl text eol=lf
+*.sql text eol=lf
+
+# Declare files that will always have CRLF line endings on checkout
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+
+# Denote all files that are truly binary and should not be modified
+*.ico binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.bmp binary
+*.tiff binary
+*.tif binary
+*.svg binary
+*.pdf binary
+*.zip binary
+*.gz binary
+*.tar binary
+*.rar binary
+*.7z binary
+*.exe binary
+*.dll binary
+*.so binary
+*.dylib binary
+*.woff binary
+*.woff2 binary
+*.eot binary
+*.ttf binary
+*.otf binary
+
+# Font files
+*.woff linguist-vendored
+*.woff2 linguist-vendored
+*.eot linguist-vendored
+*.ttf linguist-vendored
+*.otf linguist-vendored
+
+# Generated files
+dist/ linguist-generated
+build/ linguist-generated
+coverage/ linguist-generated
+*.min.js linguist-generated
+*.bundle.js linguist-generated
+*.map linguist-generated
+
+# Documentation
+*.md linguist-documentation
+docs/ linguist-documentation
+
+# Lock files
+pnpm-lock.yaml linguist-generated
+yarn.lock linguist-generated
+package-lock.json linguist-generated
+Cargo.lock linguist-generated
+composer.lock linguist-generated
+Gemfile.lock linguist-generated
+go.sum linguist-generated

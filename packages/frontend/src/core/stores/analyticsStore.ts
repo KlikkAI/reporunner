@@ -5,18 +5,18 @@
  * and optimization insights state across the application.
  */
 
-import { create } from "zustand";
-import { subscribeWithSelector } from "zustand/middleware";
-import { analyticsService } from "../services/analyticsService";
+import { create } from 'zustand';
+import { subscribeWithSelector } from 'zustand/middleware';
 import type {
-  ExecutionMetrics,
-  WorkflowAnalytics,
   BottleneckAnalysis,
-  PredictiveInsight,
   CostOptimization,
+  ExecutionMetrics,
   NodeMetrics,
+  PredictiveInsight,
   TimeSeriesPoint,
-} from "../services/analyticsService";
+  WorkflowAnalytics,
+} from '../services/analyticsService';
+import { analyticsService } from '../services/analyticsService';
 
 export interface AnalyticsState {
   // Current analytics data
@@ -48,7 +48,7 @@ export interface AnalyticsState {
 
   // UI state
   analyticsModalOpen: boolean;
-  selectedTab: "overview" | "performance" | "costs" | "insights" | "nodes";
+  selectedTab: 'overview' | 'performance' | 'costs' | 'insights' | 'nodes';
   selectedNodeId: string | null;
   comparisonMode: boolean;
   comparisonWorkflowIds: string[];
@@ -64,7 +64,7 @@ export interface AnalyticsState {
   setSelectedWorkflow: (workflowId: string | null) => void;
   setAnalyticsPeriod: (period: 1 | 7 | 30 | 90) => void;
   toggleAnalyticsModal: () => void;
-  setSelectedTab: (tab: "overview" | "performance" | "costs" | "insights" | "nodes") => void;
+  setSelectedTab: (tab: 'overview' | 'performance' | 'costs' | 'insights' | 'nodes') => void;
   setSelectedNode: (nodeId: string | null) => void;
   toggleAutoRefresh: () => void;
   togglePredictions: () => void;
@@ -95,7 +95,7 @@ export const useAnalyticsStore = create<AnalyticsState>()(
     autoRefresh: false,
     refreshInterval: 30000, // 30 seconds
     analyticsModalOpen: false,
-    selectedTab: "overview",
+    selectedTab: 'overview',
     selectedNodeId: null,
     comparisonMode: false,
     comparisonWorkflowIds: [],
@@ -113,11 +113,12 @@ export const useAnalyticsStore = create<AnalyticsState>()(
         const costHistory = analytics.resourceTrends.costTrend;
 
         // Calculate reliability history from execution stats
-        const reliabilityHistory: TimeSeriesPoint[] = performanceHistory.map(point => ({
+        const reliabilityHistory: TimeSeriesPoint[] = performanceHistory.map((point) => ({
           timestamp: point.timestamp,
-          value: analytics.executionStats.total > 0
-            ? (analytics.executionStats.successful / analytics.executionStats.total) * 100
-            : 100,
+          value:
+            analytics.executionStats.total > 0
+              ? (analytics.executionStats.successful / analytics.executionStats.total) * 100
+              : 100,
         }));
 
         set({
@@ -135,9 +136,8 @@ export const useAnalyticsStore = create<AnalyticsState>()(
           get().showPredictions ? get().generatePredictiveInsights(workflowId) : Promise.resolve(),
           get().showCostAnalysis ? get().generateCostOptimization(workflowId) : Promise.resolve(),
         ]);
-
       } catch (error) {
-        console.error("Failed to load analytics:", error);
+        console.error('Failed to load analytics:', error);
         set({ isLoading: false });
       }
     },
@@ -194,7 +194,7 @@ export const useAnalyticsStore = create<AnalyticsState>()(
         const bottlenecks = analyticsService.detectBottlenecks(workflowId);
         set({ bottlenecks });
       } catch (error) {
-        console.error("Failed to generate bottleneck analysis:", error);
+        console.error('Failed to generate bottleneck analysis:', error);
       }
     },
 
@@ -203,7 +203,7 @@ export const useAnalyticsStore = create<AnalyticsState>()(
         const insights = analyticsService.generatePredictiveInsights(workflowId);
         set({ predictiveInsights: insights });
       } catch (error) {
-        console.error("Failed to generate predictive insights:", error);
+        console.error('Failed to generate predictive insights:', error);
       }
     },
 
@@ -212,7 +212,7 @@ export const useAnalyticsStore = create<AnalyticsState>()(
         const optimization = analyticsService.generateCostOptimization(workflowId);
         set({ costOptimization: optimization });
       } catch (error) {
-        console.error("Failed to generate cost optimization:", error);
+        console.error('Failed to generate cost optimization:', error);
       }
     },
 
@@ -296,7 +296,7 @@ export const useAnalyticsStore = create<AnalyticsState>()(
 );
 
 // Set up auto-refresh subscription
-if (typeof window !== "undefined") {
+if (typeof window !== 'undefined') {
   let refreshInterval: NodeJS.Timeout;
 
   useAnalyticsStore.subscribe(
@@ -341,9 +341,10 @@ export const getExecutionSummary = (analytics: WorkflowAnalytics | null) => {
 
   return {
     totalExecutions: analytics.executionStats.total,
-    successRate: analytics.executionStats.total > 0
-      ? (analytics.executionStats.successful / analytics.executionStats.total) * 100
-      : 100,
+    successRate:
+      analytics.executionStats.total > 0
+        ? (analytics.executionStats.successful / analytics.executionStats.total) * 100
+        : 100,
     avgDuration: analytics.executionStats.averageDuration,
     throughput: analytics.performanceMetrics.throughput,
     efficiency: analytics.performanceMetrics.efficiency,

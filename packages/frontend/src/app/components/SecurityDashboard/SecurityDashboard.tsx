@@ -10,52 +10,53 @@
  * - Secrets management and rotation
  */
 
-import React, { useState, useCallback, useEffect } from "react";
 import {
-  Card,
-  Button,
-  Space,
-  Typography,
-  Table,
-  Input,
-  Select,
-  Modal,
-  Form,
-  Tag,
-  Badge,
-  Tooltip,
-  Alert,
-  Tabs,
-  Statistic,
-  Timeline,
-  DatePicker,
-  Row,
-  Col,
-} from "antd";
-import {
-  BugOutlined,
   AlertOutlined,
-  CheckCircleOutlined,
-  EyeOutlined,
-  SettingOutlined,
-  ReloadOutlined,
-  DownloadOutlined,
-  KeyOutlined,
-  SecurityScanOutlined,
   AuditOutlined,
-} from "@ant-design/icons";
-import { cn } from "@/design-system/utils";
-import { enterpriseSecurityService } from "@/core/services/enterpriseSecurityService";
+  BugOutlined,
+  CheckCircleOutlined,
+  DownloadOutlined,
+  EyeOutlined,
+  KeyOutlined,
+  ReloadOutlined,
+  SecurityScanOutlined,
+  SettingOutlined,
+} from '@ant-design/icons';
+import {
+  Alert,
+  Badge,
+  Button,
+  Card,
+  Col,
+  DatePicker,
+  Form,
+  Input,
+  Modal,
+  Row,
+  Select,
+  Space,
+  Statistic,
+  Table,
+  Tabs,
+  Tag,
+  Timeline,
+  Tooltip,
+  Typography,
+} from 'antd';
+import type React from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import { enterpriseSecurityService } from '@/core/services/enterpriseSecurityService';
 import type {
+  AuditCategory,
   AuditLog,
-  SecurityMetrics,
-  SecurityIncident,
-  VulnerabilityScan,
+  AuditSeverity,
   ComplianceReport,
   SecretManager,
-  AuditSeverity,
-  AuditCategory,
-} from "@/core/types/security";
+  SecurityIncident,
+  SecurityMetrics,
+  VulnerabilityScan,
+} from '@/core/types/security';
+import { cn } from '@/design-system/utils';
 
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -66,26 +67,21 @@ interface SecurityDashboardProps {
 }
 
 const SecurityDashboard: React.FC<SecurityDashboardProps> = ({ className }) => {
-  const [activeTab, setActiveTab] = useState("overview");
+  const [activeTab, setActiveTab] = useState('overview');
   const [metrics, setMetrics] = useState<SecurityMetrics | null>(null);
   const [auditLogs, setAuditLogs] = useState<AuditLog[]>([]);
   const [incidents, setIncidents] = useState<SecurityIncident[]>([]);
-  const [vulnerabilityScans, setVulnerabilityScans] = useState<
-    VulnerabilityScan[]
-  >([]);
-  const [complianceReports, setComplianceReports] = useState<
-    ComplianceReport[]
-  >([]);
+  const [vulnerabilityScans, setVulnerabilityScans] = useState<VulnerabilityScan[]>([]);
+  const [complianceReports, setComplianceReports] = useState<ComplianceReport[]>([]);
   const [secrets, setSecrets] = useState<SecretManager[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [selectedIncident, setSelectedIncident] =
-    useState<SecurityIncident | null>(null);
+  const [selectedIncident, setSelectedIncident] = useState<SecurityIncident | null>(null);
   const [isIncidentModalOpen, setIsIncidentModalOpen] = useState(false);
   const [isScanModalOpen, setIsScanModalOpen] = useState(false);
   const [isSecretModalOpen, setIsSecretModalOpen] = useState(false);
   const [filters, setFilters] = useState({
-    severity: "all" as AuditSeverity | "all",
-    category: "all" as AuditCategory | "all",
+    severity: 'all' as AuditSeverity | 'all',
+    category: 'all' as AuditCategory | 'all',
     startDate: null as any,
     endDate: null as any,
   });
@@ -98,21 +94,15 @@ const SecurityDashboard: React.FC<SecurityDashboardProps> = ({ className }) => {
   const loadSecurityData = useCallback(async () => {
     setIsLoading(true);
     try {
-      const [
-        metricsData,
-        auditLogsData,
-        incidentsData,
-        scansData,
-        reportsData,
-        secretsData,
-      ] = await Promise.all([
-        enterpriseSecurityService.getSecurityMetrics(),
-        enterpriseSecurityService.getAuditLogs({ limit: 100 }),
-        Promise.resolve([]), // getSecurityIncidents - method doesn't exist yet
-        enterpriseSecurityService.getVulnerabilityScans(),
-        Promise.resolve([]), // getComplianceReports - method doesn't exist yet
-        Promise.resolve([]), // getSecrets - method doesn't exist yet
-      ]);
+      const [metricsData, auditLogsData, incidentsData, scansData, reportsData, secretsData] =
+        await Promise.all([
+          enterpriseSecurityService.getSecurityMetrics(),
+          enterpriseSecurityService.getAuditLogs({ limit: 100 }),
+          Promise.resolve([]), // getSecurityIncidents - method doesn't exist yet
+          enterpriseSecurityService.getVulnerabilityScans(),
+          Promise.resolve([]), // getComplianceReports - method doesn't exist yet
+          Promise.resolve([]), // getSecrets - method doesn't exist yet
+        ]);
 
       setMetrics(metricsData);
       setAuditLogs(auditLogsData);
@@ -121,7 +111,7 @@ const SecurityDashboard: React.FC<SecurityDashboardProps> = ({ className }) => {
       setComplianceReports(reportsData as ComplianceReport[]);
       setSecrets(secretsData as SecretManager[]);
     } catch (error) {
-      console.error("Failed to load security data:", error);
+      console.error('Failed to load security data:', error);
     } finally {
       setIsLoading(false);
     }
@@ -129,64 +119,58 @@ const SecurityDashboard: React.FC<SecurityDashboardProps> = ({ className }) => {
 
   const getSeverityColor = (severity: string) => {
     switch (severity) {
-      case "critical":
-        return "red";
-      case "high":
-        return "orange";
-      case "medium":
-        return "yellow";
-      case "low":
-        return "green";
-      case "info":
-        return "blue";
+      case 'critical':
+        return 'red';
+      case 'high':
+        return 'orange';
+      case 'medium':
+        return 'yellow';
+      case 'low':
+        return 'green';
+      case 'info':
+        return 'blue';
       default:
-        return "default";
+        return 'default';
     }
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "open":
-        return "red";
-      case "investigating":
-        return "orange";
-      case "contained":
-        return "blue";
-      case "resolved":
-        return "green";
-      case "closed":
-        return "gray";
+      case 'open':
+        return 'red';
+      case 'investigating':
+        return 'orange';
+      case 'contained':
+        return 'blue';
+      case 'resolved':
+        return 'green';
+      case 'closed':
+        return 'gray';
       default:
-        return "default";
+        return 'default';
     }
   };
 
   const filteredAuditLogs = auditLogs.filter((log) => {
-    if (filters.severity !== "all" && log.severity !== filters.severity)
-      return false;
-    if (filters.category !== "all" && log.category !== filters.category)
-      return false;
-    if (filters.startDate && log.timestamp < filters.startDate.valueOf())
-      return false;
-    if (filters.endDate && log.timestamp > filters.endDate.valueOf())
-      return false;
+    if (filters.severity !== 'all' && log.severity !== filters.severity) return false;
+    if (filters.category !== 'all' && log.category !== filters.category) return false;
+    if (filters.startDate && log.timestamp < filters.startDate.valueOf()) return false;
+    if (filters.endDate && log.timestamp > filters.endDate.valueOf()) return false;
     return true;
   });
 
   const auditLogColumns = [
     {
-      title: "Timestamp",
-      key: "timestamp",
+      title: 'Timestamp',
+      key: 'timestamp',
       render: (_record: AuditLog) => (
-        <div className="text-gray-400 text-xs">
-          {new Date(_record.timestamp).toLocaleString()}
-        </div>
+        <div className="text-gray-400 text-xs">{new Date(_record.timestamp).toLocaleString()}</div>
       ),
       sorter: (a: AuditLog, b: AuditLog) => a.timestamp - b.timestamp,
     },
     {
-      title: "User",
-      key: "user",
+      title: 'User',
+      key: 'user',
       render: (_record: AuditLog) => (
         <div>
           <div className="text-white text-sm">{_record.userEmail}</div>
@@ -195,20 +179,18 @@ const SecurityDashboard: React.FC<SecurityDashboardProps> = ({ className }) => {
       ),
     },
     {
-      title: "Action",
-      key: "action",
+      title: 'Action',
+      key: 'action',
       render: (_record: AuditLog) => (
         <div>
           <div className="text-white text-sm">{_record.action.description}</div>
-          <Tag color={getSeverityColor(_record.severity)}>
-            {_record.action.type}
-          </Tag>
+          <Tag color={getSeverityColor(_record.severity)}>{_record.action.type}</Tag>
         </div>
       ),
     },
     {
-      title: "Resource",
-      key: "resource",
+      title: 'Resource',
+      key: 'resource',
       render: (_record: AuditLog) => (
         <div>
           <div className="text-white text-sm">{_record.resource.name}</div>
@@ -217,24 +199,22 @@ const SecurityDashboard: React.FC<SecurityDashboardProps> = ({ className }) => {
       ),
     },
     {
-      title: "Severity",
-      key: "severity",
+      title: 'Severity',
+      key: 'severity',
       render: (_record: AuditLog) => (
         <Tag color={getSeverityColor(_record.severity)}>{_record.severity}</Tag>
       ),
     },
     {
-      title: "IP Address",
-      key: "ipAddress",
+      title: 'IP Address',
+      key: 'ipAddress',
       render: (_record: AuditLog) => (
-        <div className="text-gray-400 text-xs font-mono">
-          {_record.ipAddress}
-        </div>
+        <div className="text-gray-400 text-xs font-mono">{_record.ipAddress}</div>
       ),
     },
     {
-      title: "Actions",
-      key: "actions",
+      title: 'Actions',
+      key: 'actions',
       render: (_record: AuditLog) => (
         <Space size="small">
           <Tooltip title="View Details">
@@ -255,8 +235,8 @@ const SecurityDashboard: React.FC<SecurityDashboardProps> = ({ className }) => {
 
   const incidentColumns = [
     {
-      title: "Title",
-      key: "title",
+      title: 'Title',
+      key: 'title',
       render: (record: SecurityIncident) => (
         <div>
           <div className="text-white font-medium">{record.title}</div>
@@ -265,31 +245,29 @@ const SecurityDashboard: React.FC<SecurityDashboardProps> = ({ className }) => {
       ),
     },
     {
-      title: "Severity",
-      key: "severity",
+      title: 'Severity',
+      key: 'severity',
       render: (record: SecurityIncident) => (
         <Tag color={getSeverityColor(record.severity)}>{record.severity}</Tag>
       ),
     },
     {
-      title: "Status",
-      key: "status",
+      title: 'Status',
+      key: 'status',
       render: (record: SecurityIncident) => (
         <Tag color={getStatusColor(record.status)}>{record.status}</Tag>
       ),
     },
     {
-      title: "Category",
-      key: "category",
+      title: 'Category',
+      key: 'category',
       render: (record: SecurityIncident) => (
-        <div className="text-gray-400 text-xs capitalize">
-          {record.category.replace("_", " ")}
-        </div>
+        <div className="text-gray-400 text-xs capitalize">{record.category.replace('_', ' ')}</div>
       ),
     },
     {
-      title: "Created",
-      key: "createdAt",
+      title: 'Created',
+      key: 'createdAt',
       render: (record: SecurityIncident) => (
         <div className="text-gray-400 text-xs">
           {new Date(record.createdAt).toLocaleDateString()}
@@ -297,8 +275,8 @@ const SecurityDashboard: React.FC<SecurityDashboardProps> = ({ className }) => {
       ),
     },
     {
-      title: "Actions",
-      key: "actions",
+      title: 'Actions',
+      key: 'actions',
       render: (record: SecurityIncident) => (
         <Space size="small">
           <Tooltip title="View Details">
@@ -339,7 +317,7 @@ const SecurityDashboard: React.FC<SecurityDashboardProps> = ({ className }) => {
               title="Security Score"
               value={metrics?.securityScore || 0}
               suffix="/100"
-              valueStyle={{ color: "#22c55e" }}
+              valueStyle={{ color: '#22c55e' }}
             />
           </Card>
         </Col>
@@ -348,7 +326,7 @@ const SecurityDashboard: React.FC<SecurityDashboardProps> = ({ className }) => {
             <Statistic
               title="Open Incidents"
               value={metrics?.openIncidents || 0}
-              valueStyle={{ color: "#ef4444" }}
+              valueStyle={{ color: '#ef4444' }}
             />
           </Card>
         </Col>
@@ -357,7 +335,7 @@ const SecurityDashboard: React.FC<SecurityDashboardProps> = ({ className }) => {
             <Statistic
               title="Critical Incidents"
               value={metrics?.criticalIncidents || 0}
-              valueStyle={{ color: "#dc2626" }}
+              valueStyle={{ color: '#dc2626' }}
             />
           </Card>
         </Col>
@@ -367,7 +345,7 @@ const SecurityDashboard: React.FC<SecurityDashboardProps> = ({ className }) => {
               title="Compliance Score"
               value={metrics?.complianceScore || 0}
               suffix="/100"
-              valueStyle={{ color: "#3b82f6" }}
+              valueStyle={{ color: '#3b82f6' }}
             />
           </Card>
         </Col>
@@ -393,16 +371,12 @@ const SecurityDashboard: React.FC<SecurityDashboardProps> = ({ className }) => {
             color: getSeverityColor(log.severity),
             children: (
               <div className="space-y-1">
-                <div className="text-white text-sm">
-                  {log.action.description}
-                </div>
+                <div className="text-white text-sm">{log.action.description}</div>
                 <div className="text-gray-400 text-xs">
                   {log.userEmail} • {new Date(log.timestamp).toLocaleString()}
                 </div>
                 <div className="flex items-center gap-2">
-                  <Tag color={getSeverityColor(log.severity)}>
-                    {log.severity}
-                  </Tag>
+                  <Tag color={getSeverityColor(log.severity)}>{log.severity}</Tag>
                   <Tag>{log.category}</Tag>
                 </div>
               </div>
@@ -424,7 +398,7 @@ const SecurityDashboard: React.FC<SecurityDashboardProps> = ({ className }) => {
                   key={incident.id}
                   message={incident.title}
                   description={incident.description}
-                  type={incident.severity === "critical" ? "error" : "warning"}
+                  type={incident.severity === 'critical' ? 'error' : 'warning'}
                   showIcon
                   className="bg-red-900 border-red-600"
                 />
@@ -448,9 +422,7 @@ const SecurityDashboard: React.FC<SecurityDashboardProps> = ({ className }) => {
                     <div className="text-gray-400 text-xs">{scan.scanType}</div>
                   </div>
                   <div className="text-right">
-                    <div className="text-white text-sm">
-                      {scan.summary.total}
-                    </div>
+                    <div className="text-white text-sm">{scan.summary.total}</div>
                     <div className="text-gray-400 text-xs">findings</div>
                   </div>
                 </div>
@@ -523,7 +495,7 @@ const SecurityDashboard: React.FC<SecurityDashboardProps> = ({ className }) => {
           size="small"
           className="bg-transparent"
           rowKey="id"
-          scroll={{ x: "max-content" }}
+          scroll={{ x: 'max-content' }}
         />
       </Card>
     </div>
@@ -576,11 +548,7 @@ const SecurityDashboard: React.FC<SecurityDashboardProps> = ({ className }) => {
 
         <div className="space-y-3">
           {vulnerabilityScans.map((scan) => (
-            <Card
-              key={scan.id}
-              size="small"
-              className="bg-gray-700 border-gray-600"
-            >
+            <Card key={scan.id} size="small" className="bg-gray-700 border-gray-600">
               <div className="flex items-center justify-between">
                 <div>
                   <div className="text-white font-medium">{scan.target}</div>
@@ -588,26 +556,18 @@ const SecurityDashboard: React.FC<SecurityDashboardProps> = ({ className }) => {
                 </div>
                 <div className="flex items-center gap-4">
                   <div className="text-center">
-                    <div className="text-white text-lg font-bold">
-                      {scan.summary.total}
-                    </div>
+                    <div className="text-white text-lg font-bold">{scan.summary.total}</div>
                     <div className="text-gray-400 text-xs">Total</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-red-400 text-lg font-bold">
-                      {scan.summary.critical}
-                    </div>
+                    <div className="text-red-400 text-lg font-bold">{scan.summary.critical}</div>
                     <div className="text-gray-400 text-xs">Critical</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-orange-400 text-lg font-bold">
-                      {scan.summary.high}
-                    </div>
+                    <div className="text-orange-400 text-lg font-bold">{scan.summary.high}</div>
                     <div className="text-gray-400 text-xs">High</div>
                   </div>
-                  <Tag color={scan.status === "completed" ? "green" : "orange"}>
-                    {scan.status}
-                  </Tag>
+                  <Tag color={scan.status === 'completed' ? 'green' : 'orange'}>{scan.status}</Tag>
                 </div>
               </div>
             </Card>
@@ -637,37 +597,24 @@ const SecurityDashboard: React.FC<SecurityDashboardProps> = ({ className }) => {
 
         <div className="space-y-3">
           {complianceReports.map((report) => (
-            <Card
-              key={report.id}
-              size="small"
-              className="bg-gray-700 border-gray-600"
-            >
+            <Card key={report.id} size="small" className="bg-gray-700 border-gray-600">
               <div className="flex items-center justify-between">
                 <div>
-                  <div className="text-white font-medium">
-                    {report.standard} Compliance Report
-                  </div>
+                  <div className="text-white font-medium">{report.standard} Compliance Report</div>
                   <div className="text-gray-400 text-xs">
-                    Generated:{" "}
-                    {new Date(report.generatedAt).toLocaleDateString()}
+                    Generated: {new Date(report.generatedAt).toLocaleDateString()}
                   </div>
                 </div>
                 <div className="flex items-center gap-4">
                   <div className="text-center">
-                    <div className="text-white text-lg font-bold">
-                      {report.score}
-                    </div>
+                    <div className="text-white text-lg font-bold">{report.score}</div>
                     <div className="text-gray-400 text-xs">Score</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-white text-lg font-bold">
-                      {report.findings.length}
-                    </div>
+                    <div className="text-white text-lg font-bold">{report.findings.length}</div>
                     <div className="text-gray-400 text-xs">Findings</div>
                   </div>
-                  <Tag
-                    color={report.status === "completed" ? "green" : "orange"}
-                  >
+                  <Tag color={report.status === 'completed' ? 'green' : 'orange'}>
                     {report.status}
                   </Tag>
                 </div>
@@ -686,22 +633,14 @@ const SecurityDashboard: React.FC<SecurityDashboardProps> = ({ className }) => {
           <Title level={5} className="text-white mb-0">
             Secrets Management
           </Title>
-          <Button
-            type="primary"
-            icon={<KeyOutlined />}
-            onClick={() => setIsSecretModalOpen(true)}
-          >
+          <Button type="primary" icon={<KeyOutlined />} onClick={() => setIsSecretModalOpen(true)}>
             Create Secret
           </Button>
         </div>
 
         <div className="space-y-3">
           {secrets.map((secret) => (
-            <Card
-              key={secret.id}
-              size="small"
-              className="bg-gray-700 border-gray-600"
-            >
+            <Card key={secret.id} size="small" className="bg-gray-700 border-gray-600">
               <div className="flex items-center justify-between">
                 <div>
                   <div className="text-white font-medium">{secret.name}</div>
@@ -715,9 +654,7 @@ const SecurityDashboard: React.FC<SecurityDashboardProps> = ({ className }) => {
                     <div className="text-gray-400 text-xs">Access Count</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-white text-lg font-bold">
-                      {secret.keyVersion}
-                    </div>
+                    <div className="text-white text-lg font-bold">{secret.keyVersion}</div>
                     <div className="text-gray-400 text-xs">Key Version</div>
                   </div>
                   <Space>
@@ -748,7 +685,7 @@ const SecurityDashboard: React.FC<SecurityDashboardProps> = ({ className }) => {
   );
 
   return (
-    <div className={cn("h-full bg-gray-900", className)}>
+    <div className={cn('h-full bg-gray-900', className)}>
       <div className="p-4 border-b border-gray-700">
         <div className="flex items-center gap-2 mb-2">
           <CheckCircleOutlined className="text-green-400 text-lg" />
@@ -768,7 +705,7 @@ const SecurityDashboard: React.FC<SecurityDashboardProps> = ({ className }) => {
           className="security-dashboard-tabs"
           items={[
             {
-              key: "overview",
+              key: 'overview',
               label: (
                 <span>
                   <CheckCircleOutlined className="mr-1" />
@@ -778,28 +715,24 @@ const SecurityDashboard: React.FC<SecurityDashboardProps> = ({ className }) => {
               children: renderOverviewTab(),
             },
             {
-              key: "audit",
+              key: 'audit',
               label: (
                 <span>
                   <AuditOutlined className="mr-1" />
                   Audit Logs
-                  <Badge
-                    count={auditLogs.length}
-                    size="small"
-                    className="ml-2"
-                  />
+                  <Badge count={auditLogs.length} size="small" className="ml-2" />
                 </span>
               ),
               children: renderAuditLogsTab(),
             },
             {
-              key: "incidents",
+              key: 'incidents',
               label: (
                 <span>
                   <AlertOutlined className="mr-1" />
                   Incidents
                   <Badge
-                    count={incidents.filter((i) => i.status === "open").length}
+                    count={incidents.filter((i) => i.status === 'open').length}
                     size="small"
                     className="ml-2"
                   />
@@ -808,37 +741,29 @@ const SecurityDashboard: React.FC<SecurityDashboardProps> = ({ className }) => {
               children: renderIncidentsTab(),
             },
             {
-              key: "vulnerabilities",
+              key: 'vulnerabilities',
               label: (
                 <span>
                   <BugOutlined className="mr-1" />
                   Vulnerabilities
-                  <Badge
-                    count={vulnerabilityScans.length}
-                    size="small"
-                    className="ml-2"
-                  />
+                  <Badge count={vulnerabilityScans.length} size="small" className="ml-2" />
                 </span>
               ),
               children: renderVulnerabilitiesTab(),
             },
             {
-              key: "compliance",
+              key: 'compliance',
               label: (
                 <span>
                   <CheckCircleOutlined className="mr-1" />
                   Compliance
-                  <Badge
-                    count={complianceReports.length}
-                    size="small"
-                    className="ml-2"
-                  />
+                  <Badge count={complianceReports.length} size="small" className="ml-2" />
                 </span>
               ),
               children: renderComplianceTab(),
             },
             {
-              key: "secrets",
+              key: 'secrets',
               label: (
                 <span>
                   <KeyOutlined className="mr-1" />
@@ -865,9 +790,7 @@ const SecurityDashboard: React.FC<SecurityDashboardProps> = ({ className }) => {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <Text className="text-gray-400">Title</Text>
-                <div className="text-white font-medium">
-                  {selectedIncident.title}
-                </div>
+                <div className="text-white font-medium">{selectedIncident.title}</div>
               </div>
               <div>
                 <Text className="text-gray-400">Severity</Text>
@@ -900,15 +823,12 @@ const SecurityDashboard: React.FC<SecurityDashboardProps> = ({ className }) => {
               <Text className="text-gray-400">Timeline</Text>
               <Timeline
                 items={selectedIncident.timeline.map((event) => ({
-                  color: "blue",
+                  color: 'blue',
                   children: (
                     <div className="space-y-1">
-                      <div className="text-white text-sm">
-                        {event.description}
-                      </div>
+                      <div className="text-white text-sm">{event.description}</div>
                       <div className="text-gray-400 text-xs">
-                        {new Date(event.timestamp).toLocaleString()} •{" "}
-                        {event.actor}
+                        {new Date(event.timestamp).toLocaleString()} • {event.actor}
                       </div>
                     </div>
                   ),
@@ -940,10 +860,7 @@ const SecurityDashboard: React.FC<SecurityDashboardProps> = ({ className }) => {
             <Input placeholder="Enter target (URL, path, etc.)" />
           </Form.Item>
           <Form.Item label="Options">
-            <Input.TextArea
-              placeholder="Additional scan options (JSON)"
-              rows={3}
-            />
+            <Input.TextArea placeholder="Additional scan options (JSON)" rows={3} />
           </Form.Item>
         </Form>
       </Modal>

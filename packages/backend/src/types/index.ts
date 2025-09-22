@@ -5,7 +5,7 @@
 // Common types
 export * from './common.js';
 
-// Express augmentations  
+// Express augmentations
 export * from './express.js';
 
 // Workflow types

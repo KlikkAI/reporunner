@@ -6,7 +6,7 @@
  * scheduling capabilities similar to Apache Airflow and Azure Logic Apps.
  */
 
-import { performanceMonitor } from "./performanceMonitor";
+import { performanceMonitor } from './performanceMonitor';
 
 export interface ScheduleConfiguration {
   id: string;
@@ -14,7 +14,7 @@ export interface ScheduleConfiguration {
   name: string;
   description?: string;
   enabled: boolean;
-  scheduleType: "cron" | "interval" | "once" | "event-driven" | "conditional";
+  scheduleType: 'cron' | 'interval' | 'once' | 'event-driven' | 'conditional';
   configuration:
     | CronSchedule
     | IntervalSchedule
@@ -67,20 +67,14 @@ export interface ConditionalSchedule {
 
 export interface EventFilter {
   field: string;
-  operator:
-    | "equals"
-    | "contains"
-    | "starts_with"
-    | "regex"
-    | "greater_than"
-    | "less_than";
+  operator: 'equals' | 'contains' | 'starts_with' | 'regex' | 'greater_than' | 'less_than';
   value: any;
 }
 
 export interface RetryPolicy {
   enabled: boolean;
   maxAttempts: number;
-  backoffStrategy: "linear" | "exponential" | "fixed";
+  backoffStrategy: 'linear' | 'exponential' | 'fixed';
   initialDelayMs: number;
   maxDelayMs: number;
   retryConditions: string[]; // Error types/patterns to retry on
@@ -88,13 +82,13 @@ export interface RetryPolicy {
 
 export interface ConcurrencySettings {
   maxConcurrent: number;
-  queueStrategy: "fifo" | "lifo" | "priority";
+  queueStrategy: 'fifo' | 'lifo' | 'priority';
   skipIfRunning: boolean;
   timeout: number; // Execution timeout in milliseconds
 }
 
 export interface ScheduleCondition {
-  type: "resource_availability" | "time_window" | "dependency" | "custom";
+  type: 'resource_availability' | 'time_window' | 'dependency' | 'custom';
   configuration: any;
   required: boolean;
 }
@@ -107,7 +101,7 @@ export interface NotificationSettings {
 }
 
 export interface NotificationChannel {
-  type: "email" | "webhook" | "slack" | "teams" | "sms";
+  type: 'email' | 'webhook' | 'slack' | 'teams' | 'sms';
   configuration: Record<string, any>;
   enabled: boolean;
 }
@@ -116,13 +110,7 @@ export interface ScheduledExecution {
   id: string;
   scheduleId: string;
   workflowId: string;
-  status:
-    | "pending"
-    | "running"
-    | "completed"
-    | "failed"
-    | "cancelled"
-    | "skipped";
+  status: 'pending' | 'running' | 'completed' | 'failed' | 'cancelled' | 'skipped';
   scheduledAt: string;
   startedAt?: string;
   completedAt?: string;
@@ -136,7 +124,7 @@ export interface ScheduledExecution {
 
 export interface ExecutionLog {
   timestamp: string;
-  level: "debug" | "info" | "warn" | "error";
+  level: 'debug' | 'info' | 'warn' | 'error';
   message: string;
   data?: any;
 }
@@ -166,16 +154,16 @@ export interface ScheduleAnalytics {
     totalCost: number;
   };
   trends: {
-    executionTrend: "increasing" | "stable" | "decreasing";
-    performanceTrend: "improving" | "stable" | "degrading";
-    errorTrend: "improving" | "stable" | "worsening";
+    executionTrend: 'increasing' | 'stable' | 'decreasing';
+    performanceTrend: 'improving' | 'stable' | 'degrading';
+    errorTrend: 'improving' | 'stable' | 'worsening';
   };
   recommendations: ScheduleRecommendation[];
 }
 
 export interface ScheduleRecommendation {
-  type: "optimization" | "reliability" | "cost_reduction" | "performance";
-  priority: "low" | "medium" | "high";
+  type: 'optimization' | 'reliability' | 'cost_reduction' | 'performance';
+  priority: 'low' | 'medium' | 'high';
   description: string;
   implementation: string;
   estimatedImpact: string;
@@ -194,10 +182,7 @@ export class WorkflowSchedulerService {
   private activeExecutions = new Map<string, ScheduledExecution>();
   private executionQueue: ScheduledExecution[] = [];
   private schedulerTimers = new Map<string, NodeJS.Timeout>();
-  private eventListeners = new Map<
-    string,
-    Set<(execution: ScheduledExecution) => void>
-  >();
+  private eventListeners = new Map<string, Set<(execution: ScheduledExecution) => void>>();
 
   // Resource management
   private resourceConstraints: ResourceConstraints = {
@@ -219,7 +204,7 @@ export class WorkflowSchedulerService {
    * Create a new schedule configuration
    */
   createSchedule(
-    config: Omit<ScheduleConfiguration, "id" | "createdAt" | "updatedAt">,
+    config: Omit<ScheduleConfiguration, 'id' | 'createdAt' | 'updatedAt'>
   ): ScheduleConfiguration {
     const schedule: ScheduleConfiguration = {
       ...config,
@@ -229,7 +214,7 @@ export class WorkflowSchedulerService {
       nextExecution: this.calculateNextExecution(
         config.scheduleType,
         config.configuration,
-        config.timezone,
+        config.timezone
       ),
     };
 
@@ -247,7 +232,7 @@ export class WorkflowSchedulerService {
    */
   updateSchedule(
     scheduleId: string,
-    updates: Partial<ScheduleConfiguration>,
+    updates: Partial<ScheduleConfiguration>
   ): ScheduleConfiguration {
     const existing = this.schedules.get(scheduleId);
     if (!existing) {
@@ -265,7 +250,7 @@ export class WorkflowSchedulerService {
       updated.nextExecution = this.calculateNextExecution(
         updated.scheduleType,
         updated.configuration,
-        updated.timezone,
+        updated.timezone
       );
     }
 
@@ -315,10 +300,7 @@ export class WorkflowSchedulerService {
   /**
    * Manually trigger a scheduled workflow
    */
-  async triggerSchedule(
-    scheduleId: string,
-    force = false,
-  ): Promise<ScheduledExecution> {
+  async triggerSchedule(scheduleId: string, force = false): Promise<ScheduledExecution> {
     const schedule = this.schedules.get(scheduleId);
     if (!schedule) {
       throw new Error(`Schedule ${scheduleId} not found`);
@@ -326,47 +308,34 @@ export class WorkflowSchedulerService {
 
     // Check conditions unless forced
     if (!force && !(await this.checkScheduleConditions(schedule))) {
-      throw new Error("Schedule conditions not met");
+      throw new Error('Schedule conditions not met');
     }
 
-    const execution = this.createExecution(schedule, "manual");
+    const execution = this.createExecution(schedule, 'manual');
     return this.executeWorkflow(execution);
   }
 
   /**
    * Get schedule analytics
    */
-  async getScheduleAnalytics(
-    scheduleId: string,
-    periodDays = 30,
-  ): Promise<ScheduleAnalytics> {
+  async getScheduleAnalytics(scheduleId: string, periodDays = 30): Promise<ScheduleAnalytics> {
     const schedule = this.schedules.get(scheduleId);
     if (!schedule) {
       throw new Error(`Schedule ${scheduleId} not found`);
     }
 
     const endDate = new Date();
-    const startDate = new Date(
-      endDate.getTime() - periodDays * 24 * 60 * 60 * 1000,
-    );
+    const startDate = new Date(endDate.getTime() - periodDays * 24 * 60 * 60 * 1000);
 
     // Get execution history for this schedule
     const executions = Array.from(this.activeExecutions.values()).filter(
-      (exec) =>
-        exec.scheduleId === scheduleId &&
-        new Date(exec.scheduledAt) >= startDate,
+      (exec) => exec.scheduleId === scheduleId && new Date(exec.scheduledAt) >= startDate
     );
 
     const totalExecutions = executions.length;
-    const successfulExecutions = executions.filter(
-      (e) => e.status === "completed",
-    ).length;
-    const failedExecutions = executions.filter(
-      (e) => e.status === "failed",
-    ).length;
-    const skippedExecutions = executions.filter(
-      (e) => e.status === "skipped",
-    ).length;
+    const successfulExecutions = executions.filter((e) => e.status === 'completed').length;
+    const failedExecutions = executions.filter((e) => e.status === 'failed').length;
+    const skippedExecutions = executions.filter((e) => e.status === 'skipped').length;
 
     const completedExecutions = executions.filter((e) => e.duration);
     const averageDuration =
@@ -375,10 +344,7 @@ export class WorkflowSchedulerService {
           completedExecutions.length
         : 0;
 
-    const successRate =
-      totalExecutions > 0
-        ? (successfulExecutions / totalExecutions) * 100
-        : 100;
+    const successRate = totalExecutions > 0 ? (successfulExecutions / totalExecutions) * 100 : 100;
 
     const resourceUtilization = this.calculateResourceUtilization(executions);
     const trends = this.calculateTrends();
@@ -418,19 +384,19 @@ export class WorkflowSchedulerService {
    */
   cancelExecution(executionId: string): boolean {
     const execution = this.activeExecutions.get(executionId);
-    if (!execution || execution.status !== "running") {
+    if (!execution || execution.status !== 'running') {
       return false;
     }
 
-    execution.status = "cancelled";
+    execution.status = 'cancelled';
     execution.completedAt = new Date().toISOString();
     execution.logs.push({
       timestamp: new Date().toISOString(),
-      level: "info",
-      message: "Execution cancelled by user",
+      level: 'info',
+      message: 'Execution cancelled by user',
     });
 
-    this.emitExecutionEvent("cancelled", execution);
+    this.emitExecutionEvent('cancelled', execution);
     return true;
   }
 
@@ -438,8 +404,8 @@ export class WorkflowSchedulerService {
    * Subscribe to execution events
    */
   subscribeToExecutions(
-    event: "started" | "completed" | "failed" | "cancelled",
-    callback: (execution: ScheduledExecution) => void,
+    event: 'started' | 'completed' | 'failed' | 'cancelled',
+    callback: (execution: ScheduledExecution) => void
   ): () => void {
     if (!this.eventListeners.has(event)) {
       this.eventListeners.set(event, new Set());
@@ -492,60 +458,52 @@ export class WorkflowSchedulerService {
     await this.processExecutionQueue();
   }
 
-  private async executeScheduledWorkflow(
-    schedule: ScheduleConfiguration,
-  ): Promise<void> {
+  private async executeScheduledWorkflow(schedule: ScheduleConfiguration): Promise<void> {
     try {
       // Check conditions
       if (!(await this.checkScheduleConditions(schedule))) {
         this.logScheduleEvent(
           schedule.id,
-          "info",
-          "Schedule conditions not met, skipping execution",
+          'info',
+          'Schedule conditions not met, skipping execution'
         );
         return;
       }
 
       // Check concurrency limits
       if (!this.canExecute(schedule)) {
-        this.logScheduleEvent(
-          schedule.id,
-          "warn",
-          "Concurrency limit reached, queueing execution",
-        );
-        const execution = this.createExecution(schedule, "scheduled");
+        this.logScheduleEvent(schedule.id, 'warn', 'Concurrency limit reached, queueing execution');
+        const execution = this.createExecution(schedule, 'scheduled');
         this.executionQueue.push(execution);
         return;
       }
 
       // Create and execute
-      const execution = this.createExecution(schedule, "scheduled");
+      const execution = this.createExecution(schedule, 'scheduled');
       await this.executeWorkflow(execution);
 
       // Update next execution time
       schedule.nextExecution = this.calculateNextExecution(
         schedule.scheduleType,
         schedule.configuration,
-        schedule.timezone,
+        schedule.timezone
       );
       schedule.lastExecuted = new Date().toISOString();
     } catch (error) {
       this.logScheduleEvent(
         schedule.id,
-        "error",
-        `Schedule execution failed: ${error instanceof Error ? error.message : String(error)}`,
+        'error',
+        `Schedule execution failed: ${error instanceof Error ? error.message : String(error)}`
       );
     }
   }
 
-  private async executeWorkflow(
-    execution: ScheduledExecution,
-  ): Promise<ScheduledExecution> {
-    execution.status = "running";
+  private async executeWorkflow(execution: ScheduledExecution): Promise<ScheduledExecution> {
+    execution.status = 'running';
     execution.startedAt = new Date().toISOString();
 
     this.activeExecutions.set(execution.id, execution);
-    this.emitExecutionEvent("started", execution);
+    this.emitExecutionEvent('started', execution);
 
     // Start performance monitoring
     // Start performance monitoring for workflow execution
@@ -557,16 +515,15 @@ export class WorkflowSchedulerService {
       // Simulate workflow execution (in real implementation, this would trigger actual workflow execution)
       const result = await this.simulateWorkflowExecution();
 
-      execution.status = "completed";
+      execution.status = 'completed';
       execution.completedAt = new Date().toISOString();
       execution.duration =
-        new Date(execution.completedAt).getTime() -
-        new Date(execution.startedAt!).getTime();
+        new Date(execution.completedAt).getTime() - new Date(execution.startedAt!).getTime();
       execution.result = result;
 
-      this.emitExecutionEvent("completed", execution);
+      this.emitExecutionEvent('completed', execution);
     } catch (error) {
-      execution.status = "failed";
+      execution.status = 'failed';
       execution.completedAt = new Date().toISOString();
       execution.error = error instanceof Error ? error.message : String(error);
 
@@ -577,18 +534,18 @@ export class WorkflowSchedulerService {
         this.shouldRetry(
           execution,
           schedule.retryPolicy,
-          error instanceof Error ? error : new Error(String(error)),
+          error instanceof Error ? error : new Error(String(error))
         )
       ) {
         await this.scheduleRetry(execution, schedule);
       } else {
-        this.emitExecutionEvent("failed", execution);
+        this.emitExecutionEvent('failed', execution);
       }
     } finally {
       // End performance monitoring
       performanceMonitor.endTrace(
         execution.id,
-        execution.status as "completed" | "failed" | "cancelled",
+        execution.status as 'completed' | 'failed' | 'cancelled'
       );
     }
 
@@ -603,7 +560,7 @@ export class WorkflowSchedulerService {
     await new Promise((resolve) => setTimeout(resolve, executionTime));
 
     if (Math.random() < failureRate) {
-      throw new Error("Simulated workflow execution failure");
+      throw new Error('Simulated workflow execution failure');
     }
 
     return {
@@ -615,20 +572,20 @@ export class WorkflowSchedulerService {
 
   private createExecution(
     schedule: ScheduleConfiguration,
-    trigger: "scheduled" | "manual",
+    trigger: 'scheduled' | 'manual'
   ): ScheduledExecution {
     return {
       id: `execution_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
       scheduleId: schedule.id,
       workflowId: schedule.workflowId,
-      status: "pending",
+      status: 'pending',
       scheduledAt: new Date().toISOString(),
       retryCount: 0,
       logs: [
         {
           timestamp: new Date().toISOString(),
-          level: "info",
-          message: `Execution ${trigger === "manual" ? "manually triggered" : "scheduled"}`,
+          level: 'info',
+          message: `Execution ${trigger === 'manual' ? 'manually triggered' : 'scheduled'}`,
           data: { trigger },
         },
       ],
@@ -641,25 +598,26 @@ export class WorkflowSchedulerService {
   }
 
   private calculateNextExecution(
-    scheduleType: ScheduleConfiguration["scheduleType"],
+    scheduleType: ScheduleConfiguration['scheduleType'],
     configuration: any,
-    _timezone: string,
+    _timezone: string
   ): string | undefined {
     const now = new Date();
 
     switch (scheduleType) {
-      case "cron":
+      case 'cron':
         return this.calculateNextCronExecution();
 
-      case "interval":
+      case 'interval': {
         const nextTime = new Date(now.getTime() + configuration.intervalMs);
         return nextTime.toISOString();
+      }
 
-      case "once":
+      case 'once':
         return configuration.executeAt;
 
-      case "event-driven":
-      case "conditional":
+      case 'event-driven':
+      case 'conditional':
         return undefined; // No fixed next execution time
 
       default:
@@ -674,9 +632,7 @@ export class WorkflowSchedulerService {
     return nextExecution.toISOString();
   }
 
-  private async checkScheduleConditions(
-    schedule: ScheduleConfiguration,
-  ): Promise<boolean> {
+  private async checkScheduleConditions(schedule: ScheduleConfiguration): Promise<boolean> {
     for (const condition of schedule.conditions) {
       if (!(await this.evaluateCondition(condition))) {
         return false;
@@ -685,20 +641,18 @@ export class WorkflowSchedulerService {
     return true;
   }
 
-  private async evaluateCondition(
-    condition: ScheduleCondition,
-  ): Promise<boolean> {
+  private async evaluateCondition(condition: ScheduleCondition): Promise<boolean> {
     switch (condition.type) {
-      case "resource_availability":
+      case 'resource_availability':
         return this.checkResourceAvailability();
 
-      case "time_window":
+      case 'time_window':
         return this.checkTimeWindow(condition.configuration);
 
-      case "dependency":
+      case 'dependency':
         return this.checkDependencies();
 
-      case "custom":
+      case 'custom':
         return this.evaluateCustomCondition(condition.configuration);
 
       default:
@@ -709,7 +663,7 @@ export class WorkflowSchedulerService {
   private checkResourceAvailability(): boolean {
     // Check if sufficient resources are available
     const activeCount = Array.from(this.activeExecutions.values()).filter(
-      (e) => e.status === "running",
+      (e) => e.status === 'running'
     ).length;
 
     return activeCount < this.resourceConstraints.maxConcurrentWorkflows;
@@ -734,17 +688,17 @@ export class WorkflowSchedulerService {
   private evaluateCustomCondition(config: any): boolean {
     try {
       // Evaluate custom JavaScript condition (in production, use a sandboxed environment)
-      const func = new Function("return " + config.expression);
+      const func = new Function('return ' + config.expression);
       return !!func();
     } catch (error) {
-      console.error("Custom condition evaluation failed:", error);
+      console.error('Custom condition evaluation failed:', error);
       return false;
     }
   }
 
   private canExecute(schedule: ScheduleConfiguration): boolean {
     const runningCount = Array.from(this.activeExecutions.values()).filter(
-      (e) => e.scheduleId === schedule.id && e.status === "running",
+      (e) => e.scheduleId === schedule.id && e.status === 'running'
     ).length;
 
     return runningCount < schedule.concurrency.maxConcurrent;
@@ -767,7 +721,7 @@ export class WorkflowSchedulerService {
 
   private canProcessQueue(): boolean {
     const totalRunning = Array.from(this.activeExecutions.values()).filter(
-      (e) => e.status === "running",
+      (e) => e.status === 'running'
     ).length;
 
     return totalRunning < this.resourceConstraints.maxConcurrentWorkflows;
@@ -776,7 +730,7 @@ export class WorkflowSchedulerService {
   private shouldRetry(
     execution: ScheduledExecution,
     retryPolicy: RetryPolicy,
-    error: Error,
+    error: Error
   ): boolean {
     if (!retryPolicy.enabled) return false;
     if (execution.retryCount >= retryPolicy.maxAttempts) return false;
@@ -784,8 +738,7 @@ export class WorkflowSchedulerService {
     // Check if error matches retry conditions
     if (retryPolicy.retryConditions.length > 0) {
       return retryPolicy.retryConditions.some(
-        (condition) =>
-          error.message.includes(condition) || error.name.includes(condition),
+        (condition) => error.message.includes(condition) || error.name.includes(condition)
       );
     }
 
@@ -794,19 +747,16 @@ export class WorkflowSchedulerService {
 
   private async scheduleRetry(
     execution: ScheduledExecution,
-    schedule: ScheduleConfiguration,
+    schedule: ScheduleConfiguration
   ): Promise<void> {
     execution.retryCount++;
 
-    const delay = this.calculateRetryDelay(
-      execution.retryCount,
-      schedule.retryPolicy,
-    );
+    const delay = this.calculateRetryDelay(execution.retryCount, schedule.retryPolicy);
 
     setTimeout(async () => {
       execution.logs.push({
         timestamp: new Date().toISOString(),
-        level: "info",
+        level: 'info',
         message: `Retry attempt ${execution.retryCount}/${schedule.retryPolicy.maxAttempts}`,
       });
 
@@ -818,13 +768,13 @@ export class WorkflowSchedulerService {
     let delay = policy.initialDelayMs;
 
     switch (policy.backoffStrategy) {
-      case "linear":
+      case 'linear':
         delay = policy.initialDelayMs * attempt;
         break;
-      case "exponential":
-        delay = policy.initialDelayMs * Math.pow(2, attempt - 1);
+      case 'exponential':
+        delay = policy.initialDelayMs * 2 ** (attempt - 1);
         break;
-      case "fixed":
+      case 'fixed':
         delay = policy.initialDelayMs;
         break;
     }
@@ -860,11 +810,9 @@ export class WorkflowSchedulerService {
     }
 
     const avgMemory =
-      completed.reduce((sum, e) => sum + e.metrics.resourceUsage.memory, 0) /
-      completed.length;
+      completed.reduce((sum, e) => sum + e.metrics.resourceUsage.memory, 0) / completed.length;
     const avgCpu =
-      completed.reduce((sum, e) => sum + e.metrics.resourceUsage.cpu, 0) /
-      completed.length;
+      completed.reduce((sum, e) => sum + e.metrics.resourceUsage.cpu, 0) / completed.length;
     const totalCost = completed.reduce((sum, e) => sum + e.metrics.cost, 0);
 
     return { avgMemory, avgCpu, totalCost };
@@ -873,9 +821,9 @@ export class WorkflowSchedulerService {
   private calculateTrends() {
     // Simplified trend calculation
     return {
-      executionTrend: "stable" as const,
-      performanceTrend: "stable" as const,
-      errorTrend: "stable" as const,
+      executionTrend: 'stable' as const,
+      performanceTrend: 'stable' as const,
+      errorTrend: 'stable' as const,
     };
   }
 
@@ -886,18 +834,17 @@ export class WorkflowSchedulerService {
     const allExecutions = Array.from(this.activeExecutions.values());
     const failureRate =
       allExecutions.length > 0
-        ? allExecutions.filter((e) => e.status === "failed").length /
-          allExecutions.length
+        ? allExecutions.filter((e) => e.status === 'failed').length / allExecutions.length
         : 0;
 
     if (failureRate > 0.1) {
       // 10% failure rate
       recommendations.push({
-        type: "reliability",
-        priority: "high",
+        type: 'reliability',
+        priority: 'high',
         description: `High failure rate detected (${(failureRate * 100).toFixed(1)}%)`,
-        implementation: "Review error patterns and improve retry policy",
-        estimatedImpact: "20-30% reduction in failed executions",
+        implementation: 'Review error patterns and improve retry policy',
+        estimatedImpact: '20-30% reduction in failed executions',
       });
     }
 
@@ -905,36 +852,27 @@ export class WorkflowSchedulerService {
     const avgDuration =
       allExecutions
         .filter((e: any) => e.duration)
-        .reduce((sum: number, e: any) => sum + (e.duration || 0), 0) /
-      allExecutions.length;
+        .reduce((sum: number, e: any) => sum + (e.duration || 0), 0) / allExecutions.length;
 
     if (avgDuration > 300000) {
       // 5 minutes
       recommendations.push({
-        type: "performance",
-        priority: "medium",
-        description: "Long execution times detected",
-        implementation:
-          "Optimize workflow logic and consider parallel processing",
-        estimatedImpact: "15-25% improvement in execution speed",
+        type: 'performance',
+        priority: 'medium',
+        description: 'Long execution times detected',
+        implementation: 'Optimize workflow logic and consider parallel processing',
+        estimatedImpact: '15-25% improvement in execution speed',
       });
     }
 
     return recommendations;
   }
 
-  private logScheduleEvent(
-    scheduleId: string,
-    level: string,
-    message: string,
-  ): void {
+  private logScheduleEvent(scheduleId: string, level: string, message: string): void {
     console.log(`[Schedule ${scheduleId}] ${level.toUpperCase()}: ${message}`);
   }
 
-  private emitExecutionEvent(
-    event: string,
-    execution: ScheduledExecution,
-  ): void {
+  private emitExecutionEvent(event: string, execution: ScheduledExecution): void {
     const listeners = this.eventListeners.get(event);
     if (listeners) {
       listeners.forEach((callback) => {

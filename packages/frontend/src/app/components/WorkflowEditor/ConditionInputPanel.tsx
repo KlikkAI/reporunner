@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState } from "react";
-import { JsonViewer } from "@/design-system";
+import React, { useState } from 'react';
+import { JsonViewer } from '@/design-system';
 
 interface ConditionInputPanelProps {
   connectedInputNodes: any[];
@@ -8,13 +8,11 @@ interface ConditionInputPanelProps {
   testResults?: any;
 }
 
-const ConditionInputPanel: React.FC<ConditionInputPanelProps> = ({
-  connectedInputNodes,
-}) => {
+const ConditionInputPanel: React.FC<ConditionInputPanelProps> = ({ connectedInputNodes }) => {
   // Default to expanding the first node that has data
   const [expandedNode, setExpandedNode] = useState<string | null>(() => {
     const firstNodeWithData = connectedInputNodes.find(
-      (node) => node?.data?.outputData || node?.data?.testResults?.data,
+      (node) => node?.data?.outputData || node?.data?.testResults?.data
     );
     return firstNodeWithData?.id || null;
   });
@@ -22,7 +20,7 @@ const ConditionInputPanel: React.FC<ConditionInputPanelProps> = ({
 
   // Debug logging
   React.useEffect(() => {
-    console.log("ConditionInputPanel Debug:", {
+    console.log('ConditionInputPanel Debug:', {
       connectedInputNodes: connectedInputNodes.length,
       nodeDetails: connectedInputNodes.map((node) => ({
         id: node?.id,
@@ -30,12 +28,10 @@ const ConditionInputPanel: React.FC<ConditionInputPanelProps> = ({
         type: node?.type,
         hasOutputData: !!node?.data?.outputData,
         hasTestResults: !!node?.data?.testResults?.data,
-        outputDataKeys: node?.data?.outputData
-          ? Object.keys(node.data.outputData)
-          : "none",
+        outputDataKeys: node?.data?.outputData ? Object.keys(node.data.outputData) : 'none',
         testResultsKeys: node?.data?.testResults?.data
           ? Object.keys(node.data.testResults.data)
-          : "none",
+          : 'none',
       })),
     });
   }, [connectedInputNodes]);
@@ -63,17 +59,15 @@ const ConditionInputPanel: React.FC<ConditionInputPanelProps> = ({
       <div className="bg-purple-900/20 border border-purple-600/30 rounded-lg p-3">
         <div className="flex items-center space-x-2 mb-2">
           <span className="text-lg">⚖️</span>
-          <div className="text-sm font-medium text-purple-200">
-            Condition Evaluation
-          </div>
+          <div className="text-sm font-medium text-purple-200">Condition Evaluation</div>
           <span className="px-2 py-1 bg-purple-800 text-purple-100 rounded text-xs">
             {connectedInputNodes.length} input
-            {connectedInputNodes.length !== 1 ? "s" : ""}
+            {connectedInputNodes.length !== 1 ? 's' : ''}
           </span>
         </div>
         <div className="text-xs text-purple-300">
-          This data will be evaluated by the condition logic. Use field
-          references in your condition expressions.
+          This data will be evaluated by the condition logic. Use field references in your condition
+          expressions.
         </div>
       </div>
 
@@ -121,9 +115,7 @@ const ConditionInputPanel: React.FC<ConditionInputPanelProps> = ({
             finalNodeData: !!nodeData,
             nodeDataType: typeof nodeData,
             nodeDataKeys:
-              nodeData && typeof nodeData === "object"
-                ? Object.keys(nodeData)
-                : "not object",
+              nodeData && typeof nodeData === 'object' ? Object.keys(nodeData) : 'not object',
           });
 
           return (
@@ -138,19 +130,14 @@ const ConditionInputPanel: React.FC<ConditionInputPanelProps> = ({
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
-                    <span
-                      className="text-xl"
-                      title={node?.data?.label || "Node Icon"}
-                    >
+                    <span className="text-xl" title={node?.data?.label || 'Node Icon'}>
                       {getNodeIcon(node)}
                     </span>
                     <div>
                       <div className="text-sm font-medium text-white">
-                        {node?.data?.label || "Unnamed Node"}
+                        {node?.data?.label || 'Unnamed Node'}
                       </div>
-                      <div className="text-xs text-gray-400">
-                        {getNodeTypeDisplay(node)}
-                      </div>
+                      <div className="text-xs text-gray-400">{getNodeTypeDisplay(node)}</div>
                     </div>
                   </div>
                   <div className="flex items-center space-x-2">
@@ -166,7 +153,7 @@ const ConditionInputPanel: React.FC<ConditionInputPanelProps> = ({
                       </span>
                     )}
                     <span
-                      className={`transform transition-transform text-gray-400 ${isExpanded ? "rotate-180" : ""}`}
+                      className={`transform transition-transform text-gray-400 ${isExpanded ? 'rotate-180' : ''}`}
                     >
                       ▼
                     </span>
@@ -180,11 +167,7 @@ const ConditionInputPanel: React.FC<ConditionInputPanelProps> = ({
                   {hasOutputData ? (
                     <div className="space-y-3">
                       {/* Enhanced JSON viewer for raw data */}
-                      <JsonViewer
-                        data={nodeData}
-                        maxHeight="400px"
-                        enableClipboard={true}
-                      />
+                      <JsonViewer data={nodeData} maxHeight="400px" enableClipboard={true} />
 
                       {/* Then show the formatted renderer */}
                       <ConditionDataRenderer
@@ -197,9 +180,7 @@ const ConditionInputPanel: React.FC<ConditionInputPanelProps> = ({
                   ) : (
                     <div className="text-center py-4 text-gray-400">
                       <div className="text-sm">No output data available</div>
-                      <div className="text-xs mt-1">
-                        Test the connected node to generate data
-                      </div>
+                      <div className="text-xs mt-1">Test the connected node to generate data</div>
                     </div>
                   )}
                 </div>
@@ -213,54 +194,34 @@ const ConditionInputPanel: React.FC<ConditionInputPanelProps> = ({
       <div className="mt-6 p-3 bg-gray-800 rounded-lg border border-gray-600">
         <div className="flex items-center space-x-2 mb-2">
           <span className="text-lg">💡</span>
-          <div className="text-sm font-medium text-gray-200">
-            Condition Tips
-          </div>
+          <div className="text-sm font-medium text-gray-200">Condition Tips</div>
         </div>
         <div className="space-y-2 text-xs text-gray-400">
           <div className="flex items-start space-x-2">
             <span className="text-purple-400 mt-0.5">•</span>
             <span>
-              Reference data fields directly in conditions (e.g.,{" "}
-              <code className="bg-gray-700 px-1 rounded text-gray-300">
-                subject
-              </code>
-              ,{" "}
-              <code className="bg-gray-700 px-1 rounded text-gray-300">
-                priority
-              </code>
-              )
+              Reference data fields directly in conditions (e.g.,{' '}
+              <code className="bg-gray-700 px-1 rounded text-gray-300">subject</code>,{' '}
+              <code className="bg-gray-700 px-1 rounded text-gray-300">priority</code>)
             </span>
           </div>
           <div className="flex items-start space-x-2">
             <span className="text-purple-400 mt-0.5">•</span>
             <span>
-              Use comparison operators:{" "}
-              <code className="bg-gray-700 px-1 rounded text-gray-300">==</code>
-              ,{" "}
-              <code className="bg-gray-700 px-1 rounded text-gray-300">!=</code>
-              ,{" "}
-              <code className="bg-gray-700 px-1 rounded text-gray-300">
-                &gt;
-              </code>
-              ,{" "}
-              <code className="bg-gray-700 px-1 rounded text-gray-300">
-                &lt;
-              </code>
-              ,{" "}
-              <code className="bg-gray-700 px-1 rounded text-gray-300">
-                contains
-              </code>
+              Use comparison operators:{' '}
+              <code className="bg-gray-700 px-1 rounded text-gray-300">==</code>,{' '}
+              <code className="bg-gray-700 px-1 rounded text-gray-300">!=</code>,{' '}
+              <code className="bg-gray-700 px-1 rounded text-gray-300">&gt;</code>,{' '}
+              <code className="bg-gray-700 px-1 rounded text-gray-300">&lt;</code>,{' '}
+              <code className="bg-gray-700 px-1 rounded text-gray-300">contains</code>
             </span>
           </div>
           <div className="flex items-start space-x-2">
             <span className="text-purple-400 mt-0.5">•</span>
             <span>
-              Combine conditions with{" "}
-              <code className="bg-gray-700 px-1 rounded text-gray-300">&&</code>{" "}
-              (and) or{" "}
-              <code className="bg-gray-700 px-1 rounded text-gray-300">||</code>{" "}
-              (or)
+              Combine conditions with{' '}
+              <code className="bg-gray-700 px-1 rounded text-gray-300">&&</code> (and) or{' '}
+              <code className="bg-gray-700 px-1 rounded text-gray-300">||</code> (or)
             </span>
           </div>
         </div>
@@ -286,13 +247,13 @@ const DataFieldsSummary: React.FC<{
       hasData: !!data,
       dataType: typeof data,
       isArray: Array.isArray(data),
-      keys: data && typeof data === "object" ? Object.keys(data) : "none",
+      keys: data && typeof data === 'object' ? Object.keys(data) : 'none',
     });
 
-    if (data && typeof data === "object") {
+    if (data && typeof data === 'object') {
       if (Array.isArray(data)) {
         // Handle arrays (like emails)
-        if (data.length > 0 && typeof data[0] === "object") {
+        if (data.length > 0 && typeof data[0] === 'object') {
           Object.keys(data[0]).forEach((key) => allFields.add(key));
         }
       } else {
@@ -307,8 +268,7 @@ const DataFieldsSummary: React.FC<{
   if (fieldsArray.length === 0) {
     return (
       <div className="text-xs text-gray-400">
-        No structured fields available. Test connected nodes to analyze data
-        fields.
+        No structured fields available. Test connected nodes to analyze data fields.
       </div>
     );
   }
@@ -337,16 +297,12 @@ const ConditionDataRenderer: React.FC<{
   onFieldSelect: (field: string) => void;
 }> = ({ data, nodeType, selectedField, onFieldSelect }) => {
   // Debug logging
-  console.log("ConditionDataRenderer:", {
+  console.log('ConditionDataRenderer:', {
     hasData: !!data,
     dataType: typeof data,
     isArray: Array.isArray(data),
     nodeType,
-    dataPreview: data
-      ? typeof data === "object"
-        ? Object.keys(data)
-        : data
-      : "none",
+    dataPreview: data ? (typeof data === 'object' ? Object.keys(data) : data) : 'none',
   });
 
   if (!data) {
@@ -357,14 +313,10 @@ const ConditionDataRenderer: React.FC<{
 
   // Check if it's an array (like emails)
   if (Array.isArray(data)) {
-    console.log(
-      "ConditionDataRenderer: Array detected with",
-      data.length,
-      "items",
-    );
+    console.log('ConditionDataRenderer: Array detected with', data.length, 'items');
     if (data.length > 0) {
       const firstItem = data[0];
-      if (nodeType === "gmail" || nodeType === "gmail-trigger") {
+      if (nodeType === 'gmail' || nodeType === 'gmail-trigger') {
         return (
           <EmailConditionView
             email={firstItem}
@@ -386,11 +338,8 @@ const ConditionDataRenderer: React.FC<{
   }
 
   // Handle email data (from Gmail triggers)
-  if (
-    (nodeType === "gmail" || nodeType === "gmail-trigger") &&
-    typeof data === "object"
-  ) {
-    console.log("ConditionDataRenderer: Gmail data detected");
+  if ((nodeType === 'gmail' || nodeType === 'gmail-trigger') && typeof data === 'object') {
+    console.log('ConditionDataRenderer: Gmail data detected');
     return (
       <EmailConditionView
         email={data}
@@ -401,8 +350,8 @@ const ConditionDataRenderer: React.FC<{
   }
 
   // Handle transformed data
-  if (nodeType === "transform" && typeof data === "object") {
-    console.log("ConditionDataRenderer: Transform data detected");
+  if (nodeType === 'transform' && typeof data === 'object') {
+    console.log('ConditionDataRenderer: Transform data detected');
     return (
       <TransformConditionView
         data={data}
@@ -413,22 +362,18 @@ const ConditionDataRenderer: React.FC<{
   }
 
   // Handle AI Agent data
-  if (nodeType === "ai-agent" && typeof data === "object") {
-    console.log("ConditionDataRenderer: AI Agent data detected");
+  if (nodeType === 'ai-agent' && typeof data === 'object') {
+    console.log('ConditionDataRenderer: AI Agent data detected');
     return (
-      <AIConditionView
-        data={data}
-        selectedField={selectedField}
-        onFieldSelect={onFieldSelect}
-      />
+      <AIConditionView data={data} selectedField={selectedField} onFieldSelect={onFieldSelect} />
     );
   }
 
   // Generic structured data
-  if (typeof data === "object" && data !== null) {
+  if (typeof data === 'object' && data !== null) {
     console.log(
-      "ConditionDataRenderer: Generic object data detected with keys:",
-      Object.keys(data),
+      'ConditionDataRenderer: Generic object data detected with keys:',
+      Object.keys(data)
     );
     return (
       <GenericConditionView
@@ -441,16 +386,13 @@ const ConditionDataRenderer: React.FC<{
 
   return (
     <div className="space-y-2">
-      <div className="text-xs text-yellow-400">
-        Debug: {nodeType} node data (fallback renderer)
-      </div>
+      <div className="text-xs text-yellow-400">Debug: {nodeType} node data (fallback renderer)</div>
       <div className="bg-gray-900 p-3 rounded border border-gray-600">
         <div className="text-xs text-gray-400 mb-2">
-          Type: {typeof data}{" "}
-          {Array.isArray(data) && `(array with ${data.length} items)`}
+          Type: {typeof data} {Array.isArray(data) && `(array with ${data.length} items)`}
         </div>
         <div className="font-mono text-xs text-gray-200 max-h-40 overflow-y-auto">
-          {typeof data === "string" ? data : JSON.stringify(data, null, 2)}
+          {typeof data === 'string' ? data : JSON.stringify(data, null, 2)}
         </div>
       </div>
     </div>
@@ -464,23 +406,21 @@ const EmailConditionView: React.FC<{
   onFieldSelect: (field: string) => void;
 }> = ({ email, selectedField, onFieldSelect }) => {
   const emailFields = [
-    { key: "from", label: "From", value: email.from },
-    { key: "subject", label: "Subject", value: email.subject },
-    { key: "body", label: "Body", value: email.body },
-    { key: "isUnread", label: "Unread", value: email.isUnread },
+    { key: 'from', label: 'From', value: email.from },
+    { key: 'subject', label: 'Subject', value: email.subject },
+    { key: 'body', label: 'Body', value: email.body },
+    { key: 'isUnread', label: 'Unread', value: email.isUnread },
     {
-      key: "hasAttachments",
-      label: "Has Attachments",
+      key: 'hasAttachments',
+      label: 'Has Attachments',
       value: email.hasAttachments,
     },
-    { key: "labels", label: "Labels", value: email.labels },
+    { key: 'labels', label: 'Labels', value: email.labels },
   ];
 
   return (
     <div className="space-y-3">
-      <div className="text-xs text-blue-400 mb-2">
-        📧 Email fields available for conditions:
-      </div>
+      <div className="text-xs text-blue-400 mb-2">📧 Email fields available for conditions:</div>
       {emailFields.map((field) => (
         <FieldRow
           key={field.key}
@@ -529,10 +469,10 @@ const AIConditionView: React.FC<{
   onFieldSelect: (field: string) => void;
 }> = ({ data, selectedField, onFieldSelect }) => {
   const aiFields = [
-    { key: "output", label: "AI Output", value: data.output },
-    { key: "provider", label: "Provider", value: data.provider },
-    { key: "model", label: "Model", value: data.model },
-    { key: "usage", label: "Token Usage", value: data.usage },
+    { key: 'output', label: 'AI Output', value: data.output },
+    { key: 'provider', label: 'Provider', value: data.provider },
+    { key: 'model', label: 'Model', value: data.model },
+    { key: 'usage', label: 'Token Usage', value: data.usage },
   ];
 
   return (
@@ -564,9 +504,7 @@ const GenericConditionView: React.FC<{
 
   return (
     <div className="space-y-3">
-      <div className="text-xs text-gray-400 mb-2">
-        📊 Data fields available for conditions:
-      </div>
+      <div className="text-xs text-gray-400 mb-2">📊 Data fields available for conditions:</div>
       {fields.map((key) => (
         <FieldRow
           key={key}
@@ -590,46 +528,36 @@ const FieldRow: React.FC<{
   onSelect: (field: string) => void;
 }> = ({ fieldKey, label, value, isSelected, onSelect }) => {
   const displayValue =
-    typeof value === "string" && value.length > 100
-      ? value.substring(0, 100) + "..."
-      : value;
+    typeof value === 'string' && value.length > 100 ? value.substring(0, 100) + '...' : value;
 
   return (
     <div
       className={`p-3 rounded border cursor-pointer transition-all ${
         isSelected
-          ? "border-purple-500 bg-purple-900/20"
-          : "border-gray-600 hover:border-gray-500 bg-gray-750"
+          ? 'border-purple-500 bg-purple-900/20'
+          : 'border-gray-600 hover:border-gray-500 bg-gray-750'
       }`}
       onClick={() => onSelect(fieldKey)}
     >
       <div className="flex items-center justify-between mb-1">
-        <span
-          className={`text-sm font-medium ${isSelected ? "text-purple-200" : "text-gray-200"}`}
-        >
+        <span className={`text-sm font-medium ${isSelected ? 'text-purple-200' : 'text-gray-200'}`}>
           {label}
         </span>
         <code
           className={`text-xs px-2 py-1 rounded ${
-            isSelected
-              ? "bg-purple-800 text-purple-200"
-              : "bg-gray-700 text-gray-300"
+            isSelected ? 'bg-purple-800 text-purple-200' : 'bg-gray-700 text-gray-300'
           }`}
         >
           {fieldKey}
         </code>
       </div>
-      <div
-        className={`text-xs ${isSelected ? "text-purple-300" : "text-gray-400"}`}
-      >
-        Type: {typeof value} {Array.isArray(value) && "(array)"}
+      <div className={`text-xs ${isSelected ? 'text-purple-300' : 'text-gray-400'}`}>
+        Type: {typeof value} {Array.isArray(value) && '(array)'}
       </div>
-      <div
-        className={`text-sm mt-2 ${isSelected ? "text-purple-100" : "text-gray-300"}`}
-      >
-        {typeof displayValue === "object"
+      <div className={`text-sm mt-2 ${isSelected ? 'text-purple-100' : 'text-gray-300'}`}>
+        {typeof displayValue === 'object'
           ? JSON.stringify(displayValue, null, 2)
-          : String(displayValue || "null")}
+          : String(displayValue || 'null')}
       </div>
     </div>
   );
@@ -638,43 +566,37 @@ const FieldRow: React.FC<{
 // Helper functions (same as in other panels)
 const getNodeIcon = (node: any): string => {
   if (
-    node?.data?.integrationData?.id === "gmail" ||
-    node?.data?.enhancedNodeType?.id === "gmail-trigger"
+    node?.data?.integrationData?.id === 'gmail' ||
+    node?.data?.enhancedNodeType?.id === 'gmail-trigger'
   ) {
-    return "📧";
+    return '📧';
   }
-  if (node?.type === "transform") {
-    return "🔄";
+  if (node?.type === 'transform') {
+    return '🔄';
   }
-  if (
-    node?.type === "ai-agent" ||
-    node?.data?.integrationData?.id === "ai-agent"
-  ) {
-    return "🤖";
+  if (node?.type === 'ai-agent' || node?.data?.integrationData?.id === 'ai-agent') {
+    return '🤖';
   }
-  if (node?.type === "trigger") {
-    return "⚡";
+  if (node?.type === 'trigger') {
+    return '⚡';
   }
-  return "📊";
+  return '📊';
 };
 
 const getNodeType = (node: any): string => {
   if (
-    node?.data?.integrationData?.id === "gmail" ||
-    node?.data?.enhancedNodeType?.id === "gmail-trigger"
+    node?.data?.integrationData?.id === 'gmail' ||
+    node?.data?.enhancedNodeType?.id === 'gmail-trigger'
   ) {
-    return "gmail-trigger";
+    return 'gmail-trigger';
   }
-  if (node?.type === "transform") {
-    return "transform";
+  if (node?.type === 'transform') {
+    return 'transform';
   }
-  if (
-    node?.type === "ai-agent" ||
-    node?.data?.integrationData?.id === "ai-agent"
-  ) {
-    return "ai-agent";
+  if (node?.type === 'ai-agent' || node?.data?.integrationData?.id === 'ai-agent') {
+    return 'ai-agent';
   }
-  return node?.type || "unknown";
+  return node?.type || 'unknown';
 };
 
 const getNodeTypeDisplay = (node: any): string => {
@@ -683,7 +605,7 @@ const getNodeTypeDisplay = (node: any): string => {
     node?.data?.nodeTypeData?.displayName ||
     node?.data?.nodeTypeData?.name ||
     node?.type ||
-    "Unknown Node Type"
+    'Unknown Node Type'
   );
 };
 

@@ -1,0 +1,70 @@
+{
+  "name": "@reporunner/auth",
+  "version": "1.0.0",
+  "description": "Enterprise authentication and authorization for Reporunner",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./middleware": {
+      "types": "./dist/middleware/index.d.ts",
+      "import": "./dist/middleware/index.mjs",
+      "require": "./dist/middleware/index.js"
+    },
+    "./providers": {
+      "types": "./dist/providers/index.d.ts",
+      "import": "./dist/providers/index.mjs",
+      "require": "./dist/providers/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "type-check": "tsc --noEmit",
+    "lint": "eslint src/**/*.ts",
+    "lint:fix": "eslint src/**/*.ts --fix"
+  },
+  "dependencies": {
+    "@reporunner/core": "workspace:*",
+    "@reporunner/shared": "workspace:*",
+    "jsonwebtoken": "^9.0.0",
+    "bcryptjs": "^2.4.3",
+    "passport": "^0.7.0",
+    "passport-local": "^1.0.0",
+    "passport-jwt": "^4.0.1",
+    "passport-oauth2": "^1.7.0",
+    "passport-saml": "^3.2.4",
+    "passport-google-oauth20": "^2.0.0",
+    "passport-github2": "^0.1.12",
+    "express-rate-limit": "^7.1.0",
+    "helmet": "^7.1.0",
+    "cors": "^2.8.5",
+    "zod": "^3.22.0",
+    "otpauth": "^9.1.0",
+    "qrcode": "^1.5.3",
+    "speakeasy": "^2.0.0"
+  },
+  "devDependencies": {
+    "@types/jsonwebtoken": "^9.0.0",
+    "@types/bcryptjs": "^2.4.0",
+    "@types/passport": "^1.0.0",
+    "@types/passport-local": "^1.0.0",
+    "@types/passport-jwt": "^3.0.0",
+    "@types/passport-oauth2": "^1.4.0",
+    "@types/cors": "^2.8.0",
+    "@types/qrcode": "^1.5.0",
+    "@types/speakeasy": "^2.0.0",
+    "typescript": "catalog:",
+    "@types/node": "catalog:",
+    "jest": "catalog:",
+    "@types/jest": "catalog:",
+    "tsup": "^7.0.0",
+    "eslint": "catalog:"
+  }
+}

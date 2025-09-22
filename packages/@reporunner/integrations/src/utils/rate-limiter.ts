@@ -1,10 +1,10 @@
-import { EventEmitter } from "events";
+import { EventEmitter } from 'events';
 
 export interface RateLimitConfig {
   name: string;
   maxRequests: number;
   windowMs: number; // Time window in milliseconds
-  strategy?: "sliding" | "fixed";
+  strategy?: 'sliding' | 'fixed';
   burstAllowance?: number; // Allow temporary burst above limit
   retryAfterMs?: number; // Time to wait before retry
 }
@@ -40,7 +40,7 @@ export class RateLimiter extends EventEmitter {
   configure(config: RateLimitConfig): void {
     this.configs.set(config.name, config);
 
-    this.emit("config:set", {
+    this.emit('config:set', {
       name: config.name,
       maxRequests: config.maxRequests,
       windowMs: config.windowMs,
@@ -50,10 +50,7 @@ export class RateLimiter extends EventEmitter {
   /**
    * Check if request is allowed
    */
-  async checkLimit(
-    name: string,
-    identifier?: string,
-  ): Promise<RateLimitStatus> {
+  async checkLimit(name: string, identifier?: string): Promise<RateLimitStatus> {
     const config = this.configs.get(name);
     if (!config) {
       // No rate limit configured
@@ -71,9 +68,7 @@ export class RateLimiter extends EventEmitter {
     if (this.blocked.has(key)) {
       const entry = this.entries.get(key);
       if (entry && entry.resetAt > now) {
-        const retryAfter = Math.ceil(
-          (entry.resetAt.getTime() - now.getTime()) / 1000,
-        );
+        const retryAfter = Math.ceil((entry.resetAt.getTime() - now.getTime()) / 1000);
         return {
           remaining: 0,
           resetAt: entry.resetAt,
@@ -94,7 +89,7 @@ export class RateLimiter extends EventEmitter {
     }
 
     // Apply strategy
-    if (config.strategy === "sliding") {
+    if (config.strategy === 'sliding') {
       return this.applySlidingWindow(entry, config, now, key);
     } else {
       return this.applyFixedWindow(entry, config, now, key);
@@ -108,7 +103,7 @@ export class RateLimiter extends EventEmitter {
     entry: RateLimitEntry,
     config: RateLimitConfig,
     now: Date,
-    key: string,
+    key: string
   ): RateLimitStatus {
     // Calculate time passed since first request
     const timePassed = now.getTime() - entry.firstRequest.getTime();
@@ -122,16 +117,12 @@ export class RateLimiter extends EventEmitter {
 
     if (remaining <= 0) {
       // Check burst allowance
-      if (
-        config.burstAllowance &&
-        effectiveCount < config.maxRequests + config.burstAllowance
-      ) {
+      if (config.burstAllowance && effectiveCount < config.maxRequests + config.burstAllowance) {
         entry.count++;
         entry.lastRequest = now;
 
         return {
-          remaining:
-            config.maxRequests + config.burstAllowance - effectiveCount - 1,
+          remaining: config.maxRequests + config.burstAllowance - effectiveCount - 1,
           resetAt: entry.resetAt,
           isLimited: false,
         };
@@ -166,16 +157,13 @@ export class RateLimiter extends EventEmitter {
     entry: RateLimitEntry,
     config: RateLimitConfig,
     now: Date,
-    key: string,
+    key: string
   ): RateLimitStatus {
     const remaining = config.maxRequests - entry.count;
 
     if (remaining <= 0) {
       // Check burst allowance
-      if (
-        config.burstAllowance &&
-        entry.count < config.maxRequests + config.burstAllowance
-      ) {
+      if (config.burstAllowance && entry.count < config.maxRequests + config.burstAllowance) {
         entry.count++;
         entry.lastRequest = now;
 
@@ -216,7 +204,7 @@ export class RateLimiter extends EventEmitter {
     const entry = this.entries.get(key);
 
     if (entry) {
-      this.emit("request:recorded", {
+      this.emit('request:recorded', {
         name,
         identifier,
         count: entry.count,
@@ -230,11 +218,7 @@ export class RateLimiter extends EventEmitter {
   /**
    * Handle rate limit exceeded
    */
-  private handleRateLimit(
-    key: string,
-    entry: RateLimitEntry,
-    config: RateLimitConfig,
-  ): void {
+  private handleRateLimit(key: string, entry: RateLimitEntry, config: RateLimitConfig): void {
     this.blocked.add(key);
 
     // Set retry after time
@@ -242,7 +226,7 @@ export class RateLimiter extends EventEmitter {
       entry.resetAt = new Date(Date.now() + config.retryAfterMs);
     }
 
-    this.emit("rate:limited", {
+    this.emit('rate:limited', {
       name: config.name,
       count: entry.count,
       resetAt: entry.resetAt,
@@ -253,11 +237,7 @@ export class RateLimiter extends EventEmitter {
   /**
    * Check if entry should be reset
    */
-  private shouldReset(
-    entry: RateLimitEntry,
-    config: RateLimitConfig,
-    now: Date,
-  ): boolean {
+  private shouldReset(entry: RateLimitEntry, config: RateLimitConfig, now: Date): boolean {
     return now >= entry.resetAt;
   }
 
@@ -288,7 +268,7 @@ export class RateLimiter extends EventEmitter {
     this.entries.delete(key);
     this.blocked.delete(key);
 
-    this.emit("rate:reset", { name, identifier });
+    this.emit('rate:reset', { name, identifier });
   }
 
   /**
@@ -336,7 +316,7 @@ export class RateLimiter extends EventEmitter {
 
     Object.assign(config, updates);
 
-    this.emit("config:updated", { name, config });
+    this.emit('config:updated', { name, config });
   }
 
   /**
@@ -359,7 +339,7 @@ export class RateLimiter extends EventEmitter {
     });
 
     if (existed) {
-      this.emit("config:removed", { name });
+      this.emit('config:removed', { name });
     }
 
     return existed;
@@ -391,7 +371,7 @@ export class RateLimiter extends EventEmitter {
       });
 
       if (keysToDelete.length > 0) {
-        this.emit("cleanup:completed", { removed: keysToDelete.length });
+        this.emit('cleanup:completed', { removed: keysToDelete.length });
       }
     }, 30000); // Every 30 seconds
   }

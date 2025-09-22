@@ -1,11 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState } from "react";
-
-import NodeToolbar from "./NodeToolbar";
-import NodeMenu from "./NodeMenu";
-import NodeHandles from "./NodeHandles";
-import { IntegrationNodeType } from "@/core";
-import ExecutionStateOverlay from "../../ExecutionStateOverlay";
+import React, { useState } from 'react';
+import type { IntegrationNodeType } from '@/core';
+import ExecutionStateOverlay from '../../ExecutionStateOverlay';
+import NodeHandles from './NodeHandles';
+import NodeMenu from './NodeMenu';
+import NodeToolbar from './NodeToolbar';
 
 // Base props interface that all nodes extend
 export interface BaseNodeData {
@@ -105,13 +104,7 @@ interface BaseNodeComponentProps extends BaseNodeProps {
   children?: React.ReactNode;
 }
 
-const BaseNode: React.FC<BaseNodeComponentProps> = ({
-  id,
-  data,
-  selected,
-  config,
-  children,
-}) => {
+const BaseNode: React.FC<BaseNodeComponentProps> = ({ id, data, selected, config, children }) => {
   const isSelected = data.isSelected || selected;
   const displayName = data.name || data.label;
   const integration = data.integrationData;
@@ -120,15 +113,15 @@ const BaseNode: React.FC<BaseNodeComponentProps> = ({
   const nodeType = React.useMemo(() => {
     // Check if this is a condition node based on having conditionRules
     if (data.conditionRules || config.handles.dynamicOutputs) {
-      console.log("BaseNode: Detected condition node type for", displayName);
-      return "condition";
+      console.log('BaseNode: Detected condition node type for', displayName);
+      return 'condition';
     }
     // Check if this is an AI agent
-    if (integration?.id === "ai-agent" || config.handles.hasAIHandles) {
-      return "ai-agent";
+    if (integration?.id === 'ai-agent' || config.handles.hasAIHandles) {
+      return 'ai-agent';
     }
     // Default to action
-    return "action";
+    return 'action';
   }, [
     data.conditionRules,
     config.handles.dynamicOutputs,
@@ -153,16 +146,16 @@ const BaseNode: React.FC<BaseNodeComponentProps> = ({
     data.edges.forEach((edge) => {
       if (edge.target === id) {
         switch (edge.targetHandle) {
-          case "ai_languageModel":
-          case "plus-ai_languageModel":
+          case 'ai_languageModel':
+          case 'plus-ai_languageModel':
             connections.ai_languageModel = true;
             break;
-          case "ai_memory":
-          case "plus-ai_memory":
+          case 'ai_memory':
+          case 'plus-ai_memory':
             connections.ai_memory = true;
             break;
-          case "ai_tool":
-          case "plus-ai_tool":
+          case 'ai_tool':
+          case 'plus-ai_tool':
             connections.ai_tool = true;
             break;
         }
@@ -187,11 +180,11 @@ const BaseNode: React.FC<BaseNodeComponentProps> = ({
   };
 
   const handlePlay = () => {
-    console.log("Play node:", id);
+    console.log('Play node:', id);
   };
 
   const handleStop = () => {
-    console.log("Stop node:", id);
+    console.log('Stop node:', id);
   };
 
   const handleOpen = () => {
@@ -201,31 +194,31 @@ const BaseNode: React.FC<BaseNodeComponentProps> = ({
   };
 
   const handleTest = () => {
-    console.log("Test node:", id);
+    console.log('Test node:', id);
   };
 
   const handleRename = () => {
-    console.log("Rename node:", id);
+    console.log('Rename node:', id);
   };
 
   const handleDeactivate = () => {
-    console.log("Deactivate node:", id);
+    console.log('Deactivate node:', id);
   };
 
   const handleCopy = () => {
-    console.log("Copy node:", id);
+    console.log('Copy node:', id);
   };
 
   const handleDuplicate = () => {
-    console.log("Duplicate node:", id);
+    console.log('Duplicate node:', id);
   };
 
   const handleSelectAll = () => {
-    console.log("Select All node:");
+    console.log('Select All node:');
   };
 
   const handleClearSelection = () => {
-    console.log("Clear selection");
+    console.log('Clear selection');
   };
 
   const handleDoubleClick = (event: React.MouseEvent) => {
@@ -256,10 +249,7 @@ const BaseNode: React.FC<BaseNodeComponentProps> = ({
   const renderIcon = () => {
     if (data.icon || integration?.icon) {
       const iconSrc = data.icon || integration?.icon;
-      if (
-        typeof iconSrc === "string" &&
-        (iconSrc.startsWith("http") || iconSrc.startsWith("/"))
-      ) {
+      if (typeof iconSrc === 'string' && (iconSrc.startsWith('http') || iconSrc.startsWith('/'))) {
         return (
           <img
             src={iconSrc}
@@ -267,8 +257,8 @@ const BaseNode: React.FC<BaseNodeComponentProps> = ({
             className="w-6 h-6"
             onError={(e) => {
               const target = e.target as HTMLImageElement;
-              target.style.display = "none";
-              target.nextElementSibling?.classList.remove("hidden");
+              target.style.display = 'none';
+              target.nextElementSibling?.classList.remove('hidden');
             }}
           />
         );
@@ -278,14 +268,14 @@ const BaseNode: React.FC<BaseNodeComponentProps> = ({
 
     // Fallback to default icon
     const defaultIcon = config.visual.defaultIcon;
-    if (typeof defaultIcon === "string") {
+    if (typeof defaultIcon === 'string') {
       // Handle special default icon types
       switch (defaultIcon) {
-        case "trigger-default":
+        case 'trigger-default':
           return <div className="w-4 h-4 bg-green-500 rounded"></div>;
-        case "action-default":
+        case 'action-default':
           return <div className="w-4 h-4 bg-blue-500 rounded"></div>;
-        case "condition-default":
+        case 'condition-default':
           return <div className="w-4 h-4 bg-yellow-500 rounded"></div>;
         default:
           return <span className="text-xl">{defaultIcon}</span>;
@@ -297,7 +287,7 @@ const BaseNode: React.FC<BaseNodeComponentProps> = ({
   return (
     <div className="flex flex-col">
       <div className="relative">
-        {" "}
+        {' '}
         {/* This container holds both the node and plus icons */}
         <div className="flex items-center">
           <div
@@ -305,10 +295,10 @@ const BaseNode: React.FC<BaseNodeComponentProps> = ({
               relative flex items-center justify-center bg-gray-800 p-4 shadow-lg transition-all duration-200
               ${config.visual.shape}
               ${config.visual.dimensions.minWidth}
-              ${config.visual.dimensions.maxWidth ? config.visual.dimensions.maxWidth : ""}
-              ${config.visual.dimensions.minHeight ? config.visual.dimensions.minHeight : ""}
-              ${isSelected ? `ring-2 ring-offset-2 ring-offset-gray-900 ${config.visual.selectionRingColor}` : ""}
-              ${isHovered ? `hover:shadow-xl hover:scale-105 ring-2 ring-offset-2 ring-offset-gray-900 ${config.visual.selectionRingColor}` : ""}
+              ${config.visual.dimensions.maxWidth ? config.visual.dimensions.maxWidth : ''}
+              ${config.visual.dimensions.minHeight ? config.visual.dimensions.minHeight : ''}
+              ${isSelected ? `ring-2 ring-offset-2 ring-offset-gray-900 ${config.visual.selectionRingColor}` : ''}
+              ${isHovered ? `hover:shadow-xl hover:scale-105 ring-2 ring-offset-2 ring-offset-gray-900 ${config.visual.selectionRingColor}` : ''}
             `}
             style={config.visual.dimensions.style}
             onMouseEnter={handleMouseEnter}
@@ -328,9 +318,7 @@ const BaseNode: React.FC<BaseNodeComponentProps> = ({
             {id && <ExecutionStateOverlay nodeId={id} />}
 
             {/* Node Icon */}
-            <div className="flex items-center justify-center">
-              {renderIcon()}
-            </div>
+            <div className="flex items-center justify-center">{renderIcon()}</div>
 
             {/* Node Toolbar */}
             <NodeToolbar

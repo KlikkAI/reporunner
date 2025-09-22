@@ -1,11 +1,5 @@
-import {
-  createCipheriv,
-  createDecipheriv,
-  randomBytes,
-  scrypt,
-  createHash,
-} from "crypto";
-import { promisify } from "util";
+import { createCipheriv, createDecipheriv, createHash, randomBytes, scrypt } from 'crypto';
+import { promisify } from 'util';
 
 const scryptAsync = promisify(scrypt);
 
@@ -29,7 +23,7 @@ export interface EncryptionOptions {
 
 export class EncryptionService {
   private readonly defaultOptions: Required<EncryptionOptions> = {
-    algorithm: "aes-256-gcm",
+    algorithm: 'aes-256-gcm',
     saltLength: 32,
     ivLength: 16,
     tagLength: 16,
@@ -59,7 +53,7 @@ export class EncryptionService {
 
     // Encrypt data
     const encryptedBuffers: Buffer[] = [];
-    encryptedBuffers.push(cipher.update(data, "utf8"));
+    encryptedBuffers.push(cipher.update(data, 'utf8'));
     encryptedBuffers.push(cipher.final());
     const encrypted = Buffer.concat(encryptedBuffers);
 
@@ -67,37 +61,30 @@ export class EncryptionService {
     const authTag = (cipher as any).getAuthTag();
 
     return {
-      encrypted: encrypted.toString("base64"),
-      salt: salt.toString("base64"),
-      iv: iv.toString("base64"),
-      authTag: authTag.toString("base64"),
+      encrypted: encrypted.toString('base64'),
+      salt: salt.toString('base64'),
+      iv: iv.toString('base64'),
+      authTag: authTag.toString('base64'),
       algorithm: this.options.algorithm,
-      keyDerivation: "scrypt",
+      keyDerivation: 'scrypt',
     };
   }
 
   /**
    * Decrypt data encrypted with encrypt()
    */
-  async decrypt(
-    encryptedData: EncryptedData,
-    masterKey: string,
-  ): Promise<string> {
+  async decrypt(encryptedData: EncryptedData, masterKey: string): Promise<string> {
     // Parse base64 encoded values
-    const encrypted = Buffer.from(encryptedData.encrypted, "base64");
-    const salt = Buffer.from(encryptedData.salt, "base64");
-    const iv = Buffer.from(encryptedData.iv, "base64");
-    const authTag = Buffer.from(encryptedData.authTag, "base64");
+    const encrypted = Buffer.from(encryptedData.encrypted, 'base64');
+    const salt = Buffer.from(encryptedData.salt, 'base64');
+    const iv = Buffer.from(encryptedData.iv, 'base64');
+    const authTag = Buffer.from(encryptedData.authTag, 'base64');
 
     // Derive the same key
     const key = await this.deriveKey(masterKey, salt);
 
     // Create decipher
-    const decipher = createDecipheriv(
-      encryptedData.algorithm || this.options.algorithm,
-      key,
-      iv,
-    );
+    const decipher = createDecipheriv(encryptedData.algorithm || this.options.algorithm, key, iv);
 
     // Set auth tag for GCM mode
     (decipher as any).setAuthTag(authTag);
@@ -107,7 +94,7 @@ export class EncryptionService {
     decryptedBuffers.push(decipher.update(encrypted));
     decryptedBuffers.push(decipher.final());
 
-    return Buffer.concat(decryptedBuffers).toString("utf8");
+    return Buffer.concat(decryptedBuffers).toString('utf8');
   }
 
   /**
@@ -116,7 +103,7 @@ export class EncryptionService {
   async encryptStream(
     inputStream: NodeJS.ReadableStream,
     outputStream: NodeJS.WritableStream,
-    masterKey: string,
+    masterKey: string
   ): Promise<EncryptedData> {
     const salt = randomBytes(this.options.saltLength);
     const iv = randomBytes(this.options.ivLength);
@@ -128,31 +115,28 @@ export class EncryptionService {
       inputStream
         .pipe(cipher)
         .pipe(outputStream)
-        .on("finish", () => {
+        .on('finish', () => {
           const authTag = (cipher as any).getAuthTag();
           resolve({
-            encrypted: "", // Stream output, no base64 string
-            salt: salt.toString("base64"),
-            iv: iv.toString("base64"),
-            authTag: authTag.toString("base64"),
+            encrypted: '', // Stream output, no base64 string
+            salt: salt.toString('base64'),
+            iv: iv.toString('base64'),
+            authTag: authTag.toString('base64'),
             algorithm: this.options.algorithm,
-            keyDerivation: "scrypt",
+            keyDerivation: 'scrypt',
           });
         })
-        .on("error", reject);
+        .on('error', reject);
     });
   }
 
   /**
    * Generate encryption key for field-level encryption
    */
-  async generateFieldKey(
-    masterKey: string,
-    fieldName: string,
-  ): Promise<string> {
-    const hash = createHash("sha256");
+  async generateFieldKey(masterKey: string, fieldName: string): Promise<string> {
+    const hash = createHash('sha256');
     hash.update(`${masterKey}:${fieldName}`);
-    return hash.digest("hex");
+    return hash.digest('hex');
   }
 
   /**
@@ -161,7 +145,7 @@ export class EncryptionService {
   async encryptFields<T extends Record<string, any>>(
     obj: T,
     fields: (keyof T)[],
-    masterKey: string,
+    masterKey: string
   ): Promise<T> {
     const encrypted = { ...obj };
 
@@ -182,22 +166,16 @@ export class EncryptionService {
   async decryptFields<T extends Record<string, any>>(
     obj: T,
     fields: (keyof T)[],
-    masterKey: string,
+    masterKey: string
   ): Promise<T> {
     const decrypted = { ...obj };
 
     for (const field of fields) {
       if (obj[field] !== undefined && obj[field] !== null) {
         try {
-          const fieldKey = await this.generateFieldKey(
-            masterKey,
-            String(field),
-          );
+          const fieldKey = await this.generateFieldKey(masterKey, String(field));
           const encryptedData = JSON.parse(String(obj[field]));
-          (decrypted as any)[field] = await this.decrypt(
-            encryptedData,
-            fieldKey,
-          );
+          (decrypted as any)[field] = await this.decrypt(encryptedData, fieldKey);
         } catch (error) {
           // Field might not be encrypted, leave as is
           console.warn(`Failed to decrypt field ${String(field)}:`, error);
@@ -214,7 +192,7 @@ export class EncryptionService {
   async rotateEncryption(
     encryptedData: EncryptedData,
     oldMasterKey: string,
-    newMasterKey: string,
+    newMasterKey: string
   ): Promise<EncryptedData> {
     // Decrypt with old key
     const decrypted = await this.decrypt(encryptedData, oldMasterKey);
@@ -227,14 +205,14 @@ export class EncryptionService {
    * Generate cryptographically secure random token
    */
   generateSecureToken(length: number = 32): string {
-    return randomBytes(length).toString("hex");
+    return randomBytes(length).toString('hex');
   }
 
   /**
    * Hash data using SHA-256
    */
   hash(data: string): string {
-    return createHash("sha256").update(data).digest("hex");
+    return createHash('sha256').update(data).digest('hex');
   }
 
   /**
@@ -248,11 +226,7 @@ export class EncryptionService {
    * Derive encryption key from master key using scrypt
    */
   private async deriveKey(masterKey: string, salt: Buffer): Promise<Buffer> {
-    return (await scryptAsync(
-      masterKey,
-      salt,
-      this.options.keyLength,
-    )) as Buffer;
+    return (await scryptAsync(masterKey, salt, this.options.keyLength)) as Buffer;
   }
 
   /**
@@ -261,21 +235,15 @@ export class EncryptionService {
    */
   async encryptDeterministic(data: string, masterKey: string): Promise<string> {
     // Use a deterministic salt based on the master key
-    const salt = createHash("sha256").update(masterKey).digest();
-    const key = await this.deriveKey(
-      masterKey,
-      salt.slice(0, this.options.saltLength),
-    );
+    const salt = createHash('sha256').update(masterKey).digest();
+    const key = await this.deriveKey(masterKey, salt.slice(0, this.options.saltLength));
 
     // Use a deterministic IV (less secure but necessary for deterministic encryption)
-    const iv = createHash("sha256")
-      .update(data)
-      .digest()
-      .slice(0, this.options.ivLength);
+    const iv = createHash('sha256').update(data).digest().slice(0, this.options.ivLength);
 
-    const cipher = createCipheriv("aes-256-cbc", key, iv); // CBC mode for deterministic
-    let encrypted = cipher.update(data, "utf8", "hex");
-    encrypted += cipher.final("hex");
+    const cipher = createCipheriv('aes-256-cbc', key, iv); // CBC mode for deterministic
+    let encrypted = cipher.update(data, 'utf8', 'hex');
+    encrypted += cipher.final('hex');
 
     return encrypted;
   }
@@ -286,7 +254,7 @@ export class EncryptionService {
   async encryptWithExpiry(
     data: string,
     masterKey: string,
-    expiryMs: number,
+    expiryMs: number
   ): Promise<EncryptedData & { expiry: number }> {
     const encrypted = await this.encrypt(data, masterKey);
     const expiry = Date.now() + expiryMs;
@@ -302,7 +270,7 @@ export class EncryptionService {
    */
   async decryptWithExpiry(
     encryptedData: EncryptedData & { expiry: number },
-    masterKey: string,
+    masterKey: string
   ): Promise<string | null> {
     if (Date.now() > encryptedData.expiry) {
       return null; // Data has expired
@@ -325,23 +293,23 @@ export class EncryptionService {
     // Check length
     if (masterKey.length >= 32) score += 25;
     else if (masterKey.length >= 16) score += 15;
-    else suggestions.push("Use at least 32 characters");
+    else suggestions.push('Use at least 32 characters');
 
     // Check for uppercase
     if (/[A-Z]/.test(masterKey)) score += 25;
-    else suggestions.push("Include uppercase letters");
+    else suggestions.push('Include uppercase letters');
 
     // Check for lowercase
     if (/[a-z]/.test(masterKey)) score += 25;
-    else suggestions.push("Include lowercase letters");
+    else suggestions.push('Include lowercase letters');
 
     // Check for numbers
     if (/\d/.test(masterKey)) score += 12.5;
-    else suggestions.push("Include numbers");
+    else suggestions.push('Include numbers');
 
     // Check for special characters
     if (/[!@#$%^&*(),.?":{}|<>]/.test(masterKey)) score += 12.5;
-    else suggestions.push("Include special characters");
+    else suggestions.push('Include special characters');
 
     return {
       isStrong: score >= 75,

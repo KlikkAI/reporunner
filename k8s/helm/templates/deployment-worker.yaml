@@ -1,0 +1,113 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "reporunner.fullname" . }}-worker
+  labels:
+    {{- $component := "worker" }}
+    {{- include "reporunner.componentLabels" (dict "Chart" .Chart "Release" .Release "Values" .Values "component" $component) | nindent 4 }}
+spec:
+  {{- if not .Values.reporunner.worker.autoscaling.enabled }}
+  replicas: {{ .Values.reporunner.worker.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "reporunner.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: worker
+  template:
+    metadata:
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+        checksum/secret: {{ include (print $.Template.BasePath "/secret.yaml") . | sha256sum }}
+      labels:
+        {{- include "reporunner.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: worker
+    spec:
+      {{- with .Values.global.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      securityContext:
+        {{- include "reporunner.podSecurityContext" . | nindent 8 }}
+      initContainers:
+        - name: wait-for-backend
+          image: curlimages/curl:8.4.0
+          command:
+            - sh
+            - -c
+            - |
+              until curl -f http://{{ include "reporunner.fullname" . }}-backend:3001/health; do
+                echo "Waiting for backend..."
+                sleep 5
+              done
+      containers:
+        - name: worker
+          securityContext:
+            {{- include "reporunner.containerSecurityContext" . | nindent 12 }}
+          image: {{ include "reporunner.image" (dict "Chart" .Chart "Values" .Values "repository" .Values.reporunner.worker.image.repository "tag" .Values.reporunner.worker.image.tag) }}
+          imagePullPolicy: {{ .Values.reporunner.image.pullPolicy }}
+          env:
+            - name: NODE_ENV
+              value: {{ .Values.reporunner.env.NODE_ENV }}
+            - name: LOG_LEVEL
+              value: {{ .Values.reporunner.env.LOG_LEVEL }}
+            - name: DATABASE_URL
+              value: {{ include "reporunner.postgresql.connectionString" . }}
+            - name: MONGODB_URI
+              value: {{ include "reporunner.mongodb.connectionString" . }}
+            - name: REDIS_URL
+              value: {{ include "reporunner.redis.connectionString" . }}
+            - name: WORKER_CONCURRENCY
+              value: {{ .Values.reporunner.worker.concurrency | quote }}
+            - name: WORKER_ID
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+          livenessProbe:
+            exec:
+              command:
+                - pgrep
+                - -f
+                - "node"
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            exec:
+              command:
+                - pgrep
+                - -f
+                - "node"
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 3
+          resources:
+            {{- toYaml .Values.reporunner.worker.resources | nindent 12 }}
+          volumeMounts:
+            - name: logs
+              mountPath: /app/logs
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: logs
+          {{- if .Values.persistence.logs.enabled }}
+          persistentVolumeClaim:
+            claimName: {{ include "reporunner.fullname" . }}-logs
+          {{- else }}
+          emptyDir: {}
+          {{- end }}
+        - name: tmp
+          emptyDir: {}
+      {{- with .Values.reporunner.worker.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.reporunner.worker.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.reporunner.worker.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

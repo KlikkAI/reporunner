@@ -3,7 +3,7 @@
  * Based on n8n's versioning system for backward compatibility
  */
 
-import type { INodeType, WorkflowNodeInstance } from "../nodes/types";
+import type { INodeType, WorkflowNodeInstance } from '../nodes/types';
 
 // Define INodeParameters locally to avoid circular imports
 interface INodeParameters {
@@ -25,7 +25,7 @@ export interface INodeVersionInfo {
   releaseDate: string;
   description: string;
   changes: Array<{
-    type: "feature" | "fix" | "breaking" | "deprecation";
+    type: 'feature' | 'fix' | 'breaking' | 'deprecation';
     description: string;
   }>;
   deprecatedProperties?: string[];
@@ -41,7 +41,7 @@ interface IVersionedNodeType {
   migrateParameters(
     parameters: INodeParameters,
     fromVersion: number,
-    toVersion: number,
+    toVersion: number
   ): INodeParameters;
   needsMigration(currentVersion: number, targetVersion?: number): boolean;
 }
@@ -55,7 +55,7 @@ abstract class BaseVersionedNodeType implements IVersionedNodeType {
   constructor(
     nodeVersions: { [version: number]: INodeType },
     versionHistory: INodeVersionInfo[] = [],
-    migrations: INodeVersionMigration[] = [],
+    migrations: INodeVersionMigration[] = []
   ) {
     this.nodeVersions = nodeVersions;
     this.versionHistory = versionHistory;
@@ -67,9 +67,7 @@ abstract class BaseVersionedNodeType implements IVersionedNodeType {
     if (!nodeType) {
       const availableVersions = this.getSupportedVersions();
       const latestVersion = Math.max(...availableVersions);
-      console.warn(
-        `Version ${version} not found, falling back to latest version ${latestVersion}`,
-      );
+      console.warn(`Version ${version} not found, falling back to latest version ${latestVersion}`);
       return this.nodeVersions[latestVersion];
     }
     return nodeType;
@@ -96,7 +94,7 @@ abstract class BaseVersionedNodeType implements IVersionedNodeType {
   migrateParameters(
     parameters: INodeParameters,
     fromVersion: number,
-    toVersion: number,
+    toVersion: number
   ): INodeParameters {
     if (fromVersion === toVersion) {
       return parameters;
@@ -108,7 +106,7 @@ abstract class BaseVersionedNodeType implements IVersionedNodeType {
     // Apply migrations step by step
     while (currentVersion < toVersion) {
       const migration = this.migrations.find(
-        (m) => m.fromVersion === currentVersion && m.toVersion > currentVersion,
+        (m) => m.fromVersion === currentVersion && m.toVersion > currentVersion
       );
 
       if (migration) {
@@ -118,15 +116,13 @@ abstract class BaseVersionedNodeType implements IVersionedNodeType {
         } catch (error) {
           console.error(
             `Migration from ${migration.fromVersion} to ${migration.toVersion} failed:`,
-            error,
+            error
           );
           break;
         }
       } else {
         // No direct migration found, try to find next available version
-        const nextVersion = this.getSupportedVersions().find(
-          (v) => v > currentVersion,
-        );
+        const nextVersion = this.getSupportedVersions().find((v) => v > currentVersion);
         if (nextVersion) {
           currentVersion = nextVersion;
         } else {
@@ -145,16 +141,13 @@ abstract class BaseVersionedNodeType implements IVersionedNodeType {
   }
 
   // Get migration path from one version to another
-  getMigrationPath(
-    fromVersion: number,
-    toVersion: number,
-  ): INodeVersionMigration[] {
+  getMigrationPath(fromVersion: number, toVersion: number): INodeVersionMigration[] {
     const path: INodeVersionMigration[] = [];
     let current = fromVersion;
 
     while (current < toVersion) {
       const migration = this.migrations.find(
-        (m) => m.fromVersion === current && m.toVersion <= toVersion,
+        (m) => m.fromVersion === current && m.toVersion <= toVersion
       );
 
       if (migration) {
@@ -176,47 +169,46 @@ class VersionedTransformNodeType extends BaseVersionedNodeType {
     const versionHistory: INodeVersionInfo[] = [
       {
         version: 1,
-        releaseDate: "2024-01-01",
-        description: "Initial Transform node implementation",
+        releaseDate: '2024-01-01',
+        description: 'Initial Transform node implementation',
         changes: [
-          { type: "feature", description: "Basic field transformation modes" },
+          { type: 'feature', description: 'Basic field transformation modes' },
           {
-            type: "feature",
-            description: "Add, remove, rename field operations",
+            type: 'feature',
+            description: 'Add, remove, rename field operations',
           },
         ],
       },
       {
         version: 2,
-        releaseDate: "2024-12-01",
-        description:
-          "Enhanced Transform node with n8n EditFields compatibility",
+        releaseDate: '2024-12-01',
+        description: 'Enhanced Transform node with n8n EditFields compatibility',
         changes: [
           {
-            type: "feature",
-            description: "Assignment collection with drag & drop",
+            type: 'feature',
+            description: 'Assignment collection with drag & drop',
           },
-          { type: "feature", description: "Type validation and conversion" },
-          { type: "feature", description: "Expression evaluation engine" },
-          { type: "feature", description: "Advanced input field management" },
+          { type: 'feature', description: 'Type validation and conversion' },
+          { type: 'feature', description: 'Expression evaluation engine' },
+          { type: 'feature', description: 'Advanced input field management' },
           {
-            type: "breaking",
-            description: "Changed parameter structure for assignments",
+            type: 'breaking',
+            description: 'Changed parameter structure for assignments',
           },
         ],
-        deprecatedProperties: ["fieldsToAdd", "fieldsToSet", "fieldsToRename"],
-        newProperties: ["assignments", "includeInputFields", "options"],
+        deprecatedProperties: ['fieldsToAdd', 'fieldsToSet', 'fieldsToRename'],
+        newProperties: ['assignments', 'includeInputFields', 'options'],
       },
       {
         version: 3,
-        releaseDate: "2024-12-15",
-        description: "Advanced Transform with resource mapping",
+        releaseDate: '2024-12-15',
+        description: 'Advanced Transform with resource mapping',
         changes: [
-          { type: "feature", description: "Resource mapping capabilities" },
-          { type: "feature", description: "Bulk operations support" },
-          { type: "feature", description: "Advanced conditional properties" },
+          { type: 'feature', description: 'Resource mapping capabilities' },
+          { type: 'feature', description: 'Bulk operations support' },
+          { type: 'feature', description: 'Advanced conditional properties' },
         ],
-        newProperties: ["resourceMapping", "bulkOperations"],
+        newProperties: ['resourceMapping', 'bulkOperations'],
       },
     ];
 
@@ -225,8 +217,7 @@ class VersionedTransformNodeType extends BaseVersionedNodeType {
       {
         fromVersion: 1,
         toVersion: 2,
-        description:
-          "Migrate from basic field operations to assignment collection",
+        description: 'Migrate from basic field operations to assignment collection',
         isBreaking: true,
         migrate: (parameters: INodeParameters): INodeParameters => {
           const migrated: INodeParameters = { ...parameters };
@@ -239,9 +230,9 @@ class VersionedTransformNodeType extends BaseVersionedNodeType {
             parameters.fieldsToAdd.forEach((field: any, index: number) => {
               assignments.push({
                 id: `migrated-add-${index}`,
-                name: field.fieldName || "",
-                type: "stringValue",
-                value: field.fieldValue || "",
+                name: field.fieldName || '',
+                type: 'stringValue',
+                value: field.fieldValue || '',
               });
             });
           }
@@ -251,32 +242,29 @@ class VersionedTransformNodeType extends BaseVersionedNodeType {
             parameters.fieldsToSet.forEach((field: any, index: number) => {
               assignments.push({
                 id: `migrated-set-${index}`,
-                name: field.fieldName || "",
-                type: "stringValue",
-                value: field.fieldValue || "",
+                name: field.fieldName || '',
+                type: 'stringValue',
+                value: field.fieldValue || '',
               });
             });
           }
 
           // Migrate fieldsToRename
-          if (
-            parameters.fieldsToRename &&
-            Array.isArray(parameters.fieldsToRename)
-          ) {
+          if (parameters.fieldsToRename && Array.isArray(parameters.fieldsToRename)) {
             parameters.fieldsToRename.forEach((field: any, index: number) => {
               assignments.push({
                 id: `migrated-rename-${index}`,
-                name: field.newName || "",
-                type: "stringValue",
-                value: `{{ $json.${field.currentName || ""} }}`,
+                name: field.newName || '',
+                type: 'stringValue',
+                value: `{{ $json.${field.currentName || ''} }}`,
               });
             });
           }
 
           // Set new parameters
-          migrated.mode = "manual";
+          migrated.mode = 'manual';
           migrated.assignments = { values: assignments };
-          migrated.includeInputFields = "all";
+          migrated.includeInputFields = 'all';
           migrated.options = {
             dotNotation: true,
             ignoreConversionErrors: false,
@@ -295,14 +283,14 @@ class VersionedTransformNodeType extends BaseVersionedNodeType {
       {
         fromVersion: 2,
         toVersion: 3,
-        description: "Add resource mapping and bulk operations support",
+        description: 'Add resource mapping and bulk operations support',
         migrate: (parameters: INodeParameters): INodeParameters => {
           const migrated: INodeParameters = { ...parameters };
 
           // Add new optional features
           migrated.resourceMapping = {
             enabled: false,
-            mode: "add",
+            mode: 'add',
             fields: [],
           };
 
@@ -332,17 +320,14 @@ class VersionedTransformNodeType extends BaseVersionedNodeType {
 class NodeMigrationService {
   private versionedNodes: Map<string, BaseVersionedNodeType> = new Map();
 
-  registerVersionedNode(
-    nodeType: string,
-    versionedNode: BaseVersionedNodeType,
-  ): void {
+  registerVersionedNode(nodeType: string, versionedNode: BaseVersionedNodeType): void {
     this.versionedNodes.set(nodeType, versionedNode);
   }
 
   // Migrate a single node instance
   migrateNodeInstance(
     instance: WorkflowNodeInstance,
-    targetVersion?: number,
+    targetVersion?: number
   ): WorkflowNodeInstance {
     const versionedNode = this.versionedNodes.get(instance.type);
     if (!versionedNode) {
@@ -361,7 +346,7 @@ class NodeMigrationService {
       const migratedParameters = versionedNode.migrateParameters(
         instance.parameters,
         currentVersion,
-        target,
+        target
       );
 
       return {
@@ -379,7 +364,7 @@ class NodeMigrationService {
   // Migrate entire workflow
   migrateWorkflow(
     nodes: WorkflowNodeInstance[],
-    targetVersions?: Map<string, number>,
+    targetVersions?: Map<string, number>
   ): {
     nodes: WorkflowNodeInstance[];
     migrations: Array<{
@@ -402,8 +387,7 @@ class NodeMigrationService {
 
     const migratedNodes = nodes.map((node) => {
       const currentVersion = node.typeVersion || node.version || 1;
-      const targetVersion =
-        targetVersions?.get(node.type) || this.getLatestVersion(node.type);
+      const targetVersion = targetVersions?.get(node.type) || this.getLatestVersion(node.type);
 
       if (currentVersion < targetVersion) {
         try {
@@ -455,10 +439,7 @@ class NodeMigrationService {
     needsMigration: boolean;
     outdatedNodes: number;
     totalNodes: number;
-    migrationsByType: Map<
-      string,
-      { count: number; versions: Array<{ from: number; to: number }> }
-    >;
+    migrationsByType: Map<string, { count: number; versions: Array<{ from: number; to: number }> }>;
   } {
     const migrationsByType = new Map<
       string,
@@ -496,14 +477,7 @@ class NodeMigrationService {
 export const nodeMigrationService = new NodeMigrationService();
 
 // Register transform node versioning
-nodeMigrationService.registerVersionedNode(
-  "transform",
-  new VersionedTransformNodeType(),
-);
+nodeMigrationService.registerVersionedNode('transform', new VersionedTransformNodeType());
 
 // Export migration utilities
-export {
-  BaseVersionedNodeType,
-  VersionedTransformNodeType,
-  NodeMigrationService,
-};
+export { BaseVersionedNodeType, VersionedTransformNodeType, NodeMigrationService };

@@ -2,7 +2,7 @@
  * Express.js type extensions and augmentations
  */
 
-import { Request } from "express";
+import type { Request } from 'express';
 
 declare global {
   namespace Express {

@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from 'react';
+
 // Old ConditionNode replaced with registry-based system
 // import { CONDITION_NODE_CONFIG } from './NodeTypes/ConditionNode'
 
@@ -8,7 +9,7 @@ interface ConditionRule {
   field: string;
   operator: string;
   value: any;
-  valueType: "fixed" | "expression";
+  valueType: 'fixed' | 'expression';
   outputName: string;
   enabled: boolean;
 }
@@ -32,135 +33,135 @@ interface ConditionBuilderProps {
 
 const OPERATORS = {
   string: [
-    { value: "equals", label: "equals", symbol: "==", example: '"urgent"' },
+    { value: 'equals', label: 'equals', symbol: '==', example: '"urgent"' },
     {
-      value: "not_equals",
-      label: "does not equal",
-      symbol: "!=",
+      value: 'not_equals',
+      label: 'does not equal',
+      symbol: '!=',
       example: '"spam"',
     },
     {
-      value: "contains",
-      label: "contains",
-      symbol: "∋",
+      value: 'contains',
+      label: 'contains',
+      symbol: '∋',
       example: '"important"',
     },
     {
-      value: "not_contains",
-      label: "does not contain",
-      symbol: "∌",
+      value: 'not_contains',
+      label: 'does not contain',
+      symbol: '∌',
       example: '"test"',
     },
     {
-      value: "starts_with",
-      label: "starts with",
-      symbol: "⤷",
+      value: 'starts_with',
+      label: 'starts with',
+      symbol: '⤷',
       example: '"Re:"',
     },
-    { value: "ends_with", label: "ends with", symbol: "↘", example: ".com" },
-    { value: "is_empty", label: "is empty", symbol: "∅", example: "" },
-    { value: "is_not_empty", label: "is not empty", symbol: "≠∅", example: "" },
+    { value: 'ends_with', label: 'ends with', symbol: '↘', example: '.com' },
+    { value: 'is_empty', label: 'is empty', symbol: '∅', example: '' },
+    { value: 'is_not_empty', label: 'is not empty', symbol: '≠∅', example: '' },
     {
-      value: "regex",
-      label: "matches regex",
-      symbol: "regex",
-      example: "regex_pattern",
+      value: 'regex',
+      label: 'matches regex',
+      symbol: 'regex',
+      example: 'regex_pattern',
     },
-    { value: "is_true", label: "is true", symbol: "✓", example: "true" },
-    { value: "is_false", label: "is false", symbol: "✗", example: "false" },
-    { value: "greater", label: "greater than", symbol: ">", example: "50" },
+    { value: 'is_true', label: 'is true', symbol: '✓', example: 'true' },
+    { value: 'is_false', label: 'is false', symbol: '✗', example: 'false' },
+    { value: 'greater', label: 'greater than', symbol: '>', example: '50' },
     {
-      value: "greater_equal",
-      label: "greater than or equal",
-      symbol: ">=",
-      example: "10",
+      value: 'greater_equal',
+      label: 'greater than or equal',
+      symbol: '>=',
+      example: '10',
     },
-    { value: "less", label: "less than", symbol: "<", example: "100" },
+    { value: 'less', label: 'less than', symbol: '<', example: '100' },
     {
-      value: "less_equal",
-      label: "less than or equal",
-      symbol: "<=",
-      example: "500",
+      value: 'less_equal',
+      label: 'less than or equal',
+      symbol: '<=',
+      example: '500',
     },
-    { value: "between", label: "between", symbol: "⟷", example: "10,100" },
-    { value: "is_null", label: "is null", symbol: "∅", example: "null" },
+    { value: 'between', label: 'between', symbol: '⟷', example: '10,100' },
+    { value: 'is_null', label: 'is null', symbol: '∅', example: 'null' },
   ],
   number: [
-    { value: "equals", label: "equals", symbol: "==", example: "100" },
+    { value: 'equals', label: 'equals', symbol: '==', example: '100' },
     {
-      value: "not_equals",
-      label: "does not equal",
-      symbol: "!=",
-      example: "0",
+      value: 'not_equals',
+      label: 'does not equal',
+      symbol: '!=',
+      example: '0',
     },
-    { value: "greater", label: "greater than", symbol: ">", example: "50" },
+    { value: 'greater', label: 'greater than', symbol: '>', example: '50' },
     {
-      value: "greater_equal",
-      label: "greater than or equal",
-      symbol: ">=",
-      example: "10",
+      value: 'greater_equal',
+      label: 'greater than or equal',
+      symbol: '>=',
+      example: '10',
     },
-    { value: "less", label: "less than", symbol: "<", example: "100" },
+    { value: 'less', label: 'less than', symbol: '<', example: '100' },
     {
-      value: "less_equal",
-      label: "less than or equal",
-      symbol: "<=",
-      example: "500",
+      value: 'less_equal',
+      label: 'less than or equal',
+      symbol: '<=',
+      example: '500',
     },
-    { value: "between", label: "between", symbol: "⟷", example: "10,100" },
-    { value: "is_null", label: "is null", symbol: "∅", example: "" },
-    { value: "is_empty", label: "is empty", symbol: "∅", example: "" },
-    { value: "is_not_empty", label: "is not empty", symbol: "≠∅", example: "" },
+    { value: 'between', label: 'between', symbol: '⟷', example: '10,100' },
+    { value: 'is_null', label: 'is null', symbol: '∅', example: '' },
+    { value: 'is_empty', label: 'is empty', symbol: '∅', example: '' },
+    { value: 'is_not_empty', label: 'is not empty', symbol: '≠∅', example: '' },
   ],
   boolean: [
-    { value: "equals", label: "equals", symbol: "==", example: "true" },
+    { value: 'equals', label: 'equals', symbol: '==', example: 'true' },
     {
-      value: "not_equals",
-      label: "does not equal",
-      symbol: "!=",
-      example: "false",
+      value: 'not_equals',
+      label: 'does not equal',
+      symbol: '!=',
+      example: 'false',
     },
-    { value: "is_true", label: "is true", symbol: "✓", example: "true" },
-    { value: "is_false", label: "is false", symbol: "✗", example: "false" },
-    { value: "is_null", label: "is null", symbol: "∅", example: "null" },
+    { value: 'is_true', label: 'is true', symbol: '✓', example: 'true' },
+    { value: 'is_false', label: 'is false', symbol: '✗', example: 'false' },
+    { value: 'is_null', label: 'is null', symbol: '∅', example: 'null' },
   ],
   array: [
-    { value: "contains", label: "contains", symbol: "∋", example: '"item"' },
+    { value: 'contains', label: 'contains', symbol: '∋', example: '"item"' },
     {
-      value: "not_contains",
-      label: "does not contain",
-      symbol: "∌",
+      value: 'not_contains',
+      label: 'does not contain',
+      symbol: '∌',
       example: '"spam"',
     },
     {
-      value: "length_equals",
-      label: "length equals",
-      symbol: "#=",
-      example: "5",
+      value: 'length_equals',
+      label: 'length equals',
+      symbol: '#=',
+      example: '5',
     },
     {
-      value: "length_greater",
-      label: "length greater than",
-      symbol: "#>",
-      example: "0",
+      value: 'length_greater',
+      label: 'length greater than',
+      symbol: '#>',
+      example: '0',
     },
-    { value: "is_empty", label: "is empty", symbol: "[]", example: "" },
+    { value: 'is_empty', label: 'is empty', symbol: '[]', example: '' },
     {
-      value: "is_not_empty",
-      label: "is not empty",
-      symbol: "[…]",
-      example: "",
+      value: 'is_not_empty',
+      label: 'is not empty',
+      symbol: '[…]',
+      example: '',
     },
     {
-      value: "equals",
-      label: "equals",
-      symbol: "==",
+      value: 'equals',
+      label: 'equals',
+      symbol: '==',
       example: '["item1", "item2"]',
     },
     {
-      value: "not_equals",
-      label: "does not equal",
-      symbol: "!=",
+      value: 'not_equals',
+      label: 'does not equal',
+      symbol: '!=',
       example: '["other"]',
     },
   ],
@@ -181,17 +182,15 @@ const ConditionBuilder: React.FC<ConditionBuilderProps> = ({
     if (rules.length === 0) {
       // Generate default rules from the centralized condition node configuration
       const baseTimestamp = Date.now();
-      const defaultRules: ConditionRule[] = [].map(
-        (output: any, index: number) => ({
-          id: `rule-${baseTimestamp + index * 100}`, // Ensure unique IDs with more spacing
-          field: "",
-          operator: "equals",
-          value: "",
-          valueType: "fixed" as const,
-          outputName: output.id, // Use 'true', 'false' from centralized config
-          enabled: true,
-        }),
-      );
+      const defaultRules: ConditionRule[] = [].map((output: any, index: number) => ({
+        id: `rule-${baseTimestamp + index * 100}`, // Ensure unique IDs with more spacing
+        field: '',
+        operator: 'equals',
+        value: '',
+        valueType: 'fixed' as const,
+        outputName: output.id, // Use 'true', 'false' from centralized config
+        enabled: true,
+      }));
 
       onChange(defaultRules);
     }
@@ -200,26 +199,25 @@ const ConditionBuilder: React.FC<ConditionBuilderProps> = ({
   const addRule = () => {
     // Generate a meaningful default name for the new handle
     const handleSuggestions = [
-      "true",
-      "false",
-      "urgent",
-      "important",
-      "spam",
-      "approved",
-      "rejected",
-      "high_priority",
+      'true',
+      'false',
+      'urgent',
+      'important',
+      'spam',
+      'approved',
+      'rejected',
+      'high_priority',
     ];
     const usedNames = rules.map((rule) => rule.outputName);
     const defaultName =
-      handleSuggestions.find((name) => !usedNames.includes(name)) ||
-      `handle_${rules.length + 1}`;
+      handleSuggestions.find((name) => !usedNames.includes(name)) || `handle_${rules.length + 1}`;
 
     const newRule: ConditionRule = {
       id: `rule-${Date.now()}`,
-      field: "",
-      operator: "equals",
-      value: "",
-      valueType: "fixed",
+      field: '',
+      operator: 'equals',
+      value: '',
+      valueType: 'fixed',
       outputName: defaultName,
       enabled: true,
     };
@@ -228,9 +226,7 @@ const ConditionBuilder: React.FC<ConditionBuilderProps> = ({
   };
 
   const updateRule = (ruleId: string, updates: Partial<ConditionRule>) => {
-    const updatedRules = rules.map((rule) =>
-      rule.id === ruleId ? { ...rule, ...updates } : rule,
-    );
+    const updatedRules = rules.map((rule) => (rule.id === ruleId ? { ...rule, ...updates } : rule));
     onChange(updatedRules);
   };
 
@@ -265,11 +261,11 @@ const ConditionBuilder: React.FC<ConditionBuilderProps> = ({
     if (!field) return OPERATORS.string;
 
     switch (field.type) {
-      case "number":
+      case 'number':
         return OPERATORS.number;
-      case "boolean":
+      case 'boolean':
         return OPERATORS.boolean;
-      case "array":
+      case 'array':
         return OPERATORS.array;
       default:
         return OPERATORS.string;
@@ -326,7 +322,7 @@ const ConditionBuilder: React.FC<ConditionBuilderProps> = ({
             <span>📊</span>
             <span>
               {rules.filter((r) => r.enabled).length} active rule
-              {rules.filter((r) => r.enabled).length !== 1 ? "s" : ""}
+              {rules.filter((r) => r.enabled).length !== 1 ? 's' : ''}
               with {rules.filter((r) => r.enabled).length} possible outputs
             </span>
           </div>
@@ -357,16 +353,7 @@ const ConditionRuleCard: React.FC<{
   onDelete: () => void;
   onTest: () => void;
   onMove: (dragIndex: number, dropIndex: number) => void;
-}> = ({
-  rule,
-  index,
-  availableFields,
-  operators,
-  testResult,
-  onUpdate,
-  onDelete,
-  onTest,
-}) => {
+}> = ({ rule, index, availableFields, operators, testResult, onUpdate, onDelete, onTest }) => {
   const [isExpanded, setIsExpanded] = useState(true);
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [localOutputName, setLocalOutputName] = useState(rule.outputName);
@@ -376,51 +363,41 @@ const ConditionRuleCard: React.FC<{
     setLocalOutputName(rule.outputName);
   }, [rule.outputName]);
 
-  const selectedOperator =
-    operators.find((op) => op.value === rule.operator) || operators[0];
+  const selectedOperator = operators.find((op) => op.value === rule.operator) || operators[0];
   const selectedField = availableFields.find((f) => f.path === rule.field);
-  const needsValue = ![
-    "is_empty",
-    "is_not_empty",
-    "is_null",
-    "is_true",
-    "is_false",
-  ].includes(rule.operator);
+  const needsValue = !['is_empty', 'is_not_empty', 'is_null', 'is_true', 'is_false'].includes(
+    rule.operator
+  );
 
   // Ensure operator is valid for current field type - reset if not available
   React.useEffect(() => {
     if (rule.operator && !operators.find((op) => op.value === rule.operator)) {
-      onUpdate({ operator: operators[0]?.value || "equals" });
+      onUpdate({ operator: operators[0]?.value || 'equals' });
     }
   }, [rule.field, rule.operator, operators, onUpdate, rule.id]);
 
   return (
     <div
       className={`bg-gray-800 rounded-lg border-2 transition-all ${
-        rule.enabled ? "border-gray-600" : "border-gray-700 opacity-60"
+        rule.enabled ? 'border-gray-600' : 'border-gray-700 opacity-60'
       }`}
     >
       {/* Header */}
       <div className="p-4 flex items-center justify-between">
         <div className="flex items-center space-x-3">
-          <button
-            className="text-gray-400 hover:text-gray-300 cursor-grab"
-            title="Drag to reorder"
-          >
+          <button className="text-gray-400 hover:text-gray-300 cursor-grab" title="Drag to reorder">
             ⋮⋮
           </button>
           <button
             onClick={() => setIsExpanded(!isExpanded)}
             className="flex items-center space-x-2 text-gray-200 hover:text-white"
           >
-            <span
-              className={`transform transition-transform ${isExpanded ? "rotate-90" : ""}`}
-            >
+            <span className={`transform transition-transform ${isExpanded ? 'rotate-90' : ''}`}>
               ▶
             </span>
             <span className="font-medium">
-              Rule {index + 1}: {rule.field || "Choose field"}{" "}
-              {selectedOperator?.symbol} {rule.value || "?"}
+              Rule {index + 1}: {rule.field || 'Choose field'} {selectedOperator?.symbol}{' '}
+              {rule.value || '?'}
             </span>
           </button>
 
@@ -429,13 +406,11 @@ const ConditionRuleCard: React.FC<{
               <div
                 className={`px-2 py-1 rounded text-xs ${
                   testResult.data?.result?.data?.conditionMet
-                    ? "bg-green-800 text-green-200"
-                    : "bg-red-800 text-red-200"
+                    ? 'bg-green-800 text-green-200'
+                    : 'bg-red-800 text-red-200'
                 }`}
               >
-                {testResult.data?.result?.data?.conditionMet
-                  ? "Success"
-                  : "Failed"}
+                {testResult.data?.result?.data?.conditionMet ? 'Success' : 'Failed'}
               </div>
             </div>
           )}
@@ -480,9 +455,7 @@ const ConditionRuleCard: React.FC<{
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">
                 Field Path
-                <span className="ml-1 text-xs text-blue-400">
-                  (supports dot notation)
-                </span>
+                <span className="ml-1 text-xs text-blue-400">(supports dot notation)</span>
               </label>
               <SmartFieldSelector
                 value={rule.field}
@@ -493,15 +466,13 @@ const ConditionRuleCard: React.FC<{
 
             {/* Operator Selection */}
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
-                Operator
-              </label>
+              <label className="block text-sm font-medium text-gray-300 mb-2">Operator</label>
               <select
                 aria-label="operator selection"
                 value={
                   operators.find((op) => op.value === rule.operator)
                     ? rule.operator
-                    : operators[0]?.value || "equals"
+                    : operators[0]?.value || 'equals'
                 }
                 onChange={(e) => onUpdate({ operator: e.target.value })}
                 className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-gray-100 focus:border-blue-500"
@@ -519,9 +490,7 @@ const ConditionRuleCard: React.FC<{
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">
                   Value
-                  <span className="ml-1 text-xs text-green-400">
-                    (auto-detects type)
-                  </span>
+                  <span className="ml-1 text-xs text-green-400">(auto-detects type)</span>
                 </label>
                 <SmartValueInput
                   value={rule.value}
@@ -529,10 +498,8 @@ const ConditionRuleCard: React.FC<{
                   valueType={rule.valueType}
                   onValueTypeChange={(valueType) => onUpdate({ valueType })}
                   operator={rule.operator}
-                  fieldType={selectedField?.type || "string"}
-                  placeholder={
-                    selectedOperator?.example || "Enter custom value..."
-                  }
+                  fieldType={selectedField?.type || 'string'}
+                  placeholder={selectedOperator?.example || 'Enter custom value...'}
                 />
                 <button
                   onClick={() => setShowAdvanced(!showAdvanced)}
@@ -551,9 +518,7 @@ const ConditionRuleCard: React.FC<{
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">
                 Output Handle
-                <span className="ml-1 text-xs text-green-400">
-                  (select existing or create new)
-                </span>
+                <span className="ml-1 text-xs text-green-400">(select existing or create new)</span>
               </label>
 
               {/* All handle names are now editable by users */}
@@ -574,14 +539,14 @@ const ConditionRuleCard: React.FC<{
                 {/* Quick suggestions for handle names */}
                 <div className="flex flex-wrap gap-1">
                   {[
-                    "true",
-                    "false",
-                    "urgent",
-                    "spam",
-                    "important",
-                    "approved",
-                    "rejected",
-                    "high_priority",
+                    'true',
+                    'false',
+                    'urgent',
+                    'spam',
+                    'important',
+                    'approved',
+                    'rejected',
+                    'high_priority',
                   ].map((suggestion) => (
                     <button
                       key={suggestion}
@@ -599,8 +564,7 @@ const ConditionRuleCard: React.FC<{
               </div>
 
               <div className="mt-1 text-xs text-gray-400">
-                💡 This routes data to the selected output handle when condition
-                matches
+                💡 This routes data to the selected output handle when condition matches
               </div>
             </div>
           </div>
@@ -608,21 +572,15 @@ const ConditionRuleCard: React.FC<{
           {/* Test Results */}
           {testResult && (
             <div className="bg-gray-750 rounded p-3 border border-gray-600">
-              <div className="text-sm font-medium text-gray-200 mb-2">
-                Test Results:
-              </div>
+              <div className="text-sm font-medium text-gray-200 mb-2">Test Results:</div>
               <div className="space-y-2">
                 <div className="flex items-center space-x-2 text-xs">
                   <span
                     className={`w-2 h-2 rounded-full ${
-                      testResult.data?.result?.data?.conditionMet
-                        ? "bg-green-400"
-                        : "bg-red-400"
+                      testResult.data?.result?.data?.conditionMet ? 'bg-green-400' : 'bg-red-400'
                     }`}
                   ></span>
-                  <span className="text-gray-300">
-                    {testResult.data?.result?.data?.message}
-                  </span>
+                  <span className="text-gray-300">{testResult.data?.result?.data?.message}</span>
                 </div>
               </div>
             </div>
@@ -637,66 +595,51 @@ const ConditionRuleCard: React.FC<{
 const SmartValueInput: React.FC<{
   value: any;
   onChange: (value: any) => void;
-  valueType: "fixed" | "expression";
-  onValueTypeChange: (type: "fixed" | "expression") => void;
+  valueType: 'fixed' | 'expression';
+  onValueTypeChange: (type: 'fixed' | 'expression') => void;
   operator: string;
   fieldType?: string;
   placeholder: string;
-}> = ({
-  value,
-  onChange,
-  valueType,
-  onValueTypeChange,
-  operator,
-  fieldType,
-  placeholder,
-}) => {
-  const [inputValue, setInputValue] = useState(String(value || ""));
-  const [detectedType, setDetectedType] = useState<string>("string");
+}> = ({ value, onChange, valueType, onValueTypeChange, operator, fieldType, placeholder }) => {
+  const [inputValue, setInputValue] = useState(String(value || ''));
+  const [detectedType, setDetectedType] = useState<string>('string');
 
   // Update input when external value changes
   useEffect(() => {
-    setInputValue(String(value || ""));
+    setInputValue(String(value || ''));
   }, [value]);
 
   // Detect value type from input
-  const detectValueType = (
-    input: string,
-  ): { type: string; parsedValue: any } => {
+  const detectValueType = (input: string): { type: string; parsedValue: any } => {
     const trimmed = input.trim();
 
     // Empty/null values
-    if (!trimmed) return { type: "string", parsedValue: "" };
+    if (!trimmed) return { type: 'string', parsedValue: '' };
 
     // Boolean values
-    if (trimmed.toLowerCase() === "true")
-      return { type: "boolean", parsedValue: true };
-    if (trimmed.toLowerCase() === "false")
-      return { type: "boolean", parsedValue: false };
-    if (trimmed.toLowerCase() === "null")
-      return { type: "null", parsedValue: null };
+    if (trimmed.toLowerCase() === 'true') return { type: 'boolean', parsedValue: true };
+    if (trimmed.toLowerCase() === 'false') return { type: 'boolean', parsedValue: false };
+    if (trimmed.toLowerCase() === 'null') return { type: 'null', parsedValue: null };
 
     // Number values - using safer regex pattern
-    const integerPattern = new RegExp("^-?\\d+$");
-    const floatPattern = new RegExp("^-?\\d*\\.\\d+$");
-    if (integerPattern.test(trimmed))
-      return { type: "number", parsedValue: parseInt(trimmed) };
-    if (floatPattern.test(trimmed))
-      return { type: "number", parsedValue: parseFloat(trimmed) };
+    const integerPattern = /^-?\d+$/;
+    const floatPattern = /^-?\d*\.\d+$/;
+    if (integerPattern.test(trimmed)) return { type: 'number', parsedValue: parseInt(trimmed) };
+    if (floatPattern.test(trimmed)) return { type: 'number', parsedValue: parseFloat(trimmed) };
 
     // JSON values
     if (
-      (trimmed.startsWith("{") && trimmed.endsWith("}")) ||
-      (trimmed.startsWith("[") && trimmed.endsWith("]"))
+      (trimmed.startsWith('{') && trimmed.endsWith('}')) ||
+      (trimmed.startsWith('[') && trimmed.endsWith(']'))
     ) {
       try {
         const parsed = JSON.parse(trimmed);
         return {
-          type: Array.isArray(parsed) ? "array" : "object",
+          type: Array.isArray(parsed) ? 'array' : 'object',
           parsedValue: parsed,
         };
       } catch {
-        return { type: "string", parsedValue: trimmed };
+        return { type: 'string', parsedValue: trimmed };
       }
     }
 
@@ -705,16 +648,16 @@ const SmartValueInput: React.FC<{
       (trimmed.startsWith('"') && trimmed.endsWith('"')) ||
       (trimmed.startsWith("'") && trimmed.endsWith("'"))
     ) {
-      return { type: "string", parsedValue: trimmed.slice(1, -1) };
+      return { type: 'string', parsedValue: trimmed.slice(1, -1) };
     }
 
     // Regex patterns
-    if (trimmed.startsWith("/") && trimmed.includes("/")) {
-      return { type: "regex", parsedValue: trimmed };
+    if (trimmed.startsWith('/') && trimmed.includes('/')) {
+      return { type: 'regex', parsedValue: trimmed };
     }
 
     // Default to string
-    return { type: "string", parsedValue: trimmed };
+    return { type: 'string', parsedValue: trimmed };
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -727,67 +670,67 @@ const SmartValueInput: React.FC<{
   };
 
   const handleValueTypeToggle = () => {
-    const newType = valueType === "fixed" ? "expression" : "fixed";
+    const newType = valueType === 'fixed' ? 'expression' : 'fixed';
     onValueTypeChange(newType);
   };
 
   const getTypeColor = (type: string): string => {
     switch (type) {
-      case "string":
-        return "text-green-400";
-      case "number":
-        return "text-yellow-400";
-      case "boolean":
-        return "text-purple-400";
-      case "array":
-        return "text-blue-400";
-      case "object":
-        return "text-cyan-400";
-      case "regex":
-        return "text-red-400";
-      case "null":
-        return "text-gray-400";
+      case 'string':
+        return 'text-green-400';
+      case 'number':
+        return 'text-yellow-400';
+      case 'boolean':
+        return 'text-purple-400';
+      case 'array':
+        return 'text-blue-400';
+      case 'object':
+        return 'text-cyan-400';
+      case 'regex':
+        return 'text-red-400';
+      case 'null':
+        return 'text-gray-400';
       default:
-        return "text-gray-400";
+        return 'text-gray-400';
     }
   };
 
   const getPlaceholderExamples = (): string[] => {
     // Boolean-specific operators
-    if (["is_true", "is_false"].includes(operator)) {
+    if (['is_true', 'is_false'].includes(operator)) {
       return []; // These operators don't need values
     }
 
     // For boolean fields, prioritize boolean values
-    if (fieldType === "boolean") {
+    if (fieldType === 'boolean') {
       switch (operator) {
-        case "equals":
-        case "not_equals":
-          return ["true", "false", "null"];
+        case 'equals':
+        case 'not_equals':
+          return ['true', 'false', 'null'];
         default:
-          return ["true", "false"];
+          return ['true', 'false'];
       }
     }
 
     // Default behavior for other types
     switch (operator) {
-      case "equals":
-      case "not_equals":
-        return ['"urgent"', "42", "true", "false"];
-      case "contains":
-      case "not_contains":
+      case 'equals':
+      case 'not_equals':
+        return ['"urgent"', '42', 'true', 'false'];
+      case 'contains':
+      case 'not_contains':
         return ['"important"', '"@company.com"'];
-      case "starts_with":
+      case 'starts_with':
         return ['"Re:"', '"[URGENT]"'];
-      case "ends_with":
+      case 'ends_with':
         return ['".pdf"', '"@gmail.com"'];
-      case "greater":
-      case "less":
-        return ["100", "3.14", "0"];
-      case "regex":
-        return ["regex_urgent_pattern", "regex_date_pattern"];
+      case 'greater':
+      case 'less':
+        return ['100', '3.14', '0'];
+      case 'regex':
+        return ['regex_urgent_pattern', 'regex_date_pattern'];
       default:
-        return ['"custom value"', "42", "true"];
+        return ['"custom value"', '42', 'true'];
     }
   };
 
@@ -814,17 +757,15 @@ const SmartValueInput: React.FC<{
             type="button"
             onClick={handleValueTypeToggle}
             className={`text-xs px-1.5 py-0.5 rounded transition-colors ${
-              valueType === "expression"
-                ? "bg-purple-600 text-purple-100"
-                : "bg-gray-600 text-gray-300 hover:bg-gray-500"
+              valueType === 'expression'
+                ? 'bg-purple-600 text-purple-100'
+                : 'bg-gray-600 text-gray-300 hover:bg-gray-500'
             }`}
             title={
-              valueType === "expression"
-                ? "Using expression mode"
-                : "Switch to expression mode"
+              valueType === 'expression' ? 'Using expression mode' : 'Switch to expression mode'
             }
           >
-            {valueType === "expression" ? "fx" : "fx"}
+            {valueType === 'expression' ? 'fx' : 'fx'}
           </button>
         </div>
       </div>
@@ -849,10 +790,8 @@ const SmartValueInput: React.FC<{
           ))}
         </div>
 
-        {valueType === "expression" && (
-          <div className="text-purple-400">
-            {"Expression mode - use {{ }} for dynamic values"}
-          </div>
+        {valueType === 'expression' && (
+          <div className="text-purple-400">{'Expression mode - use {{ }} for dynamic values'}</div>
         )}
       </div>
 
@@ -861,18 +800,16 @@ const SmartValueInput: React.FC<{
         <div className="flex items-center space-x-2">
           <span>💡</span>
           <span>
-            {detectedType === "string" &&
-              "Text value - wrap in quotes for exact matching"}
-            {detectedType === "number" &&
-              "Numeric value - for mathematical comparisons"}
-            {detectedType === "boolean" &&
-              (fieldType === "boolean"
-                ? "Boolean field - use true/false values"
-                : "Boolean value - true or false")}
-            {detectedType === "array" && "Array value - JSON format"}
-            {detectedType === "object" && "Object value - JSON format"}
-            {detectedType === "regex" && "Regular expression pattern"}
-            {detectedType === "null" && "Null value"}
+            {detectedType === 'string' && 'Text value - wrap in quotes for exact matching'}
+            {detectedType === 'number' && 'Numeric value - for mathematical comparisons'}
+            {detectedType === 'boolean' &&
+              (fieldType === 'boolean'
+                ? 'Boolean field - use true/false values'
+                : 'Boolean value - true or false')}
+            {detectedType === 'array' && 'Array value - JSON format'}
+            {detectedType === 'object' && 'Object value - JSON format'}
+            {detectedType === 'regex' && 'Regular expression pattern'}
+            {detectedType === 'null' && 'Null value'}
           </span>
         </div>
       </div>
@@ -912,7 +849,7 @@ const SmartFieldSelector: React.FC<{
       const filtered = availableFields.filter(
         (field) =>
           field.path.toLowerCase().includes(inputValue.toLowerCase()) ||
-          field.name.toLowerCase().includes(inputValue.toLowerCase()),
+          field.name.toLowerCase().includes(inputValue.toLowerCase())
       );
       setFilteredFields(filtered);
     }
@@ -961,9 +898,7 @@ const SmartFieldSelector: React.FC<{
           onClick={() => setIsDropdownOpen(!isDropdownOpen)}
           className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-300"
         >
-          <span
-            className={`transform transition-transform ${isDropdownOpen ? "rotate-180" : ""}`}
-          >
+          <span className={`transform transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`}>
             ▼
           </span>
         </button>
@@ -973,22 +908,17 @@ const SmartFieldSelector: React.FC<{
       {selectedField && (
         <div className="mt-2 p-2 bg-blue-900/20 border border-blue-600/30 rounded text-xs">
           <div className="flex items-center space-x-2">
-            <span className="text-blue-400 font-medium">
-              {selectedField.type}
-            </span>
+            <span className="text-blue-400 font-medium">{selectedField.type}</span>
             {selectedField.nodeSource && (
-              <span className="text-gray-400">
-                from {selectedField.nodeSource}
-              </span>
+              <span className="text-gray-400">from {selectedField.nodeSource}</span>
             )}
           </div>
           {selectedField.example !== undefined && (
             <div className="mt-1 text-gray-300">
-              Example:{" "}
+              Example:{' '}
               <code className="bg-gray-700 px-1 rounded">
-                {typeof selectedField.example === "string" &&
-                selectedField.example.length > 50
-                  ? selectedField.example.substring(0, 50) + "..."
+                {typeof selectedField.example === 'string' && selectedField.example.length > 50
+                  ? selectedField.example.substring(0, 50) + '...'
                   : JSON.stringify(selectedField.example)}
               </code>
             </div>
@@ -1001,7 +931,7 @@ const SmartFieldSelector: React.FC<{
         <div className="absolute z-50 w-full mt-1 bg-gray-700 border border-gray-600 rounded-lg shadow-lg max-h-60 overflow-y-auto">
           <div className="p-2 text-xs text-gray-400 border-b border-gray-600">
             {filteredFields.length} field
-            {filteredFields.length !== 1 ? "s" : ""} available
+            {filteredFields.length !== 1 ? 's' : ''} available
           </div>
 
           {filteredFields.map((field, index) => (
@@ -1013,28 +943,24 @@ const SmartFieldSelector: React.FC<{
             >
               <div className="flex items-center justify-between">
                 <div className="flex-1 min-w-0">
-                  <div className="text-sm text-gray-100 truncate">
-                    {field.path}
-                  </div>
+                  <div className="text-sm text-gray-100 truncate">{field.path}</div>
                   <div className="text-xs text-gray-400 flex items-center space-x-2">
                     <span
                       className={`px-1.5 py-0.5 rounded text-xs ${
-                        field.type === "json-string"
-                          ? "bg-purple-600 text-purple-200"
+                        field.type === 'json-string'
+                          ? 'bg-purple-600 text-purple-200'
                           : field.isVirtual
-                            ? "bg-blue-600 text-blue-200"
-                            : "bg-gray-600"
+                            ? 'bg-blue-600 text-blue-200'
+                            : 'bg-gray-600'
                       }`}
                     >
-                      {field.type === "json-string"
-                        ? "JSON"
+                      {field.type === 'json-string'
+                        ? 'JSON'
                         : field.isVirtual
-                          ? field.type + " (parsed)"
+                          ? field.type + ' (parsed)'
                           : field.type}
                     </span>
-                    {field.isVirtual && (
-                      <span className="text-blue-400 text-xs">📋 Virtual</span>
-                    )}
+                    {field.isVirtual && <span className="text-blue-400 text-xs">📋 Virtual</span>}
                     {field.nodeSource && <span>from {field.nodeSource}</span>}
                   </div>
                 </div>
@@ -1042,24 +968,19 @@ const SmartFieldSelector: React.FC<{
                   <div className="ml-2 text-xs flex items-center">
                     <span
                       className={
-                        field.parentType === "json-string"
-                          ? "text-purple-400"
-                          : "text-gray-400"
+                        field.parentType === 'json-string' ? 'text-purple-400' : 'text-gray-400'
                       }
                     >
-                      {field.parentType === "json-string" && field.isVirtual
-                        ? "🔗"
-                        : ""}
-                      {"└".repeat(Math.min(field.depth || 0, 3))}
+                      {field.parentType === 'json-string' && field.isVirtual ? '🔗' : ''}
+                      {'└'.repeat(Math.min(field.depth || 0, 3))}
                     </span>
                   </div>
                 )}
               </div>
               {field.example !== undefined && (
                 <div className="mt-1 text-xs text-gray-500 truncate">
-                  {typeof field.example === "string" &&
-                  field.example.length > 60
-                    ? field.example.substring(0, 60) + "..."
+                  {typeof field.example === 'string' && field.example.length > 60
+                    ? field.example.substring(0, 60) + '...'
                     : JSON.stringify(field.example)}
                 </div>
               )}

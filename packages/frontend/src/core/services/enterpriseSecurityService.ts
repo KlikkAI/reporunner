@@ -12,31 +12,31 @@
 
 // Removed unused import: performanceMonitor
 import type {
-  AuditLog,
   AuditAction,
-  AuditResource,
-  AuditDetails,
-  SecurityPolicy,
-  VulnerabilityScan,
-  VulnerabilityFinding,
-  SecretManager,
-  SecurityIncident,
-  SecurityMetrics,
-  ComplianceReport,
-  ComplianceFinding,
-  ComplianceStandard,
   AuditActionType,
+  AuditCategory,
+  AuditDetails,
+  AuditLog,
+  AuditResource,
   AuditResourceType,
   AuditSeverity,
-  AuditCategory,
-  VulnerabilityScanType,
-  SecretType,
-  IncidentSeverity,
-  IncidentStatus,
-  IncidentCategory,
-  IncidentSource,
+  ComplianceFinding,
+  ComplianceReport,
+  ComplianceStandard,
   DataClassification,
-} from "@/core/types/security";
+  IncidentCategory,
+  IncidentSeverity,
+  IncidentSource,
+  IncidentStatus,
+  SecretManager,
+  SecretType,
+  SecurityIncident,
+  SecurityMetrics,
+  SecurityPolicy,
+  VulnerabilityFinding,
+  VulnerabilityScan,
+  VulnerabilityScanType,
+} from '@/core/types/security';
 
 export interface SecurityServiceConfig {
   auditLogRetention: number; // milliseconds
@@ -63,7 +63,7 @@ export class EnterpriseSecurityService {
   constructor(config: Partial<SecurityServiceConfig> = {}) {
     this.config = {
       auditLogRetention: 365 * 24 * 60 * 60 * 1000, // 1 year
-      encryptionAlgorithm: "AES-256-GCM",
+      encryptionAlgorithm: 'AES-256-GCM',
       keyRotationInterval: 90 * 24 * 60 * 60 * 1000, // 90 days
       vulnerabilityScanInterval: 24 * 60 * 60 * 1000, // 24 hours
       complianceCheckInterval: 7 * 24 * 60 * 60 * 1000, // 7 days
@@ -88,7 +88,7 @@ export class EnterpriseSecurityService {
     action: AuditAction,
     resource: AuditResource,
     details: AuditDetails,
-    metadata: Record<string, any> = {},
+    metadata: Record<string, any> = {}
   ): Promise<AuditLog> {
     const auditLog: AuditLog = {
       id: `audit_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
@@ -97,7 +97,7 @@ export class EnterpriseSecurityService {
       userEmail,
       action,
       resource,
-      resourceId: resource.identifier || "",
+      resourceId: resource.identifier || '',
       details,
       ipAddress: this.getClientIP(),
       userAgent: navigator.userAgent,
@@ -105,7 +105,7 @@ export class EnterpriseSecurityService {
       severity: this.calculateSeverity(action, details),
       category: this.categorizeAction(action.type),
       tags: this.generateTags(action, resource, details),
-      hash: "", // Will be calculated
+      hash: '', // Will be calculated
       metadata,
     };
 
@@ -126,7 +126,7 @@ export class EnterpriseSecurityService {
 
     // Emit security event
     this.emitSecurityEvent({
-      type: "audit_log_created",
+      type: 'audit_log_created',
       timestamp: Date.now(),
       data: auditLog,
     });
@@ -145,7 +145,7 @@ export class EnterpriseSecurityService {
       startTime?: number;
       endTime?: number;
       limit?: number;
-    } = {},
+    } = {}
   ): Promise<AuditLog[]> {
     let logs = Array.from(this.auditLogs.values());
 
@@ -187,7 +187,7 @@ export class EnterpriseSecurityService {
    * Security Policy Management
    */
   async createSecurityPolicy(
-    policy: Omit<SecurityPolicy, "id" | "createdAt" | "updatedAt">,
+    policy: Omit<SecurityPolicy, 'id' | 'createdAt' | 'updatedAt'>
   ): Promise<SecurityPolicy> {
     const securityPolicy: SecurityPolicy = {
       id: `policy_${Date.now()}`,
@@ -199,23 +199,23 @@ export class EnterpriseSecurityService {
     this.securityPolicies.set(securityPolicy.id, securityPolicy);
 
     await this.logAuditEvent(
-      "system",
-      "system@reporunner.com",
+      'system',
+      'system@reporunner.com',
       {
-        type: "configuration_changed",
+        type: 'configuration_changed',
         description: `Security policy created: ${securityPolicy.name}`,
-        outcome: "success",
+        outcome: 'success',
       },
       {
-        type: "security_policy",
+        type: 'security_policy',
         name: securityPolicy.name,
         identifier: securityPolicy.id,
       },
       {
-        riskLevel: "medium",
+        riskLevel: 'medium',
         complianceFlags: [],
         after: securityPolicy,
-      },
+      }
     );
 
     console.log(`Security policy created: ${securityPolicy.id}`);
@@ -226,24 +226,20 @@ export class EnterpriseSecurityService {
     userId: string,
     _action: string,
     resource: string,
-    _context: Record<string, any>,
+    _context: Record<string, any>
   ): Promise<{ allowed: boolean; policy?: SecurityPolicy; reason?: string }> {
-    const applicablePolicies = Array.from(
-      this.securityPolicies.values(),
-    ).filter(
-      (policy) =>
-        policy.enabled &&
-        this.isPolicyApplicable(policy, userId, resource, _context),
+    const applicablePolicies = Array.from(this.securityPolicies.values()).filter(
+      (policy) => policy.enabled && this.isPolicyApplicable(policy, userId, resource, _context)
     );
 
     for (const policy of applicablePolicies) {
       for (const rule of policy.rules) {
         if (rule.enabled && this.evaluateRule(_context)) {
-          const allowed = rule.action.type === "allow";
+          const allowed = rule.action.type === 'allow';
           return {
             allowed,
             policy,
-            reason: rule.action.type === "deny" ? rule.description : undefined,
+            reason: rule.action.type === 'deny' ? rule.description : undefined,
           };
         }
       }
@@ -258,13 +254,13 @@ export class EnterpriseSecurityService {
   async startVulnerabilityScan(
     scanType: VulnerabilityScanType,
     target: string,
-    options: Record<string, any> = {},
+    options: Record<string, any> = {}
   ): Promise<VulnerabilityScan> {
     const scan: VulnerabilityScan = {
       id: `scan_${Date.now()}`,
       scanType,
       target,
-      status: "pending",
+      status: 'pending',
       startedAt: Date.now(),
       findings: [],
       summary: {
@@ -286,23 +282,23 @@ export class EnterpriseSecurityService {
     setTimeout(() => this.executeVulnerabilityScan(scan), 1000);
 
     await this.logAuditEvent(
-      "system",
-      "system@reporunner.com",
+      'system',
+      'system@reporunner.com',
       {
-        type: "configuration_changed",
+        type: 'configuration_changed',
         description: `Vulnerability scan started: ${scanType} on ${target}`,
-        outcome: "success",
+        outcome: 'success',
       },
       {
-        type: "integration",
-        name: "Vulnerability Scanner",
+        type: 'integration',
+        name: 'Vulnerability Scanner',
         identifier: scan.id,
       },
       {
-        riskLevel: "low",
+        riskLevel: 'low',
         complianceFlags: [],
         context: { scanType, target, options },
-      },
+      }
     );
 
     console.log(`Vulnerability scan started: ${scan.id}`);
@@ -327,7 +323,7 @@ export class EnterpriseSecurityService {
     secretType: SecretType,
     data: string,
     classification: DataClassification,
-    metadata: Record<string, any> = {},
+    metadata: Record<string, any> = {}
   ): Promise<SecretManager> {
     const encryptedData = await this.encryptData(data);
     const encryptionKey = await this.generateEncryptionKey();
@@ -342,7 +338,7 @@ export class EnterpriseSecurityService {
       rotationPolicy: {
         enabled: true,
         interval: this.config.keyRotationInterval,
-        method: "automatic",
+        method: 'automatic',
         notificationDays: 7,
         autoRotation: true,
       },
@@ -355,12 +351,12 @@ export class EnterpriseSecurityService {
         accessCount: 0,
       },
       metadata: {
-        description: metadata.description || "",
+        description: metadata.description || '',
         tags: metadata.tags || [],
         classification,
-        owner: metadata.owner || "system",
-        environment: metadata.environment || "production",
-        application: metadata.application || "",
+        owner: metadata.owner || 'system',
+        environment: metadata.environment || 'production',
+        application: metadata.application || '',
         compliance: metadata.compliance || [],
       },
       createdAt: Date.now(),
@@ -371,34 +367,30 @@ export class EnterpriseSecurityService {
     this.secrets.set(secret.id, secret);
 
     await this.logAuditEvent(
-      "system",
-      "system@reporunner.com",
+      'system',
+      'system@reporunner.com',
       {
-        type: "credential_created",
+        type: 'credential_created',
         description: `Secret created: ${name}`,
-        outcome: "success",
+        outcome: 'success',
       },
       {
-        type: "credential",
+        type: 'credential',
         name,
         identifier: secret.id,
       },
       {
-        riskLevel: "high",
+        riskLevel: 'high',
         complianceFlags: [],
         context: { secretType, classification },
-      },
+      }
     );
 
     console.log(`Secret created: ${secret.id}`);
     return secret;
   }
 
-  async accessSecret(
-    secretId: string,
-    userId: string,
-    ipAddress: string,
-  ): Promise<string | null> {
+  async accessSecret(secretId: string, userId: string, ipAddress: string): Promise<string | null> {
     const secret = this.secrets.get(secretId);
     if (!secret) {
       return null;
@@ -408,22 +400,22 @@ export class EnterpriseSecurityService {
     if (!this.isAccessAllowed(secret, userId, ipAddress)) {
       await this.logAuditEvent(
         userId,
-        "user@reporunner.com",
+        'user@reporunner.com',
         {
-          type: "credential_created",
+          type: 'credential_created',
           description: `Unauthorized access attempt to secret: ${secret.name}`,
-          outcome: "failure",
+          outcome: 'failure',
         },
         {
-          type: "credential",
+          type: 'credential',
           name: secret.name,
           identifier: secret.id,
         },
         {
-          riskLevel: "high",
+          riskLevel: 'high',
           complianceFlags: [],
           context: { ipAddress },
-        },
+        }
       );
       return null;
     }
@@ -437,22 +429,22 @@ export class EnterpriseSecurityService {
 
     await this.logAuditEvent(
       userId,
-      "user@reporunner.com",
+      'user@reporunner.com',
       {
-        type: "read",
+        type: 'read',
         description: `Secret accessed: ${secret.name}`,
-        outcome: "success",
+        outcome: 'success',
       },
       {
-        type: "credential",
+        type: 'credential',
         name: secret.name,
         identifier: secret.id,
       },
       {
-        riskLevel: "medium",
+        riskLevel: 'medium',
         complianceFlags: [],
         context: { ipAddress },
-      },
+      }
     );
 
     return decryptedData;
@@ -475,22 +467,22 @@ export class EnterpriseSecurityService {
 
     await this.logAuditEvent(
       userId,
-      "user@reporunner.com",
+      'user@reporunner.com',
       {
-        type: "credential_updated",
+        type: 'credential_updated',
         description: `Secret rotated: ${secret.name}`,
-        outcome: "success",
+        outcome: 'success',
       },
       {
-        type: "credential",
+        type: 'credential',
         name: secret.name,
         identifier: secret.id,
       },
       {
-        riskLevel: "medium",
+        riskLevel: 'medium',
         complianceFlags: [],
         context: { keyVersion: secret.keyVersion },
-      },
+      }
     );
 
     console.log(`Secret rotated: ${secret.id}`);
@@ -507,14 +499,14 @@ export class EnterpriseSecurityService {
     category: IncidentCategory,
     source: IncidentSource,
     affectedResources: string[],
-    metadata: Record<string, any> = {},
+    metadata: Record<string, any> = {}
   ): Promise<SecurityIncident> {
     const incident: SecurityIncident = {
       id: `incident_${Date.now()}`,
       title,
       description,
       severity,
-      status: "open",
+      status: 'open',
       category,
       source,
       affectedResources,
@@ -522,9 +514,9 @@ export class EnterpriseSecurityService {
         {
           id: `event_${Date.now()}`,
           timestamp: Date.now(),
-          type: "detected",
-          description: "Security incident detected",
-          actor: "system",
+          type: 'detected',
+          description: 'Security incident detected',
+          actor: 'system',
           details: { source, severity, category },
         },
       ],
@@ -536,28 +528,28 @@ export class EnterpriseSecurityService {
     this.incidents.set(incident.id, incident);
 
     await this.logAuditEvent(
-      "system",
-      "system@reporunner.com",
+      'system',
+      'system@reporunner.com',
       {
-        type: "security_event",
+        type: 'security_event',
         description: `Security incident created: ${title}`,
-        outcome: "success",
+        outcome: 'success',
       },
       {
-        type: "audit_log",
-        name: "Security Incident",
+        type: 'audit_log',
+        name: 'Security Incident',
         identifier: incident.id,
       },
       {
-        riskLevel: severity === "critical" ? "critical" : "high",
+        riskLevel: severity === 'critical' ? 'critical' : 'high',
         complianceFlags: [],
         context: { severity, category, source },
-      },
+      }
     );
 
     // Emit security event
     this.emitSecurityEvent({
-      type: "security_incident_created",
+      type: 'security_incident_created',
       timestamp: Date.now(),
       data: incident,
     });
@@ -570,7 +562,7 @@ export class EnterpriseSecurityService {
     incidentId: string,
     status: IncidentStatus,
     userId: string,
-    notes?: string,
+    notes?: string
   ): Promise<boolean> {
     const incident = this.incidents.get(incidentId);
     if (!incident) {
@@ -581,7 +573,7 @@ export class EnterpriseSecurityService {
     incident.status = status;
     incident.updatedAt = Date.now();
 
-    if (status === "resolved" || status === "closed") {
+    if (status === 'resolved' || status === 'closed') {
       incident.resolvedAt = Date.now();
     }
 
@@ -589,7 +581,7 @@ export class EnterpriseSecurityService {
     incident.timeline.push({
       id: `event_${Date.now()}`,
       timestamp: Date.now(),
-      type: status === "resolved" ? "resolved" : "investigated",
+      type: status === 'resolved' ? 'resolved' : 'investigated',
       description: `Status changed from ${previousStatus} to ${status}`,
       actor: userId,
       details: { previousStatus, newStatus: status, notes },
@@ -597,22 +589,22 @@ export class EnterpriseSecurityService {
 
     await this.logAuditEvent(
       userId,
-      "user@reporunner.com",
+      'user@reporunner.com',
       {
-        type: "security_event",
+        type: 'security_event',
         description: `Incident status updated: ${incident.title}`,
-        outcome: "success",
+        outcome: 'success',
       },
       {
-        type: "audit_log",
-        name: "Security Incident",
+        type: 'audit_log',
+        name: 'Security Incident',
         identifier: incident.id,
       },
       {
-        riskLevel: "medium",
+        riskLevel: 'medium',
         complianceFlags: [],
         context: { previousStatus, newStatus: status },
-      },
+      }
     );
 
     console.log(`Incident status updated: ${incidentId} to ${status}`);
@@ -625,13 +617,13 @@ export class EnterpriseSecurityService {
   async generateComplianceReport(
     standard: ComplianceStandard,
     scope: string[],
-    generatedBy: string,
+    generatedBy: string
   ): Promise<ComplianceReport> {
     const report: ComplianceReport = {
       id: `report_${Date.now()}`,
       standard,
-      version: "1.0",
-      status: "in-progress",
+      version: '1.0',
+      status: 'in-progress',
       scope,
       findings: [],
       score: 0,
@@ -645,28 +637,28 @@ export class EnterpriseSecurityService {
     const findings = await this.performComplianceCheck();
     report.findings = findings;
     report.score = this.calculateComplianceScore(findings);
-    report.status = "completed";
+    report.status = 'completed';
 
     this.complianceReports.set(report.id, report);
 
     await this.logAuditEvent(
       generatedBy,
-      "user@reporunner.com",
+      'user@reporunner.com',
       {
-        type: "data_exported",
+        type: 'data_exported',
         description: `Compliance report generated: ${standard}`,
-        outcome: "success",
+        outcome: 'success',
       },
       {
-        type: "compliance_report",
+        type: 'compliance_report',
         name: `${standard} Compliance Report`,
         identifier: report.id,
       },
       {
-        riskLevel: "low",
+        riskLevel: 'low',
         complianceFlags: [],
         context: { standard, scope, score: report.score },
-      },
+      }
     );
 
     console.log(`Compliance report generated: ${report.id}`);
@@ -678,11 +670,9 @@ export class EnterpriseSecurityService {
    */
   async getSecurityMetrics(): Promise<SecurityMetrics> {
     const incidents = Array.from(this.incidents.values());
-    const openIncidents = incidents.filter((i) => i.status === "open");
-    const resolvedIncidents = incidents.filter((i) => i.status === "resolved");
-    const criticalIncidents = incidents.filter(
-      (i) => i.severity === "critical",
-    );
+    const openIncidents = incidents.filter((i) => i.status === 'open');
+    const resolvedIncidents = incidents.filter((i) => i.status === 'resolved');
+    const criticalIncidents = incidents.filter((i) => i.severity === 'critical');
 
     const averageResolutionTime =
       resolvedIncidents.length > 0
@@ -720,34 +710,30 @@ export class EnterpriseSecurityService {
 
   // Private helper methods
 
-  private async executeVulnerabilityScan(
-    scan: VulnerabilityScan,
-  ): Promise<void> {
-    scan.status = "running";
+  private async executeVulnerabilityScan(scan: VulnerabilityScan): Promise<void> {
+    scan.status = 'running';
 
     // Simulate scan execution
     setTimeout(() => {
-      scan.status = "completed";
+      scan.status = 'completed';
       scan.completedAt = Date.now();
 
       // Simulate findings
       const mockFindings: VulnerabilityFinding[] = [
         {
           id: `finding_${Date.now()}`,
-          severity: "high",
-          title: "SQL Injection Vulnerability",
-          description: "Potential SQL injection vulnerability detected",
-          cve: "CVE-2023-1234",
+          severity: 'high',
+          title: 'SQL Injection Vulnerability',
+          description: 'Potential SQL injection vulnerability detected',
+          cve: 'CVE-2023-1234',
           cvss: 8.5,
-          package: "express",
-          version: "4.17.1",
-          fixedVersion: "4.18.0",
-          path: "/api/users",
-          references: [
-            "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2023-1234",
-          ],
-          remediation: "Update to version 4.18.0 or later",
-          status: "open",
+          package: 'express',
+          version: '4.17.1',
+          fixedVersion: '4.18.0',
+          path: '/api/users',
+          references: ['https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2023-1234'],
+          remediation: 'Update to version 4.18.0 or later',
+          status: 'open',
           createdAt: Date.now(),
           updatedAt: Date.now(),
         },
@@ -756,11 +742,11 @@ export class EnterpriseSecurityService {
       scan.findings = mockFindings;
       scan.summary = {
         total: mockFindings.length,
-        critical: mockFindings.filter((f) => f.severity === "critical").length,
-        high: mockFindings.filter((f) => f.severity === "high").length,
-        medium: mockFindings.filter((f) => f.severity === "medium").length,
-        low: mockFindings.filter((f) => f.severity === "low").length,
-        info: mockFindings.filter((f) => f.severity === "info").length,
+        critical: mockFindings.filter((f) => f.severity === 'critical').length,
+        high: mockFindings.filter((f) => f.severity === 'high').length,
+        medium: mockFindings.filter((f) => f.severity === 'medium').length,
+        low: mockFindings.filter((f) => f.severity === 'low').length,
+        info: mockFindings.filter((f) => f.severity === 'info').length,
         fixed: 0,
         ignored: 0,
       };
@@ -771,100 +757,92 @@ export class EnterpriseSecurityService {
 
   private async checkSecurityViolations(auditLog: AuditLog): Promise<void> {
     // Check for suspicious patterns
-    if (auditLog.action.type === "failed_login") {
+    if (auditLog.action.type === 'failed_login') {
       const attempts = this.failedAttempts.get(auditLog.userId) || 0;
       this.failedAttempts.set(auditLog.userId, attempts + 1);
 
       if (attempts >= this.config.maxFailedAttempts) {
         await this.createSecurityIncident(
-          "Multiple Failed Login Attempts",
+          'Multiple Failed Login Attempts',
           `User ${auditLog.userEmail} has exceeded maximum failed login attempts`,
-          "high",
-          "unauthorized_access",
-          "automated",
+          'high',
+          'unauthorized_access',
+          'automated',
           [auditLog.userId],
-          { userId: auditLog.userId, attempts: attempts + 1 },
+          { userId: auditLog.userId, attempts: attempts + 1 }
         );
       }
     }
 
     // Check for unusual access patterns
-    if (
-      auditLog.action.type === "read" &&
-      auditLog.resource.type === "credential"
-    ) {
+    if (auditLog.action.type === 'read' && auditLog.resource.type === 'credential') {
       // Check if accessing sensitive data outside business hours
       const hour = new Date(auditLog.timestamp).getHours();
       if (hour < 6 || hour > 22) {
         await this.createSecurityIncident(
-          "Unusual Access Time",
+          'Unusual Access Time',
           `Credential accessed outside business hours by ${auditLog.userEmail}`,
-          "medium",
-          "unauthorized_access",
-          "automated",
+          'medium',
+          'unauthorized_access',
+          'automated',
           [auditLog.resource.identifier],
-          { userId: auditLog.userId, hour, resource: auditLog.resource },
+          { userId: auditLog.userId, hour, resource: auditLog.resource }
         );
       }
     }
   }
 
-  private calculateSeverity(
-    action: AuditAction,
-    details: AuditDetails,
-  ): AuditSeverity {
-    if (action.outcome === "failure" && details.riskLevel === "critical") {
-      return "critical";
+  private calculateSeverity(action: AuditAction, details: AuditDetails): AuditSeverity {
+    if (action.outcome === 'failure' && details.riskLevel === 'critical') {
+      return 'critical';
     }
-    if (details.riskLevel === "high" || action.type === "failed_login") {
-      return "error";
+    if (details.riskLevel === 'high' || action.type === 'failed_login') {
+      return 'error';
     }
-    if (details.riskLevel === "medium" || action.type.includes("credential")) {
-      return "warning";
+    if (details.riskLevel === 'medium' || action.type.includes('credential')) {
+      return 'warning';
     }
-    return "info";
+    return 'info';
   }
 
   private categorizeAction(actionType: AuditActionType): AuditCategory {
-    if (actionType.includes("login") || actionType.includes("logout")) {
-      return "authentication";
+    if (actionType.includes('login') || actionType.includes('logout')) {
+      return 'authentication';
     }
-    if (actionType.includes("permission")) {
-      return "authorization";
+    if (actionType.includes('permission')) {
+      return 'authorization';
     }
-    if (actionType.includes("credential") || actionType.includes("api_key")) {
-      return "security_event";
+    if (actionType.includes('credential') || actionType.includes('api_key')) {
+      return 'security_event';
     }
-    if (actionType.includes("workflow")) {
-      return "data_access";
+    if (actionType.includes('workflow')) {
+      return 'data_access';
     }
-    if (actionType.includes("configuration") || actionType.includes("policy")) {
-      return "system_configuration";
+    if (actionType.includes('configuration') || actionType.includes('policy')) {
+      return 'system_configuration';
     }
-    return "administrative";
+    return 'administrative';
   }
 
   private generateTags(
     action: AuditAction,
     resource: AuditResource,
-    details: AuditDetails,
+    details: AuditDetails
   ): string[] {
     const tags: string[] = [action.type, resource.type, details.riskLevel];
 
     if (details.complianceFlags.length > 0) {
-      tags.push("compliance");
+      tags.push('compliance');
     }
 
-    if (action.outcome === "failure") {
-      tags.push("failure");
+    if (action.outcome === 'failure') {
+      tags.push('failure');
     }
 
     return tags;
   }
 
-  private calculateAuditHash(
-    log: Omit<AuditLog, "hash" | "previousHash">,
-  ): string {
+  private calculateAuditHash(log: Omit<AuditLog, 'hash' | 'previousHash'>): string {
     const data = JSON.stringify({
       id: log.id,
       timestamp: log.timestamp,
@@ -884,19 +862,19 @@ export class EnterpriseSecurityService {
 
   private getClientIP(): string {
     // In production, get actual client IP
-    return "127.0.0.1";
+    return '127.0.0.1';
   }
 
   private getCurrentSessionId(): string {
     // In production, get actual session ID
-    return "session_123";
+    return 'session_123';
   }
 
   private isPolicyApplicable(
     policy: SecurityPolicy,
     userId: string,
     resource: string,
-    _context: Record<string, any>,
+    _context: Record<string, any>
   ): boolean {
     // Check if policy applies to user
     if (policy.scope.users.length > 0 && !policy.scope.users.includes(userId)) {
@@ -904,10 +882,7 @@ export class EnterpriseSecurityService {
     }
 
     // Check if policy applies to resource
-    if (
-      policy.scope.resources.length > 0 &&
-      !policy.scope.resources.includes(resource)
-    ) {
+    if (policy.scope.resources.length > 0 && !policy.scope.resources.includes(resource)) {
       return false;
     }
 
@@ -934,11 +909,7 @@ export class EnterpriseSecurityService {
     return Math.random().toString(36).substr(2, 32);
   }
 
-  private isAccessAllowed(
-    secret: SecretManager,
-    userId: string,
-    ipAddress: string,
-  ): boolean {
+  private isAccessAllowed(secret: SecretManager, userId: string, ipAddress: string): boolean {
     const policy = secret.accessPolicy;
 
     // Check user access
@@ -947,10 +918,7 @@ export class EnterpriseSecurityService {
     }
 
     // Check IP whitelist
-    if (
-      policy.ipWhitelist.length > 0 &&
-      !policy.ipWhitelist.includes(ipAddress)
-    ) {
+    if (policy.ipWhitelist.length > 0 && !policy.ipWhitelist.includes(ipAddress)) {
       return false;
     }
 
@@ -967,15 +935,12 @@ export class EnterpriseSecurityService {
     return [
       {
         id: `finding_${Date.now()}`,
-        requirement: "Data Encryption",
-        description: "All sensitive data must be encrypted",
-        status: "compliant",
-        evidence: [
-          "AES-256 encryption enabled",
-          "Key rotation policy implemented",
-        ],
-        riskLevel: "low",
-        category: "data_protection",
+        requirement: 'Data Encryption',
+        description: 'All sensitive data must be encrypted',
+        status: 'compliant',
+        evidence: ['AES-256 encryption enabled', 'Key rotation policy implemented'],
+        riskLevel: 'low',
+        category: 'data_protection',
       },
     ];
   }
@@ -983,9 +948,7 @@ export class EnterpriseSecurityService {
   private calculateComplianceScore(findings: ComplianceFinding[]): number {
     if (findings.length === 0) return 100;
 
-    const compliantCount = findings.filter(
-      (f) => f.status === "compliant",
-    ).length;
+    const compliantCount = findings.filter((f) => f.status === 'compliant').length;
     return Math.round((compliantCount / findings.length) * 100);
   }
 
@@ -1003,45 +966,42 @@ export class EnterpriseSecurityService {
 
   private initializeDefaultPolicies(): void {
     // Create default security policies
-    const defaultPolicies: Omit<
-      SecurityPolicy,
-      "id" | "createdAt" | "updatedAt"
-    >[] = [
+    const defaultPolicies: Omit<SecurityPolicy, 'id' | 'createdAt' | 'updatedAt'>[] = [
       {
-        name: "Data Access Policy",
-        description: "Controls access to sensitive data",
-        type: "data_protection",
+        name: 'Data Access Policy',
+        description: 'Controls access to sensitive data',
+        type: 'data_protection',
         rules: [
           {
-            id: "rule_1",
-            name: "Encrypt Sensitive Data",
-            description: "All sensitive data must be encrypted",
+            id: 'rule_1',
+            name: 'Encrypt Sensitive Data',
+            description: 'All sensitive data must be encrypted',
             condition: {
-              type: "data_classification",
-              parameters: { classification: "confidential" },
-              operator: "and",
+              type: 'data_classification',
+              parameters: { classification: 'confidential' },
+              operator: 'and',
             },
             action: {
-              type: "encrypt",
-              parameters: { algorithm: "AES-256" },
+              type: 'encrypt',
+              parameters: { algorithm: 'AES-256' },
             },
             priority: 1,
             enabled: true,
           },
         ],
         enforcement: {
-          mode: "enforce",
-          failureAction: "block",
+          mode: 'enforce',
+          failureAction: 'block',
           retryAttempts: 3,
           timeout: 30000,
         },
         scope: {
-          resources: ["workflow", "credential", "user"],
+          resources: ['workflow', 'credential', 'user'],
           users: [],
-          environments: ["production"],
+          environments: ['production'],
         },
         enabled: true,
-        version: "1.0.0",
+        version: '1.0.0',
       },
     ];
 
@@ -1059,19 +1019,19 @@ export class EnterpriseSecurityService {
 
   private async performPeriodicSecurityChecks(): Promise<void> {
     // Perform periodic security checks
-    console.log("Performing periodic security checks...");
+    console.log('Performing periodic security checks...');
 
     // Check for expired secrets
     for (const secret of this.secrets.values()) {
       if (secret.expiresAt && secret.expiresAt < Date.now()) {
         await this.createSecurityIncident(
-          "Expired Secret",
+          'Expired Secret',
           `Secret ${secret.name} has expired`,
-          "medium",
-          "system_compromise",
-          "automated",
+          'medium',
+          'system_compromise',
+          'automated',
           [secret.id],
-          { secretId: secret.id, name: secret.name },
+          { secretId: secret.id, name: secret.name }
         );
       }
     }
@@ -1082,7 +1042,7 @@ export class EnterpriseSecurityService {
       try {
         listener(event);
       } catch (error) {
-        console.error("Error in security event listener:", error);
+        console.error('Error in security event listener:', error);
       }
     });
   }
@@ -1090,10 +1050,10 @@ export class EnterpriseSecurityService {
 
 export interface SecurityEvent {
   type:
-    | "audit_log_created"
-    | "security_incident_created"
-    | "vulnerability_found"
-    | "policy_violation";
+    | 'audit_log_created'
+    | 'security_incident_created'
+    | 'vulnerability_found'
+    | 'policy_violation';
   timestamp: number;
   data: any;
 }

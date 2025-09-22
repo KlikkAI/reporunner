@@ -6,8 +6,8 @@
  * type validation for optimal workflow building.
  */
 
-import type { XYPosition, Node, Edge } from "reactflow";
-import { nodeRegistry } from "@/core/nodes";
+import type { Edge, Node, XYPosition } from 'reactflow';
+import { nodeRegistry } from '@/core/nodes';
 
 export interface ConnectionSuggestion {
   sourceNodeId: string;
@@ -27,7 +27,7 @@ export interface ConnectionScore {
 
 export interface AutoConnectOptions {
   maxDistance?: number;
-  preferredDirection?: "horizontal" | "vertical";
+  preferredDirection?: 'horizontal' | 'vertical';
   considerContainers?: boolean;
   validateNodeTypes?: boolean;
 }
@@ -35,7 +35,7 @@ export interface AutoConnectOptions {
 export class IntelligentAutoConnectService {
   private readonly defaultOptions: Required<AutoConnectOptions> = {
     maxDistance: 300,
-    preferredDirection: "horizontal",
+    preferredDirection: 'horizontal',
     considerContainers: true,
     validateNodeTypes: true,
   };
@@ -47,17 +47,12 @@ export class IntelligentAutoConnectService {
     dropPosition: XYPosition,
     existingNodes: Node[],
     existingEdges: Edge[],
-    options: AutoConnectOptions = {},
+    options: AutoConnectOptions = {}
   ): ConnectionSuggestion | null {
     const opts = { ...this.defaultOptions, ...options };
 
     // Get nodes that could be connected to
-    const candidateNodes = this.getCandidateNodes(
-      dropPosition,
-      existingNodes,
-      existingEdges,
-      opts,
-    );
+    const candidateNodes = this.getCandidateNodes(dropPosition, existingNodes, existingEdges, opts);
 
     if (candidateNodes.length === 0) {
       return null;
@@ -65,15 +60,11 @@ export class IntelligentAutoConnectService {
 
     // Score each potential connection
     const scoredConnections = candidateNodes
-      .map((node) =>
-        this.scoreConnection(dropPosition, node, existingEdges, opts),
-      )
+      .map((node) => this.scoreConnection(dropPosition, node, existingEdges, opts))
       .filter((score) => score.isValid)
       .sort((a, b) => b.score - a.score);
 
-    return scoredConnections.length > 0
-      ? scoredConnections[0].suggestion
-      : null;
+    return scoredConnections.length > 0 ? scoredConnections[0].suggestion : null;
   }
 
   /**
@@ -84,20 +75,18 @@ export class IntelligentAutoConnectService {
 
     // Find nodes with no outgoing connections
     const nodesWithOutgoing = new Set(edges.map((edge) => edge.source));
-    const candidateNodes = nodes.filter(
-      (node) => !nodesWithOutgoing.has(node.id),
-    );
+    const candidateNodes = nodes.filter((node) => !nodesWithOutgoing.has(node.id));
 
     if (candidateNodes.length === 0) {
       // If all nodes have outgoing connections, use the rightmost positioned node
       return nodes.reduce((rightmost, current) =>
-        current.position.x > rightmost.position.x ? current : rightmost,
+        current.position.x > rightmost.position.x ? current : rightmost
       );
     }
 
     // Among candidates with no outgoing connections, pick the rightmost
     return candidateNodes.reduce((rightmost, current) =>
-      current.position.x > rightmost.position.x ? current : rightmost,
+      current.position.x > rightmost.position.x ? current : rightmost
     );
   }
 
@@ -107,7 +96,7 @@ export class IntelligentAutoConnectService {
   findOptimalDropPosition(
     currentPosition: XYPosition,
     existingNodes: Node[],
-    targetConnection?: Node,
+    targetConnection?: Node
   ): XYPosition {
     if (!targetConnection || existingNodes.length === 0) {
       return currentPosition;
@@ -120,8 +109,7 @@ export class IntelligentAutoConnectService {
     // Check for conflicts with existing nodes
     const hasConflict = existingNodes.some((node) => {
       const distance = Math.sqrt(
-        Math.pow(node.position.x - optimalX, 2) +
-          Math.pow(node.position.y - optimalY, 2),
+        (node.position.x - optimalX) ** 2 + (node.position.y - optimalY) ** 2
       );
       return distance < 100; // Minimum spacing
     });
@@ -131,10 +119,7 @@ export class IntelligentAutoConnectService {
     }
 
     // Find alternative position if there's a conflict
-    return this.findAlternativePosition(
-      { x: optimalX, y: optimalY },
-      existingNodes,
-    );
+    return this.findAlternativePosition({ x: optimalX, y: optimalY }, existingNodes);
   }
 
   /**
@@ -144,13 +129,11 @@ export class IntelligentAutoConnectService {
     sourceNodeType: string,
     targetNodeType: string,
     sourceHandle?: string,
-    targetHandle?: string,
+    targetHandle?: string
   ): boolean {
     try {
-      const sourceDefinition =
-        nodeRegistry.getNodeTypeDescription(sourceNodeType);
-      const targetDefinition =
-        nodeRegistry.getNodeTypeDescription(targetNodeType);
+      const sourceDefinition = nodeRegistry.getNodeTypeDescription(sourceNodeType);
+      const targetDefinition = nodeRegistry.getNodeTypeDescription(targetNodeType);
 
       if (!sourceDefinition || !targetDefinition) {
         return false;
@@ -165,14 +148,14 @@ export class IntelligentAutoConnectService {
       }
 
       // Handle AI-specific connections
-      if (sourceHandle?.startsWith("ai_") || targetHandle?.startsWith("ai_")) {
+      if (sourceHandle?.startsWith('ai_') || targetHandle?.startsWith('ai_')) {
         return this.validateAIConnection(sourceHandle, targetHandle);
       }
 
       // For regular connections, allow if both nodes support standard connection types
       return true;
     } catch (error) {
-      console.warn("Connection validation failed:", error);
+      console.warn('Connection validation failed:', error);
       return true; // Allow connection on validation error
     }
   }
@@ -181,7 +164,7 @@ export class IntelligentAutoConnectService {
     dropPosition: XYPosition,
     existingNodes: Node[],
     _existingEdges: Edge[],
-    options: Required<AutoConnectOptions>,
+    options: Required<AutoConnectOptions>
   ): Node[] {
     return existingNodes.filter((node) => {
       // Calculate distance
@@ -205,7 +188,7 @@ export class IntelligentAutoConnectService {
     dropPosition: XYPosition,
     targetNode: Node,
     existingEdges: Edge[],
-    options: Required<AutoConnectOptions>,
+    options: Required<AutoConnectOptions>
   ): ConnectionScore {
     const distance = this.calculateDistance(dropPosition, targetNode.position);
     const maxDistance = options.maxDistance;
@@ -217,14 +200,11 @@ export class IntelligentAutoConnectService {
     const directionScore = this.calculateDirectionScore(
       dropPosition,
       targetNode.position,
-      options.preferredDirection,
+      options.preferredDirection
     );
 
     // Connection availability score (prefer nodes without outgoing connections)
-    const availabilityScore = this.calculateAvailabilityScore(
-      targetNode.id,
-      existingEdges,
-    );
+    const availabilityScore = this.calculateAvailabilityScore(targetNode.id, existingEdges);
 
     // Type compatibility score
     let typeScore = 1.0;
@@ -235,14 +215,11 @@ export class IntelligentAutoConnectService {
 
     // Calculate final score (weighted average)
     const finalScore =
-      distanceScore * 0.4 +
-      directionScore * 0.2 +
-      availabilityScore * 0.3 +
-      typeScore * 0.1;
+      distanceScore * 0.4 + directionScore * 0.2 + availabilityScore * 0.3 + typeScore * 0.1;
 
     const suggestion: ConnectionSuggestion = {
       sourceNodeId: targetNode.id,
-      targetNodeId: "", // Will be filled by caller
+      targetNodeId: '', // Will be filled by caller
       score: finalScore,
       reason: this.generateConnectionReason(finalScore, distance),
       distance,
@@ -256,20 +233,18 @@ export class IntelligentAutoConnectService {
   }
 
   private calculateDistance(pos1: XYPosition, pos2: XYPosition): number {
-    return Math.sqrt(
-      Math.pow(pos1.x - pos2.x, 2) + Math.pow(pos1.y - pos2.y, 2),
-    );
+    return Math.sqrt((pos1.x - pos2.x) ** 2 + (pos1.y - pos2.y) ** 2);
   }
 
   private calculateDirectionScore(
     dropPos: XYPosition,
     nodePos: XYPosition,
-    preferredDirection: "horizontal" | "vertical",
+    preferredDirection: 'horizontal' | 'vertical'
   ): number {
     const deltaX = Math.abs(dropPos.x - nodePos.x);
     const deltaY = Math.abs(dropPos.y - nodePos.y);
 
-    if (preferredDirection === "horizontal") {
+    if (preferredDirection === 'horizontal') {
       // Prefer left-to-right flow
       if (dropPos.x > nodePos.x) {
         return Math.max(0, 1 - deltaY / (deltaX + deltaY + 1));
@@ -284,13 +259,8 @@ export class IntelligentAutoConnectService {
     }
   }
 
-  private calculateAvailabilityScore(
-    nodeId: string,
-    existingEdges: Edge[],
-  ): number {
-    const outgoingConnections = existingEdges.filter(
-      (edge) => edge.source === nodeId,
-    );
+  private calculateAvailabilityScore(nodeId: string, existingEdges: Edge[]): number {
+    const outgoingConnections = existingEdges.filter((edge) => edge.source === nodeId);
 
     // Prefer nodes with no outgoing connections
     if (outgoingConnections.length === 0) {
@@ -313,16 +283,8 @@ export class IntelligentAutoConnectService {
     }
   }
 
-  private validateAIConnection(
-    sourceHandle?: string,
-    targetHandle?: string,
-  ): boolean {
-    const aiConnectionTypes = [
-      "ai_languageModel",
-      "ai_embedding",
-      "ai_vectorStore",
-      "ai_tool",
-    ];
+  private validateAIConnection(sourceHandle?: string, targetHandle?: string): boolean {
+    const aiConnectionTypes = ['ai_languageModel', 'ai_embedding', 'ai_vectorStore', 'ai_tool'];
 
     if (!sourceHandle || !targetHandle) {
       return false;
@@ -330,14 +292,11 @@ export class IntelligentAutoConnectService {
 
     // AI connections must match types
     return aiConnectionTypes.some(
-      (type) => sourceHandle.includes(type) && targetHandle.includes(type),
+      (type) => sourceHandle.includes(type) && targetHandle.includes(type)
     );
   }
 
-  private findAlternativePosition(
-    idealPosition: XYPosition,
-    existingNodes: Node[],
-  ): XYPosition {
+  private findAlternativePosition(idealPosition: XYPosition, existingNodes: Node[]): XYPosition {
     const spacing = 150;
     const maxAttempts = 8;
 

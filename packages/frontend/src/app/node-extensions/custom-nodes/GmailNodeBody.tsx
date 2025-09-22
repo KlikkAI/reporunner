@@ -1,8 +1,9 @@
-import React, { useState, useRef } from "react";
-import { Handle, Position } from "reactflow";
-import type { CustomNodeBodyProps } from "../nodeUiRegistry";
-import NodeToolbar from "../../components/WorkflowEditor/NodeTypes/BaseNode/NodeToolbar";
-import { useSmartMenuPosition } from "../../hooks/useSmartMenuPosition";
+import type React from 'react';
+import { useRef, useState } from 'react';
+import { Handle, Position } from 'reactflow';
+import NodeToolbar from '../../components/WorkflowEditor/NodeTypes/BaseNode/NodeToolbar';
+import { useSmartMenuPosition } from '../../hooks/useSmartMenuPosition';
+import type { CustomNodeBodyProps } from '../nodeUiRegistry';
 
 interface GmailNodeBodyProps extends CustomNodeBodyProps {
   nodeData: any;
@@ -27,9 +28,8 @@ const GmailNodeBody: React.FC<GmailNodeBodyProps> = ({
   onDelete,
   onOpenProperties,
 }) => {
-  const displayName = nodeData.name || nodeData.label || "Gmail";
-  const icon =
-    "https://upload.wikimedia.org/wikipedia/commons/7/7e/Gmail_icon_%282020%29.svg";
+  const displayName = nodeData.name || nodeData.label || 'Gmail';
+  const icon = 'https://upload.wikimedia.org/wikipedia/commons/7/7e/Gmail_icon_%282020%29.svg';
 
   // Menu state for NodeToolbar
   const [showLocalMenu, setShowLocalMenu] = useState(false);
@@ -59,8 +59,8 @@ const GmailNodeBody: React.FC<GmailNodeBodyProps> = ({
             className={`
               relative flex items-center justify-center bg-gray-800 p-4 shadow-lg transition-all duration-200
               rounded-md min-w-[80px] max-w-[150px] min-h-[60px]
-              ${selected ? "ring-2 ring-offset-2 ring-offset-gray-900 ring-red-400" : ""}
-              ${isHovered ? "hover:shadow-xl hover:scale-105 ring-2 ring-offset-2 ring-offset-gray-900 ring-red-400" : ""}
+              ${selected ? 'ring-2 ring-offset-2 ring-offset-gray-900 ring-red-400' : ''}
+              ${isHovered ? 'hover:shadow-xl hover:scale-105 ring-2 ring-offset-2 ring-offset-gray-900 ring-red-400' : ''}
             `}
             onMouseEnter={onMouseEnter}
             onMouseLeave={onMouseLeave}
@@ -72,7 +72,7 @@ const GmailNodeBody: React.FC<GmailNodeBodyProps> = ({
               position={Position.Left}
               id="input_0"
               style={{
-                background: "#555",
+                background: '#555',
                 width: 10,
                 height: 10,
                 left: -5,
@@ -85,7 +85,7 @@ const GmailNodeBody: React.FC<GmailNodeBodyProps> = ({
               position={Position.Right}
               id="output_0"
               style={{
-                background: "#555",
+                background: '#555',
                 width: 10,
                 height: 10,
                 right: -5,
@@ -100,10 +100,10 @@ const GmailNodeBody: React.FC<GmailNodeBodyProps> = ({
                 className="w-6 h-6"
                 onError={(e) => {
                   const target = e.target as HTMLImageElement;
-                  target.style.display = "none";
+                  target.style.display = 'none';
                   const fallback = target.nextElementSibling;
                   if (fallback) {
-                    fallback.classList.remove("hidden");
+                    fallback.classList.remove('hidden');
                   }
                 }}
               />
@@ -113,8 +113,8 @@ const GmailNodeBody: React.FC<GmailNodeBodyProps> = ({
             {/* Shared NodeToolbar */}
             <NodeToolbar
               visible={isHovered}
-              onPlay={() => console.log("Play Gmail:", nodeData.id)}
-              onStop={() => console.log("Stop Gmail:", nodeData.id)}
+              onPlay={() => console.log('Play Gmail:', nodeData.id)}
+              onStop={() => console.log('Stop Gmail:', nodeData.id)}
               onDelete={(e) => {
                 e.stopPropagation();
                 onDelete?.();
@@ -144,7 +144,7 @@ const GmailNodeBody: React.FC<GmailNodeBodyProps> = ({
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
-                    console.log("Test Gmail:", nodeData.id);
+                    console.log('Test Gmail:', nodeData.id);
                     setShowLocalMenu(false);
                   }}
                   className="w-full px-3 py-1.5 text-left text-sm text-gray-200 hover:bg-gray-700 flex items-center gap-2"
@@ -154,7 +154,7 @@ const GmailNodeBody: React.FC<GmailNodeBodyProps> = ({
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
-                    console.log("Copy Gmail:", nodeData.id);
+                    console.log('Copy Gmail:', nodeData.id);
                     setShowLocalMenu(false);
                   }}
                   className="w-full px-3 py-1.5 text-left text-sm text-gray-200 hover:bg-gray-700 flex items-center gap-2"
@@ -164,7 +164,7 @@ const GmailNodeBody: React.FC<GmailNodeBodyProps> = ({
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
-                    console.log("Duplicate Gmail:", nodeData.id);
+                    console.log('Duplicate Gmail:', nodeData.id);
                     setShowLocalMenu(false);
                   }}
                   className="w-full px-3 py-1.5 text-left text-sm text-gray-200 hover:bg-gray-700 flex items-center gap-2"

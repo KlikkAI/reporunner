@@ -3,54 +3,54 @@
  * Reusable badge component for displaying status, counts, and indicators on nodes
  */
 
-import React from 'react'
-import type { NodeBadge, BadgePosition, NodeTheme } from '../types'
-import { useNodeTheme } from '../themes'
+import type React from 'react';
+import { useNodeTheme } from '../themes';
+import type { BadgePosition, NodeBadge, NodeTheme } from '../types';
 
 interface NodeBadgeProps {
-  badge: NodeBadge
-  theme?: NodeTheme
-  visible?: boolean
-  onClick?: (badgeId: string) => void
+  badge: NodeBadge;
+  theme?: NodeTheme;
+  visible?: boolean;
+  onClick?: (badgeId: string) => void;
 }
 
 const NodeBadgeComponent: React.FC<NodeBadgeProps> = ({
   badge,
   theme: propTheme,
   visible = true,
-  onClick
+  onClick,
 }) => {
-  const { theme: contextTheme } = useNodeTheme()
-  const theme = propTheme || contextTheme
+  const { theme: contextTheme } = useNodeTheme();
+  const theme = propTheme || contextTheme;
 
-  if (!visible) return null
+  if (!visible) return null;
 
   const getPositionStyles = (position: BadgePosition): React.CSSProperties => {
     const baseStyles: React.CSSProperties = {
       position: 'absolute',
       zIndex: 10,
-    }
+    };
 
     switch (position) {
       case 'top-left':
-        return { ...baseStyles, top: '-6px', left: '-6px' }
+        return { ...baseStyles, top: '-6px', left: '-6px' };
       case 'top-right':
-        return { ...baseStyles, top: '-6px', right: '-6px' }
+        return { ...baseStyles, top: '-6px', right: '-6px' };
       case 'bottom-left':
-        return { ...baseStyles, bottom: '-6px', left: '-6px' }
+        return { ...baseStyles, bottom: '-6px', left: '-6px' };
       case 'bottom-right':
-        return { ...baseStyles, bottom: '-6px', right: '-6px' }
+        return { ...baseStyles, bottom: '-6px', right: '-6px' };
       default:
-        return { ...baseStyles, top: '-6px', right: '-6px' }
+        return { ...baseStyles, top: '-6px', right: '-6px' };
     }
-  }
+  };
 
   const handleClick = (e: React.MouseEvent) => {
-    e.stopPropagation()
+    e.stopPropagation();
     if (onClick) {
-      onClick(badge.id)
+      onClick(badge.id);
     }
-  }
+  };
 
   const badgeStyle: React.CSSProperties = {
     backgroundColor: badge.backgroundColor || theme.colors.primary,
@@ -68,12 +68,14 @@ const NodeBadgeComponent: React.FC<NodeBadgeProps> = ({
     boxShadow: theme.shadows.sm,
     transition: `all ${theme.animations.duration.fast} ${theme.animations.easing.easeInOut}`,
     transform: 'scale(1)',
-  }
+  };
 
-  const hoverStyles: React.CSSProperties = onClick ? {
-    transform: 'scale(1.1)',
-    boxShadow: theme.shadows.md,
-  } : {}
+  const hoverStyles: React.CSSProperties = onClick
+    ? {
+        transform: 'scale(1.1)',
+        boxShadow: theme.shadows.md,
+      }
+    : {};
 
   return (
     <div
@@ -81,7 +83,7 @@ const NodeBadgeComponent: React.FC<NodeBadgeProps> = ({
       onClick={onClick ? handleClick : undefined}
       onMouseEnter={(e) => {
         if (onClick) {
-          Object.assign((e.target as HTMLElement).style, hoverStyles)
+          Object.assign((e.target as HTMLElement).style, hoverStyles);
         }
       }}
       onMouseLeave={(e) => {
@@ -89,42 +91,36 @@ const NodeBadgeComponent: React.FC<NodeBadgeProps> = ({
           Object.assign((e.target as HTMLElement).style, {
             transform: 'scale(1)',
             boxShadow: theme.shadows.sm,
-          })
+          });
         }
       }}
     >
       <div style={badgeStyle}>
-        {badge.icon && (
-          <span style={{ marginRight: badge.text ? '2px' : '0' }}>
-            {badge.icon}
-          </span>
-        )}
-        {badge.text && (
-          <span>{badge.text}</span>
-        )}
+        {badge.icon && <span style={{ marginRight: badge.text ? '2px' : '0' }}>{badge.icon}</span>}
+        {badge.text && <span>{badge.text}</span>}
       </div>
     </div>
-  )
-}
+  );
+};
 
 /**
  * NodeBadgeGroup Component
  * Manages multiple badges for a single node
  */
 interface NodeBadgeGroupProps {
-  badges: NodeBadge[]
-  nodeId: string
-  theme?: NodeTheme
-  onBadgeClick?: (badgeId: string, nodeId: string) => void
+  badges: NodeBadge[];
+  nodeId: string;
+  theme?: NodeTheme;
+  onBadgeClick?: (badgeId: string, nodeId: string) => void;
 }
 
 export const NodeBadgeGroup: React.FC<NodeBadgeGroupProps> = ({
   badges,
   nodeId,
   theme,
-  onBadgeClick
+  onBadgeClick,
 }) => {
-  if (!badges || badges.length === 0) return null
+  if (!badges || badges.length === 0) return null;
 
   return (
     <>
@@ -137,8 +133,8 @@ export const NodeBadgeGroup: React.FC<NodeBadgeGroupProps> = ({
         />
       ))}
     </>
-  )
-}
+  );
+};
 
 /**
  * Predefined Badge Types
@@ -153,17 +149,17 @@ export const createStatusBadge = (
     warning: { icon: '⚠', color: '#000000', backgroundColor: '#faad14' },
     info: { icon: 'ℹ', color: '#ffffff', backgroundColor: '#1890ff' },
     processing: { icon: '⟳', color: '#ffffff', backgroundColor: '#722ed1' },
-  }
+  };
 
-  const config = statusConfig[status]
+  const config = statusConfig[status];
 
   return {
     id: `status-${status}`,
     text: '',
     position,
     ...config,
-  }
-}
+  };
+};
 
 export const createCountBadge = (
   count: number,
@@ -176,7 +172,7 @@ export const createCountBadge = (
   color: color || '#ffffff',
   backgroundColor: backgroundColor || '#ff4d4f',
   position,
-})
+});
 
 export const createTextBadge = (
   text: string,
@@ -189,7 +185,7 @@ export const createTextBadge = (
   color: color || '#ffffff',
   backgroundColor: backgroundColor || '#1890ff',
   position,
-})
+});
 
 export const createIconBadge = (
   icon: string,
@@ -203,6 +199,6 @@ export const createIconBadge = (
   color: color || '#ffffff',
   backgroundColor: backgroundColor || '#52c41a',
   position,
-})
+});
 
-export default NodeBadgeComponent
+export default NodeBadgeComponent;

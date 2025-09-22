@@ -1,38 +1,38 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 // Workflow Status
 export enum WorkflowStatus {
-  DRAFT = "DRAFT",
-  ACTIVE = "ACTIVE",
-  INACTIVE = "INACTIVE",
-  ERROR = "ERROR",
-  ARCHIVED = "ARCHIVED",
+  DRAFT = 'DRAFT',
+  ACTIVE = 'ACTIVE',
+  INACTIVE = 'INACTIVE',
+  ERROR = 'ERROR',
+  ARCHIVED = 'ARCHIVED',
 }
 
 // Execution Status
 export enum ExecutionStatus {
-  PENDING = "PENDING",
-  RUNNING = "RUNNING",
-  SUCCESS = "SUCCESS",
-  FAILED = "FAILED",
-  CANCELLED = "CANCELLED",
-  WAITING = "WAITING",
-  PAUSED = "PAUSED",
+  PENDING = 'PENDING',
+  RUNNING = 'RUNNING',
+  SUCCESS = 'SUCCESS',
+  FAILED = 'FAILED',
+  CANCELLED = 'CANCELLED',
+  WAITING = 'WAITING',
+  PAUSED = 'PAUSED',
 }
 
 // Node Types
 export enum NodeType {
-  TRIGGER = "TRIGGER",
-  ACTION = "ACTION",
-  CONDITIONAL = "CONDITIONAL",
-  LOOP = "LOOP",
-  WEBHOOK = "WEBHOOK",
-  SCHEDULE = "SCHEDULE",
-  HTTP_REQUEST = "HTTP_REQUEST",
-  FUNCTION = "FUNCTION",
-  AI_AGENT = "AI_AGENT",
-  DATA_TRANSFORM = "DATA_TRANSFORM",
-  INTEGRATION = "INTEGRATION",
+  TRIGGER = 'TRIGGER',
+  ACTION = 'ACTION',
+  CONDITIONAL = 'CONDITIONAL',
+  LOOP = 'LOOP',
+  WEBHOOK = 'WEBHOOK',
+  SCHEDULE = 'SCHEDULE',
+  HTTP_REQUEST = 'HTTP_REQUEST',
+  FUNCTION = 'FUNCTION',
+  AI_AGENT = 'AI_AGENT',
+  DATA_TRANSFORM = 'DATA_TRANSFORM',
+  INTEGRATION = 'INTEGRATION',
 }
 
 // Base Node Interface
@@ -61,7 +61,7 @@ export interface IEdge {
   sourceHandle?: string;
   target: string;
   targetHandle?: string;
-  type?: "default" | "conditional" | "error";
+  type?: 'default' | 'conditional' | 'error';
   label?: string;
   data?: Record<string, any>;
 }
@@ -94,7 +94,7 @@ export interface IWorkflowSettings {
   saveManualExecutions?: boolean;
   retryFailedExecutions?: boolean;
   maxConsecutiveFailures?: number;
-  executionOrder?: "sequential" | "parallel";
+  executionOrder?: 'sequential' | 'parallel';
 }
 
 // Execution Interface
@@ -105,7 +105,7 @@ export interface IExecution {
   startedAt: Date;
   stoppedAt?: Date;
   executionTime?: number;
-  mode: "manual" | "trigger" | "schedule" | "webhook" | "retry";
+  mode: 'manual' | 'trigger' | 'schedule' | 'webhook' | 'retry';
   retryOf?: string;
   retryCount?: number;
   data?: IExecutionData;
@@ -167,7 +167,7 @@ export const EdgeSchema = z.object({
   sourceHandle: z.string().optional(),
   target: z.string(),
   targetHandle: z.string().optional(),
-  type: z.enum(["default", "conditional", "error"]).optional(),
+  type: z.enum(['default', 'conditional', 'error']).optional(),
   label: z.string().optional(),
   data: z.record(z.any()).optional(),
 });
@@ -195,7 +195,7 @@ export const WorkflowSchema = z.object({
       saveManualExecutions: z.boolean().optional(),
       retryFailedExecutions: z.boolean().optional(),
       maxConsecutiveFailures: z.number().optional(),
-      executionOrder: z.enum(["sequential", "parallel"]).optional(),
+      executionOrder: z.enum(['sequential', 'parallel']).optional(),
     })
     .optional(),
   meta: z.record(z.any()).optional(),

@@ -1,33 +1,30 @@
-import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
-import { AuthApiService } from '@/core/api/AuthApiService'
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
+import { AuthApiService } from '@/core/api/AuthApiService';
 import type {
-  UserProfile as User,
   LoginCredentials,
   RegisterRequest as RegisterData,
-} from '@/core/schemas'
+  UserProfile as User,
+} from '@/core/schemas';
 
-const authApiService = new AuthApiService()
+const authApiService = new AuthApiService();
 
 interface AuthState {
-  user: User | null
-  isAuthenticated: boolean
-  isLoading: boolean
-  error: string | null
+  user: User | null;
+  isAuthenticated: boolean;
+  isLoading: boolean;
+  error: string | null;
 
   // Actions
-  login: (credentials: LoginCredentials) => Promise<void>
-  register: (userData: RegisterData) => Promise<void>
-  logout: () => Promise<void>
-  getCurrentUser: () => Promise<void>
-  clearError: () => void
+  login: (credentials: LoginCredentials) => Promise<void>;
+  register: (userData: RegisterData) => Promise<void>;
+  logout: () => Promise<void>;
+  getCurrentUser: () => Promise<void>;
+  clearError: () => void;
   updateProfile: (
     updates: Partial<Pick<User, 'firstName' | 'lastName' | 'email'>>
-  ) => Promise<void>
-  changePassword: (
-    currentPassword: string,
-    newPassword: string
-  ) => Promise<void>
+  ) => Promise<void>;
+  changePassword: (currentPassword: string, newPassword: string) => Promise<void>;
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -39,83 +36,83 @@ export const useAuthStore = create<AuthState>()(
       error: null,
 
       login: async (credentials: LoginCredentials) => {
-        set({ isLoading: true, error: null })
+        set({ isLoading: true, error: null });
         try {
-          const authResponse = await authApiService.login(credentials)
-          console.log('Login successful, setting auth state:', authResponse.user)
+          const authResponse = await authApiService.login(credentials);
+          console.log('Login successful, setting auth state:', authResponse.user);
           set({
             user: authResponse.user,
             isAuthenticated: true,
             isLoading: false,
             error: null,
-          })
+          });
         } catch (error: any) {
-          console.error('Login failed:', error)
+          console.error('Login failed:', error);
           set({
             user: null,
             isAuthenticated: false,
             isLoading: false,
             error: error.message || 'Login failed',
-          })
-          throw error
+          });
+          throw error;
         }
       },
 
       register: async (userData: RegisterData) => {
-        set({ isLoading: true, error: null })
+        set({ isLoading: true, error: null });
         try {
-          const authResponse = await authApiService.register(userData)
+          const authResponse = await authApiService.register(userData);
           set({
             user: authResponse.user,
             isAuthenticated: true,
             isLoading: false,
             error: null,
-          })
+          });
         } catch (error: any) {
           set({
             user: null,
             isAuthenticated: false,
             isLoading: false,
             error: error.message || 'Registration failed',
-          })
-          throw error
+          });
+          throw error;
         }
       },
 
       logout: async () => {
-        set({ isLoading: true })
+        set({ isLoading: true });
         try {
-          await authApiService.logout()
+          await authApiService.logout();
         } catch (error) {
-          console.warn('Logout API call failed:', error)
+          console.warn('Logout API call failed:', error);
         } finally {
           set({
             user: null,
             isAuthenticated: false,
             isLoading: false,
             error: null,
-          })
+          });
         }
       },
 
       getCurrentUser: async () => {
         if (!authApiService.isAuthenticated()) {
-          set({ user: null, isAuthenticated: false })
-          return
+          set({ user: null, isAuthenticated: false });
+          return;
         }
 
-        set({ isLoading: true, error: null })
+        set({ isLoading: true, error: null });
         try {
-          const user = await authApiService.getProfile()
+          const user = await authApiService.getProfile();
           set({
             user,
             isAuthenticated: true,
             isLoading: false,
             error: null,
-          })
+          });
         } catch (error: any) {
-          console.error('Failed to get user profile:', error)
-          
+          console.error('Failed to get user profile:', error);
+
           // Only clear auth state if the error is authentication-related
           // Don't clear if it's a network error or temporary issue
           if (error.status === 401 || error.code === 'TOKEN_REFRESH_ERROR') {
@@ -124,55 +121,53 @@ export const useAuthStore = create<AuthState>()(
               isAuthenticated: false,
               isLoading: false,
               error: error.message || 'Failed to get user profile',
-            })
+            });
             // Clear invalid token
-            authApiService.clearAuthData()
+            authApiService.clearAuthData();
           } else {
             // For other errors (network, server), keep the user logged in
             set({
               isLoading: false,
               error: error.message || 'Failed to get user profile',
-            })
+            });
           }
         }
       },
 
-      updateProfile: async (
-        updates: Partial<Pick<User, 'firstName' | 'lastName' | 'email'>>
-      ) => {
-        if (!get().user) return
+      updateProfile: async (updates: Partial<Pick<User, 'firstName' | 'lastName' | 'email'>>) => {
+        if (!get().user) return;
 
-        set({ isLoading: true, error: null })
+        set({ isLoading: true, error: null });
         try {
-          const updatedUser = await authApiService.updateProfile(updates)
+          const updatedUser = await authApiService.updateProfile(updates);
           set({
             user: updatedUser,
             isLoading: false,
             error: null,
-          })
+          });
         } catch (error: any) {
           set({
             isLoading: false,
             error: error.message || 'Profile update failed',
-          })
-          throw error
+          });
+          throw error;
         }
       },
 
       changePassword: async (currentPassword: string, newPassword: string) => {
-        set({ isLoading: true, error: null })
+        set({ isLoading: true, error: null });
         try {
-          await authApiService.changePassword({ currentPassword, newPassword })
+          await authApiService.changePassword({ currentPassword, newPassword });
           set({
             isLoading: false,
             error: null,
-          })
+          });
         } catch (error: any) {
           set({
             isLoading: false,
             error: error.message || 'Password change failed',
-          })
-          throw error
+          });
+          throw error;
         }
       },
 
@@ -180,10 +175,10 @@ export const useAuthStore = create<AuthState>()(
     }),
     {
       name: 'auth-storage',
-      partialize: state => ({
+      partialize: (state) => ({
         user: state.user,
         isAuthenticated: state.isAuthenticated,
       }),
     }
   )
-)
+);

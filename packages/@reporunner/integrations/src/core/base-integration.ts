@@ -1,8 +1,8 @@
-import { EventEmitter } from "events";
-import { AxiosInstance } from "axios";
-import { WebhookManager } from "../webhook/webhook-manager";
-import { OAuth2Handler } from "../auth/oauth2-handler";
-import { CredentialManager } from "../security/credential-manager";
+import type { AxiosInstance } from 'axios';
+import { EventEmitter } from 'events';
+import type { OAuth2Handler } from '../auth/oauth2-handler';
+import type { CredentialManager } from '../security/credential-manager';
+import { WebhookManager } from '../webhook/webhook-manager';
 
 export interface IntegrationConfig {
   name: string;
@@ -31,7 +31,7 @@ export interface IntegrationConfig {
 }
 
 export interface IntegrationState {
-  status: "initializing" | "connected" | "disconnected" | "error" | "suspended";
+  status: 'initializing' | 'connected' | 'disconnected' | 'error' | 'suspended';
   lastActivity?: Date;
   errorMessage?: string;
   errorCount: number;
@@ -41,7 +41,7 @@ export interface IntegrationState {
 export interface IntegrationContext {
   userId: string;
   workspaceId?: string;
-  environment?: "development" | "staging" | "production";
+  environment?: 'development' | 'staging' | 'production';
   settings?: Record<string, any>;
 }
 
@@ -62,7 +62,7 @@ export abstract class BaseIntegration extends EventEmitter {
     super();
     this.config = config;
     this.state = {
-      status: "initializing",
+      status: 'initializing',
       errorCount: 0,
     };
   }
@@ -83,12 +83,10 @@ export abstract class BaseIntegration extends EventEmitter {
   /**
    * Perform initialization
    */
-  private async performInitialization(
-    context: IntegrationContext,
-  ): Promise<void> {
+  private async performInitialization(context: IntegrationContext): Promise<void> {
     try {
       this.context = context;
-      this.setState("initializing");
+      this.setState('initializing');
 
       // Validate configuration
       await this.validateConfiguration();
@@ -102,8 +100,8 @@ export abstract class BaseIntegration extends EventEmitter {
       // Start heartbeat
       this.startHeartbeat();
 
-      this.setState("connected");
-      this.emit("initialized", { name: this.config.name });
+      this.setState('connected');
+      this.emit('initialized', { name: this.config.name });
     } catch (error: any) {
       this.handleError(error);
       throw error;
@@ -120,23 +118,23 @@ export abstract class BaseIntegration extends EventEmitter {
    */
   async connect(): Promise<void> {
     try {
-      this.setState("initializing");
+      this.setState('initializing');
 
       // Call abstract connect method
       await this.onConnect();
 
-      this.setState("connected");
+      this.setState('connected');
       this.retryCount = 0;
-      this.emit("connected", { name: this.config.name });
+      this.emit('connected', { name: this.config.name });
     } catch (error: any) {
       this.handleError(error);
 
       // Retry logic
       if (this.retryCount < this.maxRetries) {
         this.retryCount++;
-        const delay = Math.pow(2, this.retryCount) * 1000;
+        const delay = 2 ** this.retryCount * 1000;
 
-        this.emit("retry", {
+        this.emit('retry', {
           name: this.config.name,
           attempt: this.retryCount,
           delay,
@@ -165,8 +163,8 @@ export abstract class BaseIntegration extends EventEmitter {
       // Call abstract disconnect method
       await this.onDisconnect();
 
-      this.setState("disconnected");
-      this.emit("disconnected", { name: this.config.name });
+      this.setState('disconnected');
+      this.emit('disconnected', { name: this.config.name });
     } catch (error: any) {
       this.handleError(error);
       throw error;
@@ -183,10 +181,7 @@ export abstract class BaseIntegration extends EventEmitter {
    */
   protected async validateConfiguration(): Promise<void> {
     // Check required credentials
-    if (
-      this.config.requiredCredentials &&
-      this.config.requiredCredentials.length > 0
-    ) {
+    if (this.config.requiredCredentials && this.config.requiredCredentials.length > 0) {
       for (const credentialName of this.config.requiredCredentials) {
         const hasCredential = await this.checkCredential(credentialName);
         if (!hasCredential) {
@@ -258,7 +253,7 @@ export abstract class BaseIntegration extends EventEmitter {
     if (credential && credential.id) {
       const fullCredential = await this.credentialManager.retrieveCredential(
         credential.id,
-        this.context.userId,
+        this.context.userId
       );
       return fullCredential?.value || null;
     }
@@ -270,7 +265,7 @@ export abstract class BaseIntegration extends EventEmitter {
    * Execute action
    */
   async execute(action: string, params: any): Promise<any> {
-    if (this.state.status !== "connected") {
+    if (this.state.status !== 'connected') {
       throw new Error(`Integration ${this.config.name} is not connected`);
     }
 
@@ -281,7 +276,7 @@ export abstract class BaseIntegration extends EventEmitter {
       // Call abstract execute method
       const result = await this.onExecute(action, params);
 
-      this.emit("action:executed", {
+      this.emit('action:executed', {
         name: this.config.name,
         action,
         params,
@@ -311,7 +306,7 @@ export abstract class BaseIntegration extends EventEmitter {
       // Call abstract webhook handler
       const result = await this.onWebhook(path, data);
 
-      this.emit("webhook:handled", {
+      this.emit('webhook:handled', {
         name: this.config.name,
         path,
         data,
@@ -332,22 +327,19 @@ export abstract class BaseIntegration extends EventEmitter {
   /**
    * Set state
    */
-  protected setState(
-    status: IntegrationState["status"],
-    errorMessage?: string,
-  ): void {
+  protected setState(status: IntegrationState['status'], errorMessage?: string): void {
     const previousStatus = this.state.status;
     this.state.status = status;
 
     if (errorMessage) {
       this.state.errorMessage = errorMessage;
-    } else if (status === "connected") {
+    } else if (status === 'connected') {
       this.state.errorMessage = undefined;
       this.state.errorCount = 0;
     }
 
     if (previousStatus !== status) {
-      this.emit("state:changed", {
+      this.emit('state:changed', {
         name: this.config.name,
         previousStatus,
         newStatus: status,
@@ -361,9 +353,9 @@ export abstract class BaseIntegration extends EventEmitter {
    */
   protected handleError(error: Error): void {
     this.state.errorCount++;
-    this.setState("error", error.message);
+    this.setState('error', error.message);
 
-    this.emit("error", {
+    this.emit('error', {
       name: this.config.name,
       error: error.message,
       errorCount: this.state.errorCount,
@@ -386,7 +378,7 @@ export abstract class BaseIntegration extends EventEmitter {
     this.heartbeatInterval = setInterval(async () => {
       try {
         await this.onHeartbeat();
-        this.emit("heartbeat", {
+        this.emit('heartbeat', {
           name: this.config.name,
           status: this.state.status,
         });
@@ -416,9 +408,9 @@ export abstract class BaseIntegration extends EventEmitter {
    */
   suspend(): void {
     this.stopHeartbeat();
-    this.setState("suspended");
+    this.setState('suspended');
 
-    this.emit("suspended", {
+    this.emit('suspended', {
       name: this.config.name,
       errorCount: this.state.errorCount,
     });
@@ -458,7 +450,7 @@ export abstract class BaseIntegration extends EventEmitter {
    */
   async updateSettings(settings: Record<string, any>): Promise<void> {
     if (!this.context) {
-      throw new Error("Integration not initialized");
+      throw new Error('Integration not initialized');
     }
 
     this.context.settings = {
@@ -468,7 +460,7 @@ export abstract class BaseIntegration extends EventEmitter {
 
     await this.onSettingsUpdate(settings);
 
-    this.emit("settings:updated", {
+    this.emit('settings:updated', {
       name: this.config.name,
       settings,
     });
@@ -477,9 +469,7 @@ export abstract class BaseIntegration extends EventEmitter {
   /**
    * Abstract method for integration-specific settings update
    */
-  protected abstract onSettingsUpdate(
-    settings: Record<string, any>,
-  ): Promise<void>;
+  protected abstract onSettingsUpdate(settings: Record<string, any>): Promise<void>;
 
   /**
    * Get capabilities
@@ -523,7 +513,7 @@ export abstract class BaseIntegration extends EventEmitter {
     await this.disconnect();
     this.removeAllListeners();
 
-    this.emit("cleanup", { name: this.config.name });
+    this.emit('cleanup', { name: this.config.name });
   }
 }
 

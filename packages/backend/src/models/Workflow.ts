@@ -1,4 +1,4 @@
-import mongoose, { Document, Schema } from 'mongoose';
+import mongoose, { type Document, Schema } from 'mongoose';
 
 export interface IWorkflowNode {
   id: string;
@@ -95,20 +95,24 @@ const workflowNodeSchema = new Schema({
     nodeTypeData: { type: Schema.Types.Mixed },
     integrationData: { type: Schema.Types.Mixed },
     // Condition node specific fields
-    conditionRules: [{
-      id: { type: String },
-      field: { type: String },
-      operator: { type: String },
-      value: { type: Schema.Types.Mixed },
-      valueType: { type: String, enum: ['fixed', 'expression'], default: 'fixed' },
-      outputName: { type: String },
-      enabled: { type: Boolean, default: true }
-    }],
+    conditionRules: [
+      {
+        id: { type: String },
+        field: { type: String },
+        operator: { type: String },
+        value: { type: Schema.Types.Mixed },
+        valueType: { type: String, enum: ['fixed', 'expression'], default: 'fixed' },
+        outputName: { type: String },
+        enabled: { type: Boolean, default: true },
+      },
+    ],
     defaultOutput: { type: String },
-    outputs: [{
-      id: { type: String },
-      label: { type: String }
-    }],
+    outputs: [
+      {
+        id: { type: String },
+        label: { type: String },
+      },
+    ],
   },
 });
 
@@ -149,11 +153,13 @@ const workflowSchema = new Schema<IWorkflow>(
       type: Boolean,
       default: false,
     },
-    tags: [{
-      type: String,
-      trim: true,
-      lowercase: true,
-    }],
+    tags: [
+      {
+        type: String,
+        trim: true,
+        lowercase: true,
+      },
+    ],
     version: {
       type: Number,
       default: 1,

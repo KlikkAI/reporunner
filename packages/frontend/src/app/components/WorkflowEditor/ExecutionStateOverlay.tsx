@@ -5,9 +5,9 @@
  * including progress indicators, error states, and performance metrics.
  */
 
-import React from "react";
-import { useEnhancedExecutionStore } from "@/core/stores/enhancedExecutionStore";
-import { cn } from "@/design-system/utils";
+import type React from 'react';
+import { useEnhancedExecutionStore } from '@/core/stores/enhancedExecutionStore';
+import { cn } from '@/design-system/utils';
 
 interface ExecutionStateOverlayProps {
   nodeId: string;
@@ -41,35 +41,35 @@ export const ExecutionStateOverlay: React.FC<ExecutionStateOverlayProps> = ({
   }
 
   const getStatusColor = () => {
-    if (isFailed) return "bg-red-500";
-    if (isCompleted) return "bg-green-500";
-    if (isActive) return "bg-blue-500";
-    if (isPending) return "bg-yellow-500";
-    return "bg-gray-400";
+    if (isFailed) return 'bg-red-500';
+    if (isCompleted) return 'bg-green-500';
+    if (isActive) return 'bg-blue-500';
+    if (isPending) return 'bg-yellow-500';
+    return 'bg-gray-400';
   };
 
   const getStatusText = () => {
-    if (isFailed) return "Failed";
-    if (isCompleted) return "Completed";
-    if (isActive) return "Running";
-    if (isPending) return "Pending";
-    return "Idle";
+    if (isFailed) return 'Failed';
+    if (isCompleted) return 'Completed';
+    if (isActive) return 'Running';
+    if (isPending) return 'Pending';
+    return 'Idle';
   };
 
   const formatDuration = (duration?: number) => {
-    if (!duration) return "";
+    if (!duration) return '';
     if (duration < 1000) return `${duration}ms`;
     return `${(duration / 1000).toFixed(1)}s`;
   };
 
   return (
-    <div className={cn("absolute inset-0 pointer-events-none z-10", className)}>
+    <div className={cn('absolute inset-0 pointer-events-none z-10', className)}>
       {/* Status indicator */}
       <div
         className={cn(
-          "absolute -top-2 -right-2 w-4 h-4 rounded-full border-2 border-white shadow-lg",
+          'absolute -top-2 -right-2 w-4 h-4 rounded-full border-2 border-white shadow-lg',
           getStatusColor(),
-          isActive && "animate-pulse",
+          isActive && 'animate-pulse'
         )}
         title={getStatusText()}
       />

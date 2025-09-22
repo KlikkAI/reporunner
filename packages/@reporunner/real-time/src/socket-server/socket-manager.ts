@@ -1,11 +1,11 @@
-import { Server as SocketIOServer, Socket } from "socket.io";
-import { Server as HTTPServer } from "http";
-import { createAdapter } from "@socket.io/redis-adapter";
-import { createClient } from "redis";
-import { IJwtPayload } from "@reporunner/api-types";
-import { RoomManager } from "./room-manager";
-import { PresenceTracker } from "../presence/presence-tracker";
-import { OperationalTransform } from "../operational-transform/operation-engine";
+import type { IJwtPayload } from '@reporunner/api-types';
+import { createAdapter } from '@socket.io/redis-adapter';
+import type { Server as HTTPServer } from 'http';
+import { createClient } from 'redis';
+import { type Socket, Server as SocketIOServer } from 'socket.io';
+import { OperationalTransform } from '../operational-transform/operation-engine';
+import { PresenceTracker } from '../presence/presence-tracker';
+import { RoomManager } from './room-manager';
 
 export interface SocketConfig {
   corsOrigin: string[];
@@ -53,7 +53,7 @@ export class SocketManager {
       },
       pingTimeout: config.pingTimeout,
       pingInterval: config.pingInterval,
-      transports: ["websocket", "polling"],
+      transports: ['websocket', 'polling'],
     });
 
     // Setup Redis adapter for horizontal scaling
@@ -84,7 +84,7 @@ export class SocketManager {
       try {
         const token = socket.handshake.auth.token;
         if (!token) {
-          return next(new Error("Authentication required"));
+          return next(new Error('Authentication required'));
         }
 
         // Verify JWT token
@@ -94,104 +94,81 @@ export class SocketManager {
 
         next();
       } catch (error) {
-        next(new Error("Authentication failed"));
+        next(new Error('Authentication failed'));
       }
     });
   }
 
   private setupEventHandlers(): void {
-    this.io.on("connection", (socket: Socket) => {
+    this.io.on('connection', (socket: Socket) => {
       const user = socket.data.user as IJwtPayload;
       const sessionId = socket.data.sessionId;
 
       console.log(`User ${user.email} connected with session ${sessionId}`);
 
       // Handle workflow room joining
-      socket.on("join:workflow", async (data: { workflowId: string }) => {
+      socket.on('join:workflow', async (data: { workflowId: string }) => {
         await this.handleJoinWorkflow(socket, data.workflowId);
       });
 
       // Handle cursor movement
-      socket.on(
-        "cursor:move",
-        (data: { x: number; y: number; nodeId?: string }) => {
-          this.handleCursorMove(socket, data);
-        },
-      );
+      socket.on('cursor:move', (data: { x: number; y: number; nodeId?: string }) => {
+        this.handleCursorMove(socket, data);
+      });
 
       // Handle selection changes
-      socket.on(
-        "selection:change",
-        (data: { nodeIds: string[]; edgeIds: string[] }) => {
-          this.handleSelectionChange(socket, data);
-        },
-      );
+      socket.on('selection:change', (data: { nodeIds: string[]; edgeIds: string[] }) => {
+        this.handleSelectionChange(socket, data);
+      });
 
       // Handle workflow operations (with OT)
-      socket.on("operation:apply", async (operation: any) => {
+      socket.on('operation:apply', async (operation: any) => {
         await this.handleOperation(socket, operation);
       });
 
       // Handle node operations
-      socket.on("node:add", (data: any) => this.handleNodeAdd(socket, data));
-      socket.on("node:update", (data: any) =>
-        this.handleNodeUpdate(socket, data),
-      );
-      socket.on("node:delete", (data: any) =>
-        this.handleNodeDelete(socket, data),
-      );
-      socket.on("node:move", (data: any) => this.handleNodeMove(socket, data));
+      socket.on('node:add', (data: any) => this.handleNodeAdd(socket, data));
+      socket.on('node:update', (data: any) => this.handleNodeUpdate(socket, data));
+      socket.on('node:delete', (data: any) => this.handleNodeDelete(socket, data));
+      socket.on('node:move', (data: any) => this.handleNodeMove(socket, data));
 
       // Handle edge operations
-      socket.on("edge:add", (data: any) => this.handleEdgeAdd(socket, data));
-      socket.on("edge:update", (data: any) =>
-        this.handleEdgeUpdate(socket, data),
-      );
-      socket.on("edge:delete", (data: any) =>
-        this.handleEdgeDelete(socket, data),
-      );
+      socket.on('edge:add', (data: any) => this.handleEdgeAdd(socket, data));
+      socket.on('edge:update', (data: any) => this.handleEdgeUpdate(socket, data));
+      socket.on('edge:delete', (data: any) => this.handleEdgeDelete(socket, data));
 
       // Handle comments
-      socket.on("comment:add", (data: any) =>
-        this.handleCommentAdd(socket, data),
-      );
-      socket.on("comment:reply", (data: any) =>
-        this.handleCommentReply(socket, data),
-      );
-      socket.on("comment:resolve", (data: any) =>
-        this.handleCommentResolve(socket, data),
-      );
+      socket.on('comment:add', (data: any) => this.handleCommentAdd(socket, data));
+      socket.on('comment:reply', (data: any) => this.handleCommentReply(socket, data));
+      socket.on('comment:resolve', (data: any) => this.handleCommentResolve(socket, data));
 
       // Handle typing indicators
-      socket.on("typing:start", (data: { nodeId: string; field: string }) => {
+      socket.on('typing:start', (data: { nodeId: string; field: string }) => {
         this.handleTypingStart(socket, data);
       });
-      socket.on("typing:stop", (data: { nodeId: string; field: string }) => {
+      socket.on('typing:stop', (data: { nodeId: string; field: string }) => {
         this.handleTypingStop(socket, data);
       });
 
       // Handle disconnection
-      socket.on("disconnect", () => {
+      socket.on('disconnect', () => {
         this.handleDisconnect(socket);
       });
 
       // Handle leaving workflow
-      socket.on("leave:workflow", () => {
+      socket.on('leave:workflow', () => {
         this.handleLeaveWorkflow(socket);
       });
     });
   }
 
-  private async handleJoinWorkflow(
-    socket: Socket,
-    workflowId: string,
-  ): Promise<void> {
+  private async handleJoinWorkflow(socket: Socket, workflowId: string): Promise<void> {
     const user = socket.data.user as IJwtPayload;
     const sessionId = socket.data.sessionId;
 
     // Check permissions
     if (!this.checkWorkflowAccess(user, workflowId)) {
-      socket.emit("error", { message: "Access denied to workflow" });
+      socket.emit('error', { message: 'Access denied to workflow' });
       return;
     }
 
@@ -225,7 +202,7 @@ export class SocketManager {
     const collaborators = await this.presenceTracker.getUsers(workflowId);
 
     // Notify others in the room
-    socket.to(`workflow:${workflowId}`).emit("user:joined", {
+    socket.to(`workflow:${workflowId}`).emit('user:joined', {
       userId: user.sub,
       userName: user.email,
       userColor: session.userColor,
@@ -233,16 +210,13 @@ export class SocketManager {
     });
 
     // Send current state to joining user
-    socket.emit("workflow:state", {
+    socket.emit('workflow:state', {
       collaborators,
       // Include current workflow state if needed
     });
   }
 
-  private handleCursorMove(
-    socket: Socket,
-    data: { x: number; y: number; nodeId?: string },
-  ): void {
+  private handleCursorMove(socket: Socket, data: { x: number; y: number; nodeId?: string }): void {
     const sessionId = socket.data.sessionId;
     const workflowId = socket.data.workflowId;
     const session = this.sessions.get(sessionId);
@@ -254,7 +228,7 @@ export class SocketManager {
     session.lastActivity = new Date();
 
     // Broadcast to others in the room
-    socket.to(`workflow:${workflowId}`).emit("cursor:moved", {
+    socket.to(`workflow:${workflowId}`).emit('cursor:moved', {
       userId: session.userId,
       sessionId,
       cursor: data,
@@ -263,7 +237,7 @@ export class SocketManager {
 
   private handleSelectionChange(
     socket: Socket,
-    data: { nodeIds: string[]; edgeIds: string[] },
+    data: { nodeIds: string[]; edgeIds: string[] }
   ): void {
     const sessionId = socket.data.sessionId;
     const workflowId = socket.data.workflowId;
@@ -276,7 +250,7 @@ export class SocketManager {
     session.lastActivity = new Date();
 
     // Broadcast to others
-    socket.to(`workflow:${workflowId}`).emit("selection:changed", {
+    socket.to(`workflow:${workflowId}`).emit('selection:changed', {
       userId: session.userId,
       sessionId,
       selection: data,
@@ -294,22 +268,22 @@ export class SocketManager {
       const transformedOp = await this.operationalTransform.transform(
         workflowId,
         operation,
-        user.sub,
+        user.sub
       );
 
       // Apply operation to workflow
       await this.applyOperationToWorkflow(workflowId, transformedOp);
 
       // Broadcast to all clients including sender
-      this.io.to(`workflow:${workflowId}`).emit("operation:applied", {
+      this.io.to(`workflow:${workflowId}`).emit('operation:applied', {
         operation: transformedOp,
         userId: user.sub,
         timestamp: new Date(),
       });
     } catch (error) {
-      socket.emit("operation:error", {
-        message: "Failed to apply operation",
-        error: error instanceof Error ? error.message : "Unknown error",
+      socket.emit('operation:error', {
+        message: 'Failed to apply operation',
+        error: error instanceof Error ? error.message : 'Unknown error',
       });
     }
   }
@@ -321,7 +295,7 @@ export class SocketManager {
     if (!workflowId) return;
 
     // Broadcast node addition
-    socket.to(`workflow:${workflowId}`).emit("node:added", {
+    socket.to(`workflow:${workflowId}`).emit('node:added', {
       ...data,
       userId: user.sub,
       timestamp: new Date(),
@@ -337,12 +311,12 @@ export class SocketManager {
     // Check for conflicts
     const isLocked = this.checkNodeLock(workflowId, data.nodeId, user.sub);
     if (isLocked) {
-      socket.emit("node:locked", { nodeId: data.nodeId });
+      socket.emit('node:locked', { nodeId: data.nodeId });
       return;
     }
 
     // Broadcast node update
-    socket.to(`workflow:${workflowId}`).emit("node:updated", {
+    socket.to(`workflow:${workflowId}`).emit('node:updated', {
       ...data,
       userId: user.sub,
       timestamp: new Date(),
@@ -355,7 +329,7 @@ export class SocketManager {
 
     if (!workflowId) return;
 
-    socket.to(`workflow:${workflowId}`).emit("node:deleted", {
+    socket.to(`workflow:${workflowId}`).emit('node:deleted', {
       ...data,
       userId: user.sub,
       timestamp: new Date(),
@@ -368,7 +342,7 @@ export class SocketManager {
 
     if (!workflowId) return;
 
-    socket.to(`workflow:${workflowId}`).emit("node:moved", {
+    socket.to(`workflow:${workflowId}`).emit('node:moved', {
       ...data,
       userId: user.sub,
       timestamp: new Date(),
@@ -381,7 +355,7 @@ export class SocketManager {
 
     if (!workflowId) return;
 
-    socket.to(`workflow:${workflowId}`).emit("edge:added", {
+    socket.to(`workflow:${workflowId}`).emit('edge:added', {
       ...data,
       userId: user.sub,
       timestamp: new Date(),
@@ -394,7 +368,7 @@ export class SocketManager {
 
     if (!workflowId) return;
 
-    socket.to(`workflow:${workflowId}`).emit("edge:updated", {
+    socket.to(`workflow:${workflowId}`).emit('edge:updated', {
       ...data,
       userId: user.sub,
       timestamp: new Date(),
@@ -407,7 +381,7 @@ export class SocketManager {
 
     if (!workflowId) return;
 
-    socket.to(`workflow:${workflowId}`).emit("edge:deleted", {
+    socket.to(`workflow:${workflowId}`).emit('edge:deleted', {
       ...data,
       userId: user.sub,
       timestamp: new Date(),
@@ -429,7 +403,7 @@ export class SocketManager {
     };
 
     // Broadcast to all including sender for confirmation
-    this.io.to(`workflow:${workflowId}`).emit("comment:added", comment);
+    this.io.to(`workflow:${workflowId}`).emit('comment:added', comment);
   }
 
   private handleCommentReply(socket: Socket, data: any): void {
@@ -446,7 +420,7 @@ export class SocketManager {
       timestamp: new Date(),
     };
 
-    this.io.to(`workflow:${workflowId}`).emit("comment:replied", reply);
+    this.io.to(`workflow:${workflowId}`).emit('comment:replied', reply);
   }
 
   private handleCommentResolve(socket: Socket, data: any): void {
@@ -455,24 +429,21 @@ export class SocketManager {
 
     if (!workflowId) return;
 
-    this.io.to(`workflow:${workflowId}`).emit("comment:resolved", {
+    this.io.to(`workflow:${workflowId}`).emit('comment:resolved', {
       ...data,
       resolvedBy: user.sub,
       resolvedAt: new Date(),
     });
   }
 
-  private handleTypingStart(
-    socket: Socket,
-    data: { nodeId: string; field: string },
-  ): void {
+  private handleTypingStart(socket: Socket, data: { nodeId: string; field: string }): void {
     const workflowId = socket.data.workflowId;
     const user = socket.data.user as IJwtPayload;
     const sessionId = socket.data.sessionId;
 
     if (!workflowId) return;
 
-    socket.to(`workflow:${workflowId}`).emit("typing:started", {
+    socket.to(`workflow:${workflowId}`).emit('typing:started', {
       ...data,
       userId: user.sub,
       userName: user.email,
@@ -480,17 +451,14 @@ export class SocketManager {
     });
   }
 
-  private handleTypingStop(
-    socket: Socket,
-    data: { nodeId: string; field: string },
-  ): void {
+  private handleTypingStop(socket: Socket, data: { nodeId: string; field: string }): void {
     const workflowId = socket.data.workflowId;
     const user = socket.data.user as IJwtPayload;
     const sessionId = socket.data.sessionId;
 
     if (!workflowId) return;
 
-    socket.to(`workflow:${workflowId}`).emit("typing:stopped", {
+    socket.to(`workflow:${workflowId}`).emit('typing:stopped', {
       ...data,
       userId: user.sub,
       sessionId,
@@ -511,7 +479,7 @@ export class SocketManager {
     this.presenceTracker.removeUser(workflowId, sessionId);
 
     // Notify others
-    socket.to(`workflow:${workflowId}`).emit("user:left", {
+    socket.to(`workflow:${workflowId}`).emit('user:left', {
       userId: user.sub,
       sessionId,
     });
@@ -530,7 +498,7 @@ export class SocketManager {
       this.presenceTracker.removeUser(workflowId, sessionId);
 
       // Notify others in the workflow
-      socket.to(`workflow:${workflowId}`).emit("user:disconnected", {
+      socket.to(`workflow:${workflowId}`).emit('user:disconnected', {
         userId: user?.sub,
         sessionId,
       });
@@ -558,33 +526,26 @@ export class SocketManager {
   private generateUserColor(userId: string): string {
     // Generate a consistent color for the user
     const colors = [
-      "#FF6B6B",
-      "#4ECDC4",
-      "#45B7D1",
-      "#96CEB4",
-      "#FFEAA7",
-      "#DDA0DD",
-      "#98D8C8",
-      "#FFB6C1",
+      '#FF6B6B',
+      '#4ECDC4',
+      '#45B7D1',
+      '#96CEB4',
+      '#FFEAA7',
+      '#DDA0DD',
+      '#98D8C8',
+      '#FFB6C1',
     ];
     const index = userId.charCodeAt(0) % colors.length;
     return colors[index];
   }
 
-  private checkNodeLock(
-    workflowId: string,
-    nodeId: string,
-    userId: string,
-  ): boolean {
+  private checkNodeLock(workflowId: string, nodeId: string, userId: string): boolean {
     // Check if node is locked by another user
     // This would be implemented with a locking mechanism
     return false;
   }
 
-  private async applyOperationToWorkflow(
-    workflowId: string,
-    operation: any,
-  ): Promise<void> {
+  private async applyOperationToWorkflow(workflowId: string, operation: any): Promise<void> {
     // Apply the operation to the actual workflow
     // This would integrate with the workflow service
     console.log(`Applying operation to workflow ${workflowId}:`, operation);
@@ -593,15 +554,11 @@ export class SocketManager {
   // Public methods
   public getActiveCollaborators(workflowId: string): CollaborationSession[] {
     return Array.from(this.sessions.values()).filter(
-      (session) => session.workflowId === workflowId && session.isActive,
+      (session) => session.workflowId === workflowId && session.isActive
     );
   }
 
-  public broadcastToWorkflow(
-    workflowId: string,
-    event: string,
-    data: any,
-  ): void {
+  public broadcastToWorkflow(workflowId: string, event: string, data: any): void {
     this.io.to(`workflow:${workflowId}`).emit(event, data);
   }
 }

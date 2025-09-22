@@ -1,17 +1,18 @@
 // Real-time Workflow Execution Monitoring Service
-import type { WorkflowExecution } from "@/core/schemas";
-import { configService } from "@/core/services/ConfigService";
-import { io, Socket } from "socket.io-client";
+
+import { io, type Socket } from 'socket.io-client';
+import type { WorkflowExecution } from '@/core/schemas';
+import { configService } from '@/core/services/ConfigService';
 
 export interface ExecutionEvent {
   type:
-    | "execution_started"
-    | "execution_completed"
-    | "execution_failed"
-    | "node_started"
-    | "node_completed"
-    | "node_failed"
-    | "log_entry";
+    | 'execution_started'
+    | 'execution_completed'
+    | 'execution_failed'
+    | 'node_started'
+    | 'node_completed'
+    | 'node_failed'
+    | 'log_entry';
   executionId: string;
   timestamp: string;
   data: any;
@@ -34,37 +35,36 @@ export class ExecutionMonitorService {
     if (this.socket?.connected || this.isConnecting) return;
 
     this.isConnecting = true;
-    const authConfig = configService.get("auth");
+    const authConfig = configService.get('auth');
     const token = localStorage.getItem(authConfig.tokenKey);
-    const socketUrl =
-      (import.meta.env["VITE_SOCKET_URL"] as string) || "http://localhost:5000";
+    const socketUrl = (import.meta.env['VITE_SOCKET_URL'] as string) || 'http://localhost:5000';
 
     this.socket = io(socketUrl, {
-      transports: ["websocket", "polling"],
+      transports: ['websocket', 'polling'],
       auth: token ? { token } : undefined,
     });
 
-    this.socket.on("connect", () => {
-      console.log("Execution monitor connected (socket.io)");
+    this.socket.on('connect', () => {
+      console.log('Execution monitor connected (socket.io)');
       this.isConnecting = false;
       // Resubscribe
       this.subscriptions.forEach((executionId) => {
-        this.socket!.emit("execution_join", { executionId });
+        this.socket!.emit('execution_join', { executionId });
       });
     });
 
-    this.socket.on("disconnect", () => {
-      console.log("Execution monitor disconnected");
+    this.socket.on('disconnect', () => {
+      console.log('Execution monitor disconnected');
       this.isConnecting = false;
       if (this.shouldReconnect) this.scheduleReconnect();
     });
 
-    this.socket.on("connect_error", (err) => {
-      console.error("Execution monitor socket error:", err);
+    this.socket.on('connect_error', (err) => {
+      console.error('Execution monitor socket error:', err);
       this.isConnecting = false;
     });
 
-    this.socket.on("execution_event", (event: ExecutionEvent) => {
+    this.socket.on('execution_event', (event: ExecutionEvent) => {
       this.handleEvent(event);
     });
   }
@@ -89,10 +89,7 @@ export class ExecutionMonitorService {
   /**
    * Subscribe to execution updates
    */
-  async subscribeToExecution(
-    executionId: string,
-    handler: ExecutionEventHandler,
-  ): Promise<void> {
+  async subscribeToExecution(executionId: string, handler: ExecutionEventHandler): Promise<void> {
     // Add handler
     if (!this.eventHandlers.has(executionId)) {
       this.eventHandlers.set(executionId, []);
@@ -103,16 +100,13 @@ export class ExecutionMonitorService {
     this.subscriptions.add(executionId);
 
     if (!this.socket || !this.socket.connected) await this.connect();
-    this.socket!.emit("execution_join", { executionId });
+    this.socket!.emit('execution_join', { executionId });
   }
 
   /**
    * Unsubscribe from execution updates
    */
-  unsubscribeFromExecution(
-    executionId: string,
-    handler?: ExecutionEventHandler,
-  ): void {
+  unsubscribeFromExecution(executionId: string, handler?: ExecutionEventHandler): void {
     if (handler) {
       // Remove specific handler
       const handlers = this.eventHandlers.get(executionId);
@@ -128,7 +122,7 @@ export class ExecutionMonitorService {
           this.subscriptions.delete(executionId);
 
           if (this.socket?.connected) {
-            this.socket.emit("execution_leave", { executionId });
+            this.socket.emit('execution_leave', { executionId });
           }
         }
       }
@@ -138,7 +132,7 @@ export class ExecutionMonitorService {
       this.subscriptions.delete(executionId);
 
       if (this.socket?.connected) {
-        this.socket.emit("execution_leave", { executionId });
+        this.socket.emit('execution_leave', { executionId });
       }
     }
   }
@@ -146,10 +140,10 @@ export class ExecutionMonitorService {
   /**
    * Get current connection status
    */
-  getConnectionStatus(): "connected" | "connecting" | "disconnected" {
-    if (this.socket?.connected) return "connected";
-    if (this.isConnecting) return "connecting";
-    return "disconnected";
+  getConnectionStatus(): 'connected' | 'connecting' | 'disconnected' {
+    if (this.socket?.connected) return 'connected';
+    if (this.isConnecting) return 'connecting';
+    return 'disconnected';
   }
 
   /**
@@ -162,7 +156,7 @@ export class ExecutionMonitorService {
         try {
           handler(event);
         } catch (error) {
-          console.error("Error in execution event handler:", error);
+          console.error('Error in execution event handler:', error);
         }
       });
     }
@@ -172,7 +166,6 @@ export class ExecutionMonitorService {
    * Send message to WebSocket
    */
   // Socket.IO handles messaging; retained for compatibility
-
 
   /**
    * Schedule reconnection
@@ -184,19 +177,18 @@ export class ExecutionMonitorService {
 
     this.reconnectTimeout = setTimeout(() => {
       if (this.shouldReconnect) {
-        console.log("Attempting to reconnect execution monitor...");
+        console.log('Attempting to reconnect execution monitor...');
         this.connect().catch((error) => {
-          console.error("Reconnection failed:", error);
+          console.error('Reconnection failed:', error);
           this.scheduleReconnect();
         });
       }
-    }, configService.get("websocket").reconnectInterval);
+    }, configService.get('websocket').reconnectInterval);
   }
 
   /**
    * Get WebSocket URL
    */
-
 }
 
 // Singleton instance
@@ -204,9 +196,7 @@ export const executionMonitor = new ExecutionMonitorService();
 
 // Hook for React components
 export function useExecutionMonitor(executionId: string | null) {
-  const [execution, setExecution] = React.useState<WorkflowExecution | null>(
-    null,
-  );
+  const [execution, setExecution] = React.useState<WorkflowExecution | null>(null);
   const [isConnected, setIsConnected] = React.useState(false);
 
   React.useEffect(() => {
@@ -217,28 +207,28 @@ export function useExecutionMonitor(executionId: string | null) {
         if (!prev) return prev;
 
         switch (event.type) {
-          case "execution_started":
-            return { ...prev, status: "running", startedAt: event.timestamp };
+          case 'execution_started':
+            return { ...prev, status: 'running', startedAt: event.timestamp };
 
-          case "execution_completed":
+          case 'execution_completed':
             return {
               ...prev,
-              status: "completed",
+              status: 'completed',
               completedAt: event.timestamp,
               results: event.data.results || prev.results,
               duration: event.data.duration,
             };
 
-          case "execution_failed":
+          case 'execution_failed':
             return {
               ...prev,
-              status: "failed",
+              status: 'failed',
               completedAt: event.timestamp,
               error: event.data.error,
               duration: event.data.duration,
             };
 
-          case "node_started":
+          case 'node_started':
             return {
               ...prev,
               progress: {
@@ -247,22 +237,19 @@ export function useExecutionMonitor(executionId: string | null) {
               },
             };
 
-          case "node_completed":
+          case 'node_completed':
             return {
               ...prev,
               progress: {
                 ...prev.progress,
-                completedNodes: [
-                  ...(prev.progress?.completedNodes || []),
-                  event.data.nodeId,
-                ],
+                completedNodes: [...(prev.progress?.completedNodes || []), event.data.nodeId],
               },
               results: [
                 ...(Array.isArray(prev.results) ? prev.results : []),
                 {
                   nodeId: event.data.nodeId,
                   nodeName: event.data.nodeName,
-                  status: "completed",
+                  status: 'completed',
                   output: event.data.output,
                   executedAt: event.timestamp,
                   duration: event.data.duration,
@@ -270,7 +257,7 @@ export function useExecutionMonitor(executionId: string | null) {
               ],
             };
 
-          case "node_failed":
+          case 'node_failed':
             return {
               ...prev,
               results: [
@@ -278,7 +265,7 @@ export function useExecutionMonitor(executionId: string | null) {
                 {
                   nodeId: event.data.nodeId,
                   nodeName: event.data.nodeName,
-                  status: "failed",
+                  status: 'failed',
                   error: event.data.error,
                   executedAt: event.timestamp,
                   duration: event.data.duration,
@@ -297,7 +284,7 @@ export function useExecutionMonitor(executionId: string | null) {
 
     // Monitor connection status
     const checkConnection = () => {
-      setIsConnected(executionMonitor.getConnectionStatus() === "connected");
+      setIsConnected(executionMonitor.getConnectionStatus() === 'connected');
     };
 
     const interval = setInterval(checkConnection, 1000);
@@ -305,10 +292,7 @@ export function useExecutionMonitor(executionId: string | null) {
 
     return () => {
       clearInterval(interval);
-      executionMonitor.unsubscribeFromExecution(
-        executionId,
-        handleExecutionEvent,
-      );
+      executionMonitor.unsubscribeFromExecution(executionId, handleExecutionEvent);
     };
   }, [executionId]);
 
@@ -316,4 +300,4 @@ export function useExecutionMonitor(executionId: string | null) {
 }
 
 // Import React for the hook
-import React from "react";
+import React from 'react';

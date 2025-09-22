@@ -8,13 +8,14 @@
  * - Subflow containers for nested workflows
  */
 
-import React, { useState, useCallback, useMemo } from "react";
-import { Handle, Position, useReactFlow } from "reactflow";
-import { cn } from "@/design-system/utils";
-import { useLeanWorkflowStore } from "@/core/stores/leanWorkflowStore";
-import type { Node } from "reactflow";
+import type React from 'react';
+import { useCallback, useMemo, useState } from 'react';
+import type { Node } from 'reactflow';
+import { Handle, Position, useReactFlow } from 'reactflow';
+import { useLeanWorkflowStore } from '@/core/stores/leanWorkflowStore';
+import { cn } from '@/design-system/utils';
 
-export type ContainerType = "loop" | "parallel" | "conditional" | "subflow";
+export type ContainerType = 'loop' | 'parallel' | 'conditional' | 'subflow';
 
 export interface ContainerNodeData {
   label: string;
@@ -22,13 +23,13 @@ export interface ContainerNodeData {
   children: Node[];
   config: {
     // Loop configuration
-    loopMode?: "forEach" | "while" | "count";
+    loopMode?: 'forEach' | 'while' | 'count';
     loopCondition?: string;
     loopCount?: number;
     loopVariable?: string;
 
     // Parallel configuration
-    parallelMode?: "all" | "first" | "race";
+    parallelMode?: 'all' | 'first' | 'race';
     maxConcurrency?: number;
 
     // Conditional configuration
@@ -66,33 +67,27 @@ interface ContainerNodeProps {
   selected?: boolean;
 }
 
-const getContainerStyles = (
-  containerType: ContainerType,
-  selected: boolean,
-) => {
-  const baseStyles =
-    "relative border-2 border-dashed rounded-lg transition-all duration-200";
+const getContainerStyles = (containerType: ContainerType, selected: boolean) => {
+  const baseStyles = 'relative border-2 border-dashed rounded-lg transition-all duration-200';
 
   const typeStyles = {
-    loop: "border-purple-400 bg-purple-900/10",
-    parallel: "border-blue-400 bg-blue-900/10",
-    conditional: "border-yellow-400 bg-yellow-900/10",
-    subflow: "border-green-400 bg-green-900/10",
+    loop: 'border-purple-400 bg-purple-900/10',
+    parallel: 'border-blue-400 bg-blue-900/10',
+    conditional: 'border-yellow-400 bg-yellow-900/10',
+    subflow: 'border-green-400 bg-green-900/10',
   };
 
-  const selectedStyles = selected
-    ? "ring-2 ring-offset-2 ring-offset-gray-900 ring-blue-400"
-    : "";
+  const selectedStyles = selected ? 'ring-2 ring-offset-2 ring-offset-gray-900 ring-blue-400' : '';
 
   return cn(baseStyles, typeStyles[containerType], selectedStyles);
 };
 
 const getContainerIcon = (containerType: ContainerType) => {
   const icons = {
-    loop: "🔄",
-    parallel: "⚡",
-    conditional: "🔀",
-    subflow: "📦",
+    loop: '🔄',
+    parallel: '⚡',
+    conditional: '🔀',
+    subflow: '📦',
   };
   return icons[containerType];
 };
@@ -107,9 +102,7 @@ const ContainerHeader: React.FC<{
   <div className="flex items-center justify-between p-2 bg-gray-800 rounded-t border-b border-gray-600">
     <div className="flex items-center gap-2">
       <span className="text-lg">{getContainerIcon(containerType)}</span>
-      <span className="text-sm font-medium text-white capitalize">
-        {label || containerType}
-      </span>
+      <span className="text-sm font-medium text-white capitalize">{label || containerType}</span>
     </div>
 
     <div className="flex items-center gap-1">
@@ -123,9 +116,9 @@ const ContainerHeader: React.FC<{
       <button
         onClick={onToggleExpanded}
         className="p-1 text-gray-400 hover:text-white transition-colors"
-        title={isExpanded ? "Collapse" : "Expand"}
+        title={isExpanded ? 'Collapse' : 'Expand'}
       >
-        {isExpanded ? "▼" : "▶"}
+        {isExpanded ? '▼' : '▶'}
       </button>
     </div>
   </div>
@@ -139,9 +132,9 @@ const DropZone: React.FC<{
 }> = ({ containerType, onDrop, onDragOver, hasChildren }) => (
   <div
     className={cn(
-      "flex-1 flex items-center justify-center transition-all duration-200",
-      "border-2 border-dashed border-gray-600 rounded m-2",
-      "hover:border-gray-400 hover:bg-gray-800/20",
+      'flex-1 flex items-center justify-center transition-all duration-200',
+      'border-2 border-dashed border-gray-600 rounded m-2',
+      'hover:border-gray-400 hover:bg-gray-800/20'
     )}
     onDrop={onDrop}
     onDragOver={onDragOver}
@@ -152,33 +145,23 @@ const DropZone: React.FC<{
         <div className="text-sm text-gray-400">
           Drop nodes here to add them to this {containerType}
         </div>
-        {containerType === "loop" && (
-          <div className="text-xs text-gray-500 mt-1">
-            Nodes will be executed repeatedly
-          </div>
+        {containerType === 'loop' && (
+          <div className="text-xs text-gray-500 mt-1">Nodes will be executed repeatedly</div>
         )}
-        {containerType === "parallel" && (
-          <div className="text-xs text-gray-500 mt-1">
-            Nodes will be executed concurrently
-          </div>
+        {containerType === 'parallel' && (
+          <div className="text-xs text-gray-500 mt-1">Nodes will be executed concurrently</div>
         )}
       </div>
     ) : (
       <div className="w-full h-full min-h-[200px] p-2">
         {/* Child nodes will be rendered here */}
-        <div className="text-xs text-gray-500 text-center">
-          Container content ({containerType})
-        </div>
+        <div className="text-xs text-gray-500 text-center">Container content ({containerType})</div>
       </div>
     )}
   </div>
 );
 
-export const ContainerNode: React.FC<ContainerNodeProps> = ({
-  id,
-  data,
-  selected = false,
-}) => {
+export const ContainerNode: React.FC<ContainerNodeProps> = ({ id, data, selected = false }) => {
   const { setNodes } = useReactFlow();
   const { addNode } = useLeanWorkflowStore();
   const [isDragOver, setIsDragOver] = useState(false);
@@ -197,14 +180,14 @@ export const ContainerNode: React.FC<ContainerNodeProps> = ({
                 isExpanded: !node.data.isExpanded,
               },
             }
-          : node,
-      ),
+          : node
+      )
     );
   }, [id, setNodes]);
 
   const handleEdit = useCallback(() => {
     // Open container configuration modal
-    console.log("Edit container:", id, containerType);
+    console.log('Edit container:', id, containerType);
   }, [id, containerType]);
 
   const handleDrop = useCallback(
@@ -213,7 +196,7 @@ export const ContainerNode: React.FC<ContainerNodeProps> = ({
       setIsDragOver(false);
 
       try {
-        const data = event.dataTransfer.getData("application/reactflow");
+        const data = event.dataTransfer.getData('application/reactflow');
         if (!data) return;
 
         const { type, nodeTypeData, integrationData } = JSON.parse(data);
@@ -255,19 +238,19 @@ export const ContainerNode: React.FC<ContainerNodeProps> = ({
                     children: [...(node.data.children || []), newNode],
                   },
                 }
-              : node,
-          ),
+              : node
+          )
         );
       } catch (error) {
-        console.error("Error dropping node into container:", error);
+        console.error('Error dropping node into container:', error);
       }
     },
-    [id, containerType, addNode, setNodes],
+    [id, containerType, addNode, setNodes]
   );
 
   const handleDragOver = useCallback((event: React.DragEvent) => {
     event.preventDefault();
-    event.dataTransfer.dropEffect = "move";
+    event.dataTransfer.dropEffect = 'move';
     setIsDragOver(true);
   }, []);
 
@@ -281,33 +264,33 @@ export const ContainerNode: React.FC<ContainerNodeProps> = ({
   // Calculate container handles based on type
   const containerHandles = useMemo(() => {
     switch (containerType) {
-      case "loop":
+      case 'loop':
         return {
-          inputs: [{ id: "input", position: Position.Left }],
+          inputs: [{ id: 'input', position: Position.Left }],
           outputs: [
-            { id: "loop-start", position: Position.Right, label: "Loop Start" },
-            { id: "loop-end", position: Position.Bottom, label: "Loop End" },
+            { id: 'loop-start', position: Position.Right, label: 'Loop Start' },
+            { id: 'loop-end', position: Position.Bottom, label: 'Loop End' },
           ],
         };
-      case "parallel":
+      case 'parallel':
         return {
-          inputs: [{ id: "input", position: Position.Left }],
+          inputs: [{ id: 'input', position: Position.Left }],
           outputs: [
             {
-              id: "parallel-branch",
+              id: 'parallel-branch',
               position: Position.Right,
-              label: "Branch",
+              label: 'Branch',
             },
             {
-              id: "parallel-complete",
+              id: 'parallel-complete',
               position: Position.Bottom,
-              label: "Complete",
+              label: 'Complete',
             },
           ],
         };
-      case "conditional":
+      case 'conditional':
         return {
-          inputs: [{ id: "input", position: Position.Left }],
+          inputs: [{ id: 'input', position: Position.Left }],
           outputs:
             config.conditions?.map((condition, index) => ({
               id: condition.id,
@@ -316,10 +299,10 @@ export const ContainerNode: React.FC<ContainerNodeProps> = ({
               style: { top: `${20 + index * 30}%` },
             })) || [],
         };
-      case "subflow":
+      case 'subflow':
         return {
-          inputs: [{ id: "input", position: Position.Left }],
-          outputs: [{ id: "output", position: Position.Right }],
+          inputs: [{ id: 'input', position: Position.Left }],
+          outputs: [{ id: 'output', position: Position.Right }],
         };
       default:
         return { inputs: [], outputs: [] };
@@ -330,12 +313,12 @@ export const ContainerNode: React.FC<ContainerNodeProps> = ({
     <div
       className={cn(
         getContainerStyles(containerType, selected),
-        isDragOver && "ring-2 ring-blue-400 ring-opacity-50",
-        "min-w-[300px] min-h-[200px]",
+        isDragOver && 'ring-2 ring-blue-400 ring-opacity-50',
+        'min-w-[300px] min-h-[200px]'
       )}
       style={{
         width: dimensions.width,
-        height: isExpanded ? dimensions.height : "auto",
+        height: isExpanded ? dimensions.height : 'auto',
       }}
       onDragLeave={handleDragLeave}
     >
@@ -357,9 +340,9 @@ export const ContainerNode: React.FC<ContainerNodeProps> = ({
           position={handle.position}
           id={handle.id}
           className="!bg-gray-600 !border-2 !border-gray-400"
-          style={"style" in handle ? handle.style : undefined}
+          style={'style' in handle ? handle.style : undefined}
         >
-          {"label" in handle && handle.label && (
+          {'label' in handle && handle.label && (
             <div className="absolute top-0 left-full ml-2 text-xs text-gray-400 whitespace-nowrap">
               {handle.label}
             </div>
@@ -390,12 +373,10 @@ export const ContainerNode: React.FC<ContainerNodeProps> = ({
       <div className="px-2 py-1 bg-gray-800 rounded-b border-t border-gray-600">
         <div className="flex justify-between items-center text-xs text-gray-400">
           <span>{children.length} nodes</span>
-          {containerType === "parallel" && config.maxConcurrency && (
+          {containerType === 'parallel' && config.maxConcurrency && (
             <span>Max: {config.maxConcurrency}</span>
           )}
-          {containerType === "loop" && config.loopMode && (
-            <span>{config.loopMode}</span>
-          )}
+          {containerType === 'loop' && config.loopMode && <span>{config.loopMode}</span>}
         </div>
       </div>
     </div>

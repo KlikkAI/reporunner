@@ -1,5 +1,5 @@
-import { Schema, model } from "mongoose";
-import { IWorkflow, WorkflowStatus, NodeType } from "@reporunner/api-types";
+import { type IWorkflow, NodeType, WorkflowStatus } from '@reporunner/api-types';
+import { model, Schema } from 'mongoose';
 
 const NodeSchema = new Schema({
   id: { type: String, required: true },
@@ -27,8 +27,8 @@ const EdgeSchema = new Schema({
   targetHandle: String,
   type: {
     type: String,
-    enum: ["default", "conditional", "error"],
-    default: "default",
+    enum: ['default', 'conditional', 'error'],
+    default: 'default',
   },
   label: String,
   data: { type: Schema.Types.Mixed },
@@ -36,7 +36,7 @@ const EdgeSchema = new Schema({
 
 const WorkflowSettingsSchema = new Schema({
   errorWorkflow: String,
-  timezone: { type: String, default: "UTC" },
+  timezone: { type: String, default: 'UTC' },
   timeout: Number,
   maxExecutionTime: Number,
   saveExecutionData: { type: Boolean, default: true },
@@ -45,8 +45,8 @@ const WorkflowSettingsSchema = new Schema({
   maxConsecutiveFailures: { type: Number, default: 5 },
   executionOrder: {
     type: String,
-    enum: ["sequential", "parallel"],
-    default: "sequential",
+    enum: ['sequential', 'parallel'],
+    default: 'sequential',
   },
 });
 
@@ -72,8 +72,8 @@ export const WorkflowSchema = new Schema<IWorkflow>(
   },
   {
     timestamps: true,
-    collection: "workflows",
-  },
+    collection: 'workflows',
+  }
 );
 
 // Compound indexes
@@ -83,14 +83,14 @@ WorkflowSchema.index({ createdBy: 1, status: 1 });
 WorkflowSchema.index({ tags: 1, status: 1 });
 
 // Text index for search
-WorkflowSchema.index({ name: "text", description: "text" });
+WorkflowSchema.index({ name: 'text', description: 'text' });
 
 // Virtual for execution count (will be populated from executions collection)
-WorkflowSchema.virtual("executionCount", {
-  ref: "Execution",
-  localField: "id",
-  foreignField: "workflowId",
+WorkflowSchema.virtual('executionCount', {
+  ref: 'Execution',
+  localField: 'id',
+  foreignField: 'workflowId',
   count: true,
 });
 
-export const WorkflowModel = model<IWorkflow>("Workflow", WorkflowSchema);
+export const WorkflowModel = model<IWorkflow>('Workflow', WorkflowSchema);

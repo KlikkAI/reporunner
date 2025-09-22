@@ -3,13 +3,13 @@
  * Monitors system health and provides status endpoints
  */
 
-import mongoose from "mongoose";
-import { logger } from "../logging/Logger.js";
-import { performanceMonitor } from "./PerformanceMonitor.js";
-import { errorTracker } from "./ErrorTracker.js";
+import mongoose from 'mongoose';
+import { logger } from '../logging/Logger.js';
+import { errorTracker } from './ErrorTracker.js';
+import { performanceMonitor } from './PerformanceMonitor.js';
 
 export interface HealthStatus {
-  status: "healthy" | "degraded" | "unhealthy";
+  status: 'healthy' | 'degraded' | 'unhealthy';
   timestamp: number;
   uptime: number;
   version: string;
@@ -19,7 +19,7 @@ export interface HealthStatus {
 
 export interface HealthCheck {
   name: string;
-  status: "pass" | "warn" | "fail";
+  status: 'pass' | 'warn' | 'fail';
   duration: number;
   message?: string;
   data?: any;
@@ -50,9 +50,9 @@ export interface HealthMetrics {
 
 export interface ServiceDependency {
   name: string;
-  type: "database" | "cache" | "external-api" | "queue" | "file-system";
+  type: 'database' | 'cache' | 'external-api' | 'queue' | 'file-system';
   checkFunction: () => Promise<{
-    status: "pass" | "warn" | "fail";
+    status: 'pass' | 'warn' | 'fail';
     data?: any;
     message?: string;
   }>;
@@ -74,7 +74,7 @@ class HealthCheckService {
   public registerDependency(dependency: ServiceDependency): void {
     this.dependencies.set(dependency.name, dependency);
     logger.info(`Health check dependency registered: ${dependency.name}`, {
-      component: "health-check",
+      component: 'health-check',
       type: dependency.type,
       critical: dependency.critical,
     });
@@ -83,7 +83,7 @@ class HealthCheckService {
   public unregisterDependency(name: string): void {
     this.dependencies.delete(name);
     logger.info(`Health check dependency unregistered: ${name}`, {
-      component: "health-check",
+      component: 'health-check',
     });
   }
 
@@ -108,7 +108,7 @@ class HealthCheckService {
       status: overallStatus,
       timestamp: Date.now(),
       uptime: process.uptime(),
-      version: process.env.npm_package_version || "1.0.0",
+      version: process.env.npm_package_version || '1.0.0',
       checks,
       metrics,
     };
@@ -117,7 +117,7 @@ class HealthCheckService {
 
     const duration = performance.now() - startTime;
     logger.debug(`Health check completed`, {
-      component: "health-check",
+      component: 'health-check',
       status: overallStatus,
       duration,
       checksCount: checks.length,
@@ -128,7 +128,7 @@ class HealthCheckService {
 
   private async runDependencyCheck(
     name: string,
-    dependency: ServiceDependency,
+    dependency: ServiceDependency
   ): Promise<HealthCheck> {
     const startTime = performance.now();
     const checkStartTime = Date.now();
@@ -136,14 +136,9 @@ class HealthCheckService {
     try {
       // Run check with timeout
       const checkPromise = dependency.checkFunction();
-      const timeoutPromise = new Promise<{ status: "fail"; message: string }>(
-        (_, reject) => {
-          setTimeout(
-            () => reject(new Error(`Health check timeout: ${name}`)),
-            dependency.timeout,
-          );
-        },
-      );
+      const timeoutPromise = new Promise<{ status: 'fail'; message: string }>((_, reject) => {
+        setTimeout(() => reject(new Error(`Health check timeout: ${name}`)), dependency.timeout);
+      });
 
       const result = await Promise.race([checkPromise, timeoutPromise]);
       const duration = performance.now() - startTime;
@@ -153,21 +148,21 @@ class HealthCheckService {
         status: result.status,
         duration,
         message: result.message,
-        data: "data" in result ? result.data : undefined,
+        data: 'data' in result ? result.data : undefined,
         lastChecked: checkStartTime,
       };
     } catch (error) {
       const duration = performance.now() - startTime;
 
       logger.warn(`Health check failed: ${name}`, {
-        component: "health-check",
+        component: 'health-check',
         error: error instanceof Error ? error.message : String(error),
         duration,
       });
 
       return {
         name,
-        status: "fail",
+        status: 'fail',
         duration,
         message: error instanceof Error ? error.message : String(error),
         lastChecked: checkStartTime,
@@ -175,37 +170,31 @@ class HealthCheckService {
     }
   }
 
-  private calculateOverallStatus(
-    checks: HealthCheck[],
-  ): "healthy" | "degraded" | "unhealthy" {
+  private calculateOverallStatus(checks: HealthCheck[]): 'healthy' | 'degraded' | 'unhealthy' {
     const criticalChecks = checks.filter((check) => {
       const dependency = this.dependencies.get(check.name);
       return dependency?.critical;
     });
 
-    const failedCritical = criticalChecks.filter(
-      (check) => check.status === "fail",
-    );
-    const warnCritical = criticalChecks.filter(
-      (check) => check.status === "warn",
-    );
+    const failedCritical = criticalChecks.filter((check) => check.status === 'fail');
+    const warnCritical = criticalChecks.filter((check) => check.status === 'warn');
 
     if (failedCritical.length > 0) {
-      return "unhealthy";
+      return 'unhealthy';
     }
 
-    const failedChecks = checks.filter((check) => check.status === "fail");
-    const warnChecks = checks.filter((check) => check.status === "warn");
+    const failedChecks = checks.filter((check) => check.status === 'fail');
+    const warnChecks = checks.filter((check) => check.status === 'warn');
 
     if (failedChecks.length > 0 || warnCritical.length > 0) {
-      return "degraded";
+      return 'degraded';
     }
 
     if (warnChecks.length > 0) {
-      return "degraded";
+      return 'degraded';
     }
 
-    return "healthy";
+    return 'healthy';
   }
 
   private async gatherMetrics(): Promise<HealthMetrics> {
@@ -217,13 +206,12 @@ class HealthCheckService {
 
     // Get performance metrics
     const requestMetrics = performanceMonitor.getMetrics(
-      "http_request_duration",
-      Date.now() - 60 * 60 * 1000,
+      'http_request_duration',
+      Date.now() - 60 * 60 * 1000
     );
     const avgResponseTime =
       requestMetrics.length > 0
-        ? requestMetrics.reduce((sum, m) => sum + m.value, 0) /
-          requestMetrics.length
+        ? requestMetrics.reduce((sum, m) => sum + m.value, 0) / requestMetrics.length
         : 0;
 
     return {
@@ -263,8 +251,8 @@ class HealthCheckService {
   private registerDefaultDependencies(): void {
     // MongoDB check
     this.registerDependency({
-      name: "mongodb",
-      type: "database",
+      name: 'mongodb',
+      type: 'database',
       critical: true,
       timeout: 5000,
       checkFunction: async () => {
@@ -273,8 +261,8 @@ class HealthCheckService {
 
           if (mongoose.connection.readyState !== 1) {
             return {
-              status: "fail",
-              message: "MongoDB not connected",
+              status: 'fail',
+              message: 'MongoDB not connected',
             };
           }
 
@@ -282,14 +270,13 @@ class HealthCheckService {
           if (mongoose.connection.db) {
             await mongoose.connection.db.admin().ping();
           } else {
-            throw new Error("Database connection not established");
+            throw new Error('Database connection not established');
           }
           const duration = performance.now() - startTime;
 
           return {
-            status: duration > 1000 ? "warn" : "pass",
-            message:
-              duration > 1000 ? "MongoDB responding slowly" : "MongoDB healthy",
+            status: duration > 1000 ? 'warn' : 'pass',
+            message: duration > 1000 ? 'MongoDB responding slowly' : 'MongoDB healthy',
             data: {
               duration,
               readyState: mongoose.connection.readyState,
@@ -299,7 +286,7 @@ class HealthCheckService {
           };
         } catch (error) {
           return {
-            status: "fail",
+            status: 'fail',
             message: `MongoDB error: ${error instanceof Error ? error.message : String(error)}`,
           };
         }
@@ -308,24 +295,23 @@ class HealthCheckService {
 
     // Memory check
     this.registerDependency({
-      name: "memory",
-      type: "file-system",
+      name: 'memory',
+      type: 'file-system',
       critical: false,
       timeout: 1000,
       checkFunction: async () => {
         const memoryUsage = process.memoryUsage();
-        const usagePercentage =
-          (memoryUsage.heapUsed / memoryUsage.heapTotal) * 100;
+        const usagePercentage = (memoryUsage.heapUsed / memoryUsage.heapTotal) * 100;
 
-        let status: "pass" | "warn" | "fail" = "pass";
-        let message = "Memory usage normal";
+        let status: 'pass' | 'warn' | 'fail' = 'pass';
+        let message = 'Memory usage normal';
 
         if (usagePercentage > 90) {
-          status = "fail";
-          message = "Critical memory usage";
+          status = 'fail';
+          message = 'Critical memory usage';
         } else if (usagePercentage > 80) {
-          status = "warn";
-          message = "High memory usage";
+          status = 'warn';
+          message = 'High memory usage';
         }
 
         return {
@@ -344,21 +330,21 @@ class HealthCheckService {
 
     // Disk space check
     this.registerDependency({
-      name: "disk-space",
-      type: "file-system",
+      name: 'disk-space',
+      type: 'file-system',
       critical: false,
       timeout: 2000,
       checkFunction: async () => {
         try {
-          const fs = await import("fs");
-          const path = await import("path");
+          const fs = await import('fs');
+          const path = await import('path');
 
           const stats = fs.statSync(process.cwd());
 
           // Note: This is a simplified check. In production, you'd want to check actual disk usage
           return {
-            status: "pass",
-            message: "Disk space check passed",
+            status: 'pass',
+            message: 'Disk space check passed',
             data: {
               path: process.cwd(),
               accessible: true,
@@ -366,7 +352,7 @@ class HealthCheckService {
           };
         } catch (error) {
           return {
-            status: "fail",
+            status: 'fail',
             message: `Disk space check failed: ${error instanceof Error ? error.message : String(error)}`,
           };
         }
@@ -375,26 +361,24 @@ class HealthCheckService {
 
     // Error rate check
     this.registerDependency({
-      name: "error-rate",
-      type: "external-api",
+      name: 'error-rate',
+      type: 'external-api',
       critical: false,
       timeout: 1000,
       checkFunction: async () => {
-        const errorStats = errorTracker.getErrorStats(
-          Date.now() - 5 * 60 * 1000,
-        ); // Last 5 minutes
+        const errorStats = errorTracker.getErrorStats(Date.now() - 5 * 60 * 1000); // Last 5 minutes
         const errorRate = errorStats.errorRate;
 
-        let status: "pass" | "warn" | "fail" = "pass";
-        let message = "Error rate normal";
+        let status: 'pass' | 'warn' | 'fail' = 'pass';
+        let message = 'Error rate normal';
 
         if (errorRate > 10) {
           // More than 10 errors per minute
-          status = "fail";
-          message = "Critical error rate";
+          status = 'fail';
+          message = 'Critical error rate';
         } else if (errorRate > 5) {
-          status = "warn";
-          message = "Elevated error rate";
+          status = 'warn';
+          message = 'Elevated error rate';
         }
 
         return {
@@ -418,11 +402,11 @@ class HealthCheckService {
         await this.performHealthCheck();
       } catch (error) {
         logger.error(
-          "Periodic health check failed",
+          'Periodic health check failed',
           {
-            component: "health-check",
+            component: 'health-check',
           },
-          error instanceof Error ? error : new Error(String(error)),
+          error instanceof Error ? error : new Error(String(error))
         );
       }
     }, 30000);
@@ -434,24 +418,20 @@ class HealthCheckService {
       try {
         const health = await this.performHealthCheck();
         const statusCode =
-          health.status === "healthy"
-            ? 200
-            : health.status === "degraded"
-              ? 200
-              : 503;
+          health.status === 'healthy' ? 200 : health.status === 'degraded' ? 200 : 503;
 
         res.status(statusCode).json(health);
       } catch (error) {
         logger.error(
-          "Health endpoint error",
-          { component: "health-check" },
-          error instanceof Error ? error : new Error(String(error)),
+          'Health endpoint error',
+          { component: 'health-check' },
+          error instanceof Error ? error : new Error(String(error))
         );
 
         res.status(503).json({
-          status: "unhealthy",
+          status: 'unhealthy',
           timestamp: Date.now(),
-          message: "Health check failed",
+          message: 'Health check failed',
           error: error instanceof Error ? error.message : String(error),
         });
       }
@@ -462,8 +442,7 @@ class HealthCheckService {
     return async (req: any, res: any) => {
       try {
         const health = await this.performHealthCheck();
-        const isReady =
-          health.status === "healthy" || health.status === "degraded";
+        const isReady = health.status === 'healthy' || health.status === 'degraded';
 
         res.status(isReady ? 200 : 503).json({
           ready: isReady,
@@ -477,7 +456,7 @@ class HealthCheckService {
       } catch (error) {
         res.status(503).json({
           ready: false,
-          message: "Readiness check failed",
+          message: 'Readiness check failed',
           timestamp: Date.now(),
         });
       }

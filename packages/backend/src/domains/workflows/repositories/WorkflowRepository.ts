@@ -45,7 +45,7 @@ export class WorkflowRepository {
 
     // Update fields
     if (allowedFields) {
-      allowedFields.forEach(field => {
+      allowedFields.forEach((field) => {
         if (updateData[field] !== undefined) {
           (workflow as any)[field] = updateData[field];
         }

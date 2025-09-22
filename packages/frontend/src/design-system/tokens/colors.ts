@@ -1,6 +1,6 @@
 /**
  * Color Design Tokens
- * 
+ *
  * Centralized color system following the design system architecture
  */
 
@@ -13,26 +13,26 @@ export const colors = {
     600: '#0284c7',
     900: '#0c4a6e',
   },
-  
+
   // Status colors
   success: {
     50: '#f0fdf4',
     500: '#22c55e',
     600: '#16a34a',
   },
-  
+
   error: {
     50: '#fef2f2',
     500: '#ef4444',
     600: '#dc2626',
   },
-  
+
   warning: {
     50: '#fffbeb',
     500: '#f59e0b',
     600: '#d97706',
   },
-  
+
   // Neutral colors
   gray: {
     50: '#f9fafb',

@@ -5,131 +5,128 @@
  * custom development capabilities
  */
 
-import React, { useState } from "react";
 import {
-  Mail,
-  Database,
-  Cloud,
-  Slack,
-  Calendar,
-  FileText,
-  Code,
-  Zap,
-  Plus,
   ArrowRight,
-  Search,
+  Calendar,
+  Cloud,
+  Code,
+  Database,
+  FileText,
   Grid3X3,
-} from "lucide-react";
+  Mail,
+  Plus,
+  Search,
+  Slack,
+  Zap,
+} from 'lucide-react';
+import type React from 'react';
+import { useState } from 'react';
 
 export const IntegrationEcosystem: React.FC = () => {
-  const [activeCategory, setActiveCategory] = useState("all");
+  const [activeCategory, setActiveCategory] = useState('all');
 
   const categories = [
-    { id: "all", name: "All Integrations", count: 500 },
-    { id: "communication", name: "Communication", count: 85 },
-    { id: "productivity", name: "Productivity", count: 120 },
-    { id: "database", name: "Database", count: 45 },
-    { id: "ai", name: "AI & ML", count: 75 },
-    { id: "commerce", name: "E-commerce", count: 60 },
-    { id: "custom", name: "Custom", count: "Unlimited" },
+    { id: 'all', name: 'All Integrations', count: 500 },
+    { id: 'communication', name: 'Communication', count: 85 },
+    { id: 'productivity', name: 'Productivity', count: 120 },
+    { id: 'database', name: 'Database', count: 45 },
+    { id: 'ai', name: 'AI & ML', count: 75 },
+    { id: 'commerce', name: 'E-commerce', count: 60 },
+    { id: 'custom', name: 'Custom', count: 'Unlimited' },
   ];
 
   const integrations = [
     {
-      name: "Gmail",
-      category: "communication",
+      name: 'Gmail',
+      category: 'communication',
       icon: Mail,
-      description: "Send, receive, and manage emails",
-      gradient: "from-red-500 to-red-600",
+      description: 'Send, receive, and manage emails',
+      gradient: 'from-red-500 to-red-600',
       popular: true,
     },
     {
-      name: "Slack",
-      category: "communication",
+      name: 'Slack',
+      category: 'communication',
       icon: Slack,
-      description: "Team messaging and notifications",
-      gradient: "from-purple-500 to-purple-600",
+      description: 'Team messaging and notifications',
+      gradient: 'from-purple-500 to-purple-600',
       popular: true,
     },
     {
-      name: "PostgreSQL",
-      category: "database",
+      name: 'PostgreSQL',
+      category: 'database',
       icon: Database,
-      description: "Relational database operations",
-      gradient: "from-blue-500 to-blue-600",
+      description: 'Relational database operations',
+      gradient: 'from-blue-500 to-blue-600',
       popular: false,
     },
     {
-      name: "Google Sheets",
-      category: "productivity",
+      name: 'Google Sheets',
+      category: 'productivity',
       icon: FileText,
-      description: "Spreadsheet automation",
-      gradient: "from-green-500 to-green-600",
+      description: 'Spreadsheet automation',
+      gradient: 'from-green-500 to-green-600',
       popular: true,
     },
     {
-      name: "Calendar",
-      category: "productivity",
+      name: 'Calendar',
+      category: 'productivity',
       icon: Calendar,
-      description: "Schedule and event management",
-      gradient: "from-indigo-500 to-indigo-600",
+      description: 'Schedule and event management',
+      gradient: 'from-indigo-500 to-indigo-600',
       popular: false,
     },
     {
-      name: "AWS",
-      category: "cloud",
+      name: 'AWS',
+      category: 'cloud',
       icon: Cloud,
-      description: "Cloud services integration",
-      gradient: "from-orange-500 to-orange-600",
+      description: 'Cloud services integration',
+      gradient: 'from-orange-500 to-orange-600',
       popular: true,
     },
     {
-      name: "OpenAI",
-      category: "ai",
+      name: 'OpenAI',
+      category: 'ai',
       icon: Zap,
-      description: "AI and language models",
-      gradient: "from-purple-500 to-pink-500",
+      description: 'AI and language models',
+      gradient: 'from-purple-500 to-pink-500',
       popular: true,
     },
     {
-      name: "Custom API",
-      category: "custom",
+      name: 'Custom API',
+      category: 'custom',
       icon: Code,
-      description: "Build your own integrations",
-      gradient: "from-gray-500 to-gray-600",
+      description: 'Build your own integrations',
+      gradient: 'from-gray-500 to-gray-600',
       popular: false,
     },
   ];
 
   const filteredIntegrations =
-    activeCategory === "all"
+    activeCategory === 'all'
       ? integrations
-      : integrations.filter(
-          (integration) => integration.category === activeCategory,
-        );
+      : integrations.filter((integration) => integration.category === activeCategory);
 
   const features = [
     {
       icon: Grid3X3,
-      title: "500+ Pre-built Integrations",
-      description:
-        "Connect to popular services out of the box with minimal configuration.",
+      title: '500+ Pre-built Integrations',
+      description: 'Connect to popular services out of the box with minimal configuration.',
     },
     {
       icon: Code,
-      title: "Custom Node SDK",
-      description:
-        "Build your own integrations with our comprehensive development kit.",
+      title: 'Custom Node SDK',
+      description: 'Build your own integrations with our comprehensive development kit.',
     },
     {
       icon: Zap,
-      title: "API-First Architecture",
-      description: "Every integration is built on our robust API foundation.",
+      title: 'API-First Architecture',
+      description: 'Every integration is built on our robust API foundation.',
     },
     {
       icon: Plus,
-      title: "Community Marketplace",
-      description: "Share and discover integrations built by the community.",
+      title: 'Community Marketplace',
+      description: 'Share and discover integrations built by the community.',
     },
   ];
 
@@ -139,14 +136,14 @@ export const IntegrationEcosystem: React.FC = () => {
         {/* Section Header */}
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-            Connect{" "}
+            Connect{' '}
             <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
               Everything
             </span>
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Integrate with 500+ services or build your own custom connections.
-            Our ecosystem grows with your needs.
+            Integrate with 500+ services or build your own custom connections. Our ecosystem grows
+            with your needs.
           </p>
         </div>
 
@@ -162,9 +159,7 @@ export const IntegrationEcosystem: React.FC = () => {
                 <div className="bg-gradient-to-r from-blue-500 to-purple-500 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
                   <Icon className="w-6 h-6 text-white" />
                 </div>
-                <h3 className="font-bold text-gray-900 mb-2">
-                  {feature.title}
-                </h3>
+                <h3 className="font-bold text-gray-900 mb-2">{feature.title}</h3>
                 <p className="text-gray-600 text-sm">{feature.description}</p>
               </div>
             );
@@ -176,9 +171,7 @@ export const IntegrationEcosystem: React.FC = () => {
           {/* Browser Header */}
           <div className="bg-gray-50 border-b border-gray-200 p-6">
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-              <h3 className="text-2xl font-bold text-gray-900">
-                Integration Library
-              </h3>
+              <h3 className="text-2xl font-bold text-gray-900">Integration Library</h3>
 
               {/* Search Bar */}
               <div className="relative">
@@ -199,14 +192,12 @@ export const IntegrationEcosystem: React.FC = () => {
                   onClick={() => setActiveCategory(category.id)}
                   className={`px-4 py-2 rounded-lg font-medium transition-all ${
                     activeCategory === category.id
-                      ? "bg-blue-600 text-white shadow-lg"
-                      : "bg-white text-gray-600 border border-gray-200 hover:bg-gray-50"
+                      ? 'bg-blue-600 text-white shadow-lg'
+                      : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'
                   }`}
                 >
                   {category.name}
-                  <span className="ml-2 text-sm opacity-75">
-                    ({category.count})
-                  </span>
+                  <span className="ml-2 text-sm opacity-75">({category.count})</span>
                 </button>
               ))}
             </div>
@@ -237,12 +228,8 @@ export const IntegrationEcosystem: React.FC = () => {
                     </div>
 
                     {/* Content */}
-                    <h4 className="font-semibold text-gray-900 mb-1">
-                      {integration.name}
-                    </h4>
-                    <p className="text-sm text-gray-600 mb-3">
-                      {integration.description}
-                    </p>
+                    <h4 className="font-semibold text-gray-900 mb-1">{integration.name}</h4>
+                    <p className="text-sm text-gray-600 mb-3">{integration.description}</p>
 
                     {/* Install Button */}
                     <button className="w-full bg-gray-50 hover:bg-blue-50 text-gray-700 hover:text-blue-600 py-2 px-3 rounded-lg text-sm font-medium transition-colors group-hover:bg-blue-50 group-hover:text-blue-600">
@@ -257,12 +244,8 @@ export const IntegrationEcosystem: React.FC = () => {
                 <div className="w-12 h-12 rounded-lg bg-gray-100 flex items-center justify-center mb-3">
                   <Plus className="w-6 h-6 text-gray-600" />
                 </div>
-                <h4 className="font-semibold text-gray-700 mb-1">
-                  Need Something Else?
-                </h4>
-                <p className="text-sm text-gray-500 mb-3">
-                  Build a custom integration
-                </p>
+                <h4 className="font-semibold text-gray-700 mb-1">Need Something Else?</h4>
+                <p className="text-sm text-gray-500 mb-3">Build a custom integration</p>
                 <button className="text-blue-600 hover:text-blue-700 text-sm font-medium">
                   View SDK
                 </button>
@@ -283,8 +266,8 @@ export const IntegrationEcosystem: React.FC = () => {
         <div className="mt-16 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-8 text-white text-center">
           <h3 className="text-2xl font-bold mb-4">Don't See What You Need?</h3>
           <p className="text-blue-100 mb-6 max-w-2xl mx-auto">
-            Build custom integrations with our comprehensive SDK, or let our
-            team create one for you. We support any API or service.
+            Build custom integrations with our comprehensive SDK, or let our team create one for
+            you. We support any API or service.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button className="bg-white text-blue-600 px-6 py-3 rounded-lg font-semibold hover:bg-gray-50 transition-colors">

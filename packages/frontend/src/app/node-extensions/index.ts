@@ -4,127 +4,113 @@
  */
 
 // Initialize components and themes immediately
-import "./bodies"; // Auto-registers specialized components
-import "./nodeUiRegistry"; // Initializes the registry and factory
-import "./themes"; // Initializes theme system including Gmail theme
+import './bodies'; // Auto-registers specialized components
+import './nodeUiRegistry'; // Initializes the registry and factory
+import './themes'; // Initializes theme system including Gmail theme
 
 // Import functions for internal use
-import {
-  getRegistryStatistics,
-  listRegisteredComponentTypes,
-} from "./nodeUiRegistry";
-import { themeManager } from "./themes";
-
-// ============================================================================
-// Core Registry System
-// ============================================================================
-export {
-  nodeUiRegistry,
-  getCustomBodyComponent,
-  getCustomPropertiesPanelComponent,
-  registerCustomBodyComponent,
-  registerCustomPropertiesPanelComponent,
-  registerLazyBodyComponent,
-  registerLazyPropertiesPanel,
-  preloadNodeComponents,
-  hasCustomBody,
-  hasCustomPropertiesPanel,
-  getRegistryStatistics,
-  listRegisteredComponentTypes,
-  enhancedRegistry,
-} from "./nodeUiRegistry";
-
-export { componentFactory, ComponentFactory } from "./ComponentFactory";
-
-// ============================================================================
-// Theme System
-// ============================================================================
-export {
-  defaultTheme,
-  darkTheme,
-  themeManager,
-  ThemeManager,
-  useNodeTheme,
-  NodeThemeProvider,
-  useNodeThemeContext,
-} from "./themes";
-
-// ============================================================================
-// Reusable Components
-// ============================================================================
-export { default as NodeBadge } from "./components/NodeBadge";
-export {
-  NodeBadgeGroup,
-  createStatusBadge,
-  createCountBadge,
-  createTextBadge,
-  createIconBadge,
-} from "./components/NodeBadge";
-
-export { default as NodeHandle } from "./components/NodeHandle";
-export {
-  NodeHandleGroup,
-  createInputHandle,
-  createOutputHandle,
-  createAIHandle,
-  createConditionHandle,
-  createWebhookHandle,
-  createTriggerHandle,
-} from "./components/NodeHandle";
-
-export { default as EnhancedNodeToolbar } from "./components/EnhancedNodeToolbar";
-export { default as PropertyField } from "./components/PropertyField";
+import { getRegistryStatistics, listRegisteredComponentTypes } from './nodeUiRegistry';
+import { themeManager } from './themes';
 
 // ============================================================================
 // Specialized Node Bodies (existing)
 // ============================================================================
-export { default as AIAgentNodeBody } from "./AIAgentNodeBody";
-export { default as ConditionNodeBody } from "./ConditionNodeBody";
+export { default as AIAgentNodeBody } from './AIAgentNodeBody';
+
+export { ComponentFactory, componentFactory } from './ComponentFactory';
+export { default as ConditionNodeBody } from './ConditionNodeBody';
+export { default as EnhancedNodeToolbar } from './components/EnhancedNodeToolbar';
+// ============================================================================
+// Reusable Components
+// ============================================================================
+export {
+  createCountBadge,
+  createIconBadge,
+  createStatusBadge,
+  createTextBadge,
+  default as NodeBadge,
+  NodeBadgeGroup,
+} from './components/NodeBadge';
+export {
+  createAIHandle,
+  createConditionHandle,
+  createInputHandle,
+  createOutputHandle,
+  createTriggerHandle,
+  createWebhookHandle,
+  default as NodeHandle,
+  NodeHandleGroup,
+} from './components/NodeHandle';
+export { default as PropertyField } from './components/PropertyField';
+// ============================================================================
+// Core Registry System
+// ============================================================================
+export {
+  enhancedRegistry,
+  getCustomBodyComponent,
+  getCustomPropertiesPanelComponent,
+  getRegistryStatistics,
+  hasCustomBody,
+  hasCustomPropertiesPanel,
+  listRegisteredComponentTypes,
+  nodeUiRegistry,
+  preloadNodeComponents,
+  registerCustomBodyComponent,
+  registerCustomPropertiesPanelComponent,
+  registerLazyBodyComponent,
+  registerLazyPropertiesPanel,
+} from './nodeUiRegistry';
+// ============================================================================
+// Theme System
+// ============================================================================
+export {
+  darkTheme,
+  defaultTheme,
+  NodeThemeProvider,
+  ThemeManager,
+  themeManager,
+  useNodeTheme,
+  useNodeThemeContext,
+} from './themes';
 
 // ============================================================================
 // Type Definitions
 // ============================================================================
 export type {
+  BadgePosition,
+  // Component system
+  CustomHandle,
+  CustomHandleRendererProps,
   // Core types
   CustomNodeBodyProps,
   CustomPropertiesPanelProps,
-  CustomHandleRendererProps,
   CustomToolbarProps,
-
-  // Enhanced node type
-  EnhancedNodeTypeDescription,
-
-  // Visual system
-  NodeShape,
-  NodeAnimation,
-  NodeVisualConfig,
-  NodeGradient,
-  NodeBadge as NodeBadgeType,
-  BadgePosition,
-
-  // Component system
-  CustomHandle,
-  HandleStyle,
-  ToolbarAction,
-
-  // Theme system
-  NodeTheme,
-  NodeColorScheme,
-  NodeTypography,
-  NodeSpacing,
-  NodeAnimationConfig,
-  ThemeVariant,
-
-  // Registry system
-  UIComponentFactory,
-  EnhancedNodeRegistry,
-  ThemeManager as IThemeManager,
-
   // Utility types
   DeepPartial,
+  EnhancedNodeRegistry,
+  // Enhanced node type
+  EnhancedNodeTypeDescription,
+  HandleStyle,
+  NodeAnimation,
+  NodeAnimationConfig,
+  NodeBadge as NodeBadgeType,
+  NodeColorScheme,
+  NodeGradient,
+  // Visual system
+  NodeShape,
+  NodeSpacing,
+  // Theme system
+  NodeTheme,
+  NodeTypography,
   NodeUIConfig,
+  NodeVisualConfig,
   ResponsiveValue,
-} from "./types";
+  ThemeManager as IThemeManager,
+  ThemeVariant,
+  ToolbarAction,
+  // Registry system
+  UIComponentFactory,
+} from './types';
 
 // ============================================================================
 // Utility Functions
@@ -135,15 +121,15 @@ export type {
  */
 export function initializeNodeExtensions(): void {
   // System is auto-initialized via imports
-  console.log("Node Extensions System initialized");
-  console.log("Registry stats:", getRegistryStatistics());
+  console.log('Node Extensions System initialized');
+  console.log('Registry stats:', getRegistryStatistics());
 }
 
 /**
  * Get the current system version
  */
 export function getVersion(): string {
-  return "2.0.0"; // Enhanced UI system version
+  return '2.0.0'; // Enhanced UI system version
 }
 
 /**

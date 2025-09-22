@@ -2,7 +2,7 @@
  * Async error handling utilities
  */
 
-import { Request, Response, NextFunction, RequestHandler } from "express";
+import type { NextFunction, Request, RequestHandler, Response } from 'express';
 
 /**
  * Wrapper for async route handlers to catch errors
@@ -21,7 +21,7 @@ export const asyncHandler = catchAsync;
  */
 export const withTiming = <T extends any[], R>(
   fn: (...args: T) => Promise<R>,
-  operationName?: string,
+  operationName?: string
 ) => {
   return async (...args: T): Promise<R> => {
     const startTime = Date.now();
@@ -52,7 +52,7 @@ export const withTiming = <T extends any[], R>(
 export const withRetry = async <T>(
   operation: () => Promise<T>,
   maxAttempts: number = 3,
-  delay: number = 1000,
+  delay: number = 1000
 ): Promise<T> => {
   let lastError: Error;
 
@@ -80,19 +80,14 @@ export const withRetry = async <T>(
 export const withTimeout = <T>(
   operation: Promise<T>,
   timeoutMs: number,
-  timeoutMessage?: string,
+  timeoutMessage?: string
 ): Promise<T> => {
   return Promise.race([
     operation,
     new Promise<never>((_, reject) => {
       setTimeout(
-        () =>
-          reject(
-            new Error(
-              timeoutMessage || `Operation timed out after ${timeoutMs}ms`,
-            ),
-          ),
-        timeoutMs,
+        () => reject(new Error(timeoutMessage || `Operation timed out after ${timeoutMs}ms`)),
+        timeoutMs
       );
     }),
   ]);

@@ -11,21 +11,21 @@
  * - Core Web Vitals tracking
  */
 
-import { configService } from "./ConfigService";
-import { logger } from "./LoggingService";
+import { configService } from './ConfigService';
+import { logger } from './LoggingService';
 
 export interface PerformanceMetric {
   name: string;
   value: number;
-  unit: "ms" | "bytes" | "count" | "ratio";
+  unit: 'ms' | 'bytes' | 'count' | 'ratio';
   timestamp: number;
   context?: Record<string, any>;
 }
 
 export interface WebVital {
-  name: "CLS" | "FID" | "FCP" | "LCP" | "TTFB";
+  name: 'CLS' | 'FID' | 'FCP' | 'LCP' | 'TTFB';
   value: number;
-  rating: "good" | "needs-improvement" | "poor";
+  rating: 'good' | 'needs-improvement' | 'poor';
   timestamp: number;
 }
 
@@ -45,7 +45,7 @@ class PerformanceMonitoringService {
   private memoryInterval: NodeJS.Timeout | null = null;
 
   constructor() {
-    if (!configService.isFeatureEnabled("enablePerformanceMonitoring")) {
+    if (!configService.isFeatureEnabled('enablePerformanceMonitoring')) {
       return;
     }
 
@@ -55,7 +55,7 @@ class PerformanceMonitoringService {
     this.trackNavigationTiming();
     this.monitorLongTasks();
 
-    logger.info("Performance monitoring service initialized");
+    logger.info('Performance monitoring service initialized');
   }
 
   /**
@@ -64,8 +64,8 @@ class PerformanceMonitoringService {
   trackMetric(
     name: string,
     value: number,
-    unit: "ms" | "bytes" | "count" | "ratio" = "ms",
-    context?: Record<string, any>,
+    unit: 'ms' | 'bytes' | 'count' | 'ratio' = 'ms',
+    context?: Record<string, any>
   ): void {
     const metric: PerformanceMetric = {
       name,
@@ -76,12 +76,7 @@ class PerformanceMonitoringService {
     };
 
     this.metrics.push(metric);
-    logger.logPerformance(
-      name,
-      value,
-      unit as "ms" | "bytes" | "count",
-      context,
-    );
+    logger.logPerformance(name, value, unit as 'ms' | 'bytes' | 'count', context);
 
     // Check if metric exceeds threshold
     this.checkThresholds(metric);
@@ -97,7 +92,7 @@ class PerformanceMonitoringService {
     componentName: string,
     renderStart: number,
     renderEnd: number,
-    props?: any,
+    props?: any
   ): void {
     const renderTime = renderEnd - renderStart;
     const propsSize = props ? JSON.stringify(props).length : 0;
@@ -128,19 +123,15 @@ class PerformanceMonitoringService {
   /**
    * Track user interaction performance
    */
-  trackInteraction(
-    interactionType: string,
-    target: string,
-    duration: number,
-  ): void {
-    this.trackMetric(`interaction_${interactionType}`, duration, "ms", {
+  trackInteraction(interactionType: string, target: string, duration: number): void {
+    this.trackMetric(`interaction_${interactionType}`, duration, 'ms', {
       target,
-      type: "user_interaction",
+      type: 'user_interaction',
     });
 
     // Track interaction to next paint (INP)
     if (duration > 200) {
-      logger.warn("Slow user interaction detected", {
+      logger.warn('Slow user interaction detected', {
         interactionType,
         target,
         duration,
@@ -151,20 +142,15 @@ class PerformanceMonitoringService {
   /**
    * Track API request performance
    */
-  trackApiRequest(
-    url: string,
-    method: string,
-    duration: number,
-    size?: number,
-  ): void {
-    this.trackMetric("api_request_duration", duration, "ms", {
+  trackApiRequest(url: string, method: string, duration: number, size?: number): void {
+    this.trackMetric('api_request_duration', duration, 'ms', {
       url,
       method,
       size,
     });
 
     if (size) {
-      this.trackMetric("api_response_size", size, "bytes", {
+      this.trackMetric('api_response_size', size, 'bytes', {
         url,
         method,
       });
@@ -175,18 +161,17 @@ class PerformanceMonitoringService {
    * Track bundle loading performance
    */
   trackBundleLoad(chunkName: string, loadTime: number, size: number): void {
-    this.trackMetric("bundle_load_time", loadTime, "ms", {
+    this.trackMetric('bundle_load_time', loadTime, 'ms', {
       chunkName,
       size,
     });
 
-    this.trackMetric("bundle_size", size, "bytes", {
+    this.trackMetric('bundle_size', size, 'bytes', {
       chunkName,
     });
 
     // Check bundle size warning threshold
-    const threshold =
-      configService.getConfig().performance.bundleSizeWarningThreshold;
+    const threshold = configService.getConfig().performance.bundleSizeWarningThreshold;
     if (size > threshold) {
       logger.warn(`Large bundle detected: ${chunkName}`, {
         size,
@@ -208,9 +193,7 @@ class PerformanceMonitoringService {
   } {
     const renderTimes = this.componentMetrics.map((m) => m.renderTime);
     const averageRenderTime =
-      renderTimes.length > 0
-        ? renderTimes.reduce((a, b) => a + b, 0) / renderTimes.length
-        : 0;
+      renderTimes.length > 0 ? renderTimes.reduce((a, b) => a + b, 0) / renderTimes.length : 0;
 
     const threshold = configService.getConfig().performance.renderTimeThreshold;
     const slowComponents = this.componentMetrics
@@ -233,8 +216,8 @@ class PerformanceMonitoringService {
    * Initialize Performance Observer
    */
   private initializePerformanceObserver(): void {
-    if (!("PerformanceObserver" in window)) {
-      logger.warn("PerformanceObserver not supported");
+    if (!('PerformanceObserver' in window)) {
+      logger.warn('PerformanceObserver not supported');
       return;
     }
 
@@ -247,19 +230,12 @@ class PerformanceMonitoringService {
 
       // Observe various performance entry types
       this.observer.observe({
-        entryTypes: [
-          "navigation",
-          "resource",
-          "measure",
-          "long-task",
-          "layout-shift",
-          "paint",
-        ],
+        entryTypes: ['navigation', 'resource', 'measure', 'long-task', 'layout-shift', 'paint'],
       });
     } catch (error) {
       logger.error(
-        "Failed to initialize PerformanceObserver",
-        error instanceof Error ? error : new Error(String(error)),
+        'Failed to initialize PerformanceObserver',
+        error instanceof Error ? error : new Error(String(error))
       );
     }
   }
@@ -269,22 +245,22 @@ class PerformanceMonitoringService {
    */
   private processPerformanceEntry(entry: PerformanceEntry): void {
     switch (entry.entryType) {
-      case "navigation":
+      case 'navigation':
         this.processNavigationEntry(entry as PerformanceNavigationTiming);
         break;
-      case "resource":
+      case 'resource':
         this.processResourceEntry(entry as PerformanceResourceTiming);
         break;
-      case "measure":
+      case 'measure':
         this.processMeasureEntry(entry);
         break;
-      case "long-task":
+      case 'long-task':
         this.processLongTaskEntry(entry);
         break;
-      case "layout-shift":
+      case 'layout-shift':
         this.processLayoutShiftEntry(entry as any); // CLS
         break;
-      case "paint":
+      case 'paint':
         this.processPaintEntry(entry);
         break;
     }
@@ -294,36 +270,12 @@ class PerformanceMonitoringService {
    * Process navigation timing
    */
   private processNavigationEntry(entry: PerformanceNavigationTiming): void {
-    this.trackMetric(
-      "navigation_total",
-      entry.loadEventEnd - entry.fetchStart,
-      "ms",
-    );
-    this.trackMetric(
-      "navigation_dns",
-      entry.domainLookupEnd - entry.domainLookupStart,
-      "ms",
-    );
-    this.trackMetric(
-      "navigation_tcp",
-      entry.connectEnd - entry.connectStart,
-      "ms",
-    );
-    this.trackMetric(
-      "navigation_request",
-      entry.responseStart - entry.requestStart,
-      "ms",
-    );
-    this.trackMetric(
-      "navigation_response",
-      entry.responseEnd - entry.responseStart,
-      "ms",
-    );
-    this.trackMetric(
-      "navigation_dom",
-      entry.domContentLoadedEventEnd - entry.responseEnd,
-      "ms",
-    );
+    this.trackMetric('navigation_total', entry.loadEventEnd - entry.fetchStart, 'ms');
+    this.trackMetric('navigation_dns', entry.domainLookupEnd - entry.domainLookupStart, 'ms');
+    this.trackMetric('navigation_tcp', entry.connectEnd - entry.connectStart, 'ms');
+    this.trackMetric('navigation_request', entry.responseStart - entry.requestStart, 'ms');
+    this.trackMetric('navigation_response', entry.responseEnd - entry.responseStart, 'ms');
+    this.trackMetric('navigation_dom', entry.domContentLoadedEventEnd - entry.responseEnd, 'ms');
   }
 
   /**
@@ -332,10 +284,10 @@ class PerformanceMonitoringService {
   private processResourceEntry(entry: PerformanceResourceTiming): void {
     const duration = entry.responseEnd - entry.fetchStart;
 
-    if (entry.name.includes(".js") || entry.name.includes(".css")) {
-      this.trackMetric("resource_load", duration, "ms", {
+    if (entry.name.includes('.js') || entry.name.includes('.css')) {
+      this.trackMetric('resource_load', duration, 'ms', {
         name: entry.name,
-        type: entry.name.includes(".js") ? "script" : "stylesheet",
+        type: entry.name.includes('.js') ? 'script' : 'stylesheet',
         size: entry.transferSize,
       });
     }
@@ -345,19 +297,19 @@ class PerformanceMonitoringService {
    * Process measure entry
    */
   private processMeasureEntry(entry: PerformanceEntry): void {
-    this.trackMetric(`measure_${entry.name}`, entry.duration, "ms");
+    this.trackMetric(`measure_${entry.name}`, entry.duration, 'ms');
   }
 
   /**
    * Process long task entry
    */
   private processLongTaskEntry(entry: PerformanceEntry): void {
-    logger.warn("Long task detected", {
+    logger.warn('Long task detected', {
       duration: entry.duration,
       startTime: entry.startTime,
     });
 
-    this.trackMetric("long_task", entry.duration, "ms");
+    this.trackMetric('long_task', entry.duration, 'ms');
   }
 
   /**
@@ -365,17 +317,12 @@ class PerformanceMonitoringService {
    */
   private processLayoutShiftEntry(entry: any): void {
     if (!entry.hadRecentInput) {
-      this.trackMetric("cumulative_layout_shift", entry.value, "ratio");
+      this.trackMetric('cumulative_layout_shift', entry.value, 'ratio');
 
-      const rating =
-        entry.value < 0.1
-          ? "good"
-          : entry.value < 0.25
-            ? "needs-improvement"
-            : "poor";
+      const rating = entry.value < 0.1 ? 'good' : entry.value < 0.25 ? 'needs-improvement' : 'poor';
 
       this.webVitals.push({
-        name: "CLS",
+        name: 'CLS',
         value: entry.value,
         rating,
         timestamp: performance.now(),
@@ -387,16 +334,12 @@ class PerformanceMonitoringService {
    * Process paint entry
    */
   private processPaintEntry(entry: PerformanceEntry): void {
-    if (entry.name === "first-contentful-paint") {
+    if (entry.name === 'first-contentful-paint') {
       const rating =
-        entry.startTime < 1800
-          ? "good"
-          : entry.startTime < 3000
-            ? "needs-improvement"
-            : "poor";
+        entry.startTime < 1800 ? 'good' : entry.startTime < 3000 ? 'needs-improvement' : 'poor';
 
       this.webVitals.push({
-        name: "FCP",
+        name: 'FCP',
         value: entry.startTime,
         rating,
         timestamp: performance.now(),
@@ -409,16 +352,15 @@ class PerformanceMonitoringService {
    */
   private trackCoreWebVitals(): void {
     // Track First Input Delay (FID)
-    if ("PerformanceEventTiming" in window) {
+    if ('PerformanceEventTiming' in window) {
       const observer = new PerformanceObserver((list) => {
         list.getEntries().forEach((entry) => {
-          if (entry.entryType === "first-input") {
+          if (entry.entryType === 'first-input') {
             const fid = (entry as any).processingStart - entry.startTime;
-            const rating =
-              fid < 100 ? "good" : fid < 300 ? "needs-improvement" : "poor";
+            const rating = fid < 100 ? 'good' : fid < 300 ? 'needs-improvement' : 'poor';
 
             this.webVitals.push({
-              name: "FID",
+              name: 'FID',
               value: fid,
               rating,
               timestamp: performance.now(),
@@ -427,11 +369,11 @@ class PerformanceMonitoringService {
         });
       });
 
-      observer.observe({ type: "first-input", buffered: true });
+      observer.observe({ type: 'first-input', buffered: true });
     }
 
     // Track Largest Contentful Paint (LCP)
-    if ("PerformanceObserver" in window && "PerformanceEntry" in window) {
+    if ('PerformanceObserver' in window && 'PerformanceEntry' in window) {
       const observer = new PerformanceObserver((list) => {
         const entries = list.getEntries();
         const lastEntry = entries[entries.length - 1];
@@ -439,13 +381,13 @@ class PerformanceMonitoringService {
         if (lastEntry) {
           const rating =
             lastEntry.startTime < 2500
-              ? "good"
+              ? 'good'
               : lastEntry.startTime < 4000
-                ? "needs-improvement"
-                : "poor";
+                ? 'needs-improvement'
+                : 'poor';
 
           this.webVitals.push({
-            name: "LCP",
+            name: 'LCP',
             value: lastEntry.startTime,
             rating,
             timestamp: performance.now(),
@@ -453,7 +395,7 @@ class PerformanceMonitoringService {
         }
       });
 
-      observer.observe({ type: "largest-contentful-paint", buffered: true });
+      observer.observe({ type: 'largest-contentful-paint', buffered: true });
     }
   }
 
@@ -461,18 +403,18 @@ class PerformanceMonitoringService {
    * Monitor memory usage
    */
   private monitorMemoryUsage(): void {
-    if (!("memory" in performance)) {
+    if (!('memory' in performance)) {
       return;
     }
 
     this.memoryInterval = setInterval(() => {
       const memory = this.getCurrentMemoryUsage();
-      this.trackMetric("memory_usage", memory, "bytes");
+      this.trackMetric('memory_usage', memory, 'bytes');
 
       // Warn if memory usage is high
       if (memory > 100 * 1024 * 1024) {
         // 100MB
-        logger.warn("High memory usage detected", { memory });
+        logger.warn('High memory usage detected', { memory });
       }
     }, 30000); // Check every 30 seconds
   }
@@ -481,7 +423,7 @@ class PerformanceMonitoringService {
    * Get current memory usage
    */
   private getCurrentMemoryUsage(): number {
-    if ("memory" in performance) {
+    if ('memory' in performance) {
       return (performance as any).memory.usedJSHeapSize || 0;
     }
     return 0;
@@ -491,10 +433,10 @@ class PerformanceMonitoringService {
    * Track navigation timing on page load
    */
   private trackNavigationTiming(): void {
-    window.addEventListener("load", () => {
+    window.addEventListener('load', () => {
       setTimeout(() => {
         const navigation = performance.getEntriesByType(
-          "navigation",
+          'navigation'
         )[0] as PerformanceNavigationTiming;
         if (navigation) {
           this.processNavigationEntry(navigation);
@@ -507,7 +449,7 @@ class PerformanceMonitoringService {
    * Monitor long tasks
    */
   private monitorLongTasks(): void {
-    if ("PerformanceObserver" in window) {
+    if ('PerformanceObserver' in window) {
       try {
         const observer = new PerformanceObserver((list) => {
           list.getEntries().forEach((entry) => {
@@ -515,7 +457,7 @@ class PerformanceMonitoringService {
           });
         });
 
-        observer.observe({ type: "longtask", buffered: true });
+        observer.observe({ type: 'longtask', buffered: true });
       } catch (error) {
         // Long task observer not supported
       }
@@ -527,8 +469,8 @@ class PerformanceMonitoringService {
    */
   private checkThresholds(metric: PerformanceMetric): void {
     // Example threshold checks
-    if (metric.name === "api_request_duration" && metric.value > 5000) {
-      logger.warn("Slow API request detected", {
+    if (metric.name === 'api_request_duration' && metric.value > 5000) {
+      logger.warn('Slow API request detected', {
         name: metric.name,
         value: metric.value,
         unit: metric.unit,
@@ -536,8 +478,8 @@ class PerformanceMonitoringService {
       });
     }
 
-    if (metric.name === "bundle_load_time" && metric.value > 3000) {
-      logger.warn("Slow bundle loading detected", {
+    if (metric.name === 'bundle_load_time' && metric.value > 3000) {
+      logger.warn('Slow bundle loading detected', {
         name: metric.name,
         value: metric.value,
         unit: metric.unit,
@@ -553,9 +495,7 @@ class PerformanceMonitoringService {
     const maxAge = 5 * 60 * 1000; // 5 minutes
     const now = performance.now();
 
-    this.metrics = this.metrics.filter(
-      (metric) => now - metric.timestamp < maxAge,
-    );
+    this.metrics = this.metrics.filter((metric) => now - metric.timestamp < maxAge);
   }
 
   /**
@@ -566,7 +506,7 @@ class PerformanceMonitoringService {
     const now = performance.now();
 
     this.componentMetrics = this.componentMetrics.filter(
-      (metric) => now - metric.timestamp < maxAge,
+      (metric) => now - metric.timestamp < maxAge
     );
   }
 
@@ -575,7 +515,7 @@ class PerformanceMonitoringService {
    */
   getMetricsInRange(startTime: number, endTime: number): PerformanceMetric[] {
     return this.metrics.filter(
-      (metric) => metric.timestamp >= startTime && metric.timestamp <= endTime,
+      (metric) => metric.timestamp >= startTime && metric.timestamp <= endTime
     );
   }
 

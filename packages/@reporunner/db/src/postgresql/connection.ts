@@ -1,5 +1,5 @@
-import { Pool, PoolClient, PoolConfig, QueryResult, QueryResultRow } from "pg";
-import { EventEmitter } from "events";
+import { EventEmitter } from 'events';
+import { Pool, type PoolClient, type PoolConfig, type QueryResult, type QueryResultRow } from 'pg';
 
 export interface PostgreSQLConfig extends PoolConfig {
   enablePgVector?: boolean;
@@ -34,11 +34,11 @@ export class PostgreSQLConnection extends EventEmitter {
   async connect(): Promise<void> {
     try {
       if (this.isConnected && this.pool) {
-        console.log("PostgreSQL already connected");
+        console.log('PostgreSQL already connected');
         return;
       }
 
-      console.log("Connecting to PostgreSQL...");
+      console.log('Connecting to PostgreSQL...');
       this.pool = new Pool(this.config);
 
       // Setup event listeners
@@ -55,11 +55,11 @@ export class PostgreSQLConnection extends EventEmitter {
       this.isConnected = true;
       this.reconnectAttempts = 0;
 
-      console.log("Connected to PostgreSQL");
-      this.emit("connected");
+      console.log('Connected to PostgreSQL');
+      this.emit('connected');
     } catch (error) {
-      console.error("PostgreSQL connection error:", error);
-      this.emit("error", error);
+      console.error('PostgreSQL connection error:', error);
+      this.emit('error', error);
       this.handleConnectionError();
       throw error;
     }
@@ -71,24 +71,24 @@ export class PostgreSQLConnection extends EventEmitter {
   private setupEventListeners(): void {
     if (!this.pool) return;
 
-    this.pool.on("connect", (client) => {
-      console.log("PostgreSQL client connected");
-      this.emit("clientConnected", client);
+    this.pool.on('connect', (client) => {
+      console.log('PostgreSQL client connected');
+      this.emit('clientConnected', client);
     });
 
-    this.pool.on("acquire", (client) => {
-      this.emit("clientAcquired", client);
+    this.pool.on('acquire', (client) => {
+      this.emit('clientAcquired', client);
     });
 
-    this.pool.on("error", (error, _client) => {
-      console.error("PostgreSQL pool error:", error);
-      this.emit("error", error);
+    this.pool.on('error', (error, _client) => {
+      console.error('PostgreSQL pool error:', error);
+      this.emit('error', error);
       this.handleConnectionError();
     });
 
-    this.pool.on("remove", (client) => {
-      console.log("PostgreSQL client removed");
-      this.emit("clientRemoved", client);
+    this.pool.on('remove', (client) => {
+      console.log('PostgreSQL client removed');
+      this.emit('clientRemoved', client);
     });
   }
 
@@ -97,10 +97,10 @@ export class PostgreSQLConnection extends EventEmitter {
    */
   private async initializePgVector(): Promise<void> {
     try {
-      console.log("Initializing pgvector extension...");
+      console.log('Initializing pgvector extension...');
 
       // Create extension if not exists
-      await this.query("CREATE EXTENSION IF NOT EXISTS vector");
+      await this.query('CREATE EXTENSION IF NOT EXISTS vector');
 
       // Create helper functions for vector operations
       await this.query(
@@ -110,12 +110,12 @@ export class PostgreSQLConnection extends EventEmitter {
         AS $$
         SELECT 1.0 - (a <=> b);
         $$ LANGUAGE SQL IMMUTABLE PARALLEL SAFE;
-      `,
+      `
       ).catch(() => {}); // Ignore if already exists
 
-      console.log("pgvector extension initialized");
+      console.log('pgvector extension initialized');
     } catch (error) {
-      console.error("Failed to initialize pgvector:", error);
+      console.error('Failed to initialize pgvector:', error);
       throw error;
     }
   }
@@ -129,8 +129,8 @@ export class PostgreSQLConnection extends EventEmitter {
     this.isConnected = false;
 
     if (this.reconnectAttempts >= (this.config.maxRetries || 10)) {
-      console.error("Max reconnection attempts reached. Giving up.");
-      this.emit("reconnectFailed");
+      console.error('Max reconnection attempts reached. Giving up.');
+      this.emit('reconnectFailed');
       return;
     }
 
@@ -144,7 +144,7 @@ export class PostgreSQLConnection extends EventEmitter {
       try {
         await this.connect();
       } catch (error) {
-        console.error("PostgreSQL reconnection attempt failed:", error);
+        console.error('PostgreSQL reconnection attempt failed:', error);
       }
     }, delay);
   }
@@ -154,10 +154,10 @@ export class PostgreSQLConnection extends EventEmitter {
    */
   async ping(): Promise<boolean> {
     try {
-      const result = await this.query("SELECT 1");
+      const result = await this.query('SELECT 1');
       return result.rows.length > 0;
     } catch (error) {
-      console.error("PostgreSQL ping failed:", error);
+      console.error('PostgreSQL ping failed:', error);
       return false;
     }
   }
@@ -165,16 +165,19 @@ export class PostgreSQLConnection extends EventEmitter {
   /**
    * Execute a query
    */
-  async query<T extends QueryResultRow = any>(text: string, params?: any[]): Promise<QueryResult<T>> {
+  async query<T extends QueryResultRow = any>(
+    text: string,
+    params?: any[]
+  ): Promise<QueryResult<T>> {
     if (!this.pool) {
-      throw new Error("PostgreSQL not connected. Call connect() first.");
+      throw new Error('PostgreSQL not connected. Call connect() first.');
     }
 
     try {
       const result = await this.pool.query<T>(text, params);
       return result;
     } catch (error) {
-      console.error("Query error:", error);
+      console.error('Query error:', error);
       throw error;
     }
   }
@@ -184,7 +187,7 @@ export class PostgreSQLConnection extends EventEmitter {
    */
   async getClient(): Promise<PoolClient> {
     if (!this.pool) {
-      throw new Error("PostgreSQL not connected. Call connect() first.");
+      throw new Error('PostgreSQL not connected. Call connect() first.');
     }
 
     return this.pool.connect();
@@ -193,18 +196,16 @@ export class PostgreSQLConnection extends EventEmitter {
   /**
    * Run a transaction
    */
-  async transaction<T>(
-    callback: (client: PoolClient) => Promise<T>,
-  ): Promise<T> {
+  async transaction<T>(callback: (client: PoolClient) => Promise<T>): Promise<T> {
     const client = await this.getClient();
 
     try {
-      await client.query("BEGIN");
+      await client.query('BEGIN');
       const result = await callback(client);
-      await client.query("COMMIT");
+      await client.query('COMMIT');
       return result;
     } catch (error) {
-      await client.query("ROLLBACK");
+      await client.query('ROLLBACK');
       throw error;
     } finally {
       client.release();
@@ -214,10 +215,7 @@ export class PostgreSQLConnection extends EventEmitter {
   /**
    * Create vector table
    */
-  async createVectorTable(
-    tableName: string,
-    dimensions?: number,
-  ): Promise<void> {
+  async createVectorTable(tableName: string, dimensions?: number): Promise<void> {
     const dim = dimensions || this.config.vectorDimensions || 1536;
 
     const query = `
@@ -251,7 +249,7 @@ export class PostgreSQLConnection extends EventEmitter {
     tableName: string,
     content: string,
     embedding: number[],
-    metadata?: any,
+    metadata?: any
   ): Promise<number> {
     const query = `
       INSERT INTO ${tableName} (content, embedding, metadata)
@@ -275,7 +273,7 @@ export class PostgreSQLConnection extends EventEmitter {
     tableName: string,
     queryEmbedding: number[],
     limit: number = 10,
-    threshold: number = 0.7,
+    threshold: number = 0.7
   ): Promise<
     Array<{
       id: number;
@@ -296,11 +294,7 @@ export class PostgreSQLConnection extends EventEmitter {
       LIMIT $3
     `;
 
-    const result = await this.query(query, [
-      JSON.stringify(queryEmbedding),
-      threshold,
-      limit,
-    ]);
+    const result = await this.query(query, [JSON.stringify(queryEmbedding), threshold, limit]);
 
     return result.rows;
   }
@@ -314,7 +308,7 @@ export class PostgreSQLConnection extends EventEmitter {
       name: string;
       up: string;
       down?: string;
-    }>,
+    }>
   ): Promise<void> {
     // Create migrations table if not exists
     await this.query(`
@@ -327,23 +321,21 @@ export class PostgreSQLConnection extends EventEmitter {
 
     // Get applied migrations
     const appliedResult = await this.query<{ version: number }>(
-      "SELECT version FROM migrations ORDER BY version",
+      'SELECT version FROM migrations ORDER BY version'
     );
     const applied = new Set(appliedResult.rows.map((r) => r.version));
 
     // Run pending migrations
     for (const migration of migrations.sort((a, b) => a.version - b.version)) {
       if (!applied.has(migration.version)) {
-        console.log(
-          `Running migration ${migration.version}: ${migration.name}`,
-        );
+        console.log(`Running migration ${migration.version}: ${migration.name}`);
 
         await this.transaction(async (client) => {
           await client.query(migration.up);
-          await client.query(
-            "INSERT INTO migrations (version, name) VALUES ($1, $2)",
-            [migration.version, migration.name],
-          );
+          await client.query('INSERT INTO migrations (version, name) VALUES ($1, $2)', [
+            migration.version,
+            migration.name,
+          ]);
         });
 
         console.log(`Migration ${migration.version} applied successfully`);
@@ -382,11 +374,11 @@ export class PostgreSQLConnection extends EventEmitter {
         await this.pool.end();
         this.pool = null;
         this.isConnected = false;
-        console.log("Disconnected from PostgreSQL");
-        this.emit("disconnected");
+        console.log('Disconnected from PostgreSQL');
+        this.emit('disconnected');
       }
     } catch (error) {
-      console.error("Error disconnecting from PostgreSQL:", error);
+      console.error('Error disconnecting from PostgreSQL:', error);
       throw error;
     }
   }
@@ -402,17 +394,13 @@ export class PostgreSQLConnection extends EventEmitter {
 // Export singleton instance
 let pgConnection: PostgreSQLConnection | null = null;
 
-export function getPostgreSQLConnection(
-  config?: PostgreSQLConfig,
-): PostgreSQLConnection {
+export function getPostgreSQLConnection(config?: PostgreSQLConfig): PostgreSQLConnection {
   if (!pgConnection && config) {
     pgConnection = new PostgreSQLConnection(config);
   }
 
   if (!pgConnection) {
-    throw new Error(
-      "PostgreSQL connection not initialized. Provide config on first call.",
-    );
+    throw new Error('PostgreSQL connection not initialized. Provide config on first call.');
   }
 
   return pgConnection;

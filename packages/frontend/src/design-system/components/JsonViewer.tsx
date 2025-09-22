@@ -44,19 +44,21 @@ export const JsonViewer: React.FC<JsonViewerProps> = ({
 
     if (Array.isArray(obj)) {
       if (obj.length === 0) return '[]';
-      const items = obj.map(item => formatJson(item, depth + 1)).join(', ');
+      const items = obj.map((item) => formatJson(item, depth + 1)).join(', ');
       return `[${items}]`;
     }
 
     if (typeof obj === 'object') {
       const keys = Object.keys(obj);
       if (keys.length === 0) return '{}';
-      
-      const pairs = keys.map(key => {
-        const value = formatJson(obj[key], depth + 1);
-        return `"${key}": ${value}`;
-      }).join(', ');
-      
+
+      const pairs = keys
+        .map((key) => {
+          const value = formatJson(obj[key], depth + 1);
+          return `"${key}": ${value}`;
+        })
+        .join(', ');
+
       return `{${pairs}}`;
     }
 
@@ -66,34 +68,33 @@ export const JsonViewer: React.FC<JsonViewerProps> = ({
   const jsonString = formatJson(data);
 
   return (
-    <div className={cn(
-      "relative border rounded-lg overflow-hidden",
-      theme === 'dark' 
-        ? "bg-gray-900 border-gray-600 text-gray-300" 
-        : "bg-gray-50 border-gray-300 text-gray-800",
-      className
-    )}>
+    <div
+      className={cn(
+        'relative border rounded-lg overflow-hidden',
+        theme === 'dark'
+          ? 'bg-gray-900 border-gray-600 text-gray-300'
+          : 'bg-gray-50 border-gray-300 text-gray-800',
+        className
+      )}
+    >
       {enableClipboard && (
         <div className="absolute top-2 right-2 z-10">
           <button
             onClick={handleCopy}
             className={cn(
-              "px-2 py-1 text-xs rounded transition-colors",
+              'px-2 py-1 text-xs rounded transition-colors',
               theme === 'dark'
-                ? "bg-gray-700 hover:bg-gray-600 text-gray-300"
-                : "bg-gray-200 hover:bg-gray-300 text-gray-700"
+                ? 'bg-gray-700 hover:bg-gray-600 text-gray-300'
+                : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
             )}
           >
             {copied ? 'Copied!' : 'Copy'}
           </button>
         </div>
       )}
-      
-      <pre 
-        className={cn(
-          "p-4 text-xs overflow-auto font-mono",
-          showLineNumbers && "pl-8"
-        )}
+
+      <pre
+        className={cn('p-4 text-xs overflow-auto font-mono', showLineNumbers && 'pl-8')}
         style={{ maxHeight }}
       >
         {jsonString}

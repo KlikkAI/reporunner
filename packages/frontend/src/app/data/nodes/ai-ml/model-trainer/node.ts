@@ -1,17 +1,16 @@
-import type { EnhancedIntegrationNodeType } from "@/core/nodes/types";
-import { modelTrainerProperties } from "./properties";
-import { modelTrainerCredentials } from "./credentials";
-import { modelTrainerActions } from "./actions";
+import type { EnhancedIntegrationNodeType } from '@/core/nodes/types';
+import { modelTrainerActions } from './actions';
+import { modelTrainerCredentials } from './credentials';
+import { modelTrainerProperties } from './properties';
 
 export const modelTrainerNode: EnhancedIntegrationNodeType = {
-  id: "model-trainer",
-  name: "Model Trainer",
-  description:
-    "Train and fine-tune AI/ML models with advanced configuration options",
-  type: "ai-agent",
-  category: "AI/ML",
-  subcategory: "Training",
-  icon: "🤖",
+  id: 'model-trainer',
+  name: 'Model Trainer',
+  description: 'Train and fine-tune AI/ML models with advanced configuration options',
+  type: 'ai-agent',
+  category: 'AI/ML',
+  subcategory: 'Training',
+  icon: '🤖',
   configuration: {
     properties: modelTrainerProperties,
     credentials: modelTrainerCredentials,
@@ -22,40 +21,40 @@ export const modelTrainerNode: EnhancedIntegrationNodeType = {
   },
   inputs: [
     {
-      name: "data",
-      type: "main",
-      displayName: "Training Data",
+      name: 'data',
+      type: 'main',
+      displayName: 'Training Data',
       required: true,
     },
     {
-      name: "dataset",
-      type: "ai_dataset",
-      displayName: "Dataset",
+      name: 'dataset',
+      type: 'ai_dataset',
+      displayName: 'Dataset',
       required: false,
     },
   ],
   outputs: [
     {
-      name: "model",
-      type: "main",
-      displayName: "Trained Model",
+      name: 'model',
+      type: 'main',
+      displayName: 'Trained Model',
     },
     {
-      name: "ai_model",
-      type: "ai_model",
-      displayName: "Model Output",
+      name: 'ai_model',
+      type: 'ai_model',
+      displayName: 'Model Output',
     },
     {
-      name: "metrics",
-      type: "main",
-      displayName: "Training Metrics",
+      name: 'metrics',
+      type: 'main',
+      displayName: 'Training Metrics',
     },
   ],
   codex: {
-    categories: ["AI/ML", "Training", "Models"],
+    categories: ['AI/ML', 'Training', 'Models'],
     subcategories: {
-      "AI/ML": ["Training", "Fine-tuning", "Hyperparameters"],
-      Models: ["Neural Networks", "Transformers", "Vision Models"],
+      'AI/ML': ['Training', 'Fine-tuning', 'Hyperparameters'],
+      Models: ['Neural Networks', 'Transformers', 'Vision Models'],
     },
   },
   ...modelTrainerActions,

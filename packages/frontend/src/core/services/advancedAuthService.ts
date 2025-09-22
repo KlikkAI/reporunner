@@ -10,25 +10,25 @@
  * - User invitation system
  */
 
-import { performanceMonitor } from './performanceMonitor';
 import type {
-  User,
-  UserRole,
-  Permission,
-  SSOProvider,
-  MFAMethod,
+  ActionType,
   APIKey,
-  Session,
-  UserInvitation,
-  UserPreferences,
   AuthContext,
   LoginCredentials,
-  RegisterData,
   MFAChallenge,
+  MFAMethod,
   MFAVerification,
+  Permission,
+  RegisterData,
   ResourceType,
-  ActionType,
+  Session,
+  SSOProvider,
+  User,
+  UserInvitation,
+  UserPreferences,
+  UserRole,
 } from '@/core/types/authentication';
+import { performanceMonitor } from './performanceMonitor';
 
 export interface AuthServiceConfig {
   sessionTimeout: number; // milliseconds
@@ -273,7 +273,7 @@ export class AdvancedAuthService {
     return {
       method: 'totp',
       challenge,
-      expiresAt: Date.now() + (5 * 60 * 1000), // 5 minutes
+      expiresAt: Date.now() + 5 * 60 * 1000, // 5 minutes
     };
   }
 
@@ -290,10 +290,11 @@ export class AdvancedAuthService {
     if (!user) return false;
 
     const permissions = await this.getUserPermissions(userId);
-    return permissions.some(permission =>
-      permission.resource === resource &&
-      permission.action === action &&
-      (!permission.conditions || this.evaluateConditions(permission.conditions, context))
+    return permissions.some(
+      (permission) =>
+        permission.resource === resource &&
+        permission.action === action &&
+        (!permission.conditions || this.evaluateConditions(permission.conditions, context))
     );
   }
 
@@ -308,7 +309,7 @@ export class AdvancedAuthService {
     const userPermissions = user.permissions || [];
 
     // Get project-specific permissions
-    const projectPermissions = user.projects.flatMap(project => project.permissions);
+    const projectPermissions = user.projects.flatMap((project) => project.permissions);
 
     return [...rolePermissions, ...userPermissions, ...projectPermissions];
   }
@@ -346,9 +347,7 @@ export class AdvancedAuthService {
     return authUrl;
   }
 
-  async handleSSOCallback(
-    providerId: string,
-    code: string  ): Promise<AuthContext> {
+  async handleSSOCallback(providerId: string, code: string): Promise<AuthContext> {
     const provider = this.ssoProviders.get(providerId);
     if (!provider) {
       throw new Error('SSO provider not found');
@@ -410,7 +409,7 @@ export class AdvancedAuthService {
       key,
       keyHash,
       permissions,
-      expiresAt: expiresAt || (Date.now() + this.config.apiKeyExpiration),
+      expiresAt: expiresAt || Date.now() + this.config.apiKeyExpiration,
       createdAt: Date.now(),
       createdBy: userId,
       status: 'active',
@@ -433,7 +432,9 @@ export class AdvancedAuthService {
     console.log(`API key revoked: ${keyId} by ${revokedBy}`);
   }
 
-  async validateAPIKey(key: string): Promise<{ valid: boolean; userId?: string; permissions?: Permission[] }> {
+  async validateAPIKey(
+    key: string
+  ): Promise<{ valid: boolean; userId?: string; permissions?: Permission[] }> {
     const keyHash = this.hashAPIKey(key);
 
     for (const apiKey of this.apiKeys.values()) {
@@ -512,7 +513,7 @@ export class AdvancedAuthService {
       password: userData.password,
       role: invitation.role,
       permissions: invitation.permissions,
-      projects: invitation.projects.map(projectId => ({
+      projects: invitation.projects.map((projectId) => ({
         projectId,
         role: invitation.role,
         permissions: invitation.permissions,
@@ -873,7 +874,7 @@ export class AdvancedAuthService {
       },
     ];
 
-    roles.forEach(role => {
+    roles.forEach((role) => {
       this.userRoles.set(role.id, role);
     });
   }
@@ -932,13 +933,13 @@ export class AdvancedAuthService {
       },
     ];
 
-    providers.forEach(provider => {
+    providers.forEach((provider) => {
       this.ssoProviders.set(provider.id, provider);
     });
   }
 
   private notifyListeners(context: AuthContext): void {
-    this.authListeners.forEach(listener => {
+    this.authListeners.forEach((listener) => {
       try {
         listener(context);
       } catch (error) {

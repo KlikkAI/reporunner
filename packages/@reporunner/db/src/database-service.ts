@@ -1,13 +1,8 @@
-import { MongoClient, Db as MongoDb } from "mongodb";
-import { Pool } from "pg";
-import { createClient, RedisClientType } from "redis";
-import { Logger } from "winston";
-import {
-  IWorkflow,
-  IExecution,
-  IUser,
-  IOrganization,
-} from "@reporunner/api-types";
+import type { IExecution, IOrganization, IUser, IWorkflow } from '@reporunner/api-types';
+import { MongoClient, type Db as MongoDb } from 'mongodb';
+import { Pool } from 'pg';
+import { createClient, type RedisClientType } from 'redis';
+import type { Logger } from 'winston';
 
 export interface DatabaseConfig {
   mongodb: {
@@ -59,9 +54,9 @@ export class DatabaseService {
       await this.connectRedis();
 
       this.isConnected = true;
-      this.logger.info("All database connections established successfully");
+      this.logger.info('All database connections established successfully');
     } catch (error) {
-      this.logger.error("Failed to establish database connections", error);
+      this.logger.error('Failed to establish database connections', error);
       throw error;
     }
   }
@@ -71,19 +66,16 @@ export class DatabaseService {
    */
   private async connectMongoDB(): Promise<void> {
     try {
-      this.mongoClient = new MongoClient(
-        this.config.mongodb.uri,
-        this.config.mongodb.options,
-      );
+      this.mongoClient = new MongoClient(this.config.mongodb.uri, this.config.mongodb.options);
       await this.mongoClient.connect();
       this.mongoDb = this.mongoClient.db(this.config.mongodb.database);
 
       // Create indexes
       await this.createMongoIndexes();
 
-      this.logger.info("MongoDB connection established");
+      this.logger.info('MongoDB connection established');
     } catch (error) {
-      this.logger.error("MongoDB connection failed", error);
+      this.logger.error('MongoDB connection failed', error);
       throw error;
     }
   }
@@ -106,15 +98,15 @@ export class DatabaseService {
       const client = await this.pgPool.connect();
 
       // Enable pgvector extension
-      await client.query("CREATE EXTENSION IF NOT EXISTS vector");
+      await client.query('CREATE EXTENSION IF NOT EXISTS vector');
 
       // Create tables
       await this.createPostgreSQLTables(client);
 
       client.release();
-      this.logger.info("PostgreSQL connection established with pgvector");
+      this.logger.info('PostgreSQL connection established with pgvector');
     } catch (error) {
-      this.logger.error("PostgreSQL connection failed", error);
+      this.logger.error('PostgreSQL connection failed', error);
       throw error;
     }
   }
@@ -132,14 +124,14 @@ export class DatabaseService {
         password: this.config.redis.password,
       });
 
-      this.redisClient.on("error", (err) => {
-        this.logger.error("Redis error", err);
+      this.redisClient.on('error', (err) => {
+        this.logger.error('Redis error', err);
       });
 
       await this.redisClient.connect();
-      this.logger.info("Redis connection established");
+      this.logger.info('Redis connection established');
     } catch (error) {
-      this.logger.error("Redis connection failed", error);
+      this.logger.error('Redis connection failed', error);
       throw error;
     }
   }
@@ -151,32 +143,20 @@ export class DatabaseService {
     if (!this.mongoDb) return;
 
     // Workflow indexes
-    await this.mongoDb
-      .collection("workflows")
-      .createIndex({ organizationId: 1, createdAt: -1 });
-    await this.mongoDb
-      .collection("workflows")
-      .createIndex({ status: 1, updatedAt: -1 });
-    await this.mongoDb.collection("workflows").createIndex({ tags: 1 });
+    await this.mongoDb.collection('workflows').createIndex({ organizationId: 1, createdAt: -1 });
+    await this.mongoDb.collection('workflows').createIndex({ status: 1, updatedAt: -1 });
+    await this.mongoDb.collection('workflows').createIndex({ tags: 1 });
 
     // Execution indexes
-    await this.mongoDb
-      .collection("executions")
-      .createIndex({ workflowId: 1, startedAt: -1 });
-    await this.mongoDb
-      .collection("executions")
-      .createIndex({ status: 1, startedAt: -1 });
+    await this.mongoDb.collection('executions').createIndex({ workflowId: 1, startedAt: -1 });
+    await this.mongoDb.collection('executions').createIndex({ status: 1, startedAt: -1 });
 
     // User indexes
-    await this.mongoDb
-      .collection("users")
-      .createIndex({ email: 1 }, { unique: true });
-    await this.mongoDb.collection("users").createIndex({ organizationId: 1 });
+    await this.mongoDb.collection('users').createIndex({ email: 1 }, { unique: true });
+    await this.mongoDb.collection('users').createIndex({ organizationId: 1 });
 
     // Organization indexes
-    await this.mongoDb
-      .collection("organizations")
-      .createIndex({ slug: 1 }, { unique: true });
+    await this.mongoDb.collection('organizations').createIndex({ slug: 1 }, { unique: true });
   }
 
   /**
@@ -250,17 +230,17 @@ export class DatabaseService {
    */
   get mongo() {
     if (!this.mongoDb) {
-      throw new Error("MongoDB not connected");
+      throw new Error('MongoDB not connected');
     }
 
     return {
-      workflows: this.mongoDb.collection<IWorkflow>("workflows"),
-      executions: this.mongoDb.collection<IExecution>("executions"),
-      users: this.mongoDb.collection<IUser>("users"),
-      organizations: this.mongoDb.collection<IOrganization>("organizations"),
-      credentials: this.mongoDb.collection("credentials"),
-      nodes: this.mongoDb.collection("nodes"),
-      integrations: this.mongoDb.collection("integrations"),
+      workflows: this.mongoDb.collection<IWorkflow>('workflows'),
+      executions: this.mongoDb.collection<IExecution>('executions'),
+      users: this.mongoDb.collection<IUser>('users'),
+      organizations: this.mongoDb.collection<IOrganization>('organizations'),
+      credentials: this.mongoDb.collection('credentials'),
+      nodes: this.mongoDb.collection('nodes'),
+      integrations: this.mongoDb.collection('integrations'),
 
       // Direct database access for custom operations
       db: this.mongoDb,
@@ -272,7 +252,7 @@ export class DatabaseService {
    */
   get postgres() {
     if (!this.pgPool) {
-      throw new Error("PostgreSQL not connected");
+      throw new Error('PostgreSQL not connected');
     }
 
     return {
@@ -291,7 +271,7 @@ export class DatabaseService {
         resourceType: string,
         resourceId: string,
         embedding: number[],
-        metadata?: any,
+        metadata?: any
       ) => {
         const query = `
           INSERT INTO embeddings (resource_type, resource_id, embedding, metadata)
@@ -299,20 +279,11 @@ export class DatabaseService {
           ON CONFLICT (resource_id) DO UPDATE
           SET embedding = $3, metadata = $4, updated_at = NOW()
         `;
-        return await this.pgPool!.query(query, [
-          resourceType,
-          resourceId,
-          embedding,
-          metadata,
-        ]);
+        return await this.pgPool!.query(query, [resourceType, resourceId, embedding, metadata]);
       },
 
       // Semantic search
-      searchSimilar: async (
-        embedding: number[],
-        limit: number = 10,
-        threshold: number = 0.8,
-      ) => {
+      searchSimilar: async (embedding: number[], limit: number = 10, threshold: number = 0.8) => {
         const query = `
           SELECT resource_id, resource_type, metadata,
                  1 - (embedding <=> $1) AS similarity
@@ -325,11 +296,7 @@ export class DatabaseService {
       },
 
       // Log analytics event
-      logEvent: async (
-        eventType: string,
-        userId?: string,
-        properties?: any,
-      ) => {
+      logEvent: async (eventType: string, userId?: string, properties?: any) => {
         const query = `
           INSERT INTO analytics_events (event_type, user_id, properties)
           VALUES ($1, $2, $3)
@@ -344,7 +311,7 @@ export class DatabaseService {
    */
   get redis(): any {
     if (!this.redisClient) {
-      throw new Error("Redis not connected");
+      throw new Error('Redis not connected');
     }
 
     return {
@@ -375,10 +342,7 @@ export class DatabaseService {
           await this.redisClient!.publish(channel, JSON.stringify(message));
         },
 
-        subscribe: async (
-          channel: string,
-          callback: (message: any) => void,
-        ) => {
+        subscribe: async (channel: string, callback: (message: any) => void) => {
           const subscriber = this.redisClient!.duplicate();
           await subscriber.connect();
           await subscriber.subscribe(channel, (message) => {
@@ -418,22 +382,22 @@ export class DatabaseService {
     try {
       if (this.mongoClient) {
         await this.mongoClient.close();
-        this.logger.info("MongoDB disconnected");
+        this.logger.info('MongoDB disconnected');
       }
 
       if (this.pgPool) {
         await this.pgPool.end();
-        this.logger.info("PostgreSQL disconnected");
+        this.logger.info('PostgreSQL disconnected');
       }
 
       if (this.redisClient) {
         await this.redisClient.quit();
-        this.logger.info("Redis disconnected");
+        this.logger.info('Redis disconnected');
       }
 
       // this.isConnected = false; // Removed isConnected tracking
     } catch (error) {
-      this.logger.error("Error disconnecting databases", error);
+      this.logger.error('Error disconnecting databases', error);
       throw error;
     }
   }
@@ -455,23 +419,23 @@ export class DatabaseService {
     try {
       // Check MongoDB
       if (this.mongoClient) {
-        await this.mongoClient.db("admin").command({ ping: 1 });
+        await this.mongoClient.db('admin').command({ ping: 1 });
         health.mongodb = true;
       }
 
       // Check PostgreSQL
       if (this.pgPool) {
-        const result = await this.pgPool.query("SELECT 1");
+        const result = await this.pgPool.query('SELECT 1');
         health.postgresql = result.rows.length > 0;
       }
 
       // Check Redis
       if (this.redisClient) {
         const pong = await this.redisClient.ping();
-        health.redis = pong === "PONG";
+        health.redis = pong === 'PONG';
       }
     } catch (error) {
-      this.logger.error("Health check failed", error);
+      this.logger.error('Health check failed', error);
     }
 
     return health;

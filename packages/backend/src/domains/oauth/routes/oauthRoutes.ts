@@ -1,8 +1,8 @@
-import express, { Router } from 'express';
+import express, { type Router } from 'express';
 import { body } from 'express-validator';
-import { OAuthController } from '../controllers/OAuthController.js';
-import { catchAsync } from '../../../middleware/errorHandlers.js';
 import { authenticate } from '../../../middleware/auth.js';
+import { catchAsync } from '../../../middleware/errorHandlers.js';
+import { OAuthController } from '../controllers/OAuthController.js';
 
 const router: Router = express.Router();
 const oauthController = new OAuthController();
@@ -15,9 +15,7 @@ const oauthController = new OAuthController();
 router.post(
   '/gmail/initiate',
   authenticate,
-  [
-    body('credentialName').notEmpty().withMessage('Credential name is required'),
-  ],
+  [body('credentialName').notEmpty().withMessage('Credential name is required')],
   catchAsync(oauthController.initiateGmailOAuth)
 );
 

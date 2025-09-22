@@ -4,18 +4,18 @@
  * encryption, and security monitoring
  */
 
-import { auditService } from "./auditService";
+import { auditService } from './auditService';
 
 export interface SecurityThreat {
   id: string;
   type:
-    | "brute_force"
-    | "credential_stuffing"
-    | "suspicious_ip"
-    | "data_exfiltration"
-    | "privilege_escalation"
-    | "malware_detection";
-  severity: "low" | "medium" | "high" | "critical";
+    | 'brute_force'
+    | 'credential_stuffing'
+    | 'suspicious_ip'
+    | 'data_exfiltration'
+    | 'privilege_escalation'
+    | 'malware_detection';
+  severity: 'low' | 'medium' | 'high' | 'critical';
   title: string;
   description: string;
   detectedAt: Date;
@@ -23,7 +23,7 @@ export interface SecurityThreat {
   targetUserId?: string;
   organizationId?: string;
   indicators: SecurityIndicator[];
-  status: "active" | "investigating" | "mitigated" | "false_positive";
+  status: 'active' | 'investigating' | 'mitigated' | 'false_positive';
   mitigationActions: string[];
   assignedTo?: string;
   resolvedAt?: Date;
@@ -38,8 +38,8 @@ export interface SecurityIndicator {
 }
 
 export interface EncryptionConfig {
-  algorithm: "AES-256-GCM" | "ChaCha20-Poly1305";
-  keyDerivation: "PBKDF2" | "Argon2id";
+  algorithm: 'AES-256-GCM' | 'ChaCha20-Poly1305';
+  keyDerivation: 'PBKDF2' | 'Argon2id';
   saltLength: number;
   iterations: number;
   keyLength: number;
@@ -66,31 +66,20 @@ export interface SecurityPolicy {
 }
 
 export interface SecurityCondition {
-  type:
-    | "ip_geolocation"
-    | "login_frequency"
-    | "device_fingerprint"
-    | "time_based"
-    | "risk_score";
-  operator:
-    | "equals"
-    | "not_equals"
-    | "greater_than"
-    | "less_than"
-    | "contains"
-    | "in_range";
+  type: 'ip_geolocation' | 'login_frequency' | 'device_fingerprint' | 'time_based' | 'risk_score';
+  operator: 'equals' | 'not_equals' | 'greater_than' | 'less_than' | 'contains' | 'in_range';
   value: any;
   weight: number; // For risk scoring
 }
 
 export interface SecurityAction {
   type:
-    | "block_request"
-    | "require_mfa"
-    | "send_alert"
-    | "quarantine_user"
-    | "rate_limit"
-    | "log_event";
+    | 'block_request'
+    | 'require_mfa'
+    | 'send_alert'
+    | 'quarantine_user'
+    | 'rate_limit'
+    | 'log_event';
   parameters: Record<string, any>;
   priority: number;
 }
@@ -120,7 +109,7 @@ export interface RiskAssessment {
   timestamp: Date;
   overallRisk: number; // 0-100
   factors: RiskFactor[];
-  recommendation: "allow" | "challenge" | "deny";
+  recommendation: 'allow' | 'challenge' | 'deny';
   confidence: number;
 }
 
@@ -163,13 +152,7 @@ export class SecurityService {
   constructor() {
     this.threatIntelligence = {
       maliciousIps: new Set(),
-      suspiciousUserAgents: new Set([
-        "sqlmap",
-        "nikto",
-        "nmap",
-        "masscan",
-        "gobuster",
-      ]),
+      suspiciousUserAgents: new Set(['sqlmap', 'nikto', 'nmap', 'masscan', 'gobuster']),
       knownAttackPatterns: [
         /(\b(union|select|insert|update|delete|drop|create|alter|exec|script)\b)/i,
         /(javascript:|data:|vbscript:)/i,
@@ -181,8 +164,8 @@ export class SecurityService {
     };
 
     this.encryptionConfig = {
-      algorithm: "AES-256-GCM",
-      keyDerivation: "Argon2id",
+      algorithm: 'AES-256-GCM',
+      keyDerivation: 'Argon2id',
       saltLength: 32,
       iterations: 100000,
       keyLength: 32,
@@ -217,7 +200,7 @@ export class SecurityService {
     userId: string,
     ipAddress: string,
     userAgent: string,
-    action: string,
+    action: string
   ): Promise<SecurityThreat[]> {
     const detectedThreats: SecurityThreat[] = [];
 
@@ -250,45 +233,45 @@ export class SecurityService {
 
   private async checkBruteForceAttack(
     userId: string,
-    ipAddress: string,
+    ipAddress: string
   ): Promise<SecurityThreat | null> {
     // Get recent failed login attempts
     const recentEvents = await auditService.getEvents(
       {
         userId,
-        action: "login",
-        result: "failure",
+        action: 'login',
+        result: 'failure',
         startDate: new Date(Date.now() - 3600000), // Last hour
       },
       100,
-      0,
+      0
     );
 
     if (recentEvents.length >= this.securityConfig.maxLoginAttempts) {
       return {
         id: this.generateId(),
-        type: "brute_force",
-        severity: "high",
-        title: "Brute Force Attack Detected",
+        type: 'brute_force',
+        severity: 'high',
+        title: 'Brute Force Attack Detected',
         description: `${recentEvents.length} failed login attempts detected for user ${userId} from IP ${ipAddress}`,
         detectedAt: new Date(),
         sourceIp: ipAddress,
         targetUserId: userId,
         indicators: [
           {
-            type: "failed_login_count",
+            type: 'failed_login_count',
             value: recentEvents.length.toString(),
             confidence: 95,
-            source: "audit_log",
+            source: 'audit_log',
             timestamp: new Date(),
           },
         ],
-        status: "active",
+        status: 'active',
         mitigationActions: [
-          "Block IP address",
-          "Lock user account",
-          "Send security alert",
-          "Require MFA for next login",
+          'Block IP address',
+          'Lock user account',
+          'Send security alert',
+          'Require MFA for next login',
         ],
       };
     }
@@ -296,19 +279,16 @@ export class SecurityService {
     return null;
   }
 
-  private checkThreatIntelligence(
-    ipAddress: string,
-    userAgent: string,
-  ): SecurityThreat | null {
+  private checkThreatIntelligence(ipAddress: string, userAgent: string): SecurityThreat | null {
     const indicators: SecurityIndicator[] = [];
 
     // Check malicious IPs
     if (this.threatIntelligence.maliciousIps.has(ipAddress)) {
       indicators.push({
-        type: "malicious_ip",
+        type: 'malicious_ip',
         value: ipAddress,
         confidence: 90,
-        source: "threat_intelligence",
+        source: 'threat_intelligence',
         timestamp: new Date(),
       });
     }
@@ -317,10 +297,10 @@ export class SecurityService {
     for (const suspiciousUA of this.threatIntelligence.suspiciousUserAgents) {
       if (userAgent.toLowerCase().includes(suspiciousUA)) {
         indicators.push({
-          type: "suspicious_user_agent",
+          type: 'suspicious_user_agent',
           value: userAgent,
           confidence: 85,
-          source: "threat_intelligence",
+          source: 'threat_intelligence',
           timestamp: new Date(),
         });
       }
@@ -329,39 +309,32 @@ export class SecurityService {
     if (indicators.length > 0) {
       return {
         id: this.generateId(),
-        type: "suspicious_ip",
-        severity: "medium",
-        title: "Threat Intelligence Match",
-        description: "Request matches known threat indicators",
+        type: 'suspicious_ip',
+        severity: 'medium',
+        title: 'Threat Intelligence Match',
+        description: 'Request matches known threat indicators',
         detectedAt: new Date(),
         sourceIp: ipAddress,
         indicators,
-        status: "active",
-        mitigationActions: [
-          "Block request",
-          "Monitor user activity",
-          "Update threat intelligence",
-        ],
+        status: 'active',
+        mitigationActions: ['Block request', 'Monitor user activity', 'Update threat intelligence'],
       };
     }
 
     return null;
   }
 
-  private checkSuspiciousPatterns(
-    action: string,
-    userAgent: string,
-  ): SecurityThreat | null {
+  private checkSuspiciousPatterns(action: string, userAgent: string): SecurityThreat | null {
     const indicators: SecurityIndicator[] = [];
 
     // Check for attack patterns
     for (const pattern of this.threatIntelligence.knownAttackPatterns) {
       if (pattern.test(action) || pattern.test(userAgent)) {
         indicators.push({
-          type: "attack_pattern",
+          type: 'attack_pattern',
           value: pattern.source,
           confidence: 80,
-          source: "pattern_analysis",
+          source: 'pattern_analysis',
           timestamp: new Date(),
         });
       }
@@ -370,19 +343,19 @@ export class SecurityService {
     if (indicators.length > 0) {
       return {
         id: this.generateId(),
-        type: "malware_detection",
-        severity: "high",
-        title: "Suspicious Pattern Detected",
-        description: "Request contains patterns associated with known attacks",
+        type: 'malware_detection',
+        severity: 'high',
+        title: 'Suspicious Pattern Detected',
+        description: 'Request contains patterns associated with known attacks',
         detectedAt: new Date(),
-        sourceIp: "unknown",
+        sourceIp: 'unknown',
         indicators,
-        status: "active",
+        status: 'active',
         mitigationActions: [
-          "Block request",
-          "Quarantine user",
-          "Deep scan user data",
-          "Alert security team",
+          'Block request',
+          'Quarantine user',
+          'Deep scan user data',
+          'Alert security team',
         ],
       };
     }
@@ -400,7 +373,7 @@ export class SecurityService {
       location?: string;
       deviceFingerprint?: string;
       timeOfAccess: Date;
-    },
+    }
   ): Promise<RiskAssessment> {
     const factors: RiskFactor[] = [];
 
@@ -430,11 +403,11 @@ export class SecurityService {
     const overallRisk = this.calculateOverallRisk(factors);
 
     // Determine recommendation
-    let recommendation: "allow" | "challenge" | "deny" = "allow";
+    let recommendation: 'allow' | 'challenge' | 'deny' = 'allow';
     if (overallRisk >= this.securityConfig.riskThresholds.high) {
-      recommendation = "deny";
+      recommendation = 'deny';
     } else if (overallRisk >= this.securityConfig.riskThresholds.medium) {
-      recommendation = "challenge";
+      recommendation = 'challenge';
     }
 
     return {
@@ -444,8 +417,7 @@ export class SecurityService {
       overallRisk,
       factors,
       recommendation,
-      confidence:
-        factors.reduce((sum, f) => sum + f.weight, 0) / factors.length,
+      confidence: factors.reduce((sum, f) => sum + f.weight, 0) / factors.length,
     };
   }
 
@@ -460,68 +432,63 @@ export class SecurityService {
       riskScore = 0;
     } else {
       // Check for private IP ranges (lower risk)
-      const privateRanges = [
-        /^10\./,
-        /^172\.(1[6-9]|2[0-9]|3[01])\./,
-        /^192\.168\./,
-      ];
+      const privateRanges = [/^10\./, /^172\.(1[6-9]|2[0-9]|3[01])\./, /^192\.168\./];
 
       const isPrivate = privateRanges.some((range) => range.test(ipAddress));
       riskScore = isPrivate ? 10 : 30;
     }
 
     return {
-      name: "IP Reputation",
+      name: 'IP Reputation',
       value: riskScore,
       weight: 25,
       description: `Risk assessment based on IP address ${ipAddress}`,
-      source: "ip_reputation",
+      source: 'ip_reputation',
     };
   }
 
   private async assessDeviceRisk(fingerprint?: string): Promise<RiskFactor> {
     if (!fingerprint) {
       return {
-        name: "Device Trust",
+        name: 'Device Trust',
         value: 50,
         weight: 20,
-        description: "Unknown device - moderate risk",
-        source: "device_fingerprint",
+        description: 'Unknown device - moderate risk',
+        source: 'device_fingerprint',
       };
     }
 
     const device = this.deviceFingerprints.get(fingerprint);
     if (!device) {
       return {
-        name: "Device Trust",
+        name: 'Device Trust',
         value: 70,
         weight: 20,
-        description: "New device - higher risk",
-        source: "device_fingerprint",
+        description: 'New device - higher risk',
+        source: 'device_fingerprint',
       };
     }
 
     if (device.trusted) {
       return {
-        name: "Device Trust",
+        name: 'Device Trust',
         value: 10,
         weight: 20,
-        description: "Trusted device - low risk",
-        source: "device_fingerprint",
+        description: 'Trusted device - low risk',
+        source: 'device_fingerprint',
       };
     }
 
     // Calculate risk based on device history
-    const daysSinceFirstSeen =
-      (Date.now() - device.firstSeen.getTime()) / (1000 * 60 * 60 * 24);
+    const daysSinceFirstSeen = (Date.now() - device.firstSeen.getTime()) / (1000 * 60 * 60 * 24);
     const riskScore = Math.max(10, 50 - daysSinceFirstSeen * 2);
 
     return {
-      name: "Device Trust",
+      name: 'Device Trust',
       value: riskScore,
       weight: 20,
       description: `Device seen for ${Math.round(daysSinceFirstSeen)} days`,
-      source: "device_fingerprint",
+      source: 'device_fingerprint',
     };
   }
 
@@ -544,11 +511,11 @@ export class SecurityService {
     }
 
     return {
-      name: "Time-based Risk",
+      name: 'Time-based Risk',
       value: riskScore,
       weight: 10,
       description: `Access at ${timeOfAccess.toLocaleTimeString()}`,
-      source: "time_analysis",
+      source: 'time_analysis',
     };
   }
 
@@ -567,11 +534,11 @@ export class SecurityService {
     }
 
     return {
-      name: "Geolocation Risk",
+      name: 'Geolocation Risk',
       value: riskScore,
       weight: 15,
       description: `Access from ${location}`,
-      source: "geolocation",
+      source: 'geolocation',
     };
   }
 
@@ -583,7 +550,7 @@ export class SecurityService {
         startDate: new Date(Date.now() - 24 * 60 * 60 * 1000), // Last 24 hours
       },
       100,
-      0,
+      0
     );
 
     let riskScore = 10;
@@ -594,7 +561,7 @@ export class SecurityService {
     }
 
     // Failed operations
-    const failedEvents = recentEvents.filter((e) => e.result === "failure");
+    const failedEvents = recentEvents.filter((e) => e.result === 'failure');
     if (failedEvents.length > 10) {
       riskScore += 30;
     }
@@ -602,58 +569,52 @@ export class SecurityService {
     // High-risk actions
     const highRiskActions = recentEvents.filter(
       (e) =>
-        e.action.includes("delete") ||
-        e.action.includes("admin") ||
-        e.severity === "high" ||
-        e.severity === "critical",
+        e.action.includes('delete') ||
+        e.action.includes('admin') ||
+        e.severity === 'high' ||
+        e.severity === 'critical'
     );
     riskScore += highRiskActions.length * 5;
 
     return {
-      name: "Behavioral Risk",
+      name: 'Behavioral Risk',
       value: Math.min(riskScore, 100),
       weight: 30,
       description: `Based on recent activity (${recentEvents.length} events)`,
-      source: "behavioral_analysis",
+      source: 'behavioral_analysis',
     };
   }
 
   private calculateOverallRisk(factors: RiskFactor[]): number {
     const totalWeight = factors.reduce((sum, factor) => sum + factor.weight, 0);
-    const weightedScore = factors.reduce(
-      (sum, factor) => sum + factor.value * factor.weight,
-      0,
-    );
+    const weightedScore = factors.reduce((sum, factor) => sum + factor.value * factor.weight, 0);
 
     return Math.round(weightedScore / totalWeight);
   }
 
   // Encryption Services
-  async encryptData(
-    data: string,
-    context?: string,
-  ): Promise<{ encrypted: string; metadata: any }> {
+  async encryptData(data: string, context?: string): Promise<{ encrypted: string; metadata: any }> {
     // In a real implementation, this would use proper encryption libraries
-    const encrypted = Buffer.from(data).toString("base64"); // Simplified for demo
+    const encrypted = Buffer.from(data).toString('base64'); // Simplified for demo
 
     const metadata = {
       algorithm: this.encryptionConfig.algorithm,
       timestamp: new Date(),
-      context: context || "general",
-      keyId: "key-" + Date.now(),
+      context: context || 'general',
+      keyId: 'key-' + Date.now(),
     };
 
     await auditService.logEvent({
-      userId: "system",
-      userName: "System",
-      action: "encrypt",
-      resource: "data",
+      userId: 'system',
+      userName: 'System',
+      action: 'encrypt',
+      resource: 'data',
       details: { context, dataLength: data.length },
-      ipAddress: "127.0.0.1",
-      userAgent: "SecurityService",
-      severity: "low",
-      category: "system",
-      result: "success",
+      ipAddress: '127.0.0.1',
+      userAgent: 'SecurityService',
+      severity: 'low',
+      category: 'system',
+      result: 'success',
     });
 
     return { encrypted, metadata };
@@ -661,19 +622,19 @@ export class SecurityService {
 
   async decryptData(encryptedData: string, metadata: any): Promise<string> {
     // In a real implementation, this would use proper decryption
-    const decrypted = Buffer.from(encryptedData, "base64").toString("utf-8");
+    const decrypted = Buffer.from(encryptedData, 'base64').toString('utf-8');
 
     await auditService.logEvent({
-      userId: "system",
-      userName: "System",
-      action: "decrypt",
-      resource: "data",
+      userId: 'system',
+      userName: 'System',
+      action: 'decrypt',
+      resource: 'data',
       details: { context: metadata.context, keyId: metadata.keyId },
-      ipAddress: "127.0.0.1",
-      userAgent: "SecurityService",
-      severity: "medium",
-      category: "system",
-      result: "success",
+      ipAddress: '127.0.0.1',
+      userAgent: 'SecurityService',
+      severity: 'medium',
+      category: 'system',
+      result: 'success',
     });
 
     return decrypted;
@@ -681,7 +642,7 @@ export class SecurityService {
 
   // Security Policy Management
   createSecurityPolicy(
-    policy: Omit<SecurityPolicy, "id" | "createdAt" | "updatedAt">,
+    policy: Omit<SecurityPolicy, 'id' | 'createdAt' | 'updatedAt'>
   ): SecurityPolicy {
     const newPolicy: SecurityPolicy = {
       ...policy,
@@ -699,7 +660,7 @@ export class SecurityService {
 
     for (const policy of this.policies.filter((p) => p.enabled)) {
       const allConditionsMet = policy.conditions.every((condition) =>
-        this.evaluateCondition(condition, context),
+        this.evaluateCondition(condition, context)
       );
 
       if (allConditionsMet) {
@@ -710,26 +671,24 @@ export class SecurityService {
     return triggeredActions.sort((a, b) => b.priority - a.priority);
   }
 
-  private evaluateCondition(
-    condition: SecurityCondition,
-    context: any,
-  ): boolean {
+  private evaluateCondition(condition: SecurityCondition, context: any): boolean {
     const value = this.getContextValue(context, condition.type);
 
     switch (condition.operator) {
-      case "equals":
+      case 'equals':
         return value === condition.value;
-      case "not_equals":
+      case 'not_equals':
         return value !== condition.value;
-      case "greater_than":
+      case 'greater_than':
         return Number(value) > Number(condition.value);
-      case "less_than":
+      case 'less_than':
         return Number(value) < Number(condition.value);
-      case "contains":
+      case 'contains':
         return String(value).includes(String(condition.value));
-      case "in_range":
+      case 'in_range': {
         const [min, max] = condition.value;
         return Number(value) >= min && Number(value) <= max;
+      }
       default:
         return false;
     }
@@ -737,15 +696,15 @@ export class SecurityService {
 
   private getContextValue(context: any, type: string): any {
     switch (type) {
-      case "ip_geolocation":
+      case 'ip_geolocation':
         return context.location;
-      case "login_frequency":
+      case 'login_frequency':
         return context.loginCount || 0;
-      case "device_fingerprint":
+      case 'device_fingerprint':
         return context.deviceFingerprint;
-      case "time_based":
+      case 'time_based':
         return context.timeOfAccess?.getHours() || 0;
-      case "risk_score":
+      case 'risk_score':
         return context.riskScore || 0;
       default:
         return null;
@@ -753,10 +712,7 @@ export class SecurityService {
   }
 
   // Device Management
-  registerDevice(
-    userId: string,
-    deviceInfo: DeviceFingerprint["deviceInfo"],
-  ): DeviceFingerprint {
+  registerDevice(userId: string, deviceInfo: DeviceFingerprint['deviceInfo']): DeviceFingerprint {
     const fingerprint = this.generateDeviceFingerprint(deviceInfo);
 
     const device: DeviceFingerprint = {
@@ -774,41 +730,39 @@ export class SecurityService {
     return device;
   }
 
-  private generateDeviceFingerprint(
-    deviceInfo: DeviceFingerprint["deviceInfo"],
-  ): string {
+  private generateDeviceFingerprint(deviceInfo: DeviceFingerprint['deviceInfo']): string {
     const data = [
       deviceInfo.userAgent,
       deviceInfo.screenResolution,
       deviceInfo.timezone,
       deviceInfo.language,
       deviceInfo.platform,
-    ].join("|");
+    ].join('|');
 
     // In a real implementation, use a proper hashing algorithm
-    return Buffer.from(data).toString("base64");
+    return Buffer.from(data).toString('base64');
   }
 
   // Utility methods
   private initializeDefaultPolicies(): void {
     // Geo-blocking policy
     this.policies.push({
-      id: "geo-block-policy",
-      name: "Geographic Blocking",
-      description: "Block access from high-risk countries",
+      id: 'geo-block-policy',
+      name: 'Geographic Blocking',
+      description: 'Block access from high-risk countries',
       enabled: true,
       conditions: [
         {
-          type: "ip_geolocation",
-          operator: "equals",
-          value: "high-risk-country",
+          type: 'ip_geolocation',
+          operator: 'equals',
+          value: 'high-risk-country',
           weight: 100,
         },
       ],
       actions: [
         {
-          type: "block_request",
-          parameters: { reason: "Geographic restriction" },
+          type: 'block_request',
+          parameters: { reason: 'Geographic restriction' },
           priority: 100,
         },
       ],
@@ -818,27 +772,27 @@ export class SecurityService {
 
     // High-risk user policy
     this.policies.push({
-      id: "high-risk-user-policy",
-      name: "High Risk User Actions",
-      description: "Require additional verification for high-risk users",
+      id: 'high-risk-user-policy',
+      name: 'High Risk User Actions',
+      description: 'Require additional verification for high-risk users',
       enabled: true,
       conditions: [
         {
-          type: "risk_score",
-          operator: "greater_than",
+          type: 'risk_score',
+          operator: 'greater_than',
           value: 80,
           weight: 100,
         },
       ],
       actions: [
         {
-          type: "require_mfa",
-          parameters: { method: "totp" },
+          type: 'require_mfa',
+          parameters: { method: 'totp' },
           priority: 90,
         },
         {
-          type: "send_alert",
-          parameters: { recipient: "security-team" },
+          type: 'send_alert',
+          parameters: { recipient: 'security-team' },
           priority: 80,
         },
       ],
@@ -852,20 +806,20 @@ export class SecurityService {
 
     // In a real implementation, this would send notifications to security team
     auditService.logEvent({
-      userId: "system",
-      userName: "SecurityService",
-      action: "threat_detected",
-      resource: "security",
+      userId: 'system',
+      userName: 'SecurityService',
+      action: 'threat_detected',
+      resource: 'security',
       details: {
         threatType: threat.type,
         severity: threat.severity,
         sourceIp: threat.sourceIp,
       },
-      ipAddress: "127.0.0.1",
-      userAgent: "SecurityService",
+      ipAddress: '127.0.0.1',
+      userAgent: 'SecurityService',
       severity: threat.severity,
-      category: "system",
-      result: "success",
+      category: 'system',
+      result: 'success',
     });
   }
 
@@ -874,10 +828,7 @@ export class SecurityService {
   }
 
   // Public getters
-  getThreats(filter?: {
-    severity?: string;
-    status?: string;
-  }): SecurityThreat[] {
+  getThreats(filter?: { severity?: string; status?: string }): SecurityThreat[] {
     let threats = [...this.threats];
 
     if (filter?.severity) {
@@ -888,9 +839,7 @@ export class SecurityService {
       threats = threats.filter((t) => t.status === filter.status);
     }
 
-    return threats.sort(
-      (a, b) => b.detectedAt.getTime() - a.detectedAt.getTime(),
-    );
+    return threats.sort((a, b) => b.detectedAt.getTime() - a.detectedAt.getTime());
   }
 
   getSecurityPolicies(): SecurityPolicy[] {

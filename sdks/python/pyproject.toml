@@ -1,0 +1,151 @@
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry]
+name = "reporunner-python"
+version = "1.0.0"
+description = "Python SDK for Reporunner - Visual workflow automation platform"
+authors = ["Reporunner Team <team@reporunner.com>"]
+license = "Apache-2.0"
+readme = "README.md"
+homepage = "https://reporunner.com"
+repository = "https://github.com/reporunner/reporunner"
+documentation = "https://docs.reporunner.com/sdks/python"
+keywords = ["workflow", "automation", "n8n", "visual-programming", "ai", "sdk"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Internet :: WWW/HTTP :: HTTP Servers",
+    "Topic :: System :: Distributed Computing",
+]
+packages = [{include = "reporunner"}]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+httpx = "^0.27.0"
+pydantic = "^2.5.0"
+typing-extensions = "^4.8.0"
+websockets = "^12.0"
+asyncio-mqtt = "^0.13.0"
+cryptography = "^41.0.0"
+pyjwt = "^2.8.0"
+click = "^8.1.0"
+rich = "^13.7.0"
+python-dotenv = "^1.0.0"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.0.0"
+pytest-asyncio = "^0.23.0"
+pytest-cov = "^4.1.0"
+pytest-mock = "^3.12.0"
+black = "^24.0.0"
+isort = "^5.13.0"
+flake8 = "^7.0.0"
+mypy = "^1.8.0"
+pre-commit = "^3.6.0"
+sphinx = "^7.2.0"
+sphinx-rtd-theme = "^2.0.0"
+moto = "^4.2.0"
+respx = "^0.20.0"
+faker = "^22.0.0"
+
+[tool.poetry.scripts]
+reporunner = "reporunner.cli:main"
+
+[tool.black]
+line-length = 88
+target-version = ['py38']
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+  # directories
+  \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | build
+  | dist
+)/
+'''
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+line_length = 88
+known_first_party = ["reporunner"]
+
+[tool.mypy]
+python_version = "3.8"
+strict = true
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+disallow_untyped_decorators = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+warn_unreachable = true
+strict_equality = true
+
+[[tool.mypy.overrides]]
+module = [
+    "asyncio_mqtt.*",
+    "moto.*",
+    "respx.*",
+    "faker.*",
+]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = "-ra -q --strict-markers --cov=reporunner --cov-report=term-missing --cov-report=html --cov-report=xml"
+testpaths = ["tests"]
+python_files = ["test_*.py", "*_test.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+markers = [
+    "integration: marks tests as integration tests",
+    "unit: marks tests as unit tests",
+    "slow: marks tests as slow running",
+    "network: marks tests that require network access",
+]
+asyncio_mode = "auto"
+
+[tool.coverage.run]
+source = ["reporunner"]
+omit = [
+    "*/tests/*",
+    "*/test_*",
+    "*/__pycache__/*",
+    "*/venv/*",
+    "*/virtualenv/*",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if self.debug:",
+    "if settings.DEBUG",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if 0:",
+    "if __name__ == .__main__.:",
+    "class .*\\bProtocol\\):",
+    "@(abc\\.)?abstractmethod",
+]

@@ -5,111 +5,102 @@
  * with third-party services in the RepoRunner platform.
  */
 
+// Authentication
+export {
+  AuthorizationRequest,
+  OAuth2Config,
+  OAuth2Handler,
+  OAuth2Session,
+  OAuth2Token,
+} from './auth/oauth2-handler';
+// Configuration
+export {
+  ApiKeySchema,
+  BaseIntegrationConfig,
+  BaseIntegrationConfigSchema,
+  ConfigurationValidator,
+  ConnectionConfigSchema,
+  configValidator,
+  GitHubIntegrationConfig,
+  GitHubIntegrationConfigSchema,
+  JiraIntegrationConfig,
+  JiraIntegrationConfigSchema,
+  OAuth2ConfigSchema,
+  RateLimitConfigSchema,
+  SlackIntegrationConfig,
+  SlackIntegrationConfigSchema,
+  WebhookConfigSchema,
+} from './config/configuration-schema';
 // Core components
 export {
   BaseIntegration,
   IntegrationConfig,
-  IntegrationState,
   IntegrationContext,
-} from "./core/base-integration";
-
+  IntegrationState,
+} from './core/base-integration';
 export {
-  IntegrationRegistry,
-  IntegrationDefinition,
-  IntegrationInstance,
-  IntegrationFilter,
-  integrationRegistry,
-} from "./core/integration-registry";
-
-export {
-  IntegrationEventBus,
+  EventBusConfig,
+  EventChannel,
+  EventFilter,
+  EventHandler,
   EventPayload,
   EventSubscription,
-  EventHandler,
-  EventFilter,
-  EventChannel,
-  EventBusConfig,
+  IntegrationEventBus,
   integrationEventBus,
-} from "./core/event-bus";
-
-// Authentication
+} from './core/event-bus';
 export {
-  OAuth2Handler,
-  OAuth2Config,
-  OAuth2Token,
-  OAuth2Session,
-  AuthorizationRequest,
-} from "./auth/oauth2-handler";
-
-// Security
-export {
-  CredentialManager,
-  Credential,
-  EncryptedData,
-  CredentialFilter,
-  CredentialRotationPolicy,
-  getCredentialManager,
-} from "./security/credential-manager";
-
-// Webhooks
-export {
-  WebhookManager,
-  WebhookConfig,
-  WebhookRegistration,
-  WebhookEvent,
-  WebhookHandler,
-  webhookManager,
-} from "./webhook/webhook-manager";
-
-// Configuration
-export {
-  ConfigurationValidator,
-  BaseIntegrationConfig,
-  GitHubIntegrationConfig,
-  SlackIntegrationConfig,
-  JiraIntegrationConfig,
-  ApiKeySchema,
-  OAuth2ConfigSchema,
-  WebhookConfigSchema,
-  RateLimitConfigSchema,
-  ConnectionConfigSchema,
-  BaseIntegrationConfigSchema,
-  GitHubIntegrationConfigSchema,
-  SlackIntegrationConfigSchema,
-  JiraIntegrationConfigSchema,
-  configValidator,
-} from "./config/configuration-schema";
-
-// Utilities
-export {
-  RateLimiter,
-  RateLimitConfig,
-  RateLimitEntry,
-  RateLimitStatus,
-  rateLimiter,
-} from "./utils/rate-limiter";
-
+  IntegrationDefinition,
+  IntegrationFilter,
+  IntegrationInstance,
+  IntegrationRegistry,
+  integrationRegistry,
+} from './core/integration-registry';
 // Monitoring
 export {
-  IntegrationHealthMonitor,
   HealthCheck,
   HealthStatus,
-  IntegrationHealth,
-  IntegrationMetrics,
   healthMonitor,
-} from "./monitoring/health-monitor";
-
+  IntegrationHealth,
+  IntegrationHealthMonitor,
+  IntegrationMetrics,
+} from './monitoring/health-monitor';
+// Security
+export {
+  Credential,
+  CredentialFilter,
+  CredentialManager,
+  CredentialRotationPolicy,
+  EncryptedData,
+  getCredentialManager,
+} from './security/credential-manager';
 // Testing
 export {
   IntegrationTester,
+  IntegrationTestHarness,
+  integrationTester,
+  MockResponse,
   MockServer,
   MockServerConfig,
-  MockResponse,
   RequestLog,
-  IntegrationTestHarness,
   TestAssertion,
-  integrationTester,
-} from "./testing/test-framework";
+} from './testing/test-framework';
+// Utilities
+export {
+  RateLimitConfig,
+  RateLimitEntry,
+  RateLimiter,
+  RateLimitStatus,
+  rateLimiter,
+} from './utils/rate-limiter';
+// Webhooks
+export {
+  WebhookConfig,
+  WebhookEvent,
+  WebhookHandler,
+  WebhookManager,
+  WebhookRegistration,
+  webhookManager,
+} from './webhook/webhook-manager';
 
 /**
  * Integration Framework Factory
@@ -163,7 +154,7 @@ export class IntegrationFramework {
       // Configure health check interval
     }
 
-    console.log("Integration Framework initialized");
+    console.log('Integration Framework initialized');
   }
 
   /**
@@ -183,11 +174,7 @@ export class IntegrationFramework {
   /**
    * Execute integration action
    */
-  async executeAction(
-    instanceId: string,
-    action: string,
-    params: any,
-  ): Promise<any> {
+  async executeAction(instanceId: string, action: string, params: any): Promise<any> {
     return this.registry.executeAction(instanceId, action, params);
   }
 
@@ -209,33 +196,20 @@ export class IntegrationFramework {
    * Register webhook
    */
   registerWebhook(integrationName: string, config: any, handler: any): string {
-    return this.webhookManager.registerWebhook(
-      integrationName,
-      config,
-      handler,
-    );
+    return this.webhookManager.registerWebhook(integrationName, config, handler);
   }
 
   /**
    * Publish event
    */
-  async publishEvent(
-    source: string,
-    event: string,
-    data: any,
-    metadata?: any,
-  ): Promise<void> {
+  async publishEvent(source: string, event: string, data: any, metadata?: any): Promise<void> {
     await this.eventBus.publish(source, event, data, metadata);
   }
 
   /**
    * Subscribe to events
    */
-  subscribeToEvents(
-    pattern: string | RegExp,
-    handler: any,
-    options?: any,
-  ): string {
+  subscribeToEvents(pattern: string | RegExp, handler: any, options?: any): string {
     return this.eventBus.subscribe(pattern, handler, options);
   }
 
@@ -275,7 +249,7 @@ export class IntegrationFramework {
     this.healthMonitor.clearAll();
     this.rateLimiter.clearAll();
 
-    console.log("Integration Framework shut down");
+    console.log('Integration Framework shut down');
   }
 }
 

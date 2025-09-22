@@ -1,0 +1,47 @@
+{
+  "name": "@reporunner/database",
+  "version": "1.0.0",
+  "description": "Hybrid database layer for Reporunner (MongoDB + PostgreSQL)",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "type-check": "tsc --noEmit",
+    "lint": "eslint src/**/*.ts",
+    "lint:fix": "eslint src/**/*.ts --fix",
+    "migrate": "tsx src/scripts/migrate.ts",
+    "seed": "tsx src/scripts/seed.ts",
+    "db:setup": "tsx src/scripts/setup.ts",
+    "db:reset": "tsx src/scripts/reset.ts"
+  },
+  "dependencies": {
+    "@reporunner/core": "workspace:*",
+    "@reporunner/shared": "workspace:*",
+    "mongodb": "^6.3.0",
+    "mongoose": "^8.0.0",
+    "pg": "^8.11.0",
+    "drizzle-orm": "^0.29.0",
+    "drizzle-kit": "^0.20.0",
+    "@neondatabase/serverless": "^0.9.0",
+    "postgres": "^3.4.0",
+    "pgvector": "^0.1.0",
+    "redis": "^4.6.0",
+    "ioredis": "^5.3.0",
+    "zod": "^3.22.0",
+    "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "@types/pg": "^8.10.0",
+    "@types/uuid": "^9.0.0",
+    "tsx": "^4.0.0",
+    "typescript": "catalog:",
+    "@types/node": "catalog:",
+    "jest": "catalog:",
+    "@types/jest": "catalog:",
+    "tsup": "^7.0.0",
+    "eslint": "catalog:"
+  }
+}

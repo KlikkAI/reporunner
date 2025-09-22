@@ -5,9 +5,9 @@
  * including conflict detection, auto-resizing, and validation.
  */
 
-import { useCallback, useRef, useState } from "react";
-import { useReactFlow, type Node, type XYPosition } from "reactflow";
-import type { ContainerType } from "../components/WorkflowEditor/NodeTypes/ContainerNode/ContainerNode";
+import { useCallback, useRef, useState } from 'react';
+import { type Node, useReactFlow, type XYPosition } from 'reactflow';
+import type { ContainerType } from '../components/WorkflowEditor/NodeTypes/ContainerNode/ContainerNode';
 
 export interface ContainerIntersection {
   containerId: string;
@@ -35,12 +35,9 @@ export const useContainerInteractions = () => {
   /**
    * Register a container element for intersection detection
    */
-  const registerContainer = useCallback(
-    (containerId: string, element: HTMLElement) => {
-      containerRefs.current.set(containerId, element);
-    },
-    [],
-  );
+  const registerContainer = useCallback((containerId: string, element: HTMLElement) => {
+    containerRefs.current.set(containerId, element);
+  }, []);
 
   /**
    * Unregister a container element
@@ -59,7 +56,7 @@ export const useContainerInteractions = () => {
 
       // Find all container nodes
       const containerNodes = nodes.filter(
-        (node) => node.type === "container" || node.data?.containerType,
+        (node) => node.type === 'container' || node.data?.containerType
       );
 
       containerNodes.forEach((containerNode) => {
@@ -80,7 +77,7 @@ export const useContainerInteractions = () => {
 
           containers.push({
             containerId: containerNode.id,
-            containerType: containerNode.data?.containerType || "subflow",
+            containerType: containerNode.data?.containerType || 'subflow',
             depth,
             bounds,
             isValid: true, // Will be validated separately
@@ -95,67 +92,63 @@ export const useContainerInteractions = () => {
         return b.score - a.score;
       });
     },
-    [getNodes],
+    [getNodes]
   );
 
   /**
    * Validate if a node can be dropped into a container
    */
   const validateDrop = useCallback(
-    (
-      nodeType: string,
-      targetContainerId: string,
-      nodes: Node[],
-    ): DropValidation => {
+    (nodeType: string, targetContainerId: string, nodes: Node[]): DropValidation => {
       const targetContainer = nodes.find((n) => n.id === targetContainerId);
       if (!targetContainer) {
-        return { isValid: false, reason: "Container not found" };
+        return { isValid: false, reason: 'Container not found' };
       }
 
       const containerType = targetContainer.data?.containerType;
 
       // Prevent dropping containers into themselves or their children
-      if (nodeType === "container") {
+      if (nodeType === 'container') {
         const wouldCreateCycle = checkForCycles(targetContainerId, nodes);
         if (wouldCreateCycle) {
-          return { isValid: false, reason: "Would create circular dependency" };
+          return { isValid: false, reason: 'Would create circular dependency' };
         }
       }
 
       // Container-specific validation
       switch (containerType) {
-        case "loop":
+        case 'loop':
           // Loop containers can contain most node types
-          if (nodeType === "trigger") {
+          if (nodeType === 'trigger') {
             return {
               isValid: false,
-              reason: "Trigger nodes cannot be inside loops",
+              reason: 'Trigger nodes cannot be inside loops',
             };
           }
           break;
 
-        case "parallel":
+        case 'parallel':
           // Parallel containers should have nodes that can run independently
-          if (nodeType === "condition") {
+          if (nodeType === 'condition') {
             return {
               isValid: false,
-              reason: "Condition nodes may not work as expected in parallel",
+              reason: 'Condition nodes may not work as expected in parallel',
             };
           }
           break;
 
-        case "conditional":
+        case 'conditional':
           // Conditional containers need specific handling
           break;
 
-        case "subflow":
+        case 'subflow':
           // Subflows can contain any node type
           break;
       }
 
       return { isValid: true };
     },
-    [],
+    []
   );
 
   /**
@@ -171,7 +164,7 @@ export const useContainerInteractions = () => {
   const handleDragOver = useCallback(
     (event: React.DragEvent, containerId: string) => {
       event.preventDefault();
-      event.dataTransfer.dropEffect = "move";
+      event.dataTransfer.dropEffect = 'move';
 
       if (!draggedNode) return;
 
@@ -184,7 +177,7 @@ export const useContainerInteractions = () => {
         setHoveredContainer(null);
       }
     },
-    [draggedNode, getNodes, validateDrop],
+    [draggedNode, getNodes, validateDrop]
   );
 
   /**
@@ -201,7 +194,7 @@ export const useContainerInteractions = () => {
       const validation = validateDrop(draggedNode.type!, containerId, nodes);
 
       if (!validation.isValid) {
-        console.warn("Drop validation failed:", validation.reason);
+        console.warn('Drop validation failed:', validation.reason);
         return;
       }
 
@@ -229,7 +222,7 @@ export const useContainerInteractions = () => {
             };
           }
           return node;
-        }),
+        })
       );
 
       // Update container to include this child
@@ -246,12 +239,12 @@ export const useContainerInteractions = () => {
             };
           }
           return node;
-        }),
+        })
       );
 
       setDraggedNode(null);
     },
-    [draggedNode, getNodes, setNodes, validateDrop],
+    [draggedNode, getNodes, setNodes, validateDrop]
   );
 
   /**
@@ -263,7 +256,7 @@ export const useContainerInteractions = () => {
         currentNodes.map((node) => {
           if (node.id === containerId) {
             const updatedChildren = (node.data?.children || []).filter(
-              (child: Node) => child.id !== nodeId,
+              (child: Node) => child.id !== nodeId
             );
             return {
               ...node,
@@ -274,25 +267,24 @@ export const useContainerInteractions = () => {
             };
           }
           return node;
-        }),
+        })
       );
 
       // Remove parent container reference from node
       setNodes((currentNodes) =>
         currentNodes.map((node) => {
           if (node.id === nodeId) {
-            const { parentContainer, containerPosition, ...cleanData } =
-              node.data || {};
+            const { parentContainer, containerPosition, ...cleanData } = node.data || {};
             return {
               ...node,
               data: cleanData,
             };
           }
           return node;
-        }),
+        })
       );
     },
-    [setNodes],
+    [setNodes]
   );
 
   /**
@@ -324,11 +316,11 @@ export const useContainerInteractions = () => {
       const padding = containerNode.data.padding || 20;
       const newWidth = Math.max(
         maxX - minX + padding * 2,
-        containerNode.data.dimensions?.minWidth || 300,
+        containerNode.data.dimensions?.minWidth || 300
       );
       const newHeight = Math.max(
         maxY - minY + padding * 2,
-        containerNode.data.dimensions?.minHeight || 200,
+        containerNode.data.dimensions?.minHeight || 200
       );
 
       // Update container dimensions
@@ -348,10 +340,10 @@ export const useContainerInteractions = () => {
             };
           }
           return node;
-        }),
+        })
       );
     },
-    [getNodes, setNodes],
+    [getNodes, setNodes]
   );
 
   return {
@@ -389,22 +381,14 @@ function getContainerDepth(containerId: string, nodes: Node[]): number {
   return 1 + getContainerDepth(parentContainer, nodes);
 }
 
-function calculateContainerScore(
-  position: XYPosition,
-  bounds: DOMRect,
-  depth: number,
-): number {
+function calculateContainerScore(position: XYPosition, bounds: DOMRect, depth: number): number {
   // Calculate how centered the position is within the container
   const centerX = bounds.left + bounds.width / 2;
   const centerY = bounds.top + bounds.height / 2;
 
-  const distanceFromCenter = Math.sqrt(
-    Math.pow(position.x - centerX, 2) + Math.pow(position.y - centerY, 2),
-  );
+  const distanceFromCenter = Math.sqrt((position.x - centerX) ** 2 + (position.y - centerY) ** 2);
 
-  const maxDistance = Math.sqrt(
-    Math.pow(bounds.width / 2, 2) + Math.pow(bounds.height / 2, 2),
-  );
+  const maxDistance = Math.sqrt((bounds.width / 2) ** 2 + (bounds.height / 2) ** 2);
 
   const centerScore = 1 - distanceFromCenter / maxDistance;
   const depthScore = depth * 0.1; // Prefer deeper containers slightly

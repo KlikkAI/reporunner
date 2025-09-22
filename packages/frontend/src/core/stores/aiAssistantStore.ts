@@ -5,13 +5,15 @@
  * workflow analysis, and real-time AI interactions.
  */
 
-import { create } from "zustand";
-import { subscribeWithSelector } from "zustand/middleware";
+import { create } from 'zustand';
+import { subscribeWithSelector } from 'zustand/middleware';
+import type { WorkflowNodeInstance } from '../nodes/types';
 // import { aiAssistantService } from "../services/aiAssistantService";
-import type { WorkflowAnalysis } from "../services/aiAssistantService";
-import type { AIWorkflowSuggestion as WorkflowSuggestion } from "../services/aiAssistantService";
-import type { WorkflowNodeInstance } from "../nodes/types";
-import type { WorkflowEdge } from "./leanWorkflowStore";
+import type {
+  WorkflowAnalysis,
+  AIWorkflowSuggestion as WorkflowSuggestion,
+} from '../services/aiAssistantService';
+import type { WorkflowEdge } from './leanWorkflowStore';
 
 export interface AIAssistantConfig {
   provider: string;
@@ -54,7 +56,7 @@ export interface AIAssistantState {
 
   // UI state
   assistantPanelOpen: boolean;
-  activeTab: "chat" | "analysis" | "suggestions" | "settings";
+  activeTab: 'chat' | 'analysis' | 'suggestions' | 'settings';
   autoAnalyze: boolean;
   showSuggestionTooltips: boolean;
 
@@ -62,7 +64,7 @@ export interface AIAssistantState {
   toggleAssistant: () => void;
   toggleChat: () => void;
   toggleAssistantPanel: () => void;
-  setActiveTab: (tab: "chat" | "analysis" | "suggestions" | "settings") => void;
+  setActiveTab: (tab: 'chat' | 'analysis' | 'suggestions' | 'settings') => void;
   updateConfig: (config: Partial<AIAssistantConfig>) => void;
 
   // Chat actions
@@ -71,10 +73,7 @@ export interface AIAssistantState {
   clearChatHistory: () => void;
 
   // Analysis actions
-  analyzeWorkflow: (
-    nodes: WorkflowNodeInstance[],
-    edges: WorkflowEdge[],
-  ) => Promise<void>;
+  analyzeWorkflow: (nodes: WorkflowNodeInstance[], edges: WorkflowEdge[]) => Promise<void>;
   refreshAnalysis: () => void;
 
   // Suggestion actions
@@ -88,7 +87,7 @@ export interface AIAssistantState {
   autoFixIssue: (
     issueId: string,
     nodes: WorkflowNodeInstance[],
-    edges: WorkflowEdge[],
+    edges: WorkflowEdge[]
   ) => Promise<boolean>;
 
   // Settings
@@ -101,7 +100,7 @@ export const useAIAssistantStore = create<AIAssistantState>()(
     // Initial state
     isEnabled: true,
     config: {
-      provider: "mock",
+      provider: 'mock',
       temperature: 0.7,
       maxTokens: 2000,
     },
@@ -110,7 +109,7 @@ export const useAIAssistantStore = create<AIAssistantState>()(
     isChatOpen: false,
     chatHistory: [],
     isProcessingChat: false,
-    chatInput: "",
+    chatInput: '',
 
     // Analysis state
     currentAnalysis: null,
@@ -130,7 +129,7 @@ export const useAIAssistantStore = create<AIAssistantState>()(
 
     // UI state
     assistantPanelOpen: false,
-    activeTab: "chat",
+    activeTab: 'chat',
     autoAnalyze: true,
     showSuggestionTooltips: true,
 
@@ -175,13 +174,13 @@ export const useAIAssistantStore = create<AIAssistantState>()(
 
       set({
         isProcessingChat: true,
-        chatInput: "",
+        chatInput: '',
         chatHistory: [
           ...state.chatHistory,
           {
             id: `user-${Date.now()}`,
             timestamp: new Date().toISOString(),
-            type: "user",
+            type: 'user',
             content: message,
             context,
           },
@@ -196,23 +195,22 @@ export const useAIAssistantStore = create<AIAssistantState>()(
             {
               id: `assistant-${Date.now()}`,
               timestamp: new Date().toISOString(),
-              type: "system",
-              content: "AI assistant response stub.",
+              type: 'system',
+              content: 'AI assistant response stub.',
             } as any,
           ],
           isProcessingChat: false,
         }));
       } catch (error) {
-        console.error("Chat message failed:", error);
+        console.error('Chat message failed:', error);
         set((state) => ({
           chatHistory: [
             ...state.chatHistory,
             {
               id: `error-${Date.now()}`,
               timestamp: new Date().toISOString(),
-              type: "system",
-              content:
-                "Sorry, I encountered an error processing your message. Please try again.",
+              type: 'system',
+              content: 'Sorry, I encountered an error processing your message. Please try again.',
             },
           ],
           isProcessingChat: false,
@@ -262,33 +260,29 @@ export const useAIAssistantStore = create<AIAssistantState>()(
             .map((issue, index) => ({
               id: `issue_${index}`,
               message: issue,
-              type: "error_handling",
+              type: 'error_handling',
             }))
             .filter((issue: any) => !get().dismissedIssues.has(issue.id)),
           activeSuggestions: (analysis.reliability?.suggestions || [])
             .map((suggestion, index) => ({
               id: `suggestion_${index}`,
-              type: "enhancement" as const,
+              type: 'enhancement' as const,
               title: `Reliability Suggestion ${index + 1}`,
               description:
-                typeof suggestion === "string"
+                typeof suggestion === 'string'
                   ? suggestion
-                  : (suggestion as any)?.message ||
-                    "Reliability improvement suggestion",
+                  : (suggestion as any)?.message || 'Reliability improvement suggestion',
               confidence: 0.8,
-              impact: "medium" as const,
-              category: "reliability",
+              impact: 'medium' as const,
+              category: 'reliability',
               suggestedChanges: [],
-              reasoning: "AI-generated reliability improvement",
+              reasoning: 'AI-generated reliability improvement',
               estimatedBenefit: { reliability: 15 },
             }))
-            .filter(
-              (suggestion: any) =>
-                !get().dismissedSuggestions.has(suggestion.id),
-            ),
+            .filter((suggestion: any) => !get().dismissedSuggestions.has(suggestion.id)),
         });
       } catch (error) {
-        console.error("Workflow analysis failed:", error);
+        console.error('Workflow analysis failed:', error);
         set({ isAnalyzing: false });
       }
     },
@@ -316,7 +310,7 @@ export const useAIAssistantStore = create<AIAssistantState>()(
           suggestionContext: context,
         });
       } catch (error) {
-        console.error("Node suggestions failed:", error);
+        console.error('Node suggestions failed:', error);
         set({
           nodeSuggestions: [],
           suggestionsVisible: false,
@@ -333,37 +327,35 @@ export const useAIAssistantStore = create<AIAssistantState>()(
 
     applySuggestion: async (suggestionId) => {
       const state = get();
-      const suggestion = state.activeSuggestions.find(
-        (s) => s.id === suggestionId,
-      );
+      const suggestion = state.activeSuggestions.find((s) => s.id === suggestionId);
 
       if (!suggestion) return;
 
       try {
         // Apply the suggestion based on its type
         switch (suggestion.type) {
-          case "optimization":
+          case 'optimization':
             // Apply performance optimizations
-            console.log("Applying optimization:", suggestion.description);
+            console.log('Applying optimization:', suggestion.description);
             break;
 
-          case "error-fix":
+          case 'error-fix':
             // Apply error handling improvements
-            console.log("Applying error fix:", suggestion.description);
+            console.log('Applying error fix:', suggestion.description);
             break;
 
-          case "enhancement":
+          case 'enhancement':
             // Apply enhancement improvements
-            console.log("Applying enhancement:", suggestion.description);
+            console.log('Applying enhancement:', suggestion.description);
             break;
 
-          case "pattern":
+          case 'pattern':
             // Apply pattern improvements
-            console.log("Applying pattern suggestion:", suggestion.description);
+            console.log('Applying pattern suggestion:', suggestion.description);
             break;
 
           default:
-            console.log("Unknown suggestion type:", suggestion.type);
+            console.log('Unknown suggestion type:', suggestion.type);
         }
 
         // Add success message to chat if chat is open
@@ -374,7 +366,7 @@ export const useAIAssistantStore = create<AIAssistantState>()(
               {
                 id: `suggestion-applied-${Date.now()}`,
                 timestamp: new Date().toISOString(),
-                type: "system",
+                type: 'system',
                 content: `✅ Applied suggestion: ${suggestion.title}`,
               },
             ],
@@ -384,7 +376,7 @@ export const useAIAssistantStore = create<AIAssistantState>()(
         // Mark as applied (dismiss)
         get().dismissSuggestion(suggestionId);
       } catch (error) {
-        console.error("Error applying suggestion:", error);
+        console.error('Error applying suggestion:', error);
 
         // Add error message to chat if chat is open
         if (state.isChatOpen) {
@@ -394,7 +386,7 @@ export const useAIAssistantStore = create<AIAssistantState>()(
               {
                 id: `suggestion-error-${Date.now()}`,
                 timestamp: new Date().toISOString(),
-                type: "system",
+                type: 'system',
                 content: `❌ Failed to apply suggestion: ${suggestion.title}`,
               },
             ],
@@ -407,20 +399,15 @@ export const useAIAssistantStore = create<AIAssistantState>()(
     dismissIssue: (issueId) => {
       set((state) => ({
         dismissedIssues: new Set([...state.dismissedIssues, issueId]),
-        activeIssues: state.activeIssues.filter(
-          (issue) => issue.id !== issueId,
-        ),
+        activeIssues: state.activeIssues.filter((issue) => issue.id !== issueId),
       }));
     },
 
     dismissSuggestion: (suggestionId) => {
       set((state) => ({
-        dismissedSuggestions: new Set([
-          ...state.dismissedSuggestions,
-          suggestionId,
-        ]),
+        dismissedSuggestions: new Set([...state.dismissedSuggestions, suggestionId]),
         activeSuggestions: state.activeSuggestions.filter(
-          (suggestion) => suggestion.id !== suggestionId,
+          (suggestion) => suggestion.id !== suggestionId
         ),
       }));
     },
@@ -434,7 +421,7 @@ export const useAIAssistantStore = create<AIAssistantState>()(
       }
 
       try {
-        const result = { success: false, description: "" } as any;
+        const result = { success: false, description: '' } as any;
 
         if (result.success) {
           // Dismiss the issue since it's been fixed
@@ -448,7 +435,7 @@ export const useAIAssistantStore = create<AIAssistantState>()(
                 {
                   id: `autofix-${Date.now()}`,
                   timestamp: new Date().toISOString(),
-                  type: "system",
+                  type: 'system',
                   content: `✅ Auto-fixed: ${result.description}`,
                 },
               ],
@@ -460,7 +447,7 @@ export const useAIAssistantStore = create<AIAssistantState>()(
 
         return false;
       } catch (error) {
-        console.error("Auto-fix failed:", error);
+        console.error('Auto-fix failed:', error);
         return false;
       }
     },
@@ -475,11 +462,11 @@ export const useAIAssistantStore = create<AIAssistantState>()(
         showSuggestionTooltips: !state.showSuggestionTooltips,
       }));
     },
-  })),
+  }))
 );
 
 // Subscribe to workflow changes for auto-analysis
-if (typeof window !== "undefined") {
+if (typeof window !== 'undefined') {
   // Auto-analyze workflow when nodes change (if enabled)
   // Auto-analyze timeout reserved for future automatic analysis features
 
@@ -493,6 +480,6 @@ if (typeof window !== "undefined") {
         // Set up auto-analysis trigger
         // This would be connected to workflow store changes
       }
-    },
+    }
   );
 }

@@ -1,22 +1,17 @@
 // Gmail Node - Enterprise Registry Pattern Implementation
-import { nodeRegistry } from "@/core/nodes/registry";
+import { nodeRegistry } from '@/core/nodes/registry';
+import { executeGmailSend, executeGmailTrigger, testGmailConnection } from './actions';
+import { gmailCredentials } from './credentials';
 import {
+  executeGmailEnhanced,
   gmailEnhancedNode,
   gmailNodeCapabilities,
-  executeGmailEnhanced,
   testGmailEnhancedConnection,
-} from "./enhanced-node";
-import { registerGmailContextResolver } from "./gmail-context-resolver";
-
+} from './enhanced-node';
+import { registerGmailContextResolver } from './gmail-context-resolver';
 // Legacy imports for backward compatibility
-import { gmailNodeMetadata } from "./node";
-import { gmailCredentials } from "./credentials";
-import { gmailTriggerProperties, gmailSendProperties } from "./properties";
-import {
-  executeGmailTrigger,
-  executeGmailSend,
-  testGmailConnection,
-} from "./actions";
+import { gmailNodeMetadata } from './node';
+import { gmailSendProperties, gmailTriggerProperties } from './properties';
 
 // =============================================================================
 // ENTERPRISE REGISTRY IMPLEMENTATION
@@ -26,54 +21,49 @@ import {
  * Initialize and register the unified Gmail node with enterprise features
  */
 export function initializeGmailNode(): void {
-  console.log("🚀 Initializing Enterprise Gmail Node...");
-  console.log("📧 Gmail Enhanced Node Data:", gmailEnhancedNode);
+  console.log('🚀 Initializing Enterprise Gmail Node...');
+  console.log('📧 Gmail Enhanced Node Data:', gmailEnhancedNode);
 
   // Register the Gmail context resolver for smart mode detection
   registerGmailContextResolver();
 
   // Register the enhanced Gmail node with enterprise registry
-  console.log("📝 Registering Gmail Enhanced Node with Registry...");
+  console.log('📝 Registering Gmail Enhanced Node with Registry...');
   nodeRegistry.registerEnhancedNodeType(gmailEnhancedNode);
 
   // Set up feature flags for Gmail
-  nodeRegistry.setFeatureFlag("gmail_unified_mode", true);
-  nodeRegistry.setFeatureFlag("gmail_smart_detection", true);
-  nodeRegistry.setFeatureFlag("gmail_progressive_ui", true);
+  nodeRegistry.setFeatureFlag('gmail_unified_mode', true);
+  nodeRegistry.setFeatureFlag('gmail_smart_detection', true);
+  nodeRegistry.setFeatureFlag('gmail_progressive_ui', true);
 
   // Verify registration
   const enhancedNodes = nodeRegistry.getAllEnhancedNodeTypes();
   console.log(
-    "🔍 Enhanced nodes in registry:",
+    '🔍 Enhanced nodes in registry:',
     enhancedNodes.map((node) => ({
       id: node.id,
       displayName: node.displayName,
-    })),
+    }))
   );
 
-  const hasGmailNode = enhancedNodes.some(
-    (node) => node.id === "gmail-enhanced",
-  );
-  console.log(
-    "🔍 Gmail node registration verification:",
-    hasGmailNode ? "SUCCESS" : "FAILED",
-  );
+  const hasGmailNode = enhancedNodes.some((node) => node.id === 'gmail-enhanced');
+  console.log('🔍 Gmail node registration verification:', hasGmailNode ? 'SUCCESS' : 'FAILED');
 
   // Show all registered nodes
   const allDescriptions = nodeRegistry.getAllNodeTypeDescriptions();
   console.log(
-    "📋 All registered node descriptions:",
+    '📋 All registered node descriptions:',
     allDescriptions.map((n) => ({
       name: n.name,
       displayName: n.displayName,
       customBodyComponent: n.customBodyComponent,
-    })),
+    }))
   );
 
   // Specifically check Gmail node
-  const gmailNode = allDescriptions.find((n) => n.name === "gmail-enhanced");
+  const gmailNode = allDescriptions.find((n) => n.name === 'gmail-enhanced');
   console.log(
-    "🎯 Gmail node found in registry:",
+    '🎯 Gmail node found in registry:',
     gmailNode
       ? {
           name: gmailNode.name,
@@ -81,11 +71,11 @@ export function initializeGmailNode(): void {
           customBodyComponent: gmailNode.customBodyComponent,
           hasCustomBody: Boolean(gmailNode.customBodyComponent),
         }
-      : "NOT FOUND",
+      : 'NOT FOUND'
   );
 
-  console.log("✅ Enterprise Gmail Node initialized successfully");
-  console.log("📊 Registry Stats:", nodeRegistry.getStatistics());
+  console.log('✅ Enterprise Gmail Node initialized successfully');
+  console.log('📊 Registry Stats:', nodeRegistry.getStatistics());
 }
 
 // =============================================================================
@@ -109,9 +99,9 @@ export const gmailEnhanced = {
 
   // Metadata
   meta: {
-    version: "2.0.0",
-    type: "unified",
-    architecture: "enterprise-registry",
+    version: '2.0.0',
+    type: 'unified',
+    architecture: 'enterprise-registry',
     features: {
       smartModeDetection: true,
       contextAwareProperties: true,
@@ -135,8 +125,8 @@ export const gmailEnhanced = {
 
 // Unified Gmail integration object (enterprise registry pattern)
 export const gmailIntegration = {
-  id: "gmail",
-  name: "Gmail",
+  id: 'gmail',
+  name: 'Gmail',
   icon: gmailNodeMetadata.icon,
   category: gmailNodeMetadata.category,
   description: gmailNodeMetadata.description,

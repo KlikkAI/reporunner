@@ -1,0 +1,148 @@
+{{- if .Values.backup.enabled }}
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "reporunner.fullname" . }}-backup
+  labels:
+    {{- include "reporunner.labels" . | nindent 4 }}
+    app.kubernetes.io/component: backup
+spec:
+  schedule: {{ .Values.backup.schedule | quote }}
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            {{- include "reporunner.selectorLabels" . | nindent 12 }}
+            app.kubernetes.io/component: backup
+        spec:
+          restartPolicy: OnFailure
+          {{- with .Values.global.imagePullSecrets }}
+          imagePullSecrets:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          securityContext:
+            {{- include "reporunner.podSecurityContext" . | nindent 12 }}
+          containers:
+            - name: postgresql-backup
+              image: postgres:16-alpine
+              command:
+                - sh
+                - -c
+                - |
+                  echo "Starting PostgreSQL backup..."
+                  TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+                  BACKUP_FILE="postgresql_backup_${TIMESTAMP}.sql"
+
+                  pg_dump -h {{ include "reporunner.fullname" . }}-postgresql \
+                          -U {{ .Values.postgresql.auth.username }} \
+                          -d {{ .Values.postgresql.auth.database }} \
+                          --no-password \
+                          --clean --if-exists \
+                          > /tmp/${BACKUP_FILE}
+
+                  {{- if eq .Values.backup.storage.type "s3" }}
+                  # Upload to S3
+                  aws s3 cp /tmp/${BACKUP_FILE} s3://{{ .Values.backup.storage.bucket }}/postgresql/${BACKUP_FILE}
+                  {{- end }}
+
+                  echo "PostgreSQL backup completed: ${BACKUP_FILE}"
+              env:
+                - name: PGPASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ include "reporunner.fullname" . }}-secrets
+                      key: postgres-password
+                {{- if eq .Values.backup.storage.type "s3" }}
+                - name: AWS_ACCESS_KEY_ID
+                  value: {{ .Values.backup.storage.accessKeyId | quote }}
+                - name: AWS_SECRET_ACCESS_KEY
+                  value: {{ .Values.backup.storage.secretAccessKey | quote }}
+                - name: AWS_DEFAULT_REGION
+                  value: {{ .Values.backup.storage.region | quote }}
+                {{- end }}
+
+            - name: mongodb-backup
+              image: mongo:7.0
+              command:
+                - sh
+                - -c
+                - |
+                  echo "Starting MongoDB backup..."
+                  TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+                  BACKUP_DIR="/tmp/mongodb_backup_${TIMESTAMP}"
+
+                  mongodump --host {{ include "reporunner.fullname" . }}-mongodb:27017 \
+                           --username {{ .Values.mongodb.auth.username }} \
+                           --password ${MONGODB_PASSWORD} \
+                           --db {{ .Values.mongodb.auth.database }} \
+                           --out ${BACKUP_DIR}
+
+                  tar -czf ${BACKUP_DIR}.tar.gz -C /tmp mongodb_backup_${TIMESTAMP}
+
+                  {{- if eq .Values.backup.storage.type "s3" }}
+                  # Upload to S3
+                  aws s3 cp ${BACKUP_DIR}.tar.gz s3://{{ .Values.backup.storage.bucket }}/mongodb/mongodb_backup_${TIMESTAMP}.tar.gz
+                  {{- end }}
+
+                  echo "MongoDB backup completed: mongodb_backup_${TIMESTAMP}.tar.gz"
+              env:
+                - name: MONGODB_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ include "reporunner.fullname" . }}-secrets
+                      key: mongodb-password
+                {{- if eq .Values.backup.storage.type "s3" }}
+                - name: AWS_ACCESS_KEY_ID
+                  value: {{ .Values.backup.storage.accessKeyId | quote }}
+                - name: AWS_SECRET_ACCESS_KEY
+                  value: {{ .Values.backup.storage.secretAccessKey | quote }}
+                - name: AWS_DEFAULT_REGION
+                  value: {{ .Values.backup.storage.region | quote }}
+                {{- end }}
+
+            - name: cleanup
+              image: alpine:latest
+              command:
+                - sh
+                - -c
+                - |
+                  echo "Cleaning up old backups..."
+                  {{- if eq .Values.backup.storage.type "s3" }}
+                  # Clean up old S3 backups based on retention policy
+                  RETENTION_DAYS={{ .Values.backup.retention | replace "d" "" }}
+                  CUTOFF_DATE=$(date -d "${RETENTION_DAYS} days ago" +%Y%m%d)
+
+                  aws s3 ls s3://{{ .Values.backup.storage.bucket }}/postgresql/ | while read -r line; do
+                    FILE_DATE=$(echo $line | awk '{print $4}' | grep -o '[0-9]\{8\}')
+                    if [ "$FILE_DATE" -lt "$CUTOFF_DATE" ]; then
+                      FILE_NAME=$(echo $line | awk '{print $4}')
+                      aws s3 rm s3://{{ .Values.backup.storage.bucket }}/postgresql/$FILE_NAME
+                      echo "Deleted old backup: $FILE_NAME"
+                    fi
+                  done
+
+                  aws s3 ls s3://{{ .Values.backup.storage.bucket }}/mongodb/ | while read -r line; do
+                    FILE_DATE=$(echo $line | awk '{print $4}' | grep -o '[0-9]\{8\}')
+                    if [ "$FILE_DATE" -lt "$CUTOFF_DATE" ]; then
+                      FILE_NAME=$(echo $line | awk '{print $4}')
+                      aws s3 rm s3://{{ .Values.backup.storage.bucket }}/mongodb/$FILE_NAME
+                      echo "Deleted old backup: $FILE_NAME"
+                    fi
+                  done
+                  {{- end }}
+
+                  echo "Cleanup completed"
+              {{- if eq .Values.backup.storage.type "s3" }}
+              env:
+                - name: AWS_ACCESS_KEY_ID
+                  value: {{ .Values.backup.storage.accessKeyId | quote }}
+                - name: AWS_SECRET_ACCESS_KEY
+                  value: {{ .Values.backup.storage.secretAccessKey | quote }}
+                - name: AWS_DEFAULT_REGION
+                  value: {{ .Values.backup.storage.region | quote }}
+              {{- end }}
+{{- end }}

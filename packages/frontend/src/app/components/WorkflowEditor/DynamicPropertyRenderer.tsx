@@ -1,32 +1,28 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState, useEffect, useCallback } from "react";
+
+import { DeleteOutlined, PlusOutlined, UploadOutlined } from '@ant-design/icons';
 import {
+  Button,
+  Card,
+  ColorPicker,
+  DatePicker,
   Input,
   InputNumber,
-  Switch,
   Select,
-  DatePicker,
-  ColorPicker,
-  Button,
+  Switch,
   Upload,
-  Card,
-} from "antd";
-import {
-  PlusOutlined,
-  DeleteOutlined,
-  UploadOutlined,
-} from "@ant-design/icons";
+} from 'antd';
+import type React from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import type {
-  PropertyFormState,
+  INodeProperty,
   PropertyEvaluationContext,
+  PropertyFormState,
   PropertyValue,
-} from "@/core";
-import type { INodeProperty } from "@/core";
+} from '@/core';
+
 // Simple property evaluation for INodeProperty (registry system)
-const evaluateINodeProperty = (
-  property: INodeProperty,
-  context: PropertyEvaluationContext,
-) => {
+const evaluateINodeProperty = (property: INodeProperty, context: PropertyEvaluationContext) => {
   // For registry system, we use simpler logic
   const formState = context.formState || {};
   const displayOptions = property.displayOptions;
@@ -48,17 +44,15 @@ const evaluateINodeProperty = (
   }
 
   if (displayOptions?.hide) {
-    const shouldHide = Object.entries(displayOptions.hide).some(
-      ([key, values]) => {
-        const currentValue = formState[key];
-        return (
-          Array.isArray(values) &&
-          currentValue !== undefined &&
-          currentValue !== null &&
-          values.includes(currentValue as string | number | boolean)
-        );
-      },
-    );
+    const shouldHide = Object.entries(displayOptions.hide).some(([key, values]) => {
+      const currentValue = formState[key];
+      return (
+        Array.isArray(values) &&
+        currentValue !== undefined &&
+        currentValue !== null &&
+        values.includes(currentValue as string | number | boolean)
+      );
+    });
     if (shouldHide) visible = false;
   }
 
@@ -74,7 +68,7 @@ interface DynamicPropertyRendererProps {
   onChange: (name: string, value: PropertyValue) => void;
   context?: Partial<PropertyEvaluationContext>;
   disabled?: boolean;
-  theme?: "light" | "dark";
+  theme?: 'light' | 'dark';
 }
 
 interface PropertyFieldProps {
@@ -83,32 +77,29 @@ interface PropertyFieldProps {
   onChange: (value: PropertyValue) => void;
   context: PropertyEvaluationContext;
   disabled?: boolean;
-  theme?: "light" | "dark";
+  theme?: 'light' | 'dark';
 }
 
 // Theme-based styling helper
-const getThemeStyles = (
-  theme: "light" | "dark",
-  hasErrors: boolean = false,
-) => {
-  if (theme === "light") {
+const getThemeStyles = (theme: 'light' | 'dark', hasErrors: boolean = false) => {
+  if (theme === 'light') {
     return {
-      backgroundColor: "#ffffff",
-      borderColor: hasErrors ? "#ff4d4f" : "#d1d5db",
-      color: "#1f2937",
+      backgroundColor: '#ffffff',
+      borderColor: hasErrors ? '#ff4d4f' : '#d1d5db',
+      color: '#1f2937',
       dropdownStyle: {
-        backgroundColor: "#ffffff",
-        border: "1px solid #d1d5db",
+        backgroundColor: '#ffffff',
+        border: '1px solid #d1d5db',
       },
     };
   } else {
     return {
-      backgroundColor: "#4b5563",
-      borderColor: hasErrors ? "#ff4d4f" : "#6b7280",
-      color: "#ffffff",
+      backgroundColor: '#4b5563',
+      borderColor: hasErrors ? '#ff4d4f' : '#6b7280',
+      color: '#ffffff',
       dropdownStyle: {
-        backgroundColor: "#374151",
-        border: "1px solid #6b7280",
+        backgroundColor: '#374151',
+        border: '1px solid #6b7280',
       },
     };
   }
@@ -120,7 +111,7 @@ const PropertyField: React.FC<PropertyFieldProps> = ({
   onChange,
   context,
   disabled = false,
-  theme = "dark",
+  theme = 'dark',
 }) => {
   const evaluation = evaluateINodeProperty(property, context);
 
@@ -139,57 +130,57 @@ const PropertyField: React.FC<PropertyFieldProps> = ({
       backgroundColor: themeStyles.backgroundColor,
       borderColor: themeStyles.borderColor,
       color: themeStyles.color,
-      ...(hasErrors ? { borderColor: "#ff4d4f" } : {}),
+      ...(hasErrors ? { borderColor: '#ff4d4f' } : {}),
     },
   };
 
   // Helper function to get credential icons
   const getCredentialIcon = (type: string) => {
     switch (type) {
-      case "openaiApi":
-        return "🤖";
-      case "anthropicApi":
-        return "🧠";
-      case "googleAiApi":
-        return "🔷";
-      case "azureOpenAiApi":
-        return "☁️";
-      case "awsBedrockApi":
-        return "🟠";
-      case "gmailOAuth2":
-        return "📧";
-      case "postgres":
-        return "🐘";
-      case "mysql":
-        return "🐬";
+      case 'openaiApi':
+        return '🤖';
+      case 'anthropicApi':
+        return '🧠';
+      case 'googleAiApi':
+        return '🔷';
+      case 'azureOpenAiApi':
+        return '☁️';
+      case 'awsBedrockApi':
+        return '🟠';
+      case 'gmailOAuth2':
+        return '📧';
+      case 'postgres':
+        return '🐘';
+      case 'mysql':
+        return '🐬';
       default:
-        return "🔑";
+        return '🔑';
     }
   };
 
   const renderBasicField = () => {
     switch (property.type) {
-      case "string":
+      case 'string':
         return (
           <Input
             {...commonProps}
-            value={(value as string) || ""}
+            value={(value as string) || ''}
             onChange={(e) => onChange(e.target.value)}
           />
         );
 
-      case "text":
+      case 'text':
         return (
           <TextArea
             {...commonProps}
-            value={(value as string) || ""}
+            value={(value as string) || ''}
             onChange={(e) => onChange(e.target.value)}
             rows={property.rows || 4}
             autoSize={{ minRows: property.rows || 4, maxRows: 10 }}
           />
         );
 
-      case "number":
+      case 'number':
         return (
           <InputNumber
             {...commonProps}
@@ -199,38 +190,34 @@ const PropertyField: React.FC<PropertyFieldProps> = ({
             max={property.max}
             step={property.step || 1}
             style={{
-              width: "100%",
-              backgroundColor: "#4b5563", // Darker gray-600
-              borderColor: hasErrors ? "#ff4d4f" : "#6b7280", // Lighter border
-              color: "#ffffff", // Pure white text
+              width: '100%',
+              backgroundColor: '#4b5563', // Darker gray-600
+              borderColor: hasErrors ? '#ff4d4f' : '#6b7280', // Lighter border
+              color: '#ffffff', // Pure white text
             }}
           />
         );
 
-      case "boolean":
+      case 'boolean':
         return (
-          <Switch
-            checked={(value as boolean) || false}
-            onChange={onChange}
-            disabled={isDisabled}
-          />
+          <Switch checked={(value as boolean) || false} onChange={onChange} disabled={isDisabled} />
         );
 
-      case "select":
+      case 'select':
         return (
           <Select
             {...commonProps}
             value={value as string}
             onChange={onChange}
             style={{
-              width: "100%",
-              backgroundColor: "#4b5563", // Darker gray-600
-              borderColor: hasErrors ? "#ff4d4f" : "#6b7280", // Lighter border
-              color: "#ffffff", // Pure white text
+              width: '100%',
+              backgroundColor: '#4b5563', // Darker gray-600
+              borderColor: hasErrors ? '#ff4d4f' : '#6b7280', // Lighter border
+              color: '#ffffff', // Pure white text
             }}
             dropdownStyle={{
-              backgroundColor: "#374151", // Dark dropdown background
-              border: "1px solid #6b7280", // Lighter border
+              backgroundColor: '#374151', // Dark dropdown background
+              border: '1px solid #6b7280', // Lighter border
             }}
             dropdownClassName="custom-dark-dropdown"
           >
@@ -239,8 +226,8 @@ const PropertyField: React.FC<PropertyFieldProps> = ({
                 key={String(option.value)}
                 value={option.value}
                 style={{
-                  backgroundColor: "#374151", // Dark option background
-                  color: "#ffffff", // White text
+                  backgroundColor: '#374151', // Dark option background
+                  color: '#ffffff', // White text
                 }}
               >
                 {option.name}
@@ -249,8 +236,8 @@ const PropertyField: React.FC<PropertyFieldProps> = ({
           </Select>
         );
 
-      case "multiSelect":
-      case "multiOptions":
+      case 'multiSelect':
+      case 'multiOptions':
         return (
           <Select
             {...commonProps}
@@ -259,14 +246,14 @@ const PropertyField: React.FC<PropertyFieldProps> = ({
             onChange={onChange}
             className="ant-select-multiple"
             style={{
-              width: "100%",
-              backgroundColor: "#4b5563", // Darker gray-600
-              borderColor: hasErrors ? "#ff4d4f" : "#6b7280", // Lighter border
-              color: "#ffffff", // Pure white text
+              width: '100%',
+              backgroundColor: '#4b5563', // Darker gray-600
+              borderColor: hasErrors ? '#ff4d4f' : '#6b7280', // Lighter border
+              color: '#ffffff', // Pure white text
             }}
             dropdownStyle={{
-              backgroundColor: "#374151", // Dark dropdown background
-              border: "1px solid #6b7280", // Lighter border
+              backgroundColor: '#374151', // Dark dropdown background
+              border: '1px solid #6b7280', // Lighter border
             }}
             dropdownClassName="custom-dark-dropdown"
             tagRender={(props) => {
@@ -274,15 +261,15 @@ const PropertyField: React.FC<PropertyFieldProps> = ({
               return (
                 <span
                   style={{
-                    backgroundColor: "#1f2937",
-                    border: "1px solid #4b5563",
-                    color: "#ffffff",
-                    borderRadius: "4px",
-                    padding: "2px 8px",
-                    margin: "2px",
-                    display: "inline-flex",
-                    alignItems: "center",
-                    fontSize: "12px",
+                    backgroundColor: '#1f2937',
+                    border: '1px solid #4b5563',
+                    color: '#ffffff',
+                    borderRadius: '4px',
+                    padding: '2px 8px',
+                    margin: '2px',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    fontSize: '12px',
                   }}
                 >
                   {label}
@@ -290,16 +277,12 @@ const PropertyField: React.FC<PropertyFieldProps> = ({
                     <span
                       onClick={onClose}
                       style={{
-                        marginLeft: "4px",
-                        cursor: "pointer",
-                        color: "#9ca3af",
+                        marginLeft: '4px',
+                        cursor: 'pointer',
+                        color: '#9ca3af',
                       }}
-                      onMouseEnter={(e) =>
-                        (e.currentTarget.style.color = "#ffffff")
-                      }
-                      onMouseLeave={(e) =>
-                        (e.currentTarget.style.color = "#9ca3af")
-                      }
+                      onMouseEnter={(e) => (e.currentTarget.style.color = '#ffffff')}
+                      onMouseLeave={(e) => (e.currentTarget.style.color = '#9ca3af')}
                     >
                       ×
                     </span>
@@ -313,8 +296,8 @@ const PropertyField: React.FC<PropertyFieldProps> = ({
                 key={String(option.value)}
                 value={option.value}
                 style={{
-                  backgroundColor: "#374151", // Dark option background
-                  color: "#ffffff", // White text
+                  backgroundColor: '#374151', // Dark option background
+                  color: '#ffffff', // White text
                 }}
               >
                 {option.name}
@@ -323,22 +306,17 @@ const PropertyField: React.FC<PropertyFieldProps> = ({
           </Select>
         );
 
-      case "credentialsSelect":
+      case 'credentialsSelect': {
         // Get available credentials from context (registry system)
         const credentialTypes = property.credentialTypes || [];
         const availableCredentials =
           context.credentials?.filter(
-            (cred: any) =>
-              credentialTypes.length === 0 ||
-              credentialTypes.includes(cred.type),
+            (cred: any) => credentialTypes.length === 0 || credentialTypes.includes(cred.type)
           ) || [];
 
         // Debug logging for credential filtering
-        if (
-          property.name === "credential" &&
-          credentialTypes.includes("gmailOAuth2")
-        ) {
-          console.log("Gmail credential filtering debug:", {
+        if (property.name === 'credential' && credentialTypes.includes('gmailOAuth2')) {
+          console.log('Gmail credential filtering debug:', {
             propertyName: property.name,
             expectedCredentialTypes: credentialTypes,
             allCredentials: context.credentials?.map((c: any) => ({
@@ -370,7 +348,7 @@ const PropertyField: React.FC<PropertyFieldProps> = ({
               // Trigger auto-population if a credential is selected
               if (selectedValue && context.onCredentialSelect) {
                 const selectedCredential = availableCredentials.find(
-                  (cred: any) => cred.id === selectedValue,
+                  (cred: any) => cred.id === selectedValue
                 );
                 if (selectedCredential) {
                   context.onCredentialSelect(selectedCredential);
@@ -379,14 +357,14 @@ const PropertyField: React.FC<PropertyFieldProps> = ({
             }}
             placeholder="Select a credential..."
             style={{
-              width: "100%",
-              backgroundColor: "#4b5563", // Darker gray-600
-              borderColor: hasErrors ? "#ff4d4f" : "#6b7280", // Lighter border
-              color: "#ffffff", // Pure white text
+              width: '100%',
+              backgroundColor: '#4b5563', // Darker gray-600
+              borderColor: hasErrors ? '#ff4d4f' : '#6b7280', // Lighter border
+              color: '#ffffff', // Pure white text
             }}
             dropdownStyle={{
-              backgroundColor: "#374151", // Dark dropdown background
-              border: "1px solid #6b7280", // Lighter border
+              backgroundColor: '#374151', // Dark dropdown background
+              border: '1px solid #6b7280', // Lighter border
             }}
             dropdownClassName="custom-dark-dropdown"
             dropdownRender={(menu) => (
@@ -395,38 +373,36 @@ const PropertyField: React.FC<PropertyFieldProps> = ({
                 {credentialTypes.length > 0 && (
                   <div
                     style={{
-                      padding: "8px",
-                      borderTop: "1px solid #6b7280",
-                      backgroundColor: "#374151",
+                      padding: '8px',
+                      borderTop: '1px solid #6b7280',
+                      backgroundColor: '#374151',
                     }}
                   >
                     <Button
                       type="text"
                       size="small"
                       onClick={() => {
-                        console.log("🔧 Create New Credential button clicked!");
-                        console.log("🔧 credentialTypes:", credentialTypes);
+                        console.log('🔧 Create New Credential button clicked!');
+                        console.log('🔧 credentialTypes:', credentialTypes);
                         console.log(
-                          "🔧 context.onCreateCredential exists:",
-                          !!context.onCreateCredential,
+                          '🔧 context.onCreateCredential exists:',
+                          !!context.onCreateCredential
                         );
                         // Trigger credential creation modal
                         if (context.onCreateCredential) {
                           console.log(
-                            "🔧 Calling context.onCreateCredential with:",
-                            credentialTypes[0],
+                            '🔧 Calling context.onCreateCredential with:',
+                            credentialTypes[0]
                           );
                           context.onCreateCredential(credentialTypes[0]);
                         } else {
-                          console.error(
-                            "🔧 context.onCreateCredential is missing!",
-                          );
+                          console.error('🔧 context.onCreateCredential is missing!');
                         }
                       }}
                       style={{
-                        color: "#3b82f6",
-                        padding: "2px 8px",
-                        height: "auto",
+                        color: '#3b82f6',
+                        padding: '2px 8px',
+                        height: 'auto',
                       }}
                     >
                       + Create New Credential
@@ -436,56 +412,50 @@ const PropertyField: React.FC<PropertyFieldProps> = ({
               </div>
             )}
           >
-            <Option
-              value=""
-              style={{ backgroundColor: "#374151", color: "#ffffff" }}
-            >
+            <Option value="" style={{ backgroundColor: '#374151', color: '#ffffff' }}>
               No credential selected
             </Option>
             {availableCredentials.map((credential: any) => {
               const credTypeDef = context.credentialTypes?.find(
-                (ct: any) => ct.name === credential.type,
+                (ct: any) => ct.name === credential.type
               );
               const icon =
-                credTypeDef?.icon && typeof credTypeDef.icon === "string"
+                credTypeDef?.icon && typeof credTypeDef.icon === 'string'
                   ? credTypeDef.icon
                   : getCredentialIcon(credential.type);
               const displayName =
-                credential.name ||
-                `${credTypeDef?.displayName || credential.type} Credential`;
+                credential.name || `${credTypeDef?.displayName || credential.type} Credential`;
 
               return (
                 <Option
                   key={credential.id}
                   value={credential.id}
-                  style={{ backgroundColor: "#374151", color: "#ffffff" }}
+                  style={{ backgroundColor: '#374151', color: '#ffffff' }}
                 >
                   <div
                     style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "8px",
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
                     }}
                   >
-                    <span style={{ fontSize: "14px" }}>{icon}</span>
+                    <span style={{ fontSize: '14px' }}>{icon}</span>
                     <div style={{ flex: 1 }}>
                       <div style={{ fontWeight: 500 }}>{displayName}</div>
-                      <div style={{ fontSize: "11px", color: "#9ca3af" }}>
+                      <div style={{ fontSize: '11px', color: '#9ca3af' }}>
                         {credential.testedAt
                           ? credential.isValid
-                            ? "✓ Tested"
-                            : "⚠ Test failed"
-                          : "Not tested"}
+                            ? '✓ Tested'
+                            : '⚠ Test failed'
+                          : 'Not tested'}
                         {credential.updatedAt && (
-                          <span style={{ marginLeft: "8px" }}>
-                            {new Date(
-                              credential.updatedAt,
-                            ).toLocaleDateString()}
+                          <span style={{ marginLeft: '8px' }}>
+                            {new Date(credential.updatedAt).toLocaleDateString()}
                           </span>
                         )}
                       </div>
                     </div>
-                    <div style={{ display: "flex", gap: "4px" }}>
+                    <div style={{ display: 'flex', gap: '4px' }}>
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
@@ -494,19 +464,15 @@ const PropertyField: React.FC<PropertyFieldProps> = ({
                           }
                         }}
                         style={{
-                          background: "none",
-                          border: "none",
-                          color: "#6b7280",
-                          cursor: "pointer",
-                          fontSize: "12px",
-                          padding: "2px",
+                          background: 'none',
+                          border: 'none',
+                          color: '#6b7280',
+                          cursor: 'pointer',
+                          fontSize: '12px',
+                          padding: '2px',
                         }}
-                        onMouseEnter={(e) =>
-                          (e.currentTarget.style.color = "#3b82f6")
-                        }
-                        onMouseLeave={(e) =>
-                          (e.currentTarget.style.color = "#6b7280")
-                        }
+                        onMouseEnter={(e) => (e.currentTarget.style.color = '#3b82f6')}
+                        onMouseLeave={(e) => (e.currentTarget.style.color = '#6b7280')}
                         title="Edit credential"
                       >
                         ✏️
@@ -514,27 +480,20 @@ const PropertyField: React.FC<PropertyFieldProps> = ({
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          if (
-                            context.onDeleteCredential &&
-                            confirm(`Delete "${displayName}"?`)
-                          ) {
+                          if (context.onDeleteCredential && confirm(`Delete "${displayName}"?`)) {
                             context.onDeleteCredential(credential);
                           }
                         }}
                         style={{
-                          background: "none",
-                          border: "none",
-                          color: "#6b7280",
-                          cursor: "pointer",
-                          fontSize: "12px",
-                          padding: "2px",
+                          background: 'none',
+                          border: 'none',
+                          color: '#6b7280',
+                          cursor: 'pointer',
+                          fontSize: '12px',
+                          padding: '2px',
                         }}
-                        onMouseEnter={(e) =>
-                          (e.currentTarget.style.color = "#ef4444")
-                        }
-                        onMouseLeave={(e) =>
-                          (e.currentTarget.style.color = "#6b7280")
-                        }
+                        onMouseEnter={(e) => (e.currentTarget.style.color = '#ef4444')}
+                        onMouseLeave={(e) => (e.currentTarget.style.color = '#6b7280')}
                         title="Delete credential"
                       >
                         🗑️
@@ -546,8 +505,9 @@ const PropertyField: React.FC<PropertyFieldProps> = ({
             })}
           </Select>
         );
+      }
 
-      case "dateTime":
+      case 'dateTime':
         return (
           <DatePicker
             {...commonProps}
@@ -555,40 +515,40 @@ const PropertyField: React.FC<PropertyFieldProps> = ({
             value={value ? new Date(value as string) : null}
             onChange={(date) => onChange(date?.toISOString() || null)}
             style={{
-              width: "100%",
-              backgroundColor: "#4b5563", // Darker gray-600
-              borderColor: hasErrors ? "#ff4d4f" : "#6b7280", // Lighter border
-              color: "#ffffff", // Pure white text
+              width: '100%',
+              backgroundColor: '#4b5563', // Darker gray-600
+              borderColor: hasErrors ? '#ff4d4f' : '#6b7280', // Lighter border
+              color: '#ffffff', // Pure white text
             }}
           />
         );
 
-      case "color":
+      case 'color':
         return (
           <ColorPicker
-            value={(value as string) || "#000000"}
+            value={(value as string) || '#000000'}
             onChange={(color) => onChange(color.toHexString())}
             disabled={isDisabled}
           />
         );
 
-      case "json":
+      case 'json':
         return (
           <TextArea
             {...commonProps}
-            value={(value as string) || "{}"}
+            value={(value as string) || '{}'}
             onChange={(e) => onChange(e.target.value)}
             rows={6}
             placeholder="Enter valid JSON..."
           />
         );
 
-      case "file":
+      case 'file':
         return (
           <Upload
             {...commonProps}
             onChange={(info) => {
-              if (info.file.status === "done") {
+              if (info.file.status === 'done') {
                 onChange(info.file.response?.url || info.file.name);
               }
             }}
@@ -603,7 +563,7 @@ const PropertyField: React.FC<PropertyFieldProps> = ({
         return (
           <Input
             {...commonProps}
-            value={(value as string) || ""}
+            value={(value as string) || ''}
             onChange={(e) => onChange(e.target.value)}
           />
         );
@@ -668,9 +628,7 @@ const PropertyField: React.FC<PropertyFieldProps> = ({
                 size="small"
                 icon={<DeleteOutlined />}
                 onClick={() => {
-                  const newValue = collectionValue.filter(
-                    (_, i) => i !== index,
-                  );
+                  const newValue = collectionValue.filter((_, i) => i !== index);
                   onChange(newValue);
                 }}
                 disabled={isDisabled}
@@ -705,29 +663,26 @@ const PropertyField: React.FC<PropertyFieldProps> = ({
             const defaultItem: Record<string, any> = {};
             property.values?.forEach((valueProperty: any) => {
               defaultItem[valueProperty.name] =
-                valueProperty.default !== undefined
-                  ? valueProperty.default
-                  : "";
+                valueProperty.default !== undefined ? valueProperty.default : '';
             });
             onChange([...collectionValue, defaultItem]);
           }}
           disabled={isDisabled}
           block
           style={{
-            backgroundColor: "#4b5563", // Darker background
-            borderColor: "#6b7280", // Lighter border
-            color: "#ffffff", // Pure white text
+            backgroundColor: '#4b5563', // Darker background
+            borderColor: '#6b7280', // Lighter border
+            color: '#ffffff', // Pure white text
           }}
         >
-          {property.typeOptions?.multipleValueButtonText ||
-            `Add ${property.displayName}`}
+          {property.typeOptions?.multipleValueButtonText || `Add ${property.displayName}`}
         </Button>
       </div>
     );
   };
 
   const renderField = () => {
-    if (property.type === "collection" || property.type === "fixedCollection") {
+    if (property.type === 'collection' || property.type === 'fixedCollection') {
       return renderCollectionField();
     }
     return renderBasicField();
@@ -765,21 +720,16 @@ const DynamicPropertyRenderer: React.FC<DynamicPropertyRendererProps> = ({
   onChange,
   context = {},
   disabled = false,
-  theme = "dark",
+  theme = 'dark',
 }) => {
   // Debug registry properties
-  console.log(
-    "🔧 DynamicPropertyRenderer - registry properties:",
-    properties.length,
-    "properties",
-  );
-  const credentialProp = properties.find((p) => p.name === "credential");
+  console.log('🔧 DynamicPropertyRenderer - registry properties:', properties.length, 'properties');
+  const credentialProp = properties.find((p) => p.name === 'credential');
   if (credentialProp) {
-    console.log("🔧 Found registry credential property:", credentialProp);
+    console.log('🔧 Found registry credential property:', credentialProp);
   }
 
-  const [localFormState, setLocalFormState] =
-    useState<PropertyFormState>(formState);
+  const [localFormState, setLocalFormState] = useState<PropertyFormState>(formState);
 
   // Update local state when props change
   useEffect(() => {
@@ -799,39 +749,37 @@ const DynamicPropertyRenderer: React.FC<DynamicPropertyRendererProps> = ({
       setLocalFormState(newFormState);
       onChange(name, value);
     },
-    [localFormState, onChange],
+    [localFormState, onChange]
   );
 
   // Group properties if they have grouping information
   const groupedProperties = properties.reduce(
     (groups, property) => {
-      const groupName = "default"; // Can be extended to support property groups
+      const groupName = 'default'; // Can be extended to support property groups
       if (!groups[groupName]) {
         groups[groupName] = [];
       }
       groups[groupName].push(property);
       return groups;
     },
-    {} as Record<string, INodeProperty[]>,
+    {} as Record<string, INodeProperty[]>
   );
 
   return (
     <div className="dynamic-property-renderer">
       {Object.entries(groupedProperties).map(([groupName, groupProperties]) => (
         <div key={groupName}>
-          {(groupProperties as INodeProperty[]).map(
-            (property: any, index: number) => (
-              <PropertyField
-                key={`${property.name}-${index}`}
-                property={property}
-                value={localFormState[property.name]}
-                onChange={(value) => handleChange(property.name, value)}
-                context={evaluationContext}
-                disabled={disabled}
-                theme={theme}
-              />
-            ),
-          )}
+          {(groupProperties as INodeProperty[]).map((property: any, index: number) => (
+            <PropertyField
+              key={`${property.name}-${index}`}
+              property={property}
+              value={localFormState[property.name]}
+              onChange={(value) => handleChange(property.name, value)}
+              context={evaluationContext}
+              disabled={disabled}
+              theme={theme}
+            />
+          ))}
         </div>
       ))}
     </div>

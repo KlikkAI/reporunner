@@ -3,7 +3,7 @@
  * Supports threaded discussions and annotations
  */
 
-import mongoose, { Document, Schema } from "mongoose";
+import mongoose, { type Document, Schema } from 'mongoose';
 
 export interface IComment extends Document {
   _id: string;
@@ -19,7 +19,7 @@ export interface IComment extends Document {
     endIndex: number;
   }>;
   attachments: Array<{
-    type: "image" | "file" | "link";
+    type: 'image' | 'file' | 'link';
     url: string;
     name: string;
     size?: number;
@@ -31,10 +31,10 @@ export interface IComment extends Document {
     nodeId?: string;
     edgeId?: string;
   };
-  status: "open" | "resolved" | "closed";
+  status: 'open' | 'resolved' | 'closed';
   reactions: Array<{
     userId: string;
-    type: "👍" | "👎" | "❤️" | "😂" | "😮" | "😢" | "😡";
+    type: '👍' | '👎' | '❤️' | '😂' | '😮' | '😢' | '😡';
     timestamp: Date;
   }>;
   thread: Array<{
@@ -49,8 +49,8 @@ export interface IComment extends Document {
       endIndex: number;
     }>;
   }>;
-  visibility: "public" | "private" | "team";
-  priority: "low" | "medium" | "high" | "urgent";
+  visibility: 'public' | 'private' | 'team';
+  priority: 'low' | 'medium' | 'high' | 'urgent';
   tags: string[];
   resolvedBy?: string;
   resolvedAt?: Date;
@@ -68,20 +68,20 @@ const commentSchema = new Schema<IComment>(
     workflowId: {
       type: String,
       required: true,
-      ref: "Workflow",
+      ref: 'Workflow',
     },
     sessionId: {
       type: String,
-      ref: "CollaborationSession",
+      ref: 'CollaborationSession',
     },
     authorId: {
       type: String,
       required: true,
-      ref: "User",
+      ref: 'User',
     },
     parentCommentId: {
       type: String,
-      ref: "Comment",
+      ref: 'Comment',
     },
     content: {
       type: String,
@@ -93,7 +93,7 @@ const commentSchema = new Schema<IComment>(
         userId: {
           type: String,
           required: true,
-          ref: "User",
+          ref: 'User',
         },
         userName: {
           type: String,
@@ -113,7 +113,7 @@ const commentSchema = new Schema<IComment>(
       {
         type: {
           type: String,
-          enum: ["image", "file", "link"],
+          enum: ['image', 'file', 'link'],
           required: true,
         },
         url: {
@@ -148,19 +148,19 @@ const commentSchema = new Schema<IComment>(
     },
     status: {
       type: String,
-      enum: ["open", "resolved", "closed"],
-      default: "open",
+      enum: ['open', 'resolved', 'closed'],
+      default: 'open',
     },
     reactions: [
       {
         userId: {
           type: String,
           required: true,
-          ref: "User",
+          ref: 'User',
         },
         type: {
           type: String,
-          enum: ["👍", "👎", "❤️", "😂", "😮", "😢", "😡"],
+          enum: ['👍', '👎', '❤️', '😂', '😮', '😢', '😡'],
           required: true,
         },
         timestamp: {
@@ -174,7 +174,7 @@ const commentSchema = new Schema<IComment>(
         authorId: {
           type: String,
           required: true,
-          ref: "User",
+          ref: 'User',
         },
         content: {
           type: String,
@@ -192,7 +192,7 @@ const commentSchema = new Schema<IComment>(
           {
             userId: {
               type: String,
-              ref: "User",
+              ref: 'User',
             },
             userName: {
               type: String,
@@ -209,13 +209,13 @@ const commentSchema = new Schema<IComment>(
     ],
     visibility: {
       type: String,
-      enum: ["public", "private", "team"],
-      default: "public",
+      enum: ['public', 'private', 'team'],
+      default: 'public',
     },
     priority: {
       type: String,
-      enum: ["low", "medium", "high", "urgent"],
-      default: "medium",
+      enum: ['low', 'medium', 'high', 'urgent'],
+      default: 'medium',
     },
     tags: [
       {
@@ -226,7 +226,7 @@ const commentSchema = new Schema<IComment>(
     ],
     resolvedBy: {
       type: String,
-      ref: "User",
+      ref: 'User',
     },
     resolvedAt: {
       type: Date,
@@ -244,7 +244,7 @@ const commentSchema = new Schema<IComment>(
         editedBy: {
           type: String,
           required: true,
-          ref: "User",
+          ref: 'User',
         },
       },
     ],
@@ -253,7 +253,7 @@ const commentSchema = new Schema<IComment>(
     timestamps: true,
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
-  },
+  }
 );
 
 // Indexes for performance
@@ -262,22 +262,22 @@ commentSchema.index({ sessionId: 1 });
 commentSchema.index({ authorId: 1, createdAt: -1 });
 commentSchema.index({ parentCommentId: 1 });
 commentSchema.index({ status: 1 });
-commentSchema.index({ "position.nodeId": 1 });
-commentSchema.index({ "position.edgeId": 1 });
+commentSchema.index({ 'position.nodeId': 1 });
+commentSchema.index({ 'position.edgeId': 1 });
 commentSchema.index({ tags: 1 });
 
 // Virtual for replies
-commentSchema.virtual("replies", {
-  ref: "Comment",
-  localField: "_id",
-  foreignField: "parentCommentId",
+commentSchema.virtual('replies', {
+  ref: 'Comment',
+  localField: '_id',
+  foreignField: 'parentCommentId',
 });
 
 // Virtual for author information
-commentSchema.virtual("author", {
-  ref: "User",
-  localField: "authorId",
-  foreignField: "_id",
+commentSchema.virtual('author', {
+  ref: 'User',
+  localField: 'authorId',
+  foreignField: '_id',
   justOne: true,
 });
 
@@ -290,10 +290,7 @@ commentSchema.methods.addReply = function (replyData: any) {
   return this.save();
 };
 
-commentSchema.methods.addReaction = function (
-  userId: string,
-  reactionType: string,
-) {
+commentSchema.methods.addReaction = function (userId: string, reactionType: string) {
   // Remove existing reaction from this user
   this.reactions = this.reactions.filter((r: any) => r.userId !== userId);
 
@@ -313,7 +310,7 @@ commentSchema.methods.removeReaction = function (userId: string) {
 };
 
 commentSchema.methods.resolve = function (resolvedBy: string) {
-  this.status = "resolved";
+  this.status = 'resolved';
   this.resolvedBy = resolvedBy;
   this.resolvedAt = new Date();
   return this.save();
@@ -332,15 +329,15 @@ commentSchema.methods.edit = function (newContent: string, editedBy: string) {
 };
 
 // Pre-save middleware to validate mentions
-commentSchema.pre("save", function (next) {
+commentSchema.pre('save', function (next) {
   // Validate that mention indices are within content bounds
   for (const mention of this.mentions) {
     if (mention.startIndex < 0 || mention.endIndex > this.content.length) {
-      next(new Error("Invalid mention indices"));
+      next(new Error('Invalid mention indices'));
       return;
     }
   }
   next();
 });
 
-export const Comment = mongoose.model<IComment>("Comment", commentSchema);
+export const Comment = mongoose.model<IComment>('Comment', commentSchema);

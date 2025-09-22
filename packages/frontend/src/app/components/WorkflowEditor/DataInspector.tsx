@@ -10,41 +10,41 @@
  * - Search and filtering
  */
 
-import React, { useState, useCallback, useMemo } from 'react';
 import {
-  Card,
-  Button,
-  Space,
-  Typography,
-  Input,
-  Select,
-  Tag,
-  Tooltip,
-  Modal,
-  Tree,
-  Divider,
-  Alert,
-  Tabs,
-  Table,
-  Progress,
-} from 'antd';
-import {
-  SearchOutlined,
+  CompressOutlined,
   CopyOutlined,
   DownloadOutlined,
   ExpandOutlined,
-  CompressOutlined,
   EyeOutlined,
+  SearchOutlined,
 } from '@ant-design/icons';
-import { cn } from '@/design-system/utils';
-import { JsonViewer } from '@/design-system';
+import {
+  Alert,
+  Button,
+  Card,
+  Divider,
+  Input,
+  Modal,
+  Progress,
+  Select,
+  Space,
+  Table,
+  Tabs,
+  Tag,
+  Tooltip,
+  Tree,
+  Typography,
+} from 'antd';
+import type React from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import type { DataInspector } from '@/core/types/debugging';
+import { JsonViewer } from '@/design-system';
+import { cn } from '@/design-system/utils';
 
 const { Title, Text } = Typography;
 const { Search } = Input;
 const { Option } = Select;
 const { TreeNode } = Tree;
-
 
 interface DataInspectorProps {
   data: any;
@@ -102,9 +102,8 @@ const DataInspector: React.FC<DataInspectorProps> = ({
 
   const handleCopyData = useCallback(async () => {
     try {
-      const text = typeof selectedData === 'string'
-        ? selectedData
-        : JSON.stringify(selectedData, null, 2);
+      const text =
+        typeof selectedData === 'string' ? selectedData : JSON.stringify(selectedData, null, 2);
       await navigator.clipboard.writeText(text);
     } catch (error) {
       console.error('Failed to copy data:', error);
@@ -136,18 +135,14 @@ const DataInspector: React.FC<DataInspectorProps> = ({
   }, []);
 
   const renderTreeNodes = useCallback((nodes: DataNode[]): React.ReactNode => {
-    return nodes.map(node => (
+    return nodes.map((node) => (
       <TreeNode
         key={node.key}
         title={
           <div className="flex items-center gap-2">
             <span className="text-white">{node.title}</span>
-            <Tag color={getTypeColor(node.type)}>
-              {node.type}
-            </Tag>
-            <span className="text-gray-400 text-xs">
-              {formatSize(node.size)}
-            </span>
+            <Tag color={getTypeColor(node.type)}>{node.type}</Tag>
+            <span className="text-gray-400 text-xs">{formatSize(node.size)}</span>
           </div>
         }
         isLeaf={node.isLeaf}
@@ -159,13 +154,7 @@ const DataInspector: React.FC<DataInspectorProps> = ({
 
   const renderDataTable = useCallback(() => {
     if (!Array.isArray(selectedData)) {
-      return (
-        <Alert
-          message="Table view only available for arrays"
-          type="info"
-          showIcon
-        />
-      );
+      return <Alert message="Table view only available for arrays" type="info" showIcon />;
     }
 
     const columns = getTableColumns(selectedData);
@@ -189,7 +178,9 @@ const DataInspector: React.FC<DataInspectorProps> = ({
 
   const renderDataAnalysis = () => (
     <div className="space-y-4">
-      <Title level={5} className="text-white">Data Analysis</Title>
+      <Title level={5} className="text-white">
+        Data Analysis
+      </Title>
 
       <div className="grid grid-cols-2 gap-4">
         <Card size="small" className="bg-gray-800 border-gray-600">
@@ -222,7 +213,9 @@ const DataInspector: React.FC<DataInspectorProps> = ({
       </div>
 
       <Card size="small" className="bg-gray-800 border-gray-600">
-        <Title level={5} className="text-white mb-3">Type Distribution</Title>
+        <Title level={5} className="text-white mb-3">
+          Type Distribution
+        </Title>
         <div className="space-y-2">
           {Object.entries(dataStats.typeDistribution).map(([type, count]) => (
             <div key={type} className="flex items-center justify-between">
@@ -250,7 +243,9 @@ const DataInspector: React.FC<DataInspectorProps> = ({
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2">
             <EyeOutlined className="text-blue-400 text-lg" />
-            <Title level={4} className="text-white mb-0">Data Inspector</Title>
+            <Title level={4} className="text-white mb-0">
+              Data Inspector
+            </Title>
           </div>
           <Space>
             <Button
@@ -301,11 +296,7 @@ const DataInspector: React.FC<DataInspectorProps> = ({
             prefix={<SearchOutlined className="text-gray-400" />}
           />
 
-          <Select
-            value={filterType}
-            onChange={setFilterType}
-            className="w-32"
-          >
+          <Select value={filterType} onChange={setFilterType} className="w-32">
             <Option value="all">All Types</Option>
             <Option value="string">String</Option>
             <Option value="number">Number</Option>
@@ -314,11 +305,7 @@ const DataInspector: React.FC<DataInspectorProps> = ({
             <Option value="array">Array</Option>
           </Select>
 
-          <Select
-            value={viewMode}
-            onChange={setViewMode}
-            className="w-24"
-          >
+          <Select value={viewMode} onChange={setViewMode} className="w-24">
             <Option value="tree">Tree</Option>
             <Option value="json">JSON</Option>
             <Option value="table">Table</Option>
@@ -328,9 +315,7 @@ const DataInspector: React.FC<DataInspectorProps> = ({
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
             <Text className="text-gray-400">Selected Path:</Text>
-            <Text className="text-white font-mono text-sm">
-              {selectedPath || 'root'}
-            </Text>
+            <Text className="text-white font-mono text-sm">{selectedPath || 'root'}</Text>
           </div>
 
           <Space>
@@ -396,11 +381,7 @@ const DataInspector: React.FC<DataInspectorProps> = ({
             {
               key: 'table',
               label: 'Table View',
-              children: (
-                <div className="h-96 overflow-auto">
-                  {renderDataTable()}
-                </div>
-              ),
+              children: <div className="h-96 overflow-auto">{renderDataTable()}</div>,
             },
           ]}
         />
@@ -435,72 +416,83 @@ const DataInspector: React.FC<DataInspectorProps> = ({
 
 function convertToTree(data: any, path: string, _key: string): DataNode[] {
   if (data === null || data === undefined) {
-    return [{
-      key: path || 'root',
-      title: 'null',
-      value: data,
-      type: 'null',
-      size: 0,
-      path: path || 'root',
-      isLeaf: true,
-    }];
+    return [
+      {
+        key: path || 'root',
+        title: 'null',
+        value: data,
+        type: 'null',
+        size: 0,
+        path: path || 'root',
+        isLeaf: true,
+      },
+    ];
   }
 
   if (Array.isArray(data)) {
-    return [{
-      key: path || 'root',
-      title: `Array (${data.length} items)`,
-      value: data,
-      type: 'array',
-      size: JSON.stringify(data).length,
-      path: path || 'root',
-      children: data.map((item, index) =>
-        convertToTree(item, `${path}[${index}]`, `[${index}]`)
-      ).flat(),
-    }];
+    return [
+      {
+        key: path || 'root',
+        title: `Array (${data.length} items)`,
+        value: data,
+        type: 'array',
+        size: JSON.stringify(data).length,
+        path: path || 'root',
+        children: data.flatMap((item, index) =>
+          convertToTree(item, `${path}[${index}]`, `[${index}]`)
+        ),
+      },
+    ];
   }
 
   if (typeof data === 'object') {
     const entries = Object.entries(data);
-    return [{
-      key: path || 'root',
-      title: `Object (${entries.length} properties)`,
-      value: data,
-      type: 'object',
-      size: JSON.stringify(data).length,
-      path: path || 'root',
-      children: entries.map(([key, value]) =>
-        convertToTree(value, path ? `${path}.${key}` : key, key)
-      ).flat(),
-    }];
+    return [
+      {
+        key: path || 'root',
+        title: `Object (${entries.length} properties)`,
+        value: data,
+        type: 'object',
+        size: JSON.stringify(data).length,
+        path: path || 'root',
+        children: entries.flatMap(([key, value]) =>
+          convertToTree(value, path ? `${path}.${key}` : key, key)
+        ),
+      },
+    ];
   }
 
-  return [{
-    key: path || 'root',
-    title: String(data),
-    value: data,
-    type: typeof data,
-    size: JSON.stringify(data).length,
-    path: path || 'root',
-    isLeaf: true,
-  }];
+  return [
+    {
+      key: path || 'root',
+      title: String(data),
+      value: data,
+      type: typeof data,
+      size: JSON.stringify(data).length,
+      path: path || 'root',
+      isLeaf: true,
+    },
+  ];
 }
 
 function filterTree(nodes: DataNode[], searchTerm: string, filterType: string): DataNode[] {
   if (!searchTerm && filterType === 'all') return nodes;
 
-  return nodes.filter(node => {
-    const matchesSearch = !searchTerm ||
-      node.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      node.path.toLowerCase().includes(searchTerm.toLowerCase());
+  return nodes
+    .filter((node) => {
+      const matchesSearch =
+        !searchTerm ||
+        node.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        node.path.toLowerCase().includes(searchTerm.toLowerCase());
 
-    const matchesType = filterType === 'all' || node.type === filterType;
+      const matchesType = filterType === 'all' || node.type === filterType;
 
-    return matchesSearch && matchesType;
-  }).map(node => ({
-    ...node,
-    children: node.children ? filterTree(node.children, searchTerm, filterType) : undefined,
-  }));
+      return matchesSearch && matchesType;
+    })
+    .map((node) => ({
+      ...node,
+      children: node.children ? filterTree(node.children, searchTerm, filterType) : undefined,
+    }));
 }
 
 function getDataByPath(data: any, path: string): any {
@@ -541,7 +533,7 @@ function analyzeData(data: any): {
     if (Array.isArray(obj)) {
       stats.arrayCount++;
       stats.typeDistribution.array = (stats.typeDistribution.array || 0) + 1;
-      obj.forEach(item => analyze(item, currentDepth + 1));
+      obj.forEach((item) => analyze(item, currentDepth + 1));
     } else if (obj !== null && typeof obj === 'object') {
       stats.typeDistribution.object = (stats.typeDistribution.object || 0) + 1;
       Object.entries(obj).forEach(([_key, value]) => {
@@ -560,14 +552,22 @@ function analyzeData(data: any): {
 
 function getTypeColor(type: string): string {
   switch (type) {
-    case 'string': return 'green';
-    case 'number': return 'blue';
-    case 'boolean': return 'orange';
-    case 'object': return 'purple';
-    case 'array': return 'cyan';
-    case 'null': return 'gray';
-    case 'undefined': return 'red';
-    default: return 'default';
+    case 'string':
+      return 'green';
+    case 'number':
+      return 'blue';
+    case 'boolean':
+      return 'orange';
+    case 'object':
+      return 'purple';
+    case 'array':
+      return 'cyan';
+    case 'null':
+      return 'gray';
+    case 'undefined':
+      return 'red';
+    default:
+      return 'default';
   }
 }
 
@@ -588,7 +588,7 @@ function getTableColumns(data: any[]): any[] {
     ];
   }
 
-  return Object.keys(sample).map(key => ({
+  return Object.keys(sample).map((key) => ({
     title: key,
     dataIndex: key,
     key,

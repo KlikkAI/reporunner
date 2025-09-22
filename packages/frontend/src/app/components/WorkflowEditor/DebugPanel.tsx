@@ -9,50 +9,50 @@
  * - Performance profiling and metrics
  */
 
-import React, { useState, useCallback, useEffect } from 'react';
-import {
-  Card,
-  Button,
-  Typography,
-  Tabs,
-  Badge,
-  Modal,
-  Form,
-  Input,
-  Switch,
-  Alert,
-  Tag,
-  Timeline,
-} from 'antd';
 import {
   BugOutlined,
-  PlayCircleOutlined,
-  PauseCircleOutlined,
-  StepForwardOutlined,
-  StepBackwardOutlined,
-  StopOutlined,
-  EyeOutlined,
   CodeOutlined,
-  HistoryOutlined,
-  SettingOutlined,
-  PlusOutlined,
   DeleteOutlined,
+  EyeOutlined,
+  HistoryOutlined,
   InfoCircleOutlined,
+  PauseCircleOutlined,
+  PlayCircleOutlined,
+  PlusOutlined,
+  SettingOutlined,
+  StepBackwardOutlined,
+  StepForwardOutlined,
+  StopOutlined,
 } from '@ant-design/icons';
-import { cn } from '@/design-system/utils';
-import { JsonViewer } from '@/design-system';
+import {
+  Alert,
+  Badge,
+  Button,
+  Card,
+  Form,
+  Input,
+  Modal,
+  Switch,
+  Tabs,
+  Tag,
+  Timeline,
+  Typography,
+} from 'antd';
+import type React from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { enhancedDebuggingService } from '@/core/services/enhancedDebuggingService';
 import type {
-  DebugSession,
   CallStackFrame,
-  WatchExpression,
-  ExecutionStep,
   DebugEvent,
   DebugMetrics,
+  DebugSession,
+  ExecutionStep,
+  WatchExpression,
 } from '@/core/types/debugging';
+import { JsonViewer } from '@/design-system';
+import { cn } from '@/design-system/utils';
 
 const { Title, Text } = Typography;
-
 
 interface DebugPanelProps {
   workflowId?: string;
@@ -60,11 +60,7 @@ interface DebugPanelProps {
   className?: string;
 }
 
-const DebugPanel: React.FC<DebugPanelProps> = ({
-  workflowId,
-  executionId,
-  className,
-}) => {
+const DebugPanel: React.FC<DebugPanelProps> = ({ workflowId, executionId, className }) => {
   const [activeTab, setActiveTab] = useState('controls');
   const [session, setSession] = useState<DebugSession | null>(null);
   const [isDebugging, setIsDebugging] = useState(false);
@@ -169,27 +165,36 @@ const DebugPanel: React.FC<DebugPanelProps> = ({
     setIsPaused(true);
   }, []);
 
-  const addBreakpoint = useCallback((nodeId: string, condition?: string) => {
-    enhancedDebuggingService.addBreakpoint(nodeId, {
-      nodeId,
-      enabled: true,
-      hitCount: 0,
-      condition,
-      actions: [{ type: 'pause' }],
-      createdAt: Date.now(),
-    });
-    updateSessionData();
-  }, [updateSessionData]);
+  const addBreakpoint = useCallback(
+    (nodeId: string, condition?: string) => {
+      enhancedDebuggingService.addBreakpoint(nodeId, {
+        nodeId,
+        enabled: true,
+        hitCount: 0,
+        condition,
+        actions: [{ type: 'pause' }],
+        createdAt: Date.now(),
+      });
+      updateSessionData();
+    },
+    [updateSessionData]
+  );
 
-  const removeBreakpoint = useCallback((nodeId: string, breakpointId: string) => {
-    enhancedDebuggingService.removeBreakpoint(nodeId, breakpointId);
-    updateSessionData();
-  }, [updateSessionData]);
+  const removeBreakpoint = useCallback(
+    (nodeId: string, breakpointId: string) => {
+      enhancedDebuggingService.removeBreakpoint(nodeId, breakpointId);
+      updateSessionData();
+    },
+    [updateSessionData]
+  );
 
-  const toggleBreakpoint = useCallback((nodeId: string, breakpointId: string) => {
-    enhancedDebuggingService.toggleBreakpoint(nodeId, breakpointId);
-    updateSessionData();
-  }, [updateSessionData]);
+  const toggleBreakpoint = useCallback(
+    (nodeId: string, breakpointId: string) => {
+      enhancedDebuggingService.toggleBreakpoint(nodeId, breakpointId);
+      updateSessionData();
+    },
+    [updateSessionData]
+  );
 
   const addWatchExpression = useCallback(() => {
     if (newWatchExpression.trim()) {
@@ -200,11 +205,13 @@ const DebugPanel: React.FC<DebugPanelProps> = ({
     }
   }, [newWatchExpression, updateSessionData]);
 
-  const removeWatchExpression = useCallback((id: string) => {
-    enhancedDebuggingService.removeWatchExpression(id);
-    updateSessionData();
-  }, [updateSessionData]);
-
+  const removeWatchExpression = useCallback(
+    (id: string) => {
+      enhancedDebuggingService.removeWatchExpression(id);
+      updateSessionData();
+    },
+    [updateSessionData]
+  );
 
   const getStatusColor = () => {
     if (!isDebugging) return 'gray';
@@ -224,7 +231,9 @@ const DebugPanel: React.FC<DebugPanelProps> = ({
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <BugOutlined className="text-blue-400" />
-            <Title level={5} className="text-white mb-0">Debug Controls</Title>
+            <Title level={5} className="text-white mb-0">
+              Debug Controls
+            </Title>
           </div>
           <div className="flex items-center gap-2">
             <Badge
@@ -248,18 +257,11 @@ const DebugPanel: React.FC<DebugPanelProps> = ({
           ) : (
             <>
               {isPaused ? (
-                <Button
-                  type="primary"
-                  icon={<PlayCircleOutlined />}
-                  onClick={resumeExecution}
-                >
+                <Button type="primary" icon={<PlayCircleOutlined />} onClick={resumeExecution}>
                   Resume
                 </Button>
               ) : (
-                <Button
-                  icon={<PauseCircleOutlined />}
-                  onClick={pauseExecution}
-                >
+                <Button icon={<PauseCircleOutlined />} onClick={pauseExecution}>
                   Pause
                 </Button>
               )}
@@ -285,11 +287,7 @@ const DebugPanel: React.FC<DebugPanelProps> = ({
                 title="Step Out"
               />
 
-              <Button
-                danger
-                icon={<StopOutlined />}
-                onClick={stopDebugging}
-              >
+              <Button danger icon={<StopOutlined />} onClick={stopDebugging}>
                 Stop
               </Button>
             </>
@@ -325,7 +323,9 @@ const DebugPanel: React.FC<DebugPanelProps> = ({
   const renderBreakpoints = () => (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <Title level={5} className="text-white mb-0">Breakpoints</Title>
+        <Title level={5} className="text-white mb-0">
+          Breakpoints
+        </Title>
         <Button
           type="dashed"
           size="small"
@@ -345,12 +345,8 @@ const DebugPanel: React.FC<DebugPanelProps> = ({
       ) : (
         <div className="space-y-2">
           {Array.from(session?.breakpoints.entries() || []).map(([nodeId, breakpoints]) =>
-            breakpoints.map(breakpoint => (
-              <Card
-                key={breakpoint.id}
-                size="small"
-                className="bg-gray-800 border-gray-600"
-              >
+            breakpoints.map((breakpoint) => (
+              <Card key={breakpoint.id} size="small" className="bg-gray-800 border-gray-600">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <Switch
@@ -365,9 +361,7 @@ const DebugPanel: React.FC<DebugPanelProps> = ({
                           Condition: {breakpoint.condition}
                         </div>
                       )}
-                      <div className="text-gray-500 text-xs">
-                        Hits: {breakpoint.hitCount}
-                      </div>
+                      <div className="text-gray-500 text-xs">Hits: {breakpoint.hitCount}</div>
                     </div>
                   </div>
                   <div className="flex items-center gap-1">
@@ -396,7 +390,9 @@ const DebugPanel: React.FC<DebugPanelProps> = ({
   const renderWatchExpressions = () => (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <Title level={5} className="text-white mb-0">Watch Expressions</Title>
+        <Title level={5} className="text-white mb-0">
+          Watch Expressions
+        </Title>
         <Button
           type="dashed"
           size="small"
@@ -415,12 +411,8 @@ const DebugPanel: React.FC<DebugPanelProps> = ({
         </div>
       ) : (
         <div className="space-y-2">
-          {watchExpressions.map(watch => (
-            <Card
-              key={watch.id}
-              size="small"
-              className="bg-gray-800 border-gray-600"
-            >
+          {watchExpressions.map((watch) => (
+            <Card key={watch.id} size="small" className="bg-gray-800 border-gray-600">
               <div className="flex items-center justify-between">
                 <div className="flex-1">
                   <div className="text-white text-sm font-mono">{watch.expression}</div>
@@ -433,8 +425,7 @@ const DebugPanel: React.FC<DebugPanelProps> = ({
                         <span className="font-mono">
                           {typeof watch.value === 'object'
                             ? JSON.stringify(watch.value)
-                            : String(watch.value)
-                          }
+                            : String(watch.value)}
                         </span>
                         <span className="text-gray-500 ml-2">({watch.type})</span>
                       </>
@@ -458,7 +449,9 @@ const DebugPanel: React.FC<DebugPanelProps> = ({
 
   const renderCallStack = () => (
     <div className="space-y-4">
-      <Title level={5} className="text-white mb-0">Call Stack</Title>
+      <Title level={5} className="text-white mb-0">
+        Call Stack
+      </Title>
 
       {callStack.length === 0 ? (
         <div className="text-center text-gray-500 py-8">
@@ -487,7 +480,9 @@ const DebugPanel: React.FC<DebugPanelProps> = ({
 
   const renderVariables = () => (
     <div className="space-y-4">
-      <Title level={5} className="text-white mb-0">Variables</Title>
+      <Title level={5} className="text-white mb-0">
+        Variables
+      </Title>
 
       {Object.keys(variables).length === 0 ? (
         <div className="text-center text-gray-500 py-8">
@@ -498,19 +493,10 @@ const DebugPanel: React.FC<DebugPanelProps> = ({
       ) : (
         <div className="space-y-2">
           {Object.entries(variables).map(([key, value]) => (
-            <Card
-              key={key}
-              size="small"
-              className="bg-gray-800 border-gray-600"
-            >
+            <Card key={key} size="small" className="bg-gray-800 border-gray-600">
               <div className="space-y-2">
                 <div className="text-white font-medium">{key}</div>
-                <JsonViewer
-                  data={value}
-                  theme="dark"
-                  collapsed={1}
-                  maxHeight="200px"
-                />
+                <JsonViewer data={value} theme="dark" collapsed={1} maxHeight="200px" />
               </div>
             </Card>
           ))}
@@ -521,7 +507,9 @@ const DebugPanel: React.FC<DebugPanelProps> = ({
 
   const renderExecutionHistory = () => (
     <div className="space-y-4">
-      <Title level={5} className="text-white mb-0">Execution History</Title>
+      <Title level={5} className="text-white mb-0">
+        Execution History
+      </Title>
 
       {executionHistory.length === 0 ? (
         <div className="text-center text-gray-500 py-8">
@@ -532,17 +520,23 @@ const DebugPanel: React.FC<DebugPanelProps> = ({
       ) : (
         <Timeline
           items={executionHistory.map((step) => ({
-            color: step.action === 'error' ? 'red' :
-                   step.action === 'breakpoint' ? 'orange' : 'blue',
+            color:
+              step.action === 'error' ? 'red' : step.action === 'breakpoint' ? 'orange' : 'blue',
             children: (
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
                   <span className="text-white font-medium">{step.nodeId}</span>
-                  <Tag color={
-                    step.action === 'error' ? 'red' :
-                    step.action === 'breakpoint' ? 'orange' :
-                    step.action === 'start' ? 'blue' : 'green'
-                  }>
+                  <Tag
+                    color={
+                      step.action === 'error'
+                        ? 'red'
+                        : step.action === 'breakpoint'
+                          ? 'orange'
+                          : step.action === 'start'
+                            ? 'blue'
+                            : 'green'
+                    }
+                  >
                     {step.action}
                   </Tag>
                 </div>
@@ -551,9 +545,7 @@ const DebugPanel: React.FC<DebugPanelProps> = ({
                   {step.duration && ` (${step.duration}ms)`}
                 </div>
                 {step.error && (
-                  <div className="text-red-400 text-xs">
-                    Error: {step.error.message}
-                  </div>
+                  <div className="text-red-400 text-xs">Error: {step.error.message}</div>
                 )}
               </div>
             ),
@@ -565,7 +557,9 @@ const DebugPanel: React.FC<DebugPanelProps> = ({
 
   const renderMetrics = () => (
     <div className="space-y-4">
-      <Title level={5} className="text-white mb-0">Debug Metrics</Title>
+      <Title level={5} className="text-white mb-0">
+        Debug Metrics
+      </Title>
 
       {!metrics ? (
         <div className="text-center text-gray-500 py-8">
@@ -630,7 +624,9 @@ const DebugPanel: React.FC<DebugPanelProps> = ({
       <div className="p-4 border-b border-gray-700">
         <div className="flex items-center gap-2 mb-2">
           <BugOutlined className="text-red-400 text-lg" />
-          <Title level={4} className="text-white mb-0">Debug Panel</Title>
+          <Title level={4} className="text-white mb-0">
+            Debug Panel
+          </Title>
         </div>
         <Text className="text-gray-400 text-sm">
           Advanced debugging tools for workflow execution
@@ -652,7 +648,11 @@ const DebugPanel: React.FC<DebugPanelProps> = ({
                   <BugOutlined className="mr-1" />
                   Breakpoints
                   {session && session.breakpoints.size > 0 && (
-                    <Badge count={Array.from(session.breakpoints.values()).flat().length} size="small" className="ml-2" />
+                    <Badge
+                      count={Array.from(session.breakpoints.values()).flat().length}
+                      size="small"
+                      className="ml-2"
+                    />
                   )}
                 </span>
               ),
@@ -769,10 +769,18 @@ const DebugPanel: React.FC<DebugPanelProps> = ({
             message="Expression Examples"
             description={
               <ul className="mt-2 text-sm">
-                <li><code>$input.user.name</code> - Access input data</li>
-                <li><code>$output.result</code> - Access output data</li>
-                <li><code>variables.count</code> - Access workflow variables</li>
-                <li><code>JSON.stringify($input)</code> - Convert to JSON</li>
+                <li>
+                  <code>$input.user.name</code> - Access input data
+                </li>
+                <li>
+                  <code>$output.result</code> - Access output data
+                </li>
+                <li>
+                  <code>variables.count</code> - Access workflow variables
+                </li>
+                <li>
+                  <code>JSON.stringify($input)</code> - Convert to JSON
+                </li>
               </ul>
             }
             type="info"

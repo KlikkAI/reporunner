@@ -1,8 +1,8 @@
 // Workflow exports
-export * from "./workflow.types";
 
 // Authentication exports
-export * from "./auth.types";
+export * from './auth.types';
+export * from './workflow.types';
 
 // Integration exports (to be added)
 // export * from './integration.types';

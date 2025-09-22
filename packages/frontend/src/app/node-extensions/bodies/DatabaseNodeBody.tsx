@@ -3,10 +3,10 @@
  * Gmail-style UI for database operation nodes
  */
 
-import React from "react";
-import { Handle, Position } from "reactflow";
-import type { CustomNodeBodyProps } from "../nodeUiRegistry";
-import { NodeIcon, HoverActions, StatusBadge, NodeLabel } from "../shared";
+import type React from 'react';
+import { Handle, Position } from 'reactflow';
+import type { CustomNodeBodyProps } from '../nodeUiRegistry';
+import { HoverActions, NodeIcon, NodeLabel, StatusBadge } from '../shared';
 
 const DatabaseNodeBody: React.FC<CustomNodeBodyProps> = ({
   nodeData,
@@ -17,25 +17,25 @@ const DatabaseNodeBody: React.FC<CustomNodeBodyProps> = ({
   onDelete,
   onOpenProperties,
 }) => {
-  const displayName = nodeData.name || nodeData.label || "Database";
-  const operation = nodeData.parameters?.operation || "select";
-  const database = nodeData.parameters?.database || "PostgreSQL";
+  const displayName = nodeData.name || nodeData.label || 'Database';
+  const operation = nodeData.parameters?.operation || 'select';
+  const database = nodeData.parameters?.database || 'PostgreSQL';
 
   // Database type icon
   const getDatabaseIcon = () => {
     const dbType = database.toLowerCase();
-    if (dbType.includes("postgres")) {
-      return "🐘";
-    } else if (dbType.includes("mysql")) {
-      return "🐬";
-    } else if (dbType.includes("mongo")) {
-      return "🍃";
-    } else if (dbType.includes("redis")) {
-      return "📦";
-    } else if (dbType.includes("sqlite")) {
-      return "💾";
+    if (dbType.includes('postgres')) {
+      return '🐘';
+    } else if (dbType.includes('mysql')) {
+      return '🐬';
+    } else if (dbType.includes('mongo')) {
+      return '🍃';
+    } else if (dbType.includes('redis')) {
+      return '📦';
+    } else if (dbType.includes('sqlite')) {
+      return '💾';
     } else {
-      return "🗃️";
+      return '🗃️';
     }
   };
 
@@ -55,8 +55,8 @@ const DatabaseNodeBody: React.FC<CustomNodeBodyProps> = ({
             className={`
               relative flex items-center justify-center bg-gray-800 p-4 shadow-lg transition-all duration-200
               rounded-md min-w-[80px] max-w-[150px] min-h-[60px]
-              ${selected ? "ring-2 ring-offset-2 ring-offset-gray-900 ring-blue-400" : ""}
-              ${isHovered ? "hover:shadow-xl hover:scale-105 ring-2 ring-offset-2 ring-offset-gray-900 ring-blue-400" : ""}
+              ${selected ? 'ring-2 ring-offset-2 ring-offset-gray-900 ring-blue-400' : ''}
+              ${isHovered ? 'hover:shadow-xl hover:scale-105 ring-2 ring-offset-2 ring-offset-gray-900 ring-blue-400' : ''}
             `}
             onMouseEnter={onMouseEnter}
             onMouseLeave={onMouseLeave}
@@ -68,7 +68,7 @@ const DatabaseNodeBody: React.FC<CustomNodeBodyProps> = ({
               position={Position.Left}
               id="input_0"
               style={{
-                background: "#555",
+                background: '#555',
                 width: 10,
                 height: 10,
                 left: -5,
@@ -81,7 +81,7 @@ const DatabaseNodeBody: React.FC<CustomNodeBodyProps> = ({
               position={Position.Right}
               id="output_0"
               style={{
-                background: "#555",
+                background: '#555',
                 width: 10,
                 height: 10,
                 right: -5,
@@ -92,16 +92,10 @@ const DatabaseNodeBody: React.FC<CustomNodeBodyProps> = ({
             <NodeIcon icon={icon} displayName={displayName} size="md" />
 
             {/* Hover Actions */}
-            <HoverActions
-              isVisible={isHovered}
-              onEdit={onOpenProperties}
-              onDelete={onDelete}
-            />
+            <HoverActions isVisible={isHovered} onEdit={onOpenProperties} onDelete={onDelete} />
 
             {/* Status Badges */}
-            {nodeData.disabled && (
-              <StatusBadge type="disabled" position="top-right" />
-            )}
+            {nodeData.disabled && <StatusBadge type="disabled" position="top-right" />}
             {operation && (
               <StatusBadge
                 type="info"

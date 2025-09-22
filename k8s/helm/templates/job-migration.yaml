@@ -1,0 +1,74 @@
+{{- if .Values.migration.enabled }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "reporunner.fullname" . }}-migration
+  labels:
+    {{- include "reporunner.labels" . | nindent 4 }}
+    app.kubernetes.io/component: migration
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+spec:
+  template:
+    metadata:
+      name: {{ include "reporunner.fullname" . }}-migration
+      labels:
+        {{- include "reporunner.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: migration
+    spec:
+      restartPolicy: Never
+      {{- with .Values.global.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      securityContext:
+        {{- include "reporunner.podSecurityContext" . | nindent 8 }}
+      initContainers:
+        - name: wait-for-postgresql
+          image: postgres:16-alpine
+          command:
+            - sh
+            - -c
+            - |
+              until pg_isready -h {{ include "reporunner.fullname" . }}-postgresql -p 5432; do
+                echo "Waiting for PostgreSQL..."
+                sleep 2
+              done
+        - name: wait-for-mongodb
+          image: mongo:7.0
+          command:
+            - sh
+            - -c
+            - |
+              until mongosh --host {{ include "reporunner.fullname" . }}-mongodb --port 27017 --eval "db.adminCommand('ping')"; do
+                echo "Waiting for MongoDB..."
+                sleep 2
+              done
+      containers:
+        - name: migration
+          securityContext:
+            {{- include "reporunner.containerSecurityContext" . | nindent 12 }}
+          image: {{ include "reporunner.image" (dict "Chart" .Chart "Values" .Values "repository" .Values.migration.image.repository "tag" .Values.migration.image.tag) }}
+          imagePullPolicy: {{ .Values.reporunner.image.pullPolicy }}
+          command:
+            - sh
+            - -c
+            - |
+              echo "Running database migrations..."
+              npm run migrate:up
+              echo "Migrations completed successfully"
+          env:
+            - name: NODE_ENV
+              value: {{ .Values.reporunner.env.NODE_ENV }}
+            - name: DATABASE_URL
+              value: {{ include "reporunner.postgresql.connectionString" . }}
+            - name: MONGODB_URI
+              value: {{ include "reporunner.mongodb.connectionString" . }}
+            - name: REDIS_URL
+              value: {{ include "reporunner.redis.connectionString" . }}
+          resources:
+            {{- toYaml .Values.migration.resources | nindent 12 }}
+  backoffLimit: 3
+{{- end }}

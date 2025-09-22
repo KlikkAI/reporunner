@@ -1,8 +1,8 @@
-import { Request, Response } from 'express';
+import type { Request, Response } from 'express';
 import { validationResult } from 'express-validator';
-import { CredentialService } from '../services/CredentialService.js';
-import { AppError } from '../../../middleware/errorHandlers.js';
 import { BaseController } from '../../../base/BaseController.js';
+import { AppError } from '../../../middleware/errorHandlers.js';
+import { CredentialService } from '../services/CredentialService.js';
 
 export class CredentialController extends BaseController {
   private credentialService: CredentialService;

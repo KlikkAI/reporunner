@@ -5,31 +5,31 @@
  * with appropriate default settings and configurations.
  */
 
-import type { Node } from "reactflow";
+import type { Node } from 'reactflow';
 import type {
-  ContainerType,
   ContainerNodeData,
-} from "../components/WorkflowEditor/NodeTypes/ContainerNode/ContainerNode";
+  ContainerType,
+} from '../components/WorkflowEditor/NodeTypes/ContainerNode/ContainerNode';
 
 export interface ContainerTemplate {
   type: ContainerType;
   label: string;
   description: string;
   icon: string;
-  defaultConfig: ContainerNodeData["config"];
-  defaultDimensions: ContainerNodeData["dimensions"];
+  defaultConfig: ContainerNodeData['config'];
+  defaultDimensions: ContainerNodeData['dimensions'];
   category: string;
 }
 
 export const CONTAINER_TEMPLATES: Record<ContainerType, ContainerTemplate> = {
   loop: {
-    type: "loop",
-    label: "Loop Container",
-    description: "Execute nodes repeatedly based on conditions or iterations",
-    icon: "🔄",
+    type: 'loop',
+    label: 'Loop Container',
+    description: 'Execute nodes repeatedly based on conditions or iterations',
+    icon: '🔄',
     defaultConfig: {
-      loopMode: "forEach",
-      loopVariable: "item",
+      loopMode: 'forEach',
+      loopVariable: 'item',
       loopCount: 10,
     },
     defaultDimensions: {
@@ -38,16 +38,16 @@ export const CONTAINER_TEMPLATES: Record<ContainerType, ContainerTemplate> = {
       minWidth: 300,
       minHeight: 200,
     },
-    category: "Control Flow",
+    category: 'Control Flow',
   },
 
   parallel: {
-    type: "parallel",
-    label: "Parallel Container",
-    description: "Execute multiple nodes concurrently",
-    icon: "⚡",
+    type: 'parallel',
+    label: 'Parallel Container',
+    description: 'Execute multiple nodes concurrently',
+    icon: '⚡',
     defaultConfig: {
-      parallelMode: "all",
+      parallelMode: 'all',
       maxConcurrency: 5,
     },
     defaultDimensions: {
@@ -56,18 +56,18 @@ export const CONTAINER_TEMPLATES: Record<ContainerType, ContainerTemplate> = {
       minWidth: 350,
       minHeight: 250,
     },
-    category: "Control Flow",
+    category: 'Control Flow',
   },
 
   conditional: {
-    type: "conditional",
-    label: "Conditional Container",
-    description: "Execute different branches based on conditions",
-    icon: "🔀",
+    type: 'conditional',
+    label: 'Conditional Container',
+    description: 'Execute different branches based on conditions',
+    icon: '🔀',
     defaultConfig: {
       conditions: [
-        { id: "true", condition: "true", label: "True" },
-        { id: "false", condition: "false", label: "False" },
+        { id: 'true', condition: 'true', label: 'True' },
+        { id: 'false', condition: 'false', label: 'False' },
       ],
     },
     defaultDimensions: {
@@ -76,14 +76,14 @@ export const CONTAINER_TEMPLATES: Record<ContainerType, ContainerTemplate> = {
       minWidth: 300,
       minHeight: 200,
     },
-    category: "Control Flow",
+    category: 'Control Flow',
   },
 
   subflow: {
-    type: "subflow",
-    label: "Subflow Container",
-    description: "Group related nodes into a reusable subflow",
-    icon: "📦",
+    type: 'subflow',
+    label: 'Subflow Container',
+    description: 'Group related nodes into a reusable subflow',
+    icon: '📦',
     defaultConfig: {
       passthrough: false,
     },
@@ -93,7 +93,7 @@ export const CONTAINER_TEMPLATES: Record<ContainerType, ContainerTemplate> = {
       minWidth: 300,
       minHeight: 200,
     },
-    category: "Organization",
+    category: 'Organization',
   },
 };
 
@@ -104,8 +104,8 @@ export class ContainerFactory {
   static createContainer(
     type: ContainerType,
     position: { x: number; y: number },
-    customConfig?: Partial<ContainerNodeData["config"]>,
-    customLabel?: string,
+    customConfig?: Partial<ContainerNodeData['config']>,
+    customLabel?: string
   ): Node {
     const template = CONTAINER_TEMPLATES[type];
     const nodeId = `container-${type}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
@@ -127,7 +127,7 @@ export class ContainerFactory {
 
     return {
       id: nodeId,
-      type: "container",
+      type: 'container',
       position,
       data: containerData,
       style: {
@@ -143,17 +143,17 @@ export class ContainerFactory {
   static createLoopContainer(
     position: { x: number; y: number },
     loopConfig: {
-      mode?: "forEach" | "while" | "count";
+      mode?: 'forEach' | 'while' | 'count';
       condition?: string;
       count?: number;
       variable?: string;
-    } = {},
+    } = {}
   ): Node {
-    return this.createContainer("loop", position, {
-      loopMode: loopConfig.mode || "forEach",
+    return ContainerFactory.createContainer('loop', position, {
+      loopMode: loopConfig.mode || 'forEach',
       loopCondition: loopConfig.condition,
       loopCount: loopConfig.count || 10,
-      loopVariable: loopConfig.variable || "item",
+      loopVariable: loopConfig.variable || 'item',
     });
   }
 
@@ -163,12 +163,12 @@ export class ContainerFactory {
   static createParallelContainer(
     position: { x: number; y: number },
     parallelConfig: {
-      mode?: "all" | "first" | "race";
+      mode?: 'all' | 'first' | 'race';
       maxConcurrency?: number;
-    } = {},
+    } = {}
   ): Node {
-    return this.createContainer("parallel", position, {
-      parallelMode: parallelConfig.mode || "all",
+    return ContainerFactory.createContainer('parallel', position, {
+      parallelMode: parallelConfig.mode || 'all',
       maxConcurrency: parallelConfig.maxConcurrency || 5,
     });
   }
@@ -179,11 +179,11 @@ export class ContainerFactory {
   static createConditionalContainer(
     position: { x: number; y: number },
     conditions: Array<{ id: string; condition: string; label: string }> = [
-      { id: "true", condition: "true", label: "True" },
-      { id: "false", condition: "false", label: "False" },
-    ],
+      { id: 'true', condition: 'true', label: 'True' },
+      { id: 'false', condition: 'false', label: 'False' },
+    ]
   ): Node {
-    return this.createContainer("conditional", position, {
+    return ContainerFactory.createContainer('conditional', position, {
       conditions,
     });
   }
@@ -196,9 +196,9 @@ export class ContainerFactory {
     subflowConfig: {
       subflowId?: string;
       passthrough?: boolean;
-    } = {},
+    } = {}
   ): Node {
-    return this.createContainer("subflow", position, {
+    return ContainerFactory.createContainer('subflow', position, {
       subflowId: subflowConfig.subflowId,
       passthrough: subflowConfig.passthrough || false,
     });
@@ -210,14 +210,14 @@ export class ContainerFactory {
   static wrapNodesInContainer(
     nodes: Node[],
     containerType: ContainerType,
-    containerPosition?: { x: number; y: number },
+    containerPosition?: { x: number; y: number }
   ): { container: Node; updatedNodes: Node[] } {
     if (nodes.length === 0) {
-      throw new Error("Cannot create container with no nodes");
+      throw new Error('Cannot create container with no nodes');
     }
 
     // Calculate bounding box of selected nodes
-    const bounds = this.calculateNodesBounds(nodes);
+    const bounds = ContainerFactory.calculateNodesBounds(nodes);
 
     // Position container to encompass all nodes
     const position = containerPosition || {
@@ -226,16 +226,16 @@ export class ContainerFactory {
     };
 
     // Create container with appropriate size
-    const container = this.createContainer(containerType, position);
+    const container = ContainerFactory.createContainer(containerType, position);
 
     // Update container dimensions to fit all nodes
     const containerWidth = Math.max(
       bounds.maxX - bounds.minX + 100, // Add padding
-      CONTAINER_TEMPLATES[containerType].defaultDimensions.minWidth,
+      CONTAINER_TEMPLATES[containerType].defaultDimensions.minWidth
     );
     const containerHeight = Math.max(
       bounds.maxY - bounds.minY + 150, // Add padding + header space
-      CONTAINER_TEMPLATES[containerType].defaultDimensions.minHeight,
+      CONTAINER_TEMPLATES[containerType].defaultDimensions.minHeight
     );
 
     container.data.dimensions.width = containerWidth;
@@ -271,18 +271,11 @@ export class ContainerFactory {
   /**
    * Unwrap nodes from a container
    */
-  static unwrapContainer(
-    container: Node,
-    containerPosition: { x: number; y: number },
-  ): Node[] {
+  static unwrapContainer(container: Node, containerPosition: { x: number; y: number }): Node[] {
     const children = container.data?.children || [];
 
     return children.map((child: Node) => {
-      const {
-        parentContainer,
-        containerPosition: childPos,
-        ...cleanData
-      } = child.data || {};
+      const { parentContainer, containerPosition: childPos, ...cleanData } = child.data || {};
 
       return {
         ...child,
@@ -331,38 +324,32 @@ export class ContainerFactory {
   /**
    * Validate container configuration
    */
-  static validateConfig(
-    type: ContainerType,
-    config: any,
-  ): { isValid: boolean; errors: string[] } {
+  static validateConfig(type: ContainerType, config: any): { isValid: boolean; errors: string[] } {
     const errors: string[] = [];
 
     switch (type) {
-      case "loop":
-        if (
-          config.loopMode === "count" &&
-          (!config.loopCount || config.loopCount < 1)
-        ) {
-          errors.push("Loop count must be greater than 0");
+      case 'loop':
+        if (config.loopMode === 'count' && (!config.loopCount || config.loopCount < 1)) {
+          errors.push('Loop count must be greater than 0');
         }
-        if (config.loopMode === "while" && !config.loopCondition) {
-          errors.push("While loop must have a condition");
+        if (config.loopMode === 'while' && !config.loopCondition) {
+          errors.push('While loop must have a condition');
         }
         break;
 
-      case "parallel":
+      case 'parallel':
         if (config.maxConcurrency && config.maxConcurrency < 1) {
-          errors.push("Max concurrency must be greater than 0");
+          errors.push('Max concurrency must be greater than 0');
         }
         break;
 
-      case "conditional":
+      case 'conditional':
         if (!config.conditions || config.conditions.length === 0) {
-          errors.push("Conditional container must have at least one condition");
+          errors.push('Conditional container must have at least one condition');
         }
         break;
 
-      case "subflow":
+      case 'subflow':
         // Subflow validation can be added here
         break;
     }

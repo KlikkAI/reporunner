@@ -3,7 +3,7 @@
  * Professional light theme with modern design principles
  */
 
-import type { NodeTheme } from '../types'
+import type { NodeTheme } from '../types';
 
 export const defaultTheme: NodeTheme = {
   name: 'default',
@@ -21,7 +21,8 @@ export const defaultTheme: NodeTheme = {
     info: '#1890ff',
   },
   typography: {
-    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+    fontFamily:
+      '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
     fontSize: {
       xs: '10px',
       sm: '12px',
@@ -75,4 +76,4 @@ export const defaultTheme: NodeTheme = {
     lg: '8px',
     full: '9999px',
   },
-}
+};

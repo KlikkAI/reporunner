@@ -1,5 +1,5 @@
-import { EventEmitter } from "events";
-import crypto from "crypto";
+import crypto from 'crypto';
+import { EventEmitter } from 'events';
 
 export interface OAuth2Config {
   clientId: string;
@@ -9,10 +9,10 @@ export interface OAuth2Config {
   redirectUri: string;
   scope?: string[];
   state?: string;
-  responseType?: "code" | "token";
-  grantType?: "authorization_code" | "client_credentials" | "refresh_token";
-  accessType?: "online" | "offline";
-  prompt?: "none" | "consent" | "select_account";
+  responseType?: 'code' | 'token';
+  grantType?: 'authorization_code' | 'client_credentials' | 'refresh_token';
+  accessType?: 'online' | 'offline';
+  prompt?: 'none' | 'consent' | 'select_account';
   pkce?: boolean;
   customParams?: Record<string, string>;
 }
@@ -62,24 +62,24 @@ export class OAuth2Handler extends EventEmitter {
     const params = new URLSearchParams();
 
     // Basic OAuth2 parameters
-    params.append("client_id", this.config.clientId);
-    params.append("redirect_uri", this.config.redirectUri);
-    params.append("response_type", this.config.responseType || "code");
-    params.append("state", state);
+    params.append('client_id', this.config.clientId);
+    params.append('redirect_uri', this.config.redirectUri);
+    params.append('response_type', this.config.responseType || 'code');
+    params.append('state', state);
 
     // Optional scope
     if (this.config.scope && this.config.scope.length > 0) {
-      params.append("scope", this.config.scope.join(" "));
+      params.append('scope', this.config.scope.join(' '));
     }
 
     // Optional access type (for offline access)
     if (this.config.accessType) {
-      params.append("access_type", this.config.accessType);
+      params.append('access_type', this.config.accessType);
     }
 
     // Optional prompt
     if (this.config.prompt) {
-      params.append("prompt", this.config.prompt);
+      params.append('prompt', this.config.prompt);
     }
 
     // PKCE support
@@ -89,8 +89,8 @@ export class OAuth2Handler extends EventEmitter {
     if (this.config.pkce) {
       codeVerifier = this.generateCodeVerifier();
       codeChallenge = this.generateCodeChallenge(codeVerifier);
-      params.append("code_challenge", codeChallenge);
-      params.append("code_challenge_method", "S256");
+      params.append('code_challenge', codeChallenge);
+      params.append('code_challenge_method', 'S256');
     }
 
     // Custom parameters
@@ -110,7 +110,7 @@ export class OAuth2Handler extends EventEmitter {
 
     const authUrl = `${this.config.authorizationUrl}?${params.toString()}`;
 
-    this.emit("authorization:started", { state, authUrl, metadata });
+    this.emit('authorization:started', { state, authUrl, metadata });
 
     return authUrl;
   }
@@ -129,7 +129,7 @@ export class OAuth2Handler extends EventEmitter {
     if (params.error) {
       const error = this.createError(
         params.error,
-        params.error_description || "OAuth2 authorization failed",
+        params.error_description || 'OAuth2 authorization failed'
       );
       error.uri = params.error_uri;
       throw error;
@@ -137,10 +137,7 @@ export class OAuth2Handler extends EventEmitter {
 
     // Validate state
     if (!params.state || !this.pendingStates.has(params.state)) {
-      throw this.createError(
-        "invalid_state",
-        "Invalid or expired state parameter",
-      );
+      throw this.createError('invalid_state', 'Invalid or expired state parameter');
     }
 
     const stateData = this.pendingStates.get(params.state)!;
@@ -148,24 +145,18 @@ export class OAuth2Handler extends EventEmitter {
 
     // Check if state is expired (10 minutes)
     if (Date.now() - stateData.timestamp > 600000) {
-      throw this.createError(
-        "state_expired",
-        "Authorization state has expired",
-      );
+      throw this.createError('state_expired', 'Authorization state has expired');
     }
 
     // Validate code
     if (!params.code) {
-      throw this.createError("missing_code", "Authorization code is missing");
+      throw this.createError('missing_code', 'Authorization code is missing');
     }
 
     // Exchange code for token
-    const token = await this.exchangeCodeForToken(
-      params.code,
-      stateData.codeVerifier,
-    );
+    const token = await this.exchangeCodeForToken(params.code, stateData.codeVerifier);
 
-    this.emit("authorization:completed", {
+    this.emit('authorization:completed', {
       token,
       metadata: stateData.metadata,
     });
@@ -176,20 +167,17 @@ export class OAuth2Handler extends EventEmitter {
   /**
    * Exchange authorization code for access token
    */
-  async exchangeCodeForToken(
-    code: string,
-    codeVerifier?: string,
-  ): Promise<OAuth2Token> {
+  async exchangeCodeForToken(code: string, codeVerifier?: string): Promise<OAuth2Token> {
     const body = new URLSearchParams();
-    body.append("grant_type", "authorization_code");
-    body.append("code", code);
-    body.append("client_id", this.config.clientId);
-    body.append("client_secret", this.config.clientSecret);
-    body.append("redirect_uri", this.config.redirectUri);
+    body.append('grant_type', 'authorization_code');
+    body.append('code', code);
+    body.append('client_id', this.config.clientId);
+    body.append('client_secret', this.config.clientSecret);
+    body.append('redirect_uri', this.config.redirectUri);
 
     // Add PKCE code verifier if used
     if (codeVerifier) {
-      body.append("code_verifier", codeVerifier);
+      body.append('code_verifier', codeVerifier);
     }
 
     const response = await this.makeTokenRequest(body);
@@ -201,10 +189,10 @@ export class OAuth2Handler extends EventEmitter {
    */
   async refreshAccessToken(refreshToken: string): Promise<OAuth2Token> {
     const body = new URLSearchParams();
-    body.append("grant_type", "refresh_token");
-    body.append("refresh_token", refreshToken);
-    body.append("client_id", this.config.clientId);
-    body.append("client_secret", this.config.clientSecret);
+    body.append('grant_type', 'refresh_token');
+    body.append('refresh_token', refreshToken);
+    body.append('client_id', this.config.clientId);
+    body.append('client_secret', this.config.clientSecret);
 
     const response = await this.makeTokenRequest(body);
     const token = this.parseTokenResponse(response);
@@ -214,7 +202,7 @@ export class OAuth2Handler extends EventEmitter {
       token.refreshToken = refreshToken;
     }
 
-    this.emit("token:refreshed", { token });
+    this.emit('token:refreshed', { token });
 
     return token;
   }
@@ -224,12 +212,12 @@ export class OAuth2Handler extends EventEmitter {
    */
   async getClientCredentialsToken(): Promise<OAuth2Token> {
     const body = new URLSearchParams();
-    body.append("grant_type", "client_credentials");
-    body.append("client_id", this.config.clientId);
-    body.append("client_secret", this.config.clientSecret);
+    body.append('grant_type', 'client_credentials');
+    body.append('client_id', this.config.clientId);
+    body.append('client_secret', this.config.clientSecret);
 
     if (this.config.scope && this.config.scope.length > 0) {
-      body.append("scope", this.config.scope.join(" "));
+      body.append('scope', this.config.scope.join(' '));
     }
 
     const response = await this.makeTokenRequest(body);
@@ -241,30 +229,30 @@ export class OAuth2Handler extends EventEmitter {
    */
   async revokeToken(
     token: string,
-    tokenType: "access_token" | "refresh_token" = "access_token",
+    tokenType: 'access_token' | 'refresh_token' = 'access_token'
   ): Promise<void> {
     // Not all OAuth2 providers support token revocation
-    const revokeUrl = `${this.config.tokenUrl.replace("/token", "/revoke")}`;
+    const revokeUrl = `${this.config.tokenUrl.replace('/token', '/revoke')}`;
 
     const body = new URLSearchParams();
-    body.append("token", token);
-    body.append("token_type_hint", tokenType);
-    body.append("client_id", this.config.clientId);
-    body.append("client_secret", this.config.clientSecret);
+    body.append('token', token);
+    body.append('token_type_hint', tokenType);
+    body.append('client_id', this.config.clientId);
+    body.append('client_secret', this.config.clientSecret);
 
     try {
       await fetch(revokeUrl, {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
+          'Content-Type': 'application/x-www-form-urlencoded',
         },
         body: body.toString(),
       });
 
-      this.emit("token:revoked", { token, tokenType });
+      this.emit('token:revoked', { token, tokenType });
     } catch (error) {
       // Many providers don't support revocation, so we don't throw
-      console.warn("Token revocation failed:", error);
+      console.warn('Token revocation failed:', error);
     }
   }
 
@@ -273,10 +261,10 @@ export class OAuth2Handler extends EventEmitter {
    */
   private async makeTokenRequest(body: URLSearchParams): Promise<any> {
     const response = await fetch(this.config.tokenUrl, {
-      method: "POST",
+      method: 'POST',
       headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-        Accept: "application/json",
+        'Content-Type': 'application/x-www-form-urlencoded',
+        Accept: 'application/json',
       },
       body: body.toString(),
     });
@@ -285,9 +273,8 @@ export class OAuth2Handler extends EventEmitter {
 
     if (!response.ok || responseData.error) {
       const error = this.createError(
-        responseData.error || "token_request_failed",
-        responseData.error_description ||
-          `Token request failed with status ${response.status}`,
+        responseData.error || 'token_request_failed',
+        responseData.error_description || `Token request failed with status ${response.status}`
       );
       error.uri = responseData.error_uri;
       throw error;
@@ -302,7 +289,7 @@ export class OAuth2Handler extends EventEmitter {
   private parseTokenResponse(response: any): OAuth2Token {
     const token: OAuth2Token = {
       accessToken: response.access_token,
-      tokenType: response.token_type || "Bearer",
+      tokenType: response.token_type || 'Bearer',
       raw: response,
     };
 
@@ -330,21 +317,21 @@ export class OAuth2Handler extends EventEmitter {
    * Generate random state
    */
   private generateState(): string {
-    return crypto.randomBytes(32).toString("base64url");
+    return crypto.randomBytes(32).toString('base64url');
   }
 
   /**
    * Generate PKCE code verifier
    */
   private generateCodeVerifier(): string {
-    return crypto.randomBytes(32).toString("base64url");
+    return crypto.randomBytes(32).toString('base64url');
   }
 
   /**
    * Generate PKCE code challenge
    */
   private generateCodeChallenge(verifier: string): string {
-    return crypto.createHash("sha256").update(verifier).digest("base64url");
+    return crypto.createHash('sha256').update(verifier).digest('base64url');
   }
 
   /**
@@ -368,7 +355,7 @@ export class OAuth2Handler extends EventEmitter {
     const error = new Error(description) as OAuth2Error;
     error.code = code;
     error.description = description;
-    error.name = "OAuth2Error";
+    error.name = 'OAuth2Error';
     return error;
   }
 

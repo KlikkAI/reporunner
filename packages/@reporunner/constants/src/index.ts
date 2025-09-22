@@ -1,9 +1,9 @@
 // System Constants
 export const SYSTEM = {
-  APP_NAME: "Reporunner",
-  VERSION: "1.0.0",
-  DEFAULT_TIMEZONE: "UTC",
-  DEFAULT_LOCALE: "en-US",
+  APP_NAME: 'Reporunner',
+  VERSION: '1.0.0',
+  DEFAULT_TIMEZONE: 'UTC',
+  DEFAULT_LOCALE: 'en-US',
   MAX_WORKFLOW_SIZE: 1000, // Max nodes in a workflow
   MAX_EXECUTION_TIME: 3600000, // 1 hour in ms
   MAX_RETRIES: 3,
@@ -12,7 +12,7 @@ export const SYSTEM = {
 
 // API Configuration
 export const API = {
-  PREFIX: "/api/v1",
+  PREFIX: '/api/v1',
   DEFAULT_PAGE_SIZE: 50,
   MAX_PAGE_SIZE: 500,
   RATE_LIMIT_WINDOW: 900000, // 15 minutes
@@ -30,8 +30,8 @@ export const DATABASE = {
 
 // Authentication
 export const AUTH = {
-  ACCESS_TOKEN_EXPIRY: "15m",
-  REFRESH_TOKEN_EXPIRY: "7d",
+  ACCESS_TOKEN_EXPIRY: '15m',
+  REFRESH_TOKEN_EXPIRY: '7d',
   PASSWORD_MIN_LENGTH: 8,
   PASSWORD_SALT_ROUNDS: 12,
   MAX_LOGIN_ATTEMPTS: 5,
@@ -53,14 +53,9 @@ export const WEBSOCKET = {
 // File Upload
 export const UPLOAD = {
   MAX_FILE_SIZE: 52428800, // 50MB
-  ALLOWED_IMAGE_TYPES: [
-    "image/jpeg",
-    "image/png",
-    "image/gif",
-    "image/svg+xml",
-  ],
-  ALLOWED_DOCUMENT_TYPES: ["application/pdf", "text/plain", "text/csv"],
-  TEMP_DIR: "/tmp/uploads",
+  ALLOWED_IMAGE_TYPES: ['image/jpeg', 'image/png', 'image/gif', 'image/svg+xml'],
+  ALLOWED_DOCUMENT_TYPES: ['application/pdf', 'text/plain', 'text/csv'],
+  TEMP_DIR: '/tmp/uploads',
 } as const;
 
 // Queue Configuration
@@ -70,14 +65,14 @@ export const QUEUE = {
     removeOnFail: false,
     attempts: 3,
     backoff: {
-      type: "exponential",
+      type: 'exponential',
       delay: 2000,
     },
   },
-  WORKFLOW_QUEUE: "workflow-execution",
-  EMAIL_QUEUE: "email-notifications",
-  WEBHOOK_QUEUE: "webhook-delivery",
-  ANALYTICS_QUEUE: "analytics-events",
+  WORKFLOW_QUEUE: 'workflow-execution',
+  EMAIL_QUEUE: 'email-notifications',
+  WEBHOOK_QUEUE: 'webhook-delivery',
+  ANALYTICS_QUEUE: 'analytics-events',
 } as const;
 
 // Error Codes
@@ -140,36 +135,36 @@ export const ERROR_CODES = {
 // Event Names
 export const EVENTS = {
   // Workflow events
-  WORKFLOW_CREATED: "workflow.created",
-  WORKFLOW_UPDATED: "workflow.updated",
-  WORKFLOW_DELETED: "workflow.deleted",
-  WORKFLOW_PUBLISHED: "workflow.published",
-  WORKFLOW_EXECUTED: "workflow.executed",
+  WORKFLOW_CREATED: 'workflow.created',
+  WORKFLOW_UPDATED: 'workflow.updated',
+  WORKFLOW_DELETED: 'workflow.deleted',
+  WORKFLOW_PUBLISHED: 'workflow.published',
+  WORKFLOW_EXECUTED: 'workflow.executed',
 
   // Execution events
-  EXECUTION_STARTED: "execution.started",
-  EXECUTION_COMPLETED: "execution.completed",
-  EXECUTION_FAILED: "execution.failed",
-  EXECUTION_CANCELLED: "execution.cancelled",
+  EXECUTION_STARTED: 'execution.started',
+  EXECUTION_COMPLETED: 'execution.completed',
+  EXECUTION_FAILED: 'execution.failed',
+  EXECUTION_CANCELLED: 'execution.cancelled',
 
   // User events
-  USER_CREATED: "user.created",
-  USER_UPDATED: "user.updated",
-  USER_DELETED: "user.deleted",
-  USER_LOGIN: "user.login",
-  USER_LOGOUT: "user.logout",
+  USER_CREATED: 'user.created',
+  USER_UPDATED: 'user.updated',
+  USER_DELETED: 'user.deleted',
+  USER_LOGIN: 'user.login',
+  USER_LOGOUT: 'user.logout',
 
   // Collaboration events
-  COLLABORATION_JOINED: "collaboration.joined",
-  COLLABORATION_LEFT: "collaboration.left",
-  COLLABORATION_CURSOR_MOVED: "collaboration.cursor_moved",
-  COLLABORATION_SELECTION_CHANGED: "collaboration.selection_changed",
+  COLLABORATION_JOINED: 'collaboration.joined',
+  COLLABORATION_LEFT: 'collaboration.left',
+  COLLABORATION_CURSOR_MOVED: 'collaboration.cursor_moved',
+  COLLABORATION_SELECTION_CHANGED: 'collaboration.selection_changed',
 } as const;
 
 // Regex Patterns
 export const PATTERNS = {
   EMAIL: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-  URL: /^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)$/,
+  URL: /^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)$/,
   SLUG: /^[a-z0-9]+(?:-[a-z0-9]+)*$/,
   UUID: /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i,
   CRON: /^(\*|([0-9]|1[0-9]|2[0-9]|3[0-9]|4[0-9]|5[0-9])|\*\/([0-9]|1[0-9]|2[0-9]|3[0-9]|4[0-9]|5[0-9])) (\*|([0-9]|1[0-9]|2[0-3])|\*\/([0-9]|1[0-9]|2[0-3])) (\*|([1-9]|1[0-9]|2[0-9]|3[0-1])|\*\/([1-9]|1[0-9]|2[0-9]|3[0-1])) (\*|([1-9]|1[0-2])|\*\/([1-9]|1[0-2])) (\*|([0-6])|\*\/([0-6]))$/,
@@ -178,67 +173,67 @@ export const PATTERNS = {
 // Node Types
 export const NODE_TYPES = {
   // Core node types
-  TRIGGER: "trigger",
-  ACTION: "action",
-  CONDITION: "condition",
-  TRANSFORM: "transform",
+  TRIGGER: 'trigger',
+  ACTION: 'action',
+  CONDITION: 'condition',
+  TRANSFORM: 'transform',
 
   // AI/ML nodes
-  AI_AGENT: "ai-agent",
-  EMBEDDING: "embedding",
-  VECTOR_STORE: "vector-store",
+  AI_AGENT: 'ai-agent',
+  EMBEDDING: 'embedding',
+  VECTOR_STORE: 'vector-store',
 
   // Communication nodes
-  GMAIL_TRIGGER: "gmail-trigger",
-  GMAIL_SEND: "gmail-send",
-  SLACK_SEND: "slack-send",
-  WEBHOOK: "webhook",
+  GMAIL_TRIGGER: 'gmail-trigger',
+  GMAIL_SEND: 'gmail-send',
+  SLACK_SEND: 'slack-send',
+  WEBHOOK: 'webhook',
 
   // Data nodes
-  DATABASE: "database",
-  FILE: "file",
-  TRANSFORM_DATA: "transform-data",
+  DATABASE: 'database',
+  FILE: 'file',
+  TRANSFORM_DATA: 'transform-data',
 
   // Flow control
-  DELAY: "delay",
-  LOOP: "loop",
-  BRANCH: "branch",
+  DELAY: 'delay',
+  LOOP: 'loop',
+  BRANCH: 'branch',
 } as const;
 
 export const AI_PROVIDERS = {
-  OPENAI: "openai",
-  ANTHROPIC: "anthropic",
-  GOOGLE: "google",
-  OLLAMA: "ollama",
-  MISTRAL: "mistral",
-  COHERE: "cohere",
+  OPENAI: 'openai',
+  ANTHROPIC: 'anthropic',
+  GOOGLE: 'google',
+  OLLAMA: 'ollama',
+  MISTRAL: 'mistral',
+  COHERE: 'cohere',
 } as const;
 
 export const NODE_CATEGORIES = {
-  TRIGGER: "trigger",
-  ACTION: "action",
-  LOGIC: "logic",
-  DATA: "data",
-  COMMUNICATION: "communication",
-  AI_ML: "ai-ml",
-  INTEGRATION: "integration",
-  UTILITY: "utility",
+  TRIGGER: 'trigger',
+  ACTION: 'action',
+  LOGIC: 'logic',
+  DATA: 'data',
+  COMMUNICATION: 'communication',
+  AI_ML: 'ai-ml',
+  INTEGRATION: 'integration',
+  UTILITY: 'utility',
 } as const;
 
 // Default Messages
 export const MESSAGES = {
   SUCCESS: {
-    CREATED: "Resource created successfully",
-    UPDATED: "Resource updated successfully",
-    DELETED: "Resource deleted successfully",
-    OPERATION_COMPLETED: "Operation completed successfully",
+    CREATED: 'Resource created successfully',
+    UPDATED: 'Resource updated successfully',
+    DELETED: 'Resource deleted successfully',
+    OPERATION_COMPLETED: 'Operation completed successfully',
   },
   ERROR: {
-    INTERNAL_ERROR: "An internal error occurred. Please try again later.",
-    UNAUTHORIZED: "You are not authorized to perform this action",
-    NOT_FOUND: "The requested resource was not found",
-    VALIDATION_FAILED: "Validation failed. Please check your input.",
-    RATE_LIMITED: "Too many requests. Please try again later.",
+    INTERNAL_ERROR: 'An internal error occurred. Please try again later.',
+    UNAUTHORIZED: 'You are not authorized to perform this action',
+    NOT_FOUND: 'The requested resource was not found',
+    VALIDATION_FAILED: 'Validation failed. Please check your input.',
+    RATE_LIMITED: 'Too many requests. Please try again later.',
   },
 } as const;
 

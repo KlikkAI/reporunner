@@ -1,7 +1,7 @@
-import { CredentialRepository } from '../repositories/CredentialRepository.js';
-import { GmailService } from '../../oauth/services/GmailService.js';
-import { AppError } from '../../../middleware/errorHandlers.js';
 import mongoose from 'mongoose';
+import { AppError } from '../../../middleware/errorHandlers.js';
+import { GmailService } from '../../oauth/services/GmailService.js';
+import { CredentialRepository } from '../repositories/CredentialRepository.js';
 
 export interface CreateCredentialData {
   name: string;
@@ -37,8 +37,14 @@ export class CredentialService {
    */
   async getCredentials(userId: string) {
     const credentials = await this.credentialRepository.findByUserId(userId);
-    console.log(`Found ${credentials.length} credentials for user ${userId}:`, 
-      credentials.map(c => ({ id: c._id, name: c.name, integration: c.integration, isActive: c.isActive }))
+    console.log(
+      `Found ${credentials.length} credentials for user ${userId}:`,
+      credentials.map((c) => ({
+        id: c._id,
+        name: c.name,
+        integration: c.integration,
+        isActive: c.isActive,
+      }))
     );
     return credentials;
   }
@@ -73,11 +79,14 @@ export class CredentialService {
     if (this.isValidObjectId(id)) {
       credential = await this.credentialRepository.findByIdAndUserId(id, userId);
     }
-    
+
     // No custom field to check - only MongoDB _id exists
     if (!credential) {
       if (!this.isValidObjectId(id)) {
-        throw new AppError(`Invalid credential ID format: ${id}. This appears to be a temporary ID. Please refresh and try again.`, 400);
+        throw new AppError(
+          `Invalid credential ID format: ${id}. This appears to be a temporary ID. Please refresh and try again.`,
+          400
+        );
       } else {
         throw new AppError('Credential not found', 404);
       }
@@ -96,11 +105,14 @@ export class CredentialService {
     if (this.isValidObjectId(id)) {
       credential = await this.credentialRepository.findOneAndDelete(id, userId);
     }
-    
+
     // No custom field to check - only MongoDB _id exists
     if (!credential) {
       if (!this.isValidObjectId(id)) {
-        throw new AppError(`Invalid credential ID format: ${id}. This appears to be a temporary ID. Please refresh and try again.`, 400);
+        throw new AppError(
+          `Invalid credential ID format: ${id}. This appears to be a temporary ID. Please refresh and try again.`,
+          400
+        );
       } else {
         throw new AppError('Credential not found', 404);
       }
@@ -116,11 +128,14 @@ export class CredentialService {
     if (this.isValidObjectId(id)) {
       credential = await this.credentialRepository.findByIdAndUserIdWithData(id, userId);
     }
-    
+
     // No custom field to check - only MongoDB _id exists
     if (!credential) {
       if (!this.isValidObjectId(id)) {
-        throw new AppError(`Invalid credential ID format: ${id}. This appears to be a temporary ID. Please refresh and try again.`, 400);
+        throw new AppError(
+          `Invalid credential ID format: ${id}. This appears to be a temporary ID. Please refresh and try again.`,
+          400
+        );
       } else {
         throw new AppError('Credential not found', 404);
       }
@@ -129,7 +144,7 @@ export class CredentialService {
     let testResult = {
       success: false,
       message: 'Connection test failed',
-      details: {}
+      details: {},
     };
 
     try {
@@ -144,7 +159,7 @@ export class CredentialService {
             testResult = {
               success: false,
               message: `OAuth2 testing not implemented for integration: ${credential.integration}`,
-              details: {}
+              details: {},
             };
           }
           break;
@@ -173,18 +188,17 @@ export class CredentialService {
           testResult = {
             success: false,
             message: `Testing not implemented for credential type: ${credential.type}`,
-            details: {}
+            details: {},
           };
       }
 
       // Update credential with test result
       await this.credentialRepository.updateTestResult(id, testResult.success);
-
     } catch (error: any) {
       testResult = {
         success: false,
         message: error.message || 'Credential test failed',
-        details: { error: error.toString() }
+        details: { error: error.toString() },
       };
     }
 
@@ -199,10 +213,10 @@ export class CredentialService {
 
     // Debug: Check what credentials exist
     console.log('Looking for credential with:', { id, userId, integration: 'gmailOAuth2' });
-    
+
     const allCredentials = await this.credentialRepository.findAllDebug();
     console.log('All credentials in database:', allCredentials);
-    
+
     const userCredentials = await this.credentialRepository.findByUserId(userId);
     console.log('User credentials:', userCredentials);
 
@@ -211,18 +225,20 @@ export class CredentialService {
     if (this.isValidObjectId(id)) {
       credential = await this.credentialRepository.findGmailCredential(id, userId);
     }
-    
+
     // No custom field to check - only MongoDB _id exists
     if (!credential) {
       // Try to find any credential with this ID regardless of other criteria
       const anyCredential = await this.credentialRepository.findById(id);
       console.log('Credential with this ID exists:', anyCredential);
-      
+
       // If specific ID not found, try to find any active Gmail credential for this user
       credential = await this.credentialRepository.findActiveGmailCredential(userId);
-      
+
       if (credential) {
-        console.log(`Using alternative Gmail credential: ${credential._id} instead of requested ${id}`);
+        console.log(
+          `Using alternative Gmail credential: ${credential._id} instead of requested ${id}`
+        );
       } else {
         throw new AppError('No Gmail credentials found for this user', 404);
       }
@@ -236,7 +252,7 @@ export class CredentialService {
       const gmailService = new GmailService({
         clientId: decryptedData.clientId,
         clientSecret: decryptedData.clientSecret,
-        refreshToken: decryptedData.refreshToken
+        refreshToken: decryptedData.refreshToken,
       });
 
       // Build Gmail query from filters
@@ -260,7 +276,7 @@ export class CredentialService {
       await this.credentialRepository.markAsUsed(credential._id);
 
       return {
-        data: messages.map(msg => ({
+        data: messages.map((msg) => ({
           id: msg.id,
           threadId: msg.threadId,
           from: msg.from,
@@ -270,21 +286,17 @@ export class CredentialService {
           date: msg.date,
           isUnread: msg.isUnread,
           labels: msg.labels,
-          hasAttachments: (msg.attachments?.length || 0) > 0
+          hasAttachments: (msg.attachments?.length || 0) > 0,
         })),
         meta: {
           count: messages.length,
           query: query.trim() || 'all messages',
-          credentialName: credential.name
-        }
+          credentialName: credential.name,
+        },
       };
-
     } catch (error: any) {
       console.error('Gmail test error:', error);
-      throw new AppError(
-        `Failed to fetch Gmail messages: ${error.message}`,
-        500
-      );
+      throw new AppError(`Failed to fetch Gmail messages: ${error.message}`, 500);
     }
   }
 
@@ -299,13 +311,10 @@ export class CredentialService {
       throw new Error('Missing required Gmail OAuth2 credentials');
     }
 
-    const oauth2Client = new google.auth.OAuth2(
-      clientId,
-      clientSecret
-    );
+    const oauth2Client = new google.auth.OAuth2(clientId, clientSecret);
 
     oauth2Client.setCredentials({
-      refresh_token: refreshToken
+      refresh_token: refreshToken,
     });
 
     try {
@@ -319,7 +328,7 @@ export class CredentialService {
       // Test basic functionality by listing a few messages
       const messages = await gmail.users.messages.list({
         userId: 'me',
-        maxResults: 1
+        maxResults: 1,
       });
 
       return {
@@ -329,8 +338,8 @@ export class CredentialService {
           emailAddress: profile.data.emailAddress,
           messagesTotal: profile.data.messagesTotal,
           threadsTotal: profile.data.threadsTotal,
-          canReadMessages: messages.data.messages ? messages.data.messages.length >= 0 : false
-        }
+          canReadMessages: messages.data.messages ? messages.data.messages.length >= 0 : false,
+        },
       };
     } catch (error: any) {
       console.error('Gmail credential test error:', error);
@@ -339,8 +348,8 @@ export class CredentialService {
         message: `Gmail connection failed: ${error.message}`,
         details: {
           error: error.message,
-          code: error.code
-        }
+          code: error.code,
+        },
       };
     }
   }
@@ -359,7 +368,7 @@ export class CredentialService {
       const response = await fetch('https://api.openai.com/v1/models', {
         method: 'GET',
         headers: {
-          'Authorization': `Bearer ${apiKey}`,
+          Authorization: `Bearer ${apiKey}`,
           ...(organizationId && { 'OpenAI-Organization': organizationId }),
           'Content-Type': 'application/json',
         },
@@ -367,7 +376,9 @@ export class CredentialService {
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error?.message || `HTTP ${response.status}: ${response.statusText}`);
+        throw new Error(
+          errorData.error?.message || `HTTP ${response.status}: ${response.statusText}`
+        );
       }
 
       const data = await response.json();
@@ -379,14 +390,14 @@ export class CredentialService {
         details: {
           modelCount,
           organizationId: organizationId || 'personal',
-          hasGPT4: data.data?.some((model: any) => model.id.includes('gpt-4')) || false
-        }
+          hasGPT4: data.data?.some((model: any) => model.id.includes('gpt-4')) || false,
+        },
       };
     } catch (error: any) {
       return {
         success: false,
         message: `OpenAI API connection failed: ${error.message}`,
-        details: { error: error.message }
+        details: { error: error.message },
       };
     }
   }
@@ -408,18 +419,20 @@ export class CredentialService {
         headers: {
           'x-api-key': apiKey,
           'Content-Type': 'application/json',
-          'anthropic-version': '2023-06-01'
+          'anthropic-version': '2023-06-01',
         },
         body: JSON.stringify({
           model: 'claude-3-haiku-20240307',
           max_tokens: 10,
-          messages: [{ role: 'user', content: 'Test' }]
-        })
+          messages: [{ role: 'user', content: 'Test' }],
+        }),
       });
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error?.message || `HTTP ${response.status}: ${response.statusText}`);
+        throw new Error(
+          errorData.error?.message || `HTTP ${response.status}: ${response.statusText}`
+        );
       }
 
       const data = await response.json();
@@ -429,14 +442,14 @@ export class CredentialService {
         message: 'Anthropic API connection successful',
         details: {
           model: data.model || 'claude-3-haiku-20240307',
-          usage: data.usage || {}
-        }
+          usage: data.usage || {},
+        },
       };
     } catch (error: any) {
       return {
         success: false,
         message: `Anthropic API connection failed: ${error.message}`,
-        details: { error: error.message }
+        details: { error: error.message },
       };
     }
   }
@@ -453,26 +466,32 @@ export class CredentialService {
 
     try {
       // First, list available models to use the correct one
-      const modelsResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
+      const modelsResponse = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
         }
-      });
+      );
 
       if (!modelsResponse.ok) {
         const errorData = await modelsResponse.json().catch(() => ({}));
-        throw new Error(errorData.error?.message || `HTTP ${modelsResponse.status}: ${modelsResponse.statusText}`);
+        throw new Error(
+          errorData.error?.message || `HTTP ${modelsResponse.status}: ${modelsResponse.statusText}`
+        );
       }
 
       const modelsData = await modelsResponse.json();
       const availableModels = modelsData.models || [];
-      
+
       // Find a suitable model for generation (prefer gemini-1.5-flash or gemini-1.0-pro)
-      const suitableModel = availableModels.find((model: any) => 
-        model.name.includes('gemini-1.5-flash') || 
-        model.name.includes('gemini-1.0-pro') ||
-        model.name.includes('gemini-pro')
+      const suitableModel = availableModels.find(
+        (model: any) =>
+          model.name.includes('gemini-1.5-flash') ||
+          model.name.includes('gemini-1.0-pro') ||
+          model.name.includes('gemini-pro')
       );
 
       if (!suitableModel) {
@@ -481,31 +500,38 @@ export class CredentialService {
           message: 'Google AI API connection successful (model list accessible)',
           details: {
             availableModels: availableModels.map((m: any) => m.name).slice(0, 5),
-            modelCount: availableModels.length
-          }
+            modelCount: availableModels.length,
+          },
         };
       }
 
       // Test with a simple generation request using the found model
       const modelName = suitableModel.name.replace('models/', '');
-      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          contents: [{
-            parts: [{ text: 'Hello' }]
-          }],
-          generationConfig: {
-            maxOutputTokens: 5
-          }
-        })
-      });
+      const response = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            contents: [
+              {
+                parts: [{ text: 'Hello' }],
+              },
+            ],
+            generationConfig: {
+              maxOutputTokens: 5,
+            },
+          }),
+        }
+      );
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error?.message || `HTTP ${response.status}: ${response.statusText}`);
+        throw new Error(
+          errorData.error?.message || `HTTP ${response.status}: ${response.statusText}`
+        );
       }
 
       const data = await response.json();
@@ -516,14 +542,14 @@ export class CredentialService {
         details: {
           model: modelName,
           candidateCount: data.candidates?.length || 0,
-          availableModels: availableModels.length
-        }
+          availableModels: availableModels.length,
+        },
       };
     } catch (error: any) {
       return {
         success: false,
         message: `Google AI API connection failed: ${error.message}`,
-        details: { error: error.message }
+        details: { error: error.message },
       };
     }
   }
@@ -551,7 +577,9 @@ export class CredentialService {
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error?.message || `HTTP ${response.status}: ${response.statusText}`);
+        throw new Error(
+          errorData.error?.message || `HTTP ${response.status}: ${response.statusText}`
+        );
       }
 
       const data = await response.json();
@@ -564,14 +592,14 @@ export class CredentialService {
           endpoint,
           apiVersion,
           deploymentCount,
-          deployments: data.data?.map((d: any) => d.id) || []
-        }
+          deployments: data.data?.map((d: any) => d.id) || [],
+        },
       };
     } catch (error: any) {
       return {
         success: false,
         message: `Azure OpenAI API connection failed: ${error.message}`,
-        details: { error: error.message }
+        details: { error: error.message },
       };
     }
   }
@@ -590,11 +618,11 @@ export class CredentialService {
       // For now, we'll just validate the format and structure
       // In a production environment, you'd want to make an actual AWS SDK call
       // to test the credentials with Bedrock service
-      
+
       if (!accessKeyId.startsWith('AKIA') && !accessKeyId.startsWith('ASIA')) {
         throw new Error('Invalid AWS Access Key ID format');
       }
-      
+
       if (secretAccessKey.length !== 40) {
         throw new Error('Invalid AWS Secret Access Key format');
       }
@@ -602,21 +630,21 @@ export class CredentialService {
       // Mock successful response for now
       // In production, use AWS SDK to test actual connectivity:
       // const { BedrockClient, ListFoundationModelsCommand } = require("@aws-sdk/client-bedrock");
-      
+
       return {
         success: true,
         message: 'AWS Bedrock credentials format validated',
         details: {
           region,
           accessKeyId: accessKeyId.substring(0, 10) + '...',
-          note: 'Credential format validated. Actual API testing requires AWS SDK integration.'
-        }
+          note: 'Credential format validated. Actual API testing requires AWS SDK integration.',
+        },
       };
     } catch (error: any) {
       return {
         success: false,
         message: `AWS Bedrock credential validation failed: ${error.message}`,
-        details: { error: error.message }
+        details: { error: error.message },
       };
     }
   }

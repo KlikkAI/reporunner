@@ -1,26 +1,25 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // Execution Toolbar Component - Controls for running workflows
-import React, { useState } from "react";
-import { Button, Space, Dropdown, Badge, message } from "antd";
+
 import {
-  PlayCircleOutlined,
-  StopOutlined,
   BugOutlined,
-  SaveOutlined,
+  DownOutlined,
   ExportOutlined,
   HistoryOutlined,
+  PlayCircleOutlined,
+  SaveOutlined,
   SettingOutlined,
-  DownOutlined,
-} from "@ant-design/icons";
-import { WorkflowApiService } from "@/core";
-import {
-  exportWorkflowToBackend,
-  validateWorkflowForExport,
-} from "@/core/utils/workflowExporter";
-import { WorkflowTester } from "../WorkflowTester/WorkflowTester";
-import { ExecutionHistory } from "../ExecutionHistory/ExecutionHistory";
-import type { Node, Edge } from "reactflow";
-import type { WorkflowExecution } from "@/core/schemas";
+  StopOutlined,
+} from '@ant-design/icons';
+import { Badge, Button, Dropdown, message, Space } from 'antd';
+import type React from 'react';
+import { useState } from 'react';
+import type { Edge, Node } from 'reactflow';
+import { WorkflowApiService } from '@/core';
+import type { WorkflowExecution } from '@/core/schemas';
+import { exportWorkflowToBackend, validateWorkflowForExport } from '@/core/utils/workflowExporter';
+import { ExecutionHistory } from '../ExecutionHistory/ExecutionHistory';
+import { WorkflowTester } from '../WorkflowTester/WorkflowTester';
 
 const workflowApiService = new WorkflowApiService();
 
@@ -44,7 +43,7 @@ export const ExecutionToolbar: React.FC<ExecutionToolbarProps> = ({
   const [showHistory, setShowHistory] = useState(false);
   const [, setSaving] = useState(false);
 
-  const isRunning = currentExecution?.status === "running";
+  const isRunning = currentExecution?.status === 'running';
   const canRun = nodes.length > 0 && !isRunning;
 
   const handleTest = () => {
@@ -57,12 +56,12 @@ export const ExecutionToolbar: React.FC<ExecutionToolbarProps> = ({
     // Validate workflow first
     const validation = validateWorkflowForExport(nodes, edges);
     if (!validation.isValid) {
-      message.error(`Cannot run workflow: ${validation.errors.join(", ")}`);
+      message.error(`Cannot run workflow: ${validation.errors.join(', ')}`);
       return;
     }
 
     if (validation.warnings.length > 0) {
-      message.warning(`Warnings: ${validation.warnings.join(", ")}`);
+      message.warning(`Warnings: ${validation.warnings.join(', ')}`);
     }
 
     try {
@@ -77,7 +76,7 @@ export const ExecutionToolbar: React.FC<ExecutionToolbarProps> = ({
         },
       });
 
-      message.success("Workflow execution started");
+      message.success('Workflow execution started');
       onExecutionStart?.(execution.id);
     } catch (error: any) {
       message.error(`Failed to start workflow: ${error.message}`);
@@ -91,7 +90,7 @@ export const ExecutionToolbar: React.FC<ExecutionToolbarProps> = ({
 
     try {
       await workflowApiService.stopExecution(currentExecution.id);
-      message.success("Workflow execution stopped");
+      message.success('Workflow execution stopped');
       onExecutionStop?.();
     } catch (error: any) {
       message.error(`Failed to stop workflow: ${error.message}`);
@@ -100,7 +99,7 @@ export const ExecutionToolbar: React.FC<ExecutionToolbarProps> = ({
 
   const handleSave = async () => {
     if (nodes.length === 0) {
-      message.warning("Cannot save empty workflow");
+      message.warning('Cannot save empty workflow');
       return;
     }
 
@@ -110,7 +109,7 @@ export const ExecutionToolbar: React.FC<ExecutionToolbarProps> = ({
 
       await workflowApiService.createWorkflow({
         name: `Workflow ${new Date().toLocaleDateString()}`,
-        description: "Saved from workflow editor",
+        description: 'Saved from workflow editor',
         nodes: workflowJson.nodes.map((node) => ({
           id: node.id,
           type: node.type,
@@ -119,7 +118,7 @@ export const ExecutionToolbar: React.FC<ExecutionToolbarProps> = ({
             label: node.name,
             parameters: node.parameters,
             credentials:
-              typeof node.credentials === "object" && node.credentials
+              typeof node.credentials === 'object' && node.credentials
                 ? Object.keys(node.credentials)[0] || undefined
                 : (node.credentials as string | undefined),
             disabled: node.disabled,
@@ -129,10 +128,10 @@ export const ExecutionToolbar: React.FC<ExecutionToolbarProps> = ({
         edges: [], // Convert connections to edges if needed
         version: 1,
         isActive: true,
-        tags: ["editor"],
+        tags: ['editor'],
       });
 
-      message.success("Workflow saved successfully");
+      message.success('Workflow saved successfully');
     } catch (error: any) {
       message.error(`Failed to save workflow: ${error.message}`);
     } finally {
@@ -142,17 +141,17 @@ export const ExecutionToolbar: React.FC<ExecutionToolbarProps> = ({
 
   const handleExport = () => {
     if (nodes.length === 0) {
-      message.warning("Cannot export empty workflow");
+      message.warning('Cannot export empty workflow');
       return;
     }
 
     try {
       const workflowJson = exportWorkflowToBackend(nodes, edges);
       const blob = new Blob([JSON.stringify(workflowJson, null, 2)], {
-        type: "application/json",
+        type: 'application/json',
       });
       const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
+      const a = document.createElement('a');
       a.href = url;
       a.download = `workflow-${Date.now()}.json`;
       document.body.appendChild(a);
@@ -160,7 +159,7 @@ export const ExecutionToolbar: React.FC<ExecutionToolbarProps> = ({
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
 
-      message.success("Workflow exported successfully");
+      message.success('Workflow exported successfully');
     } catch (error: any) {
       message.error(`Failed to export workflow: ${error.message}`);
     }
@@ -168,15 +167,15 @@ export const ExecutionToolbar: React.FC<ExecutionToolbarProps> = ({
 
   const runMenuItems = [
     {
-      key: "run",
-      label: "Run Workflow",
+      key: 'run',
+      label: 'Run Workflow',
       icon: <PlayCircleOutlined />,
       onClick: handleRun,
       disabled: !canRun,
     },
     {
-      key: "test",
-      label: "Test Workflow",
+      key: 'test',
+      label: 'Test Workflow',
       icon: <BugOutlined />,
       onClick: handleTest,
     },
@@ -184,20 +183,20 @@ export const ExecutionToolbar: React.FC<ExecutionToolbarProps> = ({
 
   const moreMenuItems = [
     {
-      key: "save",
-      label: "Save Workflow",
+      key: 'save',
+      label: 'Save Workflow',
       icon: <SaveOutlined />,
       onClick: handleSave,
     },
     {
-      key: "export",
-      label: "Export JSON",
+      key: 'export',
+      label: 'Export JSON',
       icon: <ExportOutlined />,
       onClick: handleExport,
     },
     {
-      key: "history",
-      label: "Execution History",
+      key: 'history',
+      label: 'Execution History',
       icon: <HistoryOutlined />,
       onClick: () => setShowHistory(true),
     },
@@ -209,26 +208,16 @@ export const ExecutionToolbar: React.FC<ExecutionToolbarProps> = ({
         <Space>
           {/* Primary execution controls */}
           {isRunning ? (
-            <Button
-              danger
-              icon={<StopOutlined />}
-              onClick={handleStop}
-              size="small"
-            >
+            <Button danger icon={<StopOutlined />} onClick={handleStop} size="small">
               Stop
             </Button>
           ) : (
             <Dropdown
               menu={{ items: runMenuItems }}
-              trigger={["click"]}
+              trigger={['click']}
               disabled={nodes.length === 0}
             >
-              <Button
-                type="primary"
-                icon={<PlayCircleOutlined />}
-                loading={testing}
-                size="small"
-              >
+              <Button type="primary" icon={<PlayCircleOutlined />} loading={testing} size="small">
                 Run <DownOutlined />
               </Button>
             </Dropdown>
@@ -248,17 +237,17 @@ export const ExecutionToolbar: React.FC<ExecutionToolbarProps> = ({
           {currentExecution && (
             <Badge
               status={
-                currentExecution.status === "running"
-                  ? "processing"
-                  : currentExecution.status === "completed"
-                    ? "success"
-                    : currentExecution.status === "failed"
-                      ? "error"
-                      : "default"
+                currentExecution.status === 'running'
+                  ? 'processing'
+                  : currentExecution.status === 'completed'
+                    ? 'success'
+                    : currentExecution.status === 'failed'
+                      ? 'error'
+                      : 'default'
               }
               text={
                 <span className="text-sm">
-                  {currentExecution.status === "running"
+                  {currentExecution.status === 'running'
                     ? `Running (${(currentExecution as any).progress?.completedNodes?.length || 0}/${(currentExecution as any).progress?.totalNodes || 0})`
                     : `${currentExecution.status} - ${Math.round((currentExecution.duration || 0) / 1000)}s`}
                 </span>
@@ -274,7 +263,7 @@ export const ExecutionToolbar: React.FC<ExecutionToolbarProps> = ({
           </span>
 
           {/* More actions */}
-          <Dropdown menu={{ items: moreMenuItems }} trigger={["click"]}>
+          <Dropdown menu={{ items: moreMenuItems }} trigger={['click']}>
             <Button icon={<SettingOutlined />} size="small">
               <DownOutlined />
             </Button>
@@ -284,17 +273,11 @@ export const ExecutionToolbar: React.FC<ExecutionToolbarProps> = ({
 
       {/* Workflow Tester Modal */}
       {showTester && (
-        <WorkflowTester
-          nodes={nodes}
-          edges={edges}
-          onClose={() => setShowTester(false)}
-        />
+        <WorkflowTester nodes={nodes} edges={edges} onClose={() => setShowTester(false)} />
       )}
 
       {/* Execution History Modal */}
-      {showHistory && (
-        <ExecutionHistory onClose={() => setShowHistory(false)} />
-      )}
+      {showHistory && <ExecutionHistory onClose={() => setShowHistory(false)} />}
     </div>
   );
 };

@@ -1,8 +1,8 @@
-import { Request, Response } from 'express';
+import type { Request, Response } from 'express';
 import { validationResult } from 'express-validator';
+import { type IAuthenticatedRequest, IController } from '../interfaces/IController.js';
+import type { IApiResponse } from '../interfaces/IService.js';
 import { AppError } from '../middleware/errorHandlers.js';
-import { IController, IAuthenticatedRequest } from '../interfaces/IController.js';
-import { IApiResponse } from '../interfaces/IService.js';
 
 export abstract class BaseController {
   /**
@@ -12,7 +12,10 @@ export abstract class BaseController {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       throw new AppError(
-        `Validation failed: ${errors.array().map(e => e.msg).join(', ')}`, 
+        `Validation failed: ${errors
+          .array()
+          .map((e) => e.msg)
+          .join(', ')}`,
         400
       );
     }
@@ -37,7 +40,7 @@ export abstract class BaseController {
       success: true,
       ...(message && { message }),
       ...(data && { data }),
-      ...(meta && { meta })
+      ...(meta && { meta }),
     };
     res.json(response);
   }
@@ -49,7 +52,7 @@ export abstract class BaseController {
     const response: IApiResponse<T> = {
       success: true,
       message,
-      data
+      data,
     };
     res.status(201).json(response);
   }
@@ -60,7 +63,7 @@ export abstract class BaseController {
   protected sendError(res: Response, message: string, statusCode: number = 500): void {
     const response: IApiResponse = {
       success: false,
-      message
+      message,
     };
     res.status(statusCode).json(response);
   }

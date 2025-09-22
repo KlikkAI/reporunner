@@ -1,20 +1,18 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import type { INodeType, INodeTypeDescription, ICredentialType } from "./types";
-import type {
-  EnhancedIntegrationNodeType,
-  PropertyFormState,
-} from "../types/dynamicProperties";
+
+import type { EnhancedIntegrationNodeType, PropertyFormState } from '../types/dynamicProperties';
+import type { ICredentialType, INodeType, INodeTypeDescription } from './types';
 
 /**
  * Enterprise-Grade Registry Interfaces
  */
 interface NodeCapabilityDefinition {
   id: string;
-  supportedModes: ("trigger" | "action" | "webhook" | "poll")[];
+  supportedModes: ('trigger' | 'action' | 'webhook' | 'poll')[];
   resources: string[];
   operations: Record<string, string[]>;
   contextAware: boolean;
-  scalingProfile: "light" | "standard" | "enterprise";
+  scalingProfile: 'light' | 'standard' | 'enterprise';
   tenantIsolation: boolean;
 }
 
@@ -36,7 +34,7 @@ export interface WorkflowContext {
 }
 
 export interface ResolvedContext {
-  mode: "trigger" | "action" | "webhook" | "poll";
+  mode: 'trigger' | 'action' | 'webhook' | 'poll';
   resource: string;
   operation?: string;
   properties: any[];
@@ -80,8 +78,7 @@ class NodeRegistry {
 
   // Core Registry Maps
   private nodeTypes: Map<string, INodeType> = new Map();
-  private enhancedNodeTypes: Map<string, EnhancedIntegrationNodeType> =
-    new Map();
+  private enhancedNodeTypes: Map<string, EnhancedIntegrationNodeType> = new Map();
   private credentialTypes: Map<string, ICredentialType> = new Map();
   private categories: Set<string> = new Set();
 
@@ -116,7 +113,7 @@ class NodeRegistry {
    */
   private initializeEnterpriseFeatures(): void {
     // Initialize default tenant
-    this.tenantRegistries.set("default", new Map());
+    this.tenantRegistries.set('default', new Map());
 
     // Set up performance monitoring
     this.setupPerformanceMonitoring();
@@ -124,7 +121,7 @@ class NodeRegistry {
     // Initialize feature flags
     this.initializeFeatureFlags();
 
-    console.log("🚀 Enterprise NodeRegistry initialized");
+    console.log('🚀 Enterprise NodeRegistry initialized');
   }
 
   /**
@@ -151,9 +148,7 @@ class NodeRegistry {
   public registerCredentialType(credentialType: ICredentialType): void {
     const { name } = credentialType;
     if (this.credentialTypes.has(name)) {
-      console.warn(
-        `Credential type "${name}" is already registered. Overwriting...`,
-      );
+      console.warn(`Credential type "${name}" is already registered. Overwriting...`);
     }
     this.credentialTypes.set(name, credentialType);
   }
@@ -172,9 +167,7 @@ class NodeRegistry {
    * @param typeName The name of the node type
    * @returns The node type description or undefined if not found
    */
-  public getNodeTypeDescription(
-    typeName: string,
-  ): INodeTypeDescription | undefined {
+  public getNodeTypeDescription(typeName: string): INodeTypeDescription | undefined {
     // First try regular node types
     const regularNode = this.nodeTypes.get(typeName);
     if (regularNode) {
@@ -187,19 +180,19 @@ class NodeRegistry {
       return {
         displayName: enhancedNode.displayName || enhancedNode.name,
         name: enhancedNode.name,
-        icon: enhancedNode.icon || "fa:envelope",
-        group: [enhancedNode.type === "trigger" ? "trigger" : "transform"],
+        icon: enhancedNode.icon || 'fa:envelope',
+        group: [enhancedNode.type === 'trigger' ? 'trigger' : 'transform'],
         version: 1,
-        description: enhancedNode.description || "",
+        description: enhancedNode.description || '',
         defaults: {
           name: enhancedNode.displayName || enhancedNode.name,
-          color: (enhancedNode as any).color || "#DD4B39",
+          color: (enhancedNode as any).color || '#DD4B39',
         },
-        inputs: (enhancedNode.inputs || [{ type: "main" }]).map((input) =>
-          typeof input === "string" ? input : input.type || "main",
+        inputs: (enhancedNode.inputs || [{ type: 'main' }]).map((input) =>
+          typeof input === 'string' ? input : input.type || 'main'
         ),
-        outputs: (enhancedNode.outputs || [{ type: "main" }]).map((output) =>
-          typeof output === "string" ? output : output.type || "main",
+        outputs: (enhancedNode.outputs || [{ type: 'main' }]).map((output) =>
+          typeof output === 'string' ? output : output.type || 'main'
         ),
         categories: enhancedNode.codex?.categories || [],
         properties: [], // Enhanced nodes use different property system
@@ -236,7 +229,7 @@ class NodeRegistry {
   public getAllNodeTypeDescriptions(): INodeTypeDescription[] {
     // Get regular node descriptions
     const regularNodes = Array.from(this.nodeTypes.values()).map(
-      (nodeType) => nodeType.description,
+      (nodeType) => nodeType.description
     );
 
     // Get enhanced node descriptions (convert to INodeTypeDescription format)
@@ -244,26 +237,26 @@ class NodeRegistry {
       (enhancedNode): INodeTypeDescription => ({
         displayName: enhancedNode.displayName || enhancedNode.name,
         name: enhancedNode.name,
-        icon: enhancedNode.icon || "fa:envelope",
-        group: [enhancedNode.type === "trigger" ? "trigger" : "transform"],
+        icon: enhancedNode.icon || 'fa:envelope',
+        group: [enhancedNode.type === 'trigger' ? 'trigger' : 'transform'],
         version: 1,
-        description: enhancedNode.description || "",
+        description: enhancedNode.description || '',
         defaults: {
           name: enhancedNode.displayName || enhancedNode.name,
-          color: (enhancedNode as any).color || "#DD4B39",
+          color: (enhancedNode as any).color || '#DD4B39',
         },
-        inputs: (enhancedNode.inputs || [{ type: "main" }]).map((input) =>
-          typeof input === "string" ? input : input.type || "main",
+        inputs: (enhancedNode.inputs || [{ type: 'main' }]).map((input) =>
+          typeof input === 'string' ? input : input.type || 'main'
         ),
-        outputs: (enhancedNode.outputs || [{ type: "main" }]).map((output) =>
-          typeof output === "string" ? output : output.type || "main",
+        outputs: (enhancedNode.outputs || [{ type: 'main' }]).map((output) =>
+          typeof output === 'string' ? output : output.type || 'main'
         ),
         categories: enhancedNode.codex?.categories || [],
         properties: [], // Enhanced nodes use different property system
         // Preserve custom UI components from enhanced nodes
         customBodyComponent: (enhancedNode as any).customBodyComponent,
         // customPropertiesPanel: (enhancedNode as any).customPropertiesPanel,
-      }),
+      })
     );
 
     return [...regularNodes, ...enhancedNodes];
@@ -287,7 +280,7 @@ class NodeRegistry {
   public async testNodeType(
     typeName: string,
     parameters: Record<string, any> = {},
-    credentials: Record<string, any> = {},
+    credentials: Record<string, any> = {}
   ): Promise<{ success: boolean; message: string; data?: any }> {
     const nodeType = this.nodeTypes.get(typeName);
     if (!nodeType) {
@@ -308,7 +301,7 @@ class NodeRegistry {
       // Create a mock context for the test method
       const mockContext = {
         getNodeParameter: (name: string, defaultValue?: any) => {
-          const keys = name.split(".");
+          const keys = name.split('.');
           let value = parameters;
           for (const key of keys) {
             value = value?.[key];
@@ -336,7 +329,7 @@ class NodeRegistry {
    */
   public getNodeTypesByCategory(category: string): INodeType[] {
     return Array.from(this.nodeTypes.values()).filter((nodeType) =>
-      nodeType.description.categories?.includes(category),
+      nodeType.description.categories?.includes(category)
     );
   }
 
@@ -405,9 +398,7 @@ class NodeRegistry {
    * @param nodeId The node type ID to get
    * @returns Enhanced node type or undefined if not found
    */
-  public getEnhancedNodeTypeSync(
-    nodeId: string,
-  ): EnhancedIntegrationNodeType | undefined {
+  public getEnhancedNodeTypeSync(nodeId: string): EnhancedIntegrationNodeType | undefined {
     return this.enhancedNodeTypes.get(nodeId);
   }
 
@@ -421,12 +412,10 @@ class NodeRegistry {
       enhancedNodeTypesCount: this.enhancedNodeTypes.size,
       credentialTypesCount: this.credentialTypes.size,
       categoriesCount: this.categories.size,
-      triggerNodes: this.getAllNodeTypes().filter((n) =>
-        n.description.group.includes("trigger"),
-      ).length,
-      actionNodes: this.getAllNodeTypes().filter(
-        (n) => !n.description.group.includes("trigger"),
-      ).length,
+      triggerNodes: this.getAllNodeTypes().filter((n) => n.description.group.includes('trigger'))
+        .length,
+      actionNodes: this.getAllNodeTypes().filter((n) => !n.description.group.includes('trigger'))
+        .length,
       tenantCount: this.tenantRegistries.size,
       featureFlagsCount: this.featureFlags.size,
       registryVersion: this.registryVersion,
@@ -443,7 +432,7 @@ class NodeRegistry {
    */
   public registerEnhancedNodeType(
     nodeType: EnhancedIntegrationNodeType,
-    tenantId = "default",
+    tenantId = 'default'
   ): void {
     // Register in enhanced registry
     this.enhancedNodeTypes.set(nodeType.id, nodeType);
@@ -455,7 +444,7 @@ class NodeRegistry {
       resources: this.extractResources(nodeType),
       operations: this.extractOperations(nodeType),
       contextAware: true,
-      scalingProfile: "enterprise",
+      scalingProfile: 'enterprise',
       tenantIsolation: true,
     });
 
@@ -469,13 +458,10 @@ class NodeRegistry {
     this.registryVersion++;
     this.lastUpdate = Date.now();
 
-    console.log(
-      `🚀 Registered enhanced node: ${nodeType.displayName} (${nodeType.id})`,
-      {
-        modes: this.deriveNodeModes(nodeType),
-        tenant: tenantId,
-      },
-    );
+    console.log(`🚀 Registered enhanced node: ${nodeType.displayName} (${nodeType.id})`, {
+      modes: this.deriveNodeModes(nodeType),
+      tenant: tenantId,
+    });
   }
 
   /**
@@ -484,12 +470,11 @@ class NodeRegistry {
   public async getEnhancedNodeType(
     nodeId: string,
     context?: WorkflowContext,
-    tenantId = "default",
+    tenantId = 'default'
   ): Promise<EnhancedIntegrationNodeType | undefined> {
     // Tenant-aware lookup
     const tenantRegistry = this.tenantRegistries.get(tenantId);
-    let nodeType =
-      tenantRegistry?.get(nodeId) || this.enhancedNodeTypes.get(nodeId);
+    let nodeType = tenantRegistry?.get(nodeId) || this.enhancedNodeTypes.get(nodeId);
 
     if (!nodeType || !context) {
       return nodeType;
@@ -509,45 +494,32 @@ class NodeRegistry {
    */
   public detectNodeMode(
     nodeId: string,
-    context: WorkflowContext,
-  ): "trigger" | "action" | "webhook" | "poll" {
+    context: WorkflowContext
+  ): 'trigger' | 'action' | 'webhook' | 'poll' {
     // Check capabilities
     const capabilities = this.nodeCapabilities.get(nodeId);
     if (!capabilities) {
-      return "action"; // Default fallback
+      return 'action'; // Default fallback
     }
 
     // Context-based detection
-    if (
-      context.isWorkflowStart &&
-      capabilities.supportedModes.includes("trigger")
-    ) {
-      return "trigger";
+    if (context.isWorkflowStart && capabilities.supportedModes.includes('trigger')) {
+      return 'trigger';
     }
 
-    if (
-      context.hasInputConnections &&
-      capabilities.supportedModes.includes("action")
-    ) {
-      return "action";
+    if (context.hasInputConnections && capabilities.supportedModes.includes('action')) {
+      return 'action';
     }
 
     // Return first supported mode as fallback
-    return capabilities.supportedModes[0] || "action";
+    return capabilities.supportedModes[0] || 'action';
   }
 
   /**
    * Dynamic property resolution based on context
    */
-  public async resolveNodeProperties(
-    nodeId: string,
-    context: WorkflowContext,
-  ): Promise<any[]> {
-    const nodeType = await this.getEnhancedNodeType(
-      nodeId,
-      context,
-      context.tenantId,
-    );
+  public async resolveNodeProperties(nodeId: string, context: WorkflowContext): Promise<any[]> {
+    const nodeType = await this.getEnhancedNodeType(nodeId, context, context.tenantId);
     if (!nodeType) {
       return [];
     }
@@ -560,7 +532,7 @@ class NodeRegistry {
     // Filter properties based on resolved context
     return this.filterPropertiesByContext(
       nodeType.configuration?.properties || [],
-      resolvedContext,
+      resolvedContext
     );
   }
 
@@ -586,7 +558,7 @@ class NodeRegistry {
   public setFeatureFlag(flag: string, enabled: boolean): void {
     this.featureFlags.set(flag, enabled);
     this.registryVersion++;
-    console.log(`🏁 Feature flag ${flag}: ${enabled ? "enabled" : "disabled"}`);
+    console.log(`🏁 Feature flag ${flag}: ${enabled ? 'enabled' : 'disabled'}`);
   }
 
   public isFeatureEnabled(flag: string): boolean {
@@ -596,11 +568,7 @@ class NodeRegistry {
   /**
    * Performance monitoring
    */
-  public recordNodeExecution(
-    nodeId: string,
-    executionTime: number,
-    success: boolean,
-  ): void {
+  public recordNodeExecution(nodeId: string, executionTime: number, success: boolean): void {
     const metrics = this.performanceMetrics.get(nodeId) || {
       nodeId,
       executionCount: 0,
@@ -612,8 +580,7 @@ class NodeRegistry {
 
     metrics.executionCount++;
     metrics.averageExecutionTime =
-      (metrics.averageExecutionTime * (metrics.executionCount - 1) +
-        executionTime) /
+      (metrics.averageExecutionTime * (metrics.executionCount - 1) + executionTime) /
       metrics.executionCount;
     metrics.errorRate = success
       ? metrics.errorRate * 0.95 // Decay error rate on success
@@ -640,10 +607,10 @@ class NodeRegistry {
 
   private initializeFeatureFlags(): void {
     // Initialize default feature flags
-    this.featureFlags.set("enhanced_ui", true);
-    this.featureFlags.set("context_aware_properties", true);
-    this.featureFlags.set("performance_monitoring", true);
-    this.featureFlags.set("multi_tenant", true);
+    this.featureFlags.set('enhanced_ui', true);
+    this.featureFlags.set('context_aware_properties', true);
+    this.featureFlags.set('performance_monitoring', true);
+    this.featureFlags.set('multi_tenant', true);
   }
 
   private registerNodeCapability(capability: NodeCapabilityDefinition): void {
@@ -651,18 +618,18 @@ class NodeRegistry {
   }
 
   private deriveNodeModes(
-    nodeType: EnhancedIntegrationNodeType,
-  ): ("trigger" | "action" | "webhook" | "poll")[] {
-    const modes: ("trigger" | "action" | "webhook" | "poll")[] = [];
+    nodeType: EnhancedIntegrationNodeType
+  ): ('trigger' | 'action' | 'webhook' | 'poll')[] {
+    const modes: ('trigger' | 'action' | 'webhook' | 'poll')[] = [];
 
-    if (nodeType.type === "trigger") modes.push("trigger");
-    if (nodeType.type === "action") modes.push("action");
-    if (nodeType.type === "webhook") modes.push("webhook");
-    if (nodeType.configuration?.polling?.enabled) modes.push("poll");
+    if (nodeType.type === 'trigger') modes.push('trigger');
+    if (nodeType.type === 'action') modes.push('action');
+    if (nodeType.type === 'webhook') modes.push('webhook');
+    if (nodeType.configuration?.polling?.enabled) modes.push('poll');
 
     // Default modes if none specified
     if (!modes.length) {
-      modes.push("action");
+      modes.push('action');
     }
 
     return modes;
@@ -674,35 +641,32 @@ class NodeRegistry {
 
     // Analyze properties to detect resource types
     nodeType.configuration?.properties?.forEach((prop: any) => {
-      if (prop.name === "resource" && prop.options) {
+      if (prop.name === 'resource' && prop.options) {
         prop.options.forEach((opt: any) => resources.add(opt.value as string));
       }
     });
 
     // Default resources if none found
     if (resources.size === 0) {
-      if (nodeType.id && nodeType.id.toLowerCase().includes("gmail")) {
-        (resources.add("email"),
-          resources.add("label"),
-          resources.add("draft"),
-          resources.add("thread"));
+      if (nodeType.id && nodeType.id.toLowerCase().includes('gmail')) {
+        resources.add('email'),
+          resources.add('label'),
+          resources.add('draft'),
+          resources.add('thread');
       }
     }
 
     return Array.from(resources);
   }
 
-  private extractOperations(
-    nodeType: EnhancedIntegrationNodeType,
-  ): Record<string, string[]> {
+  private extractOperations(nodeType: EnhancedIntegrationNodeType): Record<string, string[]> {
     const operations: Record<string, string[]> = {};
 
     // Extract operations from properties
     nodeType.configuration?.properties?.forEach((prop: any) => {
-      if (prop.name === "operation" && prop.options) {
+      if (prop.name === 'operation' && prop.options) {
         prop.options.forEach((opt: any) => {
-          const resource =
-            prop.displayOptions?.show?.resource?.[0] || "default";
+          const resource = prop.displayOptions?.show?.resource?.[0] || 'default';
           if (!operations[resource]) operations[resource] = [];
           operations[resource].push(opt.value as string);
         });
@@ -712,12 +676,10 @@ class NodeRegistry {
     return operations;
   }
 
-  private async resolveNodeContext(
-    context: WorkflowContext,
-  ): Promise<ResolvedContext | undefined> {
+  private async resolveNodeContext(context: WorkflowContext): Promise<ResolvedContext | undefined> {
     // Get all applicable resolvers sorted by priority
     const resolvers = Array.from(this.contextResolvers.values()).sort(
-      (a, b) => b.priority - a.priority,
+      (a, b) => b.priority - a.priority
     );
 
     // Apply first matching resolver
@@ -737,7 +699,7 @@ class NodeRegistry {
 
   private async adaptNodeToContext(
     nodeType: EnhancedIntegrationNodeType,
-    context: ResolvedContext,
+    context: ResolvedContext
   ): Promise<EnhancedIntegrationNodeType> {
     // Create adapted copy of node type
     const adaptedNode = { ...nodeType };
@@ -746,17 +708,14 @@ class NodeRegistry {
     if (adaptedNode.configuration?.properties) {
       adaptedNode.configuration.properties = this.filterPropertiesByContext(
         adaptedNode.configuration.properties,
-        context,
+        context
       );
     }
 
     return adaptedNode;
   }
 
-  private filterPropertiesByContext(
-    properties: any[],
-    context: ResolvedContext,
-  ): any[] {
+  private filterPropertiesByContext(properties: any[], context: ResolvedContext): any[] {
     // Filter and adapt properties based on mode and capabilities
     return properties.filter((prop) => {
       // Context-aware property filtering logic

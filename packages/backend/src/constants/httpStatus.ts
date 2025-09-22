@@ -21,7 +21,7 @@ export const HTTP_STATUS = {
   INTERNAL_SERVER_ERROR: 500,
   BAD_GATEWAY: 502,
   SERVICE_UNAVAILABLE: 503,
-  GATEWAY_TIMEOUT: 504
+  GATEWAY_TIMEOUT: 504,
 } as const;
 
 export const HTTP_STATUS_MESSAGES = {
@@ -38,5 +38,5 @@ export const HTTP_STATUS_MESSAGES = {
   [HTTP_STATUS.INTERNAL_SERVER_ERROR]: 'Internal Server Error',
   [HTTP_STATUS.BAD_GATEWAY]: 'Bad Gateway',
   [HTTP_STATUS.SERVICE_UNAVAILABLE]: 'Service Unavailable',
-  [HTTP_STATUS.GATEWAY_TIMEOUT]: 'Gateway Timeout'
+  [HTTP_STATUS.GATEWAY_TIMEOUT]: 'Gateway Timeout',
 } as const;

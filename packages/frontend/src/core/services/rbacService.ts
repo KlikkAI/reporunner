@@ -9,7 +9,7 @@ export interface Permission {
   description: string;
   resource: string; // e.g., 'workflow', 'credential', 'organization'
   action: string; // e.g., 'create', 'read', 'update', 'delete', 'execute'
-  scope?: "own" | "team" | "organization" | "global";
+  scope?: 'own' | 'team' | 'organization' | 'global';
 }
 
 export interface Role {
@@ -59,7 +59,7 @@ export interface Organization {
 
 export interface OrganizationMember {
   userId: string;
-  role: "owner" | "admin" | "member" | "viewer";
+  role: 'owner' | 'admin' | 'member' | 'viewer';
   joinedAt: Date;
   invitedBy?: string;
   permissions?: Permission[];
@@ -90,161 +90,161 @@ export interface PasswordPolicy {
 // Predefined system roles
 export const SYSTEM_ROLES: Role[] = [
   {
-    id: "system_admin",
-    name: "System Administrator",
-    description: "Full system access with all permissions",
+    id: 'system_admin',
+    name: 'System Administrator',
+    description: 'Full system access with all permissions',
     isSystem: true,
     permissions: [
       {
-        id: "admin_all",
-        name: "Administrator Access",
-        description: "Full system access",
-        resource: "*",
-        action: "*",
+        id: 'admin_all',
+        name: 'Administrator Access',
+        description: 'Full system access',
+        resource: '*',
+        action: '*',
       },
     ],
     createdAt: new Date(),
     updatedAt: new Date(),
   },
   {
-    id: "organization_owner",
-    name: "Organization Owner",
-    description: "Full access within organization",
+    id: 'organization_owner',
+    name: 'Organization Owner',
+    description: 'Full access within organization',
     isSystem: true,
     permissions: [
       {
-        id: "org_manage",
-        name: "Manage Organization",
-        description: "Manage organization settings",
-        resource: "organization",
-        action: "*",
-        scope: "organization",
+        id: 'org_manage',
+        name: 'Manage Organization',
+        description: 'Manage organization settings',
+        resource: 'organization',
+        action: '*',
+        scope: 'organization',
       },
       {
-        id: "workflow_all",
-        name: "Manage All Workflows",
-        description: "Full workflow access",
-        resource: "workflow",
-        action: "*",
-        scope: "organization",
+        id: 'workflow_all',
+        name: 'Manage All Workflows',
+        description: 'Full workflow access',
+        resource: 'workflow',
+        action: '*',
+        scope: 'organization',
       },
       {
-        id: "user_manage",
-        name: "Manage Users",
-        description: "Invite and manage users",
-        resource: "user",
-        action: "*",
-        scope: "organization",
+        id: 'user_manage',
+        name: 'Manage Users',
+        description: 'Invite and manage users',
+        resource: 'user',
+        action: '*',
+        scope: 'organization',
       },
     ],
     createdAt: new Date(),
     updatedAt: new Date(),
   },
   {
-    id: "workflow_admin",
-    name: "Workflow Administrator",
-    description: "Manage workflows and executions",
+    id: 'workflow_admin',
+    name: 'Workflow Administrator',
+    description: 'Manage workflows and executions',
     isSystem: true,
     permissions: [
       {
-        id: "workflow_create",
-        name: "Create Workflows",
-        description: "Create new workflows",
-        resource: "workflow",
-        action: "create",
-        scope: "organization",
+        id: 'workflow_create',
+        name: 'Create Workflows',
+        description: 'Create new workflows',
+        resource: 'workflow',
+        action: 'create',
+        scope: 'organization',
       },
       {
-        id: "workflow_edit",
-        name: "Edit Workflows",
-        description: "Edit all workflows",
-        resource: "workflow",
-        action: "update",
-        scope: "organization",
+        id: 'workflow_edit',
+        name: 'Edit Workflows',
+        description: 'Edit all workflows',
+        resource: 'workflow',
+        action: 'update',
+        scope: 'organization',
       },
       {
-        id: "workflow_execute",
-        name: "Execute Workflows",
-        description: "Execute all workflows",
-        resource: "workflow",
-        action: "execute",
-        scope: "organization",
+        id: 'workflow_execute',
+        name: 'Execute Workflows',
+        description: 'Execute all workflows',
+        resource: 'workflow',
+        action: 'execute',
+        scope: 'organization',
       },
       {
-        id: "execution_view",
-        name: "View Executions",
-        description: "View execution history",
-        resource: "execution",
-        action: "read",
-        scope: "organization",
+        id: 'execution_view',
+        name: 'View Executions',
+        description: 'View execution history',
+        resource: 'execution',
+        action: 'read',
+        scope: 'organization',
       },
     ],
     createdAt: new Date(),
     updatedAt: new Date(),
   },
   {
-    id: "workflow_editor",
-    name: "Workflow Editor",
-    description: "Create and edit own workflows",
+    id: 'workflow_editor',
+    name: 'Workflow Editor',
+    description: 'Create and edit own workflows',
     isSystem: true,
     permissions: [
       {
-        id: "workflow_create_own",
-        name: "Create Own Workflows",
-        description: "Create new workflows",
-        resource: "workflow",
-        action: "create",
-        scope: "own",
+        id: 'workflow_create_own',
+        name: 'Create Own Workflows',
+        description: 'Create new workflows',
+        resource: 'workflow',
+        action: 'create',
+        scope: 'own',
       },
       {
-        id: "workflow_edit_own",
-        name: "Edit Own Workflows",
-        description: "Edit own workflows",
-        resource: "workflow",
-        action: "update",
-        scope: "own",
+        id: 'workflow_edit_own',
+        name: 'Edit Own Workflows',
+        description: 'Edit own workflows',
+        resource: 'workflow',
+        action: 'update',
+        scope: 'own',
       },
       {
-        id: "workflow_execute_own",
-        name: "Execute Own Workflows",
-        description: "Execute own workflows",
-        resource: "workflow",
-        action: "execute",
-        scope: "own",
+        id: 'workflow_execute_own',
+        name: 'Execute Own Workflows',
+        description: 'Execute own workflows',
+        resource: 'workflow',
+        action: 'execute',
+        scope: 'own',
       },
       {
-        id: "credential_manage_own",
-        name: "Manage Own Credentials",
-        description: "Manage personal credentials",
-        resource: "credential",
-        action: "*",
-        scope: "own",
+        id: 'credential_manage_own',
+        name: 'Manage Own Credentials',
+        description: 'Manage personal credentials',
+        resource: 'credential',
+        action: '*',
+        scope: 'own',
       },
     ],
     createdAt: new Date(),
     updatedAt: new Date(),
   },
   {
-    id: "workflow_viewer",
-    name: "Workflow Viewer",
-    description: "View workflows and executions only",
+    id: 'workflow_viewer',
+    name: 'Workflow Viewer',
+    description: 'View workflows and executions only',
     isSystem: true,
     permissions: [
       {
-        id: "workflow_view",
-        name: "View Workflows",
-        description: "View shared workflows",
-        resource: "workflow",
-        action: "read",
-        scope: "team",
+        id: 'workflow_view',
+        name: 'View Workflows',
+        description: 'View shared workflows',
+        resource: 'workflow',
+        action: 'read',
+        scope: 'team',
       },
       {
-        id: "execution_view_own",
-        name: "View Own Executions",
-        description: "View own execution history",
-        resource: "execution",
-        action: "read",
-        scope: "own",
+        id: 'execution_view_own',
+        name: 'View Own Executions',
+        description: 'View own execution history',
+        resource: 'execution',
+        action: 'read',
+        scope: 'own',
       },
     ],
     createdAt: new Date(),
@@ -271,7 +271,7 @@ export class RBACService {
     resource: string,
     action: string,
     resourceId?: string,
-    organizationId?: string,
+    organizationId?: string
   ): boolean {
     const userRoles = this.getUserRoles(userId, organizationId);
 
@@ -284,14 +284,7 @@ export class RBACService {
 
       for (const permission of role.permissions) {
         if (
-          this.matchesPermission(
-            permission,
-            resource,
-            action,
-            userId,
-            resourceId,
-            organizationId,
-          )
+          this.matchesPermission(permission, resource, action, userId, resourceId, organizationId)
         ) {
           return true;
         }
@@ -303,14 +296,7 @@ export class RBACService {
     for (const team of userTeams) {
       for (const permission of team.permissions) {
         if (
-          this.matchesPermission(
-            permission,
-            resource,
-            action,
-            userId,
-            resourceId,
-            organizationId,
-          )
+          this.matchesPermission(permission, resource, action, userId, resourceId, organizationId)
         ) {
           return true;
         }
@@ -326,31 +312,31 @@ export class RBACService {
     action: string,
     _userId: string,
     _resourceId?: string,
-    _organizationId?: string,
+    _organizationId?: string
   ): boolean {
     // Check resource match
-    if (permission.resource !== "*" && permission.resource !== resource) {
+    if (permission.resource !== '*' && permission.resource !== resource) {
       return false;
     }
 
     // Check action match
-    if (permission.action !== "*" && permission.action !== action) {
+    if (permission.action !== '*' && permission.action !== action) {
       return false;
     }
 
     // Check scope
     if (permission.scope) {
       switch (permission.scope) {
-        case "own":
+        case 'own':
           // User can only access their own resources
           return this.isOwnResource();
-        case "team":
+        case 'team':
           // User can access team resources
           return this.isTeamResource();
-        case "organization":
+        case 'organization':
           // User can access organization resources
           return this.isOrganizationResource();
-        case "global":
+        case 'global':
           // Global access
           return true;
       }
@@ -371,10 +357,7 @@ export class RBACService {
     return true; // Simplified for demo
   }
 
-  private isOrganizationResource(
-    organizationId?: string,
-    userId?: string,
-  ): boolean {
+  private isOrganizationResource(organizationId?: string, userId?: string): boolean {
     // Check if user is member of organization
     if (!organizationId || !userId) return false;
     const org = this.organizations.get(organizationId);
@@ -382,28 +365,23 @@ export class RBACService {
   }
 
   // Role management methods
-  assignRole(
-    userId: string,
-    roleId: string,
-    organizationId?: string,
-    assignedBy?: string,
-  ): void {
+  assignRole(userId: string, roleId: string, organizationId?: string, assignedBy?: string): void {
     const currentRoles = this.userRoles.get(userId) || [];
 
     // Check if user already has this role
     const existingRole = currentRoles.find(
-      (ur) => ur.roleId === roleId && ur.organizationId === organizationId,
+      (ur) => ur.roleId === roleId && ur.organizationId === organizationId
     );
 
     if (existingRole) {
-      throw new Error("User already has this role");
+      throw new Error('User already has this role');
     }
 
     const userRole: UserRole = {
       userId,
       roleId,
       organizationId,
-      assignedBy: assignedBy || "system",
+      assignedBy: assignedBy || 'system',
       assignedAt: new Date(),
     };
 
@@ -414,7 +392,7 @@ export class RBACService {
   removeRole(userId: string, roleId: string, organizationId?: string): void {
     const currentRoles = this.userRoles.get(userId) || [];
     const filteredRoles = currentRoles.filter(
-      (ur) => !(ur.roleId === roleId && ur.organizationId === organizationId),
+      (ur) => !(ur.roleId === roleId && ur.organizationId === organizationId)
     );
     this.userRoles.set(userId, filteredRoles);
   }
@@ -424,8 +402,7 @@ export class RBACService {
 
     if (organizationId) {
       return allRoles.filter(
-        (role) =>
-          role.organizationId === organizationId || !role.organizationId,
+        (role) => role.organizationId === organizationId || !role.organizationId
       );
     }
 
@@ -451,15 +428,12 @@ export class RBACService {
 
     // Remove duplicates
     return permissions.filter(
-      (permission, index, array) =>
-        index === array.findIndex((p) => p.id === permission.id),
+      (permission, index, array) => index === array.findIndex((p) => p.id === permission.id)
     );
   }
 
   // Organization management
-  createOrganization(
-    org: Omit<Organization, "id" | "createdAt" | "updatedAt">,
-  ): Organization {
+  createOrganization(org: Omit<Organization, 'id' | 'createdAt' | 'updatedAt'>): Organization {
     const organization: Organization = {
       ...org,
       id: this.generateId(),
@@ -470,7 +444,7 @@ export class RBACService {
     this.organizations.set(organization.id, organization);
 
     // Assign owner role to creator
-    this.assignRole(org.ownerId, "organization_owner", organization.id);
+    this.assignRole(org.ownerId, 'organization_owner', organization.id);
 
     return organization;
   }
@@ -478,11 +452,11 @@ export class RBACService {
   addOrganizationMember(
     organizationId: string,
     userId: string,
-    role: OrganizationMember["role"],
-    invitedBy: string,
+    role: OrganizationMember['role'],
+    invitedBy: string
   ): void {
     const org = this.organizations.get(organizationId);
-    if (!org) throw new Error("Organization not found");
+    if (!org) throw new Error('Organization not found');
 
     const member: OrganizationMember = {
       userId,
@@ -495,18 +469,18 @@ export class RBACService {
     this.organizations.set(organizationId, org);
 
     // Assign appropriate system role based on organization role
-    const systemRoleMap: Record<OrganizationMember["role"], string> = {
-      owner: "organization_owner",
-      admin: "workflow_admin",
-      member: "workflow_editor",
-      viewer: "workflow_viewer",
+    const systemRoleMap: Record<OrganizationMember['role'], string> = {
+      owner: 'organization_owner',
+      admin: 'workflow_admin',
+      member: 'workflow_editor',
+      viewer: 'workflow_viewer',
     };
 
     this.assignRole(userId, systemRoleMap[role], organizationId, invitedBy);
   }
 
   // Team management
-  createTeam(team: Omit<Team, "id" | "createdAt">): Team {
+  createTeam(team: Omit<Team, 'id' | 'createdAt'>): Team {
     const newTeam: Team = {
       ...team,
       id: this.generateId(),
@@ -519,7 +493,7 @@ export class RBACService {
 
   addTeamMember(teamId: string, userId: string): void {
     const team = this.teams.get(teamId);
-    if (!team) throw new Error("Team not found");
+    if (!team) throw new Error('Team not found');
 
     if (!team.members.includes(userId)) {
       team.members.push(userId);
@@ -532,8 +506,7 @@ export class RBACService {
 
     return allTeams.filter(
       (team) =>
-        team.members.includes(userId) &&
-        (!organizationId || team.organizationId === organizationId),
+        team.members.includes(userId) && (!organizationId || team.organizationId === organizationId)
     );
   }
 
@@ -542,7 +515,7 @@ export class RBACService {
     name: string,
     description: string,
     permissions: Permission[],
-    organizationId?: string,
+    organizationId?: string
   ): Role {
     const role: Role = {
       id: this.generateId(),
@@ -561,8 +534,8 @@ export class RBACService {
 
   updateRole(roleId: string, updates: Partial<Role>): Role {
     const role = this.roles.get(roleId);
-    if (!role) throw new Error("Role not found");
-    if (role.isSystem) throw new Error("Cannot modify system roles");
+    if (!role) throw new Error('Role not found');
+    if (role.isSystem) throw new Error('Cannot modify system roles');
 
     const updatedRole = {
       ...role,
@@ -576,8 +549,8 @@ export class RBACService {
 
   deleteRole(roleId: string): void {
     const role = this.roles.get(roleId);
-    if (!role) throw new Error("Role not found");
-    if (role.isSystem) throw new Error("Cannot delete system roles");
+    if (!role) throw new Error('Role not found');
+    if (role.isSystem) throw new Error('Cannot delete system roles');
 
     // Remove role from all users
     for (const [userId, userRoles] of this.userRoles.entries()) {
@@ -592,9 +565,7 @@ export class RBACService {
     const allRoles = Array.from(this.roles.values());
 
     if (organizationId) {
-      return allRoles.filter(
-        (role) => role.isSystem || role.organizationId === organizationId,
-      );
+      return allRoles.filter((role) => role.isSystem || role.organizationId === organizationId);
     }
 
     return allRoles;

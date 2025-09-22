@@ -1,20 +1,15 @@
-import React from 'react'
-import { Tooltip } from 'antd'
-import {
-  PlayCircleOutlined,
-  StopOutlined,
-  DeleteOutlined,
-  MoreOutlined,
-} from '@ant-design/icons'
-import styles from './NodeAnimations.module.css'
+import { DeleteOutlined, MoreOutlined, PlayCircleOutlined, StopOutlined } from '@ant-design/icons';
+import { Tooltip } from 'antd';
+import type React from 'react';
+import styles from './NodeAnimations.module.css';
 
 interface CustomNodeToolbarProps {
-  visible: boolean
-  nodeId: string
-  onPlay: (nodeId: string) => void
-  onStop: (nodeId: string) => void
-  onDelete: (nodeId: string) => void
-  onMenuToggle: (nodeId: string) => void
+  visible: boolean;
+  nodeId: string;
+  onPlay: (nodeId: string) => void;
+  onStop: (nodeId: string) => void;
+  onDelete: (nodeId: string) => void;
+  onMenuToggle: (nodeId: string) => void;
 }
 
 /**
@@ -29,30 +24,30 @@ const CustomNodeToolbar: React.FC<CustomNodeToolbarProps> = ({
   onDelete,
   onMenuToggle,
 }) => {
-  if (!visible) return null
+  if (!visible) return null;
 
   const handlePlay = (e: React.MouseEvent) => {
-    e.stopPropagation()
-    onPlay(nodeId)
-  }
+    e.stopPropagation();
+    onPlay(nodeId);
+  };
 
   const handleStop = (e: React.MouseEvent) => {
-    e.stopPropagation()
-    onStop(nodeId)
-  }
+    e.stopPropagation();
+    onStop(nodeId);
+  };
 
   const handleDelete = (e: React.MouseEvent) => {
-    e.stopPropagation()
-    onDelete(nodeId)
-  }
+    e.stopPropagation();
+    onDelete(nodeId);
+  };
 
   const handleMenu = (e: React.MouseEvent) => {
-    e.stopPropagation()
-    onMenuToggle(nodeId)
-  }
+    e.stopPropagation();
+    onMenuToggle(nodeId);
+  };
 
   return (
-    <div 
+    <div
       className={`
         absolute -top-10 left-1/2 transform -translate-x-1/2 flex items-center gap-0.5 
         bg-gray-800 rounded-md shadow-lg px-1 py-0.5
@@ -68,7 +63,7 @@ const CustomNodeToolbar: React.FC<CustomNodeToolbarProps> = ({
           <PlayCircleOutlined />
         </button>
       </Tooltip>
-      
+
       <Tooltip title="Stop">
         <button
           className={`w-6 h-6 bg-transparent hover:bg-red-600 text-red-400 hover:text-white rounded transition-colors flex items-center justify-center text-xs ${styles.toolbarButton}`}
@@ -77,7 +72,7 @@ const CustomNodeToolbar: React.FC<CustomNodeToolbarProps> = ({
           <StopOutlined />
         </button>
       </Tooltip>
-      
+
       <Tooltip title="Delete">
         <button
           className={`w-6 h-6 bg-transparent hover:bg-gray-600 text-gray-400 hover:text-white rounded transition-colors flex items-center justify-center text-xs ${styles.toolbarButton}`}
@@ -86,7 +81,7 @@ const CustomNodeToolbar: React.FC<CustomNodeToolbarProps> = ({
           <DeleteOutlined />
         </button>
       </Tooltip>
-      
+
       <Tooltip title="More">
         <button
           className={`w-6 h-6 bg-transparent hover:bg-gray-600 text-gray-400 hover:text-white rounded transition-colors flex items-center justify-center text-xs ${styles.toolbarButton}`}
@@ -96,7 +91,7 @@ const CustomNodeToolbar: React.FC<CustomNodeToolbarProps> = ({
         </button>
       </Tooltip>
     </div>
-  )
-}
+  );
+};
 
-export default CustomNodeToolbar
+export default CustomNodeToolbar;

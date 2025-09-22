@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express';
+import type { NextFunction, Request, Response } from 'express';
 import { logger } from '../utils/logger.js';
 
 // Custom error class
@@ -38,8 +38,7 @@ const handleValidationErrorDB = (err: any) => {
 };
 
 // JWT Error handler
-const handleJWTError = () =>
-  new AppError('Invalid token. Please log in again!', 401);
+const handleJWTError = () => new AppError('Invalid token. Please log in again!', 401);
 
 // JWT Expired Error handler
 const handleJWTExpiredError = () =>
@@ -82,12 +81,7 @@ export const catchAsync = (fn: Function) => {
 };
 
 // Global error handler middleware
-export const errorHandler = (
-  err: any,
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const errorHandler = (err: any, req: Request, res: Response, next: NextFunction) => {
   err.statusCode = err.statusCode || 500;
   err.status = err.status || 'error';
 

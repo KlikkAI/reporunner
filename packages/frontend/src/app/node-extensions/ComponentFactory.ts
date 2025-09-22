@@ -3,31 +3,23 @@
  * Centralized factory for creating and managing node UI components
  */
 
-import type { ComponentType } from "react";
+import type { ComponentType } from 'react';
 import type {
-  UIComponentFactory,
+  CustomHandleRendererProps,
   CustomNodeBodyProps,
   CustomPropertiesPanelProps,
-  CustomHandleRendererProps,
   CustomToolbarProps,
-} from "./types";
+  UIComponentFactory,
+} from './types';
 
 class ComponentFactory implements UIComponentFactory {
-  private bodyComponents: Map<string, ComponentType<CustomNodeBodyProps>> =
-    new Map();
-  private propertiesPanels: Map<
-    string,
-    ComponentType<CustomPropertiesPanelProps>
-  > = new Map();
-  private handleRenderers: Map<
-    string,
-    ComponentType<CustomHandleRendererProps>
-  > = new Map();
+  private bodyComponents: Map<string, ComponentType<CustomNodeBodyProps>> = new Map();
+  private propertiesPanels: Map<string, ComponentType<CustomPropertiesPanelProps>> = new Map();
+  private handleRenderers: Map<string, ComponentType<CustomHandleRendererProps>> = new Map();
   private toolbars: Map<string, ComponentType<CustomToolbarProps>> = new Map();
 
   // Lazy loading cache
-  private lazyLoaders: Map<string, () => Promise<ComponentType<any>>> =
-    new Map();
+  private lazyLoaders: Map<string, () => Promise<ComponentType<any>>> = new Map();
   private loadingPromises: Map<string, Promise<ComponentType<any>>> = new Map();
 
   // ============================================================================
@@ -46,15 +38,11 @@ class ComponentFactory implements UIComponentFactory {
     return component;
   }
 
-  createPropertiesPanel(
-    type: string,
-  ): ComponentType<CustomPropertiesPanelProps> | null {
+  createPropertiesPanel(type: string): ComponentType<CustomPropertiesPanelProps> | null {
     return this.propertiesPanels.get(type) || null;
   }
 
-  createHandleRenderer(
-    type: string,
-  ): ComponentType<CustomHandleRendererProps> | null {
+  createHandleRenderer(type: string): ComponentType<CustomHandleRendererProps> | null {
     return this.handleRenderers.get(type) || null;
   }
 
@@ -66,13 +54,10 @@ class ComponentFactory implements UIComponentFactory {
   // Registration Methods
   // ============================================================================
 
-  registerBodyComponent(
-    name: string,
-    component: ComponentType<CustomNodeBodyProps>,
-  ): void {
+  registerBodyComponent(name: string, component: ComponentType<CustomNodeBodyProps>): void {
     if (!component) {
       console.error(
-        `❌ ComponentFactory: Attempted to register null/undefined body component: ${name}`,
+        `❌ ComponentFactory: Attempted to register null/undefined body component: ${name}`
       );
       return;
     }
@@ -80,7 +65,7 @@ class ComponentFactory implements UIComponentFactory {
     console.log(`📝 ComponentFactory: Registering body component "${name}"`, {
       componentName: component.name,
       componentType: typeof component,
-      isFunction: typeof component === "function",
+      isFunction: typeof component === 'function',
     });
 
     this.bodyComponents.set(name, component);
@@ -89,17 +74,17 @@ class ComponentFactory implements UIComponentFactory {
     const retrieved = this.bodyComponents.get(name);
     console.log(
       `✅ ComponentFactory: Body component "${name}" registration verified:`,
-      !!retrieved,
+      !!retrieved
     );
   }
 
   registerPropertiesPanel(
     name: string,
-    component: ComponentType<CustomPropertiesPanelProps>,
+    component: ComponentType<CustomPropertiesPanelProps>
   ): void {
     if (!component) {
       console.error(
-        `❌ ComponentFactory: Attempted to register null/undefined properties panel: ${name}`,
+        `❌ ComponentFactory: Attempted to register null/undefined properties panel: ${name}`
       );
       return;
     }
@@ -107,7 +92,7 @@ class ComponentFactory implements UIComponentFactory {
     console.log(`📝 ComponentFactory: Registering properties panel "${name}"`, {
       componentName: component.name,
       componentType: typeof component,
-      isFunction: typeof component === "function",
+      isFunction: typeof component === 'function',
     });
 
     this.propertiesPanels.set(name, component);
@@ -116,21 +101,15 @@ class ComponentFactory implements UIComponentFactory {
     const retrieved = this.propertiesPanels.get(name);
     console.log(
       `✅ ComponentFactory: Properties panel "${name}" registration verified:`,
-      !!retrieved,
+      !!retrieved
     );
   }
 
-  registerHandleRenderer(
-    name: string,
-    component: ComponentType<CustomHandleRendererProps>,
-  ): void {
+  registerHandleRenderer(name: string, component: ComponentType<CustomHandleRendererProps>): void {
     this.handleRenderers.set(name, component);
   }
 
-  registerToolbar(
-    name: string,
-    component: ComponentType<CustomToolbarProps>,
-  ): void {
+  registerToolbar(name: string, component: ComponentType<CustomToolbarProps>): void {
     this.toolbars.set(name, component);
   }
 
@@ -143,7 +122,7 @@ class ComponentFactory implements UIComponentFactory {
    */
   registerLazyBodyComponent(
     name: string,
-    loader: () => Promise<{ default: ComponentType<CustomNodeBodyProps> }>,
+    loader: () => Promise<{ default: ComponentType<CustomNodeBodyProps> }>
   ): void {
     this.lazyLoaders.set(`body-${name}`, async () => {
       const module = await loader();
@@ -157,7 +136,7 @@ class ComponentFactory implements UIComponentFactory {
     name: string,
     loader: () => Promise<{
       default: ComponentType<CustomPropertiesPanelProps>;
-    }>,
+    }>
   ): void {
     this.lazyLoaders.set(`panel-${name}`, async () => {
       const module = await loader();
@@ -170,9 +149,7 @@ class ComponentFactory implements UIComponentFactory {
   /**
    * Load a component asynchronously
    */
-  async loadBodyComponent(
-    name: string,
-  ): Promise<ComponentType<CustomNodeBodyProps> | null> {
+  async loadBodyComponent(name: string): Promise<ComponentType<CustomNodeBodyProps> | null> {
     // Check if already loaded
     const existing = this.bodyComponents.get(name);
     if (existing) return existing;
@@ -184,9 +161,7 @@ class ComponentFactory implements UIComponentFactory {
 
     // Check if already loading
     if (this.loadingPromises.has(loaderKey)) {
-      return (await this.loadingPromises.get(
-        loaderKey,
-      )) as ComponentType<CustomNodeBodyProps>;
+      return (await this.loadingPromises.get(loaderKey)) as ComponentType<CustomNodeBodyProps>;
     }
 
     // Start loading
@@ -205,7 +180,7 @@ class ComponentFactory implements UIComponentFactory {
   }
 
   async loadPropertiesPanel(
-    name: string,
+    name: string
   ): Promise<ComponentType<CustomPropertiesPanelProps> | null> {
     // Similar implementation to loadBodyComponent
     const existing = this.propertiesPanels.get(name);
@@ -217,7 +192,7 @@ class ComponentFactory implements UIComponentFactory {
 
     if (this.loadingPromises.has(loaderKey)) {
       return (await this.loadingPromises.get(
-        loaderKey,
+        loaderKey
       )) as ComponentType<CustomPropertiesPanelProps>;
     }
 
@@ -244,10 +219,7 @@ class ComponentFactory implements UIComponentFactory {
    */
   async preloadComponents(nodeTypes: string[]): Promise<void> {
     const loadPromises = nodeTypes.map(async (type) => {
-      await Promise.all([
-        this.loadBodyComponent(type),
-        this.loadPropertiesPanel(type),
-      ]);
+      await Promise.all([this.loadBodyComponent(type), this.loadPropertiesPanel(type)]);
     });
 
     await Promise.all(loadPromises);
@@ -282,15 +254,11 @@ class ComponentFactory implements UIComponentFactory {
   // ============================================================================
 
   hasCustomBody(type: string): boolean {
-    return (
-      this.bodyComponents.has(type) || this.lazyLoaders.has(`body-${type}`)
-    );
+    return this.bodyComponents.has(type) || this.lazyLoaders.has(`body-${type}`);
   }
 
   hasCustomPropertiesPanel(type: string): boolean {
-    return (
-      this.propertiesPanels.has(type) || this.lazyLoaders.has(`panel-${type}`)
-    );
+    return this.propertiesPanels.has(type) || this.lazyLoaders.has(`panel-${type}`);
   }
 
   hasCustomHandleRenderer(type: string): boolean {
@@ -356,12 +324,10 @@ class ComponentFactory implements UIComponentFactory {
   createLoadingProxy<T>(
     loadFunction: () => Promise<ComponentType<T> | null>,
     LoadingComponent?: ComponentType<T>,
-    ErrorComponent?: ComponentType<T & { error: Error }>,
+    ErrorComponent?: ComponentType<T & { error: Error }>
   ): ComponentType<T> {
     return (props: T) => {
-      const [component, setComponent] = React.useState<ComponentType<T> | null>(
-        null,
-      );
+      const [component, setComponent] = React.useState<ComponentType<T> | null>(null);
       const [loading, setLoading] = React.useState(true);
       const [error, setError] = React.useState<Error | null>(null);
 
@@ -378,10 +344,7 @@ class ComponentFactory implements UIComponentFactory {
       }, []);
 
       if (loading && LoadingComponent) {
-        return React.createElement(
-          LoadingComponent as React.ComponentType<any>,
-          props as any,
-        );
+        return React.createElement(LoadingComponent as React.ComponentType<any>, props as any);
       }
 
       if (error && ErrorComponent) {
@@ -392,10 +355,7 @@ class ComponentFactory implements UIComponentFactory {
       }
 
       if (component) {
-        return React.createElement(
-          component as React.ComponentType<any>,
-          props as any,
-        );
+        return React.createElement(component as React.ComponentType<any>, props as any);
       }
 
       return null;
@@ -408,7 +368,7 @@ class ComponentFactory implements UIComponentFactory {
   registerVersionedBodyComponent(
     name: string,
     version: string,
-    component: ComponentType<CustomNodeBodyProps>,
+    component: ComponentType<CustomNodeBodyProps>
   ): void {
     const versionedName = `${name}@${version}`;
     this.bodyComponents.set(versionedName, component);
@@ -425,7 +385,7 @@ class ComponentFactory implements UIComponentFactory {
   getComponentWithFallback<T>(
     primaryName: string,
     fallbackNames: string[],
-    componentMap: Map<string, ComponentType<T>>,
+    componentMap: Map<string, ComponentType<T>>
   ): ComponentType<T> | null {
     // Try primary name first
     let component = componentMap.get(primaryName);
@@ -442,7 +402,7 @@ class ComponentFactory implements UIComponentFactory {
 }
 
 // Import React for the loading proxy
-import React from "react";
+import React from 'react';
 
 // Export singleton instance
 export const componentFactory = new ComponentFactory();

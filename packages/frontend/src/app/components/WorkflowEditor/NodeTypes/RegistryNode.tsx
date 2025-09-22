@@ -1,11 +1,11 @@
-import React, { memo, useMemo, useState, useRef } from "react";
-import { Handle, Position } from "reactflow";
-import type { NodeProps } from "reactflow";
-import { nodeRegistry, type WorkflowNodeInstance } from "@/core";
-import { getCustomBodyComponent } from "@/app/node-extensions/nodeUiRegistry";
-import NodeToolbar from "./BaseNode/NodeToolbar";
-
-import { useSmartMenuPosition } from "../../../hooks/useSmartMenuPosition";
+import type React from 'react';
+import { memo, useMemo, useRef, useState } from 'react';
+import type { NodeProps } from 'reactflow';
+import { Handle, Position } from 'reactflow';
+import { getCustomBodyComponent } from '@/app/node-extensions/nodeUiRegistry';
+import { nodeRegistry, type WorkflowNodeInstance } from '@/core';
+import { useSmartMenuPosition } from '../../../hooks/useSmartMenuPosition';
+import NodeToolbar from './BaseNode/NodeToolbar';
 
 interface RegistryNodeData extends WorkflowNodeInstance {
   onDelete?: () => void;
@@ -45,28 +45,26 @@ const RegistryNode: React.FC<RegistryNodeProps> = ({ data, selected, id }) => {
   const { icon, displayName, subtitle } = useMemo(() => {
     if (!nodeDefinition) {
       return {
-        icon: "❓",
+        icon: '❓',
         displayName: data.type,
-        color: "#666",
-        subtitle: "Unknown node type",
+        color: '#666',
+        subtitle: 'Unknown node type',
       };
     }
 
     // Build subtitle from parameters if template exists
-    let subtitle = nodeDefinition.subtitle || "";
+    let subtitle = nodeDefinition.subtitle || '';
     if (subtitle && data.parameters) {
       subtitle = subtitle.replace(/\{\{[^}]+\}\}/g, (match) => {
-        const paramPath = match
-          .replace('{{$parameter["', "")
-          .replace('"]}}', "");
-        return data.parameters[paramPath] || "";
+        const paramPath = match.replace('{{$parameter["', '').replace('"]}}', '');
+        return data.parameters[paramPath] || '';
       });
     }
 
     return {
-      icon: nodeDefinition.icon || nodeDefinition.iconUrl || "📦",
+      icon: nodeDefinition.icon || nodeDefinition.iconUrl || '📦',
       displayName: data.name || nodeDefinition.displayName,
-      color: nodeDefinition.defaults?.color || "#1890ff",
+      color: nodeDefinition.defaults?.color || '#1890ff',
       subtitle,
     };
   }, [nodeDefinition, data.name, data.parameters]);
@@ -88,12 +86,12 @@ const RegistryNode: React.FC<RegistryNodeProps> = ({ data, selected, id }) => {
           position={Position.Left}
           id="input_0"
           style={{
-            background: "#555",
+            background: '#555',
             width: 10,
             height: 10,
             // No top property - handle will be vertically centered by default
           }}
-        />,
+        />
       );
     }
 
@@ -103,7 +101,7 @@ const RegistryNode: React.FC<RegistryNodeProps> = ({ data, selected, id }) => {
         // For single output, don't set top (centers by default)
         // For multiple outputs, calculate vertical distribution
         const handleStyle: React.CSSProperties = {
-          background: "#555",
+          background: '#555',
           width: 10,
           height: 10,
         };
@@ -120,7 +118,7 @@ const RegistryNode: React.FC<RegistryNodeProps> = ({ data, selected, id }) => {
             position={Position.Right}
             id={`output_${index}`}
             style={handleStyle}
-          />,
+          />
         );
       });
     }
@@ -132,17 +130,17 @@ const RegistryNode: React.FC<RegistryNodeProps> = ({ data, selected, id }) => {
 
   // Toolbar handlers
   const handlePlay = (nodeId: string) => {
-    console.log("Play node:", nodeId);
+    console.log('Play node:', nodeId);
     // TODO: Implement play functionality
   };
 
   const handleStop = (nodeId: string) => {
-    console.log("Stop node:", nodeId);
+    console.log('Stop node:', nodeId);
     // TODO: Implement stop functionality
   };
 
   const handleDelete = (nodeId: string) => {
-    console.log("Delete node:", nodeId);
+    console.log('Delete node:', nodeId);
     data.onDelete?.();
   };
 
@@ -153,7 +151,7 @@ const RegistryNode: React.FC<RegistryNodeProps> = ({ data, selected, id }) => {
   const handleDoubleClick = (event: React.MouseEvent) => {
     // Handle double-click to open properties panel
     event.stopPropagation();
-    console.log("Double-click on registry node:", id);
+    console.log('Double-click on registry node:', id);
     data.onOpenProperties?.();
   };
 
@@ -249,7 +247,7 @@ const RegistryNode: React.FC<RegistryNodeProps> = ({ data, selected, id }) => {
   if (CustomBodyComponent) {
     return (
       <div
-        className={`registry-node ${selected ? "selected" : ""} relative`}
+        className={`registry-node ${selected ? 'selected' : ''} relative`}
         style={{
           opacity: data.disabled ? 0.5 : 1,
         }}
@@ -275,7 +273,7 @@ const RegistryNode: React.FC<RegistryNodeProps> = ({ data, selected, id }) => {
 
   return (
     <div
-      className={`registry-node ${selected ? "selected" : ""} relative`}
+      className={`registry-node ${selected ? 'selected' : ''} relative`}
       style={{
         opacity: data.disabled ? 0.5 : 1,
       }}
@@ -293,23 +291,23 @@ const RegistryNode: React.FC<RegistryNodeProps> = ({ data, selected, id }) => {
             className={`
               relative flex items-center justify-center bg-gray-800 p-4 shadow-lg transition-all duration-200
               rounded-md min-w-[80px] max-w-[150px] min-h-[60px]
-              ${selected ? "ring-2 ring-offset-2 ring-offset-gray-900 ring-red-400" : ""}
-              ${isHovered ? "hover:shadow-xl hover:scale-105 ring-2 ring-offset-2 ring-offset-gray-900 ring-red-400" : ""}
+              ${selected ? 'ring-2 ring-offset-2 ring-offset-gray-900 ring-red-400' : ''}
+              ${isHovered ? 'hover:shadow-xl hover:scale-105 ring-2 ring-offset-2 ring-offset-gray-900 ring-red-400' : ''}
             `}
           >
             {/* Dynamic Node Icon */}
             <div className="flex items-center justify-center">
-              {icon.startsWith("http") || icon.startsWith("/") ? (
+              {icon.startsWith('http') || icon.startsWith('/') ? (
                 <img
                   src={icon}
                   alt={displayName}
                   className="w-6 h-6"
                   onError={(e) => {
                     const target = e.target as HTMLImageElement;
-                    target.style.display = "none";
+                    target.style.display = 'none';
                     const fallback = target.nextElementSibling;
                     if (fallback) {
-                      fallback.classList.remove("hidden");
+                      fallback.classList.remove('hidden');
                     }
                   }}
                 />
@@ -324,7 +322,7 @@ const RegistryNode: React.FC<RegistryNodeProps> = ({ data, selected, id }) => {
             {(data.disabled || data.retryOnFail || data.continueOnFail) && (
               <div className="absolute -top-2 -right-2 w-4 h-4 bg-red-500 rounded-full flex items-center justify-center">
                 <span className="text-white text-xs">
-                  {data.disabled ? "!" : data.retryOnFail ? "R" : "C"}
+                  {data.disabled ? '!' : data.retryOnFail ? 'R' : 'C'}
                 </span>
               </div>
             )}
@@ -338,9 +336,7 @@ const RegistryNode: React.FC<RegistryNodeProps> = ({ data, selected, id }) => {
 
         {/* Subtitle if exists */}
         {subtitle && (
-          <div className="text-xs text-gray-400 text-center max-w-[150px] truncate">
-            {subtitle}
-          </div>
+          <div className="text-xs text-gray-400 text-center max-w-[150px] truncate">{subtitle}</div>
         )}
       </div>
     </div>

@@ -38,19 +38,19 @@ export interface ContainerExecutionConfig {
   loopCondition?: string; // JavaScript expression
   loopLimit?: number; // Maximum iterations
   loopDelay?: number; // Delay between iterations (ms)
-  
+
   // Parallel configuration
   maxConcurrency?: number; // Maximum parallel executions
   parallelStrategy?: 'all' | 'race' | 'any'; // Wait for all, first to complete, or any to complete
-  
+
   // Conditional configuration
   conditionExpression?: string; // JavaScript expression for branching
-  
+
   // Try-catch configuration
   retryAttempts?: number;
   retryDelay?: number;
   errorHandling?: 'stop' | 'continue' | 'retry';
-  
+
   // Batch configuration
   batchSize?: number;
   batchDelay?: number;

@@ -1,4 +1,4 @@
-import { body, query, param } from 'express-validator';
+import { body, param, query } from 'express-validator';
 
 /**
  * Common parameter validators
@@ -9,12 +9,8 @@ export const mongoIdParam = param('id').isMongoId().withMessage('Invalid ID form
  * Pagination query validators
  */
 export const paginationValidation = [
-  query('page')
-    .optional()
-    .isInt({ min: 1 })
-    .toInt()
-    .withMessage('Page must be a positive integer'),
-  
+  query('page').optional().isInt({ min: 1 }).toInt().withMessage('Page must be a positive integer'),
+
   query('limit')
     .optional()
     .isInt({ min: 1, max: 100 })
@@ -30,35 +26,22 @@ export const createWorkflowValidation = [
     .trim()
     .isLength({ min: 1, max: 100 })
     .withMessage('Workflow name must be between 1 and 100 characters'),
-  
+
   body('description')
     .optional()
     .trim()
     .isLength({ max: 500 })
     .withMessage('Description must not exceed 500 characters'),
-  
-  body('nodes')
-    .isArray()
-    .withMessage('Nodes must be an array'),
-  
-  body('edges')
-    .isArray()
-    .withMessage('Edges must be an array'),
-  
-  body('tags')
-    .optional()
-    .isArray()
-    .withMessage('Tags must be an array'),
-  
-  body('isPublic')
-    .optional()
-    .isBoolean()
-    .withMessage('isPublic must be a boolean'),
-  
-  body('settings')
-    .optional()
-    .isObject()
-    .withMessage('Settings must be an object'),
+
+  body('nodes').isArray().withMessage('Nodes must be an array'),
+
+  body('edges').isArray().withMessage('Edges must be an array'),
+
+  body('tags').optional().isArray().withMessage('Tags must be an array'),
+
+  body('isPublic').optional().isBoolean().withMessage('isPublic must be a boolean'),
+
+  body('settings').optional().isObject().withMessage('Settings must be an object'),
 ];
 
 /**
@@ -71,42 +54,24 @@ export const updateWorkflowValidation = [
     .trim()
     .isLength({ min: 1, max: 100 })
     .withMessage('Workflow name must be between 1 and 100 characters'),
-  
+
   body('description')
     .optional()
     .trim()
     .isLength({ max: 500 })
     .withMessage('Description must not exceed 500 characters'),
-  
-  body('nodes')
-    .optional()
-    .isArray()
-    .withMessage('Nodes must be an array'),
-  
-  body('edges')
-    .optional()
-    .isArray()
-    .withMessage('Edges must be an array'),
-  
-  body('tags')
-    .optional()
-    .isArray()
-    .withMessage('Tags must be an array'),
-  
-  body('isPublic')
-    .optional()
-    .isBoolean()
-    .withMessage('isPublic must be a boolean'),
-  
-  body('isActive')
-    .optional()
-    .isBoolean()
-    .withMessage('isActive must be a boolean'),
-  
-  body('settings')
-    .optional()
-    .isObject()
-    .withMessage('Settings must be an object'),
+
+  body('nodes').optional().isArray().withMessage('Nodes must be an array'),
+
+  body('edges').optional().isArray().withMessage('Edges must be an array'),
+
+  body('tags').optional().isArray().withMessage('Tags must be an array'),
+
+  body('isPublic').optional().isBoolean().withMessage('isPublic must be a boolean'),
+
+  body('isActive').optional().isBoolean().withMessage('isActive must be a boolean'),
+
+  body('settings').optional().isObject().withMessage('Settings must be an object'),
 ];
 
 /**
@@ -119,17 +84,10 @@ export const workflowSearchValidation = [
     .trim()
     .isLength({ min: 1 })
     .withMessage('Search term must not be empty'),
-  
-  query('tags')
-    .optional()
-    .isString()
-    .withMessage('Tags must be a comma-separated string'),
-  
-  query('isActive')
-    .optional()
-    .isBoolean()
-    .toBoolean()
-    .withMessage('isActive must be a boolean'),
+
+  query('tags').optional().isString().withMessage('Tags must be a comma-separated string'),
+
+  query('isActive').optional().isBoolean().toBoolean().withMessage('isActive must be a boolean'),
 ];
 
 /**
@@ -137,10 +95,7 @@ export const workflowSearchValidation = [
  */
 export const executeWorkflowValidation = [
   mongoIdParam,
-  body('triggerData')
-    .optional()
-    .isObject()
-    .withMessage('Trigger data must be an object'),
+  body('triggerData').optional().isObject().withMessage('Trigger data must be an object'),
 ];
 
 /**
@@ -160,11 +115,8 @@ export const workflowStatsValidation = [
  */
 export const executionQueryValidation = [
   ...paginationValidation,
-  query('workflowId')
-    .optional()
-    .isMongoId()
-    .withMessage('Invalid workflow ID format'),
-  
+  query('workflowId').optional().isMongoId().withMessage('Invalid workflow ID format'),
+
   query('status')
     .optional()
     .isIn(['pending', 'running', 'success', 'error', 'cancelled'])

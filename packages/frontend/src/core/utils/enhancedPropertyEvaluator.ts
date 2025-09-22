@@ -10,10 +10,10 @@
  */
 
 import type {
+  NodeProperty as INodeProperty,
   PropertyFormState,
   PropertyValue,
-} from "../types/dynamicProperties";
-import type { NodeProperty as INodeProperty } from "../types/dynamicProperties";
+} from '../types/dynamicProperties';
 
 export interface EnhancedPropertyEvaluation {
   visible: boolean;
@@ -27,27 +27,20 @@ export interface EnhancedPropertyEvaluation {
 
 export interface PropertyDependency {
   property: string;
-  operator:
-    | "equals"
-    | "notEquals"
-    | "in"
-    | "notIn"
-    | "exists"
-    | "empty"
-    | "regex";
+  operator: 'equals' | 'notEquals' | 'in' | 'notIn' | 'exists' | 'empty' | 'regex';
   value?: any;
   ignoreCase?: boolean;
 }
 
 export interface ValidationRule {
-  type: "required" | "minLength" | "maxLength" | "pattern" | "custom";
+  type: 'required' | 'minLength' | 'maxLength' | 'pattern' | 'custom';
   value?: any;
   message: string;
   validator?: (value: PropertyValue, formState: PropertyFormState) => boolean;
 }
 
 export interface EnhancedNodeProperty
-  extends Omit<INodeProperty, "displayOptions" | "expressionSupport"> {
+  extends Omit<INodeProperty, 'displayOptions' | 'expressionSupport'> {
   // Enhanced display options (separate from base DisplayOptions)
   displayOptions?: {
     show?: PropertyDependency[];
@@ -61,9 +54,9 @@ export interface EnhancedNodeProperty
 
   // Property relationships
   dependencies?: string[];
-  
+
   // Expression support (compatible with base interface)
-  expressionSupport?: "none" | "full" | "partial";
+  expressionSupport?: 'none' | 'full' | 'partial';
   affects?: string[];
 
   // AI assistance
@@ -71,13 +64,13 @@ export interface EnhancedNodeProperty
   aiPrompt?: string;
 
   // Expression language (additional property not in base interface)
-  expressionLanguage?: "javascript" | "jsonpath" | "n8n";
+  expressionLanguage?: 'javascript' | 'jsonpath' | 'n8n';
 
   // Dynamic properties
   isDynamic?: boolean;
   dynamicLoadOptions?: {
     endpoint: string;
-    method: "GET" | "POST";
+    method: 'GET' | 'POST';
     params?: Record<string, any>;
     dependsOn?: string[];
   };
@@ -120,9 +113,7 @@ export class EnhancedPropertyEvaluator {
   /**
    * Evaluate multiple properties and resolve dependencies
    */
-  evaluateProperties(
-    properties: EnhancedNodeProperty[],
-  ): Map<string, EnhancedPropertyEvaluation> {
+  evaluateProperties(properties: EnhancedNodeProperty[]): Map<string, EnhancedPropertyEvaluation> {
     this.buildDependencyGraph(properties);
     const results = new Map<string, EnhancedPropertyEvaluation>();
 
@@ -134,10 +125,7 @@ export class EnhancedPropertyEvaluator {
       results.set(property.name, evaluation);
 
       // Update form state if property has a default value
-      if (
-        evaluation.defaultValue !== undefined &&
-        this.formState[property.name] === undefined
-      ) {
+      if (evaluation.defaultValue !== undefined && this.formState[property.name] === undefined) {
         this.formState[property.name] = evaluation.defaultValue;
       }
     }
@@ -199,9 +187,7 @@ export class EnhancedPropertyEvaluator {
     this.clearCache();
   }
 
-  private performEvaluation(
-    property: EnhancedNodeProperty,
-  ): EnhancedPropertyEvaluation {
+  private performEvaluation(property: EnhancedNodeProperty): EnhancedPropertyEvaluation {
     const currentValue = this.formState[property.name];
 
     // Start with default evaluation
@@ -215,11 +201,7 @@ export class EnhancedPropertyEvaluator {
     evaluation = this.evaluateDisplayConditions(property, evaluation);
 
     // Evaluate validation rules
-    evaluation = this.evaluateValidationRules(
-      property,
-      currentValue,
-      evaluation,
-    );
+    evaluation = this.evaluateValidationRules(property, currentValue, evaluation);
 
     // Generate AI suggestions if enabled
     if (property.aiSuggestions) {
@@ -236,7 +218,7 @@ export class EnhancedPropertyEvaluator {
 
   private evaluateDisplayConditions(
     property: EnhancedNodeProperty,
-    evaluation: EnhancedPropertyEvaluation,
+    evaluation: EnhancedPropertyEvaluation
   ): EnhancedPropertyEvaluation {
     const displayOptions = property.displayOptions;
 
@@ -281,55 +263,37 @@ export class EnhancedPropertyEvaluator {
     const currentValue = this.formState[dependency.property];
 
     switch (dependency.operator) {
-      case "equals":
-        return this.compareValues(
-          currentValue,
-          dependency.value,
-          dependency.ignoreCase,
-        );
+      case 'equals':
+        return this.compareValues(currentValue, dependency.value, dependency.ignoreCase);
 
-      case "notEquals":
-        return !this.compareValues(
-          currentValue,
-          dependency.value,
-          dependency.ignoreCase,
-        );
+      case 'notEquals':
+        return !this.compareValues(currentValue, dependency.value, dependency.ignoreCase);
 
-      case "in":
+      case 'in':
         return (
           Array.isArray(dependency.value) &&
           dependency.value.some((val) =>
-            this.compareValues(currentValue, val, dependency.ignoreCase),
+            this.compareValues(currentValue, val, dependency.ignoreCase)
           )
         );
 
-      case "notIn":
+      case 'notIn':
         return (
           !Array.isArray(dependency.value) ||
           !dependency.value.some((val) =>
-            this.compareValues(currentValue, val, dependency.ignoreCase),
+            this.compareValues(currentValue, val, dependency.ignoreCase)
           )
         );
 
-      case "exists":
+      case 'exists':
         return currentValue !== undefined && currentValue !== null;
 
-      case "empty":
-        return (
-          currentValue === undefined ||
-          currentValue === null ||
-          currentValue === ""
-        );
+      case 'empty':
+        return currentValue === undefined || currentValue === null || currentValue === '';
 
-      case "regex":
-        if (
-          typeof dependency.value === "string" &&
-          typeof currentValue === "string"
-        ) {
-          const regex = new RegExp(
-            dependency.value,
-            dependency.ignoreCase ? "i" : "",
-          );
+      case 'regex':
+        if (typeof dependency.value === 'string' && typeof currentValue === 'string') {
+          const regex = new RegExp(dependency.value, dependency.ignoreCase ? 'i' : '');
           return regex.test(currentValue);
         }
         return false;
@@ -340,11 +304,7 @@ export class EnhancedPropertyEvaluator {
   }
 
   private compareValues(value1: any, value2: any, ignoreCase = false): boolean {
-    if (
-      ignoreCase &&
-      typeof value1 === "string" &&
-      typeof value2 === "string"
-    ) {
+    if (ignoreCase && typeof value1 === 'string' && typeof value2 === 'string') {
       return value1.toLowerCase() === value2.toLowerCase();
     }
     return value1 === value2;
@@ -353,7 +313,7 @@ export class EnhancedPropertyEvaluator {
   private evaluateValidationRules(
     property: EnhancedNodeProperty,
     currentValue: PropertyValue,
-    evaluation: EnhancedPropertyEvaluation,
+    evaluation: EnhancedPropertyEvaluation
   ): EnhancedPropertyEvaluation {
     if (!property.validation) {
       return evaluation;
@@ -373,45 +333,39 @@ export class EnhancedPropertyEvaluator {
   private validateRule(
     rule: ValidationRule,
     value: PropertyValue,
-    property: EnhancedNodeProperty,
+    property: EnhancedNodeProperty
   ): string | null {
     switch (rule.type) {
-      case "required":
-        if (value === undefined || value === null || value === "") {
-          return (
-            rule.message ||
-            `${property.displayName || property.name} is required`
-          );
+      case 'required':
+        if (value === undefined || value === null || value === '') {
+          return rule.message || `${property.displayName || property.name} is required`;
         }
         break;
 
-      case "minLength":
-        if (typeof value === "string" && value.length < (rule.value || 0)) {
+      case 'minLength':
+        if (typeof value === 'string' && value.length < (rule.value || 0)) {
           return rule.message || `Minimum length is ${rule.value}`;
         }
         break;
 
-      case "maxLength":
-        if (
-          typeof value === "string" &&
-          value.length > (rule.value || Infinity)
-        ) {
+      case 'maxLength':
+        if (typeof value === 'string' && value.length > (rule.value || Infinity)) {
           return rule.message || `Maximum length is ${rule.value}`;
         }
         break;
 
-      case "pattern":
-        if (typeof value === "string" && typeof rule.value === "string") {
+      case 'pattern':
+        if (typeof value === 'string' && typeof rule.value === 'string') {
           const regex = new RegExp(rule.value);
           if (!regex.test(value)) {
-            return rule.message || "Invalid format";
+            return rule.message || 'Invalid format';
           }
         }
         break;
 
-      case "custom":
+      case 'custom':
         if (rule.validator && !rule.validator(value, this.formState)) {
-          return rule.message || "Validation failed";
+          return rule.message || 'Validation failed';
         }
         break;
     }
@@ -421,45 +375,45 @@ export class EnhancedPropertyEvaluator {
 
   private generateAISuggestion(
     property: EnhancedNodeProperty,
-    currentValue: PropertyValue,
+    currentValue: PropertyValue
   ): string | undefined {
     // Generate contextual AI suggestions based on property type and current value
     if (!property.aiPrompt && !currentValue) {
       // Generate default suggestions based on property type
       switch (property.type) {
-        case "string":
-          if (property.name.toLowerCase().includes("prompt")) {
+        case 'string':
+          if (property.name.toLowerCase().includes('prompt')) {
             return 'Try: "Analyze the following data and provide insights..."';
           }
-          if (property.name.toLowerCase().includes("subject")) {
+          if (property.name.toLowerCase().includes('subject')) {
             return 'Try: "Important update from your workflow"';
           }
-          if (property.name.toLowerCase().includes("message")) {
+          if (property.name.toLowerCase().includes('message')) {
             return 'Try: "Here are the results from your automation..."';
           }
           break;
 
-        case "select":
+        case 'select':
           if (property.options && property.options.length > 0) {
             const firstOption = property.options[0];
-            return `Suggested: ${typeof firstOption === "object" ? firstOption.value : firstOption}`;
+            return `Suggested: ${typeof firstOption === 'object' ? firstOption.value : firstOption}`;
           }
           break;
 
-        case "number":
-          if (property.name.toLowerCase().includes("temperature")) {
-            return "Suggested: 0.7 (balanced creativity)";
+        case 'number':
+          if (property.name.toLowerCase().includes('temperature')) {
+            return 'Suggested: 0.7 (balanced creativity)';
           }
-          if (property.name.toLowerCase().includes("token")) {
-            return "Suggested: 1000 (moderate length)";
+          if (property.name.toLowerCase().includes('token')) {
+            return 'Suggested: 1000 (moderate length)';
           }
-          if (property.name.toLowerCase().includes("timeout")) {
-            return "Suggested: 30000 (30 seconds)";
+          if (property.name.toLowerCase().includes('timeout')) {
+            return 'Suggested: 30000 (30 seconds)';
           }
           break;
 
-        case "boolean":
-          return "Suggested: true (enabled)";
+        case 'boolean':
+          return 'Suggested: true (enabled)';
       }
     }
 
@@ -470,12 +424,9 @@ export class EnhancedPropertyEvaluator {
 
     // Contextual suggestions based on current value
     if (currentValue) {
-      if (property.type === "string" && typeof currentValue === "string") {
-        if (
-          currentValue.length < 10 &&
-          property.name.toLowerCase().includes("prompt")
-        ) {
-          return "Consider adding more detail to improve AI responses";
+      if (property.type === 'string' && typeof currentValue === 'string') {
+        if (currentValue.length < 10 && property.name.toLowerCase().includes('prompt')) {
+          return 'Consider adding more detail to improve AI responses';
         }
       }
     }
@@ -483,9 +434,7 @@ export class EnhancedPropertyEvaluator {
     return undefined;
   }
 
-  private calculateDefaultValue(
-    property: EnhancedNodeProperty,
-  ): PropertyValue | undefined {
+  private calculateDefaultValue(property: EnhancedNodeProperty): PropertyValue | undefined {
     // Use existing default if available
     if (property.default !== undefined) {
       return property.default as PropertyValue;
@@ -493,18 +442,18 @@ export class EnhancedPropertyEvaluator {
 
     // Generate smart defaults based on property type
     switch (property.type) {
-      case "string":
-        return "";
-      case "number":
+      case 'string':
+        return '';
+      case 'number':
         return 0;
-      case "boolean":
+      case 'boolean':
         return false;
-      case "select":
-      case "multiSelect":
+      case 'select':
+      case 'multiSelect':
         return [];
-      case "collection":
+      case 'collection':
         return undefined;
-      case "fixedCollection":
+      case 'fixedCollection':
         return undefined;
       default:
         return undefined;
@@ -530,7 +479,7 @@ export class EnhancedPropertyEvaluator {
 
     // Extract from display options
     if (property.displayOptions) {
-      ["show", "hide", "enable", "disable"].forEach((key) => {
+      ['show', 'hide', 'enable', 'disable'].forEach((key) => {
         const conditions = (property.displayOptions as any)?.[key];
         if (Array.isArray(conditions)) {
           conditions.forEach((dep: PropertyDependency) => {
@@ -548,9 +497,7 @@ export class EnhancedPropertyEvaluator {
     return Array.from(dependencies);
   }
 
-  private topologicalSort(
-    properties: EnhancedNodeProperty[],
-  ): EnhancedNodeProperty[] {
+  private topologicalSort(properties: EnhancedNodeProperty[]): EnhancedNodeProperty[] {
     const visited = new Set<string>();
     const visiting = new Set<string>();
     const result: EnhancedNodeProperty[] = [];
@@ -568,9 +515,7 @@ export class EnhancedPropertyEvaluator {
 
       visiting.add(propertyName);
 
-      const dependencies = this.extractDependencies(
-        propertyMap.get(propertyName)!,
-      );
+      const dependencies = this.extractDependencies(propertyMap.get(propertyName)!);
       dependencies.forEach((dep) => {
         if (propertyMap.has(dep)) {
           visit(dep);
@@ -603,7 +548,7 @@ export class EnhancedPropertyEvaluator {
         acc[dep] = this.formState[dep];
         return acc;
       },
-      {} as Record<string, any>,
+      {} as Record<string, any>
     );
 
     return `${property.name}:${JSON.stringify(relevantState)}`;
@@ -616,14 +561,14 @@ export class EnhancedPropertyEvaluator {
 export function useEnhancedPropertyEvaluator(
   properties: EnhancedNodeProperty[],
   formState: PropertyFormState,
-  executionContext: any = {},
+  executionContext: any = {}
 ) {
   const [evaluator] = React.useState(
-    () => new EnhancedPropertyEvaluator(formState, executionContext),
+    () => new EnhancedPropertyEvaluator(formState, executionContext)
   );
-  const [evaluations, setEvaluations] = React.useState<
-    Map<string, EnhancedPropertyEvaluation>
-  >(new Map());
+  const [evaluations, setEvaluations] = React.useState<Map<string, EnhancedPropertyEvaluation>>(
+    new Map()
+  );
 
   React.useEffect(() => {
     evaluator.updateFormState(formState);
@@ -639,7 +584,7 @@ export function useEnhancedPropertyEvaluator(
     (propertyName: string) => {
       return evaluator.getDependentProperties(propertyName);
     },
-    [evaluator],
+    [evaluator]
   );
 
   return {
@@ -651,4 +596,4 @@ export function useEnhancedPropertyEvaluator(
 }
 
 // Import React for the hook
-import React from "react";
+import React from 'react';

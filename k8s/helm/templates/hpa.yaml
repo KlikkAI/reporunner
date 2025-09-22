@@ -1,0 +1,103 @@
+{{- if .Values.reporunner.backend.autoscaling.enabled }}
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ include "reporunner.fullname" . }}-backend
+  labels:
+    {{- $component := "backend" }}
+    {{- include "reporunner.componentLabels" (dict "Chart" .Chart "Release" .Release "Values" .Values "component" $component) | nindent 4 }}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ include "reporunner.fullname" . }}-backend
+  minReplicas: {{ .Values.reporunner.backend.autoscaling.minReplicas }}
+  maxReplicas: {{ .Values.reporunner.backend.autoscaling.maxReplicas }}
+  metrics:
+    {{- if .Values.reporunner.backend.autoscaling.targetCPUUtilizationPercentage }}
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.reporunner.backend.autoscaling.targetCPUUtilizationPercentage }}
+    {{- end }}
+    {{- if .Values.reporunner.backend.autoscaling.targetMemoryUtilizationPercentage }}
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.reporunner.backend.autoscaling.targetMemoryUtilizationPercentage }}
+    {{- end }}
+{{- end }}
+
+---
+{{- if .Values.reporunner.frontend.autoscaling.enabled }}
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ include "reporunner.fullname" . }}-frontend
+  labels:
+    {{- $component := "frontend" }}
+    {{- include "reporunner.componentLabels" (dict "Chart" .Chart "Release" .Release "Values" .Values "component" $component) | nindent 4 }}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ include "reporunner.fullname" . }}-frontend
+  minReplicas: {{ .Values.reporunner.frontend.autoscaling.minReplicas }}
+  maxReplicas: {{ .Values.reporunner.frontend.autoscaling.maxReplicas }}
+  metrics:
+    {{- if .Values.reporunner.frontend.autoscaling.targetCPUUtilizationPercentage }}
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.reporunner.frontend.autoscaling.targetCPUUtilizationPercentage }}
+    {{- end }}
+    {{- if .Values.reporunner.frontend.autoscaling.targetMemoryUtilizationPercentage }}
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.reporunner.frontend.autoscaling.targetMemoryUtilizationPercentage }}
+    {{- end }}
+{{- end }}
+
+---
+{{- if .Values.reporunner.worker.autoscaling.enabled }}
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ include "reporunner.fullname" . }}-worker
+  labels:
+    {{- $component := "worker" }}
+    {{- include "reporunner.componentLabels" (dict "Chart" .Chart "Release" .Release "Values" .Values "component" $component) | nindent 4 }}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ include "reporunner.fullname" . }}-worker
+  minReplicas: {{ .Values.reporunner.worker.autoscaling.minReplicas }}
+  maxReplicas: {{ .Values.reporunner.worker.autoscaling.maxReplicas }}
+  metrics:
+    {{- if .Values.reporunner.worker.autoscaling.targetCPUUtilizationPercentage }}
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.reporunner.worker.autoscaling.targetCPUUtilizationPercentage }}
+    {{- end }}
+    {{- if .Values.reporunner.worker.autoscaling.targetMemoryUtilizationPercentage }}
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.reporunner.worker.autoscaling.targetMemoryUtilizationPercentage }}
+    {{- end }}
+{{- end }}

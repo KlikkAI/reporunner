@@ -1,4 +1,4 @@
-import type { BaseNodeConfig } from './index'
+import type { BaseNodeConfig } from './index';
 
 // Node configuration presets for different node types
 export const NodeConfigs: Record<string, BaseNodeConfig> = {
@@ -347,9 +347,9 @@ export const NodeConfigs: Record<string, BaseNodeConfig> = {
       },
     },
   },
-}
+};
 
 // Helper function to get node config by type
 export const getNodeConfig = (nodeType: string): BaseNodeConfig => {
-  return NodeConfigs[nodeType] || NodeConfigs.action // Default to action config
-}
+  return NodeConfigs[nodeType] || NodeConfigs.action; // Default to action config
+};

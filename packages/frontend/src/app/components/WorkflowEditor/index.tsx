@@ -1,71 +1,66 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import ReactFlow, {
-  Background,
-  Controls,
-  MiniMap,
-  Panel,
   addEdge,
-  useNodesState,
-  useEdgesState,
+  Background,
   type Connection,
+  Controls,
   type Edge,
+  MiniMap,
   type Node,
+  Panel,
   type ReactFlowInstance,
   ReactFlowProvider,
-} from "reactflow";
-import "reactflow/dist/style.css";
-import { useLeanWorkflowStore, nodeRegistry } from "@/core";
-import { useCredentialStore } from "@/core/stores/credentialStore";
-import { useAIAssistantStore } from "@/core/stores/aiAssistantStore";
-import { useCollaborationStore } from "@/core/stores/collaborationStore";
-import { useAnalyticsStore } from "@/core/stores/analyticsStore";
-import { ExecutionToolbar } from "./ExecutionToolbar";
+  useEdgesState,
+  useNodesState,
+} from 'reactflow';
+import 'reactflow/dist/style.css';
+import { executionMonitor, useExecutionMonitor } from '@/app/services/executionMonitor';
+import { intelligentAutoConnect } from '@/app/services/intelligentAutoConnect';
+import { nodeRegistry, useLeanWorkflowStore } from '@/core';
+import { useAIAssistantStore } from '@/core/stores/aiAssistantStore';
+import { useAnalyticsStore } from '@/core/stores/analyticsStore';
+import { useCollaborationStore } from '@/core/stores/collaborationStore';
+import { useCredentialStore } from '@/core/stores/credentialStore';
+import { useRBACStore } from '@/core/stores/rbacStore';
+import { ConnectionType } from '@/core/types/edge';
+import { AuditDashboard } from '../AuditDashboard/AuditDashboard';
+import { EnterpriseDashboard } from '../EnterpriseDashboard/EnterpriseDashboard';
+import { OrganizationSettingsComponent } from '../OrganizationManagement/OrganizationSettings';
+import AdvancedNodePanel from './AdvancedNodePanel';
+import AdvancedPropertyPanel from './AdvancedPropertyPanel';
+import AIAssistantPanel from './AIAssistantPanel';
 import {
-  executionMonitor,
-  useExecutionMonitor,
-} from "@/app/services/executionMonitor";
-import { intelligentAutoConnect } from "@/app/services/intelligentAutoConnect";
-import AdvancedNodePanel from "./AdvancedNodePanel";
-import RegistryNode from "./NodeTypes/RegistryNode";
-import ContainerNode from "./NodeTypes/ContainerNode/ContainerNode";
-import AdvancedPropertyPanel from "./AdvancedPropertyPanel";
-import CustomEdge from "./CustomEdge";
-import ExecutionPanel from "./ExecutionPanel";
-import AIAssistantPanel from "./AIAssistantPanel";
-import DebugPanel from "./DebugPanel";
-import { CollaborationPanel } from "./CollaborationPanel";
-import { UserPresenceOverlay } from "./UserPresenceOverlay";
-import { CommentAnnotations } from "./CommentAnnotations";
-import { AnalyticsDashboard } from "./AnalyticsDashboard";
-import { SchedulingPanel } from "./SchedulingPanel";
-import { TriggerPanel } from "./TriggerPanel";
-import {
-  ConditionalBranchingPanel,
-  type BranchConfiguration,
-} from "./ConditionalBranchingPanel";
-import { WorkflowTemplatesPanel } from "./WorkflowTemplatesPanel";
-import { ConnectionType } from "@/core/types/edge";
-import ConnectionLine from "./ConnectionLine";
-import { EnterpriseDashboard } from "../EnterpriseDashboard/EnterpriseDashboard";
-import { AuditDashboard } from "../AuditDashboard/AuditDashboard";
-import { OrganizationSettingsComponent } from "../OrganizationManagement/OrganizationSettings";
-import { useRBACStore } from "@/core/stores/rbacStore";
-import {
-  AILanguageModelEdge,
-  AIEmbeddingEdge,
-  AIVectorStoreEdge,
-  AIToolEdge,
   AIEdgeMarkers,
   AIEdgeStyles,
-} from "./AIEdges";
+  AIEmbeddingEdge,
+  AILanguageModelEdge,
+  AIToolEdge,
+  AIVectorStoreEdge,
+} from './AIEdges';
+import { AnalyticsDashboard } from './AnalyticsDashboard';
+import { CollaborationPanel } from './CollaborationPanel';
+import { CommentAnnotations } from './CommentAnnotations';
+import { type BranchConfiguration, ConditionalBranchingPanel } from './ConditionalBranchingPanel';
+import ConnectionLine from './ConnectionLine';
+import CustomEdge from './CustomEdge';
+import DebugPanel from './DebugPanel';
+import ExecutionPanel from './ExecutionPanel';
+import { ExecutionToolbar } from './ExecutionToolbar';
+import ContainerNode from './NodeTypes/ContainerNode/ContainerNode';
+import RegistryNode from './NodeTypes/RegistryNode';
+import { SchedulingPanel } from './SchedulingPanel';
+import { TriggerPanel } from './TriggerPanel';
+import { UserPresenceOverlay } from './UserPresenceOverlay';
+import { WorkflowTemplatesPanel } from './WorkflowTemplatesPanel';
+
 // Generate dynamic node types from registry + container nodes
 // 🎯 100% Registry Migration - No Legacy Fallback Needed
 const generateNodeTypes = () => {
   const nodeTypes: Record<string, any> = {};
 
   // Add container node type
-  nodeTypes["container"] = ContainerNode;
+  nodeTypes['container'] = ContainerNode;
 
   // Get ALL node descriptions (regular + enhanced) and map them to RegistryNode
   const allNodeDescriptions = nodeRegistry.getAllNodeTypeDescriptions();
@@ -75,19 +70,17 @@ const generateNodeTypes = () => {
 
   // Only log in development mode and only if there are issues
   if (import.meta.env.DEV) {
-    const hasGmailNode = "gmail-enhanced" in nodeTypes;
+    const hasGmailNode = 'gmail-enhanced' in nodeTypes;
 
     if (!hasGmailNode) {
-      console.warn("⚠️ Gmail enhanced node missing from React Flow mapping!");
-      console.warn("🔍 Available nodes:", Object.keys(nodeTypes));
-      console.warn(
-        `📊 Generated ${Object.keys(nodeTypes).length} node types from registry`,
-      );
+      console.warn('⚠️ Gmail enhanced node missing from React Flow mapping!');
+      console.warn('🔍 Available nodes:', Object.keys(nodeTypes));
+      console.warn(`📊 Generated ${Object.keys(nodeTypes).length} node types from registry`);
     } else {
       // Only log success once per session to avoid spam
       if (!(window as any).__gmailNodeValidationLogged) {
         console.log(
-          `✅ Generated ${Object.keys(nodeTypes).length} node types including Gmail and containers`,
+          `✅ Generated ${Object.keys(nodeTypes).length} node types including Gmail and containers`
         );
         (window as any).__gmailNodeValidationLogged = true;
       }
@@ -138,14 +131,13 @@ const WorkflowEditor: React.FC = () => {
   } = useCollaborationStore();
 
   // Analytics state
-  const { analyticsModalOpen, toggleAnalyticsModal, setSelectedWorkflow } =
-    useAnalyticsStore();
+  const { analyticsModalOpen, toggleAnalyticsModal, setSelectedWorkflow } = useAnalyticsStore();
   const { organizations, canManageOrganization } = useRBACStore();
 
   // Memoized node types - prevent React Flow warnings about creating new objects
   const nodeTypes = useMemo<Record<string, any>>(() => {
     if (import.meta.env.DEV) {
-      console.log("🔄 WorkflowEditor: Memoizing node types");
+      console.log('🔄 WorkflowEditor: Memoizing node types');
     }
     return generateNodeTypes();
   }, []);
@@ -155,12 +147,12 @@ const WorkflowEditor: React.FC = () => {
     // Validate that Gmail node is properly registered (one-time check)
     const hasGmailInRegistry = nodeRegistry
       .getAllNodeTypeDescriptions()
-      .some((n) => n.name === "gmail-enhanced");
-    const hasGmailInReactFlow = "gmail-enhanced" in nodeTypes;
+      .some((n) => n.name === 'gmail-enhanced');
+    const hasGmailInReactFlow = 'gmail-enhanced' in nodeTypes;
 
     // Only log if there's actually a problem
     if (hasGmailInRegistry !== hasGmailInReactFlow) {
-      console.warn("🔍 Gmail Node Validation Issue:", {
+      console.warn('🔍 Gmail Node Validation Issue:', {
         inRegistry: hasGmailInRegistry,
         inReactFlow: hasGmailInReactFlow,
         registryStats: nodeRegistry.getStatistics(),
@@ -170,12 +162,12 @@ const WorkflowEditor: React.FC = () => {
       // If this happens, the user should refresh the page
       if (hasGmailInRegistry && !hasGmailInReactFlow) {
         console.error(
-          "🔄 Gmail node in registry but missing from React Flow - page refresh may be needed",
+          '🔄 Gmail node in registry but missing from React Flow - page refresh may be needed'
         );
       }
     } else if (import.meta.env.DEV) {
       // Success case - only show in dev mode and only once
-      console.log("✅ Gmail node validation passed on mount");
+      console.log('✅ Gmail node validation passed on mount');
     }
   }, []); // ✅ Fixed: Empty dependency array - runs only once on mount
 
@@ -186,22 +178,15 @@ const WorkflowEditor: React.FC = () => {
 
       // Error handling for missing node types
       if (!nodeDefinition) {
-        console.error(
-          `❌ Node type "${leanNode.type}" not found in registry!`,
-          {
-            nodeId: leanNode.id,
-            nodeType: leanNode.type,
-            availableTypes: nodeRegistry
-              .getAllNodeTypeDescriptions()
-              .map((n) => n.name),
-          },
-        );
+        console.error(`❌ Node type "${leanNode.type}" not found in registry!`, {
+          nodeId: leanNode.id,
+          nodeType: leanNode.type,
+          availableTypes: nodeRegistry.getAllNodeTypeDescriptions().map((n) => n.name),
+        });
 
         // Special handling for Gmail node - likely needs page refresh
-        if (leanNode.type === "gmail-enhanced") {
-          console.error(
-            "🔥 Gmail Enhanced Node missing - page refresh may be needed",
-          );
+        if (leanNode.type === 'gmail-enhanced') {
+          console.error('🔥 Gmail Enhanced Node missing - page refresh may be needed');
         }
       }
       return {
@@ -223,32 +208,21 @@ const WorkflowEditor: React.FC = () => {
 
   const [localNodes, setNodes, onNodesChange] = useNodesState(reactFlowNodes);
   const [localEdges, setEdges, onEdgesChange] = useEdgesState(edges);
-  const [reactFlowInstance, setReactFlowInstance] =
-    React.useState<ReactFlowInstance | null>(null);
-  const [selectedNodeForConfig, setSelectedNodeForConfig] = useState<
-    string | null
-  >(null);
-  const [edgesHoveredById, setEdgesHoveredById] = useState<
-    Record<string, boolean>
-  >({});
-  const [edgesBringToFrontById, setEdgesBringToFrontById] = useState<
-    Record<string, boolean>
-  >({});
+  const [reactFlowInstance, setReactFlowInstance] = React.useState<ReactFlowInstance | null>(null);
+  const [selectedNodeForConfig, setSelectedNodeForConfig] = useState<string | null>(null);
+  const [edgesHoveredById, setEdgesHoveredById] = useState<Record<string, boolean>>({});
+  const [edgesBringToFrontById, setEdgesBringToFrontById] = useState<Record<string, boolean>>({});
   const [isNodePanelCollapsed, setIsNodePanelCollapsed] = useState(false);
   const [isMinimapMinimized, setIsMinimapMinimized] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const [currentExecutionId, setCurrentExecutionId] = useState<string | null>(
-    null,
-  );
+  const [currentExecutionId, setCurrentExecutionId] = useState<string | null>(null);
   const [isExecutionPanelVisible, setIsExecutionPanelVisible] = useState(false);
   const [isDebugPanelVisible, setIsDebugPanelVisible] = useState(false);
-  const [isSchedulingPanelVisible, setIsSchedulingPanelVisible] =
-    useState(false);
+  const [isSchedulingPanelVisible, setIsSchedulingPanelVisible] = useState(false);
   const [isTriggerPanelVisible, setIsTriggerPanelVisible] = useState(false);
   const [isBranchingPanelVisible, setIsBranchingPanelVisible] = useState(false);
   const [isTemplatesPanelVisible, setIsTemplatesPanelVisible] = useState(false);
-  const [isEnterpriseDashboardVisible, setIsEnterpriseDashboardVisible] =
-    useState(false);
+  const [isEnterpriseDashboardVisible, setIsEnterpriseDashboardVisible] = useState(false);
   const [isAuditDashboardVisible, setIsAuditDashboardVisible] = useState(false);
   const [isOrgSettingsVisible, setIsOrgSettingsVisible] = useState(false);
   const [containerRef, setContainerRef] = useState<HTMLDivElement | null>(null);
@@ -259,22 +233,22 @@ const WorkflowEditor: React.FC = () => {
   // Handle branch creation from conditional branching panel
   const handleAddBranch = useCallback(
     (branchConfig: BranchConfiguration) => {
-      console.log("Adding branch configuration:", branchConfig);
+      console.log('Adding branch configuration:', branchConfig);
 
       // Create condition nodes and edges based on branch configuration
       const conditionNodeId = `condition-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`;
 
       const conditionNode = {
         id: conditionNodeId,
-        type: "condition",
+        type: 'condition',
         position: { x: 300, y: 200 },
         parameters: {},
         data: {
           label: branchConfig.name,
           description: branchConfig.description,
-          type: "condition",
-          integration: "core",
-          nodeType: "condition",
+          type: 'condition',
+          integration: 'core',
+          nodeType: 'condition',
           configuration: {
             conditions: branchConfig.conditions,
             logicalOperator: branchConfig.logicalOperator,
@@ -282,7 +256,7 @@ const WorkflowEditor: React.FC = () => {
             priority: branchConfig.priority,
           },
           credentials: [],
-          icon: "🔀",
+          icon: '🔀',
           properties: {
             conditions: branchConfig.conditions,
             logicalOperator: branchConfig.logicalOperator,
@@ -293,32 +267,30 @@ const WorkflowEditor: React.FC = () => {
       addNode(conditionNode);
 
       // Create edges for true/false branches
-      const sourceNode = localNodes.find(
-        (node) => node.id === branchConfig.sourceNodeId,
-      );
+      const sourceNode = localNodes.find((node) => node.id === branchConfig.sourceNodeId);
       if (sourceNode) {
         const trueEdge = {
           id: `edge-${branchConfig.sourceNodeId}-${conditionNodeId}-true`,
           source: branchConfig.sourceNodeId,
           target: conditionNodeId,
-          type: "default",
-          data: { label: "true" },
+          type: 'default',
+          data: { label: 'true' },
         };
 
         addEdgeToStore(trueEdge);
       }
     },
-    [addNode, addEdgeToStore, localNodes],
+    [addNode, addEdgeToStore, localNodes]
   );
 
   // Handle workflow creation from template
   const handleCreateFromTemplate = useCallback(
     (templateId: string, variables?: Record<string, any>) => {
-      console.log("Creating workflow from template:", templateId, variables);
+      console.log('Creating workflow from template:', templateId, variables);
       // Template creation is handled within the WorkflowTemplatesPanel component
       // which calls loadWorkflow directly on the store
     },
-    [],
+    []
   );
 
   // Sync workflow changes with collaboration service
@@ -329,13 +301,13 @@ const WorkflowEditor: React.FC = () => {
       const syncWorkflowChanges = async () => {
         try {
           await sendOperation({
-            type: "node_update",
-            userId: "current-user", // Would come from auth context
+            type: 'node_update',
+            userId: 'current-user', // Would come from auth context
             data: { nodes: leanNodes },
-            workflowId: "current-workflow", // Would come from props or context
+            workflowId: 'current-workflow', // Would come from props or context
           });
         } catch (error) {
-          console.error("Failed to sync workflow changes:", error);
+          console.error('Failed to sync workflow changes:', error);
         }
       };
 
@@ -363,19 +335,13 @@ const WorkflowEditor: React.FC = () => {
       const correctedParams = { ...params };
 
       // If connecting FROM an AI agent plus icon, redirect to main handle
-      if (correctedParams.sourceHandle?.startsWith("plus-")) {
-        correctedParams.sourceHandle = correctedParams.sourceHandle.replace(
-          "plus-",
-          "",
-        );
+      if (correctedParams.sourceHandle?.startsWith('plus-')) {
+        correctedParams.sourceHandle = correctedParams.sourceHandle.replace('plus-', '');
       }
 
       // If connecting TO an AI agent plus icon, redirect to main handle
-      if (correctedParams.targetHandle?.startsWith("plus-ai_")) {
-        correctedParams.targetHandle = correctedParams.targetHandle.replace(
-          "plus-ai_",
-          "ai_",
-        );
+      if (correctedParams.targetHandle?.startsWith('plus-ai_')) {
+        correctedParams.targetHandle = correctedParams.targetHandle.replace('plus-ai_', 'ai_');
       }
 
       const newEdge = addEdge(
@@ -383,14 +349,14 @@ const WorkflowEditor: React.FC = () => {
           ...correctedParams,
           data: {
             connectionType: ConnectionType.Main,
-            ...("data" in params ? params.data : {}),
+            ...('data' in params ? params.data : {}),
           },
         },
-        localEdges,
+        localEdges
       );
       setEdges(newEdge);
     },
-    [localEdges, setEdges],
+    [localEdges, setEdges]
   );
 
   const onEdgeDelete = useCallback(
@@ -399,39 +365,29 @@ const WorkflowEditor: React.FC = () => {
       setEdges(filteredEdges);
       updateEdges(filteredEdges as any);
     },
-    [localEdges, setEdges, updateEdges],
+    [localEdges, setEdges, updateEdges]
   );
 
   // Edge hover handlers
-  const onEdgeMouseEnter = useCallback(
-    (_event: React.MouseEvent, edge: Edge) => {
-      setEdgesBringToFrontById((prev) => ({ ...prev, [edge.id]: true }));
-      setEdgesHoveredById((prev) => ({ ...prev, [edge.id]: true }));
-    },
-    [],
-  );
+  const onEdgeMouseEnter = useCallback((_event: React.MouseEvent, edge: Edge) => {
+    setEdgesBringToFrontById((prev) => ({ ...prev, [edge.id]: true }));
+    setEdgesHoveredById((prev) => ({ ...prev, [edge.id]: true }));
+  }, []);
 
-  const onEdgeMouseLeave = useCallback(
-    (_event: React.MouseEvent, edge: Edge) => {
-      setEdgesBringToFrontById((prev) => ({ ...prev, [edge.id]: false }));
-      setEdgesHoveredById((prev) => ({ ...prev, [edge.id]: false }));
-    },
-    [],
-  );
+  const onEdgeMouseLeave = useCallback((_event: React.MouseEvent, edge: Edge) => {
+    setEdgesBringToFrontById((prev) => ({ ...prev, [edge.id]: false }));
+    setEdgesHoveredById((prev) => ({ ...prev, [edge.id]: false }));
+  }, []);
 
   const onKeyDown = useCallback(
     (event: KeyboardEvent) => {
       // Don't interfere with typing in input fields
       const target = event.target as HTMLElement;
-      if (
-        target.tagName === "INPUT" ||
-        target.tagName === "TEXTAREA" ||
-        target.isContentEditable
-      ) {
+      if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable) {
         return;
       }
 
-      if (event.key === "Delete" || event.key === "Backspace") {
+      if (event.key === 'Delete' || event.key === 'Backspace') {
         event.preventDefault();
         if (selectedNodeIds.length > 0) {
           // Delete selected nodes
@@ -439,12 +395,12 @@ const WorkflowEditor: React.FC = () => {
           clearSelection();
         }
       } else if (event.ctrlKey || event.metaKey) {
-        if (event.key === "a") {
+        if (event.key === 'a') {
           // Select all nodes
           event.preventDefault();
           setSelectedNodes(localNodes.map((n) => n.id));
         }
-      } else if (event.key === "Escape") {
+      } else if (event.key === 'Escape') {
         event.preventDefault();
         if (isFullscreen) {
           // Exit fullscreen mode
@@ -455,20 +411,13 @@ const WorkflowEditor: React.FC = () => {
         }
       }
     },
-    [
-      selectedNodeIds,
-      removeNode,
-      clearSelection,
-      setSelectedNodes,
-      localNodes,
-      isFullscreen,
-    ],
+    [selectedNodeIds, removeNode, clearSelection, setSelectedNodes, localNodes, isFullscreen]
   );
 
   // Add keyboard event listener for delete
   useEffect(() => {
-    window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
   }, [onKeyDown]);
 
   const onNodeClick = useCallback(
@@ -490,7 +439,7 @@ const WorkflowEditor: React.FC = () => {
         setSelectedNodes([node.id]);
       }
     },
-    [selectedNodeIds, setSelectedNodes],
+    [selectedNodeIds, setSelectedNodes]
   );
 
   const onNodeDoubleClick = useCallback(
@@ -499,7 +448,7 @@ const WorkflowEditor: React.FC = () => {
       setSelectedNodes([node.id]);
       setSelectedNodeForConfig(node.id);
     },
-    [setSelectedNodes],
+    [setSelectedNodes]
   );
 
   const onPaneClick = useCallback(() => {
@@ -508,7 +457,7 @@ const WorkflowEditor: React.FC = () => {
 
   const onDragOver = useCallback((event: React.DragEvent) => {
     event.preventDefault();
-    event.dataTransfer.dropEffect = "move";
+    event.dataTransfer.dropEffect = 'move';
   }, []);
 
   // Enhanced auto-connection using intelligent algorithm
@@ -523,10 +472,10 @@ const WorkflowEditor: React.FC = () => {
         localEdges,
         {
           maxDistance: 400,
-          preferredDirection: "horizontal",
+          preferredDirection: 'horizontal',
           considerContainers: true,
           validateNodeTypes: true,
-        },
+        }
       );
 
       if (suggestion) {
@@ -536,7 +485,7 @@ const WorkflowEditor: React.FC = () => {
       // Fallback to original logic for compatibility
       return intelligentAutoConnect.findLastNode(localNodes, localEdges);
     },
-    [localNodes, localEdges],
+    [localNodes, localEdges]
   );
 
   const onDrop = useCallback(
@@ -545,20 +494,14 @@ const WorkflowEditor: React.FC = () => {
 
       try {
         const reactFlowBounds = event.currentTarget.getBoundingClientRect();
-        const data = event.dataTransfer.getData("application/reactflow");
+        const data = event.dataTransfer.getData('application/reactflow');
 
         if (!data || !reactFlowInstance) {
-          console.warn("No drag data or ReactFlow instance available");
+          console.warn('No drag data or ReactFlow instance available');
           return;
         }
 
-        const {
-          type,
-          integration,
-          connectionId,
-          nodeTypeData,
-          integrationData,
-        } = JSON.parse(data);
+        const { type, integration, connectionId, nodeTypeData, integrationData } = JSON.parse(data);
 
         const position = reactFlowInstance.project({
           x: event.clientX - reactFlowBounds.left,
@@ -570,11 +513,7 @@ const WorkflowEditor: React.FC = () => {
 
         // Optimize position based on target connection
         const optimizedPosition = targetNode
-          ? intelligentAutoConnect.findOptimalDropPosition(
-              position,
-              localNodes,
-              targetNode,
-            )
+          ? intelligentAutoConnect.findOptimalDropPosition(position, localNodes, targetNode)
           : position;
 
         const baseId = nodeTypeData?.name || type;
@@ -588,8 +527,7 @@ const WorkflowEditor: React.FC = () => {
           // Find the matching enhanced node type
           enhancedNodeType =
             integrationData.enhancedNodeTypes.find(
-              (nt: any) =>
-                nt.id === nodeTypeData?.id || nt.name === nodeTypeData?.name,
+              (nt: any) => nt.id === nodeTypeData?.id || nt.name === nodeTypeData?.name
             ) || integrationData.enhancedNodeTypes[0];
 
           // Get icon from enhanced node type or integration
@@ -627,7 +565,7 @@ const WorkflowEditor: React.FC = () => {
             id: `edge-${targetNode.id}-${newNodeId}`,
             source: targetNode.id,
             target: newNodeId,
-            type: "default",
+            type: 'default',
             data: {
               connectionType: ConnectionType.Main,
             },
@@ -642,10 +580,10 @@ const WorkflowEditor: React.FC = () => {
               localEdges,
               {
                 maxDistance: 400,
-                preferredDirection: "horizontal",
+                preferredDirection: 'horizontal',
                 considerContainers: true,
                 validateNodeTypes: true,
-              },
+              }
             );
             if (suggestion) {
               console.log(`🔗 Intelligent Auto-Connect: ${suggestion.reason}`);
@@ -653,17 +591,10 @@ const WorkflowEditor: React.FC = () => {
           }
         }
       } catch (error) {
-        console.error("Error in onDrop:", error);
+        console.error('Error in onDrop:', error);
       }
     },
-    [
-      reactFlowInstance,
-      addNode,
-      addEdgeToStore,
-      findOptimalConnection,
-      localNodes,
-      localEdges,
-    ],
+    [reactFlowInstance, addNode, addEdgeToStore, findOptimalConnection, localNodes, localEdges]
   );
 
   const onInit = useCallback((instance: ReactFlowInstance) => {
@@ -726,8 +657,8 @@ const WorkflowEditor: React.FC = () => {
             parameters: node.data?.parameters || {},
             credentials: node.data?.credentials || [],
             disabled: node.data?.disabled || false,
-            notes: node.data?.notes || "",
-            name: node.data?.name || "",
+            notes: node.data?.notes || '',
+            name: node.data?.name || '',
             continueOnFail: node.data?.continueOnFail || false,
             executeOnce: node.data?.executeOnce || false,
           })),
@@ -738,9 +669,9 @@ const WorkflowEditor: React.FC = () => {
             sourceHandle: edge.sourceHandle || undefined,
             targetHandle: edge.targetHandle || undefined,
             data: edge.data,
-          })),
+          }))
         ).catch((error) => {
-          console.error("AI workflow analysis failed:", error);
+          console.error('AI workflow analysis failed:', error);
         });
       }, 1000); // Debounce analysis
       return () => clearTimeout(timeoutId);
@@ -758,7 +689,7 @@ const WorkflowEditor: React.FC = () => {
       setSelectedNodes([nodeId]);
       setSelectedNodeForConfig(nodeId);
     },
-    [setSelectedNodes],
+    [setSelectedNodes]
   );
 
   // Execution control handlers
@@ -782,12 +713,12 @@ const WorkflowEditor: React.FC = () => {
   // Handle OAuth success/error messages from URL parameters
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
-    const credentialStatus = urlParams.get("credential");
-    const credentialName = urlParams.get("name");
-    const errorMessage = urlParams.get("message");
+    const credentialStatus = urlParams.get('credential');
+    const credentialName = urlParams.get('name');
+    const errorMessage = urlParams.get('message');
 
-    if (credentialStatus === "success" && credentialName) {
-      console.log("OAuth success:", credentialName);
+    if (credentialStatus === 'success' && credentialName) {
+      console.log('OAuth success:', credentialName);
       // Show success notification
       alert(`Successfully connected ${decodeURIComponent(credentialName)}!`);
 
@@ -799,14 +730,12 @@ const WorkflowEditor: React.FC = () => {
       loadCredentials().catch(console.error);
 
       // Reload workflow to ensure it's fresh after OAuth redirect
-      const workflowId = window.location.pathname
-        .split("/workflow/")[1]
-        ?.split("?")[0];
+      const workflowId = window.location.pathname.split('/workflow/')[1]?.split('?')[0];
       if (workflowId) {
         loadWorkflow(workflowId).catch(console.error);
       }
-    } else if (credentialStatus === "error" && errorMessage) {
-      console.error("OAuth error:", errorMessage);
+    } else if (credentialStatus === 'error' && errorMessage) {
+      console.error('OAuth error:', errorMessage);
       // Show error notification
       alert(`Failed to connect: ${decodeURIComponent(errorMessage)}`);
 
@@ -820,9 +749,7 @@ const WorkflowEditor: React.FC = () => {
     () =>
       localNodes.map((node) => {
         // Check if this node has outgoing connections from any handle
-        const hasOutgoingConnection = localEdges.some(
-          (edge) => edge.source === node.id,
-        );
+        const hasOutgoingConnection = localEdges.some((edge) => edge.source === node.id);
 
         return {
           ...node,
@@ -835,25 +762,18 @@ const WorkflowEditor: React.FC = () => {
             hasOutgoingConnection,
             isSelected: selectedNodeIds.includes(node.id),
             // For AI agent nodes, pass edges data for handle connection tracking
-            ...(node.type === "ai-agent" && { edges: localEdges }),
+            ...(node.type === 'ai-agent' && { edges: localEdges }),
           },
         };
       }),
-    [
-      localNodes,
-      localEdges,
-      selectedNodeIds,
-      removeNode,
-      handleNodeConnect,
-      handleOpenProperties,
-    ],
+    [localNodes, localEdges, selectedNodeIds, removeNode, handleNodeConnect, handleOpenProperties]
   );
 
   const memoizedEdges = useMemo(
     () =>
       localEdges.map((edge) => ({
         ...edge,
-        type: "default",
+        type: 'default',
         data: {
           onDelete: onEdgeDelete,
           connectionType: edge.data?.connectionType || ConnectionType.Main,
@@ -863,13 +783,11 @@ const WorkflowEditor: React.FC = () => {
         hovered: edgesHoveredById[edge.id] || false,
         bringToFront: edgesBringToFrontById[edge.id] || false,
       })),
-    [localEdges, onEdgeDelete, edgesHoveredById, edgesBringToFrontById],
+    [localEdges, onEdgeDelete, edgesHoveredById, edgesBringToFrontById]
   );
 
   return (
-    <div
-      className={`h-full flex flex-col ${isFullscreen ? "fixed inset-0 z-50 bg-gray-900" : ""}`}
-    >
+    <div className={`h-full flex flex-col ${isFullscreen ? 'fixed inset-0 z-50 bg-gray-900' : ''}`}>
       {/* Execution Toolbar - hidden in fullscreen */}
       {!isFullscreen && (
         <ExecutionToolbar
@@ -941,7 +859,7 @@ const WorkflowEditor: React.FC = () => {
               selectionOnDrag={true}
             >
               {/* AI Edge Markers for specialized connections */}
-              <svg style={{ position: "absolute", top: 0, left: 0 }}>
+              <svg style={{ position: 'absolute', top: 0, left: 0 }}>
                 <AIEdgeMarkers />
               </svg>
 
@@ -974,13 +892,9 @@ const WorkflowEditor: React.FC = () => {
                   <button
                     onClick={toggleAssistantPanel}
                     className={`react-flow__controls-button ${
-                      assistantPanelOpen ? "bg-blue-100 border-blue-300" : ""
+                      assistantPanelOpen ? 'bg-blue-100 border-blue-300' : ''
                     }`}
-                    title={
-                      assistantPanelOpen
-                        ? "Hide AI Assistant"
-                        : "Open AI Assistant"
-                    }
+                    title={assistantPanelOpen ? 'Hide AI Assistant' : 'Open AI Assistant'}
                   >
                     🤖
                   </button>
@@ -988,14 +902,10 @@ const WorkflowEditor: React.FC = () => {
                 <button
                   onClick={toggleCollaborationPanel}
                   className={`react-flow__controls-button ${
-                    collaborationPanelOpen
-                      ? "bg-green-100 border-green-300"
-                      : ""
-                  } ${isCollaborationConnected ? "bg-green-50" : ""}`}
+                    collaborationPanelOpen ? 'bg-green-100 border-green-300' : ''
+                  } ${isCollaborationConnected ? 'bg-green-50' : ''}`}
                   title={
-                    collaborationPanelOpen
-                      ? "Hide Collaboration Panel"
-                      : "Open Collaboration Panel"
+                    collaborationPanelOpen ? 'Hide Collaboration Panel' : 'Open Collaboration Panel'
                   }
                 >
                   👥
@@ -1005,163 +915,107 @@ const WorkflowEditor: React.FC = () => {
                     toggleAnalyticsModal();
                     if (!analyticsModalOpen) {
                       // Set workflow ID for analytics - would come from props in real app
-                      setSelectedWorkflow("current-workflow");
+                      setSelectedWorkflow('current-workflow');
                     }
                   }}
                   className={`react-flow__controls-button ${
-                    analyticsModalOpen ? "bg-purple-100 border-purple-300" : ""
+                    analyticsModalOpen ? 'bg-purple-100 border-purple-300' : ''
                   }`}
                   title={
-                    analyticsModalOpen
-                      ? "Hide Analytics Dashboard"
-                      : "Open Analytics Dashboard"
+                    analyticsModalOpen ? 'Hide Analytics Dashboard' : 'Open Analytics Dashboard'
                   }
                 >
                   📊
                 </button>
                 <button
-                  onClick={() =>
-                    setIsExecutionPanelVisible(!isExecutionPanelVisible)
-                  }
+                  onClick={() => setIsExecutionPanelVisible(!isExecutionPanelVisible)}
                   className="react-flow__controls-button"
-                  title={
-                    isExecutionPanelVisible
-                      ? "Hide execution panel"
-                      : "Show execution panel"
-                  }
+                  title={isExecutionPanelVisible ? 'Hide execution panel' : 'Show execution panel'}
                 >
                   📊
                 </button>
                 <button
                   onClick={() => setIsDebugPanelVisible(!isDebugPanelVisible)}
                   className={`react-flow__controls-button ${
-                    isDebugPanelVisible ? "bg-orange-100 border-orange-300" : ""
+                    isDebugPanelVisible ? 'bg-orange-100 border-orange-300' : ''
                   }`}
-                  title={
-                    isDebugPanelVisible
-                      ? "Hide debug panel"
-                      : "Show debug panel"
-                  }
+                  title={isDebugPanelVisible ? 'Hide debug panel' : 'Show debug panel'}
                 >
                   🐛
                 </button>
                 <button
-                  onClick={() =>
-                    setIsSchedulingPanelVisible(!isSchedulingPanelVisible)
-                  }
+                  onClick={() => setIsSchedulingPanelVisible(!isSchedulingPanelVisible)}
                   className={`react-flow__controls-button ${
-                    isSchedulingPanelVisible
-                      ? "bg-purple-100 border-purple-300"
-                      : ""
+                    isSchedulingPanelVisible ? 'bg-purple-100 border-purple-300' : ''
                   }`}
                   title={
-                    isSchedulingPanelVisible
-                      ? "Hide scheduling panel"
-                      : "Show scheduling panel"
+                    isSchedulingPanelVisible ? 'Hide scheduling panel' : 'Show scheduling panel'
                   }
                 >
                   ⏰
                 </button>
                 <button
-                  onClick={() =>
-                    setIsTriggerPanelVisible(!isTriggerPanelVisible)
-                  }
+                  onClick={() => setIsTriggerPanelVisible(!isTriggerPanelVisible)}
                   className={`react-flow__controls-button ${
-                    isTriggerPanelVisible
-                      ? "bg-yellow-100 border-yellow-300"
-                      : ""
+                    isTriggerPanelVisible ? 'bg-yellow-100 border-yellow-300' : ''
                   }`}
-                  title={
-                    isTriggerPanelVisible
-                      ? "Hide trigger panel"
-                      : "Show trigger panel"
-                  }
+                  title={isTriggerPanelVisible ? 'Hide trigger panel' : 'Show trigger panel'}
                 >
                   ⚡
                 </button>
                 <button
-                  onClick={() =>
-                    setIsBranchingPanelVisible(!isBranchingPanelVisible)
-                  }
+                  onClick={() => setIsBranchingPanelVisible(!isBranchingPanelVisible)}
                   className={`react-flow__controls-button ${
-                    isBranchingPanelVisible
-                      ? "bg-indigo-100 border-indigo-300"
-                      : ""
+                    isBranchingPanelVisible ? 'bg-indigo-100 border-indigo-300' : ''
                   }`}
-                  title={
-                    isBranchingPanelVisible
-                      ? "Hide branching panel"
-                      : "Show branching panel"
-                  }
+                  title={isBranchingPanelVisible ? 'Hide branching panel' : 'Show branching panel'}
                 >
                   🔀
                 </button>
                 <button
-                  onClick={() =>
-                    setIsTemplatesPanelVisible(!isTemplatesPanelVisible)
-                  }
+                  onClick={() => setIsTemplatesPanelVisible(!isTemplatesPanelVisible)}
                   className={`react-flow__controls-button ${
-                    isTemplatesPanelVisible ? "bg-cyan-100 border-cyan-300" : ""
+                    isTemplatesPanelVisible ? 'bg-cyan-100 border-cyan-300' : ''
                   }`}
-                  title={
-                    isTemplatesPanelVisible
-                      ? "Hide templates panel"
-                      : "Show templates panel"
-                  }
+                  title={isTemplatesPanelVisible ? 'Hide templates panel' : 'Show templates panel'}
                 >
                   📋
                 </button>
                 {canManageOrganization() && (
                   <>
                     <button
-                      onClick={() =>
-                        setIsEnterpriseDashboardVisible(
-                          !isEnterpriseDashboardVisible,
-                        )
-                      }
+                      onClick={() => setIsEnterpriseDashboardVisible(!isEnterpriseDashboardVisible)}
                       className={`react-flow__controls-button ${
-                        isEnterpriseDashboardVisible
-                          ? "bg-emerald-100 border-emerald-300"
-                          : ""
+                        isEnterpriseDashboardVisible ? 'bg-emerald-100 border-emerald-300' : ''
                       }`}
                       title={
                         isEnterpriseDashboardVisible
-                          ? "Hide enterprise dashboard"
-                          : "Show enterprise dashboard"
+                          ? 'Hide enterprise dashboard'
+                          : 'Show enterprise dashboard'
                       }
                     >
                       📊
                     </button>
                     <button
-                      onClick={() =>
-                        setIsAuditDashboardVisible(!isAuditDashboardVisible)
-                      }
+                      onClick={() => setIsAuditDashboardVisible(!isAuditDashboardVisible)}
                       className={`react-flow__controls-button ${
-                        isAuditDashboardVisible
-                          ? "bg-red-100 border-red-300"
-                          : ""
+                        isAuditDashboardVisible ? 'bg-red-100 border-red-300' : ''
                       }`}
                       title={
-                        isAuditDashboardVisible
-                          ? "Hide audit dashboard"
-                          : "Show audit dashboard"
+                        isAuditDashboardVisible ? 'Hide audit dashboard' : 'Show audit dashboard'
                       }
                     >
                       🔒
                     </button>
                     <button
-                      onClick={() =>
-                        setIsOrgSettingsVisible(!isOrgSettingsVisible)
-                      }
+                      onClick={() => setIsOrgSettingsVisible(!isOrgSettingsVisible)}
                       className={`react-flow__controls-button ${
-                        isOrgSettingsVisible
-                          ? "bg-gray-100 border-gray-300"
-                          : ""
+                        isOrgSettingsVisible ? 'bg-gray-100 border-gray-300' : ''
                       }`}
                       title={
                         isOrgSettingsVisible
-                          ? "Hide organization settings"
-                          : "Show organization settings"
+                          ? 'Hide organization settings'
+                          : 'Show organization settings'
                       }
                     >
                       ⚙️
@@ -1171,9 +1025,9 @@ const WorkflowEditor: React.FC = () => {
                 <button
                   onClick={() => setIsFullscreen(!isFullscreen)}
                   className="react-flow__controls-button"
-                  title={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
+                  title={isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}
                 >
-                  {isFullscreen ? "⊞" : "⛶"}
+                  {isFullscreen ? '⊞' : '⛶'}
                 </button>
               </Controls>
 
@@ -1187,28 +1041,28 @@ const WorkflowEditor: React.FC = () => {
                   ariaLabel="Workflow minimap"
                   nodeColor={(node) => {
                     switch (node.type) {
-                      case "trigger":
-                        return "#10b981";
-                      case "action":
-                        return "#3b82f6";
-                      case "condition":
-                        return "#f59e0b";
-                      case "delay":
-                        return "#a855f7";
-                      case "loop":
-                        return "#6366f1";
-                      case "transform":
-                        return "#14b8a6";
-                      case "webhook":
-                        return "#f97316";
-                      case "database":
-                        return "#64748b";
-                      case "email":
-                        return "#ef4444";
-                      case "file":
-                        return "#059669";
+                      case 'trigger':
+                        return '#10b981';
+                      case 'action':
+                        return '#3b82f6';
+                      case 'condition':
+                        return '#f59e0b';
+                      case 'delay':
+                        return '#a855f7';
+                      case 'loop':
+                        return '#6366f1';
+                      case 'transform':
+                        return '#14b8a6';
+                      case 'webhook':
+                        return '#f97316';
+                      case 'database':
+                        return '#64748b';
+                      case 'email':
+                        return '#ef4444';
+                      case 'file':
+                        return '#059669';
                       default:
-                        return "#6b7280";
+                        return '#6b7280';
                     }
                   }}
                   nodeStrokeWidth={1}
@@ -1222,9 +1076,9 @@ const WorkflowEditor: React.FC = () => {
                 <button
                   onClick={() => setIsMinimapMinimized(!isMinimapMinimized)}
                   className="w-8 h-8 bg-white border border-gray-300 rounded-md flex items-center justify-center hover:bg-gray-50 transition-colors shadow-sm text-gray-700 font-bold"
-                  title={isMinimapMinimized ? "Show minimap" : "Hide minimap"}
+                  title={isMinimapMinimized ? 'Show minimap' : 'Hide minimap'}
                 >
-                  {isMinimapMinimized ? "□" : "−"}
+                  {isMinimapMinimized ? '□' : '−'}
                 </button>
               </Panel>
               <Background color="#ffffff" gap={20} size={1} />
@@ -1232,19 +1086,15 @@ const WorkflowEditor: React.FC = () => {
               {/* User Presence Overlay */}
               <UserPresenceOverlay
                 containerRef={{ current: containerRef! }}
-                transform={
-                  reactFlowInstance?.getViewport() || { x: 0, y: 0, zoom: 1 }
-                }
+                transform={reactFlowInstance?.getViewport() || { x: 0, y: 0, zoom: 1 }}
               />
 
               {/* Comment Annotations */}
               <CommentAnnotations
                 containerRef={{ current: containerRef! }}
-                transform={
-                  reactFlowInstance?.getViewport() || { x: 0, y: 0, zoom: 1 }
-                }
+                transform={reactFlowInstance?.getViewport() || { x: 0, y: 0, zoom: 1 }}
                 onCommentClick={(position) => {
-                  console.log("Comment clicked at position:", position);
+                  console.log('Comment clicked at position:', position);
                 }}
               />
             </ReactFlow>
@@ -1272,38 +1122,32 @@ const WorkflowEditor: React.FC = () => {
           workflow={{
             nodes: localNodes.map((node) => ({
               id: node.id,
-              type: node.type || "",
+              type: node.type || '',
               position: node.position,
               parameters: node.data?.parameters || {},
               name: node.data?.name,
             })),
             connections: {},
-            name: "Current Workflow",
+            name: 'Current Workflow',
           }}
           onApplySuggestion={(suggestion) => {
             // Handle suggestion application
-            console.log("Applying suggestion:", suggestion);
+            console.log('Applying suggestion:', suggestion);
           }}
           onGenerateWorkflow={(workflow) => {
             // Handle workflow generation
-            console.log("Generated workflow:", workflow);
+            console.log('Generated workflow:', workflow);
           }}
         />
       )}
 
       {/* Debug Panel */}
       {isDebugPanelVisible && (
-        <DebugPanel
-          workflowId={undefined}
-          executionId={currentExecutionId || undefined}
-        />
+        <DebugPanel workflowId={undefined} executionId={currentExecutionId || undefined} />
       )}
 
       {/* Collaboration Panel */}
-      <CollaborationPanel
-        isVisible={collaborationPanelOpen}
-        onToggle={toggleCollaborationPanel}
-      />
+      <CollaborationPanel isVisible={collaborationPanelOpen} onToggle={toggleCollaborationPanel} />
 
       {/* Analytics Dashboard */}
       <AnalyticsDashboard
@@ -1348,19 +1192,19 @@ const WorkflowEditor: React.FC = () => {
           {isEnterpriseDashboardVisible && (
             <div
               style={{
-                position: "fixed",
+                position: 'fixed',
                 top: 0,
                 left: 0,
                 right: 0,
                 bottom: 0,
-                backgroundColor: "white",
+                backgroundColor: 'white',
                 zIndex: 1000,
-                overflow: "auto",
+                overflow: 'auto',
               }}
             >
               <div
                 style={{
-                  position: "absolute",
+                  position: 'absolute',
                   top: 16,
                   right: 16,
                   zIndex: 1001,
@@ -1369,13 +1213,13 @@ const WorkflowEditor: React.FC = () => {
                 <button
                   onClick={() => setIsEnterpriseDashboardVisible(false)}
                   style={{
-                    background: "#ff4d4f",
-                    color: "white",
-                    border: "none",
-                    borderRadius: "50%",
+                    background: '#ff4d4f',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '50%',
                     width: 32,
                     height: 32,
-                    cursor: "pointer",
+                    cursor: 'pointer',
                   }}
                 >
                   ✕
@@ -1389,19 +1233,19 @@ const WorkflowEditor: React.FC = () => {
           {isAuditDashboardVisible && (
             <div
               style={{
-                position: "fixed",
+                position: 'fixed',
                 top: 0,
                 left: 0,
                 right: 0,
                 bottom: 0,
-                backgroundColor: "white",
+                backgroundColor: 'white',
                 zIndex: 1000,
-                overflow: "auto",
+                overflow: 'auto',
               }}
             >
               <div
                 style={{
-                  position: "absolute",
+                  position: 'absolute',
                   top: 16,
                   right: 16,
                   zIndex: 1001,
@@ -1410,13 +1254,13 @@ const WorkflowEditor: React.FC = () => {
                 <button
                   onClick={() => setIsAuditDashboardVisible(false)}
                   style={{
-                    background: "#ff4d4f",
-                    color: "white",
-                    border: "none",
-                    borderRadius: "50%",
+                    background: '#ff4d4f',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '50%',
                     width: 32,
                     height: 32,
-                    cursor: "pointer",
+                    cursor: 'pointer',
                   }}
                 >
                   ✕
@@ -1430,19 +1274,19 @@ const WorkflowEditor: React.FC = () => {
           {isOrgSettingsVisible && organizations.length > 0 && (
             <div
               style={{
-                position: "fixed",
+                position: 'fixed',
                 top: 0,
                 left: 0,
                 right: 0,
                 bottom: 0,
-                backgroundColor: "white",
+                backgroundColor: 'white',
                 zIndex: 1000,
-                overflow: "auto",
+                overflow: 'auto',
               }}
             >
               <div
                 style={{
-                  position: "absolute",
+                  position: 'absolute',
                   top: 16,
                   right: 16,
                   zIndex: 1001,
@@ -1451,13 +1295,13 @@ const WorkflowEditor: React.FC = () => {
                 <button
                   onClick={() => setIsOrgSettingsVisible(false)}
                   style={{
-                    background: "#ff4d4f",
-                    color: "white",
-                    border: "none",
-                    borderRadius: "50%",
+                    background: '#ff4d4f',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '50%',
                     width: 32,
                     height: 32,
-                    cursor: "pointer",
+                    cursor: 'pointer',
                   }}
                 >
                   ✕

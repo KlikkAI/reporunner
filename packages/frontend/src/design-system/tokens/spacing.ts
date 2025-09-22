@@ -1,6 +1,6 @@
 /**
  * Spacing Design Tokens
- * 
+ *
  * Consistent spacing scale for the design system
  */
 

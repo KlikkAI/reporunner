@@ -3,18 +3,18 @@
  * Provides structured logging with multiple transports and formats
  */
 
-import winston from "winston";
-import path from "path";
+import path from 'path';
+import winston from 'winston';
 
 // Log levels
 export enum LogLevel {
-  ERROR = "error",
-  WARN = "warn",
-  INFO = "info",
-  HTTP = "http",
-  VERBOSE = "verbose",
-  DEBUG = "debug",
-  SILLY = "silly",
+  ERROR = 'error',
+  WARN = 'warn',
+  INFO = 'info',
+  HTTP = 'http',
+  VERBOSE = 'verbose',
+  DEBUG = 'debug',
+  SILLY = 'silly',
 }
 
 // Log context interface
@@ -51,87 +51,80 @@ class LoggerService {
   private createMainLogger(): winston.Logger {
     const logFormat = winston.format.combine(
       winston.format.timestamp({
-        format: "YYYY-MM-DD HH:mm:ss.SSS",
+        format: 'YYYY-MM-DD HH:mm:ss.SSS',
       }),
       winston.format.errors({ stack: true }),
       winston.format.json(),
-      winston.format.printf(
-        ({ timestamp, level, message, context, stack, ...meta }) => {
-          const logEntry: any = {
-            timestamp,
-            level,
-            message,
-            context: context || {},
-            ...meta,
-          };
+      winston.format.printf(({ timestamp, level, message, context, stack, ...meta }) => {
+        const logEntry: any = {
+          timestamp,
+          level,
+          message,
+          context: context || {},
+          ...meta,
+        };
 
-          if (stack) {
-            logEntry.stack = stack;
-          }
+        if (stack) {
+          logEntry.stack = stack;
+        }
 
-          return JSON.stringify(logEntry);
-        },
-      ),
+        return JSON.stringify(logEntry);
+      })
     );
 
     const transports: winston.transport[] = [
       // Console transport with colors for development
       new winston.transports.Console({
-        level: process.env.LOG_LEVEL || "info",
+        level: process.env.LOG_LEVEL || 'info',
         format: winston.format.combine(
           winston.format.colorize(),
           winston.format.simple(),
           winston.format.printf(({ timestamp, level, message, context }) => {
             const contextStr =
-              context && Object.keys(context).length > 0
-                ? ` [${JSON.stringify(context)}]`
-                : "";
+              context && Object.keys(context).length > 0 ? ` [${JSON.stringify(context)}]` : '';
             return `${timestamp} ${level}: ${message}${contextStr}`;
-          }),
+          })
         ),
       }),
     ];
 
     // File transports for production
-    if (
-      process.env.NODE_ENV === "production" ||
-      process.env.ENABLE_FILE_LOGGING === "true"
-    ) {
+    if (process.env.NODE_ENV === 'production' || process.env.ENABLE_FILE_LOGGING === 'true') {
       // Error logs
       transports.push(
         new winston.transports.File({
-          filename: path.join(process.cwd(), "logs", "error.log"),
-          level: "error",
+          filename: path.join(process.cwd(), 'logs', 'error.log'),
+          level: 'error',
           format: logFormat,
           maxsize: 50 * 1024 * 1024, // 50MB
           maxFiles: 5,
-        }),
+        })
       );
 
       // Combined logs
       transports.push(
         new winston.transports.File({
-          filename: path.join(process.cwd(), "logs", "combined.log"),
+          filename: path.join(process.cwd(), 'logs', 'combined.log'),
           format: logFormat,
           maxsize: 100 * 1024 * 1024, // 100MB
           maxFiles: 10,
-        }),
+        })
       );
 
       // HTTP logs
       transports.push(
         new winston.transports.File({
-          filename: path.join(process.cwd(), "logs", "http.log"),
-          level: "http",
+          filename: path.join(process.cwd(), 'logs', 'http.log'),
+          level: 'http',
           format: logFormat,
           maxsize: 50 * 1024 * 1024, // 50MB
           maxFiles: 5,
-        }),
+        })
       );
     }
 
     return winston.createLogger({
-      level: process.env.LOG_LEVEL || "info",
+      level: process.env.LOG_LEVEL || 'info',
       format: logFormat,
       transports,
       // Don't exit on handled exceptions
@@ -144,14 +137,11 @@ class LoggerService {
 
   private createMetricsLogger(): winston.Logger {
     return winston.createLogger({
-      level: "info",
-      format: winston.format.combine(
-        winston.format.timestamp(),
-        winston.format.json(),
-      ),
+      level: 'info',
+      format: winston.format.combine(winston.format.timestamp(), winston.format.json()),
       transports: [
         new winston.transports.File({
-          filename: path.join(process.cwd(), "logs", "metrics.log"),
+          filename: path.join(process.cwd(), 'logs', 'metrics.log'),
           maxsize: 100 * 1024 * 1024, // 100MB
           maxFiles: 5,
         }),
@@ -200,42 +190,30 @@ class LoggerService {
       userId: req.user?.id,
       method: req.method,
       url: req.originalUrl,
-      userAgent: req.get("User-Agent"),
+      userAgent: req.get('User-Agent'),
       ip: req.ip,
       statusCode: res.statusCode,
-      contentLength: res.get("Content-Length"),
+      contentLength: res.get('Content-Length'),
       duration,
     };
 
-    this.http(
-      `${req.method} ${req.originalUrl} ${res.statusCode} - ${duration}ms`,
-      context,
-    );
+    this.http(`${req.method} ${req.originalUrl} ${res.statusCode} - ${duration}ms`, context);
   }
 
-  public logDatabaseQuery(
-    query: string,
-    duration: number,
-    context?: LogContext,
-  ): void {
+  public logDatabaseQuery(query: string, duration: number, context?: LogContext): void {
     this.debug(`Database query executed in ${duration}ms`, {
       ...context,
       query,
       duration,
-      component: "database",
+      component: 'database',
     });
   }
 
-  public logCollaborationEvent(
-    event: string,
-    sessionId: string,
-    userId: string,
-    data?: any,
-  ): void {
+  public logCollaborationEvent(event: string, sessionId: string, userId: string, data?: any): void {
     this.info(`Collaboration event: ${event}`, {
       sessionId,
       userId,
-      component: "collaboration",
+      component: 'collaboration',
       event,
       data,
     });
@@ -246,15 +224,15 @@ class LoggerService {
     nodeId: string,
     status: string,
     duration?: number,
-    error?: Error,
+    error?: Error
   ): void {
-    const level = error ? "error" : "info";
+    const level = error ? 'error' : 'info';
     const message = `Workflow execution: ${workflowId}/${nodeId} - ${status}`;
 
     const context: LogContext = {
       workflowId,
       nodeId,
-      component: "workflow-engine",
+      component: 'workflow-engine',
       status,
       duration,
     };
@@ -269,9 +247,9 @@ class LoggerService {
   public logPerformanceMetrics(
     operation: string,
     metrics: PerformanceMetrics,
-    context?: LogContext,
+    context?: LogContext
   ): void {
-    this.metricsLogger.info("Performance metrics", {
+    this.metricsLogger.info('Performance metrics', {
       operation,
       metrics,
       context,
@@ -281,16 +259,15 @@ class LoggerService {
 
   public logSecurityEvent(
     event: string,
-    severity: "low" | "medium" | "high" | "critical",
-    context?: LogContext,
+    severity: 'low' | 'medium' | 'high' | 'critical',
+    context?: LogContext
   ): void {
-    const level =
-      severity === "critical" || severity === "high" ? "error" : "warn";
+    const level = severity === 'critical' || severity === 'high' ? 'error' : 'warn';
 
     this.logger.log(level, `Security event: ${event}`, {
       context: {
         ...context,
-        component: "security",
+        component: 'security',
         event,
         severity,
       },
@@ -302,11 +279,11 @@ class LoggerService {
     provider: string,
     duration: number,
     tokens?: number,
-    context?: LogContext,
+    context?: LogContext
   ): void {
     this.info(`AI operation: ${operation} via ${provider}`, {
       ...context,
-      component: "ai",
+      component: 'ai',
       operation,
       provider,
       duration,
@@ -341,7 +318,7 @@ class LoggerService {
 export class ChildLogger {
   constructor(
     private parent: LoggerService,
-    private defaultContext: LogContext,
+    private defaultContext: LogContext
   ) {}
 
   private mergeContext(context?: LogContext): LogContext {

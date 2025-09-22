@@ -1,42 +1,44 @@
-import React, { useState, useEffect } from "react";
 import {
-  Card,
-  Row,
-  Col,
-  Statistic,
-  Progress,
-  Table,
-  Alert,
-  Select,
-  DatePicker,
-  Button,
-  Space,
-  Typography,
-  Tabs,
-  Badge,
-  Tag,
-  Timeline,
-  Avatar,
-} from "antd";
-import {
-  DashboardOutlined,
-  TeamOutlined,
-  SecurityScanOutlined,
-  RiseOutlined,
-  FallOutlined,
-  WarningOutlined,
+  ApiOutlined,
+  BugOutlined,
   CheckCircleOutlined,
   ClockCircleOutlined,
-  UserOutlined,
-  ExportOutlined,
-  ReloadOutlined,
-  BugOutlined,
-  ThunderboltOutlined,
+  DashboardOutlined,
   DatabaseOutlined,
-  ApiOutlined,
-} from "@ant-design/icons";
-import { Line, Column, Pie, Area } from "@ant-design/plots";
-import { useRBACStore } from "@/core/stores/rbacStore";
+  ExportOutlined,
+  FallOutlined,
+  ReloadOutlined,
+  RiseOutlined,
+  SecurityScanOutlined,
+  TeamOutlined,
+  ThunderboltOutlined,
+  UserOutlined,
+  WarningOutlined,
+} from '@ant-design/icons';
+import { Area, Column, Line, Pie } from '@ant-design/plots';
+import {
+  Alert,
+  Avatar,
+  Badge,
+  Button,
+  Card,
+  Col,
+  DatePicker,
+  Progress,
+  Row,
+  Select,
+  Space,
+  Statistic,
+  Table,
+  Tabs,
+  Tag,
+  Timeline,
+  Typography,
+} from 'antd';
+import type React from 'react';
+import { useEffect, useState } from 'react';
+import { useRBACStore } from '@/core/stores/rbacStore';
+
 // import { auditService } from "@/core/services/auditService";
 // import { securityService } from "@/core/services/securityService";
 
@@ -83,11 +85,11 @@ interface DashboardMetrics {
 
 interface ActivityEvent {
   id: string;
-  type: "user_login" | "workflow_execution" | "security_alert" | "system_event";
+  type: 'user_login' | 'workflow_execution' | 'security_alert' | 'system_event';
   title: string;
   description: string;
   timestamp: Date;
-  severity: "low" | "medium" | "high" | "critical";
+  severity: 'low' | 'medium' | 'high' | 'critical';
   user?: string;
   organization?: string;
 }
@@ -97,8 +99,7 @@ export const EnterpriseDashboard: React.FC = () => {
   const [activities, setActivities] = useState<ActivityEvent[]>([]);
   const [loading, setLoading] = useState(true);
   const [dateRange, setDateRange] = useState<[any, any] | null>(null);
-  const [selectedOrganization, setSelectedOrganization] =
-    useState<string>("all");
+  const [selectedOrganization, setSelectedOrganization] = useState<string>('all');
 
   const { organizations, canManageOrganization } = useRBACStore();
 
@@ -149,63 +150,63 @@ export const EnterpriseDashboard: React.FC = () => {
 
       const mockActivities: ActivityEvent[] = [
         {
-          id: "1",
-          type: "security_alert",
-          title: "Multiple Failed Login Attempts",
-          description: "User john.doe@acme.com has 5 failed login attempts",
+          id: '1',
+          type: 'security_alert',
+          title: 'Multiple Failed Login Attempts',
+          description: 'User john.doe@acme.com has 5 failed login attempts',
           timestamp: new Date(Date.now() - 30 * 60 * 1000),
-          severity: "high",
-          user: "john.doe@acme.com",
-          organization: "Acme Corp",
+          severity: 'high',
+          user: 'john.doe@acme.com',
+          organization: 'Acme Corp',
         },
         {
-          id: "2",
-          type: "workflow_execution",
-          title: "High Volume Data Pipeline Completed",
-          description: "Successfully processed 50,000 records in 4.2 minutes",
+          id: '2',
+          type: 'workflow_execution',
+          title: 'High Volume Data Pipeline Completed',
+          description: 'Successfully processed 50,000 records in 4.2 minutes',
           timestamp: new Date(Date.now() - 45 * 60 * 1000),
-          severity: "low",
-          user: "sarah.chen@techcorp.com",
-          organization: "TechCorp",
+          severity: 'low',
+          user: 'sarah.chen@techcorp.com',
+          organization: 'TechCorp',
         },
         {
-          id: "3",
-          type: "user_login",
-          title: "Admin Login from New Location",
-          description: "Administrator logged in from Tokyo, Japan",
+          id: '3',
+          type: 'user_login',
+          title: 'Admin Login from New Location',
+          description: 'Administrator logged in from Tokyo, Japan',
           timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000),
-          severity: "medium",
-          user: "admin@enterprise.com",
-          organization: "Enterprise Ltd",
+          severity: 'medium',
+          user: 'admin@enterprise.com',
+          organization: 'Enterprise Ltd',
         },
         {
-          id: "4",
-          type: "system_event",
-          title: "System Maintenance Completed",
-          description: "Scheduled maintenance window completed successfully",
+          id: '4',
+          type: 'system_event',
+          title: 'System Maintenance Completed',
+          description: 'Scheduled maintenance window completed successfully',
           timestamp: new Date(Date.now() - 6 * 60 * 60 * 1000),
-          severity: "low",
+          severity: 'low',
         },
       ];
 
       setMetrics(mockMetrics);
       setActivities(mockActivities);
     } catch (error) {
-      console.error("Failed to load dashboard data:", error);
+      console.error('Failed to load dashboard data:', error);
     } finally {
       setLoading(false);
     }
   };
 
-  const getActivityIcon = (type: ActivityEvent["type"]) => {
+  const getActivityIcon = (type: ActivityEvent['type']) => {
     switch (type) {
-      case "security_alert":
+      case 'security_alert':
         return <SecurityScanOutlined />;
-      case "workflow_execution":
+      case 'workflow_execution':
         return <ThunderboltOutlined />;
-      case "user_login":
+      case 'user_login':
         return <UserOutlined />;
-      case "system_event":
+      case 'system_event':
         return <DatabaseOutlined />;
       default:
         return <ClockCircleOutlined />;
@@ -214,83 +215,83 @@ export const EnterpriseDashboard: React.FC = () => {
 
   const getSeverityColor = (severity: string) => {
     switch (severity) {
-      case "critical":
-        return "#ff4d4f";
-      case "high":
-        return "#fa8c16";
-      case "medium":
-        return "#fadb14";
-      case "low":
-        return "#52c41a";
+      case 'critical':
+        return '#ff4d4f';
+      case 'high':
+        return '#fa8c16';
+      case 'medium':
+        return '#fadb14';
+      case 'low':
+        return '#52c41a';
       default:
-        return "#d9d9d9";
+        return '#d9d9d9';
     }
   };
 
   // Chart data
   const executionTrendData = [
-    { date: "2024-01", executions: 8500 },
-    { date: "2024-02", executions: 9200 },
-    { date: "2024-03", executions: 8800 },
-    { date: "2024-04", executions: 10500 },
-    { date: "2024-05", executions: 11200 },
-    { date: "2024-06", executions: 12800 },
+    { date: '2024-01', executions: 8500 },
+    { date: '2024-02', executions: 9200 },
+    { date: '2024-03', executions: 8800 },
+    { date: '2024-04', executions: 10500 },
+    { date: '2024-05', executions: 11200 },
+    { date: '2024-06', executions: 12800 },
   ];
 
   const userGrowthData = [
-    { month: "Jan", active: 750, total: 1100 },
-    { month: "Feb", active: 820, total: 1150 },
-    { month: "Mar", active: 780, total: 1180 },
-    { month: "Apr", active: 890, total: 1220 },
-    { month: "May", active: 850, total: 1250 },
-    { month: "Jun", active: 892, total: 1247 },
+    { month: 'Jan', active: 750, total: 1100 },
+    { month: 'Feb', active: 820, total: 1150 },
+    { month: 'Mar', active: 780, total: 1180 },
+    { month: 'Apr', active: 890, total: 1220 },
+    { month: 'May', active: 850, total: 1250 },
+    { month: 'Jun', active: 892, total: 1247 },
   ];
 
   const workflowCategoriesData = [
-    { type: "Data Processing", value: 35 },
-    { type: "Email Automation", value: 25 },
-    { type: "AI/ML Workflows", value: 20 },
-    { type: "Integration", value: 12 },
-    { type: "Other", value: 8 },
+    { type: 'Data Processing', value: 35 },
+    { type: 'Email Automation', value: 25 },
+    { type: 'AI/ML Workflows', value: 20 },
+    { type: 'Integration', value: 12 },
+    { type: 'Other', value: 8 },
   ];
 
   const performanceData = [
-    { time: "00:00", cpu: 45, memory: 62, throughput: 1200 },
-    { time: "04:00", cpu: 32, memory: 58, throughput: 800 },
-    { time: "08:00", cpu: 78, memory: 75, throughput: 2100 },
-    { time: "12:00", cpu: 85, memory: 82, throughput: 2500 },
-    { time: "16:00", cpu: 92, memory: 88, throughput: 2800 },
-    { time: "20:00", cpu: 67, memory: 71, throughput: 1900 },
+    { time: '00:00', cpu: 45, memory: 62, throughput: 1200 },
+    { time: '04:00', cpu: 32, memory: 58, throughput: 800 },
+    { time: '08:00', cpu: 78, memory: 75, throughput: 2100 },
+    { time: '12:00', cpu: 85, memory: 82, throughput: 2500 },
+    { time: '16:00', cpu: 92, memory: 88, throughput: 2800 },
+    { time: '20:00', cpu: 67, memory: 71, throughput: 1900 },
   ];
 
   const topUsersData = [
     {
-      name: "Sarah Chen",
-      organization: "TechCorp",
+      name: 'Sarah Chen',
+      organization: 'TechCorp',
       executions: 1250,
       successRate: 98.5,
     },
     {
-      name: "Mike Johnson",
-      organization: "DataFlow Inc",
+      name: 'Mike Johnson',
+      organization: 'DataFlow Inc',
       executions: 980,
       successRate: 96.2,
     },
     {
-      name: "Lisa Wang",
-      organization: "AutoSys",
+      name: 'Lisa Wang',
+      organization: 'AutoSys',
       executions: 875,
       successRate: 99.1,
     },
     {
-      name: "John Smith",
-      organization: "ProcessPro",
+      name: 'John Smith',
+      organization: 'ProcessPro',
       executions: 820,
       successRate: 94.8,
     },
     {
-      name: "Emma Davis",
-      organization: "FlowTech",
+      name: 'Emma Davis',
+      organization: 'FlowTech',
       executions: 765,
       successRate: 97.3,
     },
@@ -298,35 +299,35 @@ export const EnterpriseDashboard: React.FC = () => {
 
   const topOrganizationsData = [
     {
-      name: "TechCorp",
+      name: 'TechCorp',
       users: 89,
       workflows: 342,
       executions: 15680,
       growth: 15.2,
     },
     {
-      name: "DataFlow Inc",
+      name: 'DataFlow Inc',
       users: 67,
       workflows: 298,
       executions: 12450,
       growth: 8.7,
     },
     {
-      name: "AutoSys",
+      name: 'AutoSys',
       users: 54,
       workflows: 234,
       executions: 9870,
       growth: 22.1,
     },
     {
-      name: "ProcessPro",
+      name: 'ProcessPro',
       users: 43,
       workflows: 187,
       executions: 7890,
       growth: -2.4,
     },
     {
-      name: "FlowTech",
+      name: 'FlowTech',
       users: 38,
       workflows: 156,
       executions: 6540,
@@ -336,7 +337,7 @@ export const EnterpriseDashboard: React.FC = () => {
 
   const tabs = [
     {
-      key: "overview",
+      key: 'overview',
       label: (
         <span>
           <DashboardOutlined />
@@ -354,7 +355,7 @@ export const EnterpriseDashboard: React.FC = () => {
                   value={metrics?.organizations.total}
                   prefix={<TeamOutlined />}
                   suffix={
-                    <span style={{ fontSize: "14px", color: "#52c41a" }}>
+                    <span style={{ fontSize: '14px', color: '#52c41a' }}>
                       <RiseOutlined /> {metrics?.organizations.growth}%
                     </span>
                   }
@@ -368,7 +369,7 @@ export const EnterpriseDashboard: React.FC = () => {
                   value={metrics?.users.active}
                   prefix={<UserOutlined />}
                   suffix={
-                    <span style={{ fontSize: "14px", color: "#52c41a" }}>
+                    <span style={{ fontSize: '14px', color: '#52c41a' }}>
                       <RiseOutlined /> {metrics?.users.growth}%
                     </span>
                   }
@@ -382,7 +383,7 @@ export const EnterpriseDashboard: React.FC = () => {
                   value={metrics?.workflows.executions}
                   prefix={<ThunderboltOutlined />}
                   suffix={
-                    <span style={{ fontSize: "14px" }}>
+                    <span style={{ fontSize: '14px' }}>
                       {metrics?.workflows.successRate}% success
                     </span>
                   }
@@ -397,7 +398,7 @@ export const EnterpriseDashboard: React.FC = () => {
                   precision={2}
                   suffix="%"
                   prefix={<CheckCircleOutlined />}
-                  valueStyle={{ color: "#52c41a" }}
+                  valueStyle={{ color: '#52c41a' }}
                 />
               </Card>
             </Col>
@@ -420,7 +421,7 @@ export const EnterpriseDashboard: React.FC = () => {
                   yField="executions"
                   height={300}
                   smooth
-                  point={{ size: 5, shape: "circle" }}
+                  point={{ size: 5, shape: 'circle' }}
                 />
               </Card>
             </Col>
@@ -438,7 +439,7 @@ export const EnterpriseDashboard: React.FC = () => {
                   xField="month"
                   yField="total"
                   height={300}
-                  columnStyle={{ fill: "#1890ff" }}
+                  columnStyle={{ fill: '#1890ff' }}
                 />
               </Card>
             </Col>
@@ -447,7 +448,7 @@ export const EnterpriseDashboard: React.FC = () => {
       ),
     },
     {
-      key: "performance",
+      key: 'performance',
       label: (
         <span>
           <RiseOutlined />
@@ -477,10 +478,7 @@ export const EnterpriseDashboard: React.FC = () => {
                   suffix="%"
                   prefix={<BugOutlined />}
                   valueStyle={{
-                    color:
-                      (metrics?.performance.errorRate ?? 0) > 2
-                        ? "#cf1322"
-                        : "#52c41a",
+                    color: (metrics?.performance.errorRate ?? 0) > 2 ? '#cf1322' : '#52c41a',
                   }}
                 />
               </Card>
@@ -504,18 +502,11 @@ export const EnterpriseDashboard: React.FC = () => {
                   suffix={
                     <span
                       style={{
-                        fontSize: "14px",
-                        color:
-                          (metrics?.costs.growth ?? 0) < 0
-                            ? "#52c41a"
-                            : "#cf1322",
+                        fontSize: '14px',
+                        color: (metrics?.costs.growth ?? 0) < 0 ? '#52c41a' : '#cf1322',
                       }}
                     >
-                      {(metrics?.costs.growth ?? 0) < 0 ? (
-                        <FallOutlined />
-                      ) : (
-                        <RiseOutlined />
-                      )}{" "}
+                      {(metrics?.costs.growth ?? 0) < 0 ? <FallOutlined /> : <RiseOutlined />}{' '}
                       {Math.abs(metrics?.costs.growth ?? 0)}%
                     </span>
                   }
@@ -540,7 +531,7 @@ export const EnterpriseDashboard: React.FC = () => {
                   yField="cpu"
                   height={300}
                   // @ts-expect-error Area config shape may differ by version
-                  areaStyle={{ fill: "l(270) 0:#ffffff 0.5:#7ec2f3 1:#1890ff" }}
+                  areaStyle={{ fill: 'l(270) 0:#ffffff 0.5:#7ec2f3 1:#1890ff' }}
                 />
               </Card>
             </Col>
@@ -553,8 +544,8 @@ export const EnterpriseDashboard: React.FC = () => {
                   height={300}
                   radius={0.8}
                   label={{
-                    type: "spider",
-                    content: "{name}\n{percentage}",
+                    type: 'spider',
+                    content: '{name}\n{percentage}',
                   }}
                 />
               </Card>
@@ -564,7 +555,7 @@ export const EnterpriseDashboard: React.FC = () => {
       ),
     },
     {
-      key: "security",
+      key: 'security',
       label: (
         <span>
           <SecurityScanOutlined />
@@ -584,10 +575,7 @@ export const EnterpriseDashboard: React.FC = () => {
                   value={metrics?.security.threats ?? 0}
                   prefix={<WarningOutlined />}
                   valueStyle={{
-                    color:
-                      (metrics?.security.threats ?? 0) > 0
-                        ? "#cf1322"
-                        : "#52c41a",
+                    color: (metrics?.security.threats ?? 0) > 0 ? '#cf1322' : '#52c41a',
                   }}
                 />
               </Card>
@@ -599,10 +587,7 @@ export const EnterpriseDashboard: React.FC = () => {
                   value={metrics?.security.alerts ?? 0}
                   prefix={<SecurityScanOutlined />}
                   valueStyle={{
-                    color:
-                      (metrics?.security.alerts ?? 0) > 5
-                        ? "#fa8c16"
-                        : "#52c41a",
+                    color: (metrics?.security.alerts ?? 0) > 5 ? '#fa8c16' : '#52c41a',
                   }}
                 />
               </Card>
@@ -615,10 +600,7 @@ export const EnterpriseDashboard: React.FC = () => {
                   suffix="%"
                   prefix={<CheckCircleOutlined />}
                   valueStyle={{
-                    color:
-                      (metrics?.security?.complianceScore ?? 0) >= 90
-                        ? "#52c41a"
-                        : "#fa8c16",
+                    color: (metrics?.security?.complianceScore ?? 0) >= 90 ? '#52c41a' : '#fa8c16',
                   }}
                 />
               </Card>
@@ -630,9 +612,8 @@ export const EnterpriseDashboard: React.FC = () => {
                   value={
                     metrics?.security.lastIncident
                       ? Math.floor(
-                          (Date.now() -
-                            metrics.security.lastIncident.getTime()) /
-                            (24 * 60 * 60 * 1000),
+                          (Date.now() - metrics.security.lastIncident.getTime()) /
+                            (24 * 60 * 60 * 1000)
                         )
                       : 0
                   }
@@ -663,53 +644,29 @@ export const EnterpriseDashboard: React.FC = () => {
               <Col span={12}>
                 <div style={{ marginBottom: 16 }}>
                   <Text strong>Threat Detection</Text>
-                  <Progress
-                    percent={85}
-                    status="active"
-                    strokeColor="#52c41a"
-                  />
+                  <Progress percent={85} status="active" strokeColor="#52c41a" />
                 </div>
                 <div style={{ marginBottom: 16 }}>
                   <Text strong>Access Control</Text>
-                  <Progress
-                    percent={92}
-                    status="active"
-                    strokeColor="#1890ff"
-                  />
+                  <Progress percent={92} status="active" strokeColor="#1890ff" />
                 </div>
                 <div style={{ marginBottom: 16 }}>
                   <Text strong>Data Encryption</Text>
-                  <Progress
-                    percent={98}
-                    status="active"
-                    strokeColor="#722ed1"
-                  />
+                  <Progress percent={98} status="active" strokeColor="#722ed1" />
                 </div>
               </Col>
               <Col span={12}>
                 <div style={{ marginBottom: 16 }}>
                   <Text strong>Audit Coverage</Text>
-                  <Progress
-                    percent={94}
-                    status="active"
-                    strokeColor="#fa8c16"
-                  />
+                  <Progress percent={94} status="active" strokeColor="#fa8c16" />
                 </div>
                 <div style={{ marginBottom: 16 }}>
                   <Text strong>Vulnerability Management</Text>
-                  <Progress
-                    percent={88}
-                    status="active"
-                    strokeColor="#13c2c2"
-                  />
+                  <Progress percent={88} status="active" strokeColor="#13c2c2" />
                 </div>
                 <div style={{ marginBottom: 16 }}>
                   <Text strong>Incident Response</Text>
-                  <Progress
-                    percent={90}
-                    status="active"
-                    strokeColor="#eb2f96"
-                  />
+                  <Progress percent={90} status="active" strokeColor="#eb2f96" />
                 </div>
               </Col>
             </Row>
@@ -718,7 +675,7 @@ export const EnterpriseDashboard: React.FC = () => {
       ),
     },
     {
-      key: "organizations",
+      key: 'organizations',
       label: (
         <span>
           <TeamOutlined />
@@ -745,15 +702,12 @@ export const EnterpriseDashboard: React.FC = () => {
               pagination={false}
               columns={[
                 {
-                  title: "Organization",
-                  dataIndex: "name",
-                  key: "name",
+                  title: 'Organization',
+                  dataIndex: 'name',
+                  key: 'name',
                   render: (name: string) => (
                     <div>
-                      <Avatar
-                        size="small"
-                        style={{ backgroundColor: "#1890ff", marginRight: 8 }}
-                      >
+                      <Avatar size="small" style={{ backgroundColor: '#1890ff', marginRight: 8 }}>
                         {name.charAt(0)}
                       </Avatar>
                       <Text strong>{name}</Text>
@@ -761,37 +715,30 @@ export const EnterpriseDashboard: React.FC = () => {
                   ),
                 },
                 {
-                  title: "Users",
-                  dataIndex: "users",
-                  key: "users",
+                  title: 'Users',
+                  dataIndex: 'users',
+                  key: 'users',
                   render: (users: number) => <Statistic value={users} />,
                 },
                 {
-                  title: "Workflows",
-                  dataIndex: "workflows",
-                  key: "workflows",
-                  render: (workflows: number) => (
-                    <Statistic value={workflows} />
-                  ),
+                  title: 'Workflows',
+                  dataIndex: 'workflows',
+                  key: 'workflows',
+                  render: (workflows: number) => <Statistic value={workflows} />,
                 },
                 {
-                  title: "Executions",
-                  dataIndex: "executions",
-                  key: "executions",
-                  render: (executions: number) => (
-                    <Statistic value={executions} />
-                  ),
+                  title: 'Executions',
+                  dataIndex: 'executions',
+                  key: 'executions',
+                  render: (executions: number) => <Statistic value={executions} />,
                 },
                 {
-                  title: "Growth",
-                  dataIndex: "growth",
-                  key: "growth",
+                  title: 'Growth',
+                  dataIndex: 'growth',
+                  key: 'growth',
                   render: (growth: number) => (
-                    <span
-                      style={{ color: growth >= 0 ? "#52c41a" : "#cf1322" }}
-                    >
-                      {growth >= 0 ? <RiseOutlined /> : <FallOutlined />}{" "}
-                      {Math.abs(growth)}%
+                    <span style={{ color: growth >= 0 ? '#52c41a' : '#cf1322' }}>
+                      {growth >= 0 ? <RiseOutlined /> : <FallOutlined />} {Math.abs(growth)}%
                     </span>
                   ),
                 },
@@ -805,16 +752,12 @@ export const EnterpriseDashboard: React.FC = () => {
               pagination={false}
               columns={[
                 {
-                  title: "User",
-                  dataIndex: "name",
-                  key: "name",
+                  title: 'User',
+                  dataIndex: 'name',
+                  key: 'name',
                   render: (name: string, record: any) => (
                     <div>
-                      <Avatar
-                        size="small"
-                        icon={<UserOutlined />}
-                        style={{ marginRight: 8 }}
-                      />
+                      <Avatar size="small" icon={<UserOutlined />} style={{ marginRight: 8 }} />
                       <div>
                         <Text strong>{name}</Text>
                         <br />
@@ -824,28 +767,20 @@ export const EnterpriseDashboard: React.FC = () => {
                   ),
                 },
                 {
-                  title: "Executions",
-                  dataIndex: "executions",
-                  key: "executions",
-                  render: (executions: number) => (
-                    <Statistic value={executions} />
-                  ),
+                  title: 'Executions',
+                  dataIndex: 'executions',
+                  key: 'executions',
+                  render: (executions: number) => <Statistic value={executions} />,
                 },
                 {
-                  title: "Success Rate",
-                  dataIndex: "successRate",
-                  key: "successRate",
+                  title: 'Success Rate',
+                  dataIndex: 'successRate',
+                  key: 'successRate',
                   render: (rate: number) => (
                     <Progress
                       percent={rate}
                       size="small"
-                      status={
-                        rate >= 95
-                          ? "success"
-                          : rate >= 90
-                            ? "normal"
-                            : "exception"
-                      }
+                      status={rate >= 95 ? 'success' : rate >= 90 ? 'normal' : 'exception'}
                     />
                   ),
                 },
@@ -856,7 +791,7 @@ export const EnterpriseDashboard: React.FC = () => {
       ),
     },
     {
-      key: "activity",
+      key: 'activity',
       label: (
         <span>
           <ClockCircleOutlined />
@@ -898,13 +833,13 @@ export const EnterpriseDashboard: React.FC = () => {
                   <div>
                     <div
                       style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
                       }}
                     >
                       <Text strong>{activity.title}</Text>
-                      <Text type="secondary" style={{ fontSize: "12px" }}>
+                      <Text type="secondary" style={{ fontSize: '12px' }}>
                         {activity.timestamp.toLocaleTimeString()}
                       </Text>
                     </div>
@@ -923,9 +858,7 @@ export const EnterpriseDashboard: React.FC = () => {
                             {activity.organization}
                           </Tag>
                         )}
-                        <Tag color={getSeverityColor(activity.severity)}>
-                          {activity.severity}
-                        </Tag>
+                        <Tag color={getSeverityColor(activity.severity)}>{activity.severity}</Tag>
                       </div>
                     )}
                   </div>
@@ -943,13 +876,13 @@ export const EnterpriseDashboard: React.FC = () => {
   }
 
   return (
-    <div style={{ padding: "24px" }}>
+    <div style={{ padding: '24px' }}>
       <div style={{ marginBottom: 24 }}>
         <div
           style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
           }}
         >
           <div>
@@ -961,11 +894,7 @@ export const EnterpriseDashboard: React.FC = () => {
             </Text>
           </div>
           <Space>
-            <RangePicker
-              value={dateRange}
-              onChange={setDateRange}
-              style={{ width: 300 }}
-            />
+            <RangePicker value={dateRange} onChange={setDateRange} style={{ width: 300 }} />
             {canManageOrganization() && (
               <Select
                 value={selectedOrganization}
@@ -980,11 +909,7 @@ export const EnterpriseDashboard: React.FC = () => {
                 ))}
               </Select>
             )}
-            <Button
-              icon={<ReloadOutlined />}
-              onClick={loadDashboardData}
-              loading={loading}
-            >
+            <Button icon={<ReloadOutlined />} onClick={loadDashboardData} loading={loading}>
               Refresh
             </Button>
           </Space>

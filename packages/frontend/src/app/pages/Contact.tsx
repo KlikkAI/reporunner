@@ -5,150 +5,149 @@
  * Sales, support, and general inquiries
  */
 
-import React, { useState } from "react";
 import {
-  Mail,
-  Phone,
-  MapPin,
-  MessageSquare,
-  Send,
+  Briefcase,
+  Calendar,
   CheckCircle,
   Clock,
-  Users,
-  Shield,
-  Zap,
-  Globe,
-  Calendar,
+  Code,
   ExternalLink,
+  Globe,
   Heart,
   HelpCircle,
-  Code,
-  Briefcase,
-} from "lucide-react";
-import { Header } from "../components/Landing/Header";
-import { Footer } from "../components/Landing/Footer";
+  Mail,
+  MapPin,
+  MessageSquare,
+  Phone,
+  Send,
+  Shield,
+  Users,
+  Zap,
+} from 'lucide-react';
+import type React from 'react';
+import { useState } from 'react';
+import { Footer } from '../components/Landing/Footer';
+import { Header } from '../components/Landing/Header';
 
 export const Contact: React.FC = () => {
   const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    company: "",
-    role: "",
-    inquiry: "general",
-    subject: "",
-    message: "",
+    name: '',
+    email: '',
+    company: '',
+    role: '',
+    inquiry: 'general',
+    subject: '',
+    message: '',
     newsletter: false,
   });
   const [isSubmitted, setIsSubmitted] = useState(false);
 
   const inquiryTypes = [
-    { value: "sales", label: "Sales Inquiry", icon: Briefcase },
-    { value: "support", label: "Technical Support", icon: HelpCircle },
-    { value: "partnership", label: "Partnership", icon: Users },
-    { value: "general", label: "General Question", icon: MessageSquare },
-    { value: "press", label: "Press & Media", icon: Globe },
-    { value: "careers", label: "Careers", icon: Heart },
+    { value: 'sales', label: 'Sales Inquiry', icon: Briefcase },
+    { value: 'support', label: 'Technical Support', icon: HelpCircle },
+    { value: 'partnership', label: 'Partnership', icon: Users },
+    { value: 'general', label: 'General Question', icon: MessageSquare },
+    { value: 'press', label: 'Press & Media', icon: Globe },
+    { value: 'careers', label: 'Careers', icon: Heart },
   ];
 
   const contactMethods = [
     {
-      type: "Sales",
-      description: "Speak with our sales team about enterprise solutions",
+      type: 'Sales',
+      description: 'Speak with our sales team about enterprise solutions',
       icon: Briefcase,
-      color: "blue",
+      color: 'blue',
       methods: [
-        { type: "email", value: "sales@reporunner.dev", icon: Mail },
-        { type: "phone", value: "+1 (555) 123-4567", icon: Phone },
-        { type: "calendar", value: "Schedule a demo", icon: Calendar },
+        { type: 'email', value: 'sales@reporunner.dev', icon: Mail },
+        { type: 'phone', value: '+1 (555) 123-4567', icon: Phone },
+        { type: 'calendar', value: 'Schedule a demo', icon: Calendar },
       ],
     },
     {
-      type: "Support",
-      description: "Get help with technical issues and questions",
+      type: 'Support',
+      description: 'Get help with technical issues and questions',
       icon: HelpCircle,
-      color: "green",
+      color: 'green',
       methods: [
-        { type: "email", value: "support@reporunner.dev", icon: Mail },
-        { type: "docs", value: "Documentation", icon: Code },
-        { type: "community", value: "Community Forum", icon: Users },
+        { type: 'email', value: 'support@reporunner.dev', icon: Mail },
+        { type: 'docs', value: 'Documentation', icon: Code },
+        { type: 'community', value: 'Community Forum', icon: Users },
       ],
     },
     {
-      type: "General",
-      description: "General inquiries and information",
+      type: 'General',
+      description: 'General inquiries and information',
       icon: MessageSquare,
-      color: "purple",
+      color: 'purple',
       methods: [
-        { type: "email", value: "hello@reporunner.dev", icon: Mail },
-        { type: "address", value: "San Francisco, CA", icon: MapPin },
-        { type: "social", value: "Follow us", icon: Globe },
+        { type: 'email', value: 'hello@reporunner.dev', icon: Mail },
+        { type: 'address', value: 'San Francisco, CA', icon: MapPin },
+        { type: 'social', value: 'Follow us', icon: Globe },
       ],
     },
   ];
 
   const offices = [
     {
-      city: "San Francisco",
-      country: "United States",
-      flag: "🇺🇸",
-      address: "123 Market Street, Suite 300",
-      postal: "San Francisco, CA 94105",
-      phone: "+1 (555) 123-4567",
-      email: "us@reporunner.dev",
-      hours: "9 AM - 6 PM PST",
+      city: 'San Francisco',
+      country: 'United States',
+      flag: '🇺🇸',
+      address: '123 Market Street, Suite 300',
+      postal: 'San Francisco, CA 94105',
+      phone: '+1 (555) 123-4567',
+      email: 'us@reporunner.dev',
+      hours: '9 AM - 6 PM PST',
     },
     {
-      city: "London",
-      country: "United Kingdom",
-      flag: "🇬🇧",
-      address: "10 Downing Street, Floor 5",
-      postal: "London SW1A 2AA",
-      phone: "+44 20 7946 0958",
-      email: "uk@reporunner.dev",
-      hours: "9 AM - 6 PM GMT",
+      city: 'London',
+      country: 'United Kingdom',
+      flag: '🇬🇧',
+      address: '10 Downing Street, Floor 5',
+      postal: 'London SW1A 2AA',
+      phone: '+44 20 7946 0958',
+      email: 'uk@reporunner.dev',
+      hours: '9 AM - 6 PM GMT',
     },
     {
-      city: "Singapore",
-      country: "Singapore",
-      flag: "🇸🇬",
-      address: "1 Raffles Place, Level 20",
-      postal: "Singapore 048616",
-      phone: "+65 6123 4567",
-      email: "sg@reporunner.dev",
-      hours: "9 AM - 6 PM SGT",
+      city: 'Singapore',
+      country: 'Singapore',
+      flag: '🇸🇬',
+      address: '1 Raffles Place, Level 20',
+      postal: 'Singapore 048616',
+      phone: '+65 6123 4567',
+      email: 'sg@reporunner.dev',
+      hours: '9 AM - 6 PM SGT',
     },
   ];
 
   const faqs = [
     {
-      question: "How can I get started with Reporunner?",
+      question: 'How can I get started with Reporunner?',
       answer:
-        "You can start with our free community edition or request a demo for enterprise features. Our quick start guide helps you deploy in minutes.",
+        'You can start with our free community edition or request a demo for enterprise features. Our quick start guide helps you deploy in minutes.',
     },
     {
-      question: "Do you offer professional services?",
+      question: 'Do you offer professional services?',
       answer:
-        "Yes, we provide migration services, custom development, training, and ongoing support for enterprise customers.",
+        'Yes, we provide migration services, custom development, training, and ongoing support for enterprise customers.',
     },
     {
       question: "What's your response time for support?",
       answer:
-        "Community support is best-effort. Professional customers get 24-hour response, and Enterprise customers get 1-hour response for critical issues.",
+        'Community support is best-effort. Professional customers get 24-hour response, and Enterprise customers get 1-hour response for critical issues.',
     },
     {
-      question: "Can I schedule a demo?",
+      question: 'Can I schedule a demo?',
       answer:
-        "Absolutely! You can book a personalized demo with our team to see how Reporunner fits your specific use case.",
+        'Absolutely! You can book a personalized demo with our team to see how Reporunner fits your specific use case.',
     },
   ];
 
   const handleInputChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >,
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value, type } = e.target;
-    if (type === "checkbox") {
+    if (type === 'checkbox') {
       setFormData((prev) => ({
         ...prev,
         [name]: (e.target as HTMLInputElement).checked,
@@ -164,20 +163,20 @@ export const Contact: React.FC = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // Form submission logic would go here
-    console.log("Form submitted:", formData);
+    console.log('Form submitted:', formData);
     setIsSubmitted(true);
 
     // Reset form after 3 seconds
     setTimeout(() => {
       setIsSubmitted(false);
       setFormData({
-        name: "",
-        email: "",
-        company: "",
-        role: "",
-        inquiry: "general",
-        subject: "",
-        message: "",
+        name: '',
+        email: '',
+        company: '',
+        role: '',
+        inquiry: 'general',
+        subject: '',
+        message: '',
         newsletter: false,
       });
     }, 3000);
@@ -195,15 +194,14 @@ export const Contact: React.FC = () => {
         <div className="container mx-auto px-6 relative z-10">
           <div className="max-w-4xl mx-auto text-center">
             <h1 className="text-5xl md:text-6xl font-bold text-white mb-6 leading-tight">
-              Get in{" "}
+              Get in{' '}
               <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
                 Touch
               </span>
             </h1>
             <p className="text-xl text-slate-200 mb-8 max-w-3xl mx-auto leading-relaxed">
-              Ready to transform your workflow automation? Our team is here to
-              help you get started, answer questions, or discuss enterprise
-              solutions.
+              Ready to transform your workflow automation? Our team is here to help you get started,
+              answer questions, or discuss enterprise solutions.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
@@ -222,25 +220,17 @@ export const Contact: React.FC = () => {
               <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20">
                 <Clock className="w-8 h-8 text-green-300 mx-auto mb-2" />
                 <div className="text-lg font-semibold text-white">Sales</div>
-                <div className="text-sm text-slate-300">
-                  &lt; 2 hours response
-                </div>
+                <div className="text-sm text-slate-300">&lt; 2 hours response</div>
               </div>
               <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20">
                 <Shield className="w-8 h-8 text-blue-300 mx-auto mb-2" />
                 <div className="text-lg font-semibold text-white">Support</div>
-                <div className="text-sm text-slate-300">
-                  &lt; 24 hours response
-                </div>
+                <div className="text-sm text-slate-300">&lt; 24 hours response</div>
               </div>
               <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20">
                 <Zap className="w-8 h-8 text-purple-300 mx-auto mb-2" />
-                <div className="text-lg font-semibold text-white">
-                  Enterprise
-                </div>
-                <div className="text-sm text-slate-300">
-                  &lt; 1 hour response
-                </div>
+                <div className="text-lg font-semibold text-white">Enterprise</div>
+                <div className="text-sm text-slate-300">&lt; 1 hour response</div>
               </div>
             </div>
           </div>
@@ -252,9 +242,7 @@ export const Contact: React.FC = () => {
         <div className="container mx-auto px-6">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-12">
-              <h2 className="text-4xl font-bold text-gray-900 mb-6">
-                How Can We Help?
-              </h2>
+              <h2 className="text-4xl font-bold text-gray-900 mb-6">How Can We Help?</h2>
               <p className="text-xl text-gray-600">
                 Choose the best way to reach us based on your needs
               </p>
@@ -268,29 +256,20 @@ export const Contact: React.FC = () => {
                     key={index}
                     className="bg-white border border-gray-200 rounded-xl p-6 hover:border-blue-300 hover:shadow-lg transition-all duration-300"
                   >
-                    <div
-                      className={`bg-${method.color}-100 p-3 rounded-lg w-fit mb-4`}
-                    >
+                    <div className={`bg-${method.color}-100 p-3 rounded-lg w-fit mb-4`}>
                       <Icon className={`w-8 h-8 text-${method.color}-600`} />
                     </div>
-                    <h3 className="text-xl font-bold text-gray-900 mb-2">
-                      {method.type}
-                    </h3>
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">{method.type}</h3>
                     <p className="text-gray-600 mb-6">{method.description}</p>
 
                     <div className="space-y-3">
                       {method.methods.map((contact, contactIndex) => {
                         const ContactIcon = contact.icon;
                         return (
-                          <div
-                            key={contactIndex}
-                            className="flex items-center gap-3"
-                          >
+                          <div key={contactIndex} className="flex items-center gap-3">
                             <ContactIcon className="w-5 h-5 text-gray-400" />
-                            <span className="text-gray-700">
-                              {contact.value}
-                            </span>
-                            {contact.type === "email" && (
+                            <span className="text-gray-700">{contact.value}</span>
+                            {contact.type === 'email' && (
                               <ExternalLink className="w-4 h-4 text-gray-400" />
                             )}
                           </div>
@@ -310,12 +289,9 @@ export const Contact: React.FC = () => {
         <div className="container mx-auto px-6">
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-12">
-              <h2 className="text-4xl font-bold text-gray-900 mb-6">
-                Send Us a Message
-              </h2>
+              <h2 className="text-4xl font-bold text-gray-900 mb-6">Send Us a Message</h2>
               <p className="text-xl text-gray-600">
-                Fill out the form below and we'll get back to you within 24
-                hours
+                Fill out the form below and we'll get back to you within 24 hours
               </p>
             </div>
 
@@ -323,16 +299,11 @@ export const Contact: React.FC = () => {
               {isSubmitted ? (
                 <div className="text-center py-12">
                   <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
-                  <h3 className="text-2xl font-bold text-gray-900 mb-2">
-                    Thank You!
-                  </h3>
+                  <h3 className="text-2xl font-bold text-gray-900 mb-2">Thank You!</h3>
                   <p className="text-gray-600 mb-4">
-                    Your message has been sent successfully. We'll get back to
-                    you soon.
+                    Your message has been sent successfully. We'll get back to you soon.
                   </p>
-                  <div className="text-sm text-gray-500">
-                    Redirecting to home page...
-                  </div>
+                  <div className="text-sm text-gray-500">Redirecting to home page...</div>
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-6">
@@ -349,8 +320,8 @@ export const Contact: React.FC = () => {
                             key={type.value}
                             className={`relative flex items-center gap-3 p-3 border rounded-lg cursor-pointer transition-colors ${
                               formData.inquiry === type.value
-                                ? "border-blue-500 bg-blue-50"
-                                : "border-gray-200 hover:border-gray-300"
+                                ? 'border-blue-500 bg-blue-50'
+                                : 'border-gray-200 hover:border-gray-300'
                             }`}
                           >
                             <input
@@ -362,9 +333,7 @@ export const Contact: React.FC = () => {
                               className="sr-only"
                             />
                             <Icon className="w-5 h-5 text-gray-600" />
-                            <span className="text-sm font-medium text-gray-700">
-                              {type.label}
-                            </span>
+                            <span className="text-sm font-medium text-gray-700">{type.label}</span>
                           </label>
                         );
                       })}
@@ -499,12 +468,8 @@ export const Contact: React.FC = () => {
                       onChange={handleInputChange}
                       className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                     />
-                    <label
-                      htmlFor="newsletter"
-                      className="ml-3 text-sm text-gray-600"
-                    >
-                      Subscribe to our newsletter for product updates and
-                      automation tips
+                    <label htmlFor="newsletter" className="ml-3 text-sm text-gray-600">
+                      Subscribe to our newsletter for product updates and automation tips
                     </label>
                   </div>
 
@@ -530,9 +495,7 @@ export const Contact: React.FC = () => {
         <div className="container mx-auto px-6">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-12">
-              <h2 className="text-4xl font-bold text-gray-900 mb-6">
-                Our Offices
-              </h2>
+              <h2 className="text-4xl font-bold text-gray-900 mb-6">Our Offices</h2>
               <p className="text-xl text-gray-600">Visit us around the world</p>
             </div>
 
@@ -553,12 +516,8 @@ export const Contact: React.FC = () => {
                     <div className="flex items-start gap-3">
                       <MapPin className="w-5 h-5 text-gray-400 mt-0.5" />
                       <div>
-                        <div className="text-gray-900 font-medium">
-                          {office.address}
-                        </div>
-                        <div className="text-gray-600 text-sm">
-                          {office.postal}
-                        </div>
+                        <div className="text-gray-900 font-medium">{office.address}</div>
+                        <div className="text-gray-600 text-sm">{office.postal}</div>
                       </div>
                     </div>
 
@@ -589,23 +548,14 @@ export const Contact: React.FC = () => {
         <div className="container mx-auto px-6">
           <div className="max-w-3xl mx-auto">
             <div className="text-center mb-12">
-              <h2 className="text-4xl font-bold text-gray-900 mb-6">
-                Frequently Asked Questions
-              </h2>
-              <p className="text-xl text-gray-600">
-                Quick answers to common questions
-              </p>
+              <h2 className="text-4xl font-bold text-gray-900 mb-6">Frequently Asked Questions</h2>
+              <p className="text-xl text-gray-600">Quick answers to common questions</p>
             </div>
 
             <div className="space-y-6">
               {faqs.map((faq, index) => (
-                <div
-                  key={index}
-                  className="bg-white border border-gray-200 rounded-xl p-6"
-                >
-                  <h3 className="text-lg font-semibold text-gray-900 mb-3">
-                    {faq.question}
-                  </h3>
+                <div key={index} className="bg-white border border-gray-200 rounded-xl p-6">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-3">{faq.question}</h3>
                   <p className="text-gray-600">{faq.answer}</p>
                 </div>
               ))}
@@ -626,8 +576,8 @@ export const Contact: React.FC = () => {
         <div className="container mx-auto px-6 text-center">
           <h2 className="text-4xl font-bold mb-6">Ready to Get Started?</h2>
           <p className="text-xl mb-8 max-w-2xl mx-auto opacity-90">
-            Don't wait - start building powerful workflows today with our free
-            tier or schedule a demo to see enterprise features.
+            Don't wait - start building powerful workflows today with our free tier or schedule a
+            demo to see enterprise features.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">

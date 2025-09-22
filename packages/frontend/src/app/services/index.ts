@@ -5,13 +5,12 @@
  * business logic coordination and user-facing operations.
  */
 
-// App-specific services
-export { integrationService } from "./integrationService";
+// Re-export core services that are still used by the app layer
+export * from '@/core/services';
 export {
+  ExecutionMonitorService,
   executionMonitor,
   useExecutionMonitor,
-  ExecutionMonitorService,
-} from "./executionMonitor";
-
-// Re-export core services that are still used by the app layer
-export * from "@/core/services";
+} from './executionMonitor';
+// App-specific services
+export { integrationService } from './integrationService';

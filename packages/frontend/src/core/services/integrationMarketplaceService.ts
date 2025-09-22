@@ -40,7 +40,7 @@ export interface IntegrationAuthor {
   id: string;
   name: string;
   displayName: string;
-  type: "individual" | "organization" | "official";
+  type: 'individual' | 'organization' | 'official';
   avatar?: string;
   website?: string;
   email: string;
@@ -67,10 +67,10 @@ export interface SubCategory {
 }
 
 export interface IntegrationPricing {
-  type: "free" | "freemium" | "paid" | "subscription" | "usage_based";
+  type: 'free' | 'freemium' | 'paid' | 'subscription' | 'usage_based';
   price?: number;
   currency?: string;
-  period?: "month" | "year" | "lifetime";
+  period?: 'month' | 'year' | 'lifetime';
   usageLimits?: UsageLimit[];
   tiers?: PricingTier[];
 }
@@ -85,13 +85,13 @@ export interface PricingTier {
 }
 
 export interface UsageLimit {
-  type: "api_calls" | "executions" | "storage" | "bandwidth";
+  type: 'api_calls' | 'executions' | 'storage' | 'bandwidth';
   limit: number;
-  period: "hour" | "day" | "month" | "year";
+  period: 'hour' | 'day' | 'month' | 'year';
 }
 
 export interface InstallationConfig {
-  type: "npm" | "docker" | "zip" | "git" | "marketplace";
+  type: 'npm' | 'docker' | 'zip' | 'git' | 'marketplace';
   source: string;
   size: number;
   dependencies: string[];
@@ -104,7 +104,7 @@ export interface ConfigurationStep {
   id: string;
   title: string;
   description: string;
-  type: "text" | "password" | "url" | "select" | "json" | "file";
+  type: 'text' | 'password' | 'url' | 'select' | 'json' | 'file';
   required: boolean;
   validation?: ValidationRule[];
   options?: string[];
@@ -112,7 +112,7 @@ export interface ConfigurationStep {
 }
 
 export interface ValidationRule {
-  type: "required" | "email" | "url" | "regex" | "min_length" | "max_length";
+  type: 'required' | 'email' | 'url' | 'regex' | 'min_length' | 'max_length';
   value?: any;
   message: string;
 }
@@ -137,12 +137,12 @@ export interface IntegrationFeature {
   name: string;
   description: string;
   icon?: string;
-  category: "core" | "advanced" | "premium";
+  category: 'core' | 'advanced' | 'premium';
   available: boolean;
 }
 
 export interface IntegrationRequirement {
-  type: "system" | "software" | "service" | "credential";
+  type: 'system' | 'software' | 'service' | 'credential';
   name: string;
   version?: string;
   description: string;
@@ -150,7 +150,7 @@ export interface IntegrationRequirement {
 }
 
 export interface Permission {
-  type: "read" | "write" | "execute" | "admin";
+  type: 'read' | 'write' | 'execute' | 'admin';
   resource: string;
   description: string;
   required: boolean;
@@ -158,7 +158,7 @@ export interface Permission {
 }
 
 export interface SecurityInfo {
-  dataHandling: "local" | "cloud" | "hybrid";
+  dataHandling: 'local' | 'cloud' | 'hybrid';
   encryption: boolean;
   certifications: string[];
   auditDate?: Date;
@@ -169,7 +169,7 @@ export interface SecurityInfo {
 
 export interface SecurityVulnerability {
   id: string;
-  severity: "low" | "medium" | "high" | "critical";
+  severity: 'low' | 'medium' | 'high' | 'critical';
   description: string;
   fixed: boolean;
   fixedVersion?: string;
@@ -221,17 +221,17 @@ export interface ReleaseNote {
 }
 
 export interface ChangelogEntry {
-  type: "feature" | "bugfix" | "improvement" | "breaking" | "security";
+  type: 'feature' | 'bugfix' | 'improvement' | 'breaking' | 'security';
   description: string;
-  impact?: "low" | "medium" | "high";
+  impact?: 'low' | 'medium' | 'high';
 }
 
 export interface RoadmapItem {
   id: string;
   title: string;
   description: string;
-  priority: "low" | "medium" | "high";
-  status: "planned" | "in_progress" | "completed" | "cancelled";
+  priority: 'low' | 'medium' | 'high';
+  status: 'planned' | 'in_progress' | 'completed' | 'cancelled';
   expectedDate?: Date;
   votes: number;
 }
@@ -277,7 +277,7 @@ export interface WorkflowTemplate {
   name: string;
   description: string;
   category: string;
-  difficulty: "beginner" | "intermediate" | "advanced";
+  difficulty: 'beginner' | 'intermediate' | 'advanced';
   estimatedTime: number;
   nodes: any[];
   edges: any[];
@@ -287,21 +287,15 @@ export interface WorkflowTemplate {
 export interface MarketplaceFilter {
   categories?: string[];
   subcategories?: string[];
-  pricing?: ("free" | "paid")[];
+  pricing?: ('free' | 'paid')[];
   author?: string;
   verified?: boolean;
   featured?: boolean;
   rating?: number;
   search?: string;
   tags?: string[];
-  sortBy?:
-    | "popularity"
-    | "downloads"
-    | "rating"
-    | "created"
-    | "updated"
-    | "name";
-  sortOrder?: "asc" | "desc";
+  sortBy?: 'popularity' | 'downloads' | 'rating' | 'created' | 'updated' | 'name';
+  sortOrder?: 'asc' | 'desc';
 }
 
 export interface InstallationResult {
@@ -340,48 +334,39 @@ export class IntegrationMarketplaceService {
   }
 
   // Marketplace Discovery
-  async searchIntegrations(
-    filter: MarketplaceFilter,
-  ): Promise<MarketplaceIntegration[]> {
+  async searchIntegrations(filter: MarketplaceFilter): Promise<MarketplaceIntegration[]> {
     let results = Array.from(this.integrations.values());
 
     // Apply filters
     if (filter.categories?.length) {
       results = results.filter((integration) =>
-        filter.categories!.includes(integration.category.id),
+        filter.categories!.includes(integration.category.id)
       );
     }
 
     if (filter.subcategories?.length) {
       results = results.filter(
         (integration) =>
-          integration.subcategory &&
-          filter.subcategories!.includes(integration.subcategory),
+          integration.subcategory && filter.subcategories!.includes(integration.subcategory)
       );
     }
 
     if (filter.pricing?.length) {
       results = results.filter((integration) =>
-        filter.pricing!.includes(integration.pricing.type as any),
+        filter.pricing!.includes(integration.pricing.type as any)
       );
     }
 
     if (filter.verified !== undefined) {
-      results = results.filter(
-        (integration) => integration.verified === filter.verified,
-      );
+      results = results.filter((integration) => integration.verified === filter.verified);
     }
 
     if (filter.featured !== undefined) {
-      results = results.filter(
-        (integration) => integration.featured === filter.featured,
-      );
+      results = results.filter((integration) => integration.featured === filter.featured);
     }
 
     if (filter.rating) {
-      results = results.filter(
-        (integration) => integration.stats.averageRating >= filter.rating!,
-      );
+      results = results.filter((integration) => integration.stats.averageRating >= filter.rating!);
     }
 
     if (filter.search) {
@@ -390,49 +375,45 @@ export class IntegrationMarketplaceService {
         (integration) =>
           integration.name.toLowerCase().includes(searchLower) ||
           integration.description.toLowerCase().includes(searchLower) ||
-          integration.tags.some((tag) =>
-            tag.toLowerCase().includes(searchLower),
-          ),
+          integration.tags.some((tag) => tag.toLowerCase().includes(searchLower))
       );
     }
 
     if (filter.tags?.length) {
       results = results.filter((integration) =>
-        filter.tags!.some((tag) => integration.tags.includes(tag)),
+        filter.tags!.some((tag) => integration.tags.includes(tag))
       );
     }
 
     // Apply sorting
-    const sortBy = filter.sortBy || "popularity";
-    const sortOrder = filter.sortOrder || "desc";
+    const sortBy = filter.sortBy || 'popularity';
+    const sortOrder = filter.sortOrder || 'desc';
 
     results.sort((a, b) => {
       let comparison = 0;
 
       switch (sortBy) {
-        case "popularity":
+        case 'popularity':
           comparison = a.stats.popularity - b.stats.popularity;
           break;
-        case "downloads":
+        case 'downloads':
           comparison = a.stats.downloads - b.stats.downloads;
           break;
-        case "rating":
+        case 'rating':
           comparison = a.stats.averageRating - b.stats.averageRating;
           break;
-        case "created":
-          comparison =
-            a.stats.createdAt.getTime() - b.stats.createdAt.getTime();
+        case 'created':
+          comparison = a.stats.createdAt.getTime() - b.stats.createdAt.getTime();
           break;
-        case "updated":
-          comparison =
-            a.stats.lastUpdated.getTime() - b.stats.lastUpdated.getTime();
+        case 'updated':
+          comparison = a.stats.lastUpdated.getTime() - b.stats.lastUpdated.getTime();
           break;
-        case "name":
+        case 'name':
           comparison = a.name.localeCompare(b.name);
           break;
       }
 
-      return sortOrder === "desc" ? -comparison : comparison;
+      return sortOrder === 'desc' ? -comparison : comparison;
     });
 
     return results;
@@ -463,18 +444,15 @@ export class IntegrationMarketplaceService {
     return this.integrations.get(id) || null;
   }
 
-  async installIntegration(
-    integrationId: string,
-    _config?: any,
-  ): Promise<InstallationResult> {
+  async installIntegration(integrationId: string, _config?: any): Promise<InstallationResult> {
     const integration = this.integrations.get(integrationId);
     if (!integration) {
       return {
         success: false,
         integrationId,
-        version: "",
-        message: "Integration not found",
-        errors: ["Integration does not exist in marketplace"],
+        version: '',
+        message: 'Integration not found',
+        errors: ['Integration does not exist in marketplace'],
         configurationRequired: false,
       };
     }
@@ -487,10 +465,9 @@ export class IntegrationMarketplaceService {
           success: false,
           integrationId,
           version: integration.version,
-          message: "Requirements not met",
+          message: 'Requirements not met',
           errors: requirementsCheck.errors,
-          configurationRequired:
-            integration.installation?.configurationRequired ?? false,
+          configurationRequired: integration.installation?.configurationRequired ?? false,
         };
       }
 
@@ -508,7 +485,7 @@ export class IntegrationMarketplaceService {
         success: true,
         integrationId,
         version: integration.version,
-        message: "Integration installed successfully",
+        message: 'Integration installed successfully',
         configurationRequired: integration.installation.configurationRequired,
         nextSteps: this.generateNextSteps(integration),
       };
@@ -517,21 +494,20 @@ export class IntegrationMarketplaceService {
         success: false,
         integrationId,
         version: integration.version,
-        message: "Installation failed",
+        message: 'Installation failed',
         errors: [error.message],
-        configurationRequired:
-          integration.installation?.configurationRequired ?? false,
+        configurationRequired: integration.installation?.configurationRequired ?? false,
       };
     }
   }
 
   async uninstallIntegration(
-    integrationId: string,
+    integrationId: string
   ): Promise<{ success: boolean; message: string }> {
     if (!this.installedIntegrations.has(integrationId)) {
       return {
         success: false,
-        message: "Integration is not installed",
+        message: 'Integration is not installed',
       };
     }
 
@@ -543,7 +519,7 @@ export class IntegrationMarketplaceService {
 
       return {
         success: true,
-        message: "Integration uninstalled successfully",
+        message: 'Integration uninstalled successfully',
       };
     } catch (error: any) {
       return {
@@ -560,8 +536,8 @@ export class IntegrationMarketplaceService {
       return {
         success: false,
         integrationId,
-        version: "",
-        message: "Integration not found",
+        version: '',
+        message: 'Integration not found',
         configurationRequired: false,
       };
     }
@@ -583,11 +559,11 @@ export class IntegrationMarketplaceService {
   // Review System
   async addReview(
     integrationId: string,
-    review: Omit<MarketplaceReview, "id" | "createdAt">,
+    review: Omit<MarketplaceReview, 'id' | 'createdAt'>
   ): Promise<MarketplaceReview> {
     const integration = this.integrations.get(integrationId);
     if (!integration) {
-      throw new Error("Integration not found");
+      throw new Error('Integration not found');
     }
 
     const newReview: MarketplaceReview = {
@@ -599,10 +575,7 @@ export class IntegrationMarketplaceService {
     integration.reviews.push(newReview);
 
     // Update average rating
-    const totalRating = integration.reviews.reduce(
-      (sum, r) => sum + r.rating,
-      0,
-    );
+    const totalRating = integration.reviews.reduce((sum, r) => sum + r.rating, 0);
     integration.stats.averageRating = totalRating / integration.reviews.length;
     integration.stats.totalReviews = integration.reviews.length;
 
@@ -612,11 +585,11 @@ export class IntegrationMarketplaceService {
   async getReviews(
     integrationId: string,
     page = 1,
-    limit = 10,
+    limit = 10
   ): Promise<{ reviews: MarketplaceReview[]; total: number }> {
     const integration = this.integrations.get(integrationId);
     if (!integration) {
-      throw new Error("Integration not found");
+      throw new Error('Integration not found');
     }
 
     const start = (page - 1) * limit;
@@ -632,7 +605,7 @@ export class IntegrationMarketplaceService {
 
   // Developer/Publisher Features
   async publishIntegration(
-    integration: Omit<MarketplaceIntegration, "id" | "stats">,
+    integration: Omit<MarketplaceIntegration, 'id' | 'stats'>
   ): Promise<MarketplaceIntegration> {
     const id = this.generateId();
     const now = new Date();
@@ -659,11 +632,11 @@ export class IntegrationMarketplaceService {
 
   async updateIntegrationListing(
     integrationId: string,
-    updates: Partial<MarketplaceIntegration>,
+    updates: Partial<MarketplaceIntegration>
   ): Promise<MarketplaceIntegration> {
     const integration = this.integrations.get(integrationId);
     if (!integration) {
-      throw new Error("Integration not found");
+      throw new Error('Integration not found');
     }
 
     const updated = {
@@ -688,9 +661,7 @@ export class IntegrationMarketplaceService {
     return Array.from(this.collections.values());
   }
 
-  async getCollectionIntegrations(
-    collectionId: string,
-  ): Promise<MarketplaceIntegration[]> {
+  async getCollectionIntegrations(collectionId: string): Promise<MarketplaceIntegration[]> {
     const collection = this.collections.get(collectionId);
     if (!collection) {
       return [];
@@ -711,18 +682,12 @@ export class IntegrationMarketplaceService {
   } {
     const integrations = Array.from(this.integrations.values());
 
-    const totalDownloads = integrations.reduce(
-      (sum, i) => sum + i.stats.downloads,
-      0,
-    );
+    const totalDownloads = integrations.reduce((sum, i) => sum + i.stats.downloads, 0);
     const totalRatings = integrations.reduce(
       (sum, i) => sum + i.stats.averageRating * i.stats.totalReviews,
-      0,
+      0
     );
-    const totalReviews = integrations.reduce(
-      (sum, i) => sum + i.stats.totalReviews,
-      0,
-    );
+    const totalReviews = integrations.reduce((sum, i) => sum + i.stats.totalReviews, 0);
 
     const categoryCount = new Map<string, number>();
     integrations.forEach((integration) => {
@@ -752,138 +717,137 @@ export class IntegrationMarketplaceService {
   private initializeCategories(): void {
     const categories: IntegrationCategory[] = [
       {
-        id: "ai-ml",
-        name: "AI & Machine Learning",
-        description:
-          "Artificial intelligence and machine learning integrations",
-        icon: "🤖",
-        color: "#722ed1",
+        id: 'ai-ml',
+        name: 'AI & Machine Learning',
+        description: 'Artificial intelligence and machine learning integrations',
+        icon: '🤖',
+        color: '#722ed1',
         subcategories: [
           {
-            id: "llm",
-            name: "Language Models",
-            description: "Large language model integrations",
-            parent: "ai-ml",
+            id: 'llm',
+            name: 'Language Models',
+            description: 'Large language model integrations',
+            parent: 'ai-ml',
           },
           {
-            id: "vision",
-            name: "Computer Vision",
-            description: "Image and video processing",
-            parent: "ai-ml",
+            id: 'vision',
+            name: 'Computer Vision',
+            description: 'Image and video processing',
+            parent: 'ai-ml',
           },
           {
-            id: "speech",
-            name: "Speech & Audio",
-            description: "Speech recognition and synthesis",
-            parent: "ai-ml",
+            id: 'speech',
+            name: 'Speech & Audio',
+            description: 'Speech recognition and synthesis',
+            parent: 'ai-ml',
           },
         ],
       },
       {
-        id: "communication",
-        name: "Communication",
-        description: "Email, messaging, and communication tools",
-        icon: "📧",
-        color: "#1890ff",
+        id: 'communication',
+        name: 'Communication',
+        description: 'Email, messaging, and communication tools',
+        icon: '📧',
+        color: '#1890ff',
         subcategories: [
           {
-            id: "email",
-            name: "Email",
-            description: "Email service integrations",
-            parent: "communication",
+            id: 'email',
+            name: 'Email',
+            description: 'Email service integrations',
+            parent: 'communication',
           },
           {
-            id: "messaging",
-            name: "Messaging",
-            description: "Chat and messaging platforms",
-            parent: "communication",
+            id: 'messaging',
+            name: 'Messaging',
+            description: 'Chat and messaging platforms',
+            parent: 'communication',
           },
           {
-            id: "video",
-            name: "Video Conferencing",
-            description: "Video call and conferencing tools",
-            parent: "communication",
+            id: 'video',
+            name: 'Video Conferencing',
+            description: 'Video call and conferencing tools',
+            parent: 'communication',
           },
         ],
       },
       {
-        id: "data-storage",
-        name: "Data & Storage",
-        description: "Databases, cloud storage, and data processing",
-        icon: "🗄️",
-        color: "#52c41a",
+        id: 'data-storage',
+        name: 'Data & Storage',
+        description: 'Databases, cloud storage, and data processing',
+        icon: '🗄️',
+        color: '#52c41a',
         subcategories: [
           {
-            id: "databases",
-            name: "Databases",
-            description: "SQL and NoSQL databases",
-            parent: "data-storage",
+            id: 'databases',
+            name: 'Databases',
+            description: 'SQL and NoSQL databases',
+            parent: 'data-storage',
           },
           {
-            id: "cloud-storage",
-            name: "Cloud Storage",
-            description: "Cloud file storage services",
-            parent: "data-storage",
+            id: 'cloud-storage',
+            name: 'Cloud Storage',
+            description: 'Cloud file storage services',
+            parent: 'data-storage',
           },
           {
-            id: "analytics",
-            name: "Analytics",
-            description: "Data analytics and BI tools",
-            parent: "data-storage",
+            id: 'analytics',
+            name: 'Analytics',
+            description: 'Data analytics and BI tools',
+            parent: 'data-storage',
           },
         ],
       },
       {
-        id: "productivity",
-        name: "Productivity",
-        description: "Office tools, project management, and productivity apps",
-        icon: "📋",
-        color: "#fa8c16",
+        id: 'productivity',
+        name: 'Productivity',
+        description: 'Office tools, project management, and productivity apps',
+        icon: '📋',
+        color: '#fa8c16',
         subcategories: [
           {
-            id: "office",
-            name: "Office Suite",
-            description: "Word processing, spreadsheets, presentations",
-            parent: "productivity",
+            id: 'office',
+            name: 'Office Suite',
+            description: 'Word processing, spreadsheets, presentations',
+            parent: 'productivity',
           },
           {
-            id: "project-mgmt",
-            name: "Project Management",
-            description: "Task and project management tools",
-            parent: "productivity",
+            id: 'project-mgmt',
+            name: 'Project Management',
+            description: 'Task and project management tools',
+            parent: 'productivity',
           },
           {
-            id: "note-taking",
-            name: "Note Taking",
-            description: "Note and knowledge management",
-            parent: "productivity",
+            id: 'note-taking',
+            name: 'Note Taking',
+            description: 'Note and knowledge management',
+            parent: 'productivity',
           },
         ],
       },
       {
-        id: "ecommerce",
-        name: "E-commerce",
-        description: "Online stores, payment processing, and e-commerce tools",
-        icon: "🛒",
-        color: "#eb2f96",
+        id: 'ecommerce',
+        name: 'E-commerce',
+        description: 'Online stores, payment processing, and e-commerce tools',
+        icon: '🛒',
+        color: '#eb2f96',
         subcategories: [
           {
-            id: "stores",
-            name: "Online Stores",
-            description: "E-commerce platforms",
-            parent: "ecommerce",
+            id: 'stores',
+            name: 'Online Stores',
+            description: 'E-commerce platforms',
+            parent: 'ecommerce',
           },
           {
-            id: "payments",
-            name: "Payments",
-            description: "Payment processing services",
-            parent: "ecommerce",
+            id: 'payments',
+            name: 'Payments',
+            description: 'Payment processing services',
+            parent: 'ecommerce',
           },
           {
-            id: "shipping",
-            name: "Shipping",
-            description: "Shipping and fulfillment services",
-            parent: "ecommerce",
+            id: 'shipping',
+            name: 'Shipping',
+            description: 'Shipping and fulfillment services',
+            parent: 'ecommerce',
           },
         ],
       },
@@ -898,156 +862,150 @@ export class IntegrationMarketplaceService {
     // Sample integrations would be loaded here
     // For brevity, showing just a few examples
 
-    const sampleIntegrations: Omit<MarketplaceIntegration, "id" | "stats">[] = [
+    const sampleIntegrations: Omit<MarketplaceIntegration, 'id' | 'stats'>[] = [
       {
-        name: "openai-advanced",
-        displayName: "OpenAI Advanced",
-        description:
-          "Advanced OpenAI integration with GPT-4, DALL-E, and Whisper support",
-        longDescription:
-          "Comprehensive OpenAI integration supporting all major models...",
-        category: this.categories.get("ai-ml")!,
-        subcategory: "llm",
+        name: 'openai-advanced',
+        displayName: 'OpenAI Advanced',
+        description: 'Advanced OpenAI integration with GPT-4, DALL-E, and Whisper support',
+        longDescription: 'Comprehensive OpenAI integration supporting all major models...',
+        category: this.categories.get('ai-ml')!,
+        subcategory: 'llm',
         author: {
-          id: "official",
-          name: "Reporunner",
-          displayName: "Reporunner Official",
-          type: "official",
-          email: "integrations@reporunner.com",
+          id: 'official',
+          name: 'Reporunner',
+          displayName: 'Reporunner Official',
+          type: 'official',
+          email: 'integrations@reporunner.com',
           verified: true,
           reputation: 100,
           totalIntegrations: 15,
           totalDownloads: 50000,
         },
-        version: "2.1.0",
-        compatibility: ["1.0.0", "1.1.0", "2.0.0"],
-        pricing: { type: "free" },
+        version: '2.1.0',
+        compatibility: ['1.0.0', '1.1.0', '2.0.0'],
+        pricing: { type: 'free' },
         installation: {
-          type: "marketplace",
-          source: "marketplace://openai-advanced",
+          type: 'marketplace',
+          source: 'marketplace://openai-advanced',
           size: 2048000,
-          dependencies: ["openai"],
+          dependencies: ['openai'],
           configurationRequired: true,
           configurationSteps: [
             {
-              id: "api-key",
-              title: "OpenAI API Key",
-              description: "Enter your OpenAI API key",
-              type: "password",
+              id: 'api-key',
+              title: 'OpenAI API Key',
+              description: 'Enter your OpenAI API key',
+              type: 'password',
               required: true,
-              validation: [
-                { type: "required", message: "API key is required" },
-              ],
+              validation: [{ type: 'required', message: 'API key is required' }],
             },
           ],
         },
         documentation: {
-          readme: "Complete OpenAI integration documentation...",
-          changelog: "Version 2.1.0: Added GPT-4 Turbo support...",
-          apiDocs: "https://docs.reporunner.com/integrations/openai",
-          exampleWorkflows: ["ai-content-generation", "image-analysis"],
+          readme: 'Complete OpenAI integration documentation...',
+          changelog: 'Version 2.1.0: Added GPT-4 Turbo support...',
+          apiDocs: 'https://docs.reporunner.com/integrations/openai',
+          exampleWorkflows: ['ai-content-generation', 'image-analysis'],
         },
-        screenshots: ["screenshot1.png", "screenshot2.png"],
+        screenshots: ['screenshot1.png', 'screenshot2.png'],
         features: [
           {
-            name: "GPT-4 Support",
-            description: "Latest GPT-4 models",
-            icon: "🧠",
-            category: "core",
+            name: 'GPT-4 Support',
+            description: 'Latest GPT-4 models',
+            icon: '🧠',
+            category: 'core',
             available: true,
           },
           {
-            name: "Image Generation",
-            description: "DALL-E integration",
-            icon: "🎨",
-            category: "core",
+            name: 'Image Generation',
+            description: 'DALL-E integration',
+            icon: '🎨',
+            category: 'core',
             available: true,
           },
           {
-            name: "Speech to Text",
-            description: "Whisper integration",
-            icon: "🎤",
-            category: "advanced",
+            name: 'Speech to Text',
+            description: 'Whisper integration',
+            icon: '🎤',
+            category: 'advanced',
             available: true,
           },
         ],
         requirements: [
           {
-            type: "service",
-            name: "OpenAI API Access",
-            description: "Valid OpenAI API key required",
+            type: 'service',
+            name: 'OpenAI API Access',
+            description: 'Valid OpenAI API key required',
             optional: false,
           },
         ],
         permissions: [
           {
-            type: "read",
-            resource: "api-keys",
-            description: "Access to OpenAI credentials",
+            type: 'read',
+            resource: 'api-keys',
+            description: 'Access to OpenAI credentials',
             required: true,
           },
         ],
         security: {
-          dataHandling: "cloud",
+          dataHandling: 'cloud',
           encryption: true,
-          certifications: ["SOC 2", "ISO 27001"],
+          certifications: ['SOC 2', 'ISO 27001'],
           vulnerabilities: [],
-          privacyPolicy: "https://reporunner.com/privacy",
-          termsOfService: "https://reporunner.com/terms",
+          privacyPolicy: 'https://reporunner.com/privacy',
+          termsOfService: 'https://reporunner.com/terms',
         },
         reviews: [],
         metadata: {
-          keywords: ["openai", "gpt", "ai", "machine-learning"],
-          license: "MIT",
-          repository: "https://github.com/reporunner/openai-integration",
-          homepage: "https://reporunner.com/integrations/openai",
-          supportUrl: "https://support.reporunner.com",
+          keywords: ['openai', 'gpt', 'ai', 'machine-learning'],
+          license: 'MIT',
+          repository: 'https://github.com/reporunner/openai-integration',
+          homepage: 'https://reporunner.com/integrations/openai',
+          supportUrl: 'https://support.reporunner.com',
           releaseNotes: [
             {
-              version: "2.1.0",
-              date: new Date("2024-01-15"),
+              version: '2.1.0',
+              date: new Date('2024-01-15'),
               changes: [
-                { type: "feature", description: "Added GPT-4 Turbo support" },
-                { type: "improvement", description: "Enhanced error handling" },
+                { type: 'feature', description: 'Added GPT-4 Turbo support' },
+                { type: 'improvement', description: 'Enhanced error handling' },
               ],
             },
           ],
         },
         nodeTypes: [
           {
-            id: "openai-chat",
-            name: "OpenAI Chat",
-            type: "ai-language",
-            category: "AI/ML",
+            id: 'openai-chat',
+            name: 'OpenAI Chat',
+            type: 'ai-language',
+            category: 'AI/ML',
             inputs: [
               {
-                name: "prompt",
-                type: "string",
+                name: 'prompt',
+                type: 'string',
                 required: true,
-                description: "Input prompt",
+                description: 'Input prompt',
               },
             ],
-            outputs: [
-              { name: "response", type: "string", description: "AI response" },
-            ],
+            outputs: [{ name: 'response', type: 'string', description: 'AI response' }],
             properties: [
               {
-                name: "model",
-                type: "select",
+                name: 'model',
+                type: 'select',
                 required: true,
-                description: "OpenAI model",
+                description: 'OpenAI model',
               },
               {
-                name: "temperature",
-                type: "number",
+                name: 'temperature',
+                type: 'number',
                 required: false,
                 defaultValue: 0.7,
-                description: "Response randomness",
+                description: 'Response randomness',
               },
             ],
-            icon: "🤖",
-            color: "#00a67e",
-            documentation: "OpenAI chat completion node",
+            icon: '🤖',
+            color: '#00a67e',
+            documentation: 'OpenAI chat completion node',
           },
         ],
         workflows: [],
@@ -1055,7 +1013,7 @@ export class IntegrationMarketplaceService {
         verified: true,
         featured: true,
         deprecated: false,
-        tags: ["ai", "gpt", "openai", "language-model"],
+        tags: ['ai', 'gpt', 'openai', 'language-model'],
       },
     ];
 
@@ -1073,9 +1031,7 @@ export class IntegrationMarketplaceService {
           totalReviews: Math.floor(Math.random() * 100) + 10,
           usageCount: Math.floor(Math.random() * 5000) + 500,
           lastUpdated: now,
-          createdAt: new Date(
-            now.getTime() - Math.random() * 365 * 24 * 60 * 60 * 1000,
-          ),
+          createdAt: new Date(now.getTime() - Math.random() * 365 * 24 * 60 * 60 * 1000),
           popularity: Math.floor(Math.random() * 100),
           trending: Math.random() > 0.7,
         },
@@ -1088,13 +1044,13 @@ export class IntegrationMarketplaceService {
   private initializeCollections(): void {
     const collections: MarketplaceCollection[] = [
       {
-        id: "ai-starter-pack",
-        name: "AI Starter Pack",
-        description: "Essential AI integrations for getting started",
-        curator: "Reporunner Team",
+        id: 'ai-starter-pack',
+        name: 'AI Starter Pack',
+        description: 'Essential AI integrations for getting started',
+        curator: 'Reporunner Team',
         integrations: [], // Would contain actual integration IDs
         featured: true,
-        tags: ["ai", "starter", "popular"],
+        tags: ['ai', 'starter', 'popular'],
         createdAt: new Date(),
         updatedAt: new Date(),
       },
@@ -1106,7 +1062,7 @@ export class IntegrationMarketplaceService {
   }
 
   private async validateRequirements(
-    integration: MarketplaceIntegration,
+    integration: MarketplaceIntegration
   ): Promise<{ valid: boolean; errors: string[] }> {
     const errors: string[] = [];
 
@@ -1151,18 +1107,18 @@ export class IntegrationMarketplaceService {
     const steps: string[] = [];
 
     if (integration.installation.configurationRequired) {
-      steps.push("Complete the integration configuration");
+      steps.push('Complete the integration configuration');
     }
 
     if (integration.documentation.tutorialUrl) {
-      steps.push("Follow the getting started tutorial");
+      steps.push('Follow the getting started tutorial');
     }
 
     if (integration.workflows.length > 0) {
-      steps.push("Try the example workflows");
+      steps.push('Try the example workflows');
     }
 
-    steps.push("Explore the integration documentation");
+    steps.push('Explore the integration documentation');
 
     return steps;
   }
@@ -1173,5 +1129,4 @@ export class IntegrationMarketplaceService {
 }
 
 // Singleton instance
-export const integrationMarketplaceService =
-  new IntegrationMarketplaceService();
+export const integrationMarketplaceService = new IntegrationMarketplaceService();

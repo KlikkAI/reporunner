@@ -1,5 +1,5 @@
-import { Request, Response, NextFunction } from "express";
-import cors, { CorsOptions } from "cors";
+import cors, { type CorsOptions } from 'cors';
+import type { NextFunction, Request, Response } from 'express';
 
 export interface SecurityHeadersConfig {
   cors?: CorsConfig;
@@ -9,7 +9,7 @@ export interface SecurityHeadersConfig {
 
 export interface CorsConfig {
   enabled?: boolean;
-  origins?: string[] | "*";
+  origins?: string[] | '*';
   credentials?: boolean;
   methods?: string[];
   allowedHeaders?: string[];
@@ -17,10 +17,7 @@ export interface CorsConfig {
   maxAge?: number;
   preflightContinue?: boolean;
   optionsSuccessStatus?: number;
-  dynamicOrigin?: (
-    origin: string,
-    callback: (err: Error | null, allow?: boolean) => void,
-  ) => void;
+  dynamicOrigin?: (origin: string, callback: (err: Error | null, allow?: boolean) => void) => void;
 }
 
 export interface CSPConfig {
@@ -66,7 +63,7 @@ const DEFAULT_CSP_DIRECTIVES: CSPDirectives = {
   defaultSrc: ["'self'"],
   scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"], // May need adjustment based on app
   styleSrc: ["'self'", "'unsafe-inline'"],
-  imgSrc: ["'self'", "data:", "https:"],
+  imgSrc: ["'self'", 'data:', 'https:'],
   connectSrc: ["'self'"],
   fontSrc: ["'self'"],
   objectSrc: ["'none'"],
@@ -85,20 +82,11 @@ const DEFAULT_CSP_DIRECTIVES: CSPDirectives = {
 export function createCorsMiddleware(config: CorsConfig = {}): any {
   const {
     enabled = true,
-    origins = ["http://localhost:3000"],
+    origins = ['http://localhost:3000'],
     credentials = true,
-    methods = ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
-    allowedHeaders = [
-      "Content-Type",
-      "Authorization",
-      "X-Requested-With",
-      "X-API-Key",
-    ],
-    exposedHeaders = [
-      "X-RateLimit-Limit",
-      "X-RateLimit-Remaining",
-      "X-RateLimit-Reset",
-    ],
+    methods = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders = ['Content-Type', 'Authorization', 'X-Requested-With', 'X-API-Key'],
+    exposedHeaders = ['X-RateLimit-Limit', 'X-RateLimit-Remaining', 'X-RateLimit-Reset'],
     maxAge = 86400, // 24 hours
     preflightContinue = false,
     optionsSuccessStatus = 204,
@@ -122,7 +110,7 @@ export function createCorsMiddleware(config: CorsConfig = {}): any {
   // Configure origin
   if (dynamicOrigin) {
     corsOptions.origin = dynamicOrigin as any;
-  } else if (origins === "*") {
+  } else if (origins === '*') {
     corsOptions.origin = true; // Allow all origins
   } else if (Array.isArray(origins)) {
     corsOptions.origin = (origin, callback) => {
@@ -134,7 +122,7 @@ export function createCorsMiddleware(config: CorsConfig = {}): any {
       if (origins.includes(origin)) {
         callback(null, true);
       } else {
-        callback(new Error("Not allowed by CORS"));
+        callback(new Error('Not allowed by CORS'));
       }
     };
   }
@@ -146,7 +134,7 @@ export function createCorsMiddleware(config: CorsConfig = {}): any {
  * Create Content Security Policy middleware
  */
 export function createCSPMiddleware(
-  config: CSPConfig = {},
+  config: CSPConfig = {}
 ): (req: Request, res: Response, next: NextFunction) => void {
   const {
     enabled = true,
@@ -171,25 +159,25 @@ export function createCSPMiddleware(
     for (const [key, value] of Object.entries(mergedDirectives)) {
       if (value === undefined || value === null) continue;
 
-      const directiveName = key.replace(/([A-Z])/g, "-$1").toLowerCase();
+      const directiveName = key.replace(/([A-Z])/g, '-$1').toLowerCase();
 
-      if (typeof value === "boolean") {
+      if (typeof value === 'boolean') {
         if (value) {
           policyDirectives.push(directiveName);
         }
       } else if (Array.isArray(value) && value.length > 0) {
-        policyDirectives.push(`${directiveName} ${value.join(" ")}`);
+        policyDirectives.push(`${directiveName} ${value.join(' ')}`);
       }
     }
 
     // Add upgrade-insecure-requests
     if (upgradeInsecureRequests) {
-      policyDirectives.push("upgrade-insecure-requests");
+      policyDirectives.push('upgrade-insecure-requests');
     }
 
     // Add block-all-mixed-content
     if (blockAllMixedContent) {
-      policyDirectives.push("block-all-mixed-content");
+      policyDirectives.push('block-all-mixed-content');
     }
 
     // Add report-uri if specified
@@ -197,10 +185,10 @@ export function createCSPMiddleware(
       policyDirectives.push(`report-uri ${reportUri}`);
     }
 
-    const policy = policyDirectives.join("; ");
+    const policy = policyDirectives.join('; ');
     const headerName = reportOnly
-      ? "Content-Security-Policy-Report-Only"
-      : "Content-Security-Policy";
+      ? 'Content-Security-Policy-Report-Only'
+      : 'Content-Security-Policy';
 
     res.setHeader(headerName, policy);
     next();
@@ -211,19 +199,18 @@ export function createCSPMiddleware(
  * Create comprehensive security headers middleware
  */
 export function createSecurityHeadersMiddleware(
-  config: SecurityHeadersConfig = {},
+  config: SecurityHeadersConfig = {}
 ): (req: Request, res: Response, next: NextFunction) => void {
   const { additionalHeaders = {} } = config;
 
   // Default security headers
   const defaultHeaders = {
-    "X-Content-Type-Options": "nosniff",
-    "X-Frame-Options": "DENY",
-    "X-XSS-Protection": "1; mode=block",
-    "Referrer-Policy": "strict-origin-when-cross-origin",
-    "Permissions-Policy":
-      "camera=(), microphone=(), geolocation=(), interest-cohort=()",
-    "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+    'X-Content-Type-Options': 'nosniff',
+    'X-Frame-Options': 'DENY',
+    'X-XSS-Protection': '1; mode=block',
+    'Referrer-Policy': 'strict-origin-when-cross-origin',
+    'Permissions-Policy': 'camera=(), microphone=(), geolocation=(), interest-cohort=()',
+    'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload',
     ...additionalHeaders,
   };
 
@@ -234,8 +221,8 @@ export function createSecurityHeadersMiddleware(
     }
 
     // Remove potentially dangerous headers
-    res.removeHeader("X-Powered-By");
-    res.removeHeader("Server");
+    res.removeHeader('X-Powered-By');
+    res.removeHeader('Server');
 
     next();
   };
@@ -244,9 +231,7 @@ export function createSecurityHeadersMiddleware(
 /**
  * Create a combined security middleware with CORS, CSP, and other security headers
  */
-export function createCombinedSecurityMiddleware(
-  config: SecurityHeadersConfig = {},
-) {
+export function createCombinedSecurityMiddleware(config: SecurityHeadersConfig = {}) {
   const corsMiddleware = createCorsMiddleware(config.cors);
   const cspMiddleware = createCSPMiddleware(config.csp);
   const securityHeadersMiddleware = createSecurityHeadersMiddleware(config);
@@ -261,11 +246,7 @@ export const SECURITY_CONFIGS = {
   development: {
     cors: {
       enabled: true,
-      origins: [
-        "http://localhost:3000",
-        "http://localhost:3001",
-        "http://localhost:5173",
-      ],
+      origins: ['http://localhost:3000', 'http://localhost:3001', 'http://localhost:5173'],
       credentials: true,
     },
     csp: {
@@ -276,45 +257,44 @@ export const SECURITY_CONFIGS = {
   staging: {
     cors: {
       enabled: true,
-      origins: ["https://staging.reporunner.com"],
+      origins: ['https://staging.reporunner.com'],
       credentials: true,
     },
     csp: {
       enabled: true,
       reportOnly: true,
-      reportUri: "/api/security/csp-report",
+      reportUri: '/api/security/csp-report',
     },
   },
   production: {
     cors: {
       enabled: true,
-      origins: ["https://reporunner.com", "https://www.reporunner.com"],
+      origins: ['https://reporunner.com', 'https://www.reporunner.com'],
       credentials: true,
       maxAge: 86400,
     },
     csp: {
       enabled: true,
       reportOnly: false,
-      reportUri: "/api/security/csp-report",
+      reportUri: '/api/security/csp-report',
       directives: {
         defaultSrc: ["'self'"],
         scriptSrc: ["'self'", "'sha256-...'"], // Add specific script hashes
         styleSrc: ["'self'", "'sha256-...'"], // Add specific style hashes
-        imgSrc: ["'self'", "https:", "data:"],
-        connectSrc: ["'self'", "https://api.reporunner.com"],
-        fontSrc: ["'self'", "https://fonts.gstatic.com"],
+        imgSrc: ["'self'", 'https:', 'data:'],
+        connectSrc: ["'self'", 'https://api.reporunner.com'],
+        fontSrc: ["'self'", 'https://fonts.gstatic.com'],
         frameSrc: ["'none'"],
         frameAncestors: ["'none'"],
         upgradeInsecureRequests: true,
       },
     },
     additionalHeaders: {
-      "Strict-Transport-Security":
-        "max-age=63072000; includeSubDomains; preload",
-      "X-Frame-Options": "DENY",
-      "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
-      Pragma: "no-cache",
-      Expires: "0",
+      'Strict-Transport-Security': 'max-age=63072000; includeSubDomains; preload',
+      'X-Frame-Options': 'DENY',
+      'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+      Pragma: 'no-cache',
+      Expires: '0',
     },
   },
 };
@@ -323,12 +303,9 @@ export const SECURITY_CONFIGS = {
  * Get security configuration based on environment
  */
 export function getEnvironmentConfig(
-  env: string = process.env.NODE_ENV || "development",
+  env: string = process.env.NODE_ENV || 'development'
 ): SecurityHeadersConfig {
-  return (
-    SECURITY_CONFIGS[env as keyof typeof SECURITY_CONFIGS] ||
-    SECURITY_CONFIGS.development
-  );
+  return SECURITY_CONFIGS[env as keyof typeof SECURITY_CONFIGS] || SECURITY_CONFIGS.development;
 }
 
 /**
@@ -339,13 +316,13 @@ export function createCSPReportHandler() {
     const report = req.body;
 
     // Log CSP violation
-    console.error("CSP Violation:", {
-      documentUri: report["document-uri"],
-      violatedDirective: report["violated-directive"],
-      blockedUri: report["blocked-uri"],
-      lineNumber: report["line-number"],
-      columnNumber: report["column-number"],
-      sourceFile: report["source-file"],
+    console.error('CSP Violation:', {
+      documentUri: report['document-uri'],
+      violatedDirective: report['violated-directive'],
+      blockedUri: report['blocked-uri'],
+      lineNumber: report['line-number'],
+      columnNumber: report['column-number'],
+      sourceFile: report['source-file'],
       timestamp: new Date().toISOString(),
     });
 
@@ -360,8 +337,8 @@ export function createCSPReportHandler() {
  * Nonce generator for inline scripts/styles
  */
 export function generateNonce(): string {
-  const crypto = require("crypto");
-  return crypto.randomBytes(16).toString("base64");
+  const crypto = require('crypto');
+  return crypto.randomBytes(16).toString('base64');
 }
 
 /**
@@ -383,7 +360,7 @@ export function createCSPWithNonce(config: CSPConfig = {}) {
 
     if (!nonce) {
       console.warn(
-        "No nonce found in res.locals. Use createNonceMiddleware() before this middleware.",
+        'No nonce found in res.locals. Use createNonceMiddleware() before this middleware.'
       );
       return next();
     }
@@ -393,14 +370,8 @@ export function createCSPWithNonce(config: CSPConfig = {}) {
       ...config,
       directives: {
         ...config.directives,
-        scriptSrc: [
-          ...(config.directives?.scriptSrc || ["'self'"]),
-          `'nonce-${nonce}'`,
-        ],
-        styleSrc: [
-          ...(config.directives?.styleSrc || ["'self'"]),
-          `'nonce-${nonce}'`,
-        ],
+        scriptSrc: [...(config.directives?.scriptSrc || ["'self'"]), `'nonce-${nonce}'`],
+        styleSrc: [...(config.directives?.styleSrc || ["'self'"]), `'nonce-${nonce}'`],
       },
     };
 

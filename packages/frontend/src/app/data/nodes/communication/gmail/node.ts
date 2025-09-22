@@ -1,5 +1,5 @@
 // Gmail Node - Core Definition
-import { UNIFIED_CATEGORIES } from '@/core/constants/categories'
+import { UNIFIED_CATEGORIES } from '@/core/constants/categories';
 
 export const gmailNodeMetadata = {
   id: 'gmail',
@@ -9,7 +9,7 @@ export const gmailNodeMetadata = {
   category: UNIFIED_CATEGORIES.COMMUNICATION,
   description: 'Gmail email service integration - trigger on new emails and send emails',
   version: 1,
-  
+
   // Input/Output definitions
   inputs: [
     {
@@ -17,25 +17,25 @@ export const gmailNodeMetadata = {
       type: 'main',
       displayName: 'Input Data',
       description: 'Input data for the node',
-      required: false
-    }
+      required: false,
+    },
   ],
-  
+
   outputs: [
     {
-      name: 'main', 
+      name: 'main',
       type: 'main',
       displayName: 'Output Data',
-      description: 'Output data from the node'
-    }
+      description: 'Output data from the node',
+    },
   ],
-  
+
   // Execution settings
   continueOnFail: false,
   retryOnFail: false,
-  
+
   // UI categorization
   codex: {
-    categories: ['communication', 'email']
-  }
-}
+    categories: ['communication', 'email'],
+  },
+};

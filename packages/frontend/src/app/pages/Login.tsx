@@ -1,27 +1,18 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
-import { useAuthStore } from "@/core/stores/authStore";
-import {
-  ArrowRight,
-  Mail,
-  Lock,
-  Eye,
-  EyeOff,
-  Shield,
-  Zap,
-  Crown,
-} from "lucide-react";
-import { Header } from "../components/Landing/Header";
-import { Footer } from "../components/Landing/Footer";
+import { ArrowRight, Crown, Eye, EyeOff, Lock, Mail, Shield, Zap } from 'lucide-react';
+import type React from 'react';
+import { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuthStore } from '@/core/stores/authStore';
+import { Footer } from '../components/Landing/Footer';
+import { Header } from '../components/Landing/Header';
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
-  const { login, isLoading, error, isAuthenticated, clearError } =
-    useAuthStore();
+  const { login, isLoading, error, isAuthenticated, clearError } = useAuthStore();
 
   const [formData, setFormData] = useState({
-    email: "",
-    password: "",
+    email: '',
+    password: '',
     rememberMe: false,
   });
 
@@ -37,7 +28,7 @@ const Login: React.FC = () => {
   // Redirect if already authenticated
   useEffect(() => {
     if (isAuthenticated) {
-      navigate("/app/dashboard");
+      navigate('/app/dashboard');
     }
   }, [isAuthenticated, navigate]);
 
@@ -50,13 +41,13 @@ const Login: React.FC = () => {
     const errors: Record<string, string> = {};
 
     if (!formData.email) {
-      errors.email = "Email is required";
+      errors.email = 'Email is required';
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      errors.email = "Email is invalid";
+      errors.email = 'Email is invalid';
     }
 
     if (!formData.password) {
-      errors.password = "Password is required";
+      errors.password = 'Password is required';
     }
 
     setFormErrors(errors);
@@ -72,10 +63,10 @@ const Login: React.FC = () => {
 
     try {
       await login(formData);
-      navigate("/app/dashboard");
+      navigate('/app/dashboard');
     } catch (error) {
       // Error is handled by the store
-      console.error("Login failed:", error);
+      console.error('Login failed:', error);
     }
   };
 
@@ -83,12 +74,12 @@ const Login: React.FC = () => {
     const { name, value, type, checked } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: type === "checkbox" ? checked : value,
+      [name]: type === 'checkbox' ? checked : value,
     }));
 
     // Clear field error when user starts typing
     if (formErrors[name]) {
-      setFormErrors((prev) => ({ ...prev, [name]: "" }));
+      setFormErrors((prev) => ({ ...prev, [name]: '' }));
     }
   };
 
@@ -112,7 +103,7 @@ const Login: React.FC = () => {
         {/* Left Side - Branding */}
         <div className="hidden lg:flex lg:w-1/2 flex-col justify-center px-12">
           <div
-            className={`transition-all duration-1000 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}
+            className={`transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
           >
             {/* Logo */}
             <Link to="/" className="inline-flex items-center gap-3 mb-8 group">
@@ -123,16 +114,16 @@ const Login: React.FC = () => {
             </Link>
 
             <h1 className="text-5xl font-bold text-white mb-6 leading-tight">
-              Welcome back to the{" "}
+              Welcome back to the{' '}
               <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
                 future
-              </span>{" "}
+              </span>{' '}
               of automation
             </h1>
 
             <p className="text-xl text-slate-200 mb-8 leading-relaxed max-w-lg">
-              Continue building powerful workflows with enterprise-grade
-              security, AI intelligence, and complete data sovereignty.
+              Continue building powerful workflows with enterprise-grade security, AI intelligence,
+              and complete data sovereignty.
             </p>
 
             {/* Feature highlights */}
@@ -162,7 +153,7 @@ const Login: React.FC = () => {
         {/* Right Side - Login Form */}
         <div className="w-full lg:w-1/2 flex items-center justify-center px-6 py-12">
           <div
-            className={`w-full max-w-md transition-all duration-1000 delay-300 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}
+            className={`w-full max-w-md transition-all duration-1000 delay-300 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
           >
             {/* Mobile Logo */}
             <div className="lg:hidden text-center mb-8">
@@ -170,21 +161,15 @@ const Login: React.FC = () => {
                 <div className="w-12 h-12 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                   <Crown className="w-6 h-6 text-white" />
                 </div>
-                <span className="text-2xl font-bold text-white">
-                  Reporunner
-                </span>
+                <span className="text-2xl font-bold text-white">Reporunner</span>
               </Link>
             </div>
 
             {/* Form Card */}
             <div className="bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 p-8 shadow-2xl">
               <div className="text-center mb-8">
-                <h2 className="text-3xl font-bold text-white mb-2">
-                  Welcome back
-                </h2>
-                <p className="text-slate-300">
-                  Sign in to your workflow automation account
-                </p>
+                <h2 className="text-3xl font-bold text-white mb-2">Welcome back</h2>
+                <p className="text-slate-300">Sign in to your workflow automation account</p>
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-6">
@@ -197,10 +182,7 @@ const Login: React.FC = () => {
 
                 {/* Email Field */}
                 <div>
-                  <label
-                    htmlFor="email"
-                    className="block text-sm font-medium text-slate-200 mb-2"
-                  >
+                  <label htmlFor="email" className="block text-sm font-medium text-slate-200 mb-2">
                     Email address
                   </label>
                   <div className="relative">
@@ -214,17 +196,13 @@ const Login: React.FC = () => {
                       value={formData.email}
                       onChange={handleChange}
                       className={`w-full pl-10 pr-4 py-3 bg-white/10 border backdrop-blur-sm rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors ${
-                        formErrors.email
-                          ? "border-red-500/50"
-                          : "border-white/20"
+                        formErrors.email ? 'border-red-500/50' : 'border-white/20'
                       }`}
                       placeholder="Enter your email"
                     />
                   </div>
                   {formErrors.email && (
-                    <p className="mt-2 text-sm text-red-300">
-                      {formErrors.email}
-                    </p>
+                    <p className="mt-2 text-sm text-red-300">{formErrors.email}</p>
                   )}
                 </div>
 
@@ -241,15 +219,13 @@ const Login: React.FC = () => {
                     <input
                       id="password"
                       name="password"
-                      type={showPassword ? "text" : "password"}
+                      type={showPassword ? 'text' : 'password'}
                       autoComplete="current-password"
                       required
                       value={formData.password}
                       onChange={handleChange}
                       className={`w-full pl-10 pr-12 py-3 bg-white/10 border backdrop-blur-sm rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors ${
-                        formErrors.password
-                          ? "border-red-500/50"
-                          : "border-white/20"
+                        formErrors.password ? 'border-red-500/50' : 'border-white/20'
                       }`}
                       placeholder="Enter your password"
                     />
@@ -258,17 +234,11 @@ const Login: React.FC = () => {
                       onClick={() => setShowPassword(!showPassword)}
                       className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-200 transition-colors"
                     >
-                      {showPassword ? (
-                        <EyeOff className="w-5 h-5" />
-                      ) : (
-                        <Eye className="w-5 h-5" />
-                      )}
+                      {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                     </button>
                   </div>
                   {formErrors.password && (
-                    <p className="mt-2 text-sm text-red-300">
-                      {formErrors.password}
-                    </p>
+                    <p className="mt-2 text-sm text-red-300">{formErrors.password}</p>
                   )}
                 </div>
 
@@ -282,9 +252,7 @@ const Login: React.FC = () => {
                       onChange={handleChange}
                       className="w-4 h-4 text-blue-600 bg-white/10 border-white/20 rounded focus:ring-blue-500 focus:ring-2"
                     />
-                    <span className="ml-2 text-sm text-slate-300">
-                      Remember me
-                    </span>
+                    <span className="ml-2 text-sm text-slate-300">Remember me</span>
                   </label>
                   <Link
                     to="/forgot-password"
@@ -322,9 +290,7 @@ const Login: React.FC = () => {
                     <div className="w-full border-t border-white/20" />
                   </div>
                   <div className="relative flex justify-center text-sm">
-                    <span className="px-4 bg-transparent text-slate-400">
-                      New to Reporunner?
-                    </span>
+                    <span className="px-4 bg-transparent text-slate-400">New to Reporunner?</span>
                   </div>
                 </div>
 

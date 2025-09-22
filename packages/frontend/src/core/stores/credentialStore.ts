@@ -1,7 +1,11 @@
-import { create } from "zustand";
-import type { Credential, CredentialTestResult } from "@/core/schemas";
-import { CredentialApiService } from "@/core/api/CredentialApiService";
-import type { CredentialTypeDefinition, CredentialType } from "@/core/schemas";
+import { create } from 'zustand';
+import { CredentialApiService } from '@/core/api/CredentialApiService';
+import type {
+  Credential,
+  CredentialTestResult,
+  CredentialType,
+  CredentialTypeDefinition,
+} from '@/core/schemas';
 
 const credentialApiService = new CredentialApiService();
 
@@ -13,16 +17,9 @@ interface CredentialState {
 
   // Actions
   loadCredentials: () => Promise<void>;
-  createCredential: (
-    name: string,
-    type: string,
-    data: Record<string, unknown>,
-  ) => Promise<string>;
+  createCredential: (name: string, type: string, data: Record<string, unknown>) => Promise<string>;
   addCredential: (credential: any) => void;
-  updateCredential: (
-    id: string,
-    data: Record<string, unknown>,
-  ) => Promise<void>;
+  updateCredential: (id: string, data: Record<string, unknown>) => Promise<void>;
   deleteCredential: (id: string) => Promise<void>;
   revokeGmailCredential: (id: string) => Promise<void>;
   testCredential: (id: string) => Promise<CredentialTestResult>;
@@ -44,7 +41,7 @@ export const useCredentialStore = create<CredentialState>((set, get) => ({
       const result = await credentialApiService.getCredentials();
       set({ credentials: result.items });
     } catch (error) {
-      console.error("Failed to load credentials:", error);
+      console.error('Failed to load credentials:', error);
       // Fallback to empty array on error
       set({ credentials: [] });
     } finally {
@@ -67,7 +64,7 @@ export const useCredentialStore = create<CredentialState>((set, get) => ({
       }));
       return credential.id;
     } catch (error) {
-      console.error("Failed to create credential:", error);
+      console.error('Failed to create credential:', error);
       throw error;
     } finally {
       set({ isLoading: false });
@@ -89,19 +86,14 @@ export const useCredentialStore = create<CredentialState>((set, get) => ({
   updateCredential: async (id, data) => {
     set({ isLoading: true });
     try {
-      const updatedCredential = await credentialApiService.updateCredential(
-        id,
-        {
-          data,
-        },
-      );
+      const updatedCredential = await credentialApiService.updateCredential(id, {
+        data,
+      });
       set((state) => ({
-        credentials: state.credentials.map((cred) =>
-          cred.id === id ? updatedCredential : cred,
-        ),
+        credentials: state.credentials.map((cred) => (cred.id === id ? updatedCredential : cred)),
       }));
     } catch (error) {
-      console.error("Failed to update credential:", error);
+      console.error('Failed to update credential:', error);
       throw error;
     } finally {
       set({ isLoading: false });
@@ -116,7 +108,7 @@ export const useCredentialStore = create<CredentialState>((set, get) => ({
         credentials: state.credentials.filter((cred) => cred.id !== id),
       }));
     } catch (error) {
-      console.error("Failed to delete credential:", error);
+      console.error('Failed to delete credential:', error);
       throw error;
     } finally {
       set({ isLoading: false });
@@ -135,7 +127,7 @@ export const useCredentialStore = create<CredentialState>((set, get) => ({
         throw new Error(result.message);
       }
     } catch (error) {
-      console.error("Failed to revoke Gmail credential:", error);
+      console.error('Failed to revoke Gmail credential:', error);
       throw error;
     } finally {
       set({ isLoading: false });
@@ -147,7 +139,7 @@ export const useCredentialStore = create<CredentialState>((set, get) => ({
     if (!credential) {
       return {
         success: false,
-        message: "Credential not found",
+        message: 'Credential not found',
         testedAt: new Date().toISOString(),
       };
     }
@@ -165,7 +157,7 @@ export const useCredentialStore = create<CredentialState>((set, get) => ({
                 testedAt: new Date().toISOString(),
                 isValid: result.success,
               }
-            : cred,
+            : cred
         ),
       }));
 
@@ -173,7 +165,7 @@ export const useCredentialStore = create<CredentialState>((set, get) => ({
     } catch (error) {
       return {
         success: false,
-        message: "Test failed due to network error",
+        message: 'Test failed due to network error',
         testedAt: new Date().toISOString(),
       };
     } finally {
@@ -187,7 +179,7 @@ export const useCredentialStore = create<CredentialState>((set, get) => ({
       const types = await credentialApiService.getCredentialTypes();
       set({ credentialTypes: types as any });
     } catch (error) {
-      console.error("Failed to load credential types:", error);
+      console.error('Failed to load credential types:', error);
       set({ credentialTypes: [] });
     } finally {
       set({ isLoading: false });

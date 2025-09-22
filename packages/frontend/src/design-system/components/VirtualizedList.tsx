@@ -1,61 +1,58 @@
-import React, { useMemo, useRef } from 'react'
-import { useVirtualizer } from '@tanstack/react-virtual'
-import { performanceService } from '@/core/services/PerformanceService'
+import { useVirtualizer } from '@tanstack/react-virtual';
+import React, { useMemo, useRef } from 'react';
+import { performanceService } from '@/core/services/PerformanceService';
 
 export interface VirtualizedListProps<T> {
   /** Array of items to render */
-  items: T[]
+  items: T[];
 
   /** Function to render each item */
-  renderItem: (item: T, index: number) => React.ReactNode
+  renderItem: (item: T, index: number) => React.ReactNode;
 
   /** Estimated size of each item in pixels (used for initial calculations) */
-  estimateSize?: number
+  estimateSize?: number;
 
   /** Height of the scrollable container */
-  height: number | string
+  height: number | string;
 
   /** Width of the scrollable container */
-  width?: number | string
+  width?: number | string;
 
   /** Additional CSS classes for the container */
-  className?: string
+  className?: string;
 
   /** Additional CSS styles for the container */
-  style?: React.CSSProperties
+  style?: React.CSSProperties;
 
   /** Callback when items come into view (useful for lazy loading) */
-  onItemsRendered?: (visibleRange: {
-    startIndex: number
-    endIndex: number
-  }) => void
+  onItemsRendered?: (visibleRange: { startIndex: number; endIndex: number }) => void;
 
   /** Key extractor function for stable item keys */
-  getItemKey?: (item: T, index: number) => string | number
+  getItemKey?: (item: T, index: number) => string | number;
 
   /** Gap between items in pixels */
-  gap?: number
+  gap?: number;
 
   /** Padding around the scrollable area */
-  padding?: number
+  padding?: number;
 
   /** Custom scroll element ref (if you want to control scrolling externally) */
-  scrollElementRef?: React.RefObject<HTMLElement>
+  scrollElementRef?: React.RefObject<HTMLElement>;
 
   /** Whether to enable horizontal scrolling */
-  horizontal?: boolean
+  horizontal?: boolean;
 
   /** Overscan count - number of items to render outside visible area */
-  overscan?: number
+  overscan?: number;
 
   /** Loading state */
-  loading?: boolean
+  loading?: boolean;
 
   /** Empty state component */
-  emptyState?: React.ReactNode
+  emptyState?: React.ReactNode;
 
   /** Error state component */
-  errorState?: React.ReactNode
+  errorState?: React.ReactNode;
 }
 
 /**
@@ -94,11 +91,11 @@ export function VirtualizedList<T>({
   emptyState,
   errorState,
 }: VirtualizedListProps<T>) {
-  const parentRef = useRef<HTMLDivElement>(null)
-  const scrollElement = scrollElementRef || parentRef
+  const parentRef = useRef<HTMLDivElement>(null);
+  const scrollElement = scrollElementRef || parentRef;
 
   // Performance tracking
-  const componentName = 'VirtualizedList'
+  const componentName = 'VirtualizedList';
 
   // Create virtualizer instance
   const virtualizer = useVirtualizer({
@@ -110,29 +107,29 @@ export function VirtualizedList<T>({
     gap,
     paddingStart: padding,
     paddingEnd: padding,
-  })
+  });
 
   // Get virtual items (only the visible ones + overscan)
-  const virtualItems = virtualizer.getVirtualItems()
+  const virtualItems = virtualizer.getVirtualItems();
 
   // Track visible range changes
   React.useEffect(() => {
     if (onItemsRendered && virtualItems.length > 0) {
-      const startIndex = virtualItems[0]?.index || 0
-      const endIndex = virtualItems[virtualItems.length - 1]?.index || 0
-      onItemsRendered({ startIndex, endIndex })
+      const startIndex = virtualItems[0]?.index || 0;
+      const endIndex = virtualItems[virtualItems.length - 1]?.index || 0;
+      onItemsRendered({ startIndex, endIndex });
     }
-  }, [virtualItems, onItemsRendered])
+  }, [virtualItems, onItemsRendered]);
 
   // Performance monitoring
   React.useEffect(() => {
-    const startTime = performance.now()
+    const startTime = performance.now();
 
     return () => {
-      const endTime = performance.now()
-      performanceService.trackComponentRender(componentName, startTime, endTime)
-    }
-  }, [items.length, virtualItems.length, estimateSize])
+      const endTime = performance.now();
+      performanceService.trackComponentRender(componentName, startTime, endTime);
+    };
+  }, [items.length, virtualItems.length, estimateSize]);
 
   // Memoize container styles for performance
   const containerStyles = useMemo(
@@ -144,7 +141,7 @@ export function VirtualizedList<T>({
       ...style,
     }),
     [height, width, style]
-  )
+  );
 
   const totalSizeStyle = useMemo(
     () => ({
@@ -153,42 +150,33 @@ export function VirtualizedList<T>({
       position: 'relative' as const,
     }),
     [virtualizer, horizontal]
-  )
+  );
 
   // Handle loading state
   if (loading) {
     return (
-      <div
-        className={`virtualized-list-loading ${className}`}
-        style={containerStyles}
-      >
+      <div className={`virtualized-list-loading ${className}`} style={containerStyles}>
         <div className="flex items-center justify-center h-full text-gray-500">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
           <span className="ml-2">Loading...</span>
         </div>
       </div>
-    )
+    );
   }
 
   // Handle error state
   if (errorState) {
     return (
-      <div
-        className={`virtualized-list-error ${className}`}
-        style={containerStyles}
-      >
+      <div className={`virtualized-list-error ${className}`} style={containerStyles}>
         {errorState}
       </div>
-    )
+    );
   }
 
   // Handle empty state
   if (items.length === 0) {
     return (
-      <div
-        className={`virtualized-list-empty ${className}`}
-        style={containerStyles}
-      >
+      <div className={`virtualized-list-empty ${className}`} style={containerStyles}>
         {emptyState || (
           <div className="flex items-center justify-center h-full text-gray-500">
             <div className="text-center">
@@ -198,7 +186,7 @@ export function VirtualizedList<T>({
           </div>
         )}
       </div>
-    )
+    );
   }
 
   return (
@@ -209,12 +197,10 @@ export function VirtualizedList<T>({
       data-testid="virtualized-list"
     >
       <div style={totalSizeStyle}>
-        {virtualItems.map(virtualRow => {
-          const item = items[virtualRow.index]
-          if (!item) return null
-          const key = getItemKey
-            ? getItemKey(item, virtualRow.index)
-            : virtualRow.index
+        {virtualItems.map((virtualRow) => {
+          const item = items[virtualRow.index];
+          if (!item) return null;
+          const key = getItemKey ? getItemKey(item, virtualRow.index) : virtualRow.index;
 
           return (
             <div
@@ -231,14 +217,14 @@ export function VirtualizedList<T>({
             >
               {item && renderItem(item, virtualRow.index)}
             </div>
-          )
+          );
         })}
       </div>
     </div>
-  )
+  );
 }
 
 // Types are already exported above
 
 // Default export for convenience
-export default VirtualizedList
+export default VirtualizedList;

@@ -5,63 +5,63 @@
 
 export enum Permission {
   // User Management
-  USER_READ = "user:read",
-  USER_CREATE = "user:create",
-  USER_UPDATE = "user:update",
-  USER_DELETE = "user:delete",
-  USER_INVITE = "user:invite",
-  USER_DEACTIVATE = "user:deactivate",
+  USER_READ = 'user:read',
+  USER_CREATE = 'user:create',
+  USER_UPDATE = 'user:update',
+  USER_DELETE = 'user:delete',
+  USER_INVITE = 'user:invite',
+  USER_DEACTIVATE = 'user:deactivate',
 
   // Workflow Management
-  WORKFLOW_READ = "workflow:read",
-  WORKFLOW_CREATE = "workflow:create",
-  WORKFLOW_UPDATE = "workflow:update",
-  WORKFLOW_DELETE = "workflow:delete",
-  WORKFLOW_EXECUTE = "workflow:execute",
-  WORKFLOW_SHARE = "workflow:share",
-  WORKFLOW_PUBLISH = "workflow:publish",
-  WORKFLOW_IMPORT = "workflow:import",
-  WORKFLOW_EXPORT = "workflow:export",
+  WORKFLOW_READ = 'workflow:read',
+  WORKFLOW_CREATE = 'workflow:create',
+  WORKFLOW_UPDATE = 'workflow:update',
+  WORKFLOW_DELETE = 'workflow:delete',
+  WORKFLOW_EXECUTE = 'workflow:execute',
+  WORKFLOW_SHARE = 'workflow:share',
+  WORKFLOW_PUBLISH = 'workflow:publish',
+  WORKFLOW_IMPORT = 'workflow:import',
+  WORKFLOW_EXPORT = 'workflow:export',
 
   // Credential Management
-  CREDENTIAL_READ = "credential:read",
-  CREDENTIAL_CREATE = "credential:create",
-  CREDENTIAL_UPDATE = "credential:update",
-  CREDENTIAL_DELETE = "credential:delete",
-  CREDENTIAL_SHARE = "credential:share",
+  CREDENTIAL_READ = 'credential:read',
+  CREDENTIAL_CREATE = 'credential:create',
+  CREDENTIAL_UPDATE = 'credential:update',
+  CREDENTIAL_DELETE = 'credential:delete',
+  CREDENTIAL_SHARE = 'credential:share',
 
   // Integration Management
-  INTEGRATION_READ = "integration:read",
-  INTEGRATION_INSTALL = "integration:install",
-  INTEGRATION_CONFIGURE = "integration:configure",
-  INTEGRATION_REMOVE = "integration:remove",
+  INTEGRATION_READ = 'integration:read',
+  INTEGRATION_INSTALL = 'integration:install',
+  INTEGRATION_CONFIGURE = 'integration:configure',
+  INTEGRATION_REMOVE = 'integration:remove',
 
   // Organization Management
-  ORG_READ = "org:read",
-  ORG_UPDATE = "org:update",
-  ORG_SETTINGS = "org:settings",
-  ORG_BILLING = "org:billing",
-  ORG_DELETE = "org:delete",
+  ORG_READ = 'org:read',
+  ORG_UPDATE = 'org:update',
+  ORG_SETTINGS = 'org:settings',
+  ORG_BILLING = 'org:billing',
+  ORG_DELETE = 'org:delete',
 
   // Audit and Analytics
-  AUDIT_READ = "audit:read",
-  ANALYTICS_READ = "analytics:read",
-  LOGS_READ = "logs:read",
+  AUDIT_READ = 'audit:read',
+  ANALYTICS_READ = 'analytics:read',
+  LOGS_READ = 'logs:read',
 
   // API and Webhooks
-  API_KEY_CREATE = "api_key:create",
-  API_KEY_READ = "api_key:read",
-  API_KEY_DELETE = "api_key:delete",
-  WEBHOOK_CREATE = "webhook:create",
-  WEBHOOK_READ = "webhook:read",
-  WEBHOOK_UPDATE = "webhook:update",
-  WEBHOOK_DELETE = "webhook:delete",
+  API_KEY_CREATE = 'api_key:create',
+  API_KEY_READ = 'api_key:read',
+  API_KEY_DELETE = 'api_key:delete',
+  WEBHOOK_CREATE = 'webhook:create',
+  WEBHOOK_READ = 'webhook:read',
+  WEBHOOK_UPDATE = 'webhook:update',
+  WEBHOOK_DELETE = 'webhook:delete',
 
   // Advanced Features
-  AI_FEATURES = "ai:features",
-  COLLABORATION = "collaboration:access",
-  ADVANCED_DEBUGGING = "debugging:advanced",
-  PERFORMANCE_MONITORING = "performance:monitoring",
+  AI_FEATURES = 'ai:features',
+  COLLABORATION = 'collaboration:access',
+  ADVANCED_DEBUGGING = 'debugging:advanced',
+  PERFORMANCE_MONITORING = 'performance:monitoring',
 }
 
 export interface Role {
@@ -89,14 +89,14 @@ export class PermissionService {
   public getSystemRoles(): Record<string, Role> {
     return {
       super_admin: {
-        name: "Super Admin",
-        description: "Full system access with all permissions",
+        name: 'Super Admin',
+        description: 'Full system access with all permissions',
         permissions: Object.values(Permission),
         isSystemRole: true,
       },
       admin: {
-        name: "Admin",
-        description: "Full organization access with user management",
+        name: 'Admin',
+        description: 'Full organization access with user management',
         permissions: [
           // User Management
           Permission.USER_READ,
@@ -158,8 +158,8 @@ export class PermissionService {
         isSystemRole: true,
       },
       member: {
-        name: "Member",
-        description: "Standard user with workflow creation and execution",
+        name: 'Member',
+        description: 'Standard user with workflow creation and execution',
         permissions: [
           // Workflow Management
           Permission.WORKFLOW_READ,
@@ -192,8 +192,8 @@ export class PermissionService {
         isSystemRole: true,
       },
       viewer: {
-        name: "Viewer",
-        description: "Read-only access to workflows and dashboards",
+        name: 'Viewer',
+        description: 'Read-only access to workflows and dashboards',
         permissions: [
           Permission.WORKFLOW_READ,
           Permission.CREDENTIAL_READ,
@@ -236,7 +236,7 @@ export class PermissionService {
     const categories: Record<string, Permission[]> = {};
 
     permissions.forEach((permission) => {
-      const category = permission.split(":")[0];
+      const category = permission.split(':')[0];
       if (!categories[category]) {
         categories[category] = [];
       }
@@ -274,10 +274,10 @@ export class PermissionService {
     userRole: string,
     userPermissions: string[],
     requiredPermission: Permission,
-    isOwner: boolean = false,
+    isOwner: boolean = false
   ): boolean {
     // Super admin has access to everything
-    if (userRole === "super_admin") {
+    if (userRole === 'super_admin') {
       return true;
     }
 
@@ -306,13 +306,10 @@ export class PermissionService {
   /**
    * Get effective permissions for a user (role + custom permissions)
    */
-  public getEffectivePermissions(
-    role: string,
-    customPermissions: string[] = [],
-  ): Permission[] {
+  public getEffectivePermissions(role: string, customPermissions: string[] = []): Permission[] {
     const rolePermissions = this.getRolePermissions(role);
     const validCustomPermissions = customPermissions.filter((p) =>
-      this.isValidPermission(p),
+      this.isValidPermission(p)
     ) as Permission[];
 
     // Combine and deduplicate permissions

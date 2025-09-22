@@ -3,31 +3,32 @@
  * Dynamic form field renderer for node properties with advanced features
  */
 
-import React, { useState, useEffect } from "react";
 import {
-  Input,
-  InputNumber,
-  Switch,
-  Select,
-  DatePicker,
-  ColorPicker,
-  Upload,
+  EyeInvisibleOutlined,
+  EyeOutlined,
+  InfoCircleOutlined,
+  MinusOutlined,
+  PlusOutlined,
+  UploadOutlined,
+} from '@ant-design/icons';
+import {
+  Badge,
   Button,
   Card,
+  ColorPicker,
+  DatePicker,
+  Input,
+  InputNumber,
+  Select,
+  Switch,
   Tooltip,
-  Badge,
-} from "antd";
-import {
-  InfoCircleOutlined,
-  PlusOutlined,
-  MinusOutlined,
-  UploadOutlined,
-  EyeOutlined,
-  EyeInvisibleOutlined,
-} from "@ant-design/icons";
-import type { INodeProperty } from "@/core/nodes/types";
-import type { NodeTheme } from "../../../app/node-extensions/types";
-import { useNodeTheme } from "../../../app/node-extensions/themes";
+  Upload,
+} from 'antd';
+import type React from 'react';
+import { useEffect, useState } from 'react';
+import type { INodeProperty } from '@/core/nodes/types';
+import { useNodeTheme } from '../../../app/node-extensions/themes';
+import type { NodeTheme } from '../../../app/node-extensions/types';
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -74,29 +75,20 @@ const PropertyField: React.FC<PropertyFieldProps> = ({
   };
 
   const validateValue = (val: any): string | null => {
-    if (
-      property.required &&
-      (val === undefined || val === null || val === "")
-    ) {
+    if (property.required && (val === undefined || val === null || val === '')) {
       return `${property.displayName} is required`;
     }
 
-    if (property.type === "string" || property.type === "text") {
-      if (
-        property.typeOptions?.minValue &&
-        val.length < property.typeOptions.minValue
-      ) {
+    if (property.type === 'string' || property.type === 'text') {
+      if (property.typeOptions?.minValue && val.length < property.typeOptions.minValue) {
         return `${property.displayName} must be at least ${property.typeOptions.minValue} characters`;
       }
-      if (
-        property.typeOptions?.maxValue &&
-        val.length > property.typeOptions.maxValue
-      ) {
+      if (property.typeOptions?.maxValue && val.length > property.typeOptions.maxValue) {
         return `${property.displayName} must be no more than ${property.typeOptions.maxValue} characters`;
       }
     }
 
-    if (property.type === "number") {
+    if (property.type === 'number') {
       if (property.min !== undefined && val < property.min) {
         return `${property.displayName} must be at least ${property.min}`;
       }
@@ -112,10 +104,10 @@ const PropertyField: React.FC<PropertyFieldProps> = ({
     return (
       <div
         style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "4px",
-          marginBottom: "4px",
+          display: 'flex',
+          alignItems: 'center',
+          gap: '4px',
+          marginBottom: '4px',
           color: theme.colors.text,
           fontSize: theme.typography.fontSize.sm,
           fontWeight: theme.typography.fontWeight.medium,
@@ -124,9 +116,7 @@ const PropertyField: React.FC<PropertyFieldProps> = ({
         <span>
           {property.displayName}
           {property.required && (
-            <span style={{ color: theme.colors.error, marginLeft: "2px" }}>
-              *
-            </span>
+            <span style={{ color: theme.colors.error, marginLeft: '2px' }}>*</span>
           )}
         </span>
 
@@ -134,9 +124,9 @@ const PropertyField: React.FC<PropertyFieldProps> = ({
           <Tooltip title={property.description} placement="top">
             <InfoCircleOutlined
               style={{
-                fontSize: "12px",
+                fontSize: '12px',
                 color: theme.colors.textSecondary,
-                cursor: "help",
+                cursor: 'help',
               }}
             />
           </Tooltip>
@@ -148,7 +138,7 @@ const PropertyField: React.FC<PropertyFieldProps> = ({
             size="small"
             style={{
               backgroundColor: theme.colors.info,
-              fontSize: "10px",
+              fontSize: '10px',
             }}
             title={property.hint}
           />
@@ -168,7 +158,7 @@ const PropertyField: React.FC<PropertyFieldProps> = ({
     return (
       <div
         style={{
-          marginTop: "4px",
+          marginTop: '4px',
           fontSize: theme.typography.fontSize.xs,
           color: theme.colors.error,
         }}
@@ -183,26 +173,24 @@ const PropertyField: React.FC<PropertyFieldProps> = ({
   const renderField = () => {
     const commonProps = {
       disabled,
-      style: { width: "100%" },
+      style: { width: '100%' },
       placeholder: property.placeholder,
     };
 
     switch (property.type) {
-      case "string":
+      case 'string':
         if (property.typeOptions?.password) {
           return (
             <Input
               {...commonProps}
-              type={showPassword ? "text" : "password"}
-              value={internalValue || property.default || ""}
+              type={showPassword ? 'text' : 'password'}
+              value={internalValue || property.default || ''}
               onChange={(e) => handleChange(e.target.value)}
               suffix={
                 <Button
                   type="text"
                   size="small"
-                  icon={
-                    showPassword ? <EyeInvisibleOutlined /> : <EyeOutlined />
-                  }
+                  icon={showPassword ? <EyeInvisibleOutlined /> : <EyeOutlined />}
                   onClick={() => setShowPassword(!showPassword)}
                 />
               }
@@ -212,22 +200,22 @@ const PropertyField: React.FC<PropertyFieldProps> = ({
         return (
           <Input
             {...commonProps}
-            value={internalValue || property.default || ""}
+            value={internalValue || property.default || ''}
             onChange={(e) => handleChange(e.target.value)}
           />
         );
 
-      case "text":
+      case 'text':
         return (
           <TextArea
             {...commonProps}
             rows={property.rows || property.typeOptions?.rows || 4}
-            value={internalValue || property.default || ""}
+            value={internalValue || property.default || ''}
             onChange={(e) => handleChange(e.target.value)}
           />
         );
 
-      case "number":
+      case 'number':
         return (
           <InputNumber
             {...commonProps}
@@ -240,19 +228,17 @@ const PropertyField: React.FC<PropertyFieldProps> = ({
           />
         );
 
-      case "boolean":
+      case 'boolean':
         return (
           <Switch
             disabled={disabled}
-            checked={
-              internalValue !== undefined ? internalValue : property.default
-            }
+            checked={internalValue !== undefined ? internalValue : property.default}
             onChange={handleChange}
           />
         );
 
-      case "select":
-      case "options":
+      case 'select':
+      case 'options':
         return (
           <Select
             {...commonProps}
@@ -260,9 +246,7 @@ const PropertyField: React.FC<PropertyFieldProps> = ({
             onChange={handleChange}
             showSearch
             filterOption={(input, option) =>
-              (option?.children as unknown as string)
-                ?.toLowerCase()
-                .includes(input.toLowerCase())
+              (option?.children as unknown as string)?.toLowerCase().includes(input.toLowerCase())
             }
           >
             {property.options?.map((option) => (
@@ -273,8 +257,8 @@ const PropertyField: React.FC<PropertyFieldProps> = ({
           </Select>
         );
 
-      case "multiSelect":
-      case "multiOptions":
+      case 'multiSelect':
+      case 'multiOptions':
         return (
           <Select
             {...commonProps}
@@ -283,9 +267,7 @@ const PropertyField: React.FC<PropertyFieldProps> = ({
             onChange={handleChange}
             showSearch
             filterOption={(input, option) =>
-              (option?.children as unknown as string)
-                ?.toLowerCase()
-                .includes(input.toLowerCase())
+              (option?.children as unknown as string)?.toLowerCase().includes(input.toLowerCase())
             }
           >
             {property.options?.map((option) => (
@@ -296,27 +278,22 @@ const PropertyField: React.FC<PropertyFieldProps> = ({
           </Select>
         );
 
-      case "dateTime":
+      case 'dateTime':
         return (
-          <DatePicker
-            {...commonProps}
-            showTime
-            value={internalValue}
-            onChange={handleChange}
-          />
+          <DatePicker {...commonProps} showTime value={internalValue} onChange={handleChange} />
         );
 
-      case "color":
+      case 'color':
         return (
           <ColorPicker
-            value={internalValue || property.default || "#1890ff"}
+            value={internalValue || property.default || '#1890ff'}
             onChange={(color) => handleChange(color.toHexString())}
             disabled={disabled}
             showText
           />
         );
 
-      case "file":
+      case 'file':
         return (
           <Upload
             disabled={disabled}
@@ -324,21 +301,19 @@ const PropertyField: React.FC<PropertyFieldProps> = ({
             onChange={(info) => handleChange(info.fileList)}
             fileList={internalValue || []}
           >
-            <Button icon={<UploadOutlined />}>
-              {property.placeholder || "Upload File"}
-            </Button>
+            <Button icon={<UploadOutlined />}>{property.placeholder || 'Upload File'}</Button>
           </Upload>
         );
 
-      case "json":
+      case 'json':
         return (
           <TextArea
             {...commonProps}
             rows={6}
             value={
-              typeof internalValue === "object"
+              typeof internalValue === 'object'
                 ? JSON.stringify(internalValue, null, 2)
-                : internalValue || property.default || "{}"
+                : internalValue || property.default || '{}'
             }
             onChange={(e) => {
               try {
@@ -353,20 +328,20 @@ const PropertyField: React.FC<PropertyFieldProps> = ({
           />
         );
 
-      case "collection":
+      case 'collection':
         return renderCollectionField();
 
-      case "fixedCollection":
+      case 'fixedCollection':
         return renderFixedCollectionField();
 
-      case "credentialsSelect":
+      case 'credentialsSelect':
         return renderCredentialsSelect();
 
       default:
         return (
           <Input
             {...commonProps}
-            value={internalValue || property.default || ""}
+            value={internalValue || property.default || ''}
             onChange={(e) => handleChange(e.target.value)}
           />
         );
@@ -383,7 +358,7 @@ const PropertyField: React.FC<PropertyFieldProps> = ({
             key={index}
             size="small"
             style={{
-              marginBottom: "8px",
+              marginBottom: '8px',
               borderColor: theme.colors.border,
             }}
             extra={
@@ -393,9 +368,7 @@ const PropertyField: React.FC<PropertyFieldProps> = ({
                 size="small"
                 icon={<MinusOutlined />}
                 onClick={() => {
-                  const newItems = items.filter(
-                    (_: any, i: number) => i !== index,
-                  );
+                  const newItems = items.filter((_: any, i: number) => i !== index);
                   handleChange(newItems);
                 }}
               />
@@ -447,9 +420,9 @@ const PropertyField: React.FC<PropertyFieldProps> = ({
   const renderCredentialsSelect = () => {
     // Mock credentials for now - would be populated from credential store
     const mockCredentials = [
-      { value: "cred1", name: "Gmail OAuth2" },
-      { value: "cred2", name: "OpenAI API Key" },
-      { value: "cred3", name: "Slack Bot Token" },
+      { value: 'cred1', name: 'Gmail OAuth2' },
+      { value: 'cred2', name: 'OpenAI API Key' },
+      { value: 'cred3', name: 'Slack Bot Token' },
     ];
 
     return (
@@ -458,7 +431,7 @@ const PropertyField: React.FC<PropertyFieldProps> = ({
         value={internalValue}
         onChange={handleChange}
         disabled={disabled}
-        style={{ width: "100%" }}
+        style={{ width: '100%' }}
       >
         {mockCredentials.map((cred) => (
           <Option key={cred.value} value={cred.value}>

@@ -5,95 +5,95 @@
  * and additional conversion opportunities
  */
 
-import React from "react";
 import {
+  ArrowRight,
+  ExternalLink,
   Github,
-  Twitter,
   Linkedin,
   Mail,
   MapPin,
   Phone,
-  ArrowRight,
   Slack,
-  ExternalLink,
-} from "lucide-react";
+  Twitter,
+} from 'lucide-react';
+import type React from 'react';
 
 export const Footer: React.FC = () => {
   const footerSections = [
     {
-      title: "Product",
+      title: 'Product',
       links: [
-        { name: "Features", href: "/features" },
-        { name: "Integrations", href: "/integrations" },
-        { name: "Pricing", href: "/pricing" },
-        { name: "Enterprise", href: "/enterprise" },
-        { name: "Self-hosted", href: "/self-hosted" },
-        { name: "Roadmap", href: "/roadmap" },
+        { name: 'Features', href: '/features' },
+        { name: 'Integrations', href: '/integrations' },
+        { name: 'Pricing', href: '/pricing' },
+        { name: 'Enterprise', href: '/enterprise' },
+        { name: 'Self-hosted', href: '/self-hosted' },
+        { name: 'Roadmap', href: '/roadmap' },
       ],
     },
     {
-      title: "Developers",
+      title: 'Developers',
       links: [
-        { name: "Documentation", href: "/documentation" },
-        { name: "API Reference", href: "/api-reference" },
-        { name: "Node SDK", href: "/documentation" },
-        { name: "Examples", href: "/documentation" },
+        { name: 'Documentation', href: '/documentation' },
+        { name: 'API Reference', href: '/api-reference' },
+        { name: 'Node SDK', href: '/documentation' },
+        { name: 'Examples', href: '/documentation' },
         {
-          name: "GitHub",
-          href: "https://github.com/reporunner/reporunner",
+          name: 'GitHub',
+          href: 'https://github.com/reporunner/reporunner',
           external: true,
         },
-        { name: "Community", href: "/contact" },
+        { name: 'Community', href: '/contact' },
       ],
     },
     {
-      title: "Resources",
+      title: 'Resources',
       links: [
-        { name: "Blog", href: "/documentation" },
-        { name: "Case Studies", href: "/about" },
-        { name: "Tutorials", href: "/documentation" },
-        { name: "Webinars", href: "/contact" },
-        { name: "Help Center", href: "/documentation" },
+        { name: 'Blog', href: '/documentation' },
+        { name: 'Case Studies', href: '/about' },
+        { name: 'Tutorials', href: '/documentation' },
+        { name: 'Webinars', href: '/contact' },
+        { name: 'Help Center', href: '/documentation' },
         {
-          name: "Status Page",
-          href: "https://status.reporunner.dev",
+          name: 'Status Page',
+          href: 'https://status.reporunner.dev',
           external: true,
         },
       ],
     },
     {
-      title: "Company",
+      title: 'Company',
       links: [
-        { name: "About", href: "/about" },
-        { name: "Careers", href: "/about" },
-        { name: "Contact", href: "/contact" },
-        { name: "Security", href: "/enterprise" },
-        { name: "Privacy", href: "/privacy" },
-        { name: "Terms", href: "/terms" },
+        { name: 'About', href: '/about' },
+        { name: 'Careers', href: '/about' },
+        { name: 'Contact', href: '/contact' },
+        { name: 'Security', href: '/enterprise' },
+        { name: 'Privacy', href: '/privacy' },
+        { name: 'Terms', href: '/terms' },
       ],
     },
   ];
 
   const socialLinks = [
     {
-      name: "GitHub",
+      name: 'GitHub',
       icon: Github,
-      href: "https://github.com/reporunner/reporunner",
-      followers: "2.5K",
+      href: 'https://github.com/reporunner/reporunner',
+      followers: '2.5K',
     },
     {
-      name: "Twitter",
+      name: 'Twitter',
       icon: Twitter,
-      href: "https://twitter.com/reporunner",
-      followers: "8.2K",
+      href: 'https://twitter.com/reporunner',
+      followers: '8.2K',
     },
     {
-      name: "LinkedIn",
+      name: 'LinkedIn',
       icon: Linkedin,
-      href: "https://linkedin.com/company/reporunner",
-      followers: "5.1K",
+      href: 'https://linkedin.com/company/reporunner',
+      followers: '5.1K',
     },
-    { name: "Slack", icon: Slack, href: "/contact", followers: "3.8K" },
+    { name: 'Slack', icon: Slack, href: '/contact', followers: '3.8K' },
   ];
 
   return (
@@ -102,13 +102,10 @@ export const Footer: React.FC = () => {
       <div className="border-b border-gray-800">
         <div className="container mx-auto px-6 py-12">
           <div className="max-w-4xl mx-auto text-center">
-            <h3 className="text-2xl font-bold mb-4">
-              Stay Updated with Reporunner
-            </h3>
+            <h3 className="text-2xl font-bold mb-4">Stay Updated with Reporunner</h3>
             <p className="text-gray-400 mb-8 max-w-2xl mx-auto">
-              Get the latest updates on new features, integrations, and
-              enterprise capabilities. Join our newsletter for exclusive
-              insights and early access.
+              Get the latest updates on new features, integrations, and enterprise capabilities.
+              Join our newsletter for exclusive insights and early access.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
@@ -125,9 +122,7 @@ export const Footer: React.FC = () => {
               </button>
             </div>
 
-            <p className="text-xs text-gray-500 mt-4">
-              No spam. Unsubscribe at any time.
-            </p>
+            <p className="text-xs text-gray-500 mt-4">No spam. Unsubscribe at any time.</p>
           </div>
         </div>
       </div>
@@ -147,9 +142,8 @@ export const Footer: React.FC = () => {
             </div>
 
             <p className="text-gray-400 mb-6 leading-relaxed">
-              Build powerful automations with AI intelligence, enterprise
-              security, and complete data sovereignty. Deploy anywhere, control
-              everything.
+              Build powerful automations with AI intelligence, enterprise security, and complete
+              data sovereignty. Deploy anywhere, control everything.
             </p>
 
             {/* Contact Info */}
@@ -215,26 +209,15 @@ export const Footer: React.FC = () => {
         <div className="container mx-auto px-6 py-6">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <div className="flex flex-col md:flex-row items-center gap-4">
-              <p className="text-gray-400 text-sm">
-                © 2025 Reporunner. All rights reserved.
-              </p>
+              <p className="text-gray-400 text-sm">© 2025 Reporunner. All rights reserved.</p>
               <div className="flex gap-6 text-sm">
-                <a
-                  href="/privacy"
-                  className="text-gray-400 hover:text-white transition-colors"
-                >
+                <a href="/privacy" className="text-gray-400 hover:text-white transition-colors">
                   Privacy Policy
                 </a>
-                <a
-                  href="/terms"
-                  className="text-gray-400 hover:text-white transition-colors"
-                >
+                <a href="/terms" className="text-gray-400 hover:text-white transition-colors">
                   Terms of Service
                 </a>
-                <a
-                  href="/enterprise"
-                  className="text-gray-400 hover:text-white transition-colors"
-                >
+                <a href="/enterprise" className="text-gray-400 hover:text-white transition-colors">
                   Security
                 </a>
               </div>

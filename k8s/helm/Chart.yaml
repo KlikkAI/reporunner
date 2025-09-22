@@ -1,0 +1,39 @@
+apiVersion: v2
+name: reporunner
+description: A visual workflow automation platform for enterprise environments
+type: application
+version: 1.0.0
+appVersion: "1.0.0"
+keywords:
+  - workflow
+  - automation
+  - n8n
+  - visual-programming
+  - ai
+  - enterprise
+home: https://reporunner.com
+sources:
+  - https://github.com/reporunner/reporunner
+maintainers:
+  - name: Reporunner Team
+    email: team@reporunner.com
+dependencies:
+  - name: postgresql
+    version: 15.x.x
+    repository: oci://registry-1.docker.io/bitnamicharts
+    condition: postgresql.enabled
+  - name: mongodb
+    version: 15.x.x
+    repository: oci://registry-1.docker.io/bitnamicharts
+    condition: mongodb.enabled
+  - name: redis
+    version: 19.x.x
+    repository: oci://registry-1.docker.io/bitnamicharts
+    condition: redis.enabled
+  - name: nginx-ingress-controller
+    version: 11.x.x
+    repository: oci://registry-1.docker.io/bitnamicharts
+    condition: ingress.enabled
+annotations:
+  category: Workflow
+  licenses: Apache-2.0

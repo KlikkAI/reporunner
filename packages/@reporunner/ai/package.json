@@ -1,0 +1,78 @@
+{
+  "name": "@reporunner/ai",
+  "version": "1.0.0",
+  "description": "AI and ML capabilities for Reporunner workflow automation",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.js"
+    },
+    "./agents": {
+      "types": "./dist/agents/index.d.ts",
+      "import": "./dist/agents/index.js",
+      "require": "./dist/agents/index.js"
+    },
+    "./embeddings": {
+      "types": "./dist/embeddings/index.d.ts",
+      "import": "./dist/embeddings/index.js",
+      "require": "./dist/embeddings/index.js"
+    },
+    "./vector-store": {
+      "types": "./dist/vector-store/index.d.ts",
+      "import": "./dist/vector-store/index.js",
+      "require": "./dist/vector-store/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc && tsc-alias",
+    "dev": "tsc --watch",
+    "clean": "rm -rf dist",
+    "test": "vitest",
+    "test:watch": "vitest --watch",
+    "lint": "eslint src",
+    "lint:fix": "eslint src --fix",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@reporunner/core": "workspace:*",
+    "@anthropic-ai/sdk": "catalog:",
+    "@langchain/core": "^0.3.26",
+    "openai": "catalog:",
+    "pg": "catalog:",
+    "pgvector": "catalog:",
+    "zod": "catalog:",
+    "winston": "catalog:"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "@types/pg": "^8.15.5",
+    "eslint": "catalog:",
+    "@typescript-eslint/eslint-plugin": "catalog:",
+    "@typescript-eslint/parser": "catalog:",
+    "tsc-alias": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "keywords": [
+    "ai",
+    "ml",
+    "langchain",
+    "openai",
+    "anthropic",
+    "embeddings",
+    "vector-store",
+    "agents",
+    "workflow",
+    "automation"
+  ],
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

@@ -5,46 +5,47 @@
  * interval scheduling, conditional execution, and advanced configuration options.
  */
 
-import React, { useState, useEffect } from "react";
 import {
-  Button,
-  Card,
-  Form,
-  Input,
-  Switch,
-  Select,
-  InputNumber,
-  Tabs,
-  Tag,
-  Divider,
-  Space,
-  Modal,
-  message,
-  Tooltip,
-  Statistic,
-  DatePicker,
-  List,
-  Badge,
-} from "antd";
-import {
-  PlayCircleOutlined,
-  PauseCircleOutlined,
-  ClockCircleOutlined,
-  CalendarOutlined,
-  ThunderboltOutlined,
   BarChartOutlined,
+  CalendarOutlined,
+  ClockCircleOutlined,
   DeleteOutlined,
   EditOutlined,
   InfoCircleOutlined,
-} from "@ant-design/icons";
-import { cn } from "@/design-system/utils";
-import { colors } from "@/design-system/tokens";
+  PauseCircleOutlined,
+  PlayCircleOutlined,
+  ThunderboltOutlined,
+} from '@ant-design/icons';
 import {
-  workflowScheduler,
+  Badge,
+  Button,
+  Card,
+  DatePicker,
+  Divider,
+  Form,
+  Input,
+  InputNumber,
+  List,
+  Modal,
+  message,
+  Select,
+  Space,
+  Statistic,
+  Switch,
+  Tabs,
+  Tag,
+  Tooltip,
+} from 'antd';
+import type React from 'react';
+import { useEffect, useState } from 'react';
+import {
+  type ScheduleAnalytics,
   type ScheduleConfiguration,
   type ScheduledExecution,
-  type ScheduleAnalytics,
-} from "@/core/services/workflowScheduler";
+  workflowScheduler,
+} from '@/core/services/workflowScheduler';
+import { colors } from '@/design-system/tokens';
+import { cn } from '@/design-system/utils';
 
 const { TabPane } = Tabs;
 const { Option } = Select;
@@ -62,13 +63,10 @@ export const SchedulingPanel: React.FC<SchedulingPanelProps> = ({
   onClose,
 }) => {
   const [schedules, setSchedules] = useState<ScheduleConfiguration[]>([]);
-  const [activeExecutions, setActiveExecutions] = useState<
-    ScheduledExecution[]
-  >([]);
-  const [selectedSchedule, setSelectedSchedule] =
-    useState<ScheduleConfiguration | null>(null);
+  const [activeExecutions, setActiveExecutions] = useState<ScheduledExecution[]>([]);
+  const [selectedSchedule, setSelectedSchedule] = useState<ScheduleConfiguration | null>(null);
   const [analytics, setAnalytics] = useState<ScheduleAnalytics | null>(null);
-  const [activeTab, setActiveTab] = useState("schedules");
+  const [activeTab, setActiveTab] = useState('schedules');
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [editingSchedule, setEditingSchedule] = useState<string | null>(null);
@@ -88,27 +86,22 @@ export const SchedulingPanel: React.FC<SchedulingPanelProps> = ({
 
   const loadSchedules = () => {
     const allSchedules = workflowScheduler.getAllSchedules();
-    const workflowSchedules = allSchedules.filter(
-      (s) => s.workflowId === workflowId,
-    );
+    const workflowSchedules = allSchedules.filter((s) => s.workflowId === workflowId);
     setSchedules(workflowSchedules);
   };
 
   const loadActiveExecutions = () => {
     const allExecutions = workflowScheduler.getActiveExecutions();
-    const workflowExecutions = allExecutions.filter(
-      (e) => e.workflowId === workflowId,
-    );
+    const workflowExecutions = allExecutions.filter((e) => e.workflowId === workflowId);
     setActiveExecutions(workflowExecutions);
   };
 
   const loadAnalytics = async (scheduleId: string) => {
     try {
-      const analytics =
-        await workflowScheduler.getScheduleAnalytics(scheduleId);
+      const analytics = await workflowScheduler.getScheduleAnalytics(scheduleId);
       setAnalytics(analytics);
     } catch (error) {
-      console.error("Failed to load analytics:", error);
+      console.error('Failed to load analytics:', error);
     }
   };
 
@@ -122,20 +115,18 @@ export const SchedulingPanel: React.FC<SchedulingPanelProps> = ({
         enabled: values.enabled ?? true,
         scheduleType: values.scheduleType,
         configuration: buildScheduleConfiguration(values),
-        timezone: values.timezone || "UTC",
+        timezone: values.timezone || 'UTC',
         retryPolicy: {
           enabled: values.retryEnabled ?? false,
           maxAttempts: values.maxAttempts ?? 3,
-          backoffStrategy: values.backoffStrategy ?? "exponential",
+          backoffStrategy: values.backoffStrategy ?? 'exponential',
           initialDelayMs: values.initialDelay ?? 1000,
           maxDelayMs: values.maxDelay ?? 300000,
-          retryConditions:
-            values.retryConditions?.split(",").map((c: string) => c.trim()) ??
-            [],
+          retryConditions: values.retryConditions?.split(',').map((c: string) => c.trim()) ?? [],
         },
         concurrency: {
           maxConcurrent: values.maxConcurrent ?? 1,
-          queueStrategy: values.queueStrategy ?? "fifo",
+          queueStrategy: values.queueStrategy ?? 'fifo',
           skipIfRunning: values.skipIfRunning ?? false,
           timeout: values.timeout ?? 3600000,
         },
@@ -150,12 +141,12 @@ export const SchedulingPanel: React.FC<SchedulingPanelProps> = ({
       };
 
       workflowScheduler.createSchedule(scheduleConfig);
-      message.success("Schedule created successfully");
+      message.success('Schedule created successfully');
       loadSchedules();
       form.resetFields();
       setEditingSchedule(null);
     } catch (error) {
-      message.error("Failed to create schedule");
+      message.error('Failed to create schedule');
       console.error(error);
     } finally {
       setLoading(false);
@@ -164,24 +155,24 @@ export const SchedulingPanel: React.FC<SchedulingPanelProps> = ({
 
   const buildScheduleConfiguration = (values: any) => {
     switch (values.scheduleType) {
-      case "cron":
+      case 'cron':
         return {
           expression: values.cronExpression,
           description: values.cronDescription,
         };
-      case "interval":
+      case 'interval':
         return {
           intervalMs: values.intervalMs,
           maxExecutions: values.maxExecutions,
           startTime: values.startTime?.toISOString(),
           endTime: values.endTime?.toISOString(),
         };
-      case "once":
+      case 'once':
         return {
           executeAt: values.executeAt?.toISOString(),
           delay: values.delay,
         };
-      case "event-driven":
+      case 'event-driven':
         return {
           eventType: values.eventType,
           eventSource: values.eventSource,
@@ -189,18 +180,17 @@ export const SchedulingPanel: React.FC<SchedulingPanelProps> = ({
           debounceMs: values.debounceMs,
           maxEventsPerWindow: values.maxEventsPerWindow,
         };
-      case "conditional":
+      case 'conditional':
         return {
           condition: values.condition,
           checkIntervalMs: values.checkIntervalMs,
           maxChecks: values.maxChecks,
-          dependencies:
-            values.dependencies?.split(",").map((d: string) => d.trim()) ?? [],
+          dependencies: values.dependencies?.split(',').map((d: string) => d.trim()) ?? [],
         };
       default:
         return {
-          eventType: "",
-          eventSource: "",
+          eventType: '',
+          eventSource: '',
           filters: [],
           debounceMs: 0,
           maxEventsPerWindow: 0,
@@ -211,44 +201,44 @@ export const SchedulingPanel: React.FC<SchedulingPanelProps> = ({
   const handleToggleSchedule = async (scheduleId: string, enabled: boolean) => {
     try {
       workflowScheduler.toggleSchedule(scheduleId, enabled);
-      message.success(`Schedule ${enabled ? "enabled" : "disabled"}`);
+      message.success(`Schedule ${enabled ? 'enabled' : 'disabled'}`);
       loadSchedules();
     } catch (error) {
-      message.error("Failed to toggle schedule");
+      message.error('Failed to toggle schedule');
     }
   };
 
   const handleDeleteSchedule = async (scheduleId: string) => {
     try {
       workflowScheduler.deleteSchedule(scheduleId);
-      message.success("Schedule deleted");
+      message.success('Schedule deleted');
       loadSchedules();
       if (selectedSchedule?.id === scheduleId) {
         setSelectedSchedule(null);
         setAnalytics(null);
       }
     } catch (error) {
-      message.error("Failed to delete schedule");
+      message.error('Failed to delete schedule');
     }
   };
 
   const handleTriggerSchedule = async (scheduleId: string) => {
     try {
       await workflowScheduler.triggerSchedule(scheduleId, true);
-      message.success("Schedule triggered successfully");
+      message.success('Schedule triggered successfully');
       loadActiveExecutions();
     } catch (error) {
-      message.error("Failed to trigger schedule");
+      message.error('Failed to trigger schedule');
     }
   };
 
   const handleCancelExecution = (executionId: string) => {
     try {
       workflowScheduler.cancelExecution(executionId);
-      message.success("Execution cancelled");
+      message.success('Execution cancelled');
       loadActiveExecutions();
     } catch (error) {
-      message.error("Failed to cancel execution");
+      message.error('Failed to cancel execution');
     }
   };
 
@@ -259,29 +249,26 @@ export const SchedulingPanel: React.FC<SchedulingPanelProps> = ({
       onFinish={handleCreateSchedule}
       initialValues={{
         enabled: true,
-        scheduleType: "cron",
-        timezone: "UTC",
+        scheduleType: 'cron',
+        timezone: 'UTC',
         retryEnabled: false,
         maxAttempts: 3,
-        backoffStrategy: "exponential",
+        backoffStrategy: 'exponential',
         maxConcurrent: 1,
-        queueStrategy: "fifo",
+        queueStrategy: 'fifo',
         skipIfRunning: false,
       }}
     >
       <Form.Item
         name="name"
         label="Schedule Name"
-        rules={[{ required: true, message: "Please enter a name" }]}
+        rules={[{ required: true, message: 'Please enter a name' }]}
       >
         <Input placeholder="Daily data sync" />
       </Form.Item>
 
       <Form.Item name="description" label="Description">
-        <TextArea
-          placeholder="Optional description of what this schedule does"
-          rows={2}
-        />
+        <TextArea placeholder="Optional description of what this schedule does" rows={2} />
       </Form.Item>
 
       <Form.Item name="enabled" label="Enabled" valuePropName="checked">
@@ -289,7 +276,7 @@ export const SchedulingPanel: React.FC<SchedulingPanelProps> = ({
       </Form.Item>
 
       <Form.Item name="scheduleType" label="Schedule Type">
-        <Select onChange={() => form.resetFields(["configuration"])}>
+        <Select onChange={() => form.resetFields(['configuration'])}>
           <Option value="cron">Cron Expression</Option>
           <Option value="interval">Fixed Interval</Option>
           <Option value="once">One Time</Option>
@@ -298,9 +285,9 @@ export const SchedulingPanel: React.FC<SchedulingPanelProps> = ({
         </Select>
       </Form.Item>
 
-      <Form.Item dependencies={["scheduleType"]} noStyle>
+      <Form.Item dependencies={['scheduleType']} noStyle>
         {({ getFieldValue }) => {
-          const scheduleType = getFieldValue("scheduleType");
+          const scheduleType = getFieldValue('scheduleType');
           return renderScheduleTypeFields(scheduleType);
         }}
       </Form.Item>
@@ -329,27 +316,19 @@ export const SchedulingPanel: React.FC<SchedulingPanelProps> = ({
         </Select>
       </Form.Item>
 
-      <Form.Item
-        name="skipIfRunning"
-        label="Skip If Already Running"
-        valuePropName="checked"
-      >
+      <Form.Item name="skipIfRunning" label="Skip If Already Running" valuePropName="checked">
         <Switch />
       </Form.Item>
 
       <Divider>Retry Policy</Divider>
 
-      <Form.Item
-        name="retryEnabled"
-        label="Enable Retries"
-        valuePropName="checked"
-      >
+      <Form.Item name="retryEnabled" label="Enable Retries" valuePropName="checked">
         <Switch />
       </Form.Item>
 
-      <Form.Item dependencies={["retryEnabled"]} noStyle>
+      <Form.Item dependencies={['retryEnabled']} noStyle>
         {({ getFieldValue }) => {
-          if (!getFieldValue("retryEnabled")) return null;
+          if (!getFieldValue('retryEnabled')) return null;
           return (
             <>
               <Form.Item name="maxAttempts" label="Max Retry Attempts">
@@ -373,7 +352,7 @@ export const SchedulingPanel: React.FC<SchedulingPanelProps> = ({
       <Form.Item>
         <Space>
           <Button type="primary" htmlType="submit" loading={loading}>
-            {editingSchedule ? "Update Schedule" : "Create Schedule"}
+            {editingSchedule ? 'Update Schedule' : 'Create Schedule'}
           </Button>
           <Button
             onClick={() => {
@@ -390,7 +369,7 @@ export const SchedulingPanel: React.FC<SchedulingPanelProps> = ({
 
   const renderScheduleTypeFields = (scheduleType: string) => {
     switch (scheduleType) {
-      case "cron":
+      case 'cron':
         return (
           <>
             <Form.Item
@@ -403,9 +382,7 @@ export const SchedulingPanel: React.FC<SchedulingPanelProps> = ({
                   </Tooltip>
                 </Space>
               }
-              rules={[
-                { required: true, message: "Please enter a cron expression" },
-              ]}
+              rules={[{ required: true, message: 'Please enter a cron expression' }]}
             >
               <Input placeholder="0 0 9 * * *" />
             </Form.Item>
@@ -414,7 +391,7 @@ export const SchedulingPanel: React.FC<SchedulingPanelProps> = ({
             </Form.Item>
           </>
         );
-      case "interval":
+      case 'interval':
         return (
           <>
             <Form.Item name="intervalMs" label="Interval (milliseconds)">
@@ -425,13 +402,13 @@ export const SchedulingPanel: React.FC<SchedulingPanelProps> = ({
             </Form.Item>
           </>
         );
-      case "once":
+      case 'once':
         return (
           <Form.Item name="executeAt" label="Execute At">
             <DatePicker showTime />
           </Form.Item>
         );
-      case "event-driven":
+      case 'event-driven':
         return (
           <>
             <Form.Item name="eventType" label="Event Type">
@@ -442,7 +419,7 @@ export const SchedulingPanel: React.FC<SchedulingPanelProps> = ({
             </Form.Item>
           </>
         );
-      case "conditional":
+      case 'conditional':
         return (
           <>
             <Form.Item name="condition" label="JavaScript Condition">
@@ -504,13 +481,9 @@ export const SchedulingPanel: React.FC<SchedulingPanelProps> = ({
             title={
               <Space>
                 {schedule.name}
-                <Tag color={schedule.enabled ? "green" : "default"}>
-                  {schedule.scheduleType}
-                </Tag>
+                <Tag color={schedule.enabled ? 'green' : 'default'}>{schedule.scheduleType}</Tag>
                 {schedule.nextExecution && (
-                  <Tag color="blue">
-                    Next: {new Date(schedule.nextExecution).toLocaleString()}
-                  </Tag>
+                  <Tag color="blue">Next: {new Date(schedule.nextExecution).toLocaleString()}</Tag>
                 )}
               </Space>
             }
@@ -518,8 +491,8 @@ export const SchedulingPanel: React.FC<SchedulingPanelProps> = ({
               <Space direction="vertical" size="small">
                 {schedule.description}
                 <Space>
-                  <Badge status={schedule.enabled ? "success" : "default"} />
-                  {schedule.enabled ? "Active" : "Inactive"}
+                  <Badge status={schedule.enabled ? 'success' : 'default'} />
+                  {schedule.enabled ? 'Active' : 'Inactive'}
                   {schedule.lastExecuted && (
                     <span style={{ color: colors.gray[500] }}>
                       Last: {new Date(schedule.lastExecuted).toLocaleString()}
@@ -531,7 +504,7 @@ export const SchedulingPanel: React.FC<SchedulingPanelProps> = ({
           />
         </List.Item>
       )}
-      locale={{ emptyText: "No schedules configured" }}
+      locale={{ emptyText: 'No schedules configured' }}
     />
   );
 
@@ -541,7 +514,7 @@ export const SchedulingPanel: React.FC<SchedulingPanelProps> = ({
       renderItem={(execution) => (
         <List.Item
           actions={[
-            execution.status === "running" && (
+            execution.status === 'running' && (
               <Button
                 type="link"
                 danger
@@ -556,36 +529,28 @@ export const SchedulingPanel: React.FC<SchedulingPanelProps> = ({
           <List.Item.Meta
             title={
               <Space>
-                Execution {execution.id.split("_")[1]}
-                <Tag color={getExecutionStatusColor(execution.status)}>
-                  {execution.status}
-                </Tag>
+                Execution {execution.id.split('_')[1]}
+                <Tag color={getExecutionStatusColor(execution.status)}>{execution.status}</Tag>
               </Space>
             }
             description={
               <Space direction="vertical" size="small">
-                <div>
-                  Scheduled: {new Date(execution.scheduledAt).toLocaleString()}
-                </div>
+                <div>Scheduled: {new Date(execution.scheduledAt).toLocaleString()}</div>
                 {execution.startedAt && (
-                  <div>
-                    Started: {new Date(execution.startedAt).toLocaleString()}
-                  </div>
+                  <div>Started: {new Date(execution.startedAt).toLocaleString()}</div>
                 )}
                 {execution.duration && (
                   <div>Duration: {(execution.duration / 1000).toFixed(2)}s</div>
                 )}
                 {execution.error && (
-                  <div style={{ color: colors.error[500] }}>
-                    Error: {execution.error}
-                  </div>
+                  <div style={{ color: colors.error[500] }}>Error: {execution.error}</div>
                 )}
               </Space>
             }
           />
         </List.Item>
       )}
-      locale={{ emptyText: "No active executions" }}
+      locale={{ emptyText: 'No active executions' }}
     />
   );
 
@@ -593,7 +558,7 @@ export const SchedulingPanel: React.FC<SchedulingPanelProps> = ({
     if (!analytics) return <div>Select a schedule to view analytics</div>;
 
     return (
-      <Space direction="vertical" size="large" style={{ width: "100%" }}>
+      <Space direction="vertical" size="large" style={{ width: '100%' }}>
         <div className="grid grid-cols-2 gap-4">
           <Statistic
             title="Success Rate"
@@ -601,16 +566,10 @@ export const SchedulingPanel: React.FC<SchedulingPanelProps> = ({
             precision={1}
             suffix="%"
             valueStyle={{
-              color:
-                analytics.successRate > 90
-                  ? colors.success[600]
-                  : colors.warning[600],
+              color: analytics.successRate > 90 ? colors.success[600] : colors.warning[600],
             }}
           />
-          <Statistic
-            title="Total Executions"
-            value={analytics.totalExecutions}
-          />
+          <Statistic title="Total Executions" value={analytics.totalExecutions} />
           <Statistic
             title="Average Duration"
             value={analytics.averageDuration / 1000}
@@ -621,10 +580,7 @@ export const SchedulingPanel: React.FC<SchedulingPanelProps> = ({
             title="Failed Executions"
             value={analytics.failedExecutions}
             valueStyle={{
-              color:
-                analytics.failedExecutions > 0
-                  ? colors.error[600]
-                  : colors.success[600],
+              color: analytics.failedExecutions > 0 ? colors.error[600] : colors.success[600],
             }}
           />
         </div>
@@ -641,11 +597,11 @@ export const SchedulingPanel: React.FC<SchedulingPanelProps> = ({
                         {rec.description}
                         <Tag
                           color={
-                            rec.priority === "high"
-                              ? "red"
-                              : rec.priority === "medium"
-                                ? "orange"
-                                : "green"
+                            rec.priority === 'high'
+                              ? 'red'
+                              : rec.priority === 'medium'
+                                ? 'orange'
+                                : 'green'
                           }
                         >
                           {rec.priority}
@@ -674,18 +630,18 @@ export const SchedulingPanel: React.FC<SchedulingPanelProps> = ({
 
   const getExecutionStatusColor = (status: string) => {
     switch (status) {
-      case "running":
-        return "blue";
-      case "completed":
-        return "green";
-      case "failed":
-        return "red";
-      case "cancelled":
-        return "orange";
-      case "skipped":
-        return "default";
+      case 'running':
+        return 'blue';
+      case 'completed':
+        return 'green';
+      case 'failed':
+        return 'red';
+      case 'cancelled':
+        return 'orange';
+      case 'skipped':
+        return 'default';
       default:
-        return "default";
+        return 'default';
     }
   };
 
@@ -701,7 +657,7 @@ export const SchedulingPanel: React.FC<SchedulingPanelProps> = ({
       onCancel={onClose}
       width={1000}
       footer={null}
-      className={cn("workflow-scheduling-panel")}
+      className={cn('workflow-scheduling-panel')}
     >
       <Tabs activeKey={activeTab} onChange={setActiveTab}>
         <TabPane

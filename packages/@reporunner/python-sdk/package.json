@@ -1,0 +1,29 @@
+{
+  "name": "@reporunner/python-sdk",
+  "version": "1.0.0",
+  "description": "Python SDK for Reporunner workflow automation platform",
+  "scripts": {
+    "build": "python -m build",
+    "dev": "python -m pip install -e .",
+    "test": "python -m pytest",
+    "test:watch": "python -m pytest-watch",
+    "lint": "ruff check .",
+    "lint:fix": "ruff check . --fix",
+    "format": "black .",
+    "type-check": "mypy src/",
+    "clean": "rm -rf dist build *.egg-info"
+  },
+  "files": [
+    "src/",
+    "pyproject.toml",
+    "README.md"
+  ],
+  "keywords": [
+    "workflow",
+    "automation",
+    "sdk",
+    "python",
+    "reporunner",
+    "api"
+  ]
+}

@@ -1,22 +1,24 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState, useMemo } from 'react'
-import { Modal } from 'antd'
-import { DownloadOutlined, CopyOutlined } from '@ant-design/icons'
-import { Search, CheckCircle } from 'lucide-react'
-import SchemaView from './SchemaView'
-import TableView from './TableView'
-import JsonView from './JsonView'
 
-type DisplayMode = 'schema' | 'table' | 'json'
+import { CopyOutlined, DownloadOutlined } from '@ant-design/icons';
+import { Modal } from 'antd';
+import { CheckCircle, Search } from 'lucide-react';
+import type React from 'react';
+import { useMemo, useState } from 'react';
+import JsonView from './JsonView';
+import SchemaView from './SchemaView';
+import TableView from './TableView';
+
+type DisplayMode = 'schema' | 'table' | 'json';
 
 interface DataVisualizationPanelProps {
-  data: any
-  title?: string
-  description?: string
-  nodeId?: string
-  nodeType?: string
-  onDataTransform?: (transformedData: any) => void
-  compact?: boolean
+  data: any;
+  title?: string;
+  description?: string;
+  nodeId?: string;
+  nodeType?: string;
+  onDataTransform?: (transformedData: any) => void;
+  compact?: boolean;
 }
 
 const DataVisualizationPanel: React.FC<DataVisualizationPanelProps> = ({
@@ -26,67 +28,61 @@ const DataVisualizationPanel: React.FC<DataVisualizationPanelProps> = ({
   onDataTransform,
   compact = false,
 }) => {
-  const [displayMode, setDisplayMode] = useState<DisplayMode>('schema')
-  const [searchTerm, setSearchTerm] = useState('')
-  const [isModalVisible, setIsModalVisible] = useState(false)
-  const [selectedField, setSelectedField] = useState<string | null>(null)
+  const [displayMode, setDisplayMode] = useState<DisplayMode>('schema');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [selectedField, setSelectedField] = useState<string | null>(null);
 
   // Filter data based on search term
   const filteredData = useMemo(() => {
-    if (!searchTerm || !data) return data
+    if (!searchTerm || !data) return data;
 
     const filterObject = (obj: any, term: string): any => {
       if (typeof obj === 'string') {
-        return obj.toLowerCase().includes(term.toLowerCase()) ? obj : null
+        return obj.toLowerCase().includes(term.toLowerCase()) ? obj : null;
       }
 
       if (Array.isArray(obj)) {
-        return obj
-          .map(item => filterObject(item, term))
-          .filter(item => item !== null)
+        return obj.map((item) => filterObject(item, term)).filter((item) => item !== null);
       }
 
       if (typeof obj === 'object' && obj !== null) {
-        const filtered: any = {}
+        const filtered: any = {};
         for (const [key, value] of Object.entries(obj)) {
           if (key.toLowerCase().includes(term.toLowerCase())) {
-            filtered[key] = value
+            filtered[key] = value;
           } else {
-            const filteredValue = filterObject(value, term)
+            const filteredValue = filterObject(value, term);
             if (filteredValue !== null) {
-              filtered[key] = filteredValue
+              filtered[key] = filteredValue;
             }
           }
         }
-        return Object.keys(filtered).length > 0 ? filtered : null
+        return Object.keys(filtered).length > 0 ? filtered : null;
       }
 
-      return obj
-    }
+      return obj;
+    };
 
-    return filterObject(data, searchTerm)
-  }, [data, searchTerm])
+    return filterObject(data, searchTerm);
+  }, [data, searchTerm]);
 
   // Data statistics
   const dataStats = useMemo(() => {
-    if (!data) return null
+    if (!data) return null;
 
     const countFields = (obj: any): number => {
-      if (typeof obj !== 'object' || obj === null) return 0
+      if (typeof obj !== 'object' || obj === null) return 0;
 
-      let count = 0
+      let count = 0;
       for (const [value] of Object.entries(obj)) {
-        count++
-        if (
-          typeof value === 'object' &&
-          value !== null &&
-          !Array.isArray(value)
-        ) {
-          count += countFields(value)
+        count++;
+        if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+          count += countFields(value);
         }
       }
-      return count
-    }
+      return count;
+    };
 
     return {
       totalFields: countFields(data),
@@ -94,31 +90,31 @@ const DataVisualizationPanel: React.FC<DataVisualizationPanelProps> = ({
       hasArrays: JSON.stringify(data).includes('['),
       hasNested: JSON.stringify(data).includes('{', 1),
       dataSize: JSON.stringify(data).length,
-    }
-  }, [data])
+    };
+  }, [data]);
 
   const handleCopyData = () => {
-    navigator.clipboard.writeText(JSON.stringify(data, null, 2))
-  }
+    navigator.clipboard.writeText(JSON.stringify(data, null, 2));
+  };
 
   const handleDownloadData = () => {
     const blob = new Blob([JSON.stringify(data, null, 2)], {
       type: 'application/json',
-    })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = `${nodeId || 'data'}-output.json`
-    document.body.appendChild(a)
-    a.click()
-    document.body.removeChild(a)
-    URL.revokeObjectURL(url)
-  }
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${nodeId || 'data'}-output.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
 
   const showFieldDetails = (fieldPath: string) => {
-    setSelectedField(fieldPath)
-    setIsModalVisible(true)
-  }
+    setSelectedField(fieldPath);
+    setIsModalVisible(true);
+  };
 
   const renderContent = () => {
     if (!data) {
@@ -134,20 +130,16 @@ const DataVisualizationPanel: React.FC<DataVisualizationPanelProps> = ({
             Connect this node to a data source to see input data visualization
           </p>
         </div>
-      )
+      );
     }
 
     switch (displayMode) {
       case 'schema':
         return (
           <div className="overflow-auto max-h-full">
-            <SchemaView
-              data={filteredData}
-              onFieldClick={showFieldDetails}
-              compact={compact}
-            />
+            <SchemaView data={filteredData} onFieldClick={showFieldDetails} compact={compact} />
           </div>
-        )
+        );
       case 'table':
         return (
           <div className="overflow-auto max-h-full">
@@ -158,21 +150,17 @@ const DataVisualizationPanel: React.FC<DataVisualizationPanelProps> = ({
               compact={compact}
             />
           </div>
-        )
+        );
       case 'json':
         return (
           <div className="overflow-auto max-h-full">
-            <JsonView
-              data={filteredData}
-              onFieldClick={showFieldDetails}
-              compact={compact}
-            />
+            <JsonView data={filteredData} onFieldClick={showFieldDetails} compact={compact} />
           </div>
-        )
+        );
       default:
-        return null
+        return null;
     }
-  }
+  };
 
   return (
     <div className="flex flex-col h-full bg-gray-900">
@@ -200,7 +188,7 @@ const DataVisualizationPanel: React.FC<DataVisualizationPanelProps> = ({
               <input
                 type="text"
                 value={searchTerm}
-                onChange={e => setSearchTerm(e.target.value)}
+                onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder="Search data fields"
                 className="w-full pl-10 pr-3 py-2 bg-gray-600 border border-gray-500 rounded text-white text-sm focus:ring-2 focus:ring-blue-400 focus:border-blue-400 focus:bg-gray-700"
               />
@@ -251,12 +239,11 @@ const DataVisualizationPanel: React.FC<DataVisualizationPanelProps> = ({
         {data && dataStats && (
           <div className="mt-3 flex items-center justify-between">
             <div className="text-sm text-gray-300">
-              <span className="text-blue-300">Fields:</span>{' '}
-              {dataStats.totalFields}
+              <span className="text-blue-300">Fields:</span> {dataStats.totalFields}
             </div>
             <div className="text-sm text-gray-300">
-              <span className="text-blue-300">Size:</span>{' '}
-              {(dataStats.dataSize / 1024).toFixed(1)}KB
+              <span className="text-blue-300">Size:</span> {(dataStats.dataSize / 1024).toFixed(1)}
+              KB
             </div>
           </div>
         )}
@@ -276,16 +263,12 @@ const DataVisualizationPanel: React.FC<DataVisualizationPanelProps> = ({
       >
         {selectedField && (
           <div className="bg-gray-900 p-4 rounded">
-            <JsonView
-              data={filteredData}
-              highlightPath={selectedField}
-              compact={false}
-            />
+            <JsonView data={filteredData} highlightPath={selectedField} compact={false} />
           </div>
         )}
       </Modal>
     </div>
-  )
-}
+  );
+};
 
-export default DataVisualizationPanel
+export default DataVisualizationPanel;

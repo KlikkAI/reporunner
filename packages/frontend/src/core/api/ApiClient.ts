@@ -1,20 +1,10 @@
-import axios from "axios";
-import type {
-  AxiosInstance,
-  AxiosRequestConfig,
-  AxiosResponse,
-  AxiosError,
-} from "axios";
-import { z } from "zod";
-import type { ZodSchema } from "zod";
-import { configService } from "../services/ConfigService";
-import { logger } from "../services/LoggingService";
-import type {
-  ApiResponse,
-  ApiError,
-  PaginationParams,
-  PaginatedResponse,
-} from "../schemas";
+import type { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
+import axios from 'axios';
+import type { ZodSchema } from 'zod';
+import { z } from 'zod';
+import type { ApiError, ApiResponse, PaginatedResponse, PaginationParams } from '../schemas';
+import { configService } from '../services/ConfigService';
+import { logger } from '../services/LoggingService';
 
 // API Client error types
 export class ApiClientError extends Error {
@@ -22,14 +12,9 @@ export class ApiClientError extends Error {
   public code?: string;
   public details?: unknown;
 
-  constructor(
-    message: string,
-    status?: number,
-    code?: string,
-    details?: unknown,
-  ) {
+  constructor(message: string, status?: number, code?: string, details?: unknown) {
     super(message);
-    this.name = "ApiClientError";
+    this.name = 'ApiClientError';
     this.status = status;
     this.code = code;
     this.details = details;
@@ -40,8 +25,8 @@ export class ValidationError extends ApiClientError {
   public validationErrors: z.ZodError;
 
   constructor(message: string, validationErrors: z.ZodError) {
-    super(message, 400, "VALIDATION_ERROR", validationErrors.issues);
-    this.name = "ValidationError";
+    super(message, 400, 'VALIDATION_ERROR', validationErrors.issues);
+    this.name = 'ValidationError';
     this.validationErrors = validationErrors;
   }
 }
@@ -81,8 +66,8 @@ export class ApiClient {
       baseURL: this.config.api.baseUrl,
       timeout: this.config.api.timeout,
       headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
       },
     });
   }
@@ -103,14 +88,14 @@ export class ApiClient {
         // Add request context for tracking
         const context: RequestContext = {
           startTime: Date.now(),
-          endpoint: config.url || "unknown",
-          method: config.method?.toUpperCase() || "GET",
+          endpoint: config.url || 'unknown',
+          method: config.method?.toUpperCase() || 'GET',
         };
         (config as any).metadata = { context };
 
         // Debug logging in development
         if (this.config.features.enableDebug) {
-          logger.debug("API Request", {
+          logger.debug('API Request', {
             method: context.method,
             endpoint: context.endpoint,
             hasData: !!config.data,
@@ -122,31 +107,25 @@ export class ApiClient {
       },
       (error) => {
         logger.error(
-          "API Request Setup Failed",
-          error instanceof Error ? error : new Error(String(error)),
+          'API Request Setup Failed',
+          error instanceof Error ? error : new Error(String(error))
         );
         return Promise.reject(
-          new ApiClientError(
-            "Request setup failed",
-            0,
-            "REQUEST_SETUP_ERROR",
-            error,
-          ),
+          new ApiClientError('Request setup failed', 0, 'REQUEST_SETUP_ERROR', error)
         );
-      },
+      }
     );
 
     // Response interceptor
     this.client.interceptors.response.use(
       (response) => {
-        const context = (response.config as any).metadata
-          ?.context as RequestContext;
+        const context = (response.config as any).metadata?.context as RequestContext;
         if (context) {
           const duration = Date.now() - context.startTime;
 
           // Log successful response
           if (this.config.features.enableDebug) {
-            logger.info("API Response Success", {
+            logger.info('API Response Success', {
               method: context.method,
               endpoint: context.endpoint,
               status: response.status,
@@ -158,7 +137,7 @@ export class ApiClient {
           // Track performance
           if (duration > 5000) {
             // Warn on slow requests (>5s)
-            logger.warn("Slow API Response", {
+            logger.warn('Slow API Response', {
               method: context.method,
               endpoint: context.endpoint,
               duration,
@@ -170,8 +149,7 @@ export class ApiClient {
         return response;
       },
       (error: AxiosError) => {
-        const context = (error.config as any)?.metadata
-          ?.context as RequestContext;
+        const context = (error.config as any)?.metadata?.context as RequestContext;
         const duration = context ? Date.now() - context.startTime : 0;
 
         // Handle different error types
@@ -187,9 +165,9 @@ export class ApiClient {
 
           // Log the error
           const logError = new Error(error.message);
-          logger.error("API Response Error", logError);
-          logger.info("API Error Details", {
-            endpoint: context?.endpoint || "UNKNOWN",
+          logger.error('API Response Error', logError);
+          logger.info('API Error Details', {
+            endpoint: context?.endpoint || 'UNKNOWN',
             status,
             duration,
             errorData,
@@ -197,42 +175,40 @@ export class ApiClient {
 
           // Create structured error
           const apiError = new ApiClientError(
-            errorData?.message || error.message || "Server error",
+            errorData?.message || error.message || 'Server error',
             status,
-            errorData?.code || "SERVER_ERROR",
-            errorData,
+            errorData?.code || 'SERVER_ERROR',
+            errorData
           );
 
           return Promise.reject(apiError);
         } else if (error.request) {
           // Network error
           const networkError = new Error(error.message);
-          logger.error("API Network Error", networkError);
-          logger.info("Network Error Details", {
-            endpoint: context?.endpoint || "UNKNOWN",
+          logger.error('API Network Error', networkError);
+          logger.info('Network Error Details', {
+            endpoint: context?.endpoint || 'UNKNOWN',
             duration,
           });
 
           return Promise.reject(
             new ApiClientError(
-              "Network error - please check your connection",
+              'Network error - please check your connection',
               0,
-              "NETWORK_ERROR",
-              error,
-            ),
+              'NETWORK_ERROR',
+              error
+            )
           );
         } else {
           // Request setup error
           logger.error(
-            "API Client Error",
-            error instanceof Error ? error : new Error(String(error)),
+            'API Client Error',
+            error instanceof Error ? error : new Error(String(error))
           );
 
-          return Promise.reject(
-            new ApiClientError("Request failed", 0, "CLIENT_ERROR", error),
-          );
+          return Promise.reject(new ApiClientError('Request failed', 0, 'CLIENT_ERROR', error));
         }
-      },
+      }
     );
   }
 
@@ -242,13 +218,13 @@ export class ApiClient {
   private handleAuthenticationError(): void {
     // Clear stored tokens
     localStorage.removeItem(this.config.auth.tokenKey);
-    const refreshTokenKey = this.config.auth.refreshTokenKey || "refresh_token";
+    const refreshTokenKey = this.config.auth.refreshTokenKey || 'refresh_token';
     localStorage.removeItem(refreshTokenKey);
 
     // Log the authentication failure
-    logger.warn("Authentication token expired or invalid", {
+    logger.warn('Authentication token expired or invalid', {
       timestamp: new Date().toISOString(),
-      action: "tokens_cleared",
+      action: 'tokens_cleared',
     });
 
     // Don't force redirect here - let the application handle it
@@ -258,12 +234,10 @@ export class ApiClient {
   /**
    * Sanitize headers for logging (remove sensitive data)
    */
-  private sanitizeHeaders(
-    headers: Record<string, unknown>,
-  ): Record<string, unknown> {
+  private sanitizeHeaders(headers: Record<string, unknown>): Record<string, unknown> {
     const sanitized = { ...headers };
-    if (sanitized["Authorization"]) {
-      sanitized["Authorization"] = "[REDACTED]";
+    if (sanitized['Authorization']) {
+      sanitized['Authorization'] = '[REDACTED]';
     }
     return sanitized;
   }
@@ -274,7 +248,7 @@ export class ApiClient {
   async get<T>(
     endpoint: string,
     schema: ZodSchema<ApiResponse<T>>,
-    config?: AxiosRequestConfig,
+    config?: AxiosRequestConfig
   ): Promise<T> {
     try {
       const response = await this.client.get(endpoint, config);
@@ -291,7 +265,7 @@ export class ApiClient {
     endpoint: string,
     data: D,
     schema: ZodSchema<ApiResponse<T>>,
-    config?: AxiosRequestConfig,
+    config?: AxiosRequestConfig
   ): Promise<T> {
     try {
       const response = await this.client.post(endpoint, data, config);
@@ -308,7 +282,7 @@ export class ApiClient {
     endpoint: string,
     data: D,
     schema: ZodSchema<ApiResponse<T>>,
-    config?: AxiosRequestConfig,
+    config?: AxiosRequestConfig
   ): Promise<T> {
     try {
       const response = await this.client.put(endpoint, data, config);
@@ -325,7 +299,7 @@ export class ApiClient {
     endpoint: string,
     data: D,
     schema: ZodSchema<ApiResponse<T>>,
-    config?: AxiosRequestConfig,
+    config?: AxiosRequestConfig
   ): Promise<T> {
     try {
       const response = await this.client.patch(endpoint, data, config);
@@ -341,7 +315,7 @@ export class ApiClient {
   async delete<T>(
     endpoint: string,
     schema: ZodSchema<ApiResponse<T>>,
-    config?: AxiosRequestConfig,
+    config?: AxiosRequestConfig
   ): Promise<T> {
     try {
       const response = await this.client.delete(endpoint, config);
@@ -357,7 +331,7 @@ export class ApiClient {
   async getPaginated<T>(
     endpoint: string,
     schema: ZodSchema<ApiResponse<PaginatedResponse<T>>>,
-    params?: PaginationParams & Record<string, unknown>,
+    params?: PaginationParams & Record<string, unknown>
   ): Promise<PaginatedResponse<T>> {
     return this.get(endpoint, schema, { params });
   }
@@ -365,10 +339,7 @@ export class ApiClient {
   /**
    * Validate response against schema and extract data
    */
-  private validateAndExtractData<T>(
-    response: AxiosResponse,
-    schema: ZodSchema<ApiResponse<T>>,
-  ): T {
+  private validateAndExtractData<T>(response: AxiosResponse, schema: ZodSchema<ApiResponse<T>>): T {
     try {
       // First validate the response structure
       const validatedResponse = schema.parse(response.data);
@@ -376,24 +347,24 @@ export class ApiClient {
       // Check if the API response indicates success
       if (!validatedResponse.success) {
         throw new ApiClientError(
-          validatedResponse.message || "API request failed",
+          validatedResponse.message || 'API request failed',
           response.status,
-          "API_ERROR",
-          validatedResponse.errors,
+          'API_ERROR',
+          validatedResponse.errors
         );
       }
 
       return validatedResponse.data;
     } catch (error) {
       if (error instanceof z.ZodError) {
-        const validationError = new Error("Response validation failed");
-        logger.error("API Response Validation Failed", validationError);
-        logger.info("Validation Error Details", {
+        const validationError = new Error('Response validation failed');
+        logger.error('API Response Validation Failed', validationError);
+        logger.info('Validation Error Details', {
           validationErrors: error.issues,
           responseData: response.data,
         });
 
-        throw new ValidationError("Response validation failed", error);
+        throw new ValidationError('Response validation failed', error);
       }
       throw error;
     }
@@ -412,17 +383,14 @@ export class ApiClient {
     }
 
     // Handle unknown errors
-    const message =
-      error instanceof Error ? error.message : "Unknown error occurred";
-    return new ApiClientError(message, 0, "UNKNOWN_ERROR", error);
+    const message = error instanceof Error ? error.message : 'Unknown error occurred';
+    return new ApiClientError(message, 0, 'UNKNOWN_ERROR', error);
   }
 
   /**
    * Raw request method for special cases (bypasses validation)
    */
-  async raw<T = unknown>(
-    config: AxiosRequestConfig,
-  ): Promise<AxiosResponse<T>> {
+  async raw<T = unknown>(config: AxiosRequestConfig): Promise<AxiosResponse<T>> {
     return this.client.request(config);
   }
 
@@ -431,18 +399,13 @@ export class ApiClient {
    */
   async healthCheck(): Promise<{ status: string; timestamp: string }> {
     try {
-      const response = await this.client.get("/health");
+      const response = await this.client.get('/health');
       return {
-        status: response.data?.status || "ok",
+        status: response.data?.status || 'ok',
         timestamp: new Date().toISOString(),
       };
     } catch (error) {
-      throw new ApiClientError(
-        "Health check failed",
-        0,
-        "HEALTH_CHECK_ERROR",
-        error,
-      );
+      throw new ApiClientError('Health check failed', 0, 'HEALTH_CHECK_ERROR', error);
     }
   }
 

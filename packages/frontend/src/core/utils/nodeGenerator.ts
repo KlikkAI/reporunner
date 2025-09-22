@@ -1,43 +1,43 @@
 // Node Generator Utility
 // Helps developers quickly scaffold new nodes with proper separation of concerns
 
-import { writeFileSync, mkdirSync } from 'fs'
-import { join } from 'path'
+import { mkdirSync, writeFileSync } from 'fs';
+import { join } from 'path';
 
 interface NodeGeneratorOptions {
-  name: string // e.g., 'discord'
-  displayName: string // e.g., 'Discord'
-  category: string // e.g., 'communication'
-  icon: string // Icon URL or emoji
-  description: string // Node description
+  name: string; // e.g., 'discord'
+  displayName: string; // e.g., 'Discord'
+  category: string; // e.g., 'communication'
+  icon: string; // Icon URL or emoji
+  description: string; // Node description
   nodeTypes: Array<{
     // Types of nodes to generate
-    id: string // e.g., 'send-message'
-    displayName: string // e.g., 'Send Message'
-    type: 'trigger' | 'action' | 'condition'
-    description: string
-  }>
+    id: string; // e.g., 'send-message'
+    displayName: string; // e.g., 'Send Message'
+    type: 'trigger' | 'action' | 'condition';
+    description: string;
+  }>;
   credentials?: Array<{
     // Required credentials
-    name: string
-    required: boolean
-    description: string
-  }>
+    name: string;
+    required: boolean;
+    description: string;
+  }>;
   properties?: Array<{
     // Basic properties to include
-    name: string
-    displayName: string
-    type: string
-    description: string
-    required: boolean
-  }>
+    name: string;
+    displayName: string;
+    type: string;
+    description: string;
+    required: boolean;
+  }>;
 }
 
 /**
  * Generates node.ts file content
  */
 function generateNodeFile(options: NodeGeneratorOptions): string {
-  const { name, displayName, icon, category, description } = options
+  const { name, displayName, icon, category, description } = options;
 
   return `// ${displayName} Node - Core Definition
 import { UNIFIED_CATEGORIES } from '../../../../constants/categories'
@@ -79,87 +79,85 @@ export const ${name}NodeMetadata = {
   codex: {
     categories: ['${category}']
   }
-}`
+}`;
 }
 
 /**
  * Generates credentials.ts file content
  */
 function generateCredentialsFile(options: NodeGeneratorOptions): string {
-  const { name, credentials = [] } = options
+  const { name, credentials = [] } = options;
 
   const credentialsArray =
     credentials.length > 0
       ? credentials
           .map(
-            cred => `  {
+            (cred) => `  {
     name: '${cred.name}',
     required: ${cred.required},
     description: '${cred.description}'
   }`
           )
           .join(',\n')
-      : '  // No credentials required'
+      : '  // No credentials required';
 
   return `// ${options.displayName} Node - Credentials Configuration
 
 export const ${name}Credentials = [
 ${credentialsArray}
-]`
+]`;
 }
 
 /**
  * Generates properties.ts file content
  */
 function generatePropertiesFile(options: NodeGeneratorOptions): string {
-  const { name, displayName, nodeTypes, properties = [] } = options
+  const { name, displayName, nodeTypes, properties = [] } = options;
 
   let content = `// ${displayName} Node - Dynamic Properties Configuration
 import type { NodeProperty } from '../../../../types/dynamicProperties'
 
-`
+`;
 
-  nodeTypes.forEach(nodeType => {
+  nodeTypes.forEach((nodeType) => {
     const propertiesArray = properties
       .map(
-        prop => `  {
+        (prop) => `  {
     name: '${prop.name}',
     displayName: '${prop.displayName}',
     type: '${prop.type}',
     description: '${prop.description}',
     required: ${prop.required}${prop.type === 'text' ? ',\n    rows: 4' : ''}${
-      prop.type === 'select'
-        ? ',\n    options: [\n      // Add options here\n    ]'
-        : ''
+      prop.type === 'select' ? ',\n    options: [\n      // Add options here\n    ]' : ''
     }
   }`
       )
-      .join(',\n')
+      .join(',\n');
 
     content += `// ${displayName} ${nodeType.displayName} Properties
-export const ${name}${nodeType.id.replace(/-([a-z])/g, g => g[1].toUpperCase())}Properties: NodeProperty[] = [
+export const ${name}${nodeType.id.replace(/-([a-z])/g, (g) => g[1].toUpperCase())}Properties: NodeProperty[] = [
 ${propertiesArray || '  // Add properties here'}
 ]
 
-`
-  })
+`;
+  });
 
-  return content
+  return content;
 }
 
 /**
  * Generates actions.ts file content
  */
 function generateActionsFile(options: NodeGeneratorOptions): string {
-  const { displayName, nodeTypes } = options
+  const { displayName, nodeTypes } = options;
 
   let content = `// ${displayName} Node - Action Logic
 import type { PropertyFormState } from '../../../../types/dynamicProperties'
 
-`
+`;
 
-  nodeTypes.forEach(nodeType => {
-    const functionName = `execute${displayName}${nodeType.displayName.replace(/\s+/g, '')}`
+  nodeTypes.forEach((nodeType) => {
+    const functionName = `execute${displayName}${nodeType.displayName.replace(/\s+/g, '')}`;
 
     content += `/**
  * Execute ${displayName} ${nodeType.displayName}
@@ -181,8 +179,8 @@ export async function ${functionName}(
   return result
 }
 
-`
-  })
+`;
+  });
 
   content += `/**
  * Test ${displayName} connection
@@ -197,50 +195,47 @@ export async function test${displayName}Connection(
     success: true,
     message: 'Successfully connected to ${displayName}'
   }
-}`
+}`;
 
-  return content
+  return content;
 }
 
 /**
  * Generates index.ts file content
  */
 function generateIndexFile(options: NodeGeneratorOptions): string {
-  const { name, displayName, nodeTypes } = options
+  const { name, displayName, nodeTypes } = options;
 
   let content = `// ${displayName} Node - Main Export
 import type { EnhancedIntegrationNodeType } from '../../../../types/dynamicProperties'
 import { ${name}NodeMetadata } from './node'
 import { ${name}Credentials } from './credentials'
-import { `
+import { `;
 
   // Import properties
   const propertyImports = nodeTypes
     .map(
-      nodeType =>
-        `${name}${nodeType.id.replace(/-([a-z])/g, g => g[1].toUpperCase())}Properties`
+      (nodeType) =>
+        `${name}${nodeType.id.replace(/-([a-z])/g, (g) => g[1].toUpperCase())}Properties`
     )
-    .join(', ')
+    .join(', ');
 
   content += `${propertyImports} } from './properties'
-import { `
+import { `;
 
   // Import actions
   const actionImports = nodeTypes
-    .map(
-      nodeType =>
-        `execute${displayName}${nodeType.displayName.replace(/\s+/g, '')}`
-    )
-    .join(', ')
+    .map((nodeType) => `execute${displayName}${nodeType.displayName.replace(/\s+/g, '')}`)
+    .join(', ');
 
   content += `${actionImports}, test${displayName}Connection } from './actions'
 
-`
+`;
 
   // Generate node type exports
-  nodeTypes.forEach(nodeType => {
-    const nodeName = `${name}${nodeType.displayName.replace(/\s+/g, '')}Node`
-    const propertiesName = `${name}${nodeType.id.replace(/-([a-z])/g, g => g[1].toUpperCase())}Properties`
+  nodeTypes.forEach((nodeType) => {
+    const nodeName = `${name}${nodeType.displayName.replace(/\s+/g, '')}Node`;
+    const propertiesName = `${name}${nodeType.id.replace(/-([a-z])/g, (g) => g[1].toUpperCase())}Properties`;
 
     content += `// ${displayName} ${nodeType.displayName} Node
 export const ${nodeName}: EnhancedIntegrationNodeType = {
@@ -267,13 +262,13 @@ export const ${nodeName}: EnhancedIntegrationNodeType = {
   }
 }
 
-`
-  })
+`;
+  });
 
   // Generate combined integration export
   const nodeNames = nodeTypes.map(
-    nodeType => `${name}${nodeType.displayName.replace(/\s+/g, '')}Node`
-  )
+    (nodeType) => `${name}${nodeType.displayName.replace(/\s+/g, '')}Node`
+  );
 
   content += `// Combined ${displayName} Integration
 export const ${name}Integration = {
@@ -294,7 +289,7 @@ export const ${name}Integration = {
   nodeTypes: [
 ${nodeTypes
   .map(
-    nodeType => `    {
+    (nodeType) => `    {
       id: '${name}-${nodeType.id}',
       name: '${displayName} ${nodeType.displayName}',
       type: '${nodeType.type}',
@@ -310,10 +305,10 @@ ${nodeTypes
   // Action executors
   actions: {
 ${nodeTypes
-  .map(nodeType => {
-    const actionName = nodeType.id.replace(/-([a-z])/g, g => g[1].toUpperCase())
-    const functionName = `execute${displayName}${nodeType.displayName.replace(/\s+/g, '')}`
-    return `    ${actionName}: ${functionName}`
+  .map((nodeType) => {
+    const actionName = nodeType.id.replace(/-([a-z])/g, (g) => g[1].toUpperCase());
+    const functionName = `execute${displayName}${nodeType.displayName.replace(/\s+/g, '')}`;
+    return `    ${actionName}: ${functionName}`;
   })
   .join(',\n')},
     test: test${displayName}Connection
@@ -327,9 +322,9 @@ export {
   ${propertyImports},
   ${actionImports},
   test${displayName}Connection
-}`
+}`;
 
-  return content
+  return content;
 }
 
 /**
@@ -339,11 +334,11 @@ export function generateNode(
   options: NodeGeneratorOptions,
   basePath: string = './src/nodes/definitions'
 ) {
-  const { name, category } = options
-  const nodePath = join(basePath, category, name)
+  const { name, category } = options;
+  const nodePath = join(basePath, category, name);
 
   // Create directory structure
-  mkdirSync(nodePath, { recursive: true })
+  mkdirSync(nodePath, { recursive: true });
 
   // Generate files
   const files = {
@@ -352,20 +347,20 @@ export function generateNode(
     'properties.ts': generatePropertiesFile(options),
     'actions.ts': generateActionsFile(options),
     'index.ts': generateIndexFile(options),
-  }
+  };
 
   // Write files
   Object.entries(files).forEach(([filename, content]) => {
-    writeFileSync(join(nodePath, filename), content)
-  })
+    writeFileSync(join(nodePath, filename), content);
+  });
 
-  console.log(`✅ Generated ${options.displayName} node at ${nodePath}`)
-  console.log(`📁 Files created:`)
-  Object.keys(files).forEach(filename => {
-    console.log(`   - ${filename}`)
-  })
+  console.log(`✅ Generated ${options.displayName} node at ${nodePath}`);
+  console.log(`📁 Files created:`);
+  Object.keys(files).forEach((filename) => {
+    console.log(`   - ${filename}`);
+  });
 
-  return nodePath
+  return nodePath;
 }
 
 // Example usage:
@@ -412,7 +407,7 @@ export const exampleDiscordNode: NodeGeneratorOptions = {
       required: true,
     },
   ],
-}
+};
 
 // CLI usage (if running directly):
 // generateNode(exampleDiscordNode)`

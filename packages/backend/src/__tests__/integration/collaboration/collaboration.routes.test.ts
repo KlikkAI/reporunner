@@ -1,12 +1,12 @@
-import { describe, it, expect, beforeEach, afterEach } from "vitest";
-import request from "supertest";
-import express from "express";
-import collaborationRoutes from "../../../domains/collaboration/routes/collaborationRoutes.js";
-import { Comment } from "../../../models/Comment.js";
-import { CollaborationSession } from "../../../models/CollaborationSession.js";
-import { testUtils } from "../../setup.js";
+import express from 'express';
+import request from 'supertest';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import collaborationRoutes from '../../../domains/collaboration/routes/collaborationRoutes.js';
+import { CollaborationSession } from '../../../models/CollaborationSession.js';
+import { Comment } from '../../../models/Comment.js';
+import { testUtils } from '../../setup.js';
 
-describe("Collaboration Routes Integration", () => {
+describe('Collaboration Routes Integration', () => {
   let app: express.Application;
   let testUser: any;
   let authToken: string;
@@ -23,32 +23,32 @@ describe("Collaboration Routes Integration", () => {
       next();
     });
 
-    app.use("/collaboration", collaborationRoutes);
+    app.use('/collaboration', collaborationRoutes);
 
     // Create test user and get auth token
     testUser = await testUtils.createTestUser({
-      email: "integration@test.com",
+      email: 'integration@test.com',
     });
     authToken = await testUtils.generateTestToken(testUser._id.toString());
-    testWorkflowId = "507f1f77bcf86cd799439011";
+    testWorkflowId = '507f1f77bcf86cd799439011';
   });
 
-  describe("Comment Routes", () => {
-    describe("GET /collaboration/comments/:workflowId", () => {
-      it("should get comments for a workflow", async () => {
+  describe('Comment Routes', () => {
+    describe('GET /collaboration/comments/:workflowId', () => {
+      it('should get comments for a workflow', async () => {
         // Create test comments
         await Comment.create({
           workflowId: testWorkflowId,
           authorId: testUser._id,
-          content: "Test comment 1",
-          status: "open",
+          content: 'Test comment 1',
+          status: 'open',
         });
 
         await Comment.create({
           workflowId: testWorkflowId,
           authorId: testUser._id,
-          content: "Test comment 2",
-          status: "resolved",
+          content: 'Test comment 2',
+          status: 'resolved',
         });
 
         const response = await request(app)
@@ -60,12 +60,12 @@ describe("Collaboration Routes Integration", () => {
           data: {
             comments: expect.arrayContaining([
               expect.objectContaining({
-                content: "Test comment 1",
-                status: "open",
+                content: 'Test comment 1',
+                status: 'open',
               }),
               expect.objectContaining({
-                content: "Test comment 2",
-                status: "resolved",
+                content: 'Test comment 2',
+                status: 'resolved',
               }),
             ]),
             pagination: expect.objectContaining({
@@ -75,44 +75,44 @@ describe("Collaboration Routes Integration", () => {
         });
       });
 
-      it("should filter comments by status", async () => {
+      it('should filter comments by status', async () => {
         await Comment.create({
           workflowId: testWorkflowId,
           authorId: testUser._id,
-          content: "Open comment",
-          status: "open",
+          content: 'Open comment',
+          status: 'open',
         });
 
         await Comment.create({
           workflowId: testWorkflowId,
           authorId: testUser._id,
-          content: "Resolved comment",
-          status: "resolved",
+          content: 'Resolved comment',
+          status: 'resolved',
         });
 
         const response = await request(app)
           .get(`/collaboration/comments/${testWorkflowId}`)
-          .query({ status: "open" })
+          .query({ status: 'open' })
           .expect(200);
 
         expect(response.body.data.comments).toHaveLength(1);
-        expect(response.body.data.comments[0].status).toBe("open");
+        expect(response.body.data.comments[0].status).toBe('open');
       });
     });
 
-    describe("POST /collaboration/comments", () => {
-      it("should create a new comment", async () => {
+    describe('POST /collaboration/comments', () => {
+      it('should create a new comment', async () => {
         const commentData = {
           workflowId: testWorkflowId,
-          content: "New integration test comment",
-          position: { x: 100, y: 200, nodeId: "node123" },
-          visibility: "public",
-          priority: "medium",
-          tags: ["test", "integration"],
+          content: 'New integration test comment',
+          position: { x: 100, y: 200, nodeId: 'node123' },
+          visibility: 'public',
+          priority: 'medium',
+          tags: ['test', 'integration'],
         };
 
         const response = await request(app)
-          .post("/collaboration/comments")
+          .post('/collaboration/comments')
           .send(commentData)
           .expect(201);
 
@@ -120,52 +120,52 @@ describe("Collaboration Routes Integration", () => {
           success: true,
           data: {
             comment: expect.objectContaining({
-              content: "New integration test comment",
+              content: 'New integration test comment',
               workflowId: testWorkflowId,
               position: expect.objectContaining({
                 x: 100,
                 y: 200,
-                nodeId: "node123",
+                nodeId: 'node123',
               }),
-              status: "open",
+              status: 'open',
             }),
-            message: "Comment created successfully",
+            message: 'Comment created successfully',
           },
         });
 
         // Verify comment exists in database
         const createdComment = await Comment.findOne({
-          content: "New integration test comment",
+          content: 'New integration test comment',
         });
         expect(createdComment).toBeTruthy();
       });
 
-      it("should return validation error for missing required fields", async () => {
+      it('should return validation error for missing required fields', async () => {
         const response = await request(app)
-          .post("/collaboration/comments")
-          .send({ content: "Missing workflow ID" })
+          .post('/collaboration/comments')
+          .send({ content: 'Missing workflow ID' })
           .expect(400);
 
         expect(response.body).toMatchObject({
           success: false,
-          message: "Workflow ID and content are required",
+          message: 'Workflow ID and content are required',
         });
       });
     });
 
-    describe("PATCH /collaboration/comments/:commentId", () => {
-      it("should update a comment", async () => {
+    describe('PATCH /collaboration/comments/:commentId', () => {
+      it('should update a comment', async () => {
         const comment = await Comment.create({
           workflowId: testWorkflowId,
           authorId: testUser._id,
-          content: "Original content",
-          status: "open",
+          content: 'Original content',
+          status: 'open',
         });
 
         const updateData = {
-          content: "Updated content",
-          priority: "high",
-          tags: ["updated", "important"],
+          content: 'Updated content',
+          priority: 'high',
+          tags: ['updated', 'important'],
         };
 
         const response = await request(app)
@@ -177,27 +177,27 @@ describe("Collaboration Routes Integration", () => {
           success: true,
           data: {
             comment: expect.objectContaining({
-              content: "Updated content",
-              priority: "high",
-              tags: ["updated", "important"],
+              content: 'Updated content',
+              priority: 'high',
+              tags: ['updated', 'important'],
             }),
-            message: "Comment updated successfully",
+            message: 'Comment updated successfully',
           },
         });
       });
     });
 
-    describe("POST /collaboration/comments/:commentId/replies", () => {
-      it("should add a reply to a comment", async () => {
+    describe('POST /collaboration/comments/:commentId/replies', () => {
+      it('should add a reply to a comment', async () => {
         const comment = await Comment.create({
           workflowId: testWorkflowId,
           authorId: testUser._id,
-          content: "Original comment",
-          status: "open",
+          content: 'Original comment',
+          status: 'open',
         });
 
         const replyData = {
-          content: "This is a reply",
+          content: 'This is a reply',
           mentions: [],
         };
 
@@ -210,27 +210,27 @@ describe("Collaboration Routes Integration", () => {
           success: true,
           data: {
             reply: expect.objectContaining({
-              content: "This is a reply",
+              content: 'This is a reply',
               authorId: testUser._id.toString(),
             }),
-            message: "Reply added successfully",
+            message: 'Reply added successfully',
           },
         });
       });
     });
 
-    describe("POST /collaboration/comments/:commentId/reactions", () => {
-      it("should add a reaction to a comment", async () => {
+    describe('POST /collaboration/comments/:commentId/reactions', () => {
+      it('should add a reaction to a comment', async () => {
         const comment = await Comment.create({
           workflowId: testWorkflowId,
           authorId: testUser._id,
-          content: "Comment to react to",
-          status: "open",
+          content: 'Comment to react to',
+          status: 'open',
         });
 
         const response = await request(app)
           .post(`/collaboration/comments/${comment._id}/reactions`)
-          .send({ type: "👍" })
+          .send({ type: '👍' })
           .expect(200);
 
         expect(response.body).toMatchObject({
@@ -239,49 +239,49 @@ describe("Collaboration Routes Integration", () => {
             reactions: expect.arrayContaining([
               expect.objectContaining({
                 userId: testUser._id.toString(),
-                type: "👍",
+                type: '👍',
               }),
             ]),
-            message: "Reaction added successfully",
+            message: 'Reaction added successfully',
           },
         });
       });
     });
 
-    describe("POST /collaboration/comments/:commentId/resolve", () => {
-      it("should resolve a comment", async () => {
+    describe('POST /collaboration/comments/:commentId/resolve', () => {
+      it('should resolve a comment', async () => {
         const comment = await Comment.create({
           workflowId: testWorkflowId,
           authorId: testUser._id,
-          content: "Comment to resolve",
-          status: "open",
+          content: 'Comment to resolve',
+          status: 'open',
         });
 
         const response = await request(app)
           .post(`/collaboration/comments/${comment._id}/resolve`)
-          .send({ resolution: "Fixed the issue" })
+          .send({ resolution: 'Fixed the issue' })
           .expect(200);
 
         expect(response.body).toMatchObject({
           success: true,
           data: {
             comment: expect.objectContaining({
-              status: "resolved",
+              status: 'resolved',
               resolvedBy: testUser._id.toString(),
             }),
-            message: "Comment resolved successfully",
+            message: 'Comment resolved successfully',
           },
         });
       });
     });
 
-    describe("DELETE /collaboration/comments/:commentId", () => {
-      it("should delete a comment", async () => {
+    describe('DELETE /collaboration/comments/:commentId', () => {
+      it('should delete a comment', async () => {
         const comment = await Comment.create({
           workflowId: testWorkflowId,
           authorId: testUser._id,
-          content: "Comment to delete",
-          status: "open",
+          content: 'Comment to delete',
+          status: 'open',
         });
 
         const response = await request(app)
@@ -291,7 +291,7 @@ describe("Collaboration Routes Integration", () => {
         expect(response.body).toMatchObject({
           success: true,
           data: {
-            message: "Comment deleted successfully",
+            message: 'Comment deleted successfully',
           },
         });
 
@@ -301,28 +301,26 @@ describe("Collaboration Routes Integration", () => {
       });
     });
 
-    describe("GET /collaboration/comments/:workflowId/analytics", () => {
-      it("should return comment analytics", async () => {
+    describe('GET /collaboration/comments/:workflowId/analytics', () => {
+      it('should return comment analytics', async () => {
         // Create test comments
         await Comment.create({
           workflowId: testWorkflowId,
           authorId: testUser._id,
-          content: "Open comment",
-          status: "open",
+          content: 'Open comment',
+          status: 'open',
         });
 
         await Comment.create({
           workflowId: testWorkflowId,
           authorId: testUser._id,
-          content: "Resolved comment",
-          status: "resolved",
-          thread: [
-            { authorId: testUser._id, content: "Reply", timestamp: new Date() },
-          ],
+          content: 'Resolved comment',
+          status: 'resolved',
+          thread: [{ authorId: testUser._id, content: 'Reply', timestamp: new Date() }],
           reactions: [
             {
               userId: testUser._id.toString(),
-              type: "👍",
+              type: '👍',
               timestamp: new Date(),
             },
           ],
@@ -351,17 +349,17 @@ describe("Collaboration Routes Integration", () => {
     });
   });
 
-  describe("Session Routes", () => {
-    describe("POST /collaboration/sessions/:workflowId/join", () => {
-      it("should create and join a new session", async () => {
+  describe('Session Routes', () => {
+    describe('POST /collaboration/sessions/:workflowId/join', () => {
+      it('should create and join a new session', async () => {
         const userData = {
           user: {
             id: testUser._id.toString(),
-            name: "Test User",
-            email: "integration@test.com",
+            name: 'Test User',
+            email: 'integration@test.com',
           },
           sessionConfig: {
-            allowedRoles: ["editor", "viewer"],
+            allowedRoles: ['editor', 'viewer'],
             maxParticipants: 10,
           },
         };
@@ -379,20 +377,20 @@ describe("Collaboration Routes Integration", () => {
       });
     });
 
-    describe("GET /collaboration/sessions/user/:userId", () => {
-      it("should get user sessions", async () => {
+    describe('GET /collaboration/sessions/user/:userId', () => {
+      it('should get user sessions', async () => {
         // Create test session
         await CollaborationSession.create({
-          sessionId: "test-session-123",
+          sessionId: 'test-session-123',
           workflowId: testWorkflowId,
           createdBy: testUser._id,
           participants: [
             {
               userId: testUser._id,
               joinedAt: new Date(),
-              socketId: "socket123",
+              socketId: 'socket123',
               isActive: true,
-              role: "owner",
+              role: 'owner',
             },
           ],
           isActive: true,
@@ -407,7 +405,7 @@ describe("Collaboration Routes Integration", () => {
           data: {
             sessions: expect.arrayContaining([
               expect.objectContaining({
-                sessionId: "test-session-123",
+                sessionId: 'test-session-123',
                 workflowId: testWorkflowId,
               }),
             ]),
@@ -419,31 +417,31 @@ describe("Collaboration Routes Integration", () => {
       });
     });
 
-    describe("PATCH /collaboration/sessions/:sessionId/config", () => {
-      it("should update session configuration", async () => {
+    describe('PATCH /collaboration/sessions/:sessionId/config', () => {
+      it('should update session configuration', async () => {
         const session = await CollaborationSession.create({
-          sessionId: "test-session-123",
+          sessionId: 'test-session-123',
           workflowId: testWorkflowId,
           createdBy: testUser._id,
           participants: [
             {
               userId: testUser._id,
               joinedAt: new Date(),
-              socketId: "socket123",
+              socketId: 'socket123',
               isActive: true,
-              role: "owner",
+              role: 'owner',
             },
           ],
           isActive: true,
           settings: {
-            allowedRoles: ["editor"],
+            allowedRoles: ['editor'],
             maxParticipants: 5,
           },
         });
 
         const updateData = {
           settings: {
-            allowedRoles: ["editor", "viewer"],
+            allowedRoles: ['editor', 'viewer'],
             maxParticipants: 10,
           },
         };
@@ -458,29 +456,29 @@ describe("Collaboration Routes Integration", () => {
           data: {
             session: expect.objectContaining({
               settings: expect.objectContaining({
-                allowedRoles: ["editor", "viewer"],
+                allowedRoles: ['editor', 'viewer'],
                 maxParticipants: 10,
               }),
             }),
-            message: "Session configuration updated successfully",
+            message: 'Session configuration updated successfully',
           },
         });
       });
     });
 
-    describe("POST /collaboration/sessions/:sessionId/end", () => {
-      it("should end a session", async () => {
+    describe('POST /collaboration/sessions/:sessionId/end', () => {
+      it('should end a session', async () => {
         const session = await CollaborationSession.create({
-          sessionId: "test-session-123",
+          sessionId: 'test-session-123',
           workflowId: testWorkflowId,
           createdBy: testUser._id,
           participants: [
             {
               userId: testUser._id,
               joinedAt: new Date(),
-              socketId: "socket123",
+              socketId: 'socket123',
               isActive: true,
-              role: "owner",
+              role: 'owner',
             },
           ],
           isActive: true,
@@ -496,7 +494,7 @@ describe("Collaboration Routes Integration", () => {
             session: expect.objectContaining({
               isActive: false,
             }),
-            message: "Collaboration session ended successfully",
+            message: 'Collaboration session ended successfully',
           },
         });
 

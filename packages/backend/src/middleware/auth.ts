@@ -3,14 +3,11 @@
  * Implements JWT verification with RBAC permission checking
  */
 
-import { Request, Response, NextFunction } from "express";
-import jwt from "jsonwebtoken";
-import { AppError } from "./errorHandlers.js";
-import { UserRepository } from "../domains/auth/repositories/UserRepository.js";
-import {
-  PermissionService,
-  Permission,
-} from "../services/PermissionService.js";
+import type { NextFunction, Request, Response } from 'express';
+import jwt from 'jsonwebtoken';
+import { UserRepository } from '../domains/auth/repositories/UserRepository.js';
+import { type Permission, PermissionService } from '../services/PermissionService.js';
+import { AppError } from './errorHandlers.js';
 
 // Extend Express Request type to include user data
 declare global {
@@ -64,20 +61,16 @@ export class AuthMiddleware {
   /**
    * Verify JWT token and attach user to request
    */
-  authenticate = async (
-    req: Request,
-    res: Response,
-    next: NextFunction,
-  ): Promise<void> => {
+  authenticate = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const token = this.extractToken(req);
       if (!token) {
-        throw new AppError("Authentication token is required", 401);
+        throw new AppError('Authentication token is required', 401);
       }
 
       const secret = process.env.JWT_SECRET;
       if (!secret) {
-        throw new AppError("JWT secret not configured", 500);
+        throw new AppError('JWT secret not configured', 500);
       }
 
       // Verify and decode token
@@ -86,12 +79,12 @@ export class AuthMiddleware {
       // Verify user still exists and is active
       const user = await this.userRepository.findById(decoded.userId);
       if (!user || !user.isActive) {
-        throw new AppError("User account not found or inactive", 401);
+        throw new AppError('User account not found or inactive', 401);
       }
 
       // Check if user is locked
       if (user.isLocked()) {
-        throw new AppError("Account is temporarily locked", 423);
+        throw new AppError('Account is temporarily locked', 423);
       }
 
       // Attach user data to request
@@ -107,9 +100,9 @@ export class AuthMiddleware {
       next();
     } catch (error) {
       if (error instanceof jwt.JsonWebTokenError) {
-        next(new AppError("Invalid authentication token", 401));
+        next(new AppError('Invalid authentication token', 401));
       } else if (error instanceof jwt.TokenExpiredError) {
-        next(new AppError("Authentication token has expired", 401));
+        next(new AppError('Authentication token has expired', 401));
       } else {
         next(error);
       }
@@ -119,11 +112,7 @@ export class AuthMiddleware {
   /**
    * Optional authentication - doesn't throw error if no token
    */
-  optionalAuth = async (
-    req: Request,
-    res: Response,
-    next: NextFunction,
-  ): Promise<void> => {
+  optionalAuth = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const token = this.extractToken(req);
       if (!token) {
@@ -141,24 +130,20 @@ export class AuthMiddleware {
    * Require specific permission
    */
   requirePermission = (permission: Permission) => {
-    return async (
-      req: Request,
-      res: Response,
-      next: NextFunction,
-    ): Promise<void> => {
+    return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
       try {
         if (!req.user) {
-          throw new AppError("Authentication required", 401);
+          throw new AppError('Authentication required', 401);
         }
 
         // Super admin has all permissions
-        if (req.user.role === "super_admin") {
+        if (req.user.role === 'super_admin') {
           return next();
         }
 
         // Check if user has the required permission
         if (!req.user.permissions.includes(permission)) {
-          throw new AppError("Insufficient permissions", 403);
+          throw new AppError('Insufficient permissions', 403);
         }
 
         next();
@@ -172,28 +157,24 @@ export class AuthMiddleware {
    * Require one of multiple permissions
    */
   requireAnyPermission = (permissions: Permission[]) => {
-    return async (
-      req: Request,
-      res: Response,
-      next: NextFunction,
-    ): Promise<void> => {
+    return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
       try {
         if (!req.user) {
-          throw new AppError("Authentication required", 401);
+          throw new AppError('Authentication required', 401);
         }
 
         // Super admin has all permissions
-        if (req.user.role === "super_admin") {
+        if (req.user.role === 'super_admin') {
           return next();
         }
 
         // Check if user has any of the required permissions
         const hasPermission = permissions.some((permission) =>
-          req.user!.permissions.includes(permission),
+          req.user!.permissions.includes(permission)
         );
 
         if (!hasPermission) {
-          throw new AppError("Insufficient permissions", 403);
+          throw new AppError('Insufficient permissions', 403);
         }
 
         next();
@@ -209,18 +190,14 @@ export class AuthMiddleware {
   requireRole = (roles: string | string[]) => {
     const roleArray = Array.isArray(roles) ? roles : [roles];
 
-    return async (
-      req: Request,
-      res: Response,
-      next: NextFunction,
-    ): Promise<void> => {
+    return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
       try {
         if (!req.user) {
-          throw new AppError("Authentication required", 401);
+          throw new AppError('Authentication required', 401);
         }
 
         if (!roleArray.includes(req.user.role)) {
-          throw new AppError("Insufficient role privileges", 403);
+          throw new AppError('Insufficient role privileges', 403);
         }
 
         next();
@@ -236,15 +213,15 @@ export class AuthMiddleware {
   requireEmailVerification = async (
     req: Request,
     res: Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<void> => {
     try {
       if (!req.user) {
-        throw new AppError("Authentication required", 401);
+        throw new AppError('Authentication required', 401);
       }
 
       if (!req.user.isEmailVerified) {
-        throw new AppError("Email verification required", 403);
+        throw new AppError('Email verification required', 403);
       }
 
       next();
@@ -256,19 +233,15 @@ export class AuthMiddleware {
   /**
    * Check resource ownership or admin access
    */
-  requireOwnershipOrAdmin = (resourceUserIdField: string = "userId") => {
-    return async (
-      req: Request,
-      res: Response,
-      next: NextFunction,
-    ): Promise<void> => {
+  requireOwnershipOrAdmin = (resourceUserIdField: string = 'userId') => {
+    return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
       try {
         if (!req.user) {
-          throw new AppError("Authentication required", 401);
+          throw new AppError('Authentication required', 401);
         }
 
         // Admin and super_admin can access any resource
-        if (["admin", "super_admin"].includes(req.user.role)) {
+        if (['admin', 'super_admin'].includes(req.user.role)) {
           return next();
         }
 
@@ -279,12 +252,12 @@ export class AuthMiddleware {
           req.query[resourceUserIdField];
 
         if (!resourceUserId) {
-          throw new AppError("Resource ownership cannot be determined", 400);
+          throw new AppError('Resource ownership cannot be determined', 400);
         }
 
         // Check if user owns the resource
         if (req.user.id !== resourceUserId) {
-          throw new AppError("Access denied: insufficient privileges", 403);
+          throw new AppError('Access denied: insufficient privileges', 403);
         }
 
         next();
@@ -298,19 +271,12 @@ export class AuthMiddleware {
    * Rate limiting by user
    */
   rateLimitByUser = (maxRequests: number, windowMs: number) => {
-    const userRequests = new Map<
-      string,
-      { count: number; resetTime: number }
-    >();
+    const userRequests = new Map<string, { count: number; resetTime: number }>();
 
-    return async (
-      req: Request,
-      res: Response,
-      next: NextFunction,
-    ): Promise<void> => {
+    return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
       try {
         if (!req.user) {
-          throw new AppError("Authentication required", 401);
+          throw new AppError('Authentication required', 401);
         }
 
         const userId = req.user.id;
@@ -329,7 +295,7 @@ export class AuthMiddleware {
         if (userLimit.count >= maxRequests) {
           res.status(429).json({
             success: false,
-            error: "Too many requests",
+            error: 'Too many requests',
             retryAfter: Math.ceil((userLimit.resetTime - now) / 1000),
           });
           return;
@@ -346,18 +312,14 @@ export class AuthMiddleware {
   /**
    * Organization context validation
    */
-  requireOrganization = async (
-    req: Request,
-    res: Response,
-    next: NextFunction,
-  ): Promise<void> => {
+  requireOrganization = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       if (!req.user) {
-        throw new AppError("Authentication required", 401);
+        throw new AppError('Authentication required', 401);
       }
 
       if (!req.user.organizationId) {
-        throw new AppError("Organization membership required", 403);
+        throw new AppError('Organization membership required', 403);
       }
 
       next();
@@ -372,17 +334,17 @@ export class AuthMiddleware {
   private extractToken(req: Request): string | null {
     // Check Authorization header
     const authHeader = req.headers.authorization;
-    if (authHeader && authHeader.startsWith("Bearer ")) {
+    if (authHeader && authHeader.startsWith('Bearer ')) {
       return authHeader.substring(7);
     }
 
     // Legacy support for bearer (lowercase)
-    if (authHeader && authHeader.toLowerCase().startsWith("bearer ")) {
-      return authHeader.split(" ")[1];
+    if (authHeader && authHeader.toLowerCase().startsWith('bearer ')) {
+      return authHeader.split(' ')[1];
     }
 
     // Legacy support: token without Bearer prefix (only if no spaces)
-    if (authHeader && !authHeader.includes(" ")) {
+    if (authHeader && !authHeader.includes(' ')) {
       return authHeader;
     }
 
@@ -392,7 +354,7 @@ export class AuthMiddleware {
     }
 
     // Check query parameter (for websocket connections)
-    if (req.query && req.query.token && typeof req.query.token === "string") {
+    if (req.query && req.query.token && typeof req.query.token === 'string') {
       return req.query.token;
     }
 

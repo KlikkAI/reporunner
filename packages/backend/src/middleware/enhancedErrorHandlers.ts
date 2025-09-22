@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express';
+import type { NextFunction, Request, Response } from 'express';
 import { ValidationError } from 'express-validator';
 import { logger } from '../utils/logger.js';
 
@@ -20,12 +20,7 @@ export class EnhancedAppError extends Error {
   public code?: string;
   public details?: ErrorDetails[];
 
-  constructor(
-    message: string,
-    statusCode: number = 500,
-    code?: string,
-    details?: ErrorDetails[]
-  ) {
+  constructor(message: string, statusCode: number = 500, code?: string, details?: ErrorDetails[]) {
     super(message);
     this.statusCode = statusCode;
     this.isOperational = true;
@@ -48,7 +43,7 @@ export const enhancedCatchAsync = (fn: Function) => {
         url: req.originalUrl,
         userId: (req as any).user?.id,
         ip: req.ip,
-        userAgent: req.get('User-Agent')
+        userAgent: req.get('User-Agent'),
       });
       next(error);
     });
@@ -79,7 +74,7 @@ export const enhancedErrorHandler = (
     details = Object.values(error.errors).map((err: any) => ({
       field: err.path,
       message: err.message,
-      code: err.kind
+      code: err.kind,
     }));
   } else if (error.name === 'CastError') {
     // Mongoose cast error (invalid ObjectId, etc.)
@@ -119,7 +114,7 @@ export const enhancedErrorHandler = (
       url: req.originalUrl,
       userId: (req as any).user?.id,
       statusCode,
-      code
+      code,
     });
   } else {
     logger.warn('Client Error', {
@@ -128,7 +123,7 @@ export const enhancedErrorHandler = (
       userId: (req as any).user?.id,
       statusCode,
       code,
-      message
+      message,
     });
   }
 
@@ -137,7 +132,7 @@ export const enhancedErrorHandler = (
     status: 'error',
     message,
     ...(code && { code }),
-    ...(details && { details })
+    ...(details && { details }),
   };
 
   // Add stack trace in development
@@ -151,21 +146,17 @@ export const enhancedErrorHandler = (
 /**
  * Handle 404 errors
  */
-export const enhancedNotFoundHandler = (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): void => {
+export const enhancedNotFoundHandler = (req: Request, res: Response, next: NextFunction): void => {
   logger.warn('Route not found', {
     method: req.method,
     url: req.originalUrl,
-    ip: req.ip
+    ip: req.ip,
   });
 
   res.status(404).json({
     status: 'error',
     message: `Route ${req.method} ${req.originalUrl} not found`,
-    code: 'ROUTE_NOT_FOUND'
+    code: 'ROUTE_NOT_FOUND',
   });
 };
 
@@ -188,7 +179,7 @@ export const requestLogger = (req: Request, res: Response, next: NextFunction): 
         statusCode,
         duration,
         ip,
-        userId
+        userId,
       });
     } else {
       logger.debug('HTTP Request', {
@@ -197,7 +188,7 @@ export const requestLogger = (req: Request, res: Response, next: NextFunction): 
         statusCode,
         duration,
         ip,
-        userId
+        userId,
       });
     }
   });

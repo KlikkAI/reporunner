@@ -1,22 +1,22 @@
-import { describe, it, expect, beforeEach } from "vitest";
-import { Comment } from "../../models/Comment.js";
-import { CollaborationSession } from "../../models/CollaborationSession.js";
-import { Operation } from "../../models/Operation.js";
-import { testUtils } from "../setup.js";
+import { beforeEach, describe, expect, it } from 'vitest';
+import { CollaborationSession } from '../../models/CollaborationSession.js';
+import { Comment } from '../../models/Comment.js';
+import { Operation } from '../../models/Operation.js';
+import { testUtils } from '../setup.js';
 
-describe("Collaboration Performance Tests", () => {
+describe('Collaboration Performance Tests', () => {
   let testUser: any;
   let testWorkflowId: string;
 
   beforeEach(async () => {
     testUser = await testUtils.createTestUser({
-      email: "performance@test.com",
+      email: 'performance@test.com',
     });
-    testWorkflowId = "507f1f77bcf86cd799439011";
+    testWorkflowId = '507f1f77bcf86cd799439011';
   });
 
-  describe("Comment Performance", () => {
-    it("should handle bulk comment creation efficiently", async () => {
+  describe('Comment Performance', () => {
+    it('should handle bulk comment creation efficiently', async () => {
       const startTime = Date.now();
       const commentCount = 1000;
 
@@ -34,9 +34,9 @@ describe("Collaboration Performance Tests", () => {
             workflowId: testWorkflowId,
             authorId: testUser._id,
             content: `Performance test comment ${j}`,
-            status: "open",
+            status: 'open',
             position: { x: j % 100, y: Math.floor(j / 100) * 50 },
-            tags: ["performance", "test", `batch-${i}`],
+            tags: ['performance', 'test', `batch-${i}`],
           });
         }
 
@@ -56,11 +56,11 @@ describe("Collaboration Performance Tests", () => {
       expect(createdComments).toBe(commentCount);
 
       console.log(
-        `Created ${commentCount} comments in ${duration}ms (${((commentCount / duration) * 1000).toFixed(2)} comments/sec)`,
+        `Created ${commentCount} comments in ${duration}ms (${((commentCount / duration) * 1000).toFixed(2)} comments/sec)`
       );
     }, 10000);
 
-    it("should handle comment queries with large datasets efficiently", async () => {
+    it('should handle comment queries with large datasets efficiently', async () => {
       // Create a large dataset first
       const commentCount = 5000;
       const comments = [];
@@ -70,12 +70,10 @@ describe("Collaboration Performance Tests", () => {
           workflowId: testWorkflowId,
           authorId: testUser._id,
           content: `Query test comment ${i}`,
-          status: i % 3 === 0 ? "resolved" : "open",
+          status: i % 3 === 0 ? 'resolved' : 'open',
           position: { x: i % 200, y: Math.floor(i / 200) * 30 },
-          tags: [`tag-${i % 10}`, "performance"],
-          createdAt: new Date(
-            Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000,
-          ), // Random date within last 30 days
+          tags: [`tag-${i % 10}`, 'performance'],
+          createdAt: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000), // Random date within last 30 days
         });
       }
 
@@ -93,20 +91,20 @@ describe("Collaboration Performance Tests", () => {
       // Test 2: Status filter query
       const openComments = await Comment.find({
         workflowId: testWorkflowId,
-        status: "open",
+        status: 'open',
       }).limit(100);
 
       // Test 3: Tag filter query
       const taggedComments = await Comment.find({
         workflowId: testWorkflowId,
-        tags: "tag-5",
+        tags: 'tag-5',
       }).limit(100);
 
       // Test 4: Position-based query (spatial)
       const spatialComments = await Comment.find({
         workflowId: testWorkflowId,
-        "position.x": { $gte: 50, $lte: 150 },
-        "position.y": { $gte: 100, $lte: 200 },
+        'position.x': { $gte: 50, $lte: 150 },
+        'position.y': { $gte: 100, $lte: 200 },
       }).limit(100);
 
       const endTime = Date.now();
@@ -121,12 +119,10 @@ describe("Collaboration Performance Tests", () => {
       expect(taggedComments.length).toBeGreaterThan(0);
       expect(spatialComments.length).toBeGreaterThan(0);
 
-      console.log(
-        `Executed complex queries on ${commentCount} comments in ${queryDuration}ms`,
-      );
+      console.log(`Executed complex queries on ${commentCount} comments in ${queryDuration}ms`);
     }, 15000);
 
-    it("should handle comment aggregation efficiently", async () => {
+    it('should handle comment aggregation efficiently', async () => {
       // Create diverse test data
       const commentCount = 2000;
       const users = [];
@@ -146,26 +142,18 @@ describe("Collaboration Performance Tests", () => {
           workflowId: testWorkflowId,
           authorId: user._id,
           content: `Aggregation test comment ${i}`,
-          status: ["open", "resolved", "closed"][i % 3],
-          reactions: Array.from(
-            { length: Math.floor(Math.random() * 5) },
-            (_, j) => ({
-              userId: users[j % users.length]._id.toString(),
-              type: ["👍", "👎", "❤️", "😂"][j % 4],
-              timestamp: new Date(),
-            }),
-          ),
-          thread: Array.from(
-            { length: Math.floor(Math.random() * 3) },
-            (_, j) => ({
-              authorId: users[j % users.length]._id,
-              content: `Reply ${j}`,
-              timestamp: new Date(),
-            }),
-          ),
-          createdAt: new Date(
-            Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000,
-          ),
+          status: ['open', 'resolved', 'closed'][i % 3],
+          reactions: Array.from({ length: Math.floor(Math.random() * 5) }, (_, j) => ({
+            userId: users[j % users.length]._id.toString(),
+            type: ['👍', '👎', '❤️', '😂'][j % 4],
+            timestamp: new Date(),
+          })),
+          thread: Array.from({ length: Math.floor(Math.random() * 3) }, (_, j) => ({
+            authorId: users[j % users.length]._id,
+            content: `Reply ${j}`,
+            timestamp: new Date(),
+          })),
+          createdAt: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000),
         });
       }
 
@@ -186,14 +174,14 @@ describe("Collaboration Performance Tests", () => {
             _id: null,
             totalComments: { $sum: 1 },
             openComments: {
-              $sum: { $cond: [{ $eq: ["$status", "open"] }, 1, 0] },
+              $sum: { $cond: [{ $eq: ['$status', 'open'] }, 1, 0] },
             },
             resolvedComments: {
-              $sum: { $cond: [{ $eq: ["$status", "resolved"] }, 1, 0] },
+              $sum: { $cond: [{ $eq: ['$status', 'resolved'] }, 1, 0] },
             },
-            totalReplies: { $sum: { $size: "$thread" } },
-            totalReactions: { $sum: { $size: "$reactions" } },
-            averageRepliesPerComment: { $avg: { $size: "$thread" } },
+            totalReplies: { $sum: { $size: '$thread' } },
+            totalReactions: { $sum: { $size: '$reactions' } },
+            averageRepliesPerComment: { $avg: { $size: '$thread' } },
           },
         },
       ]);
@@ -208,7 +196,7 @@ describe("Collaboration Performance Tests", () => {
         },
         {
           $group: {
-            _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
+            _id: { $dateToString: { format: '%Y-%m-%d', date: '$createdAt' } },
             count: { $sum: 1 },
           },
         },
@@ -225,7 +213,7 @@ describe("Collaboration Performance Tests", () => {
         },
         {
           $group: {
-            _id: "$authorId",
+            _id: '$authorId',
             commentCount: { $sum: 1 },
           },
         },
@@ -253,13 +241,13 @@ describe("Collaboration Performance Tests", () => {
       expect(topCommenters).toBeInstanceOf(Array);
 
       console.log(
-        `Executed complex aggregations on ${commentCount} comments in ${aggregationDuration}ms`,
+        `Executed complex aggregations on ${commentCount} comments in ${aggregationDuration}ms`
       );
     }, 20000);
   });
 
-  describe("Session Performance", () => {
-    it("should handle multiple concurrent sessions efficiently", async () => {
+  describe('Session Performance', () => {
+    it('should handle multiple concurrent sessions efficiently', async () => {
       const sessionCount = 100;
       const startTime = Date.now();
 
@@ -270,19 +258,16 @@ describe("Collaboration Performance Tests", () => {
           sessionId: `perf-session-${i}`,
           workflowId: `workflow-${i % 10}`, // 10 different workflows
           createdBy: testUser._id,
-          participants: Array.from(
-            { length: Math.floor(Math.random() * 5) + 1 },
-            (_, j) => ({
-              userId: `user-${j}`,
-              joinedAt: new Date(),
-              socketId: `socket-${i}-${j}`,
-              isActive: Math.random() > 0.3,
-              role: ["owner", "editor", "viewer"][j % 3],
-            }),
-          ),
+          participants: Array.from({ length: Math.floor(Math.random() * 5) + 1 }, (_, j) => ({
+            userId: `user-${j}`,
+            joinedAt: new Date(),
+            socketId: `socket-${i}-${j}`,
+            isActive: Math.random() > 0.3,
+            role: ['owner', 'editor', 'viewer'][j % 3],
+          })),
           isActive: Math.random() > 0.2,
           settings: {
-            allowedRoles: ["editor", "viewer"],
+            allowedRoles: ['editor', 'viewer'],
             maxParticipants: 10,
             autoSave: true,
           },
@@ -307,12 +292,12 @@ describe("Collaboration Performance Tests", () => {
 
       // User sessions query
       const userSessions = await CollaborationSession.find({
-        "participants.userId": "user-1",
+        'participants.userId': 'user-1',
       });
 
       // Workflow sessions query
       const workflowSessions = await CollaborationSession.find({
-        workflowId: "workflow-1",
+        workflowId: 'workflow-1',
       });
 
       const queryEnd = Date.now();
@@ -321,15 +306,15 @@ describe("Collaboration Performance Tests", () => {
       expect(queryDuration).toBeLessThan(1000);
 
       console.log(
-        `Created ${sessionCount} sessions in ${duration}ms, queried in ${queryDuration}ms`,
+        `Created ${sessionCount} sessions in ${duration}ms, queried in ${queryDuration}ms`
       );
     }, 10000);
   });
 
-  describe("Operation Performance", () => {
-    it("should handle high-frequency operations efficiently", async () => {
+  describe('Operation Performance', () => {
+    it('should handle high-frequency operations efficiently', async () => {
       const operationCount = 5000;
-      const sessionId = "perf-session-operations";
+      const sessionId = 'perf-session-operations';
       const startTime = Date.now();
 
       // Create operations in batches
@@ -343,12 +328,12 @@ describe("Collaboration Performance Tests", () => {
 
         for (let j = start; j < end; j++) {
           const operationType = [
-            "node_add",
-            "node_update",
-            "node_delete",
-            "edge_add",
-            "edge_update",
-            "edge_delete",
+            'node_add',
+            'node_update',
+            'node_delete',
+            'edge_add',
+            'edge_update',
+            'edge_delete',
           ][j % 6];
 
           batchOperations.push({
@@ -357,14 +342,14 @@ describe("Collaboration Performance Tests", () => {
             authorId: testUser._id,
             type: operationType,
             target: {
-              type: operationType.startsWith("node") ? "node" : "edge",
-              id: `${operationType.startsWith("node") ? "node" : "edge"}-${j}`,
+              type: operationType.startsWith('node') ? 'node' : 'edge',
+              id: `${operationType.startsWith('node') ? 'node' : 'edge'}-${j}`,
             },
             data: {
               name: `Operation ${j}`,
               position: { x: j % 100, y: Math.floor(j / 100) * 50 },
             },
-            status: ["pending", "applied", "failed"][j % 3],
+            status: ['pending', 'applied', 'failed'][j % 3],
             version: j + 1,
             timestamp: new Date(Date.now() - Math.random() * 60000), // Random timestamp within last minute
           });
@@ -393,13 +378,13 @@ describe("Collaboration Performance Tests", () => {
       // Operations by type
       const nodeOps = await Operation.find({
         sessionId,
-        type: { $regex: "^node_" },
+        type: { $regex: '^node_' },
       }).limit(1000);
 
       // Operations by status
       const appliedOps = await Operation.find({
         sessionId,
-        status: "applied",
+        status: 'applied',
       }).limit(1000);
 
       const queryEnd = Date.now();
@@ -408,22 +393,19 @@ describe("Collaboration Performance Tests", () => {
       expect(queryDuration).toBeLessThan(2000);
 
       console.log(
-        `Created ${operationCount} operations in ${duration}ms (${((operationCount / duration) * 1000).toFixed(2)} ops/sec)`,
+        `Created ${operationCount} operations in ${duration}ms (${((operationCount / duration) * 1000).toFixed(2)} ops/sec)`
       );
       console.log(`Queried operations in ${queryDuration}ms`);
     }, 15000);
 
-    it("should handle operation conflict resolution efficiently", async () => {
+    it('should handle operation conflict resolution efficiently', async () => {
       const conflictOperations = 1000;
-      const sessionId = "conflict-resolution-session";
+      const sessionId = 'conflict-resolution-session';
       const startTime = Date.now();
 
       // Create operations that might conflict (same targets)
       const operations = [];
-      const nodeIds = Array.from(
-        { length: 10 },
-        (_, i) => `conflict-node-${i}`,
-      );
+      const nodeIds = Array.from({ length: 10 }, (_, i) => `conflict-node-${i}`);
 
       for (let i = 0; i < conflictOperations; i++) {
         const nodeId = nodeIds[i % nodeIds.length];
@@ -431,13 +413,13 @@ describe("Collaboration Performance Tests", () => {
           sessionId,
           workflowId: testWorkflowId,
           authorId: testUser._id,
-          type: "node_update",
-          target: { type: "node", id: nodeId },
+          type: 'node_update',
+          target: { type: 'node', id: nodeId },
           data: {
             name: `Updated name ${i}`,
             properties: { value: i },
           },
-          status: "pending",
+          status: 'pending',
           version: i + 1,
           timestamp: new Date(Date.now() + i * 10), // Sequential timestamps
         });
@@ -451,8 +433,8 @@ describe("Collaboration Performance Tests", () => {
       for (const nodeId of nodeIds) {
         const conflictingOps = await Operation.find({
           sessionId,
-          "target.id": nodeId,
-          status: "pending",
+          'target.id': nodeId,
+          status: 'pending',
         }).sort({ timestamp: 1 });
 
         if (conflictingOps.length > 1) {
@@ -465,15 +447,12 @@ describe("Collaboration Performance Tests", () => {
               _id: { $in: conflictingOps.slice(0, -1).map((op) => op._id) },
             },
             {
-              $set: { status: "transformed" },
-            },
+              $set: { status: 'transformed' },
+            }
           );
 
           // Mark last operation as applied
-          await Operation.updateOne(
-            { _id: lastOp._id },
-            { $set: { status: "applied" } },
-          );
+          await Operation.updateOne({ _id: lastOp._id }, { $set: { status: 'applied' } });
         }
       }
 
@@ -487,18 +466,18 @@ describe("Collaboration Performance Tests", () => {
       // Verify conflict resolution
       const appliedOps = await Operation.countDocuments({
         sessionId,
-        status: "applied",
+        status: 'applied',
       });
       const transformedOps = await Operation.countDocuments({
         sessionId,
-        status: "transformed",
+        status: 'transformed',
       });
 
       expect(appliedOps).toBe(nodeIds.length); // One applied operation per node
       expect(transformedOps).toBe(conflictOperations - nodeIds.length); // Rest are transformed
 
       console.log(
-        `Resolved ${conflictOperations} potentially conflicting operations in ${resolutionDuration}ms`,
+        `Resolved ${conflictOperations} potentially conflicting operations in ${resolutionDuration}ms`
       );
     }, 12000);
   });

@@ -1,11 +1,11 @@
-import { Request, Response, NextFunction } from "express";
-import multer, { FileFilterCallback, MulterError } from "multer";
-import path from "path";
-import fs from "fs";
-import crypto from "crypto";
-import { promisify } from "util";
-import { exec } from "child_process";
-import { ERROR_CODES } from "@reporunner/constants";
+import { ERROR_CODES } from '@reporunner/constants';
+import { exec } from 'child_process';
+import crypto from 'crypto';
+import type { NextFunction, Request, Response } from 'express';
+import fs from 'fs';
+import multer, { type FileFilterCallback, MulterError } from 'multer';
+import path from 'path';
+import { promisify } from 'util';
 
 const execAsync = promisify(exec);
 const unlinkAsync = promisify(fs.unlink);
@@ -25,7 +25,7 @@ export interface FileUploadConfig {
   validateMagicNumbers?: boolean;
   sanitizeFilename?: boolean;
   metadata?: boolean;
-  hashAlgorithm?: "md5" | "sha1" | "sha256" | "sha512";
+  hashAlgorithm?: 'md5' | 'sha1' | 'sha256' | 'sha512';
 }
 
 export interface UploadedFile {
@@ -57,74 +57,65 @@ export interface FileMetadata {
  * Magic number signatures for file type validation
  */
 const MAGIC_NUMBERS: Record<string, Buffer[]> = {
-  "image/jpeg": [Buffer.from([0xff, 0xd8, 0xff])],
-  "image/png": [Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a])],
-  "image/gif": [Buffer.from("GIF87a"), Buffer.from("GIF89a")],
-  "image/webp": [Buffer.from("RIFF"), Buffer.from("WEBP")],
-  "application/pdf": [Buffer.from([0x25, 0x50, 0x44, 0x46])],
-  "application/zip": [
-    Buffer.from([0x50, 0x4b, 0x03, 0x04]),
-    Buffer.from([0x50, 0x4b, 0x05, 0x06]),
-  ],
-  "application/x-rar": [Buffer.from("Rar!")],
-  "application/x-7z-compressed": [
-    Buffer.from([0x37, 0x7a, 0xbc, 0xaf, 0x27, 0x1c]),
-  ],
-  "application/gzip": [Buffer.from([0x1f, 0x8b])],
-  "text/plain": [
+  'image/jpeg': [Buffer.from([0xff, 0xd8, 0xff])],
+  'image/png': [Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a])],
+  'image/gif': [Buffer.from('GIF87a'), Buffer.from('GIF89a')],
+  'image/webp': [Buffer.from('RIFF'), Buffer.from('WEBP')],
+  'application/pdf': [Buffer.from([0x25, 0x50, 0x44, 0x46])],
+  'application/zip': [Buffer.from([0x50, 0x4b, 0x03, 0x04]), Buffer.from([0x50, 0x4b, 0x05, 0x06])],
+  'application/x-rar': [Buffer.from('Rar!')],
+  'application/x-7z-compressed': [Buffer.from([0x37, 0x7a, 0xbc, 0xaf, 0x27, 0x1c])],
+  'application/gzip': [Buffer.from([0x1f, 0x8b])],
+  'text/plain': [
     Buffer.from([0xef, 0xbb, 0xbf]),
     Buffer.from([0xff, 0xfe]),
     Buffer.from([0xfe, 0xff]),
   ],
-  "application/msword": [
-    Buffer.from([0xd0, 0xcf, 0x11, 0xe0, 0xa1, 0xb1, 0x1a, 0xe1]),
-  ],
-  "application/vnd.openxmlformats-officedocument": [
-    Buffer.from([0x50, 0x4b, 0x03, 0x04]),
-  ],
+  'application/msword': [Buffer.from([0xd0, 0xcf, 0x11, 0xe0, 0xa1, 0xb1, 0x1a, 0xe1])],
+  'application/vnd.openxmlformats-officedocument': [Buffer.from([0x50, 0x4b, 0x03, 0x04])],
 };
 
 /**
  * Dangerous file extensions that should always be blocked
  */
 const DANGEROUS_EXTENSIONS = [
-  ".exe",
-  ".dll",
-  ".bat",
-  ".cmd",
-  ".com",
-  ".scr",
-  ".vbs",
-  ".vbe",
-  ".js",
-  ".jse",
-  ".ws",
-  ".wsf",
-  ".wsc",
-  ".wsh",
-  ".ps1",
-  ".ps1xml",
-  ".ps2",
-  ".ps2xml",
-  ".psc1",
-  ".psc2",
-  ".msh",
-  ".msh1",
-  ".msh2",
-  ".mshxml",
-  ".msh1xml",
-  ".msh2xml",
-  ".scf",
-  ".lnk",
-  ".inf",
-  ".reg",
-  ".app",
-  ".pif",
-  ".hta",
-  ".cpl",
-  ".msc",
-  ".jar",
-  ".sh",
+  '.exe',
+  '.dll',
+  '.bat',
+  '.cmd',
+  '.com',
+  '.scr',
+  '.vbs',
+  '.vbe',
+  '.js',
+  '.jse',
+  '.ws',
+  '.wsf',
+  '.wsc',
+  '.wsh',
+  '.ps1',
+  '.ps1xml',
+  '.ps2',
+  '.ps2xml',
+  '.psc1',
+  '.psc2',
+  '.msh',
+  '.msh1',
+  '.msh2',
+  '.mshxml',
+  '.msh1xml',
+  '.msh2xml',
+  '.scf',
+  '.lnk',
+  '.inf',
+  '.reg',
+  '.app',
+  '.pif',
+  '.hta',
+  '.cpl',
+  '.msc',
+  '.jar',
+  '.sh',
 ];
 
 /**
@@ -132,16 +123,11 @@ const DANGEROUS_EXTENSIONS = [
  */
 export function createFileUploadMiddleware(config: FileUploadConfig = {}) {
   const {
-    destination = "/tmp/uploads",
+    destination = '/tmp/uploads',
     maxFileSize = 10 * 1024 * 1024, // 10 MB
     maxFiles = 10,
-    allowedMimeTypes = [
-      "image/jpeg",
-      "image/png",
-      "image/gif",
-      "application/pdf",
-    ],
-    allowedExtensions = [".jpg", ".jpeg", ".png", ".gif", ".pdf"],
+    allowedMimeTypes = ['image/jpeg', 'image/png', 'image/gif', 'application/pdf'],
+    allowedExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.pdf'],
     blockedExtensions = DANGEROUS_EXTENSIONS,
     preserveExtension = true,
     generateUniqueName = true,
@@ -164,8 +150,8 @@ export function createFileUploadMiddleware(config: FileUploadConfig = {}) {
         : file.originalname;
 
       if (generateUniqueName) {
-        const uniqueSuffix = `${Date.now()}-${crypto.randomBytes(6).toString("hex")}`;
-        const ext = preserveExtension ? path.extname(sanitized) : "";
+        const uniqueSuffix = `${Date.now()}-${crypto.randomBytes(6).toString('hex')}`;
+        const ext = preserveExtension ? path.extname(sanitized) : '';
         cb(null, `${path.basename(sanitized, ext)}-${uniqueSuffix}${ext}`);
       } else {
         cb(null, sanitized);
@@ -174,16 +160,9 @@ export function createFileUploadMiddleware(config: FileUploadConfig = {}) {
   });
 
   // File filter
-  const fileFilter = (
-    _req: Request,
-    file: Express.Multer.File,
-    cb: FileFilterCallback,
-  ) => {
+  const fileFilter = (_req: Request, file: Express.Multer.File, cb: FileFilterCallback) => {
     // Check MIME type
-    if (
-      allowedMimeTypes.length > 0 &&
-      !allowedMimeTypes.includes(file.mimetype)
-    ) {
+    if (allowedMimeTypes.length > 0 && !allowedMimeTypes.includes(file.mimetype)) {
       return cb(new Error(`File type ${file.mimetype} is not allowed`));
     }
 
@@ -192,9 +171,7 @@ export function createFileUploadMiddleware(config: FileUploadConfig = {}) {
 
     // Block dangerous extensions
     if (blockedExtensions.includes(ext)) {
-      return cb(
-        new Error(`File extension ${ext} is blocked for security reasons`),
-      );
+      return cb(new Error(`File extension ${ext} is blocked for security reasons`));
     }
 
     // Check allowed extensions
@@ -203,11 +180,8 @@ export function createFileUploadMiddleware(config: FileUploadConfig = {}) {
     }
 
     // Sanitize filename for path traversal attempts
-    if (
-      file.originalname.includes("../") ||
-      file.originalname.includes("..\\")
-    ) {
-      return cb(new Error("Invalid filename"));
+    if (file.originalname.includes('../') || file.originalname.includes('..\\')) {
+      return cb(new Error('Invalid filename'));
     }
 
     cb(null, true);
@@ -224,12 +198,10 @@ export function createFileUploadMiddleware(config: FileUploadConfig = {}) {
   });
 
   return {
-    single: (fieldName: string) =>
-      createUploadHandler(upload.single(fieldName), config),
+    single: (fieldName: string) => createUploadHandler(upload.single(fieldName), config),
     array: (fieldName: string, maxCount?: number) =>
       createUploadHandler(upload.array(fieldName, maxCount), config),
-    fields: (fields: multer.Field[]) =>
-      createUploadHandler(upload.fields(fields), config),
+    fields: (fields: multer.Field[]) => createUploadHandler(upload.fields(fields), config),
     any: () => createUploadHandler(upload.any(), config),
   };
 }
@@ -242,9 +214,7 @@ function createUploadHandler(multerMiddleware: any, config: FileUploadConfig) {
     multerMiddleware,
     async (req: Request, res: Response, next: NextFunction) => {
       try {
-        const files = req.file
-          ? [req.file]
-          : (req.files as Express.Multer.File[]) || [];
+        const files = req.file ? [req.file] : (req.files as Express.Multer.File[]) || [];
 
         if (files.length === 0) {
           return next();
@@ -258,14 +228,9 @@ function createUploadHandler(multerMiddleware: any, config: FileUploadConfig) {
           try {
             // Validate magic numbers
             if (config.validateMagicNumbers) {
-              const isValid = await validateMagicNumber(
-                file.path,
-                file.mimetype,
-              );
+              const isValid = await validateMagicNumber(file.path, file.mimetype);
               if (!isValid) {
-                errors.push(
-                  `File ${file.originalname} content does not match declared MIME type`,
-                );
+                errors.push(`File ${file.originalname} content does not match declared MIME type`);
                 await unlinkAsync(file.path);
                 continue;
               }
@@ -274,13 +239,10 @@ function createUploadHandler(multerMiddleware: any, config: FileUploadConfig) {
             // Scan for viruses
             let virusScanResult;
             if (config.scanForVirus) {
-              virusScanResult = await scanFileForVirus(
-                file.path,
-                config.clamavPath,
-              );
+              virusScanResult = await scanFileForVirus(file.path, config.clamavPath);
               if (!virusScanResult.clean) {
                 errors.push(
-                  `File ${file.originalname} contains malware: ${virusScanResult.threat}`,
+                  `File ${file.originalname} contains malware: ${virusScanResult.threat}`
                 );
                 await unlinkAsync(file.path);
                 continue;
@@ -300,7 +262,7 @@ function createUploadHandler(multerMiddleware: any, config: FileUploadConfig) {
                 uploadedAt: new Date(),
                 uploadedBy: (req as any).user?.id,
                 ipAddress: req.ip,
-                userAgent: req.headers["user-agent"],
+                userAgent: req.headers['user-agent'],
                 virusScanResult,
               };
             }
@@ -311,9 +273,7 @@ function createUploadHandler(multerMiddleware: any, config: FileUploadConfig) {
               metadata,
             } as UploadedFile);
           } catch (error: any) {
-            errors.push(
-              `Error processing file ${file.originalname}: ${error.message}`,
-            );
+            errors.push(`Error processing file ${file.originalname}: ${error.message}`);
             await unlinkAsync(file.path).catch(() => {});
           }
         }
@@ -323,7 +283,7 @@ function createUploadHandler(multerMiddleware: any, config: FileUploadConfig) {
             success: false,
             error: {
               code: ERROR_CODES.FILE_UPLOAD_ERROR,
-              message: "File upload failed",
+              message: 'File upload failed',
               details: errors,
             },
           });
@@ -339,11 +299,11 @@ function createUploadHandler(multerMiddleware: any, config: FileUploadConfig) {
         // Log upload audit event if audit logger is available
         if ((global as any).auditLogger) {
           await (global as any).auditLogger.log({
-            type: "FILE_UPLOADED",
-            severity: "LOW",
+            type: 'FILE_UPLOADED',
+            severity: 'LOW',
             userId: (req as any).user?.id,
-            action: "File upload",
-            result: "SUCCESS",
+            action: 'File upload',
+            result: 'SUCCESS',
             details: {
               files: processedFiles.map((f) => ({
                 filename: f.filename,
@@ -367,10 +327,7 @@ function createUploadHandler(multerMiddleware: any, config: FileUploadConfig) {
 /**
  * Validate magic number of file
  */
-async function validateMagicNumber(
-  filePath: string,
-  mimeType: string,
-): Promise<boolean> {
+async function validateMagicNumber(filePath: string, mimeType: string): Promise<boolean> {
   const signatures = MAGIC_NUMBERS[mimeType];
   if (!signatures || signatures.length === 0) {
     // No signature to validate against
@@ -378,7 +335,7 @@ async function validateMagicNumber(
   }
 
   const buffer = Buffer.alloc(Math.max(...signatures.map((s) => s.length)));
-  const fd = fs.openSync(filePath, "r");
+  const fd = fs.openSync(filePath, 'r');
 
   try {
     fs.readSync(fd, buffer, 0, buffer.length, 0);
@@ -400,7 +357,7 @@ async function validateMagicNumber(
  */
 async function scanFileForVirus(
   filePath: string,
-  clamavPath?: string,
+  clamavPath?: string
 ): Promise<{
   scanned: boolean;
   clean: boolean;
@@ -411,21 +368,19 @@ async function scanFileForVirus(
   }
 
   try {
-    const { stdout, stderr } = await execAsync(
-      `${clamavPath} --no-summary "${filePath}"`,
-    );
+    const { stdout, stderr } = await execAsync(`${clamavPath} --no-summary "${filePath}"`);
 
     if (stderr) {
-      console.error("ClamAV stderr:", stderr);
+      console.error('ClamAV stderr:', stderr);
     }
 
     const output = stdout.toLowerCase();
-    const clean = output.includes("ok") && !output.includes("found");
+    const clean = output.includes('ok') && !output.includes('found');
 
     if (!clean) {
       // Extract threat name
       const match = output.match(/: (.+) found/i);
-      const threat = match ? match[1] : "Unknown threat";
+      const threat = match ? match[1] : 'Unknown threat';
       return { scanned: true, clean: false, threat };
     }
 
@@ -434,11 +389,11 @@ async function scanFileForVirus(
     // ClamAV returns exit code 1 if virus is found
     if (error.code === 1) {
       const match = error.stdout?.match(/: (.+) found/i);
-      const threat = match ? match[1] : "Unknown threat";
+      const threat = match ? match[1] : 'Unknown threat';
       return { scanned: true, clean: false, threat };
     }
 
-    console.error("ClamAV error:", error);
+    console.error('ClamAV error:', error);
     return { scanned: false, clean: true };
   }
 }
@@ -446,17 +401,14 @@ async function scanFileForVirus(
 /**
  * Calculate file hash
  */
-async function calculateFileHash(
-  filePath: string,
-  algorithm: string,
-): Promise<string> {
+async function calculateFileHash(filePath: string, algorithm: string): Promise<string> {
   return new Promise((resolve, reject) => {
     const hash = crypto.createHash(algorithm);
     const stream = fs.createReadStream(filePath);
 
-    stream.on("error", reject);
-    stream.on("data", (chunk) => hash.update(chunk));
-    stream.on("end", () => resolve(hash.digest("hex")));
+    stream.on('error', reject);
+    stream.on('data', (chunk) => hash.update(chunk));
+    stream.on('end', () => resolve(hash.digest('hex')));
   });
 }
 
@@ -468,14 +420,14 @@ function sanitizeFilenameString(filename: string): string {
   const basename = path.basename(filename);
 
   // Remove special characters except dots and hyphens
-  let sanitized = basename.replace(/[^a-zA-Z0-9.-]/g, "_");
+  let sanitized = basename.replace(/[^a-zA-Z0-9.-]/g, '_');
 
   // Remove multiple dots (prevent extension spoofing)
-  sanitized = sanitized.replace(/\.{2,}/g, "_");
+  sanitized = sanitized.replace(/\.{2,}/g, '_');
 
   // Ensure filename doesn't start with a dot (hidden file)
-  if (sanitized.startsWith(".")) {
-    sanitized = "_" + sanitized.substring(1);
+  if (sanitized.startsWith('.')) {
+    sanitized = '_' + sanitized.substring(1);
   }
 
   // Limit length
@@ -492,17 +444,10 @@ function sanitizeFilenameString(filename: string): string {
  * Create file cleanup middleware
  */
 export function createFileCleanupMiddleware() {
-  return async (
-    err: any,
-    req: Request,
-    res: Response,
-    next: NextFunction,
-  ): Promise<void> => {
+  return async (err: any, req: Request, res: Response, next: NextFunction): Promise<void> => {
     // Clean up uploaded files on error
     if (err) {
-      const files = req.file
-        ? [req.file]
-        : (req.files as Express.Multer.File[]) || [];
+      const files = req.file ? [req.file] : (req.files as Express.Multer.File[]) || [];
 
       for (const file of files) {
         try {
@@ -515,17 +460,17 @@ export function createFileCleanupMiddleware() {
 
     // Handle multer errors
     if (err instanceof MulterError) {
-      let message = "File upload error";
+      let message = 'File upload error';
 
       switch (err.code) {
-        case "LIMIT_FILE_SIZE":
-          message = "File too large";
+        case 'LIMIT_FILE_SIZE':
+          message = 'File too large';
           break;
-        case "LIMIT_FILE_COUNT":
-          message = "Too many files";
+        case 'LIMIT_FILE_COUNT':
+          message = 'Too many files';
           break;
-        case "LIMIT_UNEXPECTED_FILE":
-          message = "Unexpected field";
+        case 'LIMIT_UNEXPECTED_FILE':
+          message = 'Unexpected field';
           break;
       }
 
@@ -547,13 +492,9 @@ export function createFileCleanupMiddleware() {
 /**
  * Create file type validation middleware
  */
-export function createFileTypeValidator(
-  allowedTypes: Record<string, string[]>,
-) {
+export function createFileTypeValidator(allowedTypes: Record<string, string[]>) {
   return (req: Request, res: Response, next: NextFunction): void => {
-    const files = req.file
-      ? [req.file]
-      : (req.files as Express.Multer.File[]) || [];
+    const files = req.file ? [req.file] : (req.files as Express.Multer.File[]) || [];
 
     for (const file of files) {
       const fieldTypes = allowedTypes[file.fieldname];
@@ -574,7 +515,7 @@ export function createFileTypeValidator(
           success: false,
           error: {
             code: ERROR_CODES.VALIDATION_ERROR,
-            message: `Invalid file type for ${file.fieldname}. Allowed types: ${fieldTypes.join(", ")}`,
+            message: `Invalid file type for ${file.fieldname}. Allowed types: ${fieldTypes.join(', ')}`,
           },
         });
         return;
@@ -590,9 +531,7 @@ export function createFileTypeValidator(
  */
 export function createFieldSizeLimiter(limits: Record<string, number>) {
   return (req: Request, res: Response, next: NextFunction): void => {
-    const files = req.file
-      ? [req.file]
-      : (req.files as Express.Multer.File[]) || [];
+    const files = req.file ? [req.file] : (req.files as Express.Multer.File[]) || [];
 
     for (const file of files) {
       const limit = limits[file.fieldname];
@@ -622,13 +561,9 @@ export function createSecureDownloadMiddleware(
     allowedPaths?: string[];
     requireAuth?: boolean;
     logDownloads?: boolean;
-  } = { basePath: "/uploads" },
+  } = { basePath: '/uploads' }
 ) {
-  return async (
-    req: Request,
-    res: Response,
-    next: NextFunction,
-  ): Promise<void> => {
+  return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       // Check authentication if required
       if (options.requireAuth && !(req as any).user) {
@@ -636,7 +571,7 @@ export function createSecureDownloadMiddleware(
           success: false,
           error: {
             code: ERROR_CODES.UNAUTHORIZED,
-            message: "Authentication required",
+            message: 'Authentication required',
           },
         });
         return;
@@ -645,24 +580,24 @@ export function createSecureDownloadMiddleware(
       // Get requested file path
       const filename = req.params.filename || req.query.filename;
 
-      if (!filename || typeof filename !== "string") {
+      if (!filename || typeof filename !== 'string') {
         res.status(400).json({
           success: false,
           error: {
             code: ERROR_CODES.VALIDATION_ERROR,
-            message: "Filename is required",
+            message: 'Filename is required',
           },
         });
         return;
       }
 
       // Prevent path traversal
-      if (filename.includes("../") || filename.includes("..\\")) {
+      if (filename.includes('../') || filename.includes('..\\')) {
         res.status(400).json({
           success: false,
           error: {
             code: ERROR_CODES.SECURITY_VIOLATION,
-            message: "Invalid filename",
+            message: 'Invalid filename',
           },
         });
         return;
@@ -679,7 +614,7 @@ export function createSecureDownloadMiddleware(
           success: false,
           error: {
             code: ERROR_CODES.FORBIDDEN,
-            message: "Access denied",
+            message: 'Access denied',
           },
         });
         return;
@@ -693,7 +628,7 @@ export function createSecureDownloadMiddleware(
           success: false,
           error: {
             code: ERROR_CODES.NOT_FOUND,
-            message: "File not found",
+            message: 'File not found',
           },
         });
         return;
@@ -702,29 +637,29 @@ export function createSecureDownloadMiddleware(
       // Log download if enabled
       if (options.logDownloads && (global as any).auditLogger) {
         await (global as any).auditLogger.log({
-          type: "FILE_DOWNLOADED",
-          severity: "LOW",
+          type: 'FILE_DOWNLOADED',
+          severity: 'LOW',
           userId: (req as any).user?.id,
-          action: "File download",
-          result: "SUCCESS",
+          action: 'File download',
+          result: 'SUCCESS',
           details: { filename },
         });
       }
 
       // Set security headers
-      res.setHeader("X-Content-Type-Options", "nosniff");
-      res.setHeader("Content-Security-Policy", "default-src 'none'");
+      res.setHeader('X-Content-Type-Options', 'nosniff');
+      res.setHeader('Content-Security-Policy', "default-src 'none'");
 
       // Send file
       res.download(resolvedPath, path.basename(filename), (err) => {
         if (err) {
-          console.error("Download error:", err);
+          console.error('Download error:', err);
           if (!res.headersSent) {
             res.status(500).json({
               success: false,
               error: {
                 code: ERROR_CODES.INTERNAL_ERROR,
-                message: "Failed to download file",
+                message: 'Failed to download file',
               },
             });
           }

@@ -1,40 +1,40 @@
-import { Command } from "commander";
-import chalk from "chalk";
-import inquirer from "inquirer";
-import { writeFileSync, mkdirSync } from "fs";
-import { join } from "path";
+import chalk from 'chalk';
+import { Command } from 'commander';
+import { mkdirSync, writeFileSync } from 'fs';
+import inquirer from 'inquirer';
+import { join } from 'path';
 
-export const initCommand = new Command("init")
-  .description("Initialize a new Reporunner project")
-  .option("-n, --name <name>", "Project name")
-  .option("-d, --dir <directory>", "Project directory", ".")
+export const initCommand = new Command('init')
+  .description('Initialize a new Reporunner project')
+  .option('-n, --name <name>', 'Project name')
+  .option('-d, --dir <directory>', 'Project directory', '.')
   .action(async (options) => {
-    console.log(chalk.blue("🚀 Initializing Reporunner project...\n"));
+    console.log(chalk.blue('🚀 Initializing Reporunner project...\n'));
 
     // Get project details
     const answers = await inquirer.prompt([
       {
-        type: "input",
-        name: "name",
-        message: "Project name:",
-        default: options.name || "my-reporunner-project",
-        validate: (input) => input.length > 0 || "Project name is required",
+        type: 'input',
+        name: 'name',
+        message: 'Project name:',
+        default: options.name || 'my-reporunner-project',
+        validate: (input) => input.length > 0 || 'Project name is required',
       },
       {
-        type: "input",
-        name: "description",
-        message: "Project description:",
-        default: "A Reporunner workflow automation project",
+        type: 'input',
+        name: 'description',
+        message: 'Project description:',
+        default: 'A Reporunner workflow automation project',
       },
       {
-        type: "list",
-        name: "template",
-        message: "Choose a template:",
+        type: 'list',
+        name: 'template',
+        message: 'Choose a template:',
         choices: [
-          { name: "Basic workflow (recommended)", value: "basic" },
-          { name: "AI-powered workflows", value: "ai" },
-          { name: "Data processing workflows", value: "data" },
-          { name: "Empty project", value: "empty" },
+          { name: 'Basic workflow (recommended)', value: 'basic' },
+          { name: 'AI-powered workflows', value: 'ai' },
+          { name: 'Data processing workflows', value: 'data' },
+          { name: 'Empty project', value: 'empty' },
         ],
       },
     ]);
@@ -44,36 +44,33 @@ export const initCommand = new Command("init")
 
     try {
       mkdirSync(projectDir, { recursive: true });
-      mkdirSync(join(projectDir, "workflows"), { recursive: true });
-      mkdirSync(join(projectDir, "credentials"), { recursive: true });
+      mkdirSync(join(projectDir, 'workflows'), { recursive: true });
+      mkdirSync(join(projectDir, 'credentials'), { recursive: true });
 
       // Create package.json
       const packageJson = {
         name: answers.name,
-        version: "1.0.0",
+        version: '1.0.0',
         description: answers.description,
-        main: "index.js",
+        main: 'index.js',
         scripts: {
-          start: "reporunner workflow run",
-          deploy: "reporunner deploy",
-          test: "reporunner workflow test",
+          start: 'reporunner workflow run',
+          deploy: 'reporunner deploy',
+          test: 'reporunner workflow test',
         },
         dependencies: {
-          "@reporunner/cli": "^1.0.0",
+          '@reporunner/cli': '^1.0.0',
         },
       };
 
-      writeFileSync(
-        join(projectDir, "package.json"),
-        JSON.stringify(packageJson, null, 2),
-      );
+      writeFileSync(join(projectDir, 'package.json'), JSON.stringify(packageJson, null, 2));
 
       // Create basic workflow template
-      if (answers.template !== "empty") {
+      if (answers.template !== 'empty') {
         const workflow = createWorkflowTemplate(answers.template);
         writeFileSync(
-          join(projectDir, "workflows", "example.json"),
-          JSON.stringify(workflow, null, 2),
+          join(projectDir, 'workflows', 'example.json'),
+          JSON.stringify(workflow, null, 2)
         );
       }
 
@@ -89,26 +86,23 @@ DATABASE_URL=mongodb://localhost:27017/reporunner
 # NODE_PATH=./custom-nodes
 `;
 
-      writeFileSync(join(projectDir, ".env.example"), envContent);
+      writeFileSync(join(projectDir, '.env.example'), envContent);
 
       // Create README
-      const readmeContent = createReadmeTemplate(
-        answers.name,
-        answers.description,
-      );
-      writeFileSync(join(projectDir, "README.md"), readmeContent);
+      const readmeContent = createReadmeTemplate(answers.name, answers.description);
+      writeFileSync(join(projectDir, 'README.md'), readmeContent);
 
-      console.log(chalk.green("✅ Project initialized successfully!\n"));
-      console.log(chalk.yellow("Next steps:"));
+      console.log(chalk.green('✅ Project initialized successfully!\n'));
+      console.log(chalk.yellow('Next steps:'));
       console.log(`  cd ${answers.name}`);
-      console.log("  cp .env.example .env");
-      console.log("  # Edit .env with your configuration");
-      console.log("  pnpm install");
-      console.log("  pnpm start");
+      console.log('  cp .env.example .env');
+      console.log('  # Edit .env with your configuration');
+      console.log('  pnpm install');
+      console.log('  pnpm start');
     } catch (error) {
       console.error(
-        chalk.red("❌ Failed to create project:"),
-        error instanceof Error ? error.message : String(error),
+        chalk.red('❌ Failed to create project:'),
+        error instanceof Error ? error.message : String(error)
       );
       process.exit(1);
     }
@@ -116,9 +110,9 @@ DATABASE_URL=mongodb://localhost:27017/reporunner
 
 function createWorkflowTemplate(template: string) {
   const baseWorkflow = {
-    id: "example-workflow",
-    name: "Example Workflow",
-    description: "An example workflow to get you started",
+    id: 'example-workflow',
+    name: 'Example Workflow',
+    description: 'An example workflow to get you started',
     active: false,
     nodes: [],
     edges: [],
@@ -127,55 +121,55 @@ function createWorkflowTemplate(template: string) {
   };
 
   switch (template) {
-    case "basic":
+    case 'basic':
       return {
         ...baseWorkflow,
-        name: "Basic Email Workflow",
-        description: "Send emails based on webhook triggers",
+        name: 'Basic Email Workflow',
+        description: 'Send emails based on webhook triggers',
         nodes: [
           {
-            id: "trigger-1",
-            type: "webhook-trigger",
+            id: 'trigger-1',
+            type: 'webhook-trigger',
             position: { x: 100, y: 100 },
-            data: { path: "/webhook/email" },
+            data: { path: '/webhook/email' },
           },
           {
-            id: "email-1",
-            type: "email-send",
+            id: 'email-1',
+            type: 'email-send',
             position: { x: 300, y: 100 },
             data: {
-              to: "{{ $trigger.email }}",
-              subject: "Hello from Reporunner!",
-              body: "This is an automated email.",
+              to: '{{ $trigger.email }}',
+              subject: 'Hello from Reporunner!',
+              body: 'This is an automated email.',
             },
           },
         ],
-        edges: [{ id: "e1-2", source: "trigger-1", target: "email-1" }],
+        edges: [{ id: 'e1-2', source: 'trigger-1', target: 'email-1' }],
       };
 
-    case "ai":
+    case 'ai':
       return {
         ...baseWorkflow,
-        name: "AI Content Generation",
-        description: "Generate content using AI models",
+        name: 'AI Content Generation',
+        description: 'Generate content using AI models',
         nodes: [
           {
-            id: "trigger-1",
-            type: "schedule-trigger",
+            id: 'trigger-1',
+            type: 'schedule-trigger',
             position: { x: 100, y: 100 },
-            data: { cron: "0 9 * * 1" },
+            data: { cron: '0 9 * * 1' },
           },
           {
-            id: "ai-1",
-            type: "openai-completion",
+            id: 'ai-1',
+            type: 'openai-completion',
             position: { x: 300, y: 100 },
             data: {
-              prompt: "Write a motivational quote for Monday",
-              model: "gpt-4",
+              prompt: 'Write a motivational quote for Monday',
+              model: 'gpt-4',
             },
           },
         ],
-        edges: [{ id: "e1-2", source: "trigger-1", target: "ai-1" }],
+        edges: [{ id: 'e1-2', source: 'trigger-1', target: 'ai-1' }],
       };
 
     default:

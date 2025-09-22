@@ -6,8 +6,8 @@
  * collaborative annotations. Inspired by Figma and Google Docs collaboration.
  */
 
-import { io, Socket } from "socket.io-client";
-import { configService } from "./ConfigService";
+import { io, type Socket } from 'socket.io-client';
+import { configService } from './ConfigService';
 // Removed unused imports
 
 export interface CollaborationUser {
@@ -16,7 +16,7 @@ export interface CollaborationUser {
   email: string;
   avatar?: string;
   color: string; // Unique color for cursor and selection
-  status: "online" | "away" | "offline";
+  status: 'online' | 'away' | 'offline';
   lastSeen: string;
 }
 
@@ -43,19 +43,19 @@ export interface UserPresence {
 export interface CollaborationOperation {
   id: string;
   type:
-    | "node_add"
-    | "node_remove"
-    | "node_update"
-    | "node_move"
-    | "edge_add"
-    | "edge_remove"
-    | "edge_update";
+    | 'node_add'
+    | 'node_remove'
+    | 'node_update'
+    | 'node_move'
+    | 'edge_add'
+    | 'edge_remove'
+    | 'edge_update';
   data: any;
   userId: string;
   timestamp: string;
   workflowId: string;
   conflictResolution?: {
-    strategy: "last_write_wins" | "merge" | "manual";
+    strategy: 'last_write_wins' | 'merge' | 'manual';
     resolved: boolean;
     originalOperation?: CollaborationOperation;
   };
@@ -102,11 +102,11 @@ export interface CollaborationSession {
 export interface CollaborationConflict {
   id: string;
   operations: CollaborationOperation[];
-  type: "concurrent_edit" | "deletion_conflict" | "dependency_conflict";
+  type: 'concurrent_edit' | 'deletion_conflict' | 'dependency_conflict';
   affectedNodes: string[];
   timestamp: string;
   resolution?: {
-    strategy: "last_write_wins" | "merge" | "manual";
+    strategy: 'last_write_wins' | 'merge' | 'manual';
     chosenOperation?: string;
     customResolution?: any;
     resolvedBy: string;
@@ -146,21 +146,21 @@ export class CollaborationService {
   async initializeSession(
     workflowId: string,
     user: CollaborationUser,
-    serverUrl?: string,
+    serverUrl?: string
   ): Promise<CollaborationSession> {
     this.currentUser = user;
 
     // Connect to Socket.IO server
     const socketBase =
       serverUrl ||
-      (import.meta.env["VITE_SOCKET_URL"] as string) ||
-      configService.get("api").baseUrl;
+      (import.meta.env['VITE_SOCKET_URL'] as string) ||
+      configService.get('api').baseUrl;
     this.socket = io(socketBase, {
       auth: {
         userId: user.id,
         workflowId,
       },
-      transports: ["websocket", "polling"],
+      transports: ['websocket', 'polling'],
     });
 
     // Set up event handlers
@@ -168,22 +168,18 @@ export class CollaborationService {
 
     // Join workflow room
     return new Promise((resolve, reject) => {
-      this.socket!.emit(
-        "join_workflow",
-        { workflowId, user },
-        (response: any) => {
-          if (response.success) {
-            this.currentSession = response.session;
-            resolve(response.session);
-          } else {
-            reject(new Error(response.error));
-          }
-        },
-      );
+      this.socket!.emit('join_workflow', { workflowId, user }, (response: any) => {
+        if (response.success) {
+          this.currentSession = response.session;
+          resolve(response.session);
+        } else {
+          reject(new Error(response.error));
+        }
+      });
 
       // Timeout after 10 seconds
       setTimeout(() => {
-        reject(new Error("Connection timeout"));
+        reject(new Error('Connection timeout'));
       }, 10000);
     });
   }
@@ -193,7 +189,7 @@ export class CollaborationService {
    */
   async leaveSession(): Promise<void> {
     if (this.socket && this.currentSession) {
-      this.socket.emit("leave_workflow", {
+      this.socket.emit('leave_workflow', {
         workflowId: this.currentSession.workflowId,
         userId: this.currentUser?.id,
       });
@@ -210,11 +206,9 @@ export class CollaborationService {
   /**
    * Send a collaboration operation
    */
-  async sendOperation(
-    operation: Omit<CollaborationOperation, "id" | "timestamp">,
-  ): Promise<void> {
+  async sendOperation(operation: Omit<CollaborationOperation, 'id' | 'timestamp'>): Promise<void> {
     if (!this.socket || !this.currentUser || !this.currentSession) {
-      throw new Error("Collaboration session not initialized");
+      throw new Error('Collaboration session not initialized');
     }
 
     const fullOperation: CollaborationOperation = {
@@ -229,21 +223,19 @@ export class CollaborationService {
     this.pendingOperations.push(fullOperation);
 
     // Send to server
-    this.socket.emit("collaboration_operation", fullOperation);
+    this.socket.emit('collaboration_operation', fullOperation);
 
     // Add to local history (optimistic update)
     this.operationHistory.push(fullOperation);
 
     // Emit to local listeners
-    this.emitEvent("operation_sent", fullOperation);
+    this.emitEvent('operation_sent', fullOperation);
   }
 
   /**
    * Update user presence (cursor, selection, viewport)
    */
-  updatePresence(
-    presence: Partial<Omit<UserPresence, "userId" | "user">>,
-  ): void {
+  updatePresence(presence: Partial<Omit<UserPresence, 'userId' | 'user'>>): void {
     if (!this.socket || !this.currentUser) return;
 
     const fullPresence: UserPresence = {
@@ -252,20 +244,17 @@ export class CollaborationService {
       ...presence,
     };
 
-    this.socket.emit("user_presence", fullPresence);
+    this.socket.emit('user_presence', fullPresence);
   }
 
   /**
    * Add a comment to the workflow
    */
   async addComment(
-    comment: Omit<
-      CollaborationComment,
-      "id" | "timestamp" | "author" | "replies"
-    >,
+    comment: Omit<CollaborationComment, 'id' | 'timestamp' | 'author' | 'replies'>
   ): Promise<CollaborationComment> {
     if (!this.socket || !this.currentUser || !this.currentSession) {
-      throw new Error("Collaboration session not initialized");
+      throw new Error('Collaboration session not initialized');
     }
 
     const fullComment: CollaborationComment = {
@@ -278,7 +267,7 @@ export class CollaborationService {
     };
 
     return new Promise((resolve, reject) => {
-      this.socket!.emit("add_comment", fullComment, (response: any) => {
+      this.socket!.emit('add_comment', fullComment, (response: any) => {
         if (response.success) {
           resolve(response.comment);
         } else {
@@ -294,10 +283,10 @@ export class CollaborationService {
   async replyToComment(
     commentId: string,
     content: string,
-    mentions: string[] = [],
+    mentions: string[] = []
   ): Promise<CollaborationReply> {
     if (!this.socket || !this.currentUser) {
-      throw new Error("Collaboration session not initialized");
+      throw new Error('Collaboration session not initialized');
     }
 
     const reply: CollaborationReply = {
@@ -309,7 +298,7 @@ export class CollaborationService {
     };
 
     return new Promise((resolve, reject) => {
-      this.socket!.emit("add_reply", { commentId, reply }, (response: any) => {
+      this.socket!.emit('add_reply', { commentId, reply }, (response: any) => {
         if (response.success) {
           resolve(response.reply);
         } else {
@@ -324,13 +313,13 @@ export class CollaborationService {
    */
   async resolveConflict(
     conflictId: string,
-    resolution: CollaborationConflict["resolution"],
+    resolution: CollaborationConflict['resolution']
   ): Promise<void> {
     if (!this.socket || !this.currentUser) {
-      throw new Error("Collaboration session not initialized");
+      throw new Error('Collaboration session not initialized');
     }
 
-    this.socket.emit("resolve_conflict", {
+    this.socket.emit('resolve_conflict', {
       conflictId,
       resolution: {
         ...resolution,
@@ -387,71 +376,65 @@ export class CollaborationService {
     if (!this.socket) return;
 
     // User joined/left events
-    this.socket.on("user_joined", (user: CollaborationUser) => {
-      this.emitEvent("user_joined", user);
+    this.socket.on('user_joined', (user: CollaborationUser) => {
+      this.emitEvent('user_joined', user);
     });
 
-    this.socket.on("user_left", (userId: string) => {
+    this.socket.on('user_left', (userId: string) => {
       this.userPresences.delete(userId);
-      this.emitEvent("user_left", userId);
+      this.emitEvent('user_left', userId);
     });
 
     // Presence updates
-    this.socket.on("presence_update", (presence: UserPresence) => {
+    this.socket.on('presence_update', (presence: UserPresence) => {
       this.userPresences.set(presence.userId, presence);
-      this.emitEvent("presence_update", presence);
+      this.emitEvent('presence_update', presence);
     });
 
     // Collaboration operations
-    this.socket.on(
-      "operation_received",
-      (operation: CollaborationOperation) => {
-        // Remove from pending if it's our operation
-        this.pendingOperations = this.pendingOperations.filter(
-          (pending) => pending.id !== operation.id,
-        );
+    this.socket.on('operation_received', (operation: CollaborationOperation) => {
+      // Remove from pending if it's our operation
+      this.pendingOperations = this.pendingOperations.filter(
+        (pending) => pending.id !== operation.id
+      );
 
-        // Add to history if not already there
-        if (!this.operationHistory.find((op) => op.id === operation.id)) {
-          this.operationHistory.push(operation);
-        }
+      // Add to history if not already there
+      if (!this.operationHistory.find((op) => op.id === operation.id)) {
+        this.operationHistory.push(operation);
+      }
 
-        this.emitEvent("operation_received", operation);
-      },
-    );
+      this.emitEvent('operation_received', operation);
+    });
 
     // Conflict detection
-    this.socket.on("conflict_detected", (conflict: CollaborationConflict) => {
-      this.emitEvent("conflict_detected", conflict);
+    this.socket.on('conflict_detected', (conflict: CollaborationConflict) => {
+      this.emitEvent('conflict_detected', conflict);
     });
 
     // Comment events
-    this.socket.on("comment_added", (comment: CollaborationComment) => {
-      this.emitEvent("comment_added", comment);
+    this.socket.on('comment_added', (comment: CollaborationComment) => {
+      this.emitEvent('comment_added', comment);
     });
 
-    this.socket.on("comment_updated", (comment: CollaborationComment) => {
-      this.emitEvent("comment_updated", comment);
+    this.socket.on('comment_updated', (comment: CollaborationComment) => {
+      this.emitEvent('comment_updated', comment);
     });
 
-    this.socket.on(
-      "reply_added",
-      (data: { commentId: string; reply: CollaborationReply }) => {
-        this.emitEvent("reply_added", data);
-      },
-    );
+    this.socket.on('reply_added', (data: { commentId: string; reply: CollaborationReply }) => {
+      this.emitEvent('reply_added', data);
+    });
 
     // Connection events
-    this.socket.on("connect", () => {
-      this.emitEvent("connected");
+    this.socket.on('connect', () => {
+      this.emitEvent('connected');
     });
 
-    this.socket.on("disconnect", (reason: string) => {
-      this.emitEvent("disconnected", reason);
+    this.socket.on('disconnect', (reason: string) => {
+      this.emitEvent('disconnected', reason);
     });
 
-    this.socket.on("connect_error", (error: Error) => {
-      this.emitEvent("connection_error", error);
+    this.socket.on('connect_error', (error: Error) => {
+      this.emitEvent('connection_error', error);
     });
   }
 
@@ -462,10 +445,7 @@ export class CollaborationService {
         try {
           listener(...args);
         } catch (error) {
-          console.error(
-            `Error in collaboration event listener for ${event}:`,
-            error,
-          );
+          console.error(`Error in collaboration event listener for ${event}:`, error);
         }
       });
     }

@@ -1,4 +1,4 @@
-import { EventEmitter } from "events";
+import { EventEmitter } from 'events';
 
 export interface HealthCheck {
   name: string;
@@ -9,7 +9,7 @@ export interface HealthCheck {
 }
 
 export interface HealthStatus {
-  status: "healthy" | "degraded" | "unhealthy";
+  status: 'healthy' | 'degraded' | 'unhealthy';
   message?: string;
   details?: Record<string, any>;
   timestamp?: Date;
@@ -18,7 +18,7 @@ export interface HealthStatus {
 
 export interface IntegrationHealth {
   integrationName: string;
-  overallStatus: "healthy" | "degraded" | "unhealthy";
+  overallStatus: 'healthy' | 'degraded' | 'unhealthy';
   checks: Record<string, HealthStatus>;
   lastChecked: Date;
   uptime: number;
@@ -70,7 +70,7 @@ export class IntegrationHealthMonitor extends EventEmitter {
       }
     }
 
-    this.emit("checks:registered", {
+    this.emit('checks:registered', {
       integrationName,
       checkCount: checks.length,
     });
@@ -91,10 +91,7 @@ export class IntegrationHealthMonitor extends EventEmitter {
   /**
    * Start interval for specific check
    */
-  private startCheckInterval(
-    integrationName: string,
-    check: HealthCheck,
-  ): void {
+  private startCheckInterval(integrationName: string, check: HealthCheck): void {
     const intervalKey = `${integrationName}:${check.name}`;
 
     // Clear existing interval if any
@@ -115,7 +112,7 @@ export class IntegrationHealthMonitor extends EventEmitter {
    */
   private async performSingleCheck(
     integrationName: string,
-    check: HealthCheck,
+    check: HealthCheck
   ): Promise<HealthStatus> {
     const startTime = Date.now();
     const timeout = check.timeout || 5000;
@@ -123,7 +120,7 @@ export class IntegrationHealthMonitor extends EventEmitter {
     try {
       // Create timeout promise
       const timeoutPromise = new Promise<HealthStatus>((_, reject) => {
-        setTimeout(() => reject(new Error("Health check timeout")), timeout);
+        setTimeout(() => reject(new Error('Health check timeout')), timeout);
       });
 
       // Race between check and timeout
@@ -138,7 +135,7 @@ export class IntegrationHealthMonitor extends EventEmitter {
       return status;
     } catch (error: any) {
       const status: HealthStatus = {
-        status: "unhealthy",
+        status: 'unhealthy',
         message: error.message,
         timestamp: new Date(),
         responseTime: Date.now() - startTime,
@@ -147,7 +144,7 @@ export class IntegrationHealthMonitor extends EventEmitter {
       this.updateHealthStatus(integrationName, check.name, status);
 
       if (check.critical) {
-        this.emit("critical:unhealthy", {
+        this.emit('critical:unhealthy', {
           integrationName,
           checkName: check.name,
           error: error.message,
@@ -164,14 +161,14 @@ export class IntegrationHealthMonitor extends EventEmitter {
   private updateHealthStatus(
     integrationName: string,
     checkName: string,
-    status: HealthStatus,
+    status: HealthStatus
   ): void {
     let health = this.healthStatuses.get(integrationName);
 
     if (!health) {
       health = {
         integrationName,
-        overallStatus: "healthy",
+        overallStatus: 'healthy',
         checks: {},
         lastChecked: new Date(),
         uptime: 0,
@@ -194,7 +191,7 @@ export class IntegrationHealthMonitor extends EventEmitter {
     // Attach metrics
     health.metrics = this.metrics.get(integrationName);
 
-    this.emit("status:updated", {
+    this.emit('status:updated', {
       integrationName,
       checkName,
       status: status.status,
@@ -206,19 +203,19 @@ export class IntegrationHealthMonitor extends EventEmitter {
    * Calculate overall status
    */
   private calculateOverallStatus(
-    checks: Record<string, HealthStatus>,
-  ): "healthy" | "degraded" | "unhealthy" {
+    checks: Record<string, HealthStatus>
+  ): 'healthy' | 'degraded' | 'unhealthy' {
     const statuses = Object.values(checks);
 
-    if (statuses.some((s) => s.status === "unhealthy")) {
-      return "unhealthy";
+    if (statuses.some((s) => s.status === 'unhealthy')) {
+      return 'unhealthy';
     }
 
-    if (statuses.some((s) => s.status === "degraded")) {
-      return "degraded";
+    if (statuses.some((s) => s.status === 'degraded')) {
+      return 'degraded';
     }
 
-    return "healthy";
+    return 'healthy';
   }
 
   /**
@@ -234,16 +231,14 @@ export class IntegrationHealthMonitor extends EventEmitter {
     const checkPromises: Promise<void>[] = [];
 
     for (const [_, check] of checks) {
-      checkPromises.push(
-        this.performSingleCheck(integrationName, check).then(() => {}),
-      );
+      checkPromises.push(this.performSingleCheck(integrationName, check).then(() => {}));
     }
 
     await Promise.all(checkPromises);
 
     const health = this.healthStatuses.get(integrationName)!;
 
-    this.emit("health:checked", {
+    this.emit('health:checked', {
       integrationName,
       status: health.overallStatus,
     });
@@ -254,9 +249,7 @@ export class IntegrationHealthMonitor extends EventEmitter {
   /**
    * Get health status
    */
-  getHealthStatus(
-    integrationName?: string,
-  ): IntegrationHealth | IntegrationHealth[] | null {
+  getHealthStatus(integrationName?: string): IntegrationHealth | IntegrationHealth[] | null {
     if (integrationName) {
       return this.healthStatuses.get(integrationName) || null;
     }
@@ -269,8 +262,8 @@ export class IntegrationHealthMonitor extends EventEmitter {
    */
   recordMetric(
     integrationName: string,
-    type: "request" | "error" | "response_time",
-    value?: number,
+    type: 'request' | 'error' | 'response_time',
+    value?: number
   ): void {
     let metrics = this.metrics.get(integrationName);
 
@@ -280,23 +273,22 @@ export class IntegrationHealthMonitor extends EventEmitter {
     }
 
     switch (type) {
-      case "request":
+      case 'request':
         metrics.requestCount++;
         break;
-      case "error":
+      case 'error':
         metrics.errorCount++;
         metrics.lastError = {
           message: `Error at ${new Date().toISOString()}`,
           timestamp: new Date(),
         };
         break;
-      case "response_time":
+      case 'response_time':
         if (value !== undefined) {
           // Calculate rolling average
           const currentAvg = metrics.averageResponseTime;
           const count = metrics.requestCount || 1;
-          metrics.averageResponseTime =
-            (currentAvg * (count - 1) + value) / count;
+          metrics.averageResponseTime = (currentAvg * (count - 1) + value) / count;
         }
         break;
     }
@@ -304,11 +296,10 @@ export class IntegrationHealthMonitor extends EventEmitter {
     // Update success rate
     if (metrics.requestCount > 0) {
       metrics.successRate =
-        ((metrics.requestCount - metrics.errorCount) / metrics.requestCount) *
-        100;
+        ((metrics.requestCount - metrics.errorCount) / metrics.requestCount) * 100;
     }
 
-    this.emit("metric:recorded", {
+    this.emit('metric:recorded', {
       integrationName,
       type,
       value,
@@ -337,7 +328,7 @@ export class IntegrationHealthMonitor extends EventEmitter {
    */
   getUnhealthyIntegrations(): IntegrationHealth[] {
     return Array.from(this.healthStatuses.values()).filter(
-      (health) => health.overallStatus === "unhealthy",
+      (health) => health.overallStatus === 'unhealthy'
     );
   }
 
@@ -346,7 +337,7 @@ export class IntegrationHealthMonitor extends EventEmitter {
    */
   getDegradedIntegrations(): IntegrationHealth[] {
     return Array.from(this.healthStatuses.values()).filter(
-      (health) => health.overallStatus === "degraded",
+      (health) => health.overallStatus === 'degraded'
     );
   }
 
@@ -356,7 +347,7 @@ export class IntegrationHealthMonitor extends EventEmitter {
   resetMetrics(integrationName: string): void {
     this.initializeMetrics(integrationName);
 
-    this.emit("metrics:reset", { integrationName });
+    this.emit('metrics:reset', { integrationName });
   }
 
   /**
@@ -378,7 +369,7 @@ export class IntegrationHealthMonitor extends EventEmitter {
     this.startTimes.delete(integrationName);
 
     if (existed) {
-      this.emit("checks:removed", { integrationName });
+      this.emit('checks:removed', { integrationName });
     }
 
     return existed;
@@ -400,28 +391,23 @@ export class IntegrationHealthMonitor extends EventEmitter {
 
     const summary = {
       totalIntegrations: healths.length,
-      healthy: healths.filter((h) => h.overallStatus === "healthy").length,
-      degraded: healths.filter((h) => h.overallStatus === "degraded").length,
-      unhealthy: healths.filter((h) => h.overallStatus === "unhealthy").length,
+      healthy: healths.filter((h) => h.overallStatus === 'healthy').length,
+      degraded: healths.filter((h) => h.overallStatus === 'degraded').length,
+      unhealthy: healths.filter((h) => h.overallStatus === 'unhealthy').length,
       averageUptime: 0,
       overallSuccessRate: 0,
     };
 
     if (healths.length > 0) {
-      summary.averageUptime =
-        healths.reduce((sum, h) => sum + h.uptime, 0) / healths.length;
+      summary.averageUptime = healths.reduce((sum, h) => sum + h.uptime, 0) / healths.length;
     }
 
     if (allMetrics.length > 0) {
-      const totalRequests = allMetrics.reduce(
-        (sum, m) => sum + m.requestCount,
-        0,
-      );
+      const totalRequests = allMetrics.reduce((sum, m) => sum + m.requestCount, 0);
       const totalErrors = allMetrics.reduce((sum, m) => sum + m.errorCount, 0);
 
       if (totalRequests > 0) {
-        summary.overallSuccessRate =
-          ((totalRequests - totalErrors) / totalRequests) * 100;
+        summary.overallSuccessRate = ((totalRequests - totalErrors) / totalRequests) * 100;
       }
     }
 

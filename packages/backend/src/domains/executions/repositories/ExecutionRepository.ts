@@ -60,14 +60,14 @@ export class ExecutionRepository {
           _id: null,
           totalExecutions: { $sum: 1 },
           successfulExecutions: {
-            $sum: { $cond: [{ $eq: ['$status', 'success'] }, 1, 0] }
+            $sum: { $cond: [{ $eq: ['$status', 'success'] }, 1, 0] },
           },
           failedExecutions: {
-            $sum: { $cond: [{ $eq: ['$status', 'error'] }, 1, 0] }
+            $sum: { $cond: [{ $eq: ['$status', 'error'] }, 1, 0] },
           },
           averageDuration: { $avg: '$duration' },
-        }
-      }
+        },
+      },
     ]);
   }
 }

@@ -14,32 +14,35 @@ export class EncryptionUtils {
    */
   static encrypt(text: string, key: string): { encrypted: string; iv: string; tag: string } {
     const iv = crypto.randomBytes(16);
-    const cipher = crypto.createCipher(this.ALGORITHM, key);
+    const cipher = crypto.createCipher(EncryptionUtils.ALGORITHM, key);
     cipher.setAAD(Buffer.from('additional-data'));
-    
+
     let encrypted = cipher.update(text, 'utf8', 'hex');
     encrypted += cipher.final('hex');
-    
+
     const tag = cipher.getAuthTag();
-    
+
     return {
       encrypted,
       iv: iv.toString('hex'),
-      tag: tag.toString('hex')
+      tag: tag.toString('hex'),
     };
   }
 
   /**
    * Decrypt sensitive data
    */
-  static decrypt(encryptedData: { encrypted: string; iv: string; tag: string }, key: string): string {
-    const decipher = crypto.createDecipher(this.ALGORITHM, key);
+  static decrypt(
+    encryptedData: { encrypted: string; iv: string; tag: string },
+    key: string
+  ): string {
+    const decipher = crypto.createDecipher(EncryptionUtils.ALGORITHM, key);
     decipher.setAAD(Buffer.from('additional-data'));
     decipher.setAuthTag(Buffer.from(encryptedData.tag, 'hex'));
-    
+
     let decrypted = decipher.update(encryptedData.encrypted, 'hex', 'utf8');
     decrypted += decipher.final('utf8');
-    
+
     return decrypted;
   }
 

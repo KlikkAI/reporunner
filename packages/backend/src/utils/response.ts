@@ -2,9 +2,9 @@
  * Standard response formatters
  */
 
-import { Response } from "express";
-import { IApiResponse, IPaginationResult } from "../types/common.js";
-import { HTTP_STATUS } from "../constants/httpStatus.js";
+import type { Response } from 'express';
+import { HTTP_STATUS } from '../constants/httpStatus.js';
+import type { IApiResponse, IPaginationResult } from '../types/common.js';
 
 export class ResponseUtils {
   /**
@@ -14,7 +14,7 @@ export class ResponseUtils {
     res: Response,
     data?: T,
     message?: string,
-    statusCode: number = HTTP_STATUS.OK,
+    statusCode: number = HTTP_STATUS.OK
   ): Response {
     const response: IApiResponse<T> = {
       success: true,
@@ -29,7 +29,7 @@ export class ResponseUtils {
    * Send created response
    */
   static created<T>(res: Response, data?: T, message?: string): Response {
-    return this.success(res, data, message, HTTP_STATUS.CREATED);
+    return ResponseUtils.success(res, data, message, HTTP_STATUS.CREATED);
   }
 
   /**
@@ -39,19 +39,19 @@ export class ResponseUtils {
     res: Response,
     message: string,
     statusCode: number = HTTP_STATUS.INTERNAL_SERVER_ERROR,
-    details?: any,
+    details?: any
   ): Response {
     const response: IApiResponse = {
       success: false,
       message,
       error: {
         statusCode,
-        status: statusCode >= 500 ? "error" : "fail",
+        status: statusCode >= 500 ? 'error' : 'fail',
         isOperational: true,
       },
     };
 
-    if (process.env.NODE_ENV === "development" && details) {
+    if (process.env.NODE_ENV === 'development' && details) {
       response.stack = details.stack;
     }
 
@@ -64,14 +64,14 @@ export class ResponseUtils {
   static fail(
     res: Response,
     message: string,
-    statusCode: number = HTTP_STATUS.BAD_REQUEST,
+    statusCode: number = HTTP_STATUS.BAD_REQUEST
   ): Response {
     const response: IApiResponse = {
       success: false,
       message,
       error: {
         statusCode,
-        status: "fail",
+        status: 'fail',
         isOperational: true,
       },
     };
@@ -86,7 +86,7 @@ export class ResponseUtils {
     res: Response,
     data: T[],
     pagination: { total: number; page: number; limit: number; pages: number },
-    message?: string,
+    message?: string
   ): Response {
     const response: IApiResponse<IPaginationResult<T>> = {
       success: true,
@@ -103,35 +103,32 @@ export class ResponseUtils {
   /**
    * Send not found response
    */
-  static notFound(res: Response, resource: string = "Resource"): Response {
-    return this.fail(res, `${resource} not found`, HTTP_STATUS.NOT_FOUND);
+  static notFound(res: Response, resource: string = 'Resource'): Response {
+    return ResponseUtils.fail(res, `${resource} not found`, HTTP_STATUS.NOT_FOUND);
   }
 
   /**
    * Send unauthorized response
    */
-  static unauthorized(
-    res: Response,
-    message: string = "Unauthorized",
-  ): Response {
-    return this.fail(res, message, HTTP_STATUS.UNAUTHORIZED);
+  static unauthorized(res: Response, message: string = 'Unauthorized'): Response {
+    return ResponseUtils.fail(res, message, HTTP_STATUS.UNAUTHORIZED);
   }
 
   /**
    * Send forbidden response
    */
-  static forbidden(res: Response, message: string = "Forbidden"): Response {
-    return this.fail(res, message, HTTP_STATUS.FORBIDDEN);
+  static forbidden(res: Response, message: string = 'Forbidden'): Response {
+    return ResponseUtils.fail(res, message, HTTP_STATUS.FORBIDDEN);
   }
 
   /**
    * Send validation error response
    */
   static validationError(res: Response, errors: any[]): Response {
-    return this.fail(
+    return ResponseUtils.fail(
       res,
-      `Validation failed: ${errors.join(", ")}`,
-      HTTP_STATUS.UNPROCESSABLE_ENTITY,
+      `Validation failed: ${errors.join(', ')}`,
+      HTTP_STATUS.UNPROCESSABLE_ENTITY
     );
   }
 }
@@ -154,7 +151,7 @@ export class ApiResponse {
       message,
       error: {
         statusCode: statusCode || 500,
-        status: statusCode && statusCode >= 500 ? "error" : "fail",
+        status: statusCode && statusCode >= 500 ? 'error' : 'fail',
         isOperational: true,
         details,
       },

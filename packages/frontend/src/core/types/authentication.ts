@@ -47,7 +47,15 @@ export interface Permission {
 
 export interface AccessCondition {
   type: 'time' | 'ip' | 'location' | 'device' | 'custom';
-  operator: 'equals' | 'not_equals' | 'contains' | 'not_contains' | 'in' | 'not_in' | 'before' | 'after';
+  operator:
+    | 'equals'
+    | 'not_equals'
+    | 'contains'
+    | 'not_contains'
+    | 'in'
+    | 'not_in'
+    | 'before'
+    | 'after';
   value: any;
 }
 
@@ -240,26 +248,26 @@ export interface MFAVerification {
 }
 
 // Enums
-export type ResourceType = 
-  | 'workflow' 
-  | 'execution' 
-  | 'credential' 
-  | 'user' 
-  | 'project' 
-  | 'organization' 
-  | 'integration' 
-  | 'audit' 
+export type ResourceType =
+  | 'workflow'
+  | 'execution'
+  | 'credential'
+  | 'user'
+  | 'project'
+  | 'organization'
+  | 'integration'
+  | 'audit'
   | 'settings';
 
-export type ActionType = 
-  | 'create' 
-  | 'read' 
-  | 'update' 
-  | 'delete' 
-  | 'execute' 
-  | 'share' 
-  | 'export' 
-  | 'import' 
+export type ActionType =
+  | 'create'
+  | 'read'
+  | 'update'
+  | 'delete'
+  | 'execute'
+  | 'share'
+  | 'export'
+  | 'import'
   | 'manage';
 
 // Factory functions
@@ -337,7 +345,7 @@ export const createUserInvitation = (data: Partial<UserInvitation>): UserInvitat
   projects: [],
   invitedBy: '',
   invitedAt: Date.now(),
-  expiresAt: Date.now() + (7 * 24 * 60 * 60 * 1000), // 7 days
+  expiresAt: Date.now() + 7 * 24 * 60 * 60 * 1000, // 7 days
   status: 'pending',
   token: '',
   ...data,
@@ -350,10 +358,11 @@ export const hasPermission = (
   action: ActionType,
   context?: any
 ): boolean => {
-  return userPermissions.some(permission => 
-    permission.resource === resource && 
-    permission.action === action &&
-    (!permission.conditions || evaluateConditions(permission.conditions, context))
+  return userPermissions.some(
+    (permission) =>
+      permission.resource === resource &&
+      permission.action === action &&
+      (!permission.conditions || evaluateConditions(permission.conditions, context))
   );
 };
 
@@ -361,20 +370,20 @@ export const hasAnyPermission = (
   userPermissions: Permission[],
   checks: Array<{ resource: ResourceType; action: ActionType }>
 ): boolean => {
-  return checks.some(check => hasPermission(userPermissions, check.resource, check.action));
+  return checks.some((check) => hasPermission(userPermissions, check.resource, check.action));
 };
 
 export const hasAllPermissions = (
   userPermissions: Permission[],
   checks: Array<{ resource: ResourceType; action: ActionType }>
 ): boolean => {
-  return checks.every(check => hasPermission(userPermissions, check.resource, check.action));
+  return checks.every((check) => hasPermission(userPermissions, check.resource, check.action));
 };
 
 export const evaluateConditions = (conditions: AccessCondition[], context: any): boolean => {
-  return conditions.every(condition => {
+  return conditions.every((condition) => {
     const value = getContextValue(context, condition.type);
-    
+
     switch (condition.operator) {
       case 'equals':
         return value === condition.value;
@@ -416,12 +425,12 @@ export const getContextValue = (context: any, type: string): any => {
 // Role hierarchy utilities
 export const getRoleLevel = (roleName: string): number => {
   const roleLevels: Record<string, number> = {
-    'owner': 10,
-    'admin': 8,
-    'manager': 6,
-    'editor': 4,
-    'viewer': 2,
-    'guest': 1,
+    owner: 10,
+    admin: 8,
+    manager: 6,
+    editor: 4,
+    viewer: 2,
+    guest: 1,
   };
   return roleLevels[roleName] || 0;
 };
@@ -433,5 +442,5 @@ export const canManageRole = (userRole: string, targetRole: string): boolean => 
 export const getAvailableRoles = (userRole: string): string[] => {
   const userLevel = getRoleLevel(userRole);
   const allRoles = ['owner', 'admin', 'manager', 'editor', 'viewer', 'guest'];
-  return allRoles.filter(role => getRoleLevel(role) < userLevel);
+  return allRoles.filter((role) => getRoleLevel(role) < userLevel);
 };

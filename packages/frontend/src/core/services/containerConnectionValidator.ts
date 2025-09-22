@@ -6,22 +6,18 @@
  * workflow structures and ensuring execution consistency.
  */
 
-import type { Node, Edge } from "reactflow";
+import type { Edge, Node } from 'reactflow';
+
 // Removed invalid import - ContainerType interface should be defined locally or imported from correct path
-type ContainerType =
-  | "loop"
-  | "parallel"
-  | "conditional"
-  | "try_catch"
-  | "custom";
+type ContainerType = 'loop' | 'parallel' | 'conditional' | 'try_catch' | 'custom';
 
 export interface ConnectionValidationResult {
   isValid: boolean;
   reason?: string;
-  severity: "error" | "warning" | "info";
+  severity: 'error' | 'warning' | 'info';
   suggestion?: string;
   autoFix?: {
-    action: "redirect" | "create_bridge" | "add_container";
+    action: 'redirect' | 'create_bridge' | 'add_container';
     details: Record<string, any>;
   };
 }
@@ -52,7 +48,7 @@ export class ContainerConnectionValidator {
     sourceNodeId: string,
     targetNodeId: string,
     sourceHandle?: string,
-    targetHandle?: string,
+    targetHandle?: string
   ): ConnectionValidationResult {
     const sourceContext = this.containerGraph.get(sourceNodeId);
     const targetContext = this.containerGraph.get(targetNodeId);
@@ -60,8 +56,8 @@ export class ContainerConnectionValidator {
     if (!sourceContext || !targetContext) {
       return {
         isValid: false,
-        reason: "Node context not found",
-        severity: "error",
+        reason: 'Node context not found',
+        severity: 'error',
       };
     }
 
@@ -71,7 +67,7 @@ export class ContainerConnectionValidator {
         sourceContext,
         targetContext,
         sourceHandle,
-        targetHandle,
+        targetHandle
       );
     }
 
@@ -80,7 +76,7 @@ export class ContainerConnectionValidator {
       sourceContext,
       targetContext,
       sourceHandle,
-      targetHandle,
+      targetHandle
     );
   }
 
@@ -91,53 +87,53 @@ export class ContainerConnectionValidator {
     sourceContext: ContainerContext,
     targetContext: ContainerContext,
     sourceHandle?: string,
-    targetHandle?: string,
+    targetHandle?: string
   ): ConnectionValidationResult {
     const containerId = sourceContext.containerId;
 
     if (!containerId) {
       // Both nodes are in the root workflow
-      return { isValid: true, severity: "info" };
+      return { isValid: true, severity: 'info' };
     }
 
     const container = this.nodes.find((n) => n.id === containerId);
     const containerType = container?.data?.containerType;
 
     switch (containerType) {
-      case "loop":
+      case 'loop':
         return this.validateLoopContainerConnection(
           sourceContext,
           targetContext,
           sourceHandle,
-          targetHandle,
+          targetHandle
         );
 
-      case "parallel":
+      case 'parallel':
         return this.validateParallelContainerConnection(
           sourceContext,
           targetContext,
           sourceHandle,
-          targetHandle,
+          targetHandle
         );
 
-      case "conditional":
+      case 'conditional':
         return this.validateConditionalContainerConnection(
           sourceContext,
           targetContext,
           sourceHandle,
-          targetHandle,
+          targetHandle
         );
 
-      case "subflow":
+      case 'subflow':
         return this.validateSubflowContainerConnection(
           sourceContext,
           targetContext,
           sourceHandle,
-          targetHandle,
+          targetHandle
         );
 
       default:
-        return { isValid: true, severity: "info" };
+        return { isValid: true, severity: 'info' };
     }
   }
 
@@ -148,48 +144,29 @@ export class ContainerConnectionValidator {
     sourceContext: ContainerContext,
     targetContext: ContainerContext,
     _sourceHandle?: string,
-    _targetHandle?: string,
+    _targetHandle?: string
   ): ConnectionValidationResult {
     // Check if this is a valid container boundary crossing
-    const relationship = this.getContainerRelationship(
-      sourceContext,
-      targetContext,
-    );
+    const relationship = this.getContainerRelationship(sourceContext, targetContext);
 
     switch (relationship.type) {
-      case "parent_to_child":
-        return this.validateParentToChildConnection(
-          sourceContext,
-          targetContext,
-          relationship,
-        );
+      case 'parent_to_child':
+        return this.validateParentToChildConnection(sourceContext, targetContext, relationship);
 
-      case "child_to_parent":
-        return this.validateChildToParentConnection(
-          sourceContext,
-          targetContext,
-          relationship,
-        );
+      case 'child_to_parent':
+        return this.validateChildToParentConnection(sourceContext, targetContext, relationship);
 
-      case "sibling":
-        return this.validateSiblingConnection(
-          sourceContext,
-          targetContext,
-          relationship,
-        );
+      case 'sibling':
+        return this.validateSiblingConnection(sourceContext, targetContext, relationship);
 
-      case "distant":
-        return this.validateDistantConnection(
-          sourceContext,
-          targetContext,
-          relationship,
-        );
+      case 'distant':
+        return this.validateDistantConnection(sourceContext, targetContext, relationship);
 
       default:
         return {
           isValid: false,
-          reason: "Invalid container relationship",
-          severity: "error",
+          reason: 'Invalid container relationship',
+          severity: 'error',
         };
     }
   }
@@ -201,7 +178,7 @@ export class ContainerConnectionValidator {
     sourceContext: ContainerContext,
     targetContext: ContainerContext,
     _sourceHandle?: string,
-    _targetHandle?: string,
+    _targetHandle?: string
   ): ConnectionValidationResult {
     // In loop containers, nodes should generally connect sequentially
     // Backward connections might create infinite loops
@@ -210,20 +187,20 @@ export class ContainerConnectionValidator {
     const targetNode = this.nodes.find((n) => n.id === targetContext.nodeId);
 
     if (!sourceNode || !targetNode) {
-      return { isValid: false, reason: "Nodes not found", severity: "error" };
+      return { isValid: false, reason: 'Nodes not found', severity: 'error' };
     }
 
     // Check for potential infinite loops
     if (this.wouldCreateLoop(sourceContext.nodeId, targetContext.nodeId)) {
       return {
         isValid: false,
-        reason: "Connection would create an infinite loop",
-        severity: "error",
-        suggestion: "Consider using a condition node to control the loop",
+        reason: 'Connection would create an infinite loop',
+        severity: 'error',
+        suggestion: 'Consider using a condition node to control the loop',
       };
     }
 
-    return { isValid: true, severity: "info" };
+    return { isValid: true, severity: 'info' };
   }
 
   /**
@@ -233,21 +210,21 @@ export class ContainerConnectionValidator {
     _sourceContext: ContainerContext,
     _targetContext: ContainerContext,
     _sourceHandle?: string,
-    _targetHandle?: string,
+    _targetHandle?: string
   ): ConnectionValidationResult {
     // In parallel containers, nodes should not depend on each other
     // Direct connections between parallel nodes are usually invalid
 
     return {
       isValid: false,
-      reason: "Nodes in parallel containers should not connect directly",
-      severity: "warning",
-      suggestion: "Use container outputs to synchronize parallel execution",
+      reason: 'Nodes in parallel containers should not connect directly',
+      severity: 'warning',
+      suggestion: 'Use container outputs to synchronize parallel execution',
       autoFix: {
-        action: "redirect",
+        action: 'redirect',
         details: {
-          redirectTo: "container_output",
-          reason: "Maintain parallel execution independence",
+          redirectTo: 'container_output',
+          reason: 'Maintain parallel execution independence',
         },
       },
     };
@@ -260,10 +237,10 @@ export class ContainerConnectionValidator {
     _sourceContext: ContainerContext,
     _targetContext: ContainerContext,
     _sourceHandle?: string,
-    _targetHandle?: string,
+    _targetHandle?: string
   ): ConnectionValidationResult {
     // In conditional containers, connections should respect branching logic
-    return { isValid: true, severity: "info" };
+    return { isValid: true, severity: 'info' };
   }
 
   /**
@@ -273,10 +250,10 @@ export class ContainerConnectionValidator {
     _sourceContext: ContainerContext,
     _targetContext: ContainerContext,
     _sourceHandle?: string,
-    _targetHandle?: string,
+    _targetHandle?: string
   ): ConnectionValidationResult {
     // Subflows are most flexible - most connections are valid
-    return { isValid: true, severity: "info" };
+    return { isValid: true, severity: 'info' };
   }
 
   /**
@@ -285,23 +262,23 @@ export class ContainerConnectionValidator {
   private validateParentToChildConnection(
     _sourceContext: ContainerContext,
     targetContext: ContainerContext,
-    relationship: any,
+    relationship: any
   ): ConnectionValidationResult {
     // Parent nodes can connect to container inputs
     if (relationship.targetIsContainerInput) {
-      return { isValid: true, severity: "info" };
+      return { isValid: true, severity: 'info' };
     }
 
     return {
       isValid: false,
-      reason: "Cannot connect directly to nodes inside child containers",
-      severity: "error",
-      suggestion: "Connect to the container input instead",
+      reason: 'Cannot connect directly to nodes inside child containers',
+      severity: 'error',
+      suggestion: 'Connect to the container input instead',
       autoFix: {
-        action: "redirect",
+        action: 'redirect',
         details: {
           redirectTo: targetContext.containerId,
-          handle: "input",
+          handle: 'input',
         },
       },
     };
@@ -313,23 +290,22 @@ export class ContainerConnectionValidator {
   private validateChildToParentConnection(
     sourceContext: ContainerContext,
     _targetContext: ContainerContext,
-    relationship: any,
+    relationship: any
   ): ConnectionValidationResult {
     // Child nodes should connect through container outputs
     if (relationship.sourceIsContainerOutput) {
-      return { isValid: true, severity: "info" };
+      return { isValid: true, severity: 'info' };
     }
 
     return {
       isValid: false,
-      reason:
-        "Nodes inside containers should connect through container outputs",
-      severity: "warning",
-      suggestion: "Use container output handles for external connections",
+      reason: 'Nodes inside containers should connect through container outputs',
+      severity: 'warning',
+      suggestion: 'Use container output handles for external connections',
       autoFix: {
-        action: "create_bridge",
+        action: 'create_bridge',
         details: {
-          bridgeType: "container_output",
+          bridgeType: 'container_output',
           sourceContainer: sourceContext.containerId,
         },
       },
@@ -342,18 +318,18 @@ export class ContainerConnectionValidator {
   private validateSiblingConnection(
     _sourceContext: ContainerContext,
     _targetContext: ContainerContext,
-    _relationship: any,
+    _relationship: any
   ): ConnectionValidationResult {
     // Sibling containers should connect through their parent
     return {
       isValid: false,
-      reason: "Sibling containers should not connect directly",
-      severity: "warning",
-      suggestion: "Connect through parent container or use shared variables",
+      reason: 'Sibling containers should not connect directly',
+      severity: 'warning',
+      suggestion: 'Connect through parent container or use shared variables',
       autoFix: {
-        action: "create_bridge",
+        action: 'create_bridge',
         details: {
-          bridgeType: "parent_mediated",
+          bridgeType: 'parent_mediated',
           parentContainer: this.getCommonParent(_sourceContext, _targetContext),
         },
       },
@@ -366,13 +342,13 @@ export class ContainerConnectionValidator {
   private validateDistantConnection(
     _sourceContext: ContainerContext,
     _targetContext: ContainerContext,
-    _relationship: any,
+    _relationship: any
   ): ConnectionValidationResult {
     return {
       isValid: false,
-      reason: "Connections across distant containers are not recommended",
-      severity: "warning",
-      suggestion: "Consider restructuring workflow or using shared variables",
+      reason: 'Connections across distant containers are not recommended',
+      severity: 'warning',
+      suggestion: 'Consider restructuring workflow or using shared variables',
     };
   }
 
@@ -416,7 +392,7 @@ export class ContainerConnectionValidator {
    */
   private getContainerRelationship(
     sourceContext: ContainerContext,
-    targetContext: ContainerContext,
+    targetContext: ContainerContext
   ) {
     const sourcePath = sourceContext.containerPath;
     const targetPath = targetContext.containerPath;
@@ -435,18 +411,18 @@ export class ContainerConnectionValidator {
     const targetDepthFromCommon = targetPath.length - commonAncestorIndex;
 
     if (sourceDepthFromCommon === 0 && targetDepthFromCommon === 1) {
-      return { type: "parent_to_child", targetIsContainerInput: true };
+      return { type: 'parent_to_child', targetIsContainerInput: true };
     }
 
     if (sourceDepthFromCommon === 1 && targetDepthFromCommon === 0) {
-      return { type: "child_to_parent", sourceIsContainerOutput: true };
+      return { type: 'child_to_parent', sourceIsContainerOutput: true };
     }
 
     if (sourceDepthFromCommon === 1 && targetDepthFromCommon === 1) {
-      return { type: "sibling" };
+      return { type: 'sibling' };
     }
 
-    return { type: "distant" };
+    return { type: 'distant' };
   }
 
   /**
@@ -466,9 +442,7 @@ export class ContainerConnectionValidator {
       visited.add(currentId);
 
       // Find outgoing edges from current node
-      const outgoingEdges = this.edges.filter(
-        (edge) => edge.source === currentId,
-      );
+      const outgoingEdges = this.edges.filter((edge) => edge.source === currentId);
       outgoingEdges.forEach((edge) => {
         if (!visited.has(edge.target)) {
           stack.push(edge.target);
@@ -484,16 +458,12 @@ export class ContainerConnectionValidator {
    */
   private getCommonParent(
     sourceContext: ContainerContext,
-    targetContext: ContainerContext,
+    targetContext: ContainerContext
   ): string | undefined {
     const sourcePath = sourceContext.containerPath;
     const targetPath = targetContext.containerPath;
 
-    for (
-      let i = Math.min(sourcePath.length, targetPath.length) - 1;
-      i >= 0;
-      i--
-    ) {
+    for (let i = Math.min(sourcePath.length, targetPath.length) - 1; i >= 0; i--) {
       if (sourcePath[i] === targetPath[i]) {
         return sourcePath[i];
       }
@@ -513,14 +483,9 @@ export function useContainerConnectionValidator(nodes: Node[], edges: Edge[]) {
     sourceNodeId: string,
     targetNodeId: string,
     sourceHandle?: string,
-    targetHandle?: string,
+    targetHandle?: string
   ) => {
-    return validator.validateConnection(
-      sourceNodeId,
-      targetNodeId,
-      sourceHandle,
-      targetHandle,
-    );
+    return validator.validateConnection(sourceNodeId, targetNodeId, sourceHandle, targetHandle);
   };
 
   return { validateConnection };

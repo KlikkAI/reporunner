@@ -5,85 +5,80 @@
 // Encryption service (commented out until implemented)
 // export * from "./encryption";
 
-// Rate limiting
-export * from "./rate-limiter";
-export * from "./middleware/rate-limit.middleware";
+// Audit logging
+export * from './audit-logger';
+export {
+  AuditEventType,
+  AuditLogger,
+  AuditSeverity,
+  auditLogger,
+} from './audit-logger';
 
 // JWT Session management
-export * from "./jwt-session";
-export * from "./middleware/auth.middleware";
-
-// Audit logging
-export * from "./audit-logger";
-
-// Security headers (CORS, CSP)
-export * from "./middleware/security-headers.middleware";
-
-// Input validation and sanitization
-export * from "./middleware/validation.middleware";
-
-// File upload security
-export * from "./middleware/file-upload.middleware";
-
-// Re-export commonly used items
-// export { EncryptionService } from "./encryption.service";
-export { AdvancedRateLimiter, rateLimiter } from "./rate-limiter";
-export { JWTSessionManager, jwtSessionManager } from "./jwt-session";
-export {
-  AuditLogger,
-  auditLogger,
-  AuditEventType,
-  AuditSeverity,
-} from "./audit-logger";
-export {
-  createRateLimitMiddleware,
-  createLoginRateLimiter,
-  createApiRateLimiter,
-  createExecutionRateLimiter,
-  createUploadRateLimiter,
-  createPasswordResetRateLimiter,
-  createWebhookRateLimiter,
-  createExportRateLimiter,
-  createTieredRateLimiter,
-  createMultiRateLimiter,
-  userKeyGenerator,
-  apiKeyGenerator,
-  combinedKeyGenerator,
-  endpointKeyGenerator,
-} from "./middleware/rate-limit.middleware";
+export * from './jwt-session';
+export { JWTSessionManager, jwtSessionManager } from './jwt-session';
+export * from './middleware/auth.middleware';
 export {
   createAuthMiddleware,
-  createRefreshTokenMiddleware,
   createLogoutMiddleware,
+  createRefreshTokenMiddleware,
   createSessionManagementMiddleware,
-  requireRole,
-  requirePermission,
   optionalAuth,
-} from "./middleware/auth.middleware";
+  requirePermission,
+  requireRole,
+} from './middleware/auth.middleware';
+// File upload security
+export * from './middleware/file-upload.middleware';
 export {
-  createCorsMiddleware,
-  createCSPMiddleware,
-  createSecurityHeadersMiddleware,
-  createCombinedSecurityMiddleware,
-  getEnvironmentConfig,
-  createCSPReportHandler,
-  createNonceMiddleware,
-  createCSPWithNonce,
-} from "./middleware/security-headers.middleware";
-export {
-  createValidationMiddleware,
-  createSQLInjectionProtection,
-  createNoSQLInjectionProtection,
-  createXSSProtection,
-  createPathTraversalProtection,
-  createCommandInjectionProtection,
-  createSecurityValidationMiddleware,
-  CommonSchemas,
-} from "./middleware/validation.middleware";
-export {
-  createFileUploadMiddleware,
+  createFieldSizeLimiter,
   createFileCleanupMiddleware,
   createFileTypeValidator,
-  createFieldSizeLimiter,
+  createFileUploadMiddleware,
   createSecureDownloadMiddleware,
-} from "./middleware/file-upload.middleware";
+} from './middleware/file-upload.middleware';
+export * from './middleware/rate-limit.middleware';
+export {
+  apiKeyGenerator,
+  combinedKeyGenerator,
+  createApiRateLimiter,
+  createExecutionRateLimiter,
+  createExportRateLimiter,
+  createLoginRateLimiter,
+  createMultiRateLimiter,
+  createPasswordResetRateLimiter,
+  createRateLimitMiddleware,
+  createTieredRateLimiter,
+  createUploadRateLimiter,
+  createWebhookRateLimiter,
+  endpointKeyGenerator,
+  userKeyGenerator,
+} from './middleware/rate-limit.middleware';
+// Security headers (CORS, CSP)
+export * from './middleware/security-headers.middleware';
+export {
+  createCombinedSecurityMiddleware,
+  createCorsMiddleware,
+  createCSPMiddleware,
+  createCSPReportHandler,
+  createCSPWithNonce,
+  createNonceMiddleware,
+  createSecurityHeadersMiddleware,
+  getEnvironmentConfig,
+} from './middleware/security-headers.middleware';
+// Input validation and sanitization
+export * from './middleware/validation.middleware';
+export {
+  CommonSchemas,
+  createCommandInjectionProtection,
+  createNoSQLInjectionProtection,
+  createPathTraversalProtection,
+  createSecurityValidationMiddleware,
+  createSQLInjectionProtection,
+  createValidationMiddleware,
+  createXSSProtection,
+} from './middleware/validation.middleware';
+// Rate limiting
+export * from './rate-limiter';
+// Re-export commonly used items
+// export { EncryptionService } from "./encryption.service";
+export { AdvancedRateLimiter, rateLimiter } from './rate-limiter';

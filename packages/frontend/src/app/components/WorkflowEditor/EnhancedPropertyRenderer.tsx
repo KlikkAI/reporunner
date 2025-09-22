@@ -6,29 +6,29 @@
  * validation and dependency management.
  */
 
-import React, { useState, useCallback, useMemo } from 'react';
 import {
-  Input,
-  Select,
-  Switch,
-  InputNumber,
-  DatePicker,
+  DeleteOutlined,
+  ExclamationCircleOutlined,
+  InfoCircleOutlined,
+  PlusOutlined,
+} from '@ant-design/icons';
+import {
+  Alert,
   Button,
   Card,
-  Alert,
-  Tooltip,
-  Tag,
-  Upload,
   ColorPicker,
+  DatePicker,
+  Input,
+  InputNumber,
+  Select,
+  Switch,
+  Tag,
+  Tooltip,
+  Upload,
 } from 'antd';
-import {
-  PlusOutlined,
-  DeleteOutlined,
-  InfoCircleOutlined,
-  ExclamationCircleOutlined,
-} from '@ant-design/icons';
-import { cn } from '@/design-system/utils';
+import React, { useCallback, useMemo, useState } from 'react';
 import type { INodeProperty } from '@/core/nodes/types';
+import { cn } from '@/design-system/utils';
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -106,13 +106,7 @@ const PropertyField: React.FC<PropertyFieldProps> = ({
         );
 
       case 'boolean':
-        return (
-          <Switch
-            checked={value || false}
-            onChange={onChange}
-            disabled={disabled}
-          />
-        );
+        return <Switch checked={value || false} onChange={onChange} disabled={disabled} />;
 
       case 'select':
         return (
@@ -213,11 +207,7 @@ const PropertyField: React.FC<PropertyFieldProps> = ({
             />
             {value && typeof value === 'object' && (
               <div className="mt-2">
-                <Button
-                  size="small"
-                  onClick={() => setIsExpanded(!isExpanded)}
-                  type="text"
-                >
+                <Button size="small" onClick={() => setIsExpanded(!isExpanded)} type="text">
                   {isExpanded ? 'Collapse' : 'Expand'} JSON
                 </Button>
               </div>
@@ -333,11 +323,7 @@ const PropertyField: React.FC<PropertyFieldProps> = ({
 
       default:
         return (
-          <Alert
-            message={`Unsupported property type: ${property.type}`}
-            type="warning"
-            showIcon
-          />
+          <Alert message={`Unsupported property type: ${property.type}`} type="warning" showIcon />
         );
     }
   };
@@ -434,9 +420,12 @@ export const EnhancedPropertyRenderer: React.FC<EnhancedPropertyRendererProps> =
     validateAll();
   }, [validateAll]);
 
-  const handlePropertyChange = useCallback((name: string, value: any) => {
-    onChange(name, value);
-  }, [onChange]);
+  const handlePropertyChange = useCallback(
+    (name: string, value: any) => {
+      onChange(name, value);
+    },
+    [onChange]
+  );
 
   const visibleProperties = useMemo(() => {
     return properties.filter((property) => {
@@ -463,9 +452,7 @@ export const EnhancedPropertyRenderer: React.FC<EnhancedPropertyRendererProps> =
             <div className="flex items-center justify-between">
               <label className="text-sm font-medium text-gray-300 flex items-center gap-2">
                 {property.label || property.name}
-                {property.required && (
-                  <span className="text-red-400">*</span>
-                )}
+                {property.required && <span className="text-red-400">*</span>}
                 {property.description && (
                   <Tooltip title={property.description}>
                     <InfoCircleOutlined className="text-gray-500" />
@@ -487,14 +474,7 @@ export const EnhancedPropertyRenderer: React.FC<EnhancedPropertyRendererProps> =
               theme={theme}
             />
 
-            {error && (
-              <Alert
-                message={error}
-                type="error"
-                showIcon
-                className="text-xs"
-              />
-            )}
+            {error && <Alert message={error} type="error" showIcon className="text-xs" />}
           </div>
         );
       })}
@@ -503,9 +483,7 @@ export const EnhancedPropertyRenderer: React.FC<EnhancedPropertyRendererProps> =
         <div className="text-center text-gray-500 py-8">
           <div className="text-2xl mb-2">⚙️</div>
           <div>No properties to configure</div>
-          <div className="text-xs mt-2">
-            All properties are hidden by conditional logic
-          </div>
+          <div className="text-xs mt-2">All properties are hidden by conditional logic</div>
         </div>
       )}
     </div>

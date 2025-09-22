@@ -50,13 +50,10 @@ export class GmailService {
   private oauth2Client: any;
 
   constructor(credentials: GmailCredentials) {
-    this.oauth2Client = new google.auth.OAuth2(
-      credentials.clientId,
-      credentials.clientSecret
-    );
+    this.oauth2Client = new google.auth.OAuth2(credentials.clientId, credentials.clientSecret);
 
     this.oauth2Client.setCredentials({
-      refresh_token: credentials.refreshToken
+      refresh_token: credentials.refreshToken,
     });
   }
 
@@ -106,7 +103,7 @@ export class GmailService {
       const response = await gmail.users.messages.list({
         userId: 'me',
         q: query,
-        maxResults
+        maxResults,
       });
 
       if (!response.data.messages) {
@@ -119,7 +116,7 @@ export class GmailService {
           const fullMessage = await gmail.users.messages.get({
             userId: 'me',
             id: msg.id,
-            format: 'full'
+            format: 'full',
           });
           return this.parseMessage(fullMessage.data);
         })
@@ -143,7 +140,7 @@ export class GmailService {
       const response = await gmail.users.messages.get({
         userId: 'me',
         id: messageId,
-        format: 'full'
+        format: 'full',
       });
 
       return this.parseMessage(response.data);
@@ -166,15 +163,15 @@ export class GmailService {
       const response = await gmail.users.messages.send({
         userId: 'me',
         requestBody: {
-          raw: message
-        }
+          raw: message,
+        },
       });
 
       logger.info(`Email sent successfully: ${response.data.id}`);
 
       return {
         messageId: response.data.id!,
-        threadId: response.data.threadId!
+        threadId: response.data.threadId!,
       };
     } catch (error: any) {
       logger.error('Failed to send Gmail message:', error);
@@ -191,13 +188,13 @@ export class GmailService {
 
     try {
       await Promise.all(
-        messageIds.map(id =>
+        messageIds.map((id) =>
           gmail.users.messages.modify({
             userId: 'me',
             id,
             requestBody: {
-              removeLabelIds: ['UNREAD']
-            }
+              removeLabelIds: ['UNREAD'],
+            },
           })
         )
       );
@@ -218,7 +215,7 @@ export class GmailService {
     // Extract body using the proper extraction method
     const bodyResult = { text: '', html: '' };
     this.extractBody(messageData.payload, bodyResult);
-    
+
     const body = bodyResult.text || bodyResult.html || '';
     const bodyHtml = bodyResult.html || bodyResult.text || '';
 
@@ -231,8 +228,14 @@ export class GmailService {
       threadId: messageData.threadId,
       messageId: getHeader('Message-ID'),
       from: getHeader('From'),
-      to: getHeader('To').split(',').map((email: string) => email.trim()).filter(Boolean),
-      cc: getHeader('Cc').split(',').map((email: string) => email.trim()).filter(Boolean),
+      to: getHeader('To')
+        .split(',')
+        .map((email: string) => email.trim())
+        .filter(Boolean),
+      cc: getHeader('Cc')
+        .split(',')
+        .map((email: string) => email.trim())
+        .filter(Boolean),
       subject: getHeader('Subject'),
       body,
       bodyHtml,
@@ -278,7 +281,7 @@ export class GmailService {
         filename: payload.filename,
         mimeType: payload.mimeType,
         size: payload.body.size,
-        attachmentId: payload.body.attachmentId
+        attachmentId: payload.body.attachmentId,
       });
     }
 
@@ -300,26 +303,28 @@ export class GmailService {
       `Subject: ${options.subject}`,
       options.replyToMessageId ? `In-Reply-To: ${options.replyToMessageId}` : '',
       'MIME-Version: 1.0',
-      `Content-Type: multipart/mixed; boundary="${boundary}"`, 
+      `Content-Type: multipart/mixed; boundary="${boundary}"`,
       '',
       `--${boundary}`,
       `Content-Type: ${options.isHtml ? 'text/html' : 'text/plain'}; charset=utf-8`,
       '',
       options.body,
-      ''
-    ].filter(Boolean).join('\n');
+      '',
+    ]
+      .filter(Boolean)
+      .join('\n');
 
     // Add attachments if any
     if (options.attachments?.length) {
-      options.attachments.forEach(attachment => {
+      options.attachments.forEach((attachment) => {
         message += [
           `--${boundary}`,
           `Content-Type: ${attachment.mimeType}`,
-          `Content-Disposition: attachment; filename="${attachment.filename}"`, 
+          `Content-Disposition: attachment; filename="${attachment.filename}"`,
           'Content-Transfer-Encoding: base64',
           '',
           attachment.data?.toString('base64') || '',
-          ''
+          '',
         ].join('\n');
       });
     }

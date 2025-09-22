@@ -1,23 +1,23 @@
-import { EventEmitter } from "events";
-import { z } from "zod";
+import { EventEmitter } from 'events';
+import type { z } from 'zod';
 
 export enum IntegrationType {
-  OAUTH2 = "oauth2",
-  API_KEY = "api_key",
-  BASIC_AUTH = "basic_auth",
-  CUSTOM = "custom",
+  OAUTH2 = 'oauth2',
+  API_KEY = 'api_key',
+  BASIC_AUTH = 'basic_auth',
+  CUSTOM = 'custom',
 }
 
 export enum IntegrationCategory {
-  COMMUNICATION = "communication",
-  PRODUCTIVITY = "productivity",
-  DEVELOPMENT = "development",
-  DATABASE = "database",
-  AI = "ai",
-  ANALYTICS = "analytics",
-  PAYMENT = "payment",
-  STORAGE = "storage",
-  MARKETING = "marketing",
+  COMMUNICATION = 'communication',
+  PRODUCTIVITY = 'productivity',
+  DEVELOPMENT = 'development',
+  DATABASE = 'database',
+  AI = 'ai',
+  ANALYTICS = 'analytics',
+  PAYMENT = 'payment',
+  STORAGE = 'storage',
+  MARKETING = 'marketing',
 }
 
 export interface IntegrationMetadata {
@@ -153,10 +153,7 @@ export abstract class BaseIntegration extends EventEmitter {
   /**
    * Execute a trigger
    */
-  async executeTrigger(
-    triggerName: string,
-    properties: Record<string, any>,
-  ): Promise<any> {
+  async executeTrigger(triggerName: string, properties: Record<string, any>): Promise<any> {
     const trigger = this.triggers.get(triggerName);
     if (!trigger) {
       throw new Error(`Trigger ${triggerName} not found`);
@@ -167,7 +164,7 @@ export abstract class BaseIntegration extends EventEmitter {
 
     // Execute trigger implementation
     const methodName = `trigger_${triggerName}`;
-    if (typeof (this as any)[methodName] !== "function") {
+    if (typeof (this as any)[methodName] !== 'function') {
       throw new Error(`Trigger implementation ${methodName} not found`);
     }
 
@@ -183,7 +180,7 @@ export abstract class BaseIntegration extends EventEmitter {
   async executeAction(
     actionName: string,
     input: Record<string, any>,
-    properties: Record<string, any>,
+    properties: Record<string, any>
   ): Promise<any> {
     const action = this.actions.get(actionName);
     if (!action) {
@@ -201,14 +198,11 @@ export abstract class BaseIntegration extends EventEmitter {
 
     // Execute action implementation
     const methodName = `action_${actionName}`;
-    if (typeof (this as any)[methodName] !== "function") {
+    if (typeof (this as any)[methodName] !== 'function') {
       throw new Error(`Action implementation ${methodName} not found`);
     }
 
-    const result = await (this as any)[methodName](
-      validatedInput,
-      validatedProps,
-    );
+    const result = await (this as any)[methodName](validatedInput, validatedProps);
 
     // Validate output
     return action.outputSchema.parse(result);
@@ -220,9 +214,9 @@ export abstract class BaseIntegration extends EventEmitter {
   async handleWebhook?(
     headers: Record<string, string>,
     body: any,
-    query?: Record<string, string>,
+    query?: Record<string, string>
   ): Promise<any> {
-    throw new Error("Webhook handling not implemented");
+    throw new Error('Webhook handling not implemented');
   }
 
   /**
@@ -231,7 +225,7 @@ export abstract class BaseIntegration extends EventEmitter {
   protected validateWebhookSignature?(
     headers: Record<string, string>,
     body: any,
-    secret: string,
+    secret: string
   ): boolean {
     return false;
   }
@@ -247,17 +241,14 @@ export abstract class BaseIntegration extends EventEmitter {
    * Get OAuth authorization URL
    */
   getAuthorizationUrl?(redirectUri: string, state: string): string {
-    throw new Error("OAuth not implemented for this integration");
+    throw new Error('OAuth not implemented for this integration');
   }
 
   /**
    * Exchange OAuth code for tokens
    */
-  async exchangeCodeForTokens?(
-    code: string,
-    redirectUri: string,
-  ): Promise<IntegrationCredentials> {
-    throw new Error("OAuth not implemented for this integration");
+  async exchangeCodeForTokens?(code: string, redirectUri: string): Promise<IntegrationCredentials> {
+    throw new Error('OAuth not implemented for this integration');
   }
 
   /**
@@ -267,14 +258,14 @@ export abstract class BaseIntegration extends EventEmitter {
     if (this.context?.logger) {
       this.context.logger[level](message, data);
     }
-    this.emit("log", { level, message, data });
+    this.emit('log', { level, message, data });
   }
 
   /**
    * Handle errors
    */
   protected handleError(error: any): never {
-    this.log("error", "Integration error", {
+    this.log('error', 'Integration error', {
       integration: this.metadata.name,
       error: error.message,
       stack: error.stack,

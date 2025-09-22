@@ -1,9 +1,10 @@
 /// <reference types="vitest/globals" />
-import { render, RenderOptions } from "@testing-library/react";
-import { ReactElement } from "react";
-import { BrowserRouter } from "react-router-dom";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { vi } from "vitest";
+
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { type RenderOptions, render } from '@testing-library/react';
+import type { ReactElement } from 'react';
+import { BrowserRouter } from 'react-router-dom';
+import { vi } from 'vitest';
 
 // Mock localStorage for tests
 const localStorageMock = {
@@ -31,7 +32,7 @@ const createTestQueryClient = () =>
   });
 
 // Custom render function with providers
-interface CustomRenderOptions extends Omit<RenderOptions, "wrapper"> {
+interface CustomRenderOptions extends Omit<RenderOptions, 'wrapper'> {
   initialEntries?: string[];
   queryClient?: QueryClient;
 }
@@ -39,17 +40,15 @@ interface CustomRenderOptions extends Omit<RenderOptions, "wrapper"> {
 const customRender = (
   ui: ReactElement,
   {
-    initialEntries = ["/"],
+    initialEntries = ['/'],
     queryClient = createTestQueryClient(),
     ...renderOptions
-  }: CustomRenderOptions = {},
+  }: CustomRenderOptions = {}
 ) => {
   function Wrapper({ children }: { children: React.ReactNode }) {
     return (
       <BrowserRouter>
-        <QueryClientProvider client={queryClient}>
-          {children}
-        </QueryClientProvider>
+        <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
       </BrowserRouter>
     );
   }
@@ -61,29 +60,29 @@ const customRender = (
 };
 
 // Test Backend Configuration
-export const TEST_BACKEND_URL = "http://localhost:5000";
+export const TEST_BACKEND_URL = 'http://localhost:5000';
 
 // Mock user data for tests
 export const mockUser = {
-  id: "507f1f77bcf86cd799439011",
-  email: "test@example.com",
-  firstName: "Test",
-  lastName: "User",
-  fullName: "Test User",
-  role: "user" as const,
+  id: '507f1f77bcf86cd799439011',
+  email: 'test@example.com',
+  firstName: 'Test',
+  lastName: 'User',
+  fullName: 'Test User',
+  role: 'user' as const,
 };
 
 // Mock tokens
 export const mockTokens = {
-  token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.test.token",
-  refreshToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.test.refresh.token",
+  token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.test.token',
+  refreshToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.test.refresh.token',
 };
 
 // Test API responses
 export const mockAuthResponses = {
   loginSuccess: {
     success: true,
-    message: "Login successful",
+    message: 'Login successful',
     data: {
       user: mockUser,
       ...mockTokens,
@@ -91,7 +90,7 @@ export const mockAuthResponses = {
   },
   registerSuccess: {
     success: true,
-    message: "User registered successfully",
+    message: 'User registered successfully',
     data: {
       user: mockUser,
       ...mockTokens,
@@ -105,22 +104,22 @@ export const mockAuthResponses = {
   },
   refreshSuccess: {
     success: true,
-    message: "Token refreshed successfully",
+    message: 'Token refreshed successfully',
     data: mockTokens,
   },
   loginError: {
     success: false,
-    message: "Invalid email or password",
+    message: 'Invalid email or password',
   },
   unauthorized: {
     success: false,
-    message: "Access token is required",
+    message: 'Access token is required',
   },
 };
 
 // Helper to setup localStorage mocks
 export const setupLocalStorageMock = () => {
-  Object.defineProperty(window, "localStorage", {
+  Object.defineProperty(window, 'localStorage', {
     value: localStorageMock,
     writable: true,
   });
@@ -133,11 +132,11 @@ export const setupLocalStorageMock = () => {
 export const setupAuthenticatedUser = () => {
   localStorageMock.getItem.mockImplementation((key: string) => {
     switch (key) {
-      case "token":
+      case 'token':
         return mockTokens.token;
-      case "refreshToken":
+      case 'refreshToken':
         return mockTokens.refreshToken;
-      case "user":
+      case 'user':
         return JSON.stringify(mockUser);
       default:
         return null;
@@ -151,8 +150,7 @@ export const setupUnauthenticatedUser = () => {
 };
 
 // Helper to wait for async operations in tests
-export const waitForAsync = () =>
-  new Promise((resolve) => setTimeout(resolve, 0));
+export const waitForAsync = () => new Promise((resolve) => setTimeout(resolve, 0));
 
 // Mock fetch for API calls
 export const setupFetchMock = () => {
@@ -168,9 +166,9 @@ export const mockApiResponse = (data: any, status = 200) => {
     json: () => Promise.resolve(data),
     headers: new Headers(),
     redirected: false,
-    statusText: status === 200 ? "OK" : "Error",
-    type: "basic" as ResponseType,
-    url: "",
+    statusText: status === 200 ? 'OK' : 'Error',
+    type: 'basic' as ResponseType,
+    url: '',
     clone: vi.fn(),
     body: null,
     bodyUsed: false,
@@ -183,7 +181,7 @@ export const mockApiResponse = (data: any, status = 200) => {
 };
 
 // Helper to mock API errors
-export const mockApiError = (status = 500, message = "Server Error") => {
+export const mockApiError = (status = 500, message = 'Server Error') => {
   return Promise.resolve({
     ok: false,
     status,
@@ -191,8 +189,8 @@ export const mockApiError = (status = 500, message = "Server Error") => {
     headers: new Headers(),
     redirected: false,
     statusText: message,
-    type: "basic" as ResponseType,
-    url: "",
+    type: 'basic' as ResponseType,
+    url: '',
     clone: vi.fn(),
     body: null,
     bodyUsed: false,
@@ -217,8 +215,8 @@ export const testUtils = {
 };
 
 // Re-export everything from testing library
-export * from "@testing-library/react";
-export { default as userEvent } from "@testing-library/user-event";
+export * from '@testing-library/react';
+export { default as userEvent } from '@testing-library/user-event';
 
 // Custom render as default export
 export { customRender as render };

@@ -1,202 +1,191 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import type {
-  INodeType,
-  INodeTypeDescription,
-  INodeExecutionData,
-} from "../types";
+import type { INodeExecutionData, INodeType, INodeTypeDescription } from '../types';
 
 export class EmbeddingNode implements INodeType {
   description: INodeTypeDescription = {
-    displayName: "Embedding",
-    name: "embedding",
-    icon: "🔢",
-    group: ["ai"],
+    displayName: 'Embedding',
+    name: 'embedding',
+    icon: '🔢',
+    group: ['ai'],
     version: 1,
-    description: "Generate vector embeddings from text using AI models",
+    description: 'Generate vector embeddings from text using AI models',
     defaults: {
-      name: "Embedding",
-      color: "#10b981",
+      name: 'Embedding',
+      color: '#10b981',
     },
-    inputs: ["main"],
-    outputs: ["main"],
+    inputs: ['main'],
+    outputs: ['main'],
     credentials: [
       {
-        name: "openai",
+        name: 'openai',
         required: false,
         displayOptions: {
           show: {
-            provider: ["openai"],
+            provider: ['openai'],
           },
         },
       },
       {
-        name: "huggingface",
+        name: 'huggingface',
         required: false,
         displayOptions: {
           show: {
-            provider: ["huggingface"],
+            provider: ['huggingface'],
           },
         },
       },
     ],
     properties: [
       {
-        displayName: "Provider",
-        name: "provider",
-        type: "options",
-        default: "openai",
+        displayName: 'Provider',
+        name: 'provider',
+        type: 'options',
+        default: 'openai',
         required: true,
         options: [
           {
-            name: "OpenAI",
-            value: "openai",
+            name: 'OpenAI',
+            value: 'openai',
           },
           {
-            name: "Hugging Face",
-            value: "huggingface",
+            name: 'Hugging Face',
+            value: 'huggingface',
           },
           {
-            name: "Local (SentenceTransformers)",
-            value: "local",
+            name: 'Local (SentenceTransformers)',
+            value: 'local',
           },
           {
-            name: "Cohere",
-            value: "cohere",
+            name: 'Cohere',
+            value: 'cohere',
           },
         ],
-        description: "Embedding provider to use",
+        description: 'Embedding provider to use',
       },
       {
-        displayName: "Model",
-        name: "model",
-        type: "options",
-        default: "text-embedding-ada-002",
+        displayName: 'Model',
+        name: 'model',
+        type: 'options',
+        default: 'text-embedding-ada-002',
         required: true,
         options: [
           {
-            name: "text-embedding-ada-002",
-            value: "text-embedding-ada-002",
+            name: 'text-embedding-ada-002',
+            value: 'text-embedding-ada-002',
             displayOptions: {
               show: {
-                provider: ["openai"],
+                provider: ['openai'],
               },
             },
           },
           {
-            name: "text-embedding-3-small",
-            value: "text-embedding-3-small",
+            name: 'text-embedding-3-small',
+            value: 'text-embedding-3-small',
             displayOptions: {
               show: {
-                provider: ["openai"],
+                provider: ['openai'],
               },
             },
           },
           {
-            name: "text-embedding-3-large",
-            value: "text-embedding-3-large",
+            name: 'text-embedding-3-large',
+            value: 'text-embedding-3-large',
             displayOptions: {
               show: {
-                provider: ["openai"],
+                provider: ['openai'],
               },
             },
           },
           {
-            name: "all-MiniLM-L6-v2",
-            value: "sentence-transformers/all-MiniLM-L6-v2",
+            name: 'all-MiniLM-L6-v2',
+            value: 'sentence-transformers/all-MiniLM-L6-v2',
             displayOptions: {
               show: {
-                provider: ["huggingface", "local"],
+                provider: ['huggingface', 'local'],
               },
             },
           },
           {
-            name: "all-mpnet-base-v2",
-            value: "sentence-transformers/all-mpnet-base-v2",
+            name: 'all-mpnet-base-v2',
+            value: 'sentence-transformers/all-mpnet-base-v2',
             displayOptions: {
               show: {
-                provider: ["huggingface", "local"],
+                provider: ['huggingface', 'local'],
               },
             },
           },
           {
-            name: "embed-english-v3.0",
-            value: "embed-english-v3.0",
+            name: 'embed-english-v3.0',
+            value: 'embed-english-v3.0',
             displayOptions: {
               show: {
-                provider: ["cohere"],
+                provider: ['cohere'],
               },
             },
           },
         ],
-        description: "Embedding model to use",
+        description: 'Embedding model to use',
       },
       {
-        displayName: "Text Field",
-        name: "textField",
-        type: "string",
-        default: "text",
+        displayName: 'Text Field',
+        name: 'textField',
+        type: 'string',
+        default: 'text',
         required: true,
-        description: "Field containing the text to embed",
-        placeholder: "text, content, description",
+        description: 'Field containing the text to embed',
+        placeholder: 'text, content, description',
       },
       {
-        displayName: "Batch Size",
-        name: "batchSize",
-        type: "number",
+        displayName: 'Batch Size',
+        name: 'batchSize',
+        type: 'number',
         default: 10,
         min: 1,
         max: 100,
-        description: "Number of texts to process in each batch",
+        description: 'Number of texts to process in each batch',
       },
       {
-        displayName: "Normalize Embeddings",
-        name: "normalize",
-        type: "boolean",
+        displayName: 'Normalize Embeddings',
+        name: 'normalize',
+        type: 'boolean',
         default: true,
-        description: "Normalize embeddings to unit length",
+        description: 'Normalize embeddings to unit length',
       },
       {
-        displayName: "Include Metadata",
-        name: "includeMetadata",
-        type: "boolean",
+        displayName: 'Include Metadata',
+        name: 'includeMetadata',
+        type: 'boolean',
         default: true,
-        description: "Include embedding metadata in output",
+        description: 'Include embedding metadata in output',
       },
       {
-        displayName: "Dimensions",
-        name: "dimensions",
-        type: "number",
+        displayName: 'Dimensions',
+        name: 'dimensions',
+        type: 'number',
         default: 1536,
         min: 1,
         max: 3072,
         displayOptions: {
           show: {
-            provider: ["openai"],
-            model: ["text-embedding-3-small", "text-embedding-3-large"],
+            provider: ['openai'],
+            model: ['text-embedding-3-small', 'text-embedding-3-large'],
           },
         },
-        description:
-          "Number of dimensions for the embedding (OpenAI v3 models only)",
+        description: 'Number of dimensions for the embedding (OpenAI v3 models only)',
       },
     ],
-    categories: ["AI/Automation"],
+    categories: ['AI/Automation'],
   };
 
   async execute(this: any): Promise<INodeExecutionData[][]> {
     const inputData = this.getInputData();
-    const provider = this.getNodeParameter("provider", "openai") as string;
-    const model = this.getNodeParameter(
-      "model",
-      "text-embedding-ada-002",
-    ) as string;
-    const textField = this.getNodeParameter("textField", "text") as string;
-    const batchSize = this.getNodeParameter("batchSize", 10) as number;
-    const normalize = this.getNodeParameter("normalize", true) as boolean;
-    const includeMetadata = this.getNodeParameter(
-      "includeMetadata",
-      true,
-    ) as boolean;
-    const dimensions = this.getNodeParameter("dimensions", 1536) as number;
+    const provider = this.getNodeParameter('provider', 'openai') as string;
+    const model = this.getNodeParameter('model', 'text-embedding-ada-002') as string;
+    const textField = this.getNodeParameter('textField', 'text') as string;
+    const batchSize = this.getNodeParameter('batchSize', 10) as number;
+    const normalize = this.getNodeParameter('normalize', true) as boolean;
+    const includeMetadata = this.getNodeParameter('includeMetadata', true) as boolean;
+    const dimensions = this.getNodeParameter('dimensions', 1536) as number;
 
     const results: INodeExecutionData[] = [];
 
@@ -205,7 +194,7 @@ export class EmbeddingNode implements INodeType {
       const batch = inputData.slice(i, i + batchSize);
 
       for (const item of batch) {
-        const textToEmbed = item.json[textField] || "";
+        const textToEmbed = item.json[textField] || '';
 
         if (!textToEmbed) {
           results.push({
@@ -220,15 +209,12 @@ export class EmbeddingNode implements INodeType {
 
         // Generate mock embedding vector
         const embeddingDimensions =
-          provider === "openai" &&
-          ["text-embedding-3-small", "text-embedding-3-large"].includes(model)
+          provider === 'openai' &&
+          ['text-embedding-3-small', 'text-embedding-3-large'].includes(model)
             ? dimensions
             : this.getDefaultDimensions(model);
 
-        const mockEmbedding = this.generateMockEmbedding(
-          embeddingDimensions,
-          normalize,
-        );
+        const mockEmbedding = this.generateMockEmbedding(embeddingDimensions, normalize);
 
         const result: any = {
           ...item.json,

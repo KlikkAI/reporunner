@@ -1,0 +1,691 @@
+name: Performance Testing & Analysis
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    # Run performance tests daily at 2 AM UTC
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to test'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+          - staging
+          - production
+      test_type:
+        description: 'Type of performance test'
+        required: true
+        default: 'standard'
+        type: choice
+        options:
+          - standard
+          - stress
+          - endurance
+          - spike
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: '20'
+  PNPM_VERSION: '9'
+
+jobs:
+  # Bundle analysis for frontend
+  bundle-analysis:
+    name: Bundle Size Analysis
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request' || github.event_name == 'push'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build frontend for analysis
+        run: pnpm --filter=@reporunner/frontend build:analyze
+
+      - name: Analyze bundle size
+        run: |
+          mkdir -p reports/bundle-analysis
+
+          # Generate bundle report
+          pnpm --filter=@reporunner/frontend exec webpack-bundle-analyzer \
+            dist/assets/manifest.json \
+            --report reports/bundle-analysis/report.html \
+            --mode static
+
+          # Generate size comparison
+          npx bundlesize
+
+      - name: Upload bundle analysis
+        uses: actions/upload-artifact@v4
+        with:
+          name: bundle-analysis
+          path: |
+            reports/bundle-analysis/
+            packages/frontend/dist/bundle-analyzer.json
+
+      - name: Comment bundle size
+        uses: actions/github-script@v7
+        if: github.event_name == 'pull_request'
+        with:
+          script: |
+            const fs = require('fs');
+
+            // Read bundle size data
+            const bundleData = JSON.parse(fs.readFileSync('packages/frontend/dist/bundle-analyzer.json', 'utf8'));
+
+            const formatSize = (bytes) => {
+              const kb = bytes / 1024;
+              return kb > 1024 ? `${(kb / 1024).toFixed(1)}MB` : `${kb.toFixed(1)}KB`;
+            };
+
+            let comment = '## 📦 Bundle Size Analysis\n\n';
+            comment += '| Asset | Size | Gzipped |\n';
+            comment += '|-------|------|----------|\n';
+
+            bundleData.assets.forEach(asset => {
+              comment += `| ${asset.name} | ${formatSize(asset.size)} | ${formatSize(asset.gzipSize)} |\n`;
+            });
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
+
+  # Performance benchmarks
+  performance-benchmarks:
+    name: Performance Benchmarks
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        benchmark: [
+          'node-performance',
+          'api-performance',
+          'workflow-execution',
+          'database-operations'
+        ]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Setup services for testing
+        run: |
+          docker compose -f docker-compose.yml up -d postgres mongodb redis
+          sleep 30
+
+      - name: Run performance benchmarks
+        run: |
+          mkdir -p reports/benchmarks
+
+          case "${{ matrix.benchmark }}" in
+            "node-performance")
+              pnpm --filter=@reporunner/backend run benchmark:node > reports/benchmarks/node-performance.json
+              ;;
+            "api-performance")
+              pnpm run benchmark:api > reports/benchmarks/api-performance.json
+              ;;
+            "workflow-execution")
+              pnpm run benchmark:workflows > reports/benchmarks/workflow-execution.json
+              ;;
+            "database-operations")
+              pnpm run benchmark:database > reports/benchmarks/database-operations.json
+              ;;
+          esac
+
+      - name: Upload benchmark results
+        uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-${{ matrix.benchmark }}
+          path: reports/benchmarks/
+
+      - name: Cleanup
+        if: always()
+        run: docker compose -f docker-compose.yml down
+
+  # Load testing with K6
+  load-testing:
+    name: Load Testing
+    runs-on: ubuntu-latest
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup test environment
+        run: |
+          # Determine target environment
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            ENVIRONMENT="${{ github.event.inputs.environment }}"
+            TEST_TYPE="${{ github.event.inputs.test_type }}"
+          else
+            ENVIRONMENT="staging"
+            TEST_TYPE="standard"
+          fi
+
+          echo "ENVIRONMENT=$ENVIRONMENT" >> $GITHUB_ENV
+          echo "TEST_TYPE=$TEST_TYPE" >> $GITHUB_ENV
+
+          case $ENVIRONMENT in
+            "staging")
+              echo "TARGET_URL=https://staging.reporunner.com" >> $GITHUB_ENV
+              ;;
+            "production")
+              echo "TARGET_URL=https://app.reporunner.com" >> $GITHUB_ENV
+              ;;
+          esac
+
+      - name: Install K6
+        run: |
+          sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys C5AD17C747E3415A3642D57D77C6C491D6AC1D69
+          echo "deb https://dl.k6.io/deb stable main" | sudo tee /etc/apt/sources.list.d/k6.list
+          sudo apt-get update
+          sudo apt-get install k6
+
+      - name: Run load tests
+        run: |
+          mkdir -p reports/load-testing
+
+          # Select test configuration based on type
+          case "${{ env.TEST_TYPE }}" in
+            "standard")
+              TEST_CONFIG="scripts/k6/standard-load.js"
+              ;;
+            "stress")
+              TEST_CONFIG="scripts/k6/stress-test.js"
+              ;;
+            "endurance")
+              TEST_CONFIG="scripts/k6/endurance-test.js"
+              ;;
+            "spike")
+              TEST_CONFIG="scripts/k6/spike-test.js"
+              ;;
+          esac
+
+          # Run K6 test
+          k6 run \
+            --env TARGET_URL=${{ env.TARGET_URL }} \
+            --out json=reports/load-testing/results.json \
+            --out csv=reports/load-testing/results.csv \
+            $TEST_CONFIG
+
+      - name: Generate load test report
+        run: |
+          # Convert K6 results to HTML report
+          npx k6-html-reporter \
+            --input reports/load-testing/results.json \
+            --output reports/load-testing/report.html
+
+      - name: Upload load test results
+        uses: actions/upload-artifact@v4
+        with:
+          name: load-test-${{ env.ENVIRONMENT }}-${{ env.TEST_TYPE }}
+          path: reports/load-testing/
+
+      - name: Analyze results and set thresholds
+        run: |
+          # Check if performance thresholds are met
+          node scripts/analyze-performance.js \
+            --input reports/load-testing/results.json \
+            --thresholds scripts/performance-thresholds.json \
+            --output reports/load-testing/analysis.json
+
+      - name: Comment on PR with results
+        uses: actions/github-script@v7
+        if: github.event_name == 'pull_request'
+        with:
+          script: |
+            const fs = require('fs');
+
+            if (!fs.existsSync('reports/load-testing/analysis.json')) {
+              return;
+            }
+
+            const analysis = JSON.parse(fs.readFileSync('reports/load-testing/analysis.json', 'utf8'));
+
+            let comment = '## ⚡ Performance Test Results\n\n';
+            comment += `**Environment**: ${{ env.ENVIRONMENT }}\n`;
+            comment += `**Test Type**: ${{ env.TEST_TYPE }}\n\n`;
+
+            comment += '### 📊 Key Metrics\n\n';
+            comment += '| Metric | Value | Threshold | Status |\n';
+            comment += '|--------|-------|-----------|--------|\n';
+
+            analysis.metrics.forEach(metric => {
+              const status = metric.passed ? '✅' : '❌';
+              comment += `| ${metric.name} | ${metric.value} | ${metric.threshold} | ${status} |\n`;
+            });
+
+            if (analysis.recommendations && analysis.recommendations.length > 0) {
+              comment += '\n### 💡 Recommendations\n\n';
+              analysis.recommendations.forEach(rec => {
+                comment += `- ${rec}\n`;
+              });
+            }
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
+
+  # Lighthouse performance audit
+  lighthouse-audit:
+    name: Lighthouse Performance Audit
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request' || github.event_name == 'push'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build frontend
+        run: pnpm --filter=@reporunner/frontend build
+
+      - name: Setup preview server
+        run: |
+          pnpm --filter=@reporunner/frontend preview &
+          sleep 10
+
+      - name: Install Lighthouse CLI
+        run: npm install -g @lhci/cli lighthouse
+
+      - name: Run Lighthouse audit
+        run: |
+          mkdir -p reports/lighthouse
+
+          # Run Lighthouse with CI configuration
+          lhci autorun \
+            --upload.target=filesystem \
+            --upload.outputDir=reports/lighthouse \
+            --collect.url=http://localhost:4173 \
+            --collect.settings.chromeFlags="--no-sandbox --headless" \
+            --assert.assertions.performance=0.8 \
+            --assert.assertions.accessibility=0.9 \
+            --assert.assertions.best-practices=0.8 \
+            --assert.assertions.seo=0.8
+
+      - name: Upload Lighthouse results
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse-audit
+          path: reports/lighthouse/
+
+      - name: Comment Lighthouse scores
+        uses: actions/github-script@v7
+        if: github.event_name == 'pull_request'
+        with:
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+
+            const lighthouseDir = 'reports/lighthouse';
+            const files = fs.readdirSync(lighthouseDir).filter(f => f.endsWith('.json'));
+
+            if (files.length === 0) return;
+
+            const reportFile = path.join(lighthouseDir, files[0]);
+            const report = JSON.parse(fs.readFileSync(reportFile, 'utf8'));
+
+            const scores = {
+              performance: Math.round(report.categories.performance.score * 100),
+              accessibility: Math.round(report.categories.accessibility.score * 100),
+              'best-practices': Math.round(report.categories['best-practices'].score * 100),
+              seo: Math.round(report.categories.seo.score * 100)
+            };
+
+            const getScoreEmoji = (score) => {
+              if (score >= 90) return '🟢';
+              if (score >= 50) return '🟡';
+              return '🔴';
+            };
+
+            let comment = '## 🔍 Lighthouse Performance Audit\n\n';
+            comment += '| Category | Score | Status |\n';
+            comment += '|----------|-------|--------|\n';
+
+            Object.entries(scores).forEach(([category, score]) => {
+              const emoji = getScoreEmoji(score);
+              const formattedCategory = category.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase());
+              comment += `| ${formattedCategory} | ${score}/100 | ${emoji} |\n`;
+            });
+
+            comment += '\n### 📊 Detailed Report\n';
+            comment += `[View full Lighthouse report](${report.finalUrl})\n`;
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
+
+  # Memory and CPU profiling
+  profiling:
+    name: Memory & CPU Profiling
+    runs-on: ubuntu-latest
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Setup services
+        run: |
+          docker compose -f docker-compose.yml up -d postgres mongodb redis
+          sleep 30
+
+      - name: Install profiling tools
+        run: |
+          npm install -g clinic autocannon
+
+      - name: CPU profiling
+        run: |
+          mkdir -p reports/profiling/cpu
+
+          # Start backend with CPU profiling
+          clinic doctor --dest reports/profiling/cpu -- \
+            node packages/backend/dist/index.js &
+
+          BACKEND_PID=$!
+          sleep 10
+
+          # Generate load for profiling
+          autocannon -c 10 -d 30 http://localhost:3001/health
+
+          # Stop backend
+          kill $BACKEND_PID
+          wait $BACKEND_PID || true
+
+      - name: Memory profiling
+        run: |
+          mkdir -p reports/profiling/memory
+
+          # Start backend with memory profiling
+          clinic heapprofiler --dest reports/profiling/memory -- \
+            node packages/backend/dist/index.js &
+
+          BACKEND_PID=$!
+          sleep 10
+
+          # Generate memory-intensive operations
+          for i in {1..100}; do
+            curl -s http://localhost:3001/api/workflows > /dev/null
+            sleep 0.1
+          done
+
+          # Stop backend
+          kill $BACKEND_PID
+          wait $BACKEND_PID || true
+
+      - name: Flame graph generation
+        run: |
+          mkdir -p reports/profiling/flame
+
+          # Start backend with flame graph profiling
+          clinic flame --dest reports/profiling/flame -- \
+            node packages/backend/dist/index.js &
+
+          BACKEND_PID=$!
+          sleep 10
+
+          # Generate mixed workload
+          autocannon -c 5 -d 20 http://localhost:3001/api/workflows
+
+          # Stop backend
+          kill $BACKEND_PID
+          wait $BACKEND_PID || true
+
+      - name: Upload profiling results
+        uses: actions/upload-artifact@v4
+        with:
+          name: profiling-results
+          path: reports/profiling/
+
+      - name: Cleanup
+        if: always()
+        run: docker compose -f docker-compose.yml down
+
+  # Performance regression detection
+  regression-detection:
+    name: Performance Regression Detection
+    runs-on: ubuntu-latest
+    needs: [performance-benchmarks]
+    if: github.event_name == 'pull_request'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download benchmark results
+        uses: actions/download-artifact@v4
+        with:
+          pattern: benchmark-*
+          path: current-benchmarks/
+          merge-multiple: true
+
+      - name: Download baseline benchmarks
+        run: |
+          # Download benchmark results from main branch
+          gh api \
+            -H "Accept: application/vnd.github.v3+json" \
+            /repos/${{ github.repository }}/actions/artifacts?name=benchmark-results \
+            | jq -r '.artifacts[0].archive_download_url' \
+            | xargs curl -L -o baseline-benchmarks.zip
+
+          unzip baseline-benchmarks.zip -d baseline-benchmarks/
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Compare performance
+        run: |
+          node scripts/compare-benchmarks.js \
+            --baseline baseline-benchmarks/ \
+            --current current-benchmarks/ \
+            --output performance-comparison.json \
+            --threshold 10
+
+      - name: Comment regression analysis
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+
+            if (!fs.existsSync('performance-comparison.json')) {
+              return;
+            }
+
+            const comparison = JSON.parse(fs.readFileSync('performance-comparison.json', 'utf8'));
+
+            let comment = '## 📈 Performance Regression Analysis\n\n';
+
+            if (comparison.regressions.length === 0) {
+              comment += '✅ No performance regressions detected!\n\n';
+            } else {
+              comment += '⚠️ Performance regressions detected:\n\n';
+              comment += '| Benchmark | Change | Impact |\n';
+              comment += '|-----------|--------|--------|\n';
+
+              comparison.regressions.forEach(regression => {
+                const changePercent = ((regression.current - regression.baseline) / regression.baseline * 100).toFixed(1);
+                const impact = Math.abs(changePercent) > 20 ? '🔴 High' :
+                               Math.abs(changePercent) > 10 ? '🟡 Medium' : '🟢 Low';
+                comment += `| ${regression.name} | ${changePercent}% | ${impact} |\n`;
+              });
+            }
+
+            if (comparison.improvements.length > 0) {
+              comment += '\n### 🚀 Performance Improvements\n\n';
+              comment += '| Benchmark | Improvement |\n';
+              comment += '|-----------|-------------|\n';
+
+              comparison.improvements.forEach(improvement => {
+                const changePercent = ((improvement.baseline - improvement.current) / improvement.baseline * 100).toFixed(1);
+                comment += `| ${improvement.name} | ${changePercent}% faster |\n`;
+              });
+            }
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
+
+  # Performance monitoring
+  monitoring:
+    name: Performance Monitoring
+    runs-on: ubuntu-latest
+    if: github.event_name == 'schedule'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run production health checks
+        run: |
+          mkdir -p reports/monitoring
+
+          # API response times
+          curl -w "@scripts/curl-format.txt" -s -o /dev/null https://app.reporunner.com/health \
+            > reports/monitoring/api-health.txt
+
+          # Database connection times
+          curl -w "@scripts/curl-format.txt" -s -o /dev/null https://app.reporunner.com/api/health/database \
+            > reports/monitoring/database-health.txt
+
+      - name: Synthetic user tests
+        run: |
+          # Run synthetic user journey tests
+          npm run test:synthetic -- \
+            --url https://app.reporunner.com \
+            --output reports/monitoring/synthetic-tests.json
+
+      - name: Upload monitoring results
+        uses: actions/upload-artifact@v4
+        with:
+          name: monitoring-${{ github.run_number }}
+          path: reports/monitoring/
+
+      - name: Alert on performance issues
+        run: |
+          # Check thresholds and send alerts if needed
+          node scripts/performance-alerts.js \
+            --input reports/monitoring/ \
+            --webhook ${{ secrets.SLACK_WEBHOOK }}
+
+  # Cleanup and reporting
+  cleanup:
+    name: Performance Report Summary
+    runs-on: ubuntu-latest
+    needs: [bundle-analysis, performance-benchmarks, load-testing, lighthouse-audit, profiling, regression-detection, monitoring]
+    if: always()
+
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: all-reports/
+
+      - name: Generate performance summary
+        run: |
+          mkdir -p performance-summary
+
+          # Create consolidated performance report
+          cat > performance-summary/README.md << 'EOF'
+          # Performance Test Results
+
+          This directory contains comprehensive performance test results for this build.
+
+          ## Contents
+
+          - `bundle-analysis/` - Frontend bundle size analysis
+          - `benchmarks/` - Performance benchmark results
+          - `load-testing/` - Load test results and reports
+          - `lighthouse/` - Lighthouse performance audit
+          - `profiling/` - CPU and memory profiling data
+          - `monitoring/` - Production monitoring data
+
+          ## Summary
+
+          Performance tests completed on $(date)
+
+          EOF
+
+      - name: Upload consolidated report
+        uses: actions/upload-artifact@v4
+        with:
+          name: performance-summary-${{ github.run_number }}
+          path: |
+            all-reports/
+            performance-summary/
+          retention-days: 30

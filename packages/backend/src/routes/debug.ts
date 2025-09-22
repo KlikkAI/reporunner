@@ -3,33 +3,32 @@
  * REST API endpoints for debugging and monitoring
  */
 
-import { Router } from "express";
-import { logger } from "../services/logging/Logger.js";
-import { performanceMonitor } from "../services/monitoring/PerformanceMonitor.js";
-import { errorTracker } from "../services/monitoring/ErrorTracker.js";
-import { healthCheck } from "../services/monitoring/HealthCheck.js";
-import { debugTools } from "../services/debugging/DebugTools.js";
+import { Router } from 'express';
+import { debugTools } from '../services/debugging/DebugTools.js';
+import { logger } from '../services/logging/Logger.js';
+import { errorTracker } from '../services/monitoring/ErrorTracker.js';
+import { healthCheck } from '../services/monitoring/HealthCheck.js';
+import { performanceMonitor } from '../services/monitoring/PerformanceMonitor.js';
 
 const router: Router = Router();
 
 // Only enable debug routes in development or when explicitly enabled
 const isDebugEnabled =
-  process.env.NODE_ENV === "development" ||
-  process.env.ENABLE_DEBUG_ROUTES === "true";
+  process.env.NODE_ENV === 'development' || process.env.ENABLE_DEBUG_ROUTES === 'true';
 
 if (!isDebugEnabled) {
   // Return 404 for all debug routes in production
-  router.use("*", (req, res) => {
-    res.status(404).json({ error: "Debug routes not available" });
+  router.use('*', (req, res) => {
+    res.status(404).json({ error: 'Debug routes not available' });
   });
 } else {
   // Health and Status Routes
-  router.get("/health", healthCheck.createHealthEndpoint());
-  router.get("/health/ready", healthCheck.createReadinessEndpoint());
-  router.get("/health/live", healthCheck.createLivenessEndpoint());
+  router.get('/health', healthCheck.createHealthEndpoint());
+  router.get('/health/ready', healthCheck.createReadinessEndpoint());
+  router.get('/health/live', healthCheck.createLivenessEndpoint());
 
   // System Information Routes
-  router.get("/system/info", (req, res) => {
+  router.get('/system/info', (req, res) => {
     const systemInfo = {
       node: {
         version: process.version,
@@ -55,11 +54,9 @@ if (!isDebugEnabled) {
     });
   });
 
-  router.get("/system/metrics", (req, res) => {
+  router.get('/system/metrics', (req, res) => {
     const { since, limit = 100 } = req.query;
-    const sinceTimestamp = since
-      ? parseInt(since as string)
-      : Date.now() - 60 * 60 * 1000; // Last hour
+    const sinceTimestamp = since ? parseInt(since as string) : Date.now() - 60 * 60 * 1000; // Last hour
 
     const metrics = performanceMonitor
       .getMetrics(undefined, sinceTimestamp)
@@ -72,7 +69,7 @@ if (!isDebugEnabled) {
           acc[metric.name] = (acc[metric.name] || 0) + 1;
           return acc;
         },
-        {} as Record<string, number>,
+        {} as Record<string, number>
       ),
       timeRange: {
         start: sinceTimestamp,
@@ -90,7 +87,7 @@ if (!isDebugEnabled) {
   });
 
   // Error Tracking Routes
-  router.get("/errors", (req, res) => {
+  router.get('/errors', (req, res) => {
     const { severity, since, limit = 50 } = req.query;
     const sinceTimestamp = since ? parseInt(since as string) : undefined;
 
@@ -111,14 +108,14 @@ if (!isDebugEnabled) {
     });
   });
 
-  router.get("/errors/:errorId", (req, res) => {
+  router.get('/errors/:errorId', (req, res) => {
     const { errorId } = req.params;
     const error = errorTracker.getError(errorId);
 
     if (!error) {
       res.status(404).json({
         success: false,
-        message: "Error not found",
+        message: 'Error not found',
       });
       return;
     }
@@ -129,7 +126,7 @@ if (!isDebugEnabled) {
     });
   });
 
-  router.get("/errors/patterns", (req, res) => {
+  router.get('/errors/patterns', (req, res) => {
     const patterns = errorTracker.getErrorPatterns();
 
     res.json({
@@ -138,28 +135,28 @@ if (!isDebugEnabled) {
     });
   });
 
-  router.post("/errors/patterns/:fingerprint/resolve", (req, res) => {
+  router.post('/errors/patterns/:fingerprint/resolve', (req, res) => {
     const { fingerprint } = req.params;
-    const { resolvedBy = "unknown" } = req.body;
+    const { resolvedBy = 'unknown' } = req.body;
 
     const success = errorTracker.resolvePattern(fingerprint, resolvedBy);
 
     if (!success) {
       res.status(404).json({
         success: false,
-        message: "Error pattern not found",
+        message: 'Error pattern not found',
       });
       return;
     }
 
     res.json({
       success: true,
-      message: "Error pattern resolved",
+      message: 'Error pattern resolved',
     });
   });
 
   // Debug Session Routes
-  router.post("/debug/sessions", (req, res) => {
+  router.post('/debug/sessions', (req, res) => {
     const { context = {} } = req.body;
     const sessionId = debugTools.startDebugSession(context);
 
@@ -169,14 +166,14 @@ if (!isDebugEnabled) {
     });
   });
 
-  router.get("/debug/sessions/:sessionId", (req, res) => {
+  router.get('/debug/sessions/:sessionId', (req, res) => {
     const { sessionId } = req.params;
-    const session = debugTools["activeSessions"].get(sessionId);
+    const session = debugTools['activeSessions'].get(sessionId);
 
     if (!session) {
       res.status(404).json({
         success: false,
-        message: "Debug session not found",
+        message: 'Debug session not found',
       });
       return;
     }
@@ -187,14 +184,14 @@ if (!isDebugEnabled) {
     });
   });
 
-  router.post("/debug/sessions/:sessionId/end", (req, res) => {
+  router.post('/debug/sessions/:sessionId/end', (req, res) => {
     const { sessionId } = req.params;
     const session = debugTools.endDebugSession(sessionId);
 
     if (!session) {
       res.status(404).json({
         success: false,
-        message: "Debug session not found",
+        message: 'Debug session not found',
       });
       return;
     }
@@ -205,39 +202,36 @@ if (!isDebugEnabled) {
     });
   });
 
-  router.get("/debug/sessions/:sessionId/export", (req, res) => {
+  router.get('/debug/sessions/:sessionId/export', (req, res) => {
     const { sessionId } = req.params;
-    const { format = "json" } = req.query;
+    const { format = 'json' } = req.query;
 
-    const exported = debugTools.exportDebugSession(
-      sessionId,
-      format as "json" | "csv",
-    );
+    const exported = debugTools.exportDebugSession(sessionId, format as 'json' | 'csv');
 
     if (!exported) {
       res.status(404).json({
         success: false,
-        message: "Debug session not found",
+        message: 'Debug session not found',
       });
       return;
     }
 
-    const contentType = format === "csv" ? "text/csv" : "application/json";
+    const contentType = format === 'csv' ? 'text/csv' : 'application/json';
     const filename = `debug-session-${sessionId}.${format}`;
 
-    res.setHeader("Content-Type", contentType);
-    res.setHeader("Content-Disposition", `attachment; filename=${filename}`);
+    res.setHeader('Content-Type', contentType);
+    res.setHeader('Content-Disposition', `attachment; filename=${filename}`);
     res.send(exported);
   });
 
   // Performance Profiling Routes
-  router.post("/debug/profiling/start", (req, res) => {
+  router.post('/debug/profiling/start', (req, res) => {
     const { name, sampleInterval, duration } = req.body;
 
     if (!name) {
       res.status(400).json({
         success: false,
-        message: "Profile name is required",
+        message: 'Profile name is required',
       });
       return;
     }
@@ -253,14 +247,14 @@ if (!isDebugEnabled) {
     });
   });
 
-  router.post("/debug/profiling/:profileId/stop", (req, res) => {
+  router.post('/debug/profiling/:profileId/stop', (req, res) => {
     const { profileId } = req.params;
     const profile = debugTools.stopProfiling(profileId);
 
     if (!profile) {
       res.status(404).json({
         success: false,
-        message: "Profile not found",
+        message: 'Profile not found',
       });
       return;
     }
@@ -272,8 +266,8 @@ if (!isDebugEnabled) {
   });
 
   // Memory Analysis Routes
-  router.post("/debug/memory/snapshot", (req, res) => {
-    const { name = "manual" } = req.body;
+  router.post('/debug/memory/snapshot', (req, res) => {
+    const { name = 'manual' } = req.body;
     const snapshotId = debugTools.takeMemorySnapshot(name);
 
     res.status(201).json({
@@ -282,34 +276,34 @@ if (!isDebugEnabled) {
     });
   });
 
-  router.post("/debug/memory/leak-detection/start", (req, res) => {
+  router.post('/debug/memory/leak-detection/start', (req, res) => {
     const { interval = 30000 } = req.body;
     debugTools.startMemoryLeakDetection(interval);
 
     res.json({
       success: true,
-      message: "Memory leak detection started",
+      message: 'Memory leak detection started',
     });
   });
 
-  router.post("/debug/memory/leak-detection/stop", (req, res) => {
+  router.post('/debug/memory/leak-detection/stop', (req, res) => {
     debugTools.stopMemoryLeakDetection();
 
     res.json({
       success: true,
-      message: "Memory leak detection stopped",
+      message: 'Memory leak detection stopped',
     });
   });
 
   // Configuration Routes
-  router.get("/debug/config", (req, res) => {
+  router.get('/debug/config', (req, res) => {
     const config = {
-      globalDebugMode: debugTools["globalDebugMode"],
+      globalDebugMode: debugTools['globalDebugMode'],
       logLevel: logger.getLogLevel(),
       environment: process.env.NODE_ENV,
       debugRoutes: isDebugEnabled,
-      activeSessions: debugTools["activeSessions"].size,
-      activeProfiles: debugTools["performanceProfiler"].size,
+      activeSessions: debugTools['activeSessions'].size,
+      activeProfiles: debugTools['performanceProfiler'].size,
     };
 
     res.json({
@@ -318,13 +312,13 @@ if (!isDebugEnabled) {
     });
   });
 
-  router.post("/debug/config/debug-mode", (req, res) => {
+  router.post('/debug/config/debug-mode', (req, res) => {
     const { enabled } = req.body;
 
-    if (typeof enabled !== "boolean") {
+    if (typeof enabled !== 'boolean') {
       res.status(400).json({
         success: false,
-        message: "enabled field must be boolean",
+        message: 'enabled field must be boolean',
       });
       return;
     }
@@ -333,26 +327,18 @@ if (!isDebugEnabled) {
 
     res.json({
       success: true,
-      message: `Debug mode ${enabled ? "enabled" : "disabled"}`,
+      message: `Debug mode ${enabled ? 'enabled' : 'disabled'}`,
     });
   });
 
-  router.post("/debug/config/log-level", (req, res) => {
+  router.post('/debug/config/log-level', (req, res) => {
     const { level } = req.body;
 
-    const validLevels = [
-      "error",
-      "warn",
-      "info",
-      "http",
-      "verbose",
-      "debug",
-      "silly",
-    ];
+    const validLevels = ['error', 'warn', 'info', 'http', 'verbose', 'debug', 'silly'];
     if (!validLevels.includes(level)) {
       res.status(400).json({
         success: false,
-        message: `Invalid log level. Valid levels: ${validLevels.join(", ")}`,
+        message: `Invalid log level. Valid levels: ${validLevels.join(', ')}`,
       });
       return;
     }
@@ -366,7 +352,7 @@ if (!isDebugEnabled) {
   });
 
   // State Dump Routes
-  router.get("/debug/state", (req, res) => {
+  router.get('/debug/state', (req, res) => {
     const { sessionId } = req.query;
     const state = debugTools.dumpState(sessionId as string);
 
@@ -377,33 +363,29 @@ if (!isDebugEnabled) {
   });
 
   // Test Error Generation (for testing error tracking)
-  router.post("/debug/test/error", (req, res) => {
-    const {
-      type = "generic",
-      message = "Test error",
-      severity = "medium",
-    } = req.body;
+  router.post('/debug/test/error', (req, res) => {
+    const { type = 'generic', message = 'Test error', severity = 'medium' } = req.body;
 
     try {
-      if (type === "throw") {
+      if (type === 'throw') {
         throw new Error(message);
-      } else if (type === "async") {
+      } else if (type === 'async') {
         Promise.reject(new Error(message));
-        res.json({ success: true, message: "Async error triggered" });
+        res.json({ success: true, message: 'Async error triggered' });
       } else {
         const error = new Error(message);
         errorTracker.trackError(
           error,
           {
-            component: "debug-test",
+            component: 'debug-test',
             requestId: (req as any).id,
           },
-          severity,
+          severity
         );
 
         res.json({
           success: true,
-          message: "Test error tracked",
+          message: 'Test error tracked',
         });
       }
     } catch (error) {
@@ -413,7 +395,7 @@ if (!isDebugEnabled) {
   });
 
   // Performance Test Routes
-  router.post("/debug/test/performance", (req, res) => {
+  router.post('/debug/test/performance', (req, res) => {
     const { duration = 100, cpu = false, memory = false } = req.body;
 
     const startTime = Date.now();
@@ -428,7 +410,7 @@ if (!isDebugEnabled) {
 
     if (memory) {
       // Memory intensive task
-      const largeArray = new Array(1000000).fill("test data");
+      const largeArray = new Array(1000000).fill('test data');
       setTimeout(() => {
         // Release after a moment
         largeArray.length = 0;
@@ -449,8 +431,8 @@ if (!isDebugEnabled) {
   });
 
   // MongoDB Debugging (if using Mongoose)
-  router.get("/debug/database/connections", (req, res) => {
-    const mongoose = require("mongoose");
+  router.get('/debug/database/connections', (req, res) => {
+    const mongoose = require('mongoose');
 
     const connectionInfo = {
       readyState: mongoose.connection.readyState,
@@ -467,15 +449,14 @@ if (!isDebugEnabled) {
   });
 
   // Log recent entries
-  router.get("/debug/logs/recent", (req, res) => {
+  router.get('/debug/logs/recent', (req, res) => {
     // This would require storing logs in memory or reading from log files
     // For now, return a placeholder
     res.json({
       success: true,
       data: {
-        message:
-          "Recent logs endpoint - would require log storage implementation",
-        recommendation: "Check log files directly or implement log storage",
+        message: 'Recent logs endpoint - would require log storage implementation',
+        recommendation: 'Check log files directly or implement log storage',
       },
     });
   });

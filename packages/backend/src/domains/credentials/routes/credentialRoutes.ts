@@ -1,8 +1,8 @@
-import express, { Router } from 'express';
+import express, { type Router } from 'express';
 import { body, param, query } from 'express-validator';
-import { CredentialController } from '../controllers/CredentialController.js';
-import { catchAsync } from '../../../middleware/errorHandlers.js';
 import { authenticate } from '../../../middleware/auth.js';
+import { catchAsync } from '../../../middleware/errorHandlers.js';
+import { CredentialController } from '../controllers/CredentialController.js';
 
 const router: Router = express.Router();
 const credentialController = new CredentialController();
@@ -12,19 +12,12 @@ const credentialController = new CredentialController();
  * @desc    Get all credentials for user
  * @access  Private
  */
-router.get(
-  '/',
-  authenticate,
-  catchAsync(credentialController.getCredentials)
-);
+router.get('/', authenticate, catchAsync(credentialController.getCredentials));
 
 /**
  * Debug route to see all credentials (temporarily for debugging)
  */
-router.get(
-  '/debug/all',
-  catchAsync(credentialController.getAllCredentialsDebug)
-);
+router.get('/debug/all', catchAsync(credentialController.getAllCredentialsDebug));
 
 /**
  * @route   POST /credentials
@@ -36,7 +29,18 @@ router.post(
   authenticate,
   [
     body('name').isString().trim().isLength({ min: 1, max: 100 }),
-    body('type').isIn(['oauth2', 'api_key', 'basic_auth', 'bearer_token', 'custom', 'openaiApi', 'anthropicApi', 'googleAiApi', 'azureOpenAiApi', 'awsBedrockApi']),
+    body('type').isIn([
+      'oauth2',
+      'api_key',
+      'basic_auth',
+      'bearer_token',
+      'custom',
+      'openaiApi',
+      'anthropicApi',
+      'googleAiApi',
+      'azureOpenAiApi',
+      'awsBedrockApi',
+    ]),
     body('integration').isString().trim(),
     body('data').isObject(),
     body('expiresAt').optional().isISO8601(),
@@ -97,11 +101,13 @@ router.post(
   [
     param('id').isMongoId().withMessage('Invalid credential ID'),
     body('action').equals('fetchEmails').withMessage('Action must be fetchEmails'),
-    body('filters').optional().custom((value) => {
-      if (value === undefined || value === null) return true;
-      if (typeof value === 'object' && !Array.isArray(value)) return true;
-      throw new Error('Filters must be an object, not an array');
-    })
+    body('filters')
+      .optional()
+      .custom((value) => {
+        if (value === undefined || value === null) return true;
+        if (typeof value === 'object' && !Array.isArray(value)) return true;
+        throw new Error('Filters must be an object, not an array');
+      }),
   ],
   catchAsync(credentialController.testGmail)
 );

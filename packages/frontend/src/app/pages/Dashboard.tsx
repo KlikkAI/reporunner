@@ -1,10 +1,11 @@
-import React, { useEffect, useState, useCallback } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import toast from "react-hot-toast";
-import { useLeanWorkflowStore, WorkflowApiService } from "@/core";
-import { VirtualizedList } from "@/design-system";
-import type { ExecutionStats } from "@/core/types/execution";
-import type { Workflow } from "@/core/types/workflow";
+import type React from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
+import { Link, useNavigate } from 'react-router-dom';
+import { useLeanWorkflowStore, WorkflowApiService } from '@/core';
+import type { ExecutionStats } from '@/core/types/execution';
+import type { Workflow } from '@/core/types/workflow';
+import { VirtualizedList } from '@/design-system';
 
 const workflowApiService = new WorkflowApiService();
 
@@ -27,7 +28,7 @@ const Dashboard: React.FC = () => {
       const result = await workflowApiService.getWorkflows();
 
       if (!result || !result.items || !Array.isArray(result.items)) {
-        console.error("Invalid workflows response structure:", result);
+        console.error('Invalid workflows response structure:', result);
         setWorkflows([]);
         return;
       }
@@ -37,15 +38,13 @@ const Dashboard: React.FC = () => {
         connections: (workflow as any).connections || {},
         createdAt: workflow.createdAt || new Date().toISOString(),
         updatedAt: workflow.updatedAt || new Date().toISOString(),
-        status:
-          (workflow.status === "expired" ? "draft" : workflow.status) ||
-          "draft",
+        status: (workflow.status === 'expired' ? 'draft' : workflow.status) || 'draft',
         settings: workflow.settings
           ? {
               ...workflow.settings,
               errorHandling:
-                workflow.settings.errorHandling === "retry"
-                  ? "stop"
+                workflow.settings.errorHandling === 'retry'
+                  ? 'stop'
                   : workflow.settings.errorHandling,
             }
           : undefined,
@@ -56,7 +55,7 @@ const Dashboard: React.FC = () => {
                 ...node.data,
                 label: node.data.label || node.id, // Ensure label is always present
                 credentials:
-                  typeof node.data.credentials === "string"
+                  typeof node.data.credentials === 'string'
                     ? [node.data.credentials]
                     : node.data.credentials,
               },
@@ -65,14 +64,14 @@ const Dashboard: React.FC = () => {
       }));
       setWorkflows(workflowsWithDefaults);
     } catch (error) {
-      console.error("Failed to load workflows:", error);
+      console.error('Failed to load workflows:', error);
       setWorkflows([]);
 
       // Check if it's an authentication error
-      if (error instanceof Error && error.message.includes("token")) {
-        toast.error("Please log in to access your workflows");
+      if (error instanceof Error && error.message.includes('token')) {
+        toast.error('Please log in to access your workflows');
       } else {
-        toast.error("Failed to load workflows");
+        toast.error('Failed to load workflows');
       }
     }
   };
@@ -97,13 +96,13 @@ const Dashboard: React.FC = () => {
       const executionStats = await workflowApiService.getExecutionStats();
       setStats(executionStats);
     } catch (error) {
-      console.error("Failed to load stats:", error);
+      console.error('Failed to load stats:', error);
 
       // Check if it's an authentication error
-      if (error instanceof Error && error.message.includes("token")) {
-        toast.error("Please log in to access execution statistics");
+      if (error instanceof Error && error.message.includes('token')) {
+        toast.error('Please log in to access execution statistics');
       } else {
-        toast.error("Failed to load statistics");
+        toast.error('Failed to load statistics');
       }
     } finally {
       setStatsLoading(false);
@@ -111,10 +110,10 @@ const Dashboard: React.FC = () => {
   };
 
   const handleCreateWorkflow = async () => {
-    const name = prompt("Enter workflow name:");
+    const name = prompt('Enter workflow name:');
     if (name) {
       if (name.trim().length === 0) {
-        toast.error("Please enter a valid workflow name.");
+        toast.error('Please enter a valid workflow name.');
         return;
       }
 
@@ -122,11 +121,10 @@ const Dashboard: React.FC = () => {
         await createNewWorkflow(name.trim(), navigate);
         // Refresh the dashboard workflows list
         await loadWorkflows();
-        toast.success("Workflow created successfully!");
+        toast.success('Workflow created successfully!');
       } catch (error) {
-        console.error("Failed to create workflow:", error);
-        const errorMessage =
-          error instanceof Error ? error.message : "Failed to create workflow";
+        console.error('Failed to create workflow:', error);
+        const errorMessage = error instanceof Error ? error.message : 'Failed to create workflow';
         toast.error(errorMessage);
       }
     }
@@ -145,39 +143,31 @@ const Dashboard: React.FC = () => {
               <h3 className="font-medium text-gray-900">{workflow.name}</h3>
               <span
                 className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                  workflow.status === "active" || workflow.isActive
-                    ? "bg-green-100 text-green-800"
-                    : workflow.status === "error"
-                      ? "bg-red-100 text-red-800"
-                      : "bg-gray-100 text-gray-800"
+                  workflow.status === 'active' || workflow.isActive
+                    ? 'bg-green-100 text-green-800'
+                    : workflow.status === 'error'
+                      ? 'bg-red-100 text-red-800'
+                      : 'bg-gray-100 text-gray-800'
                 }`}
               >
-                {workflow.status === "active" || workflow.isActive
-                  ? "active"
-                  : workflow.status || "inactive"}
+                {workflow.status === 'active' || workflow.isActive
+                  ? 'active'
+                  : workflow.status || 'inactive'}
               </span>
             </div>
-            <p className="text-sm text-gray-600 mt-1">
-              {workflow.description || "No description"}
-            </p>
+            <p className="text-sm text-gray-600 mt-1">{workflow.description || 'No description'}</p>
             <div className="flex items-center mt-2 space-x-4">
+              <span className="text-xs text-gray-500">{workflow.nodes?.length || 0} nodes</span>
               <span className="text-xs text-gray-500">
-                {workflow.nodes?.length || 0} nodes
-              </span>
-              <span className="text-xs text-gray-500">
-                Updated{" "}
-                {workflow.updatedAt
-                  ? new Date(workflow.updatedAt).toLocaleDateString()
-                  : "N/A"}
+                Updated{' '}
+                {workflow.updatedAt ? new Date(workflow.updatedAt).toLocaleDateString() : 'N/A'}
               </span>
               {workflow.lastRun && (
                 <span className="text-xs text-gray-500">
                   Last run {new Date(workflow.lastRun).toLocaleDateString()}
                 </span>
               )}
-              {!workflow.lastRun && (
-                <span className="text-xs text-gray-500">Never executed</span>
-              )}
+              {!workflow.lastRun && <span className="text-xs text-gray-500">Never executed</span>}
             </div>
           </div>
           <div className="flex items-center space-x-2">
@@ -197,52 +187,48 @@ const Dashboard: React.FC = () => {
         </div>
       </div>
     ),
-    [],
+    []
   );
 
-  const handleDeleteWorkflow = async (
-    workflowId: string,
-    workflowName: string,
-  ) => {
+  const handleDeleteWorkflow = async (workflowId: string, workflowName: string) => {
     if (
       window.confirm(
-        `Are you sure you want to delete "${workflowName}"? This action cannot be undone.`,
+        `Are you sure you want to delete "${workflowName}"? This action cannot be undone.`
       )
     ) {
       try {
         await deleteWorkflow(workflowId);
         // Refresh the dashboard workflows list
         await loadWorkflows();
-        toast.success("Workflow deleted successfully!");
+        toast.success('Workflow deleted successfully!');
       } catch (error) {
-        toast.error("Failed to delete workflow. Please try again.");
+        toast.error('Failed to delete workflow. Please try again.');
       }
     }
   };
 
   const dashboardStats = [
-    { name: "Total Workflows", value: workflows.length, icon: "🔄" },
+    { name: 'Total Workflows', value: workflows.length, icon: '🔄' },
     {
-      name: "Active Workflows",
-      value: workflows.filter((w) => w.isActive || w.status === "active")
-        .length,
-      icon: "✅",
+      name: 'Active Workflows',
+      value: workflows.filter((w) => w.isActive || w.status === 'active').length,
+      icon: '✅',
     },
     {
-      name: "Total Executions",
-      value: statsLoading ? "..." : (stats?.totalExecutions ?? 0),
-      icon: "▶️",
+      name: 'Total Executions',
+      value: statsLoading ? '...' : (stats?.totalExecutions ?? 0),
+      icon: '▶️',
     },
     {
-      name: "Success Rate",
+      name: 'Success Rate',
       value: statsLoading
-        ? "..."
+        ? '...'
         : stats?.successRate !== undefined
           ? `${Math.round(stats.successRate)}%`
           : stats?.totalExecutions && stats.totalExecutions > 0
             ? `${Math.round(((stats.successfulExecutions || 0) / stats.totalExecutions) * 100)}%`
-            : "N/A",
-      icon: "📈",
+            : 'N/A',
+      icon: '📈',
     },
   ];
 
@@ -251,9 +237,7 @@ const Dashboard: React.FC = () => {
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-gray-900">Workflows</h1>
-        <p className="text-gray-600">
-          Create and manage your automation workflows
-        </p>
+        <p className="text-gray-600">Create and manage your automation workflows</p>
       </div>
 
       {/* Stats */}
@@ -264,19 +248,13 @@ const Dashboard: React.FC = () => {
               <div className="text-2xl mr-4">{stat.icon}</div>
               <div>
                 <p className="text-sm font-medium text-gray-600">{stat.name}</p>
-                <p className="text-2xl font-semibold text-gray-900">
-                  {stat.value}
-                </p>
-                {statsLoading && (
-                  <p className="text-xs text-gray-400 mt-1">Loading...</p>
-                )}
+                <p className="text-2xl font-semibold text-gray-900">{stat.value}</p>
+                {statsLoading && <p className="text-xs text-gray-400 mt-1">Loading...</p>}
                 {!statsLoading &&
                   stats &&
-                  stat.name === "Total Executions" &&
+                  stat.name === 'Total Executions' &&
                   stats.totalExecutions === 0 && (
-                    <p className="text-xs text-gray-400 mt-1">
-                      No executions yet
-                    </p>
+                    <p className="text-xs text-gray-400 mt-1">No executions yet</p>
                   )}
               </div>
             </div>
@@ -288,9 +266,7 @@ const Dashboard: React.FC = () => {
       <div className="bg-white rounded-lg shadow">
         <div className="p-6 border-b border-gray-200">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-medium text-gray-900">
-              Your Workflows
-            </h2>
+            <h2 className="text-lg font-medium text-gray-900">Your Workflows</h2>
             <button
               onClick={handleCreateWorkflow}
               className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"

@@ -67,29 +67,29 @@ export interface CollaborationEventData {
   nodeUpdated?: NodeUpdatedEvent;
   nodeDeleted?: NodeDeletedEvent;
   nodeMoved?: NodeMovedEvent;
-  
+
   // Connection events
   connectionCreated?: ConnectionCreatedEvent;
   connectionDeleted?: ConnectionDeletedEvent;
-  
+
   // Cursor events
   cursorMoved?: CursorMovedEvent;
   selectionChanged?: SelectionChangedEvent;
-  
+
   // Comment events
   commentAdded?: CommentAddedEvent;
   commentUpdated?: CommentUpdatedEvent;
   commentDeleted?: CommentDeletedEvent;
-  
+
   // Presence events
   userJoined?: UserJoinedEvent;
   userLeft?: UserLeftEvent;
   userStatusChanged?: UserStatusChangedEvent;
-  
+
   // Conflict events
   conflictDetected?: ConflictDetectedEvent;
   conflictResolved?: ConflictResolvedEvent;
-  
+
   // Version events
   versionCreated?: VersionCreatedEvent;
   versionRestored?: VersionRestoredEvent;
@@ -359,23 +359,39 @@ export interface CollaborationPresence {
 }
 
 // Enums
-export type CollaborationEventType = 
-  | 'node_created' | 'node_updated' | 'node_deleted' | 'node_moved'
-  | 'connection_created' | 'connection_deleted'
-  | 'cursor_moved' | 'selection_changed'
-  | 'comment_added' | 'comment_updated' | 'comment_deleted'
-  | 'user_joined' | 'user_left' | 'user_status_changed'
-  | 'conflict_detected' | 'conflict_resolved'
-  | 'version_created' | 'version_restored';
+export type CollaborationEventType =
+  | 'node_created'
+  | 'node_updated'
+  | 'node_deleted'
+  | 'node_moved'
+  | 'connection_created'
+  | 'connection_deleted'
+  | 'cursor_moved'
+  | 'selection_changed'
+  | 'comment_added'
+  | 'comment_updated'
+  | 'comment_deleted'
+  | 'user_joined'
+  | 'user_left'
+  | 'user_status_changed'
+  | 'conflict_detected'
+  | 'conflict_resolved'
+  | 'version_created'
+  | 'version_restored';
 
-export type CollaborationRole = 
-  | 'owner' | 'editor' | 'commenter' | 'viewer';
+export type CollaborationRole = 'owner' | 'editor' | 'commenter' | 'viewer';
 
-export type ConflictType = 
-  | 'node_conflict' | 'connection_conflict' | 'property_conflict' | 'position_conflict';
+export type ConflictType =
+  | 'node_conflict'
+  | 'connection_conflict'
+  | 'property_conflict'
+  | 'position_conflict';
 
-export type ConflictResolutionStrategy = 
-  | 'last_write_wins' | 'first_write_wins' | 'manual_resolution' | 'automatic_merge';
+export type ConflictResolutionStrategy =
+  | 'last_write_wins'
+  | 'first_write_wins'
+  | 'manual_resolution'
+  | 'automatic_merge';
 
 // Factory functions
 export const createCollaborationSession = (
@@ -467,20 +483,16 @@ export const createCollaborationInvitation = (
   role,
   permissions,
   status: 'pending',
-  expiresAt: Date.now() + (7 * 24 * 60 * 60 * 1000), // 7 days
+  expiresAt: Date.now() + 7 * 24 * 60 * 60 * 1000, // 7 days
   createdAt: Date.now(),
 });
 
 // Utility functions
-export const canUserEdit = (
-  userPermissions: ParticipantPermissions,
-): boolean => {
+export const canUserEdit = (userPermissions: ParticipantPermissions): boolean => {
   return userPermissions.canEditNodes;
 };
 
-export const canUserComment = (
-  userPermissions: ParticipantPermissions
-): boolean => {
+export const canUserComment = (userPermissions: ParticipantPermissions): boolean => {
   return userPermissions.canAddComments;
 };
 
@@ -501,17 +513,15 @@ export const isConflictResolvable = (
   }
 };
 
-export const calculateCollaborationScore = (
-  history: CollaborationHistory
-): number => {
+export const calculateCollaborationScore = (history: CollaborationHistory): number => {
   const summary = history.summary;
   const totalEvents = summary.totalEvents;
-  
+
   if (totalEvents === 0) return 100;
-  
+
   const conflictRate = summary.conflictsDetected / totalEvents;
   const resolutionRate = summary.conflictsResolved / Math.max(summary.conflictsDetected, 1);
-  
+
   return Math.round((1 - conflictRate) * resolutionRate * 100);
 };
 

@@ -69,7 +69,7 @@ export class CredentialRepository {
   async updateTestResult(id: string, isValid: boolean) {
     return Credential.findByIdAndUpdate(id, {
       lastTestedAt: new Date(),
-      isValid: isValid
+      isValid: isValid,
     });
   }
 
@@ -81,7 +81,7 @@ export class CredentialRepository {
       _id: id,
       userId,
       integration: 'gmailOAuth2',
-      isActive: true
+      isActive: true,
     }).select('+data');
   }
 
@@ -92,7 +92,7 @@ export class CredentialRepository {
     return Credential.findOne({
       userId,
       integration: 'gmailOAuth2',
-      isActive: true
+      isActive: true,
     }).select('+data');
   }
 

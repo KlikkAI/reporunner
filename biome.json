@@ -1,0 +1,169 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.2.4/schema.json",
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "useIgnoreFile": true,
+    "root": "."
+  },
+  "files": {
+    "includes": ["**/*.js", "**/*.jsx", "**/*.ts", "**/*.tsx", "**/*.json", "**/*.jsonc"]
+  },
+  "formatter": {
+    "enabled": true,
+    "formatWithErrors": true,
+    "indentStyle": "space",
+    "indentWidth": 2,
+    "lineEnding": "lf",
+    "lineWidth": 100,
+    "attributePosition": "auto"
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "recommended": true,
+      "correctness": {
+        "recommended": true,
+        "noUnusedVariables": "error",
+        "noUnusedImports": "error",
+        "useExhaustiveDependencies": "warn"
+      },
+      "style": {
+        "recommended": true,
+        "noDefaultExport": "off",
+        "noNonNullAssertion": "warn",
+        "useConst": "error",
+        "useImportType": "warn"
+      },
+      "suspicious": {
+        "recommended": true,
+        "noConsole": "warn",
+        "noDebugger": "error",
+        "noExplicitAny": "warn"
+      },
+      "performance": {
+        "recommended": true,
+        "noDelete": "error"
+      },
+      "security": {
+        "recommended": true,
+        "noGlobalEval": "error"
+      },
+      "complexity": {
+        "recommended": true,
+        "noForEach": "warn",
+        "noExcessiveCognitiveComplexity": {
+          "level": "warn",
+          "options": {
+            "maxAllowedComplexity": 15
+          }
+        }
+      },
+      "nursery": {
+        "useQwikClasslist": "off",
+        "useReactFunctionComponents": "warn",
+        "useSortedClasses": "off",
+        "useVueMultiWordComponentNames": "warn"
+      }
+    }
+  },
+  "javascript": {
+    "formatter": {
+      "jsxQuoteStyle": "double",
+      "quoteProperties": "asNeeded",
+      "trailingCommas": "es5",
+      "semicolons": "always",
+      "arrowParentheses": "always",
+      "bracketSpacing": true,
+      "bracketSameLine": false,
+      "quoteStyle": "single",
+      "attributePosition": "auto"
+    }
+  },
+  "json": {
+    "formatter": {
+      "enabled": true,
+      "indentStyle": "space",
+      "indentWidth": 2,
+      "lineEnding": "lf",
+      "lineWidth": 100,
+      "trailingCommas": "none"
+    }
+  },
+  "overrides": [
+    {
+      "includes": ["packages/frontend/**/*", "packages/@reporunner/design-system/**/*"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noDefaultExport": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["packages/backend/**/*", "packages/@reporunner/workflow/**/*"],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noConsole": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": [
+        "**/*.test.{js,ts,tsx}",
+        "**/*.spec.{js,ts,tsx}",
+        "**/test/**/*",
+        "**/tests/**/*"
+      ],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noExplicitAny": "off",
+            "noConsole": "off"
+          },
+          "style": {
+            "noNonNullAssertion": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": [
+        "**/scripts/**/*",
+        "**/*.config.{js,ts}",
+        "**/vite.config.{js,ts}",
+        "**/vitest.config.{js,ts}",
+        "**/tailwind.config.{js,ts}",
+        "**/next.config.{js,ts}"
+      ],
+      "linter": {
+        "rules": {
+          "style": {
+            "noDefaultExport": "off"
+          },
+          "suspicious": {
+            "noExplicitAny": "off",
+            "noConsole": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["**/*.d.ts"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noDefaultExport": "off",
+            "useImportType": "off"
+          },
+          "suspicious": {
+            "noExplicitAny": "off"
+          }
+        }
+      }
+    }
+  ]
+}

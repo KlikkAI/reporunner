@@ -3,7 +3,7 @@
  * Stores all collaborative operations for conflict resolution and history
  */
 
-import mongoose, { Document, Schema } from "mongoose";
+import mongoose, { type Document, Schema } from 'mongoose';
 
 export interface IOperation extends Document {
   _id: string;
@@ -13,18 +13,18 @@ export interface IOperation extends Document {
   operationId: string; // Unique operation ID for OT
   parentOperationId?: string; // For operation chains
   type:
-    | "node_add"
-    | "node_delete"
-    | "node_update"
-    | "node_move"
-    | "edge_add"
-    | "edge_delete"
-    | "edge_update"
-    | "property_update"
-    | "bulk_update"
-    | "transform";
+    | 'node_add'
+    | 'node_delete'
+    | 'node_update'
+    | 'node_move'
+    | 'edge_add'
+    | 'edge_delete'
+    | 'edge_update'
+    | 'property_update'
+    | 'bulk_update'
+    | 'transform';
   target: {
-    type: "node" | "edge" | "workflow" | "property";
+    type: 'node' | 'edge' | 'workflow' | 'property';
     id: string;
     path?: string; // For nested property updates
   };
@@ -40,15 +40,15 @@ export interface IOperation extends Document {
   };
   version: number; // Session version when operation was created
   appliedVersion?: number; // Version when operation was applied
-  status: "pending" | "applied" | "rejected" | "transformed";
+  status: 'pending' | 'applied' | 'rejected' | 'transformed';
   transformations: Array<{
     operationId: string;
-    type: "composition" | "transformation";
+    type: 'composition' | 'transformation';
     timestamp: Date;
   }>;
   conflicts: Array<{
     conflictingOperationId: string;
-    resolutionStrategy: "auto" | "manual" | "priority";
+    resolutionStrategy: 'auto' | 'manual' | 'priority';
     resolvedBy?: string;
     resolvedAt?: Date;
   }>;
@@ -57,7 +57,7 @@ export interface IOperation extends Document {
     timestamp: Date;
     latency?: number;
     retryCount?: number;
-    source: "user" | "system" | "sync";
+    source: 'user' | 'system' | 'sync';
   };
   createdAt: Date;
   updatedAt: Date;
@@ -68,17 +68,17 @@ const operationSchema = new Schema<IOperation>(
     sessionId: {
       type: String,
       required: true,
-      ref: "CollaborationSession",
+      ref: 'CollaborationSession',
     },
     workflowId: {
       type: String,
       required: true,
-      ref: "Workflow",
+      ref: 'Workflow',
     },
     userId: {
       type: String,
       required: true,
-      ref: "User",
+      ref: 'User',
     },
     operationId: {
       type: String,
@@ -87,28 +87,28 @@ const operationSchema = new Schema<IOperation>(
     },
     parentOperationId: {
       type: String,
-      ref: "Operation",
+      ref: 'Operation',
     },
     type: {
       type: String,
       enum: [
-        "node_add",
-        "node_delete",
-        "node_update",
-        "node_move",
-        "edge_add",
-        "edge_delete",
-        "edge_update",
-        "property_update",
-        "bulk_update",
-        "transform",
+        'node_add',
+        'node_delete',
+        'node_update',
+        'node_move',
+        'edge_add',
+        'edge_delete',
+        'edge_update',
+        'property_update',
+        'bulk_update',
+        'transform',
       ],
       required: true,
     },
     target: {
       type: {
         type: String,
-        enum: ["node", "edge", "workflow", "property"],
+        enum: ['node', 'edge', 'workflow', 'property'],
         required: true,
       },
       id: {
@@ -138,8 +138,8 @@ const operationSchema = new Schema<IOperation>(
     },
     status: {
       type: String,
-      enum: ["pending", "applied", "rejected", "transformed"],
-      default: "pending",
+      enum: ['pending', 'applied', 'rejected', 'transformed'],
+      default: 'pending',
     },
     transformations: [
       {
@@ -149,7 +149,7 @@ const operationSchema = new Schema<IOperation>(
         },
         type: {
           type: String,
-          enum: ["composition", "transformation"],
+          enum: ['composition', 'transformation'],
           required: true,
         },
         timestamp: {
@@ -166,12 +166,12 @@ const operationSchema = new Schema<IOperation>(
         },
         resolutionStrategy: {
           type: String,
-          enum: ["auto", "manual", "priority"],
-          default: "auto",
+          enum: ['auto', 'manual', 'priority'],
+          default: 'auto',
         },
         resolvedBy: {
           type: String,
-          ref: "User",
+          ref: 'User',
         },
         resolvedAt: {
           type: Date,
@@ -196,8 +196,8 @@ const operationSchema = new Schema<IOperation>(
       },
       source: {
         type: String,
-        enum: ["user", "system", "sync"],
-        default: "user",
+        enum: ['user', 'system', 'sync'],
+        default: 'user',
       },
     },
   },
@@ -205,7 +205,7 @@ const operationSchema = new Schema<IOperation>(
     timestamps: true,
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
-  },
+  }
 );
 
 // Indexes for performance
@@ -214,13 +214,10 @@ operationSchema.index({ workflowId: 1, createdAt: -1 });
 operationSchema.index({ userId: 1, createdAt: -1 });
 operationSchema.index({ operationId: 1 }, { unique: true });
 operationSchema.index({ status: 1 });
-operationSchema.index({ "target.type": 1, "target.id": 1 });
+operationSchema.index({ 'target.type': 1, 'target.id': 1 });
 
 // TTL index to cleanup old operations (30 days)
-operationSchema.index(
-  { createdAt: 1 },
-  { expireAfterSeconds: 30 * 24 * 60 * 60 },
-);
+operationSchema.index({ createdAt: 1 }, { expireAfterSeconds: 30 * 24 * 60 * 60 });
 
 // Methods for operational transform
 operationSchema.methods.transform = function (otherOperation: IOperation) {
@@ -247,10 +244,7 @@ operationSchema.methods.compose = function (otherOperation: IOperation) {
         delta: { ...this.data.delta, ...otherOperation.data.delta },
       },
       version: Math.max(this.version, otherOperation.version),
-      transformations: [
-        ...this.transformations,
-        ...otherOperation.transformations,
-      ],
+      transformations: [...this.transformations, ...otherOperation.transformations],
     };
   }
   return null;
@@ -268,7 +262,7 @@ operationSchema.methods.inverse = function () {
     },
     metadata: {
       ...this.metadata,
-      source: "system",
+      source: 'system',
       timestamp: new Date(),
     },
   };
@@ -281,7 +275,7 @@ operationSchema.methods.invertDelta = function (delta: any) {
   const inverted: any = {};
 
   for (const [key, value] of Object.entries(delta)) {
-    if (typeof value === "object" && value !== null) {
+    if (typeof value === 'object' && value !== null) {
       inverted[key] = this.invertDelta(value);
     } else {
       // For simple values, we'd need the previous state to create proper inverse
@@ -292,7 +286,4 @@ operationSchema.methods.invertDelta = function (delta: any) {
   return inverted;
 };
 
-export const Operation = mongoose.model<IOperation>(
-  "Operation",
-  operationSchema,
-);
+export const Operation = mongoose.model<IOperation>('Operation', operationSchema);

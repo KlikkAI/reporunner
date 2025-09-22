@@ -3,10 +3,11 @@
  * Advanced displayOptions evaluation matching n8n's complex conditional logic
  */
 
-import React, { useMemo, useCallback } from "react";
-import { PropertyRenderer } from "./PropertyRenderers";
-import type { PropertyRendererProps } from "./PropertyRenderers";
-import type { INodeProperty } from "@/core/nodes/types";
+import type React from 'react';
+import { useCallback, useMemo } from 'react';
+import type { INodeProperty } from '@/core/nodes/types';
+import type { PropertyRendererProps } from './PropertyRenderers';
+import { PropertyRenderer } from './PropertyRenderers';
 
 // Define display options interface locally
 interface INodePropertyDisplayOptions {
@@ -22,32 +23,32 @@ export interface EnhancedDisplayOptions extends INodePropertyDisplayOptions {
   showIf?: {
     field: string;
     operator:
-      | "equals"
-      | "not_equals"
-      | "contains"
-      | "not_contains"
-      | "greater_than"
-      | "less_than"
-      | "is_empty"
-      | "is_not_empty";
+      | 'equals'
+      | 'not_equals'
+      | 'contains'
+      | 'not_contains'
+      | 'greater_than'
+      | 'less_than'
+      | 'is_empty'
+      | 'is_not_empty';
     value: any;
   }[];
   hideIf?: {
     field: string;
     operator:
-      | "equals"
-      | "not_equals"
-      | "contains"
-      | "not_contains"
-      | "greater_than"
-      | "less_than"
-      | "is_empty"
-      | "is_not_empty";
+      | 'equals'
+      | 'not_equals'
+      | 'contains'
+      | 'not_contains'
+      | 'greater_than'
+      | 'less_than'
+      | 'is_empty'
+      | 'is_not_empty';
     value: any;
   }[];
   // Nested conditions with AND/OR logic
   conditions?: {
-    type: "AND" | "OR";
+    type: 'AND' | 'OR';
     rules: Array<{
       field: string;
       operator: string;
@@ -61,8 +62,7 @@ export interface EnhancedDisplayOptions extends INodePropertyDisplayOptions {
   };
 }
 
-export interface ConditionalPropertyRendererProps
-  extends Omit<PropertyRendererProps, "property"> {
+export interface ConditionalPropertyRendererProps extends Omit<PropertyRendererProps, 'property'> {
   property: INodeProperty & {
     displayOptions?: EnhancedDisplayOptions;
   };
@@ -112,36 +112,26 @@ class DisplayOptionsEvaluator {
 
     // Resource-dependent visibility
     if (displayOptions.resourceDependent && visible) {
-      visible = this.evaluateResourceDependentConditions(
-        displayOptions.resourceDependent,
-      );
+      visible = this.evaluateResourceDependentConditions(displayOptions.resourceDependent);
     }
 
     return { visible, disabled, required };
   }
 
   // Standard n8n show conditions
-  private evaluateShowConditions(
-    showConditions: Record<string, any[]>,
-  ): boolean {
-    return Object.entries(showConditions).every(
-      ([fieldName, expectedValues]) => {
-        const currentValue = this.getFieldValue(fieldName);
-        return this.matchesAnyValue(currentValue, expectedValues);
-      },
-    );
+  private evaluateShowConditions(showConditions: Record<string, any[]>): boolean {
+    return Object.entries(showConditions).every(([fieldName, expectedValues]) => {
+      const currentValue = this.getFieldValue(fieldName);
+      return this.matchesAnyValue(currentValue, expectedValues);
+    });
   }
 
   // Standard n8n hide conditions
-  private evaluateHideConditions(
-    hideConditions: Record<string, any[]>,
-  ): boolean {
-    return Object.entries(hideConditions).some(
-      ([fieldName, expectedValues]) => {
-        const currentValue = this.getFieldValue(fieldName);
-        return this.matchesAnyValue(currentValue, expectedValues);
-      },
-    );
+  private evaluateHideConditions(hideConditions: Record<string, any[]>): boolean {
+    return Object.entries(hideConditions).some(([fieldName, expectedValues]) => {
+      const currentValue = this.getFieldValue(fieldName);
+      return this.matchesAnyValue(currentValue, expectedValues);
+    });
   }
 
   // Advanced conditional logic with operators
@@ -150,21 +140,17 @@ class DisplayOptionsEvaluator {
       field: string;
       operator: string;
       value: any;
-    }>,
+    }>
   ): boolean {
     return conditions.every((condition) => {
       const fieldValue = this.getFieldValue(condition.field);
-      return this.evaluateCondition(
-        fieldValue,
-        condition.operator,
-        condition.value,
-      );
+      return this.evaluateCondition(fieldValue, condition.operator, condition.value);
     });
   }
 
   // Nested conditions with AND/OR logic
   private evaluateNestedConditions(conditions: {
-    type: "AND" | "OR";
+    type: 'AND' | 'OR';
     rules: Array<{
       field: string;
       operator: string;
@@ -176,7 +162,7 @@ class DisplayOptionsEvaluator {
       return this.evaluateCondition(fieldValue, rule.operator, rule.value);
     });
 
-    return conditions.type === "AND"
+    return conditions.type === 'AND'
       ? results.every((result) => result)
       : results.some((result) => result);
   }
@@ -190,39 +176,35 @@ class DisplayOptionsEvaluator {
     try {
       return resourceDependent.condition(resource);
     } catch (error) {
-      console.warn("Resource-dependent condition evaluation failed:", error);
+      console.warn('Resource-dependent condition evaluation failed:', error);
       return false;
     }
   }
 
   // Single condition evaluation with operators
-  private evaluateCondition(
-    fieldValue: any,
-    operator: string,
-    expectedValue: any,
-  ): boolean {
+  private evaluateCondition(fieldValue: any, operator: string, expectedValue: any): boolean {
     switch (operator) {
-      case "equals":
+      case 'equals':
         return fieldValue === expectedValue;
-      case "not_equals":
+      case 'not_equals':
         return fieldValue !== expectedValue;
-      case "contains":
+      case 'contains':
         return this.valueContains(fieldValue, expectedValue);
-      case "not_contains":
+      case 'not_contains':
         return !this.valueContains(fieldValue, expectedValue);
-      case "greater_than":
+      case 'greater_than':
         return Number(fieldValue) > Number(expectedValue);
-      case "less_than":
+      case 'less_than':
         return Number(fieldValue) < Number(expectedValue);
-      case "is_empty":
+      case 'is_empty':
         return this.isEmpty(fieldValue);
-      case "is_not_empty":
+      case 'is_not_empty':
         return !this.isEmpty(fieldValue);
-      case "starts_with":
+      case 'starts_with':
         return String(fieldValue).startsWith(String(expectedValue));
-      case "ends_with":
+      case 'ends_with':
         return String(fieldValue).endsWith(String(expectedValue));
-      case "matches_regex":
+      case 'matches_regex':
         try {
           return new RegExp(String(expectedValue)).test(String(fieldValue));
         } catch {
@@ -243,7 +225,7 @@ class DisplayOptionsEvaluator {
       }
 
       // Handle object values
-      if (typeof currentValue === "object" && currentValue !== null) {
+      if (typeof currentValue === 'object' && currentValue !== null) {
         return JSON.stringify(currentValue) === JSON.stringify(expectedValue);
       }
 
@@ -258,11 +240,11 @@ class DisplayOptionsEvaluator {
       return fieldValue.includes(expectedValue);
     }
 
-    if (typeof fieldValue === "string" && typeof expectedValue === "string") {
+    if (typeof fieldValue === 'string' && typeof expectedValue === 'string') {
       return fieldValue.toLowerCase().includes(expectedValue.toLowerCase());
     }
 
-    if (typeof fieldValue === "object" && fieldValue !== null) {
+    if (typeof fieldValue === 'object' && fieldValue !== null) {
       return JSON.stringify(fieldValue).includes(String(expectedValue));
     }
 
@@ -272,16 +254,16 @@ class DisplayOptionsEvaluator {
   // Helper: Check if value is empty
   private isEmpty(value: any): boolean {
     if (value === null || value === undefined) return true;
-    if (typeof value === "string") return value.trim() === "";
+    if (typeof value === 'string') return value.trim() === '';
     if (Array.isArray(value)) return value.length === 0;
-    if (typeof value === "object") return Object.keys(value).length === 0;
+    if (typeof value === 'object') return Object.keys(value).length === 0;
     return false;
   }
 
   // Helper: Get field value with dot notation support
   private getFieldValue(fieldPath: string): any {
     // Handle dot notation: 'operation.type' -> operation.type
-    const pathParts = fieldPath.split(".");
+    const pathParts = fieldPath.split('.');
     let value = this.nodeValues;
 
     for (const part of pathParts) {
@@ -323,43 +305,30 @@ class PropertyDependencyTracker {
   }
 
   // Extract dependencies from display options
-  extractDependencies(
-    propertyName: string,
-    displayOptions: EnhancedDisplayOptions,
-  ): void {
+  extractDependencies(propertyName: string, displayOptions: EnhancedDisplayOptions): void {
     const dependencies = new Set<string>();
 
     // Extract from show/hide conditions
     if (displayOptions.show) {
-      Object.keys(displayOptions.show).forEach((field) =>
-        dependencies.add(field),
-      );
+      Object.keys(displayOptions.show).forEach((field) => dependencies.add(field));
     }
 
     if (displayOptions.hide) {
-      Object.keys(displayOptions.hide).forEach((field) =>
-        dependencies.add(field),
-      );
+      Object.keys(displayOptions.hide).forEach((field) => dependencies.add(field));
     }
 
     // Extract from advanced conditions
     if (displayOptions.showIf) {
-      displayOptions.showIf.forEach((condition) =>
-        dependencies.add(condition.field),
-      );
+      displayOptions.showIf.forEach((condition) => dependencies.add(condition.field));
     }
 
     if (displayOptions.hideIf) {
-      displayOptions.hideIf.forEach((condition) =>
-        dependencies.add(condition.field),
-      );
+      displayOptions.hideIf.forEach((condition) => dependencies.add(condition.field));
     }
 
     // Extract from nested conditions
     if (displayOptions.conditions) {
-      displayOptions.conditions.rules.forEach((rule) =>
-        dependencies.add(rule.field),
-      );
+      displayOptions.conditions.rules.forEach((rule) => dependencies.add(rule.field));
     }
 
     // Extract from resource dependencies
@@ -374,14 +343,16 @@ class PropertyDependencyTracker {
 }
 
 // Main Conditional Property Renderer Component
-export const ConditionalPropertyRenderer: React.FC<
-  ConditionalPropertyRendererProps
-> = ({ property, value, onChange, nodeValues, disabled = false, context }) => {
+export const ConditionalPropertyRenderer: React.FC<ConditionalPropertyRendererProps> = ({
+  property,
+  value,
+  onChange,
+  nodeValues,
+  disabled = false,
+  context,
+}) => {
   // Memoize the evaluator to prevent unnecessary re-computations
-  const evaluator = useMemo(
-    () => new DisplayOptionsEvaluator(nodeValues),
-    [nodeValues],
-  );
+  const evaluator = useMemo(() => new DisplayOptionsEvaluator(nodeValues), [nodeValues]);
 
   // Evaluate display conditions
   const displayState = useMemo(() => {
@@ -408,7 +379,7 @@ export const ConditionalPropertyRenderer: React.FC<
       // Trigger re-evaluation of dependent properties
       // This would be handled by the parent form component
     },
-    [onChange],
+    [onChange]
   );
 
   // Don't render if not visible
@@ -418,9 +389,7 @@ export const ConditionalPropertyRenderer: React.FC<
 
   // Render with conditional state
   return (
-    <div
-      className={`property-field ${displayState.disabled ? "opacity-50" : ""}`}
-    >
+    <div className={`property-field ${displayState.disabled ? 'opacity-50' : ''}`}>
       <PropertyRenderer
         property={{
           ...property,
@@ -438,9 +407,7 @@ export const ConditionalPropertyRenderer: React.FC<
 
 // Property Group Renderer with Conditional Logic
 export interface PropertyGroupRendererProps {
-  properties: Array<
-    INodeProperty & { displayOptions?: EnhancedDisplayOptions }
-  >;
+  properties: Array<INodeProperty & { displayOptions?: EnhancedDisplayOptions }>;
   values: Record<string, any>;
   onChange: (field: string, value: any) => void;
   evaluationContext?: any;
@@ -478,12 +445,12 @@ export const PropertyGroupRenderer: React.FC<PropertyGroupRendererProps> = ({
       const dependentProperties = dependencyTracker.getDependents(fieldName);
       if (dependentProperties.length > 0) {
         console.log(
-          `Field ${fieldName} changed, triggering re-evaluation of: ${dependentProperties.join(", ")}`,
+          `Field ${fieldName} changed, triggering re-evaluation of: ${dependentProperties.join(', ')}`
         );
         // The parent component should handle this by updating its state
       }
     },
-    [onChange, dependencyTracker],
+    [onChange, dependencyTracker]
   );
 
   return (
@@ -507,7 +474,7 @@ export const PropertyGroupRenderer: React.FC<PropertyGroupRendererProps> = ({
 export const displayOptionsUtils = {
   evaluateDisplayOptions: (
     displayOptions: EnhancedDisplayOptions,
-    nodeValues: Record<string, any>,
+    nodeValues: Record<string, any>
   ) => {
     const evaluator = new DisplayOptionsEvaluator(nodeValues);
     return evaluator.evaluateDisplayOptions(displayOptions);
@@ -517,33 +484,23 @@ export const displayOptionsUtils = {
     const dependencies = new Set<string>();
 
     if (displayOptions.show) {
-      Object.keys(displayOptions.show).forEach((field) =>
-        dependencies.add(field),
-      );
+      Object.keys(displayOptions.show).forEach((field) => dependencies.add(field));
     }
 
     if (displayOptions.hide) {
-      Object.keys(displayOptions.hide).forEach((field) =>
-        dependencies.add(field),
-      );
+      Object.keys(displayOptions.hide).forEach((field) => dependencies.add(field));
     }
 
     if (displayOptions.showIf) {
-      displayOptions.showIf.forEach((condition) =>
-        dependencies.add(condition.field),
-      );
+      displayOptions.showIf.forEach((condition) => dependencies.add(condition.field));
     }
 
     if (displayOptions.hideIf) {
-      displayOptions.hideIf.forEach((condition) =>
-        dependencies.add(condition.field),
-      );
+      displayOptions.hideIf.forEach((condition) => dependencies.add(condition.field));
     }
 
     if (displayOptions.conditions) {
-      displayOptions.conditions.rules.forEach((rule) =>
-        dependencies.add(rule.field),
-      );
+      displayOptions.conditions.rules.forEach((rule) => dependencies.add(rule.field));
     }
 
     return Array.from(dependencies);
