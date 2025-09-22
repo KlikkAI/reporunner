@@ -395,7 +395,7 @@ function sanitizeInput(value: any, rule: ValidationRule): any {
  * Create SQL injection prevention middleware
  */
 export function createSQLInjectionProtection() {
-  return (req: Request, res: Response, next: NextFunction): void => {
+  return (req: Request, res: Response, next: NextFunction) => {
     const checkValue = (value: any, field: string): boolean => {
       if (typeof value !== "string") return true;
 
@@ -434,7 +434,7 @@ export function createSQLInjectionProtection() {
  * Create NoSQL injection prevention middleware
  */
 export function createNoSQLInjectionProtection() {
-  return (req: Request, res: Response, next: NextFunction): void => {
+  return (req: Request, res: Response, next: NextFunction) => {
     const checkValue = (value: any): boolean => {
       const valueStr = JSON.stringify(value);
 
@@ -476,7 +476,7 @@ export function createNoSQLInjectionProtection() {
  * Create XSS prevention middleware
  */
 export function createXSSProtection() {
-  return (req: Request, res: Response, next: NextFunction): void => {
+  return (req: Request, res: Response, next: NextFunction) => {
     const sanitizeValue = (value: any): any => {
       if (typeof value === "string") {
         // Check for XSS patterns
@@ -516,7 +516,7 @@ export function createXSSProtection() {
  * Create path traversal prevention middleware
  */
 export function createPathTraversalProtection() {
-  return (req: Request, res: Response, next: NextFunction): void => {
+  return (req: Request, res: Response, next: NextFunction) => {
     const checkPath = (value: string): boolean => {
       for (const pattern of PATH_TRAVERSAL_PATTERNS) {
         if (pattern.test(value)) {
@@ -565,7 +565,7 @@ export function createPathTraversalProtection() {
  * Create command injection prevention middleware
  */
 export function createCommandInjectionProtection() {
-  return (req: Request, res: Response, next: NextFunction): void => {
+  return (req: Request, res: Response, next: NextFunction) => {
     const checkValue = (value: any): boolean => {
       if (typeof value !== "string") return true;
 

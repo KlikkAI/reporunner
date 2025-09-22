@@ -212,7 +212,7 @@ export class JWTSessionManager {
         newRefreshToken = this.signToken(
           newRefreshTokenPayload,
           {
-            expiresIn: this.config.refreshTokenExpiry as string,
+            expiresIn: String(this.config.refreshTokenExpiry),
             subject: decoded.userId,
           },
           true,

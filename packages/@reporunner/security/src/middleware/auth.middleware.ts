@@ -327,7 +327,7 @@ export function createSessionManagementMiddleware(
     },
 
     // Revoke a specific session
-    revokeSession: async (req: Request, res: Response): Promise<void> => {
+    revokeSession: async (req: Request, res: Response) => {
       if (!req.user) {
         res.status(401).json({
           success: false,
