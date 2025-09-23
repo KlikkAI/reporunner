@@ -1,228 +1,162 @@
-/**
- * Core AI types and interfaces
- */
+import { z } from 'zod';
 
-// LLM Provider Interface
-export interface LLMProvider {
-  readonly name: string;
-  readonly supportedModels: string[];
-
-  generateText(params: GenerateTextParams): Promise<GenerateTextResult>;
-  generateStream(params: GenerateTextParams): AsyncIterableIterator<GenerateTextStreamResult>;
-  embed(params: EmbedParams): Promise<EmbedResult>;
-}
-
-// Text Generation
-export interface GenerateTextParams {
-  model: string;
-  messages: ChatMessage[];
-  temperature?: number;
-  maxTokens?: number;
-  stopSequences?: string[];
-  systemPrompt?: string;
-  tools?: AITool[];
-}
-
-export interface ChatMessage {
-  role: 'system' | 'user' | 'assistant' | 'tool';
-  content: string;
-  toolCallId?: string;
-  toolName?: string;
-}
-
-export interface GenerateTextResult {
-  text: string;
-  usage: {
-    inputTokens: number;
-    outputTokens: number;
-    totalTokens: number;
-  };
-  finishReason: 'stop' | 'length' | 'tool_use' | 'error';
-  toolCalls?: ToolCall[];
-}
-
-export interface GenerateTextStreamResult {
-  delta: string;
-  usage?: {
-    inputTokens: number;
-    outputTokens: number;
-  };
-  finishReason?: 'stop' | 'length' | 'tool_use' | 'error';
-  toolCalls?: ToolCall[];
-}
-
-// Embeddings
-export interface EmbedParams {
-  model: string;
-  texts: string[];
-  dimensions?: number;
-}
-
-export interface EmbedResult {
-  embeddings: number[][];
-  usage: {
-    totalTokens: number;
-  };
-}
-
-// AI Tools
-export interface AITool {
-  name: string;
-  description: string;
-  parameters: ToolParameter[];
-  handler: ToolHandler;
-}
-
-export interface ToolParameter {
-  name: string;
-  type: 'string' | 'number' | 'boolean' | 'object' | 'array';
-  description: string;
-  required: boolean;
-  enum?: string[];
-}
-
-export interface ToolCall {
+// Base AI types
+export interface AIProvider {
   id: string;
   name: string;
-  parameters: Record<string, any>;
+  type: 'llm' | 'embedding' | 'vector' | 'multimodal';
+  config: Record<string, unknown>;
 }
 
-export type ToolHandler = (parameters: Record<string, any>) => Promise<any>;
+// LLM Types
+export const LLMMessageSchema = z.object({
+  role: z.enum(['system', 'user', 'assistant', 'function']),
+  content: z.string(),
+  name: z.string().optional(),
+  function_call: z
+    .object({
+      name: z.string(),
+      arguments: z.string(),
+    })
+    .optional(),
+});
 
-// Vector Store
-export interface VectorStoreDocument {
+export type LLMMessage = z.infer<typeof LLMMessageSchema>;
+
+export const LLMCompletionSchema = z.object({
+  model: z.string(),
+  messages: z.array(LLMMessageSchema),
+  temperature: z.number().min(0).max(2).optional(),
+  max_tokens: z.number().positive().optional(),
+  top_p: z.number().min(0).max(1).optional(),
+  frequency_penalty: z.number().min(-2).max(2).optional(),
+  presence_penalty: z.number().min(-2).max(2).optional(),
+  stop: z.union([z.string(), z.array(z.string())]).optional(),
+  stream: z.boolean().optional(),
+  functions: z
+    .array(
+      z.object({
+        name: z.string(),
+        description: z.string(),
+        parameters: z.record(z.unknown()),
+      })
+    )
+    .optional(),
+});
+
+export type LLMCompletion = z.infer<typeof LLMCompletionSchema>;
+
+export interface LLMResponse {
+  id: string;
+  choices: Array<{
+    index: number;
+    message: LLMMessage;
+    finish_reason: string;
+  }>;
+  usage: {
+    prompt_tokens: number;
+    completion_tokens: number;
+    total_tokens: number;
+  };
+  model: string;
+  created: number;
+}
+
+// Embedding Types
+export const EmbeddingRequestSchema = z.object({
+  input: z.union([z.string(), z.array(z.string())]),
+  model: z.string(),
+  encoding_format: z.enum(['float', 'base64']).optional(),
+  dimensions: z.number().positive().optional(),
+});
+
+export type EmbeddingRequest = z.infer<typeof EmbeddingRequestSchema>;
+
+export interface EmbeddingResponse {
+  data: Array<{
+    object: 'embedding';
+    index: number;
+    embedding: number[];
+  }>;
+  model: string;
+  usage: {
+    prompt_tokens: number;
+    total_tokens: number;
+  };
+}
+
+// Vector Store Types
+export interface VectorDocument {
   id: string;
   content: string;
-  embedding: number[];
-  metadata: Record<string, any>;
-  createdAt: Date;
-  updatedAt: Date;
+  metadata: Record<string, unknown>;
+  embedding?: number[];
 }
 
-export interface VectorSearchParams {
-  query: string;
-  queryEmbedding?: number[];
-  limit?: number;
+export interface VectorSearchQuery {
+  vector?: number[];
+  query?: string;
+  filter?: Record<string, unknown>;
+  top_k?: number;
   threshold?: number;
-  filter?: Record<string, any>;
 }
 
 export interface VectorSearchResult {
-  document: VectorStoreDocument;
-  similarity: number;
+  document: VectorDocument;
+  score: number;
+  distance: number;
 }
 
-// AI Agent
-export interface AIAgentConfig {
-  name: string;
-  description: string;
-  instructions: string;
-  model: string;
-  provider: string;
-  temperature?: number;
-  maxTokens?: number;
-  tools?: AITool[];
-  memory?: AgentMemoryConfig;
-}
-
-export interface AgentMemoryConfig {
-  type: 'conversation' | 'vector' | 'hybrid';
-  maxMessages?: number;
-  vectorStoreConfig?: VectorStoreConfig;
-}
-
-export interface VectorStoreConfig {
-  connectionString: string;
-  tableName: string;
-  dimensions: number;
-}
-
-export interface AgentConversation {
-  id: string;
-  agentId: string;
-  messages: ChatMessage[];
-  metadata: Record<string, any>;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-// Prompt Management
-export interface PromptTemplate {
-  id: string;
-  name: string;
-  description: string;
-  template: string;
-  variables: PromptVariable[];
-  version: number;
-  tags: string[];
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-export interface PromptVariable {
-  name: string;
-  type: 'string' | 'number' | 'boolean';
-  description: string;
-  required: boolean;
-  defaultValue?: any;
-}
-
-// Provider-specific configurations
-export interface OpenAIConfig {
+// AI Node Types
+export interface AINodeCredentials {
   apiKey: string;
-  baseURL?: string;
-  organization?: string;
-}
-
-export interface AnthropicConfig {
-  apiKey: string;
-  baseURL?: string;
-}
-
-export interface GoogleConfig {
-  apiKey: string;
-  projectId?: string;
-}
-
-export interface OllamaConfig {
-  baseURL: string;
+  endpoint?: string;
   model?: string;
 }
 
-// Error types
-export class AIError extends Error {
-  constructor(
-    message: string,
-    public code?: string
-  ) {
-    super(message);
-    this.name = 'AIError';
-  }
+export interface AIExecutionContext {
+  nodeId: string;
+  workflowId: string;
+  credentials: AINodeCredentials;
+  parameters: Record<string, unknown>;
+  input: Record<string, unknown>;
 }
 
-export class LLMProviderError extends AIError {
-  constructor(
-    message: string,
-    public provider: string
-  ) {
-    super(message);
-    this.name = 'LLMProviderError';
-  }
+// Provider specific types
+export enum AIProviderType {
+  OPENAI = 'openai',
+  ANTHROPIC = 'anthropic',
+  GOOGLE = 'google',
+  COHERE = 'cohere',
+  HUGGINGFACE = 'huggingface',
+  OLLAMA = 'ollama',
+  AZURE = 'azure',
 }
 
-export class VectorStoreError extends AIError {
-  constructor(message: string) {
-    super(message);
-    this.name = 'VectorStoreError';
-  }
+export interface ProviderConfig {
+  type: AIProviderType;
+  apiKey: string;
+  endpoint?: string;
+  model: string;
+  organization?: string;
+  apiVersion?: string;
 }
 
-export class AgentExecutionError extends AIError {
-  constructor(
-    message: string,
-    public agentId: string
-  ) {
-    super(message);
-    this.name = 'AgentExecutionError';
-  }
+// Memory and context types
+export interface ConversationMemory {
+  id: string;
+  sessionId: string;
+  messages: LLMMessage[];
+  summary?: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface KnowledgeBase {
+  id: string;
+  name: string;
+  description: string;
+  documents: VectorDocument[];
+  indexId: string;
+  metadata: Record<string, unknown>;
 }

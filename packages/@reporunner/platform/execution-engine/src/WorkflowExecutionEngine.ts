@@ -8,7 +8,7 @@ import {
   NodeType,
 } from '@reporunner/api-types';
 import { ERROR_CODES, EVENTS, SYSTEM } from '@reporunner/constants';
-import type { DatabaseService } from '@reporunner/db';
+import type { DatabaseService } from '@reporunner/database';
 import { type Job, Queue, Worker } from 'bullmq';
 import { EventEmitter } from 'events';
 import { v4 as uuidv4 } from 'uuid';

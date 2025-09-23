@@ -202,7 +202,7 @@ jobs:
     strategy:
       matrix:
         package: [
-          '@reporunner/ai-core',
+          '@reporunner/ai',
           '@reporunner/auth',
           '@reporunner/workflow-engine',
           '@reporunner/database',

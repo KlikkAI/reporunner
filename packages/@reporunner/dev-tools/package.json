@@ -1,0 +1,47 @@
+{
+  "name": "@reporunner/dev-tools",
+  "version": "1.0.0",
+  "description": "Development tools, debugging utilities, and CLI helpers for Reporunner development",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "reporunner-dev": "./dist/cli.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx watch src/index.ts",
+    "test": "vitest",
+    "lint": "eslint src/**/*.ts",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@reporunner/constants": "workspace:*",
+    "@reporunner/database": "workspace:*",
+    "commander": "^11.1.0",
+    "inquirer": "^9.2.12",
+    "chalk": "^5.3.0",
+    "ora": "^7.0.1",
+    "boxen": "^7.1.1",
+    "figlet": "^1.7.0",
+    "table": "^6.8.1",
+    "yaml": "^2.3.4",
+    "chokidar": "^3.5.3"
+  },
+  "devDependencies": {
+    "@types/figlet": "^1.5.8",
+    "@types/inquirer": "^9.0.7",
+    "typescript": "catalog:",
+    "@types/node": "catalog:",
+    "vitest": "catalog:",
+    "eslint": "catalog:"
+  },
+  "keywords": [
+    "dev-tools",
+    "cli",
+    "debugging",
+    "development",
+    "utilities"
+  ],
+  "author": "Reporunner Team",
+  "license": "MIT"
+}

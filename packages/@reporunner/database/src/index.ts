@@ -1,12 +1,13 @@
-// Database manager
-
-// Connection utilities
-export * from './connections';
+export { DatabaseConfig, DatabaseService } from './database-service';
 export * from './database-manager';
-// MongoDB exports
-export * from './mongodb';
-// PostgreSQL exports
-export * from './postgresql';
 
-// Types
+// Export MongoDB schemas
+export * from './mongodb/schemas/user.schema';
+export * from './mongodb/schemas/workflow.schema';
+export * from './mongodb/connection';
+
+// Export PostgreSQL connection
+export * from './postgresql/connection';
+
+// Export types
 export * from './types';

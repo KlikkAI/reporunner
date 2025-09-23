@@ -1,0 +1,42 @@
+{
+  "name": "@reporunner/scheduler",
+  "version": "1.0.0",
+  "description": "Enterprise workflow scheduler with cron support, distributed execution, and advanced scheduling",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx watch src/index.ts",
+    "test": "vitest",
+    "lint": "eslint src/**/*.ts",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@reporunner/constants": "workspace:*",
+    "@reporunner/database": "workspace:*",
+    "node-cron": "^3.0.3",
+    "cron-parser": "^4.9.0",
+    "bullmq": "catalog:",
+    "ioredis": "catalog:",
+    "uuid": "^9.0.1",
+    "date-fns": "^3.6.0"
+  },
+  "devDependencies": {
+    "@types/node-cron": "^3.0.11",
+    "@types/uuid": "^9.0.8",
+    "typescript": "catalog:",
+    "@types/node": "catalog:",
+    "vitest": "catalog:",
+    "eslint": "catalog:"
+  },
+  "keywords": [
+    "scheduler",
+    "cron",
+    "workflow",
+    "automation",
+    "distributed",
+    "enterprise"
+  ],
+  "author": "Reporunner Team",
+  "license": "MIT"
+}

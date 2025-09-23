@@ -1,0 +1,38 @@
+{
+  "name": "@reporunner/state-store",
+  "version": "1.0.0",
+  "description": "Enterprise state management for workflow execution state, persistence, and recovery",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx watch src/index.ts",
+    "test": "vitest",
+    "lint": "eslint src/**/*.ts",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@reporunner/constants": "workspace:*",
+    "@reporunner/database": "workspace:*",
+    "ioredis": "catalog:",
+    "uuid": "^9.0.1",
+    "date-fns": "^3.6.0",
+    "zstd-codec": "^0.1.4"
+  },
+  "devDependencies": {
+    "@types/uuid": "^9.0.8",
+    "typescript": "catalog:",
+    "@types/node": "catalog:",
+    "vitest": "catalog:",
+    "eslint": "catalog:"
+  },
+  "keywords": [
+    "state-management",
+    "workflow",
+    "persistence",
+    "recovery",
+    "enterprise"
+  ],
+  "author": "Reporunner Team",
+  "license": "MIT"
+}

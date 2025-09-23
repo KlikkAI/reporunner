@@ -1,25 +1,15 @@
-/**
- * @reporunner/ai - AI and ML capabilities for Reporunner
- *
- * This package provides comprehensive AI/ML integration including:
- * - LLM providers (OpenAI, Anthropic, Google, Ollama)
- * - Vector embeddings and search
- * - AI agents with memory and tools
- * - Prompt management and optimization
- */
+// Core AI exports
 
-export * from './agents';
-// Core AI classes
-export { AIAgent } from './agents/AIAgent';
+export * from './base';
+// Embeddings
 export * from './embeddings';
-export { EmbeddingService } from './embeddings/EmbeddingService';
-export * from './prompt-manager';
-export { PromptManager } from './prompt-manager/PromptManager';
-export * from './providers';
-export { AnthropicProvider } from './providers/AnthropicProvider';
-// Provider factories
-export { createLLMProvider } from './providers/factory';
-export { OpenAIProvider } from './providers/OpenAIProvider';
+
+// LLM providers
+export * from './llm';
+// AI workflow nodes
+export * from './nodes';
 export * from './types';
-export * from './vector-store';
-export { VectorStore } from './vector-store/VectorStore';
+// Utilities
+export * from './utils';
+// Vector stores
+export * from './vector';

@@ -19,7 +19,7 @@
   "dependencies": {
     "@reporunner/api-types": "workspace:*",
     "@reporunner/constants": "workspace:*",
-    "@reporunner/db": "workspace:*",
+    "@reporunner/database": "workspace:*",
     "@types/winston": "^2.4.4",
     "bullmq": "^5.30.1",
     "eventemitter3": "^5.0.1",

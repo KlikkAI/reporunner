@@ -8,7 +8,7 @@ import {
   UserRole,
 } from '@reporunner/api-types';
 import { AUTH, ERROR_CODES, MESSAGES } from '@reporunner/constants';
-import type { DatabaseService } from '@reporunner/db';
+import type { DatabaseService } from '@reporunner/database';
 import bcrypt from 'bcrypt';
 import { createHash, randomBytes } from 'crypto';
 import { v4 as uuidv4 } from 'uuid';

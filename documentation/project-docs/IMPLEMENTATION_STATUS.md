@@ -27,7 +27,7 @@ Successfully implemented the enterprise-grade infrastructure scaling roadmap for
 - **Created @reporunner scoped packages**:
   - `@reporunner/api-types` - Shared TypeScript types and interfaces
   - `@reporunner/constants` - Platform-wide constants and configurations
-  - `@reporunner/db` - Hybrid database layer (MongoDB + PostgreSQL)
+  - `@reporunner/database` - Hybrid database layer (MongoDB + PostgreSQL)
   - `@reporunner/platform/*` - Core platform services
   - `@reporunner/services/*` - Microservices architecture
   - `@reporunner/plugin-framework` - Base integration framework
@@ -46,7 +46,7 @@ Successfully implemented the enterprise-grade infrastructure scaling roadmap for
   - PostgreSQL with pgvector for AI embeddings and analytics
   - Redis for caching and pub/sub messaging
 - **Key Implementation**:
-  - `/packages/@reporunner/db/src/database-service.ts` - Intelligent database routing
+  - `/packages/@reporunner/database/src/database-service.ts` - Intelligent database routing
   - MongoDB schemas with proper indexing
   - PostgreSQL tables for vector search and analytics
   - Health check and connection pooling

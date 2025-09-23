@@ -33,7 +33,7 @@ reporunner/
 │   ├── @reporunner/api-types/
 │   ├── @reporunner/backend-common/
 │   ├── @reporunner/constants/
-│   └── @reporunner/db/
+│   └── @reporunner/database/
 ├── turbo.json
 ├── pnpm-workspace.yaml
 └── package.json (root)
@@ -62,7 +62,7 @@ reporunner/
 **Files to Create**:
 
 ```typescript
-// packages/@reporunner/db/src/
+// packages/@reporunner/database/src/
 ├── mongodb/
 │   ├── connection.ts
 │   ├── schemas/

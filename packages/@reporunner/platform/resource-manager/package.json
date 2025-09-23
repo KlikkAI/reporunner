@@ -1,0 +1,38 @@
+{
+  "name": "@reporunner/resource-manager",
+  "version": "1.0.0",
+  "description": "Enterprise resource management for CPU, memory, scaling, and performance optimization",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx watch src/index.ts",
+    "test": "vitest",
+    "lint": "eslint src/**/*.ts",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@reporunner/constants": "workspace:*",
+    "@reporunner/monitoring": "workspace:*",
+    "systeminformation": "^5.21.22",
+    "pidusage": "^3.0.2",
+    "uuid": "^9.0.1",
+    "date-fns": "^3.6.0"
+  },
+  "devDependencies": {
+    "@types/uuid": "^9.0.8",
+    "typescript": "catalog:",
+    "@types/node": "catalog:",
+    "vitest": "catalog:",
+    "eslint": "catalog:"
+  },
+  "keywords": [
+    "resource-management",
+    "scaling",
+    "performance",
+    "monitoring",
+    "enterprise"
+  ],
+  "author": "Reporunner Team",
+  "license": "MIT"
+}
