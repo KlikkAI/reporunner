@@ -1,0 +1,311 @@
+# Filebeat configuration for Reporunner log collection
+
+# Global settings
+name: reporunner-filebeat
+tags: ["reporunner", "filebeat"]
+
+# Filebeat inputs
+filebeat.inputs:
+  # Application logs
+  - type: log
+    enabled: true
+    paths:
+      - /var/log/reporunner/*.log
+      - /var/log/reporunner/**/*.log
+    fields:
+      service: reporunner
+      log_type: application
+    fields_under_root: false
+    multiline.pattern: '^\d{4}-\d{2}-\d{2}'
+    multiline.negate: true
+    multiline.match: after
+    scan_frequency: 10s
+    harvester_buffer_size: 16384
+    max_bytes: 10485760
+    json.keys_under_root: true
+    json.add_error_key: true
+    processors:
+      - add_host_metadata:
+          when.not.contains.tags: forwarded
+
+  # Docker container logs
+  - type: container
+    enabled: true
+    paths:
+      - '/var/lib/docker/containers/*/*.log'
+    stream: all
+    fields:
+      log_type: container
+    processors:
+      - add_docker_metadata:
+          host: "unix:///var/run/docker.sock"
+      - decode_json_fields:
+          fields: ["message"]
+          target: ""
+          overwrite_keys: true
+
+  # System logs
+  - type: log
+    enabled: true
+    paths:
+      - /host/var/log/syslog
+      - /host/var/log/auth.log
+      - /host/var/log/kern.log
+    fields:
+      service: system
+      log_type: system
+    exclude_lines: ['^$']
+
+  # Nginx access logs
+  - type: log
+    enabled: true
+    paths:
+      - /var/log/nginx/access.log
+      - /var/log/nginx/*_access.log
+    fields:
+      service: nginx
+      log_type: nginx_access
+    exclude_lines: ['GET /health', 'GET /metrics', 'GET /ping']
+
+  # Nginx error logs
+  - type: log
+    enabled: true
+    paths:
+      - /var/log/nginx/error.log
+      - /var/log/nginx/*_error.log
+    fields:
+      service: nginx
+      log_type: nginx_error
+    multiline.pattern: '^\d{4}/\d{2}/\d{2}'
+    multiline.negate: true
+    multiline.match: after
+
+  # MongoDB logs
+  - type: log
+    enabled: true
+    paths:
+      - /var/log/mongodb/mongod.log
+      - /var/log/mongodb/*.log
+    fields:
+      service: mongodb
+      log_type: database
+    json.keys_under_root: true
+    json.add_error_key: true
+
+  # PostgreSQL logs
+  - type: log
+    enabled: true
+    paths:
+      - /var/log/postgresql/postgresql-*.log
+      - /var/log/postgresql/*.log
+    fields:
+      service: postgresql
+      log_type: database
+    multiline.pattern: '^\d{4}-\d{2}-\d{2}'
+    multiline.negate: true
+    multiline.match: after
+
+  # Redis logs
+  - type: log
+    enabled: true
+    paths:
+      - /var/log/redis/redis-server.log
+      - /var/log/redis/*.log
+    fields:
+      service: redis
+      log_type: database
+
+  # Journal logs (systemd)
+  - type: journald
+    enabled: true
+    id: everything
+    include_matches:
+      - "UNIT=docker.service"
+      - "UNIT=nginx.service"
+      - "_SYSTEMD_UNIT=reporunner.service"
+    fields:
+      service: systemd
+      log_type: system
+
+# Global processors
+processors:
+  # Add metadata
+  - add_host_metadata:
+      when.not.contains.tags: forwarded
+      netinfo.enabled: false
+      cache.ttl: 5m
+      geo.location: 52.374444, 4.889444
+      geo.continent_name: Europe
+      geo.country_iso_code: NL
+
+  # Add Docker metadata for container logs
+  - add_docker_metadata:
+      host: "unix:///var/run/docker.sock"
+      match_fields: ["container.id"]
+      match_pids: ["process.pid"]
+
+  # Add Kubernetes metadata (if running on K8s)
+  - add_kubernetes_metadata:
+      host: ${NODE_NAME}
+      matchers:
+        - logs_path:
+            logs_path: "/var/log/containers/"
+
+  # Drop empty events
+  - drop_event:
+      when:
+        equals:
+          message: ""
+
+  # Add environment information
+  - add_fields:
+      target: environment
+      fields:
+        name: production
+        component: logging
+        version: "1.0.0"
+
+  # Parse timestamps
+  - timestamp:
+      field: "@timestamp"
+      layouts:
+        - '2006-01-02T15:04:05.000Z'
+        - '2006-01-02T15:04:05Z07:00'
+        - '2006-01-02 15:04:05'
+      test:
+        - '2023-10-25T14:30:45.123Z'
+
+  # Rename fields for consistency
+  - rename:
+      fields:
+        - from: "container.name"
+          to: "service_name"
+      ignore_missing: true
+
+  # Convert field types
+  - convert:
+      fields:
+        - {from: "response_time", to: "response_time_ms", type: "float"}
+        - {from: "status_code", to: "http.response.status_code", type: "long"}
+      ignore_missing: true
+
+# Module configurations
+filebeat.modules:
+  # System module
+  - module: system
+    syslog:
+      enabled: true
+      var.paths: ["/host/var/log/syslog*"]
+    auth:
+      enabled: true
+      var.paths: ["/host/var/log/auth.log*"]
+
+  # Nginx module
+  - module: nginx
+    access:
+      enabled: true
+      var.paths: ["/var/log/nginx/access.log*"]
+    error:
+      enabled: true
+      var.paths: ["/var/log/nginx/error.log*"]
+
+  # MongoDB module
+  - module: mongodb
+    log:
+      enabled: true
+      var.paths: ["/var/log/mongodb/mongod.log*"]
+
+  # PostgreSQL module
+  - module: postgresql
+    log:
+      enabled: true
+      var.paths: ["/var/log/postgresql/postgresql-*.log"]
+
+  # Redis module
+  - module: redis
+    log:
+      enabled: true
+      var.paths: ["/var/log/redis/redis-server.log*"]
+
+# Output configuration
+output.logstash:
+  hosts: ["logstash:5044"]
+  timeout: 15s
+  max_retries: 3
+  bulk_max_size: 2048
+  template.settings:
+    index.number_of_shards: 1
+    index.number_of_replicas: 0
+
+# Alternative output to Elasticsearch (disabled by default)
+# output.elasticsearch:
+#   hosts: ["elasticsearch:9200"]
+#   username: "elastic"
+#   password: "elastic123"
+#   index: "reporunner-filebeat-%{+yyyy.MM.dd}"
+#   template.settings:
+#     index.number_of_shards: 1
+#     index.number_of_replicas: 0
+
+# Setup template loading
+setup.template.enabled: true
+setup.template.name: "reporunner-filebeat"
+setup.template.pattern: "reporunner-filebeat-*"
+setup.template.settings:
+  index.number_of_shards: 1
+  index.number_of_replicas: 0
+
+# ILM Policy
+setup.ilm.enabled: true
+setup.ilm.rollover_alias: "reporunner-filebeat"
+setup.ilm.pattern: "{now/d}-000001"
+setup.ilm.policy: "reporunner-filebeat-policy"
+
+# Kibana configuration
+setup.kibana:
+  host: "kibana:5601"
+  username: "elastic"
+  password: "elastic123"
+
+# Dashboards
+setup.dashboards.enabled: true
+setup.dashboards.url: ""
+setup.dashboards.directory: ""
+setup.dashboards.index: ".kibana"
+
+# Logging
+logging.level: info
+logging.to_files: true
+logging.files:
+  path: /var/log/filebeat
+  name: filebeat
+  keepfiles: 7
+  permissions: 0644
+
+# HTTP endpoint for health checks
+http.enabled: true
+http.host: 0.0.0.0
+http.port: 5066
+
+# Monitoring
+monitoring.enabled: true
+monitoring.elasticsearch:
+  hosts: ["elasticsearch:9200"]
+  username: "elastic"
+  password: "elastic123"
+
+# Performance tuning
+queue.mem:
+  events: 4096
+  flush.min_events: 512
+  flush.timeout: 1s
+
+# Registry file
+filebeat.registry.path: /usr/share/filebeat/data/registry
+
+# Reload configuration
+filebeat.config.inputs:
+  enabled: true
+  path: inputs.d/*.yml
+  reload.enabled: true
+  reload.period: 10s

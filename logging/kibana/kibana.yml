@@ -1,0 +1,167 @@
+# Kibana configuration for Reporunner logging
+
+# Server settings
+server.name: reporunner-kibana
+server.host: 0.0.0.0
+server.port: 5601
+server.basePath: ""
+server.publicBaseUrl: "http://localhost:5601"
+server.maxPayload: 1048576
+
+# Elasticsearch connection
+elasticsearch.hosts: ["http://elasticsearch:9200"]
+elasticsearch.username: "elastic"
+elasticsearch.password: "elastic123"
+elasticsearch.requestTimeout: 30000
+elasticsearch.shardTimeout: 30000
+elasticsearch.pingTimeout: 1500
+
+# Index settings
+kibana.index: ".kibana"
+kibana.defaultAppId: "home"
+
+# Security settings
+xpack.security.enabled: true
+xpack.security.encryptionKey: "a7a6311933d3503b89bc2dbc235837c06c65681a06b6c0498c55"
+
+# Reporting settings
+xpack.reporting.enabled: true
+xpack.reporting.encryptionKey: "a7a6311933d3503b89bc2dbc235837c06c65681a06b6c0498c55"
+xpack.reporting.kibanaServer.hostname: "reporunner-kibana"
+xpack.reporting.capture.browser.chromium.disableSandbox: true
+
+# Saved objects encryption
+xpack.encryptedSavedObjects.encryptionKey: "a7a6311933d3503b89bc2dbc235837c06c65681a06b6c0498c55"
+
+# Actions and alerting
+xpack.actions.enabled: true
+xpack.alerting.enabled: true
+
+# Task Manager
+xpack.task_manager.enabled: true
+xpack.task_manager.max_workers: 10
+xpack.task_manager.max_attempts: 3
+xpack.task_manager.poll_interval: 3000
+
+# Monitoring
+monitoring.enabled: true
+monitoring.kibana.collection.enabled: true
+monitoring.kibana.collection.interval: 10000
+
+# Logging
+logging.root.level: warn
+logging.appenders.default:
+  type: console
+  layout:
+    type: json
+
+logging.loggers:
+  - name: plugins.security
+    level: info
+  - name: elasticsearch.query
+    level: warn
+  - name: http.server.response
+    level: warn
+
+# UI settings
+map.includeElasticMapsService: false
+telemetry.enabled: false
+telemetry.allowChangingOptInStatus: false
+
+# Development settings
+server.cors.enabled: true
+server.cors.allowCredentials: true
+server.cors.allowOrigin: ["*"]
+
+# Performance settings
+elasticsearch.maxSockets: 1024
+elasticsearch.keepAlive: true
+elasticsearch.compression: true
+
+# Index patterns
+kibana.autocompleteTimeout: 1000
+kibana.autocompleteTerminateAfter: 100000
+
+# Search settings
+discover.searchTimeout: 30000
+discover.sampleSize: 500
+
+# Visualization settings
+vis_type_vega.enableExternalUrls: false
+
+# Advanced settings for Reporunner
+reporunner:
+  defaultIndex: "reporunner-logs-*"
+  refreshInterval: 30s
+  timeFilter:
+    refreshIntervalDefaults:
+      pause: false
+      value: 30000
+    timeDefaults:
+      from: "now-24h"
+      to: "now"
+
+# Dashboard settings
+dashboard.defaultDarkMode: false
+
+# CSV export settings
+xpack.reporting.csv.maxSizeBytes: 10485760
+
+# Canvas settings
+xpack.canvas.enabled: true
+
+# Machine learning
+xpack.ml.enabled: false
+
+# Graph
+xpack.graph.enabled: false
+
+# APM integration
+apm_oss.enabled: true
+apm_oss.indexPattern: "apm-*"
+
+# Fleet and endpoint
+xpack.fleet.enabled: false
+xpack.endpoint.enabled: false
+
+# Enterprise search
+enterpriseSearch.enabled: false
+
+# Uptime
+xpack.uptime.enabled: true
+
+# Lens
+xpack.lens.enabled: true
+
+# Stack alerts
+xpack.stackAlerts.enabled: true
+
+# Triggers and actions
+xpack.triggersActionsUi.enabled: true
+
+# Index lifecycle management
+xpack.ilm.enabled: true
+
+# Snapshot and restore
+xpack.snapshotRestore.enabled: true
+
+# Cross cluster replication
+xpack.remoteClusters.enabled: false
+
+# Rollup
+xpack.rollup.enabled: false
+
+# Index management
+xpack.indexManagement.enabled: true
+
+# Ingest pipelines
+xpack.ingestPipelines.enabled: true
+
+# Global search
+xpack.globalSearch.enabled: true
+
+# Spaces
+xpack.spaces.enabled: false
+
+# Features
+xpack.features.enabled: true

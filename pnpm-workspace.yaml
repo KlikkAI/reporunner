@@ -53,15 +53,21 @@ catalog:
   "@testing-library/jest-dom": ^6.8.0
   "@vitest/ui": ^3.2.4
   "@vitest/coverage-v8": ^3.2.4
+  jest: ^29.6.2
+  "@types/jest": ^29.5.3
+  eslint: ^9.0.0
   
   # Build tools
   tsx: ^4.7.0
   tsc-alias: ^1.8.8
   "@vitejs/plugin-react": ^4.6.0
   rollup-plugin-visualizer: ^6.0.3
+  turbo: ^2.5.6
   
   # Linting & Formatting
   "@biomejs/biome": ^2.2.4
+  "@typescript-eslint/eslint-plugin": ^8.0.0
+  "@typescript-eslint/parser": ^8.0.0
   
   # Types
   "@types/node": ^24.0.13

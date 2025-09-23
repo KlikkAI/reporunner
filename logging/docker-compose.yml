@@ -1,0 +1,336 @@
+version: '3.8'
+
+services:
+  # Elasticsearch - Search and analytics engine
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
+    container_name: reporunner-elasticsearch
+    restart: unless-stopped
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    environment:
+      # Single node cluster
+      - discovery.type=single-node
+      - node.name=reporunner-elasticsearch
+      - cluster.name=reporunner-logs
+
+      # Security settings
+      - xpack.security.enabled=true
+      - xpack.security.enrollment.enabled=false
+      - ELASTIC_PASSWORD=elastic123
+      - xpack.security.http.ssl.enabled=false
+      - xpack.security.transport.ssl.enabled=false
+
+      # Performance settings
+      - "ES_JAVA_OPTS=-Xms2g -Xmx2g"
+      - bootstrap.memory_lock=true
+      - network.host=0.0.0.0
+
+      # Index settings
+      - action.auto_create_index=.monitoring*,.watches,.triggered_watches,.watcher-history*,.ml*
+      - xpack.ml.enabled=false
+      - xpack.graph.enabled=false
+      - xpack.watcher.enabled=false
+      - xpack.monitoring.collection.enabled=true
+
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+      - ./elasticsearch/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
+      - ./elasticsearch/jvm.options:/usr/share/elasticsearch/config/jvm.options:ro
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    networks:
+      - logging
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9200/_cluster/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.elasticsearch.rule=Host(`elasticsearch.reporunner.local`)"
+      - "traefik.http.services.elasticsearch.loadbalancer.server.port=9200"
+
+  # Logstash - Data processing pipeline
+  logstash:
+    image: docker.elastic.co/logstash/logstash:8.11.0
+    container_name: reporunner-logstash
+    restart: unless-stopped
+    ports:
+      - "5044:5044"   # Beats input
+      - "5000:5000"   # TCP input
+      - "9600:9600"   # Logstash monitoring API
+      - "12201:12201/udp"  # GELF UDP
+      - "12201:12201/tcp"  # GELF TCP
+    environment:
+      - "LS_JAVA_OPTS=-Xmx1g -Xms1g"
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - ELASTICSEARCH_USERNAME=elastic
+      - ELASTICSEARCH_PASSWORD=elastic123
+    volumes:
+      - ./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro
+      - ./logstash/pipeline:/usr/share/logstash/pipeline:ro
+      - ./logstash/patterns:/usr/share/logstash/patterns:ro
+      - logstash_data:/usr/share/logstash/data
+    networks:
+      - logging
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9600 || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # Kibana - Data visualization and exploration
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.11.0
+    container_name: reporunner-kibana
+    restart: unless-stopped
+    ports:
+      - "5601:5601"
+    environment:
+      - SERVERNAME=kibana
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - ELASTICSEARCH_USERNAME=elastic
+      - ELASTICSEARCH_PASSWORD=elastic123
+      - SERVER_BASEPATH=""
+      - SERVER_NAME=reporunner-kibana
+      - LOGGING_ROOT_LEVEL=warn
+
+      # Security settings
+      - XPACK_SECURITY_ENABLED=true
+      - XPACK_ENCRYPTEDSAVEDOBJECTS_ENCRYPTIONKEY=a7a6311933d3503b89bc2dbc235837c06c65681a06b6c0498c55
+      - XPACK_REPORTING_ENCRYPTIONKEY=a7a6311933d3503b89bc2dbc235837c06c65681a06b6c0498c55
+      - XPACK_SECURITY_ENCRYPTIONKEY=a7a6311933d3503b89bc2dbc235837c06c65681a06b6c0498c55
+
+    volumes:
+      - kibana_data:/usr/share/kibana/data
+      - ./kibana/kibana.yml:/usr/share/kibana/config/kibana.yml:ro
+    networks:
+      - logging
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:5601/api/status || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.kibana.rule=Host(`kibana.reporunner.local`)"
+      - "traefik.http.services.kibana.loadbalancer.server.port=5601"
+
+  # Filebeat - Lightweight log shipper
+  filebeat:
+    image: docker.elastic.co/beats/filebeat:8.11.0
+    container_name: reporunner-filebeat
+    restart: unless-stopped
+    user: root
+    environment:
+      - LOGSTASH_HOSTS=logstash:5044
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - ELASTICSEARCH_USERNAME=elastic
+      - ELASTICSEARCH_PASSWORD=elastic123
+      - KIBANA_HOST=http://kibana:5601
+    volumes:
+      - ./filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+      - filebeat_data:/usr/share/filebeat/data
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /var/log:/host/var/log:ro
+      - /proc:/host/proc:ro
+      - /sys/fs/cgroup:/host/sys/fs/cgroup:ro
+    command: ["--strict.perms=false"]
+    networks:
+      - logging
+    depends_on:
+      - elasticsearch
+      - logstash
+
+  # Metricbeat - System and service metrics
+  metricbeat:
+    image: docker.elastic.co/beats/metricbeat:8.11.0
+    container_name: reporunner-metricbeat
+    restart: unless-stopped
+    user: root
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - ELASTICSEARCH_USERNAME=elastic
+      - ELASTICSEARCH_PASSWORD=elastic123
+      - KIBANA_HOST=http://kibana:5601
+    volumes:
+      - ./metricbeat/metricbeat.yml:/usr/share/metricbeat/metricbeat.yml:ro
+      - metricbeat_data:/usr/share/metricbeat/data
+      - /proc:/hostfs/proc:ro
+      - /sys/fs/cgroup:/hostfs/sys/fs/cgroup:ro
+      - /:/hostfs:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    command: ["--strict.perms=false"]
+    networks:
+      - logging
+    depends_on:
+      - elasticsearch
+
+  # Heartbeat - Uptime monitoring
+  heartbeat:
+    image: docker.elastic.co/beats/heartbeat:8.11.0
+    container_name: reporunner-heartbeat
+    restart: unless-stopped
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - ELASTICSEARCH_USERNAME=elastic
+      - ELASTICSEARCH_PASSWORD=elastic123
+      - KIBANA_HOST=http://kibana:5601
+    volumes:
+      - ./heartbeat/heartbeat.yml:/usr/share/heartbeat/heartbeat.yml:ro
+      - heartbeat_data:/usr/share/heartbeat/data
+    command: ["--strict.perms=false"]
+    networks:
+      - logging
+    depends_on:
+      - elasticsearch
+
+  # APM Server - Application Performance Monitoring
+  apm-server:
+    image: docker.elastic.co/apm/apm-server:8.11.0
+    container_name: reporunner-apm-server
+    restart: unless-stopped
+    ports:
+      - "8200:8200"
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - ELASTICSEARCH_USERNAME=elastic
+      - ELASTICSEARCH_PASSWORD=elastic123
+      - KIBANA_HOST=http://kibana:5601
+    volumes:
+      - ./apm-server/apm-server.yml:/usr/share/apm-server/apm-server.yml:ro
+      - apm_data:/usr/share/apm-server/data
+    command: ["--strict.perms=false"]
+    networks:
+      - logging
+    depends_on:
+      - elasticsearch
+
+  # ElastAlert2 - Alerting for Elasticsearch
+  elastalert:
+    image: jertel/elastalert2:2.9.0
+    container_name: reporunner-elastalert
+    restart: unless-stopped
+    environment:
+      - ELASTICSEARCH_HOST=elasticsearch
+      - ELASTICSEARCH_PORT=9200
+      - ELASTICSEARCH_USERNAME=elastic
+      - ELASTICSEARCH_PASSWORD=elastic123
+    volumes:
+      - ./elastalert/config.yaml:/opt/elastalert/config.yaml:ro
+      - ./elastalert/rules:/opt/elastalert/rules:ro
+      - elastalert_data:/opt/elastalert/data
+    networks:
+      - logging
+    depends_on:
+      - elasticsearch
+
+  # Curator - Elasticsearch index management
+  curator:
+    image: untergeek/curator:8.0.4
+    container_name: reporunner-curator
+    restart: "no"  # Run as cron job
+    environment:
+      - ELASTICSEARCH_HOST=elasticsearch
+      - ELASTICSEARCH_PORT=9200
+      - ELASTICSEARCH_USERNAME=elastic
+      - ELASTICSEARCH_PASSWORD=elastic123
+    volumes:
+      - ./curator/curator.yml:/curator/curator.yml:ro
+      - ./curator/actions.yml:/curator/actions.yml:ro
+    networks:
+      - logging
+    depends_on:
+      - elasticsearch
+    entrypoint: ["curator", "--config", "/curator/curator.yml", "/curator/actions.yml"]
+
+  # Cerebro - Elasticsearch web admin tool
+  cerebro:
+    image: lmenezes/cerebro:0.9.4
+    container_name: reporunner-cerebro
+    restart: unless-stopped
+    ports:
+      - "9000:9000"
+    volumes:
+      - ./cerebro/application.conf:/opt/cerebro/conf/application.conf:ro
+    networks:
+      - logging
+    depends_on:
+      - elasticsearch
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.cerebro.rule=Host(`cerebro.reporunner.local`)"
+      - "traefik.http.services.cerebro.loadbalancer.server.port=9000"
+
+  # Elasticsearch Exporter - Metrics for Prometheus
+  elasticsearch-exporter:
+    image: quay.io/prometheuscommunity/elasticsearch-exporter:v1.6.0
+    container_name: reporunner-elasticsearch-exporter
+    restart: unless-stopped
+    ports:
+      - "9114:9114"
+    environment:
+      - ES_URI=http://elastic:elastic123@elasticsearch:9200
+      - ES_ALL=true
+      - ES_INDICES=true
+      - ES_SHARDS=true
+      - ES_SNAPSHOTS=true
+    networks:
+      - logging
+    depends_on:
+      - elasticsearch
+
+  # Setup service for initial configuration
+  setup:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
+    container_name: reporunner-setup
+    volumes:
+      - ./setup/setup.sh:/setup.sh:ro
+      - setup_certs:/usr/share/elasticsearch/config/certs
+    command: ["bash", "/setup.sh"]
+    environment:
+      - ELASTIC_PASSWORD=elastic123
+      - KIBANA_PASSWORD=kibana123
+    networks:
+      - logging
+    depends_on:
+      - elasticsearch
+
+volumes:
+  elasticsearch_data:
+    driver: local
+  logstash_data:
+    driver: local
+  kibana_data:
+    driver: local
+  filebeat_data:
+    driver: local
+  metricbeat_data:
+    driver: local
+  heartbeat_data:
+    driver: local
+  apm_data:
+    driver: local
+  elastalert_data:
+    driver: local
+  setup_certs:
+    driver: local
+
+networks:
+  logging:
+    driver: bridge
+    name: reporunner-logging

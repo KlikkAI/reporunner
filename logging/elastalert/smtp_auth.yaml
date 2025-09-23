@@ -1,0 +1,12 @@
+# SMTP authentication configuration for ElastAlert
+# This file should be created with actual credentials in production
+
+# SMTP server authentication
+user: "alerts@reporunner.com"
+password: "your_smtp_password_here"
+
+# Alternative configuration for OAuth2 (Gmail)
+# oauth2_enabled: true
+# oauth2_client_id: "your_client_id"
+# oauth2_client_secret: "your_client_secret"
+# oauth2_refresh_token: "your_refresh_token"

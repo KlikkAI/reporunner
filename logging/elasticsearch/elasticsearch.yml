@@ -1,0 +1,127 @@
+# Elasticsearch configuration for Reporunner logging
+
+# Cluster settings
+cluster.name: reporunner-logs
+node.name: reporunner-elasticsearch
+network.host: 0.0.0.0
+http.port: 9200
+transport.port: 9300
+
+# Discovery settings (single node)
+discovery.type: single-node
+cluster.initial_master_nodes: ["reporunner-elasticsearch"]
+
+# Node settings
+node.roles: [master, data, ingest, ml, remote_cluster_client]
+node.attr.rack_id: rack1
+node.max_local_storage_nodes: 1
+
+# Path settings
+path.data: /usr/share/elasticsearch/data
+path.logs: /usr/share/elasticsearch/logs
+path.repo: ["/usr/share/elasticsearch/backups"]
+
+# Memory settings
+bootstrap.memory_lock: true
+
+# Security settings
+xpack.security.enabled: true
+xpack.security.enrollment.enabled: false
+xpack.security.http.ssl.enabled: false
+xpack.security.transport.ssl.enabled: false
+
+# Disable ML and other features for resource optimization
+xpack.ml.enabled: false
+xpack.graph.enabled: false
+xpack.watcher.enabled: false
+
+# Monitoring
+xpack.monitoring.collection.enabled: true
+xpack.monitoring.elasticsearch.collection.enabled: true
+
+# Index settings
+action.auto_create_index: +reporunner-*,-*
+
+# Performance tuning
+indices.memory.index_buffer_size: 30%
+indices.memory.min_index_buffer_size: 96mb
+
+# Thread pool settings
+thread_pool:
+  write:
+    size: 1
+    queue_size: 1000
+  search:
+    size: 13
+    queue_size: 1000
+  get:
+    size: 1
+    queue_size: 1000
+  analyze:
+    size: 1
+    queue_size: 16
+
+# HTTP settings
+http.max_content_length: 100mb
+http.compression: true
+http.cors.enabled: true
+http.cors.allow-origin: "*"
+http.cors.allow-methods: OPTIONS, HEAD, GET, POST, PUT, DELETE
+http.cors.allow-headers: X-Requested-With, X-Auth-Token, Content-Type, Content-Length, Authorization
+
+# Index lifecycle management
+index.lifecycle.name: reporunner-logs-policy
+index.lifecycle.rollover_alias: reporunner-logs
+
+# Circuit breaker settings
+indices.breaker.total.limit: 70%
+indices.breaker.fielddata.limit: 40%
+indices.breaker.request.limit: 40%
+
+# Indexing settings
+index.refresh_interval: 30s
+index.number_of_shards: 1
+index.number_of_replicas: 0
+index.translog.durability: async
+index.translog.sync_interval: 5s
+
+# Search settings
+search.max_buckets: 65536
+search.allow_expensive_queries: true
+
+# Cluster settings
+cluster.routing.allocation.enable: all
+cluster.routing.allocation.node_concurrent_recoveries: 2
+cluster.routing.allocation.disk.threshold_enabled: true
+cluster.routing.allocation.disk.watermark.low: 85%
+cluster.routing.allocation.disk.watermark.high: 90%
+cluster.routing.allocation.disk.watermark.flood_stage: 95%
+
+# Logging levels
+logger.org.elasticsearch.transport: warn
+logger.org.elasticsearch.discovery: warn
+logger.org.elasticsearch.cluster.service: warn
+
+# Deprecation logging
+cluster.deprecation_indexing.enabled: false
+
+# Slow log settings
+index.search.slowlog.threshold.query.warn: 10s
+index.search.slowlog.threshold.query.info: 5s
+index.search.slowlog.threshold.query.debug: 2s
+index.search.slowlog.threshold.query.trace: 500ms
+
+index.search.slowlog.threshold.fetch.warn: 1s
+index.search.slowlog.threshold.fetch.info: 800ms
+index.search.slowlog.threshold.fetch.debug: 500ms
+index.search.slowlog.threshold.fetch.trace: 200ms
+
+index.indexing.slowlog.threshold.index.warn: 10s
+index.indexing.slowlog.threshold.index.info: 5s
+index.indexing.slowlog.threshold.index.debug: 2s
+index.indexing.slowlog.threshold.index.trace: 500ms
+
+# GC settings
+indices.fielddata.cache.size: 30%
+indices.requests.cache.size: 2%
+indices.queries.cache.size: 10%

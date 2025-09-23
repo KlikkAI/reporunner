@@ -1,0 +1,97 @@
+# Tempo Configuration
+# High-performance distributed tracing backend
+
+server:
+  http_listen_port: 3200
+  grpc_listen_port: 9095
+
+distributor:
+  receivers:
+    jaeger:
+      protocols:
+        thrift_http:
+          endpoint: 0.0.0.0:14268
+        grpc:
+          endpoint: 0.0.0.0:14250
+        thrift_binary:
+          endpoint: 0.0.0.0:6832
+        thrift_compact:
+          endpoint: 0.0.0.0:6831
+    zipkin:
+      endpoint: 0.0.0.0:9411
+    otlp:
+      protocols:
+        http:
+          endpoint: 0.0.0.0:4318
+        grpc:
+          endpoint: 0.0.0.0:4317
+
+# Ingester configuration
+ingester:
+  lifecycler:
+    address: 127.0.0.1
+    ring:
+      kvstore:
+        store: inmemory
+      replication_factor: 1
+    tokens_file_path: /var/tempo/tokens.json
+
+# Query frontend configuration
+query_frontend:
+  search:
+    duration_slo: 5s
+    throughput_bytes_slo: 1.073741824e+09
+  trace_by_id:
+    duration_slo: 5s
+
+# Querier configuration
+querier:
+  frontend_worker:
+    frontend_address: 127.0.0.1:9095
+
+# Compactor configuration
+compactor:
+  compaction:
+    compaction_window: 1h
+    max_compaction_objects: 1000000
+    block_retention: 1h
+    compacted_block_retention: 10m
+
+# Metrics generator configuration
+metrics_generator:
+  registry:
+    external_labels:
+      source: tempo
+      cluster: docker-compose
+  storage:
+    path: /var/tempo/generator/wal
+    remote_write:
+      - url: http://prometheus:9090/api/v1/write
+        send_exemplars: true
+
+# Storage configuration
+storage:
+  trace:
+    backend: s3
+    s3:
+      bucket: tempo-traces
+      endpoint: minio:9000
+      access_key: minio
+      secret_key: minio123
+      insecure: true
+    pool:
+      max_workers: 100
+      queue_depth: 10000
+
+# Usage report configuration
+usage_report:
+  reporting_enabled: false
+
+# Multitenancy configuration
+multitenancy_enabled: false
+
+# Search configuration
+search_enabled: true
+
+# Metrics generator configuration
+metrics_generator_enabled: true

@@ -1,0 +1,47 @@
+# Core OpenTelemetry packages
+opentelemetry-api>=1.20.0
+opentelemetry-sdk>=1.20.0
+opentelemetry-instrumentation>=0.41b0
+
+# Auto-instrumentation
+opentelemetry-distro>=0.41b0
+opentelemetry-bootstrap>=0.41b0
+
+# Exporters
+opentelemetry-exporter-jaeger-thrift>=1.20.0
+opentelemetry-exporter-otlp>=1.20.0
+opentelemetry-exporter-prometheus>=1.12.0rc1
+
+# Propagators
+opentelemetry-propagator-b3>=1.20.0
+opentelemetry-propagator-jaeger>=1.20.0
+
+# Resource detectors
+opentelemetry-resource-detector-docker>=0.41b0
+opentelemetry-resource-detector-gcp>=1.5.0a0
+
+# Core instrumentations
+opentelemetry-instrumentation-requests>=0.41b0
+opentelemetry-instrumentation-urllib>=0.41b0
+opentelemetry-instrumentation-urllib3>=0.41b0
+opentelemetry-instrumentation-httpx>=0.41b0
+opentelemetry-instrumentation-aiohttp-client>=0.41b0
+opentelemetry-instrumentation-logging>=0.41b0
+
+# Database instrumentations
+opentelemetry-instrumentation-sqlalchemy>=0.41b0
+opentelemetry-instrumentation-pymongo>=0.41b0
+opentelemetry-instrumentation-redis>=0.41b0
+opentelemetry-instrumentation-psycopg2>=0.41b0
+
+# Web framework instrumentations (optional, installed via extras)
+# opentelemetry-instrumentation-fastapi>=0.41b0
+# opentelemetry-instrumentation-django>=0.41b0
+# opentelemetry-instrumentation-flask>=0.41b0
+
+# Task queue instrumentations (optional)
+# opentelemetry-instrumentation-celery>=0.41b0
+
+# Additional utilities
+opentelemetry-util-http>=0.41b0
+opentelemetry-semantic-conventions>=0.41b0

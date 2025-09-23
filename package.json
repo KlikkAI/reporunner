@@ -148,10 +148,6 @@
       "date-fns": "2.30.0",
       "form-data": "4.0.4"
     },
-    "patchedDependencies": {
-      "js-base64": "patches/js-base64.patch",
-      "minifaker": "patches/minifaker.patch"
-    },
     "packageExtensions": {
       "@anthropic-ai/sdk": {
         "peerDependencies": {
