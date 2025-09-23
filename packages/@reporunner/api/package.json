@@ -15,7 +15,7 @@
     "lint:fix": "biome check --write .",
     "format": "biome format --write .",
     "swagger:generate": "swagger-jsdoc -d swagger.config.js src/**/*.ts -o dist/swagger.json",
-    "docs:serve": "swagger-ui-serve dist/swagger.json"
+    "docs:serve": "pnpm swagger:generate && cd dist && python -m http.server 8081"
   },
   "dependencies": {
     "@reporunner/core": "workspace:*",

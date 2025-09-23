@@ -22,7 +22,7 @@
     "organize-imports": "biome check --write .",
     "type-check": "tsc --noEmit",
     "clean": "rm -rf dist",
-    "deploy": "pnpm build && node scripts/deploy.js",
+    "deploy": "pnpm build && node -e \"console.log('Deploy for @reporunner/backend is not implemented yet');\"",
     "seed": "tsx src/scripts/seed.ts"
   },
   "dependencies": {

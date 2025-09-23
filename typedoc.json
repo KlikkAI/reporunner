@@ -6,8 +6,8 @@
     "packages/core",
     "packages/backend",
     "packages/frontend",
-    "packages/cli",
-    "packages/sdk"
+    "packages/@reporunner/cli",
+    "sdks/typescript"
   ],
   "out": "docs/api",
   "exclude": ["**/*+(test|spec|e2e).ts", "**/node_modules/**", "**/dist/**", "**/coverage/**"],

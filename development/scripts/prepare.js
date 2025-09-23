@@ -7,7 +7,7 @@ const path = require('node:path');
 console.log('🔧 Running prepare script...');
 
 // Ensure we're in the right directory
-const rootDir = path.resolve(__dirname, '..');
+const rootDir = path.resolve(__dirname, '../..');
 process.chdir(rootDir);
 
 try {
@@ -19,7 +19,7 @@ try {
 
   // Build core packages first
   console.log('🏗️  Building core packages...');
-  execSync('pnpm turbo run build --filter=@reporunner/core --filter=@reporunner/shared', {
+  execSync('pnpm turbo run build --filter=@reporunner/core', {
     stdio: 'inherit',
   });
 

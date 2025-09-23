@@ -17,7 +17,7 @@
     "test": "vitest --run",
     "test:watch": "vitest",
     "clean": "rm -rf dist node_modules/.cache .eslintcache",
-    "deploy": "pnpm build && node scripts/deploy.js",
+    "deploy": "pnpm build && node -e \"console.log('Deploy for @reporunner/frontend is not implemented yet');\"",
     "build:production": "NODE_ENV=production vite build"
   },
   "dependencies": {
