@@ -37,7 +37,6 @@
   },
   "dependencies": {
     "@reporunner/core": "workspace:*",
-    "@reporunner/shared": "workspace:*",
     "@anthropic-ai/sdk": "^0.27.0",
     "openai": "^4.20.0",
     "@google/generative-ai": "^0.1.0",

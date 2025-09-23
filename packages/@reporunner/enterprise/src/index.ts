@@ -1,0 +1,37 @@
+export interface EnterpriseConfig {
+  features: {
+    sso: boolean;
+    rbac: boolean;
+    audit: boolean;
+    compliance: boolean;
+  };
+  limits: {
+    maxUsers: number;
+    maxWorkflows: number;
+    maxExecutions: number;
+  };
+}
+
+export interface SSOProvider {
+  name: string;
+  type: 'saml' | 'oauth' | 'ldap';
+  config: Record<string, any>;
+  enabled: boolean;
+}
+
+export class EnterpriseManager {
+  constructor(private config: EnterpriseConfig) {}
+
+  isFeatureEnabled(feature: keyof EnterpriseConfig['features']): boolean {
+    return this.config.features[feature];
+  }
+
+  getLimit(limit: keyof EnterpriseConfig['limits']): number {
+    return this.config.limits[limit];
+  }
+}
+
+export * from './sso';
+export * from './rbac';
+export * from './audit';
+export * from './compliance';

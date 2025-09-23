@@ -18,7 +18,6 @@
   },
   "dependencies": {
     "@reporunner/core": "workspace:*",
-    "@reporunner/shared": "workspace:*",
     "@reporunner/auth": "workspace:*",
     "@reporunner/workflow-engine": "workspace:*",
     "express": "^4.18.0",
@@ -42,7 +41,7 @@
     "connect-redis": "^7.1.0",
     "ioredis": "^5.3.0",
     "zod": "^3.22.0",
-    "zod-to-openapi": "^1.0.0"
+    "zod-to-openapi": "^0.2.1"
   },
   "devDependencies": {
     "@types/express": "^4.17.0",

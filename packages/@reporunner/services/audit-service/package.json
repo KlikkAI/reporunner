@@ -1,0 +1,39 @@
+{
+  "name": "@reporunner/audit-service",
+  "version": "1.0.0",
+  "description": "Enterprise audit service for compliance, security logging, and governance",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx watch src/index.ts",
+    "test": "vitest",
+    "lint": "eslint src/**/*.ts",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@reporunner/constants": "workspace:*",
+    "@reporunner/database": "workspace:*",
+    "@reporunner/security": "workspace:*",
+    "crypto": "^1.0.1",
+    "uuid": "^9.0.1",
+    "date-fns": "^3.6.0"
+  },
+  "devDependencies": {
+    "@types/uuid": "^9.0.8",
+    "typescript": "catalog:",
+    "@types/node": "catalog:",
+    "vitest": "catalog:",
+    "eslint": "catalog:"
+  },
+  "keywords": [
+    "audit",
+    "compliance",
+    "security",
+    "governance",
+    "logging",
+    "enterprise"
+  ],
+  "author": "Reporunner Team",
+  "license": "MIT"
+}
