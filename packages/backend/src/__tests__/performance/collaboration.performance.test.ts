@@ -286,17 +286,17 @@ describe('Collaboration Performance Tests', () => {
       const queryStart = Date.now();
 
       // Active sessions query
-      const activeSessions = await CollaborationSession.find({
+      const _activeSessions = await CollaborationSession.find({
         isActive: true,
       });
 
       // User sessions query
-      const userSessions = await CollaborationSession.find({
+      const _userSessions = await CollaborationSession.find({
         'participants.userId': 'user-1',
       });
 
       // Workflow sessions query
-      const workflowSessions = await CollaborationSession.find({
+      const _workflowSessions = await CollaborationSession.find({
         workflowId: 'workflow-1',
       });
 
@@ -368,7 +368,7 @@ describe('Collaboration Performance Tests', () => {
       const queryStart = Date.now();
 
       // Recent operations
-      const recentOps = await Operation.find({
+      const _recentOps = await Operation.find({
         sessionId,
         timestamp: { $gte: new Date(Date.now() - 30000) },
       })
@@ -376,13 +376,13 @@ describe('Collaboration Performance Tests', () => {
         .limit(100);
 
       // Operations by type
-      const nodeOps = await Operation.find({
+      const _nodeOps = await Operation.find({
         sessionId,
         type: { $regex: '^node_' },
       }).limit(1000);
 
       // Operations by status
-      const appliedOps = await Operation.find({
+      const _appliedOps = await Operation.find({
         sessionId,
         status: 'applied',
       }).limit(1000);

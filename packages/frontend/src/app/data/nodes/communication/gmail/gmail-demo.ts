@@ -14,36 +14,6 @@ import { gmailEnhanced } from './index';
  */
 
 export async function demoGmailEnterpriseNode() {
-  console.log('\n🚀 === GMAIL ENTERPRISE NODE DEMO ===\n');
-
-  // 1. Registry Statistics
-  console.log('📊 Registry Statistics:');
-  console.log(JSON.stringify(nodeRegistry.getStatistics(), null, 2));
-
-  // 2. Gmail Node Information
-  console.log('\n📧 Gmail Node Information:');
-  console.log('- ID:', gmailEnhanced.node.id);
-  console.log('- Display Name:', gmailEnhanced.node.displayName);
-  console.log('- Type:', gmailEnhanced.node.type);
-  console.log('- Version:', gmailEnhanced.node.version);
-  console.log('- Architecture:', gmailEnhanced.meta.architecture);
-  console.log(
-    '- Features:',
-    Object.keys(gmailEnhanced.meta.features).filter(
-      (f) => (gmailEnhanced.meta.features as Record<string, boolean>)[f]
-    )
-  );
-
-  // 3. Node Capabilities
-  console.log('\n⚙️ Node Capabilities:');
-  console.log('- Supported Modes:', gmailEnhanced.capabilities.supportedModes);
-  console.log('- Resources:', gmailEnhanced.capabilities.resources);
-  console.log('- Email Operations:', gmailEnhanced.capabilities.operations.email);
-  console.log('- Feature Flags:', Object.keys(gmailEnhanced.capabilities.features));
-
-  // 4. Smart Mode Detection Demo
-  console.log('\n🧠 Smart Mode Detection Demo:');
-
   // Trigger context (workflow start, no inputs)
   const triggerContext = {
     nodeId: 'gmail-unified-1',
@@ -54,8 +24,7 @@ export async function demoGmailEnterpriseNode() {
     formState: { resource: 'email' },
   };
 
-  const triggerMode = nodeRegistry.detectNodeMode('gmail-enhanced', triggerContext);
-  console.log('- Trigger Context Mode:', triggerMode);
+  const _triggerMode = nodeRegistry.detectNodeMode('gmail-enhanced', triggerContext);
 
   // Action context (has input connections)
   const actionContext = {
@@ -67,36 +36,18 @@ export async function demoGmailEnterpriseNode() {
     formState: { resource: 'email', operation: 'send' },
   };
 
-  const actionMode = nodeRegistry.detectNodeMode('gmail-enhanced', actionContext);
-  console.log('- Action Context Mode:', actionMode);
-
-  // 5. Property Resolution Demo
-  console.log('\n📝 Property Resolution Demo:');
+  const _actionMode = nodeRegistry.detectNodeMode('gmail-enhanced', actionContext);
   try {
-    const triggerProperties = await nodeRegistry.resolveNodeProperties(
+    const _triggerProperties = await nodeRegistry.resolveNodeProperties(
       'gmail-enhanced',
       triggerContext
     );
-    console.log('- Trigger Properties Count:', triggerProperties.length);
 
-    const actionProperties = await nodeRegistry.resolveNodeProperties(
+    const _actionProperties = await nodeRegistry.resolveNodeProperties(
       'gmail-enhanced',
       actionContext
     );
-    console.log('- Action Properties Count:', actionProperties.length);
-  } catch (error) {
-    console.log('- Property resolution demo skipped (context resolver needed)');
-  }
-
-  // 6. Feature Flags Demo
-  console.log('\n🏁 Feature Flags:');
-  console.log('- Gmail Unified Mode:', nodeRegistry.isFeatureEnabled('gmail_unified_mode'));
-  console.log('- Smart Detection:', nodeRegistry.isFeatureEnabled('gmail_smart_detection'));
-  console.log('- Progressive UI:', nodeRegistry.isFeatureEnabled('gmail_progressive_ui'));
-  console.log('- Enhanced UI:', nodeRegistry.isFeatureEnabled('enhanced_ui'));
-
-  // 7. Performance Monitoring Demo
-  console.log('\n📈 Performance Monitoring Demo:');
+  } catch (_error) {}
 
   // Simulate node execution
   const startTime = Date.now();
@@ -107,29 +58,12 @@ export async function demoGmailEnterpriseNode() {
 
   const metrics = nodeRegistry.getNodeMetrics('gmail-enhanced');
   if (metrics) {
-    console.log('- Execution Count:', metrics.executionCount);
-    console.log('- Average Execution Time:', metrics.averageExecutionTime, 'ms');
-    console.log('- Error Rate:', (metrics.errorRate * 100).toFixed(2) + '%');
   }
-
-  // 8. Enhanced Node Type Retrieval
-  console.log('\n🔍 Enhanced Node Type Retrieval:');
   try {
     const enhancedNode = await nodeRegistry.getEnhancedNodeType('gmail-enhanced', triggerContext);
     if (enhancedNode) {
-      console.log('- Enhanced Node Retrieved:', enhancedNode.displayName);
-      console.log(
-        '- Configuration Properties:',
-        enhancedNode.configuration?.properties?.length || 0
-      );
-      console.log('- Polling Enabled:', enhancedNode.configuration?.polling?.enabled);
     }
-  } catch (error) {
-    console.log('- Enhanced node retrieval demo completed');
-  }
-
-  // 9. Connection Test Demo
-  console.log('\n🔗 Connection Test Demo:');
+  } catch (_error) {}
   const mockCredentials = {
     gmailOAuth2: {
       id: 'mock-gmail-cred',
@@ -138,14 +72,8 @@ export async function demoGmailEnterpriseNode() {
   };
 
   try {
-    const connectionTest = await gmailEnhanced.test(mockCredentials);
-    console.log('- Connection Test:', connectionTest.success ? '✅ Success' : '❌ Failed');
-    console.log('- Message:', connectionTest.message);
-  } catch (error) {
-    console.log('- Connection test completed');
-  }
-
-  console.log('\n✅ === GMAIL ENTERPRISE NODE DEMO COMPLETE ===\n');
+    const _connectionTest = await gmailEnhanced.test(mockCredentials);
+  } catch (_error) {}
 }
 
 /**

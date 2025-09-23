@@ -1,11 +1,6 @@
 import Anthropic from '@anthropic-ai/sdk';
 import { BaseAIProvider, type ILLMProvider, type ProviderCapabilities } from '../base/ai-provider';
-import {
-  AIProviderType,
-  type LLMCompletion,
-  type LLMResponse,
-  type ProviderConfig,
-} from '../types';
+import type { LLMCompletion, LLMResponse, ProviderConfig } from '../types';
 
 export class AnthropicProvider extends BaseAIProvider implements ILLMProvider {
   private client: Anthropic;
@@ -44,8 +39,7 @@ export class AnthropicProvider extends BaseAIProvider implements ILLMProvider {
         messages: [{ role: 'user', content: 'test' }],
       });
       return response.content.length > 0;
-    } catch (error) {
-      console.error('Anthropic connection test failed:', error);
+    } catch (_error) {
       return false;
     }
   }

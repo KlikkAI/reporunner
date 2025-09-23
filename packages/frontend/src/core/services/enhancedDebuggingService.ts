@@ -75,8 +75,6 @@ export class EnhancedDebuggingService implements DebuggerControls {
       sessionId,
       timestamp: Date.now(),
     });
-
-    console.log(`Debug session started: ${sessionId}`);
   }
 
   /**
@@ -97,8 +95,6 @@ export class EnhancedDebuggingService implements DebuggerControls {
 
     this.activeSessions.delete(sessionId);
     this.executionHistory.delete(sessionId);
-
-    console.log(`Debug session stopped: ${sessionId}`);
   }
 
   /**
@@ -110,8 +106,6 @@ export class EnhancedDebuggingService implements DebuggerControls {
 
     session.status = 'paused';
     session.pauseTime = Date.now();
-
-    console.log('Execution paused');
   }
 
   /**
@@ -123,8 +117,6 @@ export class EnhancedDebuggingService implements DebuggerControls {
 
     session.status = 'running';
     session.pauseTime = undefined;
-
-    console.log('Execution resumed');
   }
 
   /**
@@ -184,9 +176,7 @@ export class EnhancedDebuggingService implements DebuggerControls {
     if (!session.breakpoints.has(nodeId)) {
       session.breakpoints.set(nodeId, []);
     }
-    session.breakpoints.get(nodeId)!.push(bp);
-
-    console.log(`Breakpoint added to node ${nodeId}:`, bp);
+    session.breakpoints.get(nodeId)?.push(bp);
   }
 
   /**
@@ -201,7 +191,6 @@ export class EnhancedDebuggingService implements DebuggerControls {
       const index = breakpoints.findIndex((bp) => bp.id === breakpointId);
       if (index !== -1) {
         breakpoints.splice(index, 1);
-        console.log(`Breakpoint removed from node ${nodeId}: ${breakpointId}`);
       }
     }
   }
@@ -218,7 +207,6 @@ export class EnhancedDebuggingService implements DebuggerControls {
       const breakpoint = breakpoints.find((bp) => bp.id === breakpointId);
       if (breakpoint) {
         breakpoint.enabled = !breakpoint.enabled;
-        console.log(`Breakpoint ${breakpointId} ${breakpoint.enabled ? 'enabled' : 'disabled'}`);
       }
     }
   }
@@ -245,7 +233,6 @@ export class EnhancedDebuggingService implements DebuggerControls {
     }
 
     session.watchExpressions.push(watch);
-    console.log(`Watch expression added: ${expression}`);
   }
 
   /**
@@ -258,7 +245,6 @@ export class EnhancedDebuggingService implements DebuggerControls {
     const index = session.watchExpressions.findIndex((watch) => watch.id === id);
     if (index !== -1) {
       session.watchExpressions.splice(index, 1);
-      console.log(`Watch expression removed: ${id}`);
     }
   }
 
@@ -392,7 +378,6 @@ export class EnhancedDebuggingService implements DebuggerControls {
    */
   updateConfiguration(config: Partial<DebugConfiguration>): void {
     this.configuration = { ...this.configuration, ...config };
-    console.log('Debug configuration updated:', this.configuration);
   }
 
   /**
@@ -433,9 +418,7 @@ export class EnhancedDebuggingService implements DebuggerControls {
     this.eventListeners.forEach((listener) => {
       try {
         listener(event);
-      } catch (error) {
-        console.error('Error in debug event listener:', error);
-      }
+      } catch (_error) {}
     });
   }
 
@@ -564,10 +547,10 @@ export class EnhancedDebuggingService implements DebuggerControls {
 
   private createDataPreview(data: any): string {
     if (data === null || data === undefined) return 'null';
-    if (typeof data === 'string') return data.length > 100 ? data.substring(0, 100) + '...' : data;
+    if (typeof data === 'string') return data.length > 100 ? `${data.substring(0, 100)}...` : data;
     if (typeof data === 'object') {
       const json = JSON.stringify(data);
-      return json.length > 100 ? json.substring(0, 100) + '...' : json;
+      return json.length > 100 ? `${json.substring(0, 100)}...` : json;
     }
     return String(data);
   }

@@ -1,5 +1,5 @@
-import crypto from 'crypto';
-import { EventEmitter } from 'events';
+import crypto from 'node:crypto';
+import { EventEmitter } from 'node:events';
 import { type NextFunction, type Request, type Response, Router } from 'express';
 
 export interface WebhookConfig {
@@ -61,7 +61,7 @@ export class WebhookManager extends EventEmitter {
    */
   private setupMiddleware(): void {
     // Raw body parser for signature verification
-    this.router.use((req: Request, res: Response, next: NextFunction) => {
+    this.router.use((req: Request, _res: Response, next: NextFunction) => {
       const chunks: Buffer[] = [];
 
       req.on('data', (chunk: Buffer) => {
@@ -155,7 +155,6 @@ export class WebhookManager extends EventEmitter {
 
         this.emit('webhook:received', { webhookId: registration.id, event });
       } catch (error: any) {
-        console.error('Webhook error:', error);
         registration.status = 'error';
         registration.error = error.message;
 
@@ -387,7 +386,7 @@ export class WebhookManager extends EventEmitter {
   /**
    * Get success count for webhook
    */
-  private getSuccessCount(webhookId: string): number {
+  private getSuccessCount(_webhookId: string): number {
     // This would be tracked in a real implementation
     return 0;
   }

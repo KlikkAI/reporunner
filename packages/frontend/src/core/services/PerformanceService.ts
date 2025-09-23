@@ -458,7 +458,7 @@ class PerformanceMonitoringService {
         });
 
         observer.observe({ type: 'longtask', buffered: true });
-      } catch (error) {
+      } catch (_error) {
         // Long task observer not supported
       }
     }

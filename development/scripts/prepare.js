@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
-const { execSync } = require('child_process');
-const { existsSync } = require('fs');
-const path = require('path');
+const { execSync } = require('node:child_process');
+const { existsSync } = require('node:fs');
+const path = require('node:path');
 
 console.log('🔧 Running prepare script...');
 

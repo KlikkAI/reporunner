@@ -148,67 +148,57 @@ export const useEnhancedExecutionStore = create<EnhancedExecutionState>()(
 
     // Execution management
     startExecution: async (workflowId: string, testMode = false) => {
-      try {
-        // Clear previous state
-        get().clearNodeStates();
+      // Clear previous state
+      get().clearNodeStates();
 
-        // Start execution via API
-        const response = await fetch('/api/executions', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            workflowId,
-            mode: testMode ? 'test' : 'production',
-            debugMode: get().debugMode,
-          }),
-        });
+      // Start execution via API
+      const response = await fetch('/api/executions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          workflowId,
+          mode: testMode ? 'test' : 'production',
+          debugMode: get().debugMode,
+        }),
+      });
 
-        if (!response.ok) {
-          throw new Error(`Failed to start execution: ${response.statusText}`);
-        }
-
-        const execution = await response.json();
-
-        set({
-          currentExecution: execution,
-          progress: {
-            totalNodes: 0,
-            completedNodes: 0,
-            failedNodes: 0,
-            skippedNodes: 0,
-            progressPercentage: 0,
-          },
-        });
-
-        // Subscribe to real-time updates
-        await get().subscribeToExecution(execution.id);
-
-        return execution.id;
-      } catch (error) {
-        console.error('Failed to start execution:', error);
-        throw error;
+      if (!response.ok) {
+        throw new Error(`Failed to start execution: ${response.statusText}`);
       }
+
+      const execution = await response.json();
+
+      set({
+        currentExecution: execution,
+        progress: {
+          totalNodes: 0,
+          completedNodes: 0,
+          failedNodes: 0,
+          skippedNodes: 0,
+          progressPercentage: 0,
+        },
+      });
+
+      // Subscribe to real-time updates
+      await get().subscribeToExecution(execution.id);
+
+      return execution.id;
     },
 
     stopExecution: async (executionId: string) => {
-      try {
-        await fetch(`/api/executions/${executionId}/stop`, {
-          method: 'POST',
-        });
+      await fetch(`/api/executions/${executionId}/stop`, {
+        method: 'POST',
+      });
 
-        // Update local state
-        set((state) => ({
-          currentExecution:
-            state.currentExecution?.id === executionId
-              ? { ...state.currentExecution, status: 'cancelled' as const }
-              : state.currentExecution,
-        }));
-      } catch (error) {
-        console.error('Failed to stop execution:', error);
-        throw error;
-      }
+      // Update local state
+      set((state) => ({
+        currentExecution:
+          state.currentExecution?.id === executionId
+            ? { ...state.currentExecution, status: 'cancelled' as const }
+            : state.currentExecution,
+      }));
     },
 
     subscribeToExecution: async (executionId: string) => {

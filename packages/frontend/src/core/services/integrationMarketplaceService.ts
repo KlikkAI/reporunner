@@ -340,20 +340,20 @@ export class IntegrationMarketplaceService {
     // Apply filters
     if (filter.categories?.length) {
       results = results.filter((integration) =>
-        filter.categories!.includes(integration.category.id)
+        filter.categories?.includes(integration.category.id)
       );
     }
 
     if (filter.subcategories?.length) {
       results = results.filter(
         (integration) =>
-          integration.subcategory && filter.subcategories!.includes(integration.subcategory)
+          integration.subcategory && filter.subcategories?.includes(integration.subcategory)
       );
     }
 
     if (filter.pricing?.length) {
       results = results.filter((integration) =>
-        filter.pricing!.includes(integration.pricing.type as any)
+        filter.pricing?.includes(integration.pricing.type as any)
       );
     }
 
@@ -381,7 +381,7 @@ export class IntegrationMarketplaceService {
 
     if (filter.tags?.length) {
       results = results.filter((integration) =>
-        filter.tags!.some((tag) => integration.tags.includes(tag))
+        filter.tags?.some((tag) => integration.tags.includes(tag))
       );
     }
 

@@ -221,9 +221,7 @@ export class WorkflowOptimizer {
         optimizedNodes = result.nodes;
         optimizedEdges = result.edges;
         appliedOptimizations.push(suggestion.id);
-      } catch (error) {
-        console.error(`Failed to apply optimization ${suggestion.id}:`, error);
-      }
+      } catch (_error) {}
     }
 
     return {
@@ -593,7 +591,7 @@ export class WorkflowOptimizer {
       if (!nodesByType.has(node.type)) {
         nodesByType.set(node.type, []);
       }
-      nodesByType.get(node.type)!.push(node);
+      nodesByType.get(node.type)?.push(node);
     });
 
     // Find potential duplicates within each type
@@ -686,7 +684,7 @@ export class WorkflowOptimizer {
       // Apply node removals
       if (previewChanges.removeNodes) {
         optimizedNodes = optimizedNodes.filter(
-          (node) => !previewChanges.removeNodes!.includes(node.id)
+          (node) => !previewChanges.removeNodes?.includes(node.id)
         );
       }
 
@@ -720,7 +718,7 @@ export class WorkflowOptimizer {
 
       if (previewChanges.removeEdges) {
         optimizedEdges = optimizedEdges.filter(
-          (edge) => !previewChanges.removeEdges!.includes(edge.id)
+          (edge) => !previewChanges.removeEdges?.includes(edge.id)
         );
       }
     }

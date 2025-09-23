@@ -1,5 +1,5 @@
-import crypto from 'crypto';
-import { EventEmitter } from 'events';
+import crypto from 'node:crypto';
+import { EventEmitter } from 'node:events';
 
 export interface OAuth2Config {
   clientId: string;
@@ -250,10 +250,7 @@ export class OAuth2Handler extends EventEmitter {
       });
 
       this.emit('token:revoked', { token, tokenType });
-    } catch (error) {
-      // Many providers don't support revocation, so we don't throw
-      console.warn('Token revocation failed:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -369,7 +366,7 @@ export class OAuth2Handler extends EventEmitter {
 
     // Add 60 second buffer to account for clock skew
     const bufferMs = 60000;
-    return new Date().getTime() > token.expiresAt.getTime() - bufferMs;
+    return Date.now() > token.expiresAt.getTime() - bufferMs;
   }
 
   /**

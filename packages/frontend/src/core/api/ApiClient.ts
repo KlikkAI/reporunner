@@ -236,8 +236,8 @@ export class ApiClient {
    */
   private sanitizeHeaders(headers: Record<string, unknown>): Record<string, unknown> {
     const sanitized = { ...headers };
-    if (sanitized['Authorization']) {
-      sanitized['Authorization'] = '[REDACTED]';
+    if (sanitized.Authorization) {
+      sanitized.Authorization = '[REDACTED]';
     }
     return sanitized;
   }

@@ -19,22 +19,7 @@ const ConditionInputPanel: React.FC<ConditionInputPanelProps> = ({ connectedInpu
   const [selectedField, setSelectedField] = useState<string | null>(null);
 
   // Debug logging
-  React.useEffect(() => {
-    console.log('ConditionInputPanel Debug:', {
-      connectedInputNodes: connectedInputNodes.length,
-      nodeDetails: connectedInputNodes.map((node) => ({
-        id: node?.id,
-        label: node?.data?.label,
-        type: node?.type,
-        hasOutputData: !!node?.data?.outputData,
-        hasTestResults: !!node?.data?.testResults?.data,
-        outputDataKeys: node?.data?.outputData ? Object.keys(node.data.outputData) : 'none',
-        testResultsKeys: node?.data?.testResults?.data
-          ? Object.keys(node.data.testResults.data)
-          : 'none',
-      })),
-    });
-  }, [connectedInputNodes]);
+  React.useEffect(() => {}, []);
 
   if (connectedInputNodes.length === 0) {
     return (
@@ -107,16 +92,6 @@ const ConditionInputPanel: React.FC<ConditionInputPanelProps> = ({ connectedInpu
           }
 
           const isExpanded = expandedNode === node?.id;
-
-          // Debug logging for each node
-          console.log(`Node ${node?.id || index} data check:`, {
-            hasOutputData: !!outputData,
-            hasTestResults: !!testResultsData,
-            finalNodeData: !!nodeData,
-            nodeDataType: typeof nodeData,
-            nodeDataKeys:
-              nodeData && typeof nodeData === 'object' ? Object.keys(nodeData) : 'not object',
-          });
 
           return (
             <div
@@ -238,17 +213,10 @@ const DataFieldsSummary: React.FC<{
   const allFields = new Set<string>();
 
   // Collect all unique fields from connected nodes
-  connectedInputNodes.forEach((node, index) => {
+  connectedInputNodes.forEach((node, _index) => {
     const outputData = node?.data?.outputData;
     const testResultsData = node?.data?.testResults?.data;
     const data = outputData || testResultsData;
-
-    console.log(`DataFieldsSummary - Node ${index} data:`, {
-      hasData: !!data,
-      dataType: typeof data,
-      isArray: Array.isArray(data),
-      keys: data && typeof data === 'object' ? Object.keys(data) : 'none',
-    });
 
     if (data && typeof data === 'object') {
       if (Array.isArray(data)) {
@@ -296,15 +264,6 @@ const ConditionDataRenderer: React.FC<{
   selectedField: string | null;
   onFieldSelect: (field: string) => void;
 }> = ({ data, nodeType, selectedField, onFieldSelect }) => {
-  // Debug logging
-  console.log('ConditionDataRenderer:', {
-    hasData: !!data,
-    dataType: typeof data,
-    isArray: Array.isArray(data),
-    nodeType,
-    dataPreview: data ? (typeof data === 'object' ? Object.keys(data) : data) : 'none',
-  });
-
   if (!data) {
     return <div className="text-gray-400 text-sm">No data available</div>;
   }
@@ -313,7 +272,6 @@ const ConditionDataRenderer: React.FC<{
 
   // Check if it's an array (like emails)
   if (Array.isArray(data)) {
-    console.log('ConditionDataRenderer: Array detected with', data.length, 'items');
     if (data.length > 0) {
       const firstItem = data[0];
       if (nodeType === 'gmail' || nodeType === 'gmail-trigger') {
@@ -339,7 +297,6 @@ const ConditionDataRenderer: React.FC<{
 
   // Handle email data (from Gmail triggers)
   if ((nodeType === 'gmail' || nodeType === 'gmail-trigger') && typeof data === 'object') {
-    console.log('ConditionDataRenderer: Gmail data detected');
     return (
       <EmailConditionView
         email={data}
@@ -351,7 +308,6 @@ const ConditionDataRenderer: React.FC<{
 
   // Handle transformed data
   if (nodeType === 'transform' && typeof data === 'object') {
-    console.log('ConditionDataRenderer: Transform data detected');
     return (
       <TransformConditionView
         data={data}
@@ -363,7 +319,6 @@ const ConditionDataRenderer: React.FC<{
 
   // Handle AI Agent data
   if (nodeType === 'ai-agent' && typeof data === 'object') {
-    console.log('ConditionDataRenderer: AI Agent data detected');
     return (
       <AIConditionView data={data} selectedField={selectedField} onFieldSelect={onFieldSelect} />
     );
@@ -371,10 +326,6 @@ const ConditionDataRenderer: React.FC<{
 
   // Generic structured data
   if (typeof data === 'object' && data !== null) {
-    console.log(
-      'ConditionDataRenderer: Generic object data detected with keys:',
-      Object.keys(data)
-    );
     return (
       <GenericConditionView
         data={data}
@@ -528,7 +479,7 @@ const FieldRow: React.FC<{
   onSelect: (field: string) => void;
 }> = ({ fieldKey, label, value, isSelected, onSelect }) => {
   const displayValue =
-    typeof value === 'string' && value.length > 100 ? value.substring(0, 100) + '...' : value;
+    typeof value === 'string' && value.length > 100 ? `${value.substring(0, 100)}...` : value;
 
   return (
     <div

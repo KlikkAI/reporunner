@@ -76,13 +76,13 @@ export const SchedulingPanel: React.FC<SchedulingPanelProps> = ({
       loadSchedules();
       loadActiveExecutions();
     }
-  }, [visible, workflowId]);
+  }, [visible, loadActiveExecutions, loadSchedules]);
 
   useEffect(() => {
     if (selectedSchedule) {
       loadAnalytics(selectedSchedule.id);
     }
-  }, [selectedSchedule]);
+  }, [selectedSchedule, loadAnalytics]);
 
   const loadSchedules = () => {
     const allSchedules = workflowScheduler.getAllSchedules();
@@ -100,9 +100,7 @@ export const SchedulingPanel: React.FC<SchedulingPanelProps> = ({
     try {
       const analytics = await workflowScheduler.getScheduleAnalytics(scheduleId);
       setAnalytics(analytics);
-    } catch (error) {
-      console.error('Failed to load analytics:', error);
-    }
+    } catch (_error) {}
   };
 
   const handleCreateSchedule = async (values: any) => {
@@ -145,9 +143,8 @@ export const SchedulingPanel: React.FC<SchedulingPanelProps> = ({
       loadSchedules();
       form.resetFields();
       setEditingSchedule(null);
-    } catch (error) {
+    } catch (_error) {
       message.error('Failed to create schedule');
-      console.error(error);
     } finally {
       setLoading(false);
     }
@@ -203,7 +200,7 @@ export const SchedulingPanel: React.FC<SchedulingPanelProps> = ({
       workflowScheduler.toggleSchedule(scheduleId, enabled);
       message.success(`Schedule ${enabled ? 'enabled' : 'disabled'}`);
       loadSchedules();
-    } catch (error) {
+    } catch (_error) {
       message.error('Failed to toggle schedule');
     }
   };
@@ -217,7 +214,7 @@ export const SchedulingPanel: React.FC<SchedulingPanelProps> = ({
         setSelectedSchedule(null);
         setAnalytics(null);
       }
-    } catch (error) {
+    } catch (_error) {
       message.error('Failed to delete schedule');
     }
   };
@@ -227,7 +224,7 @@ export const SchedulingPanel: React.FC<SchedulingPanelProps> = ({
       await workflowScheduler.triggerSchedule(scheduleId, true);
       message.success('Schedule triggered successfully');
       loadActiveExecutions();
-    } catch (error) {
+    } catch (_error) {
       message.error('Failed to trigger schedule');
     }
   };
@@ -237,7 +234,7 @@ export const SchedulingPanel: React.FC<SchedulingPanelProps> = ({
       workflowScheduler.cancelExecution(executionId);
       message.success('Execution cancelled');
       loadActiveExecutions();
-    } catch (error) {
+    } catch (_error) {
       message.error('Failed to cancel execution');
     }
   };

@@ -172,8 +172,6 @@ function convertGmailParameters(config: any, nodeType: string): Record<string, a
  * Convert AI Agent parameters - Full configuration for sentiment analysis and other AI tasks
  */
 function convertAiAgentParameters(config: any): Record<string, any> {
-  console.log('Converting AI Agent parameters:', config);
-
   return {
     // AI Provider Configuration
     provider: config.provider || 'openai',
@@ -353,14 +351,14 @@ function generateInstanceId(): string {
  * Generate unique condition ID
  */
 function generateConditionId(): string {
-  return 'condition-' + Math.random().toString(36).substring(2, 9);
+  return `condition-${Math.random().toString(36).substring(2, 9)}`;
 }
 
 /**
  * Generate unique credential ID
  */
 function generateCredentialId(): string {
-  return 'cred-' + Math.random().toString(36).substring(2, 15);
+  return `cred-${Math.random().toString(36).substring(2, 15)}`;
 }
 
 /**

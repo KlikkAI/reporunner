@@ -1,4 +1,4 @@
-import { AuditEvent } from './index';
+import type { AuditEvent } from './index';
 
 export interface RetentionPolicy {
   id: string;

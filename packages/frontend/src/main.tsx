@@ -11,16 +11,6 @@ import '@/app/node-extensions'; // Initialize component factory and registry
 import '@/core/nodes/definitions'; // Register core node definitions (includes unified Transform node)
 import '@/app/data/nodes/communication/gmail'; // Register Gmail node - CRITICAL: Must be before React
 
-// Debug logging for node registration timing
-import { nodeRegistry } from '@/core';
-
-console.log('🚀 main.tsx - Node registration completed before React initialization');
-console.log('📊 Registry stats:', nodeRegistry.getStatistics());
-console.log(
-  '📋 Registered nodes:',
-  nodeRegistry.getAllNodeTypeDescriptions().map((n) => n.name)
-);
-
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {

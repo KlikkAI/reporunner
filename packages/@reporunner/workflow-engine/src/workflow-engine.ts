@@ -1,4 +1,4 @@
-import { EventEmitter } from 'events';
+import { EventEmitter } from 'node:events';
 import { v4 as uuidv4 } from 'uuid';
 import { EventBus } from './events/event-bus';
 import { ExecutionEngine } from './execution/execution-engine';
@@ -7,7 +7,6 @@ import {
   type Execution,
   ExecutionStatus,
   type TriggerConfig,
-  Workflow,
   type WorkflowEngineConfig,
   WorkflowEvent,
   type WorkflowEventData,
@@ -41,70 +40,46 @@ export class WorkflowEngine extends EventEmitter {
       return;
     }
 
-    try {
-      console.log('🚀 Initializing Workflow Engine...');
+    // Initialize queue manager
+    await this.queueManager.initialize();
 
-      // Initialize queue manager
-      await this.queueManager.initialize();
-      console.log('✅ Queue Manager initialized');
+    // Initialize execution engine
+    await this.executionEngine.initialize();
 
-      // Initialize execution engine
-      await this.executionEngine.initialize();
-      console.log('✅ Execution Engine initialized');
-
-      // Initialize worker manager if enabled
-      if (this.config.workers.enabled) {
-        await this.workerManager.initialize();
-        console.log('✅ Worker Manager initialized');
-      }
-
-      // Initialize event bus
-      await this.eventBus.initialize();
-      console.log('✅ Event Bus initialized');
-
-      this.isInitialized = true;
-      console.log('🎉 Workflow Engine fully initialized');
-
-      this.emit('engine:initialized');
-    } catch (error) {
-      console.error('❌ Failed to initialize Workflow Engine:', error);
-      throw error;
+    // Initialize worker manager if enabled
+    if (this.config.workers.enabled) {
+      await this.workerManager.initialize();
     }
+
+    // Initialize event bus
+    await this.eventBus.initialize();
+
+    this.isInitialized = true;
+
+    this.emit('engine:initialized');
   }
 
   /**
    * Shutdown the workflow engine gracefully
    */
   async shutdown(): Promise<void> {
-    console.log('🔄 Shutting down Workflow Engine...');
-
-    try {
-      // Stop workers first
-      if (this.config.workers.enabled) {
-        await this.workerManager.shutdown();
-        console.log('✅ Worker Manager shut down');
-      }
-
-      // Stop execution engine
-      await this.executionEngine.shutdown();
-      console.log('✅ Execution Engine shut down');
-
-      // Stop queue manager
-      await this.queueManager.shutdown();
-      console.log('✅ Queue Manager shut down');
-
-      // Stop event bus
-      await this.eventBus.shutdown();
-      console.log('✅ Event Bus shut down');
-
-      this.isInitialized = false;
-      console.log('🔽 Workflow Engine shut down complete');
-
-      this.emit('engine:shutdown');
-    } catch (error) {
-      console.error('❌ Error during shutdown:', error);
-      throw error;
+    // Stop workers first
+    if (this.config.workers.enabled) {
+      await this.workerManager.shutdown();
     }
+
+    // Stop execution engine
+    await this.executionEngine.shutdown();
+
+    // Stop queue manager
+    await this.queueManager.shutdown();
+
+    // Stop event bus
+    await this.eventBus.shutdown();
+
+    this.isInitialized = false;
+
+    this.emit('engine:shutdown');
   }
 
   /**
@@ -232,24 +207,19 @@ export class WorkflowEngine extends EventEmitter {
   /**
    * Register a trigger
    */
-  async registerTrigger(trigger: TriggerConfig): Promise<void> {
+  async registerTrigger(_trigger: TriggerConfig): Promise<void> {
     if (!this.isInitialized) {
       throw new Error('Workflow Engine not initialized');
     }
-
-    // Implementation would register the trigger based on its type
-    console.log(`Registering trigger ${trigger.id} for workflow ${trigger.workflowId}`);
   }
 
   /**
    * Unregister a trigger
    */
-  async unregisterTrigger(triggerId: string): Promise<void> {
+  async unregisterTrigger(_triggerId: string): Promise<void> {
     if (!this.isInitialized) {
       throw new Error('Workflow Engine not initialized');
     }
-
-    console.log(`Unregistering trigger ${triggerId}`);
   }
 
   /**

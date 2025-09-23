@@ -1,7 +1,5 @@
 import type { Request, Response } from 'express';
-import { validationResult } from 'express-validator';
 import { BaseController } from '../../../base/BaseController.js';
-import { AppError } from '../../../middleware/errorHandlers.js';
 import { CredentialService } from '../services/CredentialService.js';
 
 export class CredentialController extends BaseController {
@@ -26,7 +24,7 @@ export class CredentialController extends BaseController {
   /**
    * Debug route to see all credentials
    */
-  getAllCredentialsDebug = async (req: Request, res: Response) => {
+  getAllCredentialsDebug = async (_req: Request, res: Response) => {
     const credentials = await this.credentialService.getAllCredentialsDebug();
 
     this.sendSuccess(res, { credentials });

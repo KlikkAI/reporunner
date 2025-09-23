@@ -1,4 +1,4 @@
-import { ComplianceRule, AuditEvent } from './index';
+import type { AuditEvent, ComplianceRule } from './index';
 
 export const SOC2_RULES: ComplianceRule[] = [
   {

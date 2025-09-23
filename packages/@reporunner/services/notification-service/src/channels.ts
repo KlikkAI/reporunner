@@ -1,14 +1,17 @@
-import { NotificationChannel, NotificationRequest, NotificationResult } from './index';
+import type { NotificationChannel, NotificationRequest, NotificationResult } from './index';
 
 export interface ChannelProvider {
   send(request: NotificationRequest, config: Record<string, any>): Promise<NotificationResult>;
 }
 
 export class EmailProvider implements ChannelProvider {
-  async send(_request: NotificationRequest, _config: Record<string, any>): Promise<NotificationResult> {
+  async send(
+    _request: NotificationRequest,
+    _config: Record<string, any>
+  ): Promise<NotificationResult> {
     // TODO: Implement email sending with nodemailer
     return {
-      id: 'email-' + Date.now(),
+      id: `email-${Date.now()}`,
       status: 'sent',
       sentAt: new Date(),
     };
@@ -16,10 +19,13 @@ export class EmailProvider implements ChannelProvider {
 }
 
 export class SlackProvider implements ChannelProvider {
-  async send(_request: NotificationRequest, _config: Record<string, any>): Promise<NotificationResult> {
+  async send(
+    _request: NotificationRequest,
+    _config: Record<string, any>
+  ): Promise<NotificationResult> {
     // TODO: Implement Slack messaging
     return {
-      id: 'slack-' + Date.now(),
+      id: `slack-${Date.now()}`,
       status: 'sent',
       sentAt: new Date(),
     };
@@ -27,10 +33,13 @@ export class SlackProvider implements ChannelProvider {
 }
 
 export class DiscordProvider implements ChannelProvider {
-  async send(_request: NotificationRequest, _config: Record<string, any>): Promise<NotificationResult> {
+  async send(
+    _request: NotificationRequest,
+    _config: Record<string, any>
+  ): Promise<NotificationResult> {
     // TODO: Implement Discord messaging
     return {
-      id: 'discord-' + Date.now(),
+      id: `discord-${Date.now()}`,
       status: 'sent',
       sentAt: new Date(),
     };
@@ -38,10 +47,13 @@ export class DiscordProvider implements ChannelProvider {
 }
 
 export class SMSProvider implements ChannelProvider {
-  async send(_request: NotificationRequest, _config: Record<string, any>): Promise<NotificationResult> {
+  async send(
+    _request: NotificationRequest,
+    _config: Record<string, any>
+  ): Promise<NotificationResult> {
     // TODO: Implement SMS sending with Twilio
     return {
-      id: 'sms-' + Date.now(),
+      id: `sms-${Date.now()}`,
       status: 'sent',
       sentAt: new Date(),
     };
@@ -49,10 +61,13 @@ export class SMSProvider implements ChannelProvider {
 }
 
 export class WebhookProvider implements ChannelProvider {
-  async send(_request: NotificationRequest, _config: Record<string, any>): Promise<NotificationResult> {
+  async send(
+    _request: NotificationRequest,
+    _config: Record<string, any>
+  ): Promise<NotificationResult> {
     // TODO: Implement webhook HTTP calls
     return {
-      id: 'webhook-' + Date.now(),
+      id: `webhook-${Date.now()}`,
       status: 'sent',
       sentAt: new Date(),
     };
@@ -60,10 +75,13 @@ export class WebhookProvider implements ChannelProvider {
 }
 
 export class TeamsProvider implements ChannelProvider {
-  async send(_request: NotificationRequest, _config: Record<string, any>): Promise<NotificationResult> {
+  async send(
+    _request: NotificationRequest,
+    _config: Record<string, any>
+  ): Promise<NotificationResult> {
     // TODO: Implement Microsoft Teams messaging
     return {
-      id: 'teams-' + Date.now(),
+      id: `teams-${Date.now()}`,
       status: 'sent',
       sentAt: new Date(),
     };
@@ -86,7 +104,10 @@ export class ChannelManager {
     return this.providers.get(type);
   }
 
-  async send(channel: NotificationChannel, request: NotificationRequest): Promise<NotificationResult> {
+  async send(
+    channel: NotificationChannel,
+    request: NotificationRequest
+  ): Promise<NotificationResult> {
     const provider = this.getProvider(channel.type);
     if (!provider) {
       throw new Error(`No provider for channel type: ${channel.type}`);

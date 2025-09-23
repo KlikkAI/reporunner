@@ -23,7 +23,6 @@ const Header: React.FC = () => {
         await createNewWorkflow(name.trim(), navigate);
         toast.success('Workflow created successfully!');
       } catch (error) {
-        console.error('Failed to create workflow:', error);
         const errorMessage = error instanceof Error ? error.message : 'Failed to create workflow';
         toast.error(errorMessage);
       }

@@ -21,14 +21,8 @@ import { gmailSendProperties, gmailTriggerProperties } from './properties';
  * Initialize and register the unified Gmail node with enterprise features
  */
 export function initializeGmailNode(): void {
-  console.log('🚀 Initializing Enterprise Gmail Node...');
-  console.log('📧 Gmail Enhanced Node Data:', gmailEnhancedNode);
-
   // Register the Gmail context resolver for smart mode detection
   registerGmailContextResolver();
-
-  // Register the enhanced Gmail node with enterprise registry
-  console.log('📝 Registering Gmail Enhanced Node with Registry...');
   nodeRegistry.registerEnhancedNodeType(gmailEnhancedNode);
 
   // Set up feature flags for Gmail
@@ -38,44 +32,14 @@ export function initializeGmailNode(): void {
 
   // Verify registration
   const enhancedNodes = nodeRegistry.getAllEnhancedNodeTypes();
-  console.log(
-    '🔍 Enhanced nodes in registry:',
-    enhancedNodes.map((node) => ({
-      id: node.id,
-      displayName: node.displayName,
-    }))
-  );
 
-  const hasGmailNode = enhancedNodes.some((node) => node.id === 'gmail-enhanced');
-  console.log('🔍 Gmail node registration verification:', hasGmailNode ? 'SUCCESS' : 'FAILED');
+  const _hasGmailNode = enhancedNodes.some((node) => node.id === 'gmail-enhanced');
 
   // Show all registered nodes
   const allDescriptions = nodeRegistry.getAllNodeTypeDescriptions();
-  console.log(
-    '📋 All registered node descriptions:',
-    allDescriptions.map((n) => ({
-      name: n.name,
-      displayName: n.displayName,
-      customBodyComponent: n.customBodyComponent,
-    }))
-  );
 
   // Specifically check Gmail node
-  const gmailNode = allDescriptions.find((n) => n.name === 'gmail-enhanced');
-  console.log(
-    '🎯 Gmail node found in registry:',
-    gmailNode
-      ? {
-          name: gmailNode.name,
-          displayName: gmailNode.displayName,
-          customBodyComponent: gmailNode.customBodyComponent,
-          hasCustomBody: Boolean(gmailNode.customBodyComponent),
-        }
-      : 'NOT FOUND'
-  );
-
-  console.log('✅ Enterprise Gmail Node initialized successfully');
-  console.log('📊 Registry Stats:', nodeRegistry.getStatistics());
+  const _gmailNode = allDescriptions.find((n) => n.name === 'gmail-enhanced');
 }
 
 // =============================================================================

@@ -1,8 +1,8 @@
 // Node Generator Utility
 // Helps developers quickly scaffold new nodes with proper separation of concerns
 
-import { mkdirSync, writeFileSync } from 'fs';
-import { join } from 'path';
+import { mkdirSync, writeFileSync } from 'node:fs';
+import { join } from 'node:path';
 
 interface NodeGeneratorOptions {
   name: string; // e.g., 'discord'
@@ -353,12 +353,7 @@ export function generateNode(
   Object.entries(files).forEach(([filename, content]) => {
     writeFileSync(join(nodePath, filename), content);
   });
-
-  console.log(`✅ Generated ${options.displayName} node at ${nodePath}`);
-  console.log(`📁 Files created:`);
-  Object.keys(files).forEach((filename) => {
-    console.log(`   - ${filename}`);
-  });
+  Object.keys(files).forEach((_filename) => {});
 
   return nodePath;
 }

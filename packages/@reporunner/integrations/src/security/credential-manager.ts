@@ -1,5 +1,5 @@
-import crypto from 'crypto';
-import { EventEmitter } from 'events';
+import crypto from 'node:crypto';
+import { EventEmitter } from 'node:events';
 
 export interface Credential {
   id: string;
@@ -62,9 +62,6 @@ export class CredentialManager extends EventEmitter {
     } else {
       // In production, this should be loaded from secure storage
       this.encryptionKey = crypto.randomBytes(32);
-      console.warn(
-        'Using auto-generated encryption key. In production, use a persistent master key.'
-      );
     }
 
     this.startExpiryChecker();
@@ -210,7 +207,7 @@ export class CredentialManager extends EventEmitter {
       }
     } else {
       // Don't return the encrypted value if not decrypting
-      delete result.value;
+      result.value = undefined;
     }
 
     return result;
@@ -368,7 +365,7 @@ export class CredentialManager extends EventEmitter {
 
       // Don't include the encrypted value in search results
       const result = { ...credential };
-      delete (result as any).value;
+      (result as any).value = undefined;
       results.push(result);
     });
 

@@ -16,8 +16,8 @@ export interface MetricsCollector {
 }
 
 export class MonitoringService {
-  // @ts-ignore: Config will be used in future implementation
-  constructor(private config: MonitoringConfig) {}
+  // @ts-expect-error: Config will be used in future implementation
+  constructor(_config: MonitoringConfig) {}
 
   async start(): Promise<void> {
     // TODO: Implement monitoring service startup
@@ -28,5 +28,5 @@ export class MonitoringService {
   }
 }
 
-export * from './metrics';
 export * from './alerts';
+export * from './metrics';

@@ -34,7 +34,6 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, onToggle }) => {
         await createNewWorkflow(name.trim(), navigate);
         toast.success('Workflow created successfully!');
       } catch (error) {
-        console.error('Failed to create workflow:', error);
         const errorMessage = error instanceof Error ? error.message : 'Failed to create workflow';
         toast.error(errorMessage);
       }
@@ -45,9 +44,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, onToggle }) => {
     try {
       await logout();
       // Navigation will be handled by ProtectedRoute when auth state changes
-    } catch (error) {
-      console.error('Logout failed:', error);
-    }
+    } catch (_error) {}
   };
 
   return (

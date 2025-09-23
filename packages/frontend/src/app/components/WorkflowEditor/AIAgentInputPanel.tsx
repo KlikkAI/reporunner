@@ -231,7 +231,7 @@ const EmailPreview: React.FC<{ email: any; isLatest: boolean }> = ({ email, isLa
           <span className="text-gray-300 text-xs leading-relaxed">
             {email.body
               ? email.body.length > 150
-                ? email.body.substring(0, 150) + '...'
+                ? `${email.body.substring(0, 150)}...`
                 : email.body
               : 'No content'}
           </span>
@@ -272,7 +272,7 @@ const TransformDataPreview: React.FC<{ data: any }> = ({ data }) => {
           const value = data[field];
           const displayValue =
             typeof value === 'string' && value.length > 100
-              ? value.substring(0, 100) + '...'
+              ? `${value.substring(0, 100)}...`
               : value;
 
           return (
@@ -306,7 +306,7 @@ const StructuredDataPreview: React.FC<{ data: any }> = ({ data }) => {
         {fields.slice(0, 4).map((field) => {
           const value = data[field];
           const displayValue =
-            typeof value === 'string' && value.length > 80 ? value.substring(0, 80) + '...' : value;
+            typeof value === 'string' && value.length > 80 ? `${value.substring(0, 80)}...` : value;
 
           return (
             <div key={field} className="text-sm">

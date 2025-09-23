@@ -313,18 +313,7 @@ export function getEnvironmentConfig(
  */
 export function createCSPReportHandler() {
   return async (req: Request, res: Response) => {
-    const report = req.body;
-
-    // Log CSP violation
-    console.error('CSP Violation:', {
-      documentUri: report['document-uri'],
-      violatedDirective: report['violated-directive'],
-      blockedUri: report['blocked-uri'],
-      lineNumber: report['line-number'],
-      columnNumber: report['column-number'],
-      sourceFile: report['source-file'],
-      timestamp: new Date().toISOString(),
-    });
+    const _report = req.body;
 
     // You could also send this to a monitoring service
     // await sendToMonitoring(report);
@@ -337,7 +326,7 @@ export function createCSPReportHandler() {
  * Nonce generator for inline scripts/styles
  */
 export function generateNonce(): string {
-  const crypto = require('crypto');
+  const crypto = require('node:crypto');
   return crypto.randomBytes(16).toString('base64');
 }
 
@@ -359,9 +348,6 @@ export function createCSPWithNonce(config: CSPConfig = {}) {
     const nonce = res.locals.nonce;
 
     if (!nonce) {
-      console.warn(
-        'No nonce found in res.locals. Use createNonceMiddleware() before this middleware.'
-      );
       return next();
     }
 

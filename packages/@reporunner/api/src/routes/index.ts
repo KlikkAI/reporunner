@@ -27,7 +27,7 @@ export function setupRoutes(app: Application): void {
   app.use(`${apiPrefix}/analytics`, analyticsRoutes);
 
   // API info endpoint
-  app.get(`${apiPrefix}`, (req, res) => {
+  app.get(`${apiPrefix}`, (_req, res) => {
     res.json({
       name: 'Reporunner API',
       version: '1.0.0',

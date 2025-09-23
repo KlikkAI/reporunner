@@ -3,7 +3,7 @@
  * Tracks application performance metrics and provides insights
  */
 
-import { EventEmitter } from 'events';
+import { EventEmitter } from 'node:events';
 import { logger } from '../logging/Logger.js';
 
 export interface PerformanceMetric {
@@ -249,7 +249,7 @@ class PerformanceMonitorService extends EventEmitter {
     // Keep only last 10 minutes of data
     const tenMinutesAgo = timestamp - 10 * 60 * 1000;
     for (const [key, _] of this.memoryLeakDetection) {
-      if (parseInt(key) < tenMinutesAgo) {
+      if (parseInt(key, 10) < tenMinutesAgo) {
         this.memoryLeakDetection.delete(key);
       }
     }

@@ -1,4 +1,4 @@
-import { EventEmitter } from 'events';
+import { EventEmitter } from 'node:events';
 import WebSocket from 'ws';
 
 export class WebSocketClient extends EventEmitter {
@@ -23,7 +23,6 @@ export class WebSocketClient extends EventEmitter {
       this.ws = new WebSocket(wsUrl);
 
       this.ws.on('open', () => {
-        console.debug('[Reporunner SDK] WebSocket connected');
         this.reconnectAttempts = 0;
         this.emit('connected');
       });
@@ -32,23 +31,18 @@ export class WebSocketClient extends EventEmitter {
         try {
           const message = JSON.parse(data.toString());
           this.handleMessage(message);
-        } catch (error) {
-          console.error('[Reporunner SDK] Failed to parse WebSocket message:', error);
-        }
+        } catch (_error) {}
       });
 
-      this.ws.on('close', (code, reason) => {
-        console.debug(`[Reporunner SDK] WebSocket closed: ${code} ${reason}`);
+      this.ws.on('close', (_code, _reason) => {
         this.emit('disconnected');
         this.handleReconnect();
       });
 
       this.ws.on('error', (error) => {
-        console.error('[Reporunner SDK] WebSocket error:', error);
         this.emit('error', error);
       });
-    } catch (error) {
-      console.error('[Reporunner SDK] Failed to create WebSocket connection:', error);
+    } catch (_error) {
       this.handleReconnect();
     }
   }
@@ -70,22 +64,17 @@ export class WebSocketClient extends EventEmitter {
         this.send({ type: 'pong' });
         break;
       default:
-        console.debug(`[Reporunner SDK] Unknown message type: ${type}`);
     }
   }
 
   private handleReconnect(): void {
     if (this.reconnectAttempts < this.maxReconnectAttempts) {
       this.reconnectAttempts++;
-      console.debug(
-        `[Reporunner SDK] Attempting to reconnect (${this.reconnectAttempts}/${this.maxReconnectAttempts})...`
-      );
 
       setTimeout(() => {
         this.connect();
       }, this.reconnectInterval * this.reconnectAttempts);
     } else {
-      console.error('[Reporunner SDK] Max reconnection attempts reached');
       this.emit('maxReconnectAttemptsReached');
     }
   }
@@ -94,7 +83,6 @@ export class WebSocketClient extends EventEmitter {
     if (this.ws && this.ws.readyState === WebSocket.OPEN) {
       this.ws.send(JSON.stringify(message));
     } else {
-      console.warn('[Reporunner SDK] Cannot send message: WebSocket not connected');
     }
   }
 

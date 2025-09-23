@@ -1,7 +1,7 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import request from 'supertest';
-import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import app from '../../app.js';
 import { User } from '../../models/User.js';
 import { testUtils } from '../setup.js';
@@ -184,7 +184,7 @@ describe('Auth Routes Integration Tests', () => {
     });
 
     it('should fail with incorrect password', async () => {
-      const testUser = await testUtils.createTestUser({
+      const _testUser = await testUtils.createTestUser({
         email: 'wrongpass@test.com',
         password: await bcrypt.hash('correctpassword', 10),
       });
@@ -206,7 +206,7 @@ describe('Auth Routes Integration Tests', () => {
     });
 
     it('should fail with inactive user', async () => {
-      const testUser = await testUtils.createTestUser({
+      const _testUser = await testUtils.createTestUser({
         email: 'inactive@test.com',
         password: await bcrypt.hash('password123', 10),
         isActive: false,

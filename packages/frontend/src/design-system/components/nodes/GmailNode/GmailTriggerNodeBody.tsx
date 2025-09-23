@@ -104,7 +104,6 @@ const GmailTriggerNodeBody: React.FC<CustomNodeBodyProps> = ({
   ];
 
   const handleToolbarAction = (action: string) => {
-    console.log('Gmail toolbar action:', action);
     switch (action) {
       case 'testConnection':
         // TODO: Implement connection test
@@ -121,19 +120,16 @@ const GmailTriggerNodeBody: React.FC<CustomNodeBodyProps> = ({
   // Event handlers with debug logging
   const handleDoubleClick = (event: React.MouseEvent) => {
     event.stopPropagation();
-    console.log('🎯 Gmail Card double-click handler called');
     onOpenProperties?.();
   };
 
   const handleEditClick = (event: React.MouseEvent) => {
     event.stopPropagation();
-    console.log('📝 Gmail edit button clicked');
     onEdit?.();
   };
 
   const handleSettingsClick = (event: React.MouseEvent) => {
     event.stopPropagation();
-    console.log('⚙️ Gmail settings button clicked');
     onOpenProperties?.();
   };
 

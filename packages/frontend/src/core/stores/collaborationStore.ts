@@ -118,7 +118,6 @@ export const useCollaborationStore = create<CollaborationState>()(
           lastSyncTimestamp: new Date().toISOString(),
         });
       } catch (error) {
-        console.error('Failed to initialize collaboration session:', error);
         set({
           connectionStatus: 'disconnected',
           isConnected: false,
@@ -143,9 +142,7 @@ export const useCollaborationStore = create<CollaborationState>()(
           lastSyncTimestamp: null,
           collaborationPanelOpen: false,
         });
-      } catch (error) {
-        console.error('Failed to leave collaboration session:', error);
-      }
+      } catch (_error) {}
     },
 
     updatePresence: (presence: Partial<UserPresence>) => {
@@ -158,14 +155,7 @@ export const useCollaborationStore = create<CollaborationState>()(
       if (!state.isConnected) {
         throw new Error('Not connected to collaboration session');
       }
-
-      try {
-        await collaborationService.sendOperation(operation);
-        // Operation will be added to history when acknowledged by server
-      } catch (error) {
-        console.error('Failed to send collaboration operation:', error);
-        throw error;
-      }
+      await collaborationService.sendOperation(operation);
     },
 
     addComment: async (
@@ -175,20 +165,14 @@ export const useCollaborationStore = create<CollaborationState>()(
       if (!state.isConnected) {
         throw new Error('Not connected to collaboration session');
       }
-
-      try {
-        const newComment = await collaborationService.addComment(comment);
-        set(() => ({
-          comments: [...state.comments, newComment],
-          activeComments: newComment.resolved
-            ? state.activeComments
-            : [...state.activeComments, newComment],
-          commentMode: false, // Exit comment mode after adding
-        }));
-      } catch (error) {
-        console.error('Failed to add comment:', error);
-        throw error;
-      }
+      const newComment = await collaborationService.addComment(comment);
+      set(() => ({
+        comments: [...state.comments, newComment],
+        activeComments: newComment.resolved
+          ? state.activeComments
+          : [...state.activeComments, newComment],
+        commentMode: false, // Exit comment mode after adding
+      }));
     },
 
     replyToComment: async (commentId: string, content: string, mentions: string[] = []) => {
@@ -196,21 +180,13 @@ export const useCollaborationStore = create<CollaborationState>()(
       if (!state.isConnected) {
         throw new Error('Not connected to collaboration session');
       }
+      const reply = await collaborationService.replyToComment(commentId, content, mentions);
 
-      try {
-        const reply = await collaborationService.replyToComment(commentId, content, mentions);
-
-        set(() => ({
-          comments: state.comments.map((comment) =>
-            comment.id === commentId
-              ? { ...comment, replies: [...comment.replies, reply] }
-              : comment
-          ),
-        }));
-      } catch (error) {
-        console.error('Failed to reply to comment:', error);
-        throw error;
-      }
+      set(() => ({
+        comments: state.comments.map((comment) =>
+          comment.id === commentId ? { ...comment, replies: [...comment.replies, reply] } : comment
+        ),
+      }));
     },
 
     resolveComment: (commentId: string) => {
@@ -228,18 +204,12 @@ export const useCollaborationStore = create<CollaborationState>()(
       if (!state.isConnected) {
         throw new Error('Not connected to collaboration session');
       }
+      await collaborationService.resolveConflict(conflictId, resolution);
 
-      try {
-        await collaborationService.resolveConflict(conflictId, resolution);
-
-        set(() => ({
-          activeConflicts: state.activeConflicts.filter((conflict) => conflict.id !== conflictId),
-          conflictResolutionMode: state.activeConflicts.length <= 1,
-        }));
-      } catch (error) {
-        console.error('Failed to resolve conflict:', error);
-        throw error;
-      }
+      set(() => ({
+        activeConflicts: state.activeConflicts.filter((conflict) => conflict.id !== conflictId),
+        conflictResolutionMode: state.activeConflicts.length <= 1,
+      }));
     },
 
     selectComment: (commentId: string | null) => {
@@ -289,7 +259,6 @@ function setupCollaborationEventListeners(
       isConnected: false,
       connectionStatus: 'disconnected',
     }));
-    console.warn('Collaboration session disconnected');
   });
 
   collaborationService.addEventListener('connection_error', (_error: Error) => {
@@ -297,13 +266,10 @@ function setupCollaborationEventListeners(
       isConnected: false,
       connectionStatus: 'disconnected',
     }));
-    console.error('Collaboration connection error');
   });
 
   // User events
-  collaborationService.addEventListener('user_joined', (user: CollaborationUser) => {
-    console.log('User joined collaboration:', user.name);
-  });
+  collaborationService.addEventListener('user_joined', (_user: CollaborationUser) => {});
 
   collaborationService.addEventListener('user_left', (userId: string) => {
     set((state) => ({

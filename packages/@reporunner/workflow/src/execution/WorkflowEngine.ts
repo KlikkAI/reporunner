@@ -3,13 +3,11 @@
  * but with enhanced AI capabilities and modern architecture
  */
 
-import { EventEmitter } from 'events';
+import { EventEmitter } from 'node:events';
 import { v4 as uuid } from 'uuid';
 import type { Logger } from 'winston';
 import { WorkflowValidator } from '../common/WorkflowValidator';
 import {
-  ExecutionContext,
-  ExecutionStatus,
   type NodeExecution,
   type WorkflowDefinition,
   WorkflowEngineError,
@@ -374,7 +372,7 @@ export class WorkflowEngine extends EventEmitter {
 
     for (const connection of inputConnections) {
       const sourceExecution = execution.nodeExecutions.get(connection.source.nodeId);
-      if (sourceExecution && sourceExecution.outputData) {
+      if (sourceExecution?.outputData) {
         const sourceData =
           sourceExecution.outputData[connection.source.outputIndex || 0] ||
           sourceExecution.outputData;

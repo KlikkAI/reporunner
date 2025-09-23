@@ -490,10 +490,9 @@ export class AIOrchestrationService {
       execution.insights = await this.generateInsights(execution);
       execution.status = 'completed';
       execution.endTime = new Date();
-    } catch (error) {
+    } catch (_error) {
       execution.status = 'failed';
       execution.endTime = new Date();
-      console.error('Workflow execution failed:', error);
     }
 
     return execution;
@@ -563,14 +562,13 @@ export class AIOrchestrationService {
         this.updateModelPerformance(model.id, latency, output.metadata.cost, qualityMetrics);
 
         break;
-      } catch (error) {
+      } catch (_error) {
         attempts++;
         nodeExecution.retryAttempts = attempts;
 
         if (attempts >= maxAttempts) {
           nodeExecution.status = 'failed';
           nodeExecution.endTime = new Date();
-          console.error(`Node ${node.id} failed after ${attempts} attempts:`, error);
         } else {
           // Apply retry strategy
           await this.applyRetryStrategy(node.retryPolicy, attempts);

@@ -308,7 +308,7 @@ export class EmbeddingsService {
   }> {
     // Total documents
     const totalResult = await this.postgres.query('SELECT COUNT(*) as count FROM embeddings');
-    const totalDocuments = parseInt(totalResult.rows[0].count);
+    const totalDocuments = parseInt(totalResult.rows[0].count, 10);
 
     // Documents by type
     const typeResult = await this.postgres.query(`
@@ -319,7 +319,7 @@ export class EmbeddingsService {
 
     const documentsByType: Record<string, number> = {};
     typeResult.rows.forEach((row: any) => {
-      documentsByType[row.content_type] = parseInt(row.count);
+      documentsByType[row.content_type] = parseInt(row.count, 10);
     });
 
     return {

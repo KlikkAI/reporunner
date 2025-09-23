@@ -10,8 +10,6 @@ import { asyncHandler } from '../../../utils/asyncHandler.js';
 import { ApiResponse } from '../../../utils/response.js';
 
 export class CommentController {
-  private collaborationService: CollaborationService;
-
   constructor() {
     this.collaborationService = CollaborationService.getInstance();
   }
@@ -64,7 +62,7 @@ export class CommentController {
         );
       } else if (includeReplies === 'false') {
         (commentObj as any).replyCount = commentObj.thread.length;
-        delete (commentObj as any).thread;
+        (commentObj as any).thread = undefined;
       }
 
       return commentObj;

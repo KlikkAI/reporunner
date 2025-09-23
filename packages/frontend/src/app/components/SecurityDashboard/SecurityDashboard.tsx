@@ -89,7 +89,7 @@ const SecurityDashboard: React.FC<SecurityDashboardProps> = ({ className }) => {
   // Load data on component mount
   useEffect(() => {
     loadSecurityData();
-  }, []);
+  }, [loadSecurityData]);
 
   const loadSecurityData = useCallback(async () => {
     setIsLoading(true);
@@ -110,8 +110,7 @@ const SecurityDashboard: React.FC<SecurityDashboardProps> = ({ className }) => {
       setVulnerabilityScans(scansData);
       setComplianceReports(reportsData as ComplianceReport[]);
       setSecrets(secretsData as SecretManager[]);
-    } catch (error) {
-      console.error('Failed to load security data:', error);
+    } catch (_error) {
     } finally {
       setIsLoading(false);
     }

@@ -1,4 +1,4 @@
-import { NotificationRequest, NotificationResult } from './index';
+import type { NotificationRequest } from './index';
 
 export interface QueueJob {
   id: string;
@@ -49,7 +49,7 @@ export class NotificationQueue {
   }
 
   async enqueueBulk(requests: NotificationRequest[]): Promise<string[]> {
-    return Promise.all(requests.map(request => this.enqueue(request)));
+    return Promise.all(requests.map((request) => this.enqueue(request)));
   }
 
   async getJob(id: string): Promise<QueueJob | undefined> {
@@ -80,7 +80,7 @@ export class NotificationQueue {
 
     while (this.processing && this.jobs.size > 0) {
       const readyJobs = Array.from(this.jobs.values())
-        .filter(job => job.scheduledAt <= new Date() && job.attempts < job.maxAttempts)
+        .filter((job) => job.scheduledAt <= new Date() && job.attempts < job.maxAttempts)
         .slice(0, this.config.concurrency);
 
       if (readyJobs.length === 0) {
@@ -88,7 +88,7 @@ export class NotificationQueue {
         continue;
       }
 
-      await Promise.all(readyJobs.map(job => this.processJob(job)));
+      await Promise.all(readyJobs.map((job) => this.processJob(job)));
     }
 
     this.processing = false;
@@ -103,7 +103,7 @@ export class NotificationQueue {
 
       // Remove completed job
       this.jobs.delete(job.id);
-    } catch (error) {
+    } catch (_error) {
       if (job.attempts >= job.maxAttempts) {
         // Mark as failed and remove
         this.jobs.delete(job.id);
@@ -115,7 +115,7 @@ export class NotificationQueue {
   }
 
   private sleep(ms: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
   private generateId(): string {

@@ -776,7 +776,7 @@ const AdvancedAssignmentCollection: React.FC<AdvancedAssignmentCollectionProps> 
 
       if (active.id !== over?.id) {
         const oldIndex = assignments.findIndex((item) => item.id === active.id);
-        const newIndex = assignments.findIndex((item) => item.id === over!.id);
+        const newIndex = assignments.findIndex((item) => item.id === over?.id);
         const reorderedAssignments = arrayMove(assignments, oldIndex, newIndex);
         onChange(reorderedAssignments);
       }

@@ -29,12 +29,6 @@ class ComponentFactory implements UIComponentFactory {
   createNodeBody(type: string): ComponentType<CustomNodeBodyProps> | null {
     const component = this.bodyComponents.get(type) || null;
 
-    console.log(`🔍 ComponentFactory: Creating node body "${type}"`, {
-      found: !!component,
-      componentName: component?.name,
-      availableComponents: Array.from(this.bodyComponents.keys()),
-    });
-
     return component;
   }
 
@@ -56,26 +50,13 @@ class ComponentFactory implements UIComponentFactory {
 
   registerBodyComponent(name: string, component: ComponentType<CustomNodeBodyProps>): void {
     if (!component) {
-      console.error(
-        `❌ ComponentFactory: Attempted to register null/undefined body component: ${name}`
-      );
       return;
     }
-
-    console.log(`📝 ComponentFactory: Registering body component "${name}"`, {
-      componentName: component.name,
-      componentType: typeof component,
-      isFunction: typeof component === 'function',
-    });
 
     this.bodyComponents.set(name, component);
 
     // Immediate verification
-    const retrieved = this.bodyComponents.get(name);
-    console.log(
-      `✅ ComponentFactory: Body component "${name}" registration verified:`,
-      !!retrieved
-    );
+    const _retrieved = this.bodyComponents.get(name);
   }
 
   registerPropertiesPanel(
@@ -83,26 +64,13 @@ class ComponentFactory implements UIComponentFactory {
     component: ComponentType<CustomPropertiesPanelProps>
   ): void {
     if (!component) {
-      console.error(
-        `❌ ComponentFactory: Attempted to register null/undefined properties panel: ${name}`
-      );
       return;
     }
-
-    console.log(`📝 ComponentFactory: Registering properties panel "${name}"`, {
-      componentName: component.name,
-      componentType: typeof component,
-      isFunction: typeof component === 'function',
-    });
 
     this.propertiesPanels.set(name, component);
 
     // Immediate verification
-    const retrieved = this.propertiesPanels.get(name);
-    console.log(
-      `✅ ComponentFactory: Properties panel "${name}" registration verified:`,
-      !!retrieved
-    );
+    const _retrieved = this.propertiesPanels.get(name);
   }
 
   registerHandleRenderer(name: string, component: ComponentType<CustomHandleRendererProps>): void {
@@ -172,9 +140,8 @@ class ComponentFactory implements UIComponentFactory {
       const component = await promise;
       this.loadingPromises.delete(loaderKey);
       return component as ComponentType<CustomNodeBodyProps>;
-    } catch (error) {
+    } catch (_error) {
       this.loadingPromises.delete(loaderKey);
-      console.error(`Failed to load body component '${name}':`, error);
       return null;
     }
   }
@@ -203,9 +170,8 @@ class ComponentFactory implements UIComponentFactory {
       const component = await promise;
       this.loadingPromises.delete(loaderKey);
       return component as ComponentType<CustomPropertiesPanelProps>;
-    } catch (error) {
+    } catch (_error) {
       this.loadingPromises.delete(loaderKey);
-      console.error(`Failed to load properties panel '${name}':`, error);
       return null;
     }
   }
@@ -341,7 +307,7 @@ class ComponentFactory implements UIComponentFactory {
             setError(err);
             setLoading(false);
           });
-      }, []);
+      }, [loadFunction]);
 
       if (loading && LoadingComponent) {
         return React.createElement(LoadingComponent as React.ComponentType<any>, props as any);

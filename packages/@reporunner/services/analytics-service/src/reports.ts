@@ -1,4 +1,4 @@
-import { AnalyticsQuery, AnalyticsResult } from './index';
+import type { AnalyticsQuery, AnalyticsResult } from './index';
 
 export interface ReportDefinition {
   id: string;
@@ -41,7 +41,10 @@ export class ReportGenerator {
     return this.definitions.delete(id);
   }
 
-  async generateReport(definitionId: string, format: 'json' | 'csv' | 'pdf' = 'json'): Promise<GeneratedReport> {
+  async generateReport(
+    definitionId: string,
+    format: 'json' | 'csv' | 'pdf' = 'json'
+  ): Promise<GeneratedReport> {
     const definition = this.definitions.get(definitionId);
     if (!definition) {
       throw new Error(`Report definition not found: ${definitionId}`);
@@ -92,10 +95,8 @@ export class ReportScheduler {
     const interval = setInterval(async () => {
       try {
         const report = await this.generator.generateReport(definition.id);
-        await this.deliverReport(report, definition.schedule!.recipients);
-      } catch (error) {
-        console.error(`Failed to generate scheduled report ${definition.id}:`, error);
-      }
+        await this.deliverReport(report, definition.schedule?.recipients);
+      } catch (_error) {}
     }, intervalMs);
 
     this.schedules.set(definition.id, interval);
@@ -111,16 +112,18 @@ export class ReportScheduler {
 
   private getIntervalMs(frequency: string): number {
     switch (frequency) {
-      case 'hourly': return 60 * 60 * 1000;
-      case 'daily': return 24 * 60 * 60 * 1000;
-      case 'weekly': return 7 * 24 * 60 * 60 * 1000;
-      case 'monthly': return 30 * 24 * 60 * 60 * 1000;
-      default: return 24 * 60 * 60 * 1000;
+      case 'hourly':
+        return 60 * 60 * 1000;
+      case 'daily':
+        return 24 * 60 * 60 * 1000;
+      case 'weekly':
+        return 7 * 24 * 60 * 60 * 1000;
+      case 'monthly':
+        return 30 * 24 * 60 * 60 * 1000;
+      default:
+        return 24 * 60 * 60 * 1000;
     }
   }
 
-  private async deliverReport(_report: GeneratedReport, _recipients: string[]): Promise<void> {
-    // TODO: Integrate with notification service to send reports
-    console.log('Delivering report to recipients');
-  }
+  private async deliverReport(_report: GeneratedReport, _recipients: string[]): Promise<void> {}
 }

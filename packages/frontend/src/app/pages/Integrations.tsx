@@ -55,20 +55,16 @@ const Integrations: React.FC = () => {
 
   const filteredIntegrations = filteredIntegrationsState;
 
-  const handleConnect = async (integration: any) => {
+  const handleConnect = async (_integration: any) => {
     // Mock connection config - Pure Registry System handles this automatically
-    const config = {
+    const _config = {
       apiKey: 'mock-api-key',
       connectedAt: new Date().toISOString(),
     };
-    // Note: In Pure Registry System, connections are handled by credential management
-    console.log('Mock connecting integration:', integration.id, config);
   };
 
-  const handleDisconnect = async (integrationId: string) => {
+  const handleDisconnect = async (_integrationId: string) => {
     if (confirm('Are you sure you want to disconnect this integration?')) {
-      // Note: In Pure Registry System, disconnections are handled by credential management
-      console.log('Mock disconnecting integration:', integrationId);
     }
   };
 

@@ -29,10 +29,10 @@ class TransformTypeValidator {
 
         case 'numberValue': {
           const num = Number(value);
-          if (isNaN(num) && !options.ignoreConversionErrors) {
+          if (Number.isNaN(num) && !options.ignoreConversionErrors) {
             throw new Error(`Cannot convert "${value}" to number`);
           }
-          return isNaN(num) ? 0 : num;
+          return Number.isNaN(num) ? 0 : num;
         }
 
         case 'booleanValue':
@@ -317,7 +317,7 @@ class ConfigurationValidator {
       if (jsonObject) {
         try {
           JSON.parse(jsonObject);
-        } catch (e) {
+        } catch (_e) {
           errors.push('Invalid JSON syntax in JSON Object');
         }
       }

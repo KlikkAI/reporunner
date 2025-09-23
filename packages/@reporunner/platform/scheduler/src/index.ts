@@ -87,8 +87,6 @@ export class WorkflowScheduler {
       },
       this.config.cleanupInterval * 60 * 60 * 1000
     );
-
-    console.log('Workflow scheduler started');
   }
 
   async stop(): Promise<void> {
@@ -99,8 +97,6 @@ export class WorkflowScheduler {
       clearInterval(interval);
     }
     this.intervals.clear();
-
-    console.log('Workflow scheduler stopped');
   }
 
   async createSchedule(
@@ -119,7 +115,7 @@ export class WorkflowScheduler {
       try {
         // TODO: Use cron-parser to validate
         this.validateCronExpression(newSchedule.schedule.cron);
-      } catch (error) {
+      } catch (_error) {
         throw new Error(`Invalid cron expression: ${newSchedule.schedule.cron}`);
       }
     }
@@ -424,7 +420,7 @@ export class WorkflowScheduler {
     let delay = retryPolicy.retryDelay;
 
     if (retryPolicy.exponentialBackoff) {
-      delay = delay * Math.pow(2, attempt - 1);
+      delay = delay * 2 ** (attempt - 1);
     }
 
     return delay;
@@ -434,10 +430,7 @@ export class WorkflowScheduler {
     _recipients: string[],
     _type: string,
     _execution: ScheduleExecution
-  ): Promise<void> {
-    // TODO: Integrate with notification service
-    console.log(`Sending ${_type} notification for execution ${_execution.id}`);
-  }
+  ): Promise<void> {}
 
   private validateCronExpression(_cron: string): void {
     // TODO: Implement proper cron validation

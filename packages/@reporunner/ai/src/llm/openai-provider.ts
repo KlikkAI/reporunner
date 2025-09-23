@@ -1,13 +1,12 @@
 import { encode } from 'gpt-tokenizer';
 import OpenAI from 'openai';
 import { CombinedAIProvider, type ProviderCapabilities } from '../base/ai-provider';
-import {
-  AIProviderType,
-  type EmbeddingRequest,
-  type EmbeddingResponse,
-  type LLMCompletion,
-  type LLMResponse,
-  type ProviderConfig,
+import type {
+  EmbeddingRequest,
+  EmbeddingResponse,
+  LLMCompletion,
+  LLMResponse,
+  ProviderConfig,
 } from '../types';
 
 export class OpenAIProvider extends CombinedAIProvider {
@@ -48,8 +47,7 @@ export class OpenAIProvider extends CombinedAIProvider {
         max_tokens: 1,
       });
       return response.choices.length > 0;
-    } catch (error) {
-      console.error('OpenAI connection test failed:', error);
+    } catch (_error) {
       return false;
     }
   }

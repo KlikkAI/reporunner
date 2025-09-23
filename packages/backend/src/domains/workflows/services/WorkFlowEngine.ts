@@ -1,4 +1,4 @@
-import { EventEmitter } from 'events';
+import { EventEmitter } from 'node:events';
 import PQueue from 'p-queue';
 import { io } from '@/server';
 import { Credential } from '../../../models/Credentials.js';
@@ -35,8 +35,8 @@ export class WorkflowEngine extends EventEmitter {
 
     // Simple in-memory queue for development (no Redis needed)
     this.executionQueue = new PQueue({
-      concurrency: parseInt(process.env.WORKER_CONCURRENCY || '5'),
-      timeout: parseInt(process.env.MAX_WORKFLOW_EXECUTION_TIME || '300000'),
+      concurrency: parseInt(process.env.WORKER_CONCURRENCY || '5', 10),
+      timeout: parseInt(process.env.MAX_WORKFLOW_EXECUTION_TIME || '300000', 10),
     });
 
     // this.integrationRegistry = new IntegrationRegistry();
@@ -372,7 +372,7 @@ export class WorkflowEngine extends EventEmitter {
       if (!edgeMap.has(edge.source)) {
         edgeMap.set(edge.source, []);
       }
-      edgeMap.get(edge.source)!.push(edge);
+      edgeMap.get(edge.source)?.push(edge);
     }
 
     return edgeMap;
@@ -408,7 +408,7 @@ export class WorkflowEngine extends EventEmitter {
     if (workflow) {
       for (const [nodeId, output] of nodeOutputs.entries()) {
         const sourceNode = workflow.nodes.find((n) => n.id === nodeId);
-        if (sourceNode && sourceNode.data?.label) {
+        if (sourceNode?.data?.label) {
           const nodeLabel = this.sanitizeNodeName(sourceNode.data.label);
           inputs[nodeLabel] = output;
         }
@@ -486,7 +486,7 @@ export class WorkflowEngine extends EventEmitter {
     inputs: Record<string, any>
   ): Promise<any> {
     const nodeType = node.type;
-    const nodeData = node.data || {};
+    const _nodeData = node.data || {};
 
     logger.info(`Executing node: ${nodeType} (${node.id})`);
 
@@ -525,7 +525,7 @@ export class WorkflowEngine extends EventEmitter {
   private async executeGmailTrigger(
     node: IWorkflowNode,
     context: ExecutionContext,
-    inputs: Record<string, any>
+    _inputs: Record<string, any>
   ): Promise<any> {
     try {
       const credentials = await this.getGmailCredentials(context.userId);
@@ -631,7 +631,7 @@ export class WorkflowEngine extends EventEmitter {
    */
   private async executeWebhook(
     node: IWorkflowNode,
-    context: ExecutionContext,
+    _context: ExecutionContext,
     inputs: Record<string, any>
   ): Promise<any> {
     // Webhook execution logic
@@ -647,7 +647,7 @@ export class WorkflowEngine extends EventEmitter {
    */
   private async executeCondition(
     node: IWorkflowNode,
-    context: ExecutionContext,
+    _context: ExecutionContext,
     inputs: Record<string, any>
   ): Promise<any> {
     // Use the new conditionRules format from the frontend
@@ -768,7 +768,7 @@ export class WorkflowEngine extends EventEmitter {
           const indexStr = key.substring(key.indexOf('[') + 1, key.indexOf(']'));
           const index = parseInt(indexStr, 10);
 
-          if (arrayKey && !isNaN(index)) {
+          if (arrayKey && !Number.isNaN(index)) {
             currentValue = currentValue[arrayKey]?.[index];
           }
         } else {
@@ -782,7 +782,7 @@ export class WorkflowEngine extends EventEmitter {
             currentValue = parsed;
             // Continue with the remaining path parts in the parsed object
             const remainingPath = pathParts.slice(i + 1).join('.');
-            return this.getFieldValue({ parsed: currentValue }, 'parsed.' + remainingPath);
+            return this.getFieldValue({ parsed: currentValue }, `parsed.${remainingPath}`);
           }
         }
       }
@@ -855,13 +855,13 @@ export class WorkflowEngine extends EventEmitter {
             return fieldValue === compareValue;
           }
           // Loose equality for mixed types
-          return fieldValue == compareValue;
+          return fieldValue === compareValue;
 
         case 'not_equals':
           if (typeof fieldValue === typeof compareValue) {
             return fieldValue !== compareValue;
           }
-          return fieldValue != compareValue;
+          return fieldValue !== compareValue;
 
         case 'contains':
           if (Array.isArray(fieldValue)) {
@@ -885,7 +885,7 @@ export class WorkflowEngine extends EventEmitter {
         case 'greater_equal': {
           const numField = Number(fieldValue);
           const numCompare = Number(compareValue);
-          if (isNaN(numField) || isNaN(numCompare)) return false;
+          if (Number.isNaN(numField) || Number.isNaN(numCompare)) return false;
           return operator === 'greater' ? numField > numCompare : numField >= numCompare;
         }
 
@@ -893,7 +893,7 @@ export class WorkflowEngine extends EventEmitter {
         case 'less_equal': {
           const numField2 = Number(fieldValue);
           const numCompare2 = Number(compareValue);
-          if (isNaN(numField2) || isNaN(numCompare2)) return false;
+          if (Number.isNaN(numField2) || Number.isNaN(numCompare2)) return false;
           return operator === 'less' ? numField2 < numCompare2 : numField2 <= numCompare2;
         }
 
@@ -901,7 +901,7 @@ export class WorkflowEngine extends EventEmitter {
           if (typeof compareValue === 'string' && compareValue.includes(',')) {
             const [min, max] = compareValue.split(',').map((v) => Number(v.trim()));
             const num = Number(fieldValue);
-            if (!isNaN(num) && !isNaN(min) && !isNaN(max)) {
+            if (!Number.isNaN(num) && !Number.isNaN(min) && !Number.isNaN(max)) {
               return num >= min && num <= max;
             }
           }
@@ -922,7 +922,7 @@ export class WorkflowEngine extends EventEmitter {
           if (Array.isArray(fieldValue) || typeof fieldValue === 'string') {
             const length = fieldValue.length;
             const compareNum = Number(compareValue);
-            if (!isNaN(compareNum)) {
+            if (!Number.isNaN(compareNum)) {
               return operator === 'length_equals' ? length === compareNum : length > compareNum;
             }
           }
@@ -974,7 +974,7 @@ export class WorkflowEngine extends EventEmitter {
    */
   private async executeDelay(
     node: IWorkflowNode,
-    context: ExecutionContext,
+    _context: ExecutionContext,
     inputs: Record<string, any>
   ): Promise<any> {
     const delayMs = node.data.configuration?.delay || 1000;
@@ -993,7 +993,7 @@ export class WorkflowEngine extends EventEmitter {
    */
   private async executeTransform(
     node: IWorkflowNode,
-    context: ExecutionContext,
+    _context: ExecutionContext,
     inputs: Record<string, any>
   ): Promise<any> {
     const transformations = node.data.configuration?.transformations || [];

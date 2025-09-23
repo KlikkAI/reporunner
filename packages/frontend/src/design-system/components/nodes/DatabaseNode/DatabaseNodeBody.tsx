@@ -132,9 +132,7 @@ const DatabaseNodeBody: React.FC<CustomNodeBodyProps> = ({
     onDelete?.();
   };
 
-  const handleMenuToggle = (_nodeId: string) => {
-    console.log('Database node menu:', _nodeId);
-  };
+  const handleMenuToggle = (_nodeId: string) => {};
 
   // Generate badges
   const badges = [

@@ -97,7 +97,7 @@ class ExpressionFunctions {
   }
 
   static round(num: number, decimals: number = 0): number {
-    return Number(Math.round(parseFloat(num + 'e' + decimals)) + 'e-' + decimals);
+    return Number(`${Math.round(parseFloat(`${num}e${decimals}`))}e-${decimals}`);
   }
 
   static min(...args: number[]): number {
@@ -157,8 +157,6 @@ class ExpressionFunctions {
 // Main Expression Evaluator Class
 class ExpressionEvaluator {
   private context: IExpressionContext;
-  // @ts-expect-error: Reserved for future expression options implementation
-  private _options: IExpressionOptions;
 
   constructor(context: IExpressionContext, options: IExpressionOptions = {}) {
     this.context = context;
@@ -235,8 +233,7 @@ class ExpressionEvaluator {
         default:
           return this.evaluateGenericExpression(content);
       }
-    } catch (error) {
-      console.warn('Expression evaluation error:', error);
+    } catch (_error) {
       return expression; // Return original if evaluation fails
     }
   }
@@ -259,7 +256,7 @@ class ExpressionEvaluator {
       const value = this.resolvePath(variable);
       const serializedValue = this.serializeValue(value);
       processedContent = processedContent.replace(
-        new RegExp('\\$' + variable.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\\\$&'), 'g'),
+        new RegExp(`\\$${variable.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\\\$&')}`, 'g'),
         serializedValue
       );
     }
@@ -293,7 +290,7 @@ class ExpressionEvaluator {
     try {
       const processed = this.preprocessFunctions(content);
       return this.safeEval(processed);
-    } catch (error) {
+    } catch (_error) {
       return this.evaluateGenericExpression(content);
     }
   }
@@ -319,7 +316,7 @@ class ExpressionEvaluator {
       const arrayMatch = part.match(/^(.+)\[([0-9]+)\]$/);
       if (arrayMatch) {
         const arrayName = arrayMatch[1];
-        const index = parseInt(arrayMatch[2]);
+        const index = parseInt(arrayMatch[2], 10);
         current = current[arrayName];
         if (Array.isArray(current)) {
           current = current[index];
@@ -370,7 +367,7 @@ class ExpressionEvaluator {
         JSON: JSON,
         parseInt: parseInt,
         parseFloat: parseFloat,
-        isNaN: isNaN,
+        isNaN: Number.isNaN,
         undefined: undefined,
         null: null,
       };
@@ -378,8 +375,7 @@ class ExpressionEvaluator {
       // Create function with limited scope
       const func = new Function(...Object.keys(safeContext), `return ${expression}`);
       return func(...Object.values(safeContext));
-    } catch (error) {
-      console.warn('Safe evaluation failed:', error);
+    } catch (_error) {
       return expression;
     }
   }

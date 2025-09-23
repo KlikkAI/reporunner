@@ -154,7 +154,7 @@ function validatePropertyType(property: NodeProperty, value: PropertyValue): str
       if (typeof value !== 'number') {
         try {
           const numValue = Number(value);
-          if (isNaN(numValue)) {
+          if (Number.isNaN(numValue)) {
             return `${displayName} must be a valid number`;
           }
           value = numValue;

@@ -15,11 +15,10 @@ export interface QueueConfig {
 
 export class ExecutionQueue {
   private queue: QueueItem[] = [];
-  private processing = false;
 
-  constructor(private config: QueueConfig) {}
+  constructor(_config: QueueConfig) {}
 
-  async enqueue(item: Omit<QueueItem, 'id' | 'attempts'>): Promise<string> {
+  async enqueue(_item: Omit<QueueItem, 'id' | 'attempts'>): Promise<string> {
     // TODO: Implement queue enqueue
     return 'placeholder-id';
   }

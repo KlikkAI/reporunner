@@ -72,8 +72,7 @@ export class AdvancedRateLimiter {
       password: redisConfig.password,
     });
 
-    this.redisClient.on('error', (err) => {
-      console.error('Redis Client Error:', err);
+    this.redisClient.on('error', (_err) => {
       // Fallback to memory limiters if Redis fails
       if (this.config.useMemoryFallback) {
         this.switchToMemoryLimiters();
@@ -214,7 +213,6 @@ export class AdvancedRateLimiter {
 
     const limiter = this.limiters.get(type);
     if (!limiter) {
-      console.warn(`Rate limiter '${type}' not found`);
       return { allowed: true };
     }
 
@@ -296,9 +294,7 @@ export class AdvancedRateLimiter {
           remaining: res.remainingPoints,
         };
       }
-    } catch (error) {
-      console.error('Error getting consumption:', error);
-    }
+    } catch (_error) {}
 
     return null;
   }
@@ -311,8 +307,6 @@ export class AdvancedRateLimiter {
     identifier: string,
     rateLimiterRes: RateLimiterRes
   ): Promise<void> {
-    console.warn(`Suspicious activity detected: ${type} from ${identifier}`);
-
     // Add to suspicious IPs
     this.ddosMetrics.suspiciousIPs.add(identifier);
 
@@ -324,7 +318,6 @@ export class AdvancedRateLimiter {
     // Auto-blacklist after repeated violations
     if (count >= 5) {
       await this.addToBlacklist(identifier, 86400); // 24 hour ban
-      console.error(`Auto-blacklisted ${identifier} due to repeated violations`);
     }
 
     // Log to security monitoring
@@ -368,8 +361,6 @@ export class AdvancedRateLimiter {
    * Trigger DDoS protection
    */
   private async triggerDDoSProtection(identifier: string): Promise<void> {
-    console.error(`DDoS attack detected from ${identifier}`);
-
     // Immediately blacklist the attacker
     await this.addToBlacklist(identifier, 86400 * 7); // 7 day ban
 
@@ -388,8 +379,6 @@ export class AdvancedRateLimiter {
    * Trigger distributed DDoS protection
    */
   private async triggerDistributedDDoSProtection(): Promise<void> {
-    console.error('Distributed DDoS attack detected');
-
     // Enable CAPTCHA or proof-of-work
     // This would integrate with your authentication system
 
@@ -446,7 +435,6 @@ export class AdvancedRateLimiter {
    * Switch to memory limiters (fallback)
    */
   private switchToMemoryLimiters(): void {
-    console.warn('Switching to memory-based rate limiters');
     this.limiters = new Map(this.memoryLimiters);
   }
 
@@ -461,7 +449,6 @@ export class AdvancedRateLimiter {
         totalRequests > 0 ? (this.ddosMetrics.blockedCount / totalRequests) * 100 : 0;
 
       if (blockRate > 50) {
-        console.warn(`High block rate detected: ${blockRate.toFixed(2)}%`);
       }
 
       // Reset counters but keep suspicious IPs and patterns for longer
@@ -488,18 +475,12 @@ export class AdvancedRateLimiter {
   /**
    * Log security event
    */
-  private async logSecurityEvent(event: any): Promise<void> {
-    // This would integrate with your logging system
-    console.log('Security Event:', event);
-  }
+  private async logSecurityEvent(_event: any): Promise<void> {}
 
   /**
    * Send DDoS alert
    */
-  private async sendDDoSAlert(identifier: string): Promise<void> {
-    // This would integrate with your notification system
-    console.error(`DDoS Alert: Attack from ${identifier}`);
-  }
+  private async sendDDoSAlert(_identifier: string): Promise<void> {}
 
   /**
    * Get current metrics

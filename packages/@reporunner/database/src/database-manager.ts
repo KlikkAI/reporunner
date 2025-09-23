@@ -17,7 +17,7 @@ export class DatabaseManager {
   private redis: RedisConnection;
   private isInitialized = false;
 
-  constructor(private config: DatabaseConfig) {
+  constructor(config: DatabaseConfig) {
     this.mongodb = new MongoDBConnection(config.mongodb);
     this.postgresql = new PostgreSQLConnection(config.postgresql);
     this.redis = new RedisConnection(config.redis);
@@ -30,53 +30,25 @@ export class DatabaseManager {
     if (this.isInitialized) {
       return;
     }
+    await this.mongodb.connect();
+    await this.postgresql.connect();
+    await this.postgresql.enableVectorExtension();
+    await this.redis.connect();
 
-    try {
-      console.log('🔄 Initializing database connections...');
-
-      // Initialize MongoDB (Primary Database)
-      console.log('📦 Connecting to MongoDB...');
-      await this.mongodb.connect();
-      console.log('✅ MongoDB connected');
-
-      // Initialize PostgreSQL (AI Database)
-      console.log('🧠 Connecting to PostgreSQL (AI Database)...');
-      await this.postgresql.connect();
-      await this.postgresql.enableVectorExtension();
-      console.log('✅ PostgreSQL connected with pgvector extension');
-
-      // Initialize Redis (Cache & Sessions)
-      console.log('⚡ Connecting to Redis...');
-      await this.redis.connect();
-      console.log('✅ Redis connected');
-
-      this.isInitialized = true;
-      console.log('🎉 All database connections initialized successfully');
-    } catch (error) {
-      console.error('❌ Failed to initialize database connections:', error);
-      throw error;
-    }
+    this.isInitialized = true;
   }
 
   /**
    * Shutdown all database connections gracefully
    */
   async shutdown(): Promise<void> {
-    console.log('🔄 Shutting down database connections...');
+    await Promise.all([
+      this.mongodb.disconnect(),
+      this.postgresql.disconnect(),
+      this.redis.disconnect(),
+    ]);
 
-    try {
-      await Promise.all([
-        this.mongodb.disconnect(),
-        this.postgresql.disconnect(),
-        this.redis.disconnect(),
-      ]);
-
-      this.isInitialized = false;
-      console.log('✅ All database connections closed');
-    } catch (error) {
-      console.error('❌ Error during database shutdown:', error);
-      throw error;
-    }
+    this.isInitialized = false;
   }
 
   /**
@@ -186,44 +158,22 @@ export class DatabaseManager {
    * Migrate databases to latest schema
    */
   async migrate(): Promise<void> {
-    console.log('🔄 Running database migrations...');
+    // Run MongoDB migrations
+    await this.mongodb.migrate();
 
-    try {
-      // Run MongoDB migrations
-      await this.mongodb.migrate();
-      console.log('✅ MongoDB migrations completed');
-
-      // Run PostgreSQL migrations
-      await this.postgresql.migrate();
-      console.log('✅ PostgreSQL migrations completed');
-
-      console.log('🎉 All migrations completed successfully');
-    } catch (error) {
-      console.error('❌ Migration failed:', error);
-      throw error;
-    }
+    // Run PostgreSQL migrations
+    await this.postgresql.migrate();
   }
 
   /**
    * Seed databases with initial data
    */
   async seed(): Promise<void> {
-    console.log('🔄 Seeding databases...');
+    // Seed MongoDB
+    await this.mongodb.seed();
 
-    try {
-      // Seed MongoDB
-      await this.mongodb.seed();
-      console.log('✅ MongoDB seeding completed');
-
-      // Seed PostgreSQL
-      await this.postgresql.seed();
-      console.log('✅ PostgreSQL seeding completed');
-
-      console.log('🎉 Database seeding completed successfully');
-    } catch (error) {
-      console.error('❌ Seeding failed:', error);
-      throw error;
-    }
+    // Seed PostgreSQL
+    await this.postgresql.seed();
   }
 
   /**

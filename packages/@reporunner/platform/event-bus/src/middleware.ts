@@ -1,12 +1,11 @@
-import { Event } from './index';
+import type { Event } from './index';
 
 export interface EventMiddleware {
   process(event: Event, next: () => Promise<void>): Promise<void>;
 }
 
 export class LoggingMiddleware implements EventMiddleware {
-  async process(event: Event, next: () => Promise<void>): Promise<void> {
-    console.log(`Event published: ${event.type} from ${event.source}`);
+  async process(_event: Event, next: () => Promise<void>): Promise<void> {
     await next();
   }
 }
@@ -28,18 +27,18 @@ export class RateLimitMiddleware implements EventMiddleware {
   async process(event: Event, next: () => Promise<void>): Promise<void> {
     const key = `${event.source}:${event.type}`;
     const count = this.eventCounts.get(key) || 0;
-    
+
     if (count >= this.maxEventsPerMinute) {
       throw new Error('Rate limit exceeded');
     }
-    
+
     this.eventCounts.set(key, count + 1);
-    
+
     // Reset counter after 1 minute
     setTimeout(() => {
       this.eventCounts.delete(key);
     }, 60000);
-    
+
     await next();
   }
 }

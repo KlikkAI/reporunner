@@ -1,8 +1,8 @@
-import { randomBytes } from 'crypto';
-import { EventEmitter } from 'events';
-import fs from 'fs';
-import path from 'path';
-import { promisify } from 'util';
+import { randomBytes } from 'node:crypto';
+import { EventEmitter } from 'node:events';
+import fs from 'node:fs';
+import path from 'node:path';
+import { promisify } from 'node:util';
 
 // const writeFile = promisify(fs.writeFile); // Removed unused function
 const appendFile = promisify(fs.appendFile);
@@ -495,8 +495,7 @@ export class AuditLogger extends EventEmitter {
       for (const event of events) {
         await this.persistEvent(event);
       }
-    } catch (error) {
-      console.error('Error processing audit queue:', error);
+    } catch (_error) {
       // Re-add failed events to queue
       this.eventQueue.unshift(...events);
     } finally {
@@ -522,7 +521,7 @@ export class AuditLogger extends EventEmitter {
    * Write event to file
    */
   private async writeToFile(event: AuditEvent): Promise<void> {
-    const logLine = JSON.stringify(event) + '\n';
+    const logLine = `${JSON.stringify(event)}\n`;
     const logPath = path.join(this.config.filePath, this.currentLogFile);
 
     await appendFile(logPath, logLine);
@@ -579,7 +578,7 @@ export class AuditLogger extends EventEmitter {
       ...event,
       // hash property already omitted from type
     });
-    return require('crypto').createHash('sha256').update(data).digest('hex');
+    return require('node:crypto').createHash('sha256').update(data).digest('hex');
   }
 
   /**
@@ -746,7 +745,7 @@ export const auditLogger = new AuditLogger({
   storageType: (process.env.AUDIT_STORAGE as any) || 'file',
   filePath: process.env.AUDIT_LOG_PATH || path.join(process.cwd(), 'audit-logs'),
   enableHashing: process.env.AUDIT_ENABLE_HASHING !== 'false',
-  retentionDays: parseInt(process.env.AUDIT_RETENTION_DAYS || '90'),
+  retentionDays: parseInt(process.env.AUDIT_RETENTION_DAYS || '90', 10),
 });
 
 export default AuditLogger;

@@ -84,13 +84,13 @@ export const TriggerPanel: React.FC<TriggerPanelProps> = ({ workflowId, visible,
       loadTriggers();
       loadRecentEvents();
     }
-  }, [visible, workflowId]);
+  }, [visible, loadRecentEvents, loadTriggers]);
 
   useEffect(() => {
     if (selectedTrigger) {
       loadMetrics(selectedTrigger.id);
     }
-  }, [selectedTrigger]);
+  }, [selectedTrigger, loadMetrics]);
 
   const loadTriggers = () => {
     const allTriggers = advancedTriggerSystem.getAllTriggers();
@@ -117,9 +117,7 @@ export const TriggerPanel: React.FC<TriggerPanelProps> = ({ workflowId, visible,
     try {
       const triggerMetrics = advancedTriggerSystem.getTriggerMetrics(triggerId);
       setMetrics(triggerMetrics);
-    } catch (error) {
-      console.error('Failed to load metrics:', error);
-    }
+    } catch (_error) {}
   };
 
   const handleCreateTrigger = async (values: any) => {
@@ -169,9 +167,8 @@ export const TriggerPanel: React.FC<TriggerPanelProps> = ({ workflowId, visible,
       loadTriggers();
       form.resetFields();
       setEditingTrigger(null);
-    } catch (error) {
+    } catch (_error) {
       message.error('Failed to create trigger');
-      console.error(error);
     } finally {
       setLoading(false);
     }
@@ -272,7 +269,7 @@ export const TriggerPanel: React.FC<TriggerPanelProps> = ({ workflowId, visible,
       advancedTriggerSystem.toggleTrigger(triggerId, enabled);
       message.success(`Trigger ${enabled ? 'enabled' : 'disabled'}`);
       loadTriggers();
-    } catch (error) {
+    } catch (_error) {
       message.error('Failed to toggle trigger');
     }
   };
@@ -286,7 +283,7 @@ export const TriggerPanel: React.FC<TriggerPanelProps> = ({ workflowId, visible,
         setSelectedTrigger(null);
         setMetrics(null);
       }
-    } catch (error) {
+    } catch (_error) {
       message.error('Failed to delete trigger');
     }
   };
@@ -297,7 +294,7 @@ export const TriggerPanel: React.FC<TriggerPanelProps> = ({ workflowId, visible,
       message.success('Trigger test completed');
       loadRecentEvents();
       setTestModalVisible(false);
-    } catch (error) {
+    } catch (_error) {
       message.error('Trigger test failed');
     }
   };

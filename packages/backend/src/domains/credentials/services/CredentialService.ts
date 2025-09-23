@@ -636,7 +636,7 @@ export class CredentialService {
         message: 'AWS Bedrock credentials format validated',
         details: {
           region,
-          accessKeyId: accessKeyId.substring(0, 10) + '...',
+          accessKeyId: `${accessKeyId.substring(0, 10)}...`,
           note: 'Credential format validated. Actual API testing requires AWS SDK integration.',
         },
       };

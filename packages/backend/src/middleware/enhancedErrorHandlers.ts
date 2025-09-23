@@ -1,5 +1,4 @@
 import type { NextFunction, Request, Response } from 'express';
-import { ValidationError } from 'express-validator';
 import { logger } from '../utils/logger.js';
 
 // Re-export existing AppError for compatibility
@@ -57,7 +56,7 @@ export const enhancedErrorHandler = (
   error: any,
   req: Request,
   res: Response,
-  next: NextFunction
+  _next: NextFunction
 ): void => {
   // Default error values
   let statusCode = error.statusCode || 500;
@@ -146,7 +145,7 @@ export const enhancedErrorHandler = (
 /**
  * Handle 404 errors
  */
-export const enhancedNotFoundHandler = (req: Request, res: Response, next: NextFunction): void => {
+export const enhancedNotFoundHandler = (req: Request, res: Response, _next: NextFunction): void => {
   logger.warn('Route not found', {
     method: req.method,
     url: req.originalUrl,

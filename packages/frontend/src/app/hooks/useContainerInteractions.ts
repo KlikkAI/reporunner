@@ -194,7 +194,6 @@ export const useContainerInteractions = () => {
       const validation = validateDrop(draggedNode.type!, containerId, nodes);
 
       if (!validation.isValid) {
-        console.warn('Drop validation failed:', validation.reason);
         return;
       }
 

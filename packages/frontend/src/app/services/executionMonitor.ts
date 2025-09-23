@@ -37,7 +37,7 @@ export class ExecutionMonitorService {
     this.isConnecting = true;
     const authConfig = configService.get('auth');
     const token = localStorage.getItem(authConfig.tokenKey);
-    const socketUrl = (import.meta.env['VITE_SOCKET_URL'] as string) || 'http://localhost:5000';
+    const socketUrl = (import.meta.env.VITE_SOCKET_URL as string) || 'http://localhost:5000';
 
     this.socket = io(socketUrl, {
       transports: ['websocket', 'polling'],
@@ -45,22 +45,19 @@ export class ExecutionMonitorService {
     });
 
     this.socket.on('connect', () => {
-      console.log('Execution monitor connected (socket.io)');
       this.isConnecting = false;
       // Resubscribe
       this.subscriptions.forEach((executionId) => {
-        this.socket!.emit('execution_join', { executionId });
+        this.socket?.emit('execution_join', { executionId });
       });
     });
 
     this.socket.on('disconnect', () => {
-      console.log('Execution monitor disconnected');
       this.isConnecting = false;
       if (this.shouldReconnect) this.scheduleReconnect();
     });
 
-    this.socket.on('connect_error', (err) => {
-      console.error('Execution monitor socket error:', err);
+    this.socket.on('connect_error', (_err) => {
       this.isConnecting = false;
     });
 
@@ -94,13 +91,13 @@ export class ExecutionMonitorService {
     if (!this.eventHandlers.has(executionId)) {
       this.eventHandlers.set(executionId, []);
     }
-    this.eventHandlers.get(executionId)!.push(handler);
+    this.eventHandlers.get(executionId)?.push(handler);
 
     // Subscribe via WebSocket
     this.subscriptions.add(executionId);
 
     if (!this.socket || !this.socket.connected) await this.connect();
-    this.socket!.emit('execution_join', { executionId });
+    this.socket?.emit('execution_join', { executionId });
   }
 
   /**
@@ -155,9 +152,7 @@ export class ExecutionMonitorService {
       handlers.forEach((handler) => {
         try {
           handler(event);
-        } catch (error) {
-          console.error('Error in execution event handler:', error);
-        }
+        } catch (_error) {}
       });
     }
   }
@@ -177,9 +172,7 @@ export class ExecutionMonitorService {
 
     this.reconnectTimeout = setTimeout(() => {
       if (this.shouldReconnect) {
-        console.log('Attempting to reconnect execution monitor...');
-        this.connect().catch((error) => {
-          console.error('Reconnection failed:', error);
+        this.connect().catch((_error) => {
           this.scheduleReconnect();
         });
       }

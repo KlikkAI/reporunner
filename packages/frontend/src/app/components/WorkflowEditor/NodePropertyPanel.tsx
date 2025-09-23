@@ -112,7 +112,6 @@ const NodeConfigurationPanel: React.FC<NodeConfigurationPanelProps> = ({
       Array.isArray(testResults.data) &&
       testResults.data.length > 0
     ) {
-      console.log('Auto-selecting first email from Gmail test results:', testResults.data[0]);
       setSelectedEmail(testResults.data[0]);
     }
   }, [testResults, enhancedNodeType?.id, currentNode?.type]);
@@ -123,12 +122,7 @@ const NodeConfigurationPanel: React.FC<NodeConfigurationPanelProps> = ({
   }, [loadCredentials]);
 
   // Debug modal state changes
-  useEffect(() => {
-    console.log('🔧 Modal state changed:', {
-      isCredentialModalOpen,
-      currentCredentialType,
-    });
-  }, [isCredentialModalOpen, currentCredentialType]);
+  useEffect(() => {}, []);
 
   const handleParameterChange = useCallback(
     (parameterName: string, value: PropertyValue) => {
@@ -178,7 +172,6 @@ const NodeConfigurationPanel: React.FC<NodeConfigurationPanelProps> = ({
         });
       }
     } catch (error: any) {
-      console.error('Node test failed:', error);
       setTestResults({
         success: false,
         message: error.message || 'Test failed',
@@ -189,16 +182,10 @@ const NodeConfigurationPanel: React.FC<NodeConfigurationPanelProps> = ({
   }, [currentNode, nodeDefinition, formState, enhancedNodeType]);
 
   // Credential management handlers
-  const handleCreateCredential = useCallback(
-    (type: string) => {
-      console.log('🔧 handleCreateCredential called with type:', type);
-      console.log('🔧 Current modal state before:', isCredentialModalOpen);
-      setCurrentCredentialType(type);
-      console.log('🔧 Setting modal state to true...');
-      setIsCredentialModalOpen(true);
-    },
-    [isCredentialModalOpen]
-  );
+  const handleCreateCredential = useCallback((type: string) => {
+    setCurrentCredentialType(type);
+    setIsCredentialModalOpen(true);
+  }, []);
 
   const handleCredentialSelect = useCallback(
     (credential: any) => {
@@ -271,7 +258,7 @@ const NodeConfigurationPanel: React.FC<NodeConfigurationPanelProps> = ({
         Math.max(minLeftWidth, Math.min(maxLeftWidth, prevWidth + e.movementX))
       );
     },
-    [isDragging, middleWidth]
+    [isDragging]
   );
 
   useEffect(() => {
@@ -320,9 +307,6 @@ const NodeConfigurationPanel: React.FC<NodeConfigurationPanelProps> = ({
         const latestVersion = nodeMigrationService.getLatestVersion('transform');
 
         if (currentVersion < latestVersion) {
-          console.log(
-            `Transform node needs migration from v${currentVersion} to v${latestVersion}`
-          );
           // Migrate the node instance
           const migratedNode = nodeMigrationService.migrateNodeInstance(currentNode, latestVersion);
 
@@ -335,12 +319,9 @@ const NodeConfigurationPanel: React.FC<NodeConfigurationPanelProps> = ({
         // Get the enhanced transform node properties (synchronously)
         const enhancedTransformNode = nodeRegistry.getEnhancedNodeTypeSync('transform');
         if (enhancedTransformNode?.configuration?.properties) {
-          console.log('Using enhanced Transform node properties');
           return enhancedTransformNode.configuration.properties;
         }
-      } catch (error) {
-        console.warn('Failed to get enhanced Transform node properties:', error);
-      }
+      } catch (_error) {}
     }
 
     if (!nodeDefinition?.properties) return [];
@@ -452,7 +433,6 @@ const NodeConfigurationPanel: React.FC<NodeConfigurationPanelProps> = ({
               {/* Debug: Test credential modal button */}
               <button
                 onClick={() => {
-                  console.log('🔧 Test Modal button clicked directly');
                   handleCreateCredential('gmailOAuth2');
                 }}
                 className="px-2 py-1 rounded text-xs bg-purple-600 hover:bg-purple-700 text-white transition-colors"
@@ -548,7 +528,6 @@ const NodeConfigurationPanel: React.FC<NodeConfigurationPanelProps> = ({
       <CredentialModal
         isOpen={isCredentialModalOpen}
         onClose={() => {
-          console.log('🔧 Credential modal closing');
           setIsCredentialModalOpen(false);
         }}
         credentialType={currentCredentialType}

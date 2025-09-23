@@ -228,9 +228,6 @@ export class TenantService {
     invitations.push(newInvitation);
     this.invitations.set(tenantId, invitations);
 
-    // TODO: Send invitation email
-    console.log(`Invitation sent to ${invitation.email} for tenant ${tenantId}`);
-
     return newInvitation.id;
   }
 

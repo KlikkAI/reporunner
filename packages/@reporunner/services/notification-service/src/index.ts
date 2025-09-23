@@ -64,7 +64,7 @@ export class NotificationService {
   }
 
   async sendBulk(requests: NotificationRequest[]): Promise<NotificationResult[]> {
-    return Promise.all(requests.map(request => this.send(request)));
+    return Promise.all(requests.map((request) => this.send(request)));
   }
 
   private generateId(): string {
@@ -73,5 +73,5 @@ export class NotificationService {
 }
 
 export * from './channels';
-export * from './templates';
 export * from './queue';
+export * from './templates';

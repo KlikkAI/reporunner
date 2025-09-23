@@ -39,7 +39,6 @@ if (import.meta.env.DEV) {
 
   // Expose registry to window for debugging
   (window as any).nodeRegistry = nodeRegistry;
-  console.log('🔧 Node registry exposed to window.nodeRegistry for debugging');
 }
 
 function App() {

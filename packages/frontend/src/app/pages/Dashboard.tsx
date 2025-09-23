@@ -28,7 +28,6 @@ const Dashboard: React.FC = () => {
       const result = await workflowApiService.getWorkflows();
 
       if (!result || !result.items || !Array.isArray(result.items)) {
-        console.error('Invalid workflows response structure:', result);
         setWorkflows([]);
         return;
       }
@@ -64,7 +63,6 @@ const Dashboard: React.FC = () => {
       }));
       setWorkflows(workflowsWithDefaults);
     } catch (error) {
-      console.error('Failed to load workflows:', error);
       setWorkflows([]);
 
       // Check if it's an authentication error
@@ -79,7 +77,7 @@ const Dashboard: React.FC = () => {
   useEffect(() => {
     loadWorkflows();
     loadStats();
-  }, []);
+  }, [loadStats, loadWorkflows]);
 
   // Check for refresh flag when component mounts or refresh flag changes
   useEffect(() => {
@@ -88,7 +86,7 @@ const Dashboard: React.FC = () => {
       loadStats();
       setShouldRefreshDashboard(false);
     }
-  }, [shouldRefreshDashboard, setShouldRefreshDashboard]);
+  }, [shouldRefreshDashboard, setShouldRefreshDashboard, loadStats, loadWorkflows]);
 
   const loadStats = async () => {
     setStatsLoading(true);
@@ -96,8 +94,6 @@ const Dashboard: React.FC = () => {
       const executionStats = await workflowApiService.getExecutionStats();
       setStats(executionStats);
     } catch (error) {
-      console.error('Failed to load stats:', error);
-
       // Check if it's an authentication error
       if (error instanceof Error && error.message.includes('token')) {
         toast.error('Please log in to access execution statistics');
@@ -123,7 +119,6 @@ const Dashboard: React.FC = () => {
         await loadWorkflows();
         toast.success('Workflow created successfully!');
       } catch (error) {
-        console.error('Failed to create workflow:', error);
         const errorMessage = error instanceof Error ? error.message : 'Failed to create workflow';
         toast.error(errorMessage);
       }
@@ -187,7 +182,7 @@ const Dashboard: React.FC = () => {
         </div>
       </div>
     ),
-    []
+    [handleDeleteWorkflow]
   );
 
   const handleDeleteWorkflow = async (workflowId: string, workflowName: string) => {
@@ -201,7 +196,7 @@ const Dashboard: React.FC = () => {
         // Refresh the dashboard workflows list
         await loadWorkflows();
         toast.success('Workflow deleted successfully!');
-      } catch (error) {
+      } catch (_error) {
         toast.error('Failed to delete workflow. Please try again.');
       }
     }

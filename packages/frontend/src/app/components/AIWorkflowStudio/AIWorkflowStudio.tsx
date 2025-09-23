@@ -78,7 +78,7 @@ export const AIWorkflowStudio: React.FC<AIWorkflowStudioProps> = ({ visible, onC
     if (visible) {
       loadAvailableModels();
     }
-  }, [visible]);
+  }, [visible, loadAvailableModels]);
 
   const loadAvailableModels = () => {
     const models = aiOrchestrationService.getAvailableModels();
@@ -145,7 +145,6 @@ export const AIWorkflowStudio: React.FC<AIWorkflowStudioProps> = ({ visible, onC
       message.success('Workflow executed successfully!');
     } catch (error: any) {
       message.error(`Execution failed: ${error.message}`);
-      console.error('Workflow execution error:', error);
     } finally {
       setIsExecuting(false);
     }

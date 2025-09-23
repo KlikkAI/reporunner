@@ -3,7 +3,6 @@ import type { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { AuthController } from '../../domains/auth/controllers/AuthController.js';
-import { AuthService } from '../../domains/auth/services/AuthService.js';
 import { User } from '../../models/User.js';
 import { testUtils } from '../setup.js';
 

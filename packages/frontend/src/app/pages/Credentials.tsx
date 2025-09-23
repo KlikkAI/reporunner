@@ -52,7 +52,10 @@ const Credentials: React.FC = () => {
       // Clean up URL
       window.history.replaceState({}, document.title, window.location.pathname);
     }
-  }, []);
+  }, [
+    // Reload credentials to show the new one
+    loadCredentials,
+  ]);
 
   const handleEdit = (credential: Credential) => {
     const type = credentialTypes.find((t) => t.name === credential.type);
@@ -90,7 +93,6 @@ const Credentials: React.FC = () => {
       setCredentialName('');
       setEditingCredential(null);
     } catch (error: any) {
-      console.error('Failed to save credential:', error);
       alert(error.message || 'Failed to save credential');
     }
   };

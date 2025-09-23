@@ -1,4 +1,4 @@
-import { EventEmitter } from 'events';
+import { EventEmitter } from 'node:events';
 
 export interface EventPayload {
   source: string;
@@ -268,11 +268,6 @@ export class IntegrationEventBus extends EventEmitter {
     });
 
     if (this.config.enableLogging) {
-      console.error('Event handler error:', {
-        subscriptionId: subscription.id,
-        event: `${payload.source}:${payload.event}`,
-        error: error.message,
-      });
     }
   }
 
@@ -353,15 +348,7 @@ export class IntegrationEventBus extends EventEmitter {
   /**
    * Log event
    */
-  private logEvent(action: string, payload: EventPayload, extra?: Record<string, any>): void {
-    console.log(`[EventBus] ${action}:`, {
-      source: payload.source,
-      event: payload.event,
-      correlationId: payload.correlationId,
-      timestamp: payload.timestamp,
-      ...extra,
-    });
-  }
+  private logEvent(_action: string, _payload: EventPayload, _extra?: Record<string, any>): void {}
 
   /**
    * Generate correlation ID

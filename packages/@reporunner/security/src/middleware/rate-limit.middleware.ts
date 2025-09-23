@@ -95,9 +95,7 @@ export function createRateLimitMiddleware(
             (skipFailedRequests && statusCode >= 400)
           ) {
             // Reset the limit to refund the points
-            rateLimiter.resetLimit(type, key).catch((err) => {
-              console.error('Failed to refund rate limit points:', err);
-            });
+            rateLimiter.resetLimit(type, key).catch((_err) => {});
           }
 
           return originalSend.call(this, data);
@@ -105,8 +103,7 @@ export function createRateLimitMiddleware(
       }
 
       next();
-    } catch (error) {
-      console.error('Rate limit middleware error:', error);
+    } catch (_error) {
       // Fail open - allow request if rate limiting fails
       next();
     }
@@ -141,7 +138,7 @@ function defaultKeyGenerator(req: Request): string {
  * User-based key generator
  */
 export function userKeyGenerator(req: Request & { user?: any }): string {
-  if (req.user && req.user.id) {
+  if (req.user?.id) {
     return `user:${req.user.id}`;
   }
   return defaultKeyGenerator(req);
@@ -163,7 +160,7 @@ export function apiKeyGenerator(req: Request): string {
  */
 export function combinedKeyGenerator(req: Request & { user?: any }): string {
   const ip = defaultKeyGenerator(req);
-  if (req.user && req.user.id) {
+  if (req.user?.id) {
     return `user:${req.user.id}:${ip}`;
   }
   return ip;
@@ -346,8 +343,7 @@ export function createMultiRateLimiter(
       }
 
       next();
-    } catch (error) {
-      console.error('Multi rate limit error:', error);
+    } catch (_error) {
       next();
     }
   };

@@ -268,7 +268,7 @@ export class WorkflowDebugger {
 
     // Check for breakpoints
     const breakpoint = this.breakpoints.get(`bp-${nodeId}`);
-    if (breakpoint && breakpoint.enabled) {
+    if (breakpoint?.enabled) {
       const shouldBreak = this.evaluateBreakpointCondition(breakpoint, frame);
       if (shouldBreak) {
         this.hitBreakpoint(sessionId, breakpoint, frame);
@@ -449,8 +449,7 @@ export class WorkflowDebugger {
       // Simple evaluation - in production, use a safer evaluation method
       const func = new Function('context', `with(context) { return ${breakpoint.condition}; }`);
       return !!func(context);
-    } catch (error) {
-      console.warn('Breakpoint condition evaluation failed:', error);
+    } catch (_error) {
       return false; // Don't break on condition errors
     }
   }
@@ -573,7 +572,7 @@ export class WorkflowDebugger {
         if (!variableChanges.has(key)) {
           variableChanges.set(key, []);
         }
-        variableChanges.get(key)!.push({
+        variableChanges.get(key)?.push({
           timestamp: frame.timestamp,
           value: variable.value,
           scope: variable.scope,
@@ -588,9 +587,7 @@ export class WorkflowDebugger {
     this.eventListeners.forEach((listener) => {
       try {
         listener(event);
-      } catch (error) {
-        console.error('Debug event listener error:', error);
-      }
+      } catch (_error) {}
     });
   }
 }

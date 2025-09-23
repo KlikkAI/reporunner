@@ -224,7 +224,7 @@ function validateType(value: any, type?: string): string | null {
       break;
 
     case 'number':
-      if (typeof value !== 'number' || isNaN(value)) {
+      if (typeof value !== 'number' || Number.isNaN(value)) {
         return `Expected number, got ${typeof value}`;
       }
       break;
@@ -372,12 +372,11 @@ function sanitizeInput(value: any, rule: ValidationRule): any {
  */
 export function createSQLInjectionProtection() {
   return (req: Request, res: Response, next: NextFunction): void => {
-    const checkValue = (value: any, field: string): boolean => {
+    const checkValue = (value: any, _field: string): boolean => {
       if (typeof value !== 'string') return true;
 
       for (const pattern of SQL_INJECTION_PATTERNS) {
         if (pattern.test(value)) {
-          console.warn(`SQL injection attempt detected in field: ${field}`);
           return false;
         }
       }
@@ -435,7 +434,6 @@ export function createNoSQLInjectionProtection() {
 
     // Check body for NoSQL injection
     if (req.body && !checkValue(req.body)) {
-      console.warn('NoSQL injection attempt detected');
       res.status(400).json({
         success: false,
         error: {
@@ -460,7 +458,6 @@ export function createXSSProtection() {
         // Check for XSS patterns
         for (const pattern of XSS_PATTERNS) {
           if (pattern.test(value)) {
-            console.warn('XSS attempt detected and sanitized');
           }
         }
 
@@ -506,7 +503,6 @@ export function createPathTraversalProtection() {
 
     // Check URL path
     if (!checkPath(req.path)) {
-      console.warn(`Path traversal attempt detected: ${req.path}`);
       res.status(400).json({
         success: false,
         error: {
@@ -521,7 +517,6 @@ export function createPathTraversalProtection() {
     for (const [key, value] of Object.entries(req.query)) {
       if (typeof value === 'string' && (key.includes('path') || key.includes('file'))) {
         if (!checkPath(value)) {
-          console.warn(`Path traversal attempt in query parameter: ${key}`);
           res.status(400).json({
             success: false,
             error: {
@@ -561,7 +556,6 @@ export function createCommandInjectionProtection() {
         for (const [key, value] of Object.entries(source)) {
           if (key.includes('cmd') || key.includes('command') || key.includes('exec')) {
             if (!checkValue(value)) {
-              console.warn(`Command injection attempt detected in: ${key}`);
               res.status(400).json({
                 success: false,
                 error: {
@@ -679,7 +673,7 @@ export const CommonSchemas = {
         type: 'number',
         min: 1,
         default: 1,
-        transform: (v: any) => parseInt(v),
+        transform: (v: any) => parseInt(v, 10),
       },
       {
         field: 'limit',
@@ -688,7 +682,7 @@ export const CommonSchemas = {
         min: 1,
         max: 100,
         default: 20,
-        transform: (v: any) => parseInt(v),
+        transform: (v: any) => parseInt(v, 10),
       },
       {
         field: 'sort',

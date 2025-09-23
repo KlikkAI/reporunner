@@ -283,7 +283,7 @@ describe('Professional Debugging Suite', () => {
       await new Promise((resolve) => setTimeout(resolve, 150));
 
       // Profile should auto-stop
-      const profile = debugTools['performanceProfiler'].get(profileId);
+      const profile = debugTools.performanceProfiler.get(profileId);
       expect(profile).toBeUndefined(); // Should be cleaned up after stopping
     });
   });

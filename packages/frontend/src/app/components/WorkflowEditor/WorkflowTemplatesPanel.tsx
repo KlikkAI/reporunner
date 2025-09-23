@@ -83,11 +83,11 @@ export const WorkflowTemplatesPanel: React.FC<WorkflowTemplatesPanelProps> = ({
     if (visible) {
       loadTemplatesAndPatterns();
     }
-  }, [visible]);
+  }, [visible, loadTemplatesAndPatterns]);
 
   useEffect(() => {
     filterTemplates();
-  }, [templates, selectedCategory, searchQuery, sortBy]);
+  }, [filterTemplates]);
 
   const loadTemplatesAndPatterns = () => {
     const allTemplates = workflowTemplates.getAllTemplates();
@@ -149,9 +149,8 @@ export const WorkflowTemplatesPanel: React.FC<WorkflowTemplatesPanelProps> = ({
         message.success(`Created workflow from "${template.name}" template`);
         onClose();
       }
-    } catch (error) {
+    } catch (_error) {
       message.error('Failed to create workflow from template');
-      console.error(error);
     }
   };
 

@@ -14,18 +14,16 @@ export interface WorkerStats {
 }
 
 export class ExecutionWorker {
-  private isRunning = false;
-  private activeJobs = 0;
   private stats: WorkerStats;
 
-  constructor(private config: WorkerConfig, private workerId: string) {
+  constructor(_config: WorkerConfig, workerId: string) {
     this.stats = {
       id: workerId,
       status: 'idle',
       activeJobs: 0,
       completedJobs: 0,
       failedJobs: 0,
-      uptime: 0
+      uptime: 0,
     };
   }
 

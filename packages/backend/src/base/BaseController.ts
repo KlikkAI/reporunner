@@ -1,6 +1,6 @@
 import type { Request, Response } from 'express';
 import { validationResult } from 'express-validator';
-import { type IAuthenticatedRequest, IController } from '../interfaces/IController.js';
+import type { IAuthenticatedRequest } from '../interfaces/IController.js';
 import type { IApiResponse } from '../interfaces/IService.js';
 import { AppError } from '../middleware/errorHandlers.js';
 
@@ -72,8 +72,8 @@ export abstract class BaseController {
    * Extract pagination parameters from request
    */
   protected getPaginationParams(req: Request): { page: number; limit: number; skip: number } {
-    const page = parseInt(req.query.page as string) || 1;
-    const limit = Math.min(parseInt(req.query.limit as string) || 20, 100); // Max 100 items
+    const page = parseInt(req.query.page as string, 10) || 1;
+    const limit = Math.min(parseInt(req.query.limit as string, 10) || 20, 100); // Max 100 items
     const skip = (page - 1) * limit;
 
     return { page, limit, skip };

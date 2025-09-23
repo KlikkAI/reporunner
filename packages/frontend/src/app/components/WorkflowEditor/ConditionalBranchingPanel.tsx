@@ -118,7 +118,7 @@ export const ConditionalBranchingPanel: React.FC<ConditionalBranchingPanelProps>
     if (visible) {
       loadExistingBranches();
     }
-  }, [visible, workflowId]);
+  }, [visible, loadExistingBranches]);
 
   const loadExistingBranches = () => {
     // Extract conditional branches from existing workflow
@@ -213,9 +213,8 @@ export const ConditionalBranchingPanel: React.FC<ConditionalBranchingPanelProps>
       onAddBranch(branchConfig);
       form.resetFields();
       setEditingBranch(null);
-    } catch (error) {
+    } catch (_error) {
       message.error('Failed to create branch');
-      console.error(error);
     } finally {
       setLoading(false);
     }
@@ -250,9 +249,8 @@ export const ConditionalBranchingPanel: React.FC<ConditionalBranchingPanelProps>
       const result = evaluateBranchConditions(branch, testData);
       message.success(`Branch evaluation result: ${result ? 'TRUE' : 'FALSE'}`);
       return result;
-    } catch (error) {
+    } catch (_error) {
       message.error('Branch test failed');
-      console.error(error);
       return false;
     }
   };

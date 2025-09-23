@@ -322,19 +322,4 @@ export class WebhookTrigger implements INodeType {
 
     return [returnData];
   }
-
-  /**
-   * Helper method to check if IP is allowed
-   */
-  // @ts-expect-error: Method reserved for future IP filtering implementation
-  private _isIpAllowed(_clientIp: string, _allowedIps: string[]): boolean {
-    // Simplified IP check - in production, use proper CIDR checking
-    return _allowedIps.some((allowed) => {
-      if (allowed.includes('/')) {
-        // CIDR range check would go here
-        return true; // Simplified for now
-      }
-      return _clientIp === allowed;
-    });
-  }
 }

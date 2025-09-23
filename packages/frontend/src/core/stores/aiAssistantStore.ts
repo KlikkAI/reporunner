@@ -201,8 +201,7 @@ export const useAIAssistantStore = create<AIAssistantState>()(
           ],
           isProcessingChat: false,
         }));
-      } catch (error) {
-        console.error('Chat message failed:', error);
+      } catch (_error) {
         set((state) => ({
           chatHistory: [
             ...state.chatHistory,
@@ -281,8 +280,7 @@ export const useAIAssistantStore = create<AIAssistantState>()(
             }))
             .filter((suggestion: any) => !get().dismissedSuggestions.has(suggestion.id)),
         });
-      } catch (error) {
-        console.error('Workflow analysis failed:', error);
+      } catch (_error) {
         set({ isAnalyzing: false });
       }
     },
@@ -309,8 +307,7 @@ export const useAIAssistantStore = create<AIAssistantState>()(
           suggestionsVisible: suggestions.length > 0,
           suggestionContext: context,
         });
-      } catch (error) {
-        console.error('Node suggestions failed:', error);
+      } catch (_error) {
         set({
           nodeSuggestions: [],
           suggestionsVisible: false,
@@ -335,27 +332,18 @@ export const useAIAssistantStore = create<AIAssistantState>()(
         // Apply the suggestion based on its type
         switch (suggestion.type) {
           case 'optimization':
-            // Apply performance optimizations
-            console.log('Applying optimization:', suggestion.description);
             break;
 
           case 'error-fix':
-            // Apply error handling improvements
-            console.log('Applying error fix:', suggestion.description);
             break;
 
           case 'enhancement':
-            // Apply enhancement improvements
-            console.log('Applying enhancement:', suggestion.description);
             break;
 
           case 'pattern':
-            // Apply pattern improvements
-            console.log('Applying pattern suggestion:', suggestion.description);
             break;
 
           default:
-            console.log('Unknown suggestion type:', suggestion.type);
         }
 
         // Add success message to chat if chat is open
@@ -375,9 +363,7 @@ export const useAIAssistantStore = create<AIAssistantState>()(
 
         // Mark as applied (dismiss)
         get().dismissSuggestion(suggestionId);
-      } catch (error) {
-        console.error('Error applying suggestion:', error);
-
+      } catch (_error) {
         // Add error message to chat if chat is open
         if (state.isChatOpen) {
           set((state) => ({
@@ -446,8 +432,7 @@ export const useAIAssistantStore = create<AIAssistantState>()(
         }
 
         return false;
-      } catch (error) {
-        console.error('Auto-fix failed:', error);
+      } catch (_error) {
         return false;
       }
     },

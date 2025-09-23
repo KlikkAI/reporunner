@@ -67,7 +67,7 @@ const RegistryNode: React.FC<RegistryNodeProps> = ({ data, selected, id }) => {
       color: nodeDefinition.defaults?.color || '#1890ff',
       subtitle,
     };
-  }, [nodeDefinition, data.name, data.parameters]);
+  }, [nodeDefinition, data.name, data.parameters, data.type]);
 
   // Determine node status
 
@@ -129,18 +129,15 @@ const RegistryNode: React.FC<RegistryNodeProps> = ({ data, selected, id }) => {
   // Simple status indicator logic - integrated into main template
 
   // Toolbar handlers
-  const handlePlay = (nodeId: string) => {
-    console.log('Play node:', nodeId);
+  const handlePlay = (_nodeId: string) => {
     // TODO: Implement play functionality
   };
 
-  const handleStop = (nodeId: string) => {
-    console.log('Stop node:', nodeId);
+  const handleStop = (_nodeId: string) => {
     // TODO: Implement stop functionality
   };
 
-  const handleDelete = (nodeId: string) => {
-    console.log('Delete node:', nodeId);
+  const handleDelete = (_nodeId: string) => {
     data.onDelete?.();
   };
 
@@ -151,7 +148,6 @@ const RegistryNode: React.FC<RegistryNodeProps> = ({ data, selected, id }) => {
   const handleDoubleClick = (event: React.MouseEvent) => {
     // Handle double-click to open properties panel
     event.stopPropagation();
-    console.log('Double-click on registry node:', id);
     data.onOpenProperties?.();
   };
 

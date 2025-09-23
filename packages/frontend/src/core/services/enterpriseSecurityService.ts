@@ -130,8 +130,6 @@ export class EnterpriseSecurityService {
       timestamp: Date.now(),
       data: auditLog,
     });
-
-    console.log(`Audit log created: ${auditLog.id} for action ${action.type}`);
     return auditLog;
   }
 
@@ -217,8 +215,6 @@ export class EnterpriseSecurityService {
         after: securityPolicy,
       }
     );
-
-    console.log(`Security policy created: ${securityPolicy.id}`);
     return securityPolicy;
   }
 
@@ -300,8 +296,6 @@ export class EnterpriseSecurityService {
         context: { scanType, target, options },
       }
     );
-
-    console.log(`Vulnerability scan started: ${scan.id}`);
     return scan;
   }
 
@@ -385,8 +379,6 @@ export class EnterpriseSecurityService {
         context: { secretType, classification },
       }
     );
-
-    console.log(`Secret created: ${secret.id}`);
     return secret;
   }
 
@@ -484,8 +476,6 @@ export class EnterpriseSecurityService {
         context: { keyVersion: secret.keyVersion },
       }
     );
-
-    console.log(`Secret rotated: ${secret.id}`);
     return true;
   }
 
@@ -553,8 +543,6 @@ export class EnterpriseSecurityService {
       timestamp: Date.now(),
       data: incident,
     });
-
-    console.log(`Security incident created: ${incident.id}`);
     return incident;
   }
 
@@ -606,8 +594,6 @@ export class EnterpriseSecurityService {
         context: { previousStatus, newStatus: status },
       }
     );
-
-    console.log(`Incident status updated: ${incidentId} to ${status}`);
     return true;
   }
 
@@ -660,8 +646,6 @@ export class EnterpriseSecurityService {
         context: { standard, scope, score: report.score },
       }
     );
-
-    console.log(`Compliance report generated: ${report.id}`);
     return report;
   }
 
@@ -750,8 +734,6 @@ export class EnterpriseSecurityService {
         fixed: 0,
         ignored: 0,
       };
-
-      console.log(`Vulnerability scan completed: ${scan.id}`);
     }, 5000);
   }
 
@@ -1018,9 +1000,6 @@ export class EnterpriseSecurityService {
   }
 
   private async performPeriodicSecurityChecks(): Promise<void> {
-    // Perform periodic security checks
-    console.log('Performing periodic security checks...');
-
     // Check for expired secrets
     for (const secret of this.secrets.values()) {
       if (secret.expiresAt && secret.expiresAt < Date.now()) {
@@ -1041,9 +1020,7 @@ export class EnterpriseSecurityService {
     this.securityListeners.forEach((listener) => {
       try {
         listener(event);
-      } catch (error) {
-        console.error('Error in security event listener:', error);
-      }
+      } catch (_error) {}
     });
   }
 }

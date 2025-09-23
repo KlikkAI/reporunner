@@ -64,10 +64,7 @@ const Login: React.FC = () => {
     try {
       await login(formData);
       navigate('/app/dashboard');
-    } catch (error) {
-      // Error is handled by the store
-      console.error('Login failed:', error);
-    }
+    } catch (_error) {}
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

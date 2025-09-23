@@ -15,12 +15,6 @@ class GmailContextResolver implements ContextResolver {
       return null;
     }
 
-    console.log('🧠 Resolving Gmail context for node:', context.nodeId, {
-      isWorkflowStart: context.isWorkflowStart,
-      hasInputConnections: context.hasInputConnections,
-      formState: context.formState,
-    });
-
     // Smart mode detection
     const mode = this.detectGmailMode(context);
     const resource = this.detectResource(context, mode);
@@ -35,8 +29,6 @@ class GmailContextResolver implements ContextResolver {
       properties,
       capabilities,
     };
-
-    console.log('✅ Resolved Gmail context:', resolvedContext);
     return resolvedContext;
   }
 
@@ -192,12 +184,9 @@ export function registerGmailContextResolver() {
   // This will be called during Gmail node registration
   import('@/core/nodes/registry')
     .then(({ nodeRegistry }) => {
-      if (nodeRegistry && nodeRegistry.registerContextResolver) {
+      if (nodeRegistry?.registerContextResolver) {
         nodeRegistry.registerContextResolver(gmailContextResolver);
-        console.log('📧 Gmail context resolver registered successfully');
       }
     })
-    .catch((err) => {
-      console.warn('⚠️ Could not register Gmail context resolver:', err);
-    });
+    .catch((_err) => {});
 }

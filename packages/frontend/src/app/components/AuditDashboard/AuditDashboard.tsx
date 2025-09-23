@@ -65,21 +65,11 @@ export const AuditDashboard: React.FC = () => {
 
   useEffect(() => {
     loadAuditData();
-  }, []);
+  }, [loadAuditData]);
 
   useEffect(() => {
     applyFilters();
-  }, [
-    events,
-    filter,
-    dateRange,
-    selectedUser,
-    selectedAction,
-    selectedResource,
-    selectedSeverity,
-    selectedCategory,
-    searchTerm,
-  ]);
+  }, [applyFilters]);
 
   const loadAuditData = async () => {
     setLoading(true);
@@ -167,8 +157,7 @@ export const AuditDashboard: React.FC = () => {
 
       setEvents(mockEvents);
       setSecurityAlerts(mockAlerts);
-    } catch (error) {
-      console.error('Failed to load audit data:', error);
+    } catch (_error) {
     } finally {
       setLoading(false);
     }
@@ -212,8 +201,7 @@ export const AuditDashboard: React.FC = () => {
               return true;
             })
       );
-    } catch (error) {
-      console.error('Failed to apply filters:', error);
+    } catch (_error) {
       setFilteredEvents(events);
     }
   };
@@ -250,9 +238,7 @@ export const AuditDashboard: React.FC = () => {
       URL.revokeObjectURL(url);
 
       setExportModalVisible(false);
-    } catch (error) {
-      console.error('Failed to export data:', error);
-    }
+    } catch (_error) {}
   };
 
   const generateComplianceReport = async () => {
@@ -273,9 +259,7 @@ export const AuditDashboard: React.FC = () => {
         content: `Report "${report.name}" has been generated successfully. Status: ${report.status}`,
         width: 600,
       });
-    } catch (error) {
-      console.error('Failed to generate compliance report:', error);
-    }
+    } catch (_error) {}
   };
 
   const getSeverityColor = (severity: string) => {

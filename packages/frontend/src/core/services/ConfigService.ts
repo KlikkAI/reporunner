@@ -130,64 +130,64 @@ class ConfigurationService {
 
     return {
       app: {
-        name: env['VITE_APP_NAME'] || 'Reporunner',
-        version: env['VITE_APP_VERSION'] || '1.0.0',
-        environment: (env['VITE_ENVIRONMENT'] || 'development') as Environment,
-        debug: env['VITE_DEBUG'] === 'true' || env['NODE_ENV'] === 'development',
+        name: env.VITE_APP_NAME || 'Reporunner',
+        version: env.VITE_APP_VERSION || '1.0.0',
+        environment: (env.VITE_ENVIRONMENT || 'development') as Environment,
+        debug: env.VITE_DEBUG === 'true' || env.NODE_ENV === 'development',
       },
 
       api: {
-        baseUrl: env['VITE_API_BASE_URL'] || 'http://localhost:5000',
-        timeout: parseInt(env['VITE_API_TIMEOUT'] || '30000'),
-        retryAttempts: parseInt(env['VITE_API_RETRY_ATTEMPTS'] || '3'),
-        retryDelay: parseInt(env['VITE_API_RETRY_DELAY'] || '1000'),
+        baseUrl: env.VITE_API_BASE_URL || 'http://localhost:5000',
+        timeout: parseInt(env.VITE_API_TIMEOUT || '30000', 10),
+        retryAttempts: parseInt(env.VITE_API_RETRY_ATTEMPTS || '3', 10),
+        retryDelay: parseInt(env.VITE_API_RETRY_DELAY || '1000', 10),
       },
 
       websocket: {
-        url: env['VITE_WS_URL'] || 'ws://localhost:5000',
-        reconnectInterval: parseInt(env['VITE_WS_RECONNECT_INTERVAL'] || '5000'),
-        maxReconnectAttempts: parseInt(env['VITE_WS_MAX_RECONNECT_ATTEMPTS'] || '5'),
-        heartbeatInterval: parseInt(env['VITE_WS_HEARTBEAT_INTERVAL'] || '30000'),
+        url: env.VITE_WS_URL || 'ws://localhost:5000',
+        reconnectInterval: parseInt(env.VITE_WS_RECONNECT_INTERVAL || '5000', 10),
+        maxReconnectAttempts: parseInt(env.VITE_WS_MAX_RECONNECT_ATTEMPTS || '5', 10),
+        heartbeatInterval: parseInt(env.VITE_WS_HEARTBEAT_INTERVAL || '30000', 10),
       },
 
       auth: {
-        tokenKey: env['VITE_AUTH_TOKEN_KEY'] || 'auth_token',
-        refreshTokenKey: env['VITE_AUTH_REFRESH_TOKEN_KEY'] || 'refresh_token',
-        timeout: parseInt(env['VITE_AUTH_TIMEOUT'] || '3600000'),
-        autoRefreshThreshold: parseInt(env['VITE_AUTH_REFRESH_THRESHOLD'] || '300000'),
+        tokenKey: env.VITE_AUTH_TOKEN_KEY || 'auth_token',
+        refreshTokenKey: env.VITE_AUTH_REFRESH_TOKEN_KEY || 'refresh_token',
+        timeout: parseInt(env.VITE_AUTH_TIMEOUT || '3600000', 10),
+        autoRefreshThreshold: parseInt(env.VITE_AUTH_REFRESH_THRESHOLD || '300000', 10),
       },
 
       features: {
-        enableDebug: env['VITE_ENABLE_DEBUG'] === 'true',
-        enableMockData: env['VITE_ENABLE_MOCK_DATA'] === 'true',
-        enablePerformanceMonitoring: env['VITE_ENABLE_PERFORMANCE_MONITORING'] === 'true',
-        enableErrorReporting: env['VITE_ENABLE_ERROR_REPORTING'] === 'true',
-        enableAnalytics: env['VITE_ENABLE_ANALYTICS'] === 'true',
-        enableHotReload: env['VITE_ENABLE_HOT_RELOAD'] === 'true',
-        maxWorkflowNodes: parseInt(env['VITE_MAX_WORKFLOW_NODES'] || '100'),
-        enableAdvancedNodeTypes: env['VITE_ENABLE_ADVANCED_NODES'] === 'true',
+        enableDebug: env.VITE_ENABLE_DEBUG === 'true',
+        enableMockData: env.VITE_ENABLE_MOCK_DATA === 'true',
+        enablePerformanceMonitoring: env.VITE_ENABLE_PERFORMANCE_MONITORING === 'true',
+        enableErrorReporting: env.VITE_ENABLE_ERROR_REPORTING === 'true',
+        enableAnalytics: env.VITE_ENABLE_ANALYTICS === 'true',
+        enableHotReload: env.VITE_ENABLE_HOT_RELOAD === 'true',
+        maxWorkflowNodes: parseInt(env.VITE_MAX_WORKFLOW_NODES || '100', 10),
+        enableAdvancedNodeTypes: env.VITE_ENABLE_ADVANCED_NODES === 'true',
       },
 
       logging: {
-        level: (env['VITE_LOG_LEVEL'] || 'info') as LogLevel,
-        enableConsole: env['VITE_LOG_CONSOLE'] !== 'false',
-        enableRemote: env['VITE_LOG_REMOTE'] === 'true',
-        remoteEndpoint: env['VITE_LOG_REMOTE_ENDPOINT'],
-        bufferSize: parseInt(env['VITE_LOG_BUFFER_SIZE'] || '100'),
+        level: (env.VITE_LOG_LEVEL || 'info') as LogLevel,
+        enableConsole: env.VITE_LOG_CONSOLE !== 'false',
+        enableRemote: env.VITE_LOG_REMOTE === 'true',
+        remoteEndpoint: env.VITE_LOG_REMOTE_ENDPOINT,
+        bufferSize: parseInt(env.VITE_LOG_BUFFER_SIZE || '100', 10),
       },
 
       performance: {
-        enableMetrics: env['VITE_PERFORMANCE_METRICS'] === 'true',
-        sampleRate: parseFloat(env['VITE_PERFORMANCE_SAMPLE_RATE'] || '0.1'),
-        bundleSizeWarningThreshold: parseInt(env['VITE_BUNDLE_SIZE_WARNING'] || '500000'),
-        renderTimeThreshold: parseInt(env['VITE_RENDER_TIME_THRESHOLD'] || '100'),
+        enableMetrics: env.VITE_PERFORMANCE_METRICS === 'true',
+        sampleRate: parseFloat(env.VITE_PERFORMANCE_SAMPLE_RATE || '0.1'),
+        bundleSizeWarningThreshold: parseInt(env.VITE_BUNDLE_SIZE_WARNING || '500000', 10),
+        renderTimeThreshold: parseInt(env.VITE_RENDER_TIME_THRESHOLD || '100', 10),
       },
 
       security: {
-        enableCSP: env['VITE_ENABLE_CSP'] === 'true',
-        allowedOrigins: env['VITE_ALLOWED_ORIGINS']?.split(',') || ['*'],
-        maxFileSize: parseInt(env['VITE_MAX_FILE_SIZE'] || '10485760'), // 10MB
-        sessionTimeout: parseInt(env['VITE_SESSION_TIMEOUT'] || '1800000'), // 30 minutes
+        enableCSP: env.VITE_ENABLE_CSP === 'true',
+        allowedOrigins: env.VITE_ALLOWED_ORIGINS?.split(',') || ['*'],
+        maxFileSize: parseInt(env.VITE_MAX_FILE_SIZE || '10485760', 10), // 10MB
+        sessionTimeout: parseInt(env.VITE_SESSION_TIMEOUT || '1800000', 10), // 30 minutes
       },
     };
   }
@@ -217,7 +217,6 @@ class ConfigurationService {
 
     if (errors.length > 0) {
       const errorMessage = `Configuration validation failed:\n${errors.join('\n')}`;
-      console.error('🚨 Configuration Error:', errorMessage);
 
       if (this.config.app.environment === 'production') {
         throw new Error(errorMessage);
@@ -230,12 +229,6 @@ class ConfigurationService {
    */
   private logConfigStatus(): void {
     if (this.config.features.enableDebug) {
-      console.group('🔧 Configuration Service Initialized');
-      console.log('Environment:', this.config.app.environment);
-      console.log('Debug Mode:', this.config.features.enableDebug);
-      console.log('API Base URL:', this.config.api.baseUrl);
-      console.log('Feature Flags:', this.config.features);
-      console.groupEnd();
     }
   }
 
@@ -300,7 +293,6 @@ class ConfigurationService {
     this.listeners.forEach((listener) => listener(this.config));
 
     if (this.config.features.enableDebug) {
-      console.log('🔄 Configuration updated:', updates);
     }
   }
 

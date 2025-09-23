@@ -1,5 +1,5 @@
+import path from 'node:path';
 import react from '@vitejs/plugin-react';
-import path from 'path';
 import { visualizer } from 'rollup-plugin-visualizer';
 import { defineConfig, loadEnv } from 'vite';
 
@@ -59,14 +59,14 @@ export default defineConfig(({ mode }) => {
 
     // Development server configuration
     server: {
-      port: parseInt(env.VITE_DEV_SERVER_PORT) || 3000,
+      port: parseInt(env.VITE_DEV_SERVER_PORT, 10) || 3000,
       host: env.VITE_DEV_SERVER_HOST || true,
       open: true,
       cors: true,
 
       // HMR configuration
       hmr: {
-        port: parseInt(env.VITE_HMR_PORT) || 24678,
+        port: parseInt(env.VITE_HMR_PORT, 10) || 24678,
         host: env.VITE_HMR_HOST || 'localhost',
       },
     },

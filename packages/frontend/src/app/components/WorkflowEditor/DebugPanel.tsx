@@ -84,32 +84,35 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ workflowId, executionId, classN
     });
 
     return unsubscribe;
-  }, []);
+  }, [handleDebugEvent]);
 
-  const handleDebugEvent = useCallback((event: DebugEvent) => {
-    switch (event.type) {
-      case 'session-started':
-        setIsDebugging(true);
-        break;
-      case 'session-ended':
-        setIsDebugging(false);
-        setIsPaused(false);
-        setSession(null);
-        break;
-      case 'step-completed':
-        _setCurrentStep(event.data);
-        updateSessionData();
-        break;
-      case 'breakpoint-hit':
-        setIsPaused(true);
-        updateSessionData();
-        break;
-      case 'error-occurred':
-        setIsPaused(true);
-        updateSessionData();
-        break;
-    }
-  }, []);
+  const handleDebugEvent = useCallback(
+    (event: DebugEvent) => {
+      switch (event.type) {
+        case 'session-started':
+          setIsDebugging(true);
+          break;
+        case 'session-ended':
+          setIsDebugging(false);
+          setIsPaused(false);
+          setSession(null);
+          break;
+        case 'step-completed':
+          _setCurrentStep(event.data);
+          updateSessionData();
+          break;
+        case 'breakpoint-hit':
+          setIsPaused(true);
+          updateSessionData();
+          break;
+        case 'error-occurred':
+          setIsPaused(true);
+          updateSessionData();
+          break;
+      }
+    },
+    [updateSessionData]
+  );
 
   const updateSessionData = useCallback(() => {
     const currentSession = enhancedDebuggingService.getCurrentSession();
@@ -128,9 +131,7 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ workflowId, executionId, classN
       await enhancedDebuggingService.startDebugging(workflowId, executionId);
       setIsDebugging(true);
       updateSessionData();
-    } catch (error) {
-      console.error('Failed to start debugging:', error);
-    }
+    } catch (_error) {}
   }, [workflowId, executionId, updateSessionData]);
 
   const stopDebugging = useCallback(() => {

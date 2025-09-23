@@ -105,7 +105,7 @@ export const EnterpriseDashboard: React.FC = () => {
 
   useEffect(() => {
     loadDashboardData();
-  }, [dateRange, selectedOrganization]);
+  }, [loadDashboardData]);
 
   const loadDashboardData = async () => {
     setLoading(true);
@@ -191,8 +191,7 @@ export const EnterpriseDashboard: React.FC = () => {
 
       setMetrics(mockMetrics);
       setActivities(mockActivities);
-    } catch (error) {
-      console.error('Failed to load dashboard data:', error);
+    } catch (_error) {
     } finally {
       setLoading(false);
     }

@@ -274,12 +274,6 @@ const NodeHandles: React.FC<NodeHandlesProps> = ({
 
       {/* Output Handles with Plus Icons and Connection Lines */}
       {config.outputs?.map((output) => {
-        console.log('NodeHandles: Rendering output handle', {
-          id: output.id,
-          position: output.position.top,
-          nodeType,
-          label: output.label,
-        });
         return (
           <React.Fragment key={output.id}>
             {/* Actual Output Handle */}

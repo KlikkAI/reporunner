@@ -1,3 +1,4 @@
+import { EventEmitter } from 'node:events';
 import {
   ExecutionStatus,
   type IEdge,
@@ -10,7 +11,6 @@ import {
 import { ERROR_CODES, EVENTS, SYSTEM } from '@reporunner/constants';
 import type { DatabaseService } from '@reporunner/database';
 import { type Job, Queue, Worker } from 'bullmq';
-import { EventEmitter } from 'events';
 import { v4 as uuidv4 } from 'uuid';
 import type { Logger } from 'winston';
 
@@ -508,7 +508,7 @@ export class WorkflowExecutionEngine extends EventEmitter {
     // Remove nodes from other branches
     nodesToExecute.filter((n, index) => {
       const edge = edges.find((e) => e.source === node.id && e.target === n.id);
-      if (edge && edge.data?.branch && edge.data.branch !== branchToTake) {
+      if (edge?.data?.branch && edge.data.branch !== branchToTake) {
         nodesToExecute.splice(index, 1);
       }
     });
@@ -573,7 +573,7 @@ export class WorkflowExecutionEngine extends EventEmitter {
           status,
           stoppedAt: new Date(),
           'data.resultData.runData': results,
-          executionTime: Date.now() - this.activeExecutions.get(executionId)!.startedAt.getTime(),
+          executionTime: Date.now() - this.activeExecutions.get(executionId)?.startedAt.getTime(),
         },
       }
     );

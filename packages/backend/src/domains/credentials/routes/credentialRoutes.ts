@@ -1,5 +1,5 @@
 import express, { type Router } from 'express';
-import { body, param, query } from 'express-validator';
+import { body, param } from 'express-validator';
 import { authenticate } from '../../../middleware/auth.js';
 import { catchAsync } from '../../../middleware/errorHandlers.js';
 import { CredentialController } from '../controllers/CredentialController.js';

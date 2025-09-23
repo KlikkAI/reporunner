@@ -107,7 +107,7 @@ class TypeInferenceEngine {
       /^\d{2}-\d{2}-\d{4}$/, // MM-DD-YYYY
     ];
 
-    return datePatterns.some((pattern) => pattern.test(value)) && !isNaN(Date.parse(value));
+    return datePatterns.some((pattern) => pattern.test(value)) && !Number.isNaN(Date.parse(value));
   }
 
   static inferFromContext(value: any, context?: IExpressionContext): FieldType {
@@ -280,7 +280,7 @@ class AdvancedTypeValidator {
       const cleaned = value.replace(/[^0-9.-]/g, '');
       const parsed = parseFloat(cleaned);
 
-      if (isNaN(parsed)) {
+      if (Number.isNaN(parsed)) {
         throw new Error(`Cannot convert "${value}" to number`);
       }
 
@@ -292,7 +292,7 @@ class AdvancedTypeValidator {
     }
 
     const parsed = Number(value);
-    if (isNaN(parsed)) {
+    if (Number.isNaN(parsed)) {
       throw new Error(`Cannot convert "${value}" to number`);
     }
 
@@ -385,7 +385,7 @@ class AdvancedTypeValidator {
 
     if (typeof value === 'string') {
       const parsed = new Date(value);
-      if (isNaN(parsed.getTime())) {
+      if (Number.isNaN(parsed.getTime())) {
         throw new Error(`Cannot convert "${value}" to date`);
       }
       return parsed;
@@ -402,13 +402,13 @@ class AdvancedTypeValidator {
 
     switch (targetType) {
       case FieldType.NUMBER:
-        if (typeof value !== 'number' || isNaN(value) || !isFinite(value)) {
+        if (typeof value !== 'number' || Number.isNaN(value) || !Number.isFinite(value)) {
           return { valid: false, error: 'Invalid number value' };
         }
         break;
 
       case FieldType.DATE:
-        if (!(value instanceof Date) || isNaN(value.getTime())) {
+        if (!(value instanceof Date) || Number.isNaN(value.getTime())) {
           return { valid: false, error: 'Invalid date value' };
         }
         break;

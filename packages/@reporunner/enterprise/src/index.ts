@@ -31,7 +31,7 @@ export class EnterpriseManager {
   }
 }
 
-export * from './sso';
-export * from './rbac';
 export * from './audit';
 export * from './compliance';
+export * from './rbac';
+export * from './sso';

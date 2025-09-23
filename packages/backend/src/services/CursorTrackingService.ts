@@ -409,7 +409,7 @@ export class CursorTrackingService {
             users: allUsers,
             yourColor: this.workflowColorAssignments.get(workflowId)?.get(userId),
           });
-        } catch (error) {
+        } catch (_error) {
           socket.emit('presence_error', { error: 'Failed to join presence' });
         }
       });

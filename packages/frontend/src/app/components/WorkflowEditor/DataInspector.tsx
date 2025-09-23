@@ -105,9 +105,7 @@ const DataInspector: React.FC<DataInspectorProps> = ({
       const text =
         typeof selectedData === 'string' ? selectedData : JSON.stringify(selectedData, null, 2);
       await navigator.clipboard.writeText(text);
-    } catch (error) {
-      console.error('Failed to copy data:', error);
-    }
+    } catch (_error) {}
   }, [selectedData]);
 
   const handleExportData = useCallback(() => {
@@ -502,12 +500,12 @@ function getDataByPath(data: any, path: string): any {
     return path.split('.').reduce((obj, key) => {
       if (key.includes('[') && key.includes(']')) {
         const arrayKey = key.substring(0, key.indexOf('['));
-        const index = parseInt(key.substring(key.indexOf('[') + 1, key.indexOf(']')));
+        const index = parseInt(key.substring(key.indexOf('[') + 1, key.indexOf(']')), 10);
         return obj[arrayKey][index];
       }
       return obj[key];
     }, data);
-  } catch (error) {
+  } catch (_error) {
     return undefined;
   }
 }

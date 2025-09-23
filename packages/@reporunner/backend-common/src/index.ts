@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express';
+import type { NextFunction, Request, Response } from 'express';
 
 export interface ApiResponse<T = any> {
   success: boolean;
@@ -99,7 +99,7 @@ export class ResponseHelper {
       data,
       meta: {
         timestamp: new Date().toISOString(),
-        requestId: this.generateRequestId(),
+        requestId: ResponseHelper.generateRequestId(),
         ...meta,
       },
     };
@@ -117,7 +117,7 @@ export class ResponseHelper {
       },
       meta: {
         timestamp: new Date().toISOString(),
-        requestId: requestId || this.generateRequestId(),
+        requestId: requestId || ResponseHelper.generateRequestId(),
       },
     };
   }
@@ -135,7 +135,7 @@ export class ResponseHelper {
       data,
       meta: {
         timestamp: new Date().toISOString(),
-        requestId: requestId || this.generateRequestId(),
+        requestId: requestId || ResponseHelper.generateRequestId(),
         pagination: {
           page: pagination.page,
           limit: pagination.limit,
@@ -186,8 +186,6 @@ export const errorHandler = (
   const context = req.context as RequestContext;
   const requestId = context?.requestId;
 
-  console.error(`[${requestId}] Error:`, error);
-
   if (error instanceof ApiError) {
     res.status(error.statusCode).json(ResponseHelper.error(error, requestId));
   } else {
@@ -203,8 +201,8 @@ export const notFoundHandler = (req: Request, res: Response, _next: NextFunction
 };
 
 export const validatePagination = (req: Request, _res: Response, next: NextFunction): void => {
-  const page = parseInt(req.query.page as string) || 1;
-  const limit = Math.min(parseInt(req.query.limit as string) || 20, 100);
+  const page = parseInt(req.query.page as string, 10) || 1;
+  const limit = Math.min(parseInt(req.query.limit as string, 10) || 20, 100);
   const sortBy = req.query.sortBy as string;
   const sortOrder = (req.query.sortOrder as string) === 'desc' ? 'desc' : 'asc';
 

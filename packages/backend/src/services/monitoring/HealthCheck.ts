@@ -336,10 +336,10 @@ class HealthCheckService {
       timeout: 2000,
       checkFunction: async () => {
         try {
-          const fs = await import('fs');
-          const path = await import('path');
+          const fs = await import('node:fs');
+          const _path = await import('node:path');
 
-          const stats = fs.statSync(process.cwd());
+          const _stats = fs.statSync(process.cwd());
 
           // Note: This is a simplified check. In production, you'd want to check actual disk usage
           return {
@@ -414,7 +414,7 @@ class HealthCheckService {
 
   // Express endpoints
   public createHealthEndpoint() {
-    return async (req: any, res: any) => {
+    return async (_req: any, res: any) => {
       try {
         const health = await this.performHealthCheck();
         const statusCode =
@@ -439,7 +439,7 @@ class HealthCheckService {
   }
 
   public createReadinessEndpoint() {
-    return async (req: any, res: any) => {
+    return async (_req: any, res: any) => {
       try {
         const health = await this.performHealthCheck();
         const isReady = health.status === 'healthy' || health.status === 'degraded';
@@ -453,7 +453,7 @@ class HealthCheckService {
             return dependency?.critical;
           }),
         });
-      } catch (error) {
+      } catch (_error) {
         res.status(503).json({
           ready: false,
           message: 'Readiness check failed',
@@ -464,7 +464,7 @@ class HealthCheckService {
   }
 
   public createLivenessEndpoint() {
-    return (req: any, res: any) => {
+    return (_req: any, res: any) => {
       // Simple liveness check - if we can respond, we're alive
       res.status(200).json({
         alive: true,

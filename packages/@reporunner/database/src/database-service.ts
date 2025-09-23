@@ -258,12 +258,12 @@ export class DatabaseService {
     return {
       // Execute raw query
       query: async (text: string, params?: any[]) => {
-        return await this.pgPool!.query(text, params);
+        return await this.pgPool?.query(text, params);
       },
 
       // Get client for transactions
       getClient: async () => {
-        return await this.pgPool!.connect();
+        return await this.pgPool?.connect();
       },
 
       // Store embedding
@@ -279,7 +279,7 @@ export class DatabaseService {
           ON CONFLICT (resource_id) DO UPDATE
           SET embedding = $3, metadata = $4, updated_at = NOW()
         `;
-        return await this.pgPool!.query(query, [resourceType, resourceId, embedding, metadata]);
+        return await this.pgPool?.query(query, [resourceType, resourceId, embedding, metadata]);
       },
 
       // Semantic search
@@ -292,7 +292,7 @@ export class DatabaseService {
           ORDER BY embedding <=> $1
           LIMIT $2
         `;
-        return await this.pgPool!.query(query, [embedding, limit, threshold]);
+        return await this.pgPool?.query(query, [embedding, limit, threshold]);
       },
 
       // Log analytics event
@@ -301,7 +301,7 @@ export class DatabaseService {
           INSERT INTO analytics_events (event_type, user_id, properties)
           VALUES ($1, $2, $3)
         `;
-        return await this.pgPool!.query(query, [eventType, userId, properties]);
+        return await this.pgPool?.query(query, [eventType, userId, properties]);
       },
     };
   }
@@ -318,32 +318,32 @@ export class DatabaseService {
       // Cache operations
       cache: {
         get: async (key: string) => {
-          const value = await this.redisClient!.get(key);
+          const value = await this.redisClient?.get(key);
           return value ? JSON.parse(value) : null;
         },
 
         set: async (key: string, value: any, ttl?: number) => {
           const serialized = JSON.stringify(value);
           if (ttl) {
-            await this.redisClient!.setEx(key, ttl, serialized);
+            await this.redisClient?.setEx(key, ttl, serialized);
           } else {
-            await this.redisClient!.set(key, serialized);
+            await this.redisClient?.set(key, serialized);
           }
         },
 
         del: async (key: string) => {
-          await this.redisClient!.del(key);
+          await this.redisClient?.del(key);
         },
       },
 
       // Pub/Sub operations
       pubsub: {
         publish: async (channel: string, message: any) => {
-          await this.redisClient!.publish(channel, JSON.stringify(message));
+          await this.redisClient?.publish(channel, JSON.stringify(message));
         },
 
         subscribe: async (channel: string, callback: (message: any) => void) => {
-          const subscriber = this.redisClient!.duplicate();
+          const subscriber = this.redisClient?.duplicate();
           await subscriber.connect();
           await subscriber.subscribe(channel, (message) => {
             callback(JSON.parse(message));

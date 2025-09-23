@@ -1,8 +1,8 @@
-import crypto from 'crypto';
+import crypto from 'node:crypto';
+import path, { dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import dotenv from 'dotenv';
 import mongoose, { type Document, Schema } from 'mongoose';
-import path, { dirname } from 'path';
-import { fileURLToPath } from 'url';
 
 // Ensure environment variables are loaded
 const __filename = fileURLToPath(import.meta.url);
@@ -135,7 +135,7 @@ const getEncryptionKey = (): Buffer => {
   }
   try {
     return Buffer.from(keyHex, 'hex');
-  } catch (error) {
+  } catch (_error) {
     throw new Error('CREDENTIAL_ENCRYPTION_KEY must be a valid hex string');
   }
 };
@@ -251,7 +251,7 @@ credentialSchema.statics.findActive = function (userId: string, integration?: st
 };
 
 // Method to refresh OAuth2 credentials
-credentialSchema.methods.refreshOAuth2Token = async function (refreshToken: string) {
+credentialSchema.methods.refreshOAuth2Token = async function (_refreshToken: string) {
   if (this.type !== 'oauth2') {
     throw new Error('This method is only available for OAuth2 credentials');
   }
@@ -272,7 +272,7 @@ credentialSchema.methods.markAsUsed = function () {
 // Remove credential data from JSON output
 credentialSchema.methods.toJSON = function () {
   const credentialObject = this.toObject();
-  delete credentialObject.data;
+  credentialObject.data = undefined;
   return credentialObject;
 };
 

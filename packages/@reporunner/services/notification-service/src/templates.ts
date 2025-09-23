@@ -44,7 +44,7 @@ export class DefaultTemplateValidator implements TemplateValidator {
     // Extract variables from template
     const variableMatches = template.match(/\{\{([^}]+)\}\}/g);
     if (variableMatches) {
-      variableMatches.forEach(match => {
+      variableMatches.forEach((match) => {
         const variable = match.replace(/\{\{|\}\}/g, '').trim();
         if (!variables.includes(variable)) {
           variables.push(variable);

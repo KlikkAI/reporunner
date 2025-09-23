@@ -1,4 +1,4 @@
-import { EventEmitter } from 'events';
+import { EventEmitter } from 'node:events';
 import type { z } from 'zod';
 
 export enum IntegrationType {
@@ -212,9 +212,9 @@ export abstract class BaseIntegration extends EventEmitter {
    * Handle webhook
    */
   async handleWebhook?(
-    headers: Record<string, string>,
-    body: any,
-    query?: Record<string, string>
+    _headers: Record<string, string>,
+    _body: any,
+    _query?: Record<string, string>
   ): Promise<any> {
     throw new Error('Webhook handling not implemented');
   }
@@ -223,9 +223,9 @@ export abstract class BaseIntegration extends EventEmitter {
    * Validate webhook signature
    */
   protected validateWebhookSignature?(
-    headers: Record<string, string>,
-    body: any,
-    secret: string
+    _headers: Record<string, string>,
+    _body: any,
+    _secret: string
   ): boolean {
     return false;
   }
@@ -240,14 +240,17 @@ export abstract class BaseIntegration extends EventEmitter {
   /**
    * Get OAuth authorization URL
    */
-  getAuthorizationUrl?(redirectUri: string, state: string): string {
+  getAuthorizationUrl?(_redirectUri: string, _state: string): string {
     throw new Error('OAuth not implemented for this integration');
   }
 
   /**
    * Exchange OAuth code for tokens
    */
-  async exchangeCodeForTokens?(code: string, redirectUri: string): Promise<IntegrationCredentials> {
+  async exchangeCodeForTokens?(
+    _code: string,
+    _redirectUri: string
+  ): Promise<IntegrationCredentials> {
     throw new Error('OAuth not implemented for this integration');
   }
 

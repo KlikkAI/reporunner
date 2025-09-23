@@ -1,4 +1,4 @@
-import { AnalyticsEvent, Metric } from './index';
+import type { AnalyticsEvent } from './index';
 
 export interface CollectorConfig {
   enabled: boolean;
@@ -43,9 +43,6 @@ export abstract class BaseCollector {
 
   protected flush(): void {
     if (this.buffer.length === 0) return;
-
-    // TODO: Send to analytics service
-    console.log(`Flushing ${this.buffer.length} events`);
     this.buffer = [];
   }
 
@@ -129,17 +126,17 @@ export class CollectorManager {
   }
 
   start(): void {
-    this.collectors.forEach(collector => {
+    this.collectors.forEach((collector) => {
       const interval = setInterval(() => {
         collector.collect().catch(console.error);
-      }, collector['config'].flushInterval);
+      }, collector.config.flushInterval);
 
       this.intervals.push(interval);
     });
   }
 
   stop(): void {
-    this.intervals.forEach(interval => clearInterval(interval));
+    this.intervals.forEach((interval) => clearInterval(interval));
     this.intervals = [];
   }
 

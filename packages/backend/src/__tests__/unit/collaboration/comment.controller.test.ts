@@ -37,14 +37,14 @@ describe('CommentController', () => {
   describe('getWorkflowComments', () => {
     it('should return comments for a workflow', async () => {
       // Create test comments
-      const comment1 = await Comment.create({
+      const _comment1 = await Comment.create({
         workflowId: testWorkflowId,
         authorId: testUser._id,
         content: 'First comment',
         status: 'open',
       });
 
-      const comment2 = await Comment.create({
+      const _comment2 = await Comment.create({
         workflowId: testWorkflowId,
         authorId: testUser._id,
         content: 'Second comment',

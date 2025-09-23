@@ -332,11 +332,7 @@ export class AIAgent implements INodeType {
         agentType: this.getNodeParameter('agentType', 'classifier'),
       } as PropertyFormState;
 
-      const credentials = this.getCredentials('credentials');
-
-      // Inline AI Agent execution logic
-      console.log('Executing AI Agent with parameters:', parameters);
-      console.log('Using credentials:', credentials);
+      const _credentials = this.getCredentials('credentials');
 
       // Extract parameters
       const model = (parameters.model as string) || 'llama3.2:3b';
@@ -399,7 +395,6 @@ export class AIAgent implements INodeType {
 
       return [[{ json: result }]];
     } catch (error: any) {
-      console.error('AI Agent execution failed:', error);
       throw new Error(`AI Agent failed: ${error.message}`);
     }
   }
@@ -414,15 +409,12 @@ export class AIAgent implements INodeType {
         };
       }
 
-      console.log('Testing AI Agent connection with credentials:', credentials);
-
       // Inline AI agent connection test logic (Mock implementation)
       return {
         success: true,
         message: 'Successfully connected to AI Agent services',
       };
     } catch (error: any) {
-      console.error('AI Agent test failed:', error);
       return {
         success: false,
         message: `AI Agent test failed: ${error.message}`,

@@ -84,7 +84,6 @@ const AdvancedNodePanel: React.FC<AdvancedNodePanelProps> = ({ isCollapsed, onTo
 
   // Only log in development mode and only if there are issues
   if (import.meta.env.DEV && registryNodes.length === 0) {
-    console.warn('⚠️ AdvancedNodePanel - No registry nodes found');
   }
 
   // Pure Registry System - use only registry nodes, no integration duplicates
@@ -101,9 +100,7 @@ const AdvancedNodePanel: React.FC<AdvancedNodePanelProps> = ({ isCollapsed, onTo
           currentNodes: nodes,
           currentEdges: edges,
           lastAction: 'node_added',
-        }).catch((error) => {
-          console.error('Failed to get AI node suggestions:', error);
-        });
+        }).catch((_error) => {});
       }, 500); // Debounce suggestions
       return () => clearTimeout(timeoutId);
     }
@@ -203,9 +200,7 @@ const AdvancedNodePanel: React.FC<AdvancedNodePanelProps> = ({ isCollapsed, onTo
 
       event.dataTransfer.setData('application/reactflow', JSON.stringify(dragData));
       event.dataTransfer.effectAllowed = 'move';
-    } catch (error) {
-      console.error('Error in onDragStart:', error);
-    }
+    } catch (_error) {}
   }, []);
 
   // Helper function to find the rightmost node (last in sequence)
@@ -413,17 +408,15 @@ const AdvancedNodePanel: React.FC<AdvancedNodePanelProps> = ({ isCollapsed, onTo
       </div>
 
       {!isCollapsed && (
-        <>
-          <div className="px-4 pb-4 border-b border-gray-200">
-            <div className="flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-gray-900">Nodes</h2>
-              <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full font-medium">
-                {allAvailableNodes.length}
-              </span>
-            </div>
-            <p className="text-sm text-gray-600">Drag to add to workflow</p>
+        <div className="px-4 pb-4 border-b border-gray-200">
+          <div className="flex items-center justify-between">
+            <h2 className="text-lg font-semibold text-gray-900">Nodes</h2>
+            <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full font-medium">
+              {allAvailableNodes.length}
+            </span>
           </div>
-        </>
+          <p className="text-sm text-gray-600">Drag to add to workflow</p>
+        </div>
       )}
 
       {/* Search and Filter */}

@@ -316,21 +316,6 @@ const PropertyField: React.FC<PropertyFieldProps> = ({
 
         // Debug logging for credential filtering
         if (property.name === 'credential' && credentialTypes.includes('gmailOAuth2')) {
-          console.log('Gmail credential filtering debug:', {
-            propertyName: property.name,
-            expectedCredentialTypes: credentialTypes,
-            allCredentials: context.credentials?.map((c: any) => ({
-              id: c.id,
-              name: c.name,
-              type: c.type,
-              integration: c.integration,
-            })),
-            filteredCredentials: availableCredentials.map((c: any) => ({
-              id: c.id,
-              name: c.name,
-              type: c.type,
-            })),
-          });
         }
 
         return (
@@ -382,21 +367,10 @@ const PropertyField: React.FC<PropertyFieldProps> = ({
                       type="text"
                       size="small"
                       onClick={() => {
-                        console.log('🔧 Create New Credential button clicked!');
-                        console.log('🔧 credentialTypes:', credentialTypes);
-                        console.log(
-                          '🔧 context.onCreateCredential exists:',
-                          !!context.onCreateCredential
-                        );
                         // Trigger credential creation modal
                         if (context.onCreateCredential) {
-                          console.log(
-                            '🔧 Calling context.onCreateCredential with:',
-                            credentialTypes[0]
-                          );
                           context.onCreateCredential(credentialTypes[0]);
                         } else {
-                          console.error('🔧 context.onCreateCredential is missing!');
                         }
                       }}
                       style={{
@@ -722,11 +696,8 @@ const DynamicPropertyRenderer: React.FC<DynamicPropertyRendererProps> = ({
   disabled = false,
   theme = 'dark',
 }) => {
-  // Debug registry properties
-  console.log('🔧 DynamicPropertyRenderer - registry properties:', properties.length, 'properties');
   const credentialProp = properties.find((p) => p.name === 'credential');
   if (credentialProp) {
-    console.log('🔧 Found registry credential property:', credentialProp);
   }
 
   const [localFormState, setLocalFormState] = useState<PropertyFormState>(formState);

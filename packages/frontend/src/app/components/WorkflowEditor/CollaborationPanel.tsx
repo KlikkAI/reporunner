@@ -117,10 +117,8 @@ export const CollaborationPanel: React.FC<CollaborationPanelProps> = ({ isVisibl
 
       setNewCommentContent('');
       setNewCommentPosition(null);
-    } catch (error) {
-      console.error('Failed to add comment:', error);
-    }
-  }, [newCommentContent, newCommentPosition, selectedNodeIds, addComment]);
+    } catch (_error) {}
+  }, [newCommentContent, newCommentPosition, selectedNodeIds, addComment, currentWorkflow?.id]);
 
   // Handle replying to a comment
   const handleReplyToComment = useCallback(
@@ -131,9 +129,7 @@ export const CollaborationPanel: React.FC<CollaborationPanelProps> = ({ isVisibl
       try {
         await replyToComment(commentId, content);
         setReplyContents({ ...replyContents, [commentId]: '' });
-      } catch (error) {
-        console.error('Failed to reply to comment:', error);
-      }
+      } catch (_error) {}
     },
     [replyContents, replyToComment]
   );
@@ -145,9 +141,7 @@ export const CollaborationPanel: React.FC<CollaborationPanelProps> = ({ isVisibl
         await resolveConflict(conflict.id, resolution);
         setConflictModalVisible(false);
         setSelectedConflict(null);
-      } catch (error) {
-        console.error('Failed to resolve conflict:', error);
-      }
+      } catch (_error) {}
     },
     [resolveConflict]
   );

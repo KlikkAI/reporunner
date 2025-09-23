@@ -16,7 +16,7 @@ const Executions: React.FC = () => {
 
   useEffect(() => {
     loadExecutions();
-  }, [filter, page]);
+  }, [loadExecutions]);
 
   const loadExecutions = async () => {
     setIsLoading(true);
@@ -65,8 +65,7 @@ const Executions: React.FC = () => {
         setExecutions((prev) => [...prev, ...transformedExecutions]);
       }
       setHasMore(result.hasMore);
-    } catch (error) {
-      console.error('Failed to load executions:', error);
+    } catch (_error) {
       setExecutions([]);
     } finally {
       setIsLoading(false);
@@ -79,8 +78,7 @@ const Executions: React.FC = () => {
       // Refresh executions
       setPage(1);
       loadExecutions();
-    } catch (error) {
-      console.error('Failed to stop execution:', error);
+    } catch (_error) {
       alert('Failed to stop execution');
     }
   };

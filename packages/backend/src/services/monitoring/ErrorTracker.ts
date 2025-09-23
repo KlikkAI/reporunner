@@ -3,7 +3,7 @@
  * Comprehensive error monitoring, reporting, and recovery
  */
 
-import { EventEmitter } from 'events';
+import { EventEmitter } from 'node:events';
 import { type LogContext, logger } from '../logging/Logger.js';
 import { performanceMonitor } from './PerformanceMonitor.js';
 
@@ -142,7 +142,7 @@ class ErrorTrackingService extends EventEmitter {
     message: string,
     context?: LogContext,
     severity: 'low' | 'medium' | 'high' | 'critical' = 'medium',
-    metadata?: Record<string, any>
+    _metadata?: Record<string, any>
   ): string {
     const customError = new Error(message);
     customError.name = name;
@@ -285,9 +285,9 @@ class ErrorTrackingService extends EventEmitter {
     const sanitized = { ...headers };
 
     // Remove sensitive headers
-    delete sanitized.authorization;
-    delete sanitized.cookie;
-    delete sanitized['x-api-key'];
+    sanitized.authorization = undefined;
+    sanitized.cookie = undefined;
+    sanitized['x-api-key'] = undefined;
 
     return sanitized;
   }
@@ -298,10 +298,10 @@ class ErrorTrackingService extends EventEmitter {
     const sanitized = { ...body };
 
     // Remove sensitive fields
-    delete sanitized.password;
-    delete sanitized.token;
-    delete sanitized.secret;
-    delete sanitized.apiKey;
+    sanitized.password = undefined;
+    sanitized.token = undefined;
+    sanitized.secret = undefined;
+    sanitized.apiKey = undefined;
 
     return sanitized;
   }
@@ -310,7 +310,7 @@ class ErrorTrackingService extends EventEmitter {
     return {
       nodeVersion: process.version,
       platform: process.platform,
-      hostname: require('os').hostname(),
+      hostname: require('node:os').hostname(),
       memory: process.memoryUsage(),
       uptime: process.uptime(),
     };
@@ -477,7 +477,7 @@ class ErrorTrackingService extends EventEmitter {
 
   // Express middleware
   public createExpressErrorHandler() {
-    return (error: Error, req: any, res: any, next: any) => {
+    return (error: Error, req: any, res: any, _next: any) => {
       const errorId = this.trackError(
         error,
         {

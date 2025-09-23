@@ -79,7 +79,7 @@ export class PermissionEngine {
     }
 
     // Check organization match for resource-based permissions
-    if (resource && resource.organizationId) {
+    if (resource?.organizationId) {
       if (user.organizationId !== resource.organizationId) {
         return false;
       }

@@ -6,7 +6,6 @@ import { WorkflowEngine } from '../../workflows/services/WorkFlowEngine.js';
 
 export class NodeExecutionService {
   private credentialRepository: CredentialRepository;
-  private workflowEngine: WorkflowEngine;
 
   constructor() {
     this.credentialRepository = new CredentialRepository();
@@ -332,7 +331,7 @@ export class NodeExecutionService {
 
       selectedFields.forEach((fieldName: string) => {
         const mapping = transformConfig.fieldMappings?.[fieldName];
-        if (mapping && mapping.path) {
+        if (mapping?.path) {
           const value = this.getNestedValue(email, mapping.path);
           transformedData[fieldName] = value;
         }
@@ -462,7 +461,7 @@ export class NodeExecutionService {
       systemPrompt: nodeConfig.systemPrompt || '',
       userPrompt: nodeConfig.userPrompt || '',
       temperature: parseFloat(nodeConfig.temperature) || 0.7,
-      maxTokens: parseInt(nodeConfig.maxTokens) || 1000,
+      maxTokens: parseInt(nodeConfig.maxTokens, 10) || 1000,
       responseFormat: nodeConfig.responseFormat || 'text',
     };
 
@@ -913,7 +912,7 @@ export class NodeExecutionService {
           const indexStr = key.substring(key.indexOf('[') + 1, key.indexOf(']'));
           const index = parseInt(indexStr, 10);
 
-          if (arrayKey && !isNaN(index)) {
+          if (arrayKey && !Number.isNaN(index)) {
             currentValue = currentValue[arrayKey]?.[index];
           }
         } else {
@@ -927,7 +926,7 @@ export class NodeExecutionService {
             currentValue = parsed;
             // Continue with the remaining path parts in the parsed object
             const remainingPath = pathParts.slice(i + 1).join('.');
-            return this.getFieldValue({ parsed: currentValue }, 'parsed.' + remainingPath);
+            return this.getFieldValue({ parsed: currentValue }, `parsed.${remainingPath}`);
           }
         }
       }
@@ -1000,13 +999,13 @@ export class NodeExecutionService {
             return fieldValue === compareValue;
           }
           // Loose equality for mixed types
-          return fieldValue == compareValue;
+          return fieldValue === compareValue;
 
         case 'not_equals':
           if (typeof fieldValue === typeof compareValue) {
             return fieldValue !== compareValue;
           }
-          return fieldValue != compareValue;
+          return fieldValue !== compareValue;
 
         case 'contains':
           if (Array.isArray(fieldValue)) {
@@ -1030,7 +1029,7 @@ export class NodeExecutionService {
         case 'greater_equal': {
           const numField = Number(fieldValue);
           const numCompare = Number(compareValue);
-          if (isNaN(numField) || isNaN(numCompare)) return false;
+          if (Number.isNaN(numField) || Number.isNaN(numCompare)) return false;
           return operator === 'greater' ? numField > numCompare : numField >= numCompare;
         }
 
@@ -1038,7 +1037,7 @@ export class NodeExecutionService {
         case 'less_equal': {
           const numField2 = Number(fieldValue);
           const numCompare2 = Number(compareValue);
-          if (isNaN(numField2) || isNaN(numCompare2)) return false;
+          if (Number.isNaN(numField2) || Number.isNaN(numCompare2)) return false;
           return operator === 'less' ? numField2 < numCompare2 : numField2 <= numCompare2;
         }
 
@@ -1046,7 +1045,7 @@ export class NodeExecutionService {
           if (typeof compareValue === 'string' && compareValue.includes(',')) {
             const [min, max] = compareValue.split(',').map((v) => Number(v.trim()));
             const num = Number(fieldValue);
-            if (!isNaN(num) && !isNaN(min) && !isNaN(max)) {
+            if (!Number.isNaN(num) && !Number.isNaN(min) && !Number.isNaN(max)) {
               return num >= min && num <= max;
             }
           }
@@ -1067,7 +1066,7 @@ export class NodeExecutionService {
           if (Array.isArray(fieldValue) || typeof fieldValue === 'string') {
             const length = fieldValue.length;
             const compareNum = Number(compareValue);
-            if (!isNaN(compareNum)) {
+            if (!Number.isNaN(compareNum)) {
               return operator === 'length_equals' ? length === compareNum : length > compareNum;
             }
           }
@@ -1282,7 +1281,7 @@ Generate a professional email response:`;
       }
 
       const generatedResponse = responseResult.output || (responseResult as any).text || '';
-      console.log('Generated email response:', generatedResponse.substring(0, 200) + '...');
+      console.log('Generated email response:', `${generatedResponse.substring(0, 200)}...`);
 
       return {
         responseText: generatedResponse,
@@ -1456,7 +1455,7 @@ Generate a professional email response:`;
   /**
    * Call Ollama API
    */
-  private async callOllama(parameters: any, userPrompt: string, credentials: any) {
+  private async callOllama(parameters: any, userPrompt: string, _credentials: any) {
     const ollamaUrl = parameters.ollamaUrl || 'http://localhost:11434';
     const fullPrompt = parameters.systemPrompt
       ? `${parameters.systemPrompt}\n\n${userPrompt}`

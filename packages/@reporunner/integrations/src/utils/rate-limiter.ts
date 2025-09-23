@@ -1,4 +1,4 @@
-import { EventEmitter } from 'events';
+import { EventEmitter } from 'node:events';
 
 export interface RateLimitConfig {
   name: string;
@@ -209,7 +209,7 @@ export class RateLimiter extends EventEmitter {
         identifier,
         count: entry.count,
         remaining: this.configs.get(name)?.maxRequests
-          ? this.configs.get(name)!.maxRequests - entry.count
+          ? this.configs.get(name)?.maxRequests - entry.count
           : Infinity,
       });
     }
@@ -237,7 +237,7 @@ export class RateLimiter extends EventEmitter {
   /**
    * Check if entry should be reset
    */
-  private shouldReset(entry: RateLimitEntry, config: RateLimitConfig, now: Date): boolean {
+  private shouldReset(entry: RateLimitEntry, _config: RateLimitConfig, now: Date): boolean {
     return now >= entry.resetAt;
   }
 

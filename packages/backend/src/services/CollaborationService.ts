@@ -107,7 +107,7 @@ export class CollaborationService {
     if (!this.participantSockets.has(workflowId)) {
       this.participantSockets.set(workflowId, new Set());
     }
-    this.participantSockets.get(workflowId)!.add(participant.socketId);
+    this.participantSockets.get(workflowId)?.add(participant.socketId);
     this.socketToWorkflow.set(participant.socketId, workflowId);
 
     // Join Socket.IO room
@@ -415,9 +415,7 @@ export class CollaborationService {
       Comment.countDocuments({ sessionId: session.sessionId }),
     ]);
 
-    const sessionDuration = Math.round(
-      (new Date().getTime() - session.createdAt.getTime()) / (1000 * 60)
-    );
+    const sessionDuration = Math.round((Date.now() - session.createdAt.getTime()) / (1000 * 60));
 
     return {
       participants: session.participants.length,
@@ -460,7 +458,7 @@ export class CollaborationService {
             },
             socket.id
           );
-        } catch (error) {
+        } catch (_error) {
           socket.emit('collaboration_error', {
             error: 'Failed to join collaboration session',
           });

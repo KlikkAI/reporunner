@@ -178,7 +178,7 @@ export const useLeanWorkflowStore = create<LeanWorkflowState>((set, get) => ({
     description?: string
   ) => {
     const newWorkflow: WorkflowDefinition = {
-      id: 'temp_' + Date.now(),
+      id: `temp_${Date.now()}`,
       name,
       description: description || '',
       active: false,
@@ -208,7 +208,7 @@ export const useLeanWorkflowStore = create<LeanWorkflowState>((set, get) => ({
       const savedWorkflow = get().currentWorkflow;
       // Set flag to refresh Dashboard when user returns
       get().setShouldRefreshDashboard(true);
-      if (savedWorkflow && savedWorkflow.id) {
+      if (savedWorkflow?.id) {
         navigate(`/workflow/${savedWorkflow.id}`);
       }
     } catch (error) {
@@ -537,11 +537,11 @@ function convertEdgesToConnections(edges: WorkflowEdge[]): WorkflowDefinition['c
       connections[edge.source] = {};
     }
 
-    if (!connections[edge.source]![outputIndex]) {
+    if (!connections[edge.source]?.[outputIndex]) {
       connections[edge.source]![outputIndex] = [];
     }
 
-    connections[edge.source]![outputIndex]!.push({
+    connections[edge.source]?.[outputIndex]?.push({
       node: edge.target,
       type: edge.type || 'main',
       index: parseInt(inputIndex, 10) || 0,

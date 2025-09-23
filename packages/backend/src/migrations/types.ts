@@ -60,7 +60,11 @@ export abstract class BaseMigration implements IMigration {
   // Generate checksum for migration integrity
   getChecksum(): string {
     const content = `${this.id}-${this.name}-${this.version}-${this.up.toString()}-${this.down.toString()}`;
-    return require('crypto').createHash('sha256').update(content).digest('hex').substring(0, 16);
+    return require('node:crypto')
+      .createHash('sha256')
+      .update(content)
+      .digest('hex')
+      .substring(0, 16);
   }
 }
 

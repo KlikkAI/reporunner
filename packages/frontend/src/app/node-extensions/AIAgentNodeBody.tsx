@@ -135,8 +135,8 @@ const AIAgentNodeBody: React.FC<CustomNodeBodyProps> = ({
             {/* Shared NodeToolbar */}
             <NodeToolbar
               visible={isHovered}
-              onPlay={() => console.log('Play AI Agent:', nodeId)}
-              onStop={() => console.log('Stop AI Agent:', nodeId)}
+              onPlay={() => {}}
+              onStop={() => {}}
               onDelete={(e) => {
                 e.stopPropagation();
                 onDelete?.();
@@ -166,7 +166,6 @@ const AIAgentNodeBody: React.FC<CustomNodeBodyProps> = ({
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
-                    console.log('Test AI Agent:', nodeId);
                     setShowLocalMenu(false);
                   }}
                   className="w-full px-3 py-1.5 text-left text-sm text-gray-200 hover:bg-gray-700 flex items-center gap-2"
@@ -176,7 +175,6 @@ const AIAgentNodeBody: React.FC<CustomNodeBodyProps> = ({
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
-                    console.log('Copy AI Agent:', nodeId);
                     setShowLocalMenu(false);
                   }}
                   className="w-full px-3 py-1.5 text-left text-sm text-gray-200 hover:bg-gray-700 flex items-center gap-2"
@@ -186,7 +184,6 @@ const AIAgentNodeBody: React.FC<CustomNodeBodyProps> = ({
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
-                    console.log('Duplicate AI Agent:', nodeId);
                     setShowLocalMenu(false);
                   }}
                   className="w-full px-3 py-1.5 text-left text-sm text-gray-200 hover:bg-gray-700 flex items-center gap-2"

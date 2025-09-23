@@ -1,6 +1,6 @@
-import { randomBytes } from 'crypto';
+import { randomBytes } from 'node:crypto';
+import { promisify } from 'node:util';
 import jwt, { type JwtPayload, type SignOptions, type VerifyOptions } from 'jsonwebtoken';
-import { promisify } from 'util';
 
 // Removed unused ERROR_CODES import
 
@@ -420,7 +420,7 @@ export class JWTSessionManager {
       throw new Error(`Invalid duration format: ${duration}`);
     }
 
-    const value = parseInt(match[1]);
+    const value = parseInt(match[1], 10);
     const unit = match[2];
     const now = new Date();
 

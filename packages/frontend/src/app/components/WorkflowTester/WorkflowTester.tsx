@@ -133,9 +133,7 @@ export const WorkflowTester: React.FC<{
     if (executionId) {
       try {
         await workflowApiService.stopExecution(executionId);
-      } catch (error) {
-        console.error('Failed to stop test execution:', error);
-      }
+      } catch (_error) {}
     }
   };
 

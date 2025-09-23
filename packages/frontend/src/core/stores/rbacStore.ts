@@ -190,16 +190,12 @@ export const useRBACStore = create<RBACState>()(
       },
 
       inviteUser: async (
-        organizationId: string,
-        email: string,
-        role: OrganizationMember['role']
+        _organizationId: string,
+        _email: string,
+        _role: OrganizationMember['role']
       ) => {
         set({ isLoading: true, error: null });
         try {
-          // In a real app, this would send an API request
-          // For now, we'll simulate the process
-          console.log(`Inviting ${email} to organization ${organizationId} with role ${role}`);
-
           set({ isLoading: false });
         } catch (error: any) {
           set({

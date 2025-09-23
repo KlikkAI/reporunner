@@ -18,7 +18,7 @@ const app = express();
 const rateLimiter = new AdvancedRateLimiter({
   redis: {
     host: process.env.REDIS_HOST || 'localhost',
-    port: parseInt(process.env.REDIS_PORT || '6379'),
+    port: parseInt(process.env.REDIS_PORT || '6379', 10),
     password: process.env.REDIS_PASSWORD,
   },
   useMemoryFallback: true, // Fall back to memory if Redis fails
@@ -29,25 +29,25 @@ const rateLimiter = new AdvancedRateLimiter({
 app.use('/api', createApiRateLimiter(rateLimiter));
 
 // Apply login rate limiting to auth endpoints
-app.post('/auth/login', createLoginRateLimiter(rateLimiter), async (req, res) => {
+app.post('/auth/login', createLoginRateLimiter(rateLimiter), async (_req, res) => {
   // Login logic here
   res.json({ success: true });
 });
 
 // Apply password reset rate limiting
-app.post('/auth/reset-password', createPasswordResetRateLimiter(rateLimiter), async (req, res) => {
+app.post('/auth/reset-password', createPasswordResetRateLimiter(rateLimiter), async (_req, res) => {
   // Password reset logic
   res.json({ success: true });
 });
 
 // Apply execution rate limiting for workflow runs
-app.post('/workflows/:id/execute', createExecutionRateLimiter(rateLimiter), async (req, res) => {
+app.post('/workflows/:id/execute', createExecutionRateLimiter(rateLimiter), async (_req, res) => {
   // Workflow execution logic
   res.json({ success: true, executionId: '123' });
 });
 
 // Apply upload rate limiting
-app.post('/upload', createUploadRateLimiter(rateLimiter), async (req, res) => {
+app.post('/upload', createUploadRateLimiter(rateLimiter), async (_req, res) => {
   // File upload logic
   res.json({ success: true, fileId: '456' });
 });
@@ -71,7 +71,7 @@ app.post(
     { type: 'execution', points: 1, message: 'Execution rate limit exceeded' },
     { type: 'export', points: 1, message: 'Export rate limit exceeded' },
   ]),
-  async (req, res) => {
+  async (_req, res) => {
     // Critical operation that consumes multiple resources
     res.json({ success: true });
   }
@@ -93,7 +93,7 @@ const customLimiter = createRateLimitMiddleware(rateLimiter, {
   draft_polli_ratelimit_headers: false, // Use X-RateLimit headers
 });
 
-app.get('/api/custom', customLimiter, (req, res) => {
+app.get('/api/custom', customLimiter, (_req, res) => {
   res.json({ data: 'custom endpoint' });
 });
 
@@ -119,14 +119,14 @@ app.post(
     points: 1,
     message: 'AI generation limit exceeded. Please try again later.',
   }),
-  async (req, res) => {
+  async (_req, res) => {
     // AI generation logic
     res.json({ success: true, result: 'AI generated content' });
   }
 );
 
 // Monitor rate limit metrics
-app.get('/admin/metrics/rate-limits', (req, res) => {
+app.get('/admin/metrics/rate-limits', (_req, res) => {
   const metrics = rateLimiter.getMetrics();
   res.json({
     totalRequests: metrics.requestCount,
@@ -159,20 +159,15 @@ app.delete('/admin/blacklist/:identifier', async (req, res) => {
 
 // Graceful shutdown
 process.on('SIGTERM', async () => {
-  console.log('Shutting down...');
   await rateLimiter.cleanup();
   process.exit(0);
 });
 
 // Error handling middleware
-app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
-  console.error('Error:', err);
+app.use((_err: any, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
   res.status(500).json({ error: 'Internal server error' });
 });
 
 // Start server
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-  console.log('Rate limiting enabled with DDoS protection');
-});
+app.listen(PORT, () => {});

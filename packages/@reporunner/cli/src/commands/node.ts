@@ -1,12 +1,12 @@
+import { exec } from 'node:child_process';
+import { join } from 'node:path';
+import { promisify } from 'node:util';
 import chalk from 'chalk';
-import { exec } from 'child_process';
 import { Command } from 'commander';
-import { ensureDirSync, existsSync, writeFileSync } from 'fs-extra';
+import { ensureDirSync, writeFileSync } from 'fs-extra';
 import inquirer from 'inquirer';
 import Mustache from 'mustache';
 import ora from 'ora';
-import { join } from 'path';
-import { promisify } from 'util';
 
 const execAsync = promisify(exec);
 
@@ -128,36 +128,17 @@ function createNodeCommand(): Command {
 
         spinner.succeed(chalk.green(`✅ Node '${nodeName}' created successfully!`));
 
-        console.log();
-        console.log(chalk.cyan('📁 Files created:'));
-        console.log(`   ${nodeDir}/package.json`);
-        console.log(`   ${nodeDir}/src/index.ts`);
-        console.log(`   ${nodeDir}/src/credentials.ts`);
-        console.log(`   ${nodeDir}/src/properties.ts`);
-        console.log(`   ${nodeDir}/README.md`);
-
         if (!options.skipInstall) {
           const installSpinner = ora('Installing dependencies...').start();
           try {
             await execAsync('pnpm install', { cwd: nodeDir });
             installSpinner.succeed(chalk.green('Dependencies installed'));
-          } catch (error) {
+          } catch (_error) {
             installSpinner.fail(chalk.red('Failed to install dependencies'));
-            console.log(chalk.yellow('You can install them manually with: pnpm install'));
           }
         }
-
-        console.log();
-        console.log(chalk.green('🎉 Node created successfully!'));
-        console.log();
-        console.log(chalk.cyan('Next steps:'));
-        console.log(`1. cd ${nodeDir}`);
-        console.log('2. Edit src/index.ts to implement your node logic');
-        console.log('3. Run: pnpm build');
-        console.log('4. Test your node with: pnpm test');
-      } catch (error) {
+      } catch (_error) {
         spinner.fail(chalk.red('Failed to create node'));
-        console.error(error);
         process.exit(1);
       }
     });
@@ -168,15 +149,14 @@ function testNodeCommand(): Command {
     .description('Test a node')
     .option('-n, --name <name>', 'Node name')
     .option('-d, --data <data>', 'Test data JSON')
-    .action(async (options) => {
+    .action(async (_options) => {
       const spinner = ora('Running node tests...').start();
 
       try {
         // Implementation for testing nodes
         spinner.succeed(chalk.green('Tests passed!'));
-      } catch (error) {
+      } catch (_error) {
         spinner.fail(chalk.red('Tests failed'));
-        console.error(error);
         process.exit(1);
       }
     });
@@ -194,9 +174,8 @@ function buildNodeCommand(): Command {
         const command = options.watch ? 'pnpm build:watch' : 'pnpm build';
         await execAsync(command);
         spinner.succeed(chalk.green('Node built successfully!'));
-      } catch (error) {
+      } catch (_error) {
         spinner.fail(chalk.red('Build failed'));
-        console.error(error);
         process.exit(1);
       }
     });
@@ -206,15 +185,14 @@ function validateNodeCommand(): Command {
   return new Command('validate')
     .description('Validate a node definition')
     .option('-n, --name <name>', 'Node name')
-    .action(async (options) => {
+    .action(async (_options) => {
       const spinner = ora('Validating node...').start();
 
       try {
         // Implementation for validating nodes
         spinner.succeed(chalk.green('Node is valid!'));
-      } catch (error) {
+      } catch (_error) {
         spinner.fail(chalk.red('Validation failed'));
-        console.error(error);
         process.exit(1);
       }
     });
@@ -456,7 +434,7 @@ export class {{name}}Api implements ICredentialType {
 }`;
 }
 
-function getPropertiesTemplate(template: string): string {
+function getPropertiesTemplate(_template: string): string {
   return `import { INodeProperties } from '@reporunner/core';
 
 export const {{name}}Properties: INodeProperties[] = [

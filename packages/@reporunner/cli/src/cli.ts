@@ -1,10 +1,9 @@
 #!/usr/bin/env node
 
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import chalk from 'chalk';
 import { Command } from 'commander';
-import figlet from 'figlet';
-import { readFileSync } from 'fs';
-import { join } from 'path';
 import updateNotifier from 'update-notifier';
 import { authCommand } from './commands/auth';
 import { buildCommand } from './commands/build';
@@ -36,19 +35,7 @@ Run ${chalk.cyan(`npm install -g ${packageJson.name}`)} to update`,
 }
 
 // ASCII Art Banner
-function showBanner(): void {
-  console.log(
-    chalk.cyan(
-      figlet.textSync('Reporunner', {
-        font: 'Standard',
-        horizontalLayout: 'default',
-        verticalLayout: 'default',
-      })
-    )
-  );
-  console.log(chalk.gray(`v${packageJson.version} - AI-powered workflow automation platform`));
-  console.log();
-}
+function showBanner(): void {}
 
 // Create CLI program
 const program = new Command();
@@ -76,17 +63,13 @@ program.addCommand(workflowCommand);
 program.addCommand(authCommand);
 
 // Global error handler
-process.on('uncaughtException', (error) => {
-  console.error(chalk.red('❌ Uncaught Exception:'), error.message);
+process.on('uncaughtException', (_error) => {
   if (program.opts().verbose) {
-    console.error(error.stack);
   }
   process.exit(1);
 });
 
-process.on('unhandledRejection', (reason, promise) => {
-  console.error(chalk.red('❌ Unhandled Rejection at:'), promise);
-  console.error(chalk.red('Reason:'), reason);
+process.on('unhandledRejection', (_reason, _promise) => {
   process.exit(1);
 });
 

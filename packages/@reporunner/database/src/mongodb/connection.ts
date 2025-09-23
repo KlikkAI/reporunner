@@ -1,4 +1,4 @@
-import { EventEmitter } from 'events';
+import { EventEmitter } from 'node:events';
 import {
   type Collection,
   type Db,
@@ -56,11 +56,8 @@ export class MongoDBConnection extends EventEmitter {
   async connect(): Promise<void> {
     try {
       if (this.isConnected && this.client) {
-        console.log('MongoDB already connected');
         return;
       }
-
-      console.log('Connecting to MongoDB...');
       this.client = new MongoClient(this.config.uri, this.config.options);
 
       // Setup event listeners
@@ -70,14 +67,11 @@ export class MongoDBConnection extends EventEmitter {
       this.db = this.client.db(this.config.database);
       this.isConnected = true;
       this.reconnectAttempts = 0;
-
-      console.log(`Connected to MongoDB database: ${this.config.database}`);
       this.emit('connected');
 
       // Verify connection
       await this.ping();
     } catch (error) {
-      console.error('MongoDB connection error:', error);
       this.emit('error', error);
       throw error;
     }
@@ -89,26 +83,18 @@ export class MongoDBConnection extends EventEmitter {
   private setupEventListeners(): void {
     if (!this.client) return;
 
-    this.client.on('serverOpening', () => {
-      console.log('MongoDB server opening');
-    });
+    this.client.on('serverOpening', () => {});
 
-    this.client.on('serverClosed', () => {
-      console.log('MongoDB server closed');
-    });
+    this.client.on('serverClosed', () => {});
 
-    this.client.on('serverDescriptionChanged', (_event: any) => {
-      console.log('MongoDB server description changed:', _event);
-    });
+    this.client.on('serverDescriptionChanged', (_event: any) => {});
 
     this.client.on('error', (error: any) => {
-      console.error('MongoDB client error:', error);
       this.emit('error', error);
       this.handleConnectionError();
     });
 
     this.client.on('close', () => {
-      console.log('MongoDB connection closed');
       this.isConnected = false;
       this.emit('disconnected');
       this.handleConnectionError();
@@ -124,13 +110,11 @@ export class MongoDBConnection extends EventEmitter {
     this.isConnected = false;
 
     if (this.reconnectAttempts >= this.maxReconnectAttempts) {
-      console.error('Max reconnection attempts reached. Giving up.');
       this.emit('reconnectFailed');
       return;
     }
 
     const delay = Math.min(1000 * 2 ** this.reconnectAttempts, 30000);
-    console.log(`Attempting to reconnect in ${delay}ms...`);
 
     this.reconnectInterval = setTimeout(async () => {
       this.reconnectInterval = null;
@@ -138,8 +122,7 @@ export class MongoDBConnection extends EventEmitter {
 
       try {
         await this.connect();
-      } catch (error) {
-        console.error('Reconnection attempt failed:', error);
+      } catch (_error) {
         this.handleConnectionError();
       }
     }, delay);
@@ -156,8 +139,7 @@ export class MongoDBConnection extends EventEmitter {
 
       const result = await this.db.admin().ping();
       return result.ok === 1;
-    } catch (error) {
-      console.error('MongoDB ping failed:', error);
+    } catch (_error) {
       return false;
     }
   }
@@ -186,23 +168,17 @@ export class MongoDBConnection extends EventEmitter {
    * Disconnect from MongoDB
    */
   async disconnect(): Promise<void> {
-    try {
-      if (this.reconnectInterval) {
-        clearTimeout(this.reconnectInterval);
-        this.reconnectInterval = null;
-      }
+    if (this.reconnectInterval) {
+      clearTimeout(this.reconnectInterval);
+      this.reconnectInterval = null;
+    }
 
-      if (this.client) {
-        await this.client.close();
-        this.client = null;
-        this.db = null;
-        this.isConnected = false;
-        console.log('Disconnected from MongoDB');
-        this.emit('disconnected');
-      }
-    } catch (error) {
-      console.error('Error disconnecting from MongoDB:', error);
-      throw error;
+    if (this.client) {
+      await this.client.close();
+      this.client = null;
+      this.db = null;
+      this.isConnected = false;
+      this.emit('disconnected');
     }
   }
 
@@ -230,7 +206,6 @@ export class MongoDBConnection extends EventEmitter {
     for (const indexConfig of indexes) {
       const collection = this.db.collection(indexConfig.collection);
       await collection.createIndex(indexConfig.index, indexConfig.options || {});
-      console.log(`Created index on ${indexConfig.collection}:`, indexConfig.index);
     }
   }
 

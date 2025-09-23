@@ -53,7 +53,7 @@ export class AuthController extends BaseController {
   /**
    * Logout user
    */
-  logout = async (req: Request, res: Response) => {
+  logout = async (_req: Request, res: Response) => {
     // Generate a simple session ID for the response
     const sessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 

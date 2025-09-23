@@ -120,8 +120,6 @@ class NodeRegistry {
 
     // Initialize feature flags
     this.initializeFeatureFlags();
-
-    console.log('🚀 Enterprise NodeRegistry initialized');
   }
 
   /**
@@ -131,7 +129,6 @@ class NodeRegistry {
   public registerNodeType(nodeType: INodeType): void {
     const { name } = nodeType.description;
     if (this.nodeTypes.has(name)) {
-      console.warn(`Node type "${name}" is already registered. Overwriting...`);
     }
     this.nodeTypes.set(name, nodeType);
 
@@ -148,7 +145,6 @@ class NodeRegistry {
   public registerCredentialType(credentialType: ICredentialType): void {
     const { name } = credentialType;
     if (this.credentialTypes.has(name)) {
-      console.warn(`Credential type "${name}" is already registered. Overwriting...`);
     }
     this.credentialTypes.set(name, credentialType);
   }
@@ -457,11 +453,6 @@ class NodeRegistry {
     // Update registry version
     this.registryVersion++;
     this.lastUpdate = Date.now();
-
-    console.log(`🚀 Registered enhanced node: ${nodeType.displayName} (${nodeType.id})`, {
-      modes: this.deriveNodeModes(nodeType),
-      tenant: tenantId,
-    });
   }
 
   /**
@@ -541,7 +532,6 @@ class NodeRegistry {
    */
   public registerContextResolver(resolver: ContextResolver): void {
     this.contextResolvers.set(resolver.id, resolver);
-    console.log(`🧠 Registered context resolver: ${resolver.id}`);
   }
 
   /**
@@ -549,7 +539,6 @@ class NodeRegistry {
    */
   public async installPlugin(plugin: RegistryPlugin): Promise<void> {
     await plugin.initialize(this);
-    console.log(`🔌 Plugin installed: ${plugin.name} v${plugin.version}`);
   }
 
   /**
@@ -558,7 +547,6 @@ class NodeRegistry {
   public setFeatureFlag(flag: string, enabled: boolean): void {
     this.featureFlags.set(flag, enabled);
     this.registryVersion++;
-    console.log(`🏁 Feature flag ${flag}: ${enabled ? 'enabled' : 'disabled'}`);
   }
 
   public isFeatureEnabled(flag: string): boolean {
@@ -648,7 +636,7 @@ class NodeRegistry {
 
     // Default resources if none found
     if (resources.size === 0) {
-      if (nodeType.id && nodeType.id.toLowerCase().includes('gmail')) {
+      if (nodeType.id?.toLowerCase().includes('gmail')) {
         resources.add('email'),
           resources.add('label'),
           resources.add('draft'),
@@ -689,9 +677,7 @@ class NodeRegistry {
         if (resolved) {
           return resolved;
         }
-      } catch (error) {
-        console.warn(`Context resolver ${resolver.id} failed:`, error);
-      }
+      } catch (_error) {}
     }
 
     return undefined;

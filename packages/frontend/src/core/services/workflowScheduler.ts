@@ -410,7 +410,7 @@ export class WorkflowSchedulerService {
     if (!this.eventListeners.has(event)) {
       this.eventListeners.set(event, new Set());
     }
-    this.eventListeners.get(event)!.add(callback);
+    this.eventListeners.get(event)?.add(callback);
 
     return () => {
       this.eventListeners.get(event)?.delete(callback);
@@ -688,10 +688,9 @@ export class WorkflowSchedulerService {
   private evaluateCustomCondition(config: any): boolean {
     try {
       // Evaluate custom JavaScript condition (in production, use a sandboxed environment)
-      const func = new Function('return ' + config.expression);
+      const func = new Function(`return ${config.expression}`);
       return !!func();
-    } catch (error) {
-      console.error('Custom condition evaluation failed:', error);
+    } catch (_error) {
       return false;
     }
   }
@@ -868,9 +867,7 @@ export class WorkflowSchedulerService {
     return recommendations;
   }
 
-  private logScheduleEvent(scheduleId: string, level: string, message: string): void {
-    console.log(`[Schedule ${scheduleId}] ${level.toUpperCase()}: ${message}`);
-  }
+  private logScheduleEvent(_scheduleId: string, _level: string, _message: string): void {}
 
   private emitExecutionEvent(event: string, execution: ScheduledExecution): void {
     const listeners = this.eventListeners.get(event);
@@ -878,9 +875,7 @@ export class WorkflowSchedulerService {
       listeners.forEach((callback) => {
         try {
           callback(execution);
-        } catch (error) {
-          console.error(`Error in execution event listener:`, error);
-        }
+        } catch (_error) {}
       });
     }
   }

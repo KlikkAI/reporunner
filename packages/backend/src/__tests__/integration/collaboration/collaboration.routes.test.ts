@@ -1,6 +1,6 @@
 import express from 'express';
 import request from 'supertest';
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 import collaborationRoutes from '../../../domains/collaboration/routes/collaborationRoutes.js';
 import { CollaborationSession } from '../../../models/CollaborationSession.js';
 import { Comment } from '../../../models/Comment.js';
@@ -9,7 +9,7 @@ import { testUtils } from '../../setup.js';
 describe('Collaboration Routes Integration', () => {
   let app: express.Application;
   let testUser: any;
-  let authToken: string;
+  let _authToken: string;
   let testWorkflowId: string;
 
   beforeEach(async () => {
@@ -18,7 +18,7 @@ describe('Collaboration Routes Integration', () => {
     app.use(express.json());
 
     // Mock authentication middleware
-    app.use((req, res, next) => {
+    app.use((req, _res, next) => {
       req.user = { id: testUser?._id.toString() };
       next();
     });
@@ -29,7 +29,7 @@ describe('Collaboration Routes Integration', () => {
     testUser = await testUtils.createTestUser({
       email: 'integration@test.com',
     });
-    authToken = await testUtils.generateTestToken(testUser._id.toString());
+    _authToken = await testUtils.generateTestToken(testUser._id.toString());
     testWorkflowId = '507f1f77bcf86cd799439011';
   });
 
@@ -366,7 +366,7 @@ describe('Collaboration Routes Integration', () => {
 
         // Note: This test would require mocking the CollaborationService
         // For now, we'll just test the route structure
-        const response = await request(app)
+        const _response = await request(app)
           .post(`/collaboration/sessions/${testWorkflowId}/join`)
           .send(userData)
           .expect(500); // Expected to fail without proper CollaborationService mock

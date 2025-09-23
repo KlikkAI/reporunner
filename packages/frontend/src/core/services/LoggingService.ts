@@ -180,7 +180,6 @@ class Logger {
     this.performanceBuffer.push(metric);
 
     if (configService.isDevelopment()) {
-      console.log(`🚀 Performance: ${name} = ${value}${unit}`, context);
     }
   }
 
@@ -205,7 +204,6 @@ class Logger {
     this.userActionBuffer.push(userAction);
 
     if (configService.isDevelopment()) {
-      console.log(`👤 User Action: ${action}`, { target, context });
     }
   }
 
@@ -227,7 +225,7 @@ class Logger {
    * Generate fingerprint for log deduplication
    */
   private generateFingerprint(level: LogLevel, message: string, context?: LogContext): string {
-    const key = `${level}:${message}:${context?.['stack']?.split('\n')[0] || ''}`;
+    const key = `${level}:${message}:${context?.stack?.split('\n')[0] || ''}`;
     // Use encodeURIComponent to safely handle Unicode characters before btoa
     return btoa(encodeURIComponent(key)).replace(/[+=/]/g, '').substr(0, 12);
   }
@@ -237,19 +235,14 @@ class Logger {
    */
   private logToConsole(entry: LogEntry): void {
     const timestamp = new Date(entry.timestamp).toLocaleTimeString();
-    const prefix = `[${timestamp}] ${entry.level.toUpperCase()}`;
+    const _prefix = `[${timestamp}] ${entry.level.toUpperCase()}`;
 
-    const style = this.getConsoleStyle(entry.level);
+    const _style = this.getConsoleStyle(entry.level);
 
     if (entry.context && Object.keys(entry.context).length > 0) {
-      console.groupCollapsed(`%c${prefix}%c ${entry.message}`, style, 'color: inherit');
-      console.log('Context:', entry.context);
       if (entry.stack) {
-        console.log('Stack:', entry.stack);
       }
-      console.groupEnd();
     } else {
-      console.log(`%c${prefix}%c ${entry.message}`, style, 'color: inherit');
     }
   }
 
@@ -369,7 +362,7 @@ class Logger {
         const payload = JSON.parse(atob(tokenPart));
         return payload.userId || payload.sub;
       }
-    } catch (e) {
+    } catch (_e) {
       // Ignore decode errors
     }
     return undefined;
@@ -411,10 +404,9 @@ class Logger {
       },
       body: JSON.stringify(payload),
     })
-      .catch((error) => {
+      .catch((_error) => {
         // Fallback to localStorage if remote fails
         this.saveToLocalStorage(payload);
-        console.warn('Failed to send logs to remote endpoint:', error);
       })
       .finally(() => {
         this.clearBuffers();
@@ -435,9 +427,7 @@ class Logger {
       }
 
       localStorage.setItem('app_logs', JSON.stringify(existing));
-    } catch (e) {
-      console.warn('Failed to save logs to localStorage:', e);
-    }
+    } catch (_e) {}
   }
 
   /**

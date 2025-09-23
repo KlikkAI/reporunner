@@ -100,10 +100,7 @@ const Register: React.FC = () => {
       const { confirmPassword, ...registerData } = formData;
       await register(registerData);
       navigate('/app/dashboard');
-    } catch (error) {
-      // Error is handled by the store
-      console.error('Registration failed:', error);
-    }
+    } catch (_error) {}
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

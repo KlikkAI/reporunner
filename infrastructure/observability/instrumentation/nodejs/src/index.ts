@@ -5,28 +5,28 @@
  * Node.js applications including tracing, metrics, and logging.
  */
 
-import { NodeSDK } from '@opentelemetry/sdk-node';
 import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentations-node';
-import { Resource } from '@opentelemetry/resources';
-import { SemanticResourceAttributes } from '@opentelemetry/semantic-conventions';
-import { JaegerExporter, JaegerPropagator } from '@opentelemetry/exporter-jaeger';
-import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
-import { OTLPMetricExporter } from '@opentelemetry/exporter-metrics-otlp-http';
-import { PrometheusExporter } from '@opentelemetry/exporter-prometheus';
-import { B3Propagator } from '@opentelemetry/propagator-b3';
 import {
   CompositePropagator,
-  W3CTraceContextPropagator,
   W3CBaggagePropagator,
+  W3CTraceContextPropagator,
 } from '@opentelemetry/core';
-import { dockerDetector } from '@opentelemetry/resource-detector-docker';
-import { gcpDetector } from '@opentelemetry/resource-detector-gcp';
+import { JaegerExporter, JaegerPropagator } from '@opentelemetry/exporter-jaeger';
+import { OTLPMetricExporter } from '@opentelemetry/exporter-metrics-otlp-http';
+import { PrometheusExporter } from '@opentelemetry/exporter-prometheus';
+import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
 import { ExpressInstrumentation } from '@opentelemetry/instrumentation-express';
 import { HttpInstrumentation } from '@opentelemetry/instrumentation-http';
+import { IORedisInstrumentation } from '@opentelemetry/instrumentation-ioredis';
 import { MongoDBInstrumentation } from '@opentelemetry/instrumentation-mongodb';
 import { RedisInstrumentation } from '@opentelemetry/instrumentation-redis';
-import { IORedisInstrumentation } from '@opentelemetry/instrumentation-ioredis';
 import { WinstonInstrumentation } from '@opentelemetry/instrumentation-winston';
+import { B3Propagator } from '@opentelemetry/propagator-b3';
+import { dockerDetector } from '@opentelemetry/resource-detector-docker';
+import { gcpDetector } from '@opentelemetry/resource-detector-gcp';
+import { Resource } from '@opentelemetry/resources';
+import { NodeSDK } from '@opentelemetry/sdk-node';
+import { SemanticResourceAttributes } from '@opentelemetry/semantic-conventions';
 
 export interface InstrumentationConfig {
   serviceName: string;
@@ -105,132 +105,123 @@ export class ReporunnerInstrumentation {
    * Initialize and start the OpenTelemetry instrumentation
    */
   public async start(): Promise<void> {
-    try {
-      // Create resource with service information
-      const resource = new Resource({
-        [SemanticResourceAttributes.SERVICE_NAME]: this.config.serviceName,
-        [SemanticResourceAttributes.SERVICE_VERSION]: this.config.serviceVersion!,
-        [SemanticResourceAttributes.DEPLOYMENT_ENVIRONMENT]: this.config.environment!,
-        [SemanticResourceAttributes.SERVICE_NAMESPACE]: 'reporunner',
-        'reporunner.component': this.getComponentType(),
-      });
+    // Create resource with service information
+    const resource = new Resource({
+      [SemanticResourceAttributes.SERVICE_NAME]: this.config.serviceName,
+      [SemanticResourceAttributes.SERVICE_VERSION]: this.config.serviceVersion!,
+      [SemanticResourceAttributes.DEPLOYMENT_ENVIRONMENT]: this.config.environment!,
+      [SemanticResourceAttributes.SERVICE_NAMESPACE]: 'reporunner',
+      'reporunner.component': this.getComponentType(),
+    });
 
-      // Detect additional resource attributes
-      const detectedResource = await Resource.default()
-        .merge(resource)
-        .merge(await dockerDetector.detect())
-        .merge(await gcpDetector.detect());
+    // Detect additional resource attributes
+    const detectedResource = await Resource.default()
+      .merge(resource)
+      .merge(await dockerDetector.detect())
+      .merge(await gcpDetector.detect());
 
-      // Configure instrumentations
-      const instrumentations = [
-        getNodeAutoInstrumentations({
-          '@opentelemetry/instrumentation-fs': {
-            enabled: false, // Disable noisy fs instrumentation
-          },
-          '@opentelemetry/instrumentation-dns': {
-            enabled: false, // Disable noisy dns instrumentation
-          },
-        }),
-        new ExpressInstrumentation({
-          requestHook: (span, info) => {
-            span.setAttributes({
-              'reporunner.request.route': info.route,
-              'reporunner.request.method': info.req.method,
-              'reporunner.request.user_agent': info.req.headers['user-agent'],
-            });
-          },
-        }),
-        new HttpInstrumentation({
-          requestHook: (span, request) => {
-            span.setAttributes({
-              'reporunner.http.request.size': request.headers['content-length'] || 0,
-            });
-          },
-          responseHook: (span, response) => {
-            span.setAttributes({
-              'reporunner.http.response.size': response.headers['content-length'] || 0,
-            });
-          },
-        }),
-        new MongoDBInstrumentation({
-          enhancedDatabaseReporting: true,
-        }),
-        new RedisInstrumentation(),
-        new IORedisInstrumentation(),
-        new WinstonInstrumentation(),
-        ...this.config.customInstrumentations,
-      ];
+    // Configure instrumentations
+    const instrumentations = [
+      getNodeAutoInstrumentations({
+        '@opentelemetry/instrumentation-fs': {
+          enabled: false, // Disable noisy fs instrumentation
+        },
+        '@opentelemetry/instrumentation-dns': {
+          enabled: false, // Disable noisy dns instrumentation
+        },
+      }),
+      new ExpressInstrumentation({
+        requestHook: (span, info) => {
+          span.setAttributes({
+            'reporunner.request.route': info.route,
+            'reporunner.request.method': info.req.method,
+            'reporunner.request.user_agent': info.req.headers['user-agent'],
+          });
+        },
+      }),
+      new HttpInstrumentation({
+        requestHook: (span, request) => {
+          span.setAttributes({
+            'reporunner.http.request.size': request.headers['content-length'] || 0,
+          });
+        },
+        responseHook: (span, response) => {
+          span.setAttributes({
+            'reporunner.http.response.size': response.headers['content-length'] || 0,
+          });
+        },
+      }),
+      new MongoDBInstrumentation({
+        enhancedDatabaseReporting: true,
+      }),
+      new RedisInstrumentation(),
+      new IORedisInstrumentation(),
+      new WinstonInstrumentation(),
+      ...this.config.customInstrumentations,
+    ];
 
-      // Configure trace exporters
-      const traceExporters = [];
-      if (this.config.tracing?.enabled) {
-        if (this.config.tracing.jaeger?.endpoint) {
-          traceExporters.push(
-            new JaegerExporter({
-              endpoint: this.config.tracing.jaeger.endpoint,
-            })
-          );
-        }
-        if (this.config.tracing.otlp?.endpoint) {
-          traceExporters.push(
-            new OTLPTraceExporter({
-              url: this.config.tracing.otlp.endpoint,
-              headers: this.config.tracing.otlp.headers,
-            })
-          );
-        }
+    // Configure trace exporters
+    const traceExporters = [];
+    if (this.config.tracing?.enabled) {
+      if (this.config.tracing.jaeger?.endpoint) {
+        traceExporters.push(
+          new JaegerExporter({
+            endpoint: this.config.tracing.jaeger.endpoint,
+          })
+        );
       }
-
-      // Configure metric exporters
-      const metricReaders = [];
-      if (this.config.metrics?.enabled) {
-        if (this.config.metrics.prometheus) {
-          metricReaders.push(
-            new PrometheusExporter({
-              port: this.config.metrics.prometheus.port,
-              endpoint: this.config.metrics.prometheus.endpoint,
-            })
-          );
-        }
-        if (this.config.metrics.otlp?.endpoint) {
-          metricReaders.push(
-            new OTLPMetricExporter({
-              url: this.config.metrics.otlp.endpoint,
-              headers: this.config.metrics.otlp.headers,
-            })
-          );
-        }
+      if (this.config.tracing.otlp?.endpoint) {
+        traceExporters.push(
+          new OTLPTraceExporter({
+            url: this.config.tracing.otlp.endpoint,
+            headers: this.config.tracing.otlp.headers,
+          })
+        );
       }
-
-      // Configure propagators
-      const propagator = new CompositePropagator({
-        propagators: [
-          new W3CTraceContextPropagator(),
-          new W3CBaggagePropagator(),
-          new B3Propagator(),
-          new JaegerPropagator(),
-        ],
-      });
-
-      // Create SDK
-      this.sdk = new NodeSDK({
-        resource: detectedResource,
-        instrumentations,
-        traceExporter: traceExporters.length > 0 ? traceExporters[0] : undefined,
-        metricReader: metricReaders.length > 0 ? metricReaders[0] : undefined,
-        textMapPropagator: propagator,
-      });
-
-      // Start the SDK
-      this.sdk.start();
-
-      console.log(`🔍 Reporunner instrumentation started for ${this.config.serviceName}`);
-      console.log(`📊 Tracing enabled: ${this.config.tracing?.enabled}`);
-      console.log(`📈 Metrics enabled: ${this.config.metrics?.enabled}`);
-    } catch (error) {
-      console.error('Failed to start Reporunner instrumentation:', error);
-      throw error;
     }
+
+    // Configure metric exporters
+    const metricReaders = [];
+    if (this.config.metrics?.enabled) {
+      if (this.config.metrics.prometheus) {
+        metricReaders.push(
+          new PrometheusExporter({
+            port: this.config.metrics.prometheus.port,
+            endpoint: this.config.metrics.prometheus.endpoint,
+          })
+        );
+      }
+      if (this.config.metrics.otlp?.endpoint) {
+        metricReaders.push(
+          new OTLPMetricExporter({
+            url: this.config.metrics.otlp.endpoint,
+            headers: this.config.metrics.otlp.headers,
+          })
+        );
+      }
+    }
+
+    // Configure propagators
+    const propagator = new CompositePropagator({
+      propagators: [
+        new W3CTraceContextPropagator(),
+        new W3CBaggagePropagator(),
+        new B3Propagator(),
+        new JaegerPropagator(),
+      ],
+    });
+
+    // Create SDK
+    this.sdk = new NodeSDK({
+      resource: detectedResource,
+      instrumentations,
+      traceExporter: traceExporters.length > 0 ? traceExporters[0] : undefined,
+      metricReader: metricReaders.length > 0 ? metricReaders[0] : undefined,
+      textMapPropagator: propagator,
+    });
+
+    // Start the SDK
+    this.sdk.start();
   }
 
   /**
@@ -239,7 +230,6 @@ export class ReporunnerInstrumentation {
   public async stop(): Promise<void> {
     if (this.sdk) {
       await this.sdk.shutdown();
-      console.log('🛑 Reporunner instrumentation stopped');
     }
   }
 
@@ -270,7 +260,7 @@ export class WorkflowTracing {
   private static tracer = require('@opentelemetry/api').trace.getTracer('reporunner-workflow');
 
   static startWorkflowExecution(workflowId: string, executionId: string) {
-    return this.tracer.startSpan('workflow.execution', {
+    return WorkflowTracing.tracer.startSpan('workflow.execution', {
       attributes: {
         'reporunner.workflow.id': workflowId,
         'reporunner.execution.id': executionId,
@@ -280,7 +270,7 @@ export class WorkflowTracing {
   }
 
   static startNodeExecution(nodeId: string, nodeType: string, executionId: string) {
-    return this.tracer.startSpan('workflow.node.execution', {
+    return WorkflowTracing.tracer.startSpan('workflow.node.execution', {
       attributes: {
         'reporunner.node.id': nodeId,
         'reporunner.node.type': nodeType,
@@ -291,7 +281,7 @@ export class WorkflowTracing {
   }
 
   static startIntegrationCall(integration: string, operation: string) {
-    return this.tracer.startSpan('integration.call', {
+    return WorkflowTracing.tracer.startSpan('integration.call', {
       attributes: {
         'reporunner.integration.name': integration,
         'reporunner.integration.operation': operation,
@@ -418,7 +408,7 @@ export function getDefaultConfig(serviceName: string): InstrumentationConfig {
     metrics: {
       enabled: process.env.METRICS_ENABLED !== 'false',
       prometheus: {
-        port: parseInt(process.env.PROMETHEUS_PORT || '9464'),
+        port: parseInt(process.env.PROMETHEUS_PORT || '9464', 10),
         endpoint: process.env.PROMETHEUS_ENDPOINT || '/metrics',
       },
       otlp: {
@@ -438,7 +428,7 @@ export function getDefaultConfig(serviceName: string): InstrumentationConfig {
 
 // Export types
 export * from '@opentelemetry/api';
-export { InstrumentationConfig };
+export type { InstrumentationConfig };
 
 // Default export
 export default ReporunnerInstrumentation;

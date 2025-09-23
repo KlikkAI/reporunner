@@ -1,5 +1,5 @@
+import { EventEmitter } from 'node:events';
 import type { AxiosInstance } from 'axios';
-import { EventEmitter } from 'events';
 import type { OAuth2Handler } from '../auth/oauth2-handler';
 import type { CredentialManager } from '../security/credential-manager';
 import { WebhookManager } from '../webhook/webhook-manager';
@@ -250,7 +250,7 @@ export abstract class BaseIntegration extends EventEmitter {
     });
 
     const credential = credentials.find((cred) => cred.name === name);
-    if (credential && credential.id) {
+    if (credential?.id) {
       const fullCredential = await this.credentialManager.retrieveCredential(
         credential.id,
         this.context.userId

@@ -136,8 +136,7 @@ export const useAnalyticsStore = create<AnalyticsState>()(
           get().showPredictions ? get().generatePredictiveInsights(workflowId) : Promise.resolve(),
           get().showCostAnalysis ? get().generateCostOptimization(workflowId) : Promise.resolve(),
         ]);
-      } catch (error) {
-        console.error('Failed to load analytics:', error);
+      } catch (_error) {
         set({ isLoading: false });
       }
     },
@@ -193,27 +192,21 @@ export const useAnalyticsStore = create<AnalyticsState>()(
       try {
         const bottlenecks = analyticsService.detectBottlenecks(workflowId);
         set({ bottlenecks });
-      } catch (error) {
-        console.error('Failed to generate bottleneck analysis:', error);
-      }
+      } catch (_error) {}
     },
 
     generatePredictiveInsights: async (workflowId: string) => {
       try {
         const insights = analyticsService.generatePredictiveInsights(workflowId);
         set({ predictiveInsights: insights });
-      } catch (error) {
-        console.error('Failed to generate predictive insights:', error);
-      }
+      } catch (_error) {}
     },
 
     generateCostOptimization: async (workflowId: string) => {
       try {
         const optimization = analyticsService.generateCostOptimization(workflowId);
         set({ costOptimization: optimization });
-      } catch (error) {
-        console.error('Failed to generate cost optimization:', error);
-      }
+      } catch (_error) {}
     },
 
     setSelectedWorkflow: (workflowId: string | null) => {

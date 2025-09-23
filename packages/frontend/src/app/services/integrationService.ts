@@ -41,7 +41,6 @@ export class IntegrationService {
     } catch (error: any) {
       // If it's a 404, the endpoint doesn't exist yet
       if (error.statusCode === 404) {
-        console.warn('Integration status endpoint not implemented yet');
         return {};
       }
       throw new ApiClientError(

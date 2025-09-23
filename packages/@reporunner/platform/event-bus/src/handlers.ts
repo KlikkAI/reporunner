@@ -1,29 +1,25 @@
-import { Event, EventHandler } from './index';
+import type { Event, EventHandler } from './index';
 
 export class WorkflowEventHandler implements EventHandler {
-  async handle(event: Event): Promise<void> {
-    console.log(`Handling workflow event: ${event.type}`, event.data);
+  async handle(_event: Event): Promise<void> {
     // TODO: Implement workflow event handling
   }
 }
 
 export class ExecutionEventHandler implements EventHandler {
-  async handle(event: Event): Promise<void> {
-    console.log(`Handling execution event: ${event.type}`, event.data);
+  async handle(_event: Event): Promise<void> {
     // TODO: Implement execution event handling
   }
 }
 
 export class UserEventHandler implements EventHandler {
-  async handle(event: Event): Promise<void> {
-    console.log(`Handling user event: ${event.type}`, event.data);
+  async handle(_event: Event): Promise<void> {
     // TODO: Implement user event handling
   }
 }
 
 export class AuditEventHandler implements EventHandler {
-  async handle(event: Event): Promise<void> {
-    console.log(`Handling audit event: ${event.type}`, event.data);
+  async handle(_event: Event): Promise<void> {
     // TODO: Implement audit event handling
   }
 }

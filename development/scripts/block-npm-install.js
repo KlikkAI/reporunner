@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-const { execSync } = require('child_process');
+const { execSync } = require('node:child_process');
 
 // Check if npm or yarn is being used instead of pnpm
 const userAgent = process.env.npm_config_user_agent || '';
@@ -45,7 +45,7 @@ if (userAgent.includes('yarn') || execPath.includes('yarn')) {
 // Check pnpm version
 try {
   const pnpmVersion = execSync('pnpm --version', { encoding: 'utf8' }).trim();
-  const majorVersion = parseInt(pnpmVersion.split('.')[0]);
+  const majorVersion = parseInt(pnpmVersion.split('.')[0], 10);
 
   if (majorVersion < 8) {
     console.error(`❌ This repository requires pnpm version 8 or higher.`);
@@ -56,7 +56,7 @@ try {
     console.error('');
     process.exit(1);
   }
-} catch (error) {
+} catch (_error) {
   console.error('❌ pnpm is not installed or not available in PATH');
   console.error('');
   console.error('Install pnpm: npm install -g pnpm');

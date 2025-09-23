@@ -9,7 +9,13 @@ export interface WorkflowVersion {
 }
 
 export interface VersionChange {
-  type: 'node_added' | 'node_removed' | 'node_modified' | 'edge_added' | 'edge_removed' | 'settings_changed';
+  type:
+    | 'node_added'
+    | 'node_removed'
+    | 'node_modified'
+    | 'edge_added'
+    | 'edge_removed'
+    | 'settings_changed';
   nodeId?: string;
   edgeId?: string;
   before?: any;
@@ -17,22 +23,26 @@ export interface VersionChange {
 }
 
 export class WorkflowVersioning {
-  async createVersion(workflowId: string, changes: VersionChange[], createdBy: string): Promise<WorkflowVersion> {
+  async createVersion(
+    _workflowId: string,
+    _changes: VersionChange[],
+    _createdBy: string
+  ): Promise<WorkflowVersion> {
     // TODO: Implement version creation
     throw new Error('Not implemented');
   }
 
-  async getVersions(workflowId: string): Promise<WorkflowVersion[]> {
+  async getVersions(_workflowId: string): Promise<WorkflowVersion[]> {
     // TODO: Implement version listing
     return [];
   }
 
-  async getVersion(versionId: string): Promise<WorkflowVersion | null> {
+  async getVersion(_versionId: string): Promise<WorkflowVersion | null> {
     // TODO: Implement version retrieval
     return null;
   }
 
-  async setActiveVersion(workflowId: string, versionId: string): Promise<boolean> {
+  async setActiveVersion(_workflowId: string, _versionId: string): Promise<boolean> {
     // TODO: Implement version activation
     return false;
   }

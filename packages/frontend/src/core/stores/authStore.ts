@@ -39,7 +39,6 @@ export const useAuthStore = create<AuthState>()(
         set({ isLoading: true, error: null });
         try {
           const authResponse = await authApiService.login(credentials);
-          console.log('Login successful, setting auth state:', authResponse.user);
           set({
             user: authResponse.user,
             isAuthenticated: true,
@@ -47,7 +46,6 @@ export const useAuthStore = create<AuthState>()(
             error: null,
           });
         } catch (error: any) {
-          console.error('Login failed:', error);
           set({
             user: null,
             isAuthenticated: false,
@@ -83,8 +81,7 @@ export const useAuthStore = create<AuthState>()(
         set({ isLoading: true });
         try {
           await authApiService.logout();
-        } catch (error) {
-          console.warn('Logout API call failed:', error);
+        } catch (_error) {
         } finally {
           set({
             user: null,
@@ -111,8 +108,6 @@ export const useAuthStore = create<AuthState>()(
             error: null,
           });
         } catch (error: any) {
-          console.error('Failed to get user profile:', error);
-
           // Only clear auth state if the error is authentication-related
           // Don't clear if it's a network error or temporary issue
           if (error.status === 401 || error.code === 'TOKEN_REFRESH_ERROR') {

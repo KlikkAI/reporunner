@@ -445,7 +445,7 @@ export class AIModelService {
         models = models.filter((m) => m.organizationId === filter.organizationId);
       }
       if (filter.tags && filter.tags.length > 0) {
-        models = models.filter((m) => filter.tags!.some((tag) => m.tags.includes(tag)));
+        models = models.filter((m) => filter.tags?.some((tag) => m.tags.includes(tag)));
       }
     }
 
@@ -578,7 +578,7 @@ export class AIModelService {
     const finalMetrics: ModelMetrics = {
       accuracy: job.metrics.accuracy[job.metrics.accuracy.length - 1],
       lossValue: job.metrics.loss[job.metrics.loss.length - 1],
-      trainingTime: Date.now() - job.startedAt!.getTime(),
+      trainingTime: Date.now() - job.startedAt?.getTime(),
       inferenceTime: 50,
       modelSize: 1024 * 1024 * 500, // 500MB
       memoryUsage: 2048,

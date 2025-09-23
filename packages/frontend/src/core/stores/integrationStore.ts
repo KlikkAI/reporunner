@@ -23,7 +23,6 @@ export const useIntegrationStore = create<IntegrationState>((set) => ({
     // Pure Registry System: Check if integrations already loaded to prevent unnecessary calls
     const currentState = useIntegrationStore.getState();
     if (currentState.integrations.length > 0) {
-      console.log('Integrations already loaded, skipping API calls');
       return;
     }
 
@@ -82,9 +81,7 @@ export const useIntegrationStore = create<IntegrationState>((set) => ({
         } catch (error: any) {
           // Handle 404 errors gracefully - endpoint might not exist yet
           if (error.message?.includes('404') || error.message?.includes('Not Found')) {
-            console.warn('Integration status endpoint not available (404), using local data');
           } else {
-            console.warn('Failed to load integration statuses, using local data:', error);
           }
           // Fallback to local integrations without connection status
           set({
@@ -96,14 +93,12 @@ export const useIntegrationStore = create<IntegrationState>((set) => ({
 
       // Log registry statistics for development
       if (config.features.enableDebug) {
-        const stats = {
+        const _stats = {
           totalNodeTypes: nodeRegistry.getAllNodeTypes().length,
           totalCredentialTypes: nodeRegistry.getAllCredentialTypes().length,
         };
-        console.log('Node Registry Stats:', stats);
       }
-    } catch (error) {
-      console.error('Failed to load integrations:', error);
+    } catch (_error) {
       set({ integrations: [], connectedIntegrations: [] });
     } finally {
       set({ isLoading: false });
@@ -114,8 +109,6 @@ export const useIntegrationStore = create<IntegrationState>((set) => ({
     set({ isLoading: true });
     try {
       if (config.features.enableMockData) {
-        // Mock connection
-        console.log('Connecting integration (mock):', id, integrationConfig);
       } else {
         // Real API call to connect integration
         await integrationService.connectIntegration(id, integrationConfig);
@@ -131,9 +124,6 @@ export const useIntegrationStore = create<IntegrationState>((set) => ({
           connectedIntegrations: updatedIntegrations.filter((i) => i.isConnected),
         };
       });
-    } catch (error) {
-      console.error('Failed to connect integration:', error);
-      throw error;
     } finally {
       set({ isLoading: false });
     }
@@ -143,8 +133,6 @@ export const useIntegrationStore = create<IntegrationState>((set) => ({
     set({ isLoading: true });
     try {
       if (config.features.enableMockData) {
-        // Mock disconnection
-        console.log('Disconnecting integration (mock):', id);
       } else {
         // Real API call to disconnect integration
         await integrationService.disconnectIntegration(id);
@@ -160,9 +148,6 @@ export const useIntegrationStore = create<IntegrationState>((set) => ({
           connectedIntegrations: updatedIntegrations.filter((i) => i.isConnected),
         };
       });
-    } catch (error) {
-      console.error('Failed to disconnect integration:', error);
-      throw error;
     } finally {
       set({ isLoading: false });
     }

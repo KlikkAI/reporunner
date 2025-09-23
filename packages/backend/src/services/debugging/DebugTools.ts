@@ -3,8 +3,8 @@
  * Provides debugging capabilities for development and troubleshooting
  */
 
-import fs from 'fs';
-import path from 'path';
+import fs from 'node:fs';
+import path from 'node:path';
 import { logger } from '../logging/Logger.js';
 import { errorTracker } from '../monitoring/ErrorTracker.js';
 import { performanceMonitor } from '../monitoring/PerformanceMonitor.js';
@@ -400,7 +400,7 @@ class DebugToolsService {
     if (!this.debugHooks.has(eventType)) {
       this.debugHooks.set(eventType, []);
     }
-    this.debugHooks.get(eventType)!.push(callback);
+    this.debugHooks.get(eventType)?.push(callback);
   }
 
   public removeDebugHook(eventType: string, callback: Function): void {
@@ -549,11 +549,7 @@ class DebugToolsService {
 export class WorkflowDebugger {
   private info: WorkflowDebugInfo;
 
-  constructor(
-    workflowId: string,
-    executionId: string,
-    private debugTools: DebugToolsService
-  ) {
+  constructor(workflowId: string, executionId: string, _debugTools: DebugToolsService) {
     this.info = {
       workflowId,
       executionId,

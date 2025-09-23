@@ -45,7 +45,7 @@ export const ExecutionPanel: React.FC<ExecutionPanelProps> = ({
     if (autoScroll && consoleRef.current) {
       consoleRef.current.scrollTop = consoleRef.current.scrollHeight;
     }
-  }, [lastUpdateTimestamp, autoScroll]);
+  }, [autoScroll]);
 
   // Get all logs from all nodes
   const getAllLogs = () => {

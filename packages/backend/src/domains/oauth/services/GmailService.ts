@@ -244,7 +244,7 @@ export class GmailService {
       sender: getHeader('From'),
       senderName: getHeader('From').split('<')[0].trim() || getHeader('From'),
       threadid: messageData.threadId,
-      date: new Date(parseInt(messageData.internalDate)),
+      date: new Date(parseInt(messageData.internalDate, 10)),
       labels: messageData.labelIds || [],
       attachments,
       isUnread: messageData.labelIds?.includes('UNREAD') || false,
@@ -258,7 +258,7 @@ export class GmailService {
    * Extract body from message payload
    */
   private extractBody(payload: any, result: { text: string; html: string }) {
-    if (payload.body && payload.body.data) {
+    if (payload.body?.data) {
       const data = Buffer.from(payload.body.data, 'base64').toString('utf-8');
       if (payload.mimeType === 'text/plain') {
         result.text = data;

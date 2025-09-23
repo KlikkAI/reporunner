@@ -142,8 +142,8 @@ const ConditionNodeBody: React.FC<CustomNodeBodyProps> = ({
             {/* Shared NodeToolbar */}
             <NodeToolbar
               visible={isHovered}
-              onPlay={() => console.log('Play Condition:', nodeId)}
-              onStop={() => console.log('Stop Condition:', nodeId)}
+              onPlay={() => {}}
+              onStop={() => {}}
               onDelete={(e) => {
                 e.stopPropagation();
                 onDelete?.();
@@ -173,7 +173,6 @@ const ConditionNodeBody: React.FC<CustomNodeBodyProps> = ({
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
-                    console.log('Test Condition:', nodeId);
                     setShowLocalMenu(false);
                   }}
                   className="w-full px-3 py-1.5 text-left text-sm text-gray-200 hover:bg-gray-700 flex items-center gap-2"
@@ -183,7 +182,6 @@ const ConditionNodeBody: React.FC<CustomNodeBodyProps> = ({
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
-                    console.log('Copy Condition:', nodeId);
                     setShowLocalMenu(false);
                   }}
                   className="w-full px-3 py-1.5 text-left text-sm text-gray-200 hover:bg-gray-700 flex items-center gap-2"
@@ -193,7 +191,6 @@ const ConditionNodeBody: React.FC<CustomNodeBodyProps> = ({
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
-                    console.log('Duplicate Condition:', nodeId);
                     setShowLocalMenu(false);
                   }}
                   className="w-full px-3 py-1.5 text-left text-sm text-gray-200 hover:bg-gray-700 flex items-center gap-2"

@@ -2,12 +2,11 @@
  * Encryption and security utilities
  */
 
-import crypto from 'crypto';
+import crypto from 'node:crypto';
 // Note: bcrypt would need to be installed: npm install bcrypt @types/bcrypt
 
 export class EncryptionUtils {
   private static readonly ALGORITHM = 'aes-256-gcm';
-  private static readonly SALT_ROUNDS = 12;
 
   /**
    * Encrypt sensitive data
@@ -49,7 +48,7 @@ export class EncryptionUtils {
   /**
    * Hash password using bcrypt (requires bcrypt package)
    */
-  static async hashPassword(password: string): Promise<string> {
+  static async hashPassword(_password: string): Promise<string> {
     // return bcrypt.hash(password, this.SALT_ROUNDS);
     throw new Error('bcrypt package not installed. Run: npm install bcrypt @types/bcrypt');
   }
@@ -57,7 +56,7 @@ export class EncryptionUtils {
   /**
    * Compare password with hash (requires bcrypt package)
    */
-  static async comparePassword(password: string, hash: string): Promise<boolean> {
+  static async comparePassword(_password: string, _hash: string): Promise<boolean> {
     // return bcrypt.compare(password, hash);
     throw new Error('bcrypt package not installed. Run: npm install bcrypt @types/bcrypt');
   }

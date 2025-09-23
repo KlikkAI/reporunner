@@ -374,7 +374,7 @@ const ConditionRuleCard: React.FC<{
     if (rule.operator && !operators.find((op) => op.value === rule.operator)) {
       onUpdate({ operator: operators[0]?.value || 'equals' });
     }
-  }, [rule.field, rule.operator, operators, onUpdate, rule.id]);
+  }, [rule.operator, operators, onUpdate]);
 
   return (
     <div
@@ -624,7 +624,7 @@ const SmartValueInput: React.FC<{
     // Number values - using safer regex pattern
     const integerPattern = /^-?\d+$/;
     const floatPattern = /^-?\d*\.\d+$/;
-    if (integerPattern.test(trimmed)) return { type: 'number', parsedValue: parseInt(trimmed) };
+    if (integerPattern.test(trimmed)) return { type: 'number', parsedValue: parseInt(trimmed, 10) };
     if (floatPattern.test(trimmed)) return { type: 'number', parsedValue: parseFloat(trimmed) };
 
     // JSON values
@@ -918,7 +918,7 @@ const SmartFieldSelector: React.FC<{
               Example:{' '}
               <code className="bg-gray-700 px-1 rounded">
                 {typeof selectedField.example === 'string' && selectedField.example.length > 50
-                  ? selectedField.example.substring(0, 50) + '...'
+                  ? `${selectedField.example.substring(0, 50)}...`
                   : JSON.stringify(selectedField.example)}
               </code>
             </div>
@@ -957,7 +957,7 @@ const SmartFieldSelector: React.FC<{
                       {field.type === 'json-string'
                         ? 'JSON'
                         : field.isVirtual
-                          ? field.type + ' (parsed)'
+                          ? `${field.type} (parsed)`
                           : field.type}
                     </span>
                     {field.isVirtual && <span className="text-blue-400 text-xs">📋 Virtual</span>}
@@ -980,7 +980,7 @@ const SmartFieldSelector: React.FC<{
               {field.example !== undefined && (
                 <div className="mt-1 text-xs text-gray-500 truncate">
                   {typeof field.example === 'string' && field.example.length > 60
-                    ? field.example.substring(0, 60) + '...'
+                    ? `${field.example.substring(0, 60)}...`
                     : JSON.stringify(field.example)}
                 </div>
               )}

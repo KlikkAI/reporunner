@@ -418,11 +418,11 @@ export class ResourceManager {
   }
 
   private async findBetterPool(
-    workflowId: string,
+    _workflowId: string,
     currentPoolId: string,
     profile: WorkflowResourceProfile
   ): Promise<ResourcePool | undefined> {
-    const otherPools = Array.from(this.pools.values()).filter(
+    const _otherPools = Array.from(this.pools.values()).filter(
       (p) => p.id !== currentPoolId && p.status === 'available'
     );
 
@@ -494,5 +494,5 @@ export class ResourceManager {
   }
 }
 
-export * from './scaling';
 export * from './monitoring';
+export * from './scaling';

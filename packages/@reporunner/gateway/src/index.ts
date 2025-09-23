@@ -27,8 +27,8 @@ export interface Route {
 }
 
 export class APIGateway {
-  // @ts-ignore: Config will be used in future implementation
-  constructor(private config: GatewayConfig) {}
+  // @ts-expect-error: Config will be used in future implementation
+  constructor(_config: GatewayConfig) {}
 
   async start(): Promise<void> {
     // TODO: Implement gateway startup

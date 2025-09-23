@@ -187,10 +187,10 @@ export class WorkflowStateStore {
 
     if (query.startTime) {
       if (query.startTime.from) {
-        states = states.filter((s) => s.startTime >= query.startTime!.from!);
+        states = states.filter((s) => s.startTime >= query.startTime?.from!);
       }
       if (query.startTime.to) {
-        states = states.filter((s) => s.startTime <= query.startTime!.to!);
+        states = states.filter((s) => s.startTime <= query.startTime?.to!);
       }
     }
 

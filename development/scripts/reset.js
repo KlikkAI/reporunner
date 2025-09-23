@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
-const { execSync } = require('child_process');
-const { existsSync, rmSync } = require('fs');
-const path = require('path');
+const { execSync } = require('node:child_process');
+const { existsSync, rmSync } = require('node:fs');
+const path = require('node:path');
 const { globSync } = require('glob');
 
 console.log('🧹 Resetting repository...');

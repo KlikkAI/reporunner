@@ -35,8 +35,9 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "type-check": "tsc --noEmit",
-    "lint": "eslint src/**/*.{ts,tsx}",
-    "lint:fix": "eslint src/**/*.{ts,tsx} --fix",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "format": "biome format --write .",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
   },
@@ -68,8 +69,7 @@
     "typescript": "catalog:",
     "@types/node": "catalog:",
     "jest": "catalog:",
-    "@types/jest": "catalog:",
-    "eslint": "catalog:"
+    "@types/jest": "catalog:"
   },
   "peerDependencies": {
     "react": "^18.0.0",

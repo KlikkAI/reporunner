@@ -1,18 +1,16 @@
+import { randomBytes } from 'node:crypto';
 import {
   type ILoginRequest,
   type ILoginResponse,
-  IOrganization,
   type IRegisterRequest,
   type IUser,
-  PermissionType,
   UserRole,
 } from '@reporunner/api-types';
-import { AUTH, ERROR_CODES, MESSAGES } from '@reporunner/constants';
+import { AUTH, ERROR_CODES } from '@reporunner/constants';
 import type { DatabaseService } from '@reporunner/database';
 import bcrypt from 'bcrypt';
-import { createHash, randomBytes } from 'crypto';
 import { v4 as uuidv4 } from 'uuid';
-import { type TokenManager, TokenPair } from '../jwt/token-manager';
+import type { TokenManager } from '../jwt/token-manager';
 import { PermissionEngine } from '../rbac/permission-engine';
 
 export interface AuthServiceConfig {
@@ -295,7 +293,7 @@ export class AuthService {
         expiresIn: tokenPair.expiresIn,
         user,
       };
-    } catch (error) {
+    } catch (_error) {
       throw new AuthError('SSO login failed', ERROR_CODES.AUTH_INVALID_CREDENTIALS);
     }
   }
@@ -355,7 +353,7 @@ export class AuthService {
 
       // Log event
       await this.db.postgres.logEvent('user.logout', userId, { sessionId });
-    } catch (error) {
+    } catch (_error) {
       throw new AuthError('Logout failed', ERROR_CODES.SYSTEM_ERROR);
     }
   }
@@ -391,10 +389,7 @@ export class AuthService {
 
       // Send reset email
       await this.sendPasswordResetEmail(user.email, user.firstName, resetToken);
-    } catch (error) {
-      // Silent fail for security
-      console.error('Password reset request failed:', error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -549,7 +544,7 @@ export class AuthService {
     );
   }
 
-  private async verifyMFACode(userId: string, code: string): Promise<boolean> {
+  private async verifyMFACode(_userId: string, _code: string): Promise<boolean> {
     // TODO: Implement MFA verification (TOTP, SMS, etc.)
     return true;
   }

@@ -145,8 +145,7 @@ export class AIAssistantService {
 
       this.suggestionsCache.set(cacheKey, suggestions);
       return suggestions;
-    } catch (error) {
-      console.error('Workflow analysis failed:', error);
+    } catch (_error) {
       return [];
     }
   }
@@ -162,8 +161,7 @@ export class AIAssistantService {
     try {
       const analysis = this.analyzeNodeContext(workflow, position, context);
       return this.generateNodeSuggestions(analysis);
-    } catch (error) {
-      console.error('Node suggestion generation failed:', error);
+    } catch (_error) {
       return [];
     }
   }
@@ -180,8 +178,7 @@ export class AIAssistantService {
       const diagnoses = this.generateErrorDiagnoses(workflow, errorPatterns);
 
       return diagnoses;
-    } catch (error) {
-      console.error('Error diagnosis failed:', error);
+    } catch (_error) {
       return [];
     }
   }
@@ -198,8 +195,7 @@ export class AIAssistantService {
       const optimizations = this.generatePerformanceOptimizations(workflow, bottlenecks);
 
       return optimizations;
-    } catch (error) {
-      console.error('Performance analysis failed:', error);
+    } catch (_error) {
       return [];
     }
   }
@@ -211,8 +207,7 @@ export class AIAssistantService {
     try {
       const patterns = this.detectPatterns(workflow);
       return this.generatePatternSuggestions(patterns);
-    } catch (error) {
-      console.error('Pattern analysis failed:', error);
+    } catch (_error) {
       return [];
     }
   }

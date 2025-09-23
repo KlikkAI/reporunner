@@ -288,14 +288,10 @@ export class CredentialApiService {
    * No technical setup required - just provide a name for the credential
    */
   async startGmailOAuthFlow(credentialName: string, returnUrl?: string): Promise<void> {
-    try {
-      const { authUrl } = await this.initiateGmailOAuth(credentialName, returnUrl);
+    const { authUrl } = await this.initiateGmailOAuth(credentialName, returnUrl);
 
-      // Redirect user to Google OAuth consent page
-      window.location.href = authUrl;
-    } catch (error) {
-      throw error;
-    }
+    // Redirect user to Google OAuth consent page
+    window.location.href = authUrl;
   }
 
   /**

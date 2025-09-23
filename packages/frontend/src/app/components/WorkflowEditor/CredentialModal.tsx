@@ -22,8 +22,6 @@ const CredentialModal: React.FC<CredentialModalProps> = ({
   onSave,
   editingCredential,
 }) => {
-  // Debug logging
-  console.log('🔧 CredentialModal render - isOpen:', isOpen, 'credentialType:', credentialType);
   const [credentialName, setCredentialName] = useState('');
   const [authType, setAuthType] = useState('oAuth2');
   const [clientId, setClientId] = useState('');
@@ -68,10 +66,6 @@ const CredentialModal: React.FC<CredentialModalProps> = ({
   // Populate form when editing existing credential
   React.useEffect(() => {
     if (editingCredential) {
-      console.log('Editing credential:', editingCredential);
-      console.log('Is AI Provider:', isAIProvider);
-      console.log('Credential data:', editingCredential.data);
-
       setCredentialName(editingCredential.name || '');
       if (isAIProvider && editingCredential.data) {
         // For AI providers, populate form data
@@ -90,7 +84,6 @@ const CredentialModal: React.FC<CredentialModalProps> = ({
         }
 
         setCredentialData(populatedData);
-        console.log('Populated credential data for AI provider:', populatedData);
       } else if (editingCredential.data) {
         setAuthType(editingCredential.data.authType || 'oAuth2');
         setClientId(editingCredential.data.clientId || '');
@@ -108,7 +101,6 @@ const CredentialModal: React.FC<CredentialModalProps> = ({
   }, [editingCredential, isAIProvider, credentialTypeDef]);
 
   if (!isOpen) {
-    console.log('🔧 CredentialModal early return - not open');
     return null;
   }
 
@@ -143,11 +135,6 @@ const CredentialModal: React.FC<CredentialModalProps> = ({
         testOnCreate: true,
       };
 
-      console.log(`${editingCredential ? 'Updating' : 'Creating'} credential:`, {
-        ...credentialPayload,
-        data: '***encrypted***',
-      });
-
       let savedCredential;
       if (editingCredential) {
         // Update existing credential
@@ -159,8 +146,6 @@ const CredentialModal: React.FC<CredentialModalProps> = ({
         // Create new credential
         savedCredential = await credentialApiService.createCredential(credentialPayload);
       }
-
-      console.log('Credential saved successfully:', savedCredential.id);
 
       // Create the credential object for the UI
       const credentialForUI = {
@@ -189,7 +174,6 @@ const CredentialModal: React.FC<CredentialModalProps> = ({
       setCredentialData({});
       setTestResult(null);
     } catch (error: any) {
-      console.error('Failed to save credential:', error);
       alert(`Failed to save credential: ${error.message}`);
     }
   };
@@ -244,9 +228,7 @@ const CredentialModal: React.FC<CredentialModalProps> = ({
         // Even if test fails, delete the credential
         try {
           await credentialApiService.deleteCredential(testCredentialId);
-        } catch (deleteError) {
-          console.warn('Failed to delete test credential:', deleteError);
-        }
+        } catch (_deleteError) {}
 
         setTestResult({
           success: false,
@@ -254,7 +236,6 @@ const CredentialModal: React.FC<CredentialModalProps> = ({
         });
       }
     } catch (error: any) {
-      console.error('Failed to test credential:', error);
       setTestResult({
         success: false,
         message: error.message || 'Failed to test credential',
@@ -278,12 +259,9 @@ const CredentialModal: React.FC<CredentialModalProps> = ({
         window.location.pathname.includes('/workflow/') &&
         (nodes.length > 0 || edges.length > 0)
       ) {
-        console.log('Auto-saving workflow before OAuth redirect...');
         try {
           await saveWorkflow();
-          console.log('Workflow auto-saved successfully');
-        } catch (saveError) {
-          console.warn('Failed to auto-save workflow:', saveError);
+        } catch (_saveError) {
           // Continue with OAuth even if save fails
         }
       }
@@ -292,7 +270,6 @@ const CredentialModal: React.FC<CredentialModalProps> = ({
       await credentialApiService.startGmailOAuthFlow(credentialName, window.location.href);
       // User will be redirected, so we don't need to do anything else
     } catch (error: any) {
-      console.error('Failed to start Gmail OAuth:', error);
       alert(error.message || 'Failed to connect with Gmail');
       setIsConnecting(false);
     }

@@ -51,7 +51,6 @@ export interface AuthPayload {
 
 export class AuthMiddleware {
   private userRepository: UserRepository;
-  private permissionService: PermissionService;
 
   constructor() {
     this.userRepository = new UserRepository();
@@ -61,7 +60,7 @@ export class AuthMiddleware {
   /**
    * Verify JWT token and attach user to request
    */
-  authenticate = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  authenticate = async (req: Request, _res: Response, next: NextFunction): Promise<void> => {
     try {
       const token = this.extractToken(req);
       if (!token) {
@@ -120,7 +119,7 @@ export class AuthMiddleware {
       }
 
       await this.authenticate(req, res, next);
-    } catch (error) {
+    } catch (_error) {
       // For optional auth, continue without user data
       next();
     }
@@ -130,7 +129,7 @@ export class AuthMiddleware {
    * Require specific permission
    */
   requirePermission = (permission: Permission) => {
-    return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    return async (req: Request, _res: Response, next: NextFunction): Promise<void> => {
       try {
         if (!req.user) {
           throw new AppError('Authentication required', 401);
@@ -157,7 +156,7 @@ export class AuthMiddleware {
    * Require one of multiple permissions
    */
   requireAnyPermission = (permissions: Permission[]) => {
-    return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    return async (req: Request, _res: Response, next: NextFunction): Promise<void> => {
       try {
         if (!req.user) {
           throw new AppError('Authentication required', 401);
@@ -170,7 +169,7 @@ export class AuthMiddleware {
 
         // Check if user has any of the required permissions
         const hasPermission = permissions.some((permission) =>
-          req.user!.permissions.includes(permission)
+          req.user?.permissions.includes(permission)
         );
 
         if (!hasPermission) {
@@ -190,7 +189,7 @@ export class AuthMiddleware {
   requireRole = (roles: string | string[]) => {
     const roleArray = Array.isArray(roles) ? roles : [roles];
 
-    return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    return async (req: Request, _res: Response, next: NextFunction): Promise<void> => {
       try {
         if (!req.user) {
           throw new AppError('Authentication required', 401);
@@ -212,7 +211,7 @@ export class AuthMiddleware {
    */
   requireEmailVerification = async (
     req: Request,
-    res: Response,
+    _res: Response,
     next: NextFunction
   ): Promise<void> => {
     try {
@@ -234,7 +233,7 @@ export class AuthMiddleware {
    * Check resource ownership or admin access
    */
   requireOwnershipOrAdmin = (resourceUserIdField: string = 'userId') => {
-    return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    return async (req: Request, _res: Response, next: NextFunction): Promise<void> => {
       try {
         if (!req.user) {
           throw new AppError('Authentication required', 401);
@@ -312,7 +311,7 @@ export class AuthMiddleware {
   /**
    * Organization context validation
    */
-  requireOrganization = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  requireOrganization = async (req: Request, _res: Response, next: NextFunction): Promise<void> => {
     try {
       if (!req.user) {
         throw new AppError('Authentication required', 401);
@@ -334,12 +333,12 @@ export class AuthMiddleware {
   private extractToken(req: Request): string | null {
     // Check Authorization header
     const authHeader = req.headers.authorization;
-    if (authHeader && authHeader.startsWith('Bearer ')) {
+    if (authHeader?.startsWith('Bearer ')) {
       return authHeader.substring(7);
     }
 
     // Legacy support for bearer (lowercase)
-    if (authHeader && authHeader.toLowerCase().startsWith('bearer ')) {
+    if (authHeader?.toLowerCase().startsWith('bearer ')) {
       return authHeader.split(' ')[1];
     }
 
@@ -349,12 +348,12 @@ export class AuthMiddleware {
     }
 
     // Check cookies (for browser requests)
-    if (req.cookies && req.cookies.token) {
+    if (req.cookies?.token) {
       return req.cookies.token;
     }
 
     // Check query parameter (for websocket connections)
-    if (req.query && req.query.token && typeof req.query.token === 'string') {
+    if (req.query?.token && typeof req.query.token === 'string') {
       return req.query.token;
     }
 

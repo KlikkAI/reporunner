@@ -175,8 +175,7 @@ class DisplayOptionsEvaluator {
     const resource = this.getFieldValue(resourceDependent.resource);
     try {
       return resourceDependent.condition(resource);
-    } catch (error) {
-      console.warn('Resource-dependent condition evaluation failed:', error);
+    } catch (_error) {
       return false;
     }
   }
@@ -211,7 +210,6 @@ class DisplayOptionsEvaluator {
           return false;
         }
       default:
-        console.warn(`Unknown operator: ${operator}`);
         return false;
     }
   }
@@ -444,9 +442,6 @@ export const PropertyGroupRenderer: React.FC<PropertyGroupRendererProps> = ({
       // Find and trigger re-evaluation of dependent properties
       const dependentProperties = dependencyTracker.getDependents(fieldName);
       if (dependentProperties.length > 0) {
-        console.log(
-          `Field ${fieldName} changed, triggering re-evaluation of: ${dependentProperties.join(', ')}`
-        );
         // The parent component should handle this by updating its state
       }
     },

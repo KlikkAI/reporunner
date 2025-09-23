@@ -52,10 +52,7 @@ const GmailPropertiesPanel: React.FC<CustomPropertiesPanelProps> = ({
   const [formState] = useState<Record<string, any>>({});
 
   // Mock function for property changes (to be implemented)
-  const handlePropertyChange = (_key: string, _value: any) => {
-    // TODO: Implement property change handling
-    console.log('Property change:', _key, _value);
-  };
+  const handlePropertyChange = (_key: string, _value: any) => {};
   const [connectionStatus, setConnectionStatus] = useState<
     'unknown' | 'connected' | 'error' | 'testing'
   >('unknown');
@@ -89,7 +86,7 @@ const GmailPropertiesPanel: React.FC<CustomPropertiesPanelProps> = ({
         setConnectionStatus('error');
         setTestResults(result);
       }
-    } catch (error) {
+    } catch (_error) {
       setConnectionStatus('error');
       setTestResults({ success: false, message: 'Connection test failed' });
     } finally {
@@ -102,9 +99,7 @@ const GmailPropertiesPanel: React.FC<CustomPropertiesPanelProps> = ({
     try {
       const result = await onTest?.();
       setTestResults(result);
-    } catch (error) {
-      console.error('Failed to preview emails:', error);
-    }
+    } catch (_error) {}
   };
 
   // Polling frequency options

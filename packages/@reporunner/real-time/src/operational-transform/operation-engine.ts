@@ -1,4 +1,4 @@
-import { EventEmitter } from 'events';
+import { EventEmitter } from 'node:events';
 
 /**
  * Operation types for workflow transformations
@@ -64,10 +64,6 @@ export class OperationalTransform extends EventEmitter {
   private pendingOperations: Map<string, Operation[]> = new Map();
   private currentVersion: number = 0;
   private maxHistorySize: number = 1000;
-
-  constructor() {
-    super();
-  }
 
   /**
    * Apply an operation to the workflow

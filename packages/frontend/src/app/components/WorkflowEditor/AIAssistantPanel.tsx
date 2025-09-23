@@ -78,7 +78,7 @@ const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({
       loadSuggestions();
       loadAnalysis();
     }
-  }, [workflow]);
+  }, [workflow, loadAnalysis, loadSuggestions]);
 
   const loadSuggestions = useCallback(async () => {
     if (!workflow) return;
@@ -86,9 +86,7 @@ const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({
     try {
       const workflowSuggestions = await aiAssistantService.analyzeWorkflow(workflow);
       setSuggestions(workflowSuggestions);
-    } catch (error) {
-      console.error('Failed to load suggestions:', error);
-    }
+    } catch (_error) {}
   }, [workflow]);
 
   const loadAnalysis = useCallback(async () => {
@@ -119,9 +117,7 @@ const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({
         },
       };
       setAnalysis(mockAnalysis);
-    } catch (error) {
-      console.error('Failed to load analysis:', error);
-    }
+    } catch (_error) {}
   }, [workflow]);
 
   const handleGenerateWorkflow = useCallback(async () => {
@@ -151,7 +147,7 @@ const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({
           </div>
         ),
       });
-    } catch (error) {
+    } catch (_error) {
       Modal.error({
         title: 'Generation Failed',
         content: 'Failed to generate workflow from natural language description.',

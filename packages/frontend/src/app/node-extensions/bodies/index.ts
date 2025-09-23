@@ -18,14 +18,6 @@ import DatabaseNodeBody from './DatabaseNodeBody';
 export function registerSpecializedComponents(): void {
   // Register new components
   registerCustomBodyComponent('DatabaseNodeBody', DatabaseNodeBody);
-  // TransformNodeBody is registered in nodeUiRegistry.ts
-
-  // Example of lazy loading registration for future components
-  // registerLazyBodyComponent('EmailNodeBody', () => import('./EmailNodeBody'))
-  // registerLazyBodyComponent('WebhookNodeBody', () => import('./WebhookNodeBody'))
-  // registerLazyBodyComponent('LoopNodeBody', () => import('./LoopNodeBody'))
-
-  console.log('Specialized node body components registered');
 }
 
 // Auto-register when imported

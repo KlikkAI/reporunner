@@ -35,7 +35,7 @@ if (process.env.NODE_ENV !== 'test') {
 }
 
 // API Routes
-app.get('/', (req: Request, res: Response) => {
+app.get('/', (_req: Request, res: Response) => {
   res.json({
     message: 'Workflow Automation Backend API is running',
     status: 'healthy',

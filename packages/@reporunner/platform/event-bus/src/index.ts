@@ -26,16 +26,16 @@ export class EventBus {
     const fullEvent: Event = {
       ...event,
       id: this.generateId(),
-      timestamp: new Date()
+      timestamp: new Date(),
     };
 
     this.eventHistory.push(fullEvent);
-    
+
     const handlers = this.subscriptions.get(event.type) || [];
     await Promise.all(
       handlers
-        .filter(sub => !sub.filter || sub.filter(fullEvent))
-        .map(sub => sub.handler.handle(fullEvent))
+        .filter((sub) => !sub.filter || sub.filter(fullEvent))
+        .map((sub) => sub.handler.handle(fullEvent))
     );
   }
 
@@ -44,20 +44,20 @@ export class EventBus {
       id: this.generateId(),
       eventType,
       handler,
-      filter
+      filter,
     };
 
     if (!this.subscriptions.has(eventType)) {
       this.subscriptions.set(eventType, []);
     }
-    this.subscriptions.get(eventType)!.push(subscription);
+    this.subscriptions.get(eventType)?.push(subscription);
 
     return subscription.id;
   }
 
   unsubscribe(subscriptionId: string): boolean {
-    for (const [eventType, subs] of this.subscriptions.entries()) {
-      const index = subs.findIndex(sub => sub.id === subscriptionId);
+    for (const [_eventType, subs] of this.subscriptions.entries()) {
+      const index = subs.findIndex((sub) => sub.id === subscriptionId);
       if (index !== -1) {
         subs.splice(index, 1);
         return true;

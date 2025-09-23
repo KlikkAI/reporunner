@@ -10,8 +10,9 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "type-check": "tsc --noEmit",
-    "lint": "eslint src/**/*.ts",
-    "lint:fix": "eslint src/**/*.ts --fix",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "format": "biome format --write .",
     "migrate": "tsx src/scripts/migrate.ts",
     "seed": "tsx src/scripts/seed.ts",
     "db:setup": "tsx src/scripts/setup.ts",
@@ -49,7 +50,6 @@
     "jest": "catalog:",
     "@types/jest": "catalog:",
     "tsup": "^7.0.0",
-    "vitest": "catalog:",
-    "eslint": "catalog:"
+    "vitest": "catalog:"
   }
 }

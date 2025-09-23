@@ -72,7 +72,6 @@ export class DelayNode implements INodeType {
       case 'hours':
         delayMs = amount * 60 * 60 * 1000;
         break;
-      case 'milliseconds':
       default:
         delayMs = amount;
         break;

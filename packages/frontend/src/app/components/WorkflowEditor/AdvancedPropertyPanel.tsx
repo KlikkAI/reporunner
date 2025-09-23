@@ -248,15 +248,9 @@ const ConfigurationPanel: React.FC<{ nodeId: string }> = ({ nodeId }) => {
     setErrors(result.errors);
   }, []);
 
-  const handleTest = useCallback(async () => {
-    // Implement node testing
-    console.log('Testing node:', nodeId, 'with parameters:', formState);
-  }, [nodeId, formState]);
+  const handleTest = useCallback(async () => {}, []);
 
-  const handleSave = useCallback(async () => {
-    // Save node configuration
-    console.log('Saving node configuration:', nodeId);
-  }, [nodeId]);
+  const handleSave = useCallback(async () => {}, []);
 
   const actions = [
     <Tooltip key="test" title="Test node">

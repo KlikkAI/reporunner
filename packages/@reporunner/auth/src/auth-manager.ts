@@ -1,5 +1,5 @@
+import { EventEmitter } from 'node:events';
 import bcrypt from 'bcryptjs';
-import { EventEmitter } from 'events';
 import jwt from 'jsonwebtoken';
 import {
   type AuthCredentials,
@@ -116,8 +116,7 @@ export class AuthManager extends EventEmitter {
         refreshToken,
         expiresIn: this.getTokenExpiration(),
       };
-    } catch (error) {
-      console.error('Authentication error:', error);
+    } catch (_error) {
       return { success: false, error: 'Authentication failed' };
     }
   }
@@ -173,7 +172,7 @@ export class AuthManager extends EventEmitter {
         refreshToken,
         expiresIn: this.getTokenExpiration(),
       };
-    } catch (error) {
+    } catch (_error) {
       return { success: false, error: 'Invalid two-factor token' };
     }
   }
@@ -219,8 +218,8 @@ export class AuthManager extends EventEmitter {
       }
 
       const user = await this.config.database.findUserById(decoded.sub);
-      return user && user.isActive ? user : null;
-    } catch (error) {
+      return user?.isActive ? user : null;
+    } catch (_error) {
       return null;
     }
   }
@@ -243,7 +242,7 @@ export class AuthManager extends EventEmitter {
 
       const token = this.generateAccessToken(user);
       return { token };
-    } catch (error) {
+    } catch (_error) {
       return null;
     }
   }
@@ -283,8 +282,7 @@ export class AuthManager extends EventEmitter {
 
       await this.emitAuthEvent(AuthEvent.PASSWORD_CHANGED, { userId });
       return true;
-    } catch (error) {
-      console.error('Password change error:', error);
+    } catch (_error) {
       return false;
     }
   }
@@ -347,14 +345,14 @@ export class AuthManager extends EventEmitter {
    * Get token expiration in seconds
    */
   private getTokenExpiration(): number {
-    return parseInt(this.config.tokenExpiration) || 3600; // 1 hour default
+    return parseInt(this.config.tokenExpiration, 10) || 3600; // 1 hour default
   }
 
   /**
    * Get refresh token expiration in seconds
    */
   private getRefreshTokenExpiration(): number {
-    return parseInt(this.config.refreshTokenExpiration) || 604800; // 7 days default
+    return parseInt(this.config.refreshTokenExpiration, 10) || 604800; // 7 days default
   }
 
   /**

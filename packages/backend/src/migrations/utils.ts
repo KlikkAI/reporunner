@@ -2,9 +2,9 @@
  * Migration utilities and helpers
  */
 
-import crypto from 'crypto';
-import fs from 'fs/promises';
-import path from 'path';
+import crypto from 'node:crypto';
+import fs from 'node:fs/promises';
+import path from 'node:path';
 import type { IMigration, IMigrationRecord } from './types.js';
 
 export class MigrationUtils {

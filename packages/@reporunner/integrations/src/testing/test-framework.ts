@@ -1,6 +1,6 @@
-import { EventEmitter } from 'events';
+import { EventEmitter } from 'node:events';
+import type { Server } from 'node:http';
 import express, { type Express, type Request, type Response } from 'express';
-import type { Server } from 'http';
 import type {
   BaseIntegration,
   IntegrationConfig,
@@ -65,7 +65,7 @@ export class MockServer extends EventEmitter {
 
     // Request logging middleware
     if (this.config.logRequests) {
-      this.app.use((req: Request, res: Response, next) => {
+      this.app.use((req: Request, _res: Response, next) => {
         const log: RequestLog = {
           method: req.method,
           path: req.path,
@@ -84,7 +84,7 @@ export class MockServer extends EventEmitter {
 
     // Error simulation middleware
     if (this.config.errorRate && this.config.errorRate > 0) {
-      this.app.use((req: Request, res: Response, next) => {
+      this.app.use((_req: Request, res: Response, next) => {
         if (Math.random() < this.config.errorRate!) {
           return res.status(500).json({ error: 'Simulated server error' });
         }
@@ -94,7 +94,7 @@ export class MockServer extends EventEmitter {
 
     // Response delay middleware
     if (this.config.responseDelay && this.config.responseDelay > 0) {
-      this.app.use((req: Request, res: Response, next) => {
+      this.app.use((_req: Request, _res: Response, next) => {
         setTimeout(next, this.config.responseDelay);
       });
     }
@@ -173,7 +173,7 @@ export class MockServer extends EventEmitter {
     }
 
     return new Promise((resolve) => {
-      this.server!.close(() => {
+      this.server?.close(() => {
         this.isRunning = false;
         this.emit('server:stopped');
         resolve();

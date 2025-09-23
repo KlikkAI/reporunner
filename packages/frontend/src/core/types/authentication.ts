@@ -410,7 +410,7 @@ export const evaluateConditions = (conditions: AccessCondition[], context: any):
 export const getContextValue = (context: any, type: string): any => {
   switch (type) {
     case 'time':
-      return new Date().getTime();
+      return Date.now();
     case 'ip':
       return context?.ipAddress;
     case 'location':

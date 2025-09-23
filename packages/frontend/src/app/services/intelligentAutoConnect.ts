@@ -154,8 +154,7 @@ export class IntelligentAutoConnectService {
 
       // For regular connections, allow if both nodes support standard connection types
       return true;
-    } catch (error) {
-      console.warn('Connection validation failed:', error);
+    } catch (_error) {
       return true; // Allow connection on validation error
     }
   }

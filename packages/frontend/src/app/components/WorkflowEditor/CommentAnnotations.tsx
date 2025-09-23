@@ -125,10 +125,8 @@ export const CommentAnnotations: React.FC<CommentAnnotationsProps> = ({
 
       setNewCommentContent('');
       setPendingCommentPosition(null);
-    } catch (error) {
-      console.error('Failed to add comment:', error);
-    }
-  }, [newCommentContent, pendingCommentPosition, addComment]);
+    } catch (_error) {}
+  }, [newCommentContent, pendingCommentPosition, addComment, currentWorkflow?.id]);
 
   // Handle replying to comment
   const handleReplyToComment = useCallback(
@@ -139,9 +137,7 @@ export const CommentAnnotations: React.FC<CommentAnnotationsProps> = ({
       try {
         await replyToComment(commentId, content);
         setReplyContents({ ...replyContents, [commentId]: '' });
-      } catch (error) {
-        console.error('Failed to reply to comment:', error);
-      }
+      } catch (_error) {}
     },
     [replyContents, replyToComment]
   );

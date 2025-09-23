@@ -3,7 +3,6 @@
  * Manages workflow versions, snapshots, and rollback capabilities
  */
 
-import { CollaborationSession } from '../models/CollaborationSession.js';
 import { type IOperation, Operation } from '../models/Operation.js';
 import { Workflow } from '../models/Workflow.js';
 
@@ -526,14 +525,14 @@ export class VersionControlService {
     console.log(`Storing version ${version.version} for workflow ${version.workflowId}`);
   }
 
-  private async getAllVersionsFromStorage(workflowId: string): Promise<WorkflowVersion[]> {
+  private async getAllVersionsFromStorage(_workflowId: string): Promise<WorkflowVersion[]> {
     // Implement retrieval from persistent storage
     return [];
   }
 
   private async getVersionFromStorage(
-    workflowId: string,
-    version: number
+    _workflowId: string,
+    _version: number
   ): Promise<WorkflowVersion | null> {
     // Implement specific version retrieval
     return null;

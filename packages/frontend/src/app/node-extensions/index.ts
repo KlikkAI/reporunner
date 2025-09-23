@@ -119,11 +119,7 @@ export type {
 /**
  * Initialize the node extension system
  */
-export function initializeNodeExtensions(): void {
-  // System is auto-initialized via imports
-  console.log('Node Extensions System initialized');
-  console.log('Registry stats:', getRegistryStatistics());
-}
+export function initializeNodeExtensions(): void {}
 
 /**
  * Get the current system version

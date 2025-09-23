@@ -32,8 +32,9 @@
     "clean": "rm -rf dist",
     "test": "vitest",
     "test:watch": "vitest --watch",
-    "lint": "eslint src",
-    "lint:fix": "eslint src --fix",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "format": "biome format --write .",
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
@@ -50,9 +51,6 @@
     "@types/luxon": "^3.4.2",
     "@types/node": "catalog:",
     "@types/uuid": "^9.0.8",
-    "eslint": "catalog:",
-    "@typescript-eslint/eslint-plugin": "catalog:",
-    "@typescript-eslint/parser": "catalog:",
     "tsc-alias": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"

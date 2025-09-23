@@ -87,7 +87,7 @@ const UserManagementPanel: React.FC<UserManagementPanelProps> = ({ className }) 
     loadAPIKeys();
     loadInvitations();
     loadSSOProviders();
-  }, []);
+  }, [loadAPIKeys, loadInvitations, loadRoles, loadSSOProviders, loadUsers]);
 
   const loadUsers = useCallback(async () => {
     setIsLoading(true);
@@ -230,8 +230,7 @@ const UserManagementPanel: React.FC<UserManagementPanelProps> = ({ className }) 
         },
       ];
       setUsers(mockUsers);
-    } catch (error) {
-      console.error('Failed to load users:', error);
+    } catch (_error) {
     } finally {
       setIsLoading(false);
     }
@@ -293,9 +292,7 @@ const UserManagementPanel: React.FC<UserManagementPanelProps> = ({ className }) 
         },
       ];
       setRoles(mockRoles);
-    } catch (error) {
-      console.error('Failed to load roles:', error);
-    }
+    } catch (_error) {}
   }, []);
 
   const loadAPIKeys = useCallback(async () => {
@@ -334,9 +331,7 @@ const UserManagementPanel: React.FC<UserManagementPanelProps> = ({ className }) 
         },
       ];
       setApiKeys(mockAPIKeys);
-    } catch (error) {
-      console.error('Failed to load API keys:', error);
-    }
+    } catch (_error) {}
   }, []);
 
   const loadInvitations = useCallback(async () => {
@@ -358,9 +353,7 @@ const UserManagementPanel: React.FC<UserManagementPanelProps> = ({ className }) 
         },
       ];
       setInvitations(mockInvitations);
-    } catch (error) {
-      console.error('Failed to load invitations:', error);
-    }
+    } catch (_error) {}
   }, []);
 
   const loadSSOProviders = useCallback(async () => {
@@ -419,9 +412,7 @@ const UserManagementPanel: React.FC<UserManagementPanelProps> = ({ className }) 
         },
       ];
       setSSOProviders(mockProviders);
-    } catch (error) {
-      console.error('Failed to load SSO providers:', error);
-    }
+    } catch (_error) {}
   }, []);
 
   const getStatusColor = (status: string) => {

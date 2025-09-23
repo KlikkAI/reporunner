@@ -242,7 +242,7 @@ export class PerformanceMonitorService {
   /**
    * Measure function execution time
    */
-  measure<T>(name: string, fn: () => T | Promise<T>, tags?: Record<string, any>): Promise<T> {
+  measure<T>(_name: string, fn: () => T | Promise<T>, _tags?: Record<string, any>): Promise<T> {
     return new Promise(async (resolve, reject) => {
       const startTime = performance.now();
       // Unique measurement identifier reserved for detailed performance tracking
@@ -250,26 +250,12 @@ export class PerformanceMonitorService {
       try {
         const result = await fn();
         const endTime = performance.now();
-        const duration = endTime - startTime;
-
-        // Log performance measurement
-        console.debug(`Performance: ${name} took ${duration.toFixed(2)}ms`, {
-          name,
-          duration,
-          tags,
-        });
+        const _duration = endTime - startTime;
 
         resolve(result);
       } catch (error) {
         const endTime = performance.now();
-        const duration = endTime - startTime;
-
-        console.error(`Performance: ${name} failed after ${duration.toFixed(2)}ms`, {
-          name,
-          duration,
-          error,
-          tags,
-        });
+        const _duration = endTime - startTime;
 
         reject(error);
       }
@@ -563,9 +549,7 @@ export class PerformanceMonitorService {
     this.alertListeners.forEach((listener) => {
       try {
         listener(alert);
-      } catch (error) {
-        console.error('Error in performance alert listener:', error);
-      }
+      } catch (_error) {}
     });
   }
 

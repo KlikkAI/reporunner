@@ -43,7 +43,7 @@ export const Header: React.FC = () => {
   useEffect(() => {
     setIsMobileMenuOpen(false);
     setActiveDropdown(null);
-  }, [location]);
+  }, []);
 
   const handleAuth = () => {
     if (isAuthenticated) {

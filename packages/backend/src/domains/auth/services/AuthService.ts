@@ -1,4 +1,4 @@
-import crypto from 'crypto';
+import crypto from 'node:crypto';
 import jwt, { type SignOptions } from 'jsonwebtoken';
 import { AppError } from '../../../middleware/errorHandlers.js';
 import type { IOrganization } from '../../../models/Organization.js';
@@ -83,7 +83,7 @@ export class AuthService {
   /**
    * Generate JWT access token with user context
    */
-  private generateToken(user: IUser, organization?: IOrganization): string {
+  private generateToken(user: IUser, _organization?: IOrganization): string {
     const secret = process.env.JWT_SECRET;
     if (!secret) {
       throw new Error('JWT_SECRET is not defined');
@@ -300,7 +300,7 @@ export class AuthService {
         expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
         scope: [],
       };
-    } catch (error) {
+    } catch (_error) {
       throw new AppError('Invalid refresh token', 401);
     }
   }

@@ -1,5 +1,5 @@
-import { type IJwtPayload, type IUser, PermissionType, UserRole } from '@reporunner/api-types';
-import { createHash } from 'crypto';
+import { createHash } from 'node:crypto';
+import type { IJwtPayload, IUser } from '@reporunner/api-types';
 import jwt from 'jsonwebtoken';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -254,7 +254,7 @@ export class TokenManager {
       throw new Error(`Invalid expiry format: ${expiry}`);
     }
 
-    const value = parseInt(match[1]);
+    const value = parseInt(match[1], 10);
     const unit = match[2];
 
     return value * units[unit];

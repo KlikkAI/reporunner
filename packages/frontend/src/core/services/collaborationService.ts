@@ -152,9 +152,7 @@ export class CollaborationService {
 
     // Connect to Socket.IO server
     const socketBase =
-      serverUrl ||
-      (import.meta.env['VITE_SOCKET_URL'] as string) ||
-      configService.get('api').baseUrl;
+      serverUrl || (import.meta.env.VITE_SOCKET_URL as string) || configService.get('api').baseUrl;
     this.socket = io(socketBase, {
       auth: {
         userId: user.id,
@@ -168,7 +166,7 @@ export class CollaborationService {
 
     // Join workflow room
     return new Promise((resolve, reject) => {
-      this.socket!.emit('join_workflow', { workflowId, user }, (response: any) => {
+      this.socket?.emit('join_workflow', { workflowId, user }, (response: any) => {
         if (response.success) {
           this.currentSession = response.session;
           resolve(response.session);
@@ -267,7 +265,7 @@ export class CollaborationService {
     };
 
     return new Promise((resolve, reject) => {
-      this.socket!.emit('add_comment', fullComment, (response: any) => {
+      this.socket?.emit('add_comment', fullComment, (response: any) => {
         if (response.success) {
           resolve(response.comment);
         } else {
@@ -298,7 +296,7 @@ export class CollaborationService {
     };
 
     return new Promise((resolve, reject) => {
-      this.socket!.emit('add_reply', { commentId, reply }, (response: any) => {
+      this.socket?.emit('add_reply', { commentId, reply }, (response: any) => {
         if (response.success) {
           resolve(response.reply);
         } else {
@@ -357,7 +355,7 @@ export class CollaborationService {
     if (!this.eventListeners.has(event)) {
       this.eventListeners.set(event, new Set());
     }
-    this.eventListeners.get(event)!.add(listener);
+    this.eventListeners.get(event)?.add(listener);
   }
 
   /**
@@ -444,9 +442,7 @@ export class CollaborationService {
       listeners.forEach((listener) => {
         try {
           listener(...args);
-        } catch (error) {
-          console.error(`Error in collaboration event listener for ${event}:`, error);
-        }
+        } catch (_error) {}
       });
     }
   }

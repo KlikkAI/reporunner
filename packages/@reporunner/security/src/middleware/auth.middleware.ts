@@ -261,7 +261,7 @@ export function createLogoutMiddleware(sessionManager: JWTSessionManager) {
         success: true,
         message: logoutAll ? 'All sessions have been terminated' : 'Logged out successfully',
       });
-    } catch (error: any) {
+    } catch (_error: any) {
       return res.status(500).json({
         success: false,
         error: {
@@ -359,7 +359,7 @@ export function requireRole(...requiredRoles: string[]) {
       return;
     }
 
-    if (!req.user.roles || !requiredRoles.some((role) => req.user!.roles!.includes(role))) {
+    if (!req.user.roles || !requiredRoles.some((role) => req.user?.roles?.includes(role))) {
       res.status(403).json({
         success: false,
         error: {
@@ -392,7 +392,7 @@ export function requirePermission(...requiredPermissions: string[]) {
 
     if (
       !req.user.permissions ||
-      !requiredPermissions.some((perm) => req.user!.permissions!.includes(perm))
+      !requiredPermissions.some((perm) => req.user?.permissions?.includes(perm))
     ) {
       res.status(403).json({
         success: false,

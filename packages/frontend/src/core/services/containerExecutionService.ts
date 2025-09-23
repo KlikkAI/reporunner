@@ -220,7 +220,6 @@ export class ContainerExecutionService {
           // Return any successful result
           finalResults = results.filter((r) => r.success);
           break;
-        case 'all':
         default:
           // Return all results
           finalResults = results;
@@ -346,7 +345,6 @@ export class ContainerExecutionService {
             errors: results.errors,
             metrics: this.calculateMetrics(state),
           };
-        case 'stop':
         default:
           // Stop execution
           throw lastError;
@@ -543,8 +541,7 @@ export class ContainerExecutionService {
       // Simple expression evaluation - in production, use a proper expression parser
       const func = new Function('$input', '$context', `return ${expression}`);
       return func(context.inputData, context.globalVariables);
-    } catch (error) {
-      console.error('Error evaluating condition:', error);
+    } catch (_error) {
       return false;
     }
   }
@@ -600,9 +597,7 @@ export class ContainerExecutionService {
     this.executionListeners.forEach((listener) => {
       try {
         listener(state);
-      } catch (error) {
-        console.error('Error in execution listener:', error);
-      }
+      } catch (_error) {}
     });
   }
 

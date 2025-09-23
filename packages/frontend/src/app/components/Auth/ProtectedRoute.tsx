@@ -12,17 +12,8 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   const location = useLocation();
 
   useEffect(() => {
-    // Try to get current user on mount if we have a token
-    console.log('ProtectedRoute: getCurrentUser called, isAuthenticated:', isAuthenticated);
     getCurrentUser();
   }, [getCurrentUser]);
-
-  console.log('ProtectedRoute render:', {
-    isAuthenticated,
-    isLoading,
-    hasUser: !!user,
-    pathname: location.pathname,
-  });
 
   if (isLoading) {
     return (

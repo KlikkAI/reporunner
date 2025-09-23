@@ -26,59 +26,30 @@ export type {
 class NodeUIRegistry {
   private initialized = false;
 
-  constructor() {
-    // Don't initialize immediately - wait until first use
-    console.log('🏗️ NodeUIRegistry: Constructor called (lazy initialization)');
-  }
-
   private ensureInitialized(): void {
     if (!this.initialized) {
-      console.log('🔄 NodeUIRegistry: Performing lazy initialization...');
       this.initializeComponents();
       this.initialized = true;
     }
   }
 
   private initializeComponents(): void {
-    console.log('🔧 NodeUIRegistry: Starting component initialization...');
-
-    // Register existing components with the factory
-    console.log('📝 Registering core components...');
     componentFactory.registerBodyComponent('AIAgentNodeBody', AIAgentNodeBody);
     componentFactory.registerBodyComponent('ConditionNodeBody', ConditionNodeBody);
-    console.log('✅ Core components registered:', ['AIAgentNodeBody', 'ConditionNodeBody']);
-
-    // Register Gmail components directly (no lazy loading to ensure immediate availability)
-    console.log('📧 Registering Gmail components directly...');
-    console.log('📧 Gmail imports:', { GmailNodeBody, GmailPropertiesPanel });
 
     try {
       // Register our custom Gmail node body that matches old UI
       componentFactory.registerBodyComponent('GmailNodeBody', GmailNodeBody);
-      console.log('✅ GmailNodeBody (custom UI) registered successfully');
 
       // Keep the original for backward compatibility if needed
       componentFactory.registerBodyComponent('GmailTriggerNodeBody', GmailNodeBody);
-      console.log('✅ GmailTriggerNodeBody registered successfully (using custom UI)');
 
       componentFactory.registerPropertiesPanel('GmailPropertiesPanel', GmailPropertiesPanel);
-      console.log('✅ GmailPropertiesPanel registered successfully');
 
       // Verify registration immediately
-      const gmailBodyComponent = componentFactory.createNodeBody('GmailTriggerNodeBody');
-      const gmailPropertiesPanel = componentFactory.createPropertiesPanel('GmailPropertiesPanel');
-
-      console.log('🔍 Gmail registration verification:', {
-        bodyComponent: !!gmailBodyComponent,
-        bodyComponentName: gmailBodyComponent?.name,
-        propertiesPanel: !!gmailPropertiesPanel,
-        propertiesPanelName: gmailPropertiesPanel?.name,
-      });
-    } catch (error) {
-      console.error('❌ Gmail component registration failed:', error);
-    }
-
-    console.log('📧 Gmail components registered directly for immediate availability');
+      const _gmailBodyComponent = componentFactory.createNodeBody('GmailTriggerNodeBody');
+      const _gmailPropertiesPanel = componentFactory.createPropertiesPanel('GmailPropertiesPanel');
+    } catch (_error) {}
 
     // Register other specialized components with lazy loading
     componentFactory.registerLazyBodyComponent(
@@ -90,11 +61,6 @@ class NodeUIRegistry {
       'AIAgentPropertiesPanel',
       () => import('./panels/AIAgentPropertiesPanel')
     );
-
-    // Final registry state logging
-    console.log('🏁 Component Factory Statistics:', componentFactory.getStatistics());
-    console.log('🏁 Registered Component Types:', componentFactory.listRegisteredTypes());
-    console.log('🔧 NodeUIRegistry initialization completed');
   }
 
   // ============================================================================
@@ -106,18 +72,9 @@ class NodeUIRegistry {
 
     if (!componentName) return undefined;
     const component = componentFactory.createNodeBody(componentName);
-    console.log(
-      `🔍 Custom body component lookup: "${componentName}" → ${component ? 'FOUND' : 'NOT FOUND'}`
-    );
 
     // Additional debug logging for Gmail specifically
     if (componentName === 'GmailTriggerNodeBody') {
-      console.log('📧 Gmail component lookup details:', {
-        componentName,
-        componentFound: !!component,
-        componentType: component?.name || 'unknown',
-        factoryStats: componentFactory.getStatistics(),
-      });
     }
 
     return component;

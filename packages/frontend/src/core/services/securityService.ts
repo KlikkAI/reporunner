@@ -601,7 +601,7 @@ export class SecurityService {
       algorithm: this.encryptionConfig.algorithm,
       timestamp: new Date(),
       context: context || 'general',
-      keyId: 'key-' + Date.now(),
+      keyId: `key-${Date.now()}`,
     };
 
     await auditService.logEvent({
@@ -802,8 +802,6 @@ export class SecurityService {
   }
 
   private triggerSecurityAlert(threat: SecurityThreat): void {
-    console.warn(`[SECURITY THREAT] ${threat.title}: ${threat.description}`);
-
     // In a real implementation, this would send notifications to security team
     auditService.logEvent({
       userId: 'system',

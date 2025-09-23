@@ -351,7 +351,7 @@ export const JsonRenderer: React.FC<PropertyRendererProps> = ({
         const parsed = JSON.parse(newValue);
         setIsValid(true);
         onChange(parsed);
-      } catch (error) {
+      } catch (_error) {
         setIsValid(false);
         // Still update the string value for live editing
         onChange(newValue);

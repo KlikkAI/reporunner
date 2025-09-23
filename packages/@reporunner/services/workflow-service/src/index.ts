@@ -30,26 +30,26 @@ export interface WorkflowSettings {
 }
 
 export class WorkflowService {
-  async create(workflow: Omit<WorkflowDefinition, 'id' | 'version'>): Promise<WorkflowDefinition> {
+  async create(_workflow: Omit<WorkflowDefinition, 'id' | 'version'>): Promise<WorkflowDefinition> {
     // TODO: Implement workflow creation
     throw new Error('Not implemented');
   }
 
-  async get(id: string): Promise<WorkflowDefinition | null> {
+  async get(_id: string): Promise<WorkflowDefinition | null> {
     // TODO: Implement workflow retrieval
     return null;
   }
 
-  async update(id: string, updates: Partial<WorkflowDefinition>): Promise<WorkflowDefinition> {
+  async update(_id: string, _updates: Partial<WorkflowDefinition>): Promise<WorkflowDefinition> {
     // TODO: Implement workflow update
     throw new Error('Not implemented');
   }
 
-  async delete(id: string): Promise<boolean> {
+  async delete(_id: string): Promise<boolean> {
     // TODO: Implement workflow deletion
     return false;
   }
 }
 
-export * from './versioning';
 export * from './validation';
+export * from './versioning';

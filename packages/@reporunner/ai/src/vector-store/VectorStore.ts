@@ -3,7 +3,7 @@
  * Provides semantic search capabilities for AI workflows
  */
 
-import { Pool, PoolClient } from 'pg';
+import { Pool } from 'pg';
 import type { Logger } from 'winston';
 import type { EmbeddingService } from '../embeddings/EmbeddingService';
 import {
@@ -300,7 +300,7 @@ export class VectorStore {
         }
 
         const result = await client.query(sql, queryParams);
-        return parseInt(result.rows[0].count);
+        return parseInt(result.rows[0].count, 10);
       } finally {
         client.release();
       }

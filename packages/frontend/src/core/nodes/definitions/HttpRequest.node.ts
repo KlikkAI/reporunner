@@ -187,12 +187,12 @@ export class HttpRequestNode implements INodeType {
         const username = this.getNodeParameter('username', '') as string;
         const password = this.getNodeParameter('password', '') as string;
         const credentials = btoa(`${username}:${password}`);
-        requestHeaders['Authorization'] = `Basic ${credentials}`;
+        requestHeaders.Authorization = `Basic ${credentials}`;
         break;
       }
       case 'bearerToken': {
         const token = this.getNodeParameter('token', '') as string;
-        requestHeaders['Authorization'] = `Bearer ${token}`;
+        requestHeaders.Authorization = `Bearer ${token}`;
         break;
       }
       case 'apiKey': {
@@ -209,7 +209,7 @@ export class HttpRequestNode implements INodeType {
       try {
         body = JSON.parse(bodyParam);
         requestHeaders['Content-Type'] = 'application/json';
-      } catch (error) {
+      } catch (_error) {
         body = bodyParam;
         requestHeaders['Content-Type'] = 'text/plain';
       }

@@ -52,7 +52,7 @@ describe('AuthService', () => {
     });
 
     it('should throw error for incorrect password', async () => {
-      const testUser = await testUtils.createTestUser({
+      const _testUser = await testUtils.createTestUser({
         email: 'service@test.com',
         password: await bcrypt.hash('password123', 10),
       });
@@ -63,7 +63,7 @@ describe('AuthService', () => {
     });
 
     it('should throw error for inactive user', async () => {
-      const testUser = await testUtils.createTestUser({
+      const _testUser = await testUtils.createTestUser({
         email: 'inactive@test.com',
         password: await bcrypt.hash('password123', 10),
         isActive: false,

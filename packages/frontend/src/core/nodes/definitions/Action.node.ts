@@ -186,7 +186,6 @@ export class ActionNode implements INodeType {
       }
 
       case 'log': {
-        console.log('Action Node Log:', inputData);
         return inputData.map((item: any) => ({
           json: {
             ...item.json,

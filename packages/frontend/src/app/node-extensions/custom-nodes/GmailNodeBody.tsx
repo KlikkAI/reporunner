@@ -113,8 +113,8 @@ const GmailNodeBody: React.FC<GmailNodeBodyProps> = ({
             {/* Shared NodeToolbar */}
             <NodeToolbar
               visible={isHovered}
-              onPlay={() => console.log('Play Gmail:', nodeData.id)}
-              onStop={() => console.log('Stop Gmail:', nodeData.id)}
+              onPlay={() => {}}
+              onStop={() => {}}
               onDelete={(e) => {
                 e.stopPropagation();
                 onDelete?.();
@@ -144,7 +144,6 @@ const GmailNodeBody: React.FC<GmailNodeBodyProps> = ({
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
-                    console.log('Test Gmail:', nodeData.id);
                     setShowLocalMenu(false);
                   }}
                   className="w-full px-3 py-1.5 text-left text-sm text-gray-200 hover:bg-gray-700 flex items-center gap-2"
@@ -154,7 +153,6 @@ const GmailNodeBody: React.FC<GmailNodeBodyProps> = ({
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
-                    console.log('Copy Gmail:', nodeData.id);
                     setShowLocalMenu(false);
                   }}
                   className="w-full px-3 py-1.5 text-left text-sm text-gray-200 hover:bg-gray-700 flex items-center gap-2"
@@ -164,7 +162,6 @@ const GmailNodeBody: React.FC<GmailNodeBodyProps> = ({
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
-                    console.log('Duplicate Gmail:', nodeData.id);
                     setShowLocalMenu(false);
                   }}
                   className="w-full px-3 py-1.5 text-left text-sm text-gray-200 hover:bg-gray-700 flex items-center gap-2"

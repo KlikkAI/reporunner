@@ -137,7 +137,7 @@ export const useCountUpAnimation = (
       }
       observer.disconnect();
     };
-  }, [targetValue, duration, startOnVisible]);
+  }, [startOnVisible, animateCount]);
 
   return elementRef;
 };

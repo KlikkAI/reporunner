@@ -431,7 +431,7 @@ export class AnalyticsService {
       if (!timeBuckets.has(bucket)) {
         timeBuckets.set(bucket, []);
       }
-      timeBuckets.get(bucket)!.push(exec);
+      timeBuckets.get(bucket)?.push(exec);
     });
 
     const memoryTrend: TimeSeriesPoint[] = [];
@@ -461,16 +461,16 @@ export class AnalyticsService {
           bucketExecutions.length;
 
         memoryTrend.push({
-          timestamp: timestamp + ':00:00.000Z',
+          timestamp: `${timestamp}:00:00.000Z`,
           value: avgMemory,
         });
-        cpuTrend.push({ timestamp: timestamp + ':00:00.000Z', value: avgCpu });
+        cpuTrend.push({ timestamp: `${timestamp}:00:00.000Z`, value: avgCpu });
         networkTrend.push({
-          timestamp: timestamp + ':00:00.000Z',
+          timestamp: `${timestamp}:00:00.000Z`,
           value: avgNetwork,
         });
         costTrend.push({
-          timestamp: timestamp + ':00:00.000Z',
+          timestamp: `${timestamp}:00:00.000Z`,
           value: avgCost,
         });
       });
@@ -532,7 +532,7 @@ export class AnalyticsService {
   private calculateThroughput(executions: ExecutionMetrics[]): number {
     if (executions.length === 0) return 0;
 
-    const timespan = new Date().getTime() - new Date(executions[0].startTime).getTime();
+    const timespan = Date.now() - new Date(executions[0].startTime).getTime();
     const hours = timespan / (1000 * 60 * 60);
     return hours > 0 ? executions.length / hours : 0;
   }

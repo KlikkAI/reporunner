@@ -67,7 +67,6 @@ abstract class BaseVersionedNodeType implements IVersionedNodeType {
     if (!nodeType) {
       const availableVersions = this.getSupportedVersions();
       const latestVersion = Math.max(...availableVersions);
-      console.warn(`Version ${version} not found, falling back to latest version ${latestVersion}`);
       return this.nodeVersions[latestVersion];
     }
     return nodeType;
@@ -113,11 +112,7 @@ abstract class BaseVersionedNodeType implements IVersionedNodeType {
         try {
           currentParameters = migration.migrate(currentParameters);
           currentVersion = migration.toVersion;
-        } catch (error) {
-          console.error(
-            `Migration from ${migration.fromVersion} to ${migration.toVersion} failed:`,
-            error
-          );
+        } catch (_error) {
           break;
         }
       } else {
@@ -271,11 +266,11 @@ class VersionedTransformNodeType extends BaseVersionedNodeType {
           };
 
           // Remove old parameters
-          delete migrated.fieldsToAdd;
-          delete migrated.fieldsToSet;
-          delete migrated.fieldsToRename;
-          delete migrated.fieldsToRemove;
-          delete migrated.filterCondition;
+          migrated.fieldsToAdd = undefined;
+          migrated.fieldsToSet = undefined;
+          migrated.fieldsToRename = undefined;
+          migrated.fieldsToRemove = undefined;
+          migrated.filterCondition = undefined;
 
           return migrated;
         },
@@ -331,7 +326,6 @@ class NodeMigrationService {
   ): WorkflowNodeInstance {
     const versionedNode = this.versionedNodes.get(instance.type);
     if (!versionedNode) {
-      console.warn(`No versioned node found for type: ${instance.type}`);
       return instance;
     }
 
@@ -355,8 +349,7 @@ class NodeMigrationService {
         typeVersion: target,
         version: target, // Update both for compatibility
       };
-    } catch (error) {
-      console.error(`Failed to migrate node ${instance.id}:`, error);
+    } catch (_error) {
       return instance;
     }
   }

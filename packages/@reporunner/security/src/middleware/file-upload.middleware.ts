@@ -1,11 +1,11 @@
+import { exec } from 'node:child_process';
+import crypto from 'node:crypto';
+import fs from 'node:fs';
+import path from 'node:path';
+import { promisify } from 'node:util';
 import { ERROR_CODES } from '@reporunner/constants';
-import { exec } from 'child_process';
-import crypto from 'crypto';
 import type { NextFunction, Request, Response } from 'express';
-import fs from 'fs';
 import multer, { type FileFilterCallback, MulterError } from 'multer';
-import path from 'path';
-import { promisify } from 'util';
 
 const execAsync = promisify(exec);
 const unlinkAsync = promisify(fs.unlink);
@@ -371,7 +371,6 @@ async function scanFileForVirus(
     const { stdout, stderr } = await execAsync(`${clamavPath} --no-summary "${filePath}"`);
 
     if (stderr) {
-      console.error('ClamAV stderr:', stderr);
     }
 
     const output = stdout.toLowerCase();
@@ -392,8 +391,6 @@ async function scanFileForVirus(
       const threat = match ? match[1] : 'Unknown threat';
       return { scanned: true, clean: false, threat };
     }
-
-    console.error('ClamAV error:', error);
     return { scanned: false, clean: true };
   }
 }
@@ -427,7 +424,7 @@ function sanitizeFilenameString(filename: string): string {
 
   // Ensure filename doesn't start with a dot (hidden file)
   if (sanitized.startsWith('.')) {
-    sanitized = '_' + sanitized.substring(1);
+    sanitized = `_${sanitized.substring(1)}`;
   }
 
   // Limit length
@@ -452,9 +449,7 @@ export function createFileCleanupMiddleware() {
       for (const file of files) {
         try {
           await unlinkAsync(file.path);
-        } catch (error) {
-          console.error(`Failed to delete file ${file.path}:`, error);
-        }
+        } catch (_error) {}
       }
     }
 
@@ -623,7 +618,7 @@ export function createSecureDownloadMiddleware(
       // Check if file exists
       try {
         await statAsync(resolvedPath);
-      } catch (error) {
+      } catch (_error) {
         res.status(404).json({
           success: false,
           error: {
@@ -653,7 +648,6 @@ export function createSecureDownloadMiddleware(
       // Send file
       res.download(resolvedPath, path.basename(filename), (err) => {
         if (err) {
-          console.error('Download error:', err);
           if (!res.headersSent) {
             res.status(500).json({
               success: false,

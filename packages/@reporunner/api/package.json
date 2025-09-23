@@ -11,8 +11,9 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "type-check": "tsc --noEmit",
-    "lint": "eslint src/**/*.ts",
-    "lint:fix": "eslint src/**/*.ts --fix",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "format": "biome format --write .",
     "swagger:generate": "swagger-jsdoc -d swagger.config.js src/**/*.ts -o dist/swagger.json",
     "docs:serve": "swagger-ui-serve dist/swagger.json"
   },
@@ -58,7 +59,6 @@
     "@types/node": "catalog:",
     "jest": "catalog:",
     "@types/jest": "catalog:",
-    "tsup": "^7.0.0",
-    "eslint": "catalog:"
+    "tsup": "^7.0.0"
   }
 }

@@ -113,7 +113,6 @@ const BaseNode: React.FC<BaseNodeComponentProps> = ({ id, data, selected, config
   const nodeType = React.useMemo(() => {
     // Check if this is a condition node based on having conditionRules
     if (data.conditionRules || config.handles.dynamicOutputs) {
-      console.log('BaseNode: Detected condition node type for', displayName);
       return 'condition';
     }
     // Check if this is an AI agent
@@ -127,7 +126,6 @@ const BaseNode: React.FC<BaseNodeComponentProps> = ({ id, data, selected, config
     config.handles.dynamicOutputs,
     config.handles.hasAIHandles,
     integration?.id,
-    displayName,
   ]);
 
   // For AI agents, calculate which handles have incoming connections
@@ -179,13 +177,9 @@ const BaseNode: React.FC<BaseNodeComponentProps> = ({ id, data, selected, config
     }
   };
 
-  const handlePlay = () => {
-    console.log('Play node:', id);
-  };
+  const handlePlay = () => {};
 
-  const handleStop = () => {
-    console.log('Stop node:', id);
-  };
+  const handleStop = () => {};
 
   const handleOpen = () => {
     if (id && data.onOpenProperties) {
@@ -193,33 +187,19 @@ const BaseNode: React.FC<BaseNodeComponentProps> = ({ id, data, selected, config
     }
   };
 
-  const handleTest = () => {
-    console.log('Test node:', id);
-  };
+  const handleTest = () => {};
 
-  const handleRename = () => {
-    console.log('Rename node:', id);
-  };
+  const handleRename = () => {};
 
-  const handleDeactivate = () => {
-    console.log('Deactivate node:', id);
-  };
+  const handleDeactivate = () => {};
 
-  const handleCopy = () => {
-    console.log('Copy node:', id);
-  };
+  const handleCopy = () => {};
 
-  const handleDuplicate = () => {
-    console.log('Duplicate node:', id);
-  };
+  const handleDuplicate = () => {};
 
-  const handleSelectAll = () => {
-    console.log('Select All node:');
-  };
+  const handleSelectAll = () => {};
 
-  const handleClearSelection = () => {
-    console.log('Clear selection');
-  };
+  const handleClearSelection = () => {};
 
   const handleDoubleClick = (event: React.MouseEvent) => {
     // Only handle double-click if it's on the node itself, not on toolbar buttons

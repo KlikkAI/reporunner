@@ -153,8 +153,6 @@ export class IntegrationFramework {
     if (config?.healthCheckInterval) {
       // Configure health check interval
     }
-
-    console.log('Integration Framework initialized');
   }
 
   /**
@@ -248,8 +246,6 @@ export class IntegrationFramework {
     this.webhookManager.clearAll();
     this.healthMonitor.clearAll();
     this.rateLimiter.clearAll();
-
-    console.log('Integration Framework shut down');
   }
 }
 

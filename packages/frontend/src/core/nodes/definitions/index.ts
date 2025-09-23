@@ -51,37 +51,19 @@ const allNodeClasses = [
 
 // Register all node types
 export function registerAllNodes() {
-  console.log('🚀 Registering all node types in registry...');
-
   allNodeClasses.forEach((NodeClass) => {
     const nodeInstance = new NodeClass();
-    console.log(
-      `📝 Registering node: ${nodeInstance.description.name} (${nodeInstance.description.displayName})`
-    );
     nodeRegistry.registerNodeType(nodeInstance);
   });
 
   const stats = nodeRegistry.getStatistics();
-  console.log(`✅ Successfully registered ${stats.nodeTypesCount} node types:`);
-  console.log(`   • Trigger nodes: ${stats.triggerNodes}`);
-  console.log(`   • Action nodes: ${stats.actionNodes}`);
-  console.log(`   • Categories: ${stats.categoriesCount}`);
-  console.log(`   • Credentials: ${stats.credentialTypesCount}`);
 
   // List all registered node types for debugging
-  const allRegisteredTypes = nodeRegistry.getAllNodeTypeDescriptions();
-  console.log(
-    '🔍 All registered node types:',
-    allRegisteredTypes.map((desc) => `${desc.name} (${desc.displayName})`).sort()
-  );
+  const _allRegisteredTypes = nodeRegistry.getAllNodeTypeDescriptions();
 
   return stats;
 }
-
-// Auto-register on import
-console.log('🔧 Starting node registration...');
-const registrationResult = registerAllNodes();
-console.log('✅ Node registration completed:', registrationResult);
+const _registrationResult = registerAllNodes();
 
 export * from './Action.node.ts';
 export * from './AIAgent.node.ts';

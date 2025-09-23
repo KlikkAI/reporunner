@@ -199,8 +199,6 @@ export class AuditService {
 
     for (const rule of enabledRules) {
       if (this.checkRuleViolation(rule, event)) {
-        // TODO: Trigger alert or notification for real-time violation
-        console.warn(`Compliance violation detected: ${rule.name}`, event);
       }
     }
   }

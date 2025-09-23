@@ -220,17 +220,11 @@ export const gmailNodeCapabilities = {
  * Enhanced execution function that adapts based on detected mode and context
  */
 export async function executeGmailEnhanced(
-  context: any, // Workflow execution context
+  _context: any, // Workflow execution context
   nodeParameters: any, // Resolved node parameters
   credentials: any // Node credentials
 ): Promise<any[]> {
   const { resource, operation } = nodeParameters;
-
-  console.log('🚀 Executing unified Gmail node:', {
-    resource,
-    operation,
-    mode: context.mode || 'action',
-  });
 
   // Route execution based on resource and operation
   switch (resource) {
@@ -286,8 +280,6 @@ async function executeLabelOperations(
   parameters: any,
   _credentials: any
 ): Promise<any[]> {
-  // TODO: Implement label operations
-  console.log('📋 Executing label operation:', operation);
   return [{ operation, status: 'mock_implementation', parameters }];
 }
 
@@ -302,7 +294,6 @@ async function executeDraftOperations(
       return [result];
     }
     default:
-      console.log('📝 Executing draft operation:', operation);
       return [{ operation, status: 'mock_implementation', parameters }];
   }
 }
@@ -312,34 +303,27 @@ async function executeThreadOperations(
   parameters: any,
   _credentials: any
 ): Promise<any[]> {
-  // TODO: Implement thread operations
-  console.log('🧵 Executing thread operation:', operation);
   return [{ operation, status: 'mock_implementation', parameters }];
 }
 
 // Mock implementations for new email operations (to be implemented)
 async function executeEmailReply(_parameters: any, _credentials: any): Promise<any[]> {
-  console.log('↩️ Mock: Email reply operation');
   return [{ operation: 'reply', status: 'mock_implementation' }];
 }
 
 async function executeEmailForward(_parameters: any, _credentials: any): Promise<any[]> {
-  console.log('➡️ Mock: Email forward operation');
   return [{ operation: 'forward', status: 'mock_implementation' }];
 }
 
 async function executeEmailGet(_parameters: any, _credentials: any): Promise<any[]> {
-  console.log('📧 Mock: Email get operation');
   return [{ operation: 'get', status: 'mock_implementation' }];
 }
 
 async function executeEmailGetAll(_parameters: any, _credentials: any): Promise<any[]> {
-  console.log('📬 Mock: Email getAll operation');
   return [{ operation: 'getAll', status: 'mock_implementation' }];
 }
 
 async function executeEmailDelete(_parameters: any, _credentials: any): Promise<any[]> {
-  console.log('🗑️ Mock: Email delete operation');
   return [{ operation: 'delete', status: 'mock_implementation' }];
 }
 
@@ -348,7 +332,6 @@ async function executeEmailMarkRead(
   _parameters: any,
   _credentials: any
 ): Promise<any[]> {
-  console.log(`👁️ Mock: Email ${operation} operation`);
   return [{ operation, status: 'mock_implementation' }];
 }
 
@@ -357,7 +340,6 @@ async function executeEmailLabelManagement(
   _parameters: any,
   _credentials: any
 ): Promise<any[]> {
-  console.log(`🏷️ Mock: Email ${operation} operation`);
   return [{ operation, status: 'mock_implementation' }];
 }
 

@@ -162,8 +162,6 @@ export const Contact: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Form submission logic would go here
-    console.log('Form submitted:', formData);
     setIsSubmitted(true);
 
     // Reset form after 3 seconds

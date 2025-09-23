@@ -141,7 +141,7 @@ export class WorkflowController extends BaseController {
   getWorkflowStatistics = async (req: Request, res: Response) => {
     const userId = (req as any).user?.id;
     const { id } = req.params;
-    const days = parseInt(req.query.days as string) || 30;
+    const days = parseInt(req.query.days as string, 10) || 30;
 
     const statistics = await this.workflowService.getWorkflowStatistics(id, userId, days);
 
@@ -157,8 +157,8 @@ export class WorkflowController extends BaseController {
   getExecutions = async (req: Request, res: Response) => {
     const userId = (req as any).user?.id;
     const { workflowId, status } = req.query;
-    const page = parseInt(req.query.page as string) || 1;
-    const limit = parseInt(req.query.limit as string) || 20;
+    const page = parseInt(req.query.page as string, 10) || 1;
+    const limit = parseInt(req.query.limit as string, 10) || 20;
 
     const result = await this.workflowService.getExecutions(userId, {
       workflowId: workflowId as string,

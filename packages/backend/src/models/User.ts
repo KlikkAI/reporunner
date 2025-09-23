@@ -192,7 +192,7 @@ userSchema.index({ passwordResetToken: 1 });
 userSchema.pre('save', async function (next) {
   if (!this.isModified('password')) return next();
 
-  const saltRounds = parseInt(process.env.BCRYPT_SALT_ROUNDS || '12');
+  const saltRounds = parseInt(process.env.BCRYPT_SALT_ROUNDS || '12', 10);
   this.password = await bcrypt.hash(this.password, saltRounds);
   next();
 });
@@ -257,12 +257,12 @@ userSchema.methods.resetLoginAttempts = function () {
 // Remove sensitive data from JSON output
 userSchema.methods.toJSON = function () {
   const userObject = this.toObject();
-  delete userObject.password;
-  delete userObject.refreshTokens;
-  delete userObject.emailVerificationToken;
-  delete userObject.emailVerificationTokenExpires;
-  delete userObject.passwordResetToken;
-  delete userObject.passwordResetTokenExpires;
+  userObject.password = undefined;
+  userObject.refreshTokens = undefined;
+  userObject.emailVerificationToken = undefined;
+  userObject.emailVerificationTokenExpires = undefined;
+  userObject.passwordResetToken = undefined;
+  userObject.passwordResetTokenExpires = undefined;
   return userObject;
 };
 

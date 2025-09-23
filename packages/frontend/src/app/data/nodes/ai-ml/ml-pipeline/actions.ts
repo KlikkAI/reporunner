@@ -762,12 +762,9 @@ async function initializeExperiment(_config: any, _pipeline: PipelineExecution):
 
 async function finalizeExperiment(
   _config: any,
-  experimentId: string,
-  metrics: Record<string, any>
-): Promise<void> {
-  // Simulate experiment finalization
-  console.log(`Finalizing experiment ${experimentId} with metrics:`, metrics);
-}
+  _experimentId: string,
+  _metrics: Record<string, any>
+): Promise<void> {}
 
 // Validation functions
 function validatePipelineConfig(config: any): {

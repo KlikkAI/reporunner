@@ -1,5 +1,5 @@
 import type { ApiResponse, ExecutionResult, WorkflowDefinition } from '@reporunner/core';
-import axios, { type AxiosInstance, AxiosRequestConfig } from 'axios';
+import axios, { type AxiosInstance } from 'axios';
 import { WebSocketClient } from './WebSocketClient.js';
 
 export interface ReporunnerClientConfig {
@@ -38,7 +38,6 @@ export class ReporunnerClient {
     // Request interceptor for logging
     this.http.interceptors.request.use(
       (config) => {
-        console.debug(`[Reporunner SDK] ${config.method?.toUpperCase()} ${config.url}`);
         return config;
       },
       (error) => Promise.reject(error)
@@ -48,7 +47,6 @@ export class ReporunnerClient {
     this.http.interceptors.response.use(
       (response) => response,
       (error) => {
-        console.error('[Reporunner SDK] Request failed:', error.response?.data || error.message);
         return Promise.reject(error);
       }
     );

@@ -14,7 +14,7 @@ export const config = {
   auth: {
     tokenKey: 'auth_token',
     refreshTokenKey: 'refresh_token',
-    timeout: parseInt(import.meta.env.VITE_AUTH_TIMEOUT || '3600000'),
+    timeout: parseInt(import.meta.env.VITE_AUTH_TIMEOUT || '3600000', 10),
   },
   features: {
     enableDebug: import.meta.env.VITE_ENABLE_DEBUG === 'true',

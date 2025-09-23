@@ -37,7 +37,7 @@ describe('SessionController', () => {
 
   describe('getSession', () => {
     it('should return active session for workflow', async () => {
-      const session = await CollaborationSession.create({
+      const _session = await CollaborationSession.create({
         sessionId: 'test-session-123',
         workflowId: testWorkflowId,
         createdBy: testUser._id,
@@ -131,7 +131,7 @@ describe('SessionController', () => {
         participantCount: 1,
       });
 
-      sessionController['collaborationService'].joinSession = mockJoinSession;
+      sessionController.collaborationService.joinSession = mockJoinSession;
 
       await sessionController.joinSession(mockReq as Request, mockRes as Response);
 
@@ -177,7 +177,7 @@ describe('SessionController', () => {
         participantCount: 2,
       });
 
-      sessionController['collaborationService'].joinSession = mockJoinSession;
+      sessionController.collaborationService.joinSession = mockJoinSession;
 
       await sessionController.joinSession(mockReq as Request, mockRes as Response);
 
@@ -212,7 +212,7 @@ describe('SessionController', () => {
   describe('getUserSessions', () => {
     it('should return sessions for a user', async () => {
       // Create test sessions
-      const session1 = await CollaborationSession.create({
+      const _session1 = await CollaborationSession.create({
         sessionId: 'session-1',
         workflowId: testWorkflowId,
         createdBy: testUser._id,
@@ -228,7 +228,7 @@ describe('SessionController', () => {
         isActive: true,
       });
 
-      const session2 = await CollaborationSession.create({
+      const _session2 = await CollaborationSession.create({
         sessionId: 'session-2',
         workflowId: '507f1f77bcf86cd799439012',
         createdBy: testUser._id,
@@ -403,7 +403,7 @@ describe('SessionController', () => {
 
   describe('updateSessionConfig', () => {
     it('should update session configuration', async () => {
-      const session = await CollaborationSession.create({
+      const _session = await CollaborationSession.create({
         sessionId: 'test-session-123',
         workflowId: testWorkflowId,
         createdBy: testUser._id,
@@ -467,7 +467,7 @@ describe('SessionController', () => {
 
   describe('endSession', () => {
     it('should end active session successfully', async () => {
-      const session = await CollaborationSession.create({
+      const _session = await CollaborationSession.create({
         sessionId: 'test-session-123',
         workflowId: testWorkflowId,
         createdBy: testUser._id,

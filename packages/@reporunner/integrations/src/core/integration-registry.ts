@@ -1,4 +1,4 @@
-import { EventEmitter } from 'events';
+import { EventEmitter } from 'node:events';
 import type { BaseIntegration, IntegrationConfig, IntegrationContext } from './base-integration';
 
 export interface IntegrationDefinition {
@@ -36,10 +36,6 @@ export class IntegrationRegistry extends EventEmitter {
   private categories: Set<string> = new Set();
   private tags: Set<string> = new Set();
   private capabilities: Set<string> = new Set();
-
-  constructor() {
-    super();
-  }
 
   /**
    * Register integration definition

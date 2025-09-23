@@ -321,7 +321,7 @@ export class ConfigurationValidator {
     // In a real implementation, you'd walk the schema and generate appropriate defaults
     try {
       return schema.parse({});
-    } catch (error: any) {
+    } catch (_error: any) {
       // Return a minimal valid config
       return {
         name,

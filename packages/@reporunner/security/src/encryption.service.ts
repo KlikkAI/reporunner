@@ -1,5 +1,5 @@
-import { createCipheriv, createDecipheriv, createHash, randomBytes, scrypt } from 'crypto';
-import { promisify } from 'util';
+import { createCipheriv, createDecipheriv, createHash, randomBytes, scrypt } from 'node:crypto';
+import { promisify } from 'node:util';
 
 const scryptAsync = promisify(scrypt);
 
@@ -176,10 +176,7 @@ export class EncryptionService {
           const fieldKey = await this.generateFieldKey(masterKey, String(field));
           const encryptedData = JSON.parse(String(obj[field]));
           (decrypted as any)[field] = await this.decrypt(encryptedData, fieldKey);
-        } catch (error) {
-          // Field might not be encrypted, leave as is
-          console.warn(`Failed to decrypt field ${String(field)}:`, error);
-        }
+        } catch (_error) {}
       }
     }
 

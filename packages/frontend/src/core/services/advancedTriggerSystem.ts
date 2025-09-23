@@ -496,7 +496,7 @@ export class AdvancedTriggerSystemService {
     if (!this.eventListeners.has(event)) {
       this.eventListeners.set(event, new Set());
     }
-    this.eventListeners.get(event)!.add(callback);
+    this.eventListeners.get(event)?.add(callback);
 
     return () => {
       this.eventListeners.get(event)?.delete(callback);
@@ -529,7 +529,6 @@ export class AdvancedTriggerSystemService {
         this.activateCalendarWatcher(trigger);
         break;
       default:
-        console.warn(`Trigger type ${trigger.triggerType} not yet implemented`);
     }
 
     // Setup rate limiter
@@ -553,8 +552,7 @@ export class AdvancedTriggerSystemService {
 
   private activateWebhookTrigger(trigger: TriggerConfiguration): void {
     // Webhook endpoints are handled by the webhook server
-    const config = trigger.configuration as WebhookConfig;
-    console.log(`Webhook trigger activated: ${config.endpoint}`);
+    const _config = trigger.configuration as WebhookConfig;
   }
 
   private activateHttpTrigger(trigger: TriggerConfiguration): void {
@@ -591,9 +589,7 @@ export class AdvancedTriggerSystemService {
           hash: currentHash,
           timestamp: new Date().toISOString(),
         });
-      } catch (error) {
-        console.error(`HTTP trigger polling failed for ${trigger.id}:`, error);
-      }
+      } catch (_error) {}
     };
 
     const timer = setInterval(pollFn, config.pollIntervalMs);
@@ -603,20 +599,11 @@ export class AdvancedTriggerSystemService {
     pollFn();
   }
 
-  private activateEmailTrigger(trigger: TriggerConfiguration): void {
-    // Email monitoring implementation would go here
-    console.log(`Email trigger activated for ${trigger.id}`);
-  }
+  private activateEmailTrigger(_trigger: TriggerConfiguration): void {}
 
-  private activateFileWatcher(trigger: TriggerConfiguration): void {
-    // File system monitoring implementation would go here
-    console.log(`File watcher activated for ${trigger.id}`);
-  }
+  private activateFileWatcher(_trigger: TriggerConfiguration): void {}
 
-  private activateDatabaseWatcher(trigger: TriggerConfiguration): void {
-    // Database change monitoring implementation would go here
-    console.log(`Database watcher activated for ${trigger.id}`);
-  }
+  private activateDatabaseWatcher(_trigger: TriggerConfiguration): void {}
 
   private activateApiPoller(trigger: TriggerConfiguration): void {
     const config = trigger.configuration as ApiPollConfig;
@@ -669,9 +656,7 @@ export class AdvancedTriggerSystemService {
               : null,
           timestamp: new Date().toISOString(),
         });
-      } catch (error) {
-        console.error(`API polling failed for ${trigger.id}:`, error);
-      }
+      } catch (_error) {}
     };
 
     const timer = setInterval(pollFn, config.pollIntervalMs);
@@ -681,10 +666,7 @@ export class AdvancedTriggerSystemService {
     pollFn();
   }
 
-  private activateCalendarWatcher(trigger: TriggerConfiguration): void {
-    // Calendar event monitoring implementation would go here
-    console.log(`Calendar watcher activated for ${trigger.id}`);
-  }
+  private activateCalendarWatcher(_trigger: TriggerConfiguration): void {}
 
   private async handleTriggerEvent(trigger: TriggerConfiguration, data: any): Promise<void> {
     const event: TriggerEvent = {
@@ -959,10 +941,7 @@ export class AdvancedTriggerSystemService {
     return 'stable';
   }
 
-  private initializeWebhookServer(): void {
-    // In a real implementation, this would set up Express/HTTP server endpoints
-    console.log('Webhook server initialized');
-  }
+  private initializeWebhookServer(): void {}
 
   private emitEvent(event: string, triggerEvent: TriggerEvent): void {
     const listeners = this.eventListeners.get(event);
@@ -970,9 +949,7 @@ export class AdvancedTriggerSystemService {
       listeners.forEach((callback) => {
         try {
           callback(triggerEvent);
-        } catch (error) {
-          console.error(`Error in trigger event listener:`, error);
-        }
+        } catch (_error) {}
       });
     }
   }

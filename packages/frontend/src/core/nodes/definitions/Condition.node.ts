@@ -175,9 +175,9 @@ export class ConditionNode implements INodeType {
 
             switch (rule.operation) {
               case 'equals':
-                return fieldValue == rule.value;
+                return fieldValue === rule.value;
               case 'notEquals':
-                return fieldValue != rule.value;
+                return fieldValue !== rule.value;
               case 'greaterThan':
                 return Number(fieldValue) > Number(rule.value);
               case 'lessThan':

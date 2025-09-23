@@ -27,9 +27,7 @@ export const JsonViewer: React.FC<JsonViewerProps> = ({
       await navigator.clipboard.writeText(JSON.stringify(data, null, 2));
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
-    } catch (error) {
-      console.error('Failed to copy JSON:', error);
-    }
+    } catch (_error) {}
   };
 
   const formatJson = (obj: any, depth = 0): string => {

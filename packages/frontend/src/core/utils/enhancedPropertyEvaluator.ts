@@ -469,7 +469,7 @@ export class EnhancedPropertyEvaluator {
         if (!this.dependencyGraph.has(dep)) {
           this.dependencyGraph.set(dep, new Set());
         }
-        this.dependencyGraph.get(dep)!.add(property.name);
+        this.dependencyGraph.get(dep)?.add(property.name);
       });
     });
   }

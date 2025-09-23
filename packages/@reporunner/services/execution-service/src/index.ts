@@ -27,19 +27,19 @@ export interface ExecutionResult {
 }
 
 export class ExecutionService {
-  constructor(private config: ExecutionConfig) {}
+  constructor(_config: ExecutionConfig) {}
 
-  async execute(request: ExecutionRequest): Promise<ExecutionResult> {
+  async execute(_request: ExecutionRequest): Promise<ExecutionResult> {
     // TODO: Implement workflow execution
     throw new Error('Not implemented');
   }
 
-  async getExecution(id: string): Promise<ExecutionResult | null> {
+  async getExecution(_id: string): Promise<ExecutionResult | null> {
     // TODO: Implement execution retrieval
     return null;
   }
 
-  async cancelExecution(id: string): Promise<boolean> {
+  async cancelExecution(_id: string): Promise<boolean> {
     // TODO: Implement execution cancellation
     return false;
   }

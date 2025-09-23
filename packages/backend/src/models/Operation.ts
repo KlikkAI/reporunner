@@ -220,7 +220,7 @@ operationSchema.index({ 'target.type': 1, 'target.id': 1 });
 operationSchema.index({ createdAt: 1 }, { expireAfterSeconds: 30 * 24 * 60 * 60 });
 
 // Methods for operational transform
-operationSchema.methods.transform = function (otherOperation: IOperation) {
+operationSchema.methods.transform = function (_otherOperation: IOperation) {
   // This will be implemented by the OperationalTransform service
   // For now, return a simple transform
   return {

@@ -1,4 +1,4 @@
-import crypto from 'crypto';
+import crypto from 'node:crypto';
 import type { Request } from 'express';
 import { google } from 'googleapis';
 import { AppError } from '../../../middleware/errorHandlers.js';

@@ -18,7 +18,7 @@ export interface ValidationWarning {
 }
 
 export class WorkflowValidator {
-  async validate(workflow: any): Promise<ValidationResult> {
+  async validate(_workflow: any): Promise<ValidationResult> {
     const errors: ValidationError[] = [];
     const warnings: ValidationWarning[] = [];
 
@@ -31,17 +31,7 @@ export class WorkflowValidator {
     return {
       valid: errors.length === 0,
       errors,
-      warnings
+      warnings,
     };
-  }
-
-  private validateConnections(workflow: any): ValidationError[] {
-    // TODO: Implement connection validation
-    return [];
-  }
-
-  private validateNodes(workflow: any): ValidationError[] {
-    // TODO: Implement node validation
-    return [];
   }
 }

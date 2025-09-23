@@ -28,7 +28,7 @@ class ThemeManager implements IThemeManager {
   }
 
   private initializeSystemThemeDetection(): void {
-    if (typeof window !== 'undefined' && window.matchMedia) {
+    if (window?.matchMedia) {
       this.mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
       this.systemPrefersDark = this.mediaQuery.matches;
 
@@ -77,7 +77,6 @@ class ThemeManager implements IThemeManager {
       this.applyCSSVariables(theme);
       this.emitThemeChangeEvent(theme);
     } else {
-      console.warn(`Theme "${name}" not found`);
     }
   }
 

@@ -18,7 +18,7 @@ const isDebugEnabled =
 
 if (!isDebugEnabled) {
   // Return 404 for all debug routes in production
-  router.use('*', (req, res) => {
+  router.use('*', (_req, res) => {
     res.status(404).json({ error: 'Debug routes not available' });
   });
 } else {
@@ -28,7 +28,7 @@ if (!isDebugEnabled) {
   router.get('/health/live', healthCheck.createLivenessEndpoint());
 
   // System Information Routes
-  router.get('/system/info', (req, res) => {
+  router.get('/system/info', (_req, res) => {
     const systemInfo = {
       node: {
         version: process.version,
@@ -56,11 +56,11 @@ if (!isDebugEnabled) {
 
   router.get('/system/metrics', (req, res) => {
     const { since, limit = 100 } = req.query;
-    const sinceTimestamp = since ? parseInt(since as string) : Date.now() - 60 * 60 * 1000; // Last hour
+    const sinceTimestamp = since ? parseInt(since as string, 10) : Date.now() - 60 * 60 * 1000; // Last hour
 
     const metrics = performanceMonitor
       .getMetrics(undefined, sinceTimestamp)
-      .slice(0, parseInt(limit as string));
+      .slice(0, parseInt(limit as string, 10));
 
     const summary = {
       total: metrics.length,
@@ -89,12 +89,12 @@ if (!isDebugEnabled) {
   // Error Tracking Routes
   router.get('/errors', (req, res) => {
     const { severity, since, limit = 50 } = req.query;
-    const sinceTimestamp = since ? parseInt(since as string) : undefined;
+    const sinceTimestamp = since ? parseInt(since as string, 10) : undefined;
 
     const errors = errorTracker.getErrors({
       severity: severity as string,
       since: sinceTimestamp,
-      limit: parseInt(limit as string),
+      limit: parseInt(limit as string, 10),
     });
 
     const stats = errorTracker.getErrorStats(sinceTimestamp);
@@ -126,7 +126,7 @@ if (!isDebugEnabled) {
     });
   });
 
-  router.get('/errors/patterns', (req, res) => {
+  router.get('/errors/patterns', (_req, res) => {
     const patterns = errorTracker.getErrorPatterns();
 
     res.json({
@@ -168,7 +168,7 @@ if (!isDebugEnabled) {
 
   router.get('/debug/sessions/:sessionId', (req, res) => {
     const { sessionId } = req.params;
-    const session = debugTools['activeSessions'].get(sessionId);
+    const session = debugTools.activeSessions.get(sessionId);
 
     if (!session) {
       res.status(404).json({
@@ -237,8 +237,8 @@ if (!isDebugEnabled) {
     }
 
     const profileId = debugTools.startProfiling(name, {
-      sampleInterval: sampleInterval ? parseInt(sampleInterval) : undefined,
-      duration: duration ? parseInt(duration) : undefined,
+      sampleInterval: sampleInterval ? parseInt(sampleInterval, 10) : undefined,
+      duration: duration ? parseInt(duration, 10) : undefined,
     });
 
     res.status(201).json({
@@ -286,7 +286,7 @@ if (!isDebugEnabled) {
     });
   });
 
-  router.post('/debug/memory/leak-detection/stop', (req, res) => {
+  router.post('/debug/memory/leak-detection/stop', (_req, res) => {
     debugTools.stopMemoryLeakDetection();
 
     res.json({
@@ -296,14 +296,14 @@ if (!isDebugEnabled) {
   });
 
   // Configuration Routes
-  router.get('/debug/config', (req, res) => {
+  router.get('/debug/config', (_req, res) => {
     const config = {
-      globalDebugMode: debugTools['globalDebugMode'],
+      globalDebugMode: debugTools.globalDebugMode,
       logLevel: logger.getLogLevel(),
       environment: process.env.NODE_ENV,
       debugRoutes: isDebugEnabled,
-      activeSessions: debugTools['activeSessions'].size,
-      activeProfiles: debugTools['performanceProfiler'].size,
+      activeSessions: debugTools.activeSessions.size,
+      activeProfiles: debugTools.performanceProfiler.size,
     };
 
     res.json({
@@ -365,32 +365,26 @@ if (!isDebugEnabled) {
   // Test Error Generation (for testing error tracking)
   router.post('/debug/test/error', (req, res) => {
     const { type = 'generic', message = 'Test error', severity = 'medium' } = req.body;
+    if (type === 'throw') {
+      throw new Error(message);
+    } else if (type === 'async') {
+      Promise.reject(new Error(message));
+      res.json({ success: true, message: 'Async error triggered' });
+    } else {
+      const error = new Error(message);
+      errorTracker.trackError(
+        error,
+        {
+          component: 'debug-test',
+          requestId: (req as any).id,
+        },
+        severity
+      );
 
-    try {
-      if (type === 'throw') {
-        throw new Error(message);
-      } else if (type === 'async') {
-        Promise.reject(new Error(message));
-        res.json({ success: true, message: 'Async error triggered' });
-      } else {
-        const error = new Error(message);
-        errorTracker.trackError(
-          error,
-          {
-            component: 'debug-test',
-            requestId: (req as any).id,
-          },
-          severity
-        );
-
-        res.json({
-          success: true,
-          message: 'Test error tracked',
-        });
-      }
-    } catch (error) {
-      // This will be caught by the error handler middleware
-      throw error;
+      res.json({
+        success: true,
+        message: 'Test error tracked',
+      });
     }
   });
 
@@ -431,7 +425,7 @@ if (!isDebugEnabled) {
   });
 
   // MongoDB Debugging (if using Mongoose)
-  router.get('/debug/database/connections', (req, res) => {
+  router.get('/debug/database/connections', (_req, res) => {
     const mongoose = require('mongoose');
 
     const connectionInfo = {
@@ -449,7 +443,7 @@ if (!isDebugEnabled) {
   });
 
   // Log recent entries
-  router.get('/debug/logs/recent', (req, res) => {
+  router.get('/debug/logs/recent', (_req, res) => {
     // This would require storing logs in memory or reading from log files
     // For now, return a placeholder
     res.json({

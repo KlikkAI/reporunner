@@ -129,7 +129,7 @@ export function VirtualizedList<T>({
       const endTime = performance.now();
       performanceService.trackComponentRender(componentName, startTime, endTime);
     };
-  }, [items.length, virtualItems.length, estimateSize]);
+  }, []);
 
   // Memoize container styles for performance
   const containerStyles = useMemo(

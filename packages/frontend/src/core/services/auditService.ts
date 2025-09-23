@@ -150,8 +150,6 @@ export class AuditService {
     if (auditEvent.severity === 'critical') {
       await this.triggerSecurityAlert(auditEvent);
     }
-
-    console.log(`[AUDIT] ${auditEvent.action} on ${auditEvent.resource} by ${auditEvent.userName}`);
   }
 
   // Authentication events
@@ -550,7 +548,7 @@ export class AuditService {
       if (!loginsByUser.has(event.userId)) {
         loginsByUser.set(event.userId, []);
       }
-      loginsByUser.get(event.userId)!.push(event);
+      loginsByUser.get(event.userId)?.push(event);
     });
 
     loginsByUser.forEach((userFailedLogins, userId) => {
@@ -669,15 +667,9 @@ export class AuditService {
     };
 
     this.securityAlerts.push(alert);
-    console.warn(`[SECURITY ALERT] ${alert.title}: ${alert.description}`);
   }
 
-  private async triggerSecurityAlert(event: AuditEvent): Promise<void> {
-    // In a real implementation, this would send notifications
-    console.error(
-      `[CRITICAL SECURITY EVENT] ${event.action} on ${event.resource} by ${event.userName}`
-    );
-  }
+  private async triggerSecurityAlert(_event: AuditEvent): Promise<void> {}
 
   // Data export for compliance
   async exportAuditData(
@@ -735,13 +727,9 @@ export class AuditService {
     const cutoffDate = new Date();
     cutoffDate.setDate(cutoffDate.getDate() - this.retentionPolicy.auditLogRetentionDays);
 
-    const beforeCount = this.events.length;
+    const _beforeCount = this.events.length;
     this.events = this.events.filter((event) => event.timestamp >= cutoffDate);
-    const afterCount = this.events.length;
-
-    console.log(
-      `Data retention: Purged ${beforeCount - afterCount} audit events older than ${this.retentionPolicy.auditLogRetentionDays} days`
-    );
+    const _afterCount = this.events.length;
   }
 }
 

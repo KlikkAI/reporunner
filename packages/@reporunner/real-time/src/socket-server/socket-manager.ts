@@ -1,6 +1,6 @@
+import type { Server as HTTPServer } from 'node:http';
 import type { IJwtPayload } from '@reporunner/api-types';
 import { createAdapter } from '@socket.io/redis-adapter';
-import type { Server as HTTPServer } from 'http';
 import { createClient } from 'redis';
 import { type Socket, Server as SocketIOServer } from 'socket.io';
 import { OperationalTransform } from '../operational-transform/operation-engine';
@@ -36,7 +36,6 @@ export interface CollaborationSession {
 
 export class SocketManager {
   private io: SocketIOServer;
-  private roomManager: RoomManager;
   private presenceTracker: PresenceTracker;
   private operationalTransform: OperationalTransform;
   private sessions: Map<string, CollaborationSession> = new Map();
@@ -93,7 +92,7 @@ export class SocketManager {
         socket.data.sessionId = `${user.sub}-${Date.now()}`;
 
         next();
-      } catch (error) {
+      } catch (_error) {
         next(new Error('Authentication failed'));
       }
     });
@@ -101,10 +100,8 @@ export class SocketManager {
 
   private setupEventHandlers(): void {
     this.io.on('connection', (socket: Socket) => {
-      const user = socket.data.user as IJwtPayload;
-      const sessionId = socket.data.sessionId;
-
-      console.log(`User ${user.email} connected with session ${sessionId}`);
+      const _user = socket.data.user as IJwtPayload;
+      const _sessionId = socket.data.sessionId;
 
       // Handle workflow room joining
       socket.on('join:workflow', async (data: { workflowId: string }) => {
@@ -506,18 +503,16 @@ export class SocketManager {
       // Clean up session
       this.sessions.delete(sessionId);
     }
-
-    console.log(`User ${user?.email} disconnected`);
   }
 
   // Helper methods
-  private async verifyToken(token: string): Promise<IJwtPayload> {
+  private async verifyToken(_token: string): Promise<IJwtPayload> {
     // Implementation would verify JWT token
     // This is a placeholder
     return {} as IJwtPayload;
   }
 
-  private checkWorkflowAccess(user: IJwtPayload, workflowId: string): boolean {
+  private checkWorkflowAccess(_user: IJwtPayload, _workflowId: string): boolean {
     // Check if user has access to the workflow
     // This would integrate with the permission engine
     return true;
@@ -539,17 +534,13 @@ export class SocketManager {
     return colors[index];
   }
 
-  private checkNodeLock(workflowId: string, nodeId: string, userId: string): boolean {
+  private checkNodeLock(_workflowId: string, _nodeId: string, _userId: string): boolean {
     // Check if node is locked by another user
     // This would be implemented with a locking mechanism
     return false;
   }
 
-  private async applyOperationToWorkflow(workflowId: string, operation: any): Promise<void> {
-    // Apply the operation to the actual workflow
-    // This would integrate with the workflow service
-    console.log(`Applying operation to workflow ${workflowId}:`, operation);
-  }
+  private async applyOperationToWorkflow(_workflowId: string, _operation: any): Promise<void> {}
 
   // Public methods
   public getActiveCollaborators(workflowId: string): CollaborationSession[] {

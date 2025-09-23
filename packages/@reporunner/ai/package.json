@@ -42,8 +42,9 @@
     "clean": "rm -rf dist",
     "test": "jest",
     "test:watch": "jest --watch",
-    "lint": "eslint src/**/*.ts",
-    "lint:fix": "eslint src/**/*.ts --fix",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "format": "biome format --write .",
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
@@ -64,9 +65,6 @@
   "devDependencies": {
     "@types/node": "catalog:",
     "@types/pg": "^8.15.5",
-    "eslint": "catalog:",
-    "@typescript-eslint/eslint-plugin": "catalog:",
-    "@typescript-eslint/parser": "catalog:",
     "jest": "catalog:",
     "@types/jest": "catalog:",
     "tsup": "^7.0.0",

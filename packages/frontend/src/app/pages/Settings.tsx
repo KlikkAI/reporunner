@@ -61,7 +61,7 @@ const Settings: React.FC = () => {
 
   useEffect(() => {
     loadUserProfile();
-  }, []);
+  }, [loadUserProfile]);
 
   const loadUserProfile = async () => {
     setIsLoading(true);
@@ -75,8 +75,7 @@ const Settings: React.FC = () => {
           timezone: 'UTC-5', // Default, could be stored in user profile
         },
       }));
-    } catch (error) {
-      console.error('Failed to load user profile:', error);
+    } catch (_error) {
     } finally {
       setIsLoading(false);
     }
@@ -97,8 +96,7 @@ const Settings: React.FC = () => {
       // For other settings, you would call appropriate API endpoints
       // For now, just show success message
       alert('Settings saved successfully!');
-    } catch (error) {
-      console.error('Failed to save settings:', error);
+    } catch (_error) {
       alert('Failed to save settings. Please try again.');
     } finally {
       setIsSaving(false);
@@ -288,7 +286,7 @@ const Settings: React.FC = () => {
                       aria-label="security-session time out"
                       value={settings.security.sessionTimeout}
                       onChange={(e) =>
-                        updateSetting('security', 'sessionTimeout', parseInt(e.target.value))
+                        updateSetting('security', 'sessionTimeout', parseInt(e.target.value, 10))
                       }
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                     >

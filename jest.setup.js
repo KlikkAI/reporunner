@@ -1,4 +1,4 @@
-const { TextEncoder, TextDecoder } = require('util');
+const { TextEncoder, TextDecoder } = require('node:util');
 
 // Make TextEncoder/TextDecoder available globally for Node.js < 19
 if (!global.TextEncoder) {

@@ -81,7 +81,7 @@ export const catchAsync = (fn: Function) => {
 };
 
 // Global error handler middleware
-export const errorHandler = (err: any, req: Request, res: Response, next: NextFunction) => {
+export const errorHandler = (err: any, _req: Request, res: Response, _next: NextFunction) => {
   err.statusCode = err.statusCode || 500;
   err.status = err.status || 'error';
 
@@ -102,7 +102,7 @@ export const errorHandler = (err: any, req: Request, res: Response, next: NextFu
 };
 
 // 404 handler for undefined routes
-export const notFoundHandler = (req: Request, res: Response, next: NextFunction) => {
+export const notFoundHandler = (req: Request, _res: Response, next: NextFunction) => {
   const err = new AppError(`Can't find ${req.originalUrl} on this server!`, 404);
   next(err);
 };

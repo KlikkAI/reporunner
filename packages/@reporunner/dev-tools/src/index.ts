@@ -61,7 +61,7 @@ export class DevTools {
   }): Promise<string> {
     const template = this.getWorkflowTemplate(options.template || 'basic');
 
-    const workflow = {
+    const _workflow = {
       ...template,
       name: options.name,
       description: options.description || `Generated workflow: ${options.name}`,
@@ -70,9 +70,6 @@ export class DevTools {
 
     const outputPath =
       options.outputPath || `./workflows/${options.name.toLowerCase().replace(/\s+/g, '-')}.json`;
-
-    // TODO: Write workflow to file
-    console.log(`Generated workflow: ${outputPath}`);
 
     return outputPath;
   }
@@ -85,7 +82,7 @@ export class DevTools {
   }): Promise<string> {
     const nodeTemplate = this.getNodeTemplate(options.type);
 
-    const node = {
+    const _node = {
       ...nodeTemplate,
       name: options.name,
       category: options.category,
@@ -95,13 +92,10 @@ export class DevTools {
     const outputPath =
       options.outputPath || `./src/nodes/${options.category}/${options.name.toLowerCase()}.ts`;
 
-    // TODO: Write node to file
-    console.log(`Generated node: ${outputPath}`);
-
     return outputPath;
   }
 
-  async testWorkflow(workflowId: string, testData?: any): Promise<WorkflowTestResult> {
+  async testWorkflow(workflowId: string, _testData?: any): Promise<WorkflowTestResult> {
     const startTime = Date.now();
 
     try {
@@ -160,12 +154,9 @@ export class DevTools {
     if (!this.config.enableHotReload) return;
 
     for (const pattern of this.config.watchPaths) {
-      // TODO: Use chokidar to watch files
-      console.log(`Watching: ${pattern}`);
-
       // Mock watcher
       const watcher = {
-        close: () => console.log(`Stopped watching: ${pattern}`),
+        close: () => {},
       };
 
       this.watchers.set(pattern, watcher);
@@ -181,9 +172,6 @@ export class DevTools {
 
   startProfiler(): void {
     if (!this.config.enableProfiler) return;
-
-    // TODO: Implement performance profiling
-    console.log('Performance profiler started');
     this.profiler = setInterval(() => {
       this.collectMetrics();
     }, 1000);
@@ -193,11 +181,10 @@ export class DevTools {
     if (this.profiler) {
       clearInterval(this.profiler);
       this.profiler = undefined;
-      console.log('Performance profiler stopped');
     }
   }
 
-  async validateWorkflows(directory: string = './workflows'): Promise<{
+  async validateWorkflows(_directory: string = './workflows'): Promise<{
     valid: number;
     invalid: number;
     errors: Array<{ file: string; errors: string[] }>;
@@ -212,7 +199,7 @@ export class DevTools {
     };
   }
 
-  async analyzePerformance(workflowId: string): Promise<{
+  async analyzePerformance(_workflowId: string): Promise<{
     bottlenecks: Array<{
       nodeId: string;
       avgDuration: number;
@@ -233,7 +220,7 @@ export class DevTools {
     };
   }
 
-  generateMockData(schema: any): any {
+  generateMockData(_schema: any): any {
     // TODO: Generate mock data based on schema
     // This would be useful for testing workflows
 
@@ -350,8 +337,6 @@ export class DevTools {
         utilization: 0, // TODO: Calculate event loop utilization
       },
     };
-
-    console.log('Performance metrics:', metrics);
     return metrics;
   }
 

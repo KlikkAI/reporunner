@@ -3,7 +3,7 @@
  * Provides structured logging with multiple transports and formats
  */
 
-import path from 'path';
+import path from 'node:path';
 import winston from 'winston';
 
 // Log levels
@@ -226,7 +226,7 @@ class LoggerService {
     duration?: number,
     error?: Error
   ): void {
-    const level = error ? 'error' : 'info';
+    const _level = error ? 'error' : 'info';
     const message = `Workflow execution: ${workflowId}/${nodeId} - ${status}`;
 
     const context: LogContext = {

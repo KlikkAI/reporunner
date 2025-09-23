@@ -1,4 +1,4 @@
-import { EventEmitter } from 'events';
+import { EventEmitter } from 'node:events';
 
 export interface IntegrationConfig {
   name: string;
@@ -179,7 +179,7 @@ export abstract class BaseIntegration extends EventEmitter {
 
     switch (this.config.authType) {
       case 'apiKey':
-        headers['Authorization'] = `Bearer ${this.credentials.data.apiKey}`;
+        headers.Authorization = `Bearer ${this.credentials.data.apiKey}`;
         break;
 
       case 'oauth2':
@@ -187,14 +187,14 @@ export abstract class BaseIntegration extends EventEmitter {
         if (this.credentials.expiresAt && new Date() >= this.credentials.expiresAt) {
           await this.refreshOAuth2Token();
         }
-        headers['Authorization'] = `Bearer ${this.credentials.data.accessToken}`;
+        headers.Authorization = `Bearer ${this.credentials.data.accessToken}`;
         break;
 
       case 'basic': {
         const auth = Buffer.from(
           `${this.credentials.data.username}:${this.credentials.data.password}`
         ).toString('base64');
-        headers['Authorization'] = `Basic ${auth}`;
+        headers.Authorization = `Basic ${auth}`;
         break;
       }
 
@@ -210,7 +210,7 @@ export abstract class BaseIntegration extends EventEmitter {
   /**
    * Apply custom authentication (to be overridden if needed)
    */
-  protected async applyCustomAuth(headers: Record<string, string>): Promise<void> {
+  protected async applyCustomAuth(_headers: Record<string, string>): Promise<void> {
     // Default implementation - does nothing
     // Override in specific integrations for custom auth
   }

@@ -1,7 +1,7 @@
+import crypto from 'node:crypto';
+import { EventEmitter } from 'node:events';
+import { URL, URLSearchParams } from 'node:url';
 import axios, { type AxiosInstance } from 'axios';
-import crypto from 'crypto';
-import { EventEmitter } from 'events';
-import { URL, URLSearchParams } from 'url';
 
 export interface OAuth2Config {
   clientId: string;
@@ -348,9 +348,7 @@ export class OAuth2Handler extends EventEmitter {
             }
           );
         }
-      } catch (error: any) {
-        console.error('Failed to revoke token at provider:', error.message);
-      }
+      } catch (_error: any) {}
     }
 
     // Remove session

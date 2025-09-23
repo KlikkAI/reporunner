@@ -1,6 +1,7 @@
 // Load environment variables FIRST, before any other imports
+
+import path from 'node:path';
 import dotenv from 'dotenv';
-import path from 'path';
 
 // Debug working directory and .env file path
 console.log('Current working directory:', process.cwd());
@@ -18,12 +19,11 @@ console.log(
 );
 console.log('JWT_SECRET:', process.env.JWT_SECRET ? '[SET]' : '[NOT SET]');
 
+import { createServer } from 'node:http';
 import compression from 'compression';
 import cors from 'cors';
-import express, { type Application, NextFunction, type Request, type Response } from 'express';
+import express, { type Application, type Request, type Response } from 'express';
 import helmet from 'helmet';
-import { createServer } from 'http';
-import mongoose from 'mongoose';
 import morgan from 'morgan';
 import { Server } from 'socket.io';
 
@@ -72,7 +72,7 @@ app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 app.use(morgan('dev'));
 
 // API Routes
-app.get('/', (req: Request, res: Response) => {
+app.get('/', (_req: Request, res: Response) => {
   res.json({
     message: 'Workflow Automation Backend API is running',
     status: 'healthy',
@@ -100,7 +100,7 @@ app.get('/health', async (_req: Request, res: Response) => {
         postgresql: healthStatus.postgres ? 'healthy' : 'unhealthy',
       },
     });
-  } catch (error) {
+  } catch (_error) {
     res.status(503).json({
       status: 'error',
       timestamp: new Date().toISOString(),

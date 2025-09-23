@@ -185,10 +185,7 @@ export const ContainerNode: React.FC<ContainerNodeProps> = ({ id, data, selected
     );
   }, [id, setNodes]);
 
-  const handleEdit = useCallback(() => {
-    // Open container configuration modal
-    console.log('Edit container:', id, containerType);
-  }, [id, containerType]);
+  const handleEdit = useCallback(() => {}, []);
 
   const handleDrop = useCallback(
     (event: React.DragEvent) => {
@@ -241,9 +238,7 @@ export const ContainerNode: React.FC<ContainerNodeProps> = ({ id, data, selected
               : node
           )
         );
-      } catch (error) {
-        console.error('Error dropping node into container:', error);
-      }
+      } catch (_error) {}
     },
     [id, containerType, addNode, setNodes]
   );

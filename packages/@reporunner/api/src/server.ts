@@ -99,7 +99,7 @@ export class APIServer {
    */
   private setupRoutes(): void {
     // Health check
-    this.app.get('/health', (req, res) => {
+    this.app.get('/health', (_req, res) => {
       res.status(200).json({
         status: 'OK',
         timestamp: new Date().toISOString(),
@@ -125,7 +125,7 @@ export class APIServer {
     );
 
     // Serve OpenAPI spec as JSON
-    this.app.get('/openapi.json', (req, res) => {
+    this.app.get('/openapi.json', (_req, res) => {
       res.json(this.openAPISpec);
     });
 
@@ -155,10 +155,6 @@ export class APIServer {
   public async start(): Promise<void> {
     return new Promise((resolve) => {
       this.app.listen(this.port, () => {
-        console.log(`🚀 API Server running on port ${this.port}`);
-        console.log(`📚 API Documentation: http://localhost:${this.port}/docs`);
-        console.log(`🔍 OpenAPI Spec: http://localhost:${this.port}/openapi.json`);
-        console.log(`❤️  Health Check: http://localhost:${this.port}/health`);
         resolve();
       });
     });
@@ -184,22 +180,19 @@ export class APIServer {
 
 // Start server if this file is run directly
 if (require.main === module) {
-  const server = new APIServer(parseInt(process.env.PORT || '3001'));
+  const server = new APIServer(parseInt(process.env.PORT || '3001', 10));
 
-  server.start().catch((error) => {
-    console.error('Failed to start server:', error);
+  server.start().catch((_error) => {
     process.exit(1);
   });
 
   // Graceful shutdown
   process.on('SIGTERM', async () => {
-    console.log('SIGTERM received, shutting down gracefully');
     await server.stop();
     process.exit(0);
   });
 
   process.on('SIGINT', async () => {
-    console.log('SIGINT received, shutting down gracefully');
     await server.stop();
     process.exit(0);
   });

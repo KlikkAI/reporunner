@@ -60,7 +60,7 @@ const generateNodeTypes = () => {
   const nodeTypes: Record<string, any> = {};
 
   // Add container node type
-  nodeTypes['container'] = ContainerNode;
+  nodeTypes.container = ContainerNode;
 
   // Get ALL node descriptions (regular + enhanced) and map them to RegistryNode
   const allNodeDescriptions = nodeRegistry.getAllNodeTypeDescriptions();
@@ -73,15 +73,9 @@ const generateNodeTypes = () => {
     const hasGmailNode = 'gmail-enhanced' in nodeTypes;
 
     if (!hasGmailNode) {
-      console.warn('⚠️ Gmail enhanced node missing from React Flow mapping!');
-      console.warn('🔍 Available nodes:', Object.keys(nodeTypes));
-      console.warn(`📊 Generated ${Object.keys(nodeTypes).length} node types from registry`);
     } else {
       // Only log success once per session to avoid spam
       if (!(window as any).__gmailNodeValidationLogged) {
-        console.log(
-          `✅ Generated ${Object.keys(nodeTypes).length} node types including Gmail and containers`
-        );
         (window as any).__gmailNodeValidationLogged = true;
       }
     }
@@ -137,7 +131,6 @@ const WorkflowEditor: React.FC = () => {
   // Memoized node types - prevent React Flow warnings about creating new objects
   const nodeTypes = useMemo<Record<string, any>>(() => {
     if (import.meta.env.DEV) {
-      console.log('🔄 WorkflowEditor: Memoizing node types');
     }
     return generateNodeTypes();
   }, []);
@@ -152,24 +145,13 @@ const WorkflowEditor: React.FC = () => {
 
     // Only log if there's actually a problem
     if (hasGmailInRegistry !== hasGmailInReactFlow) {
-      console.warn('🔍 Gmail Node Validation Issue:', {
-        inRegistry: hasGmailInRegistry,
-        inReactFlow: hasGmailInReactFlow,
-        registryStats: nodeRegistry.getStatistics(),
-      });
-
       // Note: With memoized nodeTypes, we can't dynamically regenerate
       // If this happens, the user should refresh the page
       if (hasGmailInRegistry && !hasGmailInReactFlow) {
-        console.error(
-          '🔄 Gmail node in registry but missing from React Flow - page refresh may be needed'
-        );
       }
     } else if (import.meta.env.DEV) {
-      // Success case - only show in dev mode and only once
-      console.log('✅ Gmail node validation passed on mount');
     }
-  }, []); // ✅ Fixed: Empty dependency array - runs only once on mount
+  }, [nodeTypes]); // ✅ Fixed: Empty dependency array - runs only once on mount
 
   // Convert lean nodes to React Flow format with error handling
   const reactFlowNodes = useMemo(() => {
@@ -178,15 +160,8 @@ const WorkflowEditor: React.FC = () => {
 
       // Error handling for missing node types
       if (!nodeDefinition) {
-        console.error(`❌ Node type "${leanNode.type}" not found in registry!`, {
-          nodeId: leanNode.id,
-          nodeType: leanNode.type,
-          availableTypes: nodeRegistry.getAllNodeTypeDescriptions().map((n) => n.name),
-        });
-
         // Special handling for Gmail node - likely needs page refresh
         if (leanNode.type === 'gmail-enhanced') {
-          console.error('🔥 Gmail Enhanced Node missing - page refresh may be needed');
         }
       }
       return {
@@ -233,8 +208,6 @@ const WorkflowEditor: React.FC = () => {
   // Handle branch creation from conditional branching panel
   const handleAddBranch = useCallback(
     (branchConfig: BranchConfiguration) => {
-      console.log('Adding branch configuration:', branchConfig);
-
       // Create condition nodes and edges based on branch configuration
       const conditionNodeId = `condition-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`;
 
@@ -285,8 +258,7 @@ const WorkflowEditor: React.FC = () => {
 
   // Handle workflow creation from template
   const handleCreateFromTemplate = useCallback(
-    (templateId: string, variables?: Record<string, any>) => {
-      console.log('Creating workflow from template:', templateId, variables);
+    (_templateId: string, _variables?: Record<string, any>) => {
       // Template creation is handled within the WorkflowTemplatesPanel component
       // which calls loadWorkflow directly on the store
     },
@@ -306,16 +278,14 @@ const WorkflowEditor: React.FC = () => {
             data: { nodes: leanNodes },
             workflowId: 'current-workflow', // Would come from props or context
           });
-        } catch (error) {
-          console.error('Failed to sync workflow changes:', error);
-        }
+        } catch (_error) {}
       };
 
       // Debounce sync to avoid excessive operations
       const timeoutId = setTimeout(syncWorkflowChanges, 500);
       return () => clearTimeout(timeoutId);
     }
-  }, [leanNodes, edges, isCollaborationConnected, sendOperation]);
+  }, [leanNodes, isCollaborationConnected, sendOperation]);
 
   // Update user selection for collaboration
   useEffect(() => {
@@ -497,7 +467,6 @@ const WorkflowEditor: React.FC = () => {
         const data = event.dataTransfer.getData('application/reactflow');
 
         if (!data || !reactFlowInstance) {
-          console.warn('No drag data or ReactFlow instance available');
           return;
         }
 
@@ -586,13 +555,10 @@ const WorkflowEditor: React.FC = () => {
               }
             );
             if (suggestion) {
-              console.log(`🔗 Intelligent Auto-Connect: ${suggestion.reason}`);
             }
           }
         }
-      } catch (error) {
-        console.error('Error in onDrop:', error);
-      }
+      } catch (_error) {}
     },
     [reactFlowInstance, addNode, addEdgeToStore, findOptimalConnection, localNodes, localEdges]
   );
@@ -670,9 +636,7 @@ const WorkflowEditor: React.FC = () => {
             targetHandle: edge.targetHandle || undefined,
             data: edge.data,
           }))
-        ).catch((error) => {
-          console.error('AI workflow analysis failed:', error);
-        });
+        ).catch((_error) => {});
       }, 1000); // Debounce analysis
       return () => clearTimeout(timeoutId);
     }
@@ -718,7 +682,6 @@ const WorkflowEditor: React.FC = () => {
     const errorMessage = urlParams.get('message');
 
     if (credentialStatus === 'success' && credentialName) {
-      console.log('OAuth success:', credentialName);
       // Show success notification
       alert(`Successfully connected ${decodeURIComponent(credentialName)}!`);
 
@@ -735,7 +698,6 @@ const WorkflowEditor: React.FC = () => {
         loadWorkflow(workflowId).catch(console.error);
       }
     } else if (credentialStatus === 'error' && errorMessage) {
-      console.error('OAuth error:', errorMessage);
       // Show error notification
       alert(`Failed to connect: ${decodeURIComponent(errorMessage)}`);
 
@@ -743,7 +705,11 @@ const WorkflowEditor: React.FC = () => {
       const newUrl = window.location.pathname + window.location.hash;
       window.history.replaceState({}, document.title, newUrl);
     }
-  }, []);
+  }, [
+    // Reload credentials to show the new one in dropdowns
+    loadCredentials,
+    loadWorkflow,
+  ]);
 
   const memoizedNodes = useMemo(
     () =>
@@ -1093,9 +1059,7 @@ const WorkflowEditor: React.FC = () => {
               <CommentAnnotations
                 containerRef={{ current: containerRef! }}
                 transform={reactFlowInstance?.getViewport() || { x: 0, y: 0, zoom: 1 }}
-                onCommentClick={(position) => {
-                  console.log('Comment clicked at position:', position);
-                }}
+                onCommentClick={(_position) => {}}
               />
             </ReactFlow>
           </ReactFlowProvider>
@@ -1130,14 +1094,8 @@ const WorkflowEditor: React.FC = () => {
             connections: {},
             name: 'Current Workflow',
           }}
-          onApplySuggestion={(suggestion) => {
-            // Handle suggestion application
-            console.log('Applying suggestion:', suggestion);
-          }}
-          onGenerateWorkflow={(workflow) => {
-            // Handle workflow generation
-            console.log('Generated workflow:', workflow);
-          }}
+          onApplySuggestion={(_suggestion) => {}}
+          onGenerateWorkflow={(_workflow) => {}}
         />
       )}
 

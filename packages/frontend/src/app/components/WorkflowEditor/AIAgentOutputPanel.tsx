@@ -190,7 +190,7 @@ const AIAgentOutputPanel: React.FC<AIAgentOutputPanelProps> = ({
                   <div className="text-gray-200 text-sm max-h-32 overflow-y-auto">
                     {aiData.originalEmail.body
                       ? aiData.originalEmail.body.length > 300
-                        ? aiData.originalEmail.body.substring(0, 300) + '...'
+                        ? `${aiData.originalEmail.body.substring(0, 300)}...`
                         : aiData.originalEmail.body
                       : 'No email body available'}
                   </div>

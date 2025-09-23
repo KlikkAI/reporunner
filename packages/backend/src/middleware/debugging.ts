@@ -136,7 +136,7 @@ export function loggingMiddleware(req: DebuggingRequest, res: Response, next: Ne
  */
 export function debugMiddleware(req: DebuggingRequest, res: Response, next: NextFunction): void {
   // Only activate in debug mode
-  if (!debugTools['globalDebugMode']) {
+  if (!debugTools.globalDebugMode) {
     return next();
   }
 
@@ -196,7 +196,7 @@ export function errorTrackingMiddleware(
   error: Error,
   req: DebuggingRequest,
   res: Response,
-  next: NextFunction
+  _next: NextFunction
 ): void {
   // Determine error severity
   let severity: 'low' | 'medium' | 'high' | 'critical' = 'medium';
@@ -391,7 +391,7 @@ export function setupDatabaseMonitoring(): void {
   const mongoose = require('mongoose');
 
   // Monitor slow queries
-  mongoose.set('debug', (collectionName: string, method: string, query: any, doc: any) => {
+  mongoose.set('debug', (collectionName: string, method: string, query: any, _doc: any) => {
     const startTime = Date.now();
 
     // This is a simplified implementation

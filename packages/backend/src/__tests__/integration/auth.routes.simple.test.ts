@@ -43,7 +43,7 @@ describe('Auth Routes Simple Integration Tests', () => {
   describe('POST /auth/login', () => {
     it('should login successfully with valid credentials', async () => {
       // Create test user with strong password
-      const testUser = await testUtils.createTestUser({
+      const _testUser = await testUtils.createTestUser({
         email: 'login@integration.com',
         password: 'Password123',
         isActive: true,

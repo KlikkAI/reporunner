@@ -1,4 +1,4 @@
-import { ReportDefinition } from './reports';
+import type { ReportDefinition } from './reports';
 
 export interface Widget {
   id: string;
@@ -39,7 +39,9 @@ export class DashboardManager {
     this.initializeTemplates();
   }
 
-  async createDashboard(dashboard: Omit<Dashboard, 'id' | 'createdAt' | 'updatedAt'>): Promise<string> {
+  async createDashboard(
+    dashboard: Omit<Dashboard, 'id' | 'createdAt' | 'updatedAt'>
+  ): Promise<string> {
     const newDashboard: Dashboard = {
       ...dashboard,
       id: this.generateId(),
@@ -74,7 +76,7 @@ export class DashboardManager {
   async getDashboards(organizationId?: string, userId?: string): Promise<Dashboard[]> {
     const dashboards = Array.from(this.dashboards.values());
 
-    return dashboards.filter(dashboard => {
+    return dashboards.filter((dashboard) => {
       const matchesOrg = !organizationId || dashboard.organizationId === organizationId;
       const matchesUser = !userId || dashboard.ownerId === userId || dashboard.shared;
       return matchesOrg && matchesUser;
@@ -98,11 +100,15 @@ export class DashboardManager {
     return newWidget.id;
   }
 
-  async updateWidget(dashboardId: string, widgetId: string, updates: Partial<Widget>): Promise<boolean> {
+  async updateWidget(
+    dashboardId: string,
+    widgetId: string,
+    updates: Partial<Widget>
+  ): Promise<boolean> {
     const dashboard = this.dashboards.get(dashboardId);
     if (!dashboard) return false;
 
-    const widgetIndex = dashboard.widgets.findIndex(w => w.id === widgetId);
+    const widgetIndex = dashboard.widgets.findIndex((w) => w.id === widgetId);
     if (widgetIndex === -1) return false;
 
     dashboard.widgets[widgetIndex] = {
@@ -118,7 +124,7 @@ export class DashboardManager {
     const dashboard = this.dashboards.get(dashboardId);
     if (!dashboard) return false;
 
-    const widgetIndex = dashboard.widgets.findIndex(w => w.id === widgetId);
+    const widgetIndex = dashboard.widgets.findIndex((w) => w.id === widgetId);
     if (widgetIndex === -1) return false;
 
     dashboard.widgets.splice(widgetIndex, 1);
@@ -127,7 +133,12 @@ export class DashboardManager {
     return true;
   }
 
-  async createFromTemplate(templateId: string, organizationId: string, ownerId: string, name?: string): Promise<string> {
+  async createFromTemplate(
+    templateId: string,
+    organizationId: string,
+    ownerId: string,
+    name?: string
+  ): Promise<string> {
     const template = this.templates.get(templateId);
     if (!template) {
       throw new Error(`Template not found: ${templateId}`);
@@ -138,7 +149,7 @@ export class DashboardManager {
       description: template.description,
       organizationId,
       ownerId,
-      widgets: template.widgets.map(widget => ({
+      widgets: template.widgets.map((widget) => ({
         ...widget,
         id: this.generateId(),
       })),

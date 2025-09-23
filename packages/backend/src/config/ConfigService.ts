@@ -50,7 +50,7 @@ export class ConfigService {
       return defaultValue;
     }
     const parsed = parseInt(value, 10);
-    if (isNaN(parsed)) {
+    if (Number.isNaN(parsed)) {
       throw new Error(`Environment variable ${key} must be a valid number`);
     }
     return parsed;

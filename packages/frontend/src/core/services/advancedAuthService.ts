@@ -251,7 +251,7 @@ export class AdvancedAuthService {
     return mfaMethod;
   }
 
-  async verifyMFA(userId: string, verification: MFAVerification): Promise<boolean> {
+  async verifyMFA(_userId: string, verification: MFAVerification): Promise<boolean> {
     // Simulate MFA verification - in production, this would verify against actual MFA service
     const isValid = this.validateMFACode(verification.method, verification.code);
 
@@ -259,8 +259,6 @@ export class AdvancedAuthService {
       // Update MFA method last used
       const user = this.currentUser;
       if (user) {
-        // Update MFA method in user profile
-        console.log(`MFA verified for user ${userId} using ${verification.method}`);
       }
     }
 
@@ -329,7 +327,6 @@ export class AdvancedAuthService {
     }
 
     user.role = role;
-    console.log(`Role ${roleId} assigned to user ${userId} by ${assignedBy}`);
   }
 
   /**
@@ -417,19 +414,17 @@ export class AdvancedAuthService {
     };
 
     this.apiKeys.set(apiKey.id, apiKey);
-    console.log(`API key created: ${apiKey.id} for user ${userId}`);
 
     return apiKey;
   }
 
-  async revokeAPIKey(keyId: string, revokedBy: string): Promise<void> {
+  async revokeAPIKey(keyId: string, _revokedBy: string): Promise<void> {
     const apiKey = this.apiKeys.get(keyId);
     if (!apiKey) {
       throw new Error('API key not found');
     }
 
     apiKey.status = 'revoked';
-    console.log(`API key revoked: ${keyId} by ${revokedBy}`);
   }
 
   async validateAPIKey(
@@ -482,7 +477,6 @@ export class AdvancedAuthService {
     };
 
     this.invitations.set(invitation.id, invitation);
-    console.log(`User invitation sent to ${email} by ${invitedBy}`);
 
     return invitation;
   }
@@ -574,7 +568,6 @@ export class AdvancedAuthService {
     const session = this.sessions.get(sessionId);
     if (session) {
       session.isActive = false;
-      console.log(`Session revoked: ${sessionId}`);
     }
   }
 
@@ -942,9 +935,7 @@ export class AdvancedAuthService {
     this.authListeners.forEach((listener) => {
       try {
         listener(context);
-      } catch (error) {
-        console.error('Error in auth listener:', error);
-      }
+      } catch (_error) {}
     });
   }
 }
