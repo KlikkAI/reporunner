@@ -1,0 +1,35 @@
+{
+  "name": "@reporunner/enterprise",
+  "version": "1.0.0",
+  "description": "Enterprise features including SSO, RBAC, audit logging, and compliance",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx watch src/index.ts",
+    "test": "vitest",
+    "lint": "eslint src/**/*.ts",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@reporunner/auth": "workspace:*",
+    "@reporunner/security": "workspace:*",
+    "@reporunner/services": "workspace:*",
+    "samlify": "^2.8.10",
+    "ldapjs": "^3.0.7"
+  },
+  "devDependencies": {
+    "@types/ldapjs": "^3.0.6"
+  },
+  "keywords": [
+    "enterprise",
+    "sso",
+    "rbac",
+    "audit",
+    "compliance",
+    "saml",
+    "ldap"
+  ],
+  "author": "Reporunner Team",
+  "license": "MIT"
+}

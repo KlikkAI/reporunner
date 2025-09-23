@@ -1,0 +1,33 @@
+{
+  "name": "@reporunner/execution-service",
+  "version": "1.0.0",
+  "description": "Scalable workflow execution service with queue management and monitoring",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx watch src/index.ts",
+    "test": "vitest",
+    "lint": "eslint src/**/*.ts",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "bullmq": "^5.23.3",
+    "ioredis": "^5.4.1",
+    "@reporunner/workflow-engine": "workspace:*",
+    "@reporunner/platform": "workspace:*",
+    "@reporunner/monitoring": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^22.4.0"
+  },
+  "keywords": [
+    "execution",
+    "queue",
+    "bullmq",
+    "redis",
+    "scaling"
+  ],
+  "author": "Reporunner Team",
+  "license": "MIT"
+}

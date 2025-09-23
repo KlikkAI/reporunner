@@ -1,0 +1,95 @@
+# Build outputs
+dist/
+build/
+out/
+.next/
+target/
+
+# Dependencies
+node_modules/
+vendor/
+
+# Generated files
+*.d.ts
+coverage/
+.nyc_output/
+
+# Logs
+*.log
+logs/
+
+# Cache
+.cache/
+.turbo/
+.eslintcache
+
+# Lock files
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Environment files
+.env
+.env.*
+
+# IDE files
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Database files
+*.db
+*.sqlite
+
+# Documentation that might have special formatting
+CHANGELOG.md
+HISTORY.md
+
+# Migration files
+migrations/
+
+# Public assets
+public/
+assets/
+
+# Minified files
+*.min.js
+*.min.css
+
+# Source maps
+*.map
+
+# Docker files
+Dockerfile*
+docker-compose*.yml
+
+# Git files
+.gitignore
+.gitattributes
+
+# Config files that shouldn't be formatted
+*.config.js
+*.config.ts
+.eslintrc.*
+.babelrc*
+.browserslistrc
+
+# Binary files
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.ico
+*.pdf
+*.woff
+*.woff2
+*.ttf
+*.eot
+
+# Archive files
+*.zip
+*.tar
+*.gz

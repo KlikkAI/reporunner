@@ -53,10 +53,16 @@ cd reporunner
 pnpm install
 
 # Start development environment
-docker-compose up -d
+pnpm dev
+
+# Install dependencies
+pnpm install
+
+# Start development environment
+cd infrastructure/docker && docker-compose up -d
 
 # Start frontend and backend
-pnpm run dev
+pnpm dev
 ```
 
 Visit [http://localhost:3000](http://localhost:3000) to access the web interface.
@@ -65,10 +71,10 @@ Visit [http://localhost:3000](http://localhost:3000) to access the web interface
 
 ```bash
 # Using Docker Compose
-docker-compose -f docker-compose.prod.yml up -d
+cd infrastructure/docker && docker-compose -f docker-compose.prod.yml up -d
 
 # Using Kubernetes with Helm
-helm install reporunner ./helm/reporunner \
+cd infrastructure/kubernetes && helm install reporunner ./helm/reporunner \
   --set ingress.hosts[0].host=your-domain.com \
   --set postgresql.auth.password=your-secure-password
 ```
@@ -77,22 +83,33 @@ helm install reporunner ./helm/reporunner \
 
 ```
 reporunner/
-├── packages/
+├── packages/              # Main application packages (monorepo)
 │   ├── frontend/          # React 19 web application
-│   ├── backend/           # Express.js API server  
+│   ├── backend/           # Express.js API server
 │   ├── core/              # Shared business logic
-│   ├── cli/               # Developer CLI tools
-│   ├── sdk/               # TypeScript SDK
 │   └── @reporunner/       # Scoped packages
 │       ├── ai/            # AI/ML capabilities
-│       ├── workflow/      # Workflow execution engine
-│       ├── nodes/         # Node type definitions
-│       ├── design-system/ # UI component library
-│       └── python-sdk/    # Python SDK
-├── helm/                  # Kubernetes deployment
-├── docker-compose.yml     # Development environment  
-└── docs/                  # Documentation
+│       ├── workflow-engine/ # Workflow execution engine
+│       ├── auth/          # Authentication services
+│       ├── database/      # Database abstractions
+│       └── design-system/ # UI component library
+├── infrastructure/        # Infrastructure as Code
+│   ├── docker/            # Docker Compose configurations
+│   ├── kubernetes/        # Kubernetes manifests and Helm charts
+│   ├── monitoring/        # Prometheus + Grafana setup
+│   ├── observability/     # OpenTelemetry + Jaeger/Tempo
+│   └── logging/           # ELK Stack configuration
+├── sdks/                  # All official SDKs (TypeScript, Python, Go, Java, C#, PHP, Rust)
+├── development/           # Development tools and scripts
+│   ├── scripts/           # Build and development scripts
+│   └── tools/             # Development tooling
+└── documentation/         # Project documentation
+    ├── project-docs/      # Technical documentation
+    ├── api-docs/          # API documentation
+    └── guides/            # User guides and tutorials
 ```
+
+> 📋 **See [DIRECTORY_STRUCTURE.md](./DIRECTORY_STRUCTURE.md) for detailed documentation of the reorganized structure.**
 
 ## 🛠️ Development
 

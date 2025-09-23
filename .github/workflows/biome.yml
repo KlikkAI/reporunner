@@ -116,7 +116,7 @@ jobs:
         run: pnpm install --frozen-lockfile --prefer-offline
 
       - name: Lint check
-        run: pnpm lint:check
+        run: pnpm lint
 
       - name: Generate lint report
         if: always()

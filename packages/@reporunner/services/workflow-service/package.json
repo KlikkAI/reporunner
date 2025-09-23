@@ -1,0 +1,28 @@
+{
+  "name": "@reporunner/workflow-service",
+  "version": "1.0.0",
+  "description": "Enterprise workflow management service with versioning and collaboration",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx watch src/index.ts",
+    "test": "vitest",
+    "lint": "eslint src/**/*.ts",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@reporunner/workflow-engine": "workspace:*",
+    "@reporunner/database": "workspace:*",
+    "@reporunner/real-time": "workspace:*",
+    "@reporunner/constants": "workspace:*"
+  },
+  "keywords": [
+    "workflow",
+    "automation",
+    "versioning",
+    "collaboration"
+  ],
+  "author": "Reporunner Team",
+  "license": "MIT"
+}

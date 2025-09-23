@@ -1,0 +1,15 @@
+# Browsers that we support for the frontend application
+# This affects build tools, transpilation, and polyfills
+
+# Production builds
+> 0.5%
+last 2 versions
+not dead
+not ie <= 11
+not op_mini all
+
+# Development builds
+# Slightly more relaxed for development
+last 1 chrome version
+last 1 firefox version
+last 1 safari version

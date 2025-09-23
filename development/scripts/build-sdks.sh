@@ -39,8 +39,8 @@ fi
 
 # Build TypeScript/Node.js SDK
 print_status "Building TypeScript SDK..."
-if [ -d "packages/sdk" ]; then
-    cd packages/sdk
+if [ -d "sdks/typescript" ]; then
+    cd sdks/typescript
     npm run build 2>/dev/null || pnpm build 2>/dev/null || yarn build
     print_success "TypeScript SDK built successfully"
     cd ../..
@@ -48,25 +48,25 @@ else
     print_warning "TypeScript SDK directory not found, skipping..."
 fi
 
-# Build Python SDK  
+# Build Python SDK
 print_status "Building Python SDK..."
-if [ -d "packages/@reporunner/python-sdk" ]; then
-    cd packages/@reporunner/python-sdk
+if [ -d "sdks/python" ]; then
+    cd sdks/python
     if command -v python3 &> /dev/null; then
         python3 -m build 2>/dev/null || print_warning "Python build failed, ensure 'build' package is installed"
         print_success "Python SDK built successfully"
     else
         print_warning "Python 3 not found, skipping Python SDK build..."
     fi
-    cd ../../..
+    cd ../..
 else
     print_warning "Python SDK directory not found, skipping..."
 fi
 
 # Build Go SDK
 print_status "Building Go SDK..."
-if [ -d "packages/@reporunner/go-sdk" ]; then
-    cd packages/@reporunner/go-sdk
+if [ -d "sdks/go" ]; then
+    cd sdks/go
     if command -v go &> /dev/null; then
         go mod download
         go build -o dist/reporunner-sdk ./...
@@ -75,15 +75,15 @@ if [ -d "packages/@reporunner/go-sdk" ]; then
     else
         print_warning "Go not found, skipping Go SDK build..."
     fi
-    cd ../../..
+    cd ../..
 else
     print_warning "Go SDK directory not found, skipping..."
 fi
 
 # Build Rust SDK
 print_status "Building Rust SDK..."
-if [ -d "packages/@reporunner/rust-sdk" ]; then
-    cd packages/@reporunner/rust-sdk
+if [ -d "sdks/rust" ]; then
+    cd sdks/rust
     if command -v cargo &> /dev/null; then
         cargo build --release
         cargo test
@@ -91,15 +91,15 @@ if [ -d "packages/@reporunner/rust-sdk" ]; then
     else
         print_warning "Cargo/Rust not found, skipping Rust SDK build..."
     fi
-    cd ../../..
+    cd ../..
 else
     print_warning "Rust SDK directory not found, skipping..."
 fi
 
 # Build Java SDK
 print_status "Building Java SDK..."
-if [ -d "packages/@reporunner/java-sdk" ]; then
-    cd packages/@reporunner/java-sdk
+if [ -d "sdks/java" ]; then
+    cd sdks/java
     if command -v mvn &> /dev/null; then
         mvn clean compile package -DskipTests=false
         print_success "Java SDK built and tested successfully"
@@ -109,15 +109,15 @@ if [ -d "packages/@reporunner/java-sdk" ]; then
     else
         print_warning "Maven not found, skipping Java SDK build..."
     fi
-    cd ../../..
+    cd ../..
 else
     print_warning "Java SDK directory not found, skipping..."
 fi
 
 # Build PHP SDK
 print_status "Building PHP SDK..."
-if [ -d "packages/@reporunner/php-sdk" ]; then
-    cd packages/@reporunner/php-sdk
+if [ -d "sdks/php" ]; then
+    cd sdks/php
     if command -v composer &> /dev/null; then
         composer install --no-dev --optimize-autoloader
         composer run-script test 2>/dev/null || print_warning "PHP tests failed or not configured"

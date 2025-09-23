@@ -1,0 +1,140 @@
+# Development Docker Compose Configuration
+# Use this for local development with hot reload and debugging
+
+version: '3.8'
+
+services:
+  # Main application in development mode
+  reporunner-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: reporunner-dev
+    ports:
+      - "3000:3000"     # Backend API
+      - "5173:5173"     # Frontend dev server
+      - "9229:9229"     # Node.js debugging port
+    volumes:
+      - .:/app:cached
+      - node_modules:/app/node_modules
+      - pnpm_cache:/root/.pnpm-store
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=mongodb://mongo:27017/reporunner_dev
+      - REDIS_URL=redis://redis:6379
+      - POSTGRES_URL=postgres://postgres:password@postgres:5432/reporunner_dev
+    depends_on:
+      - mongo
+      - redis
+      - postgres
+    networks:
+      - reporunner-dev
+    restart: unless-stopped
+    stdin_open: true
+    tty: true
+
+  # MongoDB for development
+  mongo:
+    image: mongo:7
+    container_name: reporunner-mongo-dev
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+      - ./development/scripts/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=password
+      - MONGO_INITDB_DATABASE=reporunner_dev
+    networks:
+      - reporunner-dev
+    restart: unless-stopped
+
+  # PostgreSQL with pgvector for AI features
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: reporunner-postgres-dev
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./development/scripts/postgres-init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    environment:
+      - POSTGRES_DB=reporunner_dev
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+    networks:
+      - reporunner-dev
+    restart: unless-stopped
+
+  # Redis for caching and queues
+  redis:
+    image: redis:7-alpine
+    container_name: reporunner-redis-dev
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes --requirepass password
+    networks:
+      - reporunner-dev
+    restart: unless-stopped
+
+  # Mailhog for email testing
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: reporunner-mailhog-dev
+    ports:
+      - "1025:1025"    # SMTP port
+      - "8025:8025"    # Web UI
+    networks:
+      - reporunner-dev
+    restart: unless-stopped
+
+  # MinIO for S3-compatible object storage
+  minio:
+    image: minio/minio:latest
+    container_name: reporunner-minio-dev
+    ports:
+      - "9000:9000"    # API
+      - "9001:9001"    # Console
+    volumes:
+      - minio_data:/data
+    environment:
+      - MINIO_ROOT_USER=minioadmin
+      - MINIO_ROOT_PASSWORD=minioadmin
+    command: server /data --console-address ":9001"
+    networks:
+      - reporunner-dev
+    restart: unless-stopped
+
+  # Adminer for database management
+  adminer:
+    image: adminer:latest
+    container_name: reporunner-adminer-dev
+    ports:
+      - "8080:8080"
+    environment:
+      - ADMINER_DEFAULT_SERVER=postgres
+    networks:
+      - reporunner-dev
+    restart: unless-stopped
+
+volumes:
+  node_modules:
+    driver: local
+  pnpm_cache:
+    driver: local
+  mongo_data:
+    driver: local
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  minio_data:
+    driver: local
+
+networks:
+  reporunner-dev:
+    driver: bridge
+    name: reporunner-dev-network

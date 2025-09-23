@@ -1,0 +1,139 @@
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Dependencies
+node_modules
+*/node_modules
+**/node_modules
+.pnpm-store
+.npm
+.yarn
+
+# Build output
+dist
+build
+.next
+out
+.turbo
+.cache
+
+# Development files
+.env
+.env.local
+.env.*.local
+*.log
+logs
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Testing
+coverage
+.nyc_output
+test-results
+playwright-report
+
+# Documentation
+docs
+*.md
+!README.md
+
+# CI/CD
+.github
+.gitlab-ci.yml
+.travis.yml
+.circleci
+
+# Package managers
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# TypeScript
+*.tsbuildinfo
+
+# ESLint
+.eslintcache
+
+# Prettier
+.prettierignore
+
+# Biome
+.biomeignore
+
+# Temporary files
+tmp
+temp
+.tmp
+
+# Source maps
+*.map
+
+# Storybook
+.storybook
+storybook-static
+
+# Changeset
+.changeset
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Certificates
+*.pem
+*.key
+*.crt
+
+# Backups
+*.backup
+*.bak
+
+# Archive files
+*.tar
+*.tar.gz
+*.zip
+*.rar
+
+# Python
+__pycache__
+*.pyc
+*.pyo
+*.egg-info
+.venv
+venv
+
+# Go
+vendor
+*.mod
+*.sum
+
+# Java
+target
+*.jar
+*.war
+
+# .NET
+bin
+obj
+*.dll
+*.exe
+
+# Rust
+target
+Cargo.lock
+
+# PHP
+vendor
+composer.lock
