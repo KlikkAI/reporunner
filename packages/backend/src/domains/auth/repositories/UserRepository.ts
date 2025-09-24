@@ -13,7 +13,7 @@ export class UserRepository {
    * Find user by email with password included
    */
   async findByEmailWithPassword(email: string): Promise<IUser | null> {
-    return User.findOne({ email, isActive: true }).select('+password');
+    return User.findOne({ email, isActive: true }).select('+password +refreshTokens');
   }
 
   /**
@@ -27,7 +27,7 @@ export class UserRepository {
    * Find user by ID with password included
    */
   async findByIdWithPassword(id: string): Promise<IUser | null> {
-    return User.findById(id).select('+password');
+    return User.findById(id).select('+password +refreshTokens');
   }
 
   /**

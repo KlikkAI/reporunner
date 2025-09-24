@@ -173,6 +173,9 @@ export class AuthService {
     const refreshToken = this.generateRefreshToken(user._id.toString());
 
     // Store refresh token
+    if (!user.refreshTokens) {
+      user.refreshTokens = [];
+    }
     user.refreshTokens.push(refreshToken);
     await user.save();
 
@@ -245,6 +248,9 @@ export class AuthService {
     const refreshToken = this.generateRefreshToken(user._id.toString());
 
     // Store refresh token (limit to 5 active tokens)
+    if (!user.refreshTokens) {
+      user.refreshTokens = [];
+    }
     user.refreshTokens.push(refreshToken);
     if (user.refreshTokens.length > 5) {
       user.refreshTokens = user.refreshTokens.slice(-5); // Keep only last 5 tokens
@@ -407,6 +413,9 @@ export class AuthService {
     const refreshToken = this.generateRefreshToken(user._id.toString());
 
     // Store refresh token
+    if (!user.refreshTokens) {
+      user.refreshTokens = [];
+    }
     user.refreshTokens.push(refreshToken);
     if (user.refreshTokens.length > 5) {
       user.refreshTokens = user.refreshTokens.slice(-5);

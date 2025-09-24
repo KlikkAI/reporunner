@@ -23,8 +23,17 @@ export class AuthController extends BaseController {
     const { email, password, firstName, lastName } = req.body;
     const result = await this.authService.register({ email, password, firstName, lastName });
 
+    // Transform response to match frontend expectations
+    const responseData = {
+      user: result.user,
+      token: result.accessToken, // Frontend expects 'token', backend returns 'accessToken'
+      refreshToken: result.refreshToken,
+      permissions: result.user.permissions || [],
+      sessionId: `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    };
+
     logger.info(`User registered: ${result.user.id}`);
-    this.sendCreated(res, result, 'User registered successfully');
+    this.sendCreated(res, responseData, 'User registered successfully');
   };
 
   /**
@@ -36,8 +45,17 @@ export class AuthController extends BaseController {
     const { email, password } = req.body;
     const result = await this.authService.login(email, password);
 
+    // Transform response to match frontend expectations
+    const responseData = {
+      user: result.user,
+      token: result.accessToken, // Frontend expects 'token', backend returns 'accessToken'
+      refreshToken: result.refreshToken,
+      permissions: result.user.permissions || [],
+      sessionId: `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    };
+
     logger.info(`User logged in: ${result.user.id}`);
-    this.sendSuccess(res, result, 'Login successful');
+    this.sendSuccess(res, responseData, 'Login successful');
   };
 
   /**

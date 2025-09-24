@@ -1,8 +1,8 @@
 import { z } from 'zod';
 import { ApiResponseSchema, IdSchema, MetadataSchema, TimestampSchema } from './BaseSchemas';
 
-// User schemas
-export const UserRoleSchema = z.enum(['admin', 'user', 'viewer', 'developer']);
+// User schemas (aligned with backend roles)
+export const UserRoleSchema = z.enum(['super_admin', 'admin', 'member', 'viewer']);
 
 export const UserProfileSchema = z.object({
   id: IdSchema,

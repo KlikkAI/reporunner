@@ -23,7 +23,7 @@ const Dashboard: React.FC = () => {
   const [stats, setStats] = useState<ExecutionStats | null>(null);
   const [statsLoading, setStatsLoading] = useState(false);
 
-  const loadWorkflows = async () => {
+  const loadWorkflows = useCallback(async () => {
     try {
       const result = await workflowApiService.getWorkflows();
 
@@ -72,23 +72,9 @@ const Dashboard: React.FC = () => {
         toast.error('Failed to load workflows');
       }
     }
-  };
+  }, []); // Empty dependency array since this function doesn't depend on any props/state
 
-  useEffect(() => {
-    loadWorkflows();
-    loadStats();
-  }, [loadStats, loadWorkflows]);
-
-  // Check for refresh flag when component mounts or refresh flag changes
-  useEffect(() => {
-    if (shouldRefreshDashboard) {
-      loadWorkflows();
-      loadStats();
-      setShouldRefreshDashboard(false);
-    }
-  }, [shouldRefreshDashboard, setShouldRefreshDashboard, loadStats, loadWorkflows]);
-
-  const loadStats = async () => {
+  const loadStats = useCallback(async () => {
     setStatsLoading(true);
     try {
       const executionStats = await workflowApiService.getExecutionStats();
@@ -103,7 +89,21 @@ const Dashboard: React.FC = () => {
     } finally {
       setStatsLoading(false);
     }
-  };
+  }, []); // Empty dependency array since this function doesn't depend on any props/state
+
+  useEffect(() => {
+    loadWorkflows();
+    loadStats();
+  }, [loadStats, loadWorkflows]);
+
+  // Check for refresh flag when component mounts or refresh flag changes
+  useEffect(() => {
+    if (shouldRefreshDashboard) {
+      loadWorkflows();
+      loadStats();
+      setShouldRefreshDashboard(false);
+    }
+  }, [shouldRefreshDashboard, setShouldRefreshDashboard, loadStats, loadWorkflows]);
 
   const handleCreateWorkflow = async () => {
     const name = prompt('Enter workflow name:');
@@ -121,6 +121,23 @@ const Dashboard: React.FC = () => {
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'Failed to create workflow';
         toast.error(errorMessage);
+      }
+    }
+  };
+
+  const handleDeleteWorkflow = async (workflowId: string, workflowName: string) => {
+    if (
+      window.confirm(
+        `Are you sure you want to delete "${workflowName}"? This action cannot be undone.`
+      )
+    ) {
+      try {
+        await deleteWorkflow(workflowId);
+        // Refresh the dashboard workflows list
+        await loadWorkflows();
+        toast.success('Workflow deleted successfully!');
+      } catch (_error) {
+        toast.error('Failed to delete workflow. Please try again.');
       }
     }
   };
@@ -184,23 +201,6 @@ const Dashboard: React.FC = () => {
     ),
     [handleDeleteWorkflow]
   );
-
-  const handleDeleteWorkflow = async (workflowId: string, workflowName: string) => {
-    if (
-      window.confirm(
-        `Are you sure you want to delete "${workflowName}"? This action cannot be undone.`
-      )
-    ) {
-      try {
-        await deleteWorkflow(workflowId);
-        // Refresh the dashboard workflows list
-        await loadWorkflows();
-        toast.success('Workflow deleted successfully!');
-      } catch (_error) {
-        toast.error('Failed to delete workflow. Please try again.');
-      }
-    }
-  };
 
   const dashboardStats = [
     { name: 'Total Workflows', value: workflows.length, icon: '🔄' },

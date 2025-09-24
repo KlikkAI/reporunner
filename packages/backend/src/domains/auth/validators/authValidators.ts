@@ -23,6 +23,11 @@ export const registerValidation = [
     .trim()
     .isLength({ min: 1, max: 50 })
     .withMessage('Last name must be between 1 and 50 characters'),
+
+  body('acceptTerms')
+    .isBoolean()
+    .custom((value) => value === true)
+    .withMessage('You must accept the terms and conditions'),
 ];
 
 /**
