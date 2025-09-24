@@ -1,14 +1,72 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="dark">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Reporunner - Visual Workflow Automation Platform</title>
     <meta name="description" content="Reporunner is a visual workflow automation platform similar to n8n, providing drag-and-drop workflow building with integrations for Gmail, AI services, databases, and more." />
+    <script>
+      // Prevent FOUC - apply dark mode immediately
+      (function() {
+        // Ensure dark class is on html element
+        document.documentElement.classList.add('dark');
+        // Set dark color scheme
+        document.documentElement.style.colorScheme = 'dark';
+      })();
+    </script>
+    <style>
+      /* Critical inline styles to prevent white flash */
+      html, body {
+        margin: 0;
+        padding: 0;
+        min-width: 320px;
+        min-height: 100vh;
+        /* Dark gradient background matching your theme */
+        background: linear-gradient(to bottom right, #0f172a, #1e3a8a, #312e81);
+        /* Fallback solid color */
+        background-color: #0f172a;
+        color: rgba(255, 255, 255, 0.87);
+        /* Ensure no transitions on initial load */
+        transition: none !important;
+      }
+      
+      #root {
+        min-width: 100vw;
+        min-height: 100vh;
+        /* Ensure root also has dark background during loading */
+        background: inherit;
+      }
+      
+      /* Loading state styles */
+      .app-loading {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        color: rgba(255, 255, 255, 0.87);
+      }
+      
+      /* Prevent any white flashes from default styles */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      
+      /* Ensure dark mode is applied before any content renders */
+      .dark {
+        color-scheme: dark;
+      }
+    </style>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <!-- Optional loading indicator -->
+      <div class="app-loading">
+        <span style="font-family: system-ui, sans-serif;">Loading...</span>
+      </div>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

@@ -6,6 +6,11 @@ import App from './app/App.tsx';
 import './app/styles/global.css';
 import './app/styles/landing-animations.css';
 
+// Ensure dark mode is applied immediately
+if (!document.documentElement.classList.contains('dark')) {
+  document.documentElement.classList.add('dark');
+}
+
 // Initialize node registry and extensions BEFORE React app starts
 import '@/app/node-extensions'; // Initialize component factory and registry
 import '@/core/nodes/definitions'; // Register core node definitions (includes unified Transform node)
@@ -20,7 +25,11 @@ const queryClient = new QueryClient({
   },
 });
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
+// Clear any loading placeholders before rendering
+const rootElement = document.getElementById('root')!;
+rootElement.innerHTML = '';
+
+ReactDOM.createRoot(rootElement).render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>

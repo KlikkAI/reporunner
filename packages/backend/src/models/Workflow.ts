@@ -73,57 +73,63 @@ export interface IWorkflow extends Document {
   updatedAt: Date;
 }
 
-const workflowNodeSchema = new Schema({
-  id: { type: String, required: true },
-  type: { type: String, required: true },
-  position: {
-    x: { type: Number, required: true },
-    y: { type: Number, required: true },
+const workflowNodeSchema = new Schema(
+  {
+    id: { type: String, required: true },
+    type: { type: String, required: true },
+    position: {
+      x: { type: Number, required: true },
+      y: { type: Number, required: true },
+    },
+    data: {
+      label: { type: String, required: true },
+      integration: { type: String },
+      nodeType: { type: String },
+      configuration: { type: Schema.Types.Mixed, default: {} },
+      credentials: [{ type: String }],
+      // Additional fields for frontend compatibility and enhanced functionality
+      config: { type: Schema.Types.Mixed, default: {} },
+      parameters: { type: Schema.Types.Mixed, default: {} },
+      icon: { type: String },
+      enhancedNodeType: { type: Schema.Types.Mixed },
+      // Legacy fields for backward compatibility
+      nodeTypeData: { type: Schema.Types.Mixed },
+      integrationData: { type: Schema.Types.Mixed },
+      // Condition node specific fields
+      conditionRules: [
+        {
+          id: { type: String },
+          field: { type: String },
+          operator: { type: String },
+          value: { type: Schema.Types.Mixed },
+          valueType: { type: String, enum: ['fixed', 'expression'], default: 'fixed' },
+          outputName: { type: String },
+          enabled: { type: Boolean, default: true },
+        },
+      ],
+      defaultOutput: { type: String },
+      outputs: [
+        {
+          id: { type: String },
+          label: { type: String },
+        },
+      ],
+    },
   },
-  data: {
-    label: { type: String, required: true },
-    integration: { type: String },
-    nodeType: { type: String },
-    configuration: { type: Schema.Types.Mixed, default: {} },
-    credentials: [{ type: String }],
-    // Additional fields for frontend compatibility and enhanced functionality
-    config: { type: Schema.Types.Mixed, default: {} },
-    parameters: { type: Schema.Types.Mixed, default: {} },
-    icon: { type: String },
-    enhancedNodeType: { type: Schema.Types.Mixed },
-    // Legacy fields for backward compatibility
-    nodeTypeData: { type: Schema.Types.Mixed },
-    integrationData: { type: Schema.Types.Mixed },
-    // Condition node specific fields
-    conditionRules: [
-      {
-        id: { type: String },
-        field: { type: String },
-        operator: { type: String },
-        value: { type: Schema.Types.Mixed },
-        valueType: { type: String, enum: ['fixed', 'expression'], default: 'fixed' },
-        outputName: { type: String },
-        enabled: { type: Boolean, default: true },
-      },
-    ],
-    defaultOutput: { type: String },
-    outputs: [
-      {
-        id: { type: String },
-        label: { type: String },
-      },
-    ],
-  },
-});
+  { _id: false }
+);
 
-const workflowEdgeSchema = new Schema({
-  id: { type: String, required: true },
-  source: { type: String, required: true },
-  target: { type: String, required: true },
-  sourceHandle: { type: String },
-  targetHandle: { type: String },
-  type: { type: String },
-});
+const workflowEdgeSchema = new Schema(
+  {
+    id: { type: String, required: true },
+    source: { type: String, required: true },
+    target: { type: String, required: true },
+    sourceHandle: { type: String },
+    targetHandle: { type: String },
+    type: { type: String },
+  },
+  { _id: false }
+);
 
 const workflowSchema = new Schema<IWorkflow>(
   {

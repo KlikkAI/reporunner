@@ -25,7 +25,15 @@ export interface CreateWorkflowData {
   edges: any[];
   tags?: string[];
   isPublic?: boolean;
-  settings?: any;
+  settings?: {
+    errorHandling?: string;
+    timeout?: number;
+    concurrent?: boolean;
+    retryPolicy?: {
+      maxRetries?: number;
+      retryDelay?: number;
+    };
+  };
 }
 
 export class WorkflowService {
@@ -100,10 +108,25 @@ export class WorkflowService {
    * Create new workflow
    */
   async createWorkflow(userId: string, workflowData: CreateWorkflowData) {
-    const workflow = await this.workflowRepository.create({
+    // Transform frontend payload to match backend schema
+    const transformedData = {
       ...workflowData,
       userId,
-    });
+      // Ensure arrays are properly initialized
+      nodes: workflowData.nodes || [],
+      edges: workflowData.edges || [],
+      // Transform settings structure from frontend to backend
+      settings: workflowData.settings
+        ? {
+            errorHandling: workflowData.settings.errorHandling || 'stop',
+            timeout: workflowData.settings.timeout || 300000,
+            retryAttempts: workflowData.settings.retryPolicy?.maxRetries || 3,
+            concurrent: workflowData.settings.concurrent || false,
+          }
+        : undefined,
+    };
+
+    const workflow = await this.workflowRepository.create(transformedData);
 
     return workflow;
   }

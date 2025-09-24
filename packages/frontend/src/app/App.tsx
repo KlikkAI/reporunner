@@ -6,6 +6,7 @@ import { logger } from '@/core/services/LoggingService';
 import GlobalErrorBoundary from '@/design-system/components/ErrorBoundary/GlobalErrorBoundary';
 import ProtectedRoute from './components/Auth/ProtectedRoute';
 import Layout from './components/Layout/Layout';
+import { RouteTransition } from './components/RouteTransition';
 import About from './pages/About';
 import APIReference from './pages/APIReference';
 import Contact from './pages/Contact';
@@ -44,61 +45,63 @@ if (import.meta.env.DEV) {
 function App() {
   return (
     <GlobalErrorBoundary>
-      <Routes>
-        {/* Public Routes */}
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+      <RouteTransition>
+        <Routes>
+          {/* Public Routes */}
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
 
-        {/* Product Pages */}
-        <Route path="/features" element={<Features />} />
-        <Route path="/integrations" element={<IntegrationsPage />} />
-        <Route path="/pricing" element={<PricingPage />} />
-        <Route path="/enterprise" element={<Enterprise />} />
-        <Route path="/self-hosted" element={<SelfHosted />} />
-        <Route path="/roadmap" element={<Roadmap />} />
+          {/* Product Pages */}
+          <Route path="/features" element={<Features />} />
+          <Route path="/integrations" element={<IntegrationsPage />} />
+          <Route path="/pricing" element={<PricingPage />} />
+          <Route path="/enterprise" element={<Enterprise />} />
+          <Route path="/self-hosted" element={<SelfHosted />} />
+          <Route path="/roadmap" element={<Roadmap />} />
 
-        {/* Developer Pages */}
-        <Route path="/documentation" element={<Documentation />} />
-        <Route path="/docs" element={<Documentation />} />
-        <Route path="/api-reference" element={<APIReference />} />
-        <Route path="/api" element={<APIReference />} />
+          {/* Developer Pages */}
+          <Route path="/documentation" element={<Documentation />} />
+          <Route path="/docs" element={<Documentation />} />
+          <Route path="/api-reference" element={<APIReference />} />
+          <Route path="/api" element={<APIReference />} />
 
-        {/* Company Pages */}
-        <Route path="/about" element={<About />} />
-        <Route path="/contact" element={<Contact />} />
+          {/* Company Pages */}
+          <Route path="/about" element={<About />} />
+          <Route path="/contact" element={<Contact />} />
 
-        {/* Legal Pages */}
-        <Route path="/privacy" element={<Privacy />} />
-        <Route path="/terms" element={<Terms />} />
+          {/* Legal Pages */}
+          <Route path="/privacy" element={<Privacy />} />
+          <Route path="/terms" element={<Terms />} />
 
-        {/* Protected App Routes */}
-        <Route
-          path="/app"
-          element={
-            <ProtectedRoute>
-              <Layout />
-            </ProtectedRoute>
-          }
-        >
-          <Route index element={<Navigate to="/app/dashboard" replace />} />
-          <Route path="dashboard" element={<Dashboard />} />
-          <Route path="workflow/:id?" element={<WorkflowEditor />} />
-          <Route path="executions" element={<Executions />} />
-          <Route path="credentials" element={<Credentials />} />
-          <Route path="settings" element={<Settings />} />
-        </Route>
+          {/* Protected App Routes */}
+          <Route
+            path="/app"
+            element={
+              <ProtectedRoute>
+                <Layout />
+              </ProtectedRoute>
+            }
+          >
+            <Route index element={<Navigate to="/app/dashboard" replace />} />
+            <Route path="dashboard" element={<Dashboard />} />
+            <Route path="workflow/:id?" element={<WorkflowEditor />} />
+            <Route path="executions" element={<Executions />} />
+            <Route path="credentials" element={<Credentials />} />
+            <Route path="settings" element={<Settings />} />
+          </Route>
 
-        {/* Legacy redirects for authenticated users */}
-        <Route path="/dashboard" element={<Navigate to="/app/dashboard" replace />} />
-        <Route path="/workflow/*" element={<Navigate to="/app/workflow" replace />} />
-        <Route path="/executions" element={<Navigate to="/app/executions" replace />} />
-        <Route path="/credentials" element={<Navigate to="/app/credentials" replace />} />
-        <Route path="/settings" element={<Navigate to="/app/settings" replace />} />
+          {/* Legacy redirects for authenticated users */}
+          <Route path="/dashboard" element={<Navigate to="/app/dashboard" replace />} />
+          <Route path="/workflow/*" element={<Navigate to="/app/workflow" replace />} />
+          <Route path="/executions" element={<Navigate to="/app/executions" replace />} />
+          <Route path="/credentials" element={<Navigate to="/app/credentials" replace />} />
+          <Route path="/settings" element={<Navigate to="/app/settings" replace />} />
 
-        {/* Catch all route - redirect to landing */}
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
+          {/* Catch all route - redirect to landing */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </RouteTransition>
 
       {/* Toast notifications */}
       <Toaster

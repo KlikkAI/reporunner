@@ -11,6 +11,13 @@
     box-sizing: border-box;
   }
 
+  html {
+    /* Ensure dark background persists after initial load */
+    background: linear-gradient(to bottom right, #0f172a, #1e3a8a, #312e81);
+    background-color: #0f172a;
+    color-scheme: dark;
+  }
+
   body {
     margin: 0;
     font-family:
@@ -19,16 +26,27 @@
       sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    /* Inherit background from html to maintain consistency */
+    background: inherit;
+    min-height: 100vh;
+    color: rgba(255, 255, 255, 0.87);
+  }
+
+  #root {
+    min-width: 100vw;
+    min-height: 100vh;
+    /* Transparent background to show gradient from body */
+    background: transparent;
   }
 }
 
 @layer components {
   .workflow-editor {
-    @apply h-screen bg-gray-50;
+    @apply h-screen bg-gray-900;
   }
 
   .react-flow__node {
-    @apply rounded-lg border-2 border-gray-300 bg-white shadow-lg;
+    @apply rounded-lg border-2 border-gray-600 bg-gray-800 shadow-lg;
   }
 
   .react-flow__node.selected {
@@ -40,11 +58,11 @@
   }
 
   .node-panel {
-    @apply bg-white border-r border-gray-200 p-4;
+    @apply bg-gray-800 border-r border-gray-700 p-4;
   }
 
   .property-panel {
-    @apply bg-white border-l border-gray-200 p-4;
+    @apply bg-gray-800 border-l border-gray-700 p-4;
   }
 
   /* Custom Ant Design dropdown styling for dark theme */
