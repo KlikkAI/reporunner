@@ -1,5 +1,5 @@
 import type React from 'react';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { WorkflowApiService } from '@/core';
 import type { WorkflowExecution } from '@/core/types/execution';
 
@@ -14,11 +14,7 @@ const Executions: React.FC = () => {
   const [page, setPage] = useState(1);
   const [, setHasMore] = useState(true);
 
-  useEffect(() => {
-    loadExecutions();
-  }, [loadExecutions]);
-
-  const loadExecutions = async () => {
+  const loadExecutions = useCallback(async () => {
     setIsLoading(true);
     try {
       const result = await workflowApiService.getExecutions({
@@ -70,7 +66,11 @@ const Executions: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [filter, page]);
+
+  useEffect(() => {
+    loadExecutions();
+  }, [loadExecutions]);
 
   const handleStopExecution = async (executionId: string) => {
     try {
@@ -86,17 +86,17 @@ const Executions: React.FC = () => {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'success':
-        return 'bg-green-100 text-green-800';
+        return 'bg-green-500/20 text-green-300 border border-green-500/30';
       case 'running':
-        return 'bg-blue-100 text-blue-800';
+        return 'bg-blue-500/20 text-blue-300 border border-blue-500/30';
       case 'pending':
-        return 'bg-yellow-100 text-yellow-800';
+        return 'bg-yellow-500/20 text-yellow-300 border border-yellow-500/30';
       case 'error':
-        return 'bg-red-100 text-red-800';
+        return 'bg-red-500/20 text-red-300 border border-red-500/30';
       case 'cancelled':
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-slate-500/20 text-slate-300 border border-slate-500/30';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-slate-500/20 text-slate-300 border border-slate-500/30';
     }
   };
 
@@ -114,36 +114,39 @@ const Executions: React.FC = () => {
     <div className="p-6">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900">Workflow Executions</h1>
-        <p className="text-gray-600">Monitor and track your workflow runs</p>
+        <h1 className="text-2xl font-bold text-white">Workflow Executions</h1>
+        <p className="text-slate-300">Monitor and track your workflow runs</p>
       </div>
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
         {[
-          { name: 'Total Executions', value: executions.length, color: 'blue' },
+          { name: 'Total Executions', value: executions.length, icon: '▶️' },
           {
             name: 'Running',
             value: executions.filter((e) => e.status === 'running').length,
-            color: 'blue',
+            icon: '🔄',
           },
           {
             name: 'Success',
             value: executions.filter((e) => e.status === 'success').length,
-            color: 'green',
+            icon: '✅',
           },
           {
             name: 'Failed',
             value: executions.filter((e) => e.status === 'error').length,
-            color: 'red',
+            icon: '❌',
           },
         ].map((stat) => (
-          <div key={stat.name} className="bg-white p-6 rounded-lg shadow">
+          <div
+            key={stat.name}
+            className="bg-white/10 backdrop-blur-md p-6 rounded-lg border border-white/20 shadow-lg hover:bg-white/15 transition-all duration-300"
+          >
             <div className="flex items-center">
-              <div className={`w-4 h-4 rounded-full mr-3 bg-${stat.color}-500`}></div>
+              <div className="text-2xl mr-4">{stat.icon}</div>
               <div>
-                <p className="text-sm font-medium text-gray-600">{stat.name}</p>
-                <p className="text-2xl font-semibold text-gray-900">{stat.value}</p>
+                <p className="text-sm font-medium text-slate-300">{stat.name}</p>
+                <p className="text-2xl font-semibold text-white">{stat.value}</p>
               </div>
             </div>
           </div>
@@ -151,8 +154,8 @@ const Executions: React.FC = () => {
       </div>
 
       {/* Filters */}
-      <div className="bg-white rounded-lg shadow mb-6">
-        <div className="p-4 border-b border-gray-200">
+      <div className="bg-white/10 backdrop-blur-md rounded-lg border border-white/20 shadow-lg mb-6">
+        <div className="p-4">
           <div className="flex space-x-4">
             {[
               { key: 'all', label: 'All' },
@@ -165,10 +168,10 @@ const Executions: React.FC = () => {
               <button
                 key={filterOption.key}
                 onClick={() => setFilter(filterOption.key as any)}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 ${
                   filter === filterOption.key
-                    ? 'bg-blue-100 text-blue-700'
-                    : 'text-gray-600 hover:bg-gray-100'
+                    ? 'bg-white/20 text-blue-300 backdrop-blur-sm border border-white/30'
+                    : 'text-slate-300 hover:bg-white/10 hover:text-white'
                 }`}
               >
                 {filterOption.label}
@@ -179,28 +182,28 @@ const Executions: React.FC = () => {
       </div>
 
       {/* Executions List */}
-      <div className="bg-white rounded-lg shadow">
+      <div className="bg-white/10 backdrop-blur-md rounded-lg border border-white/20 shadow-lg">
         <div className="p-6">
           {isLoading ? (
             <div className="text-center py-8">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-              <p className="mt-2 text-gray-600">Loading executions...</p>
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-400 mx-auto"></div>
+              <p className="mt-2 text-slate-300">Loading executions...</p>
             </div>
           ) : executions.length === 0 ? (
             <div className="text-center py-8">
-              <p className="text-gray-600">No executions found</p>
+              <p className="text-slate-300">No executions found</p>
             </div>
           ) : (
             <div className="space-y-4">
               {executions.map((execution) => (
                 <div
                   key={execution.id}
-                  className="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors"
+                  className="bg-white/5 backdrop-blur-sm border border-white/20 rounded-lg p-4 hover:bg-white/10 transition-all duration-300"
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex-1">
                       <div className="flex items-center space-x-3">
-                        <h3 className="font-medium text-gray-900">
+                        <h3 className="font-medium text-white">
                           Workflow ID: {execution.workflowId}
                         </h3>
                         <span
@@ -209,7 +212,7 @@ const Executions: React.FC = () => {
                           {execution.status}
                         </span>
                       </div>
-                      <div className="mt-2 flex items-center space-x-6 text-sm text-gray-600">
+                      <div className="mt-2 flex items-center space-x-6 text-sm text-slate-300">
                         <span>
                           Started:{' '}
                           {execution.startTime
@@ -222,22 +225,22 @@ const Executions: React.FC = () => {
                       {execution.nodeExecutions && execution.nodeExecutions.length > 0 && (
                         <div className="mt-3">
                           <details className="group">
-                            <summary className="cursor-pointer text-sm text-blue-600 hover:text-blue-800">
+                            <summary className="cursor-pointer text-sm text-blue-300 hover:text-blue-200 transition-colors">
                               View Node Results ({execution.nodeExecutions.length} nodes)
                             </summary>
-                            <div className="mt-2 bg-gray-50 rounded p-3 text-sm">
+                            <div className="mt-2 bg-white/10 backdrop-blur-sm rounded p-3 text-sm border border-white/20">
                               {execution.nodeExecutions.map((nodeExec, index) => (
-                                <div key={index} className="text-gray-700 mb-1">
-                                  <span className="font-medium">
+                                <div key={index} className="text-slate-300 mb-1">
+                                  <span className="font-medium text-white">
                                     {nodeExec.nodeName || nodeExec.nodeId}:
                                   </span>
                                   <span
-                                    className={`ml-2 ${nodeExec.status === 'completed' ? 'text-green-600' : nodeExec.status === 'failed' ? 'text-red-600' : 'text-blue-600'}`}
+                                    className={`ml-2 ${nodeExec.status === 'completed' ? 'text-green-300' : nodeExec.status === 'failed' ? 'text-red-300' : 'text-blue-300'}`}
                                   >
                                     {nodeExec.status}
                                   </span>
                                   {nodeExec.duration && (
-                                    <span className="ml-2 text-gray-500">
+                                    <span className="ml-2 text-slate-400">
                                       ({nodeExec.duration}ms)
                                     </span>
                                   )}
@@ -252,12 +255,14 @@ const Executions: React.FC = () => {
                       {(execution.status === 'running' || execution.status === 'pending') && (
                         <button
                           onClick={() => handleStopExecution(execution.id)}
-                          className="text-red-600 hover:text-red-800 px-3 py-1 text-sm border border-red-200 rounded"
+                          className="text-red-300 hover:text-red-200 px-3 py-1 text-sm border border-red-500/30 rounded bg-red-500/20 backdrop-blur-sm transition-colors"
                         >
                           Cancel
                         </button>
                       )}
-                      <button className="text-gray-400 hover:text-gray-600">⋮</button>
+                      <button className="text-slate-400 hover:text-white transition-colors">
+                        ⋮
+                      </button>
                     </div>
                   </div>
                 </div>

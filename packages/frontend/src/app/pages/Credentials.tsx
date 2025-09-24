@@ -144,7 +144,7 @@ const Credentials: React.FC = () => {
             value={String(value)}
             onChange={(e) => handleFieldChange(property.name, e.target.value)}
             placeholder={property.placeholder}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className="w-full px-3 py-2 bg-white/10 border border-white/30 text-white placeholder-slate-400 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-blue-400 backdrop-blur-sm"
           />
         );
 
@@ -155,7 +155,7 @@ const Credentials: React.FC = () => {
             value={String(value)}
             onChange={(e) => handleFieldChange(property.name, e.target.value)}
             placeholder={property.placeholder}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className="w-full px-3 py-2 bg-white/10 border border-white/30 text-white placeholder-slate-400 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-blue-400 backdrop-blur-sm"
           />
         );
 
@@ -166,7 +166,7 @@ const Credentials: React.FC = () => {
             value={Number(value)}
             onChange={(e) => handleFieldChange(property.name, Number(e.target.value))}
             placeholder={property.placeholder}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className="w-full px-3 py-2 bg-white/10 border border-white/30 text-white placeholder-slate-400 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-blue-400 backdrop-blur-sm"
           />
         );
 
@@ -178,9 +178,9 @@ const Credentials: React.FC = () => {
               type="checkbox"
               checked={Boolean(value)}
               onChange={(e) => handleFieldChange(property.name, e.target.checked)}
-              className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+              className="h-4 w-4 text-blue-400 focus:ring-blue-400 bg-white/10 border-white/30 rounded"
             />
-            <span className="ml-2 text-sm text-gray-600">{property.description}</span>
+            <span className="ml-2 text-sm text-slate-300">{property.description}</span>
           </div>
         );
 
@@ -190,10 +190,10 @@ const Credentials: React.FC = () => {
             aria-label="Select an option"
             value={String(value)}
             onChange={(e) => handleFieldChange(property.name, e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className="w-full px-3 py-2 bg-white/10 border border-white/30 text-white rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-blue-400 backdrop-blur-sm"
           >
             {property.options?.map((option: any) => (
-              <option key={option.value} value={option.value}>
+              <option key={option.value} value={option.value} className="bg-slate-800 text-white">
                 {option.name}
               </option>
             ))}
@@ -209,75 +209,90 @@ const Credentials: React.FC = () => {
     <div className="p-6">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900">Credentials</h1>
-        <p className="text-gray-600">Manage authentication credentials for your integrations</p>
+        <h1 className="text-2xl font-bold text-white">Credentials</h1>
+        <p className="text-slate-300">Manage authentication credentials for your integrations</p>
       </div>
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div className="bg-white p-6 rounded-lg shadow">
+        <div className="bg-white/10 backdrop-blur-md p-6 rounded-lg border border-white/20 shadow-lg hover:bg-white/15 transition-all duration-300">
           <div className="flex items-center">
             <div className="text-2xl mr-4">🔐</div>
             <div>
-              <p className="text-sm font-medium text-gray-600">Total Credentials</p>
-              <p className="text-2xl font-semibold text-gray-900">{credentials.length}</p>
+              <p className="text-sm font-medium text-slate-300">Total Credentials</p>
+              <p className="text-2xl font-semibold text-white">{credentials.length}</p>
             </div>
           </div>
         </div>
-        <div className="bg-white p-6 rounded-lg shadow">
+        <div className="bg-white/10 backdrop-blur-md p-6 rounded-lg border border-white/20 shadow-lg hover:bg-white/15 transition-all duration-300">
           <div className="flex items-center">
             <div className="text-2xl mr-4">✅</div>
             <div>
-              <p className="text-sm font-medium text-gray-600">Verified</p>
-              <p className="text-2xl font-semibold text-gray-900">
+              <p className="text-sm font-medium text-slate-300">Verified</p>
+              <p className="text-2xl font-semibold text-white">
                 {credentials.filter((c) => c.isValid).length}
               </p>
             </div>
           </div>
         </div>
-        <div className="bg-white p-6 rounded-lg shadow">
+        <div className="bg-white/10 backdrop-blur-md p-6 rounded-lg border border-white/20 shadow-lg hover:bg-white/15 transition-all duration-300">
           <div className="flex items-center">
             <div className="text-2xl mr-4">🔗</div>
             <div>
-              <p className="text-sm font-medium text-gray-600">Types Available</p>
-              <p className="text-2xl font-semibold text-gray-900">{credentialTypes.length}</p>
+              <p className="text-sm font-medium text-slate-300">Types Available</p>
+              <p className="text-2xl font-semibold text-white">{credentialTypes.length}</p>
             </div>
           </div>
         </div>
       </div>
 
       {/* Existing Credentials */}
-      <div className="bg-white rounded-lg shadow">
+      <div className="bg-white/10 backdrop-blur-md rounded-lg border border-white/20 shadow-lg">
+        <div className="p-6 border-b border-white/20">
+          <div className="flex items-center justify-between">
+            <h2 className="text-lg font-semibold text-white">Your Credentials</h2>
+            <button
+              onClick={() => setShowCreateForm(true)}
+              className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-lg hover:scale-105 transition-all duration-300 shadow-lg"
+            >
+              Create New
+            </button>
+          </div>
+        </div>
         <div className="p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Your Credentials</h2>
-
           {isLoading ? (
             <div className="text-center py-8">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-              <p className="mt-2 text-gray-600">Loading credentials...</p>
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-400 mx-auto"></div>
+              <p className="mt-2 text-slate-300">Loading credentials...</p>
             </div>
           ) : credentials.length === 0 ? (
             <div className="text-center py-8">
-              <p className="text-gray-500">No credentials configured</p>
-              <p className="text-gray-400 text-sm mt-1">
-                Create your first credential to get started
-              </p>
+              <p className="text-slate-300 mb-4">No credentials configured</p>
+              <button
+                onClick={() => setShowCreateForm(true)}
+                className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-lg hover:scale-105 transition-all duration-300 shadow-lg"
+              >
+                Create Your First Credential
+              </button>
             </div>
           ) : (
             <div className="space-y-4">
               {credentials.map((credential) => {
                 const type = credentialTypes.find((t) => t.name === credential.type);
                 return (
-                  <div key={credential.id} className="border border-gray-200 rounded-lg p-4">
+                  <div
+                    key={credential.id}
+                    className="bg-white/5 backdrop-blur-sm border border-white/20 rounded-lg p-4 hover:bg-white/10 transition-all duration-300"
+                  >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-3">
                         <span className="text-2xl">{type?.icon || '🔐'}</span>
                         <div>
-                          <h3 className="font-medium text-gray-900">{credential.name}</h3>
-                          <p className="text-sm text-gray-600">{type?.displayName}</p>
+                          <h3 className="font-medium text-white">{credential.name}</h3>
+                          <p className="text-sm text-slate-300">{type?.displayName}</p>
                         </div>
                         {credential.isValid && (
-                          <span className="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
+                          <span className="bg-green-500/20 text-green-300 border border-green-500/30 text-xs font-medium px-2.5 py-0.5 rounded-full">
                             Verified
                           </span>
                         )}
@@ -287,14 +302,14 @@ const Credentials: React.FC = () => {
                         <button
                           onClick={() => handleTest(credential.id)}
                           disabled={testingCredential === credential.id}
-                          className="text-blue-600 hover:text-blue-800 text-sm disabled:opacity-50"
+                          className="text-blue-300 hover:text-blue-200 text-sm disabled:opacity-50 transition-colors"
                         >
                           {testingCredential === credential.id ? 'Testing...' : 'Test'}
                         </button>
                         {credential.type !== 'gmailOAuth2' && (
                           <button
                             onClick={() => handleEdit(credential)}
-                            className="text-gray-600 hover:text-gray-800 text-sm"
+                            className="text-slate-300 hover:text-white text-sm transition-colors"
                           >
                             Edit
                           </button>
@@ -303,14 +318,14 @@ const Credentials: React.FC = () => {
                         credential?.integration === 'gmailOAuth2' ? (
                           <button
                             onClick={() => handleRevokeGmail(credential.id, credential.name)}
-                            className="text-red-600 hover:text-red-800 text-sm font-medium"
+                            className="text-red-300 hover:text-red-200 text-sm font-medium transition-colors"
                           >
                             🔐 Revoke Access
                           </button>
                         ) : (
                           <button
                             onClick={() => handleDelete(credential.id, credential.name)}
-                            className="text-red-600 hover:text-red-800 text-sm"
+                            className="text-red-300 hover:text-red-200 text-sm transition-colors"
                           >
                             Delete
                           </button>
@@ -318,7 +333,7 @@ const Credentials: React.FC = () => {
                       </div>
                     </div>
 
-                    <div className="mt-2 text-xs text-gray-500">
+                    <div className="mt-2 text-xs text-slate-400">
                       Created: {new Date(credential.createdAt).toLocaleDateString()}
                       {credential.lastTestedAt && (
                         <span className="ml-4">
@@ -336,16 +351,16 @@ const Credentials: React.FC = () => {
 
       {/* Create/Edit Form Modal */}
       {showCreateForm && selectedType && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg shadow-xl max-w-md w-full max-h-96 overflow-y-auto">
+        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
+          <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-lg shadow-xl max-w-md w-full max-h-96 overflow-y-auto">
             <div className="p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">
+              <h2 className="text-lg font-semibold text-white mb-4">
                 {editingCredential ? 'Edit' : 'Create'} {selectedType.displayName} Credential
               </h2>
 
               {/* Credential Name */}
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-slate-300 mb-1">
                   Credential Name
                 </label>
                 <input
@@ -353,7 +368,7 @@ const Credentials: React.FC = () => {
                   value={credentialName}
                   onChange={(e) => setCredentialName(e.target.value)}
                   placeholder="e.g., Personal Gmail, Company SMTP"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 bg-white/10 border border-white/30 text-white placeholder-slate-400 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-blue-400 backdrop-blur-sm"
                 />
               </div>
 
@@ -361,13 +376,13 @@ const Credentials: React.FC = () => {
               <div className="space-y-4">
                 {selectedType.properties?.map((property) => (
                   <div key={property.name}>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-slate-300 mb-1">
                       {property.displayName}
-                      {property.required && <span className="text-red-500 ml-1">*</span>}
+                      {property.required && <span className="text-red-400 ml-1">*</span>}
                     </label>
                     {renderField(property)}
                     {property.description && (
-                      <p className="text-xs text-gray-500 mt-1">{property.description}</p>
+                      <p className="text-xs text-slate-400 mt-1">{property.description}</p>
                     )}
                   </div>
                 ))}
@@ -378,7 +393,7 @@ const Credentials: React.FC = () => {
                 <button
                   onClick={handleSave}
                   disabled={!credentialName.trim()}
-                  className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 text-white py-2 px-4 rounded-lg hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 shadow-lg"
                 >
                   {selectedType.name === 'gmailOAuth2' && !editingCredential
                     ? 'Connect with Google'
@@ -389,7 +404,7 @@ const Credentials: React.FC = () => {
                 </button>
                 <button
                   onClick={() => setShowCreateForm(false)}
-                  className="flex-1 bg-gray-500 text-white py-2 px-4 rounded-lg hover:bg-gray-600"
+                  className="flex-1 bg-white/20 text-slate-300 py-2 px-4 rounded-lg hover:bg-white/30 hover:text-white transition-all duration-300 backdrop-blur-sm"
                 >
                   Cancel
                 </button>

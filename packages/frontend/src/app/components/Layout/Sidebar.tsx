@@ -49,27 +49,34 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, onToggle }) => {
 
   return (
     <div
-      className={`${isCollapsed ? 'w-16' : 'w-64'} bg-white border-r border-gray-200 transition-all duration-300 ease-in-out flex flex-col h-full`}
+      className={`${isCollapsed ? 'w-16' : 'w-64'} bg-white/10 backdrop-blur-md border-r border-white/20 transition-all duration-300 ease-in-out flex flex-col h-full`}
     >
       {/* Header Section */}
-      <div className="border-b border-gray-200 p-4">
+      <div className="border-b border-white/20 p-4">
         <div className="flex flex-col items-center justify-between">
           <button
             onClick={onToggle}
-            className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
+            className="p-2 rounded-lg hover:bg-white/10 transition-colors text-white"
             title={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
           >
             <span className="text-lg">{isCollapsed ? '→' : '←'}</span>
           </button>
           {!isCollapsed && (
-            <Link to="/" className="text-xl font-bold text-gray-900 flex items-center space-x-2">
-              <span>🔄</span>
+            <Link
+              to="/"
+              className="text-xl font-bold text-white flex items-center space-x-2 hover:text-blue-300 transition-colors"
+            >
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 flex items-center justify-center">
+                <span className="text-white text-sm">🔄</span>
+              </div>
               <span>RepoRunner</span>
             </Link>
           )}
           {isCollapsed && (
             <Link to="/" className="text-2xl" title="RepoRunner">
-              🔄
+              <div className="w-10 h-10 rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 flex items-center justify-center hover:scale-110 transition-transform">
+                <span className="text-white">🔄</span>
+              </div>
             </Link>
           )}
         </div>
@@ -77,10 +84,10 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, onToggle }) => {
 
       {/* Action Buttons */}
       {!isCollapsed && (
-        <div className="p-4 border-b border-gray-200">
+        <div className="p-4 border-b border-white/20">
           <button
             onClick={handleCreateWorkflow}
-            className="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center font-medium"
+            className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-lg hover:scale-105 transition-all duration-300 flex items-center justify-center font-medium shadow-lg"
           >
             + Create Workflow
           </button>
@@ -88,10 +95,10 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, onToggle }) => {
       )}
 
       {isCollapsed && (
-        <div className="p-2 border-b border-gray-200">
+        <div className="p-2 border-b border-white/20">
           <button
             onClick={handleCreateWorkflow}
-            className="w-full bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center"
+            className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white p-2 rounded-lg hover:scale-105 transition-all duration-300 flex items-center justify-center shadow-lg"
             title="Create Workflow"
           >
             <span className="text-lg">+</span>
@@ -109,8 +116,8 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, onToggle }) => {
                   to={item.href}
                   className={`flex items-center ${isCollapsed ? 'px-2 py-3 justify-center' : 'px-4 py-2'} text-sm font-medium rounded-lg transition-all duration-200 ${
                     location.pathname === item.href
-                      ? 'bg-blue-50 text-blue-700'
-                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                      ? 'bg-white/20 text-blue-300 backdrop-blur-sm border border-white/30'
+                      : 'text-slate-300 hover:bg-white/10 hover:text-white'
                   }`}
                   title={isCollapsed ? item.name : undefined}
                 >
@@ -126,19 +133,19 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, onToggle }) => {
       </nav>
 
       {/* User Section */}
-      <div className="border-t border-gray-200 p-4">
+      <div className="border-t border-white/20 p-4">
         {!isCollapsed && (
           <div className="space-y-4">
             {/* User Info */}
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white font-medium text-sm">
+              <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-purple-600 rounded-full flex items-center justify-center text-white font-medium text-sm shadow-lg">
                 {user?.firstName?.[0]?.toUpperCase() || 'U'}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-gray-900 truncate">
+                <p className="text-sm font-medium text-white truncate">
                   {user?.firstName} {user?.lastName}
                 </p>
-                <p className="text-xs text-gray-500 truncate">
+                <p className="text-xs text-slate-300 truncate">
                   {user?.email || 'user@example.com'}
                 </p>
               </div>
@@ -147,7 +154,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, onToggle }) => {
             {/* Logout Button */}
             <button
               onClick={handleLogout}
-              className="w-full flex items-center justify-start space-x-3 px-3 py-2.5 text-sm text-gray-700 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all duration-200 border border-gray-200 hover:border-red-200"
+              className="w-full flex items-center justify-start space-x-3 px-3 py-2.5 text-sm text-slate-300 hover:text-red-300 hover:bg-red-500/20 rounded-lg transition-all duration-200 border border-white/20 hover:border-red-500/50 backdrop-blur-sm"
               title="Logout"
             >
               <span className="text-base">🚪</span>

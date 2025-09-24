@@ -1,5 +1,5 @@
 import type React from 'react';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { AuthApiService } from '@/core';
 
 const authApiService = new AuthApiService();
@@ -59,11 +59,7 @@ const Settings: React.FC = () => {
   const [isSaving, setIsSaving] = useState(false);
   const [_isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    loadUserProfile();
-  }, [loadUserProfile]);
-
-  const loadUserProfile = async () => {
+  const loadUserProfile = useCallback(async () => {
     setIsLoading(true);
     try {
       const user = await authApiService.getProfile();
@@ -79,7 +75,11 @@ const Settings: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    loadUserProfile();
+  }, [loadUserProfile]);
 
   const handleSave = async () => {
     setIsSaving(true);
@@ -124,8 +124,8 @@ const Settings: React.FC = () => {
     <div className="p-6">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900">Settings</h1>
-        <p className="text-gray-600">Manage your account and application preferences</p>
+        <h1 className="text-2xl font-bold text-white">Settings</h1>
+        <p className="text-slate-300">Manage your account and application preferences</p>
       </div>
 
       <div className="flex gap-8">
@@ -136,10 +136,10 @@ const Settings: React.FC = () => {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as any)}
-                className={`w-full flex items-center px-4 py-3 text-left rounded-lg transition-colors ${
+                className={`w-full flex items-center px-4 py-3 text-left rounded-lg transition-all duration-300 ${
                   activeTab === tab.id
-                    ? 'bg-blue-50 text-blue-700 border border-blue-200'
-                    : 'text-gray-600 hover:bg-gray-50'
+                    ? 'bg-white/20 text-blue-300 backdrop-blur-sm border border-white/30'
+                    : 'text-slate-300 hover:bg-white/10 hover:text-white'
                 }`}
               >
                 <span className="mr-3 text-lg">{tab.icon}</span>
@@ -151,14 +151,14 @@ const Settings: React.FC = () => {
 
         {/* Content */}
         <div className="flex-1">
-          <div className="bg-white rounded-lg shadow">
+          <div className="bg-white/10 backdrop-blur-md rounded-lg border border-white/20 shadow-lg">
             {/* Profile Tab */}
             {activeTab === 'profile' && (
               <div className="p-6">
-                <h2 className="text-lg font-medium text-gray-900 mb-6">Profile Information</h2>
+                <h2 className="text-lg font-medium text-white mb-6">Profile Information</h2>
                 <div className="space-y-6">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-slate-300 mb-2">
                       Full Name
                     </label>
                     <input
@@ -166,11 +166,11 @@ const Settings: React.FC = () => {
                       type="text"
                       value={settings.profile.name}
                       onChange={(e) => updateSetting('profile', 'name', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full px-3 py-2 bg-white/10 border border-white/30 text-white placeholder-slate-400 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-blue-400 backdrop-blur-sm"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-slate-300 mb-2">
                       Email Address
                     </label>
                     <input
@@ -178,21 +178,31 @@ const Settings: React.FC = () => {
                       type="email"
                       value={settings.profile.email}
                       onChange={(e) => updateSetting('profile', 'email', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full px-3 py-2 bg-white/10 border border-white/30 text-white placeholder-slate-400 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-blue-400 backdrop-blur-sm"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Timezone</label>
+                    <label className="block text-sm font-medium text-slate-300 mb-2">
+                      Timezone
+                    </label>
                     <select
                       aria-label="timezone"
                       value={settings.profile.timezone}
                       onChange={(e) => updateSetting('profile', 'timezone', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full px-3 py-2 bg-white/10 border border-white/30 text-white rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-blue-400 backdrop-blur-sm"
                     >
-                      <option value="UTC-8">UTC-8 (Pacific)</option>
-                      <option value="UTC-5">UTC-5 (Eastern)</option>
-                      <option value="UTC+0">UTC+0 (GMT)</option>
-                      <option value="UTC+1">UTC+1 (Central European)</option>
+                      <option value="UTC-8" className="bg-slate-800 text-white">
+                        UTC-8 (Pacific)
+                      </option>
+                      <option value="UTC-5" className="bg-slate-800 text-white">
+                        UTC-5 (Eastern)
+                      </option>
+                      <option value="UTC+0" className="bg-slate-800 text-white">
+                        UTC+0 (GMT)
+                      </option>
+                      <option value="UTC+1" className="bg-slate-800 text-white">
+                        UTC+1 (Central European)
+                      </option>
                     </select>
                   </div>
                 </div>
@@ -202,7 +212,7 @@ const Settings: React.FC = () => {
             {/* Notifications Tab */}
             {activeTab === 'notifications' && (
               <div className="p-6">
-                <h2 className="text-lg font-medium text-gray-900 mb-6">Notification Preferences</h2>
+                <h2 className="text-lg font-medium text-white mb-6">Notification Preferences</h2>
                 <div className="space-y-6">
                   {[
                     {
@@ -228,8 +238,8 @@ const Settings: React.FC = () => {
                   ].map((item) => (
                     <div key={item.key} className="flex items-center justify-between">
                       <div>
-                        <h3 className="text-sm font-medium text-gray-900">{item.label}</h3>
-                        <p className="text-sm text-gray-600">{item.description}</p>
+                        <h3 className="text-sm font-medium text-white">{item.label}</h3>
+                        <p className="text-sm text-slate-300">{item.description}</p>
                       </div>
                       <label className="relative inline-flex items-center cursor-pointer">
                         <input
@@ -243,7 +253,7 @@ const Settings: React.FC = () => {
                           }
                           className="sr-only peer"
                         />
-                        <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                        <div className="w-11 h-6 bg-white/20 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-400/30 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-white/30 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-500"></div>
                       </label>
                     </div>
                   ))}
@@ -254,14 +264,12 @@ const Settings: React.FC = () => {
             {/* Security Tab */}
             {activeTab === 'security' && (
               <div className="p-6">
-                <h2 className="text-lg font-medium text-gray-900 mb-6">Security Settings</h2>
+                <h2 className="text-lg font-medium text-white mb-6">Security Settings</h2>
                 <div className="space-y-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <h3 className="text-sm font-medium text-gray-900">
-                        Two-Factor Authentication
-                      </h3>
-                      <p className="text-sm text-gray-600">
+                      <h3 className="text-sm font-medium text-white">Two-Factor Authentication</h3>
+                      <p className="text-sm text-slate-300">
                         Add an extra layer of security to your account
                       </p>
                     </div>
@@ -275,11 +283,11 @@ const Settings: React.FC = () => {
                         }
                         className="sr-only peer"
                       />
-                      <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                      <div className="w-11 h-6 bg-white/20 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-400/30 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-white/30 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-500"></div>
                     </label>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-slate-300 mb-2">
                       Session Timeout (minutes)
                     </label>
                     <select
@@ -288,18 +296,26 @@ const Settings: React.FC = () => {
                       onChange={(e) =>
                         updateSetting('security', 'sessionTimeout', parseInt(e.target.value, 10))
                       }
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full px-3 py-2 bg-white/10 border border-white/30 text-white rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-blue-400 backdrop-blur-sm"
                     >
-                      <option value={30}>30 minutes</option>
-                      <option value={60}>1 hour</option>
-                      <option value={120}>2 hours</option>
-                      <option value={480}>8 hours</option>
+                      <option value={30} className="bg-slate-800 text-white">
+                        30 minutes
+                      </option>
+                      <option value={60} className="bg-slate-800 text-white">
+                        1 hour
+                      </option>
+                      <option value={120} className="bg-slate-800 text-white">
+                        2 hours
+                      </option>
+                      <option value={480} className="bg-slate-800 text-white">
+                        8 hours
+                      </option>
                     </select>
                   </div>
                   <div className="flex items-center justify-between">
                     <div>
-                      <h3 className="text-sm font-medium text-gray-900">API Access</h3>
-                      <p className="text-sm text-gray-600">Allow API access to your account</p>
+                      <h3 className="text-sm font-medium text-white">API Access</h3>
+                      <p className="text-sm text-slate-300">Allow API access to your account</p>
                     </div>
                     <label className="relative inline-flex items-center cursor-pointer">
                       <input
@@ -309,7 +325,7 @@ const Settings: React.FC = () => {
                         onChange={(e) => updateSetting('security', 'apiAccess', e.target.checked)}
                         className="sr-only peer"
                       />
-                      <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                      <div className="w-11 h-6 bg-white/20 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-400/30 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-white/30 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-500"></div>
                     </label>
                   </div>
                 </div>
@@ -319,37 +335,53 @@ const Settings: React.FC = () => {
             {/* Preferences Tab */}
             {activeTab === 'preferences' && (
               <div className="p-6">
-                <h2 className="text-lg font-medium text-gray-900 mb-6">Application Preferences</h2>
+                <h2 className="text-lg font-medium text-white mb-6">Application Preferences</h2>
                 <div className="space-y-6">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Theme</label>
+                    <label className="block text-sm font-medium text-slate-300 mb-2">Theme</label>
                     <select
                       aria-label="performance"
                       value={settings.preferences.theme}
                       onChange={(e) => updateSetting('preferences', 'theme', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full px-3 py-2 bg-white/10 border border-white/30 text-white rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-blue-400 backdrop-blur-sm"
                     >
-                      <option value="light">Light</option>
-                      <option value="dark">Dark</option>
-                      <option value="auto">Auto</option>
+                      <option value="light" className="bg-slate-800 text-white">
+                        Light
+                      </option>
+                      <option value="dark" className="bg-slate-800 text-white">
+                        Dark
+                      </option>
+                      <option value="auto" className="bg-slate-800 text-white">
+                        Auto
+                      </option>
                     </select>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Language</label>
+                    <label className="block text-sm font-medium text-slate-300 mb-2">
+                      Language
+                    </label>
                     <select
                       aria-label="language"
                       value={settings.preferences.language}
                       onChange={(e) => updateSetting('preferences', 'language', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full px-3 py-2 bg-white/10 border border-white/30 text-white rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-blue-400 backdrop-blur-sm"
                     >
-                      <option value="en">English</option>
-                      <option value="es">Spanish</option>
-                      <option value="fr">French</option>
-                      <option value="de">German</option>
+                      <option value="en" className="bg-slate-800 text-white">
+                        English
+                      </option>
+                      <option value="es" className="bg-slate-800 text-white">
+                        Spanish
+                      </option>
+                      <option value="fr" className="bg-slate-800 text-white">
+                        French
+                      </option>
+                      <option value="de" className="bg-slate-800 text-white">
+                        German
+                      </option>
                     </select>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-slate-300 mb-2">
                       Default Workflow Privacy
                     </label>
                     <select
@@ -358,11 +390,17 @@ const Settings: React.FC = () => {
                       onChange={(e) =>
                         updateSetting('preferences', 'defaultWorkflowPrivacy', e.target.value)
                       }
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full px-3 py-2 bg-white/10 border border-white/30 text-white rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-blue-400 backdrop-blur-sm"
                     >
-                      <option value="private">Private</option>
-                      <option value="team">Team</option>
-                      <option value="public">Public</option>
+                      <option value="private" className="bg-slate-800 text-white">
+                        Private
+                      </option>
+                      <option value="team" className="bg-slate-800 text-white">
+                        Team
+                      </option>
+                      <option value="public" className="bg-slate-800 text-white">
+                        Public
+                      </option>
                     </select>
                   </div>
                 </div>
@@ -370,18 +408,18 @@ const Settings: React.FC = () => {
             )}
 
             {/* Save Button */}
-            <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 rounded-b-lg">
+            <div className="px-6 py-4 bg-white/5 border-t border-white/20 rounded-b-lg backdrop-blur-sm">
               <div className="flex justify-end space-x-3">
                 <button
                   onClick={() => window.location.reload()}
-                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
+                  className="px-4 py-2 text-sm font-medium text-slate-300 bg-white/10 border border-white/30 rounded-lg hover:bg-white/20 hover:text-white transition-all duration-300 backdrop-blur-sm"
                 >
                   Reset
                 </button>
                 <button
                   onClick={handleSave}
                   disabled={isSaving}
-                  className="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 disabled:opacity-50"
+                  className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-purple-600 border border-transparent rounded-lg hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:hover:scale-100 shadow-lg"
                 >
                   {isSaving ? 'Saving...' : 'Save Changes'}
                 </button>

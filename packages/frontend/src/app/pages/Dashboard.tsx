@@ -147,19 +147,19 @@ const Dashboard: React.FC = () => {
     (workflow: Workflow) => (
       <div
         key={workflow.id}
-        className="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors mb-4"
+        className="bg-white/5 backdrop-blur-sm border border-white/20 rounded-lg p-4 hover:bg-white/10 transition-all duration-300 mb-4 shadow-lg"
       >
         <div className="flex items-center justify-between">
           <div className="flex-1">
             <div className="flex items-center space-x-3">
-              <h3 className="font-medium text-gray-900">{workflow.name}</h3>
+              <h3 className="font-medium text-white">{workflow.name}</h3>
               <span
                 className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                   workflow.status === 'active' || workflow.isActive
-                    ? 'bg-green-100 text-green-800'
+                    ? 'bg-green-500/20 text-green-300 border border-green-500/30'
                     : workflow.status === 'error'
-                      ? 'bg-red-100 text-red-800'
-                      : 'bg-gray-100 text-gray-800'
+                      ? 'bg-red-500/20 text-red-300 border border-red-500/30'
+                      : 'bg-slate-500/20 text-slate-300 border border-slate-500/30'
                 }`}
               >
                 {workflow.status === 'active' || workflow.isActive
@@ -167,31 +167,33 @@ const Dashboard: React.FC = () => {
                   : workflow.status || 'inactive'}
               </span>
             </div>
-            <p className="text-sm text-gray-600 mt-1">{workflow.description || 'No description'}</p>
+            <p className="text-sm text-slate-300 mt-1">
+              {workflow.description || 'No description'}
+            </p>
             <div className="flex items-center mt-2 space-x-4">
-              <span className="text-xs text-gray-500">{workflow.nodes?.length || 0} nodes</span>
-              <span className="text-xs text-gray-500">
+              <span className="text-xs text-slate-400">{workflow.nodes?.length || 0} nodes</span>
+              <span className="text-xs text-slate-400">
                 Updated{' '}
                 {workflow.updatedAt ? new Date(workflow.updatedAt).toLocaleDateString() : 'N/A'}
               </span>
               {workflow.lastRun && (
-                <span className="text-xs text-gray-500">
+                <span className="text-xs text-slate-400">
                   Last run {new Date(workflow.lastRun).toLocaleDateString()}
                 </span>
               )}
-              {!workflow.lastRun && <span className="text-xs text-gray-500">Never executed</span>}
+              {!workflow.lastRun && <span className="text-xs text-slate-400">Never executed</span>}
             </div>
           </div>
           <div className="flex items-center space-x-2">
             <Link
               to={`/workflow/${workflow.id}`}
-              className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm"
+              className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-lg hover:scale-105 transition-all duration-300 text-sm shadow-lg"
             >
               Edit
             </Link>
             <button
               onClick={() => handleDeleteWorkflow(workflow.id, workflow.name)}
-              className="text-gray-400 hover:text-red-600 px-2 py-2 rounded hover:bg-red-50 transition-colors text-sm"
+              className="text-slate-400 hover:text-red-300 px-2 py-2 rounded hover:bg-red-500/20 transition-all duration-300 text-sm backdrop-blur-sm"
             >
               🗑️
             </button>
@@ -231,25 +233,28 @@ const Dashboard: React.FC = () => {
     <div className="p-6">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900">Workflows</h1>
-        <p className="text-gray-600">Create and manage your automation workflows</p>
+        <h1 className="text-2xl font-bold text-white">Workflows</h1>
+        <p className="text-slate-300">Create and manage your automation workflows</p>
       </div>
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         {dashboardStats.map((stat) => (
-          <div key={stat.name} className="bg-white p-6 rounded-lg shadow">
+          <div
+            key={stat.name}
+            className="bg-white/10 backdrop-blur-md p-6 rounded-lg border border-white/20 shadow-lg hover:bg-white/15 transition-all duration-300"
+          >
             <div className="flex items-center">
               <div className="text-2xl mr-4">{stat.icon}</div>
               <div>
-                <p className="text-sm font-medium text-gray-600">{stat.name}</p>
-                <p className="text-2xl font-semibold text-gray-900">{stat.value}</p>
-                {statsLoading && <p className="text-xs text-gray-400 mt-1">Loading...</p>}
+                <p className="text-sm font-medium text-slate-300">{stat.name}</p>
+                <p className="text-2xl font-semibold text-white">{stat.value}</p>
+                {statsLoading && <p className="text-xs text-slate-400 mt-1">Loading...</p>}
                 {!statsLoading &&
                   stats &&
                   stat.name === 'Total Executions' &&
                   stats.totalExecutions === 0 && (
-                    <p className="text-xs text-gray-400 mt-1">No executions yet</p>
+                    <p className="text-xs text-slate-400 mt-1">No executions yet</p>
                   )}
               </div>
             </div>
@@ -258,13 +263,13 @@ const Dashboard: React.FC = () => {
       </div>
 
       {/* Workflows */}
-      <div className="bg-white rounded-lg shadow">
-        <div className="p-6 border-b border-gray-200">
+      <div className="bg-white/10 backdrop-blur-md rounded-lg border border-white/20 shadow-lg">
+        <div className="p-6 border-b border-white/20">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-medium text-gray-900">Your Workflows</h2>
+            <h2 className="text-lg font-medium text-white">Your Workflows</h2>
             <button
               onClick={handleCreateWorkflow}
-              className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+              className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-lg hover:scale-105 transition-all duration-300 shadow-lg"
             >
               Create New
             </button>
@@ -274,15 +279,15 @@ const Dashboard: React.FC = () => {
         <div className="p-6">
           {isLoading ? (
             <div className="text-center py-8">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-              <p className="mt-2 text-gray-600">Loading workflows...</p>
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-400 mx-auto"></div>
+              <p className="mt-2 text-slate-300">Loading workflows...</p>
             </div>
           ) : workflows.length === 0 ? (
             <div className="text-center py-8">
-              <p className="text-gray-600 mb-4">No workflows yet</p>
+              <p className="text-slate-300 mb-4">No workflows yet</p>
               <button
                 onClick={handleCreateWorkflow}
-                className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+                className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-lg hover:scale-105 transition-all duration-300 shadow-lg"
               >
                 Create Your First Workflow
               </button>
@@ -298,10 +303,10 @@ const Dashboard: React.FC = () => {
               className="workflow-list"
               emptyState={
                 <div className="text-center py-8">
-                  <p className="text-gray-600 mb-4">No workflows found</p>
+                  <p className="text-slate-300 mb-4">No workflows found</p>
                   <button
                     onClick={handleCreateWorkflow}
-                    className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+                    className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-lg hover:scale-105 transition-all duration-300 shadow-lg"
                   >
                     Create Your First Workflow
                   </button>
