@@ -1,6 +1,5 @@
 import path from 'node:path';
 import react from '@vitejs/plugin-react';
-import { visualizer } from 'rollup-plugin-visualizer';
 import { defineConfig, loadEnv } from 'vite';
 
 // https://vite.dev/config/
@@ -8,17 +7,7 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
 
   return {
-    plugins: [
-      react(),
-      // Bundle analyzer plugin for development and analyze modes
-      mode === 'analyze' &&
-        visualizer({
-          filename: 'dist/stats.html',
-          open: true,
-          gzipSize: true,
-          brotliSize: true,
-        }),
-    ].filter(Boolean),
+    plugins: [react()],
 
     resolve: {
       alias: {
