@@ -16,7 +16,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, onToggle }) => {
   const { createNewWorkflow } = useLeanWorkflowStore();
 
   const navigation = [
-    { name: 'Workflows', href: '/', icon: '🔄' },
+    { name: 'Workflows', href: '/dashboard', icon: '🔄' },
     { name: 'Executions', href: '/executions', icon: '▶️' },
     { name: 'Credentials', href: '/credentials', icon: '🔐' },
     { name: 'Settings', href: '/settings', icon: '⚙️' },
