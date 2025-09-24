@@ -151,7 +151,7 @@ export const NodeSchema = z.object({
     x: z.number(),
     y: z.number(),
   }),
-  properties: z.record(z.any()),
+  properties: z.record(z.string(), z.any()),
   credentials: z.array(z.string()).optional(),
   disabled: z.boolean().optional(),
   notes: z.string().optional(),
@@ -169,7 +169,7 @@ export const EdgeSchema = z.object({
   targetHandle: z.string().optional(),
   type: z.enum(['default', 'conditional', 'error']).optional(),
   label: z.string().optional(),
-  data: z.record(z.any()).optional(),
+  data: z.record(z.string(), z.any()).optional(),
 });
 
 export const WorkflowSchema = z.object({
@@ -198,7 +198,7 @@ export const WorkflowSchema = z.object({
       executionOrder: z.enum(['sequential', 'parallel']).optional(),
     })
     .optional(),
-  meta: z.record(z.any()).optional(),
+  meta: z.record(z.string(), z.any()).optional(),
 });
 
 export type Node = z.infer<typeof NodeSchema>;

@@ -49,6 +49,6 @@
     "@types/node": "catalog:",
     "jest": "catalog:",
     "@types/jest": "catalog:",
-    "tsup": "^7.0.0"
+    "tsup": "catalog:"
   }
 }

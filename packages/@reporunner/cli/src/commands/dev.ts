@@ -1,5 +1,4 @@
 import { Command } from 'commander';
-import chalk from 'chalk';
 import { execa } from 'execa';
 
 export const devCommand = new Command()
@@ -12,12 +11,9 @@ export const devCommand = new Command()
 
     if (options.backendOnly) {
       command = 'dev:backend';
-      console.log(chalk.blue('Starting backend development server...'));
     } else if (options.frontendOnly) {
       command = 'dev:frontend';
-      console.log(chalk.blue('Starting frontend development server...'));
     } else {
-      console.log(chalk.blue('Starting full development environment...'));
     }
 
     try {
@@ -25,8 +21,7 @@ export const devCommand = new Command()
         cwd: process.cwd(),
         stdio: 'inherit',
       });
-    } catch (error) {
-      console.error(chalk.red('✗ Failed to start dev server:'), error);
+    } catch (_error) {
       process.exit(1);
     }
   });

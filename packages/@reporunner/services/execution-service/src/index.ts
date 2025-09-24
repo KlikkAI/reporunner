@@ -27,8 +27,6 @@ export interface ExecutionResult {
 }
 
 export class ExecutionService {
-  constructor(_config: ExecutionConfig) {}
-
   async execute(_request: ExecutionRequest): Promise<ExecutionResult> {
     // TODO: Implement workflow execution
     throw new Error('Not implemented');

@@ -16,9 +16,6 @@ export interface MetricsCollector {
 }
 
 export class MonitoringService {
-  // @ts-expect-error: Config will be used in future implementation
-  constructor(_config: MonitoringConfig) {}
-
   async start(): Promise<void> {
     // TODO: Implement monitoring service startup
   }

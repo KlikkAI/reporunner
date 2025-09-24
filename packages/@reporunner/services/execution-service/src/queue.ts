@@ -16,8 +16,6 @@ export interface QueueConfig {
 export class ExecutionQueue {
   private queue: QueueItem[] = [];
 
-  constructor(_config: QueueConfig) {}
-
   async enqueue(_item: Omit<QueueItem, 'id' | 'attempts'>): Promise<string> {
     // TODO: Implement queue enqueue
     return 'placeholder-id';

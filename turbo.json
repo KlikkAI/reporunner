@@ -69,13 +69,13 @@
     },
     "build:cli": {
       "dependsOn": ["@reporunner/core#build"],
-      "inputs": ["packages/cli/src/**", "packages/cli/package.json"],
-      "outputs": ["packages/cli/dist/**"]
+      "inputs": ["packages/@reporunner/cli/src/**", "packages/@reporunner/cli/package.json"],
+      "outputs": ["packages/@reporunner/cli/dist/**"]
     },
     "build:sdk": {
       "dependsOn": ["@reporunner/core#build"],
-      "inputs": ["packages/sdk/src/**", "packages/sdk/package.json"],
-      "outputs": ["packages/sdk/dist/**"]
+      "inputs": ["packages/@reporunner/sdk/src/**", "packages/@reporunner/sdk/package.json"],
+      "outputs": ["packages/@reporunner/sdk/dist/**"]
     },
     "build:go-sdk": {
       "dependsOn": ["@reporunner/core#build"],
@@ -116,8 +116,11 @@
     },
     "build:nodes": {
       "dependsOn": ["@reporunner/core#build", "@reporunner/workflow#build"],
-      "inputs": ["packages/@reporunner/nodes/**", "!packages/@reporunner/nodes/**/*.test.{js,ts}"],
-      "outputs": ["packages/@reporunner/nodes/dist/**"]
+      "inputs": [
+        "packages/@reporunner/nodes-*/**",
+        "!packages/@reporunner/nodes-*/**/*.test.{js,ts}"
+      ],
+      "outputs": ["packages/@reporunner/nodes-*/dist/**"]
     },
     "build:design-system": {
       "inputs": [

@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 
-const { execSync } = require('node:child_process');
-const { writeFileSync, mkdirSync, existsSync } = require('node:fs');
+const { writeFileSync, mkdirSync } = require('node:fs');
 const path = require('node:path');
 
 // Node scaffolding script inspired by n8n

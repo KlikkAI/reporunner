@@ -27,9 +27,6 @@ export interface Route {
 }
 
 export class APIGateway {
-  // @ts-expect-error: Config will be used in future implementation
-  constructor(_config: GatewayConfig) {}
-
   async start(): Promise<void> {
     // TODO: Implement gateway startup
   }

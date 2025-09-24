@@ -271,7 +271,7 @@ export const UserSchema = z.object({
         .optional(),
     })
     .optional(),
-  metadata: z.record(z.any()).optional(),
+  metadata: z.record(z.string(), z.any()).optional(),
 });
 
 export const LoginRequestSchema = z.object({

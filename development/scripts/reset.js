@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 
-const { execSync } = require('node:child_process');
 const { existsSync, rmSync, readdirSync, statSync } = require('node:fs');
 const path = require('node:path');
 
@@ -32,12 +31,9 @@ function findDirectories(dir, targetNames) {
               }
             }
           }
-        } catch (error) {
-          // Skip files we can't access
-          continue;
-        }
+        } catch (_error) {}
       }
-    } catch (error) {
+    } catch (_error) {
       // Skip directories we can't read
       return;
     }
@@ -52,13 +48,13 @@ try {
   console.log('📦 Removing node_modules...');
   const nodeModulesPaths = findDirectories(rootDir, ['node_modules']);
 
-  nodeModulesPaths.forEach((p) => {
+  for (const p of nodeModulesPaths) {
     const fullPath = path.resolve(rootDir, p);
     if (existsSync(fullPath)) {
       console.log(`  Removing ${p}`);
       rmSync(fullPath, { recursive: true, force: true });
     }
-  });
+  }
 
   // Remove build artifacts
   console.log('🏗️  Removing build artifacts...');
@@ -75,13 +71,13 @@ try {
   ];
 
   const buildArtifacts = findDirectories(rootDir, buildPaths);
-  buildArtifacts.forEach((p) => {
+  for (const p of buildArtifacts) {
     const fullPath = path.resolve(rootDir, p);
     if (existsSync(fullPath)) {
       console.log(`  Removing ${p}`);
       rmSync(fullPath, { recursive: true, force: true });
     }
-  });
+  }
 
   // Remove .tsbuildinfo files
   console.log('🔧 Removing TypeScript build info files...');
@@ -98,11 +94,9 @@ try {
           } else if (stats.isDirectory() && item !== 'node_modules') {
             removeTsBuildInfo(fullPath);
           }
-        } catch (error) {
-          continue;
-        }
+        } catch (_error) {}
       }
-    } catch (error) {
+    } catch (_error) {
       return;
     }
   }

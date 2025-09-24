@@ -61,6 +61,7 @@ catalog:
   # Build tools
   tsx: ^4.7.0
   tsc-alias: ^1.8.8
+  tsup: ^8.3.5
   "@vitejs/plugin-react": ^4.6.0
   rollup-plugin-visualizer: ^6.0.3
   turbo: ^2.5.6
