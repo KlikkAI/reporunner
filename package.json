@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Open-source workflow automation platform with native AI capabilities - n8n alternative",
   "private": true,
-  "packageManager": "pnpm@10.16.1",
+  "packageManager": "pnpm@10.17.1",
   "engines": {
     "node": ">=18.20.0",
     "pnpm": ">=9.0.0",
