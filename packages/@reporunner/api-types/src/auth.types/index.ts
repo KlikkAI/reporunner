@@ -1,3 +1,3 @@
-export * from './auth.types-part1';
-export * from './auth.types-part2';
-export * from './auth.types-part3';
+export * from './user-permissions';
+export * from './organization-types';
+export * from './auth-requests';

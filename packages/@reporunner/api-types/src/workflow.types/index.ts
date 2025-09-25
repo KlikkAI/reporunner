@@ -1,3 +1,3 @@
-export * from './workflow.types-part1';
-export * from './workflow.types-part2';
-export * from './workflow.types-part3';
+export * from './workflow-core-types';
+export * from './execution-types';
+export * from './workflow-schemas';
