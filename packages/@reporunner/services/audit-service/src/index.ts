@@ -62,7 +62,16 @@ export interface ComplianceRule {
   severity: 'low' | 'medium' | 'high' | 'critical';
   conditions: Array<{
     field: string;
-    operator: 'equals' | 'not_equals' | 'contains' | 'not_contains' | 'greater_than' | 'less_than' | 'regex' | 'exists' | 'not_exists';
+    operator:
+      | 'equals'
+      | 'not_equals'
+      | 'contains'
+      | 'not_contains'
+      | 'greater_than'
+      | 'less_than'
+      | 'regex'
+      | 'exists'
+      | 'not_exists';
     value: any;
     case_sensitive?: boolean;
   }>;
@@ -178,11 +187,13 @@ const AuditEventSchema = z.object({
   sessionId: z.string().optional(),
   severity: z.enum(['low', 'medium', 'high', 'critical']),
   risk_score: z.number().min(0).max(100).optional(),
-  geo_location: z.object({
-    country: z.string().optional(),
-    region: z.string().optional(),
-    city: z.string().optional(),
-  }).optional(),
+  geo_location: z
+    .object({
+      country: z.string().optional(),
+      region: z.string().optional(),
+      city: z.string().optional(),
+    })
+    .optional(),
   compliance_tags: z.array(z.string()).optional(),
   retention_period: z.number().optional(),
 });
@@ -204,11 +215,7 @@ export class AuditService extends EventEmitter {
   private readonly CACHE_TTL = 300; // 5 minutes
   private readonly BATCH_SIZE = 1000;
 
-  constructor(
-    redis: RedisService,
-    database: DatabaseService,
-    eventBus: EventBusService
-  ) {
+  constructor(redis: RedisService, database: DatabaseService, eventBus: EventBusService) {
     super();
     this.redis = redis;
     this.database = database;
@@ -228,32 +235,20 @@ export class AuditService extends EventEmitter {
       },
     });
 
-    this.worker = new Worker(
-      'audit-processing',
-      this.processAuditJob.bind(this),
-      {
-        connection: this.redis.getConnection(),
-        concurrency: 5,
-      }
-    );
+    this.worker = new Worker('audit-processing', this.processAuditJob.bind(this), {
+      connection: this.redis.getConnection(),
+      concurrency: 5,
+    });
 
-    this.retentionWorker = new Worker(
-      'audit-retention',
-      this.processRetentionJob.bind(this),
-      {
-        connection: this.redis.getConnection(),
-        concurrency: 2,
-      }
-    );
+    this.retentionWorker = new Worker('audit-retention', this.processRetentionJob.bind(this), {
+      connection: this.redis.getConnection(),
+      concurrency: 2,
+    });
 
-    this.alertWorker = new Worker(
-      'audit-alerts',
-      this.processAlertJob.bind(this),
-      {
-        connection: this.redis.getConnection(),
-        concurrency: 10,
-      }
-    );
+    this.alertWorker = new Worker('audit-alerts', this.processAlertJob.bind(this), {
+      connection: this.redis.getConnection(),
+      concurrency: 10,
+    });
 
     this.initializeEventListeners();
     this.initializeDatabase();
@@ -278,11 +273,12 @@ export class AuditService extends EventEmitter {
       await this.database.createIndex(this.AUDIT_COLLECTION, {
         action: 'text',
         resource: 'text',
-        'details.description': 'text'
+        'details.description': 'text',
       });
 
       // Create TTL index for automatic cleanup
-      await this.database.createIndex(this.AUDIT_COLLECTION,
+      await this.database.createIndex(
+        this.AUDIT_COLLECTION,
         { timestamp: 1 },
         { expireAfterSeconds: 31536000 } // 365 days default
       );
@@ -310,7 +306,7 @@ export class AuditService extends EventEmitter {
     });
 
     this.eventBus.on('audit.event', (eventData) => {
-      this.logEventAsync(eventData).catch(err => {
+      this.logEventAsync(eventData).catch((err) => {
         logger.error('Failed to log audit event:', err);
       });
     });
@@ -362,13 +358,15 @@ export class AuditService extends EventEmitter {
     }
   }
 
-  async logBulkEvents(events: Array<Omit<AuditEvent, 'id' | 'timestamp' | 'hash'>>): Promise<string[]> {
+  async logBulkEvents(
+    events: Array<Omit<AuditEvent, 'id' | 'timestamp' | 'hash'>>
+  ): Promise<string[]> {
     const eventIds: string[] = [];
     const batchSize = Math.min(this.BATCH_SIZE, events.length);
 
     for (let i = 0; i < events.length; i += batchSize) {
       const batch = events.slice(i, i + batchSize);
-      const batchPromises = batch.map(event => this.logEvent(event));
+      const batchPromises = batch.map((event) => this.logEvent(event));
       const batchIds = await Promise.all(batchPromises);
       eventIds.push(...batchIds);
     }
@@ -399,7 +397,7 @@ export class AuditService extends EventEmitter {
     }
   }
 
-  async queryEvents(filter: AuditFilter): Promise<{ events: AuditEvent[], total: number }> {
+  async queryEvents(filter: AuditFilter): Promise<{ events: AuditEvent[]; total: number }> {
     try {
       const cacheKey = `audit:query:${this.hashFilter(filter)}`;
       const cached = await this.redis.get(cacheKey);
@@ -412,15 +410,11 @@ export class AuditService extends EventEmitter {
       const sortOptions = this.buildSortOptions(filter);
 
       const [events, total] = await Promise.all([
-        this.database.findMany(
-          this.AUDIT_COLLECTION,
-          mongoFilter,
-          {
-            sort: sortOptions,
-            limit: filter.limit || 100,
-            skip: filter.offset || 0,
-          }
-        ),
+        this.database.findMany(this.AUDIT_COLLECTION, mongoFilter, {
+          sort: sortOptions,
+          limit: filter.limit || 100,
+          skip: filter.offset || 0,
+        }),
         this.database.countDocuments(this.AUDIT_COLLECTION, mongoFilter),
       ]);
 
@@ -436,7 +430,10 @@ export class AuditService extends EventEmitter {
     }
   }
 
-  async exportEvents(filter: AuditFilter, format: 'json' | 'csv' | 'xml' | 'xlsx'): Promise<Buffer | string> {
+  async exportEvents(
+    filter: AuditFilter,
+    format: 'json' | 'csv' | 'xml' | 'xlsx'
+  ): Promise<Buffer | string> {
     try {
       const { events } = await this.queryEvents({
         ...filter,
@@ -462,7 +459,9 @@ export class AuditService extends EventEmitter {
     }
   }
 
-  async addComplianceRule(rule: Omit<ComplianceRule, 'id' | 'created_at' | 'updated_at'>): Promise<string> {
+  async addComplianceRule(
+    rule: Omit<ComplianceRule, 'id' | 'created_at' | 'updated_at'>
+  ): Promise<string> {
     try {
       const complianceRule: ComplianceRule = {
         ...rule,
@@ -562,18 +561,24 @@ export class AuditService extends EventEmitter {
         }
       }
 
-      const complianceScore = Math.max(0, Math.min(100,
-        ((periodEvents.length - totalViolations) / Math.max(1, periodEvents.length)) * 100
-      ));
+      const complianceScore = Math.max(
+        0,
+        Math.min(
+          100,
+          ((periodEvents.length - totalViolations) / Math.max(1, periodEvents.length)) * 100
+        )
+      );
 
-      const coveragePercentage = (relevantRules.length / this.getTotalRulesForStandard(standard)) * 100;
+      const coveragePercentage =
+        (relevantRules.length / this.getTotalRulesForStandard(standard)) * 100;
 
       const report: ComplianceReport = {
         id: this.generateId(),
         standard,
         generatedAt: new Date(),
         period,
-        status: complianceScore >= 95 ? 'compliant' : complianceScore >= 80 ? 'partial' : 'non-compliant',
+        status:
+          complianceScore >= 95 ? 'compliant' : complianceScore >= 80 ? 'partial' : 'non-compliant',
         violations,
         summary: {
           totalEvents: periodEvents.length,
@@ -582,8 +587,9 @@ export class AuditService extends EventEmitter {
           risk_score: Math.round(totalRiskScore),
           coverage_percentage: Math.round(coveragePercentage),
         },
-        recommendations: options.includeRecommendations ?
-          await this.generateRecommendations(violations, periodEvents) : [],
+        recommendations: options.includeRecommendations
+          ? await this.generateRecommendations(violations, periodEvents)
+          : [],
         generated_by: 'system',
       };
 
@@ -600,9 +606,7 @@ export class AuditService extends EventEmitter {
     }
   }
 
-  async getAuditMetrics(
-    filter: Omit<AuditFilter, 'limit' | 'offset'>
-  ): Promise<AuditMetrics> {
+  async getAuditMetrics(filter: Omit<AuditFilter, 'limit' | 'offset'>): Promise<AuditMetrics> {
     try {
       const cacheKey = `audit:metrics:${this.hashFilter(filter)}`;
       const cached = await this.redis.get(cacheKey);
@@ -627,10 +631,12 @@ export class AuditService extends EventEmitter {
         risk_distribution: this.getRiskDistribution(events),
         compliance_scores: await this.getComplianceScores(events),
         anomalies_detected: await this.countAnomalies(events),
-        blocked_actions: events.filter(e => e.outcome === 'failure' && e.severity === 'critical').length,
+        blocked_actions: events.filter((e) => e.outcome === 'failure' && e.severity === 'critical')
+          .length,
         period: {
-          start: filter.startDate || new Date(Math.min(...events.map(e => e.timestamp.getTime()))),
-          end: filter.endDate || new Date(Math.max(...events.map(e => e.timestamp.getTime()))),
+          start:
+            filter.startDate || new Date(Math.min(...events.map((e) => e.timestamp.getTime()))),
+          end: filter.endDate || new Date(Math.max(...events.map((e) => e.timestamp.getTime()))),
         },
       };
 
@@ -642,7 +648,9 @@ export class AuditService extends EventEmitter {
     }
   }
 
-  async addRetentionPolicy(policy: Omit<RetentionPolicy, 'id' | 'created_at' | 'updated_at'>): Promise<string> {
+  async addRetentionPolicy(
+    policy: Omit<RetentionPolicy, 'id' | 'created_at' | 'updated_at'>
+  ): Promise<string> {
     try {
       const retentionPolicy: RetentionPolicy = {
         ...policy,
@@ -722,12 +730,16 @@ export class AuditService extends EventEmitter {
 
       for (const rule of rules) {
         if (await this.shouldTriggerAlert(rule, event)) {
-          await this.auditQueue.add('trigger-alert', {
-            rule,
-            event,
-          }, {
-            priority: this.getSeverityPriority(rule.severity),
-          });
+          await this.auditQueue.add(
+            'trigger-alert',
+            {
+              rule,
+              event,
+            },
+            {
+              priority: this.getSeverityPriority(rule.severity),
+            }
+          );
         }
       }
     } catch (error) {
@@ -747,15 +759,15 @@ export class AuditService extends EventEmitter {
         case 'contains':
           const containsValue = String(eventValue);
           const searchValue = String(condition.value);
-          return condition.case_sensitive ?
-            containsValue.includes(searchValue) :
-            containsValue.toLowerCase().includes(searchValue.toLowerCase());
+          return condition.case_sensitive
+            ? containsValue.includes(searchValue)
+            : containsValue.toLowerCase().includes(searchValue.toLowerCase());
         case 'not_contains':
           const notContainsValue = String(eventValue);
           const notSearchValue = String(condition.value);
-          return condition.case_sensitive ?
-            !notContainsValue.includes(notSearchValue) :
-            !notContainsValue.toLowerCase().includes(notSearchValue.toLowerCase());
+          return condition.case_sensitive
+            ? !notContainsValue.includes(notSearchValue)
+            : !notContainsValue.toLowerCase().includes(notSearchValue.toLowerCase());
         case 'greater_than':
           return Number(eventValue) > Number(condition.value);
         case 'less_than':
@@ -788,13 +800,10 @@ export class AuditService extends EventEmitter {
       if (condition.time_window && condition.threshold) {
         // Time-based threshold check
         const windowStart = new Date(Date.now() - condition.time_window * 60000);
-        const recentEvents = await this.database.countDocuments(
-          this.AUDIT_COLLECTION,
-          {
-            timestamp: { $gte: windowStart },
-            [condition.field]: condition.value,
-          }
-        );
+        const recentEvents = await this.database.countDocuments(this.AUDIT_COLLECTION, {
+          timestamp: { $gte: windowStart },
+          [condition.field]: condition.value,
+        });
 
         if (recentEvents < condition.threshold) {
           return false;
@@ -812,16 +821,26 @@ export class AuditService extends EventEmitter {
 
   private checkSimpleCondition(value: any, operator: string, expected: any): boolean {
     switch (operator) {
-      case 'equals': return value === expected;
-      case 'not_equals': return value !== expected;
-      case 'contains': return String(value).includes(String(expected));
-      case 'greater_than': return Number(value) > Number(expected);
-      case 'less_than': return Number(value) < Number(expected);
-      default: return false;
+      case 'equals':
+        return value === expected;
+      case 'not_equals':
+        return value !== expected;
+      case 'contains':
+        return String(value).includes(String(expected));
+      case 'greater_than':
+        return Number(value) > Number(expected);
+      case 'less_than':
+        return Number(value) < Number(expected);
+      default:
+        return false;
     }
   }
 
-  private async executeRuleAction(rule: ComplianceRule, event: AuditEvent, action: any): Promise<void> {
+  private async executeRuleAction(
+    rule: ComplianceRule,
+    event: AuditEvent,
+    action: any
+  ): Promise<void> {
     try {
       switch (action.type) {
         case 'alert':
@@ -873,7 +892,9 @@ export class AuditService extends EventEmitter {
           };
 
           if (rule.archive_after_days) {
-            const archiveDate = new Date(Date.now() - rule.archive_after_days * 24 * 60 * 60 * 1000);
+            const archiveDate = new Date(
+              Date.now() - rule.archive_after_days * 24 * 60 * 60 * 1000
+            );
             // Archive old events
             await this.archiveEvents(filter, archiveDate);
           }
@@ -881,7 +902,9 @@ export class AuditService extends EventEmitter {
           // Delete expired events
           const deleteResult = await this.database.deleteMany(this.AUDIT_COLLECTION, filter);
 
-          logger.info(`Retention policy ${policy.id} processed: deleted ${deleteResult.deletedCount} events`);
+          logger.info(
+            `Retention policy ${policy.id} processed: deleted ${deleteResult.deletedCount} events`
+          );
         }
       }
     } catch (error) {
@@ -1033,11 +1056,18 @@ export class AuditService extends EventEmitter {
 
   private startRetentionScheduler(): void {
     // Schedule retention cleanup every 6 hours
-    setInterval(() => {
-      this.auditQueue.add('process-retention', {}, {
-        repeat: { every: 6 * 60 * 60 * 1000 }, // 6 hours
-      });
-    }, 6 * 60 * 60 * 1000);
+    setInterval(
+      () => {
+        this.auditQueue.add(
+          'process-retention',
+          {},
+          {
+            repeat: { every: 6 * 60 * 60 * 1000 }, // 6 hours
+          }
+        );
+      },
+      6 * 60 * 60 * 1000
+    );
   }
 
   private async archiveEvents(filter: any, archiveDate: Date): Promise<void> {
@@ -1074,7 +1104,10 @@ export class AuditService extends EventEmitter {
     return Math.round(baseRisk * (1 + Math.log(eventCount)) * (1 + avgRiskScore / 100));
   }
 
-  private async calculateViolationTrend(ruleId: string, period: { start: Date; end: Date }): Promise<'increasing' | 'decreasing' | 'stable'> {
+  private async calculateViolationTrend(
+    ruleId: string,
+    period: { start: Date; end: Date }
+  ): Promise<'increasing' | 'decreasing' | 'stable'> {
     // Calculate trend by comparing with previous period
     const periodDuration = period.end.getTime() - period.start.getTime();
     const previousPeriod = {
@@ -1093,9 +1126,12 @@ export class AuditService extends EventEmitter {
       }),
     ]);
 
-    const changePercent = previousCount === 0 ?
-      (currentCount > 0 ? 100 : 0) :
-      ((currentCount - previousCount) / previousCount) * 100;
+    const changePercent =
+      previousCount === 0
+        ? currentCount > 0
+          ? 100
+          : 0
+        : ((currentCount - previousCount) / previousCount) * 100;
 
     if (changePercent > 10) return 'increasing';
     if (changePercent < -10) return 'decreasing';
@@ -1104,13 +1140,13 @@ export class AuditService extends EventEmitter {
 
   private getTotalRulesForStandard(standard: string): number {
     const ruleCounts = {
-      'SOC2': 200,
-      'GDPR': 150,
-      'HIPAA': 180,
-      'ISO27001': 114,
+      SOC2: 200,
+      GDPR: 150,
+      HIPAA: 180,
+      ISO27001: 114,
       'PCI-DSS': 300,
-      'CCPA': 100,
-      'NIST': 400,
+      CCPA: 100,
+      NIST: 400,
     };
 
     return ruleCounts[standard] || 100;
@@ -1123,7 +1159,7 @@ export class AuditService extends EventEmitter {
     const recommendations = [];
 
     // High-frequency violation recommendation
-    const highFreqViolations = violations.filter(v => v.count > 10);
+    const highFreqViolations = violations.filter((v) => v.count > 10);
     if (highFreqViolations.length > 0) {
       recommendations.push({
         title: 'Address High-Frequency Violations',
@@ -1134,7 +1170,7 @@ export class AuditService extends EventEmitter {
     }
 
     // Critical severity recommendation
-    const criticalViolations = violations.filter(v => v.severity === 'critical');
+    const criticalViolations = violations.filter((v) => v.severity === 'critical');
     if (criticalViolations.length > 0) {
       recommendations.push({
         title: 'Immediate Action Required',
@@ -1145,7 +1181,7 @@ export class AuditService extends EventEmitter {
     }
 
     // Trend-based recommendation
-    const increasingViolations = violations.filter(v => v.trend === 'increasing');
+    const increasingViolations = violations.filter((v) => v.trend === 'increasing');
     if (increasingViolations.length > 0) {
       recommendations.push({
         title: 'Monitor Increasing Trends',
@@ -1159,28 +1195,38 @@ export class AuditService extends EventEmitter {
   }
 
   private groupBy<T>(array: T[], key: keyof T): Record<string, number> {
-    return array.reduce((groups, item) => {
-      const value = String(item[key]);
-      groups[value] = (groups[value] || 0) + 1;
-      return groups;
-    }, {} as Record<string, number>);
+    return array.reduce(
+      (groups, item) => {
+        const value = String(item[key]);
+        groups[value] = (groups[value] || 0) + 1;
+        return groups;
+      },
+      {} as Record<string, number>
+    );
   }
 
-  private getTopItems<T>(array: T[], key: keyof T, limit: number): Array<{ [K in keyof T]: T[K] } & { event_count: number }> {
+  private getTopItems<T>(
+    array: T[],
+    key: keyof T,
+    limit: number
+  ): Array<{ [K in keyof T]: T[K] } & { event_count: number }> {
     const counts = this.groupBy(array, key);
     return Object.entries(counts)
-      .sort(([,a], [,b]) => b - a)
+      .sort(([, a], [, b]) => b - a)
       .slice(0, limit)
-      .map(([value, count]) => ({
-        [key]: value,
-        event_count: count,
-      } as any));
+      .map(
+        ([value, count]) =>
+          ({
+            [key]: value,
+            event_count: count,
+          }) as any
+      );
   }
 
   private getRiskDistribution(events: AuditEvent[]): Record<string, number> {
     const distribution = { low: 0, medium: 0, high: 0, critical: 0 };
 
-    events.forEach(event => {
+    events.forEach((event) => {
       const riskScore = event.risk_score || 0;
       if (riskScore >= 80) distribution.critical++;
       else if (riskScore >= 60) distribution.high++;
@@ -1200,12 +1246,13 @@ export class AuditService extends EventEmitter {
       let violations = 0;
 
       for (const rule of rules) {
-        violations += events.filter(event => this.checkRuleViolation(rule, event)).length;
+        violations += events.filter((event) => this.checkRuleViolation(rule, event)).length;
       }
 
-      const score = Math.max(0, Math.min(100,
-        ((events.length - violations) / Math.max(1, events.length)) * 100
-      ));
+      const score = Math.max(
+        0,
+        Math.min(100, ((events.length - violations) / Math.max(1, events.length)) * 100)
+      );
       scores[standard] = Math.round(score);
     }
 
@@ -1217,10 +1264,10 @@ export class AuditService extends EventEmitter {
     let anomalies = 0;
 
     // Check for unusual high-risk events
-    anomalies += events.filter(e => e.risk_score && e.risk_score > 90).length;
+    anomalies += events.filter((e) => e.risk_score && e.risk_score > 90).length;
 
     // Check for unusual failure rates
-    const failures = events.filter(e => e.outcome === 'failure').length;
+    const failures = events.filter((e) => e.outcome === 'failure').length;
     const failureRate = failures / events.length;
     if (failureRate > 0.1) anomalies += Math.floor(failures * 0.5); // 50% of failures considered anomalies
 
@@ -1228,8 +1275,9 @@ export class AuditService extends EventEmitter {
     const userCounts = this.groupBy(events, 'userId');
     const avgEventsPerUser = events.length / Object.keys(userCounts).length;
 
-    Object.values(userCounts).forEach(count => {
-      if (count > avgEventsPerUser * 5) { // 5x above average
+    Object.values(userCounts).forEach((count) => {
+      if (count > avgEventsPerUser * 5) {
+        // 5x above average
         anomalies += Math.floor(count * 0.2); // 20% considered anomalies
       }
     });
@@ -1241,19 +1289,32 @@ export class AuditService extends EventEmitter {
     if (events.length === 0) return '';
 
     const headers = [
-      'id', 'timestamp', 'userId', 'organizationId', 'action',
-      'resource', 'resourceId', 'outcome', 'severity', 'risk_score',
-      'ip', 'userAgent', 'sessionId', 'details'
+      'id',
+      'timestamp',
+      'userId',
+      'organizationId',
+      'action',
+      'resource',
+      'resourceId',
+      'outcome',
+      'severity',
+      'risk_score',
+      'ip',
+      'userAgent',
+      'sessionId',
+      'details',
     ];
 
     const rows = events.map((event) =>
-      headers.map(header => {
-        const value = event[header as keyof AuditEvent];
-        if (typeof value === 'object' && value !== null) {
-          return `"${JSON.stringify(value).replace(/"/g, '""')}"`;
-        }
-        return `"${String(value || '').replace(/"/g, '""')}"`;
-      }).join(',')
+      headers
+        .map((header) => {
+          const value = event[header as keyof AuditEvent];
+          if (typeof value === 'object' && value !== null) {
+            return `"${JSON.stringify(value).replace(/"/g, '""')}"`;
+          }
+          return `"${String(value || '').replace(/"/g, '""')}"`;
+        })
+        .join(',')
     );
 
     return [headers.join(','), ...rows].join('\n');
@@ -1264,9 +1325,10 @@ export class AuditService extends EventEmitter {
       .map((event) => {
         const fields = Object.entries(event)
           .map(([key, value]) => {
-            const xmlValue = typeof value === 'object' && value !== null ?
-              `<![CDATA[${JSON.stringify(value)}]]>` :
-              String(value || '');
+            const xmlValue =
+              typeof value === 'object' && value !== null
+                ? `<![CDATA[${JSON.stringify(value)}]]>`
+                : String(value || '');
             return `<${key}>${xmlValue}</${key}>`;
           })
           .join('');
@@ -1319,7 +1381,9 @@ export class AuditService extends EventEmitter {
     });
 
     // Emit high-priority alert for critical violations
-    const criticalViolations = data.violations.filter((v: ComplianceRule) => v.severity === 'critical');
+    const criticalViolations = data.violations.filter(
+      (v: ComplianceRule) => v.severity === 'critical'
+    );
     if (criticalViolations.length > 0) {
       this.emit('critical.violation', {
         event: data.event,

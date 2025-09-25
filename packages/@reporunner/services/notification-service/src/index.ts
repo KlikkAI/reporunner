@@ -383,7 +383,7 @@ export class NotificationService extends EventEmitter {
         ...channel,
         id: uuidv4(),
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       };
 
       await this.channels.insertOne(newChannel);
@@ -406,8 +406,8 @@ export class NotificationService extends EventEmitter {
         {
           $set: {
             ...updates,
-            updatedAt: new Date()
-          }
+            updatedAt: new Date(),
+          },
         },
         { returnDocument: 'after' }
       );
@@ -469,7 +469,7 @@ export class NotificationService extends EventEmitter {
         ...template,
         id: uuidv4(),
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       };
 
       // Validate template syntax
@@ -512,7 +512,7 @@ export class NotificationService extends EventEmitter {
         const existing = await this.requests.findOne({
           deduplicationId: request.deduplicationId,
           organizationId: request.organizationId,
-          createdAt: { $gte: new Date(Date.now() - 24 * 60 * 60 * 1000) } // Last 24 hours
+          createdAt: { $gte: new Date(Date.now() - 24 * 60 * 60 * 1000) }, // Last 24 hours
         });
 
         if (existing) {
@@ -550,7 +550,7 @@ export class NotificationService extends EventEmitter {
       // Save request
       const notificationRequest: NotificationRequest = {
         ...request,
-        createdAt: new Date()
+        createdAt: new Date(),
       } as NotificationRequest;
 
       await this.requests.insertOne(notificationRequest);
@@ -565,9 +565,9 @@ export class NotificationService extends EventEmitter {
           content,
           metadata: {
             recipient,
-            ...request.metadata
+            ...request.metadata,
           },
-          attempt: 1
+          attempt: 1,
         };
 
         // Schedule or send immediately
@@ -575,15 +575,11 @@ export class NotificationService extends EventEmitter {
           ? Math.max(0, request.scheduledAt.getTime() - Date.now())
           : 0;
 
-        await this.notificationQueue.add(
-          'send-notification',
-          jobData,
-          {
-            delay,
-            priority: this.getPriorityWeight(request.priority),
-            jobId: `${request.id}:${recipient.id}`
-          }
-        );
+        await this.notificationQueue.add('send-notification', jobData, {
+          delay,
+          priority: this.getPriorityWeight(request.priority),
+          jobId: `${request.id}:${recipient.id}`,
+        });
 
         // Create result record
         const result: NotificationResult = {
@@ -594,7 +590,7 @@ export class NotificationService extends EventEmitter {
           status: delay > 0 ? 'pending' : 'pending',
           createdAt: new Date(),
           attempts: 0,
-          maxAttempts: this.config.queue.retryAttempts
+          maxAttempts: this.config.queue.retryAttempts,
         };
 
         await this.results.insertOne(result);
@@ -605,7 +601,7 @@ export class NotificationService extends EventEmitter {
         requestId: request.id,
         channelId: request.channelId,
         recipientCount: request.recipients.length,
-        organizationId: request.organizationId
+        organizationId: request.organizationId,
       });
 
       logger.info(`Notification request queued: ${request.id}`);
@@ -657,7 +653,7 @@ export class NotificationService extends EventEmitter {
         recipient: metadata.recipient,
         subject,
         content,
-        metadata
+        metadata,
       });
 
       // Update result with success
@@ -668,9 +664,8 @@ export class NotificationService extends EventEmitter {
         requestId,
         recipientId,
         channelId,
-        response
+        response,
       });
-
     } catch (error) {
       logger.error(`Failed to process notification: ${requestId}:${recipientId}`, error);
 
@@ -678,7 +673,7 @@ export class NotificationService extends EventEmitter {
       await this.updateResultWithError(requestId, recipientId, 'failed', {
         code: 'SEND_FAILED',
         message: (error as Error).message,
-        retryable: this.isRetryableError(error as Error)
+        retryable: this.isRetryableError(error as Error),
       });
 
       // Emit failure event
@@ -686,7 +681,7 @@ export class NotificationService extends EventEmitter {
         requestId,
         recipientId,
         channelId,
-        error: (error as Error).message
+        error: (error as Error).message,
       });
 
       throw error;
@@ -702,7 +697,7 @@ export class NotificationService extends EventEmitter {
         ...rule,
         id: uuidv4(),
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       };
 
       await this.rules.insertOne(newRule);
@@ -721,10 +716,13 @@ export class NotificationService extends EventEmitter {
 
   private async processEventForRules(event: any): Promise<void> {
     try {
-      const rules = await this.rules.find({
-        enabled: true,
-        eventTypes: event.type
-      }).sort({ priority: -1 }).toArray();
+      const rules = await this.rules
+        .find({
+          enabled: true,
+          eventTypes: event.type,
+        })
+        .sort({ priority: -1 })
+        .toArray();
 
       for (const rule of rules) {
         try {
@@ -766,7 +764,7 @@ export class NotificationService extends EventEmitter {
             ...action.variables,
             event: event.data,
             eventType: event.type,
-            timestamp: event.timestamp
+            timestamp: event.timestamp,
           },
           priority: action.priority,
           organizationId: rule.organizationId,
@@ -774,8 +772,8 @@ export class NotificationService extends EventEmitter {
           correlationId: event.correlationId,
           metadata: {
             ruleId: rule.id,
-            ruleName: rule.name
-          }
+            ruleName: rule.name,
+          },
         };
 
         await this.sendNotification(request);
@@ -795,10 +793,10 @@ export class NotificationService extends EventEmitter {
     // Check for undefined variables
     const variablePattern = /\{\{(\w+)\}\}/g;
     const matches = [...template.template.matchAll(variablePattern)];
-    const usedVariables = matches.map(match => match[1]);
-    const definedVariables = template.variables.map(v => v.name);
+    const usedVariables = matches.map((match) => match[1]);
+    const definedVariables = template.variables.map((v) => v.name);
 
-    const undefinedVars = usedVariables.filter(v => !definedVariables.includes(v));
+    const undefinedVars = usedVariables.filter((v) => !definedVariables.includes(v));
     if (undefinedVars.length > 0) {
       throw new Error(`Undefined variables in template: ${undefinedVars.join(', ')}`);
     }
@@ -821,11 +819,11 @@ export class NotificationService extends EventEmitter {
       'ETIMEDOUT',
       'ENOTFOUND',
       'RATE_LIMITED',
-      'SERVER_ERROR'
+      'SERVER_ERROR',
     ];
 
-    return retryableErrors.some(code =>
-      error.message.includes(code) || error.name.includes(code)
+    return retryableErrors.some(
+      (code) => error.message.includes(code) || error.name.includes(code)
     );
   }
 
@@ -844,7 +842,7 @@ export class NotificationService extends EventEmitter {
       { requestId, recipientId },
       {
         $set: update,
-        $inc: { attempts: 1 }
+        $inc: { attempts: 1 },
       }
     );
   }
@@ -861,9 +859,9 @@ export class NotificationService extends EventEmitter {
         $set: {
           status,
           sentAt: new Date(),
-          response
+          response,
         },
-        $inc: { attempts: 1 }
+        $inc: { attempts: 1 },
       }
     );
   }
@@ -880,9 +878,9 @@ export class NotificationService extends EventEmitter {
         $set: {
           status,
           failedAt: new Date(),
-          error
+          error,
         },
-        $inc: { attempts: 1 }
+        $inc: { attempts: 1 },
       }
     );
   }
@@ -893,17 +891,28 @@ export class NotificationService extends EventEmitter {
 
   private evaluateCondition(actual: any, operator: string, expected: any): boolean {
     switch (operator) {
-      case 'eq': return actual === expected;
-      case 'neq': return actual !== expected;
-      case 'gt': return actual > expected;
-      case 'lt': return actual < expected;
-      case 'gte': return actual >= expected;
-      case 'lte': return actual <= expected;
-      case 'in': return Array.isArray(expected) && expected.includes(actual);
-      case 'nin': return Array.isArray(expected) && !expected.includes(actual);
-      case 'contains': return String(actual).includes(String(expected));
-      case 'matches': return new RegExp(String(expected)).test(String(actual));
-      default: return false;
+      case 'eq':
+        return actual === expected;
+      case 'neq':
+        return actual !== expected;
+      case 'gt':
+        return actual > expected;
+      case 'lt':
+        return actual < expected;
+      case 'gte':
+        return actual >= expected;
+      case 'lte':
+        return actual <= expected;
+      case 'in':
+        return Array.isArray(expected) && expected.includes(actual);
+      case 'nin':
+        return Array.isArray(expected) && !expected.includes(actual);
+      case 'contains':
+        return String(actual).includes(String(expected));
+      case 'matches':
+        return new RegExp(String(expected)).test(String(actual));
+      default:
+        return false;
     }
   }
 
@@ -913,17 +922,15 @@ export class NotificationService extends EventEmitter {
   ): Promise<NotificationRecipient[]> {
     // This would typically resolve user IDs to actual notification recipients
     // For now, return simple recipients
-    return recipientIds.map(id => ({
+    return recipientIds.map((id) => ({
       id,
       type: 'user' as const,
-      value: id
+      value: id,
     }));
   }
 
   // Query methods
-  async getNotificationResults(
-    requestId: string
-  ): Promise<NotificationResult[]> {
+  async getNotificationResults(requestId: string): Promise<NotificationResult[]> {
     return await this.results.find({ requestId }).toArray();
   }
 
@@ -955,7 +962,7 @@ export class NotificationService extends EventEmitter {
 
     // Get matching request IDs
     const requests = await this.requests.find(requestQuery, { projection: { id: 1 } }).toArray();
-    const requestIds = requests.map(r => r.id);
+    const requestIds = requests.map((r) => r.id);
 
     // Build results query
     const resultsQuery: any = { requestId: { $in: requestIds } };
@@ -967,7 +974,7 @@ export class NotificationService extends EventEmitter {
 
     const [results, total] = await Promise.all([
       this.results.find(resultsQuery).sort({ createdAt: -1 }).skip(skip).limit(limit).toArray(),
-      this.results.countDocuments(resultsQuery)
+      this.results.countDocuments(resultsQuery),
     ]);
 
     return { results, total };
@@ -993,7 +1000,7 @@ export class NotificationService extends EventEmitter {
       const [queueSize, sent24h, failed24h] = await Promise.all([
         this.notificationQueue.count(),
         this.results.countDocuments({ status: 'sent', sentAt: { $gte: last24h } }),
-        this.results.countDocuments({ status: 'failed', failedAt: { $gte: last24h } })
+        this.results.countDocuments({ status: 'failed', failedAt: { $gte: last24h } }),
       ]);
 
       return {
@@ -1002,8 +1009,8 @@ export class NotificationService extends EventEmitter {
           queueSize,
           processing: 0, // Would need to track active jobs
           sent24h,
-          failed24h
-        }
+          failed24h,
+        },
       };
     } catch (error) {
       return {
@@ -1012,8 +1019,8 @@ export class NotificationService extends EventEmitter {
           queueSize: 0,
           processing: 0,
           sent24h: 0,
-          failed24h: 0
-        }
+          failed24h: 0,
+        },
       };
     }
   }
@@ -1110,13 +1117,10 @@ class InAppProvider implements NotificationProvider {
       subject: params.subject,
       content: params.content,
       timestamp: new Date(),
-      read: false
+      read: false,
     };
 
-    await this.cache.lpush(
-      `notifications:${params.recipient.value}`,
-      JSON.stringify(notification)
-    );
+    await this.cache.lpush(`notifications:${params.recipient.value}`, JSON.stringify(notification));
 
     logger.info(`Storing in-app notification for ${params.recipient.value}`);
     return { notificationId: notification.id };

@@ -306,7 +306,7 @@ export class ExecutionService extends EventEmitter {
           workflowId: request.workflowId,
           workflow,
           request,
-          attempt: 1
+          attempt: 1,
         },
         {
           priority: this.getPriorityWeight(request.options?.priority || 'normal'),
@@ -319,7 +319,7 @@ export class ExecutionService extends EventEmitter {
       await this.eventBus.publish('execution.started', {
         executionId: execution.id,
         workflowId: request.workflowId,
-        triggeredBy: request.triggeredBy
+        triggeredBy: request.triggeredBy,
       });
 
       logger.info(`Execution queued: ${execution.id}`);
@@ -352,7 +352,6 @@ export class ExecutionService extends EventEmitter {
       await this.completeExecution(executionId, result);
 
       this.activeExecutions.delete(executionId);
-
     } catch (error) {
       logger.error(`Execution processing failed: ${executionId}`, error);
       await this.failExecution(executionId, error as Error);
@@ -379,7 +378,7 @@ export class ExecutionService extends EventEmitter {
         status: 'pending',
         attempts: 0,
         maxAttempts: node.config?.retryPolicy?.maxAttempts || 3,
-        retryCount: 0
+        retryCount: 0,
       };
       execution.nodeExecutions.push(nodeExecution);
     }
@@ -390,12 +389,12 @@ export class ExecutionService extends EventEmitter {
         break;
       }
 
-      const node = workflow.nodes.find(n => n.id === nodeId);
+      const node = workflow.nodes.find((n) => n.id === nodeId);
       if (!node) continue;
 
       try {
         // Check if node should be executed based on conditions
-        if (!await this.shouldExecuteNode(node, workflow.edges, nodeOutputs, execution)) {
+        if (!(await this.shouldExecuteNode(node, workflow.edges, nodeOutputs, execution))) {
           await this.skipNode(execution.id, nodeId, 'Condition not met');
           continue;
         }
@@ -406,7 +405,6 @@ export class ExecutionService extends EventEmitter {
         executedNodes.add(nodeId);
 
         await this.updateExecutionProgress(execution.id);
-
       } catch (error) {
         logger.error(`Node execution failed: ${nodeId}`, error);
 
@@ -433,7 +431,7 @@ export class ExecutionService extends EventEmitter {
     nodeOutputs: Map<string, any>,
     request: ExecutionRequest
   ): Promise<any> {
-    const nodeExecution = execution.nodeExecutions.find(ne => ne.nodeId === node.id);
+    const nodeExecution = execution.nodeExecutions.find((ne) => ne.nodeId === node.id);
     if (!nodeExecution) {
       throw new Error(`Node execution not found: ${node.id}`);
     }
@@ -455,11 +453,11 @@ export class ExecutionService extends EventEmitter {
       const result = await Promise.race([
         executor.execute(node, inputData, {
           executionId: execution.id,
-          correlationId: execution.metadata.correlationId
+          correlationId: execution.metadata.correlationId,
         }),
         new Promise((_, reject) =>
           setTimeout(() => reject(new Error('Node execution timeout')), timeout)
-        )
+        ),
       ]);
 
       // Update node status to completed
@@ -470,11 +468,10 @@ export class ExecutionService extends EventEmitter {
         executionId: execution.id,
         nodeId: node.id,
         nodeType: node.type,
-        result
+        result,
       });
 
       return result;
-
     } catch (error) {
       // Update node status to failed
       await this.updateNodeStatus(execution.id, node.id, 'failed', null, error as Error);
@@ -484,7 +481,7 @@ export class ExecutionService extends EventEmitter {
         executionId: execution.id,
         nodeId: node.id,
         nodeType: node.type,
-        error: (error as Error).message
+        error: (error as Error).message,
       });
 
       throw error;
@@ -537,7 +534,7 @@ export class ExecutionService extends EventEmitter {
       // Emit cancellation event
       await this.eventBus.publish('execution.cancelled', {
         executionId: id,
-        reason: reason || 'User cancellation'
+        reason: reason || 'User cancellation',
       });
 
       logger.info(`Execution cancelled: ${id}`);
@@ -548,18 +545,21 @@ export class ExecutionService extends EventEmitter {
     }
   }
 
-  async listExecutions(filters: {
-    workflowId?: string;
-    status?: string;
-    triggeredBy?: string;
-    organizationId?: string;
-    startDate?: Date;
-    endDate?: Date;
-  }, pagination: {
-    page: number;
-    limit: number;
-    sort?: Record<string, 1 | -1>;
-  }): Promise<{ executions: ExecutionResult[]; total: number }> {
+  async listExecutions(
+    filters: {
+      workflowId?: string;
+      status?: string;
+      triggeredBy?: string;
+      organizationId?: string;
+      startDate?: Date;
+      endDate?: Date;
+    },
+    pagination: {
+      page: number;
+      limit: number;
+      sort?: Record<string, 1 | -1>;
+    }
+  ): Promise<{ executions: ExecutionResult[]; total: number }> {
     try {
       const query: any = {};
 
@@ -578,13 +578,8 @@ export class ExecutionService extends EventEmitter {
       const sort = pagination.sort || { startedAt: -1 };
 
       const [executions, total] = await Promise.all([
-        this.executions
-          .find(query)
-          .sort(sort)
-          .skip(skip)
-          .limit(pagination.limit)
-          .toArray(),
-        this.executions.countDocuments(query)
+        this.executions.find(query).sort(sort).skip(skip).limit(pagination.limit).toArray(),
+        this.executions.countDocuments(query),
       ]);
 
       return { executions, total };
@@ -612,7 +607,7 @@ export class ExecutionService extends EventEmitter {
       if (filters?.timeRange) {
         query.startedAt = {
           $gte: filters.timeRange.from,
-          $lte: filters.timeRange.to
+          $lte: filters.timeRange.to,
         };
       }
 
@@ -625,7 +620,7 @@ export class ExecutionService extends EventEmitter {
             byTriggerType: [{ $group: { _id: '$triggerType', count: { $sum: 1 } } }],
             duration: [
               { $match: { duration: { $exists: true } } },
-              { $group: { _id: null, avg: { $avg: '$duration' } } }
+              { $group: { _id: null, avg: { $avg: '$duration' } } },
             ],
             successRate: [
               {
@@ -633,13 +628,13 @@ export class ExecutionService extends EventEmitter {
                   _id: null,
                   total: { $sum: 1 },
                   successful: {
-                    $sum: { $cond: [{ $eq: ['$status', 'completed'] }, 1, 0] }
-                  }
-                }
-              }
-            ]
-          }
-        }
+                    $sum: { $cond: [{ $eq: ['$status', 'completed'] }, 1, 0] },
+                  },
+                },
+              },
+            ],
+          },
+        },
       ];
 
       const result = await this.executions.aggregate(pipeline).toArray();
@@ -647,16 +642,14 @@ export class ExecutionService extends EventEmitter {
 
       return {
         total: data.total[0]?.count || 0,
-        byStatus: Object.fromEntries(
-          data.byStatus.map((item: any) => [item._id, item.count])
-        ),
+        byStatus: Object.fromEntries(data.byStatus.map((item: any) => [item._id, item.count])),
         byTriggerType: Object.fromEntries(
           data.byTriggerType.map((item: any) => [item._id, item.count])
         ),
         avgDuration: data.duration[0]?.avg || 0,
         successRate: data.successRate[0]
-          ? data.successRate[0].successful / data.successRate[0].total * 100
-          : 0
+          ? (data.successRate[0].successful / data.successRate[0].total) * 100
+          : 0,
       };
     } catch (error) {
       logger.error('Failed to get execution stats', error);
@@ -696,7 +689,7 @@ export class ExecutionService extends EventEmitter {
         correlationId: request.correlationId || uuidv4(),
         environment: request.environment || 'production',
         organizationId: workflow.organizationId,
-        executionContext: request.metadata || {}
+        executionContext: request.metadata || {},
       },
       progress: {
         totalNodes: workflow.nodes.length,
@@ -706,8 +699,8 @@ export class ExecutionService extends EventEmitter {
         runningNodes: 0,
         pendingNodes: workflow.nodes.length,
         percentage: 0,
-        currentPhase: 'initializing'
-      }
+        currentPhase: 'initializing',
+      },
     };
 
     await this.executions.insertOne(execution);
@@ -769,17 +762,17 @@ export class ExecutionService extends EventEmitter {
       settings: {
         timeout: 30000,
         retries: 3,
-        errorHandling: 'stop'
+        errorHandling: 'stop',
       },
-      organizationId: 'test-org'
+      organizationId: 'test-org',
     };
   }
 
-  private async updateExecutionStatus(id: string, status: ExecutionResult['status']): Promise<void> {
-    await this.executions.updateOne(
-      { id },
-      { $set: { status, updatedAt: new Date() } }
-    );
+  private async updateExecutionStatus(
+    id: string,
+    status: ExecutionResult['status']
+  ): Promise<void> {
+    await this.executions.updateOne({ id }, { $set: { status, updatedAt: new Date() } });
   }
 
   private async shouldExecuteNode(
@@ -789,7 +782,7 @@ export class ExecutionService extends EventEmitter {
     execution: ExecutionResult
   ): Promise<boolean> {
     // Find incoming edges with conditions
-    const incomingEdges = edges.filter(edge => edge.target === node.id && edge.condition);
+    const incomingEdges = edges.filter((edge) => edge.target === node.id && edge.condition);
 
     if (incomingEdges.length === 0) {
       return true; // No conditions, execute
@@ -822,15 +815,24 @@ export class ExecutionService extends EventEmitter {
 
   private compareValues(actual: any, expected: any, operator: string): boolean {
     switch (operator) {
-      case 'eq': return actual === expected;
-      case 'neq': return actual !== expected;
-      case 'gt': return actual > expected;
-      case 'lt': return actual < expected;
-      case 'gte': return actual >= expected;
-      case 'lte': return actual <= expected;
-      case 'contains': return String(actual).includes(String(expected));
-      case 'matches': return new RegExp(String(expected)).test(String(actual));
-      default: return true;
+      case 'eq':
+        return actual === expected;
+      case 'neq':
+        return actual !== expected;
+      case 'gt':
+        return actual > expected;
+      case 'lt':
+        return actual < expected;
+      case 'gte':
+        return actual >= expected;
+      case 'lte':
+        return actual <= expected;
+      case 'contains':
+        return String(actual).includes(String(expected));
+      case 'matches':
+        return new RegExp(String(expected)).test(String(actual));
+      default:
+        return true;
     }
   }
 
@@ -852,7 +854,7 @@ export class ExecutionService extends EventEmitter {
   ): Promise<void> {
     const update: any = {
       'nodeExecutions.$.status': status,
-      'nodeExecutions.$.completedAt': new Date()
+      'nodeExecutions.$.completedAt': new Date(),
     };
 
     if (result !== undefined) update['nodeExecutions.$.outputData'] = result;
@@ -860,7 +862,7 @@ export class ExecutionService extends EventEmitter {
       update['nodeExecutions.$.error'] = {
         message: error.message,
         stack: error.stack,
-        type: 'runtime'
+        type: 'runtime',
       };
     }
     if (skipReason) update['nodeExecutions.$.skipReason'] = skipReason;
@@ -875,11 +877,11 @@ export class ExecutionService extends EventEmitter {
     const execution = await this.getExecution(executionId);
     if (!execution) return;
 
-    const completed = execution.nodeExecutions.filter(ne => ne.status === 'completed').length;
-    const failed = execution.nodeExecutions.filter(ne => ne.status === 'failed').length;
-    const skipped = execution.nodeExecutions.filter(ne => ne.status === 'skipped').length;
-    const running = execution.nodeExecutions.filter(ne => ne.status === 'running').length;
-    const pending = execution.nodeExecutions.filter(ne => ne.status === 'pending').length;
+    const completed = execution.nodeExecutions.filter((ne) => ne.status === 'completed').length;
+    const failed = execution.nodeExecutions.filter((ne) => ne.status === 'failed').length;
+    const skipped = execution.nodeExecutions.filter((ne) => ne.status === 'skipped').length;
+    const running = execution.nodeExecutions.filter((ne) => ne.status === 'running').length;
+    const pending = execution.nodeExecutions.filter((ne) => ne.status === 'pending').length;
 
     const progress: ExecutionProgress = {
       totalNodes: execution.nodeExecutions.length,
@@ -888,14 +890,13 @@ export class ExecutionService extends EventEmitter {
       skippedNodes: skipped,
       runningNodes: running,
       pendingNodes: pending,
-      percentage: Math.round((completed + failed + skipped) / execution.nodeExecutions.length * 100),
-      currentPhase: running > 0 ? 'executing' : pending > 0 ? 'pending' : 'completed'
+      percentage: Math.round(
+        ((completed + failed + skipped) / execution.nodeExecutions.length) * 100
+      ),
+      currentPhase: running > 0 ? 'executing' : pending > 0 ? 'pending' : 'completed',
     };
 
-    await this.executions.updateOne(
-      { id: executionId },
-      { $set: { progress } }
-    );
+    await this.executions.updateOne({ id: executionId }, { $set: { progress } });
   }
 
   private async prepareNodeInput(
@@ -906,7 +907,7 @@ export class ExecutionService extends EventEmitter {
     // Merge node configuration with outputs from previous nodes
     const input = {
       ...node.data,
-      ...request.inputData
+      ...request.inputData,
     };
 
     // Add outputs from connected nodes
@@ -920,8 +921,8 @@ export class ExecutionService extends EventEmitter {
       $nodes: nodeOutput,
       $execution: {
         id: request.correlationId,
-        triggeredBy: request.triggeredBy
-      }
+        triggeredBy: request.triggeredBy,
+      },
     };
   }
 
@@ -930,9 +931,9 @@ export class ExecutionService extends EventEmitter {
     workflow: WorkflowDefinition
   ): Record<string, any> {
     // Find output nodes (nodes with no outgoing edges)
-    const nodeIds = new Set(workflow.nodes.map(n => n.id));
-    const hasOutgoing = new Set(workflow.edges.map(e => e.source));
-    const outputNodes = Array.from(nodeIds).filter(id => !hasOutgoing.has(id));
+    const nodeIds = new Set(workflow.nodes.map((n) => n.id));
+    const hasOutgoing = new Set(workflow.edges.map((e) => e.source));
+    const outputNodes = Array.from(nodeIds).filter((id) => !hasOutgoing.has(id));
 
     // Build output from final nodes
     const output: Record<string, any> = {};
@@ -946,19 +947,15 @@ export class ExecutionService extends EventEmitter {
     return Object.keys(output).length > 0 ? output : Object.fromEntries(nodeOutputs);
   }
 
-  private async rollbackExecution(
-    executionId: string,
-    executedNodes: Set<string>
-  ): Promise<void> {
-    logger.info(`Rolling back execution: ${executionId}`, { executedNodes: Array.from(executedNodes) });
+  private async rollbackExecution(executionId: string, executedNodes: Set<string>): Promise<void> {
+    logger.info(`Rolling back execution: ${executionId}`, {
+      executedNodes: Array.from(executedNodes),
+    });
     // Implement rollback logic based on node types
     // This would typically involve calling rollback methods on node executors
   }
 
-  private async completeExecution(
-    executionId: string,
-    result: Record<string, any>
-  ): Promise<void> {
+  private async completeExecution(executionId: string, result: Record<string, any>): Promise<void> {
     const now = new Date();
     const execution = await this.getExecution(executionId);
     const duration = execution ? now.getTime() - execution.startedAt.getTime() : 0;
@@ -970,8 +967,8 @@ export class ExecutionService extends EventEmitter {
           status: 'completed',
           completedAt: now,
           outputData: result,
-          duration
-        }
+          duration,
+        },
       }
     );
   }
@@ -991,9 +988,9 @@ export class ExecutionService extends EventEmitter {
           error: {
             message: error.message,
             stack: error.stack,
-            type: 'workflow'
-          }
-        }
+            type: 'workflow',
+          },
+        },
       }
     );
   }
@@ -1022,20 +1019,20 @@ export class ExecutionService extends EventEmitter {
   }> {
     try {
       const queueSize = await this.executionQueue.count();
-      const workerStatus = await this.executionWorker.isRunning() ? 'running' : 'stopped';
+      const workerStatus = (await this.executionWorker.isRunning()) ? 'running' : 'stopped';
 
       return {
         status: 'healthy',
         activeExecutions: this.activeExecutions.size,
         queueSize,
-        workerStatus
+        workerStatus,
       };
     } catch (error) {
       return {
         status: 'unhealthy',
         activeExecutions: 0,
         queueSize: 0,
-        workerStatus: 'error'
+        workerStatus: 'error',
       };
     }
   }
@@ -1054,7 +1051,11 @@ export class ExecutionService extends EventEmitter {
 
 // Base interface for node executors
 export interface NodeExecutor {
-  execute(node: WorkflowNode, input: any, context: { executionId: string; correlationId: string }): Promise<any>;
+  execute(
+    node: WorkflowNode,
+    input: any,
+    context: { executionId: string; correlationId: string }
+  ): Promise<any>;
 }
 
 // Node executor implementations
@@ -1064,7 +1065,7 @@ class TriggerNodeExecutor implements NodeExecutor {
       triggered: true,
       timestamp: new Date(),
       input,
-      nodeId: node.id
+      nodeId: node.id,
     };
   }
 }
@@ -1072,14 +1073,14 @@ class TriggerNodeExecutor implements NodeExecutor {
 class ActionNodeExecutor implements NodeExecutor {
   async execute(node: WorkflowNode, input: any): Promise<any> {
     // Simulate action execution
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await new Promise((resolve) => setTimeout(resolve, 100));
 
     return {
       action: node.data.action || 'default_action',
       result: 'action_executed',
       input,
       nodeId: node.id,
-      timestamp: new Date()
+      timestamp: new Date(),
     };
   }
 }
@@ -1093,7 +1094,7 @@ class ConditionNodeExecutor implements NodeExecutor {
       condition: result,
       input,
       nodeId: node.id,
-      evaluation: condition
+      evaluation: condition,
     };
   }
 
@@ -1128,7 +1129,7 @@ class TransformNodeExecutor implements NodeExecutor {
     return {
       transformed,
       originalInput: input,
-      nodeId: node.id
+      nodeId: node.id,
     };
   }
 }
@@ -1137,14 +1138,14 @@ class DelayNodeExecutor implements NodeExecutor {
   async execute(node: WorkflowNode, input: any): Promise<any> {
     const delay = node.data.delay || 1000;
 
-    await new Promise(resolve => setTimeout(resolve, delay));
+    await new Promise((resolve) => setTimeout(resolve, delay));
 
     return {
       delayed: true,
       duration: delay,
       input,
       nodeId: node.id,
-      timestamp: new Date()
+      timestamp: new Date(),
     };
   }
 }
@@ -1158,7 +1159,7 @@ class WebhookNodeExecutor implements NodeExecutor {
     }
 
     // Simulate webhook call
-    await new Promise(resolve => setTimeout(resolve, 200));
+    await new Promise((resolve) => setTimeout(resolve, 200));
 
     return {
       webhook_called: true,
@@ -1167,7 +1168,7 @@ class WebhookNodeExecutor implements NodeExecutor {
       headers,
       input,
       nodeId: node.id,
-      response: { status: 200, data: 'success' }
+      response: { status: 200, data: 'success' },
     };
   }
 }
@@ -1181,7 +1182,7 @@ class EmailNodeExecutor implements NodeExecutor {
     }
 
     // Simulate email sending
-    await new Promise(resolve => setTimeout(resolve, 500));
+    await new Promise((resolve) => setTimeout(resolve, 500));
 
     return {
       email_sent: true,
@@ -1190,7 +1191,7 @@ class EmailNodeExecutor implements NodeExecutor {
       body,
       input,
       nodeId: node.id,
-      messageId: `msg_${Date.now()}`
+      messageId: `msg_${Date.now()}`,
     };
   }
 }
@@ -1200,7 +1201,7 @@ class DatabaseNodeExecutor implements NodeExecutor {
     const { operation, collection, query } = node.data;
 
     // Simulate database operation
-    await new Promise(resolve => setTimeout(resolve, 150));
+    await new Promise((resolve) => setTimeout(resolve, 150));
 
     return {
       db_operation: operation || 'find',
@@ -1208,7 +1209,7 @@ class DatabaseNodeExecutor implements NodeExecutor {
       query,
       result: { matched: 1, modified: 1 },
       input,
-      nodeId: node.id
+      nodeId: node.id,
     };
   }
 }
@@ -1218,7 +1219,7 @@ class AIAgentNodeExecutor implements NodeExecutor {
     const { provider, model, prompt } = node.data;
 
     // Simulate AI processing
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await new Promise((resolve) => setTimeout(resolve, 1000));
 
     return {
       ai_response: `AI response for: ${prompt}`,
@@ -1226,7 +1227,7 @@ class AIAgentNodeExecutor implements NodeExecutor {
       model: model || 'gpt-3.5-turbo',
       input,
       nodeId: node.id,
-      tokens_used: 150
+      tokens_used: 150,
     };
   }
 }
@@ -1238,12 +1239,12 @@ class LoopNodeExecutor implements NodeExecutor {
 
     for (let i = 0; i < iterations; i++) {
       // Simulate loop iteration
-      await new Promise(resolve => setTimeout(resolve, 50));
+      await new Promise((resolve) => setTimeout(resolve, 50));
 
       results.push({
         iteration: i + 1,
         input: { ...input, iteration: i + 1 },
-        result: `iteration_${i + 1}_complete`
+        result: `iteration_${i + 1}_complete`,
       });
 
       // Check condition if provided
@@ -1256,7 +1257,7 @@ class LoopNodeExecutor implements NodeExecutor {
       loop_completed: true,
       iterations: results.length,
       results,
-      nodeId: node.id
+      nodeId: node.id,
     };
   }
 

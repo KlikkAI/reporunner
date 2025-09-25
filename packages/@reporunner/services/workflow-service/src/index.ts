@@ -150,15 +150,15 @@ export class WorkflowService extends EventEmitter {
     try {
       // Create indexes for efficient queries
       await this.workflows.createIndex({ organizationId: 1, createdAt: -1 });
-      await this.workflows.createIndex({ 'tags': 1 });
+      await this.workflows.createIndex({ tags: 1 });
       await this.workflows.createIndex({ status: 1 });
       await this.workflows.createIndex({ createdBy: 1 });
       await this.workflows.createIndex({ name: 'text', description: 'text' });
-      
+
       await this.executions.createIndex({ workflowId: 1, startedAt: -1 });
       await this.executions.createIndex({ status: 1 });
       await this.executions.createIndex({ 'metadata.correlationId': 1 });
-      
+
       logger.info('Database indexes initialized');
     } catch (error) {
       logger.error('Failed to create indexes', error);
@@ -176,26 +176,26 @@ export class WorkflowService extends EventEmitter {
       createdAt: new Date(),
       updatedAt: new Date(),
       createdBy: userId,
-      status: workflow.status || 'draft'
+      status: workflow.status || 'draft',
     };
 
     try {
       // Validate workflow structure
       this.validateWorkflow(newWorkflow);
-      
+
       // Save to database
       await this.workflows.insertOne(newWorkflow);
-      
+
       // Cache the workflow
       await this.cacheWorkflow(newWorkflow);
-      
+
       // Emit event for other services
       this.emit('workflow.created', {
         workflowId: newWorkflow.id,
         userId,
-        organizationId: newWorkflow.organizationId
+        organizationId: newWorkflow.organizationId,
       });
-      
+
       logger.info(`Workflow created: ${newWorkflow.id}`);
       return newWorkflow;
     } catch (error) {
@@ -209,15 +209,15 @@ export class WorkflowService extends EventEmitter {
       // Check cache first
       const cached = await this.getCachedWorkflow(id);
       if (cached) return cached;
-      
+
       // Fetch from database
       const workflow = await this.workflows.findOne({ id });
-      
+
       if (workflow) {
         // Cache for future requests
         await this.cacheWorkflow(workflow);
       }
-      
+
       return workflow;
     } catch (error) {
       logger.error(`Failed to get workflow ${id}`, error);
@@ -235,39 +235,39 @@ export class WorkflowService extends EventEmitter {
       if (!existing) {
         throw new Error(`Workflow ${id} not found`);
       }
-      
+
       // Check permissions
       if (!this.hasEditPermission(existing, userId)) {
         throw new Error('Insufficient permissions to edit workflow');
       }
-      
+
       const updated: WorkflowDefinition = {
         ...existing,
         ...updates,
         id, // Preserve original ID
         version: this.incrementVersion(existing.version),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       };
-      
+
       // Validate updated workflow
       this.validateWorkflow(updated);
-      
+
       // Save version history
       await this.saveVersionHistory(existing);
-      
+
       // Update in database
       await this.workflows.replaceOne({ id }, updated);
-      
+
       // Invalidate cache
       await this.invalidateCache(id);
-      
+
       // Emit update event
       this.emit('workflow.updated', {
         workflowId: id,
         userId,
-        changes: updates
+        changes: updates,
       });
-      
+
       logger.info(`Workflow updated: ${id}`);
       return updated;
     } catch (error) {
@@ -282,36 +282,36 @@ export class WorkflowService extends EventEmitter {
       if (!workflow) {
         return false;
       }
-      
+
       // Check permissions
       if (!this.hasDeletePermission(workflow, userId)) {
         throw new Error('Insufficient permissions to delete workflow');
       }
-      
+
       // Soft delete by updating status
       await this.workflows.updateOne(
         { id },
-        { 
-          $set: { 
+        {
+          $set: {
             status: 'archived',
             archivedAt: new Date(),
-            archivedBy: userId
-          }
+            archivedBy: userId,
+          },
         }
       );
-      
+
       // Invalidate cache
       await this.invalidateCache(id);
-      
+
       // Cancel any scheduled executions
       await this.cancelScheduledExecutions(id);
-      
+
       // Emit deletion event
       this.emit('workflow.deleted', {
         workflowId: id,
-        userId
+        userId,
       });
-      
+
       logger.info(`Workflow deleted: ${id}`);
       return true;
     } catch (error) {
@@ -336,43 +336,35 @@ export class WorkflowService extends EventEmitter {
   ): Promise<{ workflows: WorkflowDefinition[]; total: number }> {
     try {
       const query: any = {};
-      
+
       if (filters.organizationId) {
         query.organizationId = filters.organizationId;
       }
-      
+
       if (filters.userId) {
-        query.$or = [
-          { createdBy: filters.userId },
-          { 'permissions.sharedWith': filters.userId }
-        ];
+        query.$or = [{ createdBy: filters.userId }, { 'permissions.sharedWith': filters.userId }];
       }
-      
+
       if (filters.status) {
         query.status = filters.status;
       }
-      
+
       if (filters.tags && filters.tags.length > 0) {
         query.tags = { $in: filters.tags };
       }
-      
+
       if (filters.search) {
         query.$text = { $search: filters.search };
       }
-      
+
       const skip = (pagination.page - 1) * pagination.limit;
       const sort = pagination.sort || { createdAt: -1 };
-      
+
       const [workflows, total] = await Promise.all([
-        this.workflows
-          .find(query)
-          .sort(sort)
-          .skip(skip)
-          .limit(pagination.limit)
-          .toArray(),
-        this.workflows.countDocuments(query)
+        this.workflows.find(query).sort(sort).skip(skip).limit(pagination.limit).toArray(),
+        this.workflows.countDocuments(query),
       ]);
-      
+
       return { workflows, total };
     } catch (error) {
       logger.error('Failed to list workflows', error);
@@ -385,20 +377,20 @@ export class WorkflowService extends EventEmitter {
     if (!workflow.nodes || workflow.nodes.length === 0) {
       throw new Error('Workflow must have at least one node');
     }
-    
+
     // Validate node IDs are unique
-    const nodeIds = new Set(workflow.nodes.map(n => n.id));
+    const nodeIds = new Set(workflow.nodes.map((n) => n.id));
     if (nodeIds.size !== workflow.nodes.length) {
       throw new Error('Duplicate node IDs found');
     }
-    
+
     // Validate edges reference existing nodes
     for (const edge of workflow.edges) {
       if (!nodeIds.has(edge.source) || !nodeIds.has(edge.target)) {
         throw new Error(`Edge references non-existent node: ${edge.id}`);
       }
     }
-    
+
     // Detect cycles
     if (this.hasCycles(workflow)) {
       throw new Error('Workflow contains cycles');
@@ -407,24 +399,24 @@ export class WorkflowService extends EventEmitter {
 
   private hasCycles(workflow: WorkflowDefinition): boolean {
     const adjacencyList = new Map<string, string[]>();
-    
+
     // Build adjacency list
     for (const node of workflow.nodes) {
       adjacencyList.set(node.id, []);
     }
-    
+
     for (const edge of workflow.edges) {
       adjacencyList.get(edge.source)?.push(edge.target);
     }
-    
+
     // DFS to detect cycles
     const visited = new Set<string>();
     const recursionStack = new Set<string>();
-    
+
     const hasCycleDFS = (nodeId: string): boolean => {
       visited.add(nodeId);
       recursionStack.add(nodeId);
-      
+
       const neighbors = adjacencyList.get(nodeId) || [];
       for (const neighbor of neighbors) {
         if (!visited.has(neighbor)) {
@@ -433,17 +425,17 @@ export class WorkflowService extends EventEmitter {
           return true;
         }
       }
-      
+
       recursionStack.delete(nodeId);
       return false;
     };
-    
+
     for (const nodeId of adjacencyList.keys()) {
       if (!visited.has(nodeId)) {
         if (hasCycleDFS(nodeId)) return true;
       }
     }
-    
+
     return false;
   }
 
@@ -451,15 +443,12 @@ export class WorkflowService extends EventEmitter {
     return (
       workflow.createdBy === userId ||
       workflow.permissions.sharedWith.includes(userId) ||
-      (workflow.permissions.roles[userId]?.includes('editor'))
+      workflow.permissions.roles[userId]?.includes('editor')
     );
   }
 
   private hasDeletePermission(workflow: WorkflowDefinition, userId: string): boolean {
-    return (
-      workflow.createdBy === userId ||
-      (workflow.permissions.roles[userId]?.includes('admin'))
-    );
+    return workflow.createdBy === userId || workflow.permissions.roles[userId]?.includes('admin');
   }
 
   private incrementVersion(version: string): string {
@@ -473,17 +462,13 @@ export class WorkflowService extends EventEmitter {
     await history.insertOne({
       ...workflow,
       archivedAt: new Date(),
-      _id: undefined
+      _id: undefined,
     });
   }
 
   private async cacheWorkflow(workflow: WorkflowDefinition): Promise<void> {
     const key = `workflow:${workflow.id}`;
-    await this.cache.setex(
-      key,
-      this.CACHE_TTL,
-      JSON.stringify(workflow)
-    );
+    await this.cache.setex(key, this.CACHE_TTL, JSON.stringify(workflow));
   }
 
   private async getCachedWorkflow(id: string): Promise<WorkflowDefinition | null> {

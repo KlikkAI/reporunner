@@ -1,0 +1,101 @@
+{
+  "timestamp": "2025-09-25T11:39:45.211Z",
+  "duration": "9.90 seconds",
+  "statistics": {
+    "totalFiles": 797,
+    "processedFiles": 0,
+    "largeFiles": 311,
+    "complexFiles": 281,
+    "refactoredFiles": 310,
+    "createdFiles": 3896,
+    "startTime": 1758800375307
+  },
+  "largestFiles": [
+    {
+      "path": "packages/backend/src/domains/executions/services/NodeExecutionService.ts",
+      "lines": 1497
+    },
+    {
+      "path": "packages/@reporunner/services/tenant-service/src/index.ts",
+      "lines": 1486
+    },
+    {
+      "path": "packages/@reporunner/services/audit-service/src/index.ts",
+      "lines": 1347
+    },
+    {
+      "path": "packages/@reporunner/services/analytics-service/src/index.ts",
+      "lines": 1328
+    },
+    {
+      "path": "packages/frontend/src/app/data/nodes/communication/gmail/enhanced-properties.ts",
+      "lines": 1286
+    },
+    {
+      "path": "packages/frontend/src/app/components/WorkflowEditor/index.tsx",
+      "lines": 1278
+    },
+    {
+      "path": "packages/@reporunner/services/execution-service/src/index.ts",
+      "lines": 1270
+    },
+    {
+      "path": "packages/frontend/src/core/services/integrationMarketplaceService.ts",
+      "lines": 1133
+    },
+    {
+      "path": "packages/@reporunner/services/notification-service/src/index.ts",
+      "lines": 1128
+    },
+    {
+      "path": "packages/backend/src/domains/workflows/services/WorkFlowEngine.ts",
+      "lines": 1052
+    },
+    {
+      "path": "packages/frontend/src/app/node-extensions/components/AdvancedAssignmentCollection.tsx",
+      "lines": 1045
+    },
+    {
+      "path": "packages/frontend/src/core/services/enterpriseSecurityService.ts",
+      "lines": 1040
+    },
+    {
+      "path": "packages/frontend/src/app/components/WorkflowEditor/ConditionBuilder.tsx",
+      "lines": 1009
+    },
+    {
+      "path": "packages/frontend/src/core/services/advancedTriggerSystem.ts",
+      "lines": 1000
+    },
+    {
+      "path": "packages/frontend/src/app/components/UserManagement/UserManagementPanel.tsx",
+      "lines": 996
+    },
+    {
+      "path": "packages/frontend/src/app/components/WorkflowEditor/TriggerPanel.tsx",
+      "lines": 986
+    },
+    {
+      "path": "packages/frontend/src/core/services/advancedAuthService.ts",
+      "lines": 945
+    },
+    {
+      "path": "packages/frontend/src/core/services/aiOrchestrationService.ts",
+      "lines": 944
+    },
+    {
+      "path": "packages/frontend/src/app/components/EnterpriseDashboard/EnterpriseDashboard.tsx",
+      "lines": 922
+    },
+    {
+      "path": "packages/frontend/src/app/components/SecurityDashboard/SecurityDashboard.tsx",
+      "lines": 909
+    }
+  ],
+  "recommendations": [
+    "Continue breaking down large files",
+    "Implement comprehensive testing",
+    "Set up CI/CD with Biome checks",
+    "Document new architecture patterns"
+  ]
+}

@@ -1,0 +1,43 @@
+# Package manager configuration
+# Force pnpm usage - prevent npm/yarn
+engine-strict=true
+enable-pre-post-scripts=true
+auto-install-peers=true
+strict-peer-dependencies=false
+prefer-workspace-packages=true
+
+# Registry configuration
+registry=https://registry.npmjs.org/
+
+# Cache configuration
+cache-max=2592000000
+cache-min=10
+
+# Security
+audit-level=moderate
+
+# Performance
+prefer-offline=true
+progress=true
+
+# Workspace configuration
+recursive-install=true
+link-workspace-packages=true
+
+# Save configuration
+save-exact=false
+save-prefix=^
+
+# Node modules structure
+shamefully-hoist=false
+public-hoist-pattern[]=*eslint*
+public-hoist-pattern[]=*prettier*
+public-hoist-pattern[]=*typescript*
+public-hoist-pattern[]=@types/*
+
+# Development
+frozen-lockfile=false
+prefer-frozen-lockfile=true
+
+# Logging
+loglevel=warn

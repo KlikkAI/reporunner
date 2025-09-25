@@ -219,7 +219,12 @@ export interface UsageMetrics {
 export interface TenantAlert {
   id: string;
   tenantId: string;
-  type: 'limit_exceeded' | 'approaching_limit' | 'billing_issue' | 'security_alert' | 'performance_issue';
+  type:
+    | 'limit_exceeded'
+    | 'approaching_limit'
+    | 'billing_issue'
+    | 'security_alert'
+    | 'performance_issue';
   severity: 'low' | 'medium' | 'high' | 'critical';
   title: string;
   message: string;
@@ -259,12 +264,14 @@ const TenantSchema = z.object({
   billing: z.object({
     billingEmail: z.string().email(),
   }),
-  settings: z.object({
-    security: z.object({
-      ssoEnabled: z.boolean(),
-      mfaRequired: z.boolean(),
-    }),
-  }).optional(),
+  settings: z
+    .object({
+      security: z.object({
+        ssoEnabled: z.boolean(),
+        mfaRequired: z.boolean(),
+      }),
+    })
+    .optional(),
   metadata: z.object({
     region: z.string(),
     timezone: z.string(),
@@ -291,11 +298,7 @@ export class TenantService extends EventEmitter {
   private readonly CACHE_TTL = 300; // 5 minutes
   private readonly INVITATION_EXPIRY_DAYS = 7;
 
-  constructor(
-    redis: RedisService,
-    database: DatabaseService,
-    eventBus: EventBusService
-  ) {
+  constructor(redis: RedisService, database: DatabaseService, eventBus: EventBusService) {
     super();
     this.redis = redis;
     this.database = database;
@@ -315,32 +318,20 @@ export class TenantService extends EventEmitter {
       },
     });
 
-    this.worker = new Worker(
-      'tenant-operations',
-      this.processTenantJob.bind(this),
-      {
-        connection: this.redis.getConnection(),
-        concurrency: 3,
-      }
-    );
+    this.worker = new Worker('tenant-operations', this.processTenantJob.bind(this), {
+      connection: this.redis.getConnection(),
+      concurrency: 3,
+    });
 
-    this.metricsWorker = new Worker(
-      'tenant-metrics',
-      this.processMetricsJob.bind(this),
-      {
-        connection: this.redis.getConnection(),
-        concurrency: 2,
-      }
-    );
+    this.metricsWorker = new Worker('tenant-metrics', this.processMetricsJob.bind(this), {
+      connection: this.redis.getConnection(),
+      concurrency: 2,
+    });
 
-    this.cleanupWorker = new Worker(
-      'tenant-cleanup',
-      this.processCleanupJob.bind(this),
-      {
-        connection: this.redis.getConnection(),
-        concurrency: 1,
-      }
-    );
+    this.cleanupWorker = new Worker('tenant-cleanup', this.processCleanupJob.bind(this), {
+      connection: this.redis.getConnection(),
+      concurrency: 1,
+    });
 
     this.initializeDatabase();
     this.initializeEventListeners();
@@ -351,7 +342,11 @@ export class TenantService extends EventEmitter {
     try {
       // Create indexes for tenants
       await this.database.createIndex(this.TENANTS_COLLECTION, { domain: 1 }, { unique: true });
-      await this.database.createIndex(this.TENANTS_COLLECTION, { subdomain: 1 }, { unique: true, sparse: true });
+      await this.database.createIndex(
+        this.TENANTS_COLLECTION,
+        { subdomain: 1 },
+        { unique: true, sparse: true }
+      );
       await this.database.createIndex(this.TENANTS_COLLECTION, { status: 1 });
       await this.database.createIndex(this.TENANTS_COLLECTION, { plan: 1 });
       await this.database.createIndex(this.TENANTS_COLLECTION, { 'metadata.region': 1 });
@@ -359,7 +354,11 @@ export class TenantService extends EventEmitter {
       await this.database.createIndex(this.TENANTS_COLLECTION, { last_activity: -1 });
 
       // Create indexes for members
-      await this.database.createIndex(this.MEMBERS_COLLECTION, { tenantId: 1, userId: 1 }, { unique: true });
+      await this.database.createIndex(
+        this.MEMBERS_COLLECTION,
+        { tenantId: 1, userId: 1 },
+        { unique: true }
+      );
       await this.database.createIndex(this.MEMBERS_COLLECTION, { tenantId: 1 });
       await this.database.createIndex(this.MEMBERS_COLLECTION, { userId: 1 });
       await this.database.createIndex(this.MEMBERS_COLLECTION, { role: 1 });
@@ -417,7 +416,9 @@ export class TenantService extends EventEmitter {
     });
   }
 
-  async createTenant(tenantData: Omit<Tenant, 'id' | 'createdAt' | 'updatedAt' | 'usage' | 'isolation'>): Promise<string> {
+  async createTenant(
+    tenantData: Omit<Tenant, 'id' | 'createdAt' | 'updatedAt' | 'usage' | 'isolation'>
+  ): Promise<string> {
     try {
       // Validate input
       const validatedData = TenantSchema.parse(tenantData);
@@ -552,11 +553,7 @@ export class TenantService extends EventEmitter {
         updatedAt: new Date(),
       };
 
-      await this.database.updateOne(
-        this.TENANTS_COLLECTION,
-        { id },
-        updatedTenant
-      );
+      await this.database.updateOne(this.TENANTS_COLLECTION, { id }, updatedTenant);
 
       // Clear cache
       await this.clearTenantCache(id);
@@ -577,7 +574,7 @@ export class TenantService extends EventEmitter {
           ...((await this.getTenant(id))?.metadata || {}),
           suspension_reason: reason,
           suspended_at: new Date(),
-        }
+        },
       });
 
       // Revoke all active sessions
@@ -604,11 +601,12 @@ export class TenantService extends EventEmitter {
         metadata: {
           ...tenant.metadata,
           deleted_at: new Date(),
-        }
+        },
       });
 
       // Schedule data cleanup
-      await this.tenantQueue.add('cleanup-tenant-data',
+      await this.tenantQueue.add(
+        'cleanup-tenant-data',
         { tenantId: id },
         { delay: 30 * 24 * 60 * 60 * 1000 } // 30 days delay
       );
@@ -621,7 +619,10 @@ export class TenantService extends EventEmitter {
     }
   }
 
-  async addMember(tenantId: string, memberData: Omit<TenantMember, 'id' | 'joinedAt'>): Promise<string> {
+  async addMember(
+    tenantId: string,
+    memberData: Omit<TenantMember, 'id' | 'joinedAt'>
+  ): Promise<string> {
     try {
       const tenant = await this.getTenant(tenantId);
       if (!tenant) {
@@ -629,10 +630,10 @@ export class TenantService extends EventEmitter {
       }
 
       // Check user limits
-      const currentMemberCount = await this.database.countDocuments(
-        this.MEMBERS_COLLECTION,
-        { tenantId, status: { $ne: 'suspended' } }
-      );
+      const currentMemberCount = await this.database.countDocuments(this.MEMBERS_COLLECTION, {
+        tenantId,
+        status: { $ne: 'suspended' },
+      });
 
       if (currentMemberCount >= tenant.limits.maxUsers) {
         throw new Error('User limit exceeded for this tenant');
@@ -682,10 +683,11 @@ export class TenantService extends EventEmitter {
 
       // Prevent removing the last owner
       if (member.role === 'owner') {
-        const ownerCount = await this.database.countDocuments(
-          this.MEMBERS_COLLECTION,
-          { tenantId, role: 'owner', status: 'active' }
-        );
+        const ownerCount = await this.database.countDocuments(this.MEMBERS_COLLECTION, {
+          tenantId,
+          role: 'owner',
+          status: 'active',
+        });
 
         if (ownerCount <= 1) {
           throw new Error('Cannot remove the last owner of a tenant');
@@ -705,12 +707,15 @@ export class TenantService extends EventEmitter {
     }
   }
 
-  async getTenantMembers(tenantId: string, options: {
-    status?: string;
-    role?: string;
-    limit?: number;
-    offset?: number;
-  } = {}): Promise<{ members: TenantMember[], total: number }> {
+  async getTenantMembers(
+    tenantId: string,
+    options: {
+      status?: string;
+      role?: string;
+      limit?: number;
+      offset?: number;
+    } = {}
+  ): Promise<{ members: TenantMember[]; total: number }> {
     try {
       const filter: any = { tenantId };
 
@@ -733,7 +738,10 @@ export class TenantService extends EventEmitter {
     }
   }
 
-  async inviteUser(tenantId: string, invitationData: Omit<TenantInvitation, 'id' | 'status' | 'createdAt' | 'expiresAt' | 'token'>): Promise<string> {
+  async inviteUser(
+    tenantId: string,
+    invitationData: Omit<TenantInvitation, 'id' | 'status' | 'createdAt' | 'expiresAt' | 'token'>
+  ): Promise<string> {
     try {
       const tenant = await this.getTenant(tenantId);
       if (!tenant) {
@@ -850,7 +858,8 @@ export class TenantService extends EventEmitter {
       if (usage.workflows !== undefined) updatedUsage.currentWorkflows = usage.workflows;
       if (usage.apiCalls !== undefined) updatedUsage.apiCallsThisMonth += usage.apiCalls;
       if (usage.storageGB !== undefined) updatedUsage.storageUsedGB = usage.storageGB;
-      if (usage.workflow_executions !== undefined) updatedUsage.executionsThisMonth += usage.workflow_executions;
+      if (usage.workflow_executions !== undefined)
+        updatedUsage.executionsThisMonth += usage.workflow_executions;
       if (usage.concurrent_executions_peak !== undefined) {
         updatedUsage.concurrent_executions_peak = Math.max(
           updatedUsage.concurrent_executions_peak,
@@ -891,15 +900,29 @@ export class TenantService extends EventEmitter {
         throw new Error('Tenant not found');
       }
 
-      const violations: Array<{ limit: string; current: number; max: number; percentage: number }> = [];
-      const warnings: Array<{ limit: string; current: number; max: number; percentage: number }> = [];
+      const violations: Array<{ limit: string; current: number; max: number; percentage: number }> =
+        [];
+      const warnings: Array<{ limit: string; current: number; max: number; percentage: number }> =
+        [];
 
       const checks = [
         { name: 'users', current: tenant.usage.currentUsers, max: tenant.limits.maxUsers },
-        { name: 'workflows', current: tenant.usage.currentWorkflows, max: tenant.limits.maxWorkflows },
-        { name: 'executions', current: tenant.usage.executionsThisMonth, max: tenant.limits.maxExecutions },
+        {
+          name: 'workflows',
+          current: tenant.usage.currentWorkflows,
+          max: tenant.limits.maxWorkflows,
+        },
+        {
+          name: 'executions',
+          current: tenant.usage.executionsThisMonth,
+          max: tenant.limits.maxExecutions,
+        },
         { name: 'storage', current: tenant.usage.storageUsedGB, max: tenant.limits.storageGB },
-        { name: 'apiCalls', current: tenant.usage.apiCallsThisMonth, max: tenant.limits.apiCallsPerMonth },
+        {
+          name: 'apiCalls',
+          current: tenant.usage.apiCallsThisMonth,
+          max: tenant.limits.apiCallsPerMonth,
+        },
       ];
 
       for (const check of checks) {
@@ -912,7 +935,8 @@ export class TenantService extends EventEmitter {
             max: check.max,
             percentage,
           });
-        } else if (percentage >= 80) { // Warning at 80%
+        } else if (percentage >= 80) {
+          // Warning at 80%
           warnings.push({
             limit: check.name,
             current: check.current,
@@ -960,7 +984,10 @@ export class TenantService extends EventEmitter {
     }
   }
 
-  async createBackup(tenantId: string, type: 'manual' | 'scheduled' | 'migration'): Promise<string> {
+  async createBackup(
+    tenantId: string,
+    type: 'manual' | 'scheduled' | 'migration'
+  ): Promise<string> {
     try {
       const tenant = await this.getTenant(tenantId);
       if (!tenant) {
@@ -1083,7 +1110,7 @@ export class TenantService extends EventEmitter {
       this.eventBus.emit('notification.send', {
         type: 'email',
         target: invitation.email,
-        subject: 'You\'ve been invited to join our workspace',
+        subject: "You've been invited to join our workspace",
         template: 'tenant_invitation',
         data: {
           tenantId,
@@ -1099,7 +1126,10 @@ export class TenantService extends EventEmitter {
     }
   }
 
-  private async recordUsageMetrics(tenantId: string, usage: Partial<UsageMetrics['metrics']>): Promise<void> {
+  private async recordUsageMetrics(
+    tenantId: string,
+    usage: Partial<UsageMetrics['metrics']>
+  ): Promise<void> {
     try {
       const now = new Date();
       const periods = ['hourly', 'daily'] as const;
@@ -1146,11 +1176,7 @@ export class TenantService extends EventEmitter {
           ...usage,
         };
 
-        await this.database.upsert(
-          this.USAGE_COLLECTION,
-          { id: metricId },
-          existingMetric
-        );
+        await this.database.upsert(this.USAGE_COLLECTION, { id: metricId }, existingMetric);
       }
     } catch (error) {
       logger.error('Failed to record usage metrics:', error);
@@ -1331,7 +1357,7 @@ export class TenantService extends EventEmitter {
         {
           lastActiveAt: new Date(),
           last_login: new Date(),
-          $inc: { login_count: 1 }
+          $inc: { login_count: 1 },
         }
       );
 
@@ -1354,9 +1380,9 @@ export class TenantService extends EventEmitter {
         `tenant:domain:*`, // Would need to implement wildcard deletion
       ];
 
-      await Promise.all(keys.map(key =>
-        key.includes('*') ? this.redis.deletePattern(key) : this.redis.del(key)
-      ));
+      await Promise.all(
+        keys.map((key) => (key.includes('*') ? this.redis.deletePattern(key) : this.redis.del(key)))
+      );
     } catch (error) {
       logger.error('Failed to clear tenant cache:', error);
     }
@@ -1430,7 +1456,7 @@ export class TenantService extends EventEmitter {
     return permissions[role] || permissions.viewer;
   }
 
-  private getPerio
+  private getPerio;
   dDate(date: Date, period: 'hourly' | 'daily'): Date {
     const periodDate = new Date(date);
 
@@ -1453,18 +1479,32 @@ export class TenantService extends EventEmitter {
 
   private startPeriodicJobs(): void {
     // Schedule metrics collection every hour
-    setInterval(() => {
-      this.tenantQueue.add('collect-metrics', {}, {
-        repeat: { every: 60 * 60 * 1000 }, // 1 hour
-      });
-    }, 60 * 60 * 1000);
+    setInterval(
+      () => {
+        this.tenantQueue.add(
+          'collect-metrics',
+          {},
+          {
+            repeat: { every: 60 * 60 * 1000 }, // 1 hour
+          }
+        );
+      },
+      60 * 60 * 1000
+    );
 
     // Schedule cleanup every day
-    setInterval(() => {
-      this.tenantQueue.add('cleanup', {}, {
-        repeat: { every: 24 * 60 * 60 * 1000 }, // 24 hours
-      });
-    }, 24 * 60 * 60 * 1000);
+    setInterval(
+      () => {
+        this.tenantQueue.add(
+          'cleanup',
+          {},
+          {
+            repeat: { every: 24 * 60 * 60 * 1000 }, // 24 hours
+          }
+        );
+      },
+      24 * 60 * 60 * 1000
+    );
   }
 
   async shutdown(): Promise<void> {

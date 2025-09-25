@@ -223,10 +223,15 @@ export class AnalyticsService extends EventEmitter {
 
       // Aggregated metrics indexes
       await this.aggregatedMetrics.createIndex({
-        metricId: 1, interval: 1, timestamp: -1
+        metricId: 1,
+        interval: 1,
+        timestamp: -1,
       });
       await this.aggregatedMetrics.createIndex({
-        organizationId: 1, metricId: 1, interval: 1, timestamp: -1
+        organizationId: 1,
+        metricId: 1,
+        interval: 1,
+        timestamp: -1,
       });
 
       // User sessions indexes
@@ -298,7 +303,7 @@ export class AnalyticsService extends EventEmitter {
         description: 'Total number of workflow executions',
         type: 'counter',
         labels: ['workflow_id', 'status', 'trigger_type'],
-        retention: 90
+        retention: 90,
       },
       {
         name: 'workflow_execution_duration',
@@ -306,21 +311,21 @@ export class AnalyticsService extends EventEmitter {
         type: 'histogram',
         unit: 'ms',
         labels: ['workflow_id', 'status'],
-        retention: 90
+        retention: 90,
       },
       {
         name: 'active_users',
         description: 'Number of active users',
         type: 'gauge',
         labels: ['time_window'],
-        retention: 30
+        retention: 30,
       },
       {
         name: 'api_requests_total',
         description: 'Total number of API requests',
         type: 'counter',
         labels: ['method', 'endpoint', 'status_code'],
-        retention: 60
+        retention: 60,
       },
       {
         name: 'api_request_duration',
@@ -328,21 +333,21 @@ export class AnalyticsService extends EventEmitter {
         type: 'histogram',
         unit: 'ms',
         labels: ['method', 'endpoint'],
-        retention: 60
+        retention: 60,
       },
       {
         name: 'node_executions_total',
         description: 'Total number of node executions',
         type: 'counter',
         labels: ['node_type', 'status', 'workflow_id'],
-        retention: 90
+        retention: 90,
       },
       {
         name: 'errors_total',
         description: 'Total number of errors',
         type: 'counter',
         labels: ['error_type', 'component', 'severity'],
-        retention: 90
+        retention: 90,
       },
       {
         name: 'system_resources',
@@ -350,8 +355,8 @@ export class AnalyticsService extends EventEmitter {
         type: 'gauge',
         unit: 'percent',
         labels: ['resource_type', 'instance'],
-        retention: 30
-      }
+        retention: 30,
+      },
     ];
 
     for (const metric of defaultMetrics) {
@@ -365,7 +370,7 @@ export class AnalyticsService extends EventEmitter {
       const analyticsEvent: AnalyticsEvent = {
         ...event,
         id: uuidv4(),
-        timestamp: new Date()
+        timestamp: new Date(),
       };
 
       await this.events.insertOne(analyticsEvent);
@@ -374,7 +379,7 @@ export class AnalyticsService extends EventEmitter {
       if (event.sessionId && event.userId) {
         await this.sessionManager.updateSession(event.sessionId, event.userId, {
           lastActivity: analyticsEvent.timestamp,
-          eventCount: 1
+          eventCount: 1,
         });
       }
 
@@ -403,8 +408,8 @@ export class AnalyticsService extends EventEmitter {
       source: 'user_interface',
       data: {
         action,
-        ...data
-      }
+        ...data,
+      },
     });
   }
 
@@ -423,8 +428,8 @@ export class AnalyticsService extends EventEmitter {
       source: 'web_app',
       data: {
         path,
-        ...metadata
-      }
+        ...metadata,
+      },
     });
 
     // Update session with page info
@@ -447,7 +452,7 @@ export class AnalyticsService extends EventEmitter {
         timestamp: new Date(),
         value,
         labels,
-        organizationId
+        organizationId,
       };
 
       await this.metricCollector.record(metric);
@@ -482,17 +487,14 @@ export class AnalyticsService extends EventEmitter {
   }
 
   // Query methods
-  async queryEvents(
-    organizationId: string,
-    options: QueryOptions
-  ): Promise<AnalyticsEvent[]> {
+  async queryEvents(organizationId: string, options: QueryOptions): Promise<AnalyticsEvent[]> {
     try {
       const query: any = {
         organizationId,
         timestamp: {
           $gte: options.startTime,
-          $lte: options.endTime
-        }
+          $lte: options.endTime,
+        },
       };
 
       // Apply filters
@@ -515,8 +517,8 @@ export class AnalyticsService extends EventEmitter {
           $group: {
             _id: groupBy,
             count: { $sum: 1 },
-            firstEvent: { $first: '$$ROOT' }
-          }
+            firstEvent: { $first: '$$ROOT' },
+          },
         });
       }
 
@@ -533,7 +535,7 @@ export class AnalyticsService extends EventEmitter {
       }
 
       const results = await this.events.aggregate(pipeline).toArray();
-      return results.map(r => options.groupBy ? r.firstEvent : r);
+      return results.map((r) => (options.groupBy ? r.firstEvent : r));
     } catch (error) {
       logger.error('Failed to query events', error);
       throw error;
@@ -551,8 +553,8 @@ export class AnalyticsService extends EventEmitter {
         metricId,
         timestamp: {
           $gte: options.startTime,
-          $lte: options.endTime
-        }
+          $lte: options.endTime,
+        },
       };
 
       if (options.interval) {
@@ -574,9 +576,7 @@ export class AnalyticsService extends EventEmitter {
       if (options.groupBy) {
         const groupBy: any = {};
         for (const field of options.groupBy) {
-          groupBy[field] = field.startsWith('labels.')
-            ? `$${field}`
-            : `$${field}`;
+          groupBy[field] = field.startsWith('labels.') ? `$${field}` : `$${field}`;
         }
 
         pipeline.push({
@@ -587,8 +587,8 @@ export class AnalyticsService extends EventEmitter {
             avg: { $avg: '$aggregations.avg' },
             min: { $min: '$aggregations.min' },
             max: { $max: '$aggregations.max' },
-            timestamp: { $first: '$timestamp' }
-          }
+            timestamp: { $first: '$timestamp' },
+          },
         });
       }
 
@@ -615,7 +615,7 @@ export class AnalyticsService extends EventEmitter {
       const cacheKey = `metric:${metricId}:${JSON.stringify(labels)}`;
       const cached = await this.cache.lrange(cacheKey, 0, 9); // Last 10 values
 
-      return cached.map(item => JSON.parse(item));
+      return cached.map((item) => JSON.parse(item));
     } catch (error) {
       logger.error('Failed to get realtime metric', error);
       return [];
@@ -631,7 +631,7 @@ export class AnalyticsService extends EventEmitter {
         ...dashboard,
         id: uuidv4(),
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       };
 
       await this.dashboards.insertOne(newDashboard);
@@ -651,16 +651,13 @@ export class AnalyticsService extends EventEmitter {
     }
   }
 
-  async listDashboards(
-    organizationId: string,
-    userId?: string
-  ): Promise<DashboardConfig[]> {
+  async listDashboards(organizationId: string, userId?: string): Promise<DashboardConfig[]> {
     try {
       const query: any = {
         $or: [
           { organizationId, isPublic: true },
-          { organizationId, createdBy: userId }
-        ]
+          { organizationId, createdBy: userId },
+        ],
       };
 
       return await this.dashboards.find(query).sort({ createdAt: -1 }).toArray();
@@ -694,8 +691,8 @@ export class AnalyticsService extends EventEmitter {
         organizationId,
         $or: [
           { endedAt: { $gte: since } },
-          { endedAt: { $exists: false }, startedAt: { $gte: since } }
-        ]
+          { endedAt: { $exists: false }, startedAt: { $gte: since } },
+        ],
       });
 
       return count;
@@ -711,7 +708,7 @@ export class AnalyticsService extends EventEmitter {
     workflowId?: string,
     timeRange: { from: Date; to: Date } = {
       from: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
-      to: new Date()
+      to: new Date(),
     }
   ): Promise<{
     totalExecutions: number;
@@ -728,8 +725,8 @@ export class AnalyticsService extends EventEmitter {
             organizationId,
             type: 'execution.completed',
             timestamp: { $gte: timeRange.from, $lte: timeRange.to },
-            ...(workflowId && { 'data.workflowId': workflowId })
-          }
+            ...(workflowId && { 'data.workflowId': workflowId }),
+          },
         },
         {
           $facet: {
@@ -739,22 +736,22 @@ export class AnalyticsService extends EventEmitter {
                   _id: null,
                   totalExecutions: { $sum: 1 },
                   successful: {
-                    $sum: { $cond: [{ $eq: ['$data.status', 'completed'] }, 1, 0] }
+                    $sum: { $cond: [{ $eq: ['$data.status', 'completed'] }, 1, 0] },
                   },
-                  avgDuration: { $avg: '$data.duration' }
-                }
-              }
+                  avgDuration: { $avg: '$data.duration' },
+                },
+              },
             ],
             errors: [
               { $match: { 'data.status': 'failed' } },
               {
                 $group: {
                   _id: '$data.error.message',
-                  count: { $sum: 1 }
-                }
+                  count: { $sum: 1 },
+                },
               },
               { $sort: { count: -1 } },
-              { $limit: 5 }
+              { $limit: 5 },
             ],
             trend: [
               {
@@ -762,28 +759,28 @@ export class AnalyticsService extends EventEmitter {
                   _id: {
                     $dateToString: {
                       format: '%Y-%m-%d',
-                      date: '$timestamp'
-                    }
+                      date: '$timestamp',
+                    },
                   },
                   count: { $sum: 1 },
                   successful: {
-                    $sum: { $cond: [{ $eq: ['$data.status', 'completed'] }, 1, 0] }
-                  }
-                }
+                    $sum: { $cond: [{ $eq: ['$data.status', 'completed'] }, 1, 0] },
+                  },
+                },
               },
               {
                 $project: {
                   date: '$_id',
                   count: 1,
                   successRate: {
-                    $multiply: [{ $divide: ['$successful', '$count'] }, 100]
-                  }
-                }
+                    $multiply: [{ $divide: ['$successful', '$count'] }, 100],
+                  },
+                },
               },
-              { $sort: { date: 1 } }
-            ]
-          }
-        }
+              { $sort: { date: 1 } },
+            ],
+          },
+        },
       ];
 
       const result = await this.events.aggregate(pipeline).toArray();
@@ -792,23 +789,23 @@ export class AnalyticsService extends EventEmitter {
       const overview = data.overview[0] || {
         totalExecutions: 0,
         successful: 0,
-        avgDuration: 0
+        avgDuration: 0,
       };
 
       return {
         totalExecutions: overview.totalExecutions,
-        successRate: overview.totalExecutions > 0
-          ? (overview.successful / overview.totalExecutions) * 100
-          : 0,
+        successRate:
+          overview.totalExecutions > 0 ? (overview.successful / overview.totalExecutions) * 100 : 0,
         avgDuration: overview.avgDuration || 0,
-        errorRate: overview.totalExecutions > 0
-          ? ((overview.totalExecutions - overview.successful) / overview.totalExecutions) * 100
-          : 0,
+        errorRate:
+          overview.totalExecutions > 0
+            ? ((overview.totalExecutions - overview.successful) / overview.totalExecutions) * 100
+            : 0,
         topErrors: data.errors.map((e: any) => ({
           error: e._id,
-          count: e.count
+          count: e.count,
         })),
-        executionTrend: data.trend
+        executionTrend: data.trend,
       };
     } catch (error) {
       logger.error('Failed to get workflow insights', error);
@@ -817,9 +814,7 @@ export class AnalyticsService extends EventEmitter {
   }
 
   // Metric definitions
-  async createMetricDefinition(
-    metric: Omit<MetricDefinition, 'id'>
-  ): Promise<MetricDefinition> {
+  async createMetricDefinition(metric: Omit<MetricDefinition, 'id'>): Promise<MetricDefinition> {
     try {
       // Check if metric already exists
       const existing = await this.metricDefinitions.findOne({ name: metric.name });
@@ -829,7 +824,7 @@ export class AnalyticsService extends EventEmitter {
 
       const definition: MetricDefinition = {
         ...metric,
-        id: uuidv4()
+        id: uuidv4(),
       };
 
       await this.metricDefinitions.insertOne(definition);
@@ -924,7 +919,7 @@ export class AnalyticsService extends EventEmitter {
     const existing = await this.aggregatedMetrics.findOne({
       metricId: metricDef.id,
       interval,
-      timestamp: timeWindow.start
+      timestamp: timeWindow.start,
     });
 
     if (existing) return; // Already aggregated
@@ -936,24 +931,24 @@ export class AnalyticsService extends EventEmitter {
           metricId: metricDef.id,
           timestamp: {
             $gte: timeWindow.start,
-            $lt: timeWindow.end
-          }
-        }
+            $lt: timeWindow.end,
+          },
+        },
       },
       {
         $group: {
           _id: {
             organizationId: '$organizationId',
-            labels: '$labels'
+            labels: '$labels',
           },
           count: { $sum: 1 },
           sum: { $sum: '$value' },
           avg: { $avg: '$value' },
           min: { $min: '$value' },
           max: { $max: '$value' },
-          values: { $push: '$value' }
-        }
-      }
+          values: { $push: '$value' },
+        },
+      },
     ];
 
     const results = await this.metrics.aggregate(pipeline).toArray();
@@ -974,8 +969,8 @@ export class AnalyticsService extends EventEmitter {
           max: result.max,
           p50: this.calculatePercentile(result.values, 50),
           p95: this.calculatePercentile(result.values, 95),
-          p99: this.calculatePercentile(result.values, 99)
-        }
+          p99: this.calculatePercentile(result.values, 99),
+        },
       };
 
       await this.aggregatedMetrics.insertOne(aggregated);
@@ -1035,21 +1030,27 @@ export class AnalyticsService extends EventEmitter {
     const now = new Date();
 
     // Clean up old raw events
-    const eventCutoff = new Date(now.getTime() - this.config.retention.rawEvents * 24 * 60 * 60 * 1000);
+    const eventCutoff = new Date(
+      now.getTime() - this.config.retention.rawEvents * 24 * 60 * 60 * 1000
+    );
     await this.events.deleteMany({ timestamp: { $lt: eventCutoff } });
 
     // Clean up old aggregated data
-    const aggregatedCutoff = new Date(now.getTime() - this.config.retention.aggregatedData * 24 * 60 * 60 * 1000);
+    const aggregatedCutoff = new Date(
+      now.getTime() - this.config.retention.aggregatedData * 24 * 60 * 60 * 1000
+    );
     await this.aggregatedMetrics.deleteMany({ timestamp: { $lt: aggregatedCutoff } });
 
     // Clean up old user sessions
-    const sessionCutoff = new Date(now.getTime() - this.config.retention.userSessions * 24 * 60 * 60 * 1000);
+    const sessionCutoff = new Date(
+      now.getTime() - this.config.retention.userSessions * 24 * 60 * 60 * 1000
+    );
     await this.userSessions.deleteMany({ startedAt: { $lt: sessionCutoff } });
 
     logger.info('Analytics cleanup completed', {
       eventCutoff,
       aggregatedCutoff,
-      sessionCutoff
+      sessionCutoff,
     });
   }
 
@@ -1062,7 +1063,7 @@ export class AnalyticsService extends EventEmitter {
         userId: event.data.userId,
         source: 'workflow_service',
         data: event.data,
-        correlationId: event.correlationId
+        correlationId: event.correlationId,
       });
 
       // Record metrics
@@ -1086,7 +1087,7 @@ export class AnalyticsService extends EventEmitter {
         userId: event.data.triggeredBy,
         source: 'execution_service',
         data: event.data,
-        correlationId: event.correlationId
+        correlationId: event.correlationId,
       });
 
       // Record execution metrics
@@ -1096,7 +1097,7 @@ export class AnalyticsService extends EventEmitter {
           {
             workflow_id: event.data.workflowId,
             status: event.data.status,
-            trigger_type: event.data.triggerType || 'unknown'
+            trigger_type: event.data.triggerType || 'unknown',
           },
           event.data.organizationId || 'system'
         );
@@ -1107,7 +1108,7 @@ export class AnalyticsService extends EventEmitter {
             event.data.duration,
             {
               workflow_id: event.data.workflowId,
-              status: event.data.status
+              status: event.data.status,
             },
             event.data.organizationId || 'system'
           );
@@ -1126,7 +1127,7 @@ export class AnalyticsService extends EventEmitter {
         userId: event.data.userId,
         source: 'auth_service',
         data: event.data,
-        correlationId: event.correlationId
+        correlationId: event.correlationId,
       });
 
       // Track user metrics
@@ -1149,7 +1150,7 @@ export class AnalyticsService extends EventEmitter {
         organizationId: 'system',
         source: 'system',
         data: event.data,
-        correlationId: event.correlationId
+        correlationId: event.correlationId,
       });
     } catch (error) {
       logger.error('Failed to handle system event', error);
@@ -1171,11 +1172,8 @@ export class AnalyticsService extends EventEmitter {
         this.events.countDocuments({ timestamp: { $gte: last24h } }),
         this.metrics.countDocuments({ timestamp: { $gte: last24h } }),
         this.userSessions.countDocuments({
-          $or: [
-            { endedAt: { $exists: false } },
-            { endedAt: { $gte: last24h } }
-          ]
-        })
+          $or: [{ endedAt: { $exists: false } }, { endedAt: { $gte: last24h } }],
+        }),
       ]);
 
       return {
@@ -1183,8 +1181,8 @@ export class AnalyticsService extends EventEmitter {
         metrics: {
           eventsProcessed24h: eventsProcessed,
           metricsRecorded24h: metricsRecorded,
-          activeSessions
-        }
+          activeSessions,
+        },
       };
     } catch (error) {
       return {
@@ -1192,8 +1190,8 @@ export class AnalyticsService extends EventEmitter {
         metrics: {
           eventsProcessed24h: 0,
           metricsRecorded24h: 0,
-          activeSessions: 0
-        }
+          activeSessions: 0,
+        },
       };
     }
   }
@@ -1230,7 +1228,7 @@ class UserSessionManager {
       startedAt: new Date(),
       events: 0,
       metadata: metadata as UserSession['metadata'],
-      pages: []
+      pages: [],
     };
 
     await this.sessions.insertOne(session);
@@ -1253,7 +1251,7 @@ class UserSessionManager {
       { id: sessionId, userId },
       {
         $set: { lastActivity: updates.lastActivity },
-        $inc: { events: updates.eventCount || 0 }
+        $inc: { events: updates.eventCount || 0 },
       }
     );
 
@@ -1276,9 +1274,9 @@ class UserSessionManager {
         $push: {
           pages: {
             path,
-            timestamp: now
-          }
-        }
+            timestamp: now,
+          },
+        },
       }
     );
   }
@@ -1295,8 +1293,8 @@ class UserSessionManager {
         {
           $set: {
             endedAt,
-            duration
-          }
+            duration,
+          },
         }
       );
     }

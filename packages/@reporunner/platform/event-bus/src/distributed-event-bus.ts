@@ -138,7 +138,7 @@ export class DistributedEventBus extends EventEmitter {
       // Disconnect publisher and subscriber
       await this.publisher.quit();
       await this.subscriber.quit();
-      
+
       this.isConnected = false;
       logger.info('Distributed event bus disconnected');
     } catch (error) {
@@ -147,11 +147,15 @@ export class DistributedEventBus extends EventEmitter {
     }
   }
 
-  async publish(eventType: string, data: any, options?: {
-    correlationId?: string;
-    metadata?: Record<string, any>;
-    stream?: string;
-  }): Promise<string> {
+  async publish(
+    eventType: string,
+    data: any,
+    options?: {
+      correlationId?: string;
+      metadata?: Record<string, any>;
+      stream?: string;
+    }
+  ): Promise<string> {
     if (!this.isConnected) {
       throw new Error('Event bus is not connected');
     }
@@ -163,7 +167,7 @@ export class DistributedEventBus extends EventEmitter {
       source: this.consumerName,
       correlationId: options?.correlationId || uuidv4(),
       metadata: options?.metadata,
-      data
+      data,
     };
 
     const streamKey = options?.stream || this.getStreamKey(eventType);
@@ -176,14 +180,15 @@ export class DistributedEventBus extends EventEmitter {
         '~',
         this.config.streams.maxLen,
         '*',
-        'event', JSON.stringify(event)
+        'event',
+        JSON.stringify(event)
       );
 
       logger.info(`Event published: ${eventType}`, {
         eventId: event.id,
         streamKey,
         messageId,
-        correlationId: event.correlationId
+        correlationId: event.correlationId,
       });
 
       // Emit local event for monitoring
@@ -206,7 +211,7 @@ export class DistributedEventBus extends EventEmitter {
       id: subscriptionId,
       pattern,
       handler,
-      options
+      options,
     };
 
     this.subscriptions.set(subscriptionId, subscription);
@@ -221,7 +226,7 @@ export class DistributedEventBus extends EventEmitter {
     logger.info(`Subscribed to pattern: ${pattern}`, {
       subscriptionId,
       streamKey,
-      consumerGroup: this.consumerGroup
+      consumerGroup: this.consumerGroup,
     });
 
     return subscriptionId;
@@ -238,8 +243,9 @@ export class DistributedEventBus extends EventEmitter {
 
     // Stop polling if no more subscriptions for this pattern
     const streamKey = this.getStreamKey(subscription.pattern);
-    const hasOtherSubscriptions = Array.from(this.subscriptions.values())
-      .some(sub => this.getStreamKey(sub.pattern) === streamKey);
+    const hasOtherSubscriptions = Array.from(this.subscriptions.values()).some(
+      (sub) => this.getStreamKey(sub.pattern) === streamKey
+    );
 
     if (!hasOtherSubscriptions) {
       const interval = this.pollingIntervals.get(streamKey);
@@ -261,13 +267,7 @@ export class DistributedEventBus extends EventEmitter {
   private async createConsumerGroup(streamKey: string): Promise<void> {
     try {
       // Try to create consumer group, starting from the beginning
-      await this.publisher.xgroup(
-        'CREATE',
-        streamKey,
-        this.consumerGroup,
-        '$',
-        'MKSTREAM'
-      );
+      await this.publisher.xgroup('CREATE', streamKey, this.consumerGroup, '$', 'MKSTREAM');
       logger.info(`Consumer group created: ${this.consumerGroup} for ${streamKey}`);
     } catch (error: any) {
       // Group already exists, which is fine
@@ -278,10 +278,7 @@ export class DistributedEventBus extends EventEmitter {
     }
   }
 
-  private async startConsuming(
-    streamKey: string,
-    subscription: Subscription
-  ): Promise<void> {
+  private async startConsuming(streamKey: string, subscription: Subscription): Promise<void> {
     // Create dedicated consumer connection
     if (!this.consumers.has(streamKey)) {
       const consumer = new Redis(this.config.redis);
@@ -358,9 +355,7 @@ export class DistributedEventBus extends EventEmitter {
     const promises = messages.map(async ([messageId, fields]) => {
       try {
         // Parse event from message
-        const eventData = fields.find((f: any, i: number) => 
-          i % 2 === 0 && f === 'event'
-        );
+        const eventData = fields.find((f: any, i: number) => i % 2 === 0 && f === 'event');
         const eventValue = fields[fields.indexOf(eventData) + 1];
         const event = JSON.parse(eventValue) as Event;
 
@@ -384,16 +379,10 @@ export class DistributedEventBus extends EventEmitter {
         }
       } catch (error) {
         logger.error(`Failed to process message: ${messageId}`, error);
-        
+
         // Retry logic
         if (subscription.options?.retryOnError) {
-          await this.retryMessage(
-            consumer,
-            streamKey,
-            messageId,
-            subscription,
-            error
-          );
+          await this.retryMessage(consumer, streamKey, messageId, subscription, error);
         } else {
           // Move to dead letter queue
           await this.moveToDeadLetter(streamKey, messageId, error);
@@ -405,34 +394,31 @@ export class DistributedEventBus extends EventEmitter {
     await Promise.all(promises);
   }
 
-  private async processEvent(
-    event: Event,
-    subscription: Subscription
-  ): Promise<void> {
+  private async processEvent(event: Event, subscription: Subscription): Promise<void> {
     const startTime = Date.now();
 
     try {
       await subscription.handler(event);
-      
+
       const duration = Date.now() - startTime;
       logger.debug(`Event processed: ${event.type}`, {
         eventId: event.id,
         duration,
-        subscriptionId: subscription.id
+        subscriptionId: subscription.id,
       });
 
       // Emit metrics
       this.emit('event.processed', {
         event,
         subscription: subscription.id,
-        duration
+        duration,
       });
     } catch (error) {
       const duration = Date.now() - startTime;
       logger.error(`Event handler error: ${event.type}`, {
         eventId: event.id,
         error,
-        duration
+        duration,
       });
 
       // Emit error metrics
@@ -440,7 +426,7 @@ export class DistributedEventBus extends EventEmitter {
         event,
         subscription: subscription.id,
         error,
-        duration
+        duration,
       });
 
       throw error;
@@ -450,13 +436,13 @@ export class DistributedEventBus extends EventEmitter {
   private matchesPattern(eventType: string, pattern: string): boolean {
     if (pattern === '*') return true;
     if (pattern === eventType) return true;
-    
+
     // Support wildcard patterns like "workflow.*"
     if (pattern.endsWith('*')) {
       const prefix = pattern.slice(0, -1);
       return eventType.startsWith(prefix);
     }
-    
+
     return false;
   }
 
@@ -487,7 +473,7 @@ export class DistributedEventBus extends EventEmitter {
     error: any
   ): Promise<void> {
     const maxRetries = subscription.options?.maxRetries || this.config.retry.maxAttempts;
-    
+
     // Get retry count from stream
     const retryKey = `${streamKey}:retry:${messageId}`;
     const retryCount = await this.publisher.incr(retryKey);
@@ -502,24 +488,18 @@ export class DistributedEventBus extends EventEmitter {
 
     // Calculate backoff delay
     const delay = this.calculateBackoff(retryCount);
-    
+
     logger.info(`Retrying message: ${messageId}`, {
       retryCount,
       maxRetries,
-      delay
+      delay,
     });
 
     // Re-deliver message after delay
     setTimeout(async () => {
       try {
         // Claim the message for re-processing
-        await consumer.xclaim(
-          streamKey,
-          this.consumerGroup,
-          this.consumerName,
-          0,
-          messageId
-        );
+        await consumer.xclaim(streamKey, this.consumerGroup, this.consumerName, 0, messageId);
       } catch (claimError) {
         logger.error(`Failed to claim message for retry: ${messageId}`, claimError);
       }
@@ -534,23 +514,22 @@ export class DistributedEventBus extends EventEmitter {
     );
   }
 
-  private async moveToDeadLetter(
-    streamKey: string,
-    messageId: string,
-    error: any
-  ): Promise<void> {
+  private async moveToDeadLetter(streamKey: string, messageId: string, error: any): Promise<void> {
     const dlqKey = `${streamKey}:dlq`;
-    
+
     try {
       await this.publisher.xadd(
         dlqKey,
         '*',
-        'originalStream', streamKey,
-        'originalMessageId', messageId,
-        'error', JSON.stringify({
+        'originalStream',
+        streamKey,
+        'originalMessageId',
+        messageId,
+        'error',
+        JSON.stringify({
           message: error.message,
           stack: error.stack,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         })
       );
 
@@ -578,10 +557,7 @@ export class DistributedEventBus extends EventEmitter {
 
   async getPendingMessages(pattern: string): Promise<any> {
     const streamKey = this.getStreamKey(pattern);
-    return await this.publisher.xpending(
-      streamKey,
-      this.consumerGroup
-    );
+    return await this.publisher.xpending(streamKey, this.consumerGroup);
   }
 
   async getDeadLetterQueue(pattern: string): Promise<any[]> {
@@ -590,7 +566,7 @@ export class DistributedEventBus extends EventEmitter {
     const messages = await this.publisher.xrange(dlqKey, '-', '+');
     return messages.map(([id, fields]) => ({
       id,
-      data: this.parseStreamFields(fields)
+      data: this.parseStreamFields(fields),
     }));
   }
 
@@ -620,9 +596,12 @@ export class DistributedEventBus extends EventEmitter {
       await this.publisher.xadd(
         streamKey,
         '*',
-        'event', data.event,
-        'reprocessed', 'true',
-        'originalMessageId', messageId
+        'event',
+        data.event,
+        'reprocessed',
+        'true',
+        'originalMessageId',
+        messageId
       );
 
       // Remove from DLQ
@@ -646,7 +625,7 @@ export class DistributedEventBus extends EventEmitter {
       connected: this.isConnected,
       subscriptions: this.subscriptions.size,
       consumers: this.consumers.size,
-      processingEvents: this.processingEvents.size
+      processingEvents: this.processingEvents.size,
     };
   }
 }

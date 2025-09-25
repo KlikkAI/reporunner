@@ -1,0 +1,103 @@
+default: '',
+            displayOptions:
+{
+  show: {
+    enabled: [true],
+  }
+  ,
+}
+,
+            placeholder: 'user_features,product_features',
+            description: 'Comma-separated list of feature groups',
+          },
+        ],
+      },
+    ],
+  },
+
+// Model Configuration Section
+{
+    displayName: 'Model Configuration',
+    name: 'modelConfig',
+    type: 'collection',
+    default: {},
+    description: 'Configure model settings',
+    displayOptions: {
+      show: {
+        '/pipelineConfig/pipelineType': ['training', 'inference', 'batch_prediction', 'evaluation'],
+      },
+    },
+    options: [
+      {
+        displayName: 'Model Registry',
+        name: 'modelRegistry',
+        type: 'select',
+        required: true,
+        default: 'local',
+        options: [
+          { name: 'Local Registry', value: 'local' },
+          { name: 'MLflow', value: 'mlflow' },
+          { name: 'AWS SageMaker', value: 'sagemaker' },
+          { name: 'Google AI Platform', value: 'gcp_ai_platform' },
+          { name: 'Azure ML', value: 'azure_ml' },
+          { name: 'HuggingFace Hub', value: 'huggingface' },
+          { name: 'Weights & Biases', value: 'wandb' },
+        ],
+        description: 'Model registry for storing and versioning models',
+      },
+      {
+        displayName: 'Model Versioning Strategy',
+        name: 'versioningStrategy',
+        type: 'select',
+        required: true,
+        default: 'semantic',
+        options: [
+          { name: 'Semantic Versioning', value: 'semantic' },
+          { name: 'Timestamp', value: 'timestamp' },
+          { name: 'Git Commit Hash', value: 'git_hash' },
+          { name: 'Auto Increment', value: 'auto_increment' },
+          { name: 'Custom', value: 'custom' },
+        ],
+        description: 'Strategy for model versioning',
+      },
+      {
+        displayName: 'Model Comparison Metrics',
+        name: 'comparisonMetrics',
+        type: 'multiSelect',
+        default: ['accuracy', 'f1_score'],
+        options: [
+          { name: 'Accuracy', value: 'accuracy' },
+          { name: 'Precision', value: 'precision' },
+          { name: 'Recall', value: 'recall' },
+          { name: 'F1 Score', value: 'f1_score' },
+          { name: 'AUC-ROC', value: 'auc_roc' },
+          { name: 'AUC-PR', value: 'auc_pr' },
+          { name: 'Mean Squared Error', value: 'mse' },
+          { name: 'Mean Absolute Error', value: 'mae' },
+          { name: 'R²Score', value: 'r2_score' },
+          { name: 'Log Loss', value: 'log_loss' },
+        ],
+        description: 'Metrics for comparing model performance',
+      },
+      {
+        displayName: 'Model Selection Criteria',
+        name: 'selectionCriteria',
+        type: 'collection',
+        default: {},
+        options: [
+          {
+            displayName: 'Primary Metric',
+            name: 'primaryMetric',
+            type: 'select',
+            required: true,
+            default: 'accuracy',
+            options: [
+              { name: 'Accuracy', value: 'accuracy' },
+              { name: 'F1 Score', value: 'f1_score' },
+              { name: 'AUC-ROC', value: 'auc_roc' },
+              { name: 'Mean Squared Error', value: 'mse' },
+              { name: 'Custom Metric', value: 'custom' },
+            ],
+          },
+          {
+            displayName: 'Optimization Goal',
