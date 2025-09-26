@@ -1,3 +1,3 @@
-export * from './retention-part1';
-export * from './retention-part2';
-export * from './retention-part3';
+export * from './retention-core';
+export * from './retention-processing';
+export * from './retention-policies';

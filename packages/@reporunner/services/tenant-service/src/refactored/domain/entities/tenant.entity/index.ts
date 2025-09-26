@@ -1,3 +1,3 @@
-export * from './tenant.entity-part1';
-export * from './tenant.entity-part2';
-export * from './tenant.entity-part3';
+export * from './tenant-core';
+export * from './tenant-properties';
+export * from './tenant-methods';

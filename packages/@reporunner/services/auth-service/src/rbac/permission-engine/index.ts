@@ -1,3 +1,3 @@
-export * from './permission-engine-part1';
-export * from './permission-engine-part2';
-export * from './permission-engine-part3';
+export * from './permission-core';
+export * from './permission-operations';
+export * from './permission-utilities';

@@ -1,3 +1,3 @@
-export * from './dashboards-part1';
-export * from './dashboards-part2';
-export * from './dashboards-part3';
+export * from './dashboard-core';
+export * from './dashboard-operations';
+export * from './dashboard-templates';

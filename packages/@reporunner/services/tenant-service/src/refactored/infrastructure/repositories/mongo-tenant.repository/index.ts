@@ -1,3 +1,3 @@
-export * from './mongo-tenant.repository-part1';
-export * from './mongo-tenant.repository-part2';
-export * from './mongo-tenant.repository-part3';
+export * from './repository-core';
+export * from './repository-operations';
+export * from './repository-queries';
