@@ -1,13 +1,2 @@
-import { injectable } from 'inversify';
+export { HandleOperationUseCase } from '../../application/HandleOperation.use-case';
 
-/**
- * HandleOperation Use Case
- * Auto-generated during refactoring
- */
-@injectable()
-export class HandleOperationUseCase {
-  async execute(input: any): Promise<any> {
-    // TODO: Implement business logic
-    throw new Error('Not implemented');
-  }
-}

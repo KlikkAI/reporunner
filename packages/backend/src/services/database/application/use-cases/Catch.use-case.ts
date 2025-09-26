@@ -1,9 +1,2 @@
-import { injectable } from 'inversify';
+export * from '@reporunner/core/use-cases/Catch.use-case';
 
-@injectable()
-export class CatchUseCase {
-  async execute(input: any): Promise<any> {
-    // TODO: Implement catch logic
-    throw new Error('Not implemented');
-  }
-}

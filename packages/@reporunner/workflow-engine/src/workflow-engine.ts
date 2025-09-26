@@ -97,7 +97,6 @@ export class WorkflowEngine extends EventEmitter {
     if (!this.isInitialized) {
       throw new Error('Workflow Engine not initialized');
     }
-
     const executionId = uuidv4();
     const execution: Execution = {
       id: executionId,
@@ -248,7 +247,11 @@ export class WorkflowEngine extends EventEmitter {
 
     return {
       executions: {
-        total: queueStats.completed + queueStats.failed + queueStats.active + queueStats.waiting,
+        total:
+          queueStats.completed +
+          queueStats.failed +
+          queueStats.active +
+          queueStats.waiting,
         running: queueStats.active,
         queued: queueStats.waiting,
         completed: queueStats.completed,
@@ -284,17 +287,26 @@ export class WorkflowEngine extends EventEmitter {
       this.emit('execution:started', { executionId });
     });
 
-    this.executionEngine.on('execution:finished', (executionId: string, result: any) => {
-      this.emit('execution:finished', { executionId, result });
-    });
+    this.executionEngine.on(
+      'execution:finished',
+      (executionId: string, result: any) => {
+        this.emit('execution:finished', { executionId, result });
+      }
+    );
 
-    this.executionEngine.on('node:started', (executionId: string, nodeId: string) => {
-      this.emit('node:started', { executionId, nodeId });
-    });
+    this.executionEngine.on(
+      'node:started',
+      (executionId: string, nodeId: string) => {
+        this.emit('node:started', { executionId, nodeId });
+      }
+    );
 
-    this.executionEngine.on('node:finished', (executionId: string, nodeId: string, result: any) => {
-      this.emit('node:finished', { executionId, nodeId, result });
-    });
+    this.executionEngine.on(
+      'node:finished',
+      (executionId: string, nodeId: string, result: any) => {
+        this.emit('node:finished', { executionId, nodeId, result });
+      }
+    );
 
     // Worker events
     this.workerManager.on('worker:started', (workerId: string) => {

@@ -231,5 +231,18 @@
       "dependsOn": ["build"],
       "outputs": ["bundle-analysis/**"]
     }
+    ,
+    "dup:check": {
+      "cache": false,
+      "inputs": [
+        "packages/**/{src,app}/**/*.{ts,tsx,js}",
+        "!**/node_modules/**",
+        "!**/dist/**",
+        "!.turbo/**"
+      ],
+      "outputs": [],
+      "env": ["CI"],
+      "command": "pnpm dup:check"
+    }
   }
 }

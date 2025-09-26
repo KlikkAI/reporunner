@@ -1,13 +1,1 @@
-import { injectable } from 'inversify';
-
-/**
- * Ceil Use Case
- * Auto-generated during refactoring
- */
-@injectable()
-export class CeilUseCase {
-  async execute(input: any): Promise<any> {
-    // TODO: Implement business logic
-    throw new Error('Not implemented');
-  }
-}
+export { UnimplementedUseCase as CeilUseCase } from '@reporunner/shared/use-case';

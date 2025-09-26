@@ -1,13 +1,1 @@
-import { injectable } from 'inversify';
-
-/**
- * ResetPassword Use Case
- * Auto-generated during refactoring
- */
-@injectable()
-export class ResetPasswordUseCase {
-  async execute(input: any): Promise<any> {
-    // TODO: Implement business logic
-    throw new Error('Not implemented');
-  }
-}
+export { ResetPasswordUseCase } from '@reporunner/services/auth-service/services/auth/application/ResetPassword.use-case';

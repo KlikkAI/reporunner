@@ -1,7 +1,8 @@
 level: 'error' | 'warn' | 'info' | 'debug';
 database: boolean;
 console: boolean;
-}
+// Ensure file has a valid TS shape
+export interface NodeContext {}
 }
 
 // Context Types

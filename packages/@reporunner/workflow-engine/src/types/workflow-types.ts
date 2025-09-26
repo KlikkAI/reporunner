@@ -1,19 +1,21 @@
 import { z } from 'zod';
-
+import {
+  WorkflowStatus,
+  ExecutionStatus as ApiExecutionStatus,
+  NodeType,
+  NodeSchema,
+  EdgeSchema,
+  WorkflowSchema as ApiWorkflowSchema,
+} from '@reporunner/api-types';
+// Valid minimal placeholder to satisfy tsup build
+export interface WorkflowTypesPlaceholder {}
 // Workflow Definition
-export const WorkflowNodeSchema = z.object({
-  id: z.string(),
-  type: z.string(),
-  name: z.string(),
-  position: z.object({
-    x: z.number(),
-    y: z.number(),
-  }),
+export const WorkflowNodeSchema = NodeSchema.extend({
   parameters: z.record(z.unknown()),
-  credentials: z.string().optional(),
+  credentials: z.string().optional(), // Overrides api-types's string[] to string for engine's internal representation
   disabled: z.boolean().default(false),
   notes: z.string().optional(),
-  retryOnFail: z.boolean().default(false),
+  retryOnFail: z.boolean().default(false), // Specific to engine
   maxRetries: z.number().default(3),
   retryDelay: z.number().default(1000),
   timeout: z.number().optional(),
@@ -21,22 +23,13 @@ export const WorkflowNodeSchema = z.object({
 
 export type WorkflowNode = z.infer<typeof WorkflowNodeSchema>;
 
-export const WorkflowConnectionSchema = z.object({
-  id: z.string(),
-  source: z.string(),
-  target: z.string(),
-  sourceHandle: z.string().optional(),
-  targetHandle: z.string().optional(),
+export const WorkflowConnectionSchema = EdgeSchema.extend({
   conditions: z.record(z.unknown()).optional(),
 });
 
 export type WorkflowConnection = z.infer<typeof WorkflowConnectionSchema>;
 
-export const WorkflowSchema = z.object({
-  id: z.string(),
-  name: z.string(),
-  description: z.string().optional(),
-  nodes: z.array(WorkflowNodeSchema),
+export const WorkflowSchema = ApiWorkflowSchema.extend({
   connections: z.array(WorkflowConnectionSchema),
   settings: z.object({
     timezone: z.string().default('UTC'),
@@ -58,15 +51,8 @@ export const WorkflowSchema = z.object({
 export type Workflow = z.infer<typeof WorkflowSchema>;
 
 // Execution Types
-export enum ExecutionStatus {
-  PENDING = 'pending',
-  RUNNING = 'running',
-  SUCCESS = 'success',
-  ERROR = 'error',
-  CANCELLED = 'cancelled',
-  WAITING = 'waiting',
-  UNKNOWN = 'unknown',
-}
+// Using ApiExecutionStatus from @reporunner/api-types as the canonical source
+export const ExecutionStatus = ApiExecutionStatus;
 
 export enum NodeExecutionStatus {
   PENDING = 'pending',

@@ -1,9 +1,2 @@
-import { injectable } from 'inversify';
+export { StopUseCase } from '../../performancemonitor/application/use-cases/Stop.use-case';
 
-@injectable()
-export class StopUseCase {
-  async execute(input: any): Promise<any> {
-    // TODO: Implement stop logic
-    throw new Error('Not implemented');
-  }
-}

@@ -1,13 +1,9 @@
+// Canonical backend Trim use-case
 import { injectable } from 'inversify';
 
-/**
- * Trim Use Case
- * Auto-generated during refactoring
- */
 @injectable()
 export class TrimUseCase {
-  async execute(input: any): Promise<any> {
-    // TODO: Implement business logic
+  async execute(_input: any): Promise<any> {
     throw new Error('Not implemented');
   }
 }

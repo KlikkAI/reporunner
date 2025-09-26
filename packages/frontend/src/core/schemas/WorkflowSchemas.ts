@@ -1,24 +1,24 @@
 import { z } from 'zod';
 import {
   ApiResponseSchema,
-  ExecutionStatusSchema,
   IdSchema,
   MetadataSchema,
   NodeParametersSchema,
   OptionalIdSchema,
   PaginatedResponseSchema,
-  StatusSchema,
   TimestampSchema,
 } from './BaseSchemas';
+import {
+  WorkflowStatus,
+  ExecutionStatus,
+  NodeType,
+  NodeSchema as ApiNodeSchema,
+  EdgeSchema as ApiEdgeSchema,
+  WorkflowSchema as ApiWorkflowSchema,
+} from '@reporunner/api-types';
 
 // Node schemas
-export const WorkflowNodeSchema = z.object({
-  id: IdSchema,
-  type: z.string(),
-  position: z.object({
-    x: z.number(),
-    y: z.number(),
-  }),
+export const WorkflowNodeSchema = ApiNodeSchema.extend({
   data: z.object({
     label: z.string().optional(),
     parameters: NodeParametersSchema.optional(),
@@ -39,25 +39,13 @@ export const WorkflowNodeSchema = z.object({
 });
 
 // Edge/Connection schemas
-export const WorkflowEdgeSchema = z.object({
-  id: IdSchema,
-  source: IdSchema,
-  target: IdSchema,
-  sourceHandle: z.string().optional(),
-  targetHandle: z.string().optional(),
-  type: z.string().optional(),
+export const WorkflowEdgeSchema = ApiEdgeSchema.extend({
   data: z.record(z.string(), z.unknown()).optional(),
   label: z.string().optional(),
 });
 
 // Core workflow definition
-export const WorkflowDefinitionSchema = z.object({
-  id: OptionalIdSchema,
-  name: z.string().min(1).max(255),
-  description: z.string().max(1000).optional(),
-  version: z.number().int().min(1).default(1),
-  nodes: z.array(WorkflowNodeSchema).default([]), // Make optional with default
-  edges: z.array(WorkflowEdgeSchema).default([]), // Make optional with default
+export const WorkflowDefinitionSchema = ApiWorkflowSchema.extend({
   settings: z
     .object({
       timeout: z.number().int().min(1000).max(3600000).default(300000), // 5 minutes default
@@ -72,9 +60,6 @@ export const WorkflowDefinitionSchema = z.object({
     .optional(),
   tags: z.array(z.string()).default([]),
   isActive: z.boolean().default(true),
-  createdAt: TimestampSchema.optional(),
-  updatedAt: TimestampSchema.optional(),
-  createdBy: z.string().optional(),
 });
 
 // Workflow with metadata (from API)
@@ -84,12 +69,12 @@ export const WorkflowSchema = WorkflowDefinitionSchema.and(
     _id: IdSchema.optional(), // MongoDB ObjectId
     userId: IdSchema.optional(), // Owner of the workflow
     isPublic: z.boolean().optional(), // Whether workflow is public
-    status: StatusSchema.optional(), // Made optional, computed from isActive
+    status: z.nativeEnum(WorkflowStatus).optional(), // Made optional, computed from isActive
     successRate: z.number().min(0).max(100).optional(), // Success rate percentage
     lastExecution: z
       .object({
         id: IdSchema,
-        status: ExecutionStatusSchema,
+        status: z.nativeEnum(ExecutionStatus),
         startTime: TimestampSchema,
         endTime: TimestampSchema.optional(),
         duration: z.number().int().min(0).optional(),
@@ -134,7 +119,7 @@ export const WorkflowExecutionSchema = z.object({
   id: IdSchema,
   workflowId: IdSchema,
   workflowName: z.string(),
-  status: ExecutionStatusSchema,
+  status: z.nativeEnum(ExecutionStatus),
   startTime: TimestampSchema,
   endTime: TimestampSchema.optional(),
   duration: z.number().int().min(0).optional(),
@@ -277,7 +262,7 @@ export const ExecuteWorkflowRequestSchema = z.object({
 });
 
 export const WorkflowFilterSchema = z.object({
-  status: StatusSchema.optional(),
+  status: z.nativeEnum(WorkflowStatus).optional(),
   tags: z.array(z.string()).optional(),
   createdBy: z.string().optional(),
   search: z.string().optional(), // Search in name/description
@@ -285,7 +270,7 @@ export const WorkflowFilterSchema = z.object({
 
 export const ExecutionFilterSchema = z.object({
   workflowId: IdSchema.optional(),
-  status: ExecutionStatusSchema.optional(),
+  status: z.nativeEnum(ExecutionStatus).optional(),
   triggerType: z.enum(['manual', 'webhook', 'schedule', 'event']).optional(),
   startDate: TimestampSchema.optional(),
   endDate: TimestampSchema.optional(),

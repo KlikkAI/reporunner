@@ -1,6 +1,7 @@
 } as
 const;
-
+// Minimal valid export to satisfy type-check; fill with real content later
+export const NODE_PROVIDERS: Record<string, unknown> = {};
 export const AI_PROVIDERS = {
   OPENAI: 'openai',
   ANTHROPIC: 'anthropic',

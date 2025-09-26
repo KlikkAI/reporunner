@@ -1,13 +1,2 @@
-import { injectable } from 'inversify';
+export { BroadcastToSessionUseCase } from '../../application/BroadcastToSession.use-case';
 
-/**
- * BroadcastToSession Use Case
- * Auto-generated during refactoring
- */
-@injectable()
-export class BroadcastToSessionUseCase {
-  async execute(input: any): Promise<any> {
-    // TODO: Implement business logic
-    throw new Error('Not implemented');
-  }
-}

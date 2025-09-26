@@ -1,48 +1,40 @@
-export interface IExecution {
-  id: string;
-  workflowId: string;
-  status: ExecutionStatus;
-  startedAt: Date;
-  stoppedAt?: Date;
-  executionTime?: number;
-  mode: 'manual' | 'trigger' | 'schedule' | 'webhook' | 'retry';
-  retryOf?: string;
-  retryCount?: number;
-  data?: IExecutionData;
-  error?: IExecutionError;
-  waitTill?: Date;
+import { z } from 'zod';
+
+// Workflow Status
+export enum WorkflowStatus {
+  DRAFT = 'DRAFT',
+  ACTIVE = 'ACTIVE',
+  INACTIVE = 'INACTIVE',
+  ERROR = 'ERROR',
+  ARCHIVED = 'ARCHIVED',
 }
 
-// Execution Data
-export interface IExecutionData {
-  nodes: Record<string, INodeExecutionData>;
-  resultData: {
-    runData: Record<string, INodeExecutionData[]>;
-    error?: IExecutionError;
-    lastNodeExecuted?: string;
-  };
+// Execution Status
+export enum ExecutionStatus {
+  PENDING = 'PENDING',
+  RUNNING = 'RUNNING',
+  SUCCESS = 'SUCCESS',
+  FAILED = 'FAILED',
+  CANCELLED = 'CANCELLED',
+  WAITING = 'WAITING',
+  PAUSED = 'PAUSED',
 }
 
-// Node Execution Data
-export interface INodeExecutionData {
-  startTime: number;
-  executionTime: number;
-  executionStatus: ExecutionStatus;
-  data?: Record<string, any>;
-  error?: IExecutionError;
-  source?: string[];
+// Node Types
+export enum NodeType {
+  TRIGGER = 'TRIGGER',
+  ACTION = 'ACTION',
+  CONDITIONAL = 'CONDITIONAL',
+  LOOP = 'LOOP',
+  WEBHOOK = 'WEBHOOK',
+  SCHEDULE = 'SCHEDULE',
+  HTTP_REQUEST = 'HTTP_REQUEST',
+  FUNCTION = 'FUNCTION',
+  AI_AGENT = 'AI_AGENT',
+  DATA_TRANSFORM = 'DATA_TRANSFORM',
+  INTEGRATION = 'INTEGRATION',
 }
 
-// Execution Error
-export interface IExecutionError {
-  message: string;
-  stack?: string;
-  node?: string;
-  timestamp: Date;
-  context?: Record<string, any>;
-}
-
-// Zod Schemas for validation
 export const NodeSchema = z.object({
   id: z.string(),
   type: z.nativeEnum(NodeType),
@@ -98,3 +90,5 @@ export const WorkflowSchema = z.object({
       executionOrder: z.enum(['sequential', 'parallel']).optional(),
     })
     .optional(),
+  meta: z.record(z.string(), z.any()).optional(),
+});

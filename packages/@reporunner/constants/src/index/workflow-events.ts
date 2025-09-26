@@ -3,7 +3,14 @@ WORKFLOW_INVALID: 5001, WORKFLOW_EXECUTION_FAILED;
 : 5002,
   WORKFLOW_TIMEOUT: 5003,
   WORKFLOW_CIRCULAR_DEPENDENCY: 5004,
+// Minimal placeholder enums/constants to satisfy type-check; replace with real definitions
+export enum WorkflowEventType {
+  Created = 'Created',
+  Updated = 'Updated',
+  Deleted = 'Deleted',
+}
 
+export const WORKFLOW_EVENTS: Record<string, WorkflowEventType> = {};
   // Integration errors (6xxx)
   INTEGRATION_AUTH_FAILED: 6001,
   INTEGRATION_API_ERROR: 6002,

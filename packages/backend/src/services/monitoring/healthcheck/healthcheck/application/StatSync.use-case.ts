@@ -1,13 +1,2 @@
-import { injectable } from 'inversify';
+export { StatSyncUseCase } from '../../application/StatSync.use-case';
 
-/**
- * StatSync Use Case
- * Auto-generated during refactoring
- */
-@injectable()
-export class StatSyncUseCase {
-  async execute(input: any): Promise<any> {
-    // TODO: Implement business logic
-    throw new Error('Not implemented');
-  }
-}

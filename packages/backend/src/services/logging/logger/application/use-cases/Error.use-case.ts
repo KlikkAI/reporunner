@@ -1,9 +1,2 @@
-import { injectable } from 'inversify';
+export * from '@reporunner/core/use-cases/Error.use-case';
 
-@injectable()
-export class ErrorUseCase {
-  async execute(input: any): Promise<any> {
-    // TODO: Implement error logic
-    throw new Error('Not implemented');
-  }
-}

@@ -1,3 +1,1 @@
-export function useRBACStore() {
-  // Extracted hook
-}
+export { useRBACStore } from '@reporunner/design-system/hooks/use-rbac-store';

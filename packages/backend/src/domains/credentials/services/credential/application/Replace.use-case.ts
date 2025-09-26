@@ -1,13 +1,9 @@
+// Canonical backend Replace use-case
 import { injectable } from 'inversify';
 
-/**
- * Replace Use Case
- * Auto-generated during refactoring
- */
 @injectable()
 export class ReplaceUseCase {
-  async execute(input: any): Promise<any> {
-    // TODO: Implement business logic
+  async execute(_input: any): Promise<any> {
     throw new Error('Not implemented');
   }
 }

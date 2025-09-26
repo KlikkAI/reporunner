@@ -46,3 +46,9 @@ export { ErrorHandler } from './utils/ErrorHandler';
 export { Logger } from './utils/Logger';
 export { Retry } from './utils/Retry';
 export { Validator } from './utils/Validator';
+// Use cases
+export { IfUseCase } from './use-cases/If.use-case';
+export { MapUseCase } from './use-cases/Map.use-case';
+export { FilterUseCase } from './use-cases/Filter.use-case';
+export { CatchUseCase } from './use-cases/Catch.use-case';
+export { ErrorUseCase } from './use-cases/Error.use-case';

@@ -1,13 +1,9 @@
+// Keep local placeholder as canonical for frontend; other frontend copies can re-export this if needed
 import { injectable } from 'inversify';
 
-/**
- * Split Use Case
- * Auto-generated during refactoring
- */
 @injectable()
 export class SplitUseCase {
-  async execute(input: any): Promise<any> {
-    // TODO: Implement business logic
+  async execute(_input: any): Promise<any> {
     throw new Error('Not implemented');
   }
 }

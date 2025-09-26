@@ -1,3 +1,1 @@
-export function useState() {
-  // Extracted hook
-}
+export { useState } from '@reporunner/design-system/hooks/use-state';

@@ -1,6 +1,8 @@
 id: string;
 status: 'idle' | 'busy' | 'error' | 'stopped';
-currentJob?: string;
+export interface EventTriggerState {
+  currentJob?: string;
+}
 processedJobs: number;
 failedJobs: number;
 {

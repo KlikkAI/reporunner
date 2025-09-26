@@ -60,7 +60,9 @@
     "docs:serve": "pnpm docs && cd docs/api && python -m http.server 8080",
     "start": "pnpm run dev:backend",
     "start:full": "pnpm run dev:full",
-    "watch": "turbo run watch --concurrency=30"
+    "watch": "turbo run watch --concurrency=30",
+    "dup:check": "jscpd --reporters console --threshold 0 --languages ts,tsx,js --pattern 'packages/**/{src,app}/**/*.{ts,tsx,js}' --ignore '**/node_modules/**,**/dist/**,.turbo/**'",
+    "dup:report": "bash development/dup-report.sh"
   },
   "keywords": [
     "workflow",

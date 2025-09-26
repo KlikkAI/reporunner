@@ -2,48 +2,15 @@
  * Workflows domain interfaces
  */
 
-export interface IWorkflow {
-  id: string;
-  name: string;
-  description?: string;
+import { INode, IEdge, IWorkflow as ApiWorkflow, IWorkflowSettings as ApiWorkflowSettings, WorkflowStatus } from '@reporunner/api-types';
+
+export interface IWorkflow extends ApiWorkflow {
   userId: string;
-  nodes: IWorkflowNode[];
-  edges: IWorkflowEdge[];
   isActive: boolean;
-  settings?: IWorkflowSettings;
   statistics?: IWorkflowStatistics;
-  createdAt: Date;
-  updatedAt: Date;
 }
 
-export interface IWorkflowNode {
-  id: string;
-  type: string;
-  position: {
-    x: number;
-    y: number;
-  };
-  data: {
-    label: string;
-    [key: string]: any;
-  };
-}
-
-export interface IWorkflowEdge {
-  id: string;
-  source: string;
-  target: string;
-  sourceHandle?: string;
-  targetHandle?: string;
-  type?: string;
-}
-
-export interface IWorkflowSettings {
-  errorHandling: 'stop' | 'continue' | 'retry';
-  timeout: number;
-  retryAttempts: number;
-  concurrent: boolean;
-}
+export interface IWorkflowSettings extends ApiWorkflowSettings {}
 
 export interface IWorkflowStatistics {
   totalExecutions: number;
@@ -53,10 +20,8 @@ export interface IWorkflowStatistics {
   lastExecuted?: Date;
 }
 
-export interface IWorkflowCreateRequest {
-  name: string;
-  description?: string;
-  nodes: IWorkflowNode[];
-  edges: IWorkflowEdge[];
-  settings?: IWorkflowSettings;
+export interface IWorkflowCreateRequest extends Omit<ApiWorkflow, 'id' | 'createdAt' | 'updatedAt' | 'createdBy' | 'status' | 'version' | 'meta'> {
+  nodes: INode[];
+  edges: IEdge[];
+  settings?: ApiWorkflowSettings;
 }

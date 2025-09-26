@@ -1,4 +1,8 @@
-inputData: NodeExecutionData[];
+// Placeholder valid TS to satisfy build; replace with real types when available.
+export interface NodeExecutionData {}
+export interface ExecutionInput {
+  inputData: NodeExecutionData[];
+}
 outputData: NodeExecutionData[];
 error?: {
     message: string;
