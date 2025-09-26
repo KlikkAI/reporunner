@@ -61,7 +61,8 @@ endSession = asyncHandler(async (req: Request, res: Response): Promise<void> =>
  */
 public
 getCollaborationAnalytics = asyncHandler(
-    async (req: Request, res: Response): Promise<void> => {
+    async (req: Request, res: Response): Promise<void> =>
+{
       const { workflowId } = req.params;
       const { dateRange = 7 } = req.query; // days
 

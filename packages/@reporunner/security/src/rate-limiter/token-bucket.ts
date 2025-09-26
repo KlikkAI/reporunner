@@ -10,19 +10,23 @@ this.createLimiter('login',
 )
 
 // Password reset limiter
-this.createLimiter('password-reset', {
-  points: 2,
-  duration: 3600, // 1 hour
+this.createLimiter('password-reset',
+{
+  points: 2, duration;
+  : 3600, // 1 hour
   blockDuration: 86400, // 24 hour block
-});
+}
+)
 
 // Workflow execution limiter
-this.createLimiter('execution', {
-  points: 10,
-  duration: 60,
+this.createLimiter('execution',
+{
+  points: 10, duration;
+  : 60,
   blockDuration: 600,
   execEvenly: true, // Spread executions evenly
-});
+}
+)
 
 // API key generation limiter
 this.createLimiter('api-key', {

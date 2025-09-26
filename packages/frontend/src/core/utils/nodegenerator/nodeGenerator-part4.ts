@@ -6,26 +6,22 @@
   actions:
 {
   $;
-  {
-    nodeTypes
-      .map((nodeType) => {
-        const actionName = nodeType.id.replace(/-([a-z])/g, (g) => g[1].toUpperCase());
-        const functionName = `execute${displayName}${nodeType.displayName.replace(/\s+/g, '')}`;
-        return `    ${actionName}: ${functionName}`;
-      })
-      .join(',\n');
-  }
+  nodeTypes
+    .map((nodeType) => {
+      const actionName = nodeType.id.replace(/-([a-z])/g, (g) => g[1].toUpperCase());
+      const functionName = `execute${displayName}${nodeType.displayName.replace(/\s+/g, '')}`;
+      return `    ${actionName}: ${functionName}`;
+    })
+    .join(',\n');
   ,
     test: test$
-  {
-    displayName;
-  }
-  Connection;
+    displayName
+  Connection
 }
 }
 
 // Export individual components
-export {
+export type {
   $
 {
   name;

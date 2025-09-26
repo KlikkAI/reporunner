@@ -1,4 +1,4 @@
-averageExecutionTime: {
+{
   type: Number;
 }
 ,
@@ -7,14 +7,10 @@ averageExecutionTime: {
 {
   timestamps: true, toJSON;
   :
-  {
-    virtuals: true;
-  }
+    virtuals: true
   ,
     toObject:
-  {
-    virtuals: true;
-  }
+    virtuals: true
   ,
 }
 )
@@ -25,8 +21,16 @@ workflowSchema.index(
   userId: 1;
 }
 )
-workflowSchema.index({ isActive: 1 });
-workflowSchema.index({ isPublic: 1 });
+workflowSchema.index(
+{
+  isActive: 1;
+}
+)
+workflowSchema.index(
+{
+  isPublic: 1;
+}
+)
 workflowSchema.index({ tags: 1 });
 workflowSchema.index({ 'statistics.lastExecuted': -1 });
 

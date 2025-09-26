@@ -20,10 +20,8 @@ name: 'advanced', displayName;
 {
   categories: [UNIFIED_CATEGORIES.COMMUNICATION, 'email'], subcategories;
   :
-  {
-    [UNIFIED_CATEGORIES.COMMUNICATION];
-    : ['email', 'messaging', 'notifications'],
-  }
+    [UNIFIED_CATEGORIES.COMMUNICATION]
+  : ['email', 'messaging', 'notifications'],
   ,
 }
 ,

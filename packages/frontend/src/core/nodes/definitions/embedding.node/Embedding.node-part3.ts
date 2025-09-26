@@ -1,4 +1,4 @@
-json: {
+{
   ...item.json,
               error: `No text found in field '${textField}'`,
               embedding: null,

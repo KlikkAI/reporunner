@@ -1,6 +1,6 @@
 duration?: number;
 events: number;
-metadata: {
+{
   userAgent?: string;
   ip?: string;
   referrer?: string;

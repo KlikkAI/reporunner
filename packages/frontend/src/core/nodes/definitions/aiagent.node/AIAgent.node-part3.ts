@@ -8,12 +8,8 @@
         placeholder: 'Enter your prompt or use {{input}} for dynamic content',
         rows: 3,
         displayOptions:
-  {
-    show: {
       promptTemplate: ['custom'],
-    }
     ,
-  }
   ,
 }
 ,
@@ -28,9 +24,7 @@
         max: 2,
         step: 0.1,
         typeOptions:
-  {
     numberPrecision: 1,
-  }
   ,
 }
 ,
@@ -54,20 +48,14 @@
         description: 'Format for the AI response',
         default: 'text',
         options: [
-  {
-    name: 'Plain Text', value;
-    : 'text'
-  }
+    name: 'Plain Text', value
+  : 'text'
   ,
-  {
-    name: 'JSON', value;
-    : 'json'
-  }
+    name: 'JSON', value
+  : 'json'
   ,
-  {
-    name: 'Markdown', value;
-    : 'markdown'
-  }
+    name: 'Markdown', value
+  : 'markdown'
   ,
         ],
 }
@@ -80,12 +68,8 @@
         description: 'Enable streaming responses for real-time output',
         default: false,
         displayOptions:
-  {
-    show: {
       provider: ['openai', 'anthropic', 'ollama'],
-    }
     ,
-  }
   ,
 }
 ,
@@ -100,12 +84,8 @@
         max: 1.0,
         step: 0.1,
         displayOptions:
-  {
-    show: {
       provider: ['openai', 'anthropic', 'google'],
-    }
     ,
-  }
   ,
 }
 ,
@@ -120,12 +100,8 @@
         max: 2.0,
         step: 0.1,
         displayOptions:
-  {
-    show: {
       provider: ['openai'],
-    }
     ,
-  }
   ,
 }
 ,

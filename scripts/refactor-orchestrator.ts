@@ -1,15 +1,15 @@
 #!/usr/bin/env ts-node
 
-import * as fs from 'fs';
-import * as path from 'path';
-import { promisify } from 'util';
-import { exec } from 'child_process';
-import * as glob from 'glob';
-import * as ts from 'typescript';
 import chalk from 'chalk';
+import { exec } from 'child_process';
+import * as fs from 'fs';
+import * as glob from 'glob';
 import ora from 'ora';
-import { Worker } from 'worker_threads';
 import PQueue from 'p-queue';
+import * as path from 'path';
+import * as ts from 'typescript';
+import { promisify } from 'util';
+import { Worker } from 'worker_threads';
 
 const execAsync = promisify(exec);
 const readFileAsync = promisify(fs.readFile);
@@ -769,4 +769,4 @@ if (require.main === module) {
   main().catch(console.error);
 }
 
-export { RefactorOrchestrator, RefactorConfig };
+export { RefactorOrchestrator, type RefactorConfig };

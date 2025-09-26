@@ -4,10 +4,10 @@ description?: string;
 placeholder?: string;
 default?: unknown
 required?: boolean
-noDataExpression?: boolean;
+noDataExpression?: boolean
 
 // Options for select/multiSelect types
-options?: PropertyOption[];
+options?: PropertyOption[]
 
 // For credential selection
 credentialTypes?: string[];

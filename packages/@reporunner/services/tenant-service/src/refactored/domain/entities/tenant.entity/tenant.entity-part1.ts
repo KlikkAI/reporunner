@@ -1,19 +1,19 @@
 import { v4 as uuidv4 } from 'uuid';
-import { TenantPlan } from '../value-objects/tenant-plan.vo';
-import { BillingInfo } from '../value-objects/billing-info.vo';
-import { SSOConfig } from '../value-objects/sso-config.vo';
-import { TenantSettings } from '../value-objects/tenant-settings.vo';
-import { TenantCreatedEvent } from '../events/tenant-created.event';
-import { TenantUpdatedEvent } from '../events/tenant-updated.event';
-import { PlanChangedEvent } from '../events/plan-changed.event';
-import { TenantSuspendedEvent } from '../events/tenant-suspended.event';
-import { DomainEvent } from '../base/domain-event';
 import { AggregateRoot } from '../base/aggregate-root';
+import { DomainEvent } from '../base/domain-event';
 import { TenantStatus } from '../enums/tenant-status.enum';
+import { PlanChangedEvent } from '../events/plan-changed.event';
+import { TenantCreatedEvent } from '../events/tenant-created.event';
+import { TenantSuspendedEvent } from '../events/tenant-suspended.event';
+import { TenantUpdatedEvent } from '../events/tenant-updated.event';
 import {
   InvalidTenantStateException,
   TenantLimitExceededException,
 } from '../exceptions/tenant.exceptions';
+import type { BillingInfo } from '../value-objects/billing-info.vo';
+import type { SSOConfig } from '../value-objects/sso-config.vo';
+import type { TenantPlan } from '../value-objects/tenant-plan.vo';
+import type { TenantSettings } from '../value-objects/tenant-settings.vo';
 
 export interface TenantProps {
   id?: string;

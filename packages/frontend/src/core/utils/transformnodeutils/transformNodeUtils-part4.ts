@@ -67,10 +67,10 @@ class TransformPerformanceUtils {
 
 // Export all utilities
 export {
-  TransformTypeValidator,
-  NestedObjectUtils,
-  InputFieldManager,
-  TransformExpressionEvaluator,
-  ConfigurationValidator,
+  type TransformTypeValidator,
+  type NestedObjectUtils,
+  type InputFieldManager,
+  type TransformExpressionEvaluator,
+  type ConfigurationValidator,
   TransformPerformanceUtils,
 };

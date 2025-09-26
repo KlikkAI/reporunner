@@ -26,7 +26,8 @@ it('should fail with incorrect current password', async () =>
 }
 )
 
-it('should fail without authentication', async () => {
+it('should fail without authentication', async () =>
+{
   const response = await request(app)
     .put('/auth/change-password')
     .send({
@@ -41,9 +42,11 @@ it('should fail without authentication', async () => {
       message: 'Access token is required',
     })
   );
-});
+}
+)
 
-it('should fail with weak new password', async () => {
+it('should fail with weak new password', async () =>
+{
   const testUser = await testUtils.createTestUser({
     password: await bcrypt.hash('currentpass', 10),
   });
@@ -65,7 +68,8 @@ it('should fail with weak new password', async () => {
       message: expect.stringMatching(/Validation failed|validation/i),
     })
   );
-});
+}
+)
 })
 
 describe('Authentication Flow Integration', () =>

@@ -1,9 +1,7 @@
 value: 'sentence-transformers/all-MiniLM-L6-v2', displayOptions;
 :
 {
-  show: {
-    provider: ['huggingface', 'local'],
-  }
+  provider: ['huggingface', 'local'],
   ,
 }
 ,
@@ -12,12 +10,8 @@ value: 'sentence-transformers/all-MiniLM-L6-v2', displayOptions;
   name: 'all-mpnet-base-v2', value;
   : 'sentence-transformers/all-mpnet-base-v2',
             displayOptions:
-  {
-    show: {
       provider: ['huggingface', 'local'],
-    }
     ,
-  }
   ,
 }
 ,
@@ -25,12 +19,8 @@ value: 'sentence-transformers/all-MiniLM-L6-v2', displayOptions;
   name: 'embed-english-v3.0', value;
   : 'embed-english-v3.0',
             displayOptions:
-  {
-    show: {
       provider: ['cohere'],
-    }
     ,
-  }
   ,
 }
 ,
@@ -81,13 +71,9 @@ value: 'sentence-transformers/all-MiniLM-L6-v2', displayOptions;
         min: 1,
         max: 3072,
         displayOptions:
-  {
-    show: {
-      provider: ['openai'], model;
-      : ['text-embedding-3-small', 'text-embedding-3-large'],
-    }
+      provider: ['openai'], model
+  : ['text-embedding-3-small', 'text-embedding-3-large'],
     ,
-  }
   ,
         description: 'Number of dimensions for the embedding (OpenAI v3 models only)',
 }

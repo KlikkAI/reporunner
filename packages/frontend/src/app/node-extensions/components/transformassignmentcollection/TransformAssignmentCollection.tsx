@@ -1,8 +1,8 @@
-import { useMemo } from './hooks/useMemo';
 import { useCallback } from './hooks/useCallback';
-import { useSortable } from './hooks/useSortable';
-import { useSensors } from './hooks/useSensors';
+import { useMemo } from './hooks/useMemo';
 import { useSensor } from './hooks/useSensor';
+import { useSensors } from './hooks/useSensors';
+import { useSortable } from './hooks/useSortable';
 /**
  * Enhanced Assignment Collection Component for Transform Node
  * Provides drag & drop reordering and bulk operations similar to n8n's EditFields

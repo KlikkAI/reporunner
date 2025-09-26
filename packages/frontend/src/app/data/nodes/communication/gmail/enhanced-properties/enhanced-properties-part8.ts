@@ -1,4 +1,4 @@
-show: {
+{
   resource: ['label'],
 }
 ,
@@ -33,13 +33,9 @@ show: {
   : 'The ID of the label',
     required: true,
     displayOptions:
-  {
-    show: {
-      resource: ['label'], operation;
-      : ['delete', 'get'],
-    }
+      resource: ['label'], operation
+  : ['delete', 'get'],
     ,
-  }
   ,
 }
 ,
@@ -50,13 +46,9 @@ show: {
   : 'Name for the new label',
     required: true,
     displayOptions:
-  {
-    show: {
-      resource: ['label'], operation;
-      : ['create'],
-    }
+      resource: ['label'], operation
+  : ['create'],
     ,
-  }
   ,
 }
 ,

@@ -14,17 +14,21 @@ worker.on('completed', (job) =>
 }
 )
 
-worker.on('failed', (job, error) => {
+worker.on('failed', (job, error) =>
+{
   this.logger.error('Workflow job failed', {
     jobId: job?.id,
     executionId: job?.data.executionId,
     error: error.message,
   });
-});
+}
+)
 
-worker.on('stalled', (jobId) => {
+worker.on('stalled', (jobId) =>
+{
   this.logger.warn('Workflow job stalled', { jobId });
-});
+}
+)
 
 this.workers.push(worker);
 }

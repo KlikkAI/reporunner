@@ -2,7 +2,7 @@ import { EventEmitter } from 'node:events';
 import type { AxiosInstance } from 'axios';
 import type { OAuth2Handler } from '../auth/oauth2-handler';
 import type { CredentialManager } from '../security/credential-manager';
-import { WebhookManager } from '../webhook/webhook-manager';
+import type { WebhookManager } from '../webhook/webhook-manager';
 
 export interface IntegrationConfig {
   name: string;

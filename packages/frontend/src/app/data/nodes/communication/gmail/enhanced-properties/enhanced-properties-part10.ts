@@ -10,12 +10,8 @@ resource: ['email'], operation;
   : 'Prefix for downloaded attachment filenames',
     placeholder: 'gmail_',
     displayOptions:
-  {
-    show: {
       downloadAttachments: [true],
-    }
     ,
-  }
   ,
 }
 ,
@@ -30,12 +26,8 @@ resource: ['email'], operation;
     min: 1,
     max: 500,
     displayOptions:
-  {
-    show: {
       operation: ['getAll', 'messageReceived'],
-    }
     ,
-  }
   ,
 }
 ,
@@ -48,30 +40,20 @@ resource: ['email'], operation;
   : 'Format of the email content',
     default: 'text',
     options: [
-  {
-    name: 'Text', value;
-    : 'text'
-  }
+    name: 'Text', value
+  : 'text'
   ,
-  {
-    name: 'HTML', value;
-    : 'html'
-  }
+    name: 'HTML', value
+  : 'html'
   ,
-  {
-    name: 'Both', value;
-    : 'both'
-  }
+    name: 'Both', value
+  : 'both'
   ,
     ],
     displayOptions:
-  {
-    show: {
-      resource: ['email'], operation;
-      : ['send', 'reply', 'forward'],
-    }
+      resource: ['email'], operation
+  : ['send', 'reply', 'forward'],
     ,
-  }
   ,
 }
 ,
@@ -83,53 +65,37 @@ resource: ['email'], operation;
   type: 'fixedCollection', description;
   : 'Files to attach to the email',
     typeOptions:
-  {
-    multipleValues: true, multipleValueButtonText;
-    : 'Add Attachment',
-  }
+    multipleValues: true, multipleValueButtonText
+  : 'Add Attachment',
   ,
     displayOptions:
-  {
-    show: {
-      resource: ['email', 'draft'], operation;
-      : ['send', 'reply', 'forward', 'create'],
-    }
+      resource: ['email', 'draft'], operation
+  : ['send', 'reply', 'forward', 'create'],
     ,
-  }
   ,
     values: [
-  {
-    name: 'type', displayName;
-    : 'Type',
-    type: 'select', required;
-    : true,
+    name: 'type', displayName
+  : 'Type',
+  type: 'select', required;
+  : true,
         default: 'binary',
         options: [
-    {
-      name: 'Binary Data', value;
-      : 'binary'
-    }
+      name: 'Binary Data', value
+  : 'binary'
     ,
-    {
-      name: 'File Path', value;
-      : 'path'
-    }
+      name: 'File Path', value
+  : 'path'
     ,
-    {
-      name: 'URL', value;
-      : 'url'
-    }
+      name: 'URL', value
+  : 'url'
     ,
         ],
-  }
   ,
-  {
-    name: 'fileName', displayName;
-    : 'File Name',
-    type: 'string', required;
-    : true,
+    name: 'fileName', displayName
+  : 'File Name',
+  type: 'string', required;
+  : true,
         placeholder: 'document.pdf',
-  }
   ,
     ],
 }

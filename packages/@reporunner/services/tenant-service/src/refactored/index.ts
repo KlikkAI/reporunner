@@ -1,21 +1,21 @@
-import express, { Application } from 'express';
-import { Server } from 'http';
-import helmet from 'helmet';
-import cors from 'cors';
 import compression from 'compression';
+import cors from 'cors';
+import express, { type Application } from 'express';
+import helmet from 'helmet';
+import type { Server } from 'http';
 import { ServiceConfig } from './config/service.config';
-import { DatabaseConnection } from './infrastructure/database/connection';
 import { RedisCache } from './infrastructure/cache/redis-cache';
+import { DatabaseConnection } from './infrastructure/database/connection';
+import { ServiceRegistry } from './infrastructure/discovery/service-registry';
 import { EventBusAdapter } from './infrastructure/events/event-bus.adapter';
-import { TenantRouter } from './presentation/routes/tenant.routes';
-import { MemberRouter } from './presentation/routes/member.routes';
-import { InvitationRouter } from './presentation/routes/invitation.routes';
-import { HealthRouter } from './presentation/routes/health.routes';
+import { MetricsCollector } from './infrastructure/monitoring/metrics.collector';
+import { QueueManager } from './infrastructure/queue/queue.manager';
 import { ErrorMiddleware } from './presentation/middleware/error.middleware';
 import { LoggingMiddleware } from './presentation/middleware/logging.middleware';
-import { MetricsCollector } from './infrastructure/monitoring/metrics.collector';
-import { ServiceRegistry } from './infrastructure/discovery/service-registry';
-import { QueueManager } from './infrastructure/queue/queue.manager';
+import { HealthRouter } from './presentation/routes/health.routes';
+import { InvitationRouter } from './presentation/routes/invitation.routes';
+import { MemberRouter } from './presentation/routes/member.routes';
+import { TenantRouter } from './presentation/routes/tenant.routes';
 import { logger } from './shared/utils/logger';
 
 export class TenantServiceBootstrap {

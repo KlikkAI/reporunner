@@ -1,4 +1,4 @@
-show: {
+{
   actionType: ['http'], method;
   : ['POST', 'PUT', 'PATCH'],
 }
@@ -12,12 +12,8 @@ show: {
   default: '{{$json}}',
         description: 'Expression to transform the data',
         displayOptions:
-  {
-    show: {
       actionType: ['transform'],
-    }
     ,
-  }
   ,
 }
 ,
@@ -28,12 +24,8 @@ show: {
   default: 'myVariable',
         description: 'Name of the variable to set',
         displayOptions:
-  {
-    show: {
       actionType: ['set'],
-    }
     ,
-  }
   ,
 }
 ,
@@ -44,12 +36,8 @@ show: {
   default: '{{$json}}',
         description: 'Value to set for the variable',
         displayOptions:
-  {
-    show: {
       actionType: ['set'],
-    }
     ,
-  }
   ,
 }
 ,

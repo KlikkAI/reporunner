@@ -28,12 +28,8 @@
   type: 'string',
   default: 'embedding',
         displayOptions:
-  {
-    show: {
       operation: ['upsert', 'query'],
-    }
     ,
-  }
   ,
         description: 'Field containing the vector embedding',
         placeholder: 'embedding, vector, embeddings',
@@ -45,12 +41,8 @@
   type: 'string',
   default: 'id',
         displayOptions:
-  {
-    show: {
       operation: ['upsert', 'delete', 'get'],
-    }
     ,
-  }
   ,
         description: 'Field containing the vector ID',
         placeholder: 'id, _id, doc_id',
@@ -62,12 +54,8 @@
   type: 'string',
   default: '',
         displayOptions:
-  {
-    show: {
       operation: ['upsert'],
-    }
     ,
-  }
   ,
         description: 'Fields to store as metadata (comma-separated)',
         placeholder: 'title, content, category, timestamp',
@@ -79,12 +67,8 @@
   type: 'string',
   default: 'embedding',
         displayOptions:
-  {
-    show: {
       operation: ['query'],
-    }
     ,
-  }
   ,
         description: 'Field containing the query vector or raw query text',
         placeholder: 'embedding, query_vector, search_text',
@@ -98,12 +82,8 @@
         min: 1,
         max: 100,
         displayOptions:
-  {
-    show: {
       operation: ['query'],
-    }
     ,
-  }
   ,
         description: 'Number of similar vectors to return',
 }
@@ -115,9 +95,6 @@
         default: 0.0,
         min: 0,
         max: 1,
-        displayOptions: {
-          show: {
-            operation: ['query'],
-          },
-        },
+        displayOptions: 
+            operation: ['query'],,,
         description: 'Minimum similarity score threshold',

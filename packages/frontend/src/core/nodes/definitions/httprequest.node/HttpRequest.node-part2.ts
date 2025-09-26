@@ -9,21 +9,17 @@ authentication: ['apiKey'],
   default: [],
         description: 'HTTP headers to send',
         values: [
-  {
-    displayName: 'Name', name;
-    : 'name',
-    type: 'string',
-    default: '',
+    displayName: 'Name', name
+  : 'name',
+  type: 'string',
+  default: '',
             description: 'Header name',
-  }
   ,
-  {
-    displayName: 'Value', name;
-    : 'value',
-    type: 'expression',
-    default: '',
+    displayName: 'Value', name
+  : 'value',
+  type: 'expression',
+  default: '',
             description: 'Header value',
-  }
   ,
         ],
 }
@@ -35,12 +31,8 @@ authentication: ['apiKey'],
   default: '{}',
         description: 'Request body as JSON',
         displayOptions:
-  {
-    show: {
       method: ['POST', 'PUT', 'PATCH'],
-    }
     ,
-  }
   ,
 }
 ,
@@ -61,20 +53,14 @@ authentication: ['apiKey'],
   default: 'json',
         description: 'How to parse the response',
         options: [
-  {
-    name: 'JSON', value;
-    : 'json'
-  }
+    name: 'JSON', value
+  : 'json'
   ,
-  {
-    name: 'Text', value;
-    : 'text'
-  }
+    name: 'Text', value
+  : 'text'
   ,
-  {
-    name: 'Binary', value;
-    : 'binary'
-  }
+    name: 'Binary', value
+  : 'binary'
   ,
         ],
 }

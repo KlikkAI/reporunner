@@ -105,7 +105,7 @@ performEvaluation(property: EnhancedNodeProperty)
     const currentValue = this.formState[property.name];
 
     // Start with default evaluation
-    let evaluation: EnhancedPropertyEvaluation = {
+    const evaluation: EnhancedPropertyEvaluation = {
       visible: true,
       disabled: false,
       required: property.required || false,

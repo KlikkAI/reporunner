@@ -1,4 +1,4 @@
-import type { Response, NextFunction } from 'express';
+import type { NextFunction, Response } from 'express';
 import type { AuthenticatedRequest } from './jwt-middleware';
 
 export interface Permission {
@@ -27,20 +27,21 @@ export function createRBACMiddleware(config: RBACConfig) {
         }
 
         const userRoleIds = await config.getUserRoles(req.userId);
-        const userRoles = config.roles.filter(role => userRoleIds.includes(role.id));
+        const userRoles = config.roles.filter((role) => userRoleIds.includes(role.id));
 
-        const hasPermission = userRoles.some(role =>
-          role.permissions.some(perm =>
-            perm.resource === permission.resource &&
-            perm.action === permission.action &&
-            (!permission.scope || perm.scope === permission.scope || perm.scope === 'all')
+        const hasPermission = userRoles.some((role) =>
+          role.permissions.some(
+            (perm) =>
+              perm.resource === permission.resource &&
+              perm.action === permission.action &&
+              (!permission.scope || perm.scope === permission.scope || perm.scope === 'all')
           )
         );
 
         if (!hasPermission) {
-          return res.status(403).json({ 
+          return res.status(403).json({
             error: 'Insufficient permissions',
-            required: permission
+            required: permission,
           });
         }
 
@@ -61,13 +62,13 @@ export function createRoleMiddleware(config: RBACConfig) {
         }
 
         const userRoleIds = await config.getUserRoles(req.userId);
-        const userRoles = config.roles.filter(role => userRoleIds.includes(role.id));
-        const hasRequiredRole = userRoles.some(role => roleNames.includes(role.name));
+        const userRoles = config.roles.filter((role) => userRoleIds.includes(role.id));
+        const hasRequiredRole = userRoles.some((role) => roleNames.includes(role.name));
 
         if (!hasRequiredRole) {
-          return res.status(403).json({ 
+          return res.status(403).json({
             error: 'Insufficient role',
-            required: roleNames
+            required: roleNames,
           });
         }
 

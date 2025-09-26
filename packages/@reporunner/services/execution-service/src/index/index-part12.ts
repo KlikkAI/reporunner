@@ -14,7 +14,7 @@ class TransformNodeExecutor implements NodeExecutor {
     const transformation = node.data.transformation || {};
 
     // Apply simple transformations
-    let transformed = { ...input };
+    const transformed = { ...input };
 
     if (transformation.mapping) {
       for (const [from, to] of Object.entries(transformation.mapping)) {

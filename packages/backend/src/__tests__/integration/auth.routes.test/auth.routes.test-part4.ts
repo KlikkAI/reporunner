@@ -28,7 +28,8 @@ it('should fail with expired token', async () =>
 }
 )
 
-it('should fail when user no longer exists', async () => {
+it('should fail when user no longer exists', async () =>
+{
   // Create and then delete user
   const testUser = await testUtils.createTestUser();
   const token = await testUtils.generateTestToken(testUser._id.toString());
@@ -45,7 +46,8 @@ it('should fail when user no longer exists', async () => {
       message: 'Invalid token',
     })
   );
-});
+}
+)
 })
 
 describe('GET /auth/me', () =>
@@ -77,7 +79,8 @@ describe('GET /auth/me', () =>
 }
 )
 
-describe('POST /auth/refresh', () => {
+describe('POST /auth/refresh', () =>
+{
     it('should refresh token successfully', async () => {
       // Create test user
       const testUser = await testUtils.createTestUser({ isActive: true });

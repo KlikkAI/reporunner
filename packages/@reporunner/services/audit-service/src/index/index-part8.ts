@@ -53,18 +53,20 @@ checkRuleViolation(rule: ComplianceRule, event: AuditEvent)
           return eventValue === condition.value;
         case 'not_equals':
           return eventValue !== condition.value;
-        case 'contains':
+        case 'contains': {
           const containsValue = String(eventValue);
           const searchValue = String(condition.value);
           return condition.case_sensitive ?
             containsValue.includes(searchValue) :
             containsValue.toLowerCase().includes(searchValue.toLowerCase());
-        case 'not_contains':
+        }
+        case 'not_contains': {
           const notContainsValue = String(eventValue);
           const notSearchValue = String(condition.value);
           return condition.case_sensitive ?
             !notContainsValue.includes(notSearchValue) :
             !notContainsValue.toLowerCase().includes(notSearchValue.toLowerCase());
+        }
         case 'greater_than':
           return Number(eventValue) > Number(condition.value);
         case 'less_than':

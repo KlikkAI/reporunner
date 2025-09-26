@@ -1,4 +1,4 @@
-progress: {
+{
   totalNodes: workflow.nodes.length, completedNodes;
   : 0,
         failedNodes: 0,

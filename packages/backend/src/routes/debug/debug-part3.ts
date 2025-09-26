@@ -1,4 +1,4 @@
-data: {
+{
   session;
 }
 ,
@@ -30,7 +30,8 @@ router.get('/debug/sessions/:sessionId/export', (req, res) =>
 )
 
 // Performance Profiling Routes
-router.post('/debug/profiling/start', (req, res) => {
+router.post('/debug/profiling/start', (req, res) =>
+{
   const { name, sampleInterval, duration } = req.body;
 
   if (!name) {
@@ -50,9 +51,11 @@ router.post('/debug/profiling/start', (req, res) => {
     success: true,
     data: { profileId },
   });
-});
+}
+)
 
-router.post('/debug/profiling/:profileId/stop', (req, res) => {
+router.post('/debug/profiling/:profileId/stop', (req, res) =>
+{
   const { profileId } = req.params;
   const profile = debugTools.stopProfiling(profileId);
 
@@ -68,7 +71,8 @@ router.post('/debug/profiling/:profileId/stop', (req, res) => {
     success: true,
     data: { profile },
   });
-});
+}
+)
 
 // Memory Analysis Routes
 router.post('/debug/memory/snapshot', (req, res) => {

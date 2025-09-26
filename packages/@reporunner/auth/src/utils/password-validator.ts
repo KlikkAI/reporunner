@@ -217,7 +217,7 @@ export class PasswordValidator {
     const lowercase = 'abcdefghijklmnopqrstuvwxyz';
     const numbers = '0123456789';
     const special = '!@#$%^&*()_+-=[]{}|;:,.<>?';
-    
+
     const allChars = uppercase + lowercase + numbers + special;
     let password = '';
 

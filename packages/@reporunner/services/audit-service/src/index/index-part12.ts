@@ -124,4 +124,4 @@ getComplianceScores(events: AuditEvent[])
 
     for (const standard of standards) {
       const rules = await this.getComplianceRules(standard);
-      let violations = 0;
+      const violations = 0;

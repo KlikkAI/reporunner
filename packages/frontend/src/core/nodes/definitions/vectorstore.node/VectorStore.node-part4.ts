@@ -4,13 +4,11 @@
           // Mock upsert operation
           results.push(
 {
-  json: {
-    operation: 'upsert', provider, indexName, vectorsProcessed;
-    : processedVectors.length,
+  operation: 'upsert', provider, indexName, vectorsProcessed;
+  : processedVectors.length,
               batchNumber: Math.floor(i / batchSize) + 1,
               vectors: processedVectors,
               timestamp: new Date().toISOString(),
-  }
   ,
 }
 )

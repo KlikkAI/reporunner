@@ -86,7 +86,7 @@ export function createRateLimitMiddleware(
       // Track response for conditional consuming
       if (skipSuccessfulRequests || skipFailedRequests) {
         const originalSend = res.send;
-        res.send = function (data: any) {
+        res.send = (data: any) => {
           const statusCode = res.statusCode;
 
           // Refund points based on response status

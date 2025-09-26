@@ -14,9 +14,7 @@ severity: 'high', automatable;
       severity: 'medium',
       automatable: true,
       estimatedImpact:
-  {
-    errorReduction: 40;
-  }
+    errorReduction: 40
   ,
 }
 ,
@@ -28,10 +26,8 @@ severity: 'high', automatable;
       severity: 'medium',
       automatable: true,
       estimatedImpact:
-  {
-    executionTime: 20, costSaving;
-    : 15
-  }
+    executionTime: 20, costSaving
+  : 15
   ,
 }
 ,
@@ -43,10 +39,8 @@ severity: 'high', automatable;
       severity: 'medium',
       automatable: false,
       estimatedImpact:
-  {
-    executionTime: 25, costSaving;
-    : 30
-  }
+    executionTime: 25, costSaving
+  : 30
   ,
 }
 ,
@@ -58,8 +52,6 @@ severity: 'high', automatable;
       severity: 'critical',
       automatable: false,
       estimatedImpact:
-  {
-  }
   ,
 }
 ,
@@ -71,9 +63,7 @@ severity: 'high', automatable;
       severity: 'low',
       automatable: false,
       estimatedImpact:
-  {
-    maintainability: 40;
-  }
+    maintainability: 40
   ,
 }
 ,
@@ -85,9 +75,7 @@ severity: 'high', automatable;
       severity: 'medium',
       automatable: true,
       estimatedImpact:
-  {
-    executionTime: 15;
-  }
+    executionTime: 15
   ,
 }
 ,

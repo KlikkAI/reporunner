@@ -64,7 +64,7 @@ export abstract class OAuthProvider {
     }
 
     const data = await response.json();
-    
+
     return {
       accessToken: data.access_token,
       refreshToken: data.refresh_token,

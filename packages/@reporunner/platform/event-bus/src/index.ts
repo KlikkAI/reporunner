@@ -1,4 +1,5 @@
-export interface Event {
+// Simple in-memory event bus for local/development use
+export interface LocalEvent {
   id: string;
   type: string;
   source: string;
@@ -7,23 +8,23 @@ export interface Event {
   metadata?: Record<string, any>;
 }
 
-export interface EventHandler {
-  handle(event: Event): Promise<void>;
+export interface LocalEventHandler {
+  handle(event: LocalEvent): Promise<void>;
 }
 
-export interface EventSubscription {
+export interface LocalEventSubscription {
   id: string;
   eventType: string;
-  handler: EventHandler;
-  filter?: (event: Event) => boolean;
+  handler: LocalEventHandler;
+  filter?: (event: LocalEvent) => boolean;
 }
 
-export class EventBus {
-  private subscriptions = new Map<string, EventSubscription[]>();
-  private eventHistory: Event[] = [];
+export class LocalEventBus {
+  private subscriptions = new Map<string, LocalEventSubscription[]>();
+  private eventHistory: LocalEvent[] = [];
 
-  async publish(event: Omit<Event, 'id' | 'timestamp'>): Promise<void> {
-    const fullEvent: Event = {
+  async publish(event: Omit<LocalEvent, 'id' | 'timestamp'>): Promise<void> {
+    const fullEvent: LocalEvent = {
       ...event,
       id: this.generateId(),
       timestamp: new Date(),
@@ -39,8 +40,8 @@ export class EventBus {
     );
   }
 
-  subscribe(eventType: string, handler: EventHandler, filter?: (event: Event) => boolean): string {
-    const subscription: EventSubscription = {
+  subscribe(eventType: string, handler: LocalEventHandler, filter?: (event: LocalEvent) => boolean): string {
+    const subscription: LocalEventSubscription = {
       id: this.generateId(),
       eventType,
       handler,
@@ -71,5 +72,9 @@ export class EventBus {
   }
 }
 
+// Export distributed event bus for production use
+export * from './distributed-event-bus';
+
+// Export handlers and middleware
 export * from './handlers';
 export * from './middleware';

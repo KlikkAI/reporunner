@@ -35,7 +35,8 @@ router.post('/debug/config/debug-mode', (req, res) =>
 }
 )
 
-router.post('/debug/config/log-level', (req, res) => {
+router.post('/debug/config/log-level', (req, res) =>
+{
   const { level } = req.body;
 
   const validLevels = ['error', 'warn', 'info', 'http', 'verbose', 'debug', 'silly'];
@@ -53,10 +54,12 @@ router.post('/debug/config/log-level', (req, res) => {
     success: true,
     message: `Log level set to ${level}`,
   });
-});
+}
+)
 
 // State Dump Routes
-router.get('/debug/state', (req, res) => {
+router.get('/debug/state', (req, res) =>
+{
   const { sessionId } = req.query;
   const state = debugTools.dumpState(sessionId as string);
 
@@ -64,7 +67,8 @@ router.get('/debug/state', (req, res) => {
     success: true,
     data: state,
   });
-});
+}
+)
 
 // Test Error Generation (for testing error tracking)
 router.post('/debug/test/error', (req, res) => {

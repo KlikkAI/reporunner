@@ -52,44 +52,31 @@ type: String, select;
       type: String,
       enum: ['google', 'microsoft', 'okta', 'auth0'],
     },
-    ssoId: {
-      type: String,
-    },
-    preferences: {
-      language: {
+    ssoId: 
+      type: String,,
+    preferences: 
         type: String,
-        default: 'en',
-      },
-      timezone: {
+        default: 'en',,
+      timezone: 
         type: String,
-        default: 'UTC',
-      },
-      theme: {
+        default: 'UTC',,
+      theme: 
         type: String,
         enum: ['light', 'dark', 'system'],
         default: 'system',
       },
-      notifications: {
-        email: {
+      notifications: 
           type: Boolean,
-          default: true,
-        },
-        push: {
+          default: true,,
+        push: 
           type: Boolean,
-          default: true,
-        },
-        workflow: {
+          default: true,,
+        workflow: 
           type: Boolean,
-          default: true,
-        },
-      },
-    },
-  },
-  {
+          default: true,,,,,
     timestamps: true,
-    toJSON: { virtuals: true },
-    toObject: { virtuals: true },
-  }
+    toJSON: virtuals: true ,
+    toObject: virtuals: true ,
 );
 
 // Virtual for full name

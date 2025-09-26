@@ -1,14 +1,14 @@
 #!/usr/bin/env ts-node
 
-import * as fs from 'fs';
-import * as path from 'path';
-import { promisify } from 'util';
-import { exec } from 'child_process';
-import * as glob from 'glob';
-import * as ts from 'typescript';
 import chalk from 'chalk';
+import { exec } from 'child_process';
+import * as fs from 'fs';
+import * as glob from 'glob';
 import ora from 'ora';
 import PQueue from 'p-queue';
+import * as path from 'path';
+import * as ts from 'typescript';
+import { promisify } from 'util';
 
 const execAsync = promisify(exec);
 const readFileAsync = promisify(fs.readFile);
@@ -870,4 +870,4 @@ if (require.main === module) {
   main().catch(console.error);
 }
 
-export { ComprehensiveRefactorer, RefactoringConfig };
+export { ComprehensiveRefactorer, type RefactoringConfig };

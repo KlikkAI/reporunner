@@ -68,7 +68,8 @@ describe('register', () =>
 }
 )
 
-describe('getProfile', () => {
+describe('getProfile', () =>
+{
     it('should return user profile for authenticated user', async () => {
       // Create test user
       const testUser = await testUtils.createTestUser();

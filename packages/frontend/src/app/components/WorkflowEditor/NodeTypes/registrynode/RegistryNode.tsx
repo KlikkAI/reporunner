@@ -1,10 +1,3 @@
-import { useLeave } from './hooks/useLeave';
-import { useEnter } from './hooks/useEnter';
-import { useEvent } from './hooks/useEvent';
-import { useSmartMenuPosition } from './hooks/useSmartMenuPosition';
-import { useState } from './hooks/useState';
-import { useRef } from './hooks/useRef';
-import { useMemo } from './hooks/useMemo';
 import type React from 'react';
 import { memo, useMemo, useRef, useState } from 'react';
 import type { NodeProps } from 'reactflow';
@@ -13,6 +6,13 @@ import { getCustomBodyComponent } from '@/app/node-extensions/nodeUiRegistry';
 import { nodeRegistry, type WorkflowNodeInstance } from '@/core';
 import { useSmartMenuPosition } from '../../../hooks/useSmartMenuPosition';
 import NodeToolbar from './BaseNode/NodeToolbar';
+import { useEnter } from './hooks/useEnter';
+import { useEvent } from './hooks/useEvent';
+import { useLeave } from './hooks/useLeave';
+import { useMemo } from './hooks/useMemo';
+import { useRef } from './hooks/useRef';
+import { useSmartMenuPosition } from './hooks/useSmartMenuPosition';
+import { useState } from './hooks/useState';
 
 interface RegistryNodeData extends WorkflowNodeInstance {
   onDelete?: () => void;

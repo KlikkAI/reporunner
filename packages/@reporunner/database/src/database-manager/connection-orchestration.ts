@@ -96,23 +96,17 @@ async;
 getStats();
 : Promise<
 {
-  mongodb: {
-    collections: number;
-    documents: number;
-    dataSize: number;
-    indexSize: number;
-  }
-  postgresql: {
-    tables: number;
-    rows: number;
-    dataSize: number;
-    indexSize: number;
-  }
-  redis: {
-    keys: number;
-    memory: number;
-    connections: number;
-  }
+  collections: number;
+  documents: number;
+  dataSize: number;
+  indexSize: number;
+  tables: number;
+  rows: number;
+  dataSize: number;
+  indexSize: number;
+  keys: number;
+  memory: number;
+  connections: number;
 }
 >
 {

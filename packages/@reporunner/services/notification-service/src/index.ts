@@ -1,10 +1,10 @@
-import { MongoClient, Db, Collection } from 'mongodb';
-import { Redis } from 'ioredis';
-import { Queue, Worker, Job } from 'bullmq';
-import { EventEmitter } from 'events';
-import { v4 as uuidv4 } from 'uuid';
+import type { DistributedEventBus } from '@reporunner/platform/event-bus';
 import { logger } from '@reporunner/shared/logger';
-import { DistributedEventBus } from '@reporunner/platform/event-bus';
+import { type Job, Queue, Worker } from 'bullmq';
+import { EventEmitter } from 'events';
+import { Redis } from 'ioredis';
+import type { Collection, Db, MongoClient } from 'mongodb';
+import { v4 as uuidv4 } from 'uuid';
 
 export interface NotificationConfig {
   mongodb: {

@@ -15,16 +15,14 @@ this.executionWorker = new Worker<ExecutionJobData>(
   connection: config.redis, concurrency;
   : config.maxConcurrentExecutions,
     limiter:
-  {
-    max: config.maxConcurrentExecutions, duration;
-    : 1000,
-  }
+    max: config.maxConcurrentExecutions, duration
+  : 1000,
   ,
 }
 )
 
-this.initializeIndexes();
-this.setupWorkerEvents();
+this.initializeIndexes()
+this.setupWorkerEvents()
 this.setupEventSubscriptions();
 this.registerNodeExecutors();
 }

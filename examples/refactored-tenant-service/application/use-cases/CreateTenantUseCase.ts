@@ -1,16 +1,16 @@
 import { BaseUseCase } from '../../../../shared/base/BaseUseCase';
-import { CreateTenantRequest } from '../dto/CreateTenantRequest.dto';
-import { TenantResponse } from '../dto/TenantResponse.dto';
+import type { IEventBus } from '../../../shared/types/IEventBus';
+import type { ILogger } from '../../../shared/types/ILogger';
 import { Tenant } from '../../domain/entities/Tenant.entity';
 import { TenantPlan } from '../../domain/value-objects/TenantPlan.vo';
-import { ITenantRepository } from '../interfaces/ITenantRepository';
-import { IEventBus } from '../../../shared/types/IEventBus';
-import { ILogger } from '../../../shared/types/ILogger';
 import {
-  SubdomainAlreadyExistsError,
   InvalidTenantDataError,
+  SubdomainAlreadyExistsError,
   TenantCreationError,
 } from '../../shared/exceptions/tenant.exceptions';
+import type { CreateTenantRequest } from '../dto/CreateTenantRequest.dto';
+import { TenantResponse } from '../dto/TenantResponse.dto';
+import type { ITenantRepository } from '../interfaces/ITenantRepository';
 import { CreateTenantRequestValidator } from '../validators/CreateTenantRequestValidator';
 
 /**

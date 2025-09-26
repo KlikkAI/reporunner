@@ -13,26 +13,18 @@
 ,
     metadata:
 {
-  version: {
-    type: Number, required;
-    : true
-  }
+  type: Number, required;
+  : true
   ,
       environment:
-  {
-    type: String,
-    default: process.env.NODE_ENV || 'development',
-  }
+  type: String,
+  default: process.env.NODE_ENV || 'development',
   ,
       userAgent:
-  {
-    type: String;
-  }
+  type: String;
   ,
       ipAddress:
-  {
-    type: String;
-  }
+  type: String;
   ,
 }
 ,
@@ -40,14 +32,10 @@
 {
   timestamps: true, toJSON;
   :
-  {
-    virtuals: true;
-  }
+    virtuals: true
   ,
     toObject:
-  {
-    virtuals: true;
-  }
+    virtuals: true
   ,
 }
 )
@@ -59,8 +47,17 @@ executionSchema.index(
   : -1
 }
 )
-executionSchema.index({ userId: 1, startTime: -1 });
-executionSchema.index({ status: 1 });
+executionSchema.index(
+{
+  userId: 1, startTime;
+  : -1
+}
+)
+executionSchema.index(
+{
+  status: 1;
+}
+)
 executionSchema.index({ triggerType: 1 });
 executionSchema.index({ startTime: -1 });
 

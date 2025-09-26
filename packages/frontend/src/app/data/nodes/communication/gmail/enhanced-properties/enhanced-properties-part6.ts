@@ -20,13 +20,9 @@ description: 'Comma-separated list of input binary property names', placeholder;
   : 'Reply-to email address (if different from sender)',
     placeholder: 'replyto@example.com',
     displayOptions:
-  {
-    show: {
-      resource: ['email'], operation;
-      : ['send', 'reply', 'forward'],
-    }
+      resource: ['email'], operation
+  : ['send', 'reply', 'forward'],
     ,
-  }
   ,
 }
 ,
@@ -39,44 +35,28 @@ description: 'Comma-separated list of input binary property names', placeholder;
   : 'Quick date range presets for filtering',
     default: '',
     displayOptions:
-  {
-    show: {
-      resource: ['email'], operation;
-      : ['messageReceived', 'getAll'],
-    }
+      resource: ['email'], operation
+  : ['messageReceived', 'getAll'],
     ,
-  }
   ,
     options: [
-  {
-    name: 'All Time', value;
-    : ''
-  }
+    name: 'All Time', value
+  : ''
   ,
-  {
-    name: 'Last 24 hours', value;
-    : '1d'
-  }
+    name: 'Last 24 hours', value
+  : '1d'
   ,
-  {
-    name: 'Last 7 days', value;
-    : '7d'
-  }
+    name: 'Last 7 days', value
+  : '7d'
   ,
-  {
-    name: 'Last 30 days', value;
-    : '30d'
-  }
+    name: 'Last 30 days', value
+  : '30d'
   ,
-  {
-    name: 'Last 90 days', value;
-    : '90d'
-  }
+    name: 'Last 90 days', value
+  : '90d'
   ,
-  {
-    name: 'Custom Range', value;
-    : 'custom'
-  }
+    name: 'Custom Range', value
+  : 'custom'
   ,
     ],
 }
@@ -89,14 +69,10 @@ description: 'Comma-separated list of input binary property names', placeholder;
   type: 'dateTime', description;
   : 'Only include emails received after this date',
     displayOptions:
-  {
-    show: {
-      resource: ['email'], operation;
-      : ['messageReceived', 'getAll'],
+      resource: ['email'], operation
+  : ['messageReceived', 'getAll'],
         dateRange: ['custom'],
-    }
     ,
-  }
   ,
 }
 ,
@@ -107,14 +83,10 @@ description: 'Comma-separated list of input binary property names', placeholder;
   type: 'dateTime', description;
   : 'Only include emails received before this date',
     displayOptions:
-  {
-    show: {
-      resource: ['email'], operation;
-      : ['messageReceived', 'getAll'],
+      resource: ['email'], operation
+  : ['messageReceived', 'getAll'],
         dateRange: ['custom'],
-    }
     ,
-  }
   ,
 }
 ,
@@ -126,16 +98,8 @@ description: 'Comma-separated list of input binary property names', placeholder;
     type: 'select',
     description: 'Filter by email size',
     default: '',
-    displayOptions: {
-      show: {
+    displayOptions: 
         resource: ['email'],
-        operation: ['messageReceived', 'getAll'],
-      },
-    },
-    options: [
-      { name: 'Any Size', value: '' },
-      { name: 'Small (< 1MB)', value: 'smaller:1M' },
-      { name: 'Medium (1-5MB)', value: 'larger:1M smaller:5M' },
-      { name: 'Large (> 5MB)', value: 'larger:5M' },
-      { name: 'Very Large (> 25MB)', value: 'larger:25M' },
+        operation: ['messageReceived', 'getAll'],,,
+    options: [name: 'Any Size', value: '' ,name: 'Small (< 1MB)', value: 'smaller:1M' ,name: 'Medium (1-5MB)', value: 'larger:1M smaller:5M' ,name: 'Large (> 5MB)', value: 'larger:5M' ,name: 'Very Large (> 25MB)', value: 'larger:25M' ,
     ],

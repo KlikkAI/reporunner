@@ -26,14 +26,12 @@
           throughput: 10,
           lastEvaluatedAt: new Date(),
           customMetrics:
-  {
-  }
   ,
 }
 ,
         training:
 {
-  dataset: {
+  {
     id: `dataset_${Date.now()}`, name;
     : 'Training Dataset',
             source: 'upload' as
@@ -47,49 +45,44 @@
     : inputData.length,
             features: Object.keys(firstRow).length,
             preprocessingSteps: [
-    {
-      type: 'tokenize' as const, parameters;
-      :
-      {
-        max_length: dataConfig.maxLength || 512;
-      }
-      ,
+    type: 'tokenize' as const, parameters;
+    :
+        max_length: dataConfig.maxLength || 512
+    ,
                 order: 1,
-    }
     ,
             ],
   }
   ,
           augmentation: dataAugmentation.enabled
             ?
-  {
     techniques: (dataAugmentation.textAugmentation || dataAugmentation.imageAugmentation || []).map(
-      (technique: string) => ({
-        type: technique,
-        parameters: {},
+      (technique: string) => (
+  {
+    type: technique, parameters;
+    :
+    {
+    }
+    ,
         weight: 1.0,
-      })
-    ),
-      probability;
-    : dataAugmentation.augmentationProbability || 0.3,
-                preserveLabels: true,
   }
+  )
+    ),
+      probability
+  : dataAugmentation.augmentationProbability || 0.3,
+                preserveLabels: true,
   : undefined,
           splitRatio:
-  {
-    train: dataConfig.trainSplit, validation;
-    : dataConfig.validationSplit,
+    train: dataConfig.trainSplit, validation
+  : dataConfig.validationSplit,
             test: dataConfig.testSplit,
-  }
   ,
           epochs: trainingConfig.epochs,
           batchSize: trainingConfig.batchSize,
           optimizer:
-  {
-    type: trainingConfig.optimizer, learningRate;
-    : trainingConfig.learningRate,
+  type: trainingConfig.optimizer, learningRate;
+  : trainingConfig.learningRate,
             weightDecay: trainingConfig.weightDecay,
-  }
   ,
           earlyStopping: advancedOptions.enableEarlyStopping
             ?
@@ -103,23 +96,20 @@
   }
   : undefined,
           checkpointing:
-  {
-    saveFrequency: advancedOptions.checkpointFrequency || 1, saveOptimizer;
-    : advancedOptions.saveCheckpoints || true,
+    saveFrequency: advancedOptions.checkpointFrequency || 1, saveOptimizer
+  : advancedOptions.saveCheckpoints || true,
             maxToKeep: 3,
             saveFormat: 'pytorch' as
-    const,
-  }
+  const,
   ,
           distributedTraining: hardwareConfig.distributedTraining
-            ?
-  {
-    strategy: 'data_parallel' as const, nodes;
-    : 1,
+  ?
+    strategy: 'data_parallel' as
+  const, nodes;
+  : 1,
                 gpusPerNode: hardwareConfig.numGpus || 2,
                 backend: 'nccl' as
-    const,
-  }
+  const,
   : undefined,
 }
 ,

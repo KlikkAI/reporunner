@@ -67,11 +67,9 @@ healthCheck();
 : Promise<
 {
   status: 'healthy' | 'unhealthy';
-  metrics: {
-    eventsProcessed24h: number;
-    metricsRecorded24h: number;
-    activeSessions: number;
-  }
+  eventsProcessed24h: number;
+  metricsRecorded24h: number;
+  activeSessions: number;
 }
 >
 {

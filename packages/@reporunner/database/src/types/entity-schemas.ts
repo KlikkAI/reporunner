@@ -11,27 +11,21 @@ startTime: z.date(), endTime;
       endTime: z.date().optional(),
       inputData: z.array(
         z.object(
-  {
-    json: z.record(z.unknown()), binary;
-    : z.record(z.unknown()).optional(),
-  }
+    json: z.record(z.unknown()), binary
+  : z.record(z.unknown()).optional(),
   )
       ),
       outputData: z.array(
         z.object(
-  {
-    json: z.record(z.unknown()), binary;
-    : z.record(z.unknown()).optional(),
-  }
+    json: z.record(z.unknown()), binary
+  : z.record(z.unknown()).optional(),
   )
       ),
       error: z
         .object(
-  {
-    message: z.string(), stack;
-    : z.string().optional(),
+    message: z.string(), stack
+  : z.string().optional(),
           timestamp: z.date(),
-  }
   )
         .optional(),
       retryCount: z.number().default(0),

@@ -7,13 +7,13 @@ expect(response.body).toEqual(
   success: true, message;
   : 'Profile updated successfully',
     data: expect.objectContaining(
+    user: expect.objectContaining(
   {
-    user: expect.objectContaining({
-        firstName: 'Updated',
-        lastName: 'Profile',
+    firstName: 'Updated', lastName;
+    : 'Profile',
         fullName: 'Updated Profile',
-      }),
   }
+  ),
   ),
 }
 )
@@ -43,7 +43,8 @@ it('should fail without authentication', async () =>
 }
 )
 
-it('should handle partial updates', async () => {
+it('should handle partial updates', async () =>
+{
   const testUser = await testUtils.createTestUser({
     firstName: 'Original',
     lastName: 'Name',
@@ -62,7 +63,8 @@ it('should handle partial updates', async () => {
 
   expect(response.body.data.user.firstName).toBe('OnlyFirstName');
   expect(response.body.data.user.lastName).toBe('Name'); // Should remain unchanged
-});
+}
+)
 })
 
 describe('POST /auth/change-password', () =>

@@ -1,8 +1,8 @@
-import {
-  type IRateLimiterOptions,
+import type {
+  IRateLimiterOptions,
   RateLimiterMemory,
   RateLimiterRedis,
-  type RateLimiterRes,
+  RateLimiterRes,
 } from 'rate-limiter-flexible';
 import { createClient, type RedisClientType } from 'redis';
 // Removed unused ERROR_CODES import

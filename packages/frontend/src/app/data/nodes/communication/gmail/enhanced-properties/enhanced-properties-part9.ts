@@ -10,13 +10,9 @@ operation: ['create'],
     required: true,
     rows: 6,
     displayOptions:
-  {
-    show: {
-      resource: ['draft'], operation;
-      : ['create'],
-    }
+      resource: ['draft'], operation
+  : ['create'],
     ,
-  }
   ,
 }
 ,

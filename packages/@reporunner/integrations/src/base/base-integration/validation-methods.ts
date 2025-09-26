@@ -116,4 +116,4 @@ cleanup();
 }
 }
 
-export interface IntegrationAction {
+export type IntegrationAction = {};

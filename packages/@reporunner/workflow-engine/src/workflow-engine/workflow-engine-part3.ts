@@ -33,22 +33,16 @@ async;
 getStats();
 : Promise<
 {
-  executions: {
-    total: number;
-    running: number;
-    queued: number;
-    completed: number;
-    failed: number;
-  }
-  workers: {
-    total: number;
-    active: number;
-    idle: number;
-  }
-  memory: {
-    used: number;
-    total: number;
-  }
+  total: number;
+  running: number;
+  queued: number;
+  completed: number;
+  failed: number;
+  total: number;
+  active: number;
+  idle: number;
+  used: number;
+  total: number;
 }
 >
 {

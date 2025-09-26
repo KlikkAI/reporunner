@@ -3,7 +3,7 @@ status: 'idle' | 'busy' | 'error' | 'stopped';
 currentJob?: string;
 processedJobs: number;
 failedJobs: number;
-memory: {
+{
   used: number;
   total: number;
 }

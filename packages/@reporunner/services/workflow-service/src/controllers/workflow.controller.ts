@@ -1,7 +1,7 @@
-import { Request, Response, NextFunction } from 'express';
-import { WorkflowService, WorkflowDefinition } from '../index';
-import { z } from 'zod';
 import { logger } from '@reporunner/shared/logger';
+import type { NextFunction, Request, Response } from 'express';
+import { z } from 'zod';
+import type { WorkflowDefinition, WorkflowService } from '../index';
 
 // Validation schemas
 const CreateWorkflowSchema = z.object({

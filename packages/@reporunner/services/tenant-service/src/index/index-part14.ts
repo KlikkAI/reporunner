@@ -26,7 +26,15 @@ $;
   backupId;
 }
 :`, error)
-await this.database.updateOne(this.BACKUPS_COLLECTION, { id: backupId }, { status: 'failed' });
+await this.database.updateOne(this.BACKUPS_COLLECTION,
+{
+  id: backupId;
+}
+,
+{
+  status: 'failed';
+}
+)
 throw error;
 }
 }

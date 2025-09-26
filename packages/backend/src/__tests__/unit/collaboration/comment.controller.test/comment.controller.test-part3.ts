@@ -75,7 +75,8 @@ describe('updateComment', () =>
 }
 )
 
-describe('addReply', () => {
+describe('addReply', () =>
+{
     it('should add reply to comment successfully', async () => {
       const comment = await Comment.create({
         workflowId: testWorkflowId,

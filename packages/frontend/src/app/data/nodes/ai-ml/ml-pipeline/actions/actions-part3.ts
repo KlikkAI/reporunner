@@ -1,11 +1,9 @@
 error: error.message || 'Pipeline execution failed', data;
 : [
 {
-  main: {
-    error: error.message, pipelineName;
-    : pipelineConfig.pipelineName,
+  error: error.message, pipelineName;
+  : pipelineConfig.pipelineName,
               timestamp: new Date().toISOString(),
-  }
   ,
 }
 ,

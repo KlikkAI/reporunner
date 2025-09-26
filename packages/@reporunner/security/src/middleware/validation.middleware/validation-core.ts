@@ -92,7 +92,7 @@ export function createValidationMiddleware(schema: ValidationSchema) {
     for (const rule of schema.rules) {
       const location = rule.location || 'body';
       const source = req[location as keyof Request] as any;
-      let value = source?.[rule.field];
+      const value = source?.[rule.field];
 
       // Check required fields
       if (rule.required && (value === undefined || value === null || value === '')) {

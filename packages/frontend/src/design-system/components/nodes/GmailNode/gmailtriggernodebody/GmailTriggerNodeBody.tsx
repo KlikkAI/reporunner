@@ -1,6 +1,3 @@
-import { useEvent } from './hooks/useEvent';
-import { useLeave } from './hooks/useLeave';
-import { useEnter } from './hooks/useEnter';
 import {
   CheckCircleOutlined,
   ClockCircleOutlined,
@@ -16,6 +13,9 @@ import { Handle, Position } from 'reactflow';
 import type { CustomNodeBodyProps } from '../../../../app/node-extensions/types';
 import { gmailTheme } from '../../../themes/gmailTheme';
 import EnhancedNodeToolbar from '../../common/EnhancedNodeToolbar';
+import { useEnter } from './hooks/useEnter';
+import { useEvent } from './hooks/useEvent';
+import { useLeave } from './hooks/useLeave';
 
 /**
  * Gmail Trigger Node Body Component

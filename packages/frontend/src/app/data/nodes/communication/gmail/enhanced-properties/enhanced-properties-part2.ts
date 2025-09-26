@@ -92,54 +92,34 @@ description: 'Forward an email', action;
   : 'The specific event that triggers the workflow',
     default: 'messageReceived',
     displayOptions:
-  {
-    show: {
-      resource: ['email'], operation;
-      : ['messageReceived'],
-    }
+      resource: ['email'], operation
+  : ['messageReceived'],
     ,
-  }
   ,
     options: [
-  {
-    name: 'Message Received', value;
-    : 'messageReceived'
-  }
+    name: 'Message Received', value
+  : 'messageReceived'
   ,
-  {
-    name: 'Message Sent', value;
-    : 'messageSent'
-  }
+    name: 'Message Sent', value
+  : 'messageSent'
   ,
-  {
-    name: 'Message Read', value;
-    : 'messageRead'
-  }
+    name: 'Message Read', value
+  : 'messageRead'
   ,
-  {
-    name: 'Message Starred', value;
-    : 'messageStarred'
-  }
+    name: 'Message Starred', value
+  : 'messageStarred'
   ,
-  {
-    name: 'Message Deleted', value;
-    : 'messageDeleted'
-  }
+    name: 'Message Deleted', value
+  : 'messageDeleted'
   ,
-  {
-    name: 'New Thread', value;
-    : 'newThread'
-  }
+    name: 'New Thread', value
+  : 'newThread'
   ,
-  {
-    name: 'Label Added', value;
-    : 'labelAdded'
-  }
+    name: 'Label Added', value
+  : 'labelAdded'
   ,
-  {
-    name: 'Label Removed', value;
-    : 'labelRemoved'
-  }
+    name: 'Label Removed', value
+  : 'labelRemoved'
   ,
     ],
 }

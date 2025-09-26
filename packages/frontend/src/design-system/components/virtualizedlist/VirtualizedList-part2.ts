@@ -67,7 +67,7 @@ if (loading) {
   // Handle error state
   if (errorState) {
     return (
-      <div className={`virtualized-list-error ${className}`} style={containerStyles}>
+      <div className={`virtualized-list-error $className`} style={containerStyles}>
         {errorState}
       </div>
     );
@@ -76,7 +76,7 @@ if (loading) {
   // Handle empty state
   if (items.length === 0) {
     return (
-      <div className={`virtualized-list-empty ${className}`} style={containerStyles}>
+      <div className={`virtualized-list-empty $className`} style={containerStyles}>
         {emptyState || (
           <div className="flex items-center justify-center h-full text-gray-500">
             <div className="text-center">
@@ -92,7 +92,7 @@ if (loading) {
   return (
     <div
       ref={parentRef}
-      className={`virtualized-list ${className}`}
+      className={`virtualized-list $className`}
       style={containerStyles}
       data-testid="virtualized-list"
     >

@@ -9,29 +9,19 @@
         description: 'Method for calculating vector similarity',
         default: 'cosine',
         options: [
-  {
-    name: 'Cosine Similarity', value;
-    : 'cosine'
-  }
+    name: 'Cosine Similarity', value
+  : 'cosine'
   ,
-  {
-    name: 'Euclidean Distance', value;
-    : 'euclidean'
-  }
+    name: 'Euclidean Distance', value
+  : 'euclidean'
   ,
-  {
-    name: 'Inner Product', value;
-    : 'inner_product'
-  }
+    name: 'Inner Product', value
+  : 'inner_product'
   ,
         ],
         displayOptions:
-  {
-    show: {
       operation: ['search'],
-    }
     ,
-  }
   ,
 }
 ,
@@ -46,12 +36,8 @@
         max: 1,
         step: 0.1,
         displayOptions:
-  {
-    show: {
       operation: ['search'],
-    }
     ,
-  }
   ,
 }
 ,
@@ -75,12 +61,8 @@
         placeholder: "category = 'example' AND created_at > '2024-01-01'",
         rows: 2,
         displayOptions:
-  {
-    show: {
       operation: ['search', 'delete'],
-    }
     ,
-  }
   ,
 }
 ,
@@ -121,7 +103,7 @@ execute(this: any)
         processedVector = processedVector.replace(/\{\{input\}\}/g, inputContent);
       }
 
-      let result: any = {
+      const result: any = {
         operation,
         tableName,
         vectorColumn,

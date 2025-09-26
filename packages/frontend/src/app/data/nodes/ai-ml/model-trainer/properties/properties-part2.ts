@@ -12,10 +12,8 @@ default:
   : true,
         default: 3,
         typeOptions:
-  {
-    minValue: 1, maxValue;
-    : 100,
-  }
+    minValue: 1, maxValue
+  : 100,
   ,
         description: 'Number of training epochs',
 }
@@ -27,10 +25,8 @@ default:
   : true,
         default: 16,
         typeOptions:
-  {
-    minValue: 1, maxValue;
-    : 128,
-  }
+    minValue: 1, maxValue
+  : 128,
   ,
         description: 'Training batch size',
 }
@@ -42,11 +38,9 @@ default:
   : true,
         default: 2e-5,
         typeOptions:
-  {
-    minValue: 1e-6, maxValue;
-    : 1e-1,
+    minValue: 1e-6, maxValue
+  : 1e-1,
           numberPrecision: 6,
-  }
   ,
         description: 'Learning rate for training',
 }
@@ -58,30 +52,20 @@ default:
   : true,
         default: 'adamw',
         options: [
-  {
-    name: 'AdamW', value;
-    : 'adamw'
-  }
+    name: 'AdamW', value
+  : 'adamw'
   ,
-  {
-    name: 'Adam', value;
-    : 'adam'
-  }
+    name: 'Adam', value
+  : 'adam'
   ,
-  {
-    name: 'SGD', value;
-    : 'sgd'
-  }
+    name: 'SGD', value
+  : 'sgd'
   ,
-  {
-    name: 'RMSprop', value;
-    : 'rmsprop'
-  }
+    name: 'RMSprop', value
+  : 'rmsprop'
   ,
-  {
-    name: 'Adagrad', value;
-    : 'adagrad'
-  }
+    name: 'Adagrad', value
+  : 'adagrad'
   ,
         ],
         description: 'Optimization algorithm',
@@ -93,11 +77,9 @@ default:
   type: 'number',
   default: 0.01,
         typeOptions:
-  {
-    minValue: 0, maxValue;
-    : 1,
+    minValue: 0, maxValue
+  : 1,
           numberPrecision: 4,
-  }
   ,
         description: 'Weight decay for regularization',
 }
@@ -108,10 +90,8 @@ default:
   type: 'number',
   default: 500,
         typeOptions:
-  {
-    minValue: 0, maxValue;
-    : 10000,
-  }
+    minValue: 0, maxValue
+  : 10000,
   ,
         description: 'Number of warmup steps for learning rate scheduler',
 }
@@ -124,16 +104,13 @@ default:
     displayName: 'Data Configuration',
     name: 'dataConfig',
     type: 'collection',
-    default: {},
+    default: ,
     description: 'Configure training data',
     options: [
-      {
         displayName: 'Input Column',
         name: 'inputColumn',
         type: 'string',
         required: true,
         default: 'text',
-        description: 'Column name containing input data',
-      },
-      {
+        description: 'Column name containing input data',,
         displayName: 'Target Column',

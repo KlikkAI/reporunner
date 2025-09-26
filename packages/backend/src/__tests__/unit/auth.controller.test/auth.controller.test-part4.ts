@@ -28,7 +28,8 @@ it('should fail when not authenticated', async () =>
 }
 )
 
-it('should fail with incorrect current password', async () => {
+it('should fail with incorrect current password', async () =>
+{
   const testUser = await testUtils.createTestUser({
     password: await bcrypt.hash('correctpassword', 10),
   });
@@ -42,6 +43,7 @@ it('should fail with incorrect current password', async () => {
   await expect(
     authController.changePassword(mockReq as Request, mockRes as Response)
   ).rejects.toThrow('Current password is incorrect');
-});
+}
+)
 })
 })

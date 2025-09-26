@@ -68,7 +68,7 @@ export class TestUtils {
   }
 
   static randomEmail(): string {
-    return `test-${this.randomId()}@example.com`;
+    return `test-${TestUtils.randomId()}@example.com`;
   }
 
   static async measureTime<T>(fn: () => Promise<T>): Promise<{ result: T; time: number }> {

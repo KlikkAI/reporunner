@@ -1,9 +1,9 @@
-import { MongoClient, Db, Collection } from 'mongodb';
-import { Redis } from 'ioredis';
-import { EventEmitter } from 'events';
-import { v4 as uuidv4 } from 'uuid';
+import type { DistributedEventBus } from '@reporunner/platform/event-bus';
 import { logger } from '@reporunner/shared/logger';
-import { DistributedEventBus } from '@reporunner/platform/event-bus';
+import { EventEmitter } from 'events';
+import { Redis } from 'ioredis';
+import type { Collection, Db, MongoClient } from 'mongodb';
+import { v4 as uuidv4 } from 'uuid';
 
 export interface AnalyticsConfig {
   mongodb: {
@@ -504,7 +504,7 @@ export class AnalyticsService extends EventEmitter {
         }
       }
 
-      let pipeline: any[] = [{ $match: query }];
+      const pipeline: any[] = [{ $match: query }];
 
       // Add grouping if specified
       if (options.groupBy) {
@@ -570,7 +570,7 @@ export class AnalyticsService extends EventEmitter {
         }
       }
 
-      let pipeline: any[] = [{ $match: query }];
+      const pipeline: any[] = [{ $match: query }];
 
       // Group by specified fields
       if (options.groupBy) {

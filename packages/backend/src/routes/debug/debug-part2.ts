@@ -27,16 +27,19 @@ router.get('/errors/:errorId', (req, res) =>
 }
 )
 
-router.get('/errors/patterns', (_req, res) => {
+router.get('/errors/patterns', (_req, res) =>
+{
   const patterns = errorTracker.getErrorPatterns();
 
   res.json({
     success: true,
     data: { patterns },
   });
-});
+}
+)
 
-router.post('/errors/patterns/:fingerprint/resolve', (req, res) => {
+router.post('/errors/patterns/:fingerprint/resolve', (req, res) =>
+{
   const { fingerprint } = req.params;
   const { resolvedBy = 'unknown' } = req.body;
 
@@ -54,7 +57,8 @@ router.post('/errors/patterns/:fingerprint/resolve', (req, res) => {
     success: true,
     message: 'Error pattern resolved',
   });
-});
+}
+)
 
 // Debug Session Routes
 router.post('/debug/sessions', (req, res) => {

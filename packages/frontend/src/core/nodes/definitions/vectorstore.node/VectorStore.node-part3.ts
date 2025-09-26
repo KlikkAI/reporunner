@@ -5,12 +5,8 @@
   type: 'json',
   default: '{}',
         displayOptions:
-  {
-    show: {
       operation: ['query'],
-    }
     ,
-  }
   ,
         description: 'Metadata filter for query',
         placeholder: '{"category": "documents", "date": {"$gte": "2024-01-01"}}',
@@ -22,12 +18,8 @@
   type: 'boolean',
   default: true,
         displayOptions:
-  {
-    show: {
       operation: ['query', 'get'],
-    }
     ,
-  }
   ,
         description: 'Include metadata in results',
 }
@@ -38,12 +30,8 @@
   type: 'boolean',
   default: false,
         displayOptions:
-  {
-    show: {
       operation: ['query', 'get'],
-    }
     ,
-  }
   ,
         description: 'Include vector embeddings in results',
 }
@@ -56,12 +44,8 @@
         min: 1,
         max: 1000,
         displayOptions:
-  {
-    show: {
       operation: ['upsert', 'delete'],
-    }
     ,
-  }
   ,
         description: 'Number of vectors to process per batch',
 }

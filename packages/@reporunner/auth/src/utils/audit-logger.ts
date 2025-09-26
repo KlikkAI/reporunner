@@ -33,7 +33,7 @@ export class AuditLogger extends EventEmitter {
     };
 
     this.logs.push(logEntry);
-    
+
     // Keep logs under max limit
     if (this.logs.length > this.maxLogs) {
       this.logs.shift();
@@ -53,21 +53,15 @@ export class AuditLogger extends EventEmitter {
   }
 
   getLogsByUser(userId: string, limit = 100): AuditLogEntry[] {
-    return this.logs
-      .filter((log) => log.userId === userId)
-      .slice(-limit);
+    return this.logs.filter((log) => log.userId === userId).slice(-limit);
   }
 
   getLogsByAction(action: string, limit = 100): AuditLogEntry[] {
-    return this.logs
-      .filter((log) => log.action === action)
-      .slice(-limit);
+    return this.logs.filter((log) => log.action === action).slice(-limit);
   }
 
   getLogsByDateRange(startDate: Date, endDate: Date): AuditLogEntry[] {
-    return this.logs.filter(
-      (log) => log.timestamp >= startDate && log.timestamp <= endDate
-    );
+    return this.logs.filter((log) => log.timestamp >= startDate && log.timestamp <= endDate);
   }
 
   clearLogs(): void {

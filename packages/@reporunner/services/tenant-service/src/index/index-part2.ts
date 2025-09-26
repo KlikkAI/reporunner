@@ -7,7 +7,7 @@ integrations:
   disabled: string[];
   custom_configs: Record<string, any>;
 }
-notifications: {
+{
   email_enabled: boolean;
   slack_enabled: boolean;
   webhook_enabled: boolean;
@@ -27,7 +27,7 @@ metadata:
   sales_contact?: string;
   custom_fields: Record<string, any>;
 }
-isolation: {
+{
   database_schema: string;
   storage_prefix: string;
   redis_namespace: string;
@@ -42,8 +42,8 @@ conversion_probability?: number;
 trial_source: string;
 }
 createdAt: Date
-updatedAt: Date;
-last_activity?: Date;
+updatedAt: Date
+last_activity?: Date
 }
 
 export interface TenantInvitation {

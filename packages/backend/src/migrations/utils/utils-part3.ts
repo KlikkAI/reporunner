@@ -38,22 +38,19 @@ this.log('Migration completed successfully');
 
   try {
     $;
-    {
-      database === 'mongodb' || database === 'both'
-        ? `
+    database === 'mongodb' || database === 'both'
+      ? `
       // MongoDB rollback operations
       if (this.database === 'mongodb' || this.database === 'both') {
         // Add your MongoDB rollback code here
         // Example:
         // await mongoose.connection.db.collection('users').dropIndex({ email: 1 });
       }`
-        : '';
-    }
+      : '';
 
     $;
-    {
-      database === 'postgresql' || database === 'both'
-        ? `
+    database === 'postgresql' || database === 'both'
+      ? `
       // PostgreSQL rollback operations
       if (this.database === 'postgresql' || this.database === 'both') {
         const pg = PostgreSQLConfig.getInstance();
@@ -62,8 +59,7 @@ this.log('Migration completed successfully');
         // Example:
         // await pg.query('DROP TABLE IF EXISTS example_table');
       }`
-        : '';
-    }
+      : '';
 
     this.log('Rollback completed successfully');
   } catch (error) {

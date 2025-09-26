@@ -11,17 +11,21 @@ this.register(
 }
 )
 
-this.register({
-  identifier: TYPES.Queue,
-  implementation: QueueManager,
+this.register(
+{
+  identifier: TYPES.Queue, implementation;
+  : QueueManager,
   lifecycle: 'singleton',
-});
+}
+)
 
-this.register({
-  identifier: TYPES.Logger,
-  implementation: logger,
+this.register(
+{
+  identifier: TYPES.Logger, implementation;
+  : logger,
   factory: () => logger,
-});
+}
+)
 }
 
   // Register environment-specific services
@@ -112,7 +116,7 @@ export const container = DIContainer.getInstance();
 
 // Decorator for automatic registration
 export function Service(identifier: symbol, lifecycle?: 'singleton' | 'transient' | 'request') {
-  return function (target: any) {
+  return (target: any) => {
     injectable()(target);
     
     // Auto-register when decorator is applied

@@ -23,7 +23,7 @@ router.post(
   authenticate,
   [param('id').isMongoId()],
   catchAsync(workflowController.testWorkflow)
-);
+)
 
 /**
  * @route   GET /workflows/:id/statistics
@@ -33,9 +33,14 @@ router.post(
 router.get(
   '/:id/statistics',
   authenticate,
-  [param('id').isMongoId(), query('days').optional().isInt({ min: 1, max: 365 }).toInt()],
+  [param('id').isMongoId(), query('days').optional().isInt(
+{
+  min: 1, max;
+  : 365
+}
+).toInt()],
   catchAsync(workflowController.getWorkflowStatistics)
-);
+)
 
 /**
  * @route   GET /workflows/executions

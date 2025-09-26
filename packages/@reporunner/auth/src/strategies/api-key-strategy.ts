@@ -19,13 +19,13 @@ export class APIKeyStrategy {
 
   async authenticate(request: any): Promise<any> {
     const apiKey = this.extractAPIKey(request);
-    
+
     if (!apiKey) {
       throw new Error('API key not provided');
     }
 
     const result = await this.options.validateKey(apiKey);
-    
+
     if (!result) {
       throw new Error('Invalid API key');
     }

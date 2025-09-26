@@ -4,20 +4,14 @@
   type: 'select',
   default: 'all',
         options: [
-  {
-    name: 'All', value;
-    : 'all'
-  }
+    name: 'All', value
+  : 'all'
   ,
-  {
-    name: 'Unread Only', value;
-    : 'unread'
-  }
+    name: 'Unread Only', value
+  : 'unread'
   ,
-  {
-    name: 'Read Only', value;
-    : 'read'
-  }
+    name: 'Read Only', value
+  : 'read'
   ,
         ],
 }
@@ -28,20 +22,14 @@
   type: 'select',
   default: 'any',
         options: [
-  {
-    name: 'Any', value;
-    : 'any'
-  }
+    name: 'Any', value
+  : 'any'
   ,
-  {
-    name: 'With Attachments', value;
-    : 'true'
-  }
+    name: 'With Attachments', value
+  : 'true'
   ,
-  {
-    name: 'Without Attachments', value;
-    : 'false'
-  }
+    name: 'Without Attachments', value
+  : 'false'
   ,
         ],
 }
@@ -58,13 +46,9 @@
     required: true,
     placeholder: 'recipient@example.com, another@example.com',
     displayOptions:
-  {
-    show: {
-      resource: ['email'], operation;
-      : ['send'],
-    }
+      resource: ['email'], operation
+  : ['send'],
     ,
-  }
   ,
 }
 ,
@@ -75,13 +59,9 @@
   : 'CC recipients',
     placeholder: 'cc@example.com',
     displayOptions:
-  {
-    show: {
-      resource: ['email'], operation;
-      : ['send'],
-    }
+      resource: ['email'], operation
+  : ['send'],
     ,
-  }
   ,
 }
 ,
@@ -92,13 +72,9 @@
   : 'BCC recipients',
     placeholder: 'bcc@example.com',
     displayOptions:
-  {
-    show: {
-      resource: ['email'], operation;
-      : ['send'],
-    }
+      resource: ['email'], operation
+  : ['send'],
     ,
-  }
   ,
 }
 ,
@@ -110,13 +86,9 @@
     required: true,
     placeholder: 'Email Subject',
     displayOptions:
-  {
-    show: {
-      resource: ['email'], operation;
-      : ['send', 'reply', 'forward'],
-    }
+      resource: ['email'], operation
+  : ['send', 'reply', 'forward'],
     ,
-  }
   ,
 }
 ,
@@ -129,13 +101,9 @@
     rows: 6,
     placeholder: 'Email message content...',
     displayOptions:
-  {
-    show: {
-      resource: ['email'], operation;
-      : ['send', 'reply', 'forward'],
-    }
+      resource: ['email'], operation
+  : ['send', 'reply', 'forward'],
     ,
-  }
   ,
 }
 ,

@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { Container as InversifyContainer, injectable, inject } from 'inversify';
+import { Container as InversifyContainer, inject, injectable } from 'inversify';
 import { logger } from '../utils/logger';
 
 // Service identifiers

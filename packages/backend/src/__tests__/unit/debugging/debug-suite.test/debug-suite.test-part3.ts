@@ -90,7 +90,8 @@ describe('Debug Tools', () =>
 }
 )
 
-describe('Health Check Service', () => {
+describe('Health Check Service', () =>
+{
     it('should perform health checks', async () => {
       const health = await healthCheck.performHealthCheck();
 

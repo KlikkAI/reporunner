@@ -4,14 +4,10 @@
 {
   timestamps: true, toJSON;
   :
-  {
-    virtuals: true;
-  }
+    virtuals: true
   ,
     toObject:
-  {
-    virtuals: true;
-  }
+    virtuals: true
   ,
 }
 )
@@ -23,8 +19,18 @@ operationSchema.index(
   : 1
 }
 )
-operationSchema.index({ workflowId: 1, createdAt: -1 });
-operationSchema.index({ userId: 1, createdAt: -1 });
+operationSchema.index(
+{
+  workflowId: 1, createdAt;
+  : -1
+}
+)
+operationSchema.index(
+{
+  userId: 1, createdAt;
+  : -1
+}
+)
 operationSchema.index({ operationId: 1 }, { unique: true });
 operationSchema.index({ status: 1 });
 operationSchema.index({ 'target.type': 1, 'target.id': 1 });

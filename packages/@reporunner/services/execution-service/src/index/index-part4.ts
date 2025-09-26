@@ -102,4 +102,3 @@ executeWorkflowNodes(
         // Check if node should be executed based on conditions
         if (!await this.shouldExecuteNode(node, workflow.edges, nodeOutputs, execution)) {
           await this.skipNode(execution.id, nodeId, 'Condition not met');
-          continue;

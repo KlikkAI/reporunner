@@ -1,7 +1,5 @@
-displayOptions: {
-  show: {
-    type: ['stringValue'],
-  }
+{
+  type: ['stringValue'],
   ,
 }
 ,
@@ -19,17 +17,12 @@ displayOptions: {
   default: 0,
                 description: 'Numeric value for the field (supports expressions)',
                 displayOptions:
-  {
-    show: {
-      type: ['numberValue'],
-    }
+  type: ['numberValue'],
     ,
-  }
   ,
-                typeOptions:
-  {
+                typeOptions
+  :
     editor: 'expression',
-  }
   ,
 }
 ,
@@ -41,12 +34,8 @@ displayOptions: {
   default: false,
                 description: 'Boolean value for the field (supports expressions)',
                 displayOptions:
-  {
-    show: {
-      type: ['booleanValue'],
-    }
+  type: ['booleanValue'],
     ,
-  }
   ,
 }
 ,
@@ -58,17 +47,12 @@ displayOptions: {
   default: '[]',
                 description: 'Array value as JSON string (supports expressions)',
                 displayOptions:
-  {
-    show: {
-      type: ['arrayValue'],
-    }
+  type: ['arrayValue'],
     ,
-  }
   ,
-                typeOptions:
-  {
+                typeOptions
+  :
     editor: 'json',
-  }
   ,
 }
 ,
@@ -80,17 +64,12 @@ displayOptions: {
   default: '{}',
                 description: 'Object value as JSON string (supports expressions)',
                 displayOptions:
-  {
-    show: {
-      type: ['objectValue'],
-    }
+  type: ['objectValue'],
     ,
-  }
   ,
-                typeOptions:
-  {
+                typeOptions
+  :
     editor: 'json',
-  }
   ,
 }
 ,
@@ -102,17 +81,12 @@ displayOptions: {
   default: '',
                 description: 'Date/time value (supports expressions and various date formats)',
                 displayOptions:
-  {
-    show: {
-      type: ['dateValue'],
-    }
+  type: ['dateValue'],
     ,
-  }
   ,
-                typeOptions:
-  {
+                typeOptions
+  :
     editor: 'expression',
-  }
   ,
                 placeholder: '2024-01-15 or {{$json.createdAt}} or {{now()}}',
   // hint: 'Accepts ISO dates, timestamps, or date expressions',

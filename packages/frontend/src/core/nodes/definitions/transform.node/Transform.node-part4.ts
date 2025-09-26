@@ -1,7 +1,5 @@
-displayOptions: {
-  show: {
-    mode: ['json'],
-  }
+{
+  mode: ['json'],
   ,
 }
 ,
@@ -19,74 +17,54 @@ displayOptions: {
   type: 'collection', placeholder;
   : 'Add Option',
         default:
-  {
-  }
   ,
         options: [
-  {
-    displayName: 'Dot Notation', name;
-    : 'dotNotation',
-    type: 'boolean',
-    default: true,
+    displayName: 'Dot Notation', name
+  : 'dotNotation',
+  type: 'boolean',
+  default: true,
             description: 'Use dot notation to access nested object properties (e.g., user.name)',
-  }
   ,
-  {
-    displayName: 'Ignore Conversion Errors', name;
-    : 'ignoreConversionErrors',
-    type: 'boolean',
-    default: false,
+    displayName: 'Ignore Conversion Errors', name
+  : 'ignoreConversionErrors',
+  type: 'boolean',
+  default: false,
             description: 'Continue execution even if type conversion fails',
-  }
   ,
-  {
-    displayName: 'Keep Only Set Fields', name;
-    : 'keepOnlySet',
-    type: 'boolean',
-    default: false,
+    displayName: 'Keep Only Set Fields', name
+  : 'keepOnlySet',
+  type: 'boolean',
+  default: false,
             description:
               'Only include the fields that are explicitly set (overrides "Include Input Fields")',
             displayOptions:
-    {
-      show: {
-        ('/mode');
-        : ['manual'],
-      }
+        ('/mode')
+  : ['manual'],
       ,
-    }
     ,
-  }
   ,
-  {
-    displayName: 'Enable Caching', name;
-    : 'enableCaching',
-    type: 'boolean',
-    default: false,
+    displayName: 'Enable Caching', name
+  : 'enableCaching',
+  type: 'boolean',
+  default: false,
             description: 'Cache expression evaluation results for better performance',
-  }
   ,
-  {
-    displayName: 'Batch Size', name;
-    : 'batchSize',
-    type: 'number',
-    default: 100,
+    displayName: 'Batch Size', name
+  : 'batchSize',
+  type: 'number',
+  default: 100,
             description: 'Number of items to process in each batch (affects memory usage)',
             typeOptions:
-    {
-      minValue: 1, maxValue;
-      : 10000,
-    }
+      minValue: 1, maxValue
+  : 10000,
     ,
-  }
   ,
-  {
-    displayName: 'Date Format', name;
-    : 'dateFormat',
-    type: 'string',
-    default: 'ISO',
+    displayName: 'Date Format', name
+  : 'dateFormat',
+  type: 'string',
+  default: 'ISO',
             description: 'Default date format for date type conversions',
             placeholder: 'YYYY-MM-DD or ISO or timestamp',
-  }
   ,
         ],
 }

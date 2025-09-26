@@ -86,7 +86,8 @@ describe('changePassword', () =>
 }
 )
 
-describe('clearError', () => {
+describe('clearError', () =>
+{
   it('should clear error state', () => {
     // Set error state
     useAuthStore.setState({ error: 'Some error' });
@@ -97,7 +98,9 @@ describe('clearError', () => {
     const newState = useAuthStore.getState();
     expect(newState.error).toBeNull();
   });
-});
+}
+)
 
-describe('Error handling', () => {
+describe('Error handling', () =>
+{
     it('should handle API errors with proper error extraction', async () => {

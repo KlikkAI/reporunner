@@ -7,7 +7,7 @@ lineNumber?: number;
 timestamp: Date;
 }
 retryCount: number
-continueOnFail: boolean;
+continueOnFail: boolean
 }
 
 export const ExecutionSchema = z.object({
@@ -97,4 +97,4 @@ export interface WorkerConfig {
   };
 }
 
-export interface WorkerStats {
+export type WorkerStats = {};

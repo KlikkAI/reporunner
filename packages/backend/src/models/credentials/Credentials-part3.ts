@@ -33,10 +33,11 @@ function (next) {
 )
 
 // Method to get decrypted data
-credentialSchema.methods.getDecryptedData = function (): Record<string, any> {
+credentialSchema.methods.getDecryptedData =
+function (): Record<string, any> {
   if (!this.data) return {};
   return this.decrypt(this.data);
-};
+}
 
 // Static method to find active credentials
 credentialSchema.statics.findActive = function (userId: string, integration?: string) {

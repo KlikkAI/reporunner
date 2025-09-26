@@ -67,7 +67,8 @@ describe('updateSessionConfig', () =>
 }
 )
 
-describe('endSession', () => {
+describe('endSession', () =>
+{
     it('should end active session successfully', async () => {
       const _session = await CollaborationSession.create({
         sessionId: 'test-session-123',

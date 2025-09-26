@@ -1,9 +1,9 @@
-import { Db, Collection, Filter, FindOptions } from 'mongodb';
-import { Tenant } from '../../domain/entities/tenant.entity';
-import { TenantRepository } from '../../domain/repositories/tenant.repository';
+import type { Collection, Db, Filter, FindOptions } from 'mongodb';
 import { TenantMapper } from '../../application/mappers/tenant.mapper';
-import { RedisCache } from '../cache/redis-cache';
+import type { Tenant } from '../../domain/entities/tenant.entity';
+import type { TenantRepository } from '../../domain/repositories/tenant.repository';
 import { logger } from '../../shared/utils/logger';
+import type { RedisCache } from '../cache/redis-cache';
 
 export class MongoTenantRepository implements TenantRepository {
   private readonly collection: Collection;

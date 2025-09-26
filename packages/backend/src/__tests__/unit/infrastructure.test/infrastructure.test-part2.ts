@@ -36,7 +36,8 @@ it('should handle comment reactions', async () =>
 }
 )
 
-it('should handle comment threads (replies)', async () => {
+it('should handle comment threads (replies)', async () =>
+{
   const testWorkflowId = '507f1f77bcf86cd799439011';
 
   // Create a comment
@@ -67,7 +68,8 @@ it('should handle comment threads (replies)', async () => {
   expect(commentWithThread?.thread).toHaveLength(2);
   expect(commentWithThread?.thread[0].content).toBe('First reply');
   expect(commentWithThread?.thread[1].content).toBe('Second reply');
-});
+}
+)
 })
 
 describe('Test Utilities', () =>

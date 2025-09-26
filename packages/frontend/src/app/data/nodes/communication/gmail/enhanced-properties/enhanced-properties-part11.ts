@@ -4,10 +4,8 @@ displayName: 'Enable Auto-Classification', type;
     default: false,
     displayOptions:
 {
-  show: {
-    resource: ['email'], operation;
-    : ['messageReceived', 'getAll'],
-  }
+  resource: ['email'], operation;
+  : ['messageReceived', 'getAll'],
   ,
 }
 ,
@@ -19,53 +17,33 @@ displayName: 'Enable Auto-Classification', type;
   : 'Categories for automatic email classification',
     default: [],
     displayOptions:
-  {
-    show: {
       enableAutoClassification: [true],
-    }
     ,
-  }
   ,
     options: [
-  {
-    name: 'Invoice/Billing', value;
-    : 'invoice'
-  }
+    name: 'Invoice/Billing', value
+  : 'invoice'
   ,
-  {
-    name: 'Support Request', value;
-    : 'support'
-  }
+    name: 'Support Request', value
+  : 'support'
   ,
-  {
-    name: 'Marketing', value;
-    : 'marketing'
-  }
+    name: 'Marketing', value
+  : 'marketing'
   ,
-  {
-    name: 'Personal', value;
-    : 'personal'
-  }
+    name: 'Personal', value
+  : 'personal'
   ,
-  {
-    name: 'Urgent', value;
-    : 'urgent'
-  }
+    name: 'Urgent', value
+  : 'urgent'
   ,
-  {
-    name: 'Newsletter', value;
-    : 'newsletter'
-  }
+    name: 'Newsletter', value
+  : 'newsletter'
   ,
-  {
-    name: 'Meeting Request', value;
-    : 'meeting'
-  }
+    name: 'Meeting Request', value
+  : 'meeting'
   ,
-  {
-    name: 'Document Request', value;
-    : 'documents'
-  }
+    name: 'Document Request', value
+  : 'documents'
   ,
     ],
 }
@@ -79,13 +57,9 @@ displayName: 'Enable Auto-Classification', type;
   : 'Generate AI-powered reply suggestions',
     default: false,
     displayOptions:
-  {
-    show: {
-      resource: ['email'], operation;
-      : ['get', 'messageReceived'],
-    }
+      resource: ['email'], operation
+  : ['get', 'messageReceived'],
     ,
-  }
   ,
 }
 ,
@@ -98,59 +72,37 @@ displayName: 'Enable Auto-Classification', type;
   : 'Language for email processing and templates',
     default: 'auto',
     displayOptions:
-  {
-    show: {
-      resource: ['email'], operation;
-      : ['send', 'reply', 'forward'],
-    }
+      resource: ['email'], operation
+  : ['send', 'reply', 'forward'],
     ,
-  }
   ,
     options: [
-  {
-    name: 'Auto-Detect', value;
-    : 'auto'
-  }
+    name: 'Auto-Detect', value
+  : 'auto'
   ,
-  {
-    name: 'English', value;
-    : 'en'
-  }
+    name: 'English', value
+  : 'en'
   ,
-  {
-    name: 'Spanish', value;
-    : 'es'
-  }
+    name: 'Spanish', value
+  : 'es'
   ,
-  {
-    name: 'French', value;
-    : 'fr'
-  }
+    name: 'French', value
+  : 'fr'
   ,
-  {
-    name: 'German', value;
-    : 'de'
-  }
+    name: 'German', value
+  : 'de'
   ,
-  {
-    name: 'Italian', value;
-    : 'it'
-  }
+    name: 'Italian', value
+  : 'it'
   ,
-  {
-    name: 'Portuguese', value;
-    : 'pt'
-  }
+    name: 'Portuguese', value
+  : 'pt'
   ,
-  {
-    name: 'Chinese', value;
-    : 'zh'
-  }
+    name: 'Chinese', value
+  : 'zh'
   ,
-  {
-    name: 'Japanese', value;
-    : 'ja'
-  }
+    name: 'Japanese', value
+  : 'ja'
   ,
     ],
 }
@@ -164,44 +116,28 @@ displayName: 'Enable Auto-Classification', type;
   : 'Gmail category/tab for the email',
     default: '',
     displayOptions:
-  {
-    show: {
-      resource: ['email'], operation;
-      : ['send', 'reply', 'forward'],
-    }
+      resource: ['email'], operation
+  : ['send', 'reply', 'forward'],
     ,
-  }
   ,
     options: [
-  {
-    name: 'Default', value;
-    : ''
-  }
+    name: 'Default', value
+  : ''
   ,
-  {
-    name: 'Primary', value;
-    : 'CATEGORY_PERSONAL'
-  }
+    name: 'Primary', value
+  : 'CATEGORY_PERSONAL'
   ,
-  {
-    name: 'Social', value;
-    : 'CATEGORY_SOCIAL'
-  }
+    name: 'Social', value
+  : 'CATEGORY_SOCIAL'
   ,
-  {
-    name: 'Promotions', value;
-    : 'CATEGORY_PROMOTIONS'
-  }
+    name: 'Promotions', value
+  : 'CATEGORY_PROMOTIONS'
   ,
-  {
-    name: 'Updates', value;
-    : 'CATEGORY_UPDATES'
-  }
+    name: 'Updates', value
+  : 'CATEGORY_UPDATES'
   ,
-  {
-    name: 'Forums', value;
-    : 'CATEGORY_FORUMS'
-  }
+    name: 'Forums', value
+  : 'CATEGORY_FORUMS'
   ,
     ],
 }

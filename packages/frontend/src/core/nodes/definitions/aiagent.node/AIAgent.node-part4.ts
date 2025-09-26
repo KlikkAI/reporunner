@@ -8,9 +8,7 @@ displayName: 'Presence Penalty', type;
         step: 0.1,
         displayOptions:
 {
-  show: {
-    provider: ['openai'],
-  }
+  provider: ['openai'],
   ,
 }
 ,

@@ -1,4 +1,4 @@
-error: {
+{
   text: '!', color;
   : '#fff',
     backgroundColor: '#dc2626',

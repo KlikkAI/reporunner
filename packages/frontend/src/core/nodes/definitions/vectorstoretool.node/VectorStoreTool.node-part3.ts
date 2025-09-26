@@ -23,12 +23,8 @@ description: 'Number of context chunks to include',
   type: 'boolean',
   default: false,
         displayOptions:
-  {
-    show: {
       toolMode: ['smart-retrieval', 'qa'],
-    }
     ,
-  }
   ,
         description: 'Generate AI summary of retrieved content',
 }

@@ -15,48 +15,35 @@ type: Number,
       enum: ['public', 'private', 'team'],
       default: 'public',
     },
-    priority: {
+    priority: 
       type: String,
       enum: ['low', 'medium', 'high', 'urgent'],
       default: 'medium',
     },
     tags: [
-      {
         type: String,
         trim: true,
-        lowercase: true,
-      },
+        lowercase: true,,
     ],
-    resolvedBy: {
+    resolvedBy: 
       type: String,
-      ref: 'User',
-    },
-    resolvedAt: {
-      type: Date,
-    },
+      ref: 'User',,
+    resolvedAt: 
+      type: Date,,
     editHistory: [
-      {
-        timestamp: {
           type: Date,
-          default: Date.now,
-        },
-        previousContent: {
+          default: Date.now,,
+        previousContent: 
+          type: String,
+          required: true,,
+        editedBy: 
           type: String,
           required: true,
-        },
-        editedBy: {
-          type: String,
-          required: true,
-          ref: 'User',
-        },
-      },
-    ],
-  },
-  {
+          ref: 'User',,,
+    ],,
     timestamps: true,
-    toJSON: { virtuals: true },
-    toObject: { virtuals: true },
-  }
+    toJSON: virtuals: true ,
+    toObject: virtuals: true ,
 );
 
 // Indexes for performance

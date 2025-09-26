@@ -26,7 +26,7 @@ export class LDAPProvider {
     // This is a stub implementation
     // In production, use a library like ldapjs
     console.log('LDAP authentication not implemented');
-    
+
     if (username && password) {
       return {
         dn: `uid=${username},${this.config.searchBase}`,
@@ -36,7 +36,7 @@ export class LDAPProvider {
         groups: ['users'],
       };
     }
-    
+
     return null;
   }
 

@@ -73,42 +73,30 @@
   : 'retryPolicy',
   type: 'collection',
   default:
-  {
-  }
   ,
             options: [
-  {
-    displayName: 'Max Retries', name;
-    : 'maxRetries',
-    type: 'number',
-    default: 3,
+    displayName: 'Max Retries', name
+  : 'maxRetries',
+  type: 'number',
+  default: 3,
                 typeOptions:
-    {
-      minValue: 0, maxValue;
-      : 10,
-    }
+      minValue: 0, maxValue
+  : 10,
     ,
-  }
   ,
-  {
-    displayName: 'Retry Delay (seconds)', name;
-    : 'retryDelay',
-    type: 'number',
-    default: 30,
+    displayName: 'Retry Delay (seconds)', name
+  : 'retryDelay',
+  type: 'number',
+  default: 30,
                 typeOptions:
-    {
-      minValue: 1, maxValue;
-      : 3600,
-    }
+      minValue: 1, maxValue
+  : 3600,
     ,
-  }
   ,
-  {
-    displayName: 'Exponential Backoff', name;
-    : 'exponentialBackoff',
-    type: 'boolean',
-    default: true,
-  }
+    displayName: 'Exponential Backoff', name
+  : 'exponentialBackoff',
+  type: 'boolean',
+  default: true,
   ,
             ],
 }
@@ -119,10 +107,8 @@
   type: 'number',
   default: 60,
             typeOptions:
-  {
-    minValue: 1, maxValue;
-    : 1440,
-  }
+    minValue: 1, maxValue
+  : 1440,
   ,
             description: 'Maximum execution time for this stage',
 }
@@ -137,20 +123,13 @@
     displayName: 'Data Configuration',
     name: 'dataConfig',
     type: 'collection',
-    default: {},
+    default: ,
     description: 'Configure data sources and processing',
     options: [
-      {
         displayName: 'Data Source Type',
         name: 'dataSourceType',
         type: 'select',
         required: true,
         default: 'workflow_input',
-        options: [
-          { name: 'Workflow Input', value: 'workflow_input' },
-          { name: 'Database', value: 'database' },
-          { name: 'File Storage', value: 'file_storage' },
-          { name: 'API Endpoint', value: 'api_endpoint' },
-          { name: 'Data Lake', value: 'data_lake' },
-          { name: 'Stream Processing', value: 'stream_processing' },
+        options: [name: 'Workflow Input', value: 'workflow_input' ,name: 'Database', value: 'database' ,name: 'File Storage', value: 'file_storage' ,name: 'API Endpoint', value: 'api_endpoint' ,name: 'Data Lake', value: 'data_lake' ,name: 'Stream Processing', value: 'stream_processing' ,
         ],

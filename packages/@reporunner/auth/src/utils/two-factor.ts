@@ -96,12 +96,8 @@ export class TwoFactorService {
   private generateBackupCodes(count = 10): string[] {
     const codes: string[] = [];
     for (let i = 0; i < count; i++) {
-      const code = crypto
-        .randomBytes(4)
-        .toString('hex')
-        .toUpperCase()
-        .match(/.{4}/g)
-        ?.join('-') || '';
+      const code =
+        crypto.randomBytes(4).toString('hex').toUpperCase().match(/.{4}/g)?.join('-') || '';
       codes.push(code);
     }
     return codes;
@@ -113,11 +109,8 @@ export class TwoFactorService {
   private generateTOTP(secret: string): string {
     // Mock implementation - in production use a proper TOTP library
     const time = Math.floor(Date.now() / 30000);
-    const hash = crypto
-      .createHmac('sha1', secret)
-      .update(time.toString())
-      .digest('hex');
-    
+    const hash = crypto.createHmac('sha1', secret).update(time.toString()).digest('hex');
+
     return hash.substring(0, 6);
   }
 

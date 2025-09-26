@@ -1,8 +1,8 @@
 #!/usr/bin/env ts-node
 
-import * as ts from 'typescript';
 import * as fs from 'fs';
 import * as path from 'path';
+import * as ts from 'typescript';
 import { promisify } from 'util';
 
 const readFileAsync = promisify(fs.readFile);

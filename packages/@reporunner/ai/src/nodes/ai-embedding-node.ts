@@ -14,12 +14,14 @@ export class AIEmbeddingNode {
     // Mock implementation
     const texts = Array.isArray(text) ? text : [text];
     console.log('Generating embeddings for:', texts);
-    
+
     const dimensions = this.config.dimensions || 768;
-    const embeddings = texts.map(() => 
-      Array(dimensions).fill(0).map(() => Math.random())
+    const embeddings = texts.map(() =>
+      Array(dimensions)
+        .fill(0)
+        .map(() => Math.random())
     );
-    
+
     return Array.isArray(text) ? embeddings : embeddings[0];
   }
 }

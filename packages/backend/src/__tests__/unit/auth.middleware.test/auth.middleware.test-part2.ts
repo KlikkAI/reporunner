@@ -38,7 +38,8 @@ it('should reject request with expired token', async () =>
 }
 )
 
-it('should reject request when user not found in database', async () => {
+it('should reject request when user not found in database', async () =>
+{
   // Create token for non-existent user
   const nonExistentUserId = '507f1f77bcf86cd799439011';
   const token = jwt.sign({ userId: nonExistentUserId }, process.env.JWT_SECRET || 'test-secret', {
@@ -59,9 +60,11 @@ it('should reject request when user not found in database', async () => {
 
   expect(mockNext).not.toHaveBeenCalled();
   expect(mockReq.user).toBeUndefined();
-});
+}
+)
 
-it('should handle token with wrong JWT secret', async () => {
+it('should handle token with wrong JWT secret', async () =>
+{
   const testUser = await testUtils.createTestUser();
 
   // Create token with wrong secret
@@ -83,7 +86,8 @@ it('should handle token with wrong JWT secret', async () => {
 
   expect(mockNext).not.toHaveBeenCalled();
   expect(mockReq.user).toBeUndefined();
-});
+}
+)
 
 it('should work with token without Bearer prefix (legacy support)', async () => {
       const testUser = await testUtils.createTestUser({

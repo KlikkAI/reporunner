@@ -1,7 +1,3 @@
-import { useAuthStore } from './hooks/useAuthStore';
-import { useNavigate } from './hooks/useNavigate';
-import { useState } from './hooks/useState';
-import { useEffect } from './hooks/useEffect';
 import {
   ArrowRight,
   CheckCircle,
@@ -20,6 +16,10 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '@/core/stores/authStore';
 import { Footer } from '../components/Landing/Footer';
 import { Header } from '../components/Landing/Header';
+import { useAuthStore } from './hooks/useAuthStore';
+import { useEffect } from './hooks/useEffect';
+import { useNavigate } from './hooks/useNavigate';
+import { useState } from './hooks/useState';
 
 const Register: React.FC = () => {
   const navigate = useNavigate();

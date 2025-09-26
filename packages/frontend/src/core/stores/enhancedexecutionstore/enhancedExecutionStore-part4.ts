@@ -74,10 +74,12 @@ break;
 
 await executionMonitor.subscribeToExecution(executionId, handleExecutionEvent)
 
-set((state) => ({
-  subscriptions: new Set([...state.subscriptions, executionId]),
-  isConnected: executionMonitor.getConnectionStatus() === 'connected',
-}));
+set((state) => (
+{
+  subscriptions: new Set([...state.subscriptions, executionId]), isConnected;
+  : executionMonitor.getConnectionStatus() === 'connected',
+}
+))
 },
 
     unsubscribeFromExecution: (executionId: string) =>

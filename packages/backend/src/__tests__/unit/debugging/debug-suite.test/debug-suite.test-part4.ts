@@ -26,7 +26,8 @@ it('should register custom dependencies', async () =>
 }
 )
 
-it('should handle failing dependencies', async () => {
+it('should handle failing dependencies', async () =>
+{
   healthCheck.registerDependency({
     name: 'failing-service',
     type: 'external-api',
@@ -49,7 +50,8 @@ it('should handle failing dependencies', async () => {
 
   // Clean up
   healthCheck.unregisterDependency('failing-service');
-});
+}
+)
 })
 
 describe('Integration Tests', () =>

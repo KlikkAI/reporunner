@@ -50,7 +50,8 @@ describe('POST /collaboration/comments/:commentId/reactions', () =>
 }
 )
 
-describe('POST /collaboration/comments/:commentId/resolve', () => {
+describe('POST /collaboration/comments/:commentId/resolve', () =>
+{
   it('should resolve a comment', async () => {
     const comment = await Comment.create({
       workflowId: testWorkflowId,
@@ -75,9 +76,11 @@ describe('POST /collaboration/comments/:commentId/resolve', () => {
       },
     });
   });
-});
+}
+)
 
-describe('DELETE /collaboration/comments/:commentId', () => {
+describe('DELETE /collaboration/comments/:commentId', () =>
+{
       it('should delete a comment', async () => {
         const comment = await Comment.create({
           workflowId: testWorkflowId,

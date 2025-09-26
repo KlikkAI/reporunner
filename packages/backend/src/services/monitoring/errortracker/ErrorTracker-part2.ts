@@ -8,10 +8,10 @@ request: requestInfo, environment;
 this.updateErrorPattern(fingerprint, severity, timestamp)
 
 // Store error
-this.errors.set(errorId, errorInfo);
+this.errors.set(errorId, errorInfo)
 
 // Update error rate tracking
-this.updateErrorRate(fingerprint, timestamp);
+this.updateErrorRate(fingerprint, timestamp)
 
 // Check circuit breaker
 this.updateCircuitBreaker(fingerprint, timestamp);

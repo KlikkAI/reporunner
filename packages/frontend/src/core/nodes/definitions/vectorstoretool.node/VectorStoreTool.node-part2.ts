@@ -39,12 +39,8 @@ default: 'openai',
   default: '',
         required: true,
         displayOptions:
-  {
-    show: {
       toolMode: ['semantic-search', 'smart-retrieval', 'qa'],
-    }
     ,
-  }
   ,
         description: 'Search query or question',
         placeholder: 'What is machine learning? How to implement RAG?',
@@ -56,12 +52,8 @@ default: 'openai',
   type: 'string',
   default: 'content',
         displayOptions:
-  {
-    show: {
       toolMode: ['recommendation', 'extraction'],
-    }
     ,
-  }
   ,
         description: 'Field containing context for recommendations/extraction',
         placeholder: 'content, text, description',
@@ -93,12 +85,8 @@ default: 'openai',
   type: 'boolean',
   default: true,
         displayOptions:
-  {
-    show: {
       toolMode: ['qa', 'smart-retrieval'],
-    }
     ,
-  }
   ,
         description: 'Include relevant context in the response',
 }
@@ -110,9 +98,6 @@ default: 'openai',
         default: 3,
         min: 1,
         max: 10,
-        displayOptions: {
-          show: {
+        displayOptions: 
             toolMode: ['qa', 'smart-retrieval'],
-            includeContext: [true],
-          },
-        },
+            includeContext: [true],,,

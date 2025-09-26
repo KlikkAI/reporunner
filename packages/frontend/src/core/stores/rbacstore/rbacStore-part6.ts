@@ -59,10 +59,8 @@ try {
 {
   name: 'rbac-storage', partialize;
   : (state) => (
-  {
-    currentOrganizationId: state.currentOrganizationId, currentTeamId;
-    : state.currentTeamId,
-  }
+    currentOrganizationId: state.currentOrganizationId, currentTeamId
+  : state.currentTeamId,
   ),
 }
 )

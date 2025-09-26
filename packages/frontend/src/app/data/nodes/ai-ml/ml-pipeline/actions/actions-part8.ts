@@ -6,7 +6,7 @@ if (depStage) {
 
     visiting.delete(stage.stageName)
 visited.add(stage.stageName)
-result.push(stage);
+result.push(stage)
 }
 
 stages.forEach(visit)

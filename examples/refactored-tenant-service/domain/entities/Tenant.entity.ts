@@ -1,23 +1,23 @@
 import { BaseEntity } from '../../../../shared/base/BaseEntity';
-import { TenantId } from '../value-objects/TenantId.vo';
-import { TenantStatus } from '../value-objects/TenantStatus.vo';
-import { TenantPlan } from '../value-objects/TenantPlan.vo';
-import { TenantSettings } from '../value-objects/TenantSettings.vo';
-import { TenantCreatedEvent } from '../events/TenantCreated.event';
-import { TenantActivatedEvent } from '../events/TenantActivated.event';
-import { TenantSuspendedEvent } from '../events/TenantSuspended.event';
-import { PlanChangedEvent } from '../events/PlanChanged.event';
-import { TenantSettingsUpdatedEvent } from '../events/TenantSettingsUpdated.event';
+import type { DomainEvent } from '../../../../shared/events/DomainEvent';
 import {
+  InvalidSubdomainError,
+  InvalidTenantDataError,
+  PlanLimitExceededError,
+  ReservedSubdomainError,
   TenantAlreadyActiveError,
   TenantAlreadySuspendedError,
-  InvalidTenantDataError,
-  InvalidSubdomainError,
-  ReservedSubdomainError,
-  PlanLimitExceededError,
   UnsupportedFeaturesError,
 } from '../../shared/exceptions/tenant.exceptions';
-import { DomainEvent } from '../../../../shared/events/DomainEvent';
+import { PlanChangedEvent } from '../events/PlanChanged.event';
+import { TenantActivatedEvent } from '../events/TenantActivated.event';
+import { TenantCreatedEvent } from '../events/TenantCreated.event';
+import { TenantSettingsUpdatedEvent } from '../events/TenantSettingsUpdated.event';
+import { TenantSuspendedEvent } from '../events/TenantSuspended.event';
+import { TenantId } from '../value-objects/TenantId.vo';
+import type { TenantPlan } from '../value-objects/TenantPlan.vo';
+import { TenantSettings } from '../value-objects/TenantSettings.vo';
+import { TenantStatus } from '../value-objects/TenantStatus.vo';
 
 export interface CreateTenantData {
   name: string;
@@ -63,10 +63,10 @@ export class Tenant extends BaseEntity {
     const id = TenantId.generate();
     const status = TenantStatus.ACTIVE;
     const plan = data.plan;
-    const settings = this.getDefaultSettings(plan, data.settings);
+    const settings = Tenant.getDefaultSettings(plan, data.settings);
 
     // Business rule validation
-    this.validateBusinessRules(data);
+    Tenant.validateBusinessRules(data);
 
     const tenant = new Tenant(
       id,

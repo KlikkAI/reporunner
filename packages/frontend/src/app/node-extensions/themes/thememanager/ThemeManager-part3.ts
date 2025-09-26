@@ -29,4 +29,4 @@ getThemeDataAttribute();
 export const themeManager = new ThemeManager();
 
 // Export class for testing
-export { ThemeManager };
+export type { ThemeManager };

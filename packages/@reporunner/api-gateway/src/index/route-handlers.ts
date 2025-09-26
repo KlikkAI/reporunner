@@ -4,7 +4,7 @@
             // Add response headers
             res.setHeader('X-Service-Name', service.name)
 res.setHeader('X-Response-Time', Date.now() - req.startTime)
-res.setHeader('X-Cache', 'MISS');
+res.setHeader('X-Cache', 'MISS')
 },
           onError: (err, req, res: any) =>
 {

@@ -1,6 +1,3 @@
-import { useForm } from './hooks/useForm';
-import { useState } from './hooks/useState';
-import { useEffect } from './hooks/useEffect';
 import {
   CheckCircleOutlined,
   ExclamationCircleOutlined,
@@ -31,6 +28,9 @@ import type React from 'react';
 import { useEffect, useState } from 'react';
 import type { CustomPropertiesPanelProps } from '../../../../app/node-extensions/types';
 import PropertyField from '../../common/PropertyField';
+import { useEffect } from './hooks/useEffect';
+import { useForm } from './hooks/useForm';
+import { useState } from './hooks/useState';
 
 const { TabPane } = Tabs;
 const { Panel } = Collapse;

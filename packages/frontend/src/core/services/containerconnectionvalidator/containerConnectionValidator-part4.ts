@@ -6,10 +6,8 @@ isValid: false, reason;
 {
   action: 'create_bridge', details;
   :
-  {
-    bridgeType: 'container_output', sourceContainer;
-    : sourceContext.containerId,
-  }
+    bridgeType: 'container_output', sourceContainer
+  : sourceContext.containerId,
   ,
 }
 ,

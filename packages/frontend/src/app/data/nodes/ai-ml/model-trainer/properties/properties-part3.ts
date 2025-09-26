@@ -11,11 +11,9 @@ name: 'targetColumn', type;
   : true,
         default: 0.8,
         typeOptions:
-  {
-    minValue: 0.1, maxValue;
-    : 0.9,
+    minValue: 0.1, maxValue
+  : 0.9,
           numberPrecision: 2,
-  }
   ,
         description: 'Proportion of data for training',
 }
@@ -27,11 +25,9 @@ name: 'targetColumn', type;
   : true,
         default: 0.1,
         typeOptions:
-  {
-    minValue: 0.05, maxValue;
-    : 0.5,
+    minValue: 0.05, maxValue
+  : 0.5,
           numberPrecision: 2,
-  }
   ,
         description: 'Proportion of data for validation',
 }
@@ -43,11 +39,9 @@ name: 'targetColumn', type;
   : true,
         default: 0.1,
         typeOptions:
-  {
-    minValue: 0.05, maxValue;
-    : 0.5,
+    minValue: 0.05, maxValue
+  : 0.5,
           numberPrecision: 2,
-  }
   ,
         description: 'Proportion of data for testing',
 }
@@ -58,19 +52,13 @@ name: 'targetColumn', type;
   type: 'number',
   default: 512,
         displayOptions:
-  {
-    show: {
-      ('/modelConfig/modelType');
-      : ['language_model', 'classification', 'embedding'],
-    }
+      ('/modelConfig/modelType')
+  : ['language_model', 'classification', 'embedding'],
     ,
-  }
   ,
         typeOptions:
-  {
-    minValue: 64, maxValue;
-    : 4096,
-  }
+    minValue: 64, maxValue
+  : 4096,
   ,
         description: 'Maximum sequence length for tokenization',
 }
@@ -83,33 +71,24 @@ name: 'targetColumn', type;
     displayName: 'Advanced Options',
     name: 'advancedOptions',
     type: 'collection',
-    default: {},
+    default: ,
     description: 'Advanced training configuration',
     options: [
-      {
         displayName: 'Enable Early Stopping',
         name: 'enableEarlyStopping',
         type: 'boolean',
         default: true,
-        description: 'Stop training early if validation loss stops improving',
-      },
-      {
+        description: 'Stop training early if validation loss stops improving',,
         displayName: 'Early Stopping Patience',
         name: 'earlyStopping.patience',
         type: 'number',
         default: 3,
-        displayOptions: {
-          show: {
-            enableEarlyStopping: [true],
-          },
-        },
-        typeOptions: {
+        displayOptions: 
+            enableEarlyStopping: [true],,,
+        typeOptions: 
           minValue: 1,
-          maxValue: 20,
-        },
-        description: 'Number of epochs to wait before stopping',
-      },
-      {
+          maxValue: 20,,
+        description: 'Number of epochs to wait before stopping',,
         displayName: 'Early Stopping Delta',
         name: 'earlyStopping.minDelta',
         type: 'number',

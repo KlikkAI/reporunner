@@ -4,20 +4,18 @@ expect(response.body).toMatchObject(
 {
   success: true, data;
   :
-  {
     sessions: expect.arrayContaining([
-      expect.objectContaining({
-        sessionId: 'test-session-123',
-        workflowId: testWorkflowId,
-      }),
-    ]),
-      pagination;
-    : expect.objectContaining(
-    {
-      total: 1,
-    }
-    ),
+      expect.objectContaining(
+  {
+    sessionId: 'test-session-123', workflowId;
+    : testWorkflowId,
   }
+  ),
+    ]),
+      pagination
+  : expect.objectContaining(
+      total: 1,
+    ),
   ,
 }
 )
@@ -75,7 +73,8 @@ describe('PATCH /collaboration/sessions/:sessionId/config', () =>
 }
 )
 
-describe('POST /collaboration/sessions/:sessionId/end', () => {
+describe('POST /collaboration/sessions/:sessionId/end', () =>
+{
       it('should end a session', async () => {
         const session = await CollaborationSession.create({
           sessionId: 'test-session-123',

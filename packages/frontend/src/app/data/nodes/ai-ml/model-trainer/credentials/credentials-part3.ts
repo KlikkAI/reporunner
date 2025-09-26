@@ -23,10 +23,8 @@ name: 'apiKey', type;
   : 'sshPrivateKey',
   type: 'string', typeOptions;
   :
-  {
-    password: true, multiline;
-    : true,
-  }
+    password: true, multiline
+  : true,
   ,
         default: '',
         required: false,

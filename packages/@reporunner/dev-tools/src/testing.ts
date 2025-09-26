@@ -45,7 +45,7 @@ export class WorkflowTester {
 
       if (testCase.expectedOutput) {
         const isMatch = JSON.stringify(actualOutput) === JSON.stringify(testCase.expectedOutput);
-        
+
         if (!isMatch) {
           return {
             testCaseId: testCase.id,
@@ -88,10 +88,10 @@ export class WorkflowTester {
   private async executeWorkflow(workflowId: string, input: any): Promise<any> {
     // Mock workflow execution
     // In production, this would call the actual workflow engine
-    
+
     // Simulate async operation
-    await new Promise(resolve => setTimeout(resolve, 10));
-    
+    await new Promise((resolve) => setTimeout(resolve, 10));
+
     return {
       ...input,
       workflowId,
@@ -102,9 +102,9 @@ export class WorkflowTester {
 
   generateTestReport(results: TestResult[]): string {
     const total = results.length;
-    const passed = results.filter(r => r.status === 'passed').length;
-    const failed = results.filter(r => r.status === 'failed').length;
-    const skipped = results.filter(r => r.status === 'skipped').length;
+    const passed = results.filter((r) => r.status === 'passed').length;
+    const failed = results.filter((r) => r.status === 'failed').length;
+    const skipped = results.filter((r) => r.status === 'skipped').length;
     const totalDuration = results.reduce((sum, r) => sum + r.duration, 0);
 
     const report = [];
@@ -112,9 +112,9 @@ export class WorkflowTester {
     report.push('Test Report');
     report.push('='.repeat(50));
     report.push(`Total: ${total}`);
-    report.push(`Passed: ${passed} (${(passed / total * 100).toFixed(1)}%)`);
-    report.push(`Failed: ${failed} (${(failed / total * 100).toFixed(1)}%)`);
-    report.push(`Skipped: ${skipped} (${(skipped / total * 100).toFixed(1)}%)`);
+    report.push(`Passed: ${passed} (${((passed / total) * 100).toFixed(1)}%)`);
+    report.push(`Failed: ${failed} (${((failed / total) * 100).toFixed(1)}%)`);
+    report.push(`Skipped: ${skipped} (${((skipped / total) * 100).toFixed(1)}%)`);
     report.push(`Total Duration: ${totalDuration}ms`);
     report.push('');
 
@@ -122,8 +122,8 @@ export class WorkflowTester {
       report.push('Failed Tests:');
       report.push('-'.repeat(50));
       results
-        .filter(r => r.status === 'failed')
-        .forEach(r => {
+        .filter((r) => r.status === 'failed')
+        .forEach((r) => {
           report.push(`  ❌ ${r.testCaseId}`);
           if (r.error) report.push(`     Error: ${r.error}`);
           if (r.assertion) report.push(`     Assertion: ${r.assertion}`);
@@ -162,7 +162,7 @@ export class NodeTester {
 
       if (testCase.expectedOutput) {
         const isMatch = JSON.stringify(actualOutput) === JSON.stringify(testCase.expectedOutput);
-        
+
         if (!isMatch) {
           return {
             testCaseId: testCase.id,

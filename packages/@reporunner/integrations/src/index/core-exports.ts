@@ -93,7 +93,7 @@ export {
   rateLimiter,
 } from './utils/rate-limiter';
 // Webhooks
-export {
+export type {
   WebhookConfig,
   WebhookEvent,
   WebhookHandler,

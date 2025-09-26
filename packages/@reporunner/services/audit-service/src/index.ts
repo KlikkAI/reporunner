@@ -1,11 +1,11 @@
-import { EventEmitter } from 'events';
-import { RedisService } from '@reporunner/core/services/redis';
-import { DatabaseService } from '@reporunner/core/services/database';
-import { EventBusService } from '@reporunner/core/services/eventBus';
+import type { DatabaseService } from '@reporunner/core/services/database';
+import type { EventBusService } from '@reporunner/core/services/eventBus';
+import type { RedisService } from '@reporunner/core/services/redis';
 import { logger } from '@reporunner/monitoring/logger';
-import { Queue, Worker, Job } from 'bullmq';
-import { z } from 'zod';
+import { type Job, Queue, Worker } from 'bullmq';
 import { createHash } from 'crypto';
+import { EventEmitter } from 'events';
+import { z } from 'zod';
 
 export interface AuditEvent {
   id: string;
@@ -756,18 +756,20 @@ export class AuditService extends EventEmitter {
           return eventValue === condition.value;
         case 'not_equals':
           return eventValue !== condition.value;
-        case 'contains':
+        case 'contains': {
           const containsValue = String(eventValue);
           const searchValue = String(condition.value);
           return condition.case_sensitive
             ? containsValue.includes(searchValue)
             : containsValue.toLowerCase().includes(searchValue.toLowerCase());
-        case 'not_contains':
+        }
+        case 'not_contains': {
           const notContainsValue = String(eventValue);
           const notSearchValue = String(condition.value);
           return condition.case_sensitive
             ? !notContainsValue.includes(notSearchValue)
             : !notContainsValue.toLowerCase().includes(notSearchValue.toLowerCase());
+        }
         case 'greater_than':
           return Number(eventValue) > Number(condition.value);
         case 'less_than':

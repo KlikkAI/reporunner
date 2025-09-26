@@ -7,43 +7,38 @@ version: 1, description;
 {
   displayName: `Property ${i}`, name;
   : `prop$
-  {
-    i;
-  }
+    i
   `,
-                      type: 'string',
-                      default: '',
-                      description: `;
+  type: 'string',
+  default: '',
+                      description: `
   This;
   is;
   property;
   $;
-  {
-    i;
-  }
+  i;
   with a detailed
   description;
   ...`,
   options: Array(10)
                         .fill(0)
                         .map((_, j) => (
+    name: `Option $
   {
-    name: `Option ${j}`, value;
-    : `option$
-    {
-      j;
-    }
-    `,
-                          description: `;
-    This;
-    is;
-    option;
-    $;
-    {
-      j;
-    }
-    ...`,
+    j;
   }
+  `, value;
+    : `;
+  option$;
+  j;
+  `,
+                          description: `;
+  This;
+  is;
+  option;
+  $;
+  j;
+  ...`,
   )),
 }
 )),

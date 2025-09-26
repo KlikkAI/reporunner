@@ -4,9 +4,7 @@ name: 'subject', type;
         required: true,
         displayOptions:
 {
-  show: {
-    operation: ['send'],
-  }
+  operation: ['send'],
   ,
 }
 ,
@@ -19,23 +17,15 @@ name: 'subject', type;
   type: 'options',
   default: 'text',
         displayOptions:
-  {
-    show: {
       operation: ['send'],
-    }
     ,
-  }
   ,
         options: [
-  {
-    name: 'Plain Text', value;
-    : 'text',
-  }
+    name: 'Plain Text', value
+  : 'text',
   ,
-  {
-    name: 'HTML', value;
-    : 'html',
-  }
+    name: 'HTML', value
+  : 'html',
   ,
         ],
         description: 'Format of the email message',
@@ -48,12 +38,8 @@ name: 'subject', type;
   default: '',
         required: true,
         displayOptions:
-  {
-    show: {
       operation: ['send'],
-    }
     ,
-  }
   ,
         description: 'Email message content',
         placeholder: 'Your email message here...',
@@ -65,12 +51,8 @@ name: 'subject', type;
   type: 'string',
   default: 'INBOX',
         displayOptions:
-  {
-    show: {
       operation: ['read'],
-    }
     ,
-  }
   ,
         description: 'Mailbox to read from',
         placeholder: 'INBOX, Sent, Draft',
@@ -82,31 +64,21 @@ name: 'subject', type;
   type: 'options',
   default: 'unread',
         displayOptions:
-  {
-    show: {
       operation: ['read'],
-    }
     ,
-  }
   ,
         options: [
-  {
-    name: 'Unread Only', value;
-    : 'unread',
+    name: 'Unread Only', value
+  : 'unread',
             description: 'Only fetch unread emails',
-  }
   ,
-  {
-    name: 'All Emails', value;
-    : 'all',
+    name: 'All Emails', value
+  : 'all',
             description: 'Fetch all emails',
-  }
   ,
-  {
-    name: 'Recent', value;
-    : 'recent',
+    name: 'Recent', value
+  : 'recent',
             description: 'Fetch recent emails',
-  }
   ,
         ],
         description: 'Which emails to read',
@@ -119,6 +91,5 @@ name: 'subject', type;
         default: 10,
         min: 1,
         max: 100,
-        displayOptions: {
-          show: {
+        displayOptions: 
             operation: ['read'],

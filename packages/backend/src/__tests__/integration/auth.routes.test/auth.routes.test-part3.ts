@@ -30,7 +30,8 @@ it('should fail with inactive user', async () =>
 }
 )
 
-it('should fail with missing credentials', async () => {
+it('should fail with missing credentials', async () =>
+{
   const response = await request(app)
     .post('/auth/login')
     .send({
@@ -45,7 +46,8 @@ it('should fail with missing credentials', async () => {
       message: expect.stringMatching(/Validation failed|validation/i),
     })
   );
-});
+}
+)
 })
 
 describe('GET /auth/profile', () =>

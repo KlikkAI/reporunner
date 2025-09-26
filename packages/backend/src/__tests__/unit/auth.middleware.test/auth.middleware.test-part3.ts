@@ -42,7 +42,8 @@ it('should handle case-insensitive Bearer prefix', async () =>
 }
 )
 
-it('should not expose sensitive user data in request.user', async () => {
+it('should not expose sensitive user data in request.user', async () =>
+{
   const testUser = await testUtils.createTestUser({
     email: 'sensitive@test.com',
   });
@@ -67,9 +68,11 @@ it('should not expose sensitive user data in request.user', async () => {
   expect(mockReq.user).toHaveProperty('email');
   expect(mockReq.user).toHaveProperty('firstName');
   expect(mockReq.user).toHaveProperty('lastName');
-});
+}
+)
 
-it('should handle database connection errors gracefully', async () => {
+it('should handle database connection errors gracefully', async () =>
+{
   const testUser = await testUtils.createTestUser();
   const token = jwt.sign(
     { userId: testUser._id.toString() },
@@ -97,6 +100,7 @@ it('should handle database connection errors gracefully', async () => {
 
   // Restore original method
   User.findById = originalFindById;
-});
+}
+)
 })
 })

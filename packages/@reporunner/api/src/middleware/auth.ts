@@ -1,4 +1,4 @@
-import type { Request, Response, NextFunction } from 'express';
+import type { NextFunction, Request, Response } from 'express';
 
 export interface AuthRequest extends Request {
   user?: any;
@@ -8,15 +8,21 @@ export interface AuthRequest extends Request {
 
 export function authMiddleware(req: AuthRequest, res: Response, next: NextFunction): void {
   // Skip auth for public endpoints
-  const publicPaths = ['/health', '/docs', '/openapi.json', '/api/auth/login', '/api/auth/register'];
-  
-  if (publicPaths.some(path => req.path.startsWith(path))) {
+  const publicPaths = [
+    '/health',
+    '/docs',
+    '/openapi.json',
+    '/api/auth/login',
+    '/api/auth/register',
+  ];
+
+  if (publicPaths.some((path) => req.path.startsWith(path))) {
     return next();
   }
 
   // Check for authorization header
   const authHeader = req.headers.authorization;
-  
+
   if (!authHeader) {
     return res.status(401).json({ error: 'No authorization header' }) as any;
   }

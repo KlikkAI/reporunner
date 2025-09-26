@@ -7,9 +7,7 @@ displayName: 'Slack Notifications', required;
   : 'webhookUrl',
   type: 'string', typeOptions;
   :
-  {
     password: true,
-  }
   ,
         default: '',
         required: true,
@@ -30,9 +28,7 @@ displayName: 'Slack Notifications', required;
   : 'botToken',
   type: 'string', typeOptions;
   :
-  {
     password: true,
-  }
   ,
         default: '',
         required: false,
@@ -47,47 +43,35 @@ displayName: 'Slack Notifications', required;
     required: false,
     documentationUrl: 'https://developer.pagerduty.com/',
     properties: [
-  {
-    displayName: 'Integration Key', name;
-    : 'integrationKey',
-    type: 'string', typeOptions;
-    :
-    {
+    displayName: 'Integration Key', name
+  : 'integrationKey',
+  type: 'string', typeOptions;
+  :
       password: true,
-    }
     ,
         default: '',
         required: true,
         description: 'PagerDuty integration key',
-  }
   ,
-  {
-    displayName: 'Routing Key', name;
-    : 'routingKey',
-    type: 'string', typeOptions;
-    :
-    {
+    displayName: 'Routing Key', name
+  : 'routingKey',
+  type: 'string', typeOptions;
+  :
       password: true,
-    }
     ,
         default: '',
         required: false,
         description: 'PagerDuty routing key for Events API v2',
-  }
   ,
-  {
-    displayName: 'API Token', name;
-    : 'apiToken',
-    type: 'string', typeOptions;
-    :
-    {
+    displayName: 'API Token', name
+  : 'apiToken',
+  type: 'string', typeOptions;
+  :
       password: true,
-    }
     ,
         default: '',
         required: false,
         description: 'PagerDuty REST API token',
-  }
   ,
     ],
 }

@@ -15,90 +15,62 @@
     ],
     attachments: [
 {
-        type: {
-          type: String,
+          String,
           enum: ['image', 'file', 'link'],
           required: true,
         },
-        url: {
-          type: String,
-          required: true,
-        },
-        name: {
-          type: String,
-          required: true,
-        },
-        size: {
-          type: Number,
-        },
-        mimeType: {
-          type: String,
-        },
-      },
+        url: 
+          String,
+          required: true,,
+        name: 
+          String,
+          required: true,,
+        size: 
+          Number,,
+        mimeType: 
+          String,,,
     ],
-    position: {
-      x: {
-        type: Number,
-      },
-      y: {
-        type: Number,
-      },
-      nodeId: {
-        type: String,
-      },
-      edgeId: {
-        type: String,
-      },
-    },
-    status: {
+    position: 
+        type: Number,,
+      y: 
+        type: Number,,
+      nodeId: 
+        type: String,,
+      edgeId: 
+        type: String,,,
+    status: 
       type: String,
       enum: ['open', 'resolved', 'closed'],
       default: 'open',
     },
     reactions: [
-      {
-        userId: {
           type: String,
           required: true,
-          ref: 'User',
-        },
-        type: {
-          type: String,
+          ref: 'User',,
+          String,
           enum: ['👍', '👎', '❤️', '😂', '😮', '😢', '😡'],
           required: true,
         },
-        timestamp: {
-          type: Date,
-          default: Date.now,
-        },
-      },
+        timestamp: 
+          Date,
+          default: Date.now,,,
     ],
     thread: [
-      {
-        authorId: {
           type: String,
           required: true,
-          ref: 'User',
-        },
-        content: {
+          ref: 'User',,
+        content: 
           type: String,
           required: true,
-          maxlength: 5000,
-        },
-        timestamp: {
+          maxlength: 5000,,
+        timestamp: 
           type: Date,
-          default: Date.now,
-        },
-        edited: {
-          type: Date,
-        },
+          default: Date.now,,
+        edited: 
+          type: Date,,
         mentions: [
-          {
-            userId: {
               type: String,
-              ref: 'User',
-            },
-            userName: {
-              type: String,
-            },
-            startIndex: {
+              ref: 'User',,
+            userName: 
+              type: String,,
+            startIndex:

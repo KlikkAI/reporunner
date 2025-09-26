@@ -1,12 +1,8 @@
 {
-  $group: {
-    _id: '$type', count;
-    :
-    {
-      $sum: 1;
-    }
-    ,
-  }
+  _id: '$type', count;
+  :
+      $sum: 1
+  ,
   ,
 }
 ,

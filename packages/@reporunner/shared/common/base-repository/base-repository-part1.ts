@@ -1,5 +1,5 @@
-import { Collection, Db, Filter, FindOptions, Document } from 'mongodb';
-import { RedisCache } from '../infrastructure/cache/redis-cache';
+import type { Collection, Db, Document, Filter, FindOptions } from 'mongodb';
+import type { RedisCache } from '../infrastructure/cache/redis-cache';
 import { logger } from '../utils/logger';
 
 export interface Repository<T> {

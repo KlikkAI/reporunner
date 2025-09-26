@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { Container as InversifyContainer, injectable, inject } from 'inversify';
+import { Container as InversifyContainer, inject, injectable } from 'inversify';
 import { logger } from '../utils/logger';
 
 // Service identifiers
@@ -287,7 +287,7 @@ export const container = DIContainer.getInstance();
 
 // Decorator for automatic registration
 export function Service(identifier: symbol, lifecycle?: 'singleton' | 'transient' | 'request') {
-  return function (target: any) {
+  return (target: any) => {
     injectable()(target);
 
     // Auto-register when decorator is applied
@@ -305,7 +305,7 @@ export function Service(identifier: symbol, lifecycle?: 'singleton' | 'transient
 
 // Factory decorator
 export function Factory(identifier: symbol) {
-  return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
+  return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
     const factory = descriptor.value;
 
     setTimeout(() => {

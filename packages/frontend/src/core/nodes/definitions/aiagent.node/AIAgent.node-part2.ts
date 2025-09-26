@@ -6,9 +6,7 @@
         ],
         displayOptions:
 {
-  show: {
-    provider: ['google'],
-  }
+  provider: ['google'],
   ,
 }
 ,
@@ -22,12 +20,8 @@
         default: 'llama3.2',
         placeholder: 'llama3.2, mistral, codellama, etc.',
         displayOptions:
-  {
-    show: {
       provider: ['ollama'],
-    }
     ,
-  }
   ,
 }
 ,
@@ -45,12 +39,8 @@
           'awsBedrockApi',
         ],
         displayOptions:
-  {
-    show: {
       provider: ['openai', 'anthropic', 'google', 'azure_openai', 'aws_bedrock'],
-    }
     ,
-  }
   ,
 }
 ,
@@ -63,12 +53,8 @@
         default: 'http://localhost:11434',
         placeholder: 'http://localhost:11434',
         displayOptions:
-  {
-    show: {
       provider: ['ollama'],
-    }
     ,
-  }
   ,
 }
 ,
@@ -91,20 +77,14 @@
         description: 'Type of AI agent for specialized tasks',
         default: 'general',
         options: [
-  {
-    name: 'General AI Agent', value;
-    : 'general'
-  }
+    name: 'General AI Agent', value
+  : 'general'
   ,
-  {
-    name: 'Email Classifier', value;
-    : 'classifier'
-  }
+    name: 'Email Classifier', value
+  : 'classifier'
   ,
-  {
-    name: 'Customer Support Agent', value;
-    : 'support-agent'
-  }
+    name: 'Customer Support Agent', value
+  : 'support-agent'
   ,
         ],
 }
@@ -117,34 +97,22 @@
         description: 'Pre-built prompt templates for common use cases',
         default: 'custom',
         options: [
-  {
-    name: 'Custom Prompt', value;
-    : 'custom'
-  }
+    name: 'Custom Prompt', value
+  : 'custom'
   ,
-  {
-    name: 'Email Support Classification', value;
-    : 'email_classification',
-  }
+    name: 'Email Support Classification', value
+  : 'email_classification',
   ,
-  {
-    name: 'Sentiment Analysis', value;
-    : 'sentiment_analysis'
-  }
+    name: 'Sentiment Analysis', value
+  : 'sentiment_analysis'
   ,
-  {
-    name: 'Content Summarization', value;
-    : 'summarization'
-  }
+    name: 'Content Summarization', value
+  : 'summarization'
   ,
         ],
         displayOptions:
-  {
-    show: {
       agentType: ['classifier', 'general'],
-    }
     ,
-  }
   ,
 }
 ,

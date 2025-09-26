@@ -1,5 +1,3 @@
-import { useState } from './hooks/useState';
-import { useEffect } from './hooks/useEffect';
 import {
   AudioOutlined,
   BarChartOutlined,
@@ -49,6 +47,8 @@ import {
   aiOrchestrationService,
   type MultiModalWorkflow,
 } from '@/core/services/aiOrchestrationService';
+import { useEffect } from './hooks/useEffect';
+import { useState } from './hooks/useState';
 
 const { Title, Text, Paragraph } = Typography;
 const { TextArea } = Input;

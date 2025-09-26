@@ -4,12 +4,12 @@ name: 'Test Company', organizationId;
       }
 
 mockValidator.validateCreate.mockResolvedValue(undefined)
-mockRepository.findByOrganizationId.mockResolvedValue(null);
+mockRepository.findByOrganizationId.mockResolvedValue(null)
 
 // First call returns existing tenant, second returns null
 mockRepository.findBySlug
   .mockResolvedValueOnce(TestDataBuilder.createTenant())
-  .mockResolvedValueOnce(null);
+  .mockResolvedValueOnce(null)
 
 mockRepository.save.mockResolvedValue(undefined);
 
@@ -44,7 +44,8 @@ it('should use default plan if not specified', async () =>
 }
 )
 
-it('should handle validation errors', async () => {
+it('should handle validation errors', async () =>
+{
   // Arrange
   const dto: CreateTenantDto = {
     name: '', // Invalid name
@@ -60,9 +61,11 @@ it('should handle validation errors', async () => {
 
   expect(mockRepository.save).not.toHaveBeenCalled();
   expect(mockEventBus.publish).not.toHaveBeenCalled();
-});
+}
+)
 
-it('should handle repository errors', async () => {
+it('should handle repository errors', async () =>
+{
   // Arrange
   const dto: CreateTenantDto = {
     name: 'Test Company',
@@ -79,7 +82,8 @@ it('should handle repository errors', async () => {
   await expect(useCase.execute(dto)).rejects.toThrow('Database error');
 
   expect(mockEventBus.publish).not.toHaveBeenCalled();
-});
+}
+)
 })
 
 describe('slug generation', () =>

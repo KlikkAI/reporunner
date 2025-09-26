@@ -1,41 +1,29 @@
-passwordPolicy: {
-  minLength: {
-    type: Number,
-    default: 8,
+{
+  type: Number,
+  default: 8,
           min: 6,
           max: 32,
-  }
   ,
         requireUppercase:
-  {
-    type: Boolean,
-    default: false,
-  }
+  type: Boolean,
+  default: false,
   ,
         requireLowercase:
-  {
-    type: Boolean,
-    default: false,
-  }
+  type: Boolean,
+  default: false,
   ,
         requireNumbers:
-  {
-    type: Boolean,
-    default: false,
-  }
+  type: Boolean,
+  default: false,
   ,
         requireSpecialChars:
-  {
-    type: Boolean,
-    default: false,
-  }
+  type: Boolean,
+  default: false,
   ,
         expirationDays:
-  {
-    type: Number, min;
-    : 30,
+  type: Number, min;
+  : 30,
           max: 365,
-  }
   ,
 }
 ,
@@ -60,94 +48,71 @@ passwordPolicy: {
       }
   ,
       ssoSettings:
-  {
-    type: Schema.Types.Mixed,
-  }
+  type: Schema.Types.Mixed,
   ,
-      auditLogRetention:
-  {
-    type: Number,
-    default: 90, // 90 days
+      auditLogRetention
+  :
+  type: Number,
+  default: 90, // 90 days
         min: 30,
         max: 365,
-  }
   ,
       maxUsers:
-  {
-    type: Number, min;
-    : 1,
-  }
+  type: Number, min;
+  : 1,
   ,
       maxWorkflows:
-  {
-    type: Number, min;
-    : 1,
-  }
+  type: Number, min;
+  : 1,
   ,
       features:
-  {
-    type: [String],
-    default: ['workflows', 'integrations', 'basic_auth'],
-  }
+  type: [String],
+  default: ['workflows', 'integrations', 'basic_auth'],
   ,
 }
 ,
     billing:
 {
-  customerId: {
-    type: String,
-  }
+  type: String,
   ,
-      subscriptionId:
-  {
-    type: String,
-  }
+      subscriptionId
+  :
+  type: String,
   ,
-      currentPeriodStart:
-  {
-    type: Date,
-  }
+      currentPeriodStart
+  :
+  type: Date,
   ,
-      currentPeriodEnd:
-  {
-    type: Date,
-  }
+      currentPeriodEnd
+  :
+  type: Date,
   ,
-      status:
-  {
-    type: String,
-    enum: ['active', 'inactive', 'suspended', 'cancelled'],
+      status
+  :
+  type: String,
+  enum: ['active', 'inactive', 'suspended', 'cancelled'],
         default: 'active',
       }
-    ,
-  }
+  ,
   ,
     isActive:
-  {
-    type: Boolean,
-    default: true,
-  }
+  type: Boolean,
+  default: true,
   ,
     ownerId:
-  {
-    type: String, ref;
-    : 'User',
+  type: String, ref;
+  : 'User',
       required: [true, 'Organization owner is required'],
-  }
   ,
 }
 ,
 {
   timestamps: true, toJSON;
   :
-  {
-    virtuals: true;
-  }
+    virtuals: true
   ,
     toObject:
-  {
-    virtuals: true;
-  }
+    virtuals: true
   ,
 }
 )

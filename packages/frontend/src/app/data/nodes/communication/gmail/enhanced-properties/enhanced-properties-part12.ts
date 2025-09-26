@@ -5,10 +5,8 @@ type: 'select', description;
     default: 'standard',
     displayOptions:
 {
-  show: {
-    resource: ['email'], operation;
-    : ['send', 'reply', 'forward'],
-  }
+  resource: ['email'], operation;
+  : ['send', 'reply', 'forward'],
   ,
 }
 ,
@@ -39,13 +37,9 @@ type: 'select', description;
   : 'Track when emails are opened (requires third-party service)',
     default: false,
     displayOptions:
-  {
-    show: {
-      resource: ['email'], operation;
-      : ['send', 'reply', 'forward'],
-    }
+      resource: ['email'], operation
+  : ['send', 'reply', 'forward'],
     ,
-  }
   ,
 }
 ,
@@ -56,13 +50,9 @@ type: 'select', description;
   : 'Track clicks on links in emails (requires third-party service)',
     default: false,
     displayOptions:
-  {
-    show: {
-      resource: ['email'], operation;
-      : ['send', 'reply', 'forward'],
-    }
+      resource: ['email'], operation
+  : ['send', 'reply', 'forward'],
     ,
-  }
   ,
 }
 ,
@@ -75,13 +65,9 @@ type: 'select', description;
   : 'Automatic reply message for incoming emails',
     rows: 3,
     displayOptions:
-  {
-    show: {
-      resource: ['email'], operation;
-      : ['messageReceived'],
-    }
+      resource: ['email'], operation
+  : ['messageReceived'],
     ,
-  }
   ,
 }
 ,
@@ -91,17 +77,11 @@ type: 'select', description;
   type: 'dateTime', description;
   : 'Start date for automatic replies',
     displayOptions:
-  {
-    show: {
       autoReplyMessage: [''],
-    }
     ,
       hide:
-    {
       autoReplyMessage: [''],
-    }
     ,
-  }
   ,
 }
 ,
@@ -111,17 +91,11 @@ type: 'select', description;
   type: 'dateTime', description;
   : 'End date for automatic replies',
     displayOptions:
-  {
-    show: {
       autoReplyMessage: [''],
-    }
     ,
       hide:
-    {
       autoReplyMessage: [''],
-    }
     ,
-  }
   ,
 }
 ,
@@ -133,7 +107,6 @@ type: 'select', description;
     type: 'boolean',
     description: 'Request delivery confirmation from email server',
     default: false,
-    displayOptions: {
-      show: {
+    displayOptions: 
         resource: ['email'],
         operation: ['send', 'reply', 'forward'],

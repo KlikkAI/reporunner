@@ -1,4 +1,4 @@
-import type { Request, Response, NextFunction } from 'express';
+import type { NextFunction, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 
 export interface JWTConfig {
@@ -19,7 +19,7 @@ export function createJWTMiddleware(config: JWTConfig) {
   return async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     try {
       const token = extractToken(req);
-      
+
       if (!token) {
         return res.status(401).json({ error: 'No token provided' });
       }
@@ -49,20 +49,20 @@ export function createJWTMiddleware(config: JWTConfig) {
 
 function extractToken(req: Request): string | null {
   const authHeader = req.headers.authorization;
-  
+
   if (authHeader && authHeader.startsWith('Bearer ')) {
     return authHeader.substring(7);
   }
-  
+
   // Check for token in query params (less secure, but sometimes needed)
   if (req.query.token && typeof req.query.token === 'string') {
     return req.query.token;
   }
-  
+
   // Check for token in cookies
   if (req.cookies && req.cookies.token) {
     return req.cookies.token;
   }
-  
+
   return null;
 }

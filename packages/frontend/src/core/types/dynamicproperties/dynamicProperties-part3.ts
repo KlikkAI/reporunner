@@ -7,8 +7,8 @@
     | 'file'
     | 'ai-agent'
 icon?: string
-description: string;
-version?: number | number[];
+description: string
+version?: number | number[]
 category?: string;
 subcategory?: string;
 

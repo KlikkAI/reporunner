@@ -1,8 +1,8 @@
-import { BaseLLM } from '../base/BaseLLM';
-import { OpenAIWrapper } from '../llm/OpenAIWrapper';
+import type { BaseLLM } from '../base/BaseLLM';
 import { AnthropicWrapper } from '../llm/AnthropicWrapper';
 import { HuggingFaceWrapper } from '../llm/HuggingFaceWrapper';
 import { OllamaWrapper } from '../llm/OllamaWrapper';
+import { OpenAIWrapper } from '../llm/OpenAIWrapper';
 
 export interface LLMConfig {
   provider: 'openai' | 'anthropic' | 'huggingface' | 'ollama' | 'custom';
@@ -37,11 +37,11 @@ export class LLMManager {
   registerLLM(name: string, config: LLMConfig): BaseLLM {
     const llm = this.createLLM(name, config);
     this.llms.set(name, llm);
-    
+
     if (!this.defaultLLM) {
       this.defaultLLM = llm;
     }
-    
+
     return llm;
   }
 
@@ -55,7 +55,7 @@ export class LLMManager {
           maxTokens: config.maxTokens,
           ...config.options,
         });
-      
+
       case 'anthropic':
         return new AnthropicWrapper({
           apiKey: config.apiKey || process.env.ANTHROPIC_API_KEY || '',
@@ -64,7 +64,7 @@ export class LLMManager {
           maxTokens: config.maxTokens,
           ...config.options,
         });
-      
+
       case 'huggingface':
         return new HuggingFaceWrapper({
           apiKey: config.apiKey || process.env.HUGGINGFACE_API_KEY || '',
@@ -72,14 +72,14 @@ export class LLMManager {
           endpoint: config.endpoint,
           ...config.options,
         });
-      
+
       case 'ollama':
         return new OllamaWrapper({
           modelName: config.modelName || 'llama2',
           endpoint: config.endpoint || 'http://localhost:11434',
           ...config.options,
         });
-      
+
       default:
         throw new Error(`Unknown LLM provider: ${config.provider}`);
     }
@@ -92,19 +92,19 @@ export class LLMManager {
       }
       return this.defaultLLM;
     }
-    
+
     const llm = this.llms.get(name);
     if (!llm) {
       throw new Error(`LLM not found: ${name}`);
     }
-    
+
     return llm;
   }
 
   async generate(prompt: string, llmName?: string, options?: any): Promise<LLMResponse> {
     const llm = this.getLLM(llmName);
     const response = await llm.generate(prompt, options);
-    
+
     return {
       text: response,
       metadata: {
@@ -121,21 +121,21 @@ export class LLMManager {
     maxRetries = 3
   ): Promise<LLMResponse> {
     let lastError: Error | undefined;
-    
+
     for (let i = 0; i < maxRetries; i++) {
       try {
         return await this.generate(prompt, llmName, options);
       } catch (error) {
         lastError = error as Error;
         console.error(`LLM generation attempt ${i + 1} failed:`, error);
-        
+
         // Exponential backoff
         if (i < maxRetries - 1) {
-          await new Promise(resolve => setTimeout(resolve, Math.pow(2, i) * 1000));
+          await new Promise((resolve) => setTimeout(resolve, 2 ** i * 1000));
         }
       }
     }
-    
+
     throw new Error(`Failed after ${maxRetries} retries: ${lastError?.message}`);
   }
 
@@ -146,11 +146,11 @@ export class LLMManager {
     options?: any
   ): Promise<void> {
     const llm = this.getLLM(llmName);
-    
+
     if (!llm.stream) {
       throw new Error('Streaming not supported by this LLM');
     }
-    
+
     await llm.stream(prompt, onToken, options);
   }
 

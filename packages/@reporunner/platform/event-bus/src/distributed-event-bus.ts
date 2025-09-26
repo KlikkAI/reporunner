@@ -1,6 +1,6 @@
-import { Redis } from 'ioredis';
-import { EventEmitter } from 'events';
 import { logger } from '@reporunner/shared/logger';
+import { EventEmitter } from 'events';
+import { Redis } from 'ioredis';
 import { v4 as uuidv4 } from 'uuid';
 
 export interface EventBusConfig {
@@ -37,9 +37,7 @@ export interface Event {
   data: any;
 }
 
-export interface EventHandler {
-  (event: Event): Promise<void>;
-}
+export type EventHandler = (event: Event) => Promise<void>;
 
 export interface Subscription {
   id: string;
@@ -509,7 +507,7 @@ export class DistributedEventBus extends EventEmitter {
   private calculateBackoff(attempt: number): number {
     const { initialDelay, backoffMultiplier } = this.config.retry;
     return Math.min(
-      initialDelay * Math.pow(backoffMultiplier, attempt - 1),
+      initialDelay * backoffMultiplier ** (attempt - 1),
       60000 // Max 1 minute
     );
   }

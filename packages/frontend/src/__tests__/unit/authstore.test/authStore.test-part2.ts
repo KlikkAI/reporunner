@@ -78,7 +78,8 @@ describe('register', () =>
 }
 )
 
-describe('logout', () => {
+describe('logout', () =>
+{
     it('should logout successfully', async () => {
       // First set an authenticated state
       useAuthStore.setState({

@@ -1,7 +1,5 @@
-displayOptions: {
-  show: {
-    enableEarlyStopping: [true],
-  }
+{
+  enableEarlyStopping: [true],
   ,
 }
 ,
@@ -20,11 +18,9 @@ displayOptions: {
   type: 'number',
   default: 1.0,
         typeOptions:
-  {
-    minValue: 0.1, maxValue;
-    : 10,
+    minValue: 0.1, maxValue
+  : 10,
           numberPrecision: 1,
-  }
   ,
         description: 'Maximum norm for gradient clipping',
 }
@@ -35,11 +31,9 @@ displayOptions: {
   type: 'number',
   default: 0.1,
         typeOptions:
-  {
-    minValue: 0, maxValue;
-    : 0.9,
+    minValue: 0, maxValue
+  : 0.9,
           numberPrecision: 2,
-  }
   ,
         description: 'Dropout rate for regularization',
 }
@@ -66,18 +60,12 @@ displayOptions: {
   type: 'number',
   default: 1,
         displayOptions:
-  {
-    show: {
       saveCheckpoints: [true],
-    }
     ,
-  }
   ,
         typeOptions:
-  {
-    minValue: 1, maxValue;
-    : 10,
-  }
+    minValue: 1, maxValue
+  : 10,
   ,
         description: 'Save checkpoint every N epochs',
 }
@@ -90,29 +78,21 @@ displayOptions: {
     displayName: 'Hardware Configuration',
     name: 'hardwareConfig',
     type: 'collection',
-    default: {},
+    default: ,
     description: 'Configure compute resources',
     options: [
-      {
         displayName: 'Use GPU',
         name: 'useGpu',
         type: 'boolean',
         default: true,
-        description: 'Use GPU for training if available',
-      },
-      {
+        description: 'Use GPU for training if available',,
         displayName: 'GPU Memory Limit (GB)',
         name: 'gpuMemoryLimit',
         type: 'number',
         default: 8,
-        displayOptions: {
-          show: {
-            useGpu: [true],
-          },
-        },
-        typeOptions: {
+        displayOptions: 
+            useGpu: [true],,,
+        typeOptions: 
           minValue: 1,
-          maxValue: 80,
-        },
-        description: 'GPU memory limit in GB',
-      },
+          maxValue: 80,,
+        description: 'GPU memory limit in GB',,

@@ -7,58 +7,65 @@ this.registerAction(
   : 'Send Email',
   description: 'Send an email via Gmail',
   properties: z.object(
-  {
-  }
   ),
   inputSchema: EmailSchema,
   outputSchema: z.object(
-  {
-    id: z.string(), threadId;
-    : z.string(),
+    id: z.string(), threadId
+  : z.string(),
     labelIds: z.array(z.string()),
-  }
   ),
 }
 )
 
-this.registerAction({
-  name: 'read_emails',
-  displayName: 'Read Emails',
+this.registerAction(
+{
+  name: 'read_emails', displayName;
+  : 'Read Emails',
   description: 'Read emails from Gmail',
   properties: EmailFilterSchema,
-  inputSchema: z.object({}),
-  outputSchema: z.object({
+  inputSchema: z.object(),
+  outputSchema: z.object(
     emails: z.array(
-      z.object({
-        id: z.string(),
-        threadId: z.string(),
+      z.object(
+  {
+    id: z.string(), threadId;
+    : z.string(),
         from: z.string(),
         subject: z.string(),
         snippet: z.string(),
         receivedAt: z.string(),
-      })
+  }
+  )
     ),
-    nextPageToken: z.string().optional(),
-  }),
-});
+    nextPageToken: z.string().optional(),),
+}
+)
 
-this.registerAction({
-  name: 'manage_labels',
-  displayName: 'Manage Labels',
+this.registerAction(
+{
+  name: 'manage_labels', displayName;
+  : 'Manage Labels',
   description: 'Create, update, or delete Gmail labels',
-  properties: z.object({
+  properties: z.object(
+  {
     operation: z.enum(['create', 'update', 'delete', 'list']),
-  }),
-  inputSchema: z.object({
-    label: LabelSchema.optional(),
-    labelId: z.string().optional(),
-  }),
-  outputSchema: z.object({
-    success: z.boolean(),
-    labels: z.array(z.any()).optional(),
+  }
+  ),
+  inputSchema: z.object(
+  {
+    label: LabelSchema.optional(), labelId;
+    : z.string().optional(),
+  }
+  ),
+  outputSchema: z.object(
+  {
+    success: z.boolean(), labels;
+    : z.array(z.any()).optional(),
     label: z.any().optional(),
-  }),
-});
+  }
+  ),
+}
+)
 }
 
   async authenticate(credentials: IntegrationCredentials): Promise<boolean>

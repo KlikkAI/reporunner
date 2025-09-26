@@ -4,10 +4,7 @@ import { DevTools } from './index';
 
 const program = new Command();
 
-program
-  .name('reporunner-dev')
-  .description('Reporunner development tools CLI')
-  .version('1.0.0');
+program.name('reporunner-dev').description('Reporunner development tools CLI').version('1.0.0');
 
 program
   .command('generate:workflow <name>')
@@ -61,7 +58,7 @@ program
     try {
       const testData = options.data ? JSON.parse(options.data) : undefined;
       const result = await devTools.testWorkflow(workflowId, testData);
-      
+
       if (result.status === 'passed') {
         console.log(`✅ Workflow test passed in ${result.duration}ms`);
       } else {
@@ -83,7 +80,7 @@ program
     try {
       const iterations = parseInt(options.iterations, 10);
       const results = await devTools.benchmarkWorkflow(workflowId, iterations);
-      
+
       console.log('📊 Benchmark Results:');
       console.log(`  Average Duration: ${results.averageDuration.toFixed(2)}ms`);
       console.log(`  Min Duration: ${results.minDuration}ms`);
@@ -102,16 +99,16 @@ program
     const devTools = new DevTools();
     try {
       const results = await devTools.validateWorkflows(directory);
-      
+
       console.log('🔍 Validation Results:');
       console.log(`  Valid: ${results.valid}`);
       console.log(`  Invalid: ${results.invalid}`);
-      
+
       if (results.errors.length > 0) {
         console.error('\n❌ Errors:');
-        results.errors.forEach(error => {
+        results.errors.forEach((error) => {
           console.error(`  ${error.file}:`);
-          error.errors.forEach(e => console.error(`    - ${e}`));
+          error.errors.forEach((e) => console.error(`    - ${e}`));
         });
         process.exit(1);
       }

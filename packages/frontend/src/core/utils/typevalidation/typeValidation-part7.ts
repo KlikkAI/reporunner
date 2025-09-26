@@ -7,7 +7,7 @@ return 'high';
 }
 
 // Export all classes and interfaces
-export {
+export type {
   TypeInferenceEngine,
   AdvancedTypeValidator,
   AssignmentValidator,

@@ -21,7 +21,7 @@ onInitialize();
  * Connect to the service
  */
 async
-connect();
+connect()
 : Promise<void>
 {
   try {
@@ -66,7 +66,7 @@ onConnect();
  * Disconnect from the service
  */
 async
-disconnect();
+disconnect()
 : Promise<void>
 {
   try {
@@ -97,7 +97,7 @@ onDisconnect();
  */
 protected
 async
-validateConfiguration();
+validateConfiguration()
 : Promise<void>
 {
   // Check required credentials

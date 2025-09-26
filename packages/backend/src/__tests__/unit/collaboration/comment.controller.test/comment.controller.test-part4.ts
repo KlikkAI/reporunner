@@ -69,7 +69,8 @@ describe('addReaction', () =>
 }
 )
 
-describe('removeReaction', () => {
+describe('removeReaction', () =>
+{
   it('should remove user reaction successfully', async () => {
     const comment = await Comment.create({
       workflowId: testWorkflowId,
@@ -99,4 +100,5 @@ describe('removeReaction', () => {
       })
     );
   });
-});
+}
+)

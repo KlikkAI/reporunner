@@ -14,10 +14,10 @@ newRefreshToken = this.signToken(
   true
 )
 
-refreshTokenExpiry = this.getExpiryDate(this.config.refreshTokenExpiry);
+refreshTokenExpiry = this.getExpiryDate(this.config.refreshTokenExpiry)
 
 // Update token store
-this.refreshTokenStore.delete(tokenId);
+this.refreshTokenStore.delete(tokenId)
 this.refreshTokenStore.set(newTokenId, {
   ...refreshTokenData,
   tokenId: newTokenId,

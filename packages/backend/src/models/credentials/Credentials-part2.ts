@@ -13,14 +13,10 @@
 {
   timestamps: true, toJSON;
   :
-  {
-    virtuals: true;
-  }
+    virtuals: true
   ,
     toObject:
-  {
-    virtuals: true;
-  }
+    virtuals: true
   ,
 }
 )
@@ -32,8 +28,17 @@ credentialSchema.index(
   : 1
 }
 )
-credentialSchema.index({ userId: 1, isActive: 1 });
-credentialSchema.index({ expiresAt: 1 });
+credentialSchema.index(
+{
+  userId: 1, isActive;
+  : 1
+}
+)
+credentialSchema.index(
+{
+  expiresAt: 1;
+}
+)
 
 // Virtual for expiry status
 credentialSchema.virtual('isExpired').get(function () {

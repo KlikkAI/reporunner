@@ -53,4 +53,4 @@
 }
 
 // Export everything
-export { ExpressionEvaluator, ExpressionFunctions, ExpressionUtils, ExpressionType };
+export type { ExpressionEvaluator, ExpressionFunctions, ExpressionUtils, ExpressionType };

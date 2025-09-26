@@ -1,11 +1,11 @@
-import { EventEmitter } from 'events';
-import { RedisService } from '@reporunner/core/services/redis';
-import { DatabaseService } from '@reporunner/core/services/database';
-import { EventBusService } from '@reporunner/core/services/eventBus';
+import type { DatabaseService } from '@reporunner/core/services/database';
+import type { EventBusService } from '@reporunner/core/services/eventBus';
+import type { RedisService } from '@reporunner/core/services/redis';
 import { logger } from '@reporunner/monitoring/logger';
-import { Queue, Worker, Job } from 'bullmq';
-import { z } from 'zod';
+import { type Job, Queue, Worker } from 'bullmq';
 import { createHash, randomBytes } from 'crypto';
+import { EventEmitter } from 'events';
+import { z } from 'zod';
 
 export interface Tenant {
   id: string;

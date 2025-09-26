@@ -3,19 +3,19 @@ break;
 case 'day':
         start.setHours(0, 0, 0, 0)
 start.setDate(start.getDate() - 1)
-end.setHours(0, 0, 0, 0);
+end.setHours(0, 0, 0, 0)
 break;
 case 'week':
         start.setHours(0, 0, 0, 0)
 start.setDate(start.getDate() - start.getDay() - 7)
-end.setHours(0, 0, 0, 0);
-end.setDate(end.getDate() - end.getDay());
+end.setHours(0, 0, 0, 0)
+end.setDate(end.getDate() - end.getDay())
 break;
 case 'month':
         start.setDate(1)
 start.setHours(0, 0, 0, 0)
-start.setMonth(start.getMonth() - 1);
-end.setDate(1);
+start.setMonth(start.getMonth() - 1)
+end.setDate(1)
 end.setHours(0, 0, 0, 0);
 break;
 }

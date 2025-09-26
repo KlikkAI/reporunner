@@ -7,8 +7,8 @@ await harness.mockServer.start();
 // Run test function
 await testFn(harness)
 
-assertion.passed = true;
-assertion.message = 'Test passed successfully';
+assertion.passed = true
+assertion.message = 'Test passed successfully'
 } catch (error: any)
 {
   assertion.passed = false;

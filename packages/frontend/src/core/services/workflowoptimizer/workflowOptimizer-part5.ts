@@ -1,16 +1,10 @@
-previewChanges: {
+{
   removeNodes: group.slice(1).map((n) => n.id), modifyNodes;
   : [
-  {
-    nodeId: group[0].id, changes;
-    :
-    {
-      parameters: {
-        consolidated: true;
-      }
-    }
-    ,
-  }
+    nodeId: group[0].id, changes
+  :
+        consolidated: true
+  ,
   ,
               ],
 }

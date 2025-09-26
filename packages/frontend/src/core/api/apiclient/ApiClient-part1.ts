@@ -1,7 +1,6 @@
 import type { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 import axios from 'axios';
-import type { ZodSchema } from 'zod';
-import { z } from 'zod';
+import type { ZodSchema, z } from 'zod';
 import type { ApiError, ApiResponse, PaginatedResponse, PaginationParams } from '../schemas';
 import { configService } from '../services/ConfigService';
 import { logger } from '../services/LoggingService';

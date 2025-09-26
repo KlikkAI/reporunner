@@ -9,20 +9,14 @@ type: 'string', description;
   : 'Filter by email read status',
         default: 'all',
         options: [
-  {
-    name: 'All', value;
-    : 'all'
-  }
+    name: 'All', value
+  : 'all'
   ,
-  {
-    name: 'Unread Only', value;
-    : 'unread'
-  }
+    name: 'Unread Only', value
+  : 'unread'
   ,
-  {
-    name: 'Read Only', value;
-    : 'read'
-  }
+    name: 'Read Only', value
+  : 'read'
   ,
         ],
 }
@@ -49,42 +43,28 @@ type: 'string', description;
   type: 'collection', description;
   : 'Filter emails by date range',
         values: [
-  {
-    name: 'enabled', displayName;
-    : 'Enable Date Filter',
-    type: 'boolean',
-    default: false,
-  }
+    name: 'enabled', displayName
+  : 'Enable Date Filter',
+  type: 'boolean',
+  default: false,
   ,
-  {
-    name: 'from', displayName;
-    : 'From Date',
-    type: 'dateTime', description;
-    : 'Start date for filtering emails',
+    name: 'from', displayName
+  : 'From Date',
+  type: 'dateTime', description;
+  : 'Start date for filtering emails',
             displayOptions:
-    {
-      show: {
         enabled: [true],
-      }
       ,
-    }
     ,
-  }
   ,
-  {
-    name: 'to', displayName;
-    : 'To Date',
-    type: 'dateTime', description;
-    : 'End date for filtering emails',
+    name: 'to', displayName
+  : 'To Date',
+  type: 'dateTime', description;
+  : 'End date for filtering emails',
             displayOptions:
-    {
-      show: {
         enabled: [true],
-      }
       ,
-    }
     ,
-  }
   ,
         ],
 }
@@ -96,20 +76,14 @@ type: 'string', description;
   : 'Filter by attachment presence',
         default: 'any',
         options: [
-  {
-    name: 'Any', value;
-    : 'any'
-  }
+    name: 'Any', value
+  : 'any'
   ,
-  {
-    name: 'Has Attachments', value;
-    : 'true'
-  }
+    name: 'Has Attachments', value
+  : 'true'
   ,
-  {
-    name: 'No Attachments', value;
-    : 'false'
-  }
+    name: 'No Attachments', value
+  : 'false'
   ,
         ],
 }
@@ -122,16 +96,13 @@ type: 'string', description;
     type: 'collection',
     description: 'Configure additional processing options',
     required: false,
-    default: {},
+    default: ,
     values: [
-      {
         name: 'downloadAttachments',
         displayName: 'Download Attachments',
         type: 'boolean',
         description: 'Automatically download email attachments',
-        default: false,
-      },
-      {
+        default: false,,
         name: 'attachmentPrefix',
         displayName: 'Attachment Prefix',
         type: 'string',

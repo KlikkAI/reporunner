@@ -79,7 +79,7 @@ applySingleOptimization(
 {
     // Apply the optimization based on the suggestion type
     let optimizedNodes = [...nodes];
-    let optimizedEdges = [...edges];
+    const optimizedEdges = [...edges];
 
     const { implementation } = suggestion;
     const { previewChanges } = implementation;

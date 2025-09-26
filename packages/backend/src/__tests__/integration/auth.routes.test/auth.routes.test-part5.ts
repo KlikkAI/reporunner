@@ -28,7 +28,8 @@ it('should fail with invalid refresh token', async () =>
 }
 )
 
-it('should fail with missing refresh token', async () => {
+it('should fail with missing refresh token', async () =>
+{
   const response = await request(app).post('/auth/refresh').send({}).expect(400);
 
   expect(response.body).toEqual(
@@ -37,9 +38,11 @@ it('should fail with missing refresh token', async () => {
       message: expect.stringMatching(/Validation failed|validation/i),
     })
   );
-});
+}
+)
 
-it('should fail when user is inactive', async () => {
+it('should fail when user is inactive', async () =>
+{
   const testUser = await testUtils.createTestUser({ isActive: false });
 
   const refreshToken = jwt.sign(
@@ -56,7 +59,8 @@ it('should fail when user is inactive', async () => {
       message: 'Invalid refresh token',
     })
   );
-});
+}
+)
 })
 
 describe('POST /auth/logout', () =>
@@ -86,7 +90,8 @@ describe('POST /auth/logout', () =>
 }
 )
 
-describe('PUT /auth/profile', () => {
+describe('PUT /auth/profile', () =>
+{
     it('should update profile successfully', async () => {
       const testUser = await testUtils.createTestUser({
         email: 'update@test.com',

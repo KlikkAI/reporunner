@@ -9,12 +9,8 @@ required: true, description;
   default: '',
         required: true,
         displayOptions:
-  {
-    show: {
       operation: ['generate', 'complete', 'summarize', 'classify'],
-    }
     ,
-  }
   ,
         description: 'The prompt to send to the LLM',
         placeholder: 'Write a creative story about...',
@@ -26,12 +22,8 @@ required: true, description;
   type: 'json',
   default: '[]',
         displayOptions:
-  {
-    show: {
       operation: ['chat'],
-    }
     ,
-  }
   ,
         description: 'Chat messages in OpenAI format',
         placeholder: '[{"role": "user", "content": "Hello!"}]',
@@ -43,12 +35,8 @@ required: true, description;
   type: 'string',
   default: '',
         displayOptions:
-  {
-    show: {
       operation: ['summarize', 'classify'],
-    }
     ,
-  }
   ,
         description: 'Text to summarize or classify',
         placeholder: 'Long text to process...',
@@ -60,12 +48,8 @@ required: true, description;
   type: 'string',
   default: '',
         displayOptions:
-  {
-    show: {
       operation: ['classify'],
-    }
     ,
-  }
   ,
         description: 'Available categories for classification (comma-separated)',
         placeholder: 'positive, negative, neutral',

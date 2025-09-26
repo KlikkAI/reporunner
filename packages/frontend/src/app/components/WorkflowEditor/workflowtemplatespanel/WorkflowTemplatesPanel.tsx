@@ -1,6 +1,6 @@
+import { useEffect } from './hooks/useEffect';
 import { useLeanWorkflowStore } from './hooks/useLeanWorkflowStore';
 import { useState } from './hooks/useState';
-import { useEffect } from './hooks/useEffect';
 /**
  * Workflow Templates Panel
  *

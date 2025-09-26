@@ -81,7 +81,8 @@ addReply = asyncHandler(async (req: Request, res: Response): Promise<void> =>
  * POST /collaboration/comments/:commentId/reactions
  */
 public
-addReaction = asyncHandler(async (req: Request, res: Response): Promise<void> => {
+addReaction = asyncHandler(async (req: Request, res: Response): Promise<void> =>
+{
     const { commentId } = req.params;
     const { type } = req.body;
 

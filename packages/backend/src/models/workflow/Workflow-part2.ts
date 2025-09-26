@@ -1,4 +1,4 @@
-id: {
+{
   type: String;
 }
 ,
@@ -23,15 +23,11 @@ id: {
   enum: ['fixed', 'expression'], default: 'fixed' }
   ,
           outputName:
-  {
-    type: String;
-  }
+  type: String;
   ,
           enabled:
-  {
-    type: Boolean,
-    default: true
-  }
+  type: Boolean,
+  default: true
   ,
 }
 ,
@@ -43,14 +39,10 @@ id: {
 ,
       outputs: [
 {
-  id: {
-    type: String;
-  }
+  type: String;
   ,
           label:
-  {
-    type: String;
-  }
+  type: String;
   ,
 }
 ,

@@ -1,10 +1,10 @@
-import { useState } from './hooks/useState';
-import { useMemo } from './hooks/useMemo';
-import { useEffect } from './hooks/useEffect';
 import { useCallback } from './hooks/useCallback';
-import { useSortable } from './hooks/useSortable';
-import { useSensors } from './hooks/useSensors';
+import { useEffect } from './hooks/useEffect';
+import { useMemo } from './hooks/useMemo';
 import { useSensor } from './hooks/useSensor';
+import { useSensors } from './hooks/useSensors';
+import { useSortable } from './hooks/useSortable';
+import { useState } from './hooks/useState';
 /**
  * Advanced Assignment Collection Component - n8n EditFields Exact Match
  * Sophisticated field assignment interface with drag & drop, auto-type detection,

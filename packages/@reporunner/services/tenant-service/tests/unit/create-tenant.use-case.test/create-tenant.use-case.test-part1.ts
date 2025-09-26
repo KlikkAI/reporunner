@@ -1,9 +1,9 @@
-import { CreateTenantUseCase } from '../../src/refactored/application/use-cases/create-tenant.use-case';
-import { TenantRepository } from '../../src/refactored/domain/repositories/tenant.repository';
-import { EventBus } from '../../src/refactored/domain/services/event-bus';
-import { TenantValidator } from '../../src/refactored/application/validators/tenant.validator';
-import { CreateTenantDto } from '../../src/refactored/application/dto/create-tenant.dto';
 import { MockFactory, TestDataBuilder } from '@reporunner/testing/setup/test-setup';
+import type { CreateTenantDto } from '../../src/refactored/application/dto/create-tenant.dto';
+import { CreateTenantUseCase } from '../../src/refactored/application/use-cases/create-tenant.use-case';
+import type { TenantValidator } from '../../src/refactored/application/validators/tenant.validator';
+import type { TenantRepository } from '../../src/refactored/domain/repositories/tenant.repository';
+import type { EventBus } from '../../src/refactored/domain/services/event-bus';
 
 describe('CreateTenantUseCase', () => {
   let useCase: CreateTenantUseCase;

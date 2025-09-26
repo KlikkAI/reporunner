@@ -1,22 +1,22 @@
-import express, { Application, Request, Response, NextFunction } from 'express';
-import { createProxyMiddleware, Options } from 'http-proxy-middleware';
-import helmet from 'helmet';
-import cors from 'cors';
+import { logger } from '@reporunner/shared/utils/logger';
 import compression from 'compression';
+import cors from 'cors';
+import express, { type Application, NextFunction, type Request, Response } from 'express';
 import rateLimit from 'express-rate-limit';
-import RedisStore from 'rate-limit-redis';
+import helmet from 'helmet';
+import { createProxyMiddleware, Options } from 'http-proxy-middleware';
 import { Redis } from 'ioredis';
 import jwt from 'jsonwebtoken';
-import { logger } from '@reporunner/shared/utils/logger';
-import { ServiceRegistry } from './service-registry';
-import { CircuitBreaker } from './circuit-breaker';
+import RedisStore from 'rate-limit-redis';
+import type { CircuitBreaker } from './circuit-breaker';
+import { config } from './config';
+import { HealthCheck } from './health-check';
 import { LoadBalancer } from './load-balancer';
-import { RequestLogger } from './middleware/request-logger';
+import { MetricsCollector } from './metrics';
 import { AuthMiddleware } from './middleware/auth';
 import { ErrorHandler } from './middleware/error-handler';
-import { HealthCheck } from './health-check';
-import { MetricsCollector } from './metrics';
-import { config } from './config';
+import { RequestLogger } from './middleware/request-logger';
+import { ServiceRegistry } from './service-registry';
 
 interface ServiceConfig {
   name: string;

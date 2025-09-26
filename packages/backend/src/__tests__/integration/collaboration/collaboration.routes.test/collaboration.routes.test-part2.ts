@@ -55,7 +55,8 @@ describe('POST /collaboration/comments', () =>
 }
 )
 
-describe('PATCH /collaboration/comments/:commentId', () => {
+describe('PATCH /collaboration/comments/:commentId', () =>
+{
   it('should update a comment', async () => {
     const comment = await Comment.create({
       workflowId: testWorkflowId,
@@ -87,9 +88,11 @@ describe('PATCH /collaboration/comments/:commentId', () => {
       },
     });
   });
-});
+}
+)
 
-describe('POST /collaboration/comments/:commentId/replies', () => {
+describe('POST /collaboration/comments/:commentId/replies', () =>
+{
       it('should add a reply to a comment', async () => {
         const comment = await Comment.create({
           workflowId: testWorkflowId,

@@ -1,9 +1,7 @@
 placeholder: 'gmail_', displayOptions;
 :
 {
-  show: {
-    downloadAttachments: [true],
-  }
+  downloadAttachments: [true],
   ,
 }
 ,
@@ -17,12 +15,8 @@ placeholder: 'gmail_', displayOptions;
         min: 1,
         max: 25,
         displayOptions:
-  {
-    show: {
       downloadAttachments: [true],
-    }
     ,
-  }
   ,
 }
 ,

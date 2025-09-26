@@ -1,8 +1,3 @@
-import { useAIAssistantStore } from './hooks/useAIAssistantStore';
-import { useLeanWorkflowStore } from './hooks/useLeanWorkflowStore';
-import { useState } from './hooks/useState';
-import { useEffect } from './hooks/useEffect';
-import { useCallback } from './hooks/useCallback';
 import type React from 'react';
 import { useCallback, useEffect, useState } from 'react';
 import { CONTAINER_TEMPLATES, ContainerFactory } from '@/app/services/containerFactory';
@@ -14,6 +9,11 @@ import {
 } from '@/core/constants/categories';
 import { useAIAssistantStore } from '@/core/stores/aiAssistantStore';
 import { VirtualizedList } from '@/design-system';
+import { useAIAssistantStore } from './hooks/useAIAssistantStore';
+import { useCallback } from './hooks/useCallback';
+import { useEffect } from './hooks/useEffect';
+import { useLeanWorkflowStore } from './hooks/useLeanWorkflowStore';
+import { useState } from './hooks/useState';
 
 interface AdvancedNodePanelProps {
   isCollapsed: boolean;

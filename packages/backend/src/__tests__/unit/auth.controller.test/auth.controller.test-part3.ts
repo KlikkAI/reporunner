@@ -39,7 +39,8 @@ describe('refreshToken', () =>
 }
 )
 
-describe('logout', () => {
+describe('logout', () =>
+{
   it('should successfully logout user', async () => {
     await authController.logout(mockReq as Request, mockRes as Response);
 
@@ -50,9 +51,11 @@ describe('logout', () => {
       })
     );
   });
-});
+}
+)
 
-describe('updateProfile', () => {
+describe('updateProfile', () =>
+{
   it('should successfully update user profile', async () => {
     const testUser = await testUtils.createTestUser({
       email: 'update@test.com',
@@ -92,7 +95,8 @@ describe('updateProfile', () => {
       authController.updateProfile(mockReq as Request, mockRes as Response)
     ).rejects.toThrow('Not authenticated');
   });
-});
+}
+)
 
 describe('changePassword', () => {
     it('should successfully change password', async () => {

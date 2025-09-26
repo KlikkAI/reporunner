@@ -17,7 +17,10 @@ executeAction(actionName: string, parameters: any)
  */
 protected
 async
-makeRequest(endpoint: string, options: RequestOptions = {})
+makeRequest(endpoint: string, options: RequestOptions =
+{
+}
+)
 : Promise<any>
 {
   // Check rate limits

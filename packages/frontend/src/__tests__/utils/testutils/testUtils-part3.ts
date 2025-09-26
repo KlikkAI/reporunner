@@ -19,4 +19,4 @@ export * from '@testing-library/react';
 export { default as userEvent } from '@testing-library/user-event';
 
 // Custom render as default export
-export { customRender as render };
+export type { customRender as render };

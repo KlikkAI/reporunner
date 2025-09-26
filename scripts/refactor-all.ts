@@ -1,13 +1,13 @@
 #!/usr/bin/env ts-node
 
-import * as fs from 'fs';
-import * as path from 'path';
-import { promisify } from 'util';
-import { exec } from 'child_process';
-import * as glob from 'glob';
 import chalk from 'chalk';
+import { exec } from 'child_process';
+import * as fs from 'fs';
+import * as glob from 'glob';
 import ora from 'ora';
 import PQueue from 'p-queue';
+import * as path from 'path';
+import { promisify } from 'util';
 import { ASTTransformer } from './ast-transformer';
 
 const execAsync = promisify(exec);
@@ -717,4 +717,4 @@ if (require.main === module) {
   main().catch(console.error);
 }
 
-export { EnterpriseRefactorer, RefactoringConfig };
+export { EnterpriseRefactorer, type RefactoringConfig };

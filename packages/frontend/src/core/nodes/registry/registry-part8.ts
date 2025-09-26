@@ -33,4 +33,4 @@ export const nodeRegistry = NodeRegistry.getInstance();
 // Transform node is now registered automatically via core/nodes/definitions import in main.tsx
 
 // Also export the class for testing purposes
-export { NodeRegistry };
+export type { NodeRegistry };

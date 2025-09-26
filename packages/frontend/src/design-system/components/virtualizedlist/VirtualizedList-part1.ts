@@ -1,5 +1,6 @@
 import { useVirtualizer } from '@tanstack/react-virtual';
-import React, { useMemo, useRef } from 'react';
+import type React from 'react';
+import { useMemo, useRef } from 'react';
 import { performanceService } from '@/core/services/PerformanceService';
 
 export interface VirtualizedListProps<T> {

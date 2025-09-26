@@ -35,7 +35,8 @@ describe('POST /auth/refresh (correct endpoint)', () =>
 }
 )
 
-describe('PUT /auth/change-password (correct method)', () => {
+describe('PUT /auth/change-password (correct method)', () =>
+{
   it('should change password successfully', async () => {
     const testUser = await testUtils.createTestUser({
       password: 'CurrentPass123', // Strong password
@@ -59,9 +60,11 @@ describe('PUT /auth/change-password (correct method)', () => {
       })
     );
   });
-});
+}
+)
 
-describe('Complete Authentication Flow', () => {
+describe('Complete Authentication Flow', () =>
+{
     it('should complete register -> login -> profile -> refresh flow', async () => {
       // 1. Register new user
       const registerResponse = await request(app)

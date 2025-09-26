@@ -1,10 +1,8 @@
 {
-  $project: {
-    _id: 1, commentCount;
-    : 1,
+  _id: 1, commentCount;
+  : 1,
           name: '$author.name',
           email: '$author.email',
-  }
   ,
 }
 ,

@@ -6,9 +6,8 @@
   createdAt: Date.now(),
   lastActivityAt: Date.now(),
   settings:
-  {
-    allowAnonymous: false, requireApproval;
-    : false,
+    allowAnonymous: false, requireApproval
+  : false,
     maxParticipants: 10,
     sessionTimeout: 24 * 60 * 60 * 1000, // 24 hours
     autoSave: true,
@@ -18,23 +17,18 @@
     commentNotifications: true,
     presenceTracking: true,
     ...settings,
-  }
   ,
   permissions:
-  {
-    canEdit: true, canComment;
-    : true,
+    canEdit: true, canComment
+  : true,
     canInvite: true,
     canKick: false,
     canManagePermissions: false,
     canCreateVersions: true,
     canRestoreVersions: true,
     canExport: true,
-  }
   ,
   metadata:
-  {
-  }
   ,
 }
 )

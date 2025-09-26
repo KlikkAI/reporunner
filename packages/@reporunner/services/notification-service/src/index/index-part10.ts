@@ -102,12 +102,10 @@ healthCheck();
 : Promise<
 {
   status: 'healthy' | 'unhealthy';
-  metrics: {
-    queueSize: number;
-    processing: number;
-    sent24h: number;
-    failed24h: number;
-  }
+  queueSize: number;
+  processing: number;
+  sent24h: number;
+  failed24h: number;
 }
 >
 {

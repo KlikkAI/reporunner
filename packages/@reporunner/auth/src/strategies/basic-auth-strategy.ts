@@ -15,7 +15,7 @@ export class BasicAuthStrategy {
 
   async authenticate(request: any): Promise<any> {
     const credentials = this.extractCredentials(request);
-    
+
     if (!credentials) {
       throw new Error('No credentials provided');
     }
@@ -24,7 +24,7 @@ export class BasicAuthStrategy {
       credentials.username,
       credentials.password
     );
-    
+
     if (!result) {
       throw new Error('Invalid credentials');
     }
@@ -34,7 +34,7 @@ export class BasicAuthStrategy {
 
   private extractCredentials(request: any): { username: string; password: string } | null {
     const authHeader = request.headers?.authorization;
-    
+
     if (!authHeader || !authHeader.startsWith('Basic ')) {
       return null;
     }

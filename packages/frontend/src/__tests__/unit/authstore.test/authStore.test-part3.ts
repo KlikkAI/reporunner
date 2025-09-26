@@ -94,7 +94,8 @@ describe('getCurrentUser', () =>
 }
 )
 
-describe('updateProfile', () => {
+describe('updateProfile', () =>
+{
     it('should update profile successfully', async () => {
       const updatedUser = {
         ...mockUser,

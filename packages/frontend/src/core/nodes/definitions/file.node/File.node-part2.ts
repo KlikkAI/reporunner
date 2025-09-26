@@ -2,9 +2,7 @@ default: '',
         required: true,
         displayOptions:
 {
-  show: {
-    operation: ['write', 'append'],
-  }
+  operation: ['write', 'append'],
   ,
 }
 ,
@@ -18,12 +16,8 @@ default: '',
   default: '',
         required: true,
         displayOptions:
-  {
-    show: {
       operation: ['copy', 'move'],
-    }
     ,
-  }
   ,
         description: 'Destination path for copy/move operation',
         placeholder: '/path/to/destination/file.txt',
@@ -35,33 +29,21 @@ default: '',
   type: 'options',
   default: 'utf8',
         displayOptions:
-  {
-    show: {
       operation: ['read', 'write', 'append'],
-    }
     ,
-  }
   ,
         options: [
-  {
-    name: 'UTF-8', value;
-    : 'utf8',
-  }
+    name: 'UTF-8', value
+  : 'utf8',
   ,
-  {
-    name: 'ASCII', value;
-    : 'ascii',
-  }
+    name: 'ASCII', value
+  : 'ascii',
   ,
-  {
-    name: 'Base64', value;
-    : 'base64',
-  }
+    name: 'Base64', value
+  : 'base64',
   ,
-  {
-    name: 'Binary', value;
-    : 'binary',
-  }
+    name: 'Binary', value
+  : 'binary',
   ,
         ],
         description: 'File encoding format',
@@ -73,12 +55,8 @@ default: '',
   type: 'boolean',
   default: true,
         displayOptions:
-  {
-    show: {
       operation: ['write', 'copy', 'move'],
-    }
     ,
-  }
   ,
         description: 'Create parent directories if they do not exist',
 }
@@ -89,12 +67,8 @@ default: '',
   type: 'boolean',
   default: false,
         displayOptions:
-  {
-    show: {
       operation: ['write', 'copy', 'move'],
-    }
     ,
-  }
   ,
         description: 'Overwrite file if it already exists',
 }
@@ -105,12 +79,8 @@ default: '',
   type: 'boolean',
   default: false,
         displayOptions:
-  {
-    show: {
       operation: ['list'],
-    }
     ,
-  }
   ,
         description: 'Include hidden files in directory listing',
 }
@@ -120,8 +90,5 @@ default: '',
         name: 'recursive',
         type: 'boolean',
         default: false,
-        displayOptions: {
-          show: {
-            operation: ['list', 'mkdir'],
-          },
-        },
+        displayOptions: 
+            operation: ['list', 'mkdir'],,,

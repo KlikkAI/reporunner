@@ -45,7 +45,8 @@ router.get('/debug/database/connections', (_req, res) =>
 )
 
 // Log recent entries
-router.get('/debug/logs/recent', (_req, res) => {
+router.get('/debug/logs/recent', (_req, res) =>
+{
   // This would require storing logs in memory or reading from log files
   // For now, return a placeholder
   res.json({
@@ -55,7 +56,8 @@ router.get('/debug/logs/recent', (_req, res) => {
       recommendation: 'Check log files directly or implement log storage',
     },
   });
-});
+}
+)
 }
 
 export default router;

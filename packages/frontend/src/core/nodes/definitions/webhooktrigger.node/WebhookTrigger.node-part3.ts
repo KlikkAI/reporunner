@@ -7,23 +7,19 @@ multipleValues: true,
   name: 'headers', displayName;
   : 'Header',
                 options: [
-  {
-    displayName: 'Name', name;
-    : 'name',
-    type: 'string',
-    default: '',
+    displayName: 'Name', name
+  : 'name',
+  type: 'string',
+  default: '',
                     description: 'Name of the header',
                     required: true,
-  }
   ,
-  {
-    displayName: 'Value', name;
-    : 'value',
-    type: 'string',
-    default: '',
+    displayName: 'Value', name
+  : 'value',
+  type: 'string',
+  default: '',
                     description: 'Value of the header',
                     required: true,
-  }
   ,
                 ],
 }
@@ -39,13 +35,9 @@ multipleValues: true,
   default: '',
         description: 'Production webhook URL will be displayed after workflow activation',
         displayOptions:
-  {
-    show: {
-      ('@_nodeVersion');
-      : [1],
-    }
+      ('@_nodeVersion')
+  : [1],
     ,
-  }
   ,
 }
 ,

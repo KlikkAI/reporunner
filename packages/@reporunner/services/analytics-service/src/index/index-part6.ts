@@ -2,7 +2,7 @@ this.applyFilter(query, filter);
 }
       }
 
-let pipeline: any[] = [{ $match: query }];
+const pipeline: any[] = [{ $match: query }];
 
 // Add grouping if specified
 if (options.groupBy) {
@@ -70,7 +70,7 @@ return results.map(r => options.groupBy ? r.firstEvent : r);
         }
       }
 
-      let pipeline: any[] = [{ $match: query }];
+      const pipeline: any[] = [{ $match: query }];
 
       // Group by specified fields
       if (options.groupBy) {

@@ -4,13 +4,15 @@
 await this.invalidateCache(id)
 
 // Cancel any scheduled executions
-await this.cancelScheduledExecutions(id);
+await this.cancelScheduledExecutions(id)
 
 // Emit deletion event
-this.emit('workflow.deleted', {
+this.emit('workflow.deleted',
+{
   workflowId: id,
   userId,
-});
+}
+)
 
 logger.info(`Workflow deleted: ${id}`);
 return true;

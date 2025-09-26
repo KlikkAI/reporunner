@@ -92,8 +92,8 @@ return {
       const accessTokenExpiry = this.getExpiryDate(this.config.accessTokenExpiry);
 
       // Rotate refresh token if enabled
-      let newRefreshToken = refreshToken;
-      let refreshTokenExpiry = refreshTokenData.expiresAt;
+      const newRefreshToken = refreshToken;
+      const refreshTokenExpiry = refreshTokenData.expiresAt;
 
       if (this.config.enableRotation) {
         const newTokenId = await this.generateTokenId();

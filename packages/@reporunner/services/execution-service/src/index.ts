@@ -1,10 +1,10 @@
-import { MongoClient, Db, Collection } from 'mongodb';
-import { Redis } from 'ioredis';
-import { Queue, Worker, Job } from 'bullmq';
-import { EventEmitter } from 'events';
-import { v4 as uuidv4 } from 'uuid';
+import type { DistributedEventBus } from '@reporunner/platform/event-bus';
 import { logger } from '@reporunner/shared/logger';
-import { DistributedEventBus } from '@reporunner/platform/event-bus';
+import { type Job, Queue, Worker } from 'bullmq';
+import { EventEmitter } from 'events';
+import { Redis } from 'ioredis';
+import type { Collection, Db, MongoClient } from 'mongodb';
+import { v4 as uuidv4 } from 'uuid';
 
 export interface ExecutionConfig {
   maxConcurrentExecutions: number;
@@ -413,7 +413,6 @@ export class ExecutionService extends EventEmitter {
           throw error;
         } else if (workflow.settings.errorHandling === 'continue') {
           await this.failNode(execution.id, nodeId, error as Error);
-          continue;
         } else if (workflow.settings.errorHandling === 'rollback') {
           await this.rollbackExecution(execution.id, executedNodes);
           throw error;
@@ -1115,7 +1114,7 @@ class TransformNodeExecutor implements NodeExecutor {
     const transformation = node.data.transformation || {};
 
     // Apply simple transformations
-    let transformed = { ...input };
+    const transformed = { ...input };
 
     if (transformation.mapping) {
       for (const [from, to] of Object.entries(transformation.mapping)) {

@@ -7,95 +7,69 @@
     },
     target:
 {
-      type: {
-        type: String,
+        String,
         enum: ['node', 'edge', 'workflow', 'property'],
         required: true,
       },
-      id: {
-        type: String,
-        required: true,
-      },
-      path: {
-        type: String, // For nested property updates like "nodes.node1.data.label"
-      },
-    },
-    data: {
+      id: 
+        String,
+        required: true,,
+      path: 
+        String, // For nested property updates like "nodes.node1.data.label",,
+    data: 
       before: Schema.Types.Mixed,
       after: Schema.Types.Mixed,
-      delta: Schema.Types.Mixed,
-    },
-    position: {
-      x: { type: Number },
-      y: { type: Number },
-      index: { type: Number },
-    },
-    version: {
+      delta: Schema.Types.Mixed,,
+    position: type: Number ,
+      y: type: Number ,
+      index: type: Number ,,
+    version: 
       type: Number,
-      required: true,
-    },
-    appliedVersion: {
-      type: Number,
-    },
-    status: {
+      required: true,,
+    appliedVersion: 
+      type: Number,,
+    status: 
       type: String,
       enum: ['pending', 'applied', 'rejected', 'transformed'],
       default: 'pending',
     },
     transformations: [
-      {
-        operationId: {
           type: String,
-          required: true,
-        },
-        type: {
-          type: String,
+          required: true,,
+          String,
           enum: ['composition', 'transformation'],
           required: true,
         },
-        timestamp: {
-          type: Date,
-          default: Date.now,
-        },
-      },
+        timestamp: 
+          Date,
+          default: Date.now,,,
     ],
     conflicts: [
-      {
-        conflictingOperationId: {
           type: String,
-          required: true,
-        },
-        resolutionStrategy: {
+          required: true,,
+        resolutionStrategy: 
           type: String,
           enum: ['auto', 'manual', 'priority'],
           default: 'auto',
         },
-        resolvedBy: {
+        resolvedBy: 
           type: String,
-          ref: 'User',
-        },
-        resolvedAt: {
-          type: Date,
-        },
-      },
+          ref: 'User',,
+        resolvedAt: 
+          type: Date,,,
     ],
-    metadata: {
-      clientId: {
+    metadata: 
         type: String,
-        required: true,
-      },
-      timestamp: {
+        required: true,,
+      timestamp: 
         type: Date,
-        default: Date.now,
-      },
-      latency: {
+        default: Date.now,,
+      latency: 
+        type: Number,,
+      retryCount: 
         type: Number,
-      },
-      retryCount: {
-        type: Number,
-        default: 0,
-      },
-      source: {
+        default: 0,,
+      source: 
         type: String,
         enum: ['user', 'system', 'sync'],
         default: 'user',

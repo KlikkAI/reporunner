@@ -55,4 +55,4 @@ export function listRegisteredComponentTypes() {
 }
 
 // Export the enhanced registry instance for advanced usage
-export { registryInstance as enhancedRegistry };
+export type { registryInstance as enhancedRegistry };

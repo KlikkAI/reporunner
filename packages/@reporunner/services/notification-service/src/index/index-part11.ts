@@ -1,4 +1,4 @@
-metrics: {
+{
   queueSize, processing;
   : 0, // Would need to track active jobs
           sent24h,

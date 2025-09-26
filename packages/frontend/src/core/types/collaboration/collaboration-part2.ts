@@ -1,4 +1,4 @@
-position: {
+{
   x: number;
   y: number;
 }

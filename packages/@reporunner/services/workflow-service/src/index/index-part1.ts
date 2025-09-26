@@ -1,8 +1,8 @@
-import { MongoClient, Db, Collection } from 'mongodb';
-import { Redis } from 'ioredis';
-import { EventEmitter } from 'events';
-import { v4 as uuidv4 } from 'uuid';
 import { logger } from '@reporunner/shared/logger';
+import { EventEmitter } from 'events';
+import { Redis } from 'ioredis';
+import { Collection, Db, MongoClient } from 'mongodb';
+import { v4 as uuidv4 } from 'uuid';
 
 export interface WorkflowDefinition {
   id: string;

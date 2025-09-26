@@ -4,7 +4,7 @@ import {
   type IntegrationCredentials,
   IntegrationType,
 } from '@reporunner/plugin-framework';
-import { OAuth2Client } from 'google-auth-library';
+import type { OAuth2Client } from 'google-auth-library';
 import { google } from 'googleapis';
 import { z } from 'zod';
 

@@ -1,5 +1,5 @@
-import type { Request, Response, NextFunction } from 'express';
 import * as crypto from 'node:crypto';
+import type { NextFunction, Request, Response } from 'express';
 
 export interface Session {
   id: string;
@@ -30,12 +30,12 @@ export class InMemorySessionStore implements SessionStore {
   async get(sessionId: string): Promise<Session | null> {
     const session = this.sessions.get(sessionId);
     if (!session) return null;
-    
+
     if (session.expiresAt < new Date()) {
       this.sessions.delete(sessionId);
       return null;
     }
-    
+
     return session;
   }
 
@@ -77,11 +77,11 @@ export function createSessionMiddleware(config: SessionConfig) {
   return async (req: SessionRequest, res: Response, next: NextFunction) => {
     try {
       // Extract session ID from cookie or header
-      const sessionId = req.cookies?.sessionId || req.headers['x-session-id'] as string;
+      const sessionId = req.cookies?.sessionId || (req.headers['x-session-id'] as string);
 
       if (sessionId) {
         const session = await store.get(sessionId);
-        
+
         if (session) {
           req.session = session;
           req.sessionId = sessionId;
@@ -107,7 +107,7 @@ export function createSessionMiddleware(config: SessionConfig) {
         };
 
         await store.set(newSessionId, session);
-        
+
         // Set cookie
         res.cookie('sessionId', newSessionId, {
           httpOnly: true,
@@ -118,7 +118,7 @@ export function createSessionMiddleware(config: SessionConfig) {
 
         req.session = session;
         req.sessionId = newSessionId;
-        
+
         return session;
       };
 

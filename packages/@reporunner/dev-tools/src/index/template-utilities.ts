@@ -9,20 +9,14 @@ inputs: [{ type: 'main' }], outputs;
 {
   type: 'trigger', properties;
   :
-  {
-    schedule: {
-      type: 'string', required;
-      : false,
+  type: 'string', required;
+  : false,
             description: 'Cron expression for scheduling',
-    }
     ,
-  }
   ,
         inputs: [],
         outputs: [
-  {
-    type: 'main';
-  }
+  type: 'main';
   ],
 }
 ,

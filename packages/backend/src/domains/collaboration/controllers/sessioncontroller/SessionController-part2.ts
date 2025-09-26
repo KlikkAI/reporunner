@@ -84,7 +84,8 @@ getSessionOperations = asyncHandler(async (req: Request, res: Response): Promise
  * PATCH /collaboration/sessions/:sessionId/config
  */
 public
-updateSessionConfig = asyncHandler(async (req: Request, res: Response): Promise<void> => {
+updateSessionConfig = asyncHandler(async (req: Request, res: Response): Promise<void> =>
+{
     const { sessionId } = req.params;
     const { settings } = req.body;
 

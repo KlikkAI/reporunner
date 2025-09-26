@@ -1,11 +1,11 @@
-import { EventEmitter } from 'events';
-import { RedisService } from '@reporunner/core/services/redis';
 import { DatabaseService } from '@reporunner/core/services/database';
 import { EventBusService } from '@reporunner/core/services/eventBus';
+import { RedisService } from '@reporunner/core/services/redis';
 import { logger } from '@reporunner/monitoring/logger';
-import { Queue, Worker, Job } from 'bullmq';
-import { z } from 'zod';
+import { Job, Queue, Worker } from 'bullmq';
 import { createHash } from 'crypto';
+import { EventEmitter } from 'events';
+import { z } from 'zod';
 
 export interface AuditEvent {
   id: string;

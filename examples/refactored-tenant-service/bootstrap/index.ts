@@ -1,19 +1,18 @@
-import { Express } from 'express';
-import express from 'express';
+import express, { type Express } from 'express';
 import { Container } from '../../../shared/di/Container';
 import { EventBus } from '../../../shared/events/EventBus';
 import {
+  createLogger,
   createMongoConnection,
   createRedisClient,
-  createLogger,
 } from '../../../shared/infrastructure';
-import { TenantRepository } from '../infrastructure/repositories/TenantRepository';
 import { CreateTenantUseCase } from '../application/use-cases/CreateTenantUseCase';
+import { DeleteTenantUseCase } from '../application/use-cases/DeleteTenantUseCase';
 import { GetTenantUseCase } from '../application/use-cases/GetTenantUseCase';
 import { UpdateTenantUseCase } from '../application/use-cases/UpdateTenantUseCase';
-import { DeleteTenantUseCase } from '../application/use-cases/DeleteTenantUseCase';
+import { TenantRepository } from '../infrastructure/repositories/TenantRepository';
 import { TenantController } from '../presentation/controllers/TenantController';
-import { ILogger, IDatabase, ICache, IEventBus } from '../shared/types';
+import type { ICache, IDatabase, IEventBus, ILogger } from '../shared/types';
 
 /**
  * TenantServiceBootstrap

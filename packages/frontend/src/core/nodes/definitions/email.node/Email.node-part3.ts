@@ -8,12 +8,8 @@
   type: 'boolean',
   default: false,
         displayOptions:
-  {
-    show: {
       operation: ['read'],
-    }
     ,
-  }
   ,
         description: 'Mark fetched emails as read',
 }

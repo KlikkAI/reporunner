@@ -20,17 +20,19 @@ export class AIClassificationNode {
   async execute(text: string): Promise<ClassificationResult | ClassificationResult[]> {
     // Mock implementation
     console.log('Classifying text:', text);
-    
-    const results = this.config.categories.map(category => ({
-      label: category,
-      confidence: Math.random(),
-    })).sort((a, b) => b.confidence - a.confidence);
-    
+
+    const results = this.config.categories
+      .map((category) => ({
+        label: category,
+        confidence: Math.random(),
+      }))
+      .sort((a, b) => b.confidence - a.confidence);
+
     if (this.config.multiLabel) {
       const threshold = this.config.threshold || 0.5;
-      return results.filter(r => r.confidence >= threshold);
+      return results.filter((r) => r.confidence >= threshold);
     }
-    
+
     return results[0];
   }
 }

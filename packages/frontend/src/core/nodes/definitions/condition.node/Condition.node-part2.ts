@@ -32,12 +32,8 @@
   default: '',
             description: 'Value to compare against',
             displayOptions:
-  {
-    hide: {
       operation: ['isEmpty', 'isNotEmpty'],
-    }
     ,
-  }
   ,
 }
 ,

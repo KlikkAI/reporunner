@@ -1,15 +1,15 @@
 import { Tenant } from '../../domain/entities/tenant.entity';
+import type { TenantRepository } from '../../domain/repositories/tenant.repository';
+import type { EventBus } from '../../domain/services/event-bus';
 import { TenantPlan } from '../../domain/value-objects/tenant-plan.vo';
 import { TenantSettings } from '../../domain/value-objects/tenant-settings.vo';
-import { TenantRepository } from '../../domain/repositories/tenant.repository';
-import { EventBus } from '../../domain/services/event-bus';
-import { CreateTenantDto } from '../dto/create-tenant.dto';
-import { TenantResponseDto } from '../dto/tenant-response.dto';
-import { TenantMapper } from '../mappers/tenant.mapper';
-import { TenantValidator } from '../validators/tenant.validator';
-import { SlugGenerator } from '../../shared/utils/slug-generator';
-import { UseCase } from '../../shared/base/use-case';
+import type { UseCase } from '../../shared/base/use-case';
 import { logger } from '../../shared/utils/logger';
+import { SlugGenerator } from '../../shared/utils/slug-generator';
+import type { CreateTenantDto } from '../dto/create-tenant.dto';
+import type { TenantResponseDto } from '../dto/tenant-response.dto';
+import { TenantMapper } from '../mappers/tenant.mapper';
+import type { TenantValidator } from '../validators/tenant.validator';
 
 export class CreateTenantUseCase implements UseCase<CreateTenantDto, TenantResponseDto> {
   constructor(

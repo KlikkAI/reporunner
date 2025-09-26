@@ -42,19 +42,15 @@ type: 'string', required;
     description: 'Basic authentication for HTTP requests',
     icon: '🔐',
     properties: [
-  {
-    displayName: 'User', name;
-    : 'user',
-    type: 'string', required;
-    : true,
-  }
+    displayName: 'User', name
+  : 'user',
+  type: 'string', required;
+  : true,
   ,
-  {
-    displayName: 'Password', name;
-    : 'password',
-    type: 'password', required;
-    : true,
-  }
+    displayName: 'Password', name
+  : 'password',
+  type: 'password', required;
+  : true,
   ,
     ],
 }
@@ -65,22 +61,18 @@ type: 'string', required;
     description: 'Header-based authentication',
     icon: '🔑',
     properties: [
-  {
-    displayName: 'Name', name;
-    : 'name',
-    type: 'string', required;
-    : true,
+    displayName: 'Name', name
+  : 'name',
+  type: 'string', required;
+  : true,
         default: 'Authorization',
         placeholder: 'Authorization',
-  }
   ,
-  {
-    displayName: 'Value', name;
-    : 'value',
-    type: 'password', required;
-    : true,
+    displayName: 'Value', name
+  : 'value',
+  type: 'password', required;
+  : true,
         placeholder: 'Bearer token123',
-  }
   ,
     ],
 }
@@ -91,12 +83,10 @@ type: 'string', required;
     description: 'Simple API key authentication',
     icon: '🗝️',
     properties: [
-  {
-    displayName: 'API Key', name;
-    : 'apiKey',
-    type: 'password', required;
-    : true,
-  }
+    displayName: 'API Key', name
+  : 'apiKey',
+  type: 'password', required;
+  : true,
   ,
     ],
 }
@@ -107,6 +97,5 @@ type: 'string', required;
     description: 'PostgreSQL database credentials',
     icon: '🐘',
     properties: [
-      {
         displayName: 'Host',
         name: 'host',

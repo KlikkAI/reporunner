@@ -1,4 +1,4 @@
-lastActivity: {
+{
   type: Date,
   default: Date.now,
 }
@@ -11,32 +11,24 @@ lastActivity: {
         }
   ,
         cursor:
-  {
-    x: {
-      type: Number;
-    }
-    ,
+  type: Number;
+  ,
           y:
-    {
-      type: Number;
-    }
-    ,
+  type: Number;
+  ,
           nodeId:
-    {
-      type: String;
-    }
-    ,
-  }
+  type: String;
+  ,
   ,
         selection:
+    nodeIds: [
   {
-    nodeIds: [{ type: String }], edgeIds;
-    : [
-    {
-      type: String;
-    }
-    ],
+    type: String;
   }
+  ], edgeIds
+  : [
+  type: String;
+  ],
   ,
 }
 ,
@@ -66,53 +58,39 @@ lastActivity: {
 ,
     settings:
 {
-      allowAnonymous: {
         type: Boolean,
-        default: false,
-      },
-      maxParticipants: {
+        default: false,,
+      maxParticipants: 
         type: Number,
-        default: 10,
-      },
-      autoSave: {
+        default: 10,,
+      autoSave: 
         type: Boolean,
-        default: true,
-      },
-      autoSaveInterval: {
+        default: true,,
+      autoSaveInterval: 
         type: Number,
-        default: 5, // 5 minutes
-      },
-      conflictResolution: {
+        default: 5, // 5 minutes,
+      conflictResolution: 
         type: String,
         enum: ['last-write-wins', 'operational-transform', 'manual'],
         default: 'operational-transform',
-      },
-    },
-    status: {
+      },,
+    status: 
       type: String,
       enum: ['active', 'paused', 'ended'],
       default: 'active',
     },
-    metadata: {
-      totalOperations: {
+    metadata: 
         type: Number,
-        default: 0,
-      },
-      totalConflicts: {
+        default: 0,,
+      totalConflicts: 
         type: Number,
-        default: 0,
-      },
-      averageResponseTime: {
+        default: 0,,
+      averageResponseTime: 
         type: Number,
-        default: 0,
-      },
-    },
-  },
-  {
+        default: 0,,,,
     timestamps: true,
-    toJSON: { virtuals: true },
-    toObject: { virtuals: true },
-  }
+    toJSON: virtuals: true ,
+    toObject: virtuals: true ,
 );
 
 // Indexes for performance

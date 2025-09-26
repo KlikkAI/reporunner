@@ -1,11 +1,10 @@
 import 'reflect-metadata';
-import { MongoMemoryServer } from 'mongodb-memory-server';
-import { MongoClient, Db } from 'mongodb';
-import Redis from 'ioredis-mock';
-import { container } from '@reporunner/shared/di/container';
-import { TYPES } from '@reporunner/shared/di/container';
-import { EventEmitter } from 'events';
+import { container, TYPES } from '@reporunner/shared/di/container';
 import { logger } from '@reporunner/shared/utils/logger';
+import { EventEmitter } from 'events';
+import Redis from 'ioredis-mock';
+import { type Db, MongoClient } from 'mongodb';
+import { MongoMemoryServer } from 'mongodb-memory-server';
 
 // Test environment configuration
 export interface TestConfig {
@@ -361,7 +360,7 @@ export class TestUtils {
   }
 
   static randomEmail(): string {
-    return `test-${this.randomId()}@example.com`;
+    return `test-${TestUtils.randomId()}@example.com`;
   }
 
   static async measureTime<T>(fn: () => Promise<T>): Promise<{ result: T; time: number }> {

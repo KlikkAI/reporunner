@@ -71,7 +71,8 @@ removeReaction = asyncHandler(async (req: Request, res: Response): Promise<void>
  * POST /collaboration/comments/:commentId/resolve
  */
 public
-resolveComment = asyncHandler(async (req: Request, res: Response): Promise<void> => {
+resolveComment = asyncHandler(async (req: Request, res: Response): Promise<void> =>
+{
     const { commentId } = req.params;
     const { resolution } = req.body;
 

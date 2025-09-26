@@ -6,29 +6,19 @@
   : 'Email priority level',
     default: 'normal',
     displayOptions:
-  {
-    show: {
-      resource: ['email'], operation;
-      : ['send', 'reply', 'forward'],
-    }
+      resource: ['email'], operation
+  : ['send', 'reply', 'forward'],
     ,
-  }
   ,
     options: [
-  {
-    name: 'High', value;
-    : 'high'
-  }
+    name: 'High', value
+  : 'high'
   ,
-  {
-    name: 'Normal', value;
-    : 'normal'
-  }
+    name: 'Normal', value
+  : 'normal'
   ,
-  {
-    name: 'Low', value;
-    : 'low'
-  }
+    name: 'Low', value
+  : 'low'
   ,
     ],
 }
@@ -41,13 +31,9 @@
   type: 'dateTime', description;
   : 'Schedule email to be sent at specific time (leave empty to send immediately)',
     displayOptions:
-  {
-    show: {
-      resource: ['email'], operation;
-      : ['send', 'reply', 'forward'],
-    }
+      resource: ['email'], operation
+  : ['send', 'reply', 'forward'],
     ,
-  }
   ,
 }
 ,
@@ -60,18 +46,12 @@
   : 'Select a predefined email template',
     default: '',
     displayOptions:
-  {
-    show: {
-      resource: ['email'], operation;
-      : ['send', 'reply', 'forward'],
-    }
+      resource: ['email'], operation
+  : ['send', 'reply', 'forward'],
     ,
-  }
   ,
     typeOptions:
-  {
     loadOptionsMethod: 'getEmailTemplates',
-  }
   ,
 }
 ,
@@ -84,13 +64,9 @@
   : 'Request read receipt from recipients',
     default: false,
     displayOptions:
-  {
-    show: {
-      resource: ['email'], operation;
-      : ['send', 'reply', 'forward'],
-    }
+      resource: ['email'], operation
+  : ['send', 'reply', 'forward'],
     ,
-  }
   ,
 }
 ,
@@ -103,13 +79,9 @@
   : 'Include Gmail signature in sent emails',
     default: true,
     displayOptions:
-  {
-    show: {
-      resource: ['email'], operation;
-      : ['send', 'reply', 'forward'],
-    }
+      resource: ['email'], operation
+  : ['send', 'reply', 'forward'],
     ,
-  }
   ,
 }
 ,
@@ -120,15 +92,11 @@
     displayName: 'Attachments',
     type: 'collection',
     description: 'Email attachments configuration',
-    default: {},
-    displayOptions: {
-      show: {
+    default: ,
+    displayOptions: 
         resource: ['email'],
-        operation: ['send', 'reply', 'forward'],
-      },
-    },
+        operation: ['send', 'reply', 'forward'],,,
     values: [
-      {
         name: 'attachmentsBinary',
         displayName: 'Attachment Binary Properties',
         type: 'string',

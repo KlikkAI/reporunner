@@ -1,12 +1,12 @@
-import { Request, Response, NextFunction } from 'express';
-import { CreateTenantUseCase } from '../../application/use-cases/create-tenant.use-case';
-import { UpdateTenantUseCase } from '../../application/use-cases/update-tenant.use-case';
-import { GetTenantUseCase } from '../../application/use-cases/get-tenant.use-case';
-import { ListTenantsUseCase } from '../../application/use-cases/list-tenants.use-case';
-import { DeleteTenantUseCase } from '../../application/use-cases/delete-tenant.use-case';
-import { ChangePlanUseCase } from '../../application/use-cases/change-plan.use-case';
+import type { NextFunction, Request, Response } from 'express';
+import type { ChangePlanUseCase } from '../../application/use-cases/change-plan.use-case';
+import type { CreateTenantUseCase } from '../../application/use-cases/create-tenant.use-case';
+import type { DeleteTenantUseCase } from '../../application/use-cases/delete-tenant.use-case';
+import type { GetTenantUseCase } from '../../application/use-cases/get-tenant.use-case';
+import type { ListTenantsUseCase } from '../../application/use-cases/list-tenants.use-case';
+import type { UpdateTenantUseCase } from '../../application/use-cases/update-tenant.use-case';
 import { HttpStatus } from '../../shared/enums/http-status.enum';
-import { ApiResponse } from '../../shared/types/api-response';
+import type { ApiResponse } from '../../shared/types/api-response';
 import { logger } from '../../shared/utils/logger';
 
 export class TenantController {

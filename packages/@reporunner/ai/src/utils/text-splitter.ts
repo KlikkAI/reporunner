@@ -19,17 +19,17 @@ export class TextSplitter {
 
   split(text: string): string[] {
     const { chunkSize, chunkOverlap, separator, keepSeparator } = this.options;
-    
+
     // Split by separator first
     const splits = text.split(separator);
     const chunks: string[] = [];
     let currentChunk = '';
-    
+
     for (const split of splits) {
-      const potentialChunk = currentChunk 
-        ? currentChunk + (keepSeparator ? separator : '') + split 
+      const potentialChunk = currentChunk
+        ? currentChunk + (keepSeparator ? separator : '') + split
         : split;
-      
+
       if (potentialChunk.length <= chunkSize) {
         currentChunk = potentialChunk;
       } else {
@@ -39,15 +39,15 @@ export class TextSplitter {
         currentChunk = split;
       }
     }
-    
+
     if (currentChunk) {
       chunks.push(currentChunk);
     }
-    
+
     // Add overlap if specified
     if (chunkOverlap > 0 && chunks.length > 1) {
       const overlappedChunks: string[] = [];
-      
+
       for (let i = 0; i < chunks.length; i++) {
         if (i === 0) {
           overlappedChunks.push(chunks[i]);
@@ -57,10 +57,10 @@ export class TextSplitter {
           overlappedChunks.push(overlapText + chunks[i]);
         }
       }
-      
+
       return overlappedChunks;
     }
-    
+
     return chunks;
   }
 }
@@ -81,29 +81,27 @@ export class RecursiveTextSplitter extends TextSplitter {
     if (separators.length === 0) {
       return [text];
     }
-    
+
     const separator = separators[0];
     const chunks: string[] = [];
-    
+
     if (text.length <= this.options.chunkSize) {
       return [text];
     }
-    
+
     const splits = text.split(separator);
     let currentChunk = '';
-    
+
     for (const split of splits) {
-      const potentialChunk = currentChunk 
-        ? currentChunk + separator + split 
-        : split;
-      
+      const potentialChunk = currentChunk ? currentChunk + separator + split : split;
+
       if (potentialChunk.length <= this.options.chunkSize) {
         currentChunk = potentialChunk;
       } else {
         if (currentChunk) {
           chunks.push(currentChunk);
         }
-        
+
         if (split.length > this.options.chunkSize) {
           // Recursively split with next separator
           const subChunks = this.recursiveSplit(split, separators.slice(1));
@@ -114,11 +112,11 @@ export class RecursiveTextSplitter extends TextSplitter {
         }
       }
     }
-    
+
     if (currentChunk) {
       chunks.push(currentChunk);
     }
-    
+
     return chunks;
   }
 }

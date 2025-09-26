@@ -10,10 +10,29 @@ export class Tokenizer {
   private initializeVocabulary(): void {
     // Mock vocabulary - in production, load from file or API
     const basicTokens = [
-      'the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for',
-      'of', 'with', 'by', 'from', 'as', 'is', 'was', 'are', 'were', 'be',
+      'the',
+      'a',
+      'an',
+      'and',
+      'or',
+      'but',
+      'in',
+      'on',
+      'at',
+      'to',
+      'for',
+      'of',
+      'with',
+      'by',
+      'from',
+      'as',
+      'is',
+      'was',
+      'are',
+      'were',
+      'be',
     ];
-    
+
     basicTokens.forEach((token, index) => {
       this.vocabulary.set(token, index);
       this.reverseVocabulary.set(index, token);
@@ -24,7 +43,7 @@ export class Tokenizer {
     // Simple whitespace tokenization
     const words = text.toLowerCase().split(/\s+/);
     const tokens: number[] = [];
-    
+
     for (const word of words) {
       if (this.vocabulary.has(word)) {
         tokens.push(this.vocabulary.get(word)!);
@@ -36,13 +55,13 @@ export class Tokenizer {
         tokens.push(newId);
       }
     }
-    
+
     return tokens;
   }
 
   decode(tokens: number[]): string {
     const words: string[] = [];
-    
+
     for (const token of tokens) {
       const word = this.reverseVocabulary.get(token);
       if (word) {
@@ -51,7 +70,7 @@ export class Tokenizer {
         words.push('[UNK]');
       }
     }
-    
+
     return words.join(' ');
   }
 
@@ -61,11 +80,11 @@ export class Tokenizer {
 
   truncate(text: string, maxTokens: number): string {
     const tokens = this.encode(text);
-    
+
     if (tokens.length <= maxTokens) {
       return text;
     }
-    
+
     const truncatedTokens = tokens.slice(0, maxTokens);
     return this.decode(truncatedTokens);
   }
@@ -83,7 +102,7 @@ export class GPTTokenizer extends Tokenizer {
     // In production, use a proper tokenizer library
     const tokens: number[] = [];
     const words = text.split(/(\s+|[.,!?;])/);
-    
+
     for (const word of words) {
       if (word.trim()) {
         // Generate mock token ID based on word hash
@@ -91,7 +110,7 @@ export class GPTTokenizer extends Tokenizer {
         tokens.push(hash % 50000); // GPT vocab size approximation
       }
     }
-    
+
     return tokens;
   }
 
@@ -99,7 +118,7 @@ export class GPTTokenizer extends Tokenizer {
     let hash = 0;
     for (let i = 0; i < str.length; i++) {
       const char = str.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char;
+      hash = (hash << 5) - hash + char;
       hash = hash & hash; // Convert to 32-bit integer
     }
     return Math.abs(hash);

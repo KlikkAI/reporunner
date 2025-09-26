@@ -1,6 +1,6 @@
-import { useState } from './hooks/useState';
-import { useMemo } from './hooks/useMemo';
 import { useCallback } from './hooks/useCallback';
+import { useMemo } from './hooks/useMemo';
+import { useState } from './hooks/useState';
 /**
  * Data Inspector Component
  *
