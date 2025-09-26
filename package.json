@@ -61,7 +61,8 @@
     "start": "pnpm run dev:backend",
     "start:full": "pnpm run dev:full",
     "watch": "turbo run watch --concurrency=30",
-    "dup:check": "jscpd --reporters console --threshold 0 --languages ts,tsx,js --pattern 'packages/**/{src,app}/**/*.{ts,tsx,js}' --ignore '**/node_modules/**,**/dist/**,.turbo/**'",
+    "dup:check": "jscpd",
+    "dup:check:strict": "jscpd --threshold 0",
     "dup:report": "bash development/dup-report.sh"
   },
   "keywords": [

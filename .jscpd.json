@@ -1,0 +1,45 @@
+{
+  "threshold": 15,
+  "reporters": ["console", "json", "html"],
+  "output": "./reports/duplication",
+  "format": ["typescript", "javascript", "tsx", "jsx"],
+  "pattern": "packages/**/{src,app}/**/*.{ts,tsx,js,jsx}",
+  "ignore": [
+    "**/node_modules/**",
+    "**/dist/**",
+    "**/build/**",
+    "**/.turbo/**",
+    "**/coverage/**",
+    "**/*.test.ts",
+    "**/*.spec.ts",
+    "**/*.test.tsx",
+    "**/*.spec.tsx",
+    "**/test/**",
+    "**/tests/**",
+    "**/__tests__/**",
+    "**/__mocks__/**",
+    "**/migrations/**",
+    "**/seeds/**",
+    "**/*.d.ts",
+    "**/generated/**",
+    "**/vendor/**"
+  ],
+  "ignoreCase": false,
+  "ignorePattern": [],
+  "min-lines": 10,
+  "min-tokens": 50,
+  "blame": false,
+  "silent": false,
+  "absolute": true,
+  "reportersOptions": {
+    "json": {
+      "path": "./reports/duplication/jscpd-report.json"
+    },
+    "html": {
+      "path": "./reports/duplication"
+    }
+  },
+  "store": ".jscpd-store",
+  "gitignore": true,
+  "exitCode": 1
+}

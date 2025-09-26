@@ -1,0 +1,183 @@
+import { Request } from 'express';
+import {
+  BaseMiddleware,
+  ValidationError,
+  Validator,
+  SchemaValidator,
+  SchemaDefinition
+} from '@reporunner/core';
+
+export interface ValidationConfig {
+  /**
+   * Schema to validate request body
+   */
+  bodySchema?: SchemaDefinition;
+
+  /**
+   * Schema to validate request query
+   */
+  querySchema?: SchemaDefinition;
+
+  /**
+   * Schema to validate request params
+   */
+  paramsSchema?: SchemaDefinition;
+
+  /**
+   * Whether to sanitize inputs
+   */
+  sanitize?: boolean;
+
+  /**
+   * Custom validation function
+   */
+  customValidation?: (req: Request) => Promise<void>;
+}
+
+export class ValidationMiddleware extends BaseMiddleware {
+  private bodyValidator?: SchemaValidator;
+  private queryValidator?: SchemaValidator;
+  private paramsValidator?: SchemaValidator;
+  private validationConfig: ValidationConfig;
+
+  constructor(config: ValidationConfig) {
+    super();
+    this.validationConfig = config;
+
+    // Initialize validators
+    if (config.bodySchema) {
+      this.bodyValidator = new SchemaValidator(config.bodySchema);
+    }
+    if (config.querySchema) {
+      this.queryValidator = new SchemaValidator(config.querySchema);
+    }
+    if (config.paramsSchema) {
+      this.paramsValidator = new SchemaValidator(config.paramsSchema);
+    }
+  }
+
+  protected async implementation({ req }: { req: Request }): Promise<void> {
+    const errors: Record<string, any> = {};
+
+    // Validate body
+    if (this.bodyValidator && req.body) {
+      try {
+        await this.bodyValidator.validate(req.body);
+      } catch (error) {
+        if (error instanceof ValidationError) {
+          errors.body = error.details;
+        } else {
+          errors.body = (error as Error).message;
+        }
+      }
+    }
+
+    // Validate query
+    if (this.queryValidator && req.query) {
+      try {
+        await this.queryValidator.validate(req.query);
+      } catch (error) {
+        if (error instanceof ValidationError) {
+          errors.query = error.details;
+        } else {
+          errors.query = (error as Error).message;
+        }
+      }
+    }
+
+    // Validate params
+    if (this.paramsValidator && req.params) {
+      try {
+        await this.paramsValidator.validate(req.params);
+      } catch (error) {
+        if (error instanceof ValidationError) {
+          errors.params = error.details;
+        } else {
+          errors.params = (error as Error).message;
+        }
+      }
+    }
+
+    // Run custom validation
+    if (this.validationConfig.customValidation) {
+      try {
+        await this.validationConfig.customValidation(req);
+      } catch (error) {
+        if (error instanceof ValidationError) {
+          errors.custom = error.details;
+        } else {
+          errors.custom = (error as Error).message;
+        }
+      }
+    }
+
+    // If there are any errors, throw a validation error
+    if (Object.keys(errors).length > 0) {
+      throw new ValidationError('Request validation failed', errors);
+    }
+
+    // Sanitize inputs if enabled
+    if (this.validationConfig.sanitize) {
+      this.sanitizeInputs(req);
+    }
+  }
+
+  private sanitizeInputs(req: Request): void {
+    if (req.body) {
+      req.body = this.sanitizeObject(req.body);
+    }
+    if (req.query) {
+      req.query = this.sanitizeObject(req.query);
+    }
+    if (req.params) {
+      req.params = this.sanitizeObject(req.params);
+    }
+  }
+
+  private sanitizeObject(obj: Record<string, any>): Record<string, any> {
+    const sanitized: Record<string, any> = {};
+
+    for (const [key, value] of Object.entries(obj)) {
+      if (typeof value === 'string') {
+        sanitized[key] = this.sanitizeString(value);
+      } else if (Array.isArray(value)) {
+        sanitized[key] = value.map(item =>
+          typeof item === 'string' ? this.sanitizeString(item) : item
+        );
+      } else if (typeof value === 'object' && value !== null) {
+        sanitized[key] = this.sanitizeObject(value);
+      } else {
+        sanitized[key] = value;
+      }
+    }
+
+    return sanitized;
+  }
+
+  private sanitizeString(str: string): string {
+    return str
+      .replace(/[<>]/g, '') // Remove < and >
+      .replace(/&/g, '&amp;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#x27;')
+      .replace(/\//g, '&#x2F;')
+      .trim();
+  }
+}
+
+// Factory functions for common validation middleware
+export function validateBody(schema: SchemaDefinition) {
+  return new ValidationMiddleware({ bodySchema: schema });
+}
+
+export function validateQuery(schema: SchemaDefinition) {
+  return new ValidationMiddleware({ querySchema: schema });
+}
+
+export function validateParams(schema: SchemaDefinition) {
+  return new ValidationMiddleware({ paramsSchema: schema });
+}
+
+export function validateRequest(config: ValidationConfig) {
+  return new ValidationMiddleware(config);
+}
