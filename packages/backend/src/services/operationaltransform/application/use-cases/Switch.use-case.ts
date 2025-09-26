@@ -1,9 +1,5 @@
-import { injectable } from 'inversify';
+// Converted to use shared utilities
+export * from '@reporunner/shared/ConditionalUtils';
 
-@injectable()
-export class SwitchUseCase {
-  async execute(input: any): Promise<any> {
-    // TODO: Implement switch logic
-    throw new Error('Not implemented');
-  }
-}
+// This file has been optimized to use the shared utility package
+// instead of maintaining duplicate implementations across services
