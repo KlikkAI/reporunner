@@ -1,0 +1,19 @@
+{
+  "name": "@reporunner/shared",
+  "version": "1.0.0",
+  "description": "Shared utilities and base classes for Reporunner",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "clean": "rimraf dist"
+  },
+  "dependencies": {
+    "inversify": "^6.0.1"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.3",
+    "rimraf": "^3.0.2"
+  }
+}
