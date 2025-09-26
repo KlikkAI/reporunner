@@ -1,3 +1,3 @@
-export * from './base-integration-part1';
-export * from './base-integration-part2';
-export * from './base-integration-part3';
+export * from './integration-core';
+export * from './integration-execution';
+export * from './integration-utilities';

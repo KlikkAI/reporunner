@@ -1,3 +1,3 @@
-export * from './User-part1';
-export * from './User-part2';
-export * from './User-part3';
+export * from './user-schema';
+export * from './user-middleware';
+export * from './user-methods';

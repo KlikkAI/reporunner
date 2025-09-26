@@ -1,3 +1,3 @@
-export * from './CollaborationSession-part1';
-export * from './CollaborationSession-part2';
-export * from './CollaborationSession-part3';
+export * from './collaboration-schema';
+export * from './collaboration-middleware';
+export * from './collaboration-methods';

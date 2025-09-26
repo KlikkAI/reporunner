@@ -1,3 +1,3 @@
-export * from './Credentials-part1';
-export * from './Credentials-part2';
-export * from './Credentials-part3';
+export * from './credentials-schema';
+export * from './credentials-middleware';
+export * from './credentials-methods';

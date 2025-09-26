@@ -1,3 +1,3 @@
-export * from './Workflow-part1';
-export * from './Workflow-part2';
-export * from './Workflow-part3';
+export * from './workflow-schema';
+export * from './workflow-middleware';
+export * from './workflow-methods';

@@ -1,3 +1,3 @@
-export * from './Organization-part1';
-export * from './Organization-part2';
-export * from './Organization-part3';
+export * from './organization-schema';
+export * from './organization-middleware';
+export * from './organization-methods';
