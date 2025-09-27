@@ -63,7 +63,14 @@
     "watch": "turbo run watch --concurrency=30",
     "dup:check": "jscpd",
     "dup:check:strict": "jscpd --threshold 0",
-    "dup:report": "bash development/dup-report.sh"
+    "dup:report": "bash development/dup-report.sh",
+    "deps:check": "npx npm-check-updates",
+    "deps:update": "npx npm-check-updates -u",
+    "analyze:deps": "madge --circular --extensions ts,tsx ./packages",
+    "quality": "pnpm lint && pnpm type-check && pnpm test:coverage",
+    "quality:fix": "pnpm lint:fix && pnpm format && pnpm organize-imports",
+    "validate": "pnpm quality && pnpm security:audit",
+    "clean:all": "pnpm clean && rimraf node_modules packages/**/node_modules"
   },
   "keywords": [
     "workflow",
@@ -100,11 +107,12 @@
     "lefthook": "^1.7.15",
     "license-checker": "^25.0.1",
     "lint-staged": "^16.1.6",
+    "madge": "^6.0.0",
     "nock": "^14.0.1",
     "nodemon": "^3.0.1",
+    "npm-check-updates": "^16.0.0",
     "npm-run-all2": "^7.0.2",
     "p-limit": "^3.1.0",
-    "prettier": "^3.1.1",
     "rimraf": "^5.0.1",
     "run-script-os": "^1.0.7",
     "supertest": "^7.1.1",
@@ -119,7 +127,7 @@
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx,json,jsonc}": [
-      "biome format --write"
+      "biome check --write"
     ]
   },
   "config": {

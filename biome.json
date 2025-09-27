@@ -7,11 +7,23 @@
     "root": "."
   },
   "files": {
-    "includes": ["**/*.js", "**/*.jsx", "**/*.ts", "**/*.tsx", "**/*.json", "**/*.jsonc"]
+    "includes": ["**/*.js", "**/*.jsx", "**/*.ts", "**/*.tsx", "**/*.json", "**/*.jsonc"],
+    "ignore": [
+      "**/node_modules/**",
+      "**/dist/**",
+      "**/build/**",
+      "**/.turbo/**",
+      "**/coverage/**",
+      "**/*.min.js",
+      "**/generated/**"
+    ]
+  },
+  "organizeImports": {
+    "enabled": true
   },
   "formatter": {
     "enabled": true,
-    "formatWithErrors": true,
+    "formatWithErrors": false,
     "indentStyle": "space",
     "indentWidth": 2,
     "lineEnding": "lf",
@@ -23,47 +35,85 @@
     "rules": {
       "recommended": true,
       "correctness": {
-        "recommended": true,
+        "all": true,
         "noUnusedVariables": "error",
         "noUnusedImports": "error",
-        "useExhaustiveDependencies": "warn"
+        "useExhaustiveDependencies": "error",
+        "noUndeclaredVariables": "error",
+        "noUnreachable": "error"
       },
       "style": {
-        "recommended": true,
+        "all": true,
         "noDefaultExport": "off",
-        "noNonNullAssertion": "warn",
+        "noNonNullAssertion": "error",
         "useConst": "error",
-        "useImportType": "warn"
+        "useImportType": "error",
+        "useNodejsImportProtocol": "error",
+        "useNumberNamespace": "error",
+        "useSingleVarDeclarator": "error",
+        "useTemplate": "error",
+        "useBlockStatements": "error",
+        "useCollapsedElseIf": "error",
+        "useShorthandFunctionType": "error"
       },
       "suspicious": {
-        "recommended": true,
-        "noConsole": "warn",
+        "all": true,
+        "noConsoleLog": "error",
         "noDebugger": "error",
-        "noExplicitAny": "warn"
+        "noExplicitAny": "error",
+        "noEmptyInterface": "error",
+        "noArrayIndexKey": "error",
+        "noConfusingVoidType": "error",
+        "noDuplicateCase": "error",
+        "noDuplicateClassMembers": "error",
+        "noDuplicateJsxProps": "error",
+        "noDuplicateParameters": "error",
+        "noEmptyBlockStatements": "error",
+        "noFallthroughSwitchClause": "error",
+        "noImplicitAnyLet": "error",
+        "noSparseArray": "error"
       },
       "performance": {
-        "recommended": true,
+        "all": true,
+        "noAccumulatingSpread": "error",
         "noDelete": "error"
       },
       "security": {
-        "recommended": true,
-        "noGlobalEval": "error"
+        "all": true,
+        "noDangerouslySetInnerHtml": "error",
+        "noDangerouslySetInnerHtmlWithChildren": "error"
       },
       "complexity": {
-        "recommended": true,
-        "noForEach": "warn",
+        "all": true,
+        "noForEach": "error",
         "noExcessiveCognitiveComplexity": {
-          "level": "warn",
+          "level": "error",
           "options": {
-            "maxAllowedComplexity": 15
+            "maxAllowedComplexity": 10
           }
-        }
+        },
+        "noBannedTypes": "error",
+        "noUselessConstructor": "error",
+        "noUselessFragments": "error",
+        "noUselessLabel": "error",
+        "noUselessRename": "error",
+        "noUselessSwitchCase": "error",
+        "noUselessThisAlias": "error",
+        "noVoid": "error",
+        "noWith": "error",
+        "useArrowFunction": "error",
+        "useLiteralKeys": "error",
+        "useOptionalChain": "error",
+        "useRegexLiterals": "error",
+        "useSimpleNumberKeys": "error",
+        "useSimplifiedLogicExpression": "error"
+      },
+      "a11y": {
+        "recommended": true
       },
       "nursery": {
-        "useQwikClasslist": "off",
-        "useReactFunctionComponents": "warn",
         "useSortedClasses": "off",
-        "useVueMultiWordComponentNames": "warn"
+        "noUselessTernary": "error"
       }
     }
   },
@@ -78,7 +128,20 @@
       "bracketSameLine": false,
       "quoteStyle": "single",
       "attributePosition": "auto"
-    }
+    },
+    "parser": {
+      "unsafeParameterDecoratorsEnabled": true
+    },
+    "globals": [
+      "console",
+      "process",
+      "Buffer",
+      "__dirname",
+      "__filename",
+      "module",
+      "require",
+      "exports"
+    ]
   },
   "json": {
     "formatter": {
@@ -88,6 +151,10 @@
       "lineEnding": "lf",
       "lineWidth": 100,
       "trailingCommas": "none"
+    },
+    "parser": {
+      "allowComments": true,
+      "allowTrailingCommas": false
     }
   },
   "overrides": [
@@ -102,11 +169,19 @@
       }
     },
     {
-      "includes": ["packages/backend/**/*", "packages/@reporunner/workflow/**/*"],
+      "includes": ["packages/backend/**/*", "packages/@reporunner/services/**/*"],
       "linter": {
         "rules": {
           "suspicious": {
-            "noConsole": "off"
+            "noConsoleLog": "warn"
+          },
+          "complexity": {
+            "noExcessiveCognitiveComplexity": {
+              "level": "warn",
+              "options": {
+                "maxAllowedComplexity": 15
+              }
+            }
           }
         }
       }
@@ -116,16 +191,20 @@
         "**/*.test.{js,ts,tsx}",
         "**/*.spec.{js,ts,tsx}",
         "**/test/**/*",
-        "**/tests/**/*"
+        "**/tests/**/*",
+        "**/__tests__/**/*"
       ],
       "linter": {
         "rules": {
           "suspicious": {
             "noExplicitAny": "off",
-            "noConsole": "off"
+            "noConsoleLog": "off"
           },
           "style": {
-            "noNonNullAssertion": "off"
+            "noNonNullAssertion": "warn"
+          },
+          "complexity": {
+            "noExcessiveCognitiveComplexity": "off"
           }
         }
       }
@@ -137,7 +216,9 @@
         "**/vite.config.{js,ts}",
         "**/vitest.config.{js,ts}",
         "**/tailwind.config.{js,ts}",
-        "**/next.config.{js,ts}"
+        "**/next.config.{js,ts}",
+        "**/turbo.json",
+        "**/package.json"
       ],
       "linter": {
         "rules": {
@@ -146,7 +227,7 @@
           },
           "suspicious": {
             "noExplicitAny": "off",
-            "noConsole": "off"
+            "noConsoleLog": "off"
           }
         }
       }
@@ -160,7 +241,8 @@
             "useImportType": "off"
           },
           "suspicious": {
-            "noExplicitAny": "off"
+            "noExplicitAny": "off",
+            "noEmptyInterface": "off"
           }
         }
       }

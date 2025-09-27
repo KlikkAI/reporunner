@@ -132,9 +132,21 @@ pnpm run test:unit        # Unit tests only
 pnpm run test:e2e         # E2E tests with Playwright
 
 # Code Quality
-pnpm run lint             # ESLint
+pnpm run lint             # Biome linting
 pnpm run type-check       # TypeScript checking
-pnpm run format           # Prettier formatting
+pnpm run format           # Biome formatting
+pnpm run organize-imports # Organize imports with Biome
+pnpm run quality          # Run all quality checks
+pnpm run quality:fix      # Fix linting, formatting, and imports
+pnpm run validate         # Full validation including security
+
+# Dependency Management
+pnpm run deps:check       # Check for dependency updates
+pnpm run deps:update      # Update dependencies
+pnpm run analyze:deps     # Analyze circular dependencies
+
+# Maintenance
+pnpm run clean:all        # Clean all node_modules and build artifacts
 ```
 
 ### Adding New Integrations
@@ -342,9 +354,9 @@ We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) f
 ### Code Standards
 
 - **TypeScript**: Strict mode enabled
-- **ESLint**: Comprehensive linting rules
-- **Prettier**: Consistent code formatting
+- **Biome**: All-in-one linting, formatting, and import organization
 - **Conventional Commits**: Standardized commit messages
+- **Consistent Style**: 100 character line width, 2-space indentation
 
 ## 📝 License
 
