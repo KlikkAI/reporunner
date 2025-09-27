@@ -3,10 +3,8 @@ import {
   NodeSchema,
   EdgeSchema,
   WorkflowSchema,
-  WorkflowStatus,
-  ExecutionStatus,
-  NodeType,
-} from './schemas/workflow.schema';
+} from './workflow.types/workflow-schemas';
+import { ExecutionStatus } from './workflow.types/execution-types';
 
 // Base Node Interface
 export interface INode extends z.infer<typeof NodeSchema> {}
@@ -75,7 +73,7 @@ export interface IExecutionError {
   context?: Record<string, any>;
 }
 
-export { NodeSchema, EdgeSchema, WorkflowSchema, WorkflowStatus, ExecutionStatus, NodeType };
+export { NodeSchema, EdgeSchema, WorkflowSchema, ExecutionStatus };
 export type Node = z.infer<typeof NodeSchema>;
 export type Edge = z.infer<typeof EdgeSchema>;
 export type Workflow = z.infer<typeof WorkflowSchema>;

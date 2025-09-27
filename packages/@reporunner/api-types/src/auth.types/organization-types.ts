@@ -1,5 +1,11 @@
-autoSaveInterval?: number;
-}
+import { UserRole, PermissionType } from './auth-enums';
+
+// Editor Preferences Interface
+export interface IEditorPreferences {
+  minimap: boolean;
+  gridSnap: boolean;
+  autoSave: boolean;
+  autoSaveInterval?: number;
 }
 
 // Organization Interface
@@ -95,6 +101,4 @@ export interface ISession {
   lastActivityAt: Date;
 }
 
-// Auth Request/Response Types
-export interface ILoginRequest {
-  email: string;
+// Auth Request/Response Types are defined in auth-requests.ts

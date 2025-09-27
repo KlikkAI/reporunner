@@ -22,6 +22,7 @@
     "build:ai": "turbo run build --filter=@reporunner/ai",
     "build:design-system": "turbo run build --filter=@reporunner/design-system",
     "dev": "turbo run dev --parallel --env-mode=loose",
+    "dev:core": "turbo run dev --parallel --env-mode=loose --filter=@reporunner/backend --filter=@reporunner/frontend --filter=@reporunner/ui",
     "dev:backend": "turbo run dev --filter=@reporunner/backend --env-mode=loose",
     "dev:frontend": "turbo run dev --filter=@reporunner/frontend --env-mode=loose",
     "dev:ai": "turbo run dev --parallel --env-mode=loose --filter=@reporunner/ai --filter=@reporunner/core",

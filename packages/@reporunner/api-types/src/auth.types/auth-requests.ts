@@ -1,6 +1,50 @@
-password: string;
-mfaCode?: string;
-rememberMe?: boolean;
+import { z } from 'zod';
+import { UserRole, PermissionType } from './auth-enums';
+
+export interface IUser {
+  id: string;
+  email: string;
+  username?: string;
+  firstName?: string;
+  lastName?: string;
+  displayName?: string;
+  avatar?: string;
+  role: UserRole;
+  permissions: PermissionType[];
+  organizationId: string;
+  teamIds?: string[];
+  isActive: boolean;
+  isEmailVerified: boolean;
+  mfaEnabled: boolean;
+  lastLogin?: Date;
+  createdAt: Date;
+  updatedAt: Date;
+  settings?: {
+    timezone?: string;
+    locale?: string;
+    theme?: 'light' | 'dark' | 'system';
+    notifications?: {
+      email: boolean;
+      inApp: boolean;
+      workflowErrors: boolean;
+      workflowSuccess: boolean;
+      systemUpdates: boolean;
+    };
+    editorPreferences?: {
+      minimap: boolean;
+      gridSnap: boolean;
+      autoSave: boolean;
+      autoSaveInterval?: number;
+    };
+  };
+  metadata?: Record<string, any>;
+}
+
+export interface ILoginRequest {
+  email: string;
+  password: string;
+  mfaCode?: string;
+  rememberMe?: boolean;
 }
 
 export interface ILoginResponse {

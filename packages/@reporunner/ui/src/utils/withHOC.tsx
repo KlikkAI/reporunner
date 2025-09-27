@@ -1,5 +1,7 @@
 import React from 'react';
 import { PolymorphicComponentProps } from '../types/component';
+import { useAsync } from '../hooks/useAsync';
+import { cn } from './styles';
 
 /**
  * Type for a HOC function
