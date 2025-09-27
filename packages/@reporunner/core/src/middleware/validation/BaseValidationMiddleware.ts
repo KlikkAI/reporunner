@@ -132,6 +132,7 @@ export abstract class BaseValidationMiddleware extends BaseMiddleware {
    */
   protected async validate(context: ValidationContext): Promise<ValidationResult> {
     const result: ValidationResult = {
+      success: true,
       valid: true,
       errors: []
     };
@@ -212,8 +213,11 @@ export abstract class BaseValidationMiddleware extends BaseMiddleware {
         }
 
         // Execute rule
-        const ruleResult = await rule.validate(context);
-        result.errors.push(...ruleResult.errors);
+        let ruleResult: any = { errors: [] };
+        if (rule.validate) {
+          ruleResult = await rule.validate(context, {});
+          result.errors!.push(...(ruleResult.errors || []));
+        }
 
         // Handle transforms
         if (ruleResult.transformed) {
@@ -229,7 +233,7 @@ export abstract class BaseValidationMiddleware extends BaseMiddleware {
         }
       } catch (error) {
         if (error instanceof ValidationError) {
-          result.errors.push(...error.details);
+          result.errors.push(...((error as any).details || []));
           if (this.validationOptions.abortEarly) {
             break;
           }
@@ -239,7 +243,7 @@ export abstract class BaseValidationMiddleware extends BaseMiddleware {
       }
     }
 
-    result.valid = result.errors.length === 0;
+    result.valid = (result.errors?.length || 0) === 0;
   }
 
   /**

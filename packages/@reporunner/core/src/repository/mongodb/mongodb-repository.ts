@@ -7,7 +7,7 @@ import { Filter, Sort, Pagination } from '../../types/repository.types';
  * implementations of the base repository operations.
  */
 export abstract class MongoDBRepository<T extends { _id?: ObjectId }, ID = string> extends BaseRepository<T, ID> {
-  protected session: ClientSession | null = null;
+  protected session: ClientSession | undefined = undefined;
   
   constructor(
     protected readonly collection: Collection<T>
@@ -53,19 +53,21 @@ export abstract class MongoDBRepository<T extends { _id?: ObjectId }, ID = strin
   
   async findById(id: ID): Promise<T | null> {
     return this.wrapError(async () => {
-      return this.collection.findOne(
+      const result = await this.collection.findOne(
         { _id: this.toObjectId(id) } as any,
         { session: this.session }
       );
+      return result as T | null;
     });
   }
   
   async findOne(filter: Filter<T>): Promise<T | null> {
     return this.wrapError(async () => {
-      return this.collection.findOne(
+      const result = await this.collection.findOne(
         this.transformFilter(filter),
         { session: this.session }
       );
+      return result as T | null;
     });
   }
   
@@ -84,7 +86,8 @@ export abstract class MongoDBRepository<T extends { _id?: ObjectId }, ID = strin
         query = query.skip(pagination.skip).limit(pagination.limit);
       }
       
-      return query.toArray();
+      const results = await query.toArray();
+      return results as T[];
     });
   }
   
@@ -116,7 +119,7 @@ export abstract class MongoDBRepository<T extends { _id?: ObjectId }, ID = strin
       return data.map((item, index) => ({
         ...item,
         _id: result.insertedIds[index]
-      })) as T[];
+      } as unknown)) as T[];
     });
   }
   
@@ -130,7 +133,7 @@ export abstract class MongoDBRepository<T extends { _id?: ObjectId }, ID = strin
           returnDocument: 'after'
         }
       );
-      return this.throwIfNotFound(result, id);
+      return this.throwIfNotFound(result as T | null, id);
     });
   }
   
@@ -173,12 +176,12 @@ export abstract class MongoDBRepository<T extends { _id?: ObjectId }, ID = strin
   protected async commitTransactionImpl(): Promise<void> {
     await this.session?.commitTransaction();
     await this.session?.endSession();
-    this.session = null;
+    this.session = undefined;
   }
   
   protected async rollbackTransactionImpl(): Promise<void> {
     await this.session?.abortTransaction();
     await this.session?.endSession();
-    this.session = null;
+    this.session = undefined;
   }
 }

@@ -1,6 +1,6 @@
 import { BaseRepository } from './base-repository';
-import { ICache } from '../cache/cache.interface';
-import { Filter, Pagination, Sort } from '../types/repository.types';
+import { ICache } from '../interfaces/ICache';
+import { Filter, Pagination, Sort } from '../types';
 
 /**
  * Abstract base class for repositories that support caching.
@@ -126,29 +126,33 @@ export abstract class CachedRepository<T, ID = string> extends BaseRepository<T,
   async findById(id: ID): Promise<T | null> {
     const cached = await this.getFromCache(id);
     if (cached) return cached;
-    
-    const entity = await super.findById(id);
+
+    // Call the concrete implementation instead of super
+    const entity = await this.findByIdImpl(id);
     if (entity) {
       await this.saveToCache(id, entity);
     }
-    
+
     return entity;
   }
+
+  // Abstract method to be implemented by concrete classes
+  protected abstract findByIdImpl(id: ID): Promise<T | null>;
   
   async create(data: Partial<T>): Promise<T> {
-    const entity = await super.create(data);
+    const entity = await this.createImpl(data);
     await this.saveToCache(this.getId(entity), entity);
     return entity;
   }
   
   async createMany(data: Partial<T>[]): Promise<T[]> {
-    const entities = await super.createMany(data);
+    const entities = await this.createManyImpl(data);
     await this.saveManyToCache(entities);
     return entities;
   }
   
   async update(id: ID, data: Partial<T>): Promise<T> {
-    const entity = await super.update(id, data);
+    const entity = await this.updateImpl(id, data);
     await this.saveToCache(id, entity);
     return entity;
   }
@@ -156,12 +160,12 @@ export abstract class CachedRepository<T, ID = string> extends BaseRepository<T,
   async updateMany(filter: Filter<T>, data: Partial<T>): Promise<number> {
     // Since we don't know which specific entities were updated,
     // we can't effectively manage the cache for bulk updates
-    const count = await super.updateMany(filter, data);
+    const count = await this.updateManyImpl(filter, data);
     return count;
   }
   
   async delete(id: ID): Promise<boolean> {
-    const result = await super.delete(id);
+    const result = await this.deleteImpl(id);
     if (result) {
       await this.invalidateCache(id);
     }
@@ -171,7 +175,15 @@ export abstract class CachedRepository<T, ID = string> extends BaseRepository<T,
   async deleteMany(filter: Filter<T>): Promise<number> {
     // Since we don't know which specific entities were deleted,
     // we can't effectively manage the cache for bulk deletes
-    const count = await super.deleteMany(filter);
+    const count = await this.deleteManyImpl(filter);
     return count;
   }
+
+  // Abstract methods that concrete implementations must provide
+  protected abstract createImpl(data: Partial<T>): Promise<T>;
+  protected abstract createManyImpl(data: Partial<T>[]): Promise<T[]>;
+  protected abstract updateImpl(id: ID, data: Partial<T>): Promise<T>;
+  protected abstract updateManyImpl(filter: Filter<T>, data: Partial<T>): Promise<number>;
+  protected abstract deleteImpl(id: ID): Promise<boolean>;
+  protected abstract deleteManyImpl(filter: Filter<T>): Promise<number>;
 }

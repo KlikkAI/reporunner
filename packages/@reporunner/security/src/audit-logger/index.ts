@@ -1,8 +1,27 @@
-export * from './audit-core';
-export * from './audit-implementation';
-export * from './audit-methods';
-export * from './query-operations';
-export * from './statistics-export';
-export * from './storage-operations';
-export * from './alert-rotation';
-export * from './retention-cleanup';
+// Simplified audit logger exports - remove references to non-existent modules
+// TODO: Implement missing audit logger modules when needed
+
+export interface AuditEvent {
+  id: string;
+  timestamp: Date;
+  userId?: string;
+  action: string;
+  resource: string;
+  details?: Record<string, any>;
+}
+
+export interface AuditLogger {
+  log(event: AuditEvent): Promise<void>;
+  query(filters: Record<string, any>): Promise<AuditEvent[]>;
+}
+
+// Basic implementation placeholder
+export class BasicAuditLogger implements AuditLogger {
+  async log(event: AuditEvent): Promise<void> {
+    console.log('Audit:', event);
+  }
+
+  async query(_filters: Record<string, any>): Promise<AuditEvent[]> {
+    return [];
+  }
+}

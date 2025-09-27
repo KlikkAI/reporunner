@@ -124,7 +124,7 @@ export abstract class SecurityMiddleware extends BaseMiddleware {
   /**
    * Handle error - can be overridden by derived classes
    */
-  protected handleError(error: Error, req: Request, res: Response, next: NextFunction): void {
+  protected handleError(error: Error, _req: Request, _res: Response, next: NextFunction): void {
     next(error);
   }
 }

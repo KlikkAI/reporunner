@@ -77,14 +77,14 @@ export function retry(maxAttempts = 3, baseDelay = 1000) {
     const logger = new Logger(`${className}:${propertyKey}`);
 
     descriptor.value = async function (...args: any[]) {
-      let lastError: Error;
-      
+      let lastError: Error | undefined;
+
       for (let attempt = 1; attempt <= maxAttempts; attempt++) {
         try {
           return await originalMethod.apply(this, args);
         } catch (error) {
           lastError = error as Error;
-          
+
           if (attempt < maxAttempts) {
             const delay = baseDelay * Math.pow(2, attempt - 1);
             logger.warn(`Attempt ${attempt} failed, retrying in ${delay}ms`, {
@@ -92,14 +92,14 @@ export function retry(maxAttempts = 3, baseDelay = 1000) {
               attempt,
               nextDelay: delay
             });
-            
+
             await new Promise(resolve => setTimeout(resolve, delay));
           }
         }
       }
 
       logger.error(`All ${maxAttempts} attempts failed`, lastError);
-      throw lastError;
+      throw lastError || new Error('Unknown error occurred');
     };
 
     return descriptor;

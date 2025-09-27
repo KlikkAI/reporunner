@@ -1,4 +1,4 @@
-import { Collection, MongoClient, Db, Filter, UpdateFilter, FindOptions } from 'mongodb';
+import { Collection, Db, Filter, UpdateFilter, FindOptions, OptionalUnlessRequiredId } from 'mongodb';
 
 export interface BaseEntity {
   _id?: any;
@@ -67,7 +67,7 @@ export abstract class BaseRepository<T extends BaseEntity> {
       }),
     } as T;
 
-    const result = await this.collection.insertOne(document);
+    const result = await this.collection.insertOne(document as OptionalUnlessRequiredId<T>);
     return { ...document, _id: result.insertedId } as T;
   }
 
@@ -84,7 +84,7 @@ export abstract class BaseRepository<T extends BaseEntity> {
       }),
     })) as T[];
 
-    const result = await this.collection.insertMany(documents);
+    const result = await this.collection.insertMany(documents as OptionalUnlessRequiredId<T>[]);
     return documents.map((doc, index) => ({
       ...doc,
       _id: result.insertedIds[index],
@@ -96,7 +96,7 @@ export abstract class BaseRepository<T extends BaseEntity> {
    */
   async findById(id: any): Promise<T | null> {
     const filter = this.applyBaseFilter({ _id: id });
-    return await this.collection.findOne(filter);
+    return (await this.collection.findOne(filter)) as T | null;
   }
 
   /**
@@ -104,7 +104,7 @@ export abstract class BaseRepository<T extends BaseEntity> {
    */
   async findOne(filter: Filter<T>, options?: FindOptions<T>): Promise<T | null> {
     const baseFilter = this.applyBaseFilter(filter);
-    return await this.collection.findOne(baseFilter, options);
+    return (await this.collection.findOne(baseFilter, options)) as T | null;
   }
 
   /**
@@ -115,7 +115,7 @@ export abstract class BaseRepository<T extends BaseEntity> {
     options?: FindOptions<T>
   ): Promise<T[]> {
     const baseFilter = this.applyBaseFilter(filter);
-    return await this.collection.find(baseFilter, options).toArray();
+    return (await this.collection.find(baseFilter, options).toArray()) as T[];
   }
 
   /**
@@ -147,7 +147,7 @@ export abstract class BaseRepository<T extends BaseEntity> {
     const totalPages = Math.ceil(total / limit);
 
     return {
-      items,
+      items: items as T[],
       total,
       page,
       limit,
@@ -173,7 +173,7 @@ export abstract class BaseRepository<T extends BaseEntity> {
       { returnDocument: 'after' }
     );
 
-    return result || null;
+    return (result as T) || null;
   }
 
   /**
@@ -192,7 +192,7 @@ export abstract class BaseRepository<T extends BaseEntity> {
       { returnDocument: 'after' }
     );
 
-    return result || null;
+    return (result as T) || null;
   }
 
   /**
@@ -303,7 +303,7 @@ export abstract class BaseRepository<T extends BaseEntity> {
       $set: {
         ...mongoUpdate.$set,
         updatedAt: new Date(),
-      },
+      } as any,
     };
   }
 

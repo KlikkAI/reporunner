@@ -99,24 +99,7 @@ const staticHeaders = new SecurityHeadersMiddleware({
     enabled: true,
     action: 'SAMEORIGIN'
   },
-  cacheControl: {
-    enabled: true,
-    value: 'public, max-age=31536000'
-  }
-});
-
-// Headers with CSP reporting
-const reportingHeaders = new SecurityHeadersMiddleware({
-  csp: {
-    enabled: true,
-    reportOnly: true,
-    directives: {
-      'default-src': ["'self'"],
-      'script-src': ["'self'"],
-      'style-src': ["'self'"]
-    },
-    reportUri: '/csp-report'
-  }
+  // Cache control headers can be set manually if needed
 });
 
 // Apply headers based on environment

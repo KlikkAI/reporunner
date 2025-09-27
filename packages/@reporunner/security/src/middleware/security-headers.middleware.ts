@@ -312,11 +312,10 @@ export function getEnvironmentConfig(
  * CSP violation report handler
  */
 export function createCSPReportHandler() {
-  return async (req: Request, res: Response) => {
-    const _report = req.body;
-
-    // You could also send this to a monitoring service
-    // await sendToMonitoring(report);
+  return async (_req: Request, res: Response) => {
+    // CSP violation report received
+    // You could process the report here
+    // console.log('CSP violation reported');
 
     res.status(204).end();
   };

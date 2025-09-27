@@ -8,7 +8,8 @@ const basicAuth = new AuthMiddleware({
   auth: {
     token: {
       secret: process.env.JWT_SECRET || 'your-secret-key',
-      expiresIn: '1h'
+      expiresIn: '1h',
+      refreshExpiresIn: '7d'
     }
   }
 });
@@ -33,7 +34,8 @@ const adminAuth = new AuthMiddleware({
   auth: {
     token: {
       secret: process.env.JWT_SECRET || 'your-secret-key',
-      expiresIn: '1h'
+      expiresIn: '1h',
+      refreshExpiresIn: '7d'
     }
   },
   rbac: {
@@ -46,7 +48,8 @@ const editorAuth = new AuthMiddleware({
   auth: {
     token: {
       secret: process.env.JWT_SECRET || 'your-secret-key',
-      expiresIn: '1h'
+      expiresIn: '1h',
+      refreshExpiresIn: '7d'
     }
   },
   rbac: {
@@ -59,7 +62,8 @@ const ownerAuth = new AuthMiddleware({
   auth: {
     token: {
       secret: process.env.JWT_SECRET || 'your-secret-key',
-      expiresIn: '1h'
+      expiresIn: '1h',
+      refreshExpiresIn: '7d'
     }
   },
   rbac: {
@@ -72,7 +76,8 @@ const complexAuth = new AuthMiddleware({
   auth: {
     token: {
       secret: process.env.JWT_SECRET || 'your-secret-key',
-      expiresIn: '1h'
+      expiresIn: '1h',
+      refreshExpiresIn: '7d'
     }
   },
   rbac: {
@@ -95,19 +100,19 @@ app.get('/api/profile', sessionAuth.handle, (req, res) => {
   res.json({ user: req.user });
 });
 
-app.get('/api/admin', adminAuth.handle, (req, res) => {
+app.get('/api/admin', adminAuth.handle, (_req, res) => {
   res.json({ message: 'Admin access granted' });
 });
 
-app.post('/api/posts', editorAuth.handle, (req, res) => {
+app.post('/api/posts', editorAuth.handle, (_req, res) => {
   res.json({ message: 'Post created' });
 });
 
-app.put('/api/posts/:id', ownerAuth.handle, (req, res) => {
+app.put('/api/posts/:id', ownerAuth.handle, (_req, res) => {
   res.json({ message: 'Post updated' });
 });
 
-app.post('/api/posts/:id/publish', complexAuth.handle, (req, res) => {
+app.post('/api/posts/:id/publish', complexAuth.handle, (_req, res) => {
   res.json({ message: 'Post published' });
 });
 
@@ -117,7 +122,8 @@ app.get('/api/sensitive-data',
     auth: {
       token: {
         secret: process.env.JWT_SECRET || 'your-secret-key',
-        expiresIn: '15m' // Shorter expiry for sensitive routes
+        expiresIn: '15m', // Shorter expiry for sensitive routes
+        refreshExpiresIn: '1d'
       }
     },
     rbac: {
@@ -125,7 +131,7 @@ app.get('/api/sensitive-data',
       permissions: ['read:sensitive-data']
     }
   }).handle,
-  (req, res) => {
+  (_req, res) => {
     res.json({ data: 'sensitive content' });
   }
 );
@@ -144,7 +150,8 @@ app.get('/api/:resourceType/:id',
       auth: {
         token: {
           secret: process.env.JWT_SECRET || 'your-secret-key',
-          expiresIn: '1h'
+          expiresIn: '1h',
+          refreshExpiresIn: '7d'
         }
       },
       rbac: {
@@ -155,7 +162,7 @@ app.get('/api/:resourceType/:id',
 
     return auth.handle(req, res, next);
   },
-  (req, res) => {
+  (_req, res) => {
     res.json({ message: 'Resource accessed' });
   }
 );
@@ -173,14 +180,15 @@ app.get('/api/content/:id',
       auth: {
         token: {
           secret: process.env.JWT_SECRET || 'your-secret-key',
-          expiresIn: '1h'
+          expiresIn: '1h',
+          refreshExpiresIn: '7d'
         }
       }
     });
 
     return auth.handle(req, res, next);
   },
-  (req, res) => {
+  (_req, res) => {
     res.json({ message: 'Content accessed' });
   }
 );

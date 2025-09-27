@@ -21,6 +21,8 @@ export interface AuthenticatedUser {
   permissions?: string[];
   sessionId?: string;
   tokenId?: string;
+  profileCompleted?: boolean;
+  tier?: string;
 }
 
 export interface AuthMiddlewareOptions {
@@ -82,7 +84,7 @@ export function createAuthMiddleware(
       }
 
       // Verify token
-      const decoded = sessionManager.verifyToken(token, false);
+      const decoded = await sessionManager.verifyToken(token);
 
       // Check if it's an access token
       if (decoded.type !== 'access') {

@@ -1,6 +1,15 @@
 import { Request, Response, NextFunction } from 'express';
 import { ZodSchema, ZodError } from 'zod';
 
+export interface ValidationMiddlewareOptions {
+  abortEarly?: boolean;
+  stripExtraFields?: boolean;
+  allowExtraFields?: boolean;
+  errorResponse?: 'default' | 'detailed' | 'minimal';
+  stripUnknown?: boolean;
+  validateBody?: boolean;
+}
+
 export interface ValidationError {
   field: string;
   message: string;
@@ -148,9 +157,9 @@ export class BaseValidationMiddleware {
       let processedSchema = schema;
 
       if (options.stripExtraFields) {
-        processedSchema = schema.strict();
+        processedSchema = (schema as any).strict?.() || schema;
       } else if (!options.allowExtraFields) {
-        processedSchema = schema.strict();
+        processedSchema = (schema as any).strict?.() || schema;
       }
 
       const validatedData = processedSchema.parse(data);
@@ -242,7 +251,7 @@ export class BaseValidationMiddleware {
         field,
         message,
         code,
-        value: error.received,
+        value: (error as any).received,
       };
     });
   }

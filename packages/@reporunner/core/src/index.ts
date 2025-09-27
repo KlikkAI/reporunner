@@ -3,21 +3,17 @@
  * Provides base classes, interfaces, and utilities for consistent architecture
  */
 
-export { BaseController } from './base/BaseController';
-// Base classes
-export { BaseEntity } from './base/BaseEntity';
-export { BaseRepository } from './base/BaseRepository';
+// Base classes - using existing implementations from repository and base directories
+export { BaseRepository, BaseEntity, PaginatedResult, PaginationOptions, RepositoryOptions } from './repository/BaseRepository';
 export { BaseService } from './base/BaseService';
-export { BaseUseCase } from './base/BaseUseCase';
-export { DomainEvent } from './base/DomainEvent';
-export { ValueObject } from './base/ValueObject';
+export { BaseMiddleware } from './base/BaseMiddleware';
 export { Cacheable } from './decorators/Cacheable';
 // Decorators
 export { Injectable } from './decorators/Injectable';
 export { Log } from './decorators/Log';
 export { Transactional } from './decorators/Transactional';
 export { Validate } from './decorators/Validate';
-// Errors
+// Errors - from both errors/index.ts and utils/errors.ts
 export {
   ConflictError,
   DomainError,
@@ -25,8 +21,14 @@ export {
   InternalError,
   NotFoundError,
   UnauthorizedError,
-  ValidationError,
 } from './errors';
+export {
+  AuthenticationError,
+  AuthorizationError,
+  BaseError,
+  ErrorTypes,
+  ValidationError, // Use ValidationError from utils/errors (supports details)
+} from './utils/errors';
 export type { ICache } from './interfaces/ICache';
 export type { IEventBus } from './interfaces/IEventBus';
 export type { ILogger } from './interfaces/ILogger';
@@ -35,17 +37,36 @@ export type { IMapper } from './interfaces/IMapper';
 export type { IRepository } from './interfaces/IRepository';
 export type { IService } from './interfaces/IService';
 export type { IUseCase } from './interfaces/IUseCase';
-export type { PaginatedResult } from './types/PaginatedResult';
-export type { RepositoryOptions } from './types/RepositoryOptions';
+// PaginatedResult and RepositoryOptions already exported from BaseRepository above
 // Common types
 export type { Result } from './types/Result';
 export type { ServiceDependencies } from './types/ServiceDependencies';
 export { Cache } from './utils/Cache';
 export { ErrorHandler } from './utils/ErrorHandler';
 // Utilities
-export { Logger } from './utils/Logger';
+export { Logger } from './utils/logger';
 export { Retry } from './utils/Retry';
 export { Validator } from './utils/Validator';
+
+// Note: SchemaValidator and SchemaDefinition would be re-exported from @reporunner/validation when available
+// For now, we'll define basic implementations as placeholders
+export interface SchemaDefinition {
+  type: string;
+  required?: boolean;
+  [key: string]: any;
+}
+
+export class SchemaValidator {
+  constructor(private schema: SchemaDefinition) {}
+
+  async validate(value: any): Promise<boolean> {
+    // Basic validation placeholder
+    if (this.schema.required && (value === null || value === undefined)) {
+      return false;
+    }
+    return true;
+  }
+}
 // Use cases
 export { IfUseCase } from './use-cases/If.use-case';
 export { MapUseCase } from './use-cases/Map.use-case';

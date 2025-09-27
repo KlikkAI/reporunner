@@ -70,7 +70,7 @@ export abstract class BaseMiddleware {
   /**
    * Hook that runs before the main implementation
    */
-  protected async beforeHandle(context: BaseMiddlewareContext): Promise<void> {
+  protected async beforeHandle(_context: BaseMiddlewareContext): Promise<void> {
     // Optional hook - override in derived classes if needed
   }
 
@@ -82,14 +82,14 @@ export abstract class BaseMiddleware {
   /**
    * Hook that runs after the main implementation
    */
-  protected async afterHandle(context: BaseMiddlewareContext): Promise<void> {
+  protected async afterHandle(_context: BaseMiddlewareContext): Promise<void> {
     // Optional hook - override in derived classes if needed
   }
 
   /**
    * Default error handler
    */
-  protected handleError(error: Error, req: Request, res: Response, next: NextFunction): void {
+  protected handleError(error: Error, _req: Request, res: Response, _next: NextFunction): void {
     if (error.name === ErrorTypes.ValidationError) {
       res.status(400).json({
         error: 'Validation Error',

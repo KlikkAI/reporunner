@@ -22,7 +22,7 @@ export function validate(validator: Validator) {
         throw new ValidationError(`Parameter validation failed`, {
           method: methodName,
           parameter: parameterIndex,
-          error: error.message
+          error: (error as Error).message
         });
       }
     };
@@ -50,7 +50,7 @@ export function validateInput(schema: SchemaDefinition) {
         }
         throw new ValidationError(`Input validation failed`, {
           method: methodName,
-          error: error.message
+          error: (error as Error).message
         });
       }
     };
@@ -82,7 +82,7 @@ export function validateOutput(schema: SchemaDefinition) {
         }
         throw new ValidationError(`Output validation failed`, {
           method: methodName,
-          error: error.message
+          error: (error as Error).message
         });
       }
     };

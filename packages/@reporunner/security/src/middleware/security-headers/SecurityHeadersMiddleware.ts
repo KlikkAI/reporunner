@@ -138,10 +138,10 @@ const DEFAULT_CONFIG: Partial<SecurityHeadersConfig> = {
 };
 
 export class SecurityHeadersMiddleware extends SecurityMiddleware {
-  private cspBuilder: CSPBuilder;
-  private hstsBuilder: HSTSBuilder;
-  private headersBuilder: SecurityHeadersBuilder;
-  private config: SecurityHeadersConfig;
+  private cspBuilder!: CSPBuilder;
+  private hstsBuilder!: HSTSBuilder;
+  private headersBuilder!: SecurityHeadersBuilder;
+  protected declare config: SecurityHeadersConfig;
 
   constructor(config: SecurityHeadersConfig) {
     super(config);

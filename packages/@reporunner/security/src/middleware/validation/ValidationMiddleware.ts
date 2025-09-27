@@ -1,10 +1,9 @@
 import { Request } from 'express';
 import {
   BaseMiddleware,
-  ValidationError,
-  Validator,
   SchemaValidator,
-  SchemaDefinition
+  SchemaDefinition,
+  ValidationError
 } from '@reporunner/core';
 
 export interface ValidationConfig {

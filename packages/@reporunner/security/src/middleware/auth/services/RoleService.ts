@@ -88,7 +88,7 @@ export class RoleService {
   /**
    * Check direct resource ownership
    */
-  private async checkDirectOwnership(userId: string, resourceId: string): Promise<boolean> {
+  private async checkDirectOwnership(_userId: string, _resourceId: string): Promise<boolean> {
     // Implement direct ownership check
     // Example: query the resource table to check if userId matches the owner_id
     return true; // Placeholder
@@ -97,7 +97,7 @@ export class RoleService {
   /**
    * Check team-based resource ownership
    */
-  private async checkTeamOwnership(userId: string, resourceId: string): Promise<boolean> {
+  private async checkTeamOwnership(_userId: string, _resourceId: string): Promise<boolean> {
     // Implement team ownership check
     // Example: check if the user is in a team that owns the resource
     return false; // Placeholder
@@ -106,7 +106,7 @@ export class RoleService {
   /**
    * Check organization-based resource ownership
    */
-  private async checkOrganizationOwnership(userId: string, resourceId: string): Promise<boolean> {
+  private async checkOrganizationOwnership(_userId: string, _resourceId: string): Promise<boolean> {
     // Implement organization ownership check
     // Example: check if the user is in an organization that owns the resource
     return false; // Placeholder

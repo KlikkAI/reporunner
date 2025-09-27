@@ -1,91 +1,76 @@
 import express from 'express';
-import { RateLimitMiddleware } from '../middleware/rate-limit/RateLimitMiddleware';
+import { createRateLimitMiddleware, createLoginRateLimiter, createTieredRateLimiter } from '../middleware/rate-limit.middleware';
+import { AdvancedRateLimiter } from '../rate-limiter';
 
 const app = express();
 
-// Basic rate limiting
-const basicLimiter = new RateLimitMiddleware({
-  max: 100, // 100 requests
-  windowMs: 15 * 60 * 1000, // per 15 minutes
-  enableLogging: true
+// Create rate limiter instance
+const rateLimiter = new AdvancedRateLimiter();
+
+// Configure basic API rate limiting
+rateLimiter.createLimiter('api', {
+  points: 100,
+  duration: 15 * 60, // 15 minutes
+  blockDuration: 60 * 15
+});
+
+// Configure stricter auth rate limiting
+rateLimiter.createLimiter('login', {
+  points: 5,
+  duration: 15 * 60, // 15 minutes
+  blockDuration: 60 * 15
+});
+
+// Basic rate limiting middleware
+const basicLimiter = createRateLimitMiddleware(rateLimiter, {
+  type: 'api',
+  points: 1,
+  message: 'API rate limit exceeded'
 });
 
 // Stricter rate limiting for auth endpoints
-const authLimiter = new RateLimitMiddleware({
-  max: 5, // 5 attempts
-  windowMs: 15 * 60 * 1000, // per 15 minutes
-  headers: {
-    remaining: 'X-Auth-Remaining',
-    reset: 'X-Auth-Reset'
-  },
-  // Custom key generator to use username+IP
-  keyGenerator: (req) => `${req.body.username}:${req.ip}`,
-  // Custom error handler
-  handler: (req, res) => {
-    res.status(429).json({
-      error: 'Too Many Login Attempts',
-      message: 'Please try again later'
-    });
-  }
-});
+const authLimiter = createLoginRateLimiter(rateLimiter);
 
-// API rate limiting with Redis
-const apiLimiter = new RateLimitMiddleware({
-  max: 1000, // 1000 requests
-  windowMs: 60 * 60 * 1000, // per hour
-  store: {
-    type: 'redis',
-    redisConfig: {
-      host: 'localhost',
-      port: 6379
-    }
-  },
-  // Skip rate limiting for admin users
-  skip: (req) => req.user?.isAdmin === true,
-  // Use API key for rate limit key
-  keyGenerator: (req) => req.headers['x-api-key'] as string
-});
+// Note: API limiter available but not used in this example
+// const apiLimiter = createApiRateLimiter(rateLimiter);
 
 // Apply rate limiting to routes
-app.use('/api/', basicLimiter.handle); // Basic rate limiting for all API routes
-app.use('/api/auth', authLimiter.handle); // Stricter limits for auth endpoints
-app.post('/api/login', async (req, res) => {
+app.use('/api/', basicLimiter); // Basic rate limiting for all API routes
+app.use('/api/auth', authLimiter); // Stricter limits for auth endpoints
+app.post('/api/login', async (_req, res) => {
   res.json({ message: 'Login successful' });
 });
 
 // Different limits for different HTTP methods
+// Configure method-specific limits
+rateLimiter.createLimiter('get', { points: 1000, duration: 3600, blockDuration: 300 });
+rateLimiter.createLimiter('post', { points: 100, duration: 3600, blockDuration: 300 });
+rateLimiter.createLimiter('put', { points: 50, duration: 3600, blockDuration: 300 });
+rateLimiter.createLimiter('delete', { points: 20, duration: 3600, blockDuration: 300 });
+
 const methodLimiters = {
-  get: new RateLimitMiddleware({ max: 1000, windowMs: 60 * 60 * 1000 }), // 1000/hour
-  post: new RateLimitMiddleware({ max: 100, windowMs: 60 * 60 * 1000 }), // 100/hour
-  put: new RateLimitMiddleware({ max: 50, windowMs: 60 * 60 * 1000 }), // 50/hour
-  delete: new RateLimitMiddleware({ max: 20, windowMs: 60 * 60 * 1000 }) // 20/hour
+  get: createRateLimitMiddleware(rateLimiter, { type: 'get', points: 1 }),
+  post: createRateLimitMiddleware(rateLimiter, { type: 'post', points: 1 }),
+  put: createRateLimitMiddleware(rateLimiter, { type: 'put', points: 1 }),
+  delete: createRateLimitMiddleware(rateLimiter, { type: 'delete', points: 1 })
 };
 
 app.use('/api/resources', (req, res, next) => {
   const method = req.method.toLowerCase();
   const limiter = methodLimiters[method as keyof typeof methodLimiters];
   if (limiter) {
-    return limiter.handle(req, res, next);
+    return limiter(req, res, next);
   }
-  next();
+  return next();
 });
 
 // Dynamic rate limiting based on user tier
-app.use('/api/premium', async (req, res, next) => {
-  const userTier = req.user?.tier || 'free';
-  const tierLimits = {
-    free: 100,
-    basic: 1000,
-    premium: 10000
-  };
+const tierLimits = {
+  free: 100,
+  basic: 1000,
+  premium: 10000
+};
 
-  const limiter = new RateLimitMiddleware({
-    max: tierLimits[userTier as keyof typeof tierLimits] || tierLimits.free,
-    windowMs: 60 * 60 * 1000,
-    keyGenerator: (req) => `${req.user?.id}:${userTier}`
-  });
-
-  return limiter.handle(req, res, next);
-});
+app.use('/api/premium', createTieredRateLimiter(rateLimiter, tierLimits));
 
 export default app;

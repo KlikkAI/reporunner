@@ -1,118 +1,98 @@
 packages:
-  - 'packages/*'
-  - 'packages/@reporunner/*'
-  - 'apps/*'
+  - packages/*
+  - packages/@reporunner/*
+  - apps/*
 
-# Catalog for shared dependencies
-catalog:
-  # Core dependencies
-  react: ^19.1.0
-  react-dom: ^19.1.0
-  typescript: ^5.8.3
-  vite: ^7.0.4
-  vitest: ^3.2.4
-  zod: ^4.1.5
-  axios: ^1.10.0
-  winston: ^3.11.0
-  
-  # Database
-  mongoose: ^8.1.1
-  drizzle-orm: ^0.44.5
-  drizzle-kit: ^0.31.4
-  postgres: ^3.4.5
-  pgvector: ^0.2.1
-  pg: ^8.16.3
-  ioredis: ^5.3.2
-  
-  # AI/ML
-  openai: ^4.24.7
-  "@anthropic-ai/sdk": ^0.57.0
-  "@langchain/core": ^0.3.26
-  
-  # Backend
-  express: ^4.19.2
-  fastify: ^5.3.0
-  socket.io: ^4.7.4
-  bullmq: ^5.1.5
-  helmet: ^7.1.0
-  cors: ^2.8.5
-  
-  # Frontend
-  "@ant-design/icons": ^6.0.0
-  antd: ^5.26.4
-  reactflow: ^11.11.4
-  "@reactflow/background": ^11.3.14
-  "@reactflow/controls": ^11.2.14
-  "@reactflow/minimap": ^11.7.14
-  zustand: ^5.0.6
-  "@tanstack/react-query": ^5.83.0
-  tailwindcss: ^3.4.17
-  
-  # Testing
-  "@testing-library/react": ^16.3.0
-  "@testing-library/jest-dom": ^6.8.0
-  "@vitest/ui": ^3.2.4
-  "@vitest/coverage-v8": ^3.2.4
-  jest: ^29.6.2
-  "@types/jest": ^29.5.3
-  supertest: ^6.3.4
-  eslint: ^9.0.0
-  
-  # Build tools
-  tsx: ^4.7.0
-  tsc-alias: ^1.8.8
-  tsup: ^8.3.5
-  "@vitejs/plugin-react": ^4.6.0
-  rollup-plugin-visualizer: ^6.0.3
-  turbo: ^2.5.6
-  
-  # Linting & Formatting
-  "@biomejs/biome": ^2.2.4
-  "@typescript-eslint/eslint-plugin": ^8.0.0
-  "@typescript-eslint/parser": ^8.0.0
-  
-  # Types
-  "@types/node": ^24.0.13
-  "@types/express": ^4.17.21
-  "@types/react": ^19.1.8
-  "@types/react-dom": ^19.1.6
-  "@types/lodash": ^4.17.20
-  "@types/bcryptjs": ^2.4.6
-  "@types/jsonwebtoken": ^9.0.5
-  "@types/supertest": ^6.0.2
-
-# pnpm configuration
-packageExtensions:
-  # Fix missing peer dependencies
-  "@reactflow/background":
-    peerDependencies:
-      reactflow: "*"
-  "@reactflow/controls":
-    peerDependencies:
-      reactflow: "*"
-  "@reactflow/minimap":
-    peerDependencies:
-      reactflow: "*"
-
-# Node.js version enforcement
-packageManager: pnpm@9.15.2
-engines:
-  node: ">=18.0.0"
-  pnpm: ">=8.0.0"
-
-# Performance optimizations
-enableGlobalHoist: true
-enableGlobalCache: true
-shamefullyHoist: false
-storeDir: ~/.pnpm-store
-virtualStoreDir: node_modules/.pnpm
-
-# Security
 auditConfig:
-  ignoreCves: []
   allowedLicenses:
     - MIT
     - Apache-2.0
     - BSD-2-Clause
     - BSD-3-Clause
     - ISC
+  ignoreCves: []
+
+catalog:
+  '@ant-design/icons': ^6.0.0
+  '@anthropic-ai/sdk': ^0.57.0
+  '@biomejs/biome': ^2.2.4
+  '@langchain/core': ^0.3.26
+  '@reactflow/background': ^11.3.14
+  '@reactflow/controls': ^11.2.14
+  '@reactflow/minimap': ^11.7.14
+  '@tanstack/react-query': ^5.83.0
+  '@testing-library/jest-dom': ^6.8.0
+  '@testing-library/react': ^16.3.0
+  '@types/bcryptjs': ^2.4.6
+  '@types/express': ^4.17.21
+  '@types/jest': ^29.5.3
+  '@types/jsonwebtoken': ^9.0.5
+  '@types/lodash': ^4.17.20
+  '@types/node': ^24.0.13
+  '@types/react': ^19.1.8
+  '@types/react-dom': ^19.1.6
+  '@types/supertest': ^6.0.2
+  '@typescript-eslint/eslint-plugin': ^8.0.0
+  '@typescript-eslint/parser': ^8.0.0
+  '@vitejs/plugin-react': ^4.6.0
+  '@vitest/coverage-v8': ^3.2.4
+  '@vitest/ui': ^3.2.4
+  antd: ^5.26.4
+  axios: ^1.10.0
+  bullmq: ^5.1.5
+  cors: ^2.8.5
+  drizzle-kit: ^0.31.4
+  drizzle-orm: ^0.44.5
+  eslint: ^9.0.0
+  express: ^4.19.2
+  fastify: ^5.3.0
+  helmet: ^7.1.0
+  ioredis: ^5.3.2
+  jest: ^29.6.2
+  mongoose: ^8.1.1
+  openai: ^4.24.7
+  pg: ^8.16.3
+  pgvector: ^0.2.1
+  postgres: ^3.4.5
+  react: ^19.1.0
+  react-dom: ^19.1.0
+  reactflow: ^11.11.4
+  rollup-plugin-visualizer: ^6.0.3
+  socket.io: ^4.7.4
+  supertest: ^6.3.4
+  tailwindcss: ^3.4.17
+  tsc-alias: ^1.8.8
+  tsup: ^8.3.5
+  tsx: ^4.7.0
+  turbo: ^2.5.6
+  typescript: ^5.8.3
+  vite: ^7.0.4
+  vitest: ^3.2.4
+  winston: ^3.11.0
+  zod: ^4.1.11
+  zustand: ^5.0.6
+
+enableGlobalCache: true
+
+enableGlobalHoist: true
+
+engines: {node: '>=18.0.0', pnpm: '>=8.0.0'}
+
+packageExtensions:
+  '@reactflow/background':
+    peerDependencies:
+      reactflow: '*'
+  '@reactflow/controls':
+    peerDependencies:
+      reactflow: '*'
+  '@reactflow/minimap':
+    peerDependencies:
+      reactflow: '*'
+
+packageManager: pnpm@9.15.2
+
+shamefullyHoist: false
+
+storeDir: ~/.pnpm-store
+
+virtualStoreDir: node_modules/.pnpm

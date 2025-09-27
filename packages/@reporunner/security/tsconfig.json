@@ -1,8 +1,7 @@
 {
   "extends": "../shared/configs/tsconfig.base.json",
   "compilerOptions": {
-    "outDir": "./dist/security",
-    "rootDir": "./src"
+    "outDir": "./dist/security"
   },
   "include": [
     "src/**/*"

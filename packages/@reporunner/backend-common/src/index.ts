@@ -166,7 +166,7 @@ export const contextMiddleware = (req: Request, res: Response, next: NextFunctio
     organizationId: req.user?.organizationId,
     roles: req.user?.roles || [],
     permissions: req.user?.permissions || [],
-    ip: req.ip || req.connection.remoteAddress || 'unknown',
+    ip: req.ip || req.connection?.remoteAddress || 'unknown',
     userAgent: req.get('User-Agent') || 'unknown',
     startTime: new Date(),
   };
@@ -231,6 +231,7 @@ declare global {
       context?: RequestContext;
       user?: {
         id: string;
+        email?: string;
         organizationId: string;
         roles: string[];
         permissions: string[];
@@ -240,6 +241,7 @@ declare global {
   }
 }
 
-export * from './middleware';
-export * from './utils';
-export * from './validation';
+// Note: Middleware, utils, and validation are available as separate modules
+// import { MiddlewareFunction } from '@reporunner/backend-common/middleware'
+// import { ValidationRule } from '@reporunner/backend-common/validation'
+// import { UtilityFunction } from '@reporunner/backend-common/utils'

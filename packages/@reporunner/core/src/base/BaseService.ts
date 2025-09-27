@@ -8,17 +8,15 @@ import { Retry } from '../utils/Retry';
  * Base service class providing common functionality for all services
  * Implements patterns for caching, retrying, error handling, and logging
  */
-export abstract class BaseService<T = unknown> {
+export abstract class BaseService<_T = unknown> {
   protected readonly logger: ILogger;
-  protected readonly cache: ICache;
-  protected readonly eventBus: IEventBus;
-  protected readonly retry: Retry;
+  protected readonly cache?: ICache;
+  protected readonly eventBus?: IEventBus;
 
   constructor(dependencies: ServiceDependencies) {
     this.logger = dependencies.logger;
     this.cache = dependencies.cache;
     this.eventBus = dependencies.eventBus;
-    this.retry = new Retry(this.logger);
   }
 
   /**
@@ -34,13 +32,10 @@ export abstract class BaseService<T = unknown> {
   ): Promise<R> {
     const { maxRetries = 3, retryDelay = 1000, exponentialBackoff = true } = options;
 
-    return this.retry.execute(operation, {
-      maxRetries,
+    return Retry.execute(operation, {
+      maxAttempts: maxRetries,
       delay: retryDelay,
-      exponentialBackoff,
-      onRetry: (attempt, error) => {
-        this.logger.warn(`Retry attempt ${attempt}`, { error: error.message });
-      },
+      backoffMultiplier: exponentialBackoff ? 2 : 1,
     });
   }
 
@@ -52,14 +47,14 @@ export abstract class BaseService<T = unknown> {
     operation: () => Promise<R>,
     ttl = 3600
   ): Promise<R> {
-    const cached = await this.cache.get<R>(key);
+    const cached = await this.cache?.get<R>(key);
     if (cached !== null && cached !== undefined) {
       this.logger.debug(`Cache hit for key: ${key}`);
       return cached;
     }
 
     const result = await operation();
-    await this.cache.set(key, result, ttl);
+    await this.cache?.set(key, result, ttl);
     this.logger.debug(`Cache set for key: ${key}`);
 
     return result;
@@ -69,7 +64,7 @@ export abstract class BaseService<T = unknown> {
    * Invalidate cache entries by pattern
    */
   protected async invalidateCache(pattern: string): Promise<void> {
-    await this.cache.deletePattern(pattern);
+    await this.cache?.deletePattern(pattern);
     this.logger.debug(`Cache invalidated for pattern: ${pattern}`);
   }
 
@@ -77,7 +72,7 @@ export abstract class BaseService<T = unknown> {
    * Publish domain event
    */
   protected async publishEvent(eventType: string, payload: unknown): Promise<void> {
-    await this.eventBus.publish(eventType, payload);
+    await this.eventBus?.publish(eventType, payload);
     this.logger.debug(`Event published: ${eventType}`);
   }
 

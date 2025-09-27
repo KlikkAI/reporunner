@@ -11,7 +11,7 @@ export function authorize(roles: string[]) {
     const methodName = propertyKey;
 
     descriptor.value = async function (...args: any[]) {
-      const user = this.currentUser || args[0]?.user;
+      const user = (this as any).currentUser || args[0]?.user;
       
       if (!user) {
         throw new AuthenticationError('No authenticated user found');
@@ -41,7 +41,7 @@ export function requirePermission(permission: string) {
     const methodName = propertyKey;
 
     descriptor.value = async function (...args: any[]) {
-      const user = this.currentUser || args[0]?.user;
+      const user = (this as any).currentUser || args[0]?.user;
       
       if (!user) {
         throw new AuthenticationError('No authenticated user found');
@@ -71,7 +71,7 @@ export function requireOwnership(resourceIdPath: string = 'id') {
     const methodName = propertyKey;
 
     descriptor.value = async function (...args: any[]) {
-      const user = this.currentUser || args[0]?.user;
+      const user = (this as any).currentUser || args[0]?.user;
       
       if (!user) {
         throw new AuthenticationError('No authenticated user found');
@@ -91,7 +91,7 @@ export function requireOwnership(resourceIdPath: string = 'id') {
       }
 
       // Check ownership - implementation will vary based on your data model
-      const isOwner = await this.checkResourceOwnership?.(resourceId, user.id);
+      const isOwner = await (this as any).checkResourceOwnership?.(resourceId, user.id);
       
       if (!isOwner) {
         throw new AuthorizationError(
@@ -117,7 +117,7 @@ export function checkAccess(resource: string) {
     const methodName = propertyKey;
 
     descriptor.value = async function (...args: any[]) {
-      const user = this.currentUser || args[0]?.user;
+      const user = (this as any).currentUser || args[0]?.user;
       
       if (!user) {
         throw new AuthenticationError('No authenticated user found');
@@ -127,7 +127,7 @@ export function checkAccess(resource: string) {
       const action = args[0]?.action || methodName;
 
       // Check if user has access to perform action on resource
-      const hasAccess = await this.checkResourceAccess?.(resource, action, user.id);
+      const hasAccess = await (this as any).checkResourceAccess?.(resource, action, user.id);
       
       if (!hasAccess) {
         throw new AuthorizationError(
@@ -153,13 +153,13 @@ export function requireScope(scope: string) {
     const methodName = propertyKey;
 
     descriptor.value = async function (...args: any[]) {
-      const user = this.currentUser || args[0]?.user;
+      const user = (this as any).currentUser || args[0]?.user;
       
       if (!user) {
         throw new AuthenticationError('No authenticated user found');
       }
 
-      const hasScope = await this.checkUserScope?.(user.id, scope);
+      const hasScope = await (this as any).checkUserScope?.(user.id, scope);
       
       if (!hasScope) {
         throw new AuthorizationError(
