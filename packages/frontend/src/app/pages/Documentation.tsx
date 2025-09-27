@@ -320,35 +320,7 @@ export const Documentation: React.FC = () => {
                   placeholder="Search documentation..."
                   className="w-full pl-12 pr-4 py-4 bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg text-white placeholder-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
-              </div>
-            </div>
-
-            {/* Quick Stats */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-              <div className="text-center">
-                <div className="text-3xl font-bold text-blue-300 mb-2">50+</div>
-                <div className="text-sm text-slate-300">Guides</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-green-300 mb-2">25+</div>
-                <div className="text-sm text-slate-300">Tutorials</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-purple-300 mb-2">15+</div>
-                <div className="text-sm text-slate-300">Video Guides</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-orange-300 mb-2">100+</div>
-                <div className="text-sm text-slate-300">Code Examples</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Quick Links */}
-      <section className="py-8 bg-white border-b border-gray-200">
-        <div className="container mx-auto px-6">
+              </div>>
           <div className="flex flex-wrap justify-center gap-4">
             {quickLinks.map((link, index) => {
               const Icon = link.icon;
@@ -395,95 +367,7 @@ export const Documentation: React.FC = () => {
                     );
                   })}
                 </nav>
-              </div>
-            </div>
-
-            {/* Main Content */}
-            <div className="lg:w-3/4">
-              <div className="mb-8">
-                <h2 className="text-3xl font-bold text-gray-900 mb-2">
-                  {categories.find((c) => c.id === selectedCategory)?.name}
-                </h2>
-                <p className="text-gray-600">
-                  {filteredDocs.length} article
-                  {filteredDocs.length !== 1 ? 's' : ''} found
-                </p>
-              </div>
-
-              {/* Documentation Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {filteredDocs.map((doc, index) => {
-                  const TypeIcon = getTypeIcon(doc.type);
-                  return (
-                    <div
-                      key={index}
-                      className="group bg-white border border-gray-200 rounded-xl p-6 hover:border-blue-300 hover:shadow-lg transition-all duration-300 cursor-pointer"
-                    >
-                      <div className="flex items-start justify-between mb-4">
-                        <div className="flex items-center gap-3">
-                          <div className="bg-blue-100 p-2 rounded-lg group-hover:bg-blue-600 transition-colors">
-                            <TypeIcon className="w-5 h-5 text-blue-600 group-hover:text-white transition-colors" />
-                          </div>
-                          {doc.popular && (
-                            <div className="flex items-center gap-1 px-2 py-1 bg-yellow-100 text-yellow-700 rounded-full text-xs font-medium">
-                              <Star className="w-3 h-3 fill-current" />
-                              Popular
-                            </div>
-                          )}
-                        </div>
-                        <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-blue-600 transition-colors" />
-                      </div>
-
-                      <h3 className="font-semibold text-xl text-gray-900 mb-2 group-hover:text-blue-900 transition-colors">
-                        {doc.title}
-                      </h3>
-
-                      <p className="text-gray-600 mb-4 line-clamp-2">{doc.description}</p>
-
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-4">
-                          <div className="flex items-center gap-1 text-sm text-gray-500">
-                            <Clock className="w-4 h-4" />
-                            {doc.readTime}
-                          </div>
-                          <span
-                            className={`px-2 py-1 text-xs font-medium rounded-full ${getDifficultyColor(doc.difficulty)}`}
-                          >
-                            {doc.difficulty}
-                          </span>
-                        </div>
-                        <span className="text-xs text-gray-400">Updated {doc.lastUpdated}</span>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-
-              {filteredDocs.length === 0 && (
-                <div className="text-center py-12">
-                  <div className="text-6xl mb-4">📚</div>
-                  <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                    No documentation found
-                  </h3>
-                  <p className="text-gray-600 mb-6">
-                    Try adjusting your search or browse a different category.
-                  </p>
-                  <button
-                    onClick={() => setSearchQuery('')}
-                    className="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors"
-                  >
-                    Clear Search
-                  </button>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Featured Tutorials */}
-      <section className="py-16 bg-gray-50">
-        <div className="container mx-auto px-6">
+              </div>>
           <div className="max-w-4xl mx-auto text-center mb-12">
             <h2 className="text-4xl font-bold text-gray-900 mb-6">Featured Tutorials</h2>
             <p className="text-xl text-gray-600">
@@ -575,43 +459,7 @@ export const Documentation: React.FC = () => {
               <div className="text-center p-6">
                 <div className="bg-blue-100 p-4 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
                   <Users className="w-8 h-8 text-blue-600" />
-                </div>
-                <h3 className="font-semibold text-gray-900 mb-2">Community Forum</h3>
-                <p className="text-gray-600 mb-4">Join thousands of developers in our community</p>
-                <button className="text-blue-600 font-medium hover:text-blue-700 transition-colors">
-                  Join Forum →
-                </button>
-              </div>
-
-              <div className="text-center p-6">
-                <div className="bg-green-100 p-4 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
-                  <GitBranch className="w-8 h-8 text-green-600" />
-                </div>
-                <h3 className="font-semibold text-gray-900 mb-2">GitHub Issues</h3>
-                <p className="text-gray-600 mb-4">Report bugs and request features</p>
-                <button className="text-green-600 font-medium hover:text-green-700 transition-colors">
-                  Open Issue →
-                </button>
-              </div>
-
-              <div className="text-center p-6">
-                <div className="bg-purple-100 p-4 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
-                  <Webhook className="w-8 h-8 text-purple-600" />
-                </div>
-                <h3 className="font-semibold text-gray-900 mb-2">Enterprise Support</h3>
-                <p className="text-gray-600 mb-4">24/7 support for enterprise customers</p>
-                <button className="text-purple-600 font-medium hover:text-purple-700 transition-colors">
-                  Contact Support →
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-16 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
-        <div className="container mx-auto px-6 text-center">
+                </div>>
           <h2 className="text-4xl font-bold mb-6">Ready to Start Building?</h2>
           <p className="text-xl mb-8 max-w-2xl mx-auto opacity-90">
             Follow our quick start guide and build your first workflow in minutes

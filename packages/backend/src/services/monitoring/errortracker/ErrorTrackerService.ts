@@ -17,7 +17,6 @@ import { GetErrorPatternsUseCase } from './application/use-cases/GetErrorPattern
 import { GetErrorStatsUseCase } from './application/use-cases/GetErrorStats.use-case';
 import { GetErrorsUseCase } from './application/use-cases/GetErrors.use-case';
 import { HandleCriticalErrorUseCase } from './application/use-cases/HandleCriticalError.use-case';
-import {
   IfUseCase,
   IfUseCase,
   IfUseCase,
@@ -98,66 +97,6 @@ export class ErrorTrackerService {
     return this.extractRequestInfoUseCase.execute(input);
   }
 
-  async if(input: any): Promise<any> {
-    return this.ifUseCase.execute(input);
-  }
-
-  async trackCustomError(input: any): Promise<any> {
-    return this.trackCustomErrorUseCase.execute(input);
-  }
-
-  async updateErrorPattern(input: any): Promise<any> {
-    return this.updateErrorPatternUseCase.execute(input);
-  }
-
-  async if(input: any): Promise<any> {
-    return this.ifUseCase.execute(input);
-  }
-
-  async if(input: any): Promise<any> {
-    return this.ifUseCase.execute(input);
-  }
-
-  async updateErrorRate(input: any): Promise<any> {
-    return this.updateErrorRateUseCase.execute(input);
-  }
-
-  async if(input: any): Promise<any> {
-    return this.ifUseCase.execute(input);
-  }
-
-  async updateCircuitBreaker(input: any): Promise<any> {
-    return this.updateCircuitBreakerUseCase.execute(input);
-  }
-
-  async if(input: any): Promise<any> {
-    return this.ifUseCase.execute(input);
-  }
-
-  async if(input: any): Promise<any> {
-    return this.ifUseCase.execute(input);
-  }
-
-  async handleCriticalError(input: any): Promise<any> {
-    return this.handleCriticalErrorUseCase.execute(input);
-  }
-
-  async generateErrorId(input: any): Promise<any> {
-    return this.generateErrorIdUseCase.execute(input);
-  }
-
-  async generateFingerprint(input: any): Promise<any> {
-    return this.generateFingerprintUseCase.execute(input);
-  }
-
-  async for(input: any): Promise<any> {
-    return this.forUseCase.execute(input);
-  }
-
-  async extractRequestInfo(input: any): Promise<any> {
-    return this.extractRequestInfoUseCase.execute(input);
-  }
-
   async sanitizeHeaders(input: any): Promise<any> {
     return this.sanitizeHeadersUseCase.execute(input);
   }
@@ -202,14 +141,6 @@ export class ErrorTrackerService {
     return this.ifUseCase.execute(input);
   }
 
-  async if(input: any): Promise<any> {
-    return this.ifUseCase.execute(input);
-  }
-
-  async if(input: any): Promise<any> {
-    return this.ifUseCase.execute(input);
-  }
-
   async getErrorPatterns(input: any): Promise<any> {
     return this.getErrorPatternsUseCase.execute(input);
   }
@@ -224,22 +155,6 @@ export class ErrorTrackerService {
 
   async createExpressErrorHandler(input: any): Promise<any> {
     return this.createExpressErrorHandlerUseCase.execute(input);
-  }
-
-  async if(input: any): Promise<any> {
-    return this.ifUseCase.execute(input);
-  }
-
-  async startCleanupInterval(input: any): Promise<any> {
-    return this.startCleanupIntervalUseCase.execute(input);
-  }
-
-  async cleanupOldErrors(input: any): Promise<any> {
-    return this.cleanupOldErrorsUseCase.execute(input);
-  }
-
-  async for(input: any): Promise<any> {
-    return this.forUseCase.execute(input);
   }
 
   async if(input: any): Promise<any> {

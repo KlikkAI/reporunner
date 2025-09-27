@@ -1,7 +1,11 @@
-export interface IOperationalTransformRepository {
-  findById(id: string): Promise<any>;
-  findAll(): Promise<any[]>;
-  create(data: any): Promise<any>;
-  update(id: string, data: any): Promise<any>;
-  delete(id: string): Promise<boolean>;
+// OperationalTransform Repository Interface
+// Extends shared base repository interface to eliminate duplication
+
+import { IBaseRepository } from '../../../shared/interfaces/IBaseRepository';
+
+export interface IOperationalTransformRepository extends IBaseRepository {
+  // OperationalTransform-specific repository methods would be defined here
+  // This extends the shared base interface instead of duplicating it
 }
+
+export default IOperationalTransformRepository;

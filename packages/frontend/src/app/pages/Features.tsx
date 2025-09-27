@@ -328,14 +328,7 @@ export const Features: React.FC = () => {
                 View Documentation
                 <ArrowRight className="w-5 h-5" />
               </button>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Feature Categories Navigation */}
-      <section className="py-16 bg-white">
-        <div className="container mx-auto px-6">
+            </div>>
           <div className="flex flex-wrap justify-center gap-4 mb-16">
             {featureCategories.map((category) => {
               const Icon = category.icon;
@@ -421,119 +414,7 @@ export const Features: React.FC = () => {
             <p className="text-xl text-gray-600">
               See how Reporunner compares to other workflow automation platforms
             </p>
-          </div>
-
-          <div className="overflow-x-auto">
-            <table className="w-full bg-white rounded-xl shadow-xl">
-              <thead>
-                <tr className="border-b border-gray-200">
-                  <th className="text-left p-6 font-semibold text-gray-900">Feature</th>
-                  <th className="text-center p-6 font-semibold text-blue-900">Reporunner</th>
-                  <th className="text-center p-6 font-semibold text-gray-700">n8n</th>
-                  <th className="text-center p-6 font-semibold text-gray-700">Zapier</th>
-                  <th className="text-center p-6 font-semibold text-gray-700">Make</th>
-                </tr>
-              </thead>
-              <tbody>
-                {[
-                  {
-                    feature: 'AI-Powered Automation',
-                    reporunner: true,
-                    n8n: false,
-                    zapier: false,
-                    make: false,
-                  },
-                  {
-                    feature: 'Self-Hosted',
-                    reporunner: true,
-                    n8n: true,
-                    zapier: false,
-                    make: false,
-                  },
-                  {
-                    feature: 'Vector Database',
-                    reporunner: true,
-                    n8n: false,
-                    zapier: false,
-                    make: false,
-                  },
-                  {
-                    feature: 'Enterprise SSO',
-                    reporunner: true,
-                    n8n: false,
-                    zapier: true,
-                    make: true,
-                  },
-                  {
-                    feature: 'Custom Nodes SDK',
-                    reporunner: true,
-                    n8n: true,
-                    zapier: false,
-                    make: false,
-                  },
-                  {
-                    feature: 'Real-time Collaboration',
-                    reporunner: true,
-                    n8n: false,
-                    zapier: false,
-                    make: true,
-                  },
-                  {
-                    feature: 'Multi-Database Support',
-                    reporunner: true,
-                    n8n: false,
-                    zapier: false,
-                    make: false,
-                  },
-                  {
-                    feature: 'Air-Gap Deployment',
-                    reporunner: true,
-                    n8n: false,
-                    zapier: false,
-                    make: false,
-                  },
-                ].map((row, index) => (
-                  <tr key={index} className="border-b border-gray-100 hover:bg-gray-50">
-                    <td className="p-6 font-medium text-gray-900">{row.feature}</td>
-                    <td className="p-6 text-center">
-                      {row.reporunner ? (
-                        <Check className="w-6 h-6 text-green-600 mx-auto" />
-                      ) : (
-                        <span className="text-gray-400">—</span>
-                      )}
-                    </td>
-                    <td className="p-6 text-center">
-                      {row.n8n ? (
-                        <Check className="w-6 h-6 text-green-600 mx-auto" />
-                      ) : (
-                        <span className="text-gray-400">—</span>
-                      )}
-                    </td>
-                    <td className="p-6 text-center">
-                      {row.zapier ? (
-                        <Check className="w-6 h-6 text-green-600 mx-auto" />
-                      ) : (
-                        <span className="text-gray-400">—</span>
-                      )}
-                    </td>
-                    <td className="p-6 text-center">
-                      {row.make ? (
-                        <Check className="w-6 h-6 text-green-600 mx-auto" />
-                      ) : (
-                        <span className="text-gray-400">—</span>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-16 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
-        <div className="container mx-auto px-6 text-center">
+          </div>>
           <h2 className="text-4xl font-bold mb-6">Ready to Experience These Features?</h2>
           <p className="text-xl mb-8 max-w-2xl mx-auto opacity-90">
             Start your free trial today and see how Reporunner can transform your workflow

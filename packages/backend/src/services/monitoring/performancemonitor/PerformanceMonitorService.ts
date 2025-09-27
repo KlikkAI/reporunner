@@ -80,10 +80,6 @@ export class PerformanceMonitorService {
     return this.ifUseCase.execute(input);
   }
 
-  async if(input: any): Promise<any> {
-    return this.ifUseCase.execute(input);
-  }
-
   async catch(input: any): Promise<any> {
     return this.catchUseCase.execute(input);
   }
@@ -96,50 +92,6 @@ export class PerformanceMonitorService {
     return this.ifUseCase.execute(input);
   }
 
-  async incrementCounter(input: any): Promise<any> {
-    return this.incrementCounterUseCase.execute(input);
-  }
-
-  async recordGauge(input: any): Promise<any> {
-    return this.recordGaugeUseCase.execute(input);
-  }
-
-  async startSystemMonitoring(input: any): Promise<any> {
-    return this.startSystemMonitoringUseCase.execute(input);
-  }
-
-  async collectSystemMetrics(input: any): Promise<any> {
-    return this.collectSystemMetricsUseCase.execute(input);
-  }
-
-  async measureEventLoopLag(input: any): Promise<any> {
-    return this.measureEventLoopLagUseCase.execute(input);
-  }
-
-  async detectMemoryLeaks(input: any): Promise<any> {
-    return this.detectMemoryLeaksUseCase.execute(input);
-  }
-
-  async for(input: any): Promise<any> {
-    return this.forUseCase.execute(input);
-  }
-
-  async if(input: any): Promise<any> {
-    return this.ifUseCase.execute(input);
-  }
-
-  async if(input: any): Promise<any> {
-    return this.ifUseCase.execute(input);
-  }
-
-  async calculateMemoryTrend(input: any): Promise<any> {
-    return this.calculateMemoryTrendUseCase.execute(input);
-  }
-
-  async for(input: any): Promise<any> {
-    return this.forUseCase.execute(input);
-  }
-
   async if(input: any): Promise<any> {
     return this.ifUseCase.execute(input);
   }
@@ -150,38 +102,6 @@ export class PerformanceMonitorService {
 
   async if(input: any): Promise<any> {
     return this.ifUseCase.execute(input);
-  }
-
-  async getMetrics(input: any): Promise<any> {
-    return this.getMetricsUseCase.execute(input);
-  }
-
-  async if(input: any): Promise<any> {
-    return this.ifUseCase.execute(input);
-  }
-
-  async if(input: any): Promise<any> {
-    return this.ifUseCase.execute(input);
-  }
-
-  async getAverageMetric(input: any): Promise<any> {
-    return this.getAverageMetricUseCase.execute(input);
-  }
-
-  async getPercentile(input: any): Promise<any> {
-    return this.getPercentileUseCase.execute(input);
-  }
-
-  async getCurrentSystemMetrics(input: any): Promise<any> {
-    return this.getCurrentSystemMetricsUseCase.execute(input);
-  }
-
-  async createExpressMiddleware(input: any): Promise<any> {
-    return this.createExpressMiddlewareUseCase.execute(input);
-  }
-
-  async stop(input: any): Promise<any> {
-    return this.stopUseCase.execute(input);
   }
 
   async if(input: any): Promise<any> {

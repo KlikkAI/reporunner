@@ -6,6 +6,13 @@ import { getCustomBodyComponent } from '@/app/node-extensions/nodeUiRegistry';
 import { nodeRegistry, type WorkflowNodeInstance } from '@/core';
 import { useSmartMenuPosition } from '../../../hooks/useSmartMenuPosition';
 import NodeToolbar from './BaseNode/NodeToolbar';
+import { useEnter } from './hooks/useEnter';
+import { useEvent } from './hooks/useEvent';
+import { useLeave } from './hooks/useLeave';
+import { useMemo } from './hooks/useMemo';
+import { useRef } from './hooks/useRef';
+import { useSmartMenuPosition } from './hooks/useSmartMenuPosition';
+import { useState } from './hooks/useState';
 
 interface RegistryNodeData extends WorkflowNodeInstance {
   onDelete?: () => void;

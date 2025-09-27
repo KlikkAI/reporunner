@@ -9,6 +9,11 @@ import {
 } from '@/core/constants/categories';
 import { useAIAssistantStore } from '@/core/stores/aiAssistantStore';
 import { VirtualizedList } from '@/design-system';
+import { useAIAssistantStore } from './hooks/useAIAssistantStore';
+import { useCallback } from './hooks/useCallback';
+import { useEffect } from './hooks/useEffect';
+import { useLeanWorkflowStore } from './hooks/useLeanWorkflowStore';
+import { useState } from './hooks/useState';
 
 interface AdvancedNodePanelProps {
   isCollapsed: boolean;

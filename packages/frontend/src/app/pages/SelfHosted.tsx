@@ -236,34 +236,7 @@ export const SelfHosted: React.FC = () => {
                 <Play className="w-5 h-5" />
                 Watch Demo
               </button>
-            </div>
-
-            {/* Quick Stats */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-              <div className="text-center">
-                <div className="text-3xl font-bold text-blue-300 mb-2">5 min</div>
-                <div className="text-sm text-slate-300">Setup Time</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-green-300 mb-2">100%</div>
-                <div className="text-sm text-slate-300">Data Control</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-purple-300 mb-2">0</div>
-                <div className="text-sm text-slate-300">External Deps</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-orange-300 mb-2">∞</div>
-                <div className="text-sm text-slate-300">Scalability</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Deployment Options */}
-      <section className="py-16 bg-white">
-        <div className="container mx-auto px-6">
+            </div>>
           <div className="max-w-4xl mx-auto text-center mb-12">
             <h2 className="text-4xl font-bold text-gray-900 mb-6">Deployment Options</h2>
             <p className="text-xl text-gray-600">
@@ -399,83 +372,7 @@ export const SelfHosted: React.FC = () => {
               <p className="text-xl text-gray-600">
                 Hardware and software requirements for different deployment scenarios
               </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {Object.entries(systemRequirements).map(([tier, requirements]) => (
-                <div
-                  key={tier}
-                  className={`rounded-xl p-6 ${
-                    tier === 'recommended'
-                      ? 'bg-gradient-to-b from-blue-50 to-purple-50 border-2 border-blue-200 shadow-xl'
-                      : 'bg-white border border-gray-200 shadow-lg'
-                  }`}
-                >
-                  <div className="text-center mb-6">
-                    <h3 className="text-2xl font-bold text-gray-900 mb-2 capitalize">
-                      {tier} Configuration
-                    </h3>
-                    <p className="text-gray-600">
-                      {tier === 'minimum' && 'For testing and small deployments'}
-                      {tier === 'recommended' && 'For production workloads'}
-                      {tier === 'enterprise' && 'For high-scale enterprise deployments'}
-                    </p>
-                  </div>
-
-                  <div className="space-y-4">
-                    {requirements.map((req, idx) => {
-                      const Icon = req.icon;
-                      return (
-                        <div key={idx} className="flex items-center gap-4">
-                          <div className="bg-gray-100 p-2 rounded-lg">
-                            <Icon className="w-5 h-5 text-gray-600" />
-                          </div>
-                          <div className="flex-1">
-                            <div className="font-medium text-gray-900">{req.component}</div>
-                            <div className="text-gray-600 text-sm">{req.requirement}</div>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-
-                  {tier === 'recommended' && (
-                    <div className="mt-6 text-center">
-                      <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
-                        Recommended
-                      </span>
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-
-            <div className="mt-12 bg-white border border-gray-200 rounded-xl p-6">
-              <h3 className="text-xl font-semibold text-gray-900 mb-4">Software Dependencies</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                {[
-                  { name: 'Node.js', version: '20+', icon: '🟢' },
-                  { name: 'Docker', version: '24+', icon: '🐳' },
-                  { name: 'MongoDB', version: '7+', icon: '🍃' },
-                  { name: 'PostgreSQL', version: '15+', icon: '🐘' },
-                ].map((dep, index) => (
-                  <div key={index} className="flex items-center gap-3">
-                    <span className="text-2xl">{dep.icon}</span>
-                    <div>
-                      <div className="font-medium text-gray-900">{dep.name}</div>
-                      <div className="text-gray-600 text-sm">Version {dep.version}</div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Self-Hosted Features */}
-      <section className="py-16 bg-white">
-        <div className="container mx-auto px-6">
+            </div>>
           <div className="max-w-4xl mx-auto text-center mb-12">
             <h2 className="text-4xl font-bold text-gray-900 mb-6">Why Self-Host?</h2>
             <p className="text-xl text-gray-600">
@@ -522,106 +419,7 @@ export const SelfHosted: React.FC = () => {
             <p className="text-xl text-gray-600">
               Seamlessly migrate from existing workflow platforms to your self-hosted Reporunner
             </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="bg-white rounded-xl p-8 shadow-lg">
-              <h3 className="text-2xl font-bold text-gray-900 mb-6">Supported Migrations</h3>
-              <div className="space-y-4">
-                {[
-                  { platform: 'n8n', difficulty: 'Easy', time: '1-2 hours' },
-                  {
-                    platform: 'Zapier',
-                    difficulty: 'Medium',
-                    time: '2-4 hours',
-                  },
-                  {
-                    platform: 'Make (Integromat)',
-                    difficulty: 'Medium',
-                    time: '2-4 hours',
-                  },
-                  {
-                    platform: 'Microsoft Power Automate',
-                    difficulty: 'Hard',
-                    time: '4-8 hours',
-                  },
-                ].map((migration, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                        <ArrowRight className="w-4 h-4 text-blue-600" />
-                      </div>
-                      <span className="font-medium text-gray-900">{migration.platform}</span>
-                    </div>
-                    <div className="text-right">
-                      <div
-                        className={`text-sm font-medium ${
-                          migration.difficulty === 'Easy'
-                            ? 'text-green-600'
-                            : migration.difficulty === 'Medium'
-                              ? 'text-yellow-600'
-                              : 'text-red-600'
-                        }`}
-                      >
-                        {migration.difficulty}
-                      </div>
-                      <div className="text-xs text-gray-500">{migration.time}</div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="bg-white rounded-xl p-8 shadow-lg">
-              <h3 className="text-2xl font-bold text-gray-900 mb-6">Migration Tools</h3>
-              <div className="space-y-6">
-                <div className="flex items-start gap-4">
-                  <div className="bg-blue-100 p-2 rounded-lg">
-                    <Code className="w-6 h-6 text-blue-600" />
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-gray-900 mb-2">Import Wizard</h4>
-                    <p className="text-gray-600 text-sm">
-                      Automated workflow import from popular platforms with intelligent conversion
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-4">
-                  <div className="bg-green-100 p-2 rounded-lg">
-                    <GitBranch className="w-6 h-6 text-green-600" />
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-gray-900 mb-2">Schema Mapping</h4>
-                    <p className="text-gray-600 text-sm">
-                      Automatic mapping of data structures and field transformations
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-4">
-                  <div className="bg-purple-100 p-2 rounded-lg">
-                    <Settings className="w-6 h-6 text-purple-600" />
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-gray-900 mb-2">Professional Services</h4>
-                    <p className="text-gray-600 text-sm">
-                      Expert migration assistance for complex workflows and custom integrations
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-16 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
-        <div className="container mx-auto px-6 text-center">
+          </div>>
           <h2 className="text-4xl font-bold mb-6">Ready to Deploy Your Own?</h2>
           <p className="text-xl mb-8 max-w-2xl mx-auto opacity-90">
             Start your self-hosted journey today. Complete data sovereignty, enterprise security,

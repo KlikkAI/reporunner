@@ -1,7 +1,11 @@
-export interface IPermissionRepository {
-  findById(id: string): Promise<any>;
-  findAll(): Promise<any[]>;
-  create(data: any): Promise<any>;
-  update(id: string, data: any): Promise<any>;
-  delete(id: string): Promise<boolean>;
+// Permission Repository Interface
+// Extends shared base repository interface to eliminate duplication
+
+import { IBaseRepository } from '../../../shared/interfaces/IBaseRepository';
+
+export interface IPermissionRepository extends IBaseRepository {
+  // Permission-specific repository methods would be defined here
+  // This extends the shared base interface instead of duplicating it
 }
+
+export default IPermissionRepository;

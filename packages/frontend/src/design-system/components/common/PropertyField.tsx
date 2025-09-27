@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * PropertyField Component
  * Dynamic form field renderer for node properties with advanced features
@@ -27,8 +28,8 @@ import {
 import type React from 'react';
 import { useEffect, useState } from 'react';
 import type { INodeProperty } from '@/core/nodes/types';
-import { useNodeTheme } from '../../../app/node-extensions/themes';
-import type { NodeTheme } from '../../../app/node-extensions/types';
+import { useNodeTheme } from '../themes';
+import type { NodeTheme } from '../types';
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -49,6 +50,7 @@ const PropertyField: React.FC<PropertyFieldProps> = ({
   onChange,
   disabled = false,
   theme: propTheme,
+
   errors = [],
 }) => {
   const { theme: contextTheme } = useNodeTheme();
@@ -434,7 +436,7 @@ const PropertyField: React.FC<PropertyFieldProps> = ({
         style={{ width: '100%' }}
       >
         {mockCredentials.map((cred) => (
-          <Option key={cred.value} value={cred.value}>
+          <Option key={String(cred.value)} value={cred.value}>
             {cred.name}
           </Option>
         ))}

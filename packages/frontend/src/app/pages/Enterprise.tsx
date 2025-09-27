@@ -252,61 +252,7 @@ export const Enterprise: React.FC = () => {
                     <Phone className="w-5 h-5" />
                     Talk to Sales
                   </button>
-                </div>
-
-                {/* Enterprise Stats */}
-                <div className="grid grid-cols-2 gap-6">
-                  <div>
-                    <div className="text-3xl font-bold text-blue-300 mb-1">99.99%</div>
-                    <div className="text-sm text-slate-300">Enterprise SLA</div>
-                  </div>
-                  <div>
-                    <div className="text-3xl font-bold text-green-300 mb-1">SOC2</div>
-                    <div className="text-sm text-slate-300">Type II Certified</div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="relative">
-                <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/20">
-                  <div className="mb-6">
-                    <h3 className="text-xl font-semibold text-white mb-4">
-                      Trusted by Enterprise Leaders
-                    </h3>
-                    <div className="grid grid-cols-2 gap-4">
-                      {['🏦 SecureBank', '🏥 HealthFirst', '🏭 GlobalMfg', '🏛️ GovTech'].map(
-                        (company, index) => (
-                          <div
-                            key={index}
-                            className="bg-white/10 rounded-lg p-3 text-center text-white"
-                          >
-                            {company}
-                          </div>
-                        )
-                      )}
-                    </div>
-                  </div>
-                  <div className="border-t border-white/20 pt-6">
-                    <div className="flex items-center justify-between text-white">
-                      <span>Enterprise Satisfaction</span>
-                      <div className="flex items-center gap-1">
-                        {[...Array(5)].map((_, i) => (
-                          <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                        ))}
-                        <span className="ml-2 font-semibold">4.9/5</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Enterprise Features Tabs */}
-      <section className="py-16 bg-white">
-        <div className="container mx-auto px-6">
+                </div>>
           <div className="max-w-4xl mx-auto text-center mb-12">
             <h2 className="text-4xl font-bold text-gray-900 mb-6">Enterprise-Grade Capabilities</h2>
             <p className="text-xl text-gray-600">
@@ -393,66 +339,7 @@ export const Enterprise: React.FC = () => {
             <p className="text-xl text-gray-600">
               Proven solutions for the most regulated and demanding industries
             </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {useCases.map((useCase, index) => {
-              const Icon = useCase.icon;
-              return (
-                <div
-                  key={index}
-                  className="bg-white rounded-xl p-8 shadow-lg hover:shadow-xl transition-shadow"
-                >
-                  <div className="flex items-center gap-4 mb-6">
-                    <div className="bg-blue-100 p-3 rounded-lg">
-                      <Icon className="w-8 h-8 text-blue-600" />
-                    </div>
-                    <div>
-                      <h3 className="text-2xl font-bold text-gray-900">{useCase.title}</h3>
-                      <p className="text-gray-600">{useCase.description}</p>
-                    </div>
-                  </div>
-
-                  <div className="space-y-6">
-                    <div>
-                      <h4 className="font-semibold text-gray-900 mb-3">Challenges:</h4>
-                      <ul className="space-y-2">
-                        {useCase.challenges.map((challenge, idx) => (
-                          <li key={idx} className="flex items-center gap-2">
-                            <div className="w-2 h-2 bg-red-400 rounded-full" />
-                            <span className="text-gray-700">{challenge}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-
-                    <div>
-                      <h4 className="font-semibold text-gray-900 mb-3">Solutions:</h4>
-                      <ul className="space-y-2">
-                        {useCase.solutions.map((solution, idx) => (
-                          <li key={idx} className="flex items-center gap-2">
-                            <CheckCircle className="w-4 h-4 text-green-500" />
-                            <span className="text-gray-700">{solution}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-
-                    <div className="bg-blue-50 p-4 rounded-lg">
-                      <h4 className="font-semibold text-blue-900 mb-2">Results:</h4>
-                      <p className="text-blue-800">{useCase.results}</p>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* Testimonials */}
-      <section className="py-16 bg-white">
-        <div className="container mx-auto px-6">
+          </div>>
           <div className="max-w-4xl mx-auto text-center mb-12">
             <h2 className="text-4xl font-bold text-gray-900 mb-6">What Enterprise Leaders Say</h2>
             <p className="text-xl text-gray-600">
@@ -496,60 +383,7 @@ export const Enterprise: React.FC = () => {
             <p className="text-xl text-gray-600">
               Flexible pricing that scales with your organization
             </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            {Object.entries(pricing).map(([key, plan]) => (
-              <div
-                key={key}
-                className={`rounded-2xl p-8 ${
-                  key === 'growth'
-                    ? 'bg-gradient-to-b from-blue-50 to-purple-50 border-2 border-blue-200 shadow-xl scale-105'
-                    : 'bg-white border border-gray-200 shadow-lg'
-                } hover:shadow-xl transition-all duration-300`}
-              >
-                {key === 'growth' && (
-                  <div className="text-center mb-4">
-                    <span className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-full text-sm font-semibold">
-                      Most Popular
-                    </span>
-                  </div>
-                )}
-
-                <div className="text-center mb-8">
-                  <h3 className="text-2xl font-bold text-gray-900 mb-2">{plan.name}</h3>
-                  <p className="text-gray-600 mb-4">{plan.description}</p>
-
-                  <div className="text-4xl font-bold text-gray-900 mb-2">{plan.price}</div>
-
-                  <button
-                    className={`w-full py-3 px-6 font-semibold rounded-lg transition-colors ${
-                      key === 'growth'
-                        ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-700 hover:to-purple-700'
-                        : 'bg-gray-900 text-white hover:bg-gray-800'
-                    }`}
-                  >
-                    {key === 'scale' ? 'Contact Sales' : 'Start Trial'}
-                  </button>
-                </div>
-
-                <ul className="space-y-3">
-                  {plan.features.map((feature, idx) => (
-                    <li key={idx} className="flex items-center gap-3">
-                      <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
-                      <span className="text-gray-700">{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-16 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
-        <div className="container mx-auto px-6 text-center">
+          </div>>
           <h2 className="text-4xl font-bold mb-6">Ready for Enterprise Automation?</h2>
           <p className="text-xl mb-8 max-w-2xl mx-auto opacity-90">
             Join the world's most security-conscious organizations who trust Reporunner for their

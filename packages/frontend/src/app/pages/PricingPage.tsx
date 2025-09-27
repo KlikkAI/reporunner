@@ -406,14 +406,7 @@ export const PricingPage: React.FC = () => {
                   Save 20%
                 </span>
               )}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Pricing Cards */}
-      <section className="py-16 bg-white">
-        <div className="container mx-auto px-6">
+            </div>>
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
             {plans.map((plan, index) => (
               <div
@@ -530,36 +523,7 @@ export const PricingPage: React.FC = () => {
             <p className="text-xl text-gray-600">
               Extend your Reporunner experience with additional services
             </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-            {addOns.map((addon, index) => {
-              const Icon = addon.icon;
-              return (
-                <div
-                  key={index}
-                  className="bg-white border border-gray-200 rounded-xl p-6 hover:border-blue-300 hover:shadow-lg transition-all duration-300"
-                >
-                  <div className="flex items-start gap-4">
-                    <div className="bg-blue-100 p-3 rounded-lg">
-                      <Icon className="w-6 h-6 text-blue-600" />
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="font-semibold text-lg text-gray-900 mb-2">{addon.name}</h3>
-                      <p className="text-gray-600 mb-3">{addon.description}</p>
-                      <div className="font-semibold text-blue-600">{addon.price}</div>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* Feature Comparison */}
-      <section className="py-16 bg-white">
-        <div className="container mx-auto px-6">
+          </div>>
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-12">
               <h2 className="text-4xl font-bold text-gray-900 mb-4">Detailed Comparison</h2>
@@ -640,40 +604,7 @@ export const PricingPage: React.FC = () => {
             <div className="text-center mb-12">
               <h2 className="text-4xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
               <p className="text-xl text-gray-600">Everything you need to know about our pricing</p>
-            </div>
-
-            <div className="space-y-4">
-              {faqs.map((faq, index) => (
-                <div
-                  key={index}
-                  className="bg-white border border-gray-200 rounded-lg overflow-hidden"
-                >
-                  <button
-                    onClick={() => setExpandedFaq(expandedFaq === index ? null : index)}
-                    className="w-full p-6 text-left flex items-center justify-between hover:bg-gray-50 transition-colors"
-                  >
-                    <span className="font-semibold text-gray-900">{faq.question}</span>
-                    {expandedFaq === index ? (
-                      <ChevronUp className="w-5 h-5 text-gray-500" />
-                    ) : (
-                      <ChevronDown className="w-5 h-5 text-gray-500" />
-                    )}
-                  </button>
-                  {expandedFaq === index && (
-                    <div className="px-6 pb-6">
-                      <p className="text-gray-600 leading-relaxed">{faq.answer}</p>
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-16 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
-        <div className="container mx-auto px-6 text-center">
+            </div>>
           <h2 className="text-4xl font-bold mb-6">Ready to Get Started?</h2>
           <p className="text-xl mb-8 max-w-2xl mx-auto opacity-90">
             Join thousands of developers and enterprises who trust Reporunner for their workflow

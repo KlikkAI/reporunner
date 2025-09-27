@@ -107,34 +107,7 @@ export const Privacy: React.FC = () => {
               <div className="flex items-center justify-center gap-2 text-white">
                 <Calendar className="w-5 h-5" />
                 <span>Last Updated: {lastUpdated}</span>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-              <div className="text-center">
-                <div className="text-3xl font-bold text-green-300 mb-2">0</div>
-                <div className="text-sm text-slate-300">Data Breaches</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-blue-300 mb-2">GDPR</div>
-                <div className="text-sm text-slate-300">Compliant</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-purple-300 mb-2">SOC2</div>
-                <div className="text-sm text-slate-300">Type II</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-orange-300 mb-2">100%</div>
-                <div className="text-sm text-slate-300">Transparent</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Privacy Principles */}
-      <section className="py-16 bg-white">
-        <div className="container mx-auto px-6">
+              </div>>
           <div className="max-w-4xl mx-auto text-center mb-12">
             <h2 className="text-4xl font-bold text-gray-900 mb-6">Our Privacy Principles</h2>
             <p className="text-xl text-gray-600">
@@ -171,75 +144,7 @@ export const Privacy: React.FC = () => {
               <p className="text-xl text-gray-600">
                 Complete transparency about the information we collect and how we use it
               </p>
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              {dataTypes.map((dataType, index) => (
-                <div key={index} className="bg-white border border-gray-200 rounded-xl p-6">
-                  <h3 className="text-xl font-bold text-gray-900 mb-3">{dataType.category}</h3>
-                  <p className="text-gray-600 mb-4">{dataType.description}</p>
-
-                  <div className="space-y-4">
-                    <div>
-                      <h4 className="font-semibold text-gray-900 mb-2">What we collect:</h4>
-                      <ul className="space-y-1">
-                        {dataType.items.map((item, itemIndex) => (
-                          <li key={itemIndex} className="flex items-center gap-2">
-                            <CheckCircle className="w-4 h-4 text-green-500" />
-                            <span className="text-gray-700 text-sm">{item}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <h4 className="font-semibold text-gray-900 mb-1">Retention:</h4>
-                        <p className="text-gray-600 text-sm">{dataType.retention}</p>
-                      </div>
-                      <div>
-                        <h4 className="font-semibold text-gray-900 mb-1">Sharing:</h4>
-                        <p className="text-gray-600 text-sm">{dataType.sharing}</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <div className="mt-12 bg-blue-50 border border-blue-200 rounded-xl p-8">
-              <div className="flex items-start gap-4">
-                <AlertCircle className="w-8 h-8 text-blue-600 mt-1" />
-                <div>
-                  <h3 className="text-xl font-bold text-blue-900 mb-3">What We DON'T Collect</h3>
-                  <div className="text-blue-800 space-y-2">
-                    <p>
-                      • <strong>Workflow data:</strong> Your actual workflow content and execution
-                      data never leaves your infrastructure
-                    </p>
-                    <p>
-                      • <strong>Credentials:</strong> API keys, passwords, and authentication tokens
-                      are encrypted and never accessible to us
-                    </p>
-                    <p>
-                      • <strong>Business data:</strong> Customer data, financial information, or any
-                      sensitive business information
-                    </p>
-                    <p>
-                      • <strong>Personal files:</strong> Documents, images, or files processed
-                      through your workflows
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Your Rights */}
-      <section className="py-16 bg-white">
-        <div className="container mx-auto px-6">
+            </div>>
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-12">
               <h2 className="text-4xl font-bold text-gray-900 mb-6">Your Rights</h2>
@@ -308,67 +213,7 @@ export const Privacy: React.FC = () => {
               <p className="text-xl text-gray-600">
                 How we protect your data with industry-leading security
               </p>
-            </div>
-
-            <div className="space-y-8">
-              {[
-                {
-                  category: 'Encryption',
-                  measures: [
-                    'TLS 1.3 for data in transit',
-                    'AES-256 encryption for data at rest',
-                    'End-to-end encryption for sensitive data',
-                    'Customer-managed encryption keys (Enterprise)',
-                  ],
-                },
-                {
-                  category: 'Access Controls',
-                  measures: [
-                    'Role-based access control (RBAC)',
-                    'Multi-factor authentication required',
-                    'Principle of least privilege',
-                    'Regular access reviews and audits',
-                  ],
-                },
-                {
-                  category: 'Infrastructure Security',
-                  measures: [
-                    'SOC2 Type II certified infrastructure',
-                    'Regular security audits and penetration testing',
-                    '24/7 security monitoring',
-                    'Incident response procedures',
-                  ],
-                },
-                {
-                  category: 'Compliance',
-                  measures: [
-                    'GDPR compliance for EU customers',
-                    'CCPA compliance for California residents',
-                    'HIPAA compliance options (Enterprise)',
-                    'Regular compliance assessments',
-                  ],
-                },
-              ].map((section, index) => (
-                <div key={index} className="bg-white border border-gray-200 rounded-xl p-6">
-                  <h3 className="text-xl font-bold text-gray-900 mb-4">{section.category}</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    {section.measures.map((measure, measureIndex) => (
-                      <div key={measureIndex} className="flex items-center gap-2">
-                        <CheckCircle className="w-5 h-5 text-green-500" />
-                        <span className="text-gray-700">{measure}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Cookie Policy */}
-      <section className="py-16 bg-white">
-        <div className="container mx-auto px-6">
+            </div>>
           <div className="max-w-4xl mx-auto">
             <h2 className="text-4xl font-bold text-gray-900 mb-6 text-center">Cookie Policy</h2>
 
@@ -414,29 +259,7 @@ export const Privacy: React.FC = () => {
                 <h3 className="font-semibold text-gray-900 mb-2">Email Us</h3>
                 <p className="text-gray-600 text-sm mb-4">For privacy-related questions</p>
                 <button className="text-blue-600 font-medium">privacy@reporunner.dev</button>
-              </div>
-
-              <div className="bg-white border border-gray-200 rounded-xl p-6">
-                <FileText className="w-8 h-8 text-green-600 mx-auto mb-4" />
-                <h3 className="font-semibold text-gray-900 mb-2">Data Request</h3>
-                <p className="text-gray-600 text-sm mb-4">Request your data or deletion</p>
-                <button className="text-green-600 font-medium">Submit Request</button>
-              </div>
-
-              <div className="bg-white border border-gray-200 rounded-xl p-6">
-                <Settings className="w-8 h-8 text-purple-600 mx-auto mb-4" />
-                <h3 className="font-semibold text-gray-900 mb-2">Privacy Settings</h3>
-                <p className="text-gray-600 text-sm mb-4">Manage your preferences</p>
-                <button className="text-purple-600 font-medium">Open Settings</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-16 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
-        <div className="container mx-auto px-6 text-center">
+              </div>>
           <h2 className="text-4xl font-bold mb-6">Privacy-First Workflow Automation</h2>
           <p className="text-xl mb-8 max-w-2xl mx-auto opacity-90">
             Experience powerful automation without compromising your privacy. Your data stays on

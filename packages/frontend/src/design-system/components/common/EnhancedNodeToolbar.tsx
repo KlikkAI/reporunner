@@ -16,8 +16,8 @@ import {
 } from '@ant-design/icons';
 import { Dropdown, Menu, Tooltip } from 'antd';
 import React, { useRef, useState } from 'react';
-import { useNodeTheme } from '../../../app/node-extensions/themes';
-import type { NodeTheme, ToolbarAction } from '../../../app/node-extensions/types';
+import { useNodeTheme } from '../themes';
+import type { NodeTheme, ToolbarAction } from '../types';
 
 interface EnhancedNodeToolbarProps {
   nodeId: string;
@@ -151,12 +151,17 @@ const EnhancedNodeToolbar: React.FC<EnhancedNodeToolbarProps> = ({
   const getVariantStyles = (): React.CSSProperties => {
     const { padding } = getSizeConfig();
 
+    // Defensive theme access with fallbacks
+    const borderRadius = theme?.borderRadius?.md || '6px';
+    const duration = theme?.animations?.duration?.normal || '150ms';
+    const easing = theme?.animations?.easing?.easeOut || 'ease-out';
+
     const baseStyles: React.CSSProperties = {
       display: 'flex',
       alignItems: 'center',
       gap: '2px',
-      borderRadius: theme.borderRadius.md,
-      transition: `all ${theme.animations.duration.normal} ${theme.animations.easing.easeOut}`,
+      borderRadius,
+      transition: `all ${duration} ${easing}`,
       opacity: visible ? 1 : 0,
       transform: visible ? 'scale(1)' : 'scale(0.9)',
       padding,
@@ -168,21 +173,21 @@ const EnhancedNodeToolbar: React.FC<EnhancedNodeToolbarProps> = ({
           ...baseStyles,
           background: 'rgba(0, 0, 0, 0.8)',
           backdropFilter: 'blur(8px)',
-          border: `1px solid ${theme.colors.border}40`,
+          border: `1px solid ${theme?.colors?.border || '#ddd'}40`,
         };
       case 'floating':
         return {
           ...baseStyles,
-          background: theme.colors.background,
-          border: `1px solid ${theme.colors.border}`,
-          boxShadow: theme.shadows.lg,
+          background: theme?.colors?.background || '#fff',
+          border: `1px solid ${theme?.colors?.border || '#ddd'}`,
+          boxShadow: theme?.shadows?.lg || '0 10px 25px rgba(0, 0, 0, 0.1)',
         };
       default:
         return {
           ...baseStyles,
           background: 'rgba(0, 0, 0, 0.9)',
-          border: `1px solid ${theme.colors.border}60`,
-          boxShadow: theme.shadows.md,
+          border: `1px solid ${theme?.colors?.border || '#ddd'}60`,
+          boxShadow: theme?.shadows?.md || '0 4px 12px rgba(0, 0, 0, 0.05)',
         };
     }
   };
