@@ -1,3 +1,16 @@
 {
-  "extends": "../shared/tsconfig/standard.json"
+  "extends": "../shared/configs/tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "./dist/design-system",
+    "rootDir": "./src"
+  },
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.test.*"
+  ],
+  "_package": "design-system"
 }

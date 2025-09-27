@@ -1,3 +1,12 @@
 {
-  "extends": "../shared/tsconfig/standard.json"
+  "extends": "../shared/configs/tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "./dist/database",
+    "rootDir": "./src",
+    "strict": true
+  },
+  "include": [
+    "src/**/*"
+  ],
+  "_package": "database"
 }

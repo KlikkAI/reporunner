@@ -1,3 +1,16 @@
 {
-  "extends": "../../../shared/tsconfig/service.json"
+  "extends": "../../shared/configs/tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "./dist/audit",
+    "rootDir": "./src"
+  },
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.test.*"
+  ],
+  "_package": "audit-service"
 }
