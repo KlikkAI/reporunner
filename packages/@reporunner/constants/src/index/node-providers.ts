@@ -1,7 +1,4 @@
-} as
-const;
-// Minimal valid export to satisfy type-check; fill with real content later
-export const NODE_PROVIDERS: Record<string, unknown> = {};
+// AI Provider Constants
 export const AI_PROVIDERS = {
   OPENAI: 'openai',
   ANTHROPIC: 'anthropic',
@@ -11,6 +8,7 @@ export const AI_PROVIDERS = {
   COHERE: 'cohere',
 } as const;
 
+// Node Category Constants
 export const NODE_CATEGORIES = {
   TRIGGER: 'trigger',
   ACTION: 'action',
@@ -20,6 +18,21 @@ export const NODE_CATEGORIES = {
   AI_ML: 'ai-ml',
   INTEGRATION: 'integration',
   UTILITY: 'utility',
+} as const;
+
+// Node Provider Constants
+export const NODE_PROVIDERS: Record<string, unknown> = {};
+
+// Node Type Constants
+export const NODE_TYPES = {
+  TRIGGER: 'trigger',
+  ACTION: 'action',
+  CONDITION: 'condition',
+  WEBHOOK: 'webhook',
+  EMAIL: 'email',
+  TRANSFORM: 'transform',
+  AI_AGENT: 'ai-agent',
+  DATABASE: 'database',
 } as const;
 
 // Default Messages
@@ -38,20 +51,3 @@ export const MESSAGES = {
     RATE_LIMITED: 'Too many requests. Please try again later.',
   },
 } as const;
-
-export default {
-  SYSTEM,
-  API,
-  DATABASE,
-  AUTH,
-  WEBSOCKET,
-  UPLOAD,
-  QUEUE,
-  ERROR_CODES,
-  EVENTS,
-  PATTERNS,
-  NODE_TYPES,
-  NODE_CATEGORIES,
-  AI_PROVIDERS,
-  MESSAGES,
-};
