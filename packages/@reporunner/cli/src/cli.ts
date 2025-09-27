@@ -30,7 +30,7 @@ if (notifier.update) {
     message: `Update available ${chalk.dim(notifier.update.current)} → ${chalk.green(
       notifier.update.latest
     )}
-Run ${chalk.cyan(`npm install -g ${packageJson.name}`)} to update`,
+Run ${chalk.cyan(`pnpm add -g ${packageJson.name}`)} to update`,
   });
 }
 

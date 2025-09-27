@@ -21,8 +21,8 @@ sdks/
 ### TypeScript/JavaScript
 ```bash
 cd sdks/typescript
-npm install
-npm run build
+pnpm install
+pnpm build
 
 # Usage
 import { ReporunnerClient } from '@reporunner/sdk';
@@ -151,7 +151,7 @@ Each SDK has its own development environment:
 
 ```bash
 # TypeScript
-cd sdks/typescript && npm run dev
+cd sdks/typescript && pnpm dev
 
 # Python
 cd sdks/python && pip install -e .[dev] && python -m pytest
@@ -178,7 +178,7 @@ cd sdks/rust && cargo test
 
 #### NPM (TypeScript/JavaScript)
 ```bash
-npm install @reporunner/sdk
+pnpm add @reporunner/sdk
 ```
 
 #### PyPI (Python)

@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { ApiErrorHandler } from '../utils/apiErrorHandler';
 import type {
   ApiKey,
   AuthTokens,
@@ -69,21 +70,29 @@ export class AuthApiService {
    * Authenticate user with email and password
    */
   async login(credentials: LoginCredentials): Promise<LoginResponse> {
-    try {
-      const response = await apiClient.post('/auth/login', credentials, LoginApiResponseSchema);
+    const result = await ApiErrorHandler.withErrorHandling(
+      async () => {
+        const response = await apiClient.post('/auth/login', credentials, LoginApiResponseSchema);
 
-      // Store tokens in localStorage
-      if (response.token) {
-        localStorage.setItem(configService.get('auth').tokenKey, response.token);
-      }
-      if (response.refreshToken) {
-        localStorage.setItem(configService.get('auth').refreshTokenKey, response.refreshToken);
-      }
+        // Store tokens in localStorage
+        if (response.token) {
+          localStorage.setItem(configService.get('auth').tokenKey, response.token);
+        }
+        if (response.refreshToken) {
+          localStorage.setItem(configService.get('auth').refreshTokenKey, response.refreshToken);
+        }
 
-      return response;
-    } catch (error) {
-      throw new ApiClientError('Login failed', 0, 'LOGIN_ERROR', error);
+        return response;
+      },
+      'AuthApiService.login',
+      { showToast: true }
+    );
+
+    if (!result.success) {
+      throw new ApiClientError(result.error.message, result.error.statusCode || 0, 'LOGIN_ERROR');
     }
+
+    return result.data;
   }
 
   /**

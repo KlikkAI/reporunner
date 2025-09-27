@@ -244,7 +244,7 @@ POST /api/executions
 
 | Language | Package | Installation |
 |----------|---------|--------------|
-| **TypeScript/Node.js** | `@reporunner/sdk` | `npm install @reporunner/sdk` |
+| **TypeScript/Node.js** | `@reporunner/sdk` | `pnpm add @reporunner/sdk` |
 | **Python** | `reporunner-sdk` | `pip install reporunner-sdk` |
 | **Go** | `go-sdk` | `go get github.com/reporunner/reporunner/go-sdk` |
 | **Rust** | `reporunner-sdk` | `cargo add reporunner-sdk` |

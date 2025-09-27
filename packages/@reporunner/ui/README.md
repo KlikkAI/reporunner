@@ -15,7 +15,7 @@ A comprehensive UI component library with flexible and reusable components for b
 
 ```bash
 # Using npm
-npm install @reporunner/ui
+pnpm add @reporunner/ui
 
 # Using yarn
 yarn add @reporunner/ui

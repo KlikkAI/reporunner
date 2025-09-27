@@ -7,19 +7,21 @@
     "root": "."
   },
   "files": {
-    "includes": ["**/*.js", "**/*.jsx", "**/*.ts", "**/*.tsx", "**/*.json", "**/*.jsonc"],
-    "ignore": [
-      "**/node_modules/**",
-      "**/dist/**",
-      "**/build/**",
-      "**/.turbo/**",
-      "**/coverage/**",
-      "**/*.min.js",
-      "**/generated/**"
-    ]
-  },
-  "organizeImports": {
-    "enabled": true
+    "includes": [
+      "**/*.js",
+      "**/*.jsx",
+      "**/*.ts",
+      "**/*.tsx",
+      "**/*.json",
+      "**/*.jsonc",
+      "**/*.css",
+      "**/*.scss",
+      "**/*.html",
+      "**/*.graphql",
+      "**/*.gql"
+    ],
+    "ignoreUnknown": false,
+    "maxSize": 1048576
   },
   "formatter": {
     "enabled": true,
@@ -35,7 +37,6 @@
     "rules": {
       "recommended": true,
       "correctness": {
-        "all": true,
         "noUnusedVariables": "error",
         "noUnusedImports": "error",
         "useExhaustiveDependencies": "error",
@@ -43,7 +44,6 @@
         "noUnreachable": "error"
       },
       "style": {
-        "all": true,
         "noDefaultExport": "off",
         "noNonNullAssertion": "error",
         "useConst": "error",
@@ -57,8 +57,7 @@
         "useShorthandFunctionType": "error"
       },
       "suspicious": {
-        "all": true,
-        "noConsoleLog": "error",
+        "noConsole": "error",
         "noDebugger": "error",
         "noExplicitAny": "error",
         "noEmptyInterface": "error",
@@ -74,25 +73,18 @@
         "noSparseArray": "error"
       },
       "performance": {
-        "all": true,
-        "noAccumulatingSpread": "error",
         "noDelete": "error"
       },
       "security": {
-        "all": true,
-        "noDangerouslySetInnerHtml": "error",
-        "noDangerouslySetInnerHtmlWithChildren": "error"
+        "noDangerouslySetInnerHtml": "error"
       },
       "complexity": {
-        "all": true,
-        "noForEach": "error",
         "noExcessiveCognitiveComplexity": {
           "level": "error",
           "options": {
             "maxAllowedComplexity": 10
           }
         },
-        "noBannedTypes": "error",
         "noUselessConstructor": "error",
         "noUselessFragments": "error",
         "noUselessLabel": "error",
@@ -100,7 +92,6 @@
         "noUselessSwitchCase": "error",
         "noUselessThisAlias": "error",
         "noVoid": "error",
-        "noWith": "error",
         "useArrowFunction": "error",
         "useLiteralKeys": "error",
         "useOptionalChain": "error",
@@ -112,8 +103,7 @@
         "recommended": true
       },
       "nursery": {
-        "useSortedClasses": "off",
-        "noUselessTernary": "error"
+        "useSortedClasses": "off"
       }
     }
   },
@@ -157,6 +147,40 @@
       "allowTrailingCommas": false
     }
   },
+  "css": {
+    "formatter": {
+      "enabled": true,
+      "indentStyle": "space",
+      "indentWidth": 2,
+      "lineEnding": "lf",
+      "lineWidth": 100,
+      "quoteStyle": "double"
+    },
+    "linter": {
+      "enabled": true
+    }
+  },
+  "html": {
+    "formatter": {
+      "enabled": true,
+      "indentStyle": "space",
+      "indentWidth": 2,
+      "lineEnding": "lf",
+      "lineWidth": 100,
+      "bracketSameLine": false,
+      "whitespaceSensitivity": "css"
+    }
+  },
+  "graphql": {
+    "formatter": {
+      "enabled": true,
+      "indentStyle": "space",
+      "indentWidth": 2,
+      "lineEnding": "lf",
+      "lineWidth": 100,
+      "quoteStyle": "double"
+    }
+  },
   "overrides": [
     {
       "includes": ["packages/frontend/**/*", "packages/@reporunner/design-system/**/*"],
@@ -173,7 +197,7 @@
       "linter": {
         "rules": {
           "suspicious": {
-            "noConsoleLog": "warn"
+            "noConsole": "warn"
           },
           "complexity": {
             "noExcessiveCognitiveComplexity": {
@@ -198,7 +222,7 @@
         "rules": {
           "suspicious": {
             "noExplicitAny": "off",
-            "noConsoleLog": "off"
+            "noConsole": "off"
           },
           "style": {
             "noNonNullAssertion": "warn"
@@ -227,7 +251,7 @@
           },
           "suspicious": {
             "noExplicitAny": "off",
-            "noConsoleLog": "off"
+            "noConsole": "off"
           }
         }
       }
@@ -245,6 +269,34 @@
             "noEmptyInterface": "off"
           }
         }
+      }
+    },
+    {
+      "includes": ["**/*.css", "**/*.scss"],
+      "formatter": {
+        "enabled": true,
+        "indentStyle": "space",
+        "indentWidth": 2,
+        "lineWidth": 100
+      }
+    },
+    {
+      "includes": ["**/*.html"],
+      "formatter": {
+        "enabled": true,
+        "indentStyle": "space",
+        "indentWidth": 2,
+        "lineWidth": 100,
+        "bracketSameLine": false
+      }
+    },
+    {
+      "includes": ["**/reports/**/*", "**/*.min.*"],
+      "formatter": {
+        "enabled": false
+      },
+      "linter": {
+        "enabled": false
       }
     }
   ]

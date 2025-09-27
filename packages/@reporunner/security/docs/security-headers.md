@@ -5,7 +5,7 @@ The Security Headers middleware provides a configurable way to add security-rela
 ## Installation
 
 ```bash
-npm install @reporunner/security
+pnpm add @reporunner/security
 ```
 
 ## Basic Usage

@@ -1,7 +1,7 @@
 import type { EnhancedIntegrationNodeType } from '@/core/nodes/types';
 import { mlPipelineActions } from './actions';
 import { mlPipelineCredentials } from './credentials';
-import { mlPipelineProperties } from './properties';
+import { mlPipelineNodeDefinition } from './nodeDefinition';
 
 export const mlPipelineNode: EnhancedIntegrationNodeType = {
   id: 'ml-pipeline',
@@ -13,7 +13,7 @@ export const mlPipelineNode: EnhancedIntegrationNodeType = {
   subcategory: 'MLOps',
   icon: '🔄',
   configuration: {
-    properties: mlPipelineProperties,
+    properties: mlPipelineNodeDefinition.description.properties,
     credentials: mlPipelineCredentials,
     polling: {
       enabled: true,

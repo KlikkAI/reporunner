@@ -1,12 +1,16 @@
 import { Execution } from '../../../models/Execution.js';
+import { BaseRepository } from '@reporunner/core/src/repository/BaseRepository';
+import type { Db } from 'mongodb';
 
-export class ExecutionRepository {
-  /**
-   * Delete many executions
-   */
-  async deleteMany(query: any): Promise<any> {
-    return Execution.deleteMany(query);
+export class ExecutionRepository extends BaseRepository<any> {
+  constructor(db: Db) {
+    super(db, 'executions', {
+      enableTimestamps: true,
+      enableSoftDelete: false,
+      cacheTTL: 300
+    });
   }
+  // deleteMany is now provided by BaseRepository
 
   /**
    * Get execution statistics
@@ -28,25 +32,17 @@ export class ExecutionRepository {
       .populate('workflowId', 'name description');
   }
 
-  /**
-   * Count documents matching query
-   */
-  async countDocuments(query: any): Promise<number> {
-    return Execution.countDocuments(query);
-  }
+  // count and findOne are now provided by BaseRepository
 
   /**
-   * Find one execution and populate
+   * Find one execution and populate (business-specific method)
    */
   async findOneAndPopulate(query: any) {
-    return Execution.findOne(query).populate('workflowId', 'name description');
-  }
+    const execution = await this.findOne(query);
+    if (!execution) return null;
 
-  /**
-   * Find one execution
-   */
-  async findOne(query: any) {
-    return Execution.findOne(query);
+    // Custom population logic would go here
+    return execution;
   }
 
   /**

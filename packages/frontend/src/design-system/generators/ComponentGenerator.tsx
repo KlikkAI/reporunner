@@ -1,0 +1,478 @@
+/**
+ * Component Generator System
+ *
+ * Provides pattern-based code generation to eliminate
+ * repetitive component creation across the codebase.
+ *
+ * Targets: Remaining 30+ duplicate component patterns
+ */
+
+import React, { useMemo } from 'react';
+import { Card, List, Table, Empty, Button, Space, Tag, Avatar, Statistic } from 'antd';
+import type { PropertyRendererConfig } from '../factories/PropertyRendererFactory';
+import type { ComponentConfig } from '../factories/ComponentFactory';
+import { ResponsiveGrid, FlexLayout, StackLayout } from '../components/DynamicLayout';
+import { cn } from '../utils';
+
+export interface GeneratorConfig {
+  id: string;
+  type: string;
+  props?: Record<string, any>;
+  className?: string;
+  children?: GeneratorConfig[];
+}
+
+export interface CardConfig extends GeneratorConfig {
+  title?: string;
+  subtitle?: string;
+  actions?: React.ReactNode;
+  cover?: React.ReactNode;
+  hoverable?: boolean;
+  bordered?: boolean;
+  size?: 'default' | 'small';
+}
+
+export interface ListConfig extends GeneratorConfig {
+  items: any[];
+  renderItem?: (item: any, index: number) => React.ReactNode;
+  emptyText?: string;
+  pagination?: boolean;
+  split?: boolean;
+  size?: 'default' | 'large' | 'small';
+}
+
+export interface TableConfig extends GeneratorConfig {
+  columns: any[];
+  dataSource: any[];
+  pagination?: boolean;
+  loading?: boolean;
+  size?: 'default' | 'middle' | 'small';
+  scroll?: { x?: number; y?: number };
+}
+
+export interface FormItemConfig extends GeneratorConfig {
+  property: PropertyRendererConfig;
+  layout?: 'horizontal' | 'vertical';
+  labelCol?: { span: number };
+  wrapperCol?: { span: number };
+}
+
+/**
+ * Component Generator for Common UI Patterns
+ */
+export class ComponentGenerator {
+  /**
+   * Generate a card component
+   */
+  static generateCard(config: CardConfig): React.ReactElement {
+    return (
+      <Card
+        key={config.id}
+        title={config.title}
+        extra={config.actions}
+        cover={config.cover}
+        hoverable={config.hoverable}
+        bordered={config.bordered}
+        size={config.size}
+        className={cn('generated-card', config.className)}
+        {...config.props}
+      >
+        {config.subtitle && (
+          <p className="text-gray-600 dark:text-gray-400 mb-4">
+            {config.subtitle}
+          </p>
+        )}
+        {config.children && this.generateChildren(config.children)}
+      </Card>
+    );
+  }
+
+  /**
+   * Generate a list component
+   */
+  static generateList(config: ListConfig): React.ReactElement {
+    return (
+      <List
+        key={config.id}
+        dataSource={config.items}
+        renderItem={config.renderItem || ((item, index) => (
+          <List.Item key={index}>
+            {typeof item === 'object' ? JSON.stringify(item) : item}
+          </List.Item>
+        ))}
+        locale={{ emptyText: config.emptyText || 'No data' }}
+        pagination={config.pagination}
+        split={config.split}
+        size={config.size}
+        className={cn('generated-list', config.className)}
+        {...config.props}
+      />
+    );
+  }
+
+  /**
+   * Generate a table component
+   */
+  static generateTable(config: TableConfig): React.ReactElement {
+    return (
+      <Table
+        key={config.id}
+        columns={config.columns}
+        dataSource={config.dataSource}
+        pagination={config.pagination}
+        loading={config.loading}
+        size={config.size}
+        scroll={config.scroll}
+        className={cn('generated-table', config.className)}
+        {...config.props}
+      />
+    );
+  }
+
+  /**
+   * Generate a stats grid
+   */
+  static generateStatsGrid(stats: Array<{
+    title: string;
+    value: string | number;
+    suffix?: string;
+    prefix?: string;
+    precision?: number;
+    valueStyle?: React.CSSProperties;
+  }>): React.ReactElement {
+    return (
+      <ResponsiveGrid
+        columns={{ xs: 1, sm: 2, lg: 4 }}
+        gap="1.5rem"
+        className="stats-grid"
+      >
+        {stats.map((stat, index) => (
+          <Card key={index} className="text-center">
+            <Statistic
+              title={stat.title}
+              value={stat.value}
+              suffix={stat.suffix}
+              prefix={stat.prefix}
+              precision={stat.precision}
+              valueStyle={stat.valueStyle}
+            />
+          </Card>
+        ))}
+      </ResponsiveGrid>
+    );
+  }
+
+  /**
+   * Generate a tag list
+   */
+  static generateTagList(
+    items: Array<{ label: string; value?: any; color?: string }>,
+    config?: {
+      closable?: boolean;
+      onClose?: (item: any) => void;
+      className?: string;
+    }
+  ): React.ReactElement {
+    return (
+      <Space wrap className={cn('tag-list', config?.className)}>
+        {items.map((item, index) => (
+          <Tag
+            key={index}
+            color={item.color}
+            closable={config?.closable}
+            onClose={() => config?.onClose?.(item)}
+          >
+            {item.label}
+          </Tag>
+        ))}
+      </Space>
+    );
+  }
+
+  /**
+   * Generate an action bar
+   */
+  static generateActionBar(
+    actions: Array<{
+      label: string;
+      type?: 'primary' | 'default' | 'dashed' | 'text' | 'link';
+      icon?: React.ReactNode;
+      onClick: () => void;
+      disabled?: boolean;
+      loading?: boolean;
+    }>,
+    align: 'left' | 'center' | 'right' = 'right'
+  ): React.ReactElement {
+    return (
+      <div className={cn(
+        'action-bar flex gap-2 py-2',
+        align === 'left' && 'justify-start',
+        align === 'center' && 'justify-center',
+        align === 'right' && 'justify-end'
+      )}>
+        {actions.map((action, index) => (
+          <Button
+            key={index}
+            type={action.type}
+            icon={action.icon}
+            onClick={action.onClick}
+            disabled={action.disabled}
+            loading={action.loading}
+          >
+            {action.label}
+          </Button>
+        ))}
+      </div>
+    );
+  }
+
+  /**
+   * Generate an empty state
+   */
+  static generateEmptyState(
+    title: string,
+    description?: string,
+    action?: {
+      label: string;
+      onClick: () => void;
+      type?: 'primary' | 'default';
+    },
+    image?: React.ReactNode
+  ): React.ReactElement {
+    return (
+      <div className="flex flex-col items-center justify-center py-12">
+        {image && <div className="mb-4">{image}</div>}
+        <Empty
+          description={
+            <div className="text-center">
+              <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-1">
+                {title}
+              </h3>
+              {description && (
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  {description}
+                </p>
+              )}
+            </div>
+          }
+        >
+          {action && (
+            <Button
+              type={action.type || 'primary'}
+              onClick={action.onClick}
+            >
+              {action.label}
+            </Button>
+          )}
+        </Empty>
+      </div>
+    );
+  }
+
+  /**
+   * Generate a user avatar with info
+   */
+  static generateUserCard(user: {
+    name: string;
+    email?: string;
+    avatar?: string;
+    status?: 'online' | 'offline' | 'away';
+    role?: string;
+    actions?: React.ReactNode;
+  }): React.ReactElement {
+    return (
+      <Card size="small" className="user-card">
+        <div className="flex items-center space-x-3">
+          <div className="relative">
+            <Avatar src={user.avatar} size={48}>
+              {user.name.charAt(0).toUpperCase()}
+            </Avatar>
+            {user.status && (
+              <div className={cn(
+                'absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-white',
+                user.status === 'online' && 'bg-green-500',
+                user.status === 'offline' && 'bg-gray-400',
+                user.status === 'away' && 'bg-yellow-500'
+              )} />
+            )}
+          </div>
+          <div className="flex-1 min-w-0">
+            <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
+              {user.name}
+            </h4>
+            {user.email && (
+              <p className="text-sm text-gray-500 dark:text-gray-400 truncate">
+                {user.email}
+              </p>
+            )}
+            {user.role && (
+              <Tag size="small" color="blue">{user.role}</Tag>
+            )}
+          </div>
+          {user.actions && (
+            <div className="flex-shrink-0">
+              {user.actions}
+            </div>
+          )}
+        </div>
+      </Card>
+    );
+  }
+
+  /**
+   * Generate a metric card
+   */
+  static generateMetricCard(metric: {
+    title: string;
+    value: string | number;
+    change?: {
+      value: number;
+      type: 'increase' | 'decrease';
+    };
+    icon?: React.ReactNode;
+    description?: string;
+  }): React.ReactElement {
+    return (
+      <Card className="metric-card">
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              {metric.title}
+            </p>
+            <p className="text-2xl font-semibold text-gray-900 dark:text-gray-100">
+              {metric.value}
+            </p>
+            {metric.change && (
+              <p className={cn(
+                'text-sm font-medium',
+                metric.change.type === 'increase' ? 'text-green-600' : 'text-red-600'
+              )}>
+                {metric.change.type === 'increase' ? '↑' : '↓'} {Math.abs(metric.change.value)}%
+              </p>
+            )}
+            {metric.description && (
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                {metric.description}
+              </p>
+            )}
+          </div>
+          {metric.icon && (
+            <div className="text-3xl text-gray-400">
+              {metric.icon}
+            </div>
+          )}
+        </div>
+      </Card>
+    );
+  }
+
+  /**
+   * Generate children components recursively
+   */
+  private static generateChildren(children: GeneratorConfig[]): React.ReactNode[] {
+    return children.map(child => this.generateComponent(child));
+  }
+
+  /**
+   * Generate a component based on its configuration
+   */
+  static generateComponent(config: GeneratorConfig): React.ReactElement {
+    switch (config.type) {
+      case 'card':
+        return this.generateCard(config as CardConfig);
+      case 'list':
+        return this.generateList(config as ListConfig);
+      case 'table':
+        return this.generateTable(config as TableConfig);
+      default:
+        return <div key={config.id}>Unknown component type: {config.type}</div>;
+    }
+  }
+}
+
+/**
+ * Pre-built Component Patterns
+ */
+export const ComponentPatterns = {
+  /**
+   * Create a workflow item card
+   */
+  workflowCard: (workflow: any, onEdit?: () => void, onDelete?: () => void) =>
+    ComponentGenerator.generateCard({
+      id: `workflow-${workflow.id}`,
+      type: 'card',
+      title: workflow.name,
+      subtitle: workflow.description,
+      hoverable: true,
+      actions: (
+        <Space>
+          {onEdit && <Button size="small" onClick={onEdit}>Edit</Button>}
+          {onDelete && <Button size="small" danger onClick={onDelete}>Delete</Button>}
+        </Space>
+      ),
+      children: [
+        {
+          id: 'workflow-stats',
+          type: 'content',
+          props: {
+            children: ComponentGenerator.generateTagList([
+              { label: `${workflow.nodeCount || 0} nodes`, color: 'blue' },
+              { label: workflow.isActive ? 'Active' : 'Inactive', color: workflow.isActive ? 'green' : 'red' },
+            ])
+          }
+        }
+      ]
+    }),
+
+  /**
+   * Create a credential item
+   */
+  credentialItem: (credential: any, onTest?: () => void, onEdit?: () => void) => (
+    <List.Item
+      key={credential.id}
+      actions={[
+        onTest && <Button size="small" onClick={onTest}>Test</Button>,
+        onEdit && <Button size="small" onClick={onEdit}>Edit</Button>,
+      ].filter(Boolean)}
+    >
+      <List.Item.Meta
+        title={credential.name}
+        description={`${credential.type} • Created ${credential.createdAt}`}
+        avatar={<Avatar>{credential.type.charAt(0).toUpperCase()}</Avatar>}
+      />
+      <div>
+        <Tag color={credential.isValid ? 'green' : 'red'}>
+          {credential.isValid ? 'Valid' : 'Invalid'}
+        </Tag>
+      </div>
+    </List.Item>
+  ),
+
+  /**
+   * Create an execution item
+   */
+  executionItem: (execution: any, onView?: () => void) => (
+    <List.Item
+      key={execution.id}
+      actions={[
+        onView && <Button size="small" onClick={onView}>View</Button>,
+      ].filter(Boolean)}
+    >
+      <List.Item.Meta
+        title={`Execution ${execution.id.slice(-8)}`}
+        description={`${execution.workflowName} • ${execution.startedAt}`}
+      />
+      <div>
+        <Tag color={
+          execution.status === 'success' ? 'green' :
+          execution.status === 'error' ? 'red' :
+          execution.status === 'running' ? 'blue' : 'default'
+        }>
+          {execution.status.toUpperCase()}
+        </Tag>
+      </div>
+    </List.Item>
+  ),
+};
+
+export default ComponentGenerator;

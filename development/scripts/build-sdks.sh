@@ -41,7 +41,7 @@ fi
 print_status "Building TypeScript SDK..."
 if [ -d "sdks/typescript" ]; then
     cd sdks/typescript
-    npm run build 2>/dev/null || pnpm build 2>/dev/null || yarn build
+    pnpm build 2>/dev/null || npm run build 2>/dev/null || yarn build
     print_success "TypeScript SDK built successfully"
     cd ../..
 else

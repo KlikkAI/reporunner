@@ -75,7 +75,7 @@ Java:       ████████████████████      20
 
 | SDK | Package Manager | Registry | Installation |
 |-----|----------------|----------|-------------|
-| **TypeScript** | npm/pnpm/yarn | npmjs.com | `npm install @reporunner/sdk` |
+| **TypeScript** | npm/pnpm/yarn | npmjs.com | `pnpm add @reporunner/sdk` |
 | **Python** | pip/poetry/conda | PyPI | `pip install reporunner-sdk` |
 | **Go** | go mod | Go Modules | `go get github.com/reporunner/go-sdk` |
 | **Rust** | cargo | crates.io | `cargo add reporunner-sdk` |

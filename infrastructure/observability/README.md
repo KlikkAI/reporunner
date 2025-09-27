@@ -128,7 +128,7 @@ Each service has its own configuration file:
 
 ```javascript
 // Install the instrumentation package
-npm install @reporunner/instrumentation-nodejs
+pnpm add @reporunner/instrumentation-nodejs
 
 // Initialize in your application entry point
 const { ReporunnerInstrumentation } = require('@reporunner/instrumentation-nodejs');

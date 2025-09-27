@@ -15,7 +15,7 @@ The Reporunner SDK provides a comprehensive TypeScript client for interacting wi
 ## Installation
 
 ```bash
-npm install @reporunner/sdk
+pnpm add @reporunner/sdk
 # or
 pnpm add @reporunner/sdk
 ```

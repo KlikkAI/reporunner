@@ -1,7 +1,7 @@
 import type { EnhancedIntegrationNodeType } from '@/core/nodes/types';
 import { modelTrainerActions } from './actions';
 import { modelTrainerCredentials } from './credentials';
-import { modelTrainerProperties } from './properties';
+import { modelTrainerNodeDefinition } from './nodeDefinition';
 
 export const modelTrainerNode: EnhancedIntegrationNodeType = {
   id: 'model-trainer',
@@ -12,7 +12,7 @@ export const modelTrainerNode: EnhancedIntegrationNodeType = {
   subcategory: 'Training',
   icon: '🤖',
   configuration: {
-    properties: modelTrainerProperties,
+    properties: modelTrainerNodeDefinition.description.properties,
     credentials: modelTrainerCredentials,
     polling: {
       enabled: true,

@@ -6,7 +6,9 @@ const { execSync } = require('node:child_process');
 const userAgent = process.env.npm_config_user_agent || '';
 const execPath = process.env.npm_execpath || '';
 
-if (userAgent.includes('npm') || execPath.includes('npm')) {
+// Only block if it's specifically npm (not pnpm)
+if ((userAgent.includes('npm') && !userAgent.includes('pnpm')) ||
+    (execPath.includes('npm') && !execPath.includes('pnpm'))) {
   console.error('');
   console.error('🚫 This repository requires pnpm as the package manager.');
   console.error('');

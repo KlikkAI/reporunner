@@ -6,7 +6,7 @@ The Reporunner SDK ecosystem provides comprehensive APIs for interacting with th
 
 | SDK | Version | Status | Package Manager |
 |-----|---------|--------|----------------|
-| **TypeScript/Node.js** | ✅ 1.0.0 | Stable | `npm install @reporunner/sdk` |
+| **TypeScript/Node.js** | ✅ 1.0.0 | Stable | `pnpm add @reporunner/sdk` |
 | **Python** | ✅ 1.0.0 | Stable | `pip install reporunner-sdk` |
 | **Go** | ✅ 1.0.0 | Stable | `go get github.com/reporunner/reporunner/go-sdk` |
 | **Rust** | ✅ 1.0.0 | Stable | `cargo add reporunner-sdk` |
