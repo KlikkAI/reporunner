@@ -8,6 +8,7 @@ export interface ValidationMiddlewareOptions {
   errorResponse?: 'default' | 'detailed' | 'minimal';
   stripUnknown?: boolean;
   validateBody?: boolean;
+  validateQuery?: boolean;
 }
 
 export interface ValidationError {

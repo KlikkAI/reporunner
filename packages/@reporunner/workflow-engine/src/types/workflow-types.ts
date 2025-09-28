@@ -84,3 +84,14 @@ export interface NodeExecution {
   startTime?: Date;
   endTime?: Date;
   executionTime?: number;
+  inputData?: Record<string, any>;
+  outputData?: Record<string, any>;
+  error?: {
+    message: string;
+    stack?: string;
+    code?: string;
+  };
+}
+
+// Export all types for use across the workflow engine
+export type { WorkflowDefinition, WorkflowExecution, WorkflowEngineNode, WorkflowEngineEdge };

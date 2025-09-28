@@ -1,10 +1,24 @@
+// OAuth Configuration
+export interface OAuthConfig {
+  clientId: string;
+  clientSecret: string;
+  scope?: string[];
+  redirectUri: string;
 }
-twoFactor:
-{
+
+// SAML Configuration
+export interface SAMLConfig {
+  entryPoint: string;
+  issuer: string;
+  cert: string;
+  privateKey?: string;
+}
+
+// Two-Factor Authentication Settings
+export interface TwoFactorSettings {
   enabled: boolean;
   required: boolean;
   backupCodes: number;
-}
 }
 
 // Authentication events

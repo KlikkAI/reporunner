@@ -5,7 +5,7 @@ export default defineConfig({
     index: 'src/index.ts',
     'llm/index': 'src/llm/index.ts',
     'base/index': 'src/base/index.ts',
-    'vector-store/VectorStore': 'src/vector-store/VectorStore.ts',
+    'vector-store/vector-store': 'src/vector-store/vector-store.ts',
   },
   format: ['cjs', 'esm'],
   dts: true,

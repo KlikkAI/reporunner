@@ -1,5 +1,5 @@
 export * from './database-manager';
-export { DatabaseConfig, DatabaseService } from './database-service';
+export * from './database-service';
 export * from './mongodb/connection';
 // Export MongoDB schemas
 export * from './mongodb/schemas/user.schema';

@@ -2,8 +2,19 @@ import { type IUser, PermissionType, UserRole } from '@reporunner/api-types';
 import bcrypt from 'bcrypt';
 import { type Document, model, Schema } from 'mongoose';
 
-// Create a Document interface that extends IUser
+// Create a Document interface that extends IUser with password and sensitive fields
 interface IUserDocument extends Omit<IUser, 'id'>, Document {
+  // Sensitive fields not included in public interface
+  password: string;
+  emailVerificationToken?: string;
+  emailVerificationExpires?: Date;
+  mfaSecret?: string;
+  mfaBackupCodes?: string[];
+  passwordResetToken?: string;
+  passwordResetExpires?: Date;
+  passwordChangedAt?: Date;
+  loginAttempts?: number;
+  lockUntil?: Date;
   // Virtual properties
   fullName?: string;
   isLocked?: boolean;

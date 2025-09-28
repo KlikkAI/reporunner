@@ -84,7 +84,7 @@ export class VectorStore {
     try {
       // Generate embeddings for all documents
       const texts = documents.map((doc) => doc.content);
-      const embeddings = await this.embeddingService.embed(texts);
+      const embeddings = await this.embeddingService.createEmbeddings(texts);
 
       const client = await this.pool.connect();
 
@@ -136,7 +136,7 @@ export class VectorStore {
 
       // Generate embedding if not provided
       if (!queryEmbedding) {
-        const embeddings = await this.embeddingService.embed([params.query]);
+        const embeddings = await this.embeddingService.createEmbeddings([params.query]);
         queryEmbedding = embeddings[0];
       }
 

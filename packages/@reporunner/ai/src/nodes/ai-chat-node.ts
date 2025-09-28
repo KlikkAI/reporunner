@@ -11,10 +11,10 @@ export interface AIChatNodeConfig {
 }
 
 export class AIChatNode {
-  private config: AIChatNodeConfig;
+  private _config: AIChatNodeConfig;
 
   constructor(config: AIChatNodeConfig = {}) {
-    this.config = config;
+    this._config = config;
   }
 
   async execute(messages: ChatMessage[]): Promise<string> {

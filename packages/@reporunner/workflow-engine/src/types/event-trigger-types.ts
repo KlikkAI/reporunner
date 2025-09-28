@@ -1,17 +1,30 @@
-id: string;
-status: 'idle' | 'busy' | 'error' | 'stopped';
+// Event trigger types reusing patterns from execution types
 export interface EventTriggerState {
+  id: string;
+  status: 'idle' | 'busy' | 'error' | 'stopped';
   currentJob?: string;
+  processedJobs: number;
+  failedJobs: number;
+  memory: {
+    used: number;
+    total: number;
+  };
+  cpu: number;
+  uptime: number;
+  lastHeartbeat: Date;
 }
-processedJobs: number;
-failedJobs: number;
-{
-  used: number;
-  total: number;
-}
-cpu: number;
-uptime: number;
-lastHeartbeat: Date;
+
+export interface WorkflowEngineConfig {
+  maxConcurrentExecutions: number;
+  executionTimeout: number;
+  retryAttempts: number;
+  queueOptions: {
+    redis: {
+      host: string;
+      port: number;
+      password?: string;
+    };
+  };
 }
 
 // Event Types
@@ -19,84 +32,57 @@ export enum WorkflowEvent {
   EXECUTION_STARTED = 'execution.started',
   EXECUTION_FINISHED = 'execution.finished',
   EXECUTION_FAILED = 'execution.failed',
+  EXECUTION_CANCELLED = 'execution.cancelled',
   NODE_STARTED = 'node.started',
   NODE_FINISHED = 'node.finished',
   NODE_FAILED = 'node.failed',
-  WORKFLOW_ACTIVATED = 'workflow.activated',
-  WORKFLOW_DEACTIVATED = 'workflow.deactivated',
+  ENGINE_STARTED = 'engine.started',
+  ENGINE_STOPPED = 'engine.stopped',
+  ENGINE_ERROR = 'engine.error'
 }
 
 export interface WorkflowEventData {
   event: WorkflowEvent;
-  workflowId: string;
   executionId: string;
-  nodeId?: string;
-  userId?: string;
-  organizationId?: string;
-  data?: Record<string, unknown>;
-  timestamp: Date;
-}
-
-// Trigger Types
-export interface TriggerConfig {
-  id: string;
   workflowId: string;
-  nodeId: string;
-  type: 'cron' | 'webhook' | 'manual' | 'email' | 'file';
-  config: Record<string, unknown>;
-  active: boolean;
-  lastExecution?: Date;
-  nextExecution?: Date;
-}
-
-export interface CronTriggerConfig extends TriggerConfig {
-  type: 'cron';
-  config: {
-    expression: string;
-    timezone: string;
+  nodeId?: string;
+  timestamp: Date;
+  data?: Record<string, any>;
+  error?: {
+    message: string;
+    stack?: string;
+    code?: string;
   };
 }
 
-export interface WebhookTriggerConfig extends TriggerConfig {
+// Trigger Configuration
+export interface TriggerConfig {
+  id: string;
+  type: 'webhook' | 'schedule' | 'manual' | 'event';
+  enabled: boolean;
+  config: Record<string, any>;
+  workflowId: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface WebhookTrigger extends TriggerConfig {
   type: 'webhook';
   config: {
     path: string;
-    method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
-    authentication: {
-      type: 'none' | 'basic' | 'header' | 'query';
-      config?: Record<string, unknown>;
+    method: 'GET' | 'POST' | 'PUT' | 'DELETE';
+    authentication?: {
+      type: 'none' | 'basic' | 'bearer' | 'apikey';
+      config: Record<string, any>;
     };
-    responseMode: 'lastNode' | 'firstEntryNode' | 'responseNode';
-    responseData?: string;
   };
 }
 
-// Workflow Engine Configuration
-export interface WorkflowEngineConfig {
-  redis: {
-    host: string;
-    port: number;
-    password?: string;
-    db?: number;
-  };
-  database: {
-    type: 'mongodb' | 'postgresql';
-    connectionString: string;
-  };
-  workers: {
+export interface ScheduleTrigger extends TriggerConfig {
+  type: 'schedule';
+  config: {
+    cron: string;
+    timezone: string;
     enabled: boolean;
-    concurrency: number;
-    maxMemory: number;
   };
-  queue: QueueOptions;
-  security: {
-    allowedNodeTypes: string[];
-    maxExecutionTime: number;
-    maxMemoryUsage: number;
-  };
-  webhooks: {
-    enabled: boolean;
-    path: string;
-    maxPayloadSize: number;
-  };
-  logging: {
+}

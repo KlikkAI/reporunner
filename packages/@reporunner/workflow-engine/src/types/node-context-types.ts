@@ -1,78 +1,71 @@
-level: 'error' | 'warn' | 'info' | 'debug';
-database: boolean;
-console: boolean;
-// Ensure file has a valid TS shape
-export interface NodeContext {}
+// Node context types reusing patterns from execution types
+export interface NodeContext {
+  nodeId: string;
+  workflowId: string;
+  executionId: string;
+  userId?: string;
+  inputData?: Record<string, any>;
+  nodeConfig: Record<string, any>;
+  previousNodeResults?: Record<string, any>;
+  workflowData?: Record<string, any>;
+  credentials?: Record<string, any>;
+  logger: {
+    level: 'error' | 'warn' | 'info' | 'debug';
+    database: boolean;
+    console: boolean;
+  };
 }
 
 // Context Types
 export interface IExecutionContext {
   executionId: string;
   workflowId: string;
-  nodeId: string;
-  userId?: string;
-  organizationId?: string;
-  mode: 'manual' | 'trigger' | 'webhook' | 'retry' | 'cli';
+  userId: string;
   startTime: Date;
-  timezone: string;
-  workflow: Workflow;
-  inputData: NodeExecutionData[];
-  getNodeParameter: (parameterName: string, index?: number) => unknown;
-  getCredentials: (credentialType: string) => Promise<Record<string, unknown>>;
-  helpers: {
-    request: (options: any) => Promise<any>;
+  environment: string;
+  variables: Record<string, any>;
+  settings: {
+    timeout: number;
+    retryAttempts: number;
+    saveExecutionData: boolean;
   };
 }
 
-export interface INodeType {
-  description: {
-    displayName: string;
+export interface INodeContext extends NodeContext {
+  execution: IExecutionContext;
+  workflow: {
+    id: string;
     name: string;
-    group: string[];
     version: number;
-    description: string;
-    defaults: {
-      name: string;
-      color?: string;
-    };
-    inputs: string[];
-    outputs: string[];
-    properties: NodeProperty[];
-    credentials?: CredentialTest[];
-    webhooks?: WebhookDescription[];
-    polling?: boolean;
+    nodes: any[];
+    connections: any[];
   };
-  execute: (context: IExecutionContext) => Promise<NodeExecutionData[][]>;
-  webhook?: (context: IExecutionContext) => Promise<any>;
-  poll?: (context: IExecutionContext) => Promise<NodeExecutionData[][]>;
-}
-
-export interface NodeProperty {
-  displayName: string;
-  name: string;
-  type: string;
-  default: unknown;
-  required?: boolean;
-  description?: string;
-  options?: Array<{
+  node: {
+    id: string;
+    type: string;
     name: string;
-    value: string | number | boolean;
-    description?: string;
-  }>;
-  displayOptions?: {
-    show?: Record<string, unknown[]>;
-    hide?: Record<string, unknown[]>;
+    parameters: Record<string, any>;
   };
 }
 
-export interface CredentialTest {
-  name: string;
-  required?: boolean;
+// Helper types for node execution
+export interface NodeExecutionContext {
+  context: INodeContext;
+  inputData: Record<string, any>;
+  outputData: Record<string, any>;
+  error?: {
+    message: string;
+    stack?: string;
+    code?: string;
+  };
 }
 
-export interface WebhookDescription {
-  name: string;
-  httpMethod: string;
-  path: string;
-  responseMode?: string;
+export interface WorkflowRuntimeContext {
+  executionId: string;
+  workflowDefinition: any;
+  currentNodeId?: string;
+  nodeResults: Map<string, any>;
+  globalVariables: Record<string, any>;
+  startTime: Date;
+  timeout: number;
 }

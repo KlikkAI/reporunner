@@ -39,7 +39,7 @@ export abstract class CachedRepository<T, ID = string> extends BaseRepository<T,
     try {
       const key = this.getCacheKey(id);
       const cached = await this.cache.get(key);
-      return cached ? this.deserialize(cached) : null;
+      return cached ? this.deserialize(cached as string) : null;
     } catch (error) {
       return null; // Cache failures shouldn't break the app
     }
@@ -81,7 +81,7 @@ export abstract class CachedRepository<T, ID = string> extends BaseRepository<T,
       const result = new Map<ID, T>();
       values.forEach((value, index) => {
         if (value) {
-          result.set(ids[index], this.deserialize(value));
+          result.set(ids[index], this.deserialize(value as string));
         }
       });
       

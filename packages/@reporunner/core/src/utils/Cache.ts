@@ -48,8 +48,30 @@ export class Cache implements ICache {
   async ttl(key: string): Promise<number> {
     const item = this.cache.get(key);
     if (!item) return -1;
-    
+
     const remaining = Math.max(0, item.expiry - Date.now());
     return Math.floor(remaining / 1000);
+  }
+
+  async setex<T>(key: string, ttl: number, value: T): Promise<void> {
+    await this.set(key, value, ttl);
+  }
+
+  async del(key: string): Promise<void> {
+    await this.delete(key);
+  }
+
+  async mget<T>(keys: string[]): Promise<(T | null)[]> {
+    const results: (T | null)[] = [];
+    for (const key of keys) {
+      results.push(await this.get<T>(key));
+    }
+    return results;
+  }
+
+  async delMany(keys: string[]): Promise<void> {
+    for (const key of keys) {
+      await this.delete(key);
+    }
   }
 }

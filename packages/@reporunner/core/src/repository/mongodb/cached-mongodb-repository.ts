@@ -154,7 +154,7 @@ export abstract class CachedMongoDBRepository<T extends { _id?: ObjectId }, ID =
       const entities = data.map((item, index) => ({
         ...item,
         _id: result.insertedIds[index]
-      })) as T[];
+      })) as unknown as T[];
       await this.saveManyToCache(entities);
       return entities;
     });
@@ -255,7 +255,7 @@ export abstract class CachedMongoDBRepository<T extends { _id?: ObjectId }, ID =
     return data.map((item, index) => ({
       ...item,
       _id: result.insertedIds[index]
-    })) as T[];
+    })) as unknown as T[];
   }
 
   protected async updateImpl(id: ID, data: Partial<T>): Promise<T> {

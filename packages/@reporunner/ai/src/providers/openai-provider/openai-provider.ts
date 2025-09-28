@@ -3,18 +3,23 @@
  */
 
 import OpenAI from 'openai';
-import {
-  type EmbedParams,
-  type EmbedResult,
-  type GenerateTextParams,
-  type GenerateTextResult,
-  type GenerateTextStreamResult,
-  type LLMProvider,
-  LLMProviderError,
-  type OpenAIConfig,
-} from '../types';
+import type {
+  ProviderConfig,
+  LLMCompletion,
+  LLMResponse,
+  EmbeddingRequest,
+  EmbeddingResponse,
+} from '../../types';
+import { CombinedAIProvider } from '../../base/ai-provider';
 
-export class OpenAIProvider implements LLMProvider {
+export interface OpenAIConfig extends ProviderConfig {
+  type: 'openai';
+  apiKey: string;
+  baseURL?: string;
+  organization?: string;
+}
+
+export class OpenAIProvider extends CombinedAIProvider {
   readonly name = 'openai';
   readonly supportedModels = [
     'gpt-4o',
@@ -30,6 +35,7 @@ export class OpenAIProvider implements LLMProvider {
   private client: OpenAI;
 
   constructor(config: OpenAIConfig) {
+    super(config);
     this.client = new OpenAI({
       apiKey: config.apiKey,
       baseURL: config.baseURL,
@@ -37,164 +43,181 @@ export class OpenAIProvider implements LLMProvider {
     });
   }
 
-  async generateText(params: GenerateTextParams): Promise<GenerateTextResult> {
+  async validateConfig(): Promise<boolean> {
+    return !!(this.config as OpenAIConfig).apiKey;
+  }
+
+  async testConnection(): Promise<boolean> {
     try {
-      const messages = this.formatMessages(params);
+      await this.client.models.list();
+      return true;
+    } catch {
+      return false;
+    }
+  }
 
-      const completion = await this.client.chat.completions.create({
-        model: params.model,
-        messages,
-        temperature: params.temperature,
-        max_tokens: params.maxTokens,
-        stop: params.stopSequences,
-        tools: params.tools ? this.formatTools(params.tools) : undefined,
-      });
-
-      const choice = completion.choices[0];
-      if (!choice) {
-        throw new LLMProviderError('No completion choice returned', this.name);
+  async complete(request: LLMCompletion): Promise<LLMResponse> {
+    try {
+      const messages = request.messages || [];
+      if (request.prompt) {
+        messages.unshift({ role: 'user', content: request.prompt });
       }
 
+      const completion = await this.client.chat.completions.create({
+        model: request.model,
+        messages: messages.map(msg => ({
+          role: msg.role,
+          content: msg.content,
+          tool_call_id: msg.toolCallId,
+          name: msg.name,
+        })),
+        temperature: request.temperature,
+        max_tokens: request.maxTokens,
+        stop: request.stop,
+        tools: request.tools ? this.formatTools(request.tools) : undefined,
+        tool_choice: request.toolChoice,
+        user: request.user,
+      });
+
       return {
-        text: choice.message.content || '',
-        usage: {
-          inputTokens: completion.usage?.prompt_tokens || 0,
-          outputTokens: completion.usage?.completion_tokens || 0,
-          totalTokens: completion.usage?.total_tokens || 0,
-        },
-        finishReason: this.mapFinishReason(choice.finish_reason),
-        toolCalls: choice.message.tool_calls
-          ? this.formatToolCalls(choice.message.tool_calls)
-          : undefined,
+        id: completion.id,
+        object: completion.object,
+        created: completion.created,
+        model: completion.model,
+        choices: completion.choices.map(choice => ({
+          index: choice.index,
+          message: choice.message,
+          finishReason: choice.finish_reason,
+          logprobs: choice.logprobs,
+        })),
+        usage: completion.usage,
+        systemFingerprint: completion.system_fingerprint,
       };
     } catch (error) {
-      throw new LLMProviderError(
-        `OpenAI generation failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
-        this.name
+      throw new Error(
+        `OpenAI completion failed: ${error instanceof Error ? error.message : 'Unknown error'}`
       );
     }
   }
 
-  async *generateStream(
-    params: GenerateTextParams
-  ): AsyncIterableIterator<GenerateTextStreamResult> {
+  async *stream(request: LLMCompletion): AsyncIterable<LLMResponse> {
     try {
-      const messages = this.formatMessages(params);
+      const messages = request.messages || [];
+      if (request.prompt) {
+        messages.unshift({ role: 'user', content: request.prompt });
+      }
 
       const stream = await this.client.chat.completions.create({
-        model: params.model,
-        messages,
-        temperature: params.temperature,
-        max_tokens: params.maxTokens,
-        stop: params.stopSequences,
-        tools: params.tools ? this.formatTools(params.tools) : undefined,
+        model: request.model,
+        messages: messages.map(msg => ({
+          role: msg.role,
+          content: msg.content,
+          tool_call_id: msg.toolCallId,
+          name: msg.name,
+        })),
+        temperature: request.temperature,
+        max_tokens: request.maxTokens,
+        stop: request.stop,
+        tools: request.tools ? this.formatTools(request.tools) : undefined,
+        tool_choice: request.toolChoice,
+        user: request.user,
         stream: true,
       });
 
       for await (const chunk of stream) {
-        const choice = chunk.choices[0];
-        if (!choice) continue;
-
-        const delta = choice.delta.content || '';
-
         yield {
-          delta,
-          finishReason: choice.finish_reason
-            ? this.mapFinishReason(choice.finish_reason)
-            : undefined,
-          toolCalls: choice.delta.tool_calls
-            ? this.formatToolCalls(choice.delta.tool_calls)
-            : undefined,
+          id: chunk.id,
+          object: chunk.object,
+          created: chunk.created,
+          model: chunk.model,
+          choices: chunk.choices.map(choice => ({
+            index: choice.index,
+            delta: choice.delta,
+            finishReason: choice.finish_reason,
+            logprobs: choice.logprobs,
+          })),
+          usage: chunk.usage,
+          systemFingerprint: chunk.system_fingerprint,
         };
       }
     } catch (error) {
-      throw new LLMProviderError(
-        `OpenAI streaming failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
-        this.name
+      throw new Error(
+        `OpenAI streaming failed: ${error instanceof Error ? error.message : 'Unknown error'}`
       );
     }
   }
 
-  async embed(params: EmbedParams): Promise<EmbedResult> {
+  async getModels(): Promise<string[]> {
+    return this.supportedModels;
+  }
+
+  estimateTokens(text: string): number {
+    // Simple token estimation - roughly 4 characters per token for GPT models
+    return Math.ceil(text.length / 4);
+  }
+
+  async createEmbeddings(request: EmbeddingRequest): Promise<EmbeddingResponse> {
     try {
       const response = await this.client.embeddings.create({
-        model: params.model,
-        input: params.texts,
-        dimensions: params.dimensions,
+        model: request.model,
+        input: request.input,
+        dimensions: request.dimensions,
+        encoding_format: request.encodingFormat,
+        user: request.user,
       });
 
       return {
-        embeddings: response.data.map((item) => item.embedding),
+        object: response.object,
+        data: response.data.map(item => ({
+          object: item.object,
+          index: item.index,
+          embedding: item.embedding,
+        })),
+        model: response.model,
         usage: {
+          promptTokens: response.usage.prompt_tokens,
           totalTokens: response.usage.total_tokens,
         },
       };
     } catch (error) {
-      throw new LLMProviderError(
-        `OpenAI embedding failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
-        this.name
+      throw new Error(
+        `OpenAI embedding failed: ${error instanceof Error ? error.message : 'Unknown error'}`
       );
     }
   }
 
-  private formatMessages(params: GenerateTextParams) {
-    const messages = [...params.messages];
-
-    if (params.systemPrompt) {
-      messages.unshift({
-        role: 'system',
-        content: params.systemPrompt,
-      });
+  getDimensions(model: string): number {
+    switch (model) {
+      case 'text-embedding-3-large':
+        return 3072;
+      case 'text-embedding-3-small':
+      case 'text-embedding-ada-002':
+        return 1536;
+      default:
+        return 1536;
     }
+  }
 
-    return messages.map((msg) => ({
-      role: msg.role,
-      content: msg.content,
-      tool_call_id: msg.toolCallId,
-      name: msg.toolName,
-    }));
+  getMaxTokens(model: string): number {
+    switch (model) {
+      case 'text-embedding-3-large':
+      case 'text-embedding-3-small':
+        return 8191;
+      case 'text-embedding-ada-002':
+        return 8191;
+      default:
+        return 8191;
+    }
   }
 
   private formatTools(tools: any[]) {
     return tools.map((tool) => ({
       type: 'function',
       function: {
-        name: tool.name,
-        description: tool.description,
-        parameters: {
-          type: 'object',
-          properties: tool.parameters.reduce((props: any, param: any) => {
-            props[param.name] = {
-              type: param.type,
-              description: param.description,
-              enum: param.enum,
-            };
-            return props;
-          }, {}),
-          required: tool.parameters.filter((p: any) => p.required).map((p: any) => p.name),
-        },
+        name: tool.function?.name || tool.name,
+        description: tool.function?.description || tool.description,
+        parameters: tool.function?.parameters || tool.parameters,
       },
     }));
-  }
-
-  private formatToolCalls(toolCalls: any[]) {
-    return toolCalls.map((tc) => ({
-      id: tc.id,
-      name: tc.function.name,
-      parameters: JSON.parse(tc.function.arguments || '{}'),
-    }));
-  }
-
-  private mapFinishReason(reason: string | null): 'stop' | 'length' | 'tool_use' | 'error' {
-    switch (reason) {
-      case 'stop':
-        return 'stop';
-      case 'length':
-        return 'length';
-      case 'tool_calls':
-        return 'tool_use';
-      default:
-        return 'error';
-    }
   }
 }

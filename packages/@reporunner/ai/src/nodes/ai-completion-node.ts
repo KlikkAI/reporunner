@@ -6,10 +6,10 @@ export interface AICompletionNodeConfig {
 }
 
 export class AICompletionNode {
-  private config: AICompletionNodeConfig;
+  private _config: AICompletionNodeConfig;
 
   constructor(config: AICompletionNodeConfig = {}) {
-    this.config = config;
+    this._config = config;
   }
 
   async execute(prompt: string): Promise<string> {

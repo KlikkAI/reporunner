@@ -1,7 +1,49 @@
-attributeStatementMapping: z.record(z.string()).optional(),
-})
+// Role-Based Access Control Types
+import { z } from 'zod';
 
-export type SAMLConfig = z.infer<typeof SAMLConfigSchema>;
+export interface Permission {
+  id: string;
+  name: string;
+  description?: string;
+  resource: string;
+  action: string;
+  conditions?: Record<string, any>;
+}
+
+export interface Role {
+  id: string;
+  name: string;
+  description?: string;
+  permissions: Permission[];
+  isSystemRole: boolean;
+  organizationId?: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+// RBAC Validation Schemas using zod pattern
+export const PermissionSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  description: z.string().optional(),
+  resource: z.string(),
+  action: z.string(),
+  conditions: z.record(z.any()).optional(),
+});
+
+export const RoleSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  description: z.string().optional(),
+  permissions: z.array(PermissionSchema),
+  isSystemRole: z.boolean(),
+  organizationId: z.string().optional(),
+  createdAt: z.date(),
+  updatedAt: z.date(),
+});
+
+export type PermissionType = z.infer<typeof PermissionSchema>;
+export type RoleType = z.infer<typeof RoleSchema>;
 
 // Two-Factor Authentication
 export interface TwoFactorSetup {
@@ -15,86 +57,37 @@ export interface TwoFactorVerification {
   backupCode?: string;
 }
 
-// Role-Based Access Control (RBAC)
-export const RoleSchema = z.object({
-  id: z.string(),
-  name: z.string(),
-  description: z.string().optional(),
-  permissions: z.array(z.string()),
-  organizationId: z.string().optional(),
-  isSystem: z.boolean().default(false),
-  createdAt: z.date(),
-  updatedAt: z.date(),
-});
+// Security Policy Types
+export interface SecurityPolicy {
+  id: string;
+  name: string;
+  description?: string;
+  rules: SecurityRule[];
+  isActive: boolean;
+  organizationId: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
 
-export type Role = z.infer<typeof RoleSchema>;
+export interface SecurityRule {
+  id: string;
+  condition: string;
+  action: 'allow' | 'deny' | 'require_mfa';
+  priority: number;
+  metadata?: Record<string, any>;
+}
 
-export const PermissionSchema = z.object({
-  id: z.string(),
-  name: z.string(),
-  resource: z.string(),
-  action: z.string(),
-  description: z.string().optional(),
-  conditions: z.record(z.unknown()).optional(),
-});
-
-export type Permission = z.infer<typeof PermissionSchema>;
-
-// Session types
-export interface SessionData {
+// Session Management
+export interface SecuritySession {
+  id: string;
   userId: string;
-  email: string;
-  organizationId?: string;
-  roles: string[];
-  permissions: string[];
-  loginMethod: 'email' | 'oauth' | 'saml';
-  ipAddress: string;
-  userAgent: string;
-  lastActivity: Date;
+  deviceInfo: {
+    userAgent: string;
+    ipAddress: string;
+    location?: string;
+  };
+  isActive: boolean;
   expiresAt: Date;
+  createdAt: Date;
+  lastAccessedAt: Date;
 }
-
-// Audit types
-export const AuditLogSchema = z.object({
-  id: z.string(),
-  userId: z.string().optional(),
-  organizationId: z.string().optional(),
-  action: z.string(),
-  resource: z.string(),
-  resourceId: z.string().optional(),
-  details: z.record(z.unknown()).optional(),
-  ipAddress: z.string(),
-  userAgent: z.string(),
-  timestamp: z.date(),
-});
-
-export type AuditLog = z.infer<typeof AuditLogSchema>;
-
-// Rate limiting
-export interface RateLimitConfig {
-  windowMs: number;
-  max: number;
-  message?: string;
-  standardHeaders?: boolean;
-  legacyHeaders?: boolean;
-}
-
-// Security settings
-export interface SecuritySettings {
-  passwordPolicy: {
-    minLength: number;
-    requireUppercase: boolean;
-    requireLowercase: boolean;
-    requireNumbers: boolean;
-    requireSymbols: boolean;
-    maxAge: number; // days
-  };
-  sessionConfig: {
-    maxAge: number; // seconds
-    secure: boolean;
-    sameSite: 'strict' | 'lax' | 'none';
-  };
-  rateLimiting: {
-    enabled: boolean;
-    requests: number;
-    window: number; // seconds

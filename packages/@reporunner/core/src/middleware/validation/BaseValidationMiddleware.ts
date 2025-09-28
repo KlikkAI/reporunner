@@ -233,7 +233,7 @@ export abstract class BaseValidationMiddleware extends BaseMiddleware {
         }
       } catch (error) {
         if (error instanceof ValidationError) {
-          result.errors.push(...((error as any).details || []));
+          result.errors!.push(...((error as any).details || []));
           if (this.validationOptions.abortEarly) {
             break;
           }
@@ -254,7 +254,7 @@ export abstract class BaseValidationMiddleware extends BaseMiddleware {
       return error;
     }
 
-    return new ValidationError([{
+    return new ValidationError(error.message, [{
       path: '',
       message: error.message,
       code: 'VALIDATION_ERROR',
