@@ -328,7 +328,14 @@ export const Features: React.FC = () => {
                 View Documentation
                 <ArrowRight className="w-5 h-5" />
               </button>
-            </div>>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Feature Categories */}
+      <section className="py-16 bg-white">
+        <div className="container mx-auto px-6">
           <div className="flex flex-wrap justify-center gap-4 mb-16">
             {featureCategories.map((category) => {
               const Icon = category.icon;
@@ -414,7 +421,7 @@ export const Features: React.FC = () => {
             <p className="text-xl text-gray-600">
               See how Reporunner compares to other workflow automation platforms
             </p>
-          </div>>
+          </div>
           <h2 className="text-4xl font-bold mb-6">Ready to Experience These Features?</h2>
           <p className="text-xl mb-8 max-w-2xl mx-auto opacity-90">
             Start your free trial today and see how Reporunner can transform your workflow

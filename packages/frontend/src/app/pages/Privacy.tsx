@@ -13,6 +13,7 @@ import {
   FileText,
   Lock,
   Mail,
+  Phone,
   Settings,
   Shield,
   Users,
@@ -107,7 +108,15 @@ export const Privacy: React.FC = () => {
               <div className="flex items-center justify-center gap-2 text-white">
                 <Calendar className="w-5 h-5" />
                 <span>Last Updated: {lastUpdated}</span>
-              </div>>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Privacy Principles */}
+      <section className="py-16 bg-white">
+        <div className="container mx-auto px-6">
           <div className="max-w-4xl mx-auto text-center mb-12">
             <h2 className="text-4xl font-bold text-gray-900 mb-6">Our Privacy Principles</h2>
             <p className="text-xl text-gray-600">
@@ -144,7 +153,40 @@ export const Privacy: React.FC = () => {
               <p className="text-xl text-gray-600">
                 Complete transparency about the information we collect and how we use it
               </p>
-            </div>>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {dataTypes.map((type, index) => (
+                <div
+                  key={index}
+                  className="bg-white border border-gray-200 rounded-xl p-6 hover:border-blue-300 hover:shadow-lg transition-all duration-300"
+                >
+                  <h3 className="text-lg font-bold text-gray-900 mb-3">{type.category}</h3>
+                  <p className="text-gray-600 mb-4">{type.description}</p>
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-500">Purpose:</span>
+                      <span className="text-gray-700">{type.purpose}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-500">Retention:</span>
+                      <span className="text-gray-700">{type.retention}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-500">Sharing:</span>
+                      <span className="text-gray-700">{type.sharing}</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Your Rights */}
+      <section className="py-16 bg-white">
+        <div className="container mx-auto px-6">
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-12">
               <h2 className="text-4xl font-bold text-gray-900 mb-6">Your Rights</h2>
@@ -213,7 +255,51 @@ export const Privacy: React.FC = () => {
               <p className="text-xl text-gray-600">
                 How we protect your data with industry-leading security
               </p>
-            </div>>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {[
+                {
+                  title: 'End-to-End Encryption',
+                  description: 'All data is encrypted both in transit and at rest using AES-256 encryption.',
+                },
+                {
+                  title: 'Zero Trust Architecture',
+                  description: 'Every request is verified and authenticated before granting access.',
+                },
+                {
+                  title: 'Regular Security Audits',
+                  description: 'Third-party security audits and penetration testing conducted quarterly.',
+                },
+                {
+                  title: 'SOC2 Type II Certified',
+                  description: 'Independently verified security controls and compliance standards.',
+                },
+                {
+                  title: 'Data Minimization',
+                  description: 'We only collect and store data that is absolutely necessary.',
+                },
+                {
+                  title: 'Access Controls',
+                  description: 'Strict role-based access with multi-factor authentication required.',
+                },
+              ].map((measure, index) => (
+                <div
+                  key={index}
+                  className="bg-white border border-gray-200 rounded-xl p-6 hover:border-blue-300 hover:shadow-lg transition-all duration-300"
+                >
+                  <h3 className="text-lg font-bold text-gray-900 mb-3">{measure.title}</h3>
+                  <p className="text-gray-600">{measure.description}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Cookie Policy */}
+      <section className="py-16 bg-white">
+        <div className="container mx-auto px-6">
           <div className="max-w-4xl mx-auto">
             <h2 className="text-4xl font-bold text-gray-900 mb-6 text-center">Cookie Policy</h2>
 
@@ -259,7 +345,29 @@ export const Privacy: React.FC = () => {
                 <h3 className="font-semibold text-gray-900 mb-2">Email Us</h3>
                 <p className="text-gray-600 text-sm mb-4">For privacy-related questions</p>
                 <button className="text-blue-600 font-medium">privacy@reporunner.dev</button>
-              </div>>
+              </div>
+
+              <div className="bg-white border border-gray-200 rounded-xl p-6">
+                <Phone className="w-8 h-8 text-blue-600 mx-auto mb-4" />
+                <h3 className="font-semibold text-gray-900 mb-2">Call Us</h3>
+                <p className="text-gray-600 text-sm mb-4">Speak with our privacy officer</p>
+                <button className="text-blue-600 font-medium">+1 (555) 123-4567</button>
+              </div>
+
+              <div className="bg-white border border-gray-200 rounded-xl p-6">
+                <FileText className="w-8 h-8 text-blue-600 mx-auto mb-4" />
+                <h3 className="font-semibold text-gray-900 mb-2">Documentation</h3>
+                <p className="text-gray-600 text-sm mb-4">Detailed privacy resources</p>
+                <button className="text-blue-600 font-medium">View Privacy Docs</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Call to Action */}
+      <section className="py-20 bg-gradient-to-r from-blue-600 to-purple-600">
+        <div className="container mx-auto px-6 text-center text-white">
           <h2 className="text-4xl font-bold mb-6">Privacy-First Workflow Automation</h2>
           <p className="text-xl mb-8 max-w-2xl mx-auto opacity-90">
             Experience powerful automation without compromising your privacy. Your data stays on

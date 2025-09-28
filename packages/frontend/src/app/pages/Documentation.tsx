@@ -36,6 +36,39 @@ export const Documentation: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('getting-started');
 
+  const getDifficultyColor = (difficulty: string) => {
+    switch (difficulty) {
+      case 'Beginner':
+        return 'bg-green-100 text-green-700';
+      case 'Intermediate':
+        return 'bg-yellow-100 text-yellow-700';
+      case 'Advanced':
+        return 'bg-red-100 text-red-700';
+      default:
+        return 'bg-gray-100 text-gray-700';
+    }
+  };
+
+  const getTypeColor = (type: string) => {
+    switch (type) {
+      case 'guide':
+        return 'bg-blue-100 text-blue-700';
+      case 'tutorial':
+        return 'bg-purple-100 text-purple-700';
+      case 'reference':
+        return 'bg-gray-100 text-gray-700';
+      default:
+        return 'bg-gray-100 text-gray-700';
+    }
+  };
+
+  const quickLinks = [
+    { title: 'Quick Start', icon: Play, url: '/docs/getting-started' },
+    { title: 'API Reference', icon: Code, url: '/docs/api' },
+    { title: 'Video Tutorials', icon: Video, url: '/docs/videos' },
+    { title: 'GitHub', icon: ExternalLink, url: 'https://github.com/reporunner' },
+  ];
+
   const categories = [
     { id: 'getting-started', name: 'Getting Started', icon: Play },
     { id: 'installation', name: 'Installation', icon: Download },
@@ -241,18 +274,6 @@ export const Documentation: React.FC = () => {
     ],
   };
 
-  const quickLinks = [
-    { title: 'API Reference', icon: Code, url: '/api-reference' },
-    { title: 'Node SDK', icon: Settings, url: '/node-sdk' },
-    { title: 'Examples', icon: FileText, url: '/examples' },
-    { title: 'Video Tutorials', icon: Video, url: '/tutorials' },
-    {
-      title: 'GitHub',
-      icon: GitBranch,
-      url: 'https://github.com/reporunner/reporunner',
-    },
-    { title: 'Community', icon: Users, url: '/community' },
-  ];
 
   const filteredDocs =
     documentation[selectedCategory as keyof typeof documentation]?.filter(
@@ -261,18 +282,6 @@ export const Documentation: React.FC = () => {
         doc.description.toLowerCase().includes(searchQuery.toLowerCase())
     ) || [];
 
-  const getDifficultyColor = (difficulty: string) => {
-    switch (difficulty) {
-      case 'Beginner':
-        return 'text-green-600 bg-green-100';
-      case 'Intermediate':
-        return 'text-yellow-600 bg-yellow-100';
-      case 'Advanced':
-        return 'text-red-600 bg-red-100';
-      default:
-        return 'text-gray-600 bg-gray-100';
-    }
-  };
 
   const getTypeIcon = (type: string) => {
     switch (type) {
@@ -320,22 +329,25 @@ export const Documentation: React.FC = () => {
                   placeholder="Search documentation..."
                   className="w-full pl-12 pr-4 py-4 bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg text-white placeholder-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
-              </div>>
-          <div className="flex flex-wrap justify-center gap-4">
-            {quickLinks.map((link, index) => {
-              const Icon = link.icon;
-              return (
-                <a
-                  key={index}
-                  href={link.url}
-                  className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors text-gray-700 hover:text-gray-900"
-                >
-                  <Icon className="w-4 h-4" />
-                  <span className="font-medium">{link.title}</span>
-                  {link.url.startsWith('http') && <ExternalLink className="w-3 h-3" />}
-                </a>
-              );
-            })}
+              </div>
+
+              <div className="flex flex-wrap justify-center gap-4">
+                {quickLinks.map((link, index) => {
+                  const Icon = link.icon;
+                  return (
+                    <a
+                      key={index}
+                      href={link.url}
+                      className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors text-gray-700 hover:text-gray-900"
+                    >
+                      <Icon className="w-4 h-4" />
+                      <span className="font-medium">{link.title}</span>
+                      {link.url.startsWith('http') && <ExternalLink className="w-3 h-3" />}
+                    </a>
+                  );
+                })}
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -367,7 +379,62 @@ export const Documentation: React.FC = () => {
                     );
                   })}
                 </nav>
-              </div>>
+              </div>
+            </div>
+
+            {/* Main Content */}
+            <div className="lg:w-3/4">
+              <div className="space-y-6">
+                {documentation[selectedCategory as keyof typeof documentation]?.map((doc, index) => (
+                  <div
+                    key={index}
+                    className="bg-white border border-gray-200 rounded-xl p-6 hover:border-blue-300 hover:shadow-lg transition-all duration-300 cursor-pointer group"
+                  >
+                    <div className="flex items-start justify-between mb-4">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-3 mb-2">
+                          <h3 className="text-xl font-bold text-gray-900 group-hover:text-blue-900 transition-colors">
+                            {doc.title}
+                          </h3>
+                          {doc.popular && (
+                            <div className="flex items-center gap-1 px-2 py-1 bg-yellow-100 text-yellow-700 rounded-full text-xs font-medium">
+                              <Star className="w-3 h-3 fill-current" />
+                              Popular
+                            </div>
+                          )}
+                        </div>
+                        <p className="text-gray-600 mb-3">{doc.description}</p>
+                        <div className="flex items-center gap-4 text-sm text-gray-500">
+                          <span className="flex items-center gap-1">
+                            <Clock className="w-4 h-4" />
+                            {doc.readTime}
+                          </span>
+                          <span
+                            className={`px-2 py-1 text-xs font-medium rounded-full ${getDifficultyColor(doc.difficulty)}`}
+                          >
+                            {doc.difficulty}
+                          </span>
+                          <span
+                            className={`px-2 py-1 text-xs font-medium rounded-full ${getTypeColor(doc.type)}`}
+                          >
+                            {doc.type}
+                          </span>
+                          <span>Updated {doc.lastUpdated}</span>
+                        </div>
+                      </div>
+                      <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-blue-600 transition-colors ml-4" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Featured Tutorials */}
+      <section className="py-16 bg-gray-50">
+        <div className="container mx-auto px-6">
           <div className="max-w-4xl mx-auto text-center mb-12">
             <h2 className="text-4xl font-bold text-gray-900 mb-6">Featured Tutorials</h2>
             <p className="text-xl text-gray-600">
@@ -459,7 +526,49 @@ export const Documentation: React.FC = () => {
               <div className="text-center p-6">
                 <div className="bg-blue-100 p-4 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
                   <Users className="w-8 h-8 text-blue-600" />
-                </div>>
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 mb-3">Community Forum</h3>
+                <p className="text-gray-600 text-sm mb-4">
+                  Join thousands of developers building with Reporunner
+                </p>
+                <button className="text-blue-600 font-medium hover:text-blue-700 transition-colors">
+                  Join Community
+                </button>
+              </div>
+
+              <div className="text-center p-6">
+                <div className="bg-green-100 p-4 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+                  <BookOpen className="w-8 h-8 text-green-600" />
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 mb-3">Documentation</h3>
+                <p className="text-gray-600 text-sm mb-4">
+                  Comprehensive guides and API references
+                </p>
+                <button className="text-green-600 font-medium hover:text-green-700 transition-colors">
+                  Browse Docs
+                </button>
+              </div>
+
+              <div className="text-center p-6">
+                <div className="bg-purple-100 p-4 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+                  <Webhook className="w-8 h-8 text-purple-600" />
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 mb-3">Support Team</h3>
+                <p className="text-gray-600 text-sm mb-4">
+                  Get help from our expert support team
+                </p>
+                <button className="text-purple-600 font-medium hover:text-purple-700 transition-colors">
+                  Contact Support
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Call to Action */}
+      <section className="py-20 bg-gradient-to-r from-blue-600 to-purple-600">
+        <div className="container mx-auto px-6 text-center text-white">
           <h2 className="text-4xl font-bold mb-6">Ready to Start Building?</h2>
           <p className="text-xl mb-8 max-w-2xl mx-auto opacity-90">
             Follow our quick start guide and build your first workflow in minutes

@@ -236,7 +236,14 @@ export const SelfHosted: React.FC = () => {
                 <Play className="w-5 h-5" />
                 Watch Demo
               </button>
-            </div>>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Deployment Options */}
+      <section className="py-16 bg-white">
+        <div className="container mx-auto px-6">
           <div className="max-w-4xl mx-auto text-center mb-12">
             <h2 className="text-4xl font-bold text-gray-900 mb-6">Deployment Options</h2>
             <p className="text-xl text-gray-600">
@@ -372,7 +379,19 @@ export const SelfHosted: React.FC = () => {
               <p className="text-xl text-gray-600">
                 Hardware and software requirements for different deployment scenarios
               </p>
-            </div>>
+            </div>
+
+            {/* System requirements content placeholder */}
+            <div className="bg-white border border-gray-200 rounded-xl p-8 shadow-sm">
+              <p className="text-center text-gray-600">System requirements details coming soon...</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Why Self-Host */}
+      <section className="py-16 bg-white">
+        <div className="container mx-auto px-6">
           <div className="max-w-4xl mx-auto text-center mb-12">
             <h2 className="text-4xl font-bold text-gray-900 mb-6">Why Self-Host?</h2>
             <p className="text-xl text-gray-600">
@@ -419,7 +438,7 @@ export const SelfHosted: React.FC = () => {
             <p className="text-xl text-gray-600">
               Seamlessly migrate from existing workflow platforms to your self-hosted Reporunner
             </p>
-          </div>>
+          </div>
           <h2 className="text-4xl font-bold mb-6">Ready to Deploy Your Own?</h2>
           <p className="text-xl mb-8 max-w-2xl mx-auto opacity-90">
             Start your self-hosted journey today. Complete data sovereignty, enterprise security,

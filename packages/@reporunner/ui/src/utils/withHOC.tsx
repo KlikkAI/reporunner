@@ -26,12 +26,12 @@ export const composeHOCs = <P extends object>(...hocs: HOC<any>[]) => (Component
 /**
  * Creates a HOC that injects props
  */
-export function withProps<InjectedProps>(injectedProps: InjectedProps) {
-  return <BaseProps extends {}>(
+export function withProps<InjectedProps extends Record<string, any>>(injectedProps: InjectedProps) {
+  return <BaseProps extends Record<string, any>>(
     WrappedComponent: React.ComponentType<BaseProps & InjectedProps>
   ) => {
     return React.forwardRef<any, BaseProps>((props, ref) => (
-      <WrappedComponent {...injectedProps} {...props} ref={ref} />
+      <WrappedComponent {...(injectedProps as any)} {...(props as any)} ref={ref} />
     ));
   };
 }
@@ -46,12 +46,12 @@ export function withStyles<BaseProps extends { className?: string }>(
     return React.forwardRef<any, BaseProps>((props, ref) => {
       const className =
         typeof styles === 'function'
-          ? styles(props)
+          ? styles(props as BaseProps)
           : styles;
 
       return (
         <WrappedComponent
-          {...props}
+          {...(props as any)}
           className={cn(className, props.className)}
           ref={ref}
         />
@@ -69,9 +69,9 @@ export function withLoading<BaseProps extends { loading?: boolean }>(
   return (WrappedComponent: React.ComponentType<BaseProps>) => {
     return React.forwardRef<any, BaseProps>((props, ref) => {
       if (props.loading) {
-        return <LoadingComponent {...props} ref={ref} />;
+        return <LoadingComponent {...(props as any)} ref={ref} />;
       }
-      return <WrappedComponent {...props} ref={ref} />;
+      return <WrappedComponent {...(props as any)} ref={ref} />;
     });
   };
 }
@@ -85,9 +85,9 @@ export function withError<BaseProps extends { error?: Error | string | null }>(
   return (WrappedComponent: React.ComponentType<BaseProps>) => {
     return React.forwardRef<any, BaseProps>((props, ref) => {
       if (props.error) {
-        return <ErrorComponent error={props.error} {...props} ref={ref} />;
+        return <ErrorComponent error={props.error} {...(props as any)} ref={ref} />;
       }
-      return <WrappedComponent {...props} ref={ref} />;
+      return <WrappedComponent {...(props as any)} ref={ref} />;
     });
   };
 }
@@ -104,7 +104,7 @@ export function withAsync<Data, BaseProps extends { data?: Data }>(
 ) {
   return (WrappedComponent: React.ComponentType<BaseProps>) => {
     return React.forwardRef<any, Omit<BaseProps, 'data'>>((props, ref) => {
-      const { isLoading, isError, error, data } = useAsync(() => asyncFn(props as BaseProps), {
+      const { isLoading, isError, error, data } = useAsync(() => asyncFn({ ...props, data: undefined } as unknown as BaseProps), {
         immediate: true,
       });
 
@@ -116,7 +116,7 @@ export function withAsync<Data, BaseProps extends { data?: Data }>(
         return <options.ErrorComponent error={error!} />;
       }
 
-      return <WrappedComponent {...props} data={data} ref={ref} />;
+      return <WrappedComponent {...(props as any)} data={data} ref={ref} />;
     });
   };
 }
@@ -129,7 +129,8 @@ export function withPolymorphic<Props extends object, DefaultElement extends Rea
   defaultElement: DefaultElement = 'div' as DefaultElement
 ) {
   return React.forwardRef<any, PolymorphicComponentProps<DefaultElement, Props>>(
-    ({ as, ...props }, ref) => {
+    (allProps, ref) => {
+      const { as, ...props } = allProps as any;
       const Element = as || defaultElement;
       return <Element ref={ref} {...props} as={undefined} />;
     }

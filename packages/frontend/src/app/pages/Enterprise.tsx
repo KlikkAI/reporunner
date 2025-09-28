@@ -32,6 +32,30 @@ import { Header } from '../components/Landing/Header';
 export const Enterprise: React.FC = () => {
   const [activeTab, setActiveTab] = useState('security');
 
+  const testimonials = [
+    {
+      quote: "Reporunner has transformed our compliance reporting. What used to take weeks now happens automatically with full audit trails.",
+      author: "Sarah Chen",
+      title: "CTO",
+      company: "Global Financial Corp",
+      logo: "🏦"
+    },
+    {
+      quote: "The security features and air-gap deployment capability gave us confidence to automate our most sensitive workflows.",
+      author: "Michael Rodriguez",
+      title: "Head of Security",
+      company: "Defense Solutions Inc",
+      logo: "🛡️"
+    },
+    {
+      quote: "Our development velocity increased 300% after implementing Reporunner for our CI/CD and incident response workflows.",
+      author: "Emma Thompson",
+      title: "VP Engineering",
+      company: "TechScale",
+      logo: "⚡"
+    }
+  ];
+
   const enterpriseFeatures = {
     security: [
       {
@@ -149,7 +173,7 @@ export const Enterprise: React.FC = () => {
     },
   ];
 
-  const testimonials = [
+  const customerTestimonials = [
     {
       quote:
         "Reporunner's enterprise features allowed us to maintain compliance while accelerating our digital transformation. The air-gap deployment was crucial for our security requirements.",
@@ -252,7 +276,42 @@ export const Enterprise: React.FC = () => {
                     <Phone className="w-5 h-5" />
                     Talk to Sales
                   </button>
-                </div>>
+                </div>
+
+                <div className="flex items-center gap-2 text-slate-300">
+                  <Star className="w-5 h-5 fill-current" />
+                  <span>Trusted by 500+ enterprises worldwide</span>
+                </div>
+              </div>
+
+              <div className="relative">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
+                    <div className="text-3xl font-bold text-white mb-2">99.99%</div>
+                    <div className="text-slate-300">Uptime SLA</div>
+                  </div>
+                  <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
+                    <div className="text-3xl font-bold text-white mb-2">SOC2</div>
+                    <div className="text-slate-300">Type II Certified</div>
+                  </div>
+                  <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
+                    <div className="text-3xl font-bold text-white mb-2">24/7</div>
+                    <div className="text-slate-300">Support</div>
+                  </div>
+                  <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
+                    <div className="text-3xl font-bold text-white mb-2">GDPR</div>
+                    <div className="text-slate-300">Compliant</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Enterprise Features */}
+      <section className="py-16 bg-white">
+        <div className="container mx-auto px-6">
           <div className="max-w-4xl mx-auto text-center mb-12">
             <h2 className="text-4xl font-bold text-gray-900 mb-6">Enterprise-Grade Capabilities</h2>
             <p className="text-xl text-gray-600">
@@ -339,7 +398,74 @@ export const Enterprise: React.FC = () => {
             <p className="text-xl text-gray-600">
               Proven solutions for the most regulated and demanding industries
             </p>
-          </div>>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {[
+              {
+                title: 'Financial Services',
+                description: 'Automated compliance reporting, fraud detection, and customer onboarding',
+                icon: Building,
+                features: ['Regulatory compliance', 'Real-time monitoring', 'Audit trails']
+              },
+              {
+                title: 'Healthcare',
+                description: 'HIPAA-compliant patient data processing and care coordination workflows',
+                icon: Award,
+                features: ['HIPAA compliance', 'Patient privacy', 'Clinical workflows']
+              },
+              {
+                title: 'Manufacturing',
+                description: 'Supply chain automation, quality control, and production optimization',
+                icon: Settings,
+                features: ['IoT integration', 'Quality automation', 'Supply chain visibility']
+              },
+              {
+                title: 'Government',
+                description: 'Citizen services automation with the highest security standards',
+                icon: Shield,
+                features: ['FedRAMP ready', 'Citizen services', 'Multi-level security']
+              },
+              {
+                title: 'Technology',
+                description: 'DevOps automation, incident response, and customer success workflows',
+                icon: TrendingUp,
+                features: ['CI/CD integration', 'Incident automation', 'Customer workflows']
+              },
+              {
+                title: 'Energy & Utilities',
+                description: 'Grid monitoring, regulatory reporting, and customer service automation',
+                icon: Globe,
+                features: ['Grid management', 'Regulatory compliance', 'Customer service']
+              },
+            ].map((useCase, index) => {
+              const Icon = useCase.icon;
+              return (
+                <div
+                  key={index}
+                  className="bg-white border border-gray-200 rounded-xl p-6 hover:border-blue-300 hover:shadow-lg transition-all duration-300"
+                >
+                  <Icon className="w-12 h-12 text-blue-600 mb-4" />
+                  <h3 className="text-xl font-bold text-gray-900 mb-3">{useCase.title}</h3>
+                  <p className="text-gray-600 mb-4">{useCase.description}</p>
+                  <ul className="space-y-2">
+                    {useCase.features.map((feature, featureIndex) => (
+                      <li key={featureIndex} className="flex items-center gap-2 text-sm">
+                        <CheckCircle className="w-4 h-4 text-green-500" />
+                        <span className="text-gray-700">{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials */}
+      <section className="py-16 bg-white">
+        <div className="container mx-auto px-6">
           <div className="max-w-4xl mx-auto text-center mb-12">
             <h2 className="text-4xl font-bold text-gray-900 mb-6">What Enterprise Leaders Say</h2>
             <p className="text-xl text-gray-600">
@@ -348,7 +474,7 @@ export const Enterprise: React.FC = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {testimonials.map((testimonial, index) => (
+            {customerTestimonials.map((testimonial, index) => (
               <div
                 key={index}
                 className="bg-white border border-gray-200 rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow"
@@ -383,7 +509,105 @@ export const Enterprise: React.FC = () => {
             <p className="text-xl text-gray-600">
               Flexible pricing that scales with your organization
             </p>
-          </div>>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            {[
+              {
+                name: 'Professional',
+                price: '$99',
+                period: 'per month',
+                description: 'For growing teams',
+                features: [
+                  'Up to 100 workflows',
+                  '10,000 executions/month',
+                  'Standard support',
+                  'Basic analytics',
+                  'Single sign-on',
+                ]
+              },
+              {
+                name: 'Enterprise',
+                price: '$499',
+                period: 'per month',
+                description: 'For large organizations',
+                popular: true,
+                features: [
+                  'Unlimited workflows',
+                  '100,000 executions/month',
+                  'Priority support',
+                  'Advanced analytics',
+                  'Enterprise SSO',
+                  'Audit logging',
+                ]
+              },
+              {
+                name: 'Enterprise Plus',
+                price: 'Custom',
+                period: 'contact us',
+                description: 'For mission-critical deployments',
+                features: [
+                  'Unlimited everything',
+                  'Custom deployment',
+                  'Dedicated support',
+                  'Professional services',
+                  'Custom SLA',
+                  'Air-gap deployment',
+                ]
+              }
+            ].map((plan, index) => (
+              <div
+                key={index}
+                className={`relative bg-white border rounded-xl p-8 ${
+                  plan.popular
+                    ? 'border-blue-500 ring-2 ring-blue-200 scale-105'
+                    : 'border-gray-200 hover:border-gray-300'
+                } transition-all duration-300`}
+              >
+                {plan.popular && (
+                  <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                    <span className="bg-blue-600 text-white px-4 py-1 rounded-full text-sm font-medium">
+                      Most Popular
+                    </span>
+                  </div>
+                )}
+
+                <div className="text-center mb-6">
+                  <h3 className="text-2xl font-bold text-gray-900 mb-2">{plan.name}</h3>
+                  <p className="text-gray-600 mb-4">{plan.description}</p>
+                  <div className="flex items-baseline justify-center gap-2">
+                    <span className="text-4xl font-bold text-gray-900">{plan.price}</span>
+                    <span className="text-gray-600">/{plan.period}</span>
+                  </div>
+                </div>
+
+                <ul className="space-y-3 mb-8">
+                  {plan.features.map((feature, featureIndex) => (
+                    <li key={featureIndex} className="flex items-center gap-3">
+                      <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
+                      <span className="text-gray-700">{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+
+                <button
+                  className={`w-full py-3 px-6 rounded-lg font-semibold transition-colors ${
+                    plan.popular
+                      ? 'bg-blue-600 text-white hover:bg-blue-700'
+                      : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
+                  }`}
+                >
+                  {plan.price === 'Custom' ? 'Contact Sales' : 'Start Free Trial'}
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Call to Action */}
+      <section className="py-20 bg-gradient-to-r from-blue-600 to-purple-600">
+        <div className="container mx-auto px-6 text-center text-white">
           <h2 className="text-4xl font-bold mb-6">Ready for Enterprise Automation?</h2>
           <p className="text-xl mb-8 max-w-2xl mx-auto opacity-90">
             Join the world's most security-conscious organizations who trust Reporunner for their

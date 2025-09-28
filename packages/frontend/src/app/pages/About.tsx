@@ -204,15 +204,17 @@ export const About: React.FC = () => {
                 Contact Us
               </button>
             </div>
-          <div className="max-w-4xl mx-auto text-center">
-            <div className="bg-gradient-to-r from-blue-100 to-purple-100 rounded-2xl p-12">
-              <Target className="w-16 h-16 text-blue-600 mx-auto mb-6" />
-              <h2 className="text-4xl font-bold text-gray-900 mb-6">Our Mission</h2>
-              <p className="text-xl text-gray-700 leading-relaxed">
-                "To empower every organization with intelligent, secure, and self-hosted workflow
-                automation that scales from startup to enterprise without compromising on data
-                sovereignty or security."
-              </p>
+
+            <div className="max-w-4xl mx-auto text-center">
+              <div className="bg-gradient-to-r from-blue-100 to-purple-100 rounded-2xl p-12">
+                <Target className="w-16 h-16 text-blue-600 mx-auto mb-6" />
+                <h2 className="text-4xl font-bold text-gray-900 mb-6">Our Mission</h2>
+                <p className="text-xl text-gray-700 leading-relaxed">
+                  "To empower every organization with intelligent, secure, and self-hosted workflow
+                  automation that scales from startup to enterprise without compromising on data
+                  sovereignty or security."
+                </p>
+              </div>
             </div>
           </div>
         </div>
@@ -226,6 +228,29 @@ export const About: React.FC = () => {
               <h2 className="text-4xl font-bold text-gray-900 mb-6">Our Values</h2>
               <p className="text-xl text-gray-600">The principles that guide everything we do</p>
             </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {values.map((value, index) => {
+                const Icon = value.icon;
+                return (
+                  <div
+                    key={index}
+                    className="bg-white border border-gray-200 rounded-xl p-6 hover:border-blue-300 hover:shadow-lg transition-all duration-300"
+                  >
+                    <Icon className="w-8 h-8 text-blue-600 mb-4" />
+                    <h3 className="text-xl font-bold text-gray-900 mb-3">{value.title}</h3>
+                    <p className="text-gray-600">{value.description}</p>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Company Timeline */}
+      <section className="py-16 bg-white">
+        <div className="container mx-auto px-6">
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-12">
               <h2 className="text-4xl font-bold text-gray-900 mb-6">Our Journey</h2>
@@ -273,6 +298,38 @@ export const About: React.FC = () => {
                 World-class engineers and product leaders from top companies
               </p>
             </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {team.map((member, index) => (
+                <div
+                  key={index}
+                  className="bg-white border border-gray-200 rounded-xl p-6 text-center hover:border-blue-300 hover:shadow-lg transition-all duration-300"
+                >
+                  <div className="text-6xl mb-4">{member.image}</div>
+                  <h3 className="text-xl font-bold text-gray-900 mb-2">{member.name}</h3>
+                  <p className="text-blue-600 font-medium mb-3">{member.role}</p>
+                  <p className="text-gray-600 text-sm mb-4">{member.bio}</p>
+                  <div className="flex justify-center gap-3">
+                    <a href={member.linkedin} className="text-gray-400 hover:text-blue-600 transition-colors">
+                      <Linkedin className="w-5 h-5" />
+                    </a>
+                    <a href={member.twitter} className="text-gray-400 hover:text-blue-600 transition-colors">
+                      <Twitter className="w-5 h-5" />
+                    </a>
+                    <a href={member.github} className="text-gray-400 hover:text-blue-600 transition-colors">
+                      <Github className="w-5 h-5" />
+                    </a>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Investors and Advisors */}
+      <section className="py-16 bg-white">
+        <div className="container mx-auto px-6">
           <div className="max-w-4xl mx-auto text-center">
             <h2 className="text-4xl font-bold text-gray-900 mb-6">Backed by the Best</h2>
             <p className="text-xl text-gray-600 mb-12">
@@ -351,6 +408,40 @@ export const About: React.FC = () => {
                 Offices around the world to serve our global community
               </p>
             </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+              {[
+                { location: 'San Francisco, CA', flag: '🇺🇸', type: 'Headquarters' },
+                { location: 'London, UK', flag: '🇬🇧', type: 'Europe Hub' },
+                { location: 'Singapore', flag: '🇸🇬', type: 'Asia Pacific' },
+                { location: 'Remote', flag: '🌍', type: 'Global Team' },
+              ].map((office, index) => (
+                <div
+                  key={index}
+                  className="bg-white border border-gray-200 rounded-xl p-6 text-center hover:border-blue-300 hover:shadow-lg transition-all duration-300"
+                >
+                  <div className="text-4xl mb-4">{office.flag}</div>
+                  <h3 className="text-lg font-bold text-gray-900 mb-2">{office.location}</h3>
+                  <p className="text-blue-600 font-medium text-sm">{office.type}</p>
+                </div>
+              ))}
+            </div>
+
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+              {stats.map((stat, index) => (
+                <div key={index} className="text-center">
+                  <div className="text-3xl font-bold text-blue-600 mb-2">{stat.metric}</div>
+                  <div className="text-gray-600 text-sm">{stat.label}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Call to Action */}
+      <section className="py-20 bg-gradient-to-r from-blue-600 to-purple-600">
+        <div className="container mx-auto px-6 text-center text-white">
           <h2 className="text-4xl font-bold mb-6">Join Our Mission</h2>
           <p className="text-xl mb-8 max-w-2xl mx-auto opacity-90">
             Help us build the future of workflow automation. We're always looking for talented

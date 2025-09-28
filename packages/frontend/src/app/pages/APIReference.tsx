@@ -376,7 +376,8 @@ console.log('Execution result:', execution.data);`;
 
       {/* Quick Start Section */}
       <section className="py-20 bg-white">
-        <div className="max-w-6xl mx-auto">
+        <div className="container mx-auto px-6">
+          <div className="max-w-6xl mx-auto">
             <div className="text-center mb-12">
               <h2 className="text-4xl font-bold text-gray-900 mb-6">Quick Start</h2>
               <p className="text-xl text-gray-600">
@@ -461,6 +462,112 @@ console.log('Execution result:', execution.data);`;
                 Complete reference for all available endpoints
               </p>
             </div>
+
+            {/* Endpoint Categories */}
+            <div className="flex flex-wrap justify-center gap-4 mb-12">
+              {endpointCategories.map((category) => {
+                const Icon = category.icon;
+                return (
+                  <button
+                    key={category.id}
+                    onClick={() => setActiveEndpoint(category.id)}
+                    className={`group p-4 rounded-xl transition-all duration-300 ${
+                      activeEndpoint === category.id
+                        ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white scale-105 shadow-xl'
+                        : 'bg-white border border-gray-200 text-gray-700 hover:border-blue-300 hover:shadow-lg'
+                    }`}
+                  >
+                    <div className="text-center">
+                      <Icon
+                        className={`w-6 h-6 mx-auto mb-2 ${
+                          activeEndpoint === category.id
+                            ? 'text-white'
+                            : 'text-blue-600 group-hover:text-blue-700'
+                        }`}
+                      />
+                      <h3 className="font-semibold text-sm mb-1">{category.name}</h3>
+                      <span
+                        className={`text-xs px-2 py-1 rounded-full ${
+                          activeEndpoint === category.id
+                            ? 'bg-white/20 text-white'
+                            : 'bg-gray-100 text-gray-600'
+                        }`}
+                      >
+                        {category.count} endpoints
+                      </span>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Endpoint Details */}
+            <div className="space-y-6">
+              {endpoints[activeEndpoint as keyof typeof endpoints]?.map((endpoint, index) => (
+                <div key={index} className="bg-white border border-gray-200 rounded-xl p-6">
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="flex items-center gap-3">
+                      <span
+                        className={`px-3 py-1 rounded-full text-xs font-bold ${getMethodColor(
+                          endpoint.method
+                        )}`}
+                      >
+                        {endpoint.method}
+                      </span>
+                      <code className="text-gray-800 font-mono text-sm">{endpoint.path}</code>
+                    </div>
+                  </div>
+                  <h3 className="text-xl font-bold text-gray-900 mb-2">{endpoint.title}</h3>
+                  <p className="text-gray-600 mb-4">{endpoint.description}</p>
+
+                  {endpoint.parameters && endpoint.parameters.length > 0 && (
+                    <div className="mb-4">
+                      <h4 className="font-semibold text-gray-900 mb-2">Parameters:</h4>
+                      <div className="space-y-2">
+                        {endpoint.parameters.map((param, paramIndex) => (
+                          <div key={paramIndex} className="flex items-center gap-2 text-sm">
+                            <code className="bg-gray-100 px-2 py-1 rounded text-blue-600">
+                              {param.name}
+                            </code>
+                            <span className="text-gray-500">({param.type})</span>
+                            {param.required && (
+                              <span className="text-red-500 text-xs">required</span>
+                            )}
+                            <span className="text-gray-600">- {param.description}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  <div>
+                    <h4 className="font-semibold text-gray-900 mb-2">Response:</h4>
+                    <div className="relative">
+                      <pre className="bg-gray-900 rounded-lg p-4 text-green-400 font-mono text-sm overflow-x-auto">
+                        <code>{endpoint.response.body}</code>
+                      </pre>
+                      <button
+                        onClick={() => copyToClipboard(endpoint.response.body)}
+                        className="absolute top-2 right-2 p-2 text-gray-400 hover:text-white transition-colors"
+                      >
+                        {copiedCode === endpoint.response.body ? (
+                          <CheckCircle className="w-4 h-4 text-green-400" />
+                        ) : (
+                          <Copy className="w-4 h-4" />
+                        )}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Webhooks */}
+      <section className="py-16 bg-white">
+        <div className="container mx-auto px-6">
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-12">
               <h2 className="text-4xl font-bold text-gray-900 mb-6">Webhooks</h2>

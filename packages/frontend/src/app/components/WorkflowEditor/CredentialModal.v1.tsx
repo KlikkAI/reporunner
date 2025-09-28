@@ -1115,7 +1115,6 @@ const CredentialModal: React.FC<CredentialModalProps> = ({
             )}
           </div>
         </div>
-      </div>
     </Modal>
   );
 };

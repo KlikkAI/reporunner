@@ -211,7 +211,14 @@ export const Contact: React.FC = () => {
                 <MessageSquare className="w-5 h-5" />
                 Start Chat
               </button>
-            </div>>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Contact Methods */}
+      <section className="py-16 bg-white">
+        <div className="container mx-auto px-6">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-12">
               <h2 className="text-4xl font-bold text-gray-900 mb-6">How Can We Help?</h2>
@@ -265,7 +272,19 @@ export const Contact: React.FC = () => {
               <p className="text-xl text-gray-600">
                 Fill out the form below and we'll get back to you within 24 hours
               </p>
-            </div>>
+            </div>
+
+            {/* Contact Form Component would go here */}
+            <div className="bg-white border border-gray-200 rounded-xl p-8 shadow-sm">
+              <p className="text-center text-gray-600">Contact form implementation coming soon...</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Offices */}
+      <section className="py-16 bg-white">
+        <div className="container mx-auto px-6">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-12">
               <h2 className="text-4xl font-bold text-gray-900 mb-6">Our Offices</h2>
@@ -323,7 +342,24 @@ export const Contact: React.FC = () => {
             <div className="text-center mb-12">
               <h2 className="text-4xl font-bold text-gray-900 mb-6">Frequently Asked Questions</h2>
               <p className="text-xl text-gray-600">Quick answers to common questions</p>
-            </div>>
+            </div>
+
+            {/* FAQ Component would go here */}
+            <div className="space-y-6">
+              {faqs.map((faq, index) => (
+                <div key={index} className="bg-white border border-gray-200 rounded-xl p-6">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">{faq.question}</h3>
+                  <p className="text-gray-600">{faq.answer}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Call to Action */}
+      <section className="py-20 bg-gradient-to-r from-blue-600 to-purple-600">
+        <div className="container mx-auto px-6 text-center text-white">
           <h2 className="text-4xl font-bold mb-6">Ready to Get Started?</h2>
           <p className="text-xl mb-8 max-w-2xl mx-auto opacity-90">
             Don't wait - start building powerful workflows today with our free tier or schedule a

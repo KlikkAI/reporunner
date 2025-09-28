@@ -93,7 +93,15 @@ export const Terms: React.FC = () => {
               <div className="flex items-center justify-center gap-2 text-white mb-4">
                 <Calendar className="w-5 h-5" />
                 <span>Last Updated: {lastUpdated}</span>
-              </div>>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Key Terms Section */}
+      <section className="py-16 bg-white">
+        <div className="container mx-auto px-6">
           <div className="max-w-4xl mx-auto text-center mb-12">
             <h2 className="text-4xl font-bold text-gray-900 mb-6">Key Terms Summary</h2>
             <p className="text-xl text-gray-600">
@@ -125,8 +133,9 @@ export const Terms: React.FC = () => {
               <p className="text-xl text-gray-600">
                 Detailed terms and conditions for using Reporunner
               </p>
-            </div>>
-          <div className="max-w-4xl mx-auto">
+            </div>
+
+            <div className="max-w-4xl mx-auto">
             <div className="flex items-start gap-4">
               <AlertTriangle className="w-8 h-8 text-orange-600 mt-1 flex-shrink-0" />
               <div>
@@ -146,6 +155,7 @@ export const Terms: React.FC = () => {
                   </p>
                 </div>
               </div>
+            </div>
             </div>
           </div>
         </div>
@@ -168,7 +178,33 @@ export const Terms: React.FC = () => {
                 <button className="text-blue-600 font-medium hover:text-blue-700 transition-colors">
                   legal@reporunner.dev
                 </button>
-              </div>>
+              </div>
+
+              <div className="bg-gray-50 border border-gray-200 rounded-xl p-6">
+                <FileText className="w-8 h-8 text-blue-600 mx-auto mb-4" />
+                <h3 className="font-semibold text-gray-900 mb-2">Documentation</h3>
+                <p className="text-gray-600 text-sm mb-4">Compliance documentation</p>
+                <button className="text-blue-600 font-medium hover:text-blue-700 transition-colors">
+                  View Legal Docs
+                </button>
+              </div>
+
+              <div className="bg-gray-50 border border-gray-200 rounded-xl p-6">
+                <Download className="w-8 h-8 text-blue-600 mx-auto mb-4" />
+                <h3 className="font-semibold text-gray-900 mb-2">Download Terms</h3>
+                <p className="text-gray-600 text-sm mb-4">PDF copy of current terms</p>
+                <button className="text-blue-600 font-medium hover:text-blue-700 transition-colors">
+                  Download PDF
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Call to Action */}
+      <section className="py-20 bg-gradient-to-r from-blue-600 to-purple-600">
+        <div className="container mx-auto px-6 text-center text-white">
           <h2 className="text-4xl font-bold mb-6">Ready to Get Started?</h2>
           <p className="text-xl mb-8 max-w-2xl mx-auto opacity-90">
             By using Reporunner, you agree to these Terms of Service. Start building powerful
