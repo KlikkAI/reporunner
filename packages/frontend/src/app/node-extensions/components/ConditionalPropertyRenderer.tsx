@@ -303,7 +303,7 @@ class PropertyDependencyTracker {
   }
 
   // Extract dependencies from display options
-  extractDependencies(propertyName: string, displayOptions: EnhancedDisplayOptions): void {
+  extractDependencies(propertyName: string, displayOptions: EnhancedDisplayOptions): string[] {
     const dependencies = new Set<string>();
 
     // Extract from show/hide conditions
@@ -330,7 +330,7 @@ class PropertyDependencyTracker {
     }
 
     return Array.from(dependencies);
-  },
+  }
 };
 
 export { DisplayOptionsEvaluator, PropertyDependencyTracker };

@@ -203,7 +203,7 @@ export const About: React.FC = () => {
                 <Mail className="w-5 h-5" />
                 Contact Us
               </button>
-            </div>>
+            </div>
           <div className="max-w-4xl mx-auto text-center">
             <div className="bg-gradient-to-r from-blue-100 to-purple-100 rounded-2xl p-12">
               <Target className="w-16 h-16 text-blue-600 mx-auto mb-6" />
@@ -225,7 +225,7 @@ export const About: React.FC = () => {
             <div className="text-center mb-12">
               <h2 className="text-4xl font-bold text-gray-900 mb-6">Our Values</h2>
               <p className="text-xl text-gray-600">The principles that guide everything we do</p>
-            </div>>
+            </div>
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-12">
               <h2 className="text-4xl font-bold text-gray-900 mb-6">Our Journey</h2>
@@ -272,7 +272,7 @@ export const About: React.FC = () => {
               <p className="text-xl text-gray-600">
                 World-class engineers and product leaders from top companies
               </p>
-            </div>>
+            </div>
           <div className="max-w-4xl mx-auto text-center">
             <h2 className="text-4xl font-bold text-gray-900 mb-6">Backed by the Best</h2>
             <p className="text-xl text-gray-600 mb-12">
@@ -350,7 +350,7 @@ export const About: React.FC = () => {
               <p className="text-xl text-gray-600">
                 Offices around the world to serve our global community
               </p>
-            </div>>
+            </div>
           <h2 className="text-4xl font-bold mb-6">Join Our Mission</h2>
           <p className="text-xl mb-8 max-w-2xl mx-auto opacity-90">
             Help us build the future of workflow automation. We're always looking for talented

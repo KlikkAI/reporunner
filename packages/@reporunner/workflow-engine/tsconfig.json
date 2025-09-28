@@ -2,7 +2,12 @@
   "extends": "../shared/configs/tsconfig.base.json",
   "compilerOptions": {
     "outDir": "./dist/workflow-engine",
-    "rootDir": "./src"
+    "composite": true,
+    "tsBuildInfoFile": "./dist/.tsbuildinfo",
+    "baseUrl": ".",
+    "paths": {
+      "@reporunner/*": ["../@reporunner/*/src"]
+    }
   },
   "include": [
     "src/**/*"
@@ -11,6 +16,11 @@
     "node_modules",
     "dist",
     "**/*.test.*"
+  ],
+  "references": [
+    {
+      "path": "../api-types"
+    }
   ],
   "_package": "workflow-engine"
 }
