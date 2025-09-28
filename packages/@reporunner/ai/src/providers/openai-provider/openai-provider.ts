@@ -65,12 +65,16 @@ export class OpenAIProvider extends CombinedAIProvider {
 
       const completion = await this.client.chat.completions.create({
         model: request.model,
-        messages: messages.map(msg => ({
-          role: msg.role,
-          content: msg.content,
-          tool_call_id: msg.toolCallId,
-          name: msg.name,
-        })),
+        messages: messages.map(msg => {
+          const baseMsg: any = {
+            role: msg.role,
+            content: msg.content,
+          };
+          // Only add optional fields if they exist
+          if (msg.toolCallId) baseMsg.tool_call_id = msg.toolCallId;
+          if (msg.name) baseMsg.name = msg.name;
+          return baseMsg;
+        }),
         temperature: request.temperature,
         max_tokens: request.maxTokens,
         stop: request.stop,
@@ -90,7 +94,13 @@ export class OpenAIProvider extends CombinedAIProvider {
           finishReason: choice.finish_reason,
           logprobs: choice.logprobs,
         })),
-        usage: completion.usage,
+        usage: completion.usage ? {
+          promptTokens: completion.usage.prompt_tokens,
+          completionTokens: completion.usage.completion_tokens,
+          totalTokens: completion.usage.total_tokens,
+          promptTokensDetails: completion.usage.prompt_tokens_details as any,
+          completionTokensDetails: completion.usage.completion_tokens_details as any,
+        } : undefined,
         systemFingerprint: completion.system_fingerprint,
       };
     } catch (error) {
@@ -109,12 +119,16 @@ export class OpenAIProvider extends CombinedAIProvider {
 
       const stream = await this.client.chat.completions.create({
         model: request.model,
-        messages: messages.map(msg => ({
-          role: msg.role,
-          content: msg.content,
-          tool_call_id: msg.toolCallId,
-          name: msg.name,
-        })),
+        messages: messages.map(msg => {
+          const baseMsg: any = {
+            role: msg.role,
+            content: msg.content,
+          };
+          // Only add optional fields if they exist
+          if (msg.toolCallId) baseMsg.tool_call_id = msg.toolCallId;
+          if (msg.name) baseMsg.name = msg.name;
+          return baseMsg;
+        }),
         temperature: request.temperature,
         max_tokens: request.maxTokens,
         stop: request.stop,
@@ -132,11 +146,18 @@ export class OpenAIProvider extends CombinedAIProvider {
           model: chunk.model,
           choices: chunk.choices.map(choice => ({
             index: choice.index,
-            delta: choice.delta,
+            delta: choice.delta ? {
+              ...choice.delta,
+              role: choice.delta.role === 'developer' ? 'assistant' : choice.delta.role,
+            } : undefined,
             finishReason: choice.finish_reason,
             logprobs: choice.logprobs,
           })),
-          usage: chunk.usage,
+          usage: chunk.usage ? {
+            promptTokens: chunk.usage.prompt_tokens || 0,
+            completionTokens: chunk.usage.completion_tokens || 0,
+            totalTokens: chunk.usage.total_tokens || 0,
+          } : undefined,
           systemFingerprint: chunk.system_fingerprint,
         };
       }
@@ -212,7 +233,7 @@ export class OpenAIProvider extends CombinedAIProvider {
 
   private formatTools(tools: any[]) {
     return tools.map((tool) => ({
-      type: 'function',
+      type: 'function' as const,
       function: {
         name: tool.function?.name || tool.name,
         description: tool.function?.description || tool.description,

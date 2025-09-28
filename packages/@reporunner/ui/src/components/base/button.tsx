@@ -1,6 +1,6 @@
 import { forwardRef } from 'react';
 import { PolymorphicComponentProps, BaseComponentProps } from '../../types/component';
-import { getBaseClasses } from '../../utils/styles';
+import { getBaseClasses, cn } from '../../utils/styles';
 
 /**
  * Button props

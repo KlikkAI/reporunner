@@ -136,8 +136,12 @@ export class VectorStore {
 
       // Generate embedding if not provided
       if (!queryEmbedding) {
-        const embeddings = await this.embeddingService.createEmbeddings([params.query]);
-        queryEmbedding = embeddings[0];
+        if (typeof params.query === 'string') {
+          const embeddings = await this.embeddingService.createEmbeddings([params.query]);
+          queryEmbedding = embeddings[0];
+        } else {
+          queryEmbedding = params.query;
+        }
       }
 
       const client = await this.pool.connect();
@@ -188,15 +192,15 @@ export class VectorStore {
         const result = await client.query(sql, queryParams);
 
         return result.rows.map((row) => ({
-          document: {
-            id: row.id,
+          id: row.id,
+          score: row.similarity,
+          values: params.includeMetadata ? this.parseVector(row.embedding) : undefined,
+          metadata: params.includeMetadata ? {
             content: row.content,
-            embedding: this.parseVector(row.embedding),
-            metadata: row.metadata,
             createdAt: row.created_at,
             updatedAt: row.updated_at,
-          },
-          similarity: row.similarity,
+            ...row.metadata,
+          } : undefined,
         }));
       } finally {
         client.release();

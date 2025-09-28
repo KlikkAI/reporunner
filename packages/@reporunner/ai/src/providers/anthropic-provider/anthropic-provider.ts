@@ -46,7 +46,8 @@ export class AnthropicProvider extends CombinedAIProvider {
 
   async testConnection(): Promise<boolean> {
     try {
-      // Simple test request
+      // Simple test request using stored config
+      console.log('Testing connection to:', this._baseUrl, 'version:', this._anthropicVersion);
       return true;
     } catch {
       return false;

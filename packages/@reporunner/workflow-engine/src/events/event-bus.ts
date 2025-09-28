@@ -1,8 +1,8 @@
 export class EventBus {
-  on(event: string, listener: (...args: any[]) => void): this {
+  on(_event: string, _listener: (...args: any[]) => void): this {
     return this;
   }
-  emit(event: string, ...args: any[]): boolean {
+  emit(_event: string, ..._args: any[]): boolean {
     return true;
   }
   initialize() {}

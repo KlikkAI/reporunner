@@ -1,6 +1,6 @@
 // Node executor reusing patterns from workflow-engine
 import { NodeExecutionError } from '../types/error-types';
-import { NodeExecutionContext } from './ExecutionContext';
+import { NodeExecutionContext, ExecutionContext } from './ExecutionContext';
 
 export interface NodeExecutorOptions {
   logger?: any;
@@ -20,6 +20,23 @@ export class NodeExecutor {
       ...options,
     };
     this.logger = this.options.logger;
+  }
+
+  // Alias for executeNode to match WorkflowEngine expectations
+  async execute(
+    node: any,
+    inputData?: any,
+    context?: NodeExecutionContext
+  ): Promise<any> {
+    const execContext = context || new NodeExecutionContext(
+      new ExecutionContext({
+        executionId: 'temp',
+        workflowId: 'temp',
+        environment: 'development'
+      }),
+      node.id
+    );
+    return this.executeNode(node, execContext, inputData);
   }
 
   async executeNode(
@@ -133,7 +150,7 @@ export class NodeExecutor {
     };
   }
 
-  private async executeConditionNode(node: any, _context: NodeExecutionContext, inputData?: any): Promise<any> {
+  private async executeConditionNode(node: any, _context: NodeExecutionContext, _inputData?: any): Promise<any> {
     // Simple condition evaluation placeholder
     const condition = node.parameters?.condition || true;
 

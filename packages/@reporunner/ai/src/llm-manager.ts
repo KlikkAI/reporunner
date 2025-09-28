@@ -116,11 +116,11 @@ export class LLMManager {
     return provider.testConnection();
   }
 
-  private isLLMProvider(provider: BaseAIProvider): provider is ILLMProvider {
+  private isLLMProvider(provider: BaseAIProvider): provider is BaseAIProvider & ILLMProvider {
     return 'complete' in provider && 'stream' in provider && 'getModels' in provider;
   }
 
-  private isEmbeddingProvider(provider: BaseAIProvider): provider is IEmbeddingProvider {
+  private isEmbeddingProvider(provider: BaseAIProvider): provider is BaseAIProvider & IEmbeddingProvider {
     return 'createEmbeddings' in provider && 'getDimensions' in provider && 'getMaxTokens' in provider;
   }
 }

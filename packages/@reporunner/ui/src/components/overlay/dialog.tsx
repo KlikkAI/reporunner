@@ -3,6 +3,7 @@ import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { motion, AnimatePresence } from 'framer-motion';
 import { BaseComponentProps } from '../../types/component';
 import { Button } from '../base/button';
+import { cn } from '../../utils/styles';
 
 /**
  * Dialog component props

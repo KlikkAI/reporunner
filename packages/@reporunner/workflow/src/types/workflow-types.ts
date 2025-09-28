@@ -36,10 +36,12 @@ export interface WorkflowConnection {
   source: {
     nodeId: string;
     outputName: string;
+    outputIndex?: number;
   };
   destination: {
     nodeId: string;
     inputName: string;
+    inputIndex?: number;
   };
   type?: string;
   conditions?: Record<string, any>;
@@ -73,7 +75,9 @@ export interface WorkflowExecution {
   userId: string;
   status: 'pending' | 'running' | 'success' | 'error' | 'cancelled';
   startTime: Date;
+  startedAt?: Date;
   endTime?: Date;
+  finishedAt?: Date;
   duration?: number;
   triggerType: string;
   triggerData?: Record<string, any>;
@@ -81,9 +85,12 @@ export interface WorkflowExecution {
   totalNodes: number;
   completedNodes: number;
   errorMessage?: string;
+  error?: string;
   metadata: Record<string, any>;
   createdAt: Date;
   updatedAt: Date;
+  inputData?: any;
+  outputData?: Record<string, any>;
 }
 
 export interface NodeExecution {
@@ -91,10 +98,14 @@ export interface NodeExecution {
   nodeName: string;
   status: 'pending' | 'running' | 'success' | 'error' | 'skipped';
   startTime?: Date;
+  startedAt?: Date;
   endTime?: Date;
+  finishedAt?: Date;
   duration?: number;
   input?: Record<string, any>;
+  inputData?: any;
   output?: Record<string, any>;
+  outputData?: any;
   error?: {
     message: string;
     stack?: string;

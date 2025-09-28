@@ -18,8 +18,8 @@ export class AIChatNode {
   }
 
   async execute(messages: ChatMessage[]): Promise<string> {
-    // Mock implementation
-    console.log('Executing AI Chat with messages:', messages);
+    // Mock implementation using config
+    console.log('Executing AI Chat with config:', this._config, 'messages:', messages);
 
     const lastUserMessage = messages.filter((m) => m.role === 'user').pop();
 

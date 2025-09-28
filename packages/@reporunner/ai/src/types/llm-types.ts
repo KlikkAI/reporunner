@@ -54,10 +54,10 @@ export interface LLMUsage {
   completionTokens: number;
   totalTokens: number;
   promptTokensDetails?: {
-    cachedTokens: number;
+    cachedTokens?: number;
   };
   completionTokensDetails?: {
-    reasoningTokens: number;
+    reasoningTokens?: number;
   };
 }
 

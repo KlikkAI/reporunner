@@ -78,7 +78,7 @@ export class EndNode extends BaseNode {
 }
 
 export class TransformNode extends BaseNode {
-  async execute(context: NodeExecutionContext, inputData?: any): Promise<any> {
+  async execute(_context: NodeExecutionContext, inputData?: any): Promise<any> {
     const transformation = this.getParameter('transformation', {});
 
     // Simple transformation logic

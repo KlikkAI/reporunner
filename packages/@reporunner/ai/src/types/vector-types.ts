@@ -102,6 +102,7 @@ export interface VectorMatch {
 // Additional types for vector store implementation
 export interface VectorSearchParams {
   query: string | number[];
+  queryEmbedding?: number[];
   limit?: number;
   threshold?: number;
   filter?: Record<string, unknown>;
@@ -114,7 +115,9 @@ export interface VectorStoreConfig {
   database: string;
   username: string;
   password: string;
-  tableName?: string;
+  connectionString?: string;
+  tableName: string;
+  dimensions: number;
   embeddingDimensions?: number;
   ssl?: boolean;
 }

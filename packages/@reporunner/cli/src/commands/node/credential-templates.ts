@@ -1,4 +1,4 @@
-function getCredentialsTemplate(credentialTypes: string[]): string {
+export function getCredentialsTemplate(credentialTypes: string[]): string {
   if (!credentialTypes || credentialTypes.length === 0) {
     return `// No credentials required for this node
 export {};`;
@@ -33,7 +33,7 @@ export class {{name}}Api implements ICredentialType {
 }`;
 }
 
-function getPropertiesTemplate(_template: string): string {
+export function getPropertiesTemplate(_template: string): string {
   return `import { INodeProperties } from '@reporunner/core';
 
 export const {{name}}Properties: INodeProperties[] = [

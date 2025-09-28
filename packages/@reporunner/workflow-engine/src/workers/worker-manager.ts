@@ -1,6 +1,6 @@
 export class WorkerManager {
-  constructor(config: any) {}
-  on(event: string, listener: (...args: any[]) => void): this {
+  constructor(_config: any) {}
+  on(_event: string, _listener: (...args: any[]) => void): this {
     return this;
   }
   initialize() {}

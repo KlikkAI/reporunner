@@ -1,11 +1,11 @@
 export class QueueManager {
-  constructor(config: any) {}
-  on(event: string, listener: (...args: any[]) => void): this {
+  constructor(_config: any) {}
+  on(_event: string, _listener: (...args: any[]) => void): this {
     return this;
   }
   initialize() {}
   shutdown() {}
-  addJob(name: string, data: any) {}
+  addJob(_name: string, _data: any) {}
   getStats(): any {
     return {
       completed: 0,

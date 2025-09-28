@@ -13,8 +13,8 @@ export class AICompletionNode {
   }
 
   async execute(prompt: string): Promise<string> {
-    // Mock implementation
-    console.log('Executing AI Completion with prompt:', prompt);
+    // Mock implementation using config
+    console.log('Executing AI Completion with config:', this._config, 'prompt:', prompt);
     return `Completion for: ${prompt}`;
   }
 }

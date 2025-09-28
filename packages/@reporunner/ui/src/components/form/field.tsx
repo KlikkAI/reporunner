@@ -1,6 +1,6 @@
 import { forwardRef } from 'react';
 import { BaseFieldProps, PolymorphicComponentProps } from '../../types/component';
-import { getBaseClasses, getFieldWrapperClasses, getFieldLabelClasses, getFieldHelperTextClasses } from '../../utils/styles';
+import { getBaseClasses, getFieldWrapperClasses, getFieldLabelClasses, getFieldHelperTextClasses, cn } from '../../utils/styles';
 
 /**
  * Form field component props
@@ -103,7 +103,7 @@ export const FormField = forwardRef<
           ref={ref as any}
           id={name}
           name={name}
-          type={type}
+          type={multiline ? undefined : type}
           disabled={disabled}
           readOnly={readOnly}
           required={required}
@@ -116,7 +116,7 @@ export const FormField = forwardRef<
             endAdornment && 'pr-10',
             className
           )}
-          {...props}
+          {...(props as any)}
         />
         
         {endAdornment && (

@@ -49,7 +49,8 @@ export class NodeRegistry {
       throw new Error(`Unknown node type: ${nodeType}`);
     }
 
-    return new NodeClass(options);
+    // Create instance of the concrete class (not BaseNode directly)
+    return new (NodeClass as any)(options);
   }
 
   private registerBuiltInNodes(): void {

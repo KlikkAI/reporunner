@@ -6,7 +6,7 @@ export interface TextSplitterOptions {
 }
 
 export class TextSplitter {
-  private options: Required<TextSplitterOptions>;
+  protected options: Required<TextSplitterOptions>;
 
   constructor(options: TextSplitterOptions = {}) {
     this.options = {

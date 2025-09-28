@@ -14,6 +14,7 @@ import {
   type WorkflowExecution,
 } from '../types';
 import { NodeExecutor } from './NodeExecutor';
+import { ExecutionContext, NodeExecutionContext } from './ExecutionContext';
 
 export interface WorkflowEngineOptions {
   maxConcurrentExecutions?: number;
@@ -61,7 +62,7 @@ export class WorkflowEngine extends EventEmitter {
 
     // Validate workflow
     const validationResult = await this.validator.validate(workflow);
-    if (!validationResult.valid) {
+    if (!validationResult.isValid) {
       throw new WorkflowEngineError(
         `Workflow validation failed: ${validationResult.errors.join(', ')}`,
         'VALIDATION_ERROR'
@@ -80,10 +81,15 @@ export class WorkflowEngine extends EventEmitter {
     const execution: WorkflowExecution = {
       id: executionId,
       workflowId: workflow.id,
+      userId: 'system', // Default user ID
       status: 'running',
+      startTime: new Date(),
       startedAt: new Date(),
+      triggerType: 'manual',
       inputData,
-      nodeExecutions: new Map(),
+      nodeExecutions: [],
+      totalNodes: workflow.nodes.length,
+      completedNodes: 0,
       outputData: {},
       metadata: {
         totalNodes: workflow.nodes.length,
@@ -91,6 +97,8 @@ export class WorkflowEngine extends EventEmitter {
         failedNodes: 0,
         retriedNodes: 0,
       },
+      createdAt: new Date(),
+      updatedAt: new Date(),
     };
 
     this.activeExecutions.set(executionId, execution);
@@ -219,7 +227,7 @@ export class WorkflowEngine extends EventEmitter {
       retryAttempt: 0,
     };
 
-    execution.nodeExecutions.set(node.id, nodeExecution);
+    execution.nodeExecutions.push(nodeExecution);
     this.emit('nodeExecutionStarted', { execution, nodeExecution });
 
     try {
@@ -227,12 +235,17 @@ export class WorkflowEngine extends EventEmitter {
       const inputData = await this.getNodeInputData(workflow, execution, node);
       nodeExecution.inputData = inputData;
 
-      // Execute the node
-      const result = await this.nodeExecutor.execute(node, inputData, {
-        workflowId: workflow.id,
+      // Create proper execution context
+      const executionCtx = new ExecutionContext({
         executionId: execution.id,
-        nodeId: node.id,
+        workflowId: workflow.id,
+        userId: execution.userId,
+        environment: 'production'
       });
+      const nodeCtx = new NodeExecutionContext(executionCtx, node.id);
+
+      // Execute the node
+      const result = await this.nodeExecutor.execute(node, inputData, nodeCtx);
 
       nodeExecution.status = 'success';
       nodeExecution.finishedAt = new Date();
@@ -371,7 +384,7 @@ export class WorkflowEngine extends EventEmitter {
     );
 
     for (const connection of inputConnections) {
-      const sourceExecution = execution.nodeExecutions.get(connection.source.nodeId);
+      const sourceExecution = execution.nodeExecutions.find(ne => ne.nodeId === connection.source.nodeId);
       if (sourceExecution?.outputData) {
         const sourceData =
           sourceExecution.outputData[connection.source.outputIndex || 0] ||

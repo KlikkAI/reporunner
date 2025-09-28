@@ -1,31 +1,13 @@
 // Workflow Engine implementation reusing patterns from @reporunner/workflow
 import { EventEmitter } from 'node:events';
 import { v4 as uuid } from 'uuid';
+import { WorkflowExecution, ExecutionStatus, TriggerType } from './types/execution-types';
 
 export interface WorkflowEngineOptions {
   maxConcurrentExecutions?: number;
   executionTimeout?: number;
   retryAttempts?: number;
   logger?: any;
-}
-
-export interface WorkflowExecution {
-  id: string;
-  workflowId: string;
-  status: 'pending' | 'running' | 'completed' | 'failed' | 'cancelled';
-  startedAt: Date;
-  finishedAt?: Date;
-  error?: string;
-  result?: any;
-}
-
-export interface NodeExecution {
-  nodeId: string;
-  status: 'pending' | 'running' | 'completed' | 'failed' | 'skipped';
-  startedAt?: Date;
-  finishedAt?: Date;
-  data?: any;
-  error?: string;
 }
 
 export class WorkflowEngine extends EventEmitter {
@@ -53,8 +35,19 @@ export class WorkflowEngine extends EventEmitter {
     const execution: WorkflowExecution = {
       id: executionId,
       workflowId: workflowDefinition.id || 'unknown',
-      status: 'running',
-      startedAt: new Date(),
+      userId: 'system',
+      status: ExecutionStatus.RUNNING,
+      startTime: new Date(),
+      triggerType: TriggerType.MANUAL,
+      nodeExecutions: [],
+      totalNodes: 0,
+      completedNodes: 0,
+      metadata: {
+        version: 1,
+        environment: 'development',
+      },
+      createdAt: new Date(),
+      updatedAt: new Date(),
     };
 
     this.activeExecutions.set(executionId, execution);
@@ -62,18 +55,19 @@ export class WorkflowEngine extends EventEmitter {
 
     try {
       // Placeholder execution logic - reusing pattern from workflow package
-      const result = await this.processWorkflow(workflowDefinition, inputData);
+      await this.processWorkflow(workflowDefinition, inputData);
 
-      execution.status = 'completed';
-      execution.finishedAt = new Date();
-      execution.result = result;
+      execution.status = ExecutionStatus.SUCCESS;
+      execution.endTime = new Date();
+      execution.updatedAt = new Date();
 
       this.emit('execution:completed', execution);
       return execution;
     } catch (error) {
-      execution.status = 'failed';
-      execution.finishedAt = new Date();
-      execution.error = error instanceof Error ? error.message : 'Unknown error';
+      execution.status = ExecutionStatus.ERROR;
+      execution.endTime = new Date();
+      execution.errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      execution.updatedAt = new Date();
 
       this.emit('execution:failed', execution, error);
       throw error;
@@ -97,8 +91,9 @@ export class WorkflowEngine extends EventEmitter {
   async cancelExecution(executionId: string): Promise<void> {
     const execution = this.activeExecutions.get(executionId);
     if (execution) {
-      execution.status = 'cancelled';
-      execution.finishedAt = new Date();
+      execution.status = ExecutionStatus.CANCELLED;
+      execution.endTime = new Date();
+      execution.updatedAt = new Date();
       this.activeExecutions.delete(executionId);
       this.emit('execution:cancelled', execution);
     }

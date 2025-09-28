@@ -7,9 +7,9 @@ export const buildCommand = new Command()
   .option('-p, --production', 'Build for production')
   .action(async (_options) => {
     try {
-      const { stdout } = await execa('pnpm', ['build'], {
+      await execa('pnpm', ['build'], {
         cwd: process.cwd(),
-        stdio: 'pipe',
+        stdio: 'inherit',
       });
     } catch (_error) {
       process.exit(1);

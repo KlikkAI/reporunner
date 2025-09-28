@@ -1,14 +1,14 @@
 import { z } from 'zod';
 import {
-  WorkflowStatus,
-  ExecutionStatus as ApiExecutionStatus,
-  NodeType,
   NodeSchema,
   EdgeSchema,
   WorkflowSchema as ApiWorkflowSchema,
 } from '@reporunner/api-types';
+import { ExecutionStatus, NodeExecution, WorkflowExecution } from './execution-types';
+
 // Valid minimal placeholder to satisfy tsup build
 export interface WorkflowTypesPlaceholder {}
+
 // Workflow Definition
 export const WorkflowNodeSchema = NodeSchema.extend({
   parameters: z.record(z.unknown()),
@@ -50,10 +50,7 @@ export const WorkflowSchema = ApiWorkflowSchema.extend({
 
 export type Workflow = z.infer<typeof WorkflowSchema>;
 
-// Execution Types
-// Using ApiExecutionStatus from @reporunner/api-types as the canonical source
-export const ExecutionStatus = ApiExecutionStatus;
-
+// Execution Types (imported from execution-types.ts to avoid duplication)
 export enum NodeExecutionStatus {
   PENDING = 'pending',
   RUNNING = 'running',
@@ -78,20 +75,10 @@ export interface NodeExecutionData {
   };
 }
 
-export interface NodeExecution {
-  nodeId: string;
-  status: NodeExecutionStatus;
-  startTime?: Date;
-  endTime?: Date;
-  executionTime?: number;
-  inputData?: Record<string, any>;
-  outputData?: Record<string, any>;
-  error?: {
-    message: string;
-    stack?: string;
-    code?: string;
-  };
-}
+// Export type aliases for workflow engine
+export type WorkflowDefinition = Workflow;
+export type WorkflowEngineNode = WorkflowNode;
+export type WorkflowEngineEdge = WorkflowConnection;
 
-// Export all types for use across the workflow engine
-export type { WorkflowDefinition, WorkflowExecution, WorkflowEngineNode, WorkflowEngineEdge };
+// Re-export imported types for convenience
+export { WorkflowExecution, ExecutionStatus, NodeExecution };

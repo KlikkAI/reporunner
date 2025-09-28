@@ -56,7 +56,6 @@ export class QueueManager {
       port: this.options.redis.port,
       password: this.options.redis.password,
       db: this.options.redis.db || 0,
-      retryDelayOnFailover: 100,
       maxRetriesPerRequest: 3,
       lazyConnect: true,
     });
@@ -326,7 +325,7 @@ export class QueueManager {
       this.logger.error('Workflow execution failed in queue', {
         jobId: job.id,
         executionId,
-        error: error.message,
+        error: error instanceof Error ? error.message : String(error),
       });
       throw error;
     }
