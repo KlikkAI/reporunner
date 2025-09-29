@@ -1,8 +1,46 @@
-import { type IWorkflow } from '@reporunner/api-types';
 import { model, Schema } from 'mongoose';
 
+// Define basic Workflow types locally
+interface INode {
+  id: string;
+  type: string;
+  position: { x: number; y: number };
+  data: {
+    label?: string;
+    inputs?: Record<string, any>;
+    outputs?: Record<string, any>;
+    config?: Record<string, any>;
+  };
+  meta?: Record<string, any>;
+}
+
+interface IEdge {
+  id: string;
+  source: string;
+  target: string;
+  sourceHandle?: string;
+  targetHandle?: string;
+  data?: Record<string, any>;
+  meta?: Record<string, any>;
+}
+
+interface IWorkflow {
+  id: string;
+  name: string;
+  description?: string;
+  nodes: INode[];
+  edges: IEdge[];
+  settings?: {
+    timezone?: string;
+    errorWorkflow?: string;
+    callerPolicy?: 'workflowsFromSameOwner' | 'workflowsFromAList' | 'any';
+  };
+  meta?: Record<string, any>;
+}
+
 // Extended interface for MongoDB document that includes all fields used in the schema
-interface IWorkflowDocument extends IWorkflow {
+interface IWorkflowDocument extends Omit<IWorkflow, 'id'> {
+  id: string;
   isActive: boolean;
   organizationId: string;
   tags: string[];

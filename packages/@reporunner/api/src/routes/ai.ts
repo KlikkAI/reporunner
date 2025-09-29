@@ -1,6 +1,6 @@
-import { Router } from 'express';
+import { Router, Request, Response } from 'express';
 import { rateLimit } from 'express-rate-limit';
-import { body, param, query } from 'express-validator';
+import { body } from 'express-validator';
 import { authRequired } from '../middleware/auth';
 import { validateRequest } from '../middleware/validation';
 
@@ -40,7 +40,7 @@ router.post(
     body('model').optional().isString(),
   ],
   validateRequest,
-  async (req, res) => {
+  async (_req: Request, res: Response) => {
     res.json({ message: 'AI routes not implemented yet' });
   }
 );

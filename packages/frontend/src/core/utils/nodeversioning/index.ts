@@ -1,1 +1,1 @@
-export * from './nodeVersioningService';
+export * from '../nodeVersioning';

@@ -1,5 +1,5 @@
 // JWT Strategy implementation reusing patterns from security package
-import type { JWTSessionManager } from '@reporunner/security';
+// import type { JWTSessionManager } from '@reporunner/security';
 
 export interface JWTStrategyOptions {
   secretOrKey: string;
@@ -20,12 +20,12 @@ export class JWTStrategy {
     };
   }
 
-  async sign(payload: any): Promise<string> {
+  async sign(_payload: any): Promise<string> {
     // Placeholder implementation - will use actual JWT library when needed
     return 'jwt-token';
   }
 
-  async verify(token: string): Promise<any> {
+  async verify(_token: string): Promise<any> {
     // Placeholder implementation - will use actual JWT library when needed
     return { id: 'user-id', email: 'user@example.com' };
   }

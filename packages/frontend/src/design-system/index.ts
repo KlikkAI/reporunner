@@ -37,5 +37,5 @@ export { cn } from './utils/classNames';
 
 // Re-export existing components
 export { JsonViewer } from './components/JsonViewer';
-export { TableView } from './components/DataVisualization/TableView';
-export { SchemaView } from './components/DataVisualization/SchemaView';
+export { default as TableView } from './components/DataVisualization/TableView';
+export { default as SchemaView } from './components/DataVisualization/SchemaView';

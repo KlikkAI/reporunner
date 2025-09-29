@@ -71,7 +71,8 @@ export abstract class UnifiedControllerBase<T, K = string> {
       const result = await this.service.create(data);
       res.status(201).json({ success: true, data: result });
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      const message = error instanceof Error ? error.message : 'Unknown error';
+      res.status(500).json({ error: message });
     }
   }
 
@@ -84,7 +85,8 @@ export abstract class UnifiedControllerBase<T, K = string> {
       }
       res.json({ success: true, data: result });
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      const message = error instanceof Error ? error.message : 'Unknown error';
+      res.status(500).json({ error: message });
     }
   }
 
@@ -98,7 +100,8 @@ export abstract class UnifiedControllerBase<T, K = string> {
       }
       res.json({ success: true, data: result });
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      const message = error instanceof Error ? error.message : 'Unknown error';
+      res.status(500).json({ error: message });
     }
   }
 
@@ -111,7 +114,8 @@ export abstract class UnifiedControllerBase<T, K = string> {
       }
       res.json({ success: true });
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      const message = error instanceof Error ? error.message : 'Unknown error';
+      res.status(500).json({ error: message });
     }
   }
 }

@@ -12,16 +12,17 @@ export interface DatabaseService {
 }
 
 export class DatabaseServiceImpl implements DatabaseService {
-  private _config?: DatabaseConfig;
+  private config?: DatabaseConfig;
   private isInitialized = false;
 
   async initialize(config: DatabaseConfig): Promise<void> {
-    this._config = config;
+    this.config = config;
     this.isInitialized = true;
+    console.log('Database service initialized with config');
   }
 
   async query<T>(_collection: string, _options?: QueryOptions): Promise<QueryResult<T>> {
-    if (!this.isInitialized) {
+    if (!this.isInitialized || !this.config) {
       throw new Error('Database service not initialized');
     }
 
@@ -62,6 +63,6 @@ export class DatabaseServiceImpl implements DatabaseService {
 
   async shutdown(): Promise<void> {
     this.isInitialized = false;
-    this._config = undefined;
+    this.config = undefined;
   }
 }

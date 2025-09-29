@@ -1,6 +1,5 @@
 import type React from 'react';
 import { useRef } from 'react';
-import { useSmartMenuPosition } from '../../../../hooks/useSmartMenuPosition';
 
 interface NodeMenuProps {
   visible: boolean;

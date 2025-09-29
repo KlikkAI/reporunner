@@ -19,7 +19,7 @@ export class SAMLProvider {
     this.config = config;
   }
 
-  async validateResponse(samlResponse: string): Promise<SAMLProfile> {
+  async validateResponse(_samlResponse: string): Promise<SAMLProfile> {
     // This is a stub implementation
     // In production, use a library like passport-saml or saml2-js
     console.log('SAML validation not implemented');

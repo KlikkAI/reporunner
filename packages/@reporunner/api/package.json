@@ -21,6 +21,7 @@
     "@asteasolutions/zod-to-openapi": "^8.1.0",
     "@reporunner/auth": "workspace:*",
     "@reporunner/core": "workspace:*",
+    "@reporunner/shared": "workspace:*",
     "@reporunner/workflow-engine": "workspace:*",
     "ajv": "^8.12.0",
     "ajv-formats": "^2.1.0",

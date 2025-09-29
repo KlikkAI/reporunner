@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import { Router, Request, Response } from 'express';
 import { rateLimit } from 'express-rate-limit';
 import { param, query } from 'express-validator';
 import { authRequired } from '../middleware/auth';
@@ -40,7 +40,7 @@ router.get(
     query('search').optional().isString(),
   ],
   validateRequest,
-  async (req, res) => {
+  async (_req: Request, res: Response) => {
     res.json({ message: 'Node routes not implemented yet' });
   }
 );
@@ -70,7 +70,7 @@ router.get(
   authRequired,
   [param('nodeType').isString()],
   validateRequest,
-  async (req, res) => {
+  async (_req: Request, res: Response) => {
     res.json({ message: 'Node routes not implemented yet' });
   }
 );

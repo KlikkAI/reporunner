@@ -1,15 +1,20 @@
 import { injectable } from 'inversify';
-import { BaseMonitoringRepository } from '@reporunner/shared';
 
 /**
  * Monitoring Repository
- * Extends shared base monitoring repository
+ * Base repository for monitoring services
  */
 
 @injectable()
-export class MonitoringRepository extends BaseMonitoringRepository<MonitoringRecord> {
-  constructor() {
-    super('monitoring');
+export class MonitoringRepository {
+  protected serviceName: string;
+
+  constructor(serviceName: string = 'monitoring') {
+    this.serviceName = serviceName;
+  }
+
+  async getServiceMetrics(serviceName: string): Promise<any> {
+    return { service: serviceName, metrics: {} };
   }
 
   // Service-specific methods can be added here

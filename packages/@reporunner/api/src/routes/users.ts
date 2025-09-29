@@ -1,6 +1,6 @@
-import { Router } from 'express';
+import { Router, Request, Response } from 'express';
 import { rateLimit } from 'express-rate-limit';
-import { body, param } from 'express-validator';
+import { body } from 'express-validator';
 import { authRequired } from '../middleware/auth';
 import { validateRequest } from '../middleware/validation';
 
@@ -35,7 +35,7 @@ router.get(
   '/profile',
   authRequired,
   userRateLimit,
-  async (req, res) => {
+  async (_req: Request, res: Response) => {
     res.json({ message: 'User routes not implemented yet' });
   }
 );
@@ -69,7 +69,7 @@ router.put(
     body('email').optional().isEmail().normalizeEmail(),
   ],
   validateRequest,
-  async (req, res) => {
+  async (_req: Request, res: Response) => {
     res.json({ message: 'User routes not implemented yet' });
   }
 );

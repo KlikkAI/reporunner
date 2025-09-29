@@ -22,17 +22,17 @@ export class LDAPProvider {
     this.config = config;
   }
 
-  async authenticate(username: string, password: string): Promise<LDAPUser | null> {
+  async authenticate(_username: string, password: string): Promise<LDAPUser | null> {
     // This is a stub implementation
     // In production, use a library like ldapjs
     console.log('LDAP authentication not implemented');
 
-    if (username && password) {
+    if (_username && password) {
       return {
-        dn: `uid=${username},${this.config.searchBase}`,
-        uid: username,
-        email: `${username}@example.com`,
-        displayName: username,
+        dn: `uid=${_username},${this.config.searchBase}`,
+        uid: _username,
+        email: `${_username}@example.com`,
+        displayName: _username,
         groups: ['users'],
       };
     }
@@ -40,13 +40,13 @@ export class LDAPProvider {
     return null;
   }
 
-  async search(filter: string): Promise<LDAPUser[]> {
+  async search(_filter: string): Promise<LDAPUser[]> {
     // Stub implementation
     console.log('LDAP search not implemented');
     return [];
   }
 
-  async getUserGroups(username: string): Promise<string[]> {
+  async getUserGroups(_username: string): Promise<string[]> {
     // Stub implementation
     console.log('LDAP group lookup not implemented');
     return ['users'];

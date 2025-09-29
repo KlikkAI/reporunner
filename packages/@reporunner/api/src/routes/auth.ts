@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import { Router, Request, Response } from 'express';
 import { rateLimit } from 'express-rate-limit';
 import { body } from 'express-validator';
 import { validateRequest } from '../middleware/validation';
@@ -36,7 +36,7 @@ router.post(
     body('password').isLength({ min: 6 }),
   ],
   validateRequest,
-  async (req, res) => {
+  async (_req: Request, res: Response) => {
     res.json({ message: 'Auth routes not implemented yet' });
   }
 );
@@ -66,7 +66,7 @@ router.post(
     body('name').trim().notEmpty(),
   ],
   validateRequest,
-  async (req, res) => {
+  async (_req: Request, res: Response) => {
     res.json({ message: 'Auth routes not implemented yet' });
   }
 );

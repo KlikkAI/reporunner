@@ -1,1 +1,1 @@
-export * from './aiAssistantService';
+export * from '../aiAssistantService';

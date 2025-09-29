@@ -34,21 +34,13 @@ export class ErrorTrackerService {
     @inject('IErrorTrackerRepository') private repository: IErrorTrackerRepository,
     @inject(TrackErrorUseCase) private trackErrorUseCase: TrackErrorUseCase,
     @inject(ExtractRequestInfoUseCase) private extractRequestInfoUseCase: ExtractRequestInfoUseCase,
-    @inject(IfUseCase) private ifUseCase: IfUseCase,
     @inject(TrackCustomErrorUseCase) private trackCustomErrorUseCase: TrackCustomErrorUseCase,
     @inject(UpdateErrorPatternUseCase) private updateErrorPatternUseCase: UpdateErrorPatternUseCase,
-    @inject(IfUseCase) private ifUseCase: IfUseCase,
-    @inject(IfUseCase) private ifUseCase: IfUseCase,
     @inject(UpdateErrorRateUseCase) private updateErrorRateUseCase: UpdateErrorRateUseCase,
-    @inject(IfUseCase) private ifUseCase: IfUseCase,
     @inject(UpdateCircuitBreakerUseCase) private updateCircuitBreakerUseCase: UpdateCircuitBreakerUseCase,
-    @inject(IfUseCase) private ifUseCase: IfUseCase,
-    @inject(IfUseCase) private ifUseCase: IfUseCase,
     @inject(HandleCriticalErrorUseCase) private handleCriticalErrorUseCase: HandleCriticalErrorUseCase,
     @inject(GenerateErrorIdUseCase) private generateErrorIdUseCase: GenerateErrorIdUseCase,
     @inject(GenerateFingerprintUseCase) private generateFingerprintUseCase: GenerateFingerprintUseCase,
-    @inject(ForUseCase) private forUseCase: ForUseCase,
-    @inject(ExtractRequestInfoUseCase) private extractRequestInfoUseCase: ExtractRequestInfoUseCase,
     @inject(SanitizeHeadersUseCase) private sanitizeHeadersUseCase: SanitizeHeadersUseCase,
     @inject(SanitizeBodyUseCase) private sanitizeBodyUseCase: SanitizeBodyUseCase,
     @inject(GetEnvironmentInfoUseCase) private getEnvironmentInfoUseCase: GetEnvironmentInfoUseCase,
@@ -58,19 +50,12 @@ export class ErrorTrackerService {
     @inject(SetupGlobalErrorHandlersUseCase) private setupGlobalErrorHandlersUseCase: SetupGlobalErrorHandlersUseCase,
     @inject(GetErrorUseCase) private getErrorUseCase: GetErrorUseCase,
     @inject(GetErrorsUseCase) private getErrorsUseCase: GetErrorsUseCase,
-    @inject(IfUseCase) private ifUseCase: IfUseCase,
-    @inject(IfUseCase) private ifUseCase: IfUseCase,
-    @inject(IfUseCase) private ifUseCase: IfUseCase,
-    @inject(IfUseCase) private ifUseCase: IfUseCase,
     @inject(GetErrorPatternsUseCase) private getErrorPatternsUseCase: GetErrorPatternsUseCase,
     @inject(GetErrorStatsUseCase) private getErrorStatsUseCase: GetErrorStatsUseCase,
     @inject(ResolvePatternUseCase) private resolvePatternUseCase: ResolvePatternUseCase,
     @inject(CreateExpressErrorHandlerUseCase) private createExpressErrorHandlerUseCase: CreateExpressErrorHandlerUseCase,
-    @inject(IfUseCase) private ifUseCase: IfUseCase,
     @inject(StartCleanupIntervalUseCase) private startCleanupIntervalUseCase: StartCleanupIntervalUseCase,
     @inject(CleanupOldErrorsUseCase) private cleanupOldErrorsUseCase: CleanupOldErrorsUseCase,
-    @inject(ForUseCase) private forUseCase: ForUseCase,
-    @inject(IfUseCase) private ifUseCase: IfUseCase,
     @inject(StopUseCase) private stopUseCase: StopUseCase
   ) {}
 
@@ -118,13 +103,6 @@ export class ErrorTrackerService {
     return this.getErrorsUseCase.execute(input);
   }
 
-  async if(input: any): Promise<any> {
-    return this.ifUseCase.execute(input);
-  }
-
-  async if(input: any): Promise<any> {
-    return this.ifUseCase.execute(input);
-  }
 
   async getErrorPatterns(input: any): Promise<any> {
     return this.getErrorPatternsUseCase.execute(input);
@@ -142,9 +120,6 @@ export class ErrorTrackerService {
     return this.createExpressErrorHandlerUseCase.execute(input);
   }
 
-  async if(input: any): Promise<any> {
-    return this.ifUseCase.execute(input);
-  }
 
   async stop(input: any): Promise<any> {
     return this.stopUseCase.execute(input);

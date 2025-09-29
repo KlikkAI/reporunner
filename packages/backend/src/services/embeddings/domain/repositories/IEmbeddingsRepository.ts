@@ -1,7 +1,7 @@
 // Embeddings Repository Interface
 // Extends shared base repository interface to eliminate duplication
 
-import { IBaseRepository } from '../../../shared/interfaces/IBaseRepository';
+import type { IBaseRepository } from '../../../shared/interfaces/IBaseRepository';
 
 export interface IEmbeddingsRepository extends IBaseRepository {
   // Embeddings-specific repository methods would be defined here

@@ -1,6 +1,43 @@
-import { type IUser, PermissionType, UserRole } from '@reporunner/api-types';
 import bcrypt from 'bcrypt';
 import { type Document, model, Schema } from 'mongoose';
+
+// Define minimal User role and permission types locally
+enum UserRole {
+  SUPER_ADMIN = 'super_admin',
+  ADMIN = 'admin',
+  EDITOR = 'editor',
+  VIEWER = 'viewer',
+  GUEST = 'guest'
+}
+
+enum PermissionType {
+  SYSTEM_ADMIN = 'system:admin',
+  USER_VIEW = 'user:view',
+  WORKFLOW_CREATE = 'workflow:create'
+}
+
+// Define basic User interface locally
+interface IUser {
+  id: string;
+  email: string;
+  username?: string;
+  firstName?: string;
+  lastName?: string;
+  displayName?: string;
+  avatar?: string;
+  role: UserRole;
+  permissions: PermissionType[];
+  organizationId: string;
+  teamIds?: string[];
+  isActive: boolean;
+  isEmailVerified: boolean;
+  mfaEnabled?: boolean;
+  lastLogin?: Date;
+  settings?: Record<string, any>;
+  metadata?: Record<string, any>;
+  createdAt: Date;
+  updatedAt: Date;
+}
 
 // Create a Document interface that extends IUser with password and sensitive fields
 interface IUserDocument extends Omit<IUser, 'id'>, Document {

@@ -49,3 +49,6 @@ export function authMiddleware(req: AuthRequest, res: Response, next: NextFuncti
     res.status(401).json({ error: 'Invalid token' });
   }
 }
+
+// Alias for compatibility
+export const authRequired = authMiddleware;

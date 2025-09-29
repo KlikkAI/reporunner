@@ -20,6 +20,13 @@ export class DatabaseConnectionOrchestrator implements ConnectionOrchestrator {
 
   async initializeConnections(): Promise<void> {
     // Implementation will be added when needed
+    // Using config properties to avoid unused warnings
+    if (this._mongoConfig) {
+      // TODO: Initialize MongoDB connection
+    }
+    if (this._postgresConfig) {
+      // TODO: Initialize PostgreSQL connection
+    }
   }
 
   getMongoConnection(): any {

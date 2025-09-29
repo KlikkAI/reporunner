@@ -1,1 +1,1 @@
-export * from './workflowSchedulerService';
+export * from '../workflowScheduler';

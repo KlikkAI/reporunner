@@ -65,7 +65,7 @@ export class InMemorySessionStore implements SessionStore {
   }
 }
 
-export interface SessionRequest extends Request {
+export interface SessionRequest extends Omit<Request, 'session'> {
   session?: Session;
   sessionId?: string;
 }

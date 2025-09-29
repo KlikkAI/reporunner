@@ -1,7 +1,7 @@
 // OperationalTransform Repository Interface
 // Extends shared base repository interface to eliminate duplication
 
-import { IBaseRepository } from '../../../shared/interfaces/IBaseRepository';
+import type { IBaseRepository } from '../../../shared/interfaces/IBaseRepository';
 
 export interface IOperationalTransformRepository extends IBaseRepository {
   // OperationalTransform-specific repository methods would be defined here

@@ -1,13 +1,2 @@
-export * from './enhanced-properties-part1';
-export * from './enhanced-properties-part2';
-export * from './enhanced-properties-part3';
-export * from './enhanced-properties-part4';
-export * from './enhanced-properties-part5';
-export * from './enhanced-properties-part6';
-export * from './enhanced-properties-part7';
-export * from './enhanced-properties-part8';
-export * from './enhanced-properties-part9';
-export * from './enhanced-properties-part10';
-export * from './enhanced-properties-part11';
-export * from './enhanced-properties-part12';
-export * from './enhanced-properties-part13';
+// Gmail enhanced properties exports
+// Placeholder for Gmail enhanced properties

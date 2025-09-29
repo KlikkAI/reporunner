@@ -16,12 +16,13 @@ export interface AuthenticatedRequest extends Request {
 }
 
 export function createJWTMiddleware(config: JWTConfig) {
-  return async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  return async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
       const token = extractToken(req);
 
       if (!token) {
-        return res.status(401).json({ error: 'No token provided' });
+        res.status(401).json({ error: 'No token provided' });
+        return;
       }
 
       const decoded = jwt.verify(token, config.secret, {
@@ -37,12 +38,14 @@ export function createJWTMiddleware(config: JWTConfig) {
       next();
     } catch (error) {
       if (error instanceof jwt.TokenExpiredError) {
-        return res.status(401).json({ error: 'Token expired' });
+        res.status(401).json({ error: 'Token expired' });
+        return;
       }
       if (error instanceof jwt.JsonWebTokenError) {
-        return res.status(401).json({ error: 'Invalid token' });
+        res.status(401).json({ error: 'Invalid token' });
+        return;
       }
-      return res.status(500).json({ error: 'Authentication error' });
+      res.status(500).json({ error: 'Authentication error' });
     }
   };
 }

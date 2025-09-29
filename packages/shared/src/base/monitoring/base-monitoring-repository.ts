@@ -1,4 +1,5 @@
 import { injectable } from 'inversify';
+import { Model, Document } from 'mongoose';
 import { BaseRepository } from '../base-repository';
 
 /**
@@ -7,11 +8,11 @@ import { BaseRepository } from '../base-repository';
  */
 
 @injectable()
-export abstract class BaseMonitoringRepository<T> extends BaseRepository<T> {
+export abstract class BaseMonitoringRepository<T extends Document> extends BaseRepository<T> {
   protected serviceName: string;
 
-  constructor(serviceName: string) {
-    super();
+  constructor(model: Model<T>, serviceName: string) {
+    super(model);
     this.serviceName = serviceName;
   }
 
@@ -23,11 +24,11 @@ export abstract class BaseMonitoringRepository<T> extends BaseRepository<T> {
       environment: process.env.NODE_ENV || 'development'
     };
 
-    return this.create(enrichedData as T);
+    return this.create(enrichedData as unknown as T);
   }
 
   async findByService(service: string): Promise<T[]> {
-    return this.find({ service } as Partial<T>);
+    return this.find({ service } as unknown as Partial<T>);
   }
 
   async findByTimeRange(start: Date, end: Date): Promise<T[]> {

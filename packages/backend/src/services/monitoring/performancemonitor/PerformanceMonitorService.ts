@@ -38,34 +38,22 @@ export class PerformanceMonitorService {
     @inject('IPerformanceMonitorRepository') private repository: IPerformanceMonitorRepository,
     @inject(StartTimerUseCase) private startTimerUseCase: StartTimerUseCase,
     @inject(EndTimerUseCase) private endTimerUseCase: EndTimerUseCase,
-    @inject(IfUseCase) private ifUseCase: IfUseCase,
-    @inject(IfUseCase) private ifUseCase: IfUseCase,
     @inject(CatchUseCase) private catchUseCase: CatchUseCase,
     @inject(RecordMetricUseCase) private recordMetricUseCase: RecordMetricUseCase,
-    @inject(IfUseCase) private ifUseCase: IfUseCase,
     @inject(IncrementCounterUseCase) private incrementCounterUseCase: IncrementCounterUseCase,
     @inject(RecordGaugeUseCase) private recordGaugeUseCase: RecordGaugeUseCase,
     @inject(StartSystemMonitoringUseCase) private startSystemMonitoringUseCase: StartSystemMonitoringUseCase,
     @inject(CollectSystemMetricsUseCase) private collectSystemMetricsUseCase: CollectSystemMetricsUseCase,
     @inject(MeasureEventLoopLagUseCase) private measureEventLoopLagUseCase: MeasureEventLoopLagUseCase,
     @inject(DetectMemoryLeaksUseCase) private detectMemoryLeaksUseCase: DetectMemoryLeaksUseCase,
-    @inject(ForUseCase) private forUseCase: ForUseCase,
-    @inject(IfUseCase) private ifUseCase: IfUseCase,
-    @inject(IfUseCase) private ifUseCase: IfUseCase,
     @inject(CalculateMemoryTrendUseCase) private calculateMemoryTrendUseCase: CalculateMemoryTrendUseCase,
-    @inject(ForUseCase) private forUseCase: ForUseCase,
-    @inject(IfUseCase) private ifUseCase: IfUseCase,
     @inject(SetupGCMonitoringUseCase) private setupGCMonitoringUseCase: SetupGCMonitoringUseCase,
-    @inject(IfUseCase) private ifUseCase: IfUseCase,
     @inject(GetMetricsUseCase) private getMetricsUseCase: GetMetricsUseCase,
-    @inject(IfUseCase) private ifUseCase: IfUseCase,
-    @inject(IfUseCase) private ifUseCase: IfUseCase,
     @inject(GetAverageMetricUseCase) private getAverageMetricUseCase: GetAverageMetricUseCase,
     @inject(GetPercentileUseCase) private getPercentileUseCase: GetPercentileUseCase,
     @inject(GetCurrentSystemMetricsUseCase) private getCurrentSystemMetricsUseCase: GetCurrentSystemMetricsUseCase,
     @inject(CreateExpressMiddlewareUseCase) private createExpressMiddlewareUseCase: CreateExpressMiddlewareUseCase,
-    @inject(StopUseCase) private stopUseCase: StopUseCase,
-    @inject(IfUseCase) private ifUseCase: IfUseCase
+    @inject(StopUseCase) private stopUseCase: StopUseCase
   ) {}
 
   async startTimer(input: any): Promise<any> {
@@ -76,10 +64,6 @@ export class PerformanceMonitorService {
     return this.endTimerUseCase.execute(input);
   }
 
-  async if(input: any): Promise<any> {
-    return this.ifUseCase.execute(input);
-  }
-
   async catch(input: any): Promise<any> {
     return this.catchUseCase.execute(input);
   }
@@ -88,23 +72,7 @@ export class PerformanceMonitorService {
     return this.recordMetricUseCase.execute(input);
   }
 
-  async if(input: any): Promise<any> {
-    return this.ifUseCase.execute(input);
-  }
-
-  async if(input: any): Promise<any> {
-    return this.ifUseCase.execute(input);
-  }
-
   async setupGCMonitoring(input: any): Promise<any> {
     return this.setupGCMonitoringUseCase.execute(input);
-  }
-
-  async if(input: any): Promise<any> {
-    return this.ifUseCase.execute(input);
-  }
-
-  async if(input: any): Promise<any> {
-    return this.ifUseCase.execute(input);
   }
 }

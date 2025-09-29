@@ -273,6 +273,9 @@ importers:
       '@reporunner/core':
         specifier: workspace:*
         version: link:../core
+      '@reporunner/shared':
+        specifier: workspace:*
+        version: link:../../shared
       '@reporunner/workflow-engine':
         specifier: workspace:*
         version: link:../workflow-engine

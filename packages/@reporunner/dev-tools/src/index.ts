@@ -61,7 +61,7 @@ export class DevTools {
   }): Promise<string> {
     const template = this.getWorkflowTemplate(options.template || 'basic');
 
-    const _workflow = {
+    const workflow = {
       ...template,
       name: options.name,
       description: options.description || `Generated workflow: ${options.name}`,
@@ -70,6 +70,9 @@ export class DevTools {
 
     const outputPath =
       options.outputPath || `./workflows/${options.name.toLowerCase().replace(/\s+/g, '-')}.json`;
+
+    // TODO: Write workflow to file system
+    console.log('Generated workflow:', workflow);
 
     return outputPath;
   }
@@ -82,7 +85,7 @@ export class DevTools {
   }): Promise<string> {
     const nodeTemplate = this.getNodeTemplate(options.type);
 
-    const _node = {
+    const node = {
       ...nodeTemplate,
       name: options.name,
       category: options.category,
@@ -91,6 +94,9 @@ export class DevTools {
 
     const outputPath =
       options.outputPath || `./src/nodes/${options.category}/${options.name.toLowerCase()}.ts`;
+
+    // TODO: Write node to file system
+    console.log('Generated node:', node);
 
     return outputPath;
   }

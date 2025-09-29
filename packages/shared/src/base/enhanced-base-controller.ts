@@ -1,5 +1,5 @@
 // Enhanced Base Controller - Eliminates controller duplications
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import { injectable } from 'inversify';
 
 @injectable()
@@ -48,7 +48,7 @@ export abstract class EnhancedBaseController {
   }
 
   // Common async wrapper
-  protected asyncHandler = (fn: Function) => (req: Request, res: Response, next: Function) => {
+  protected asyncHandler = (fn: (req: Request, res: Response, next: NextFunction) => Promise<any>) => (req: Request, res: Response, next: NextFunction) => {
     Promise.resolve(fn(req, res, next)).catch(next);
   };
 

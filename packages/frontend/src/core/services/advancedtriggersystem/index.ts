@@ -1,1 +1,1 @@
-export * from './advancedTriggerSystemService';
+export * from '../advancedTriggerSystem';

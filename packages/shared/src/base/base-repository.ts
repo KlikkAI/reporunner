@@ -50,4 +50,13 @@ export abstract class BaseRepository<T extends Document, K = string> implements 
     const result = await this.model.exists({ _id: id } as any);
     return result !== null;
   }
+
+  async find(filter: Partial<T> = {}): Promise<T[]> {
+    return this.model.find(filter as any).exec();
+  }
+
+  async deleteMany(filter: Partial<T>): Promise<number> {
+    const result = await this.model.deleteMany(filter as any).exec();
+    return result.deletedCount || 0;
+  }
 }

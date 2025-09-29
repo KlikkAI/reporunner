@@ -46,9 +46,7 @@ import {
   type AIWorkflowExecution,
   aiOrchestrationService,
   type MultiModalWorkflow,
-} from '@/core/services/aiOrchestrationService';
-import { useEffect } from './hooks/useEffect';
-import { useState } from './hooks/useState';
+} from '@/core/services';
 
 const { Title, Text, Paragraph } = Typography;
 const { TextArea } = Input;

@@ -1,4 +1,3 @@
-export * from './dev-tools-core';
-export * from './performance-analysis';
-export * from './template-utilities';
-export * from './testing-benchmarking';
+export * from '../generators';
+export * from '../testing';
+export * from '../index';

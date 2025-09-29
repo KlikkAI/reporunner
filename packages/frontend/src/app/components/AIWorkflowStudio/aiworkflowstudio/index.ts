@@ -1,1 +1,1 @@
-export * from './AIWorkflowStudio';
+export * from '../AIWorkflowStudio';

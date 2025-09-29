@@ -1,4 +1,4 @@
-import { Route } from './index';
+import { Route as _Route } from './index';
 
 export interface RouteConfig {
   path: string;

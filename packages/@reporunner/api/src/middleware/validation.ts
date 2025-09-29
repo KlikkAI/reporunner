@@ -1,4 +1,5 @@
 import type { NextFunction, Request, Response } from 'express';
+import { validationResult } from 'express-validator';
 
 export interface ValidationRule {
   field: string;
@@ -86,6 +87,18 @@ export function validate(rules: ValidationRule[]) {
 }
 
 // Default validation middleware that does nothing
-export function validationMiddleware(req: Request, res: Response, next: NextFunction): void {
+export function validationMiddleware(_req: Request, _res: Response, next: NextFunction): void {
+  next();
+}
+
+// Express-validator compatible middleware
+export function validateRequest(req: Request, res: Response, next: NextFunction): void {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({
+      error: 'Validation failed',
+      errors: errors.array()
+    }) as any;
+  }
   next();
 }

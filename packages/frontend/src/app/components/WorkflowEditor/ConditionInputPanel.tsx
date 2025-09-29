@@ -1,8 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState } from 'react';
 import { JsonViewer } from '@/design-system';
-import { useEffect } from './hooks/useEffect';
-import { useState } from './hooks/useState';
 
 interface ConditionInputPanelProps {
   connectedInputNodes: any[];

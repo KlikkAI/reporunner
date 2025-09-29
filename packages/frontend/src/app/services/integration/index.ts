@@ -1,1 +1,1 @@
-export * from './integrationService';
+export * from '../integrationService';

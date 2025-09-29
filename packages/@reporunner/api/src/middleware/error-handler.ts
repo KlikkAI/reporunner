@@ -10,7 +10,7 @@ export function errorHandler(
   error: AppError,
   req: Request,
   res: Response,
-  next: NextFunction
+  _next: NextFunction
 ): void {
   // Log error
   console.error('Error:', {

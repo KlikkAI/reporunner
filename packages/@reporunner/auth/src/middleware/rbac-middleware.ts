@@ -20,10 +20,11 @@ export interface RBACConfig {
 
 export function createRBACMiddleware(config: RBACConfig) {
   return function requirePermission(permission: Permission) {
-    return async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+    return async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
       try {
         if (!req.userId) {
-          return res.status(401).json({ error: 'Not authenticated' });
+          res.status(401).json({ error: 'Not authenticated' });
+          return;
         }
 
         const userRoleIds = await config.getUserRoles(req.userId);
@@ -39,15 +40,16 @@ export function createRBACMiddleware(config: RBACConfig) {
         );
 
         if (!hasPermission) {
-          return res.status(403).json({
+          res.status(403).json({
             error: 'Insufficient permissions',
             required: permission,
           });
+          return;
         }
 
         next();
       } catch (error) {
-        return res.status(500).json({ error: 'Authorization error' });
+        res.status(500).json({ error: 'Authorization error' });
       }
     };
   };
@@ -55,10 +57,11 @@ export function createRBACMiddleware(config: RBACConfig) {
 
 export function createRoleMiddleware(config: RBACConfig) {
   return function requireRole(...roleNames: string[]) {
-    return async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+    return async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
       try {
         if (!req.userId) {
-          return res.status(401).json({ error: 'Not authenticated' });
+          res.status(401).json({ error: 'Not authenticated' });
+          return;
         }
 
         const userRoleIds = await config.getUserRoles(req.userId);
@@ -66,15 +69,16 @@ export function createRoleMiddleware(config: RBACConfig) {
         const hasRequiredRole = userRoles.some((role) => roleNames.includes(role.name));
 
         if (!hasRequiredRole) {
-          return res.status(403).json({
+          res.status(403).json({
             error: 'Insufficient role',
             required: roleNames,
           });
+          return;
         }
 
         next();
       } catch (error) {
-        return res.status(500).json({ error: 'Authorization error' });
+        res.status(500).json({ error: 'Authorization error' });
       }
     };
   };

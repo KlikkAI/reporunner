@@ -3,6 +3,7 @@
  * Reduces duplication across domain controllers
  */
 import { Request, Response } from 'express';
+import '../types/express';
 
 export interface ApiResponse<T = any> {
   success: boolean;

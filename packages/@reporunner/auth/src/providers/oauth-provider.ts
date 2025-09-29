@@ -52,7 +52,7 @@ export class OAuthProvider {
     return `${this.config.authorizationURL}?${params.toString()}`;
   }
 
-  async exchangeCodeForToken(code: string): Promise<OAuthTokenResponse> {
+  async exchangeCodeForToken(_code: string): Promise<OAuthTokenResponse> {
     // Placeholder implementation - will use actual OAuth library when needed
     return {
       accessToken: 'access-token',
@@ -62,7 +62,7 @@ export class OAuthProvider {
     };
   }
 
-  async getUserInfo(accessToken: string): Promise<OAuthUserInfo> {
+  async getUserInfo(_accessToken: string): Promise<OAuthUserInfo> {
     // Placeholder implementation - will use actual OAuth library when needed
     return {
       id: 'oauth-user-id',
@@ -71,7 +71,7 @@ export class OAuthProvider {
     };
   }
 
-  async refreshAccessToken(refreshToken: string): Promise<OAuthTokenResponse> {
+  async refreshAccessToken(_refreshToken: string): Promise<OAuthTokenResponse> {
     // Placeholder implementation - will use actual OAuth library when needed
     return {
       accessToken: 'new-access-token',
