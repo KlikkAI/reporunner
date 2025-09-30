@@ -10,6 +10,9 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import type { ReactNode } from 'react';
 import { z } from 'zod';
+import { Logger } from '@reporunner/core';
+
+const logger = new Logger('PropertyRendererFactory');
 
 // Base property renderer configuration
 export interface PropertyRendererConfig {
@@ -131,7 +134,7 @@ export class PropertyRendererFactory {
     const Renderer = this.rendererRegistry.get(config.type);
 
     if (!Renderer) {
-      console.warn(`Property renderer for type "${config.type}" not found`);
+      logger.warn('Property renderer not found', { type: config.type, configId: config.id });
       return this.createFallbackRenderer(config, context);
     }
 

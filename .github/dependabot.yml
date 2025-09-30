@@ -1,0 +1,123 @@
+version: 2
+updates:
+  # Frontend package - React TypeScript application
+  - package-ecosystem: "npm"
+    directory: "/packages/frontend"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "mdferdousalam"
+    labels:
+      - "dependencies"
+      - "frontend"
+      - "security"
+    commit-message:
+      prefix: "chore(frontend)"
+      include: "scope"
+    # Group minor and patch updates together
+    groups:
+      frontend-minor-patch:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
+    # Auto-approve security updates
+    allow:
+      - dependency-type: "all"
+
+  # Core package - Shared utilities
+  - package-ecosystem: "npm"
+    directory: "/packages/@reporunner/core"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 5
+    reviewers:
+      - "mdferdousalam"
+    labels:
+      - "dependencies"
+      - "core"
+      - "security"
+    commit-message:
+      prefix: "chore(core)"
+      include: "scope"
+    groups:
+      core-minor-patch:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
+
+  # Types package - Shared type definitions
+  - package-ecosystem: "npm"
+    directory: "/packages/@reporunner/types"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 5
+    reviewers:
+      - "mdferdousalam"
+    labels:
+      - "dependencies"
+      - "types"
+      - "security"
+    commit-message:
+      prefix: "chore(types)"
+      include: "scope"
+    groups:
+      types-minor-patch:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
+
+  # Root workspace - Monorepo tooling
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 5
+    reviewers:
+      - "mdferdousalam"
+    labels:
+      - "dependencies"
+      - "workspace"
+      - "tooling"
+    commit-message:
+      prefix: "chore(workspace)"
+      include: "scope"
+    groups:
+      workspace-minor-patch:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
+
+  # GitHub Actions - CI/CD dependencies
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+      day: "first monday"
+      time: "09:00"
+    open-pull-requests-limit: 5
+    reviewers:
+      - "mdferdousalam"
+    labels:
+      - "dependencies"
+      - "ci-cd"
+      - "github-actions"
+    commit-message:
+      prefix: "chore(ci)"
+      include: "scope"

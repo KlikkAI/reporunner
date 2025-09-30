@@ -20,10 +20,13 @@ import {
   StopOutlined,
 } from '@ant-design/icons';
 import { Badge, Tooltip } from 'antd';
+import { Logger } from '@reporunner/core';
 import {
   ComponentGenerator,
   UniversalForm,
 } from '@/design-system';
+
+const logger = new Logger('ContainerNode');
 import type {
   ContainerDropEvent,
   ContainerExecutionState,
@@ -58,7 +61,7 @@ export const ContainerNode: React.FC<ContainerNodeProps> = ({ id, data, selected
         nodeType,
         position: { x: event.clientX, y: event.clientY },
       };
-      console.log('Container drop:', dropEvent);
+      logger.debug('Container drop event', { dropEvent });
     }
   }, [id]);
 
@@ -67,7 +70,7 @@ export const ContainerNode: React.FC<ContainerNodeProps> = ({ id, data, selected
       containerId: id,
       newDimensions,
     };
-    console.log('Container resize:', resizeEvent);
+    logger.debug('Container resize event', { resizeEvent });
   }, [id]);
 
   // Configuration form properties based on container type
@@ -187,19 +190,19 @@ export const ContainerNode: React.FC<ContainerNodeProps> = ({ id, data, selected
       label: 'Execute',
       type: 'primary',
       icon: <PlayCircleOutlined />,
-      onClick: () => console.log('Execute container'),
+      onClick: () => logger.info('Container execution triggered', { containerId: id }),
       disabled: !data.containedNodes?.length,
     },
     {
       label: data.executionState?.status === 'running' ? 'Pause' : 'Resume',
       icon: data.executionState?.status === 'running' ? <PauseCircleOutlined /> : <PlayCircleOutlined />,
-      onClick: () => console.log('Toggle execution'),
+      onClick: () => logger.info('Container execution toggled', { containerId: id, status: data.executionState?.status }),
     },
     {
       label: 'Stop',
       type: 'danger',
       icon: <StopOutlined />,
-      onClick: () => console.log('Stop execution'),
+      onClick: () => logger.info('Container execution stopped', { containerId: id }),
       disabled: data.executionState?.status !== 'running',
     },
     {
@@ -267,7 +270,7 @@ export const ContainerNode: React.FC<ContainerNodeProps> = ({ id, data, selected
         <UniversalForm
           properties={getConfigProperties()}
           onSubmit={(values) => {
-            console.log('Container config saved:', values);
+            logger.info('Container config saved', { containerId: id, values });
             setIsConfigOpen(false);
           }}
           submitText="Save Configuration"

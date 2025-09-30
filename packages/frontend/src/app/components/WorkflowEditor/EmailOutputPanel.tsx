@@ -9,11 +9,14 @@
 
 import React, { useMemo } from 'react';
 import { CheckCircle, Edit, Pin } from 'lucide-react';
+import { Logger } from '@reporunner/core';
 import {
   ComponentGenerator,
   ComponentPatterns,
 } from '@/design-system';
 import { SharedDataVisualizationPanel } from '@/design-system/components/data/SharedDataVisualizationPanel';
+
+const logger = new Logger('EmailOutputPanel');
 
 interface EmailOutputPanelProps {
   selectedEmail?: any;
@@ -103,17 +106,17 @@ export const EmailOutputPanel: React.FC<EmailOutputPanelProps> = ({
     {
       label: 'Pin Email',
       icon: <Pin className="w-4 h-4" />,
-      onClick: () => console.log('Pin email'),
+      onClick: () => logger.info('Email pinned', { emailId: selectedEmail?.id }),
     },
     {
       label: 'Edit',
       icon: <Edit className="w-4 h-4" />,
-      onClick: () => console.log('Edit email'),
+      onClick: () => logger.info('Email edit initiated', { emailId: selectedEmail?.id }),
     },
     {
       label: 'Mark Read',
       icon: <CheckCircle className="w-4 h-4" />,
-      onClick: () => console.log('Mark as read'),
+      onClick: () => logger.info('Email marked as read', { emailId: selectedEmail?.id }),
     },
   ]);
 

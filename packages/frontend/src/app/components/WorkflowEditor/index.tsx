@@ -18,6 +18,7 @@ import 'reactflow/dist/style.css';
 import { executionMonitor, useExecutionMonitor } from '@/app/services/executionMonitor';
 import { intelligentAutoConnect } from '@/app/services/intelligentAutoConnect';
 import { nodeRegistry, useLeanWorkflowStore } from '@/core';
+import { Logger } from '@reporunner/core';
 import { useAIAssistantStore } from '@/core/stores/aiAssistantStore';
 import { useAnalyticsStore } from '@/core/stores/analyticsStore';
 import { useCollaborationStore } from '@/core/stores/collaborationStore';
@@ -92,6 +93,8 @@ const edgeTypes = {
   ai_vectorStore: AIVectorStoreEdge,
   ai_tool: AIToolEdge,
 };
+
+const logger = new Logger('WorkflowEditor');
 
 const WorkflowEditor: React.FC = () => {
   const {
@@ -667,7 +670,9 @@ const WorkflowEditor: React.FC = () => {
 
   // Connect to execution monitor on mount
   useEffect(() => {
-    executionMonitor.connect().catch(console.error);
+    executionMonitor.connect().catch((error) =>
+      logger.error('Failed to connect execution monitor', { error })
+    );
 
     return () => {
       executionMonitor.disconnect();
@@ -690,12 +695,16 @@ const WorkflowEditor: React.FC = () => {
       window.history.replaceState({}, document.title, newUrl);
 
       // Reload credentials to show the new one in dropdowns
-      loadCredentials().catch(console.error);
+      loadCredentials().catch((error) =>
+        logger.error('Failed to reload credentials after OAuth', { error, credentialName })
+      );
 
       // Reload workflow to ensure it's fresh after OAuth redirect
       const workflowId = window.location.pathname.split('/workflow/')[1]?.split('?')[0];
       if (workflowId) {
-        loadWorkflow(workflowId).catch(console.error);
+        loadWorkflow(workflowId).catch((error) =>
+          logger.error('Failed to reload workflow after OAuth', { error, workflowId })
+        );
       }
     } else if (credentialStatus === 'error' && errorMessage) {
       // Show error notification

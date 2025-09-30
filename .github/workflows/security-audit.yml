@@ -1,0 +1,263 @@
+name: Security Audit
+
+on:
+  # Run weekly on Monday at 9 AM UTC
+  schedule:
+    - cron: '0 9 * * 1'
+
+  # Run on pushes to main and develop branches
+  push:
+    branches:
+      - main
+      - develop
+
+  # Run on pull requests targeting main or develop
+  pull_request:
+    branches:
+      - main
+      - develop
+
+  # Allow manual triggering
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  security-events: write
+  pull-requests: write
+  issues: write
+
+jobs:
+  dependency-audit:
+    name: Dependency Security Audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run pnpm audit (production)
+        id: audit-prod
+        run: |
+          echo "## Production Dependencies Audit" >> $GITHUB_STEP_SUMMARY
+          pnpm audit --prod --audit-level=moderate --recursive 2>&1 | tee audit-prod.txt
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          cat audit-prod.txt >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+        continue-on-error: true
+
+      - name: Run pnpm audit (all dependencies)
+        id: audit-all
+        run: |
+          echo "## All Dependencies Audit" >> $GITHUB_STEP_SUMMARY
+          pnpm audit --audit-level=low --recursive --json > audit-all.json
+          pnpm audit --audit-level=low --recursive 2>&1 | tee audit-all.txt
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          cat audit-all.txt >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+        continue-on-error: true
+
+      - name: Check for outdated dependencies
+        id: outdated
+        run: |
+          echo "## Outdated Dependencies" >> $GITHUB_STEP_SUMMARY
+          pnpm outdated --recursive 2>&1 | tee outdated.txt || true
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          head -50 outdated.txt >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+        continue-on-error: true
+
+      - name: Verify lock file integrity
+        run: |
+          echo "## Lock File Integrity Check" >> $GITHUB_STEP_SUMMARY
+          pnpm install --frozen-lockfile --dry-run
+          echo "✅ Lock file integrity verified" >> $GITHUB_STEP_SUMMARY
+
+      - name: Check for duplicate dependencies
+        run: |
+          echo "## Duplicate Dependencies Check" >> $GITHUB_STEP_SUMMARY
+          pnpm dedupe --check 2>&1 | tee dedupe.txt || true
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          cat dedupe.txt >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+        continue-on-error: true
+
+      - name: Upload audit results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: security-audit-results
+          path: |
+            audit-prod.txt
+            audit-all.txt
+            audit-all.json
+            outdated.txt
+            dedupe.txt
+          retention-days: 30
+
+      - name: Comment PR with audit results
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const auditProd = fs.existsSync('audit-prod.txt') ? fs.readFileSync('audit-prod.txt', 'utf8') : 'No production audit data';
+            const auditAll = fs.existsSync('audit-all.txt') ? fs.readFileSync('audit-all.txt', 'utf8') : 'No full audit data';
+
+            const body = `## 🔒 Security Audit Results
+
+            ### Production Dependencies
+            \`\`\`
+            ${auditProd.substring(0, 1000)}
+            \`\`\`
+
+            ### All Dependencies
+            \`\`\`
+            ${auditAll.substring(0, 1000)}
+            \`\`\`
+
+            <details>
+            <summary>View full audit report</summary>
+
+            Download the \`security-audit-results\` artifact for complete details.
+
+            </details>
+            `;
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: body
+            });
+
+  secret-scanning:
+    name: Secret Detection
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full history for secret scanning
+
+      - name: Scan for hardcoded secrets
+        run: |
+          echo "## Secret Scanning Results" >> $GITHUB_STEP_SUMMARY
+          echo "Scanning for common secret patterns..." >> $GITHUB_STEP_SUMMARY
+
+          # Check for API keys and tokens
+          SECRET_COUNT=$(grep -r -E '(api[_-]?key|password|secret|token|bearer|auth[_-]?token)\s*[:=]\s*["\x27][^\"\x27]{10,}' \
+            --include="*.ts" --include="*.tsx" --include="*.js" --include="*.json" \
+            --exclude-dir=node_modules --exclude-dir=dist --exclude-dir=build \
+            packages/ 2>/dev/null | wc -l || echo "0")
+
+          if [ "$SECRET_COUNT" -gt 0 ]; then
+            echo "⚠️ Found $SECRET_COUNT potential secrets" >> $GITHUB_STEP_SUMMARY
+            echo "Review the findings carefully for false positives" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "✅ No secrets detected" >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: Check for committed .env files
+        run: |
+          echo "## Environment File Check" >> $GITHUB_STEP_SUMMARY
+          ENV_FILES=$(find packages/ -name ".env" -o -name ".env.*" | grep -v ".env.example" | wc -l || echo "0")
+
+          if [ "$ENV_FILES" -gt 0 ]; then
+            echo "❌ Found $ENV_FILES committed .env files" >> $GITHUB_STEP_SUMMARY
+            find packages/ -name ".env" -o -name ".env.*" | grep -v ".env.example" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "✅ No .env files committed" >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: Verify .gitignore patterns
+        run: |
+          echo "## GitIgnore Verification" >> $GITHUB_STEP_SUMMARY
+          if grep -q "\.env" .gitignore; then
+            echo "✅ .env files are gitignored" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "⚠️ .env pattern not found in .gitignore" >> $GITHUB_STEP_SUMMARY
+          fi
+
+  security-best-practices:
+    name: Security Best Practices Check
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check for dangerous patterns
+        run: |
+          echo "## Security Anti-Pattern Detection" >> $GITHUB_STEP_SUMMARY
+
+          # Check for eval usage
+          EVAL_COUNT=$(grep -r "eval(" --include="*.ts" --include="*.tsx" packages/ 2>/dev/null | wc -l || echo "0")
+          echo "- eval() usage: $EVAL_COUNT occurrences" >> $GITHUB_STEP_SUMMARY
+
+          # Check for innerHTML
+          INNERHTML_COUNT=$(grep -r "innerHTML" --include="*.tsx" packages/frontend/ 2>/dev/null | wc -l || echo "0")
+          echo "- innerHTML usage: $INNERHTML_COUNT occurrences" >> $GITHUB_STEP_SUMMARY
+
+          # Check for security headers (backend)
+          if grep -r "helmet" packages/ --include="*.ts" > /dev/null 2>&1; then
+            echo "- ✅ Helmet.js security headers configured" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "- ⚠️ Helmet.js not found (recommended for Express)" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          # Check for rate limiting
+          if grep -r "rate.*limit" packages/ --include="*.ts" > /dev/null 2>&1; then
+            echo "- ✅ Rate limiting configured" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "- ⚠️ Rate limiting not detected" >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: Check package.json for security risks
+        run: |
+          echo "## Package.json Security Review" >> $GITHUB_STEP_SUMMARY
+
+          # Check for install scripts
+          INSTALL_SCRIPTS=$(grep -r '"preinstall"\|"postinstall"' packages/*/package.json 2>/dev/null | wc -l || echo "0")
+          if [ "$INSTALL_SCRIPTS" -gt 0 ]; then
+            echo "- ⚠️ Found $INSTALL_SCRIPTS install scripts (review for safety)" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "- ✅ No install scripts found" >> $GITHUB_STEP_SUMMARY
+          fi
+
+  summary:
+    name: Generate Security Summary
+    runs-on: ubuntu-latest
+    needs: [dependency-audit, secret-scanning, security-best-practices]
+    if: always()
+
+    steps:
+      - name: Generate summary
+        run: |
+          echo "# 🔒 Security Audit Complete" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "All security checks have been executed." >> $GITHUB_STEP_SUMMARY
+          echo "Review the detailed results in each job's summary." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Next Steps:**" >> $GITHUB_STEP_SUMMARY
+          echo "1. Review any identified vulnerabilities" >> $GITHUB_STEP_SUMMARY
+          echo "2. Update dependencies with security patches" >> $GITHUB_STEP_SUMMARY
+          echo "3. Address any security anti-patterns" >> $GITHUB_STEP_SUMMARY
+          echo "4. Ensure secrets are properly managed" >> $GITHUB_STEP_SUMMARY

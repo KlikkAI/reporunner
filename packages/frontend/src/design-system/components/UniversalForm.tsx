@@ -10,9 +10,12 @@
 
 import React, { useState, useCallback, useMemo } from 'react';
 import { Button, Spin, Alert } from 'antd';
+import { Logger } from '@reporunner/core';
 import { PropertyRendererFactory } from '../factories/PropertyRendererFactory';
 import type { PropertyRendererConfig, PropertyContext } from '../factories/PropertyRendererFactory';
 import { cn } from '../utils';
+
+const logger = new Logger('UniversalForm');
 
 export interface UniversalFormProps {
   properties: PropertyRendererConfig[];
@@ -140,7 +143,7 @@ export const UniversalForm: React.FC<UniversalFormProps> = ({
         await onSubmit(formData);
       }
     } catch (error) {
-      console.error('Form submission error:', error);
+      logger.error('Form submission error', { error, formData });
     } finally {
       setIsSubmitting(false);
     }

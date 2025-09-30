@@ -9,6 +9,9 @@
 
 import React from 'react';
 import type { ComponentType, ReactNode } from 'react';
+import { Logger } from '@reporunner/core';
+
+const logger = new Logger('ComponentFactory');
 
 // Base configuration interfaces
 export interface BaseComponentConfig {
@@ -146,7 +149,7 @@ export class ComponentFactory {
     const Component = this.componentRegistry.get(config.type);
 
     if (!Component) {
-      console.warn(`Component type "${config.type}" not found in registry`);
+      logger.warn('Component type not found in registry', { type: config.type, configId: config.id });
       return null;
     }
 
@@ -262,7 +265,7 @@ export class ComponentFactory {
         const conditionFn = new Function('context', `return ${rule.condition}`);
         return conditionFn(context);
       } catch (error) {
-        console.warn('Error evaluating condition:', rule.condition, error);
+        logger.warn('Error evaluating condition', { condition: rule.condition, error });
         return true; // Default to show on error
       }
     });
