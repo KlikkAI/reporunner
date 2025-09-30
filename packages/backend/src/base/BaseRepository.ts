@@ -18,14 +18,14 @@ export abstract class BaseRepository<T extends Document> implements IRepositoryW
   /**
    * Find one document by query
    */
-  async findOne(query: any): Promise<T | null> {
+  async findOne(query: Record<string, unknown>): Promise<T | null> {
     return this.model.findOne(query);
   }
 
   /**
    * Find multiple documents
    */
-  async find(query: any): Promise<T[]> {
+  async find(query: Record<string, unknown>): Promise<T[]> {
     return this.model.find(query);
   }
 
@@ -55,28 +55,35 @@ export abstract class BaseRepository<T extends Document> implements IRepositoryW
   /**
    * Count documents matching query
    */
-  async countDocuments(query: any): Promise<number> {
+  async countDocuments(query: Record<string, unknown>): Promise<number> {
     return this.model.countDocuments(query);
   }
 
   /**
    * Find with pagination
    */
-  async findWithPagination(query: any, skip: number, limit: number): Promise<T[]> {
+  async findWithPagination(
+    query: Record<string, unknown>,
+    skip: number,
+    limit: number
+  ): Promise<T[]> {
     return this.model.find(query).skip(skip).limit(limit).sort({ updatedAt: -1 });
   }
 
   /**
    * Find one and delete
    */
-  async findOneAndDelete(query: any): Promise<T | null> {
+  async findOneAndDelete(query: Record<string, unknown>): Promise<T | null> {
     return this.model.findOneAndDelete(query);
   }
 
   /**
    * Update one document
    */
-  async updateOne(query: any, update: any): Promise<boolean> {
+  async updateOne(
+    query: Record<string, unknown>,
+    update: Record<string, unknown>
+  ): Promise<boolean> {
     const result = await this.model.updateOne(query, update);
     return result.modifiedCount > 0;
   }
@@ -84,7 +91,7 @@ export abstract class BaseRepository<T extends Document> implements IRepositoryW
   /**
    * Delete many documents
    */
-  async deleteMany(query: any): Promise<number> {
+  async deleteMany(query: Record<string, unknown>): Promise<number> {
     const result = await this.model.deleteMany(query);
     return result.deletedCount || 0;
   }

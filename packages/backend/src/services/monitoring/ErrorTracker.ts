@@ -7,6 +7,25 @@ import { EventEmitter } from 'node:events';
 import { type LogContext, logger } from '../logging/Logger';
 import { performanceMonitor } from './PerformanceMonitor';
 
+interface ErrorWithCode extends Error {
+  code?: string | number;
+}
+
+interface RequestLike {
+  id?: string;
+  method: string;
+  originalUrl?: string;
+  url: string;
+  headers: Record<string, unknown>;
+  body?: Record<string, unknown>;
+  ip?: string;
+  connection?: { remoteAddress?: string };
+  get: (header: string) => string | undefined;
+  user?: {
+    id: string;
+  };
+}
+
 export interface ErrorInfo {
   id: string;
   name: string;
@@ -30,7 +49,7 @@ export interface ErrorInfo {
     method: string;
     url: string;
     headers: Record<string, string>;
-    body?: any;
+    body?: Record<string, unknown>;
     ip: string;
     userAgent: string;
   };
@@ -42,7 +61,7 @@ export interface ErrorInfo {
     uptime: number;
   };
   tags: Record<string, string>;
-  metadata: Record<string, any>;
+  metadata: Record<string, unknown>;
 }
 
 export interface ErrorPattern {
@@ -74,7 +93,7 @@ class ErrorTrackingService extends EventEmitter {
     error: Error,
     context?: LogContext,
     severity: 'low' | 'medium' | 'high' | 'critical' = 'medium',
-    request?: any
+    request?: RequestLike
   ): string {
     const errorId = this.generateErrorId();
     const fingerprint = this.generateFingerprint(error, context);
@@ -86,10 +105,10 @@ class ErrorTrackingService extends EventEmitter {
     // Create error info
     const errorInfo: ErrorInfo = {
       id: errorId,
+      code: (error as ErrorWithCode).code,
       name: error.name,
       message: error.message,
       stack: error.stack,
-      code: (error as any).code,
       timestamp,
       context,
       severity,
@@ -117,7 +136,7 @@ class ErrorTrackingService extends EventEmitter {
     this.updateCircuitBreaker(fingerprint, timestamp);
 
     // Log error
-    logger.error(`Error tracked: ${error.message}`, context, error);
+    logger.error(`Error tracked: ${error.message}`, { ...context, error });
 
     // Record performance metric
     performanceMonitor.incrementCounter('errors_total', 1, {
@@ -142,7 +161,7 @@ class ErrorTrackingService extends EventEmitter {
     message: string,
     context?: LogContext,
     severity: 'low' | 'medium' | 'high' | 'critical' = 'medium',
-    _metadata?: Record<string, any>
+    _metadata?: Record<string, unknown>
   ): string {
     const customError = new Error(message);
     customError.name = name;
@@ -236,11 +255,12 @@ class ErrorTrackingService extends EventEmitter {
   // Critical error handling
   private handleCriticalError(errorInfo: ErrorInfo): void {
     // Log to security events
-    logger.logSecurityEvent(`Critical error: ${errorInfo.name}`, 'critical', {
+    logger.error(`Critical error: ${errorInfo.name}`, {
       errorId: errorInfo.id,
       fingerprint: errorInfo.fingerprint.substring(0, 8),
       userId: errorInfo.user?.id,
       requestId: errorInfo.request?.id,
+      severity: 'critical',
     });
 
     // Could integrate with external alerting systems here
@@ -269,31 +289,37 @@ class ErrorTrackingService extends EventEmitter {
     return Math.abs(hash).toString(16);
   }
 
-  private extractRequestInfo(req: any): ErrorInfo['request'] {
+  private extractRequestInfo(req: RequestLike): ErrorInfo['request'] {
     return {
       id: req.id || 'unknown',
       method: req.method,
       url: req.originalUrl || req.url,
       headers: this.sanitizeHeaders(req.headers),
       body: this.sanitizeBody(req.body),
-      ip: req.ip || req.connection?.remoteAddress,
+      ip: req.ip || req.connection?.remoteAddress || 'unknown',
       userAgent: req.get('User-Agent') || 'unknown',
     };
   }
 
-  private sanitizeHeaders(headers: any): Record<string, string> {
-    const sanitized = { ...headers };
+  private sanitizeHeaders(headers: Record<string, unknown>): Record<string, string> {
+    const sanitized: Record<string, string> = {};
 
-    // Remove sensitive headers
-    sanitized.authorization = undefined;
-    sanitized.cookie = undefined;
-    sanitized['x-api-key'] = undefined;
+    // Copy and convert all values to strings, excluding sensitive headers
+    Object.entries(headers).forEach(([key, value]) => {
+      if (value != null && key !== 'authorization' && key !== 'cookie' && key !== 'x-api-key') {
+        sanitized[key] = String(value);
+      }
+    });
 
     return sanitized;
   }
 
-  private sanitizeBody(body: any): any {
-    if (!body) return undefined;
+  private sanitizeBody(
+    body: Record<string, unknown> | undefined
+  ): Record<string, unknown> | undefined {
+    if (!body) {
+      return undefined;
+    }
 
     const sanitized = { ...body };
 
@@ -325,11 +351,11 @@ class ErrorTrackingService extends EventEmitter {
     };
   }
 
-  private extractMetadata(error: Error, context?: LogContext): Record<string, any> {
+  private extractMetadata(error: Error, context?: LogContext): Record<string, unknown> {
     return {
       hasStack: !!error.stack,
       stackLines: error.stack?.split('\n').length || 0,
-      errorCode: (error as any).code,
+      errorCode: (error as ErrorWithCode).code,
       context: context || {},
     };
   }
@@ -349,7 +375,7 @@ class ErrorTrackingService extends EventEmitter {
     // Uncaught exceptions
     process.on('uncaughtException', (error) => {
       this.trackError(error, { component: 'global' }, 'critical');
-      logger.error('Uncaught exception', { component: 'global' }, error);
+      logger.error('Uncaught exception', { component: 'global', error });
 
       // Give time to log before exiting
       setTimeout(() => {
@@ -361,7 +387,7 @@ class ErrorTrackingService extends EventEmitter {
     process.on('unhandledRejection', (reason, promise) => {
       const error = reason instanceof Error ? reason : new Error(String(reason));
       this.trackError(error, { component: 'global', promise: promise.toString() }, 'high');
-      logger.error('Unhandled rejection', { component: 'global' }, error);
+      logger.error('Unhandled rejection', { component: 'global', error });
     });
 
     // Warning events
@@ -394,7 +420,7 @@ class ErrorTrackingService extends EventEmitter {
     }
 
     if (filters?.since) {
-      errors = errors.filter((e) => e.timestamp >= filters.since!);
+      errors = errors.filter((e) => filters.since && e.timestamp >= filters.since);
     }
 
     if (filters?.fingerprint) {
@@ -460,7 +486,9 @@ class ErrorTrackingService extends EventEmitter {
   // Resolution methods
   public resolvePattern(fingerprint: string, resolvedBy: string): boolean {
     const pattern = this.patterns.get(fingerprint);
-    if (!pattern) return false;
+    if (!pattern) {
+      return false;
+    }
 
     pattern.isResolved = true;
     pattern.resolvedAt = Date.now();
@@ -477,7 +505,12 @@ class ErrorTrackingService extends EventEmitter {
 
   // Express middleware
   public createExpressErrorHandler() {
-    return (error: Error, req: any, res: any, _next: any) => {
+    return (
+      error: Error,
+      req: RequestLike,
+      res: { status: (code: number) => { json: (data: unknown) => void } },
+      _next: (error?: unknown) => void
+    ) => {
       const errorId = this.trackError(
         error,
         {

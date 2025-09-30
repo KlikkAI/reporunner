@@ -4,21 +4,30 @@
  */
 
 import { EventEmitter } from 'node:events';
+import type { NextFunction, Request, Response } from 'express';
 import { logger } from '../logging/Logger';
+
+declare global {
+  namespace Express {
+    interface Request {
+      id?: string;
+    }
+  }
+}
 
 export interface PerformanceMetric {
   name: string;
   value: number;
   unit: string;
   timestamp: number;
-  tags?: Record<string, string>;
-  metadata?: Record<string, any>;
+  tags?: Record<string, string | number | boolean>;
+  metadata?: Record<string, unknown>;
 }
 
 export interface OperationTimer {
   start: number;
   name: string;
-  context?: Record<string, any>;
+  context?: Record<string, unknown>;
 }
 
 export interface MemorySnapshot {
@@ -63,7 +72,7 @@ class PerformanceMonitorService extends EventEmitter {
   }
 
   // Timer operations
-  public startTimer(name: string, context?: Record<string, any>): string {
+  public startTimer(name: string, context?: Record<string, unknown>): string {
     const timerId = `${name}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
     this.timers.set(timerId, {
@@ -109,14 +118,14 @@ class PerformanceMonitorService extends EventEmitter {
   public measureOperation<T>(
     name: string,
     operation: () => Promise<T>,
-    context?: Record<string, any>
+    context?: Record<string, unknown>
   ): Promise<T> {
-    return new Promise(async (resolve, reject) => {
+    return new Promise((resolve, reject) => {
       const timerId = this.startTimer(name, context);
       const startMemory = process.memoryUsage();
 
       try {
-        const result = await operation();
+        const result = operation();
         const duration = this.endTimer(timerId);
         const endMemory = process.memoryUsage();
 
@@ -153,19 +162,22 @@ class PerformanceMonitorService extends EventEmitter {
     this.emit('metric', metric);
 
     // Log performance metrics to specialized logger
-    logger.logPerformanceMetrics(
-      metric.name,
-      {
-        duration: metric.value,
-        timestamp: metric.timestamp,
-      },
-      {
-        component: 'performance',
-        unit: metric.unit,
-        tags: metric.tags,
-        ...metric.metadata,
-      }
-    );
+    // Check if logPerformanceMetrics exists on logger before calling
+    if ('logPerformanceMetrics' in logger && typeof logger.logPerformanceMetrics === 'function') {
+      logger.logPerformanceMetrics(
+        metric.name,
+        {
+          duration: metric.value,
+          timestamp: metric.timestamp,
+        },
+        {
+          component: 'performance',
+          unit: metric.unit,
+          tags: metric.tags,
+          ...metric.metadata,
+        }
+      );
+    }
 
     // Keep metrics buffer manageable
     if (this.metrics.length > 10000) {
@@ -249,7 +261,7 @@ class PerformanceMonitorService extends EventEmitter {
     // Keep only last 10 minutes of data
     const tenMinutesAgo = timestamp - 10 * 60 * 1000;
     for (const [key, _] of this.memoryLeakDetection) {
-      if (parseInt(key, 10) < tenMinutesAgo) {
+      if (Number.parseInt(key, 10) < tenMinutesAgo) {
         this.memoryLeakDetection.delete(key);
       }
     }
@@ -320,7 +332,9 @@ class PerformanceMonitorService extends EventEmitter {
 
   public getAverageMetric(name: string, since?: number): number {
     const metrics = this.getMetrics(name, since);
-    if (metrics.length === 0) return 0;
+    if (metrics.length === 0) {
+      return 0;
+    }
 
     const sum = metrics.reduce((acc, m) => acc + m.value, 0);
     return sum / metrics.length;
@@ -328,7 +342,9 @@ class PerformanceMonitorService extends EventEmitter {
 
   public getPercentile(name: string, percentile: number, since?: number): number {
     const metrics = this.getMetrics(name, since);
-    if (metrics.length === 0) return 0;
+    if (metrics.length === 0) {
+      return 0;
+    }
 
     const sorted = metrics.map((m) => m.value).sort((a, b) => a - b);
     const index = Math.ceil((percentile / 100) * sorted.length) - 1;
@@ -360,9 +376,8 @@ class PerformanceMonitorService extends EventEmitter {
     };
   }
 
-  // Middleware for Express
-  public createExpressMiddleware() {
-    return (req: any, res: any, next: any) => {
+  public createExpressMiddleware(): (req: Request, res: Response, next: NextFunction) => void {
+    return (req: Request, res: Response, next: NextFunction) => {
       const startTime = performance.now();
       const startMemory = process.memoryUsage();
 
@@ -393,7 +408,12 @@ class PerformanceMonitorService extends EventEmitter {
         });
 
         // Log request performance
-        logger.logRequest(req, res, duration);
+        logger.debug('Request completed', {
+          method: req.method,
+          path: req.path,
+          duration,
+          statusCode: res.statusCode,
+        });
       });
 
       next();
