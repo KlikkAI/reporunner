@@ -7,7 +7,7 @@ export class NodeExecutionController {
   private nodeExecutionService: NodeExecutionService;
 
   constructor() {
-    this.nodeExecutionService = new NodeExecutionService();
+    this.nodeExecutionService = NodeExecutionService.getInstance();
   }
 
   /**

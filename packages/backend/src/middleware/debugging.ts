@@ -151,18 +151,20 @@ export function debugMiddleware(req: DebuggingRequest, res: Response, next: Next
   });
 
   // Log detailed request information
-  debugTools.addDebugEvent(req.debugSession, {
-    timestamp: Date.now(),
-    type: 'log',
-    level: 'debug',
-    message: 'Request received',
-    data: {
-      headers: req.headers,
-      query: req.query,
-      params: req.params,
-      body: req.body,
-    },
-  });
+  if (req.debugSession) {
+    debugTools.addDebugEvent(req.debugSession, {
+      timestamp: Date.now(),
+      type: 'log',
+      level: 'debug',
+      message: 'Request received',
+      data: {
+        headers: req.headers,
+        query: req.query,
+        params: req.params,
+        body: req.body,
+      },
+    });
+  }
 
   // Intercept response
   const originalSend = res.send;

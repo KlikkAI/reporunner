@@ -11,6 +11,9 @@ export interface AIChatNodeConfig {
 }
 
 export class AIChatNode {
+  // @ts-ignore - Config stored for future use
+  private _config: AIChatNodeConfig;
+
   constructor(config: AIChatNodeConfig = {}) {
     this._config = config;
   }

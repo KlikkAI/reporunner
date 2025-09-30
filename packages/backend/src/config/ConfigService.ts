@@ -26,4 +26,12 @@ export class ConfigService {
     }
     return value;
   }
+
+  getDatabaseConfig(): any {
+    // TODO: Implement database configuration
+    return {
+      uri: this.get('MONGODB_URI') || 'mongodb://localhost:27017/reporunner',
+      dbName: this.get('DB_NAME') || 'reporunner',
+    };
+  }
 }

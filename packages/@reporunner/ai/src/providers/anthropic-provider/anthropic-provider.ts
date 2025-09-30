@@ -30,6 +30,10 @@ export class AnthropicProvider extends CombinedAIProvider {
   ];
 
   private apiKey: string;
+  // @ts-ignore - Config stored for future use
+  private _baseUrl: string;
+  // @ts-ignore - Config stored for future use
+  private _anthropicVersion: string;
 
   constructor(config: AnthropicConfig) {
     super(config);

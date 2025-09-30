@@ -6,6 +6,9 @@ export interface AICompletionNodeConfig {
 }
 
 export class AICompletionNode {
+  // @ts-ignore - Config stored for future use
+  private _config: AICompletionNodeConfig;
+
   constructor(config: AICompletionNodeConfig = {}) {
     this._config = config;
   }

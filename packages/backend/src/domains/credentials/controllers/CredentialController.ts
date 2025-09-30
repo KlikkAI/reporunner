@@ -7,7 +7,7 @@ export class CredentialController extends BaseController {
 
   constructor() {
     super();
-    this.credentialService = new CredentialService();
+    this.credentialService = CredentialService.getInstance();
   }
 
   /**

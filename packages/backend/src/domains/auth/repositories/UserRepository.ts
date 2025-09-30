@@ -4,5 +4,10 @@
  */
 
 export class UserRepository {
-  // TODO: Implement repository methods
+  async findById(_id: string): Promise<any> {
+    // TODO: Implement findById
+    return null;
+  }
+
+  // TODO: Implement other repository methods
 }

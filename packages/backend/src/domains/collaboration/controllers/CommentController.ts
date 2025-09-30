@@ -5,11 +5,12 @@
 
 import type { Request, Response } from 'express';
 import { Comment } from '../../../models/Comment';
-import { CollaborationService } from '../../../services/CollaborationService';
 import { asyncHandler } from '../../../utils/asyncHandler';
 import { ApiResponse } from '../../../utils/response';
+import { CollaborationService } from '../services/CollaborationService';
 
 export class CommentController {
+  private collaborationService: CollaborationService;
   constructor() {
     this.collaborationService = CollaborationService.getInstance();
   }

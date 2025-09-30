@@ -10,7 +10,7 @@ export class AuthController extends BaseController {
 
   constructor() {
     super();
-    this.authService = new AuthService();
+    this.authService = AuthService.getInstance();
     // Using winston logger directly
   }
 

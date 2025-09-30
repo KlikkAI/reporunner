@@ -1,5 +1,6 @@
 import { CrudControllerBase } from '@reporunner/shared';
 import type { Request, Response } from 'express';
+import type { IExecution, Workflow } from '@reporunner/api-types';
 import { injectable } from 'inversify';
 
 @injectable()
@@ -8,11 +9,10 @@ export class WorkflowController extends CrudControllerBase {
   async getWorkflows(req: Request, res: Response) {
     try {
       const { page, limit, skip: _skip } = this.getPaginationParams(req);
-      const _filters = this.buildQueryFilters(req, ['status', 'name', 'tags']);
 
       // Mock response for now - replace with actual service call
       // TODO: Use filters to query workflows
-      const workflows: any[] = [];
+      const workflows: Workflow[] = [];
       const total = 0;
 
       return this.sendSuccess(res, {
@@ -127,7 +127,7 @@ export class WorkflowController extends CrudControllerBase {
       const { page, limit, skip: _skip } = this.getPaginationParams(req);
 
       // Mock response for now - replace with actual service call
-      const executions: any[] = [];
+      const executions: IExecution[] = [];
       const total = 0;
 
       return this.sendSuccess(res, {

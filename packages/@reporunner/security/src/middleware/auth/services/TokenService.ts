@@ -17,8 +17,15 @@ interface TokenServiceInterface {
 }
 
 export class JWTTokenService implements TokenServiceInterface {
+  // @ts-ignore - Config stored for future JWT implementation
+  private config: any;
+
+  constructor(config?: any) {
+    this.config = config;
+  }
+
   async generateToken(payload: TokenPayload): Promise<string> {
-    // TODO: Implement JWT generation
+    // TODO: Implement JWT generation with config
     return Buffer.from(JSON.stringify(payload)).toString('base64');
   }
 

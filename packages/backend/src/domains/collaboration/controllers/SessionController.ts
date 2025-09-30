@@ -6,11 +6,12 @@
 import type { Request, Response } from 'express';
 import { CollaborationSession } from '../../../models/CollaborationSession';
 import { Operation } from '../../../models/Operation';
-import { CollaborationService } from '../../../services/CollaborationService';
 import { asyncHandler } from '../../../utils/asyncHandler';
 import { ApiResponse } from '../../../utils/response';
+import { CollaborationService } from '../services/CollaborationService';
 
 export class SessionController {
+  private collaborationService: CollaborationService;
   constructor() {
     this.collaborationService = CollaborationService.getInstance();
   }

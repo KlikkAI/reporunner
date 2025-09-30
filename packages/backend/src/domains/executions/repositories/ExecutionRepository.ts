@@ -13,12 +13,13 @@ export class ExecutionRepository extends BaseRepository<any> {
   }
 
   // Delegate methods to Mongoose model for backward compatibility
-  async findOne(query: any) {
+  override async findOne(query: any) {
     return Execution.findOne(query);
   }
 
-  async deleteMany(query: any) {
-    return Execution.deleteMany(query);
+  override async deleteMany(query: any): Promise<number> {
+    const result = await Execution.deleteMany(query);
+    return result.deletedCount || 0;
   }
 
   async countDocuments(query: any) {

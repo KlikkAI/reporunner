@@ -15,5 +15,10 @@ export class NodeExecutionService {
     return NodeExecutionService.instance;
   }
 
-  // TODO: Implement node execution methods
+  async executeNodeChain(_executionId: string, _nodeIds: string[], _data?: any): Promise<any> {
+    // TODO: Implement node chain execution
+    throw new Error('Node chain execution not yet implemented');
+  }
+
+  // TODO: Implement other node execution methods
 }

@@ -15,5 +15,18 @@ export class WorkflowEngine {
     return WorkflowEngine.instance;
   }
 
-  // TODO: Implement workflow execution methods
+  async executeWorkflow(
+    _workflow: any,
+    _triggerType?: string,
+    _triggerData?: any,
+    _userId?: string
+  ): Promise<any> {
+    // TODO: Implement workflow execution
+    throw new Error('Workflow execution not yet implemented');
+  }
+
+  async stopExecution(_executionId: string): Promise<void> {
+    // TODO: Implement execution stopping
+    throw new Error('Stop execution not yet implemented');
+  }
 }

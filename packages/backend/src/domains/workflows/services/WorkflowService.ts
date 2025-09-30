@@ -44,7 +44,7 @@ export class WorkflowService {
   constructor() {
     this.workflowRepository = new WorkflowRepository();
     this.executionRepository = new ExecutionRepository();
-    this.workflowEngine = new WorkflowEngine();
+    this.workflowEngine = WorkflowEngine.getInstance();
   }
 
   /**
