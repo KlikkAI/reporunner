@@ -59,15 +59,6 @@ export class DevTools {
     template?: 'basic' | 'api' | 'data-processing' | 'ai-workflow';
     outputPath?: string;
   }): Promise<string> {
-    const template = this.getWorkflowTemplate(options.template || 'basic');
-
-    const _workflow = {
-      ...template,
-      name: options.name,
-      description: options.description || `Generated workflow: ${options.name}`,
-      createdAt: new Date().toISOString(),
-    };
-
     const outputPath =
       options.outputPath || `./workflows/${options.name.toLowerCase().replace(/\s+/g, '-')}.json`;
 
@@ -80,15 +71,6 @@ export class DevTools {
     category: string;
     outputPath?: string;
   }): Promise<string> {
-    const nodeTemplate = this.getNodeTemplate(options.type);
-
-    const _node = {
-      ...nodeTemplate,
-      name: options.name,
-      category: options.category,
-      createdAt: new Date().toISOString(),
-    };
-
     const outputPath =
       options.outputPath || `./src/nodes/${options.category}/${options.name.toLowerCase()}.ts`;
 
@@ -235,6 +217,7 @@ export class DevTools {
     };
   }
 
+  // @ts-expect-error - Template method reserved for future use
   private getWorkflowTemplate(type: string): any {
     const templates = {
       basic: {
@@ -291,6 +274,7 @@ export class DevTools {
     return templates[type as keyof typeof templates] || templates.basic;
   }
 
+  // @ts-expect-error - Template method reserved for future use
   private getNodeTemplate(type: string): any {
     const templates = {
       action: {

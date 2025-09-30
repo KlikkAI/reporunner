@@ -15,7 +15,7 @@ program
   .action(async (name, options) => {
     const devTools = new DevTools();
     try {
-      const _path = await devTools.generateWorkflow({
+      await devTools.generateWorkflow({
         name,
         template: options.template,
         description: options.description,
@@ -34,7 +34,7 @@ program
   .action(async (type, name, options) => {
     const devTools = new DevTools();
     try {
-      const _path = await devTools.generateNode({
+      await devTools.generateNode({
         type,
         name,
         category: options.category,
@@ -72,7 +72,7 @@ program
     const devTools = new DevTools();
     try {
       const iterations = Number.parseInt(options.iterations, 10);
-      const _results = await devTools.benchmarkWorkflow(workflowId, iterations);
+      await devTools.benchmarkWorkflow(workflowId, iterations);
     } catch (_error) {
       process.exit(1);
     }
