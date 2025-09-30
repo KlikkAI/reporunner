@@ -1,5 +1,5 @@
 import type { Document, Model } from 'mongoose';
-import type { IRepositoryWithPagination } from '../interfaces/IRepository.js';
+import type { IRepositoryWithPagination } from '../interfaces/IRepository';
 
 export abstract class BaseRepository<T extends Document> implements IRepositoryWithPagination<T> {
   protected model: Model<T>;

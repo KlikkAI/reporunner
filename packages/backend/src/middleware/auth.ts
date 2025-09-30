@@ -5,9 +5,9 @@
 
 import type { NextFunction, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
-import { UserRepository } from '../domains/auth/repositories/UserRepository.js';
-import { type Permission, PermissionService } from '../services/PermissionService.js';
-import { AppError } from './errorHandlers.js';
+import { UserRepository } from '../domains/auth/repositories/UserRepository';
+import { type Permission, PermissionService } from '../services/PermissionService';
+import { AppError } from './errorHandlers';
 
 // Extend Express Request type to include user data
 declare global {

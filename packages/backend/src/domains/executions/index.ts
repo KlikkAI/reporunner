@@ -2,7 +2,7 @@
  * Executions domain exports
  */
 
-export * from './controllers/NodeExecutionController.js';
-export * from './interfaces/index.js';
-export * from './repositories/ExecutionRepository.js';
-export * from './services/NodeExecutionService.js';
+export * from './controllers/NodeExecutionController';
+export * from './interfaces/index';
+export * from './repositories/ExecutionRepository';
+export * from './services/NodeExecutionService';

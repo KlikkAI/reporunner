@@ -4,10 +4,10 @@
  */
 
 import type { NextFunction, Request, Response } from 'express';
-import { debugTools } from '../services/debugging/DebugTools.js';
-import { logger } from '../services/logging/Logger.js';
-import { errorTracker } from '../services/monitoring/ErrorTracker.js';
-import { performanceMonitor } from '../services/monitoring/PerformanceMonitor.js';
+import { debugTools } from '../services/debugging/DebugTools';
+import { logger } from '../services/logging/Logger';
+import { errorTracker } from '../services/monitoring/ErrorTracker';
+import { performanceMonitor } from '../services/monitoring/PerformanceMonitor';
 
 // Extended Request interface for debugging
 interface DebuggingRequest extends Request {

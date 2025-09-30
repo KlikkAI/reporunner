@@ -2,7 +2,7 @@
  * OAuth domain exports
  */
 
-export * from './controllers/OAuthController.js';
-export * from './interfaces/index.js';
-export * from './services/GmailService.js';
-export * from './services/OAuthService.js';
+export * from './controllers/OAuthController';
+export * from './interfaces/index';
+export * from './services/GmailService';
+export * from './services/OAuthService';

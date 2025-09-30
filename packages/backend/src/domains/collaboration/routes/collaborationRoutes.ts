@@ -4,9 +4,9 @@
  */
 
 import { Router } from 'express';
-import { authenticate } from '../../../middleware/auth.js';
-import { CommentController } from '../controllers/CommentController.js';
-import { SessionController } from '../controllers/SessionController.js';
+import { authenticate } from '../../../middleware/auth';
+import { CommentController } from '../controllers/CommentController';
+import { SessionController } from '../controllers/SessionController';
 
 const router: Router = Router();
 

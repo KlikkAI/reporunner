@@ -1,8 +1,8 @@
 import express, { type Router } from 'express';
 import { body, param, query } from 'express-validator';
-import { authenticate } from '../../../middleware/auth.js';
-import { catchAsync } from '../../../middleware/errorHandlers.js';
-import { WorkflowController } from '../controllers/WorkflowController.js';
+import { authenticate } from '../../../middleware/auth';
+import { catchAsync } from '../../../middleware/errorHandlers';
+import { WorkflowController } from '../controllers/WorkflowController';
 
 const router: Router = express.Router();
 const workflowController = new WorkflowController();

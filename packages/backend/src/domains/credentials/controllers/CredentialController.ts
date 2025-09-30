@@ -1,6 +1,6 @@
 import type { Request, Response } from 'express';
-import { BaseController } from '../../../base/BaseController.js';
-import { CredentialService } from '../services/CredentialService.js';
+import { BaseController } from '../../../base/BaseController';
+import { CredentialService } from '../services/CredentialService';
 
 export class CredentialController extends BaseController {
   private credentialService: CredentialService;

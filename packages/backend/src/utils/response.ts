@@ -3,8 +3,8 @@
  */
 
 import type { Response } from 'express';
-import { HTTP_STATUS } from '../constants/httpStatus.js';
-import type { IApiResponse, IPaginationResult } from '../types/common.js';
+import { HTTP_STATUS } from '../constants/httpStatus';
+import type { IApiResponse, IPaginationResult } from '../types/common';
 
 export class ResponseUtils {
   /**

@@ -1,8 +1,8 @@
 import type { Request, Response } from 'express';
-import { BaseController } from '../../../base/BaseController.js';
-import { AppError } from '../../../middleware/errorHandlers.js';
-import { logger } from '../../../utils/logger.js';
-import { AuthService } from '../services/AuthService.js';
+import { BaseController } from '../../../base/BaseController';
+import { AppError } from '../../../middleware/errorHandlers';
+import { logger } from '../../../utils/logger';
+import { AuthService } from '../services/AuthService';
 
 export class AuthController extends BaseController {
   private authService: AuthService;

@@ -1,14 +1,14 @@
 import express, { type Router } from 'express';
-import { authenticate } from '../../../middleware/auth.js';
-import { enhancedCatchAsync } from '../../../middleware/enhancedErrorHandlers.js';
-import { AuthController } from '../controllers/AuthController.js';
+import { authenticate } from '../../../middleware/auth';
+import { enhancedCatchAsync } from '../../../middleware/enhancedErrorHandlers';
+import { AuthController } from '../controllers/AuthController';
 import {
   changePasswordValidation,
   loginValidation,
   refreshTokenValidation,
   registerValidation,
   updateProfileValidation,
-} from '../validators/authValidators.js';
+} from '../validators/authValidators';
 
 const router: Router = express.Router();
 const authController = new AuthController();

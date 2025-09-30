@@ -4,11 +4,11 @@
  */
 
 import type { Request, Response } from 'express';
-import { CollaborationSession } from '../../../models/CollaborationSession.js';
-import { Operation } from '../../../models/Operation.js';
-import { CollaborationService } from '../../../services/CollaborationService.js';
-import { asyncHandler } from '../../../utils/asyncHandler.js';
-import { ApiResponse } from '../../../utils/response.js';
+import { CollaborationSession } from '../../../models/CollaborationSession';
+import { Operation } from '../../../models/Operation';
+import { CollaborationService } from '../../../services/CollaborationService';
+import { asyncHandler } from '../../../utils/asyncHandler';
+import { ApiResponse } from '../../../utils/response';
 
 export class SessionController {
   private collaborationService: CollaborationService;

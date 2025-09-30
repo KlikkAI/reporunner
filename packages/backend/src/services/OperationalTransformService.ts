@@ -3,7 +3,7 @@
  * Implements operational transformation algorithms for conflict resolution
  */
 
-import type { IOperation } from '../models/Operation.js';
+import type { IOperation } from '../models/Operation';
 
 export interface TransformResult {
   transformedOperation: IOperation;

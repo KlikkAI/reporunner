@@ -1,7 +1,7 @@
-import { AppError } from '../../../middleware/errorHandlers.js';
-import { ExecutionRepository } from '../../executions/repositories/ExecutionRepository.js';
-import { WorkflowRepository } from '../repositories/WorkflowRepository.js';
-import { WorkflowEngine } from './WorkFlowEngine.js';
+import { AppError } from '../../../middleware/errorHandlers';
+import { ExecutionRepository } from '../../executions/repositories/ExecutionRepository';
+import { WorkflowRepository } from '../repositories/WorkflowRepository';
+import { WorkflowEngine } from './WorkFlowEngine';
 
 export interface WorkflowFilters {
   page: number;

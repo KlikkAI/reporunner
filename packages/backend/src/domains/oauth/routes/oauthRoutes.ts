@@ -1,8 +1,8 @@
 import express, { type Router } from 'express';
 import { body } from 'express-validator';
-import { authenticate } from '../../../middleware/auth.js';
-import { catchAsync } from '../../../middleware/errorHandlers.js';
-import { OAuthController } from '../controllers/OAuthController.js';
+import { authenticate } from '../../../middleware/auth';
+import { catchAsync } from '../../../middleware/errorHandlers';
+import { OAuthController } from '../controllers/OAuthController';
 
 const router: Router = express.Router();
 const oauthController = new OAuthController();

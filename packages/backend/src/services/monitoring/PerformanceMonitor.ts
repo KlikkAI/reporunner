@@ -4,7 +4,7 @@
  */
 
 import { EventEmitter } from 'node:events';
-import { logger } from '../logging/Logger.js';
+import { logger } from '../logging/Logger';
 
 export interface PerformanceMetric {
   name: string;

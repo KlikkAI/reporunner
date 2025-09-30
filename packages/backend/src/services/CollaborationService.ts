@@ -7,13 +7,13 @@ import type { Server as SocketIOServer } from 'socket.io';
 import {
   CollaborationSession,
   type ICollaborationSession,
-} from '../models/CollaborationSession.js';
-import { Comment, type IComment } from '../models/Comment.js';
-import { type IOperation, Operation } from '../models/Operation.js';
+} from '../models/CollaborationSession';
+import { Comment, type IComment } from '../models/Comment';
+import { type IOperation, Operation } from '../models/Operation';
 import {
   OperationalTransformService,
   type TransformResult,
-} from './OperationalTransformService.js';
+} from './OperationalTransformService';
 
 export interface ParticipantData {
   userId: string;

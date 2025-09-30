@@ -2,7 +2,7 @@
  * Auth domain exports
  */
 
-export * from './controllers/AuthController.js';
-export * from './interfaces/index.js';
-export * from './repositories/UserRepository.js';
-export * from './services/AuthService.js';
+export * from './controllers/AuthController';
+export * from './interfaces/index';
+export * from './repositories/UserRepository';
+export * from './services/AuthService';

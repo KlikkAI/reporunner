@@ -1,7 +1,7 @@
 import type { Request, Response } from 'express';
 import { validationResult } from 'express-validator';
-import { AppError } from '../../../middleware/errorHandlers.js';
-import { NodeExecutionService } from '../services/NodeExecutionService.js';
+import { AppError } from '../../../middleware/errorHandlers';
+import { NodeExecutionService } from '../services/NodeExecutionService';
 
 export class NodeExecutionController {
   private nodeExecutionService: NodeExecutionService;

@@ -4,8 +4,8 @@
  */
 
 import { EventEmitter } from 'node:events';
-import { type LogContext, logger } from '../logging/Logger.js';
-import { performanceMonitor } from './PerformanceMonitor.js';
+import { type LogContext, logger } from '../logging/Logger';
+import { performanceMonitor } from './PerformanceMonitor';
 
 export interface ErrorInfo {
   id: string;

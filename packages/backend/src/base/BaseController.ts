@@ -1,8 +1,8 @@
 import type { Request, Response } from 'express';
 import { validationResult } from 'express-validator';
-import type { IAuthenticatedRequest } from '../interfaces/IController.js';
-import type { IApiResponse } from '../interfaces/IService.js';
-import { AppError } from '../middleware/errorHandlers.js';
+import type { IAuthenticatedRequest } from '../interfaces/IController';
+import type { IApiResponse } from '../interfaces/IService';
+import { AppError } from '../middleware/errorHandlers';
 
 export abstract class BaseController {
   /**

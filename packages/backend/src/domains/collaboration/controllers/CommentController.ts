@@ -4,10 +4,10 @@
  */
 
 import type { Request, Response } from 'express';
-import { Comment } from '../../../models/Comment.js';
-import { CollaborationService } from '../../../services/CollaborationService.js';
-import { asyncHandler } from '../../../utils/asyncHandler.js';
-import { ApiResponse } from '../../../utils/response.js';
+import { Comment } from '../../../models/Comment';
+import { CollaborationService } from '../../../services/CollaborationService';
+import { asyncHandler } from '../../../utils/asyncHandler';
+import { ApiResponse } from '../../../utils/response';
 
 export class CommentController {
   constructor() {

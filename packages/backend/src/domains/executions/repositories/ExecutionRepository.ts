@@ -1,4 +1,4 @@
-import { Execution } from '../../../models/Execution.js';
+import { Execution } from '../../../models/Execution';
 import { BaseRepository } from '@reporunner/core/src/repository/BaseRepository';
 import type { Db } from 'mongodb';
 

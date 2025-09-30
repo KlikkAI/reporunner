@@ -1,7 +1,7 @@
 import type { Request, Response } from 'express';
 import { validationResult } from 'express-validator';
-import { AppError } from '../../../middleware/errorHandlers.js';
-import { OAuthService } from '../services/OAuthService.js';
+import { AppError } from '../../../middleware/errorHandlers';
+import { OAuthService } from '../services/OAuthService';
 
 export class OAuthController {
   private oauthService: OAuthService;
