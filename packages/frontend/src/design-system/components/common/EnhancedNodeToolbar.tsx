@@ -16,7 +16,7 @@ import {
 } from '@ant-design/icons';
 import { Dropdown, Menu, Tooltip } from 'antd';
 import React, { useRef, useState } from 'react';
-import { useNodeTheme } from '../themes';
+import { useNodeTheme } from '../../themes';
 import type { NodeTheme, ToolbarAction } from '../types';
 
 interface EnhancedNodeToolbarProps {

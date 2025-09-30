@@ -50,7 +50,8 @@ export {
   SectionLayout,
   StackLayout,
 } from './DynamicLayout';
-export { default as PageSection } from './PageSection';
+// TODO: Implement PageSection component
+// export { default as PageSection } from './PageSection';
 // Advanced Components
 export { PropertyRenderer } from './PropertyRenderer';
 export { default as StatsCard } from './StatsCard';

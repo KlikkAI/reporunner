@@ -28,7 +28,7 @@ import {
 import type React from 'react';
 import { useEffect, useState } from 'react';
 import type { INodeProperty } from '@/core/nodes/types';
-import { useNodeTheme } from '../themes';
+import { useNodeTheme } from '../../themes';
 import type { NodeTheme } from '../types';
 
 const { Option } = Select;

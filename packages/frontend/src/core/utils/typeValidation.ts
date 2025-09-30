@@ -92,7 +92,7 @@ class TypeValidation {
         break;
 
       case 'object':
-        this.validateObject(value, rule, errors, warnings);
+        this.validateObjectValue(value, rule, errors, warnings);
         break;
     }
 
@@ -198,9 +198,9 @@ class TypeValidation {
   }
 
   /**
-   * Validate object value
+   * Validate object value type and constraints
    */
-  private validateObject(
+  private validateObjectValue(
     value: any,
     rule: ValidationRule,
     errors: string[],
