@@ -114,8 +114,10 @@ export interface INodeType {
 
 /**
  * Integration definition
+ * @deprecated Use IIntegration from '../integration' instead
+ * This is kept for backward compatibility but will be removed in next major version
  */
-export interface IIntegration {
+export interface INodeIntegration {
   id: ID;
   name: string;
   displayName: string;

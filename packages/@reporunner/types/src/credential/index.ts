@@ -51,7 +51,7 @@ export interface ICredentialData {
   password?: string;
 
   // JWT
-  token?: string;
+  jwtToken?: string;
 
   // Service Account
   clientEmail?: string;
