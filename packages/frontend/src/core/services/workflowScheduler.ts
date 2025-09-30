@@ -51,7 +51,7 @@ class WorkflowScheduler {
    */
   createSchedule(schedule: ScheduleConfig): void {
     this.schedules.set(schedule.id, schedule);
-    
+
     if (schedule.enabled) {
       this.activateSchedule(schedule.id);
     }
@@ -111,8 +111,9 @@ class WorkflowScheduler {
    * Get schedules for a workflow
    */
   getWorkflowSchedules(workflowId: string): ScheduleConfig[] {
-    return Array.from(this.schedules.values())
-      .filter(schedule => schedule.workflowId === workflowId);
+    return Array.from(this.schedules.values()).filter(
+      (schedule) => schedule.workflowId === workflowId
+    );
   }
 
   /**
@@ -120,16 +121,20 @@ class WorkflowScheduler {
    */
   private activateSchedule(scheduleId: string): void {
     const schedule = this.schedules.get(scheduleId);
-    if (!schedule) return;
+    if (!schedule) {
+      return;
+    }
 
     // Clear existing timer
     this.deactivateSchedule(scheduleId);
 
     const nextExecution = this.calculateNextExecution(schedule);
-    if (!nextExecution) return;
+    if (!nextExecution) {
+      return;
+    }
 
     const delay = new Date(nextExecution).getTime() - Date.now();
-    
+
     if (delay > 0) {
       const timer = setTimeout(() => {
         this.executeScheduledWorkflow(scheduleId);
@@ -155,16 +160,18 @@ class WorkflowScheduler {
    */
   private calculateNextExecution(schedule: ScheduleConfig): string | null {
     const now = new Date();
-    
+
     switch (schedule.schedule.type) {
-      case 'once':
+      case 'once': {
         const startDate = schedule.schedule.startDate;
         return startDate && new Date(startDate) > now ? startDate : null;
+      }
 
-      case 'interval':
+      case 'interval': {
         // Simple interval implementation (in milliseconds)
-        const interval = parseInt(schedule.schedule.expression || '0');
+        const interval = Number.parseInt(schedule.schedule.expression || '0', 10);
         return new Date(now.getTime() + interval).toISOString();
+      }
 
       case 'cron':
         // Mock cron calculation - in real implementation, use a cron library
@@ -181,7 +188,9 @@ class WorkflowScheduler {
    */
   private async executeScheduledWorkflow(scheduleId: string): Promise<void> {
     const schedule = this.schedules.get(scheduleId);
-    if (!schedule || !schedule.enabled) return;
+    if (!schedule?.enabled) {
+      return;
+    }
 
     const execution: ScheduledExecution = {
       id: `sched-exec-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
@@ -196,14 +205,13 @@ class WorkflowScheduler {
 
     try {
       execution.actualStartTime = new Date().toISOString();
-      
+
       // Mock workflow execution - replace with actual workflow engine call
       await this.mockWorkflowExecution(schedule.workflowId);
-      
+
       execution.status = 'completed';
       execution.completedTime = new Date().toISOString();
       execution.result = { success: true };
-
     } catch (error) {
       execution.status = 'failed';
       execution.error = error instanceof Error ? error.message : 'Unknown error';
@@ -225,11 +233,17 @@ class WorkflowScheduler {
   /**
    * Schedule a retry
    */
-  private async scheduleRetry(execution: ScheduledExecution, schedule: ScheduleConfig): Promise<void> {
-    if (!schedule.retryConfig) return;
+  private async scheduleRetry(
+    execution: ScheduledExecution,
+    schedule: ScheduleConfig
+  ): Promise<void> {
+    if (!schedule.retryConfig) {
+      return;
+    }
 
-    const delay = schedule.retryConfig.retryDelay * 
-                  Math.pow(schedule.retryConfig.backoffMultiplier, execution.retryCount);
+    const delay =
+      schedule.retryConfig.retryDelay *
+      schedule.retryConfig.backoffMultiplier ** execution.retryCount;
 
     setTimeout(() => {
       execution.retryCount++;
@@ -246,8 +260,8 @@ class WorkflowScheduler {
     logger.info('Executing scheduled workflow', { workflowId });
 
     // Simulate execution time
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+
     // Random success/failure for testing
     if (Math.random() < 0.1) {
       throw new Error('Mock workflow execution failed');
@@ -259,14 +273,12 @@ class WorkflowScheduler {
    */
   getExecutionHistory(scheduleId?: string): ScheduledExecution[] {
     const executions = Array.from(this.executions.values());
-    
+
     if (scheduleId) {
-      return executions.filter(exec => exec.scheduleId === scheduleId);
+      return executions.filter((exec) => exec.scheduleId === scheduleId);
     }
-    
-    return executions.sort((a, b) => 
-      b.scheduledTime.localeCompare(a.scheduledTime)
-    );
+
+    return executions.sort((a, b) => b.scheduledTime.localeCompare(a.scheduledTime));
   }
 
   /**
@@ -331,10 +343,10 @@ class WorkflowScheduler {
 
     return {
       totalSchedules: schedules.length,
-      activeSchedules: schedules.filter(s => s.enabled).length,
+      activeSchedules: schedules.filter((s) => s.enabled).length,
       totalExecutions: executions.length,
-      successfulExecutions: executions.filter(e => e.status === 'completed').length,
-      failedExecutions: executions.filter(e => e.status === 'failed').length,
+      successfulExecutions: executions.filter((e) => e.status === 'completed').length,
+      failedExecutions: executions.filter((e) => e.status === 'failed').length,
     };
   }
 }

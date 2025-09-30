@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { ExecutionStatus, NodeExecution, WorkflowExecution } from './execution-types';
 
 // Valid minimal placeholder to satisfy tsup build
-export interface WorkflowTypesPlaceholder {}
+export type WorkflowTypesPlaceholder = {};
 
 // Workflow Definition - Engine-specific node with additional properties
 export const WorkflowNodeSchema = z.object({

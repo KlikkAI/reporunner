@@ -108,7 +108,7 @@ async;
 setupDefaultMetrics();
 : Promise<void>
 {
-    const defaultMetrics: Omit<MetricDefinition, 'id'>[] = [
+    const _defaultMetrics: Omit<MetricDefinition, 'id'>[] = [
       {
         name: 'workflow_executions_total',
         description: 'Total number of workflow executions',

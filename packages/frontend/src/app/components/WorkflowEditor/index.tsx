@@ -15,10 +15,10 @@ import ReactFlow, {
   useNodesState,
 } from 'reactflow';
 import 'reactflow/dist/style.css';
+import { Logger } from '@reporunner/core';
 import { executionMonitor, useExecutionMonitor } from '@/app/services/executionMonitor';
 import { intelligentAutoConnect } from '@/app/services/intelligentAutoConnect';
 import { nodeRegistry, useLeanWorkflowStore } from '@/core';
-import { Logger } from '@reporunner/core';
 import { useAIAssistantStore } from '@/core/stores/aiAssistantStore';
 import { useAnalyticsStore } from '@/core/stores/analyticsStore';
 import { useCollaborationStore } from '@/core/stores/collaborationStore';
@@ -436,7 +436,9 @@ const WorkflowEditor: React.FC = () => {
   // Enhanced auto-connection using intelligent algorithm
   const findOptimalConnection = useCallback(
     (dropPosition: any) => {
-      if (localNodes.length === 0) return null;
+      if (localNodes.length === 0) {
+        return null;
+      }
 
       // Use intelligent auto-connect for sophisticated connection suggestions
       const suggestion = intelligentAutoConnect.findOptimalConnection(
@@ -469,7 +471,7 @@ const WorkflowEditor: React.FC = () => {
         const reactFlowBounds = event.currentTarget.getBoundingClientRect();
         const data = event.dataTransfer.getData('application/reactflow');
 
-        if (!data || !reactFlowInstance) {
+        if (!(data && reactFlowInstance)) {
           return;
         }
 
@@ -625,11 +627,11 @@ const WorkflowEditor: React.FC = () => {
             position: node.position,
             parameters: node.data?.parameters || {},
             credentials: node.data?.credentials || [],
-            disabled: node.data?.disabled || false,
+            disabled: node.data?.disabled,
             notes: node.data?.notes || '',
             name: node.data?.name || '',
-            continueOnFail: node.data?.continueOnFail || false,
-            executeOnce: node.data?.executeOnce || false,
+            continueOnFail: node.data?.continueOnFail,
+            executeOnce: node.data?.executeOnce,
           })),
           localEdges.map((edge) => ({
             id: edge.id,
@@ -670,9 +672,9 @@ const WorkflowEditor: React.FC = () => {
 
   // Connect to execution monitor on mount
   useEffect(() => {
-    executionMonitor.connect().catch((error) =>
-      logger.error('Failed to connect execution monitor', { error })
-    );
+    executionMonitor
+      .connect()
+      .catch((error) => logger.error('Failed to connect execution monitor', { error }));
 
     return () => {
       executionMonitor.disconnect();
@@ -755,8 +757,8 @@ const WorkflowEditor: React.FC = () => {
           ...edge.data,
         },
         // Pass hover state as props
-        hovered: edgesHoveredById[edge.id] || false,
-        bringToFront: edgesBringToFrontById[edge.id] || false,
+        hovered: edgesHoveredById[edge.id],
+        bringToFront: edgesBringToFrontById[edge.id],
       })),
     [localEdges, onEdgeDelete, edgesHoveredById, edgesBringToFrontById]
   );

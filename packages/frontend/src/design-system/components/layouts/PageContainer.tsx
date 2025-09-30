@@ -1,7 +1,7 @@
 // Shared Page Container Component
 // Provides consistent page layout structure
 
-import React from 'react';
+import type React from 'react';
 
 interface PageContainerProps {
   children: React.ReactNode;
@@ -14,7 +14,7 @@ export const PageContainer: React.FC<PageContainerProps> = ({
   children,
   className = '',
   maxWidth = 'xl',
-  padding = 'md'
+  padding = 'md',
 }) => {
   const maxWidthClasses = {
     sm: 'max-w-sm',
@@ -22,14 +22,14 @@ export const PageContainer: React.FC<PageContainerProps> = ({
     lg: 'max-w-lg',
     xl: 'max-w-7xl',
     '2xl': 'max-w-2xl',
-    full: 'max-w-full'
+    full: 'max-w-full',
   };
 
   const paddingClasses = {
     none: '',
     sm: 'px-4 py-2',
     md: 'px-6 py-4',
-    lg: 'px-8 py-6'
+    lg: 'px-8 py-6',
   };
 
   return (

@@ -96,7 +96,9 @@ const DataInspector: React.FC<DataInspectorProps> = ({
 
   // Get selected data
   const selectedData = useMemo(() => {
-    if (!selectedPath) return data;
+    if (!selectedPath) {
+      return data;
+    }
     return getDataByPath(data, selectedPath);
   }, [data, selectedPath]);
 
@@ -474,7 +476,9 @@ function convertToTree(data: any, path: string, _key: string): DataNode[] {
 }
 
 function filterTree(nodes: DataNode[], searchTerm: string, filterType: string): DataNode[] {
-  if (!searchTerm && filterType === 'all') return nodes;
+  if (!searchTerm && filterType === 'all') {
+    return nodes;
+  }
 
   return nodes
     .filter((node) => {
@@ -494,13 +498,15 @@ function filterTree(nodes: DataNode[], searchTerm: string, filterType: string): 
 }
 
 function getDataByPath(data: any, path: string): any {
-  if (path === 'root' || !path) return data;
+  if (path === 'root' || !path) {
+    return data;
+  }
 
   try {
     return path.split('.').reduce((obj, key) => {
       if (key.includes('[') && key.includes(']')) {
         const arrayKey = key.substring(0, key.indexOf('['));
-        const index = parseInt(key.substring(key.indexOf('[') + 1, key.indexOf(']')), 10);
+        const index = Number.parseInt(key.substring(key.indexOf('[') + 1, key.indexOf(']')), 10);
         return obj[arrayKey][index];
       }
       return obj[key];
@@ -570,13 +576,19 @@ function getTypeColor(type: string): string {
 }
 
 function formatSize(bytes: number): string {
-  if (bytes < 1024) return `${bytes} B`;
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  if (bytes < 1024) {
+    return `${bytes} B`;
+  }
+  if (bytes < 1024 * 1024) {
+    return `${(bytes / 1024).toFixed(1)} KB`;
+  }
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
 function getTableColumns(data: any[]): any[] {
-  if (data.length === 0) return [];
+  if (data.length === 0) {
+    return [];
+  }
 
   const sample = data[0];
   if (typeof sample !== 'object' || Array.isArray(sample)) {

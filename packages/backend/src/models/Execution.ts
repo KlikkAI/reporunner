@@ -131,7 +131,9 @@ executionSchema.index({ startTime: -1 });
 
 // Virtual for progress percentage
 executionSchema.virtual('progress').get(function () {
-  if (this.totalNodes === 0) return 0;
+  if (this.totalNodes === 0) {
+    return 0;
+  }
   return Math.round((this.completedNodes / this.totalNodes) * 100);
 });
 

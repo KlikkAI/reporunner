@@ -317,7 +317,9 @@ const JsonView: React.FC<JsonViewProps> = ({
   const [showLineNumbers, setShowLineNumbers] = useState(true);
 
   const formattedJson = useMemo(() => {
-    if (!data) return '';
+    if (!data) {
+      return '';
+    }
     return JSON.stringify(data, null, collapsed ? 0 : 2);
   }, [data, collapsed]);
 

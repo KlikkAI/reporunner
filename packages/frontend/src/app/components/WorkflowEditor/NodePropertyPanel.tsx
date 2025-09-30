@@ -53,18 +53,24 @@ const NodeConfigurationPanel: React.FC<NodeConfigurationPanelProps> = ({
   const middleWidth = 550;
 
   const currentNode = useMemo(() => {
-    if (!nodeId) return null;
+    if (!nodeId) {
+      return null;
+    }
     return getNodeById(nodeId);
   }, [nodeId, getNodeById]);
 
   const nodeDefinition = useMemo(() => {
-    if (!currentNode) return null;
+    if (!currentNode) {
+      return null;
+    }
     return nodeRegistry.getNodeTypeDescription(currentNode.type);
   }, [currentNode]);
 
   // Get enhanced node type from node data (Gmail-specific)
   const enhancedNodeType = useMemo(() => {
-    if (!currentNode) return null;
+    if (!currentNode) {
+      return null;
+    }
 
     // For registry-based system, derive node type from node.type
     if (currentNode.type === 'gmail-enhanced' || currentNode.type?.includes('gmail')) {
@@ -79,7 +85,9 @@ const NodeConfigurationPanel: React.FC<NodeConfigurationPanelProps> = ({
 
   // Get connected input nodes for display
   const connectedInputNodes = useMemo(() => {
-    if (!currentNode || !Array.isArray(nodes) || !Array.isArray(edges)) return [];
+    if (!(currentNode && Array.isArray(nodes) && Array.isArray(edges))) {
+      return [];
+    }
     return edges
       .filter((edge) => edge.target === currentNode.id)
       .map((edge) => nodes.find((node) => node.id === edge.source))
@@ -137,7 +145,9 @@ const NodeConfigurationPanel: React.FC<NodeConfigurationPanelProps> = ({
 
   // Gmail-specific test functionality
   const handleTestNode = useCallback(async () => {
-    if (!currentNode || !nodeDefinition) return;
+    if (!(currentNode && nodeDefinition)) {
+      return;
+    }
 
     setIsTestingNode(true);
     setTestResults(null);
@@ -250,7 +260,9 @@ const NodeConfigurationPanel: React.FC<NodeConfigurationPanelProps> = ({
 
   const handleMouseMove = useCallback(
     (e: MouseEvent) => {
-      if (!isDragging) return;
+      if (!isDragging) {
+        return;
+      }
       const containerWidth = window.innerWidth;
       const minLeftWidth = 200;
       const maxLeftWidth = containerWidth - middleWidth - 200;
@@ -324,11 +336,13 @@ const NodeConfigurationPanel: React.FC<NodeConfigurationPanelProps> = ({
       } catch (_error) {}
     }
 
-    if (!nodeDefinition?.properties) return [];
+    if (!nodeDefinition?.properties) {
+      return [];
+    }
     return nodeDefinition.properties;
   }, [nodeDefinition, enhancedNodeType, currentNode, updateNodeParameters]);
 
-  if (!isOpen || !currentNode || !nodeDefinition) {
+  if (!(isOpen && currentNode && nodeDefinition)) {
     return null;
   }
 

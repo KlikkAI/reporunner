@@ -2,7 +2,7 @@
  * Log decorator for automatic method logging
  */
 export function Log(level: 'debug' | 'info' | 'warn' | 'error' = 'info') {
-  return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
+  return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
     const originalMethod = descriptor.value;
 
     descriptor.value = function (...args: any[]) {

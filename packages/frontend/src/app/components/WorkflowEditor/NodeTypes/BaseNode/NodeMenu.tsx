@@ -37,7 +37,9 @@ const NodeMenu: React.FC<NodeMenuProps> = ({
 
   // Click-outside handling is now centralized in useSmartMenuPosition hook
 
-  if (!visible) return null;
+  if (!visible) {
+    return null;
+  }
 
   return (
     <div

@@ -13,8 +13,8 @@ import {
   WorkflowEngineError,
   type WorkflowExecution,
 } from '../types';
-import { NodeExecutor } from './NodeExecutor';
 import { ExecutionContext, NodeExecutionContext } from './ExecutionContext';
+import { NodeExecutor } from './NodeExecutor';
 
 export interface WorkflowEngineOptions {
   maxConcurrentExecutions?: number;
@@ -186,7 +186,9 @@ export class WorkflowEngine extends EventEmitter {
 
       for (const nodeId of executionOrder) {
         const node = workflow.nodes.find((n) => n.id === nodeId);
-        if (!node) continue;
+        if (!node) {
+          continue;
+        }
 
         // Check if execution was cancelled
         if (execution.status === 'cancelled') {
@@ -240,7 +242,7 @@ export class WorkflowEngine extends EventEmitter {
         executionId: execution.id,
         workflowId: workflow.id,
         userId: execution.userId,
-        environment: 'production'
+        environment: 'production',
       });
       const nodeCtx = new NodeExecutionContext(executionCtx, node.id);
 
@@ -384,7 +386,9 @@ export class WorkflowEngine extends EventEmitter {
     );
 
     for (const connection of inputConnections) {
-      const sourceExecution = execution.nodeExecutions.find(ne => ne.nodeId === connection.source.nodeId);
+      const sourceExecution = execution.nodeExecutions.find(
+        (ne) => ne.nodeId === connection.source.nodeId
+      );
       if (sourceExecution?.outputData) {
         const sourceData =
           sourceExecution.outputData[connection.source.outputIndex || 0] ||

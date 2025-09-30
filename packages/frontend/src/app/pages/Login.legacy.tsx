@@ -1,7 +1,7 @@
-import React from 'react';
+import type React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AuthForm } from '@/design-system/components/AuthForm';
 import { useAuthStore } from '@/core/stores/authStore';
+import { AuthForm } from '@/design-system/components/AuthForm';
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
@@ -16,12 +16,7 @@ const Login: React.FC = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <AuthForm
-        type="login"
-        onSubmit={handleLogin}
-        loading={loading}
-        error={error}
-      />
+      <AuthForm type="login" onSubmit={handleLogin} loading={loading} error={error} />
     </div>
   );
 };

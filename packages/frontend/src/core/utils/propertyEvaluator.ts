@@ -1,6 +1,6 @@
 /**
  * Property Evaluator
- * 
+ *
  * Reuses the enhanced property evaluator for backward compatibility
  */
 

@@ -1,18 +1,22 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { CredentialApiService } from '@/core';
-import type { CredentialTypeDef, TestResult, CredentialData } from '../components/Credentials/shared/types';
+import type {
+  CredentialData,
+  CredentialTypeDef,
+  TestResult,
+} from '../components/Credentials/shared/types';
 
 interface UseCredentialFormOptions {
   /**
    * Type of credential being managed
    */
   credentialType: string;
-  
+
   /**
    * Existing credential data when editing
    */
   editingCredential?: CredentialData;
-  
+
   /**
    * Called when credential is saved successfully
    */
@@ -22,7 +26,7 @@ interface UseCredentialFormOptions {
 export const useCredentialForm = ({
   credentialType,
   editingCredential,
-  onSave
+  onSave,
 }: UseCredentialFormOptions) => {
   const [credentialName, setCredentialName] = useState('');
   const [credentialData, setCredentialData] = useState<Record<string, any>>({});
@@ -42,7 +46,7 @@ export const useCredentialForm = ({
       }
     };
     fetchCredentialType();
-  }, [credentialType]);
+  }, [credentialType, credentialApiService.getCredentialTypes]);
 
   // Populate form when editing
   useEffect(() => {
@@ -68,7 +72,7 @@ export const useCredentialForm = ({
   const handleFieldChange = (field: string, value: any) => {
     setCredentialData((prev) => ({
       ...prev,
-      [field]: value
+      [field]: value,
     }));
     if (testResult) {
       setTestResult(null);
@@ -90,7 +94,7 @@ export const useCredentialForm = ({
         type: credentialType,
         integration: credentialType,
         data: credentialData,
-        testOnCreate: true
+        testOnCreate: true,
       };
 
       const testCredential = await credentialApiService.createCredential(testCredentialPayload);
@@ -106,13 +110,13 @@ export const useCredentialForm = ({
 
         setTestResult({
           success: false,
-          message: testError.message || 'Credential test failed'
+          message: testError.message || 'Credential test failed',
         });
       }
     } catch (error: any) {
       setTestResult({
         success: false,
-        message: error.message || 'Failed to test credential'
+        message: error.message || 'Failed to test credential',
       });
     } finally {
       setIsTesting(false);
@@ -126,16 +130,16 @@ export const useCredentialForm = ({
     }
 
     // Validate required fields
-    const requiredFields = credentialTypeDef?.fields.filter(f => f.required) || [];
-    let missingFields = requiredFields.filter(field => !credentialData[field.name]);
-    
+    const requiredFields = credentialTypeDef?.fields.filter((f) => f.required) || [];
+    let missingFields = requiredFields.filter((field) => !credentialData[field.name]);
+
     // When editing, password fields are optional
     if (editingCredential) {
-      missingFields = missingFields.filter(field => field.type !== 'password');
+      missingFields = missingFields.filter((field) => field.type !== 'password');
     }
 
     if (missingFields.length > 0) {
-      alert(`Please fill in required fields: ${missingFields.map(f => f.name).join(', ')}`);
+      alert(`Please fill in required fields: ${missingFields.map((f) => f.name).join(', ')}`);
       return;
     }
 
@@ -145,7 +149,7 @@ export const useCredentialForm = ({
         type: credentialType,
         integration: credentialType,
         data: credentialData,
-        testOnCreate: true
+        testOnCreate: true,
       };
 
       const savedCredential = editingCredential
@@ -158,8 +162,9 @@ export const useCredentialForm = ({
         type: credentialType,
         data: credentialData,
         isConnected: true,
-        createdAt: editingCredential?.createdAt || savedCredential.createdAt || new Date().toISOString(),
-        updatedAt: savedCredential.updatedAt || new Date().toISOString()
+        createdAt:
+          editingCredential?.createdAt || savedCredential.createdAt || new Date().toISOString(),
+        updatedAt: savedCredential.updatedAt || new Date().toISOString(),
       };
 
       onSave?.(credentialForUI);
@@ -187,6 +192,6 @@ export const useCredentialForm = ({
     testResult,
     handleTest,
     handleSave,
-    credentialTypeDef
+    credentialTypeDef,
   };
 };

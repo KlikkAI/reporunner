@@ -365,7 +365,7 @@ export const WorkflowTester: React.FC<{
         )}
 
         <Card title="Test Results" size="small" extra={testing && <Spin size="small" />}>
-          {!testResult && !testing && (
+          {!(testResult || testing) && (
             <div className="text-gray-500 text-center py-8">
               Configure your test settings and click "Run Test" to begin
             </div>

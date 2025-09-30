@@ -1,4 +1,4 @@
-import { Router, Request, Response } from 'express';
+import { type Request, type Response, Router } from 'express';
 import { rateLimit } from 'express-rate-limit';
 import { body } from 'express-validator';
 import { authRequired } from '../middleware/auth';
@@ -31,14 +31,9 @@ const userRateLimit = rateLimit({
  *       500:
  *         $ref: '#/components/responses/InternalServerError'
  */
-router.get(
-  '/profile',
-  authRequired,
-  userRateLimit,
-  async (_req: Request, res: Response) => {
-    res.json({ message: 'User routes not implemented yet' });
-  }
-);
+router.get('/profile', authRequired, userRateLimit, async (_req: Request, res: Response) => {
+  res.json({ message: 'User routes not implemented yet' });
+});
 
 /**
  * @swagger
@@ -64,10 +59,7 @@ router.put(
   '/profile',
   authRequired,
   userRateLimit,
-  [
-    body('name').optional().trim().notEmpty(),
-    body('email').optional().isEmail().normalizeEmail(),
-  ],
+  [body('name').optional().trim().notEmpty(), body('email').optional().isEmail().normalizeEmail()],
   validateRequest,
   async (_req: Request, res: Response) => {
     res.json({ message: 'User routes not implemented yet' });

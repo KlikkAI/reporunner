@@ -1,4 +1,4 @@
-import { UploadedFile } from '../types/UploadedFile';
+import type { UploadedFile } from '../types/UploadedFile';
 
 /**
  * Interface for storage engines

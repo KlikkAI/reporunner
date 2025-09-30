@@ -2,17 +2,13 @@ import { AuthenticationError, AuthorizationError } from '../utils/errors';
 
 // Role-based authorization decorator
 export function authorize(roles: string[]) {
-  return function (
-    target: any,
-    propertyKey: string,
-    descriptor: PropertyDescriptor
-  ) {
+  return (_target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
     const originalMethod = descriptor.value;
     const methodName = propertyKey;
 
     descriptor.value = async function (...args: any[]) {
       const user = (this as any).currentUser || args[0]?.user;
-      
+
       if (!user) {
         throw new AuthenticationError('No authenticated user found');
       }
@@ -32,17 +28,13 @@ export function authorize(roles: string[]) {
 
 // Permission-based authorization decorator
 export function requirePermission(permission: string) {
-  return function (
-    target: any,
-    propertyKey: string,
-    descriptor: PropertyDescriptor
-  ) {
+  return (_target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
     const originalMethod = descriptor.value;
     const methodName = propertyKey;
 
     descriptor.value = async function (...args: any[]) {
       const user = (this as any).currentUser || args[0]?.user;
-      
+
       if (!user) {
         throw new AuthenticationError('No authenticated user found');
       }
@@ -62,17 +54,13 @@ export function requirePermission(permission: string) {
 
 // Resource ownership check decorator
 export function requireOwnership(resourceIdPath: string = 'id') {
-  return function (
-    target: any,
-    propertyKey: string,
-    descriptor: PropertyDescriptor
-  ) {
+  return (_target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
     const originalMethod = descriptor.value;
-    const methodName = propertyKey;
+    const _methodName = propertyKey;
 
     descriptor.value = async function (...args: any[]) {
       const user = (this as any).currentUser || args[0]?.user;
-      
+
       if (!user) {
         throw new AuthenticationError('No authenticated user found');
       }
@@ -85,18 +73,14 @@ export function requireOwnership(resourceIdPath: string = 'id') {
       }
 
       if (!resourceId) {
-        throw new AuthorizationError(
-          `Could not find resource ID at path: ${resourceIdPath}`
-        );
+        throw new AuthorizationError(`Could not find resource ID at path: ${resourceIdPath}`);
       }
 
       // Check ownership - implementation will vary based on your data model
       const isOwner = await (this as any).checkResourceOwnership?.(resourceId, user.id);
-      
+
       if (!isOwner) {
-        throw new AuthorizationError(
-          `User does not own resource ${resourceId}`
-        );
+        throw new AuthorizationError(`User does not own resource ${resourceId}`);
       }
 
       return originalMethod.apply(this, args);
@@ -108,17 +92,13 @@ export function requireOwnership(resourceIdPath: string = 'id') {
 
 // Resource access control decorator
 export function checkAccess(resource: string) {
-  return function (
-    target: any,
-    propertyKey: string,
-    descriptor: PropertyDescriptor
-  ) {
+  return (_target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
     const originalMethod = descriptor.value;
     const methodName = propertyKey;
 
     descriptor.value = async function (...args: any[]) {
       const user = (this as any).currentUser || args[0]?.user;
-      
+
       if (!user) {
         throw new AuthenticationError('No authenticated user found');
       }
@@ -128,11 +108,9 @@ export function checkAccess(resource: string) {
 
       // Check if user has access to perform action on resource
       const hasAccess = await (this as any).checkResourceAccess?.(resource, action, user.id);
-      
+
       if (!hasAccess) {
-        throw new AuthorizationError(
-          `User does not have permission to ${action} ${resource}`
-        );
+        throw new AuthorizationError(`User does not have permission to ${action} ${resource}`);
       }
 
       return originalMethod.apply(this, args);
@@ -144,27 +122,21 @@ export function checkAccess(resource: string) {
 
 // Organization/team scope check decorator
 export function requireScope(scope: string) {
-  return function (
-    target: any,
-    propertyKey: string,
-    descriptor: PropertyDescriptor
-  ) {
+  return (_target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
     const originalMethod = descriptor.value;
-    const methodName = propertyKey;
+    const _methodName = propertyKey;
 
     descriptor.value = async function (...args: any[]) {
       const user = (this as any).currentUser || args[0]?.user;
-      
+
       if (!user) {
         throw new AuthenticationError('No authenticated user found');
       }
 
       const hasScope = await (this as any).checkUserScope?.(user.id, scope);
-      
+
       if (!hasScope) {
-        throw new AuthorizationError(
-          `User does not have required scope: ${scope}`
-        );
+        throw new AuthorizationError(`User does not have required scope: ${scope}`);
       }
 
       return originalMethod.apply(this, args);

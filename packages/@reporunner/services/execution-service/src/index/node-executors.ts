@@ -51,7 +51,7 @@ healthCheck();
         queueSize,
         workerStatus
       };
-  } catch (error) {
+  } catch (_error) {
     return {
         status: 'unhealthy',
         activeExecutions: 0,
@@ -125,4 +125,4 @@ class ConditionNodeExecutor implements NodeExecutor {
     };
   }
 
-  private evaluateCondition(condition: any, input: any): boolean {
+  private evaluateCondition(_condition: any, _input: any): boolean {

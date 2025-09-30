@@ -89,7 +89,9 @@ export const ExecutionPanel: React.FC<ExecutionPanelProps> = ({
   };
 
   const renderProgressBar = () => {
-    if (!progress) return null;
+    if (!progress) {
+      return null;
+    }
 
     const { progressPercentage, completedNodes, totalNodes, failedNodes } = progress;
 

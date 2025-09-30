@@ -216,7 +216,9 @@ export class WebhookManager extends EventEmitter {
 
     while (this.eventQueue.length > 0) {
       const event = this.eventQueue.shift();
-      if (!event) continue;
+      if (!event) {
+        continue;
+      }
 
       const webhook = this.webhooks.get(event.webhookId);
       if (!webhook || webhook.status !== 'active') {

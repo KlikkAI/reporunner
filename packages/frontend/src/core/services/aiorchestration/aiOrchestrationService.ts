@@ -47,7 +47,6 @@ export interface MultiModalWorkflow {
 }
 
 class AIOrchestrationService {
-  private models: AIModel[] = [];
   private executions: Map<string, AIWorkflowExecution> = new Map();
 
   /**
@@ -129,7 +128,10 @@ class AIOrchestrationService {
   /**
    * Test AI model connection
    */
-  public async testModel(modelId: string, testInput: string): Promise<{ success: boolean; result?: string; error?: string }> {
+  public async testModel(
+    modelId: string,
+    testInput: string
+  ): Promise<{ success: boolean; result?: string; error?: string }> {
     try {
       // Mock model testing
       return {

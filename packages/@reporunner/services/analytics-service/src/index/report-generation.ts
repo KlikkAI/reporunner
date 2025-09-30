@@ -100,7 +100,7 @@ queryEvents(
 : Promise<AnalyticsEvent[]>
 {
     try {
-      const query: any = {
+      const _query: any = {
         organizationId,
         timestamp: {
           $gte: options.startTime,
@@ -110,4 +110,4 @@ queryEvents(
 
       // Apply filters
       if (options.filters) {
-        for (const filter of options.filters) {
+        for (const _filter of options.filters) {

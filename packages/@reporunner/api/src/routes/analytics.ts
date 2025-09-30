@@ -1,4 +1,4 @@
-import { Router, Request, Response } from 'express';
+import { type Request, type Response, Router } from 'express';
 import { rateLimit } from 'express-rate-limit';
 import { query } from 'express-validator';
 import { authRequired } from '../middleware/auth';
@@ -35,9 +35,7 @@ router.get(
   '/dashboard',
   authRequired,
   analyticsRateLimit,
-  [
-    query('timeRange').optional().isIn(['1h', '24h', '7d', '30d']),
-  ],
+  [query('timeRange').optional().isIn(['1h', '24h', '7d', '30d'])],
   validateRequest,
   async (_req: Request, res: Response) => {
     res.json({ message: 'Analytics routes not implemented yet' });

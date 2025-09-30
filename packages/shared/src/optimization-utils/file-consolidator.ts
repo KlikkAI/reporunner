@@ -15,15 +15,15 @@ export class FileConsolidator {
     const combinedContent: string[] = [];
     const allExports: string[] = [];
 
-    sections.forEach(section => {
+    sections.forEach((section) => {
       // Extract imports
       const importMatches = section.content.match(/import.*?from.*?;/g);
       if (importMatches) {
-        importMatches.forEach(imp => imports.add(imp));
+        importMatches.forEach((imp) => imports.add(imp));
       }
 
       // Clean content (remove imports and isolated exports)
-      let cleanContent = section.content
+      const cleanContent = section.content
         .replace(/import.*?from.*?;\n?/g, '')
         .replace(/^export \{[^}]*\};?\n?/gm, '');
 
@@ -40,7 +40,7 @@ export class FileConsolidator {
       '',
       combinedContent.join('\n\n'),
       '',
-      `export { ${allExports.join(', ')} };`
+      `export { ${allExports.join(', ')} };`,
     ].join('\n');
 
     return result;

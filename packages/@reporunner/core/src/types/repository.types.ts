@@ -2,18 +2,20 @@
  * Generic type for filtering entities
  */
 export type Filter<T> = {
-  [P in keyof T]?: T[P] | {
-    $eq?: T[P];
-    $ne?: T[P];
-    $in?: T[P][];
-    $nin?: T[P][];
-    $lt?: T[P];
-    $lte?: T[P];
-    $gt?: T[P];
-    $gte?: T[P];
-    $regex?: string;
-    $exists?: boolean;
-  };
+  [P in keyof T]?:
+    | T[P]
+    | {
+        $eq?: T[P];
+        $ne?: T[P];
+        $in?: T[P][];
+        $nin?: T[P][];
+        $lt?: T[P];
+        $lte?: T[P];
+        $gt?: T[P];
+        $gte?: T[P];
+        $regex?: string;
+        $exists?: boolean;
+      };
 } & {
   $and?: Filter<T>[];
   $or?: Filter<T>[];
@@ -35,7 +37,7 @@ export interface Pagination {
    * Number of records to skip
    */
   skip: number;
-  
+
   /**
    * Maximum number of records to return
    */
@@ -46,7 +48,10 @@ export interface Pagination {
  * Base error class for repository operations
  */
 export class RepositoryError extends Error {
-  constructor(message: string, public readonly cause?: Error) {
+  constructor(
+    message: string,
+    public readonly cause?: Error
+  ) {
     super(message);
     this.name = 'RepositoryError';
   }
@@ -76,9 +81,7 @@ export class UniqueConstraintError extends RepositoryError {
  * Error thrown when validation fails
  */
 export class ValidationError extends RepositoryError {
-  constructor(
-    public readonly errors: Record<string, string[]>
-  ) {
+  constructor(public readonly errors: Record<string, string[]>) {
     super('Validation failed');
     this.name = 'ValidationError';
   }
@@ -91,5 +94,5 @@ export enum TransactionState {
   NONE = 'NONE',
   STARTED = 'STARTED',
   COMMITTED = 'COMMITTED',
-  ROLLED_BACK = 'ROLLED_BACK'
+  ROLLED_BACK = 'ROLLED_BACK',
 }

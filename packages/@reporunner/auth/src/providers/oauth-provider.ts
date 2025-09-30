@@ -33,7 +33,7 @@ export class OAuthProvider {
   constructor(config: OAuthProviderConfig) {
     this.config = {
       scopes: ['profile', 'email'],
-      ...config
+      ...config,
     };
   }
 
@@ -58,7 +58,7 @@ export class OAuthProvider {
       accessToken: 'access-token',
       refreshToken: 'refresh-token',
       expiresIn: 3600,
-      tokenType: 'Bearer'
+      tokenType: 'Bearer',
     };
   }
 
@@ -67,7 +67,7 @@ export class OAuthProvider {
     return {
       id: 'oauth-user-id',
       email: 'user@example.com',
-      name: 'OAuth User'
+      name: 'OAuth User',
     };
   }
 
@@ -77,7 +77,7 @@ export class OAuthProvider {
       accessToken: 'new-access-token',
       refreshToken: 'new-refresh-token',
       expiresIn: 3600,
-      tokenType: 'Bearer'
+      tokenType: 'Bearer',
     };
   }
 

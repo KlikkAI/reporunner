@@ -94,7 +94,7 @@ testCredential(id: string)
 }
 
 // WebSocket Methods
-onExecutionUpdate(callback: (execution: ExecutionResult) => void)
+onExecutionUpdate(callback: (_execution: ExecutionResult) => void)
 : void
 {
   if (!this.ws) {
@@ -103,7 +103,7 @@ onExecutionUpdate(callback: (execution: ExecutionResult) => void)
   this.ws.on('execution:update', callback);
 }
 
-onWorkflowUpdate(callback: (workflow: WorkflowDefinition) => void)
+onWorkflowUpdate(callback: (_workflow: WorkflowDefinition) => void)
 : void
 {
   if (!this.ws) {

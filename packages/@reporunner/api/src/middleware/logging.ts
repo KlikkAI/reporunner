@@ -27,19 +27,11 @@ export function loggingMiddleware(req: Request, res: Response, next: NextFunctio
     userId: (req as any).userId,
   };
 
-  // Log request
-  console.log(`[${logEntry.timestamp.toISOString()}] ${logEntry.method} ${logEntry.path}`);
-
   // Capture response
   const originalSend = res.send;
   res.send = function (data: any) {
     logEntry.statusCode = res.statusCode;
     logEntry.duration = Date.now() - startTime;
-
-    // Log response
-    console.log(
-      `[${new Date().toISOString()}] ${logEntry.method} ${logEntry.path} - ${logEntry.statusCode} (${logEntry.duration}ms)`
-    );
 
     return originalSend.call(this, data);
   };

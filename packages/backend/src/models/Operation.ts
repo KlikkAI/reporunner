@@ -269,7 +269,9 @@ operationSchema.methods.inverse = function () {
 };
 
 operationSchema.methods.invertDelta = function (delta: any) {
-  if (!delta) return null;
+  if (!delta) {
+    return null;
+  }
 
   // Simple delta inversion - this would be more complex in practice
   const inverted: any = {};

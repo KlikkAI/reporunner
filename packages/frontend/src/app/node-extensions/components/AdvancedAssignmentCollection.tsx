@@ -348,7 +348,7 @@ const AdvancedAssignmentItem: React.FC<{
                     key="test"
                     icon={<EyeOutlined />}
                     onClick={() => onTest?.(assignment)}
-                    disabled={!assignment.name || !assignment.value}
+                    disabled={!(assignment.name && assignment.value)}
                   >
                     Test Assignment
                   </Menu.Item>
@@ -512,7 +512,7 @@ const AdvancedAssignmentItem: React.FC<{
                   <div>
                     <Switch
                       size="small"
-                      checked={assignment.expression || false}
+                      checked={assignment.expression}
                       onChange={(checked) => handleFieldChange('expression', checked)}
                       disabled={disabled}
                     />
@@ -670,7 +670,9 @@ const AdvancedAssignmentCollection: React.FC<AdvancedAssignmentCollectionProps> 
   }, [onChange]);
 
   const handleAddAllFields = useCallback(async () => {
-    if (!inputData || !inputData.length) return;
+    if (!inputData?.length) {
+      return;
+    }
 
     setBulkOperationProgress({
       visible: true,
@@ -1024,7 +1026,9 @@ function extractFieldNames(
   fieldNames: Set<string>,
   maxDepth: number
 ): void {
-  if (maxDepth <= 0) return;
+  if (maxDepth <= 0) {
+    return;
+  }
 
   Object.keys(obj).forEach((key) => {
     const fullPath = prefix ? `${prefix}.${key}` : key;

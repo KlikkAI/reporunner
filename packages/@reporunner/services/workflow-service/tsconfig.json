@@ -4,13 +4,7 @@
     "outDir": "./dist/workflow-svc",
     "rootDir": "./src"
   },
-  "include": [
-    "src/**/*"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "**/*.test.*"
-  ],
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist", "**/*.test.*"],
   "_package": "workflow-service"
 }

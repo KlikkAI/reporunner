@@ -13,7 +13,7 @@ export class HSTSBuilder {
       enabled: true,
       maxAge: 31536000, // 1 year
       includeSubDomains: true,
-      preload: false
+      preload: false,
     };
   }
 

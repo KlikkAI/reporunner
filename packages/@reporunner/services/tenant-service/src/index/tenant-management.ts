@@ -57,7 +57,7 @@ export interface TenantBackup {
   };
 }
 
-const TenantSchema = z.object({
+const _TenantSchema = z.object({
   name: z.string().min(1).max(100),
   domain: z.string().min(1).max(255),
   subdomain: z.string().optional(),
@@ -82,27 +82,11 @@ const TenantSchema = z.object({
 });
 
 export class TenantService extends EventEmitter {
-  private redis: RedisService;
-  private database: DatabaseService;
-  private eventBus: EventBusService;
-  private tenantQueue: Queue;
-  private worker: Worker;
-  private metricsWorker: Worker;
-  private cleanupWorker: Worker;
-
-  private readonly TENANTS_COLLECTION = 'tenants';
-  private readonly MEMBERS_COLLECTION = 'tenant_members';
-  private readonly INVITATIONS_COLLECTION = 'tenant_invitations';
-  private readonly USAGE_COLLECTION = 'tenant_usage';
-  private readonly ALERTS_COLLECTION = 'tenant_alerts';
-  private readonly BACKUPS_COLLECTION = 'tenant_backups';
-  private readonly CACHE_TTL = 300; // 5 minutes
-  private readonly INVITATION_EXPIRY_DAYS = 7;
 
   constructor(
     redis: RedisService,
-    database: DatabaseService,
-    eventBus: EventBusService
+    _database: DatabaseService,
+    _eventBus: EventBusService
   ) {
     super();
     this.redis = redis;

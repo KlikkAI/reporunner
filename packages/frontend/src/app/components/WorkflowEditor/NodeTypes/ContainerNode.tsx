@@ -7,26 +7,23 @@
  * Reduction: ~400 lines → ~150 lines (62% reduction)
  */
 
-import React, { useCallback, useRef, useState } from 'react';
-import { Handle, type NodeProps, Position } from 'reactflow';
 import {
   CompressOutlined,
-  DeleteOutlined,
   ExpandOutlined,
-  MoreOutlined,
   PauseCircleOutlined,
   PlayCircleOutlined,
   SettingOutlined,
   StopOutlined,
 } from '@ant-design/icons';
-import { Badge, Tooltip } from 'antd';
 import { Logger } from '@reporunner/core';
-import {
-  ComponentGenerator,
-  UniversalForm,
-} from '@/design-system';
+import { Badge, Tooltip } from 'antd';
+import type React from 'react';
+import { useCallback, useRef, useState } from 'react';
+import { Handle, type NodeProps, Position } from 'reactflow';
+import { ComponentGenerator, UniversalForm } from '@/design-system';
 
 const logger = new Logger('ContainerNode');
+
 import type {
   ContainerDropEvent,
   ContainerExecutionState,
@@ -49,29 +46,35 @@ interface ContainerNodeProps extends NodeProps {
 
 export const ContainerNode: React.FC<ContainerNodeProps> = ({ id, data, selected }) => {
   const [isConfigOpen, setIsConfigOpen] = useState(false);
-  const [isCollapsed, setIsCollapsed] = useState(data.isCollapsed || false);
+  const [isCollapsed, setIsCollapsed] = useState(data.isCollapsed);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const handleDrop = useCallback((event: React.DragEvent) => {
-    event.preventDefault();
-    const nodeType = event.dataTransfer.getData('application/reactflow');
-    if (nodeType) {
-      const dropEvent: ContainerDropEvent = {
-        containerId: id,
-        nodeType,
-        position: { x: event.clientX, y: event.clientY },
-      };
-      logger.debug('Container drop event', { dropEvent });
-    }
-  }, [id]);
+  const handleDrop = useCallback(
+    (event: React.DragEvent) => {
+      event.preventDefault();
+      const nodeType = event.dataTransfer.getData('application/reactflow');
+      if (nodeType) {
+        const dropEvent: ContainerDropEvent = {
+          containerId: id,
+          nodeType,
+          position: { x: event.clientX, y: event.clientY },
+        };
+        logger.debug('Container drop event', { dropEvent });
+      }
+    },
+    [id]
+  );
 
-  const handleResize = useCallback((newDimensions: { width: number; height: number }) => {
-    const resizeEvent: ContainerResizeEvent = {
-      containerId: id,
-      newDimensions,
-    };
-    logger.debug('Container resize event', { resizeEvent });
-  }, [id]);
+  const _handleResize = useCallback(
+    (newDimensions: { width: number; height: number }) => {
+      const resizeEvent: ContainerResizeEvent = {
+        containerId: id,
+        newDimensions,
+      };
+      logger.debug('Container resize event', { resizeEvent });
+    },
+    [id]
+  );
 
   // Configuration form properties based on container type
   const getConfigProperties = (): PropertyRendererConfig[] => {
@@ -195,8 +198,17 @@ export const ContainerNode: React.FC<ContainerNodeProps> = ({ id, data, selected
     },
     {
       label: data.executionState?.status === 'running' ? 'Pause' : 'Resume',
-      icon: data.executionState?.status === 'running' ? <PauseCircleOutlined /> : <PlayCircleOutlined />,
-      onClick: () => logger.info('Container execution toggled', { containerId: id, status: data.executionState?.status }),
+      icon:
+        data.executionState?.status === 'running' ? (
+          <PauseCircleOutlined />
+        ) : (
+          <PlayCircleOutlined />
+        ),
+      onClick: () =>
+        logger.info('Container execution toggled', {
+          containerId: id,
+          status: data.executionState?.status,
+        }),
     },
     {
       label: 'Stop',
@@ -234,9 +246,13 @@ export const ContainerNode: React.FC<ContainerNodeProps> = ({ id, data, selected
                 {data.executionState && (
                   <Badge
                     status={
-                      data.executionState.status === 'running' ? 'processing' :
-                      data.executionState.status === 'completed' ? 'success' :
-                      data.executionState.status === 'failed' ? 'error' : 'default'
+                      data.executionState.status === 'running'
+                        ? 'processing'
+                        : data.executionState.status === 'completed'
+                          ? 'success'
+                          : data.executionState.status === 'failed'
+                            ? 'error'
+                            : 'default'
                     }
                     text={data.executionState.status}
                   />
@@ -264,9 +280,7 @@ export const ContainerNode: React.FC<ContainerNodeProps> = ({ id, data, selected
   const configModal = isConfigOpen && (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-md w-full mx-4">
-        <h3 className="text-lg font-semibold mb-4">
-          Configure {data.type} Container
-        </h3>
+        <h3 className="text-lg font-semibold mb-4">Configure {data.type} Container</h3>
         <UniversalForm
           properties={getConfigProperties()}
           onSubmit={(values) => {
@@ -302,9 +316,7 @@ export const ContainerNode: React.FC<ContainerNodeProps> = ({ id, data, selected
         />
 
         {/* Container Header */}
-        <div className="p-3 border-b border-gray-200 dark:border-gray-700">
-          {containerHeader}
-        </div>
+        <div className="p-3 border-b border-gray-200 dark:border-gray-700">{containerHeader}</div>
 
         {/* Container Body */}
         {!isCollapsed && (

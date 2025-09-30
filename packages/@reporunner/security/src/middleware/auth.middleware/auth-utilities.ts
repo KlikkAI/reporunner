@@ -19,7 +19,11 @@ export interface JWTSessionManager {
 
   // Additional methods used by auth.middleware.ts
   extractTokenFromHeader(authorization: string): string | null;
-  refreshAccessToken(refreshToken: string, ipAddress?: string, userAgent?: string): Promise<{ accessToken: string; refreshToken: string }>;
+  refreshAccessToken(
+    refreshToken: string,
+    ipAddress?: string,
+    userAgent?: string
+  ): Promise<{ accessToken: string; refreshToken: string }>;
   revokeAllUserTokens(userId: string): Promise<void>;
   revokeSession(sessionId: string): Promise<void>;
   getUserSessions(userId: string): any[];
@@ -49,7 +53,9 @@ export function createAuthMiddleware(
     const authHeader = req.headers.authorization;
 
     if (!authHeader) {
-      if (!required) return next();
+      if (!required) {
+        return next();
+      }
       return res.status(401).json({
         error: 'No authorization header',
         message: 'Authentication required',
@@ -74,9 +80,7 @@ export function createAuthMiddleware(
       // Check permissions if required
       if (permissions.length > 0) {
         const userPermissions = user.permissions || [];
-        const hasRequiredPermission = permissions.some((perm) =>
-          userPermissions.includes(perm)
-        );
+        const hasRequiredPermission = permissions.some((perm) => userPermissions.includes(perm));
 
         if (!hasRequiredPermission) {
           return res.status(403).json({
@@ -87,7 +91,7 @@ export function createAuthMiddleware(
       }
 
       next();
-    } catch (error) {
+    } catch (_error) {
       return res.status(401).json({
         error: 'Invalid token',
         message: 'Authentication failed',

@@ -1,4 +1,4 @@
-import { ValidationMiddlewareOptions } from './BaseValidationMiddleware';
+import type { ValidationMiddlewareOptions } from './BaseValidationMiddleware';
 
 // Use security components from existing packages
 export interface SecurityMiddlewareOptions {
@@ -21,48 +21,54 @@ export class MiddlewareFactory {
   /**
    * Create validation middleware
    */
-  public static createValidationMiddleware(options: ValidationMiddlewareOptions = {}): MiddlewareInstance {
+  public static createValidationMiddleware(
+    _options: ValidationMiddlewareOptions = {}
+  ): MiddlewareInstance {
     return {
-      handle: (req: any, res: any, next: any) => {
+      handle: (_req: any, _res: any, next: any) => {
         // Basic validation middleware implementation
         next();
-      }
+      },
     };
   }
 
   /**
    * Create security headers middleware
    */
-  public static createSecurityHeadersMiddleware(options: SecurityMiddlewareOptions = {}): MiddlewareInstance {
+  public static createSecurityHeadersMiddleware(
+    _options: SecurityMiddlewareOptions = {}
+  ): MiddlewareInstance {
     return {
-      handle: (req: any, res: any, next: any) => {
+      handle: (_req: any, _res: any, next: any) => {
         // Basic security headers middleware implementation
         next();
-      }
+      },
     };
   }
 
   /**
    * Create authentication middleware
    */
-  public static createAuthMiddleware(options: SecurityMiddlewareOptions = {}): MiddlewareInstance {
+  public static createAuthMiddleware(_options: SecurityMiddlewareOptions = {}): MiddlewareInstance {
     return {
-      handle: (req: any, res: any, next: any) => {
+      handle: (_req: any, _res: any, next: any) => {
         // Basic auth middleware implementation
         next();
-      }
+      },
     };
   }
 
   /**
    * Create rate limiting middleware
    */
-  public static createRateLimitMiddleware(options: SecurityMiddlewareOptions = {}): MiddlewareInstance {
+  public static createRateLimitMiddleware(
+    _options: SecurityMiddlewareOptions = {}
+  ): MiddlewareInstance {
     return {
-      handle: (req: any, res: any, next: any) => {
+      handle: (_req: any, _res: any, next: any) => {
         // Basic rate limit middleware implementation
         next();
-      }
+      },
     };
   }
 
@@ -70,26 +76,26 @@ export class MiddlewareFactory {
    * Create a middleware chain
    */
   public static createMiddlewareChain(...middleware: any[]) {
-    return middleware.map(m => m.handle);
+    return middleware.map((m) => m.handle);
   }
 
   /**
    * Create development middleware stack
    */
   public static createDevStack() {
-    return this.createMiddlewareChain(
-      this.createSecurityHeadersMiddleware({
+    return MiddlewareFactory.createMiddlewareChain(
+      MiddlewareFactory.createSecurityHeadersMiddleware({
         cors: {
           enabled: true,
           origins: ['*'],
-          credentials: true
-        }
+          credentials: true,
+        },
       }),
-      this.createValidationMiddleware({
+      MiddlewareFactory.createValidationMiddleware({
         stripUnknown: true,
-        abortEarly: false
+        abortEarly: false,
       }),
-      this.createRateLimitMiddleware({
+      MiddlewareFactory.createRateLimitMiddleware({
         // Higher limits for development
       })
     );
@@ -99,18 +105,18 @@ export class MiddlewareFactory {
    * Create production middleware stack
    */
   public static createProdStack() {
-    return this.createMiddlewareChain(
-      this.createSecurityHeadersMiddleware({
+    return MiddlewareFactory.createMiddlewareChain(
+      MiddlewareFactory.createSecurityHeadersMiddleware({
         cors: {
           enabled: true,
-          origins: process.env.ALLOWED_ORIGINS?.split(',') || []
-        }
+          origins: process.env.ALLOWED_ORIGINS?.split(',') || [],
+        },
       }),
-      this.createValidationMiddleware({
+      MiddlewareFactory.createValidationMiddleware({
         stripUnknown: true,
-        abortEarly: true
+        abortEarly: true,
       }),
-      this.createRateLimitMiddleware({
+      MiddlewareFactory.createRateLimitMiddleware({
         // Stricter limits for production
       })
     );
@@ -120,15 +126,15 @@ export class MiddlewareFactory {
    * Create API middleware stack
    */
   public static createApiStack() {
-    return this.createMiddlewareChain(
-      this.createAuthMiddleware({
-        requireAuth: true
+    return MiddlewareFactory.createMiddlewareChain(
+      MiddlewareFactory.createAuthMiddleware({
+        requireAuth: true,
       }),
-      this.createValidationMiddleware({
+      MiddlewareFactory.createValidationMiddleware({
         validateBody: true,
-        validateQuery: true
+        validateQuery: true,
       }),
-      this.createRateLimitMiddleware({
+      MiddlewareFactory.createRateLimitMiddleware({
         // API-specific limits
       })
     );
@@ -138,17 +144,17 @@ export class MiddlewareFactory {
    * Create admin middleware stack
    */
   public static createAdminStack() {
-    return this.createMiddlewareChain(
-      this.createAuthMiddleware({
+    return MiddlewareFactory.createMiddlewareChain(
+      MiddlewareFactory.createAuthMiddleware({
         requireAuth: true,
-        requiredRoles: ['admin']
+        requiredRoles: ['admin'],
       }),
-      this.createValidationMiddleware({
+      MiddlewareFactory.createValidationMiddleware({
         validateBody: true,
         validateQuery: true,
-        stripUnknown: false
+        stripUnknown: false,
       }),
-      this.createRateLimitMiddleware({
+      MiddlewareFactory.createRateLimitMiddleware({
         // Admin-specific limits
       })
     );

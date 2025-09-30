@@ -170,8 +170,12 @@ export const Header: React.FC = () => {
   ];
 
   const isActivePage = (href: string) => {
-    if (href === '/' && location.pathname === '/') return true;
-    if (href !== '/' && location.pathname.startsWith(href)) return true;
+    if (href === '/' && location.pathname === '/') {
+      return true;
+    }
+    if (href !== '/' && location.pathname.startsWith(href)) {
+      return true;
+    }
     return false;
   };
 

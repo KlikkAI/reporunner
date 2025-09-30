@@ -24,8 +24,7 @@ export class ExpressionEvaluator {
       }
 
       return expression;
-    } catch (error) {
-      console.warn('Expression evaluation failed:', error);
+    } catch (_error) {
       return expression;
     }
   }

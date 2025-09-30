@@ -151,7 +151,9 @@ class ThemeManager implements IThemeManager {
   }
 
   applyCSSVariables(theme: NodeTheme): void {
-    if (typeof document === 'undefined') return;
+    if (typeof document === 'undefined') {
+      return;
+    }
 
     const variables = this.generateCSSVariables(theme);
     const root = document.documentElement;

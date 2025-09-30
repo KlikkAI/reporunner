@@ -94,12 +94,7 @@ export async function handleCreateNode(options: any): Promise<void> {
     spinner.text = `Creating ${nodeName} node...`;
 
     // Create node directory
-    const nodeDir = join(
-      process.cwd(),
-      'nodes',
-      category.toLowerCase(),
-      nodeName.toLowerCase()
-    );
+    const nodeDir = join(process.cwd(), 'nodes', category.toLowerCase(), nodeName.toLowerCase());
     ensureDirSync(nodeDir);
 
     // Generate node files

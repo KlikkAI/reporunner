@@ -7,11 +7,9 @@
  * Reduction: ~150 lines → ~90 lines (40% reduction)
  */
 
-import React from 'react';
+import type React from 'react';
 import { Handle, Position } from 'reactflow';
-import {
-  ComponentGenerator,
-} from '@/design-system';
+import { ComponentGenerator } from '@/design-system';
 import type { HandleConfig } from './index';
 
 interface NodeHandlesProps {
@@ -30,27 +28,32 @@ interface NodeHandlesProps {
 const createHandleConfig = (handleId: string, nodeType?: string) => {
   const handleConfigs: Record<string, { className: string; color: string; description: string }> = {
     ai_languageModel: {
-      className: 'w-3 h-3 bg-blue-400 border-2 border-white rounded-full hover:bg-blue-300 transition-colors',
+      className:
+        'w-3 h-3 bg-blue-400 border-2 border-white rounded-full hover:bg-blue-300 transition-colors',
       color: 'blue',
       description: 'Language Model Connection',
     },
     ai_embedding: {
-      className: 'w-3 h-3 bg-indigo-400 border-2 border-white rounded-full hover:bg-indigo-300 transition-colors',
+      className:
+        'w-3 h-3 bg-indigo-400 border-2 border-white rounded-full hover:bg-indigo-300 transition-colors',
       color: 'indigo',
       description: 'Embedding Model Connection',
     },
     ai_vectorStore: {
-      className: 'w-3 h-3 bg-purple-400 border-2 border-white rounded-full hover:bg-purple-300 transition-colors',
+      className:
+        'w-3 h-3 bg-purple-400 border-2 border-white rounded-full hover:bg-purple-300 transition-colors',
       color: 'purple',
       description: 'Vector Store Connection',
     },
     ai_tool: {
-      className: 'w-3 h-3 bg-teal-400 border-2 border-white rounded-full hover:bg-teal-300 transition-colors',
+      className:
+        'w-3 h-3 bg-teal-400 border-2 border-white rounded-full hover:bg-teal-300 transition-colors',
       color: 'teal',
       description: 'AI Tool Connection',
     },
     ai_memory: {
-      className: 'w-3 h-3 bg-orange-400 border-2 border-white rounded-full hover:bg-orange-300 transition-colors',
+      className:
+        'w-3 h-3 bg-orange-400 border-2 border-white rounded-full hover:bg-orange-300 transition-colors',
       color: 'orange',
       description: 'Memory Connection',
     },
@@ -60,24 +63,29 @@ const createHandleConfig = (handleId: string, nodeType?: string) => {
   if (nodeType === 'condition') {
     if (handleId === 'default') {
       return {
-        className: 'w-3 h-3 bg-gray-500 border-2 border-gray-700 rounded-full hover:bg-gray-400 transition-colors',
+        className:
+          'w-3 h-3 bg-gray-500 border-2 border-gray-700 rounded-full hover:bg-gray-400 transition-colors',
         color: 'gray',
         description: 'Default Output',
       };
     }
     return {
-      className: 'w-3 h-3 bg-green-500 border-2 border-green-700 rounded-full hover:bg-green-400 transition-colors',
+      className:
+        'w-3 h-3 bg-green-500 border-2 border-green-700 rounded-full hover:bg-green-400 transition-colors',
       color: 'green',
       description: 'Condition Output',
     };
   }
 
   // Return configured handle or default
-  return handleConfigs[handleId] || {
-    className: 'w-3 h-3 bg-gray-600 border-2 border-gray-800 rounded-full hover:bg-gray-500 transition-colors',
-    color: 'gray',
-    description: 'Connection Point',
-  };
+  return (
+    handleConfigs[handleId] || {
+      className:
+        'w-3 h-3 bg-gray-600 border-2 border-gray-800 rounded-full hover:bg-gray-500 transition-colors',
+      color: 'gray',
+      description: 'Connection Point',
+    }
+  );
 };
 
 // Generate handle component using factory
@@ -132,26 +140,22 @@ export const NodeHandles: React.FC<NodeHandlesProps> = ({
 
   // Generate output handles
   const outputHandles = config.outputs.map((output, index) => {
-    const style = config.outputs.length > 1
-      ? { top: `${((index + 1) / (config.outputs.length + 1)) * 100}%` }
-      : undefined;
+    const style =
+      config.outputs.length > 1
+        ? { top: `${((index + 1) / (config.outputs.length + 1)) * 100}%` }
+        : undefined;
 
-    return createHandle(
-      output.id || 'output',
-      'source',
-      Position.Right,
-      nodeType,
-      style
-    );
+    return createHandle(output.id || 'output', 'source', Position.Right, nodeType, style);
   });
 
   // Generate dynamic outputs for condition nodes
-  const dynamicOutputHandles = config.dynamicOutputs && nodeType === 'condition'
-    ? [
-        createHandle('true', 'source', Position.Right, nodeType, { top: '30%' }),
-        createHandle('false', 'source', Position.Right, nodeType, { top: '70%' }),
-      ]
-    : [];
+  const dynamicOutputHandles =
+    config.dynamicOutputs && nodeType === 'condition'
+      ? [
+          createHandle('true', 'source', Position.Right, nodeType, { top: '30%' }),
+          createHandle('false', 'source', Position.Right, nodeType, { top: '70%' }),
+        ]
+      : [];
 
   // Combine all handles
   const allHandles = [
@@ -228,9 +232,7 @@ export const NodeHandles: React.FC<NodeHandlesProps> = ({
           <span className="text-xs text-green-600 bg-white dark:bg-gray-800 px-1 rounded mb-2">
             True
           </span>
-          <span className="text-xs text-red-600 bg-white dark:bg-gray-800 px-1 rounded">
-            False
-          </span>
+          <span className="text-xs text-red-600 bg-white dark:bg-gray-800 px-1 rounded">False</span>
         </div>
       )}
     </>

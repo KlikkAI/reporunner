@@ -33,7 +33,7 @@ export class ComplianceManager {
       type: 'gdpr',
       status: 'compliant',
       findings: [],
-      recommendations: []
+      recommendations: [],
     };
   }
 

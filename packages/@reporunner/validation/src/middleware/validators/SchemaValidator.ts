@@ -1,7 +1,7 @@
-import { ValidationOptions } from '../ValidationMiddleware';
-import { SchemaDefinition, SchemaType } from '../schema/ValidationSchema';
-import { ValidationError, ValidationErrorDetail } from '../errors/ValidationError';
-import { ValidationResult } from '../types/ValidationResult';
+import { ValidationError, type ValidationErrorDetail } from '../errors/ValidationError';
+import type { SchemaDefinition, SchemaType } from '../schema/ValidationSchema';
+import type { ValidationResult } from '../types/ValidationResult';
+import type { ValidationOptions } from '../ValidationMiddleware';
 
 export class SchemaValidator {
   private options: Required<ValidationOptions>;
@@ -20,7 +20,7 @@ export class SchemaValidator {
       messages: {},
       ...options,
       onError: options.onError || (() => {}),
-      onSuccess: options.onSuccess || (() => {})
+      onSuccess: options.onSuccess || (() => {}),
     };
   }
 
@@ -34,7 +34,7 @@ export class SchemaValidator {
     const result: ValidationResult = {
       valid: true,
       errors: [],
-      value: {}
+      value: {},
     };
 
     const errors: ValidationErrorDetail[] = [];
@@ -45,7 +45,7 @@ export class SchemaValidator {
       rulesExecuted: 0,
       transformations: 0,
       sanitizations: 0,
-      startTime: Date.now()
+      startTime: Date.now(),
     };
 
     try {
@@ -53,12 +53,7 @@ export class SchemaValidator {
       for (const [key, definition] of Object.entries(schema)) {
         try {
           const fieldValue = value?.[key];
-          const validatedValue = await this.validateField(
-            key,
-            fieldValue,
-            definition,
-            meta
-          );
+          const validatedValue = await this.validateField(key, fieldValue, definition, meta);
 
           if (validatedValue !== undefined) {
             validated[key] = validatedValue;
@@ -77,21 +72,19 @@ export class SchemaValidator {
 
       // Check for unknown fields
       if (!this.options.allowUnknown) {
-        const unknownFields = Object.keys(value || {}).filter(
-          key => !schema[key]
-        );
+        const unknownFields = Object.keys(value || {}).filter((key) => !schema[key]);
 
         if (unknownFields.length > 0) {
           if (this.options.stripUnknown) {
             // Remove unknown fields
-            unknownFields.forEach(key => delete validated[key]);
+            unknownFields.forEach((key) => delete validated[key]);
           } else {
             // Add errors for unknown fields
-            unknownFields.forEach(key => {
+            unknownFields.forEach((key) => {
               errors.push({
                 path: key,
                 message: `Unknown field: ${key}`,
-                code: 'UNKNOWN_FIELD'
+                code: 'UNKNOWN_FIELD',
               });
             });
           }
@@ -106,17 +99,19 @@ export class SchemaValidator {
         duration: Date.now() - meta.startTime,
         rulesExecuted: meta.rulesExecuted,
         transformations: meta.transformations,
-        sanitizations: meta.sanitizations
+        sanitizations: meta.sanitizations,
       };
 
       return result;
     } catch (error) {
-      throw new ValidationError([{
-        path: '',
-        message: 'Validation failed',
-        code: 'VALIDATION_ERROR',
-        context: { error }
-      }]);
+      throw new ValidationError([
+        {
+          path: '',
+          message: 'Validation failed',
+          code: 'VALIDATION_ERROR',
+          context: { error },
+        },
+      ]);
     }
   }
 
@@ -176,11 +171,7 @@ export class SchemaValidator {
       meta.rulesExecuted++;
 
       if (!isValid) {
-        throw ValidationError.custom(
-          path,
-          schema.message || 'Invalid value',
-          'CUSTOM_VALIDATION'
-        );
+        throw ValidationError.custom(path, schema.message || 'Invalid value', 'CUSTOM_VALIDATION');
       }
     }
 
@@ -190,21 +181,13 @@ export class SchemaValidator {
   /**
    * Validate value type
    */
-  private async validateType(
-    path: string,
-    value: any,
-    schema: SchemaDefinition
-  ): Promise<void> {
+  private async validateType(path: string, value: any, schema: SchemaDefinition): Promise<void> {
     const types = Array.isArray(schema.type) ? schema.type : [schema.type];
-    
-    const validType = types.some(type => this.checkType(value, type));
-    
+
+    const validType = types.some((type) => this.checkType(value, type));
+
     if (!validType) {
-      throw ValidationError.type(
-        path,
-        types.join(' | '),
-        typeof value
-      );
+      throw ValidationError.type(path, types.join(' | '), typeof value);
     }
   }
 
@@ -216,7 +199,7 @@ export class SchemaValidator {
       case 'string':
         return typeof value === 'string';
       case 'number':
-        return typeof value === 'number' && !isNaN(value);
+        return typeof value === 'number' && !Number.isNaN(value);
       case 'boolean':
         return typeof value === 'boolean';
       case 'object':
@@ -230,14 +213,11 @@ export class SchemaValidator {
       case 'integer':
         return Number.isInteger(value);
       case 'float':
-        return typeof value === 'number' && !isNaN(value);
+        return typeof value === 'number' && !Number.isNaN(value);
       case 'date':
-        return value instanceof Date && !isNaN(value.getTime());
+        return value instanceof Date && !Number.isNaN(value.getTime());
       case 'file':
-        return value &&
-          typeof value === 'object' &&
-          'size' in value &&
-          'mimetype' in value;
+        return value && typeof value === 'object' && 'size' in value && 'mimetype' in value;
       default:
         return false;
     }
@@ -300,9 +280,7 @@ export class SchemaValidator {
     // Array items
     if (Array.isArray(value) && schema.items) {
       await Promise.all(
-        value.map((item, index) =>
-          this.validateField(`${path}[${index}]`, item, schema.items!)
-        )
+        value.map((item, index) => this.validateField(`${path}[${index}]`, item, schema.items!))
       );
     }
 
@@ -324,13 +302,15 @@ export class SchemaValidator {
       case 'email':
         return /^[^@]+@[^@]+\.[^@]+$/.test(value);
       case 'uuid':
-        return /^[0-9a-f]{8}-[0-9a-f]{4}-[4][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value);
+        return /^[0-9a-f]{8}-[0-9a-f]{4}-[4][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
+          value
+        );
       case 'date':
-        return !isNaN(Date.parse(value));
+        return !Number.isNaN(Date.parse(value));
       case 'time':
         return /^([01]\d|2[0-3]):([0-5]\d):([0-5]\d)$/.test(value);
       case 'date-time':
-        return !isNaN(Date.parse(value));
+        return !Number.isNaN(Date.parse(value));
       case 'ipv4':
         return /^(\d{1,3}\.){3}\d{1,3}$/.test(value);
       case 'ipv6':
@@ -350,10 +330,7 @@ export class SchemaValidator {
   /**
    * Sanitize value
    */
-  private async sanitizeValue(
-    value: any,
-    options: SchemaDefinition['sanitize']
-  ): Promise<any> {
+  private async sanitizeValue(value: any, options: SchemaDefinition['sanitize']): Promise<any> {
     if (!options || typeof value !== 'string') {
       return value;
     }
@@ -399,9 +376,9 @@ export class SchemaValidator {
       "'": '&#39;',
       '/': '&#x2F;',
       '`': '&#x60;',
-      '=': '&#x3D;'
+      '=': '&#x3D;',
     };
 
-    return value.replace(/[&<>"'`=\/]/g, s => entityMap[s]);
+    return value.replace(/[&<>"'`=/]/g, (s) => entityMap[s]);
   }
 }

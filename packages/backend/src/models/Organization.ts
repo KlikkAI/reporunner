@@ -221,13 +221,17 @@ organizationSchema.methods.hasFeature = function (feature: string): boolean {
 
 // Method to check if organization can add more users
 organizationSchema.methods.canAddUsers = function (currentUserCount: number): boolean {
-  if (!this.settings.maxUsers) return true;
+  if (!this.settings.maxUsers) {
+    return true;
+  }
   return currentUserCount < this.settings.maxUsers;
 };
 
 // Method to check if organization can add more workflows
 organizationSchema.methods.canAddWorkflows = function (currentWorkflowCount: number): boolean {
-  if (!this.settings.maxWorkflows) return true;
+  if (!this.settings.maxWorkflows) {
+    return true;
+  }
   return currentWorkflowCount < this.settings.maxWorkflows;
 };
 

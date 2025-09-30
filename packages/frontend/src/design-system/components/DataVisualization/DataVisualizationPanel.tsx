@@ -35,7 +35,9 @@ const DataVisualizationPanel: React.FC<DataVisualizationPanelProps> = ({
 
   // Filter data based on search term
   const filteredData = useMemo(() => {
-    if (!searchTerm || !data) return data;
+    if (!(searchTerm && data)) {
+      return data;
+    }
 
     const filterObject = (obj: any, term: string): any => {
       if (typeof obj === 'string') {
@@ -69,10 +71,14 @@ const DataVisualizationPanel: React.FC<DataVisualizationPanelProps> = ({
 
   // Data statistics
   const dataStats = useMemo(() => {
-    if (!data) return null;
+    if (!data) {
+      return null;
+    }
 
     const countFields = (obj: any): number => {
-      if (typeof obj !== 'object' || obj === null) return 0;
+      if (typeof obj !== 'object' || obj === null) {
+        return 0;
+      }
 
       let count = 0;
       for (const [value] of Object.entries(obj)) {

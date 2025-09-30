@@ -100,7 +100,7 @@ createAlert(
 {
     try {
       // Check if similar alert already exists and is active
-      const existingAlert = await this.database.findOne(this.ALERTS_COLLECTION, {
+      const _existingAlert = await this.database.findOne(this.ALERTS_COLLECTION, {
         tenantId,
         type: alertData.type,
         title: alertData.title,

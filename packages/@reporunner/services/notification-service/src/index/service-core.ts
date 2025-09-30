@@ -28,21 +28,11 @@ export interface NotificationAction {
 
 export class NotificationService extends EventEmitter {
   private db: Db;
-  private cache: Redis;
   private channels: Collection<NotificationChannel>;
   private templates: Collection<NotificationTemplate>;
   private requests: Collection<NotificationRequest>;
-  private results: Collection<NotificationResult>;
-  private rules: Collection<NotificationRule>;
-  private eventBus: DistributedEventBus;
 
-  private notificationQueue: Queue<NotificationJobData>;
-  private notificationWorker: Worker<NotificationJobData>;
-  private providers: Map<string, NotificationProvider> = new Map();
-
-  constructor(
-    private config: NotificationConfig,
-    private mongoClient: MongoClient,
+  constructor(config: NotificationConfig,mongoClient: MongoClient,
     eventBus: DistributedEventBus
   ) {
     super();

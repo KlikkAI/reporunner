@@ -48,7 +48,7 @@ export function createRBACMiddleware(config: RBACConfig) {
         }
 
         next();
-      } catch (error) {
+      } catch (_error) {
         res.status(500).json({ error: 'Authorization error' });
       }
     };
@@ -77,7 +77,7 @@ export function createRoleMiddleware(config: RBACConfig) {
         }
 
         next();
-      } catch (error) {
+      } catch (_error) {
         res.status(500).json({ error: 'Authorization error' });
       }
     };

@@ -1,4 +1,4 @@
-import { Router, Request, Response } from 'express';
+import { type Request, type Response, Router } from 'express';
 import { rateLimit } from 'express-rate-limit';
 import { body, param } from 'express-validator';
 import { authRequired } from '../middleware/auth';
@@ -32,10 +32,7 @@ const webhookRateLimit = rateLimit({
 router.post(
   '/',
   webhookRateLimit,
-  [
-    body('payload').optional(),
-    body('signature').optional().isString(),
-  ],
+  [body('payload').optional(), body('signature').optional().isString()],
   validateRequest,
   async (_req: Request, res: Response) => {
     res.json({ message: 'Webhook received', timestamp: new Date().toISOString() });

@@ -274,16 +274,14 @@ export const Documentation: React.FC = () => {
     ],
   };
 
-
-  const filteredDocs =
+  const _filteredDocs =
     documentation[selectedCategory as keyof typeof documentation]?.filter(
       (doc) =>
         doc.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         doc.description.toLowerCase().includes(searchQuery.toLowerCase())
     ) || [];
 
-
-  const getTypeIcon = (type: string) => {
+  const _getTypeIcon = (type: string) => {
     switch (type) {
       case 'guide':
         return BookOpen;
@@ -385,47 +383,49 @@ export const Documentation: React.FC = () => {
             {/* Main Content */}
             <div className="lg:w-3/4">
               <div className="space-y-6">
-                {documentation[selectedCategory as keyof typeof documentation]?.map((doc, index) => (
-                  <div
-                    key={index}
-                    className="bg-white border border-gray-200 rounded-xl p-6 hover:border-blue-300 hover:shadow-lg transition-all duration-300 cursor-pointer group"
-                  >
-                    <div className="flex items-start justify-between mb-4">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-3 mb-2">
-                          <h3 className="text-xl font-bold text-gray-900 group-hover:text-blue-900 transition-colors">
-                            {doc.title}
-                          </h3>
-                          {doc.popular && (
-                            <div className="flex items-center gap-1 px-2 py-1 bg-yellow-100 text-yellow-700 rounded-full text-xs font-medium">
-                              <Star className="w-3 h-3 fill-current" />
-                              Popular
-                            </div>
-                          )}
+                {documentation[selectedCategory as keyof typeof documentation]?.map(
+                  (doc, index) => (
+                    <div
+                      key={index}
+                      className="bg-white border border-gray-200 rounded-xl p-6 hover:border-blue-300 hover:shadow-lg transition-all duration-300 cursor-pointer group"
+                    >
+                      <div className="flex items-start justify-between mb-4">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-3 mb-2">
+                            <h3 className="text-xl font-bold text-gray-900 group-hover:text-blue-900 transition-colors">
+                              {doc.title}
+                            </h3>
+                            {doc.popular && (
+                              <div className="flex items-center gap-1 px-2 py-1 bg-yellow-100 text-yellow-700 rounded-full text-xs font-medium">
+                                <Star className="w-3 h-3 fill-current" />
+                                Popular
+                              </div>
+                            )}
+                          </div>
+                          <p className="text-gray-600 mb-3">{doc.description}</p>
+                          <div className="flex items-center gap-4 text-sm text-gray-500">
+                            <span className="flex items-center gap-1">
+                              <Clock className="w-4 h-4" />
+                              {doc.readTime}
+                            </span>
+                            <span
+                              className={`px-2 py-1 text-xs font-medium rounded-full ${getDifficultyColor(doc.difficulty)}`}
+                            >
+                              {doc.difficulty}
+                            </span>
+                            <span
+                              className={`px-2 py-1 text-xs font-medium rounded-full ${getTypeColor(doc.type)}`}
+                            >
+                              {doc.type}
+                            </span>
+                            <span>Updated {doc.lastUpdated}</span>
+                          </div>
                         </div>
-                        <p className="text-gray-600 mb-3">{doc.description}</p>
-                        <div className="flex items-center gap-4 text-sm text-gray-500">
-                          <span className="flex items-center gap-1">
-                            <Clock className="w-4 h-4" />
-                            {doc.readTime}
-                          </span>
-                          <span
-                            className={`px-2 py-1 text-xs font-medium rounded-full ${getDifficultyColor(doc.difficulty)}`}
-                          >
-                            {doc.difficulty}
-                          </span>
-                          <span
-                            className={`px-2 py-1 text-xs font-medium rounded-full ${getTypeColor(doc.type)}`}
-                          >
-                            {doc.type}
-                          </span>
-                          <span>Updated {doc.lastUpdated}</span>
-                        </div>
+                        <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-blue-600 transition-colors ml-4" />
                       </div>
-                      <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-blue-600 transition-colors ml-4" />
                     </div>
-                  </div>
-                ))}
+                  )
+                )}
               </div>
             </div>
           </div>
@@ -554,9 +554,7 @@ export const Documentation: React.FC = () => {
                   <Webhook className="w-8 h-8 text-purple-600" />
                 </div>
                 <h3 className="text-xl font-bold text-gray-900 mb-3">Support Team</h3>
-                <p className="text-gray-600 text-sm mb-4">
-                  Get help from our expert support team
-                </p>
+                <p className="text-gray-600 text-sm mb-4">Get help from our expert support team</p>
                 <button className="text-purple-600 font-medium hover:text-purple-700 transition-colors">
                   Contact Support
                 </button>

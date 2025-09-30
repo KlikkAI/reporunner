@@ -288,7 +288,9 @@ const TransformAssignmentCollection: React.FC<TransformAssignmentCollectionProps
 
   // Add all fields from input data
   const handleAddAllFields = useCallback(() => {
-    if (!inputData || !inputData.length) return;
+    if (!inputData?.length) {
+      return;
+    }
 
     // Get all unique field names from input data
     const fieldNames = new Set<string>();
@@ -305,10 +307,15 @@ const TransformAssignmentCollection: React.FC<TransformAssignmentCollectionProps
       for (const item of inputData) {
         if (item.json && item.json[fieldName] !== undefined) {
           const value = item.json[fieldName];
-          if (typeof value === 'number') detectedType = 'numberValue';
-          else if (typeof value === 'boolean') detectedType = 'booleanValue';
-          else if (Array.isArray(value)) detectedType = 'arrayValue';
-          else if (typeof value === 'object' && value !== null) detectedType = 'objectValue';
+          if (typeof value === 'number') {
+            detectedType = 'numberValue';
+          } else if (typeof value === 'boolean') {
+            detectedType = 'booleanValue';
+          } else if (Array.isArray(value)) {
+            detectedType = 'arrayValue';
+          } else if (typeof value === 'object' && value !== null) {
+            detectedType = 'objectValue';
+          }
           break;
         }
       }

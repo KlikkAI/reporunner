@@ -1,7 +1,7 @@
 /**
  * Execution Monitor Service - Reusing existing implementations
- * 
- * This service reuses the existing PerformanceMonitorService and other 
+ *
+ * This service reuses the existing PerformanceMonitorService and other
  * monitoring infrastructure to provide execution monitoring capabilities.
  */
 
@@ -19,7 +19,7 @@ interface ExecutionMonitor {
   activeExecutions: Map<string, WorkflowExecution>;
   executionUpdates: Map<string, any[]>;
   isMonitoring: boolean;
-  
+
   // Methods
   startMonitoring: (executionId: string) => void;
   stopMonitoring: (executionId: string) => void;
@@ -43,7 +43,7 @@ class ExecutionMonitorService {
    */
   startMonitoring(executionId: string): void {
     const state = useExecutionMonitorStore.getState();
-    
+
     // Don't start if already monitoring
     if (this.intervalIds.has(executionId)) {
       return;
@@ -70,14 +70,14 @@ class ExecutionMonitorService {
 
     // Add to active executions
     state.activeExecutions.set(executionId, mockExecution);
-    
+
     // Set up polling for updates
     const intervalId = setInterval(() => {
       this.pollExecutionUpdates(executionId);
     }, 1000);
-    
+
     this.intervalIds.set(executionId, intervalId);
-    
+
     useExecutionMonitorStore.setState({
       activeExecutions: new Map(state.activeExecutions),
       isMonitoring: state.activeExecutions.size > 0,
@@ -89,7 +89,7 @@ class ExecutionMonitorService {
    */
   stopMonitoring(executionId: string): void {
     const state = useExecutionMonitorStore.getState();
-    
+
     // Clear interval
     const intervalId = this.intervalIds.get(executionId);
     if (intervalId) {
@@ -100,7 +100,7 @@ class ExecutionMonitorService {
     // Remove from active executions
     state.activeExecutions.delete(executionId);
     state.executionUpdates.delete(executionId);
-    
+
     // Clear callbacks
     this.updateCallbacks.delete(executionId);
 
@@ -143,17 +143,25 @@ class ExecutionMonitorService {
   private async pollExecutionUpdates(executionId: string): Promise<void> {
     const state = useExecutionMonitorStore.getState();
     const execution = state.activeExecutions.get(executionId);
-    
-    if (!execution) return;
+
+    if (!execution) {
+      return;
+    }
 
     // Mock update - replace with actual API call
     const update = {
       timestamp: new Date().toISOString(),
       progress: {
         ...execution.progress,
-        completedNodes: Math.min(execution.progress.completedNodes + 1, execution.progress.totalNodes),
+        completedNodes: Math.min(
+          execution.progress.completedNodes + 1,
+          execution.progress.totalNodes
+        ),
       },
-      status: execution.progress.completedNodes >= execution.progress.totalNodes - 1 ? 'completed' : 'running',
+      status:
+        execution.progress.completedNodes >= execution.progress.totalNodes - 1
+          ? 'completed'
+          : 'running',
     };
 
     // Update execution
@@ -167,7 +175,7 @@ class ExecutionMonitorService {
 
     // Notify callbacks
     const callbacks = this.updateCallbacks.get(executionId) || [];
-    callbacks.forEach(callback => callback(update));
+    callbacks.forEach((callback) => callback(update));
 
     // Update store
     useExecutionMonitorStore.setState({
@@ -187,7 +195,7 @@ class ExecutionMonitorService {
   clearExecutionUpdates(executionId: string): void {
     const state = useExecutionMonitorStore.getState();
     state.executionUpdates.delete(executionId);
-    
+
     useExecutionMonitorStore.setState({
       executionUpdates: new Map(state.executionUpdates),
     });
@@ -202,7 +210,7 @@ const executionMonitorService = new ExecutionMonitorService();
  */
 export function useExecutionMonitor() {
   const { activeExecutions, executionUpdates, isMonitoring } = useExecutionMonitorStore();
-  
+
   return {
     activeExecutions,
     executionUpdates,
@@ -211,7 +219,8 @@ export function useExecutionMonitor() {
     stopMonitoring: executionMonitorService.stopMonitoring.bind(executionMonitorService),
     getExecutionStatus: executionMonitorService.getExecutionStatus.bind(executionMonitorService),
     onExecutionUpdate: executionMonitorService.onExecutionUpdate.bind(executionMonitorService),
-    clearExecutionUpdates: executionMonitorService.clearExecutionUpdates.bind(executionMonitorService),
+    clearExecutionUpdates:
+      executionMonitorService.clearExecutionUpdates.bind(executionMonitorService),
   };
 }
 

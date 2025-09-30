@@ -17,7 +17,9 @@ const NodeToolbar: React.FC<NodeToolbarProps> = ({
   onMenuToggle,
   menuTriggerRef,
 }) => {
-  if (!visible) return null;
+  if (!visible) {
+    return null;
+  }
 
   return (
     <div

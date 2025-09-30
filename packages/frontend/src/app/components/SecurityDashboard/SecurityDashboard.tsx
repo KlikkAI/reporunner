@@ -151,10 +151,18 @@ const SecurityDashboard: React.FC<SecurityDashboardProps> = ({ className }) => {
   };
 
   const filteredAuditLogs = auditLogs.filter((log) => {
-    if (filters.severity !== 'all' && log.severity !== filters.severity) return false;
-    if (filters.category !== 'all' && log.category !== filters.category) return false;
-    if (filters.startDate && log.timestamp < filters.startDate.valueOf()) return false;
-    if (filters.endDate && log.timestamp > filters.endDate.valueOf()) return false;
+    if (filters.severity !== 'all' && log.severity !== filters.severity) {
+      return false;
+    }
+    if (filters.category !== 'all' && log.category !== filters.category) {
+      return false;
+    }
+    if (filters.startDate && log.timestamp < filters.startDate.valueOf()) {
+      return false;
+    }
+    if (filters.endDate && log.timestamp > filters.endDate.valueOf()) {
+      return false;
+    }
     return true;
   });
 

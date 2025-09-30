@@ -48,14 +48,14 @@ export default defineConfig(({ mode }) => {
 
     // Development server configuration
     server: {
-      port: parseInt(env.VITE_DEV_SERVER_PORT, 10) || 3000,
-      host: env.VITE_DEV_SERVER_HOST || true,
+      port: Number.parseInt(env.VITE_DEV_SERVER_PORT, 10) || 3000,
+      host: true,
       open: true,
       cors: true,
 
       // HMR configuration
       hmr: {
-        port: parseInt(env.VITE_HMR_PORT, 10) || 24678,
+        port: Number.parseInt(env.VITE_HMR_PORT, 10) || 24678,
         host: env.VITE_HMR_HOST || 'localhost',
       },
     },

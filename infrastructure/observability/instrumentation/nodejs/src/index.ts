@@ -403,12 +403,12 @@ export function getDefaultConfig(serviceName: string): InstrumentationConfig {
           ? JSON.parse(process.env.OTEL_EXPORTER_OTLP_HEADERS)
           : undefined,
       },
-      samplingRate: parseFloat(process.env.TRACING_SAMPLING_RATE || '0.1'),
+      samplingRate: Number.parseFloat(process.env.TRACING_SAMPLING_RATE || '0.1'),
     },
     metrics: {
       enabled: process.env.METRICS_ENABLED !== 'false',
       prometheus: {
-        port: parseInt(process.env.PROMETHEUS_PORT || '9464', 10),
+        port: Number.parseInt(process.env.PROMETHEUS_PORT || '9464', 10),
         endpoint: process.env.PROMETHEUS_ENDPOINT || '/metrics',
       },
       otlp: {

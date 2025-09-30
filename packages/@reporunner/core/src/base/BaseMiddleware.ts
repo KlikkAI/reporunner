@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express';
+import type { NextFunction, Request, Response } from 'express';
 import { ErrorTypes } from '../utils/errors';
 
 export interface MiddlewareConfig {
@@ -41,7 +41,7 @@ export abstract class BaseMiddleware {
   public handle = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const context: BaseMiddlewareContext = { req, res, next, config: this.config };
-      
+
       // Run pre-execution hooks
       await this.beforeHandle(context);
 
@@ -93,7 +93,7 @@ export abstract class BaseMiddleware {
     if (error.name === ErrorTypes.ValidationError) {
       res.status(400).json({
         error: 'Validation Error',
-        message: error.message
+        message: error.message,
       });
       return;
     }
@@ -101,7 +101,7 @@ export abstract class BaseMiddleware {
     if (error.name === ErrorTypes.AuthenticationError) {
       res.status(401).json({
         error: 'Authentication Error',
-        message: error.message
+        message: error.message,
       });
       return;
     }
@@ -109,7 +109,7 @@ export abstract class BaseMiddleware {
     if (error.name === ErrorTypes.AuthorizationError) {
       res.status(403).json({
         error: 'Authorization Error',
-        message: error.message
+        message: error.message,
       });
       return;
     }
@@ -117,7 +117,7 @@ export abstract class BaseMiddleware {
     // Default to 500 for unhandled errors
     res.status(500).json({
       error: 'Internal Server Error',
-      message: 'An unexpected error occurred'
+      message: 'An unexpected error occurred',
     });
   }
 }

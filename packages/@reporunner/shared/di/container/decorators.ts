@@ -4,7 +4,7 @@ return target;
 
 // Factory decorator
 export function Factory(identifier: symbol) {
-  return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
+  return (_target: any, _propertyKey: string, descriptor: PropertyDescriptor) => {
     const factory = descriptor.value;
 
     setTimeout(() => {

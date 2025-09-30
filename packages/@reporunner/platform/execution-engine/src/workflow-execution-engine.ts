@@ -372,7 +372,7 @@ export class WorkflowExecutionEngine extends EventEmitter {
         data: result,
       };
     } catch (error) {
-      const shouldContinue = node.continueOnError || false;
+      const shouldContinue = node.continueOnError;
 
       if (!shouldContinue) {
         throw error;
@@ -414,7 +414,9 @@ export class WorkflowExecutionEngine extends EventEmitter {
     const plan: INode[] = [];
 
     const visit = (nodeId: string) => {
-      if (visited.has(nodeId)) return;
+      if (visited.has(nodeId)) {
+        return;
+      }
       visited.add(nodeId);
 
       // Visit dependencies first

@@ -97,7 +97,9 @@ export const CommentAnnotations: React.FC<CommentAnnotationsProps> = ({
   // Handle canvas click for new comments
   const handleCanvasClick = useCallback(
     (event: React.MouseEvent) => {
-      if (!commentMode || !containerRef.current) return;
+      if (!(commentMode && containerRef.current)) {
+        return;
+      }
 
       const rect = containerRef.current.getBoundingClientRect();
       const x = event.clientX - rect.left;
@@ -112,7 +114,9 @@ export const CommentAnnotations: React.FC<CommentAnnotationsProps> = ({
 
   // Handle adding new comment
   const handleAddComment = useCallback(async () => {
-    if (!newCommentContent.trim() || !pendingCommentPosition) return;
+    if (!(newCommentContent.trim() && pendingCommentPosition)) {
+      return;
+    }
 
     try {
       await addComment({
@@ -132,7 +136,9 @@ export const CommentAnnotations: React.FC<CommentAnnotationsProps> = ({
   const handleReplyToComment = useCallback(
     async (commentId: string) => {
       const content = replyContents[commentId];
-      if (!content?.trim()) return;
+      if (!content?.trim()) {
+        return;
+      }
 
       try {
         await replyToComment(commentId, content);
@@ -385,7 +391,9 @@ export const CommentAnnotations: React.FC<CommentAnnotationsProps> = ({
     );
   };
 
-  if (!showComments || !containerRef.current) return null;
+  if (!(showComments && containerRef.current)) {
+    return null;
+  }
 
   return (
     <>

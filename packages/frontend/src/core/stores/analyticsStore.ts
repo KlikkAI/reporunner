@@ -330,7 +330,9 @@ if (typeof window !== 'undefined') {
 
 // Export helper functions for component use
 export const getExecutionSummary = (analytics: WorkflowAnalytics | null) => {
-  if (!analytics) return null;
+  if (!analytics) {
+    return null;
+  }
 
   return {
     totalExecutions: analytics.executionStats.total,
@@ -352,7 +354,9 @@ export const getTopBottlenecks = (bottlenecks: BottleneckAnalysis[], limit = 5) 
 };
 
 export const getCostTrend = (costHistory: TimeSeriesPoint[]) => {
-  if (costHistory.length < 2) return 0;
+  if (costHistory.length < 2) {
+    return 0;
+  }
 
   const recent = costHistory.slice(-7).reduce((sum, p) => sum + p.value, 0) / 7;
   const previous = costHistory.slice(-14, -7).reduce((sum, p) => sum + p.value, 0) / 7;
@@ -361,16 +365,28 @@ export const getCostTrend = (costHistory: TimeSeriesPoint[]) => {
 };
 
 export const formatDuration = (milliseconds: number): string => {
-  if (milliseconds < 1000) return `${milliseconds}ms`;
-  if (milliseconds < 60000) return `${(milliseconds / 1000).toFixed(1)}s`;
-  if (milliseconds < 3600000) return `${(milliseconds / 60000).toFixed(1)}m`;
+  if (milliseconds < 1000) {
+    return `${milliseconds}ms`;
+  }
+  if (milliseconds < 60000) {
+    return `${(milliseconds / 1000).toFixed(1)}s`;
+  }
+  if (milliseconds < 3600000) {
+    return `${(milliseconds / 60000).toFixed(1)}m`;
+  }
   return `${(milliseconds / 3600000).toFixed(1)}h`;
 };
 
 export const formatBytes = (bytes: number): string => {
-  if (bytes < 1024) return `${bytes}B`;
-  if (bytes < 1048576) return `${(bytes / 1024).toFixed(1)}KB`;
-  if (bytes < 1073741824) return `${(bytes / 1048576).toFixed(1)}MB`;
+  if (bytes < 1024) {
+    return `${bytes}B`;
+  }
+  if (bytes < 1048576) {
+    return `${(bytes / 1024).toFixed(1)}KB`;
+  }
+  if (bytes < 1073741824) {
+    return `${(bytes / 1048576).toFixed(1)}MB`;
+  }
   return `${(bytes / 1073741824).toFixed(1)}GB`;
 };
 

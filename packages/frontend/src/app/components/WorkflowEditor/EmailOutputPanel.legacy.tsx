@@ -12,26 +12,34 @@ interface EmailOutputPanelProps {
 
 const EmailOutputPanel: React.FC<EmailOutputPanelProps> = ({ selectedEmail, isVisible = true }) => {
   const emailTitle = useMemo(() => {
-    if (!selectedEmail) return 'Email Output';
+    if (!selectedEmail) {
+      return 'Email Output';
+    }
     const from = selectedEmail.from || 'Unknown sender';
-    const subject = selectedEmail.subject || 'No subject';
+    const _subject = selectedEmail.subject || 'No subject';
     return `Email from ${from}`;
   }, [selectedEmail]);
 
-  const emailSubtitle = useMemo(() => {
-    if (!selectedEmail) return undefined;
+  const _emailSubtitle = useMemo(() => {
+    if (!selectedEmail) {
+      return undefined;
+    }
     return selectedEmail.subject || 'No subject';
   }, [selectedEmail]);
 
-  const handleExport = (format: 'json' | 'csv' | 'xml') => {
-    if (!selectedEmail) return;
+  const handleExport = (_format: 'json' | 'csv' | 'xml') => {
+    if (!selectedEmail) {
+      return;
+    }
 
     // Custom export logic for email data
-    const filename = `email-${selectedEmail.id || 'unknown'}-${Date.now()}`;
+    const _filename = `email-${selectedEmail.id || 'unknown'}-${Date.now()}`;
     // Implementation would be handled by SharedDataVisualizationPanel
   };
 
-  if (!isVisible) return null;
+  if (!isVisible) {
+    return null;
+  }
 
   if (!selectedEmail) {
     return (
@@ -72,8 +80,13 @@ const EmailOutputPanel: React.FC<EmailOutputPanelProps> = ({ selectedEmail, isVi
 
         <div className="text-xs text-gray-300">
           <div className="flex justify-between">
-            <span><span className="text-blue-300">From:</span> {selectedEmail.from || 'Unknown'}</span>
-            <span><span className="text-blue-300">Subject:</span> {selectedEmail.subject || 'No subject'}</span>
+            <span>
+              <span className="text-blue-300">From:</span> {selectedEmail.from || 'Unknown'}
+            </span>
+            <span>
+              <span className="text-blue-300">Subject:</span>{' '}
+              {selectedEmail.subject || 'No subject'}
+            </span>
           </div>
         </div>
       </div>
@@ -87,7 +100,7 @@ const EmailOutputPanel: React.FC<EmailOutputPanelProps> = ({ selectedEmail, isVi
             showJson: true,
             showTable: true,
             showSchema: true,
-            maxHeight: 'calc(100vh - 200px)'
+            maxHeight: 'calc(100vh - 200px)',
           }}
           onExport={handleExport}
           emptyMessage="No email data available"

@@ -9,14 +9,8 @@
       "@reporunner/*": ["../@reporunner/*/src"]
     }
   },
-  "include": [
-    "src/**/*"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "**/*.test.*"
-  ],
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist", "**/*.test.*"],
   "references": [
     {
       "path": "../api-types"

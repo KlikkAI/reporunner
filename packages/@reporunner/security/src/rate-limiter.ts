@@ -167,7 +167,7 @@ export class AdvancedRateLimiter {
       points: options.points,
       duration: options.duration,
       blockDuration: options.blockDuration || options.duration * 2,
-      execEvenly: options.execEvenly || false,
+      execEvenly: options.execEvenly,
     };
 
     if (this.redisClient) {
@@ -284,7 +284,9 @@ export class AdvancedRateLimiter {
     identifier: string
   ): Promise<{ consumed: number; remaining: number } | null> {
     const limiter = this.limiters.get(type);
-    if (!limiter) return null;
+    if (!limiter) {
+      return null;
+    }
 
     try {
       const res = await limiter.get(identifier);

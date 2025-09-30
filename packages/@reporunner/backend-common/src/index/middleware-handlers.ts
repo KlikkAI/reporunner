@@ -4,5 +4,5 @@ export {
   contextMiddleware,
   errorHandler,
   notFoundHandler,
-  validatePagination
+  validatePagination,
 } from '../index';

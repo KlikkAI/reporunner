@@ -1,4 +1,4 @@
-import { Store } from './stores/Store';
+import type { Store } from './stores/Store';
 
 export interface RateLimiterConfig {
   /**

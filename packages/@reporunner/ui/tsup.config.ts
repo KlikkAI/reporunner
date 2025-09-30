@@ -11,12 +11,12 @@ export default defineConfig({
     '@emotion/react',
     '@emotion/styled',
     '@radix-ui/*',
-    'framer-motion'
+    'framer-motion',
   ],
   esbuildOptions(options) {
     options.banner = {
       js: '"use client"',
     };
     options.jsx = 'automatic';
-  }
+  },
 });

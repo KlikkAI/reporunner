@@ -8,10 +8,8 @@ export interface IfInput {
 
 export class IfUseCase implements IUseCase<IfInput, any> {
   async execute(input: IfInput): Promise<any> {
-    const condition = typeof input.condition === 'function' 
-      ? input.condition() 
-      : input.condition;
-    
+    const condition = typeof input.condition === 'function' ? input.condition() : input.condition;
+
     return condition ? input.trueValue : input.falseValue;
   }
 }

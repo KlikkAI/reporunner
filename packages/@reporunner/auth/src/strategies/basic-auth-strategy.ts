@@ -10,7 +10,7 @@ export class BasicAuthStrategy {
   constructor(options: BasicAuthStrategyOptions) {
     this.options = {
       realm: 'Reporunner API',
-      ...options
+      ...options,
     };
   }
 
@@ -30,7 +30,7 @@ export class BasicAuthStrategy {
   private extractCredentials(req: any): { username: string; password: string } | null {
     const authHeader = req.headers.authorization;
 
-    if (!authHeader || !authHeader.startsWith('Basic ')) {
+    if (!authHeader?.startsWith('Basic ')) {
       return null;
     }
 
@@ -39,12 +39,12 @@ export class BasicAuthStrategy {
       const credentials = Buffer.from(base64Credentials, 'base64').toString('ascii');
       const [username, password] = credentials.split(':');
 
-      if (!username || !password) {
+      if (!(username && password)) {
         return null;
       }
 
       return { username, password };
-    } catch (error) {
+    } catch (_error) {
       return null;
     }
   }

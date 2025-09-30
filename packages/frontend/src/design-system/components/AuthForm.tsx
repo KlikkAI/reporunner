@@ -1,6 +1,7 @@
 // Shared Authentication Form Component
-import React, { useState } from 'react';
-import { Button, Input, Form } from 'antd';
+
+import { Button, Form, Input } from 'antd';
+import type React from 'react';
 
 interface AuthFormProps {
   type: 'login' | 'register';
@@ -28,7 +29,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({ type, onSubmit, loading, err
           label="Email"
           rules={[
             { required: true, message: 'Please input your email!' },
-            { type: 'email', message: 'Please enter a valid email!' }
+            { type: 'email', message: 'Please enter a valid email!' },
           ]}
         >
           <Input placeholder="Enter your email" />
@@ -39,7 +40,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({ type, onSubmit, loading, err
           label="Password"
           rules={[
             { required: true, message: 'Please input your password!' },
-            { min: 8, message: 'Password must be at least 8 characters!' }
+            { min: 8, message: 'Password must be at least 8 characters!' },
           ]}
         >
           <Input.Password placeholder="Enter your password" />
@@ -73,21 +74,20 @@ export const AuthForm: React.FC<AuthFormProps> = ({ type, onSubmit, loading, err
         )}
 
         <Form.Item>
-          <Button
-            type="primary"
-            htmlType="submit"
-            loading={loading}
-            className="w-full"
-          >
+          <Button type="primary" htmlType="submit" loading={loading} className="w-full">
             {type === 'login' ? 'Sign In' : 'Create Account'}
           </Button>
         </Form.Item>
 
         <div className="text-center">
           {type === 'login' ? (
-            <p>Don't have an account? <a href="/register">Sign up</a></p>
+            <p>
+              Don't have an account? <a href="/register">Sign up</a>
+            </p>
           ) : (
-            <p>Already have an account? <a href="/login">Sign in</a></p>
+            <p>
+              Already have an account? <a href="/login">Sign in</a>
+            </p>
           )}
         </div>
       </Form>

@@ -4,12 +4,14 @@ import { z } from 'zod';
 export const MongoDBConfigSchema = z.object({
   uri: z.string(),
   database: z.string(),
-  options: z.object({
-    maxPoolSize: z.number().optional(),
-    minPoolSize: z.number().optional(),
-    connectTimeoutMS: z.number().optional(),
-    serverSelectionTimeoutMS: z.number().optional(),
-  }).optional(),
+  options: z
+    .object({
+      maxPoolSize: z.number().optional(),
+      minPoolSize: z.number().optional(),
+      connectTimeoutMS: z.number().optional(),
+      serverSelectionTimeoutMS: z.number().optional(),
+    })
+    .optional(),
 });
 
 export const PostgreSQLConfigSchema = z.object({
@@ -19,11 +21,13 @@ export const PostgreSQLConfigSchema = z.object({
   username: z.string(),
   password: z.string(),
   ssl: z.boolean().optional(),
-  pool: z.object({
-    min: z.number().optional(),
-    max: z.number().optional(),
-    idle: z.number().optional(),
-  }).optional(),
+  pool: z
+    .object({
+      min: z.number().optional(),
+      max: z.number().optional(),
+      idle: z.number().optional(),
+    })
+    .optional(),
 });
 
 export const DatabaseConfigSchema = z.object({

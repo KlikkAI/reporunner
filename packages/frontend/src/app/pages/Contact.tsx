@@ -8,7 +8,6 @@
 import {
   Briefcase,
   Calendar,
-  CheckCircle,
   Clock,
   Code,
   ExternalLink,
@@ -19,8 +18,6 @@ import {
   MapPin,
   MessageSquare,
   Phone,
-  Send,
-  Shield,
   Users,
   Zap,
 } from 'lucide-react';
@@ -30,7 +27,7 @@ import { Footer } from '../components/Landing/Footer';
 import { Header } from '../components/Landing/Header';
 
 export const Contact: React.FC = () => {
-  const [formData, setFormData] = useState({
+  const [_formData, setFormData] = useState({
     name: '',
     email: '',
     company: '',
@@ -40,9 +37,9 @@ export const Contact: React.FC = () => {
     message: '',
     newsletter: false,
   });
-  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [_isSubmitted, setIsSubmitted] = useState(false);
 
-  const inquiryTypes = [
+  const _inquiryTypes = [
     { value: 'sales', label: 'Sales Inquiry', icon: Briefcase },
     { value: 'support', label: 'Technical Support', icon: HelpCircle },
     { value: 'partnership', label: 'Partnership', icon: Users },
@@ -143,7 +140,7 @@ export const Contact: React.FC = () => {
     },
   ];
 
-  const handleInputChange = (
+  const _handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value, type } = e.target;
@@ -160,7 +157,7 @@ export const Contact: React.FC = () => {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const _handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitted(true);
 
@@ -276,7 +273,9 @@ export const Contact: React.FC = () => {
 
             {/* Contact Form Component would go here */}
             <div className="bg-white border border-gray-200 rounded-xl p-8 shadow-sm">
-              <p className="text-center text-gray-600">Contact form implementation coming soon...</p>
+              <p className="text-center text-gray-600">
+                Contact form implementation coming soon...
+              </p>
             </div>
           </div>
         </div>

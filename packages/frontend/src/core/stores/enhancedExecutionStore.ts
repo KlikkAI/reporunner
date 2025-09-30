@@ -1,6 +1,6 @@
 /**
  * Enhanced Execution Store
- * 
+ *
  * Reuses existing execution monitoring infrastructure to provide
  * enhanced execution tracking capabilities.
  */
@@ -37,27 +37,31 @@ interface ExecutionMetrics {
 interface EnhancedExecutionState {
   // Active executions
   activeExecutions: Map<string, WorkflowExecution>;
-  
+
   // Node-level execution details
   nodeExecutions: Map<string, Map<string, NodeExecution>>; // executionId -> nodeId -> NodeExecution
-  
+
   // Real-time updates
   executionUpdates: Map<string, any[]>;
-  
+
   // Metrics and analytics
   executionMetrics: Map<string, ExecutionMetrics>;
-  
+
   // UI state
   selectedExecution: string | null;
   isMonitoring: boolean;
   autoRefresh: boolean;
-  
+
   // Actions
   startExecution: (workflowId: string, executionData: any) => Promise<string>;
   stopExecution: (executionId: string) => Promise<void>;
   getExecution: (executionId: string) => WorkflowExecution | undefined;
   getNodeExecution: (executionId: string, nodeId: string) => NodeExecution | undefined;
-  updateNodeExecution: (executionId: string, nodeId: string, update: Partial<NodeExecution>) => void;
+  updateNodeExecution: (
+    executionId: string,
+    nodeId: string,
+    update: Partial<NodeExecution>
+  ) => void;
   addExecutionLog: (executionId: string, nodeId: string, log: NodeExecution['logs'][0]) => void;
   setSelectedExecution: (executionId: string | null) => void;
   toggleAutoRefresh: () => void;
@@ -78,7 +82,7 @@ export const useEnhancedExecutionStore = create<EnhancedExecutionState>()(
     // Start execution
     startExecution: async (workflowId: string, executionData: any): Promise<string> => {
       const executionId = `exec-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-      
+
       const execution: WorkflowExecution = {
         id: executionId,
         workflowId,
@@ -97,7 +101,7 @@ export const useEnhancedExecutionStore = create<EnhancedExecutionState>()(
         },
       };
 
-      set(state => ({
+      set((state) => ({
         activeExecutions: new Map(state.activeExecutions.set(executionId, execution)),
         nodeExecutions: new Map(state.nodeExecutions.set(executionId, new Map())),
         isMonitoring: true,
@@ -110,7 +114,7 @@ export const useEnhancedExecutionStore = create<EnhancedExecutionState>()(
     stopExecution: async (executionId: string): Promise<void> => {
       const state = get();
       const execution = state.activeExecutions.get(executionId);
-      
+
       if (execution) {
         const updatedExecution = {
           ...execution,
@@ -118,7 +122,7 @@ export const useEnhancedExecutionStore = create<EnhancedExecutionState>()(
           endTime: new Date().toISOString(),
         };
 
-        set(state => ({
+        set((state) => ({
           activeExecutions: new Map(state.activeExecutions.set(executionId, updatedExecution)),
         }));
       }
@@ -136,8 +140,12 @@ export const useEnhancedExecutionStore = create<EnhancedExecutionState>()(
     },
 
     // Update node execution
-    updateNodeExecution: (executionId: string, nodeId: string, update: Partial<NodeExecution>): void => {
-      set(state => {
+    updateNodeExecution: (
+      executionId: string,
+      nodeId: string,
+      update: Partial<NodeExecution>
+    ): void => {
+      set((state) => {
         const nodeExecutions = state.nodeExecutions.get(executionId) || new Map();
         const currentExecution = nodeExecutions.get(nodeId) || {
           nodeId,
@@ -156,7 +164,7 @@ export const useEnhancedExecutionStore = create<EnhancedExecutionState>()(
 
     // Add execution log
     addExecutionLog: (executionId: string, nodeId: string, log: NodeExecution['logs'][0]): void => {
-      set(state => {
+      set((state) => {
         const nodeExecutions = state.nodeExecutions.get(executionId) || new Map();
         const nodeExecution = nodeExecutions.get(nodeId) || {
           nodeId,
@@ -183,12 +191,12 @@ export const useEnhancedExecutionStore = create<EnhancedExecutionState>()(
 
     // Toggle auto refresh
     toggleAutoRefresh: (): void => {
-      set(state => ({ autoRefresh: !state.autoRefresh }));
+      set((state) => ({ autoRefresh: !state.autoRefresh }));
     },
 
     // Clear execution data
     clearExecutionData: (executionId: string): void => {
-      set(state => {
+      set((state) => {
         const newActiveExecutions = new Map(state.activeExecutions);
         const newNodeExecutions = new Map(state.nodeExecutions);
         const newExecutionUpdates = new Map(state.executionUpdates);
@@ -204,7 +212,8 @@ export const useEnhancedExecutionStore = create<EnhancedExecutionState>()(
           nodeExecutions: newNodeExecutions,
           executionUpdates: newExecutionUpdates,
           executionMetrics: newExecutionMetrics,
-          selectedExecution: state.selectedExecution === executionId ? null : state.selectedExecution,
+          selectedExecution:
+            state.selectedExecution === executionId ? null : state.selectedExecution,
         };
       });
     },

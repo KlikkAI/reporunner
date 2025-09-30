@@ -1,4 +1,4 @@
-import { Router, Request, Response } from 'express';
+import { type Request, type Response, Router } from 'express';
 import { rateLimit } from 'express-rate-limit';
 import { body } from 'express-validator';
 import { authRequired } from '../middleware/auth';
@@ -35,10 +35,7 @@ router.post(
   '/chat',
   authRequired,
   aiRateLimit,
-  [
-    body('message').trim().notEmpty(),
-    body('model').optional().isString(),
-  ],
+  [body('message').trim().notEmpty(), body('model').optional().isString()],
   validateRequest,
   async (_req: Request, res: Response) => {
     res.json({ message: 'AI routes not implemented yet' });

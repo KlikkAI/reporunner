@@ -1,5 +1,5 @@
 // Shared Page Layout Component
-import React from 'react';
+import type React from 'react';
 
 interface PageLayoutProps {
   title: string;
@@ -21,9 +21,7 @@ export const PageLayout: React.FC<PageLayoutProps> = ({ title, children, classNa
 export const CenteredLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="max-w-4xl mx-auto px-4">
-        {children}
-      </div>
+      <div className="max-w-4xl mx-auto px-4">{children}</div>
     </div>
   );
 };

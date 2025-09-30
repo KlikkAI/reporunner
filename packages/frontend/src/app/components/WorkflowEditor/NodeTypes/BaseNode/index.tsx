@@ -130,7 +130,7 @@ const BaseNode: React.FC<BaseNodeComponentProps> = ({ id, data, selected, config
 
   // For AI agents, calculate which handles have incoming connections
   const aiHandleConnections = React.useMemo(() => {
-    if (!config.handles.hasAIHandles || !data.edges || !id) {
+    if (!(config.handles.hasAIHandles && data.edges && id)) {
       return {};
     }
 

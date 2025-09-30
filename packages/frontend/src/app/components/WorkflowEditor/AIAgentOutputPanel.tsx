@@ -51,7 +51,9 @@ const AIAgentOutputPanel: React.FC<AIAgentOutputPanelProps> = ({
             <div className="text-gray-100 whitespace-pre-wrap leading-relaxed">
               {(() => {
                 const output = aiData.llmResponse?.output || aiData.analysis || aiData.output;
-                if (!output) return 'No AI response available';
+                if (!output) {
+                  return 'No AI response available';
+                }
 
                 // If the output is an object, stringify it for display
                 if (typeof output === 'object') {

@@ -1,11 +1,11 @@
-import { Request, Response, NextFunction } from 'express';
-import { ValidationSchema } from './schema/ValidationSchema';
-import { ValidationRule } from './rules/ValidationRule';
-import { ValidationError } from './errors/ValidationError';
-import { ValidationResult } from './types/ValidationResult';
+import type { NextFunction, Request, Response } from 'express';
 import { ValidationContext } from './context/ValidationContext';
-import { SchemaValidator } from './validators/SchemaValidator';
+import { ValidationError } from './errors/ValidationError';
+import type { ValidationRule } from './rules/ValidationRule';
+import type { ValidationSchema } from './schema/ValidationSchema';
+import type { ValidationResult } from './types/ValidationResult';
 import { CustomValidator } from './validators/CustomValidator';
+import { SchemaValidator } from './validators/SchemaValidator';
 
 export interface ValidationOptions {
   /**
@@ -99,7 +99,7 @@ export class ValidationMiddleware {
       messages: {},
       ...options,
       onError: options.onError || this.defaultErrorHandler.bind(this),
-      onSuccess: options.onSuccess || this.defaultSuccessHandler.bind(this)
+      onSuccess: options.onSuccess || this.defaultSuccessHandler.bind(this),
     };
 
     this.schemaValidator = new SchemaValidator(this.options);
@@ -152,7 +152,7 @@ export class ValidationMiddleware {
   private async validate(context: ValidationContext): Promise<ValidationResult> {
     const result: ValidationResult = {
       valid: true,
-      errors: []
+      errors: [],
     };
 
     // Schema validation
@@ -180,19 +180,13 @@ export class ValidationMiddleware {
     result: ValidationResult
   ): Promise<void> {
     if (this.options.validateQuery && this.schema.query) {
-      const queryResult = await this.schemaValidator.validate(
-        this.schema.query,
-        context.req.query
-      );
+      const queryResult = await this.schemaValidator.validate(this.schema.query, context.req.query);
       result.query = queryResult.value;
       result.errors.push(...queryResult.errors);
     }
 
     if (this.options.validateBody && this.schema.body) {
-      const bodyResult = await this.schemaValidator.validate(
-        this.schema.body,
-        context.req.body
-      );
+      const bodyResult = await this.schemaValidator.validate(this.schema.body, context.req.body);
       result.body = bodyResult.value;
       result.errors.push(...bodyResult.errors);
     }
@@ -225,10 +219,7 @@ export class ValidationMiddleware {
     }
 
     if (this.options.validateFiles && this.schema.files) {
-      const filesResult = await this.schemaValidator.validate(
-        this.schema.files,
-        context.req.files
-      );
+      const filesResult = await this.schemaValidator.validate(this.schema.files, context.req.files);
       result.files = filesResult.value;
       result.errors.push(...filesResult.errors);
     }
@@ -276,7 +267,7 @@ export class ValidationMiddleware {
    * Add multiple custom validation rules
    */
   public addRules(rules: ValidationRule[]): this {
-    rules.forEach(rule => this.customValidator.addRule(rule));
+    rules.forEach((rule) => this.customValidator.addRule(rule));
     return this;
   }
 
@@ -298,8 +289,8 @@ export class ValidationMiddleware {
     context.res.status(400).json({
       error: {
         message: 'Validation failed',
-        details: error.details
-      }
+        details: error.details,
+      },
     });
   }
 
@@ -307,8 +298,8 @@ export class ValidationMiddleware {
    * Default success handler
    */
   private async defaultSuccessHandler(
-    result: ValidationResult,
-    context: ValidationContext
+    _result: ValidationResult,
+    _context: ValidationContext
   ): Promise<void> {
     // Do nothing by default
   }

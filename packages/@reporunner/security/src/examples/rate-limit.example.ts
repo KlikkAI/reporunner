@@ -1,5 +1,9 @@
 import express from 'express';
-import { createRateLimitMiddleware, createLoginRateLimiter, createTieredRateLimiter } from '../middleware/rate-limit.middleware';
+import {
+  createLoginRateLimiter,
+  createRateLimitMiddleware,
+  createTieredRateLimiter,
+} from '../middleware/rate-limit.middleware';
 import { AdvancedRateLimiter } from '../rate-limiter';
 
 const app = express();
@@ -11,21 +15,21 @@ const rateLimiter = new AdvancedRateLimiter();
 rateLimiter.createLimiter('api', {
   points: 100,
   duration: 15 * 60, // 15 minutes
-  blockDuration: 60 * 15
+  blockDuration: 60 * 15,
 });
 
 // Configure stricter auth rate limiting
 rateLimiter.createLimiter('login', {
   points: 5,
   duration: 15 * 60, // 15 minutes
-  blockDuration: 60 * 15
+  blockDuration: 60 * 15,
 });
 
 // Basic rate limiting middleware
 const basicLimiter = createRateLimitMiddleware(rateLimiter, {
   type: 'api',
   points: 1,
-  message: 'API rate limit exceeded'
+  message: 'API rate limit exceeded',
 });
 
 // Stricter rate limiting for auth endpoints
@@ -52,7 +56,7 @@ const methodLimiters = {
   get: createRateLimitMiddleware(rateLimiter, { type: 'get', points: 1 }),
   post: createRateLimitMiddleware(rateLimiter, { type: 'post', points: 1 }),
   put: createRateLimitMiddleware(rateLimiter, { type: 'put', points: 1 }),
-  delete: createRateLimitMiddleware(rateLimiter, { type: 'delete', points: 1 })
+  delete: createRateLimitMiddleware(rateLimiter, { type: 'delete', points: 1 }),
 };
 
 app.use('/api/resources', (req, res, next) => {
@@ -68,7 +72,7 @@ app.use('/api/resources', (req, res, next) => {
 const tierLimits = {
   free: 100,
   basic: 1000,
-  premium: 10000
+  premium: 10000,
 };
 
 app.use('/api/premium', createTieredRateLimiter(rateLimiter, tierLimits));

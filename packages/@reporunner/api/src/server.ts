@@ -180,7 +180,7 @@ export class APIServer {
 
 // Start server if this file is run directly
 if (require.main === module) {
-  const server = new APIServer(parseInt(process.env.PORT || '3001', 10));
+  const server = new APIServer(Number.parseInt(process.env.PORT || '3001', 10));
 
   server.start().catch((_error) => {
     process.exit(1);

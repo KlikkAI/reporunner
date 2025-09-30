@@ -193,7 +193,7 @@ export abstract class BaseNodeDefinition implements INodeType {
   }
 
   protected createCredentialProperty(
-    credentialType: string,
+    _credentialType: string,
     options: Partial<NodeProperty> = {}
   ): NodeProperty {
     return {
@@ -209,7 +209,7 @@ export abstract class BaseNodeDefinition implements INodeType {
   protected createCollectionProperty(
     displayName: string,
     name: string,
-    properties: NodeProperty[],
+    _properties: NodeProperty[],
     options: Partial<NodeProperty> = {}
   ): NodeProperty {
     return {
@@ -275,16 +275,21 @@ export abstract class BaseNodeDefinition implements INodeType {
         placeholder: 'https://api.example.com/endpoint',
         description: 'The URL to make the request to',
       }),
-      this.createSelectProperty('Method', 'method', [
-        { name: 'GET', value: 'GET' },
-        { name: 'POST', value: 'POST' },
-        { name: 'PUT', value: 'PUT' },
-        { name: 'DELETE', value: 'DELETE' },
-        { name: 'PATCH', value: 'PATCH' },
-      ], {
-        default: 'GET',
-        description: 'The HTTP method to use',
-      }),
+      this.createSelectProperty(
+        'Method',
+        'method',
+        [
+          { name: 'GET', value: 'GET' },
+          { name: 'POST', value: 'POST' },
+          { name: 'PUT', value: 'PUT' },
+          { name: 'DELETE', value: 'DELETE' },
+          { name: 'PATCH', value: 'PATCH' },
+        ],
+        {
+          default: 'GET',
+          description: 'The HTTP method to use',
+        }
+      ),
       this.createJsonProperty('Headers', 'headers', {
         description: 'Headers to send with the request',
         default: '{\n  "Content-Type": "application/json"\n}',
@@ -324,20 +329,30 @@ export abstract class BaseNodeDefinition implements INodeType {
         placeholder: 'Search term',
         description: 'Search filter',
       }),
-      this.createSelectProperty('Sort By', 'sortBy', [
-        { name: 'Created Date', value: 'createdAt' },
-        { name: 'Updated Date', value: 'updatedAt' },
-        { name: 'Name', value: 'name' },
-      ], {
-        description: 'Field to sort by',
-      }),
-      this.createSelectProperty('Sort Order', 'sortOrder', [
-        { name: 'Ascending', value: 'asc' },
-        { name: 'Descending', value: 'desc' },
-      ], {
-        default: 'desc',
-        description: 'Sort order',
-      }),
+      this.createSelectProperty(
+        'Sort By',
+        'sortBy',
+        [
+          { name: 'Created Date', value: 'createdAt' },
+          { name: 'Updated Date', value: 'updatedAt' },
+          { name: 'Name', value: 'name' },
+        ],
+        {
+          description: 'Field to sort by',
+        }
+      ),
+      this.createSelectProperty(
+        'Sort Order',
+        'sortOrder',
+        [
+          { name: 'Ascending', value: 'asc' },
+          { name: 'Descending', value: 'desc' },
+        ],
+        {
+          default: 'desc',
+          description: 'Sort order',
+        }
+      ),
     ];
   }
 

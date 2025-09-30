@@ -2,7 +2,7 @@
  * User Types - User accounts and authentication
  */
 
-import type { ID, Timestamp, BaseEntity } from '../common';
+import type { BaseEntity, ID, Timestamp } from '../common';
 
 /**
  * User role

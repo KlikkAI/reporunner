@@ -31,7 +31,6 @@ export class NodeExecutionController {
         data: result,
       });
     } catch (error: any) {
-      console.error('Node execution error:', error);
       res.status(400).json({
         status: 'error',
         message: error.message || 'Failed to execute node',

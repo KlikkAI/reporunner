@@ -120,12 +120,16 @@ class ComponentFactory implements UIComponentFactory {
   async loadBodyComponent(name: string): Promise<ComponentType<CustomNodeBodyProps> | null> {
     // Check if already loaded
     const existing = this.bodyComponents.get(name);
-    if (existing) return existing;
+    if (existing) {
+      return existing;
+    }
 
     // Check if lazy loader exists
     const loaderKey = `body-${name}`;
     const loader = this.lazyLoaders.get(loaderKey);
-    if (!loader) return null;
+    if (!loader) {
+      return null;
+    }
 
     // Check if already loading
     if (this.loadingPromises.has(loaderKey)) {
@@ -151,11 +155,15 @@ class ComponentFactory implements UIComponentFactory {
   ): Promise<ComponentType<CustomPropertiesPanelProps> | null> {
     // Similar implementation to loadBodyComponent
     const existing = this.propertiesPanels.get(name);
-    if (existing) return existing;
+    if (existing) {
+      return existing;
+    }
 
     const loaderKey = `panel-${name}`;
     const loader = this.lazyLoaders.get(loaderKey);
-    if (!loader) return null;
+    if (!loader) {
+      return null;
+    }
 
     if (this.loadingPromises.has(loaderKey)) {
       return (await this.loadingPromises.get(
@@ -355,12 +363,16 @@ class ComponentFactory implements UIComponentFactory {
   ): ComponentType<T> | null {
     // Try primary name first
     let component = componentMap.get(primaryName);
-    if (component) return component;
+    if (component) {
+      return component;
+    }
 
     // Try fallbacks
     for (const fallbackName of fallbackNames) {
       component = componentMap.get(fallbackName);
-      if (component) return component;
+      if (component) {
+        return component;
+      }
     }
 
     return null;

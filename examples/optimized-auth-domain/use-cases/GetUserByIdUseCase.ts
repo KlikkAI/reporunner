@@ -4,16 +4,15 @@
  * BEFORE: Individual use-case file with standard CRUD implementation
  * AFTER: Extends BaseGetByIdUseCase, adds validation/authorization
  */
-import { injectable, inject } from 'inversify';
+
 import { BaseGetByIdUseCase, LoggingUtils } from '@reporunner/shared';
-import { User } from '../interfaces/User';
-import { UserRepository } from '../repositories/UserRepository';
+import { inject, injectable } from 'inversify';
+import type { User } from '../interfaces/User';
+import type { UserRepository } from '../repositories/UserRepository';
 
 @injectable()
 export class GetUserByIdUseCase extends BaseGetByIdUseCase<User> {
-  constructor(
-    @inject('UserRepository') userRepository: UserRepository
-  ) {
+  constructor(@inject('UserRepository') userRepository: UserRepository) {
     super(userRepository);
   }
 

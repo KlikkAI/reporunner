@@ -7,10 +7,20 @@
  * Targets: 25+ property renderer files in jscpd analysis
  */
 
-import React, { useCallback, useMemo } from 'react';
-import { Input, Select, Checkbox, Switch, DatePicker, InputNumber, Upload, ColorPicker } from 'antd';
 import { EyeInvisibleOutlined, EyeTwoTone, UploadOutlined } from '@ant-design/icons';
-import type { PropertyRendererConfig, PropertyContext } from '../factories/PropertyRendererFactory';
+import {
+  Checkbox,
+  ColorPicker,
+  DatePicker,
+  Input,
+  InputNumber,
+  Select,
+  Switch,
+  Upload,
+} from 'antd';
+import type React from 'react';
+import { useCallback, useMemo } from 'react';
+import type { PropertyContext, PropertyRendererConfig } from '../factories/PropertyRendererFactory';
 import { cn } from '../utils';
 
 const { TextArea } = Input;
@@ -25,8 +35,9 @@ interface PropertyRendererProps {
  * Individual Property Renderers
  */
 export const TextRenderer: React.FC<PropertyRendererProps> = ({ config, context }) => {
-  const { value, error, onChange, onFocus, onBlur, styling, ...props } = useMemo(() =>
-    context.formData[config.id] ?? config.defaultValue, [config, context]
+  const { value, error, onChange, onFocus, onBlur, styling, ...props } = useMemo(
+    () => context.formData[config.id] ?? config.defaultValue,
+    [config, context]
   );
 
   return (
@@ -49,8 +60,9 @@ export const TextRenderer: React.FC<PropertyRendererProps> = ({ config, context 
 };
 
 export const PasswordRenderer: React.FC<PropertyRendererProps> = ({ config, context }) => {
-  const { value, error, onChange, onFocus, onBlur, styling, ...props } = useMemo(() =>
-    context.formData[config.id] ?? config.defaultValue, [config, context]
+  const { value, error, onChange, onFocus, onBlur, styling, ...props } = useMemo(
+    () => context.formData[config.id] ?? config.defaultValue,
+    [config, context]
   );
 
   return (
@@ -73,8 +85,9 @@ export const PasswordRenderer: React.FC<PropertyRendererProps> = ({ config, cont
 };
 
 export const EmailRenderer: React.FC<PropertyRendererProps> = ({ config, context }) => {
-  const { value, error, onChange, onFocus, onBlur, styling, ...props } = useMemo(() =>
-    context.formData[config.id] ?? config.defaultValue, [config, context]
+  const { value, error, onChange, onFocus, onBlur, styling, ...props } = useMemo(
+    () => context.formData[config.id] ?? config.defaultValue,
+    [config, context]
   );
 
   return (
@@ -97,8 +110,9 @@ export const EmailRenderer: React.FC<PropertyRendererProps> = ({ config, context
 };
 
 export const NumberRenderer: React.FC<PropertyRendererProps> = ({ config, context }) => {
-  const { value, error, onChange, onFocus, onBlur, styling, ...props } = useMemo(() =>
-    context.formData[config.id] ?? config.defaultValue, [config, context]
+  const { value, error, onChange, onFocus, onBlur, styling, ...props } = useMemo(
+    () => context.formData[config.id] ?? config.defaultValue,
+    [config, context]
   );
 
   return (
@@ -120,8 +134,9 @@ export const NumberRenderer: React.FC<PropertyRendererProps> = ({ config, contex
 };
 
 export const TextareaRenderer: React.FC<PropertyRendererProps> = ({ config, context }) => {
-  const { value, error, onChange, onFocus, onBlur, styling, ...props } = useMemo(() =>
-    context.formData[config.id] ?? config.defaultValue, [config, context]
+  const { value, error, onChange, onFocus, onBlur, styling, ...props } = useMemo(
+    () => context.formData[config.id] ?? config.defaultValue,
+    [config, context]
   );
 
   return (
@@ -130,10 +145,7 @@ export const TextareaRenderer: React.FC<PropertyRendererProps> = ({ config, cont
       value={value}
       status={error ? 'error' : undefined}
       rows={styling?.size === 'sm' ? 3 : styling?.size === 'lg' ? 8 : 5}
-      className={cn(
-        'w-full',
-        styling?.customClasses
-      )}
+      className={cn('w-full', styling?.customClasses)}
       onChange={(e) => onChange?.(e.target.value)}
       onFocus={onFocus}
       onBlur={onBlur}
@@ -142,8 +154,9 @@ export const TextareaRenderer: React.FC<PropertyRendererProps> = ({ config, cont
 };
 
 export const SelectRenderer: React.FC<PropertyRendererProps> = ({ config, context }) => {
-  const { value, error, onChange, onFocus, onBlur, styling, options, ...props } = useMemo(() =>
-    context.formData[config.id] ?? config.defaultValue, [config, context]
+  const { value, error, onChange, onFocus, onBlur, styling, options, ...props } = useMemo(
+    () => context.formData[config.id] ?? config.defaultValue,
+    [config, context]
   );
 
   return (
@@ -165,9 +178,7 @@ export const SelectRenderer: React.FC<PropertyRendererProps> = ({ config, contex
         <Option key={option.value} value={option.value} disabled={option.disabled}>
           {option.icon && <span className="mr-2">{option.icon}</span>}
           {option.label}
-          {option.description && (
-            <div className="text-xs text-gray-500">{option.description}</div>
-          )}
+          {option.description && <div className="text-xs text-gray-500">{option.description}</div>}
         </Option>
       ))}
     </Select>
@@ -175,8 +186,9 @@ export const SelectRenderer: React.FC<PropertyRendererProps> = ({ config, contex
 };
 
 export const MultiSelectRenderer: React.FC<PropertyRendererProps> = ({ config, context }) => {
-  const { value, error, onChange, onFocus, onBlur, styling, options, ...props } = useMemo(() =>
-    context.formData[config.id] ?? config.defaultValue, [config, context]
+  const { value, error, onChange, onFocus, onBlur, styling, options, ...props } = useMemo(
+    () => context.formData[config.id] ?? config.defaultValue,
+    [config, context]
   );
 
   return (
@@ -185,10 +197,7 @@ export const MultiSelectRenderer: React.FC<PropertyRendererProps> = ({ config, c
       mode="multiple"
       value={value}
       status={error ? 'error' : undefined}
-      className={cn(
-        'w-full',
-        styling?.customClasses
-      )}
+      className={cn('w-full', styling?.customClasses)}
       onChange={onChange}
       onFocus={onFocus}
       onBlur={onBlur}
@@ -204,17 +213,16 @@ export const MultiSelectRenderer: React.FC<PropertyRendererProps> = ({ config, c
 };
 
 export const CheckboxRenderer: React.FC<PropertyRendererProps> = ({ config, context }) => {
-  const { value, error, onChange, styling, ...props } = useMemo(() =>
-    context.formData[config.id] ?? config.defaultValue, [config, context]
+  const { value, error, onChange, styling, ...props } = useMemo(
+    () => context.formData[config.id] ?? config.defaultValue,
+    [config, context]
   );
 
   return (
     <Checkbox
       {...props}
       checked={value}
-      className={cn(
-        styling?.customClasses
-      )}
+      className={cn(styling?.customClasses)}
       onChange={(e) => onChange?.(e.target.checked)}
     >
       {config.label}
@@ -223,8 +231,9 @@ export const CheckboxRenderer: React.FC<PropertyRendererProps> = ({ config, cont
 };
 
 export const SwitchRenderer: React.FC<PropertyRendererProps> = ({ config, context }) => {
-  const { value, error, onChange, styling, ...props } = useMemo(() =>
-    context.formData[config.id] ?? config.defaultValue, [config, context]
+  const { value, error, onChange, styling, ...props } = useMemo(
+    () => context.formData[config.id] ?? config.defaultValue,
+    [config, context]
   );
 
   return (
@@ -242,8 +251,9 @@ export const SwitchRenderer: React.FC<PropertyRendererProps> = ({ config, contex
 };
 
 export const DateRenderer: React.FC<PropertyRendererProps> = ({ config, context }) => {
-  const { value, error, onChange, onFocus, onBlur, styling, ...props } = useMemo(() =>
-    context.formData[config.id] ?? config.defaultValue, [config, context]
+  const { value, error, onChange, onFocus, onBlur, styling, ...props } = useMemo(
+    () => context.formData[config.id] ?? config.defaultValue,
+    [config, context]
   );
 
   return (
@@ -265,8 +275,9 @@ export const DateRenderer: React.FC<PropertyRendererProps> = ({ config, context 
 };
 
 export const ColorRenderer: React.FC<PropertyRendererProps> = ({ config, context }) => {
-  const { value, error, onChange, styling, ...props } = useMemo(() =>
-    context.formData[config.id] ?? config.defaultValue, [config, context]
+  const { value, error, onChange, styling, ...props } = useMemo(
+    () => context.formData[config.id] ?? config.defaultValue,
+    [config, context]
   );
 
   return (
@@ -281,8 +292,9 @@ export const ColorRenderer: React.FC<PropertyRendererProps> = ({ config, context
 };
 
 export const FileRenderer: React.FC<PropertyRendererProps> = ({ config, context }) => {
-  const { value, error, onChange, styling, ...props } = useMemo(() =>
-    context.formData[config.id] ?? config.defaultValue, [config, context]
+  const { value, error, onChange, styling, ...props } = useMemo(
+    () => context.formData[config.id] ?? config.defaultValue,
+    [config, context]
   );
 
   return (
@@ -301,21 +313,27 @@ export const FileRenderer: React.FC<PropertyRendererProps> = ({ config, context 
 };
 
 export const JsonRenderer: React.FC<PropertyRendererProps> = ({ config, context }) => {
-  const { value, error, onChange, onFocus, onBlur, styling, ...props } = useMemo(() =>
-    context.formData[config.id] ?? config.defaultValue, [config, context]
+  const { value, error, onChange, onFocus, onBlur, styling, ...props } = useMemo(
+    () => context.formData[config.id] ?? config.defaultValue,
+    [config, context]
   );
 
-  const handleChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    try {
-      const parsed = JSON.parse(e.target.value);
-      onChange?.(parsed);
-    } catch {
-      onChange?.(e.target.value);
-    }
-  }, [onChange]);
+  const handleChange = useCallback(
+    (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+      try {
+        const parsed = JSON.parse(e.target.value);
+        onChange?.(parsed);
+      } catch {
+        onChange?.(e.target.value);
+      }
+    },
+    [onChange]
+  );
 
   const displayValue = useMemo(() => {
-    if (typeof value === 'string') return value;
+    if (typeof value === 'string') {
+      return value;
+    }
     return JSON.stringify(value, null, 2);
   }, [value]);
 
@@ -325,10 +343,7 @@ export const JsonRenderer: React.FC<PropertyRendererProps> = ({ config, context 
       value={displayValue}
       status={error ? 'error' : undefined}
       rows={styling?.size === 'sm' ? 5 : styling?.size === 'lg' ? 15 : 10}
-      className={cn(
-        'w-full font-mono text-sm',
-        styling?.customClasses
-      )}
+      className={cn('w-full font-mono text-sm', styling?.customClasses)}
       onChange={handleChange}
       onFocus={onFocus}
       onBlur={onBlur}
@@ -386,11 +401,13 @@ export const PropertyRenderer: React.FC<PropertyRendererProps> = ({ config, cont
   const isTouched = context.touched[config.id];
 
   return (
-    <div className={cn(
-      'space-y-2',
-      config.styling?.fullWidth && 'w-full',
-      config.styling?.inline && 'flex items-center gap-4'
-    )}>
+    <div
+      className={cn(
+        'space-y-2',
+        config.styling?.fullWidth && 'w-full',
+        config.styling?.inline && 'flex items-center gap-4'
+      )}
+    >
       {!['checkbox', 'switch'].includes(config.type) && (
         <div className="flex items-center gap-1">
           <label
@@ -410,9 +427,7 @@ export const PropertyRenderer: React.FC<PropertyRendererProps> = ({ config, cont
 
       <div className="relative">
         {renderField()}
-        {isTouched && error && (
-          <div className="mt-1 text-xs text-red-600">{error}</div>
-        )}
+        {isTouched && error && <div className="mt-1 text-xs text-red-600">{error}</div>}
       </div>
     </div>
   );

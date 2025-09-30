@@ -97,7 +97,7 @@ export function validateRequest(req: Request, res: Response, next: NextFunction)
   if (!errors.isEmpty()) {
     return res.status(400).json({
       error: 'Validation failed',
-      errors: errors.array()
+      errors: errors.array(),
     }) as any;
   }
   next();

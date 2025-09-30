@@ -1,4 +1,4 @@
-import { Router, Request, Response } from 'express';
+import { type Request, type Response, Router } from 'express';
 import { rateLimit } from 'express-rate-limit';
 import { body } from 'express-validator';
 import { validateRequest } from '../middleware/validation';
@@ -31,10 +31,7 @@ const authRateLimit = rateLimit({
 router.post(
   '/login',
   authRateLimit,
-  [
-    body('email').isEmail().normalizeEmail(),
-    body('password').isLength({ min: 6 }),
-  ],
+  [body('email').isEmail().normalizeEmail(), body('password').isLength({ min: 6 })],
   validateRequest,
   async (_req: Request, res: Response) => {
     res.json({ message: 'Auth routes not implemented yet' });

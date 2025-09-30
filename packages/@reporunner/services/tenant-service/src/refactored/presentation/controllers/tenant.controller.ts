@@ -7,7 +7,6 @@ import type { ListTenantsUseCase } from '../../application/use-cases/list-tenant
 import type { UpdateTenantUseCase } from '../../application/use-cases/update-tenant.use-case';
 import { HttpStatus } from '../../shared/enums/http-status.enum';
 import type { ApiResponse } from '../../shared/types/api-response';
-import { logger } from '../../shared/utils/logger';
 
 export class TenantController {
   constructor(
@@ -169,7 +168,7 @@ export class TenantController {
   }
 
   // Health check endpoint
-  async health(req: Request, res: Response): Promise<void> {
+  async health(_req: Request, res: Response): Promise<void> {
     res.status(HttpStatus.OK).json({
       success: true,
       service: 'tenant-service',

@@ -53,7 +53,7 @@ export function createJWTMiddleware(config: JWTConfig) {
 function extractToken(req: Request): string | null {
   const authHeader = req.headers.authorization;
 
-  if (authHeader && authHeader.startsWith('Bearer ')) {
+  if (authHeader?.startsWith('Bearer ')) {
     return authHeader.substring(7);
   }
 
@@ -63,7 +63,7 @@ function extractToken(req: Request): string | null {
   }
 
   // Check for token in cookies
-  if (req.cookies && req.cookies.token) {
+  if (req.cookies?.token) {
     return req.cookies.token;
   }
 

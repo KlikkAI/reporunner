@@ -1,14 +1,20 @@
 // AI package main index - reusing patterns from other packages
-export * from './types';
-export * from './providers';
-export * from './llm-manager';
+
 export * from './ai-registry';
-export * from './prompt-template';
+// Re-export specific items from base to avoid conflicts
+export {
+  BaseAIProvider,
+  CombinedAIProvider,
+  IEmbeddingProvider,
+  ILLMProvider,
+  IVectorStoreProvider,
+} from './base';
 export * from './embeddings';
+export * from './llm';
+export * from './llm-manager';
+export * from './nodes';
+export * from './prompt-template';
+export * from './providers';
+export * from './types';
 export * from './utils';
 export * from './vector-store';
-export * from './llm';
-export * from './nodes';
-
-// Re-export specific items from base to avoid conflicts
-export { BaseAIProvider, ILLMProvider, IEmbeddingProvider, IVectorStoreProvider, CombinedAIProvider } from './base';

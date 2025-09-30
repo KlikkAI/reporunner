@@ -14,7 +14,9 @@ interface CredentialState {
   // Actions
   fetchCredentials: () => Promise<void>;
   fetchCredentialTypes: () => Promise<void>;
-  createCredential: (credential: Omit<Credential, 'id' | 'createdAt' | 'updatedAt'>) => Promise<void>;
+  createCredential: (
+    credential: Omit<Credential, 'id' | 'createdAt' | 'updatedAt'>
+  ) => Promise<void>;
   updateCredential: (id: string, updates: Partial<Credential>) => Promise<void>;
   deleteCredential: (id: string) => Promise<void>;
   testCredential: (id: string) => Promise<boolean>;
@@ -46,7 +48,8 @@ export const useCredentialStore = create<CredentialState>()(
           const response = await credentialApiService.getCredentialTypes();
           set({ credentialTypes: response.data, isLoading: false });
         } catch (error) {
-          const message = error instanceof Error ? error.message : 'Failed to fetch credential types';
+          const message =
+            error instanceof Error ? error.message : 'Failed to fetch credential types';
           set({ error: message, isLoading: false });
         }
       },
@@ -58,7 +61,7 @@ export const useCredentialStore = create<CredentialState>()(
           const { credentials } = get();
           set({
             credentials: [...credentials, response.data],
-            isLoading: false
+            isLoading: false,
           });
         } catch (error) {
           const message = error instanceof Error ? error.message : 'Failed to create credential';
@@ -72,10 +75,8 @@ export const useCredentialStore = create<CredentialState>()(
           const response = await credentialApiService.updateCredential(id, updates);
           const { credentials } = get();
           set({
-            credentials: credentials.map(cred =>
-              cred.id === id ? response.data : cred
-            ),
-            isLoading: false
+            credentials: credentials.map((cred) => (cred.id === id ? response.data : cred)),
+            isLoading: false,
           });
         } catch (error) {
           const message = error instanceof Error ? error.message : 'Failed to update credential';
@@ -89,8 +90,8 @@ export const useCredentialStore = create<CredentialState>()(
           await credentialApiService.deleteCredential(id);
           const { credentials } = get();
           set({
-            credentials: credentials.filter(cred => cred.id !== id),
-            isLoading: false
+            credentials: credentials.filter((cred) => cred.id !== id),
+            isLoading: false,
           });
         } catch (error) {
           const message = error instanceof Error ? error.message : 'Failed to delete credential';

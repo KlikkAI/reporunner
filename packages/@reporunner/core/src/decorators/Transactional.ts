@@ -6,7 +6,7 @@ export function Transactional(_target: any, _propertyKey: string, descriptor: Pr
 
   descriptor.value = async function (...args: any[]) {
     const transactionManager = (this as any).transactionManager;
-    
+
     if (transactionManager && typeof transactionManager.runInTransaction === 'function') {
       return transactionManager.runInTransaction(async () => {
         return originalMethod.apply(this, args);

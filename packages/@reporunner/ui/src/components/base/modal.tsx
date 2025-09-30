@@ -1,4 +1,4 @@
-import React from 'react';
+import type React from 'react';
 import { cn } from '../../utils/styles';
 
 export interface ModalProps {
@@ -6,22 +6,22 @@ export interface ModalProps {
    * Whether the modal is currently open
    */
   isOpen: boolean;
-  
+
   /**
    * Called when the modal needs to be closed
    */
   onClose: () => void;
-  
+
   /**
    * Title of the modal
    */
   title?: React.ReactNode;
-  
+
   /**
    * Description text below the title
    */
   description?: React.ReactNode;
-  
+
   /**
    * Icon to display in the header
    */
@@ -31,7 +31,7 @@ export interface ModalProps {
    * Actions to display in the header next to close button
    */
   headerActions?: React.ReactNode;
-  
+
   /**
    * Content of the modal
    */
@@ -53,15 +53,19 @@ export const Modal = ({
   children,
   className,
 }: ModalProps) => {
-  if (!isOpen) return null;
+  if (!isOpen) {
+    return null;
+  }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div className={cn(
-        "bg-gray-900 border border-gray-700 rounded-lg w-full h-5/6 flex flex-col",
-        "max-w-4xl",
-        className
-      )}>
+      <div
+        className={cn(
+          'bg-gray-900 border border-gray-700 rounded-lg w-full h-5/6 flex flex-col',
+          'max-w-4xl',
+          className
+        )}
+      >
         {/* Header */}
         <div className="p-6 border-b border-gray-700 flex items-center justify-between">
           <div className="flex items-center space-x-4">
@@ -72,26 +76,14 @@ export const Modal = ({
             )}
             {(title || description) && (
               <div>
-                {title && (
-                  <h2 className="text-lg font-semibold text-white">
-                    {title}
-                  </h2>
-                )}
-                {description && (
-                  <p className="text-sm text-gray-400">
-                    {description}
-                  </p>
-                )}
+                {title && <h2 className="text-lg font-semibold text-white">{title}</h2>}
+                {description && <p className="text-sm text-gray-400">{description}</p>}
               </div>
             )}
             {headerActions}
           </div>
-          
-          <button 
-            onClick={onClose} 
-            className="text-gray-400 hover:text-white"
-            aria-label="Close"
-          >
+
+          <button onClick={onClose} className="text-gray-400 hover:text-white" aria-label="Close">
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
                 strokeLinecap="round"
@@ -104,9 +96,7 @@ export const Modal = ({
         </div>
 
         {/* Content */}
-        <div className="flex-1 overflow-y-auto">
-          {children}
-        </div>
+        <div className="flex-1 overflow-y-auto">{children}</div>
       </div>
     </div>
   );

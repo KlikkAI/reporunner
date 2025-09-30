@@ -230,8 +230,7 @@
     "bundle-analysis": {
       "dependsOn": ["build"],
       "outputs": ["bundle-analysis/**"]
-    }
-    ,
+    },
     "dup:check": {
       "cache": false,
       "inputs": [

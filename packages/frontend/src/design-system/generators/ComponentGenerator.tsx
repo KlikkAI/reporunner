@@ -7,11 +7,10 @@
  * Targets: Remaining 30+ duplicate component patterns
  */
 
-import React, { useMemo } from 'react';
-import { Card, List, Table, Empty, Button, Space, Tag, Avatar, Statistic } from 'antd';
+import { Avatar, Button, Card, Empty, List, Space, Statistic, Table, Tag } from 'antd';
+import type React from 'react';
+import { ResponsiveGrid } from '../components/DynamicLayout';
 import type { PropertyRendererConfig } from '../factories/PropertyRendererFactory';
-import type { ComponentConfig } from '../factories/ComponentFactory';
-import { ResponsiveGrid, FlexLayout, StackLayout } from '../components/DynamicLayout';
 import { cn } from '../utils';
 
 export interface GeneratorConfig {
@@ -78,11 +77,9 @@ export class ComponentGenerator {
         {...config.props}
       >
         {config.subtitle && (
-          <p className="text-gray-600 dark:text-gray-400 mb-4">
-            {config.subtitle}
-          </p>
+          <p className="text-gray-600 dark:text-gray-400 mb-4">{config.subtitle}</p>
         )}
-        {config.children && this.generateChildren(config.children)}
+        {config.children && ComponentGenerator.generateChildren(config.children)}
       </Card>
     );
   }
@@ -95,11 +92,14 @@ export class ComponentGenerator {
       <List
         key={config.id}
         dataSource={config.items}
-        renderItem={config.renderItem || ((item, index) => (
-          <List.Item key={index}>
-            {typeof item === 'object' ? JSON.stringify(item) : item}
-          </List.Item>
-        ))}
+        renderItem={
+          config.renderItem ||
+          ((item, index) => (
+            <List.Item key={index}>
+              {typeof item === 'object' ? JSON.stringify(item) : item}
+            </List.Item>
+          ))
+        }
         locale={{ emptyText: config.emptyText || 'No data' }}
         pagination={config.pagination}
         split={config.split}
@@ -132,20 +132,18 @@ export class ComponentGenerator {
   /**
    * Generate a stats grid
    */
-  static generateStatsGrid(stats: Array<{
-    title: string;
-    value: string | number;
-    suffix?: string;
-    prefix?: string;
-    precision?: number;
-    valueStyle?: React.CSSProperties;
-  }>): React.ReactElement {
+  static generateStatsGrid(
+    stats: Array<{
+      title: string;
+      value: string | number;
+      suffix?: string;
+      prefix?: string;
+      precision?: number;
+      valueStyle?: React.CSSProperties;
+    }>
+  ): React.ReactElement {
     return (
-      <ResponsiveGrid
-        columns={{ xs: 1, sm: 2, lg: 4 }}
-        gap="1.5rem"
-        className="stats-grid"
-      >
+      <ResponsiveGrid columns={{ xs: 1, sm: 2, lg: 4 }} gap="1.5rem" className="stats-grid">
         {stats.map((stat, index) => (
           <Card key={index} className="text-center">
             <Statistic
@@ -204,12 +202,14 @@ export class ComponentGenerator {
     align: 'left' | 'center' | 'right' = 'right'
   ): React.ReactElement {
     return (
-      <div className={cn(
-        'action-bar flex gap-2 py-2',
-        align === 'left' && 'justify-start',
-        align === 'center' && 'justify-center',
-        align === 'right' && 'justify-end'
-      )}>
+      <div
+        className={cn(
+          'action-bar flex gap-2 py-2',
+          align === 'left' && 'justify-start',
+          align === 'center' && 'justify-center',
+          align === 'right' && 'justify-end'
+        )}
+      >
         {actions.map((action, index) => (
           <Button
             key={index}
@@ -245,22 +245,15 @@ export class ComponentGenerator {
         <Empty
           description={
             <div className="text-center">
-              <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-1">
-                {title}
-              </h3>
+              <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-1">{title}</h3>
               {description && (
-                <p className="text-sm text-gray-500 dark:text-gray-400">
-                  {description}
-                </p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">{description}</p>
               )}
             </div>
           }
         >
           {action && (
-            <Button
-              type={action.type || 'primary'}
-              onClick={action.onClick}
-            >
+            <Button type={action.type || 'primary'} onClick={action.onClick}>
               {action.label}
             </Button>
           )}
@@ -288,12 +281,14 @@ export class ComponentGenerator {
               {user.name.charAt(0).toUpperCase()}
             </Avatar>
             {user.status && (
-              <div className={cn(
-                'absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-white',
-                user.status === 'online' && 'bg-green-500',
-                user.status === 'offline' && 'bg-gray-400',
-                user.status === 'away' && 'bg-yellow-500'
-              )} />
+              <div
+                className={cn(
+                  'absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-white',
+                  user.status === 'online' && 'bg-green-500',
+                  user.status === 'offline' && 'bg-gray-400',
+                  user.status === 'away' && 'bg-yellow-500'
+                )}
+              />
             )}
           </div>
           <div className="flex-1 min-w-0">
@@ -301,19 +296,15 @@ export class ComponentGenerator {
               {user.name}
             </h4>
             {user.email && (
-              <p className="text-sm text-gray-500 dark:text-gray-400 truncate">
-                {user.email}
-              </p>
+              <p className="text-sm text-gray-500 dark:text-gray-400 truncate">{user.email}</p>
             )}
             {user.role && (
-              <Tag size="small" color="blue">{user.role}</Tag>
+              <Tag size="small" color="blue">
+                {user.role}
+              </Tag>
             )}
           </div>
-          {user.actions && (
-            <div className="flex-shrink-0">
-              {user.actions}
-            </div>
-          )}
+          {user.actions && <div className="flex-shrink-0">{user.actions}</div>}
         </div>
       </Card>
     );
@@ -336,31 +327,25 @@ export class ComponentGenerator {
       <Card className="metric-card">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
-              {metric.title}
-            </p>
+            <p className="text-sm text-gray-600 dark:text-gray-400">{metric.title}</p>
             <p className="text-2xl font-semibold text-gray-900 dark:text-gray-100">
               {metric.value}
             </p>
             {metric.change && (
-              <p className={cn(
-                'text-sm font-medium',
-                metric.change.type === 'increase' ? 'text-green-600' : 'text-red-600'
-              )}>
+              <p
+                className={cn(
+                  'text-sm font-medium',
+                  metric.change.type === 'increase' ? 'text-green-600' : 'text-red-600'
+                )}
+              >
                 {metric.change.type === 'increase' ? '↑' : '↓'} {Math.abs(metric.change.value)}%
               </p>
             )}
             {metric.description && (
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                {metric.description}
-              </p>
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{metric.description}</p>
             )}
           </div>
-          {metric.icon && (
-            <div className="text-3xl text-gray-400">
-              {metric.icon}
-            </div>
-          )}
+          {metric.icon && <div className="text-3xl text-gray-400">{metric.icon}</div>}
         </div>
       </Card>
     );
@@ -370,7 +355,7 @@ export class ComponentGenerator {
    * Generate children components recursively
    */
   private static generateChildren(children: GeneratorConfig[]): React.ReactNode[] {
-    return children.map(child => this.generateComponent(child));
+    return children.map((child) => ComponentGenerator.generateComponent(child));
   }
 
   /**
@@ -379,11 +364,11 @@ export class ComponentGenerator {
   static generateComponent(config: GeneratorConfig): React.ReactElement {
     switch (config.type) {
       case 'card':
-        return this.generateCard(config as CardConfig);
+        return ComponentGenerator.generateCard(config as CardConfig);
       case 'list':
-        return this.generateList(config as ListConfig);
+        return ComponentGenerator.generateList(config as ListConfig);
       case 'table':
-        return this.generateTable(config as TableConfig);
+        return ComponentGenerator.generateTable(config as TableConfig);
       default:
         return <div key={config.id}>Unknown component type: {config.type}</div>;
     }
@@ -406,8 +391,16 @@ export const ComponentPatterns = {
       hoverable: true,
       actions: (
         <Space>
-          {onEdit && <Button size="small" onClick={onEdit}>Edit</Button>}
-          {onDelete && <Button size="small" danger onClick={onDelete}>Delete</Button>}
+          {onEdit && (
+            <Button size="small" onClick={onEdit}>
+              Edit
+            </Button>
+          )}
+          {onDelete && (
+            <Button size="small" danger onClick={onDelete}>
+              Delete
+            </Button>
+          )}
         </Space>
       ),
       children: [
@@ -417,11 +410,14 @@ export const ComponentPatterns = {
           props: {
             children: ComponentGenerator.generateTagList([
               { label: `${workflow.nodeCount || 0} nodes`, color: 'blue' },
-              { label: workflow.isActive ? 'Active' : 'Inactive', color: workflow.isActive ? 'green' : 'red' },
-            ])
-          }
-        }
-      ]
+              {
+                label: workflow.isActive ? 'Active' : 'Inactive',
+                color: workflow.isActive ? 'green' : 'red',
+              },
+            ]),
+          },
+        },
+      ],
     }),
 
   /**
@@ -431,8 +427,16 @@ export const ComponentPatterns = {
     <List.Item
       key={credential.id}
       actions={[
-        onTest && <Button size="small" onClick={onTest}>Test</Button>,
-        onEdit && <Button size="small" onClick={onEdit}>Edit</Button>,
+        onTest && (
+          <Button size="small" onClick={onTest}>
+            Test
+          </Button>
+        ),
+        onEdit && (
+          <Button size="small" onClick={onEdit}>
+            Edit
+          </Button>
+        ),
       ].filter(Boolean)}
     >
       <List.Item.Meta
@@ -455,7 +459,11 @@ export const ComponentPatterns = {
     <List.Item
       key={execution.id}
       actions={[
-        onView && <Button size="small" onClick={onView}>View</Button>,
+        onView && (
+          <Button size="small" onClick={onView}>
+            View
+          </Button>
+        ),
       ].filter(Boolean)}
     >
       <List.Item.Meta
@@ -463,11 +471,17 @@ export const ComponentPatterns = {
         description={`${execution.workflowName} • ${execution.startedAt}`}
       />
       <div>
-        <Tag color={
-          execution.status === 'success' ? 'green' :
-          execution.status === 'error' ? 'red' :
-          execution.status === 'running' ? 'blue' : 'default'
-        }>
+        <Tag
+          color={
+            execution.status === 'success'
+              ? 'green'
+              : execution.status === 'error'
+                ? 'red'
+                : execution.status === 'running'
+                  ? 'blue'
+                  : 'default'
+          }
+        >
           {execution.status.toUpperCase()}
         </Tag>
       </div>

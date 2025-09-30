@@ -14,9 +14,7 @@ export interface IUseCase<TInput, TOutput> {
   execute(input: TInput): Promise<TOutput>;
 }
 
-export interface IController {
-  // Common controller interface
-}
+export type IController = {};
 
 export interface IService<T, K = string> {
   getById(id: K): Promise<T | null>;

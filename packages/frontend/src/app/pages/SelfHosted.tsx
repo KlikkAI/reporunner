@@ -6,25 +6,21 @@
  */
 
 import {
-  ArrowRight,
   Box,
   CheckCircle,
   Cloud,
-  Code,
   Container,
   Copy,
   Cpu,
   Database,
   Download,
   ExternalLink,
-  GitBranch,
   Globe,
   HardDrive,
   Lock,
   MemoryStick,
   Play,
   Server,
-  Settings,
   Shield,
   Terminal,
   Wifi,
@@ -133,7 +129,7 @@ export const SelfHosted: React.FC = () => {
     },
   };
 
-  const systemRequirements = {
+  const _systemRequirements = {
     minimum: [
       { component: 'CPU', requirement: '2 vCPUs', icon: Cpu },
       { component: 'RAM', requirement: '4 GB', icon: MemoryStick },
@@ -383,7 +379,9 @@ export const SelfHosted: React.FC = () => {
 
             {/* System requirements content placeholder */}
             <div className="bg-white border border-gray-200 rounded-xl p-8 shadow-sm">
-              <p className="text-center text-gray-600">System requirements details coming soon...</p>
+              <p className="text-center text-gray-600">
+                System requirements details coming soon...
+              </p>
             </div>
           </div>
         </div>

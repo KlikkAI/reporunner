@@ -23,7 +23,9 @@ const NodeBadgeComponent: React.FC<NodeBadgeProps> = ({
   const { theme: contextTheme } = useNodeTheme();
   const theme = propTheme || contextTheme;
 
-  if (!visible) return null;
+  if (!visible) {
+    return null;
+  }
 
   const getPositionStyles = (position: BadgePosition): React.CSSProperties => {
     const baseStyles: React.CSSProperties = {
@@ -120,7 +122,9 @@ export const NodeBadgeGroup: React.FC<NodeBadgeGroupProps> = ({
   theme,
   onBadgeClick,
 }) => {
-  if (!badges || badges.length === 0) return null;
+  if (!badges || badges.length === 0) {
+    return null;
+  }
 
   return (
     <>

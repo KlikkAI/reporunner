@@ -43,7 +43,7 @@ export abstract class UnifiedServiceBase<T, K = string> {
     return {
       ...data,
       ...(isUpdate ? { updatedAt: timestamp } : { createdAt: timestamp }),
-      service: this.serviceName
+      service: this.serviceName,
     };
   }
 

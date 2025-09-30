@@ -1,4 +1,4 @@
-import { Filter, Pagination, Sort } from '../types/repository.types';
+import type { Filter, Pagination, Sort } from '../types/repository.types';
 
 /**
  * Generic response type for service operations
@@ -18,32 +18,32 @@ export interface IBaseService<T, ID = string> {
    * Get entity by ID
    */
   getById(id: ID): Promise<ServiceResult<T>>;
-  
+
   /**
    * Find entities matching criteria
    */
   find(filter?: Filter<T>, sort?: Sort<T>, pagination?: Pagination): Promise<ServiceResult<T[]>>;
-  
+
   /**
    * Count entities matching criteria
    */
   count(filter?: Filter<T>): Promise<ServiceResult<number>>;
-  
+
   /**
    * Create new entity
    */
   create(data: Partial<T>): Promise<ServiceResult<T>>;
-  
+
   /**
    * Update existing entity
    */
   update(id: ID, data: Partial<T>): Promise<ServiceResult<T>>;
-  
+
   /**
    * Delete entity
    */
   delete(id: ID): Promise<ServiceResult<boolean>>;
-  
+
   /**
    * Check if entity exists
    */

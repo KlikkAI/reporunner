@@ -12,7 +12,7 @@ export class CSPBuilder {
     this.config = config || {
       enabled: true,
       reportOnly: false,
-      directives: {}
+      directives: {},
     };
   }
 
@@ -45,7 +45,7 @@ export class CSPBuilder {
     if (!this.config.directives) {
       this.config.directives = {};
     }
-    
+
     if (!this.config.directives[name]) {
       this.config.directives[name] = [];
     }
@@ -75,11 +75,11 @@ export class CSPBuilder {
    */
   public setNonce(nonce: string): this {
     const nonceDirectives = ['script-src', 'style-src'];
-    
+
     for (const directive of nonceDirectives) {
       this.addDirective(directive, `'nonce-${nonce}'`);
     }
-    
+
     return this;
   }
 

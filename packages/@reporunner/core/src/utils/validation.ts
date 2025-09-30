@@ -21,8 +21,8 @@ export class Validator<T = any> {
    */
   public required(message = 'Field is required'): this {
     return this.addRule({
-      validate: value => value !== undefined && value !== null && value !== '',
-      message
+      validate: (value) => value !== undefined && value !== null && value !== '',
+      message,
     });
   }
 
@@ -31,8 +31,8 @@ export class Validator<T = any> {
    */
   public string(message = 'Must be a string'): this {
     return this.addRule({
-      validate: value => typeof value === 'string',
-      message
+      validate: (value) => typeof value === 'string',
+      message,
     });
   }
 
@@ -41,8 +41,8 @@ export class Validator<T = any> {
    */
   public number(message = 'Must be a number'): this {
     return this.addRule({
-      validate: value => typeof value === 'number' && !isNaN(value),
-      message
+      validate: (value) => typeof value === 'number' && !Number.isNaN(value),
+      message,
     });
   }
 
@@ -51,8 +51,8 @@ export class Validator<T = any> {
    */
   public boolean(message = 'Must be a boolean'): this {
     return this.addRule({
-      validate: value => typeof value === 'boolean',
-      message
+      validate: (value) => typeof value === 'boolean',
+      message,
     });
   }
 
@@ -61,8 +61,8 @@ export class Validator<T = any> {
    */
   public min(min: number, message = `Must be at least ${min}`): this {
     return this.addRule({
-      validate: value => typeof value === 'number' && value >= min,
-      message
+      validate: (value) => typeof value === 'number' && value >= min,
+      message,
     });
   }
 
@@ -71,8 +71,8 @@ export class Validator<T = any> {
    */
   public max(max: number, message = `Must be at most ${max}`): this {
     return this.addRule({
-      validate: value => typeof value === 'number' && value <= max,
-      message
+      validate: (value) => typeof value === 'number' && value <= max,
+      message,
     });
   }
 
@@ -81,8 +81,8 @@ export class Validator<T = any> {
    */
   public minLength(min: number, message = `Must be at least ${min} characters`): this {
     return this.addRule({
-      validate: value => typeof value === 'string' && value.length >= min,
-      message
+      validate: (value) => typeof value === 'string' && value.length >= min,
+      message,
     });
   }
 
@@ -91,8 +91,8 @@ export class Validator<T = any> {
    */
   public maxLength(max: number, message = `Must be at most ${max} characters`): this {
     return this.addRule({
-      validate: value => typeof value === 'string' && value.length <= max,
-      message
+      validate: (value) => typeof value === 'string' && value.length <= max,
+      message,
     });
   }
 
@@ -101,8 +101,8 @@ export class Validator<T = any> {
    */
   public pattern(pattern: RegExp, message = 'Invalid format'): this {
     return this.addRule({
-      validate: value => typeof value === 'string' && pattern.test(value),
-      message
+      validate: (value) => typeof value === 'string' && pattern.test(value),
+      message,
     });
   }
 
@@ -149,7 +149,7 @@ export class Validator<T = any> {
     if (errors.length > 0) {
       throw new ValidationError(`${fieldName} validation failed`, {
         field: fieldName,
-        errors
+        errors,
       });
     }
   }

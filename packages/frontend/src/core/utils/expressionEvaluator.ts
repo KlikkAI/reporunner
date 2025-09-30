@@ -1,6 +1,6 @@
 /**
  * Expression Evaluator
- * 
+ *
  * Safely evaluates JavaScript expressions in node properties
  */
 
@@ -31,7 +31,7 @@ class ExpressionEvaluator {
 
       // Create a safe evaluation context
       const safeContext = this.createSafeContext(context);
-      
+
       // Evaluate the expression
       const func = new Function(...Object.keys(safeContext), `return ${expression}`);
       const value = func(...Object.values(safeContext));
@@ -66,7 +66,7 @@ class ExpressionEvaluator {
       /document\./,
     ];
 
-    return dangerousPatterns.some(pattern => pattern.test(expression));
+    return dangerousPatterns.some((pattern) => pattern.test(expression));
   }
 
   /**
@@ -75,16 +75,16 @@ class ExpressionEvaluator {
   private createSafeContext(context: ExpressionContext): ExpressionContext {
     // Remove potentially dangerous properties
     const safeContext = { ...context };
-    delete safeContext.eval;
-    delete safeContext.Function;
-    delete safeContext.setTimeout;
-    delete safeContext.setInterval;
-    delete safeContext.require;
-    delete safeContext.import;
-    delete safeContext.process;
-    delete safeContext.global;
-    delete safeContext.window;
-    delete safeContext.document;
+    safeContext.eval = undefined;
+    safeContext.Function = undefined;
+    safeContext.setTimeout = undefined;
+    safeContext.setInterval = undefined;
+    safeContext.require = undefined;
+    safeContext.import = undefined;
+    safeContext.process = undefined;
+    safeContext.global = undefined;
+    safeContext.window = undefined;
+    safeContext.document = undefined;
 
     // Add safe utility functions
     safeContext.Math = Math;

@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express';
+import type { NextFunction, Request, Response } from 'express';
 
 /**
  * Core middleware context containing request, response and other shared data
@@ -54,7 +54,7 @@ export abstract class BaseMiddleware {
       metadata: {},
       ...options,
       onError: options.onError || this.defaultErrorHandler.bind(this),
-      onSuccess: options.onSuccess || this.defaultSuccessHandler.bind(this)
+      onSuccess: options.onSuccess || this.defaultSuccessHandler.bind(this),
     };
   }
 
@@ -67,7 +67,7 @@ export abstract class BaseMiddleware {
       res,
       next,
       startTime: Date.now(),
-      metadata: { ...this.options.metadata }
+      metadata: { ...this.options.metadata },
     };
 
     try {
@@ -126,24 +126,23 @@ export abstract class BaseMiddleware {
     context.res.status(500).json({
       error: {
         message: error.message,
-        type: error.name
-      }
+        type: error.name,
+      },
     });
   }
 
   /**
    * Default success handler
    */
-  protected async defaultSuccessHandler(context: MiddlewareContext): Promise<void> {
+  protected async defaultSuccessHandler(_context: MiddlewareContext): Promise<void> {
     // No-op by default
   }
 
   /**
    * Logging utility
    */
-  protected log(message: string, data?: Record<string, unknown>): void {
+  protected log(_message: string, _data?: Record<string, unknown>): void {
     if (this.options.enableLogging) {
-      console.log(`[${this.constructor.name}] ${message}`, data);
     }
   }
 
@@ -153,7 +152,7 @@ export abstract class BaseMiddleware {
   public updateOptions(options: Partial<BaseMiddlewareOptions>): this {
     this.options = {
       ...this.options,
-      ...options
+      ...options,
     };
     return this;
   }

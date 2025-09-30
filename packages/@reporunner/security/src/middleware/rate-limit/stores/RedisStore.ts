@@ -1,5 +1,5 @@
 import Redis from 'ioredis';
-import { Store } from './Store';
+import type { Store } from './Store';
 
 interface RedisConfig {
   host: string;
@@ -18,19 +18,16 @@ export class RedisStore implements Store {
   }
 
   public async getHits(key: string, windowStart: number): Promise<number> {
-    const hits = await this.client.zrangebyscore(
-      this.getKey(key),
-      windowStart,
-      '+inf'
-    );
+    const hits = await this.client.zrangebyscore(this.getKey(key), windowStart, '+inf');
     return hits.length;
   }
 
   public async incrementHits(key: string, timestamp: number, windowMs: number): Promise<void> {
     const redisKey = this.getKey(key);
-    
+
     // Use Redis transaction to ensure atomicity
-    await this.client.multi()
+    await this.client
+      .multi()
       // Add new hit
       .zadd(redisKey, timestamp, `${timestamp}`)
       // Remove old hits

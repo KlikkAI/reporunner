@@ -7,13 +7,11 @@
  * Reduction: ~120 lines → ~70 lines (42% reduction)
  */
 
-import React, { useMemo } from 'react';
-import { CheckCircle, Edit, Pin } from 'lucide-react';
 import { Logger } from '@reporunner/core';
-import {
-  ComponentGenerator,
-  ComponentPatterns,
-} from '@/design-system';
+import { CheckCircle, Edit, Pin } from 'lucide-react';
+import type React from 'react';
+import { useMemo } from 'react';
+import { ComponentGenerator } from '@/design-system';
 import { SharedDataVisualizationPanel } from '@/design-system/components/data/SharedDataVisualizationPanel';
 
 const logger = new Logger('EmailOutputPanel');
@@ -25,26 +23,34 @@ interface EmailOutputPanelProps {
 
 export const EmailOutputPanel: React.FC<EmailOutputPanelProps> = ({
   selectedEmail,
-  isVisible = true
+  isVisible = true,
 }) => {
   const emailTitle = useMemo(() => {
-    if (!selectedEmail) return 'Email Output';
+    if (!selectedEmail) {
+      return 'Email Output';
+    }
     const from = selectedEmail.from || 'Unknown sender';
     return `Email from ${from}`;
   }, [selectedEmail]);
 
   const emailSubtitle = useMemo(() => {
-    if (!selectedEmail) return undefined;
+    if (!selectedEmail) {
+      return undefined;
+    }
     return selectedEmail.subject || 'No subject';
   }, [selectedEmail]);
 
-  const handleExport = (format: 'json' | 'csv' | 'xml') => {
-    if (!selectedEmail) return;
-    const filename = `email-${selectedEmail.id || 'unknown'}-${Date.now()}`;
+  const handleExport = (_format: 'json' | 'csv' | 'xml') => {
+    if (!selectedEmail) {
+      return;
+    }
+    const _filename = `email-${selectedEmail.id || 'unknown'}-${Date.now()}`;
     // Implementation would be handled by SharedDataVisualizationPanel
   };
 
-  if (!isVisible) return null;
+  if (!isVisible) {
+    return null;
+  }
 
   // Generate empty state using ComponentGenerator
   if (!selectedEmail) {
@@ -134,9 +140,7 @@ export const EmailOutputPanel: React.FC<EmailOutputPanelProps> = ({
             <div className="flex items-center justify-between p-4 border-b border-gray-700">
               <div>
                 <h3 className="text-lg font-semibold text-white">{emailTitle}</h3>
-                {emailSubtitle && (
-                  <p className="text-sm text-gray-300">{emailSubtitle}</p>
-                )}
+                {emailSubtitle && <p className="text-sm text-gray-300">{emailSubtitle}</p>}
               </div>
               {emailActions}
             </div>

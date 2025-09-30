@@ -13,6 +13,6 @@
  * Estimated file reduction: 326 → ~50 files (85% reduction)
  */
 
-export * from './utilities';
 export * from './base';
 export * from './types';
+export * from './utilities';

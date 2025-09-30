@@ -53,7 +53,7 @@ export class ContainerConnectionValidator {
     const sourceContext = this.containerGraph.get(sourceNodeId);
     const targetContext = this.containerGraph.get(targetNodeId);
 
-    if (!sourceContext || !targetContext) {
+    if (!(sourceContext && targetContext)) {
       return {
         isValid: false,
         reason: 'Node context not found',
@@ -186,7 +186,7 @@ export class ContainerConnectionValidator {
     const sourceNode = this.nodes.find((n) => n.id === sourceContext.nodeId);
     const targetNode = this.nodes.find((n) => n.id === targetContext.nodeId);
 
-    if (!sourceNode || !targetNode) {
+    if (!(sourceNode && targetNode)) {
       return { isValid: false, reason: 'Nodes not found', severity: 'error' };
     }
 
@@ -436,8 +436,12 @@ export class ContainerConnectionValidator {
     while (stack.length > 0) {
       const currentId = stack.pop()!;
 
-      if (visited.has(currentId)) continue;
-      if (currentId === sourceId) return true;
+      if (visited.has(currentId)) {
+        continue;
+      }
+      if (currentId === sourceId) {
+        return true;
+      }
 
       visited.add(currentId);
 

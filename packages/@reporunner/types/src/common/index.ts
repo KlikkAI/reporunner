@@ -63,17 +63,17 @@ export interface SortOptions {
  * Filter operator
  */
 export type FilterOperator =
-  | 'eq'      // equals
-  | 'ne'      // not equals
-  | 'gt'      // greater than
-  | 'gte'     // greater than or equal
-  | 'lt'      // less than
-  | 'lte'     // less than or equal
-  | 'in'      // in array
-  | 'nin'     // not in array
-  | 'contains'// string contains
+  | 'eq' // equals
+  | 'ne' // not equals
+  | 'gt' // greater than
+  | 'gte' // greater than or equal
+  | 'lt' // less than
+  | 'lte' // less than or equal
+  | 'in' // in array
+  | 'nin' // not in array
+  | 'contains' // string contains
   | 'startsWith' // string starts with
-  | 'endsWith';  // string ends with
+  | 'endsWith'; // string ends with
 
 /**
  * Generic filter

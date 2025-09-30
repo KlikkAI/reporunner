@@ -62,6 +62,6 @@ export const HTTP_STATUS = {
 } as const;
 
 // Type exports for better TypeScript support
-export type ErrorCode = typeof ERROR_CODES[keyof typeof ERROR_CODES];
-export type AuthConstant = typeof AUTH[keyof typeof AUTH];
-export type HttpStatus = typeof HTTP_STATUS[keyof typeof HTTP_STATUS];
+export type ErrorCode = (typeof ERROR_CODES)[keyof typeof ERROR_CODES];
+export type AuthConstant = (typeof AUTH)[keyof typeof AUTH];
+export type HttpStatus = (typeof HTTP_STATUS)[keyof typeof HTTP_STATUS];

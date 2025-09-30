@@ -245,7 +245,9 @@ const ConditionBuilder: React.FC<ConditionBuilderProps> = ({
   };
 
   const testRule = (rule: ConditionRule) => {
-    if (!onTestRule) return;
+    if (!onTestRule) {
+      return;
+    }
 
     // The actual test is performed on the backend.
     // We just need to trigger the onTestRule function and store results.
@@ -258,7 +260,9 @@ const ConditionBuilder: React.FC<ConditionBuilderProps> = ({
 
   const getOperatorsForField = (fieldPath: string) => {
     const field = availableFields.find((f) => f.path === fieldPath);
-    if (!field) return OPERATORS.string;
+    if (!field) {
+      return OPERATORS.string;
+    }
 
     switch (field.type) {
       case 'number':
@@ -429,7 +433,7 @@ const ConditionRuleCard: React.FC<{
 
           <button
             onClick={onTest}
-            disabled={!rule.field || !rule.operator}
+            disabled={!(rule.field && rule.operator)}
             className="px-3 py-1 bg-purple-600 hover:bg-purple-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white rounded text-sm transition-colors"
             title="Test this rule against input data"
           >
@@ -614,18 +618,30 @@ const SmartValueInput: React.FC<{
     const trimmed = input.trim();
 
     // Empty/null values
-    if (!trimmed) return { type: 'string', parsedValue: '' };
+    if (!trimmed) {
+      return { type: 'string', parsedValue: '' };
+    }
 
     // Boolean values
-    if (trimmed.toLowerCase() === 'true') return { type: 'boolean', parsedValue: true };
-    if (trimmed.toLowerCase() === 'false') return { type: 'boolean', parsedValue: false };
-    if (trimmed.toLowerCase() === 'null') return { type: 'null', parsedValue: null };
+    if (trimmed.toLowerCase() === 'true') {
+      return { type: 'boolean', parsedValue: true };
+    }
+    if (trimmed.toLowerCase() === 'false') {
+      return { type: 'boolean', parsedValue: false };
+    }
+    if (trimmed.toLowerCase() === 'null') {
+      return { type: 'null', parsedValue: null };
+    }
 
     // Number values - using safer regex pattern
     const integerPattern = /^-?\d+$/;
     const floatPattern = /^-?\d*\.\d+$/;
-    if (integerPattern.test(trimmed)) return { type: 'number', parsedValue: parseInt(trimmed, 10) };
-    if (floatPattern.test(trimmed)) return { type: 'number', parsedValue: parseFloat(trimmed) };
+    if (integerPattern.test(trimmed)) {
+      return { type: 'number', parsedValue: Number.parseInt(trimmed, 10) };
+    }
+    if (floatPattern.test(trimmed)) {
+      return { type: 'number', parsedValue: Number.parseFloat(trimmed) };
+    }
 
     // JSON values
     if (

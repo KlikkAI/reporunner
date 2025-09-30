@@ -217,7 +217,9 @@ workflowSchema.index({ 'statistics.lastExecuted': -1 });
 
 // Virtual for success rate
 workflowSchema.virtual('successRate').get(function () {
-  if (this.statistics.totalExecutions === 0) return 0;
+  if (this.statistics.totalExecutions === 0) {
+    return 0;
+  }
   return (this.statistics.successfulExecutions / this.statistics.totalExecutions) * 100;
 });
 

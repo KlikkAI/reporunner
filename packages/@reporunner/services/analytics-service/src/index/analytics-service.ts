@@ -65,21 +65,11 @@ export interface QueryOptions {
 export class AnalyticsService extends EventEmitter {
   private db: Db;
   private cache: Redis;
-  private events: Collection<AnalyticsEvent>;
   private metrics: Collection<MetricValue>;
-  private aggregatedMetrics: Collection<AggregatedMetric>;
   private metricDefinitions: Collection<MetricDefinition>;
   private userSessions: Collection<UserSession>;
-  private dashboards: Collection<DashboardConfig>;
-  private eventBus: DistributedEventBus;
 
-  private aggregationTimer?: NodeJS.Timeout;
-  private sessionManager: UserSessionManager;
-  private metricCollector: MetricCollector;
-
-  constructor(
-    private config: AnalyticsConfig,
-    private mongoClient: MongoClient,
+  constructor(config: AnalyticsConfig,mongoClient: MongoClient,
     eventBus: DistributedEventBus
   ) {
     super();

@@ -19,7 +19,7 @@ export class WorkflowValidator {
       errors.push('Workflow name is required');
     }
 
-    if (!workflow.nodes || !Array.isArray(workflow.nodes)) {
+    if (!(workflow.nodes && Array.isArray(workflow.nodes))) {
       errors.push('Workflow must have nodes array');
     } else {
       // Validate nodes
@@ -35,7 +35,7 @@ export class WorkflowValidator {
 
     return {
       isValid: errors.length === 0,
-      errors
+      errors,
     };
   }
 
@@ -75,7 +75,7 @@ export class WorkflowValidator {
 
   private validateConnections(connections: any[], nodes: any[]): string[] {
     const errors: string[] = [];
-    const nodeIds = new Set(nodes.map(node => node.id));
+    const nodeIds = new Set(nodes.map((node) => node.id));
 
     for (const connection of connections) {
       if (!connection.source?.nodeId) {
@@ -93,7 +93,9 @@ export class WorkflowValidator {
       }
 
       if (!nodeIds.has(connection.destination.nodeId)) {
-        errors.push(`Connection references non-existent destination node: ${connection.destination.nodeId}`);
+        errors.push(
+          `Connection references non-existent destination node: ${connection.destination.nodeId}`
+        );
       }
     }
 

@@ -6,7 +6,6 @@
  */
 
 import { Logger } from '@reporunner/core';
-import { configService } from '@/core/services/ConfigService';
 import { nodeRegistry } from '@/core';
 import type { Integration } from '@/core/types/integration';
 
@@ -20,8 +19,8 @@ class IntegrationService {
   async loadIntegrations(): Promise<Integration[]> {
     // Reuse existing node registry to get available integrations
     const integrations = nodeRegistry.getAvailableIntegrations();
-    
-    return integrations.map(integration => ({
+
+    return integrations.map((integration) => ({
       id: integration.id,
       name: integration.name,
       description: integration.description || `${integration.name} integration`,
@@ -65,7 +64,7 @@ class IntegrationService {
   /**
    * Get integration status
    */
-  async getIntegrationStatus(id: string): Promise<'connected' | 'disconnected' | 'error'> {
+  async getIntegrationStatus(_id: string): Promise<'connected' | 'disconnected' | 'error'> {
     // Mock implementation - replace with actual status check
     return 'disconnected';
   }

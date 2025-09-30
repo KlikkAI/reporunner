@@ -241,7 +241,9 @@ export class CostOptimizerService {
    */
   updateBudgetSpending(workflowId: string, currentSpend: number): void {
     const budget = this.budgets.get(workflowId);
-    if (!budget) return;
+    if (!budget) {
+      return;
+    }
 
     budget.currentSpend = currentSpend;
     budget.projectedSpend = this.calculateProjectedSpend(budget);

@@ -39,17 +39,13 @@ export class PostgreSQLVectorExtensions implements VectorExtensions {
       LIMIT $3
     `;
 
-    const result = await this.client.query(sql, [
-      `[${vector.join(',')}]`,
-      threshold,
-      limit
-    ]);
+    const result = await this.client.query(sql, [`[${vector.join(',')}]`, threshold, limit]);
 
     return result.rows.map((row: any) => ({
       id: row.id,
       content: row.content,
       metadata: row.metadata,
-      score: row.score
+      score: row.score,
     }));
   }
 
@@ -75,7 +71,7 @@ export class PostgreSQLVectorExtensions implements VectorExtensions {
       id,
       content,
       `[${embedding.join(',')}]`,
-      JSON.stringify(metadata || {})
+      JSON.stringify(metadata || {}),
     ]);
   }
 }

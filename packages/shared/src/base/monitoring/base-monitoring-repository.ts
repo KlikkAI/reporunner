@@ -1,5 +1,5 @@
 import { injectable } from 'inversify';
-import { Model, Document } from 'mongoose';
+import type { Document, Model } from 'mongoose';
 import { BaseRepository } from '../base-repository';
 
 /**
@@ -21,7 +21,7 @@ export abstract class BaseMonitoringRepository<T extends Document> extends BaseR
       ...data,
       service: this.serviceName,
       timestamp: new Date(),
-      environment: process.env.NODE_ENV || 'development'
+      environment: process.env.NODE_ENV || 'development',
     };
 
     return this.create(enrichedData as unknown as T);
@@ -35,8 +35,8 @@ export abstract class BaseMonitoringRepository<T extends Document> extends BaseR
     return this.find({
       timestamp: {
         $gte: start,
-        $lte: end
-      }
+        $lte: end,
+      },
     } as any);
   }
 
@@ -46,7 +46,7 @@ export abstract class BaseMonitoringRepository<T extends Document> extends BaseR
     return {
       total: records.length,
       service,
-      lastUpdated: new Date()
+      lastUpdated: new Date(),
     };
   }
 
@@ -55,7 +55,7 @@ export abstract class BaseMonitoringRepository<T extends Document> extends BaseR
     cutoffDate.setDate(cutoffDate.getDate() - retentionDays);
 
     const deleted = await this.deleteMany({
-      timestamp: { $lt: cutoffDate }
+      timestamp: { $lt: cutoffDate },
     } as any);
 
     return deleted;

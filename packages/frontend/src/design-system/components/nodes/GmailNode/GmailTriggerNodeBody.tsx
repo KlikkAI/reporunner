@@ -68,13 +68,27 @@ const GmailTriggerNodeBody: React.FC<CustomNodeBodyProps> = ({
   // Get active filters count
   const getActiveFiltersCount = (filters: any) => {
     let count = 0;
-    if (filters.search) count++;
-    if (filters.senderFilter) count++;
-    if (filters.subjectFilter) count++;
-    if (filters.labelNamesOrIds?.length > 0) count++;
-    if (filters.readStatus && filters.readStatus !== 'all') count++;
-    if (filters.hasAttachment && filters.hasAttachment !== 'any') count++;
-    if (filters.dateRange?.enabled) count++;
+    if (filters.search) {
+      count++;
+    }
+    if (filters.senderFilter) {
+      count++;
+    }
+    if (filters.subjectFilter) {
+      count++;
+    }
+    if (filters.labelNamesOrIds?.length > 0) {
+      count++;
+    }
+    if (filters.readStatus && filters.readStatus !== 'all') {
+      count++;
+    }
+    if (filters.hasAttachment && filters.hasAttachment !== 'any') {
+      count++;
+    }
+    if (filters.dateRange?.enabled) {
+      count++;
+    }
     return count;
   };
 

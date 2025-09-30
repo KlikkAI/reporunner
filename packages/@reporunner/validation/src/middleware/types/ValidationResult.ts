@@ -1,4 +1,4 @@
-import { ValidationErrorDetail } from '../errors/ValidationError';
+import type { ValidationErrorDetail } from '../errors/ValidationError';
 
 /**
  * Result of validation

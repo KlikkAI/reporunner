@@ -17,10 +17,7 @@ export class AIClassificationNode {
     this.config = config;
   }
 
-  async execute(text: string): Promise<ClassificationResult | ClassificationResult[]> {
-    // Mock implementation
-    console.log('Classifying text:', text);
-
+  async execute(_text: string): Promise<ClassificationResult | ClassificationResult[]> {
     const results = this.config.categories
       .map((category) => ({
         label: category,

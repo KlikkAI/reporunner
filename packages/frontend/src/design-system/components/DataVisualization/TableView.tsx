@@ -27,14 +27,28 @@ interface TableRow {
 }
 
 const inferType = (value: any): string => {
-  if (value === null) return 'null';
-  if (value === undefined) return 'undefined';
-  if (Array.isArray(value)) return 'array';
-  if (typeof value === 'object') return 'object';
+  if (value === null) {
+    return 'null';
+  }
+  if (value === undefined) {
+    return 'undefined';
+  }
+  if (Array.isArray(value)) {
+    return 'array';
+  }
+  if (typeof value === 'object') {
+    return 'object';
+  }
   if (typeof value === 'string') {
-    if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/.test(value)) return 'date';
-    if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) return 'email';
-    if (/^https?:\/\//.test(value)) return 'url';
+    if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/.test(value)) {
+      return 'date';
+    }
+    if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+      return 'email';
+    }
+    if (/^https?:\/\//.test(value)) {
+      return 'url';
+    }
     return 'string';
   }
   return typeof value;
@@ -57,8 +71,12 @@ const getTypeColor = (type: string) => {
 };
 
 const formatDisplayValue = (value: any, type: string): string => {
-  if (value === null) return 'null';
-  if (value === undefined) return 'undefined';
+  if (value === null) {
+    return 'null';
+  }
+  if (value === undefined) {
+    return 'undefined';
+  }
 
   switch (type) {
     case 'string':
@@ -81,7 +99,9 @@ const formatDisplayValue = (value: any, type: string): string => {
 const flattenObject = (obj: any, prefix: string = ''): TableRow[] => {
   const rows: TableRow[] = [];
 
-  if (!obj || typeof obj !== 'object') return rows;
+  if (!obj || typeof obj !== 'object') {
+    return rows;
+  }
 
   Object.entries(obj).forEach(([key, value]) => {
     const path = prefix ? `${prefix}.${key}` : key;

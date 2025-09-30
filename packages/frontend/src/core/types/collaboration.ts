@@ -517,7 +517,9 @@ export const calculateCollaborationScore = (history: CollaborationHistory): numb
   const summary = history.summary;
   const totalEvents = summary.totalEvents;
 
-  if (totalEvents === 0) return 100;
+  if (totalEvents === 0) {
+    return 100;
+  }
 
   const conflictRate = summary.conflictsDetected / totalEvents;
   const resolutionRate = summary.conflictsResolved / Math.max(summary.conflictsDetected, 1);

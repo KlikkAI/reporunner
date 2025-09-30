@@ -7,18 +7,14 @@
  * Reduction: ~420 lines → ~150 lines (64% reduction)
  */
 
-import React, { useEffect, useState } from 'react';
-import { KeyOutlined, CheckCircleOutlined, LinkOutlined, PlusOutlined } from '@ant-design/icons';
+import { CheckCircleOutlined, KeyOutlined, LinkOutlined, PlusOutlined } from '@ant-design/icons';
+import type React from 'react';
+import { useEffect, useState } from 'react';
 import { CredentialApiService } from '@/core';
 import type { Credential, CredentialTypeDefinition } from '@/core/schemas';
 import { useCredentialStore } from '@/core/stores/credentialStore';
-import {
-  PageTemplates,
-  ComponentGenerator,
-  PropertyRendererFactory,
-  UniversalForm,
-} from '@/design-system';
-import type { PropertyRendererConfig, Statistic, PageAction } from '@/design-system';
+import type { PageAction, PropertyRendererConfig, Statistic } from '@/design-system';
+import { ComponentGenerator, PageTemplates, UniversalForm } from '@/design-system';
 
 const credentialApiService = new CredentialApiService();
 
@@ -75,7 +71,7 @@ export const Credentials: React.FC = () => {
     },
     {
       title: 'Verified',
-      value: credentials.filter(c => c.isValid).length,
+      value: credentials.filter((c) => c.isValid).length,
       icon: <CheckCircleOutlined />,
       color: 'green',
       loading: isLoading,
@@ -111,10 +107,10 @@ export const Credentials: React.FC = () => {
       },
     ];
 
-    type.properties?.forEach(property => {
+    type.properties?.forEach((property) => {
       const config: PropertyRendererConfig = {
         id: property.name,
-        type: property.type === 'options' ? 'select' : property.type as any,
+        type: property.type === 'options' ? 'select' : (property.type as any),
         label: property.displayName,
         description: property.description,
         required: property.required,
@@ -122,7 +118,7 @@ export const Credentials: React.FC = () => {
       };
 
       if (property.type === 'options' && property.options) {
-        config.options = property.options.map(option => ({
+        config.options = property.options.map((option) => ({
           label: option.name,
           value: option.value,
         }));
@@ -136,12 +132,14 @@ export const Credentials: React.FC = () => {
 
   // Handle form submission
   const handleSave = async (formData: Record<string, any>) => {
-    if (!selectedType) return;
+    if (!selectedType) {
+      return;
+    }
 
     try {
       const credentialName = formData.name;
       const credentialData = { ...formData };
-      delete credentialData.name;
+      credentialData.name = undefined;
 
       // Handle Gmail OAuth2 differently
       if (selectedType.name === 'gmailOAuth2' && !editingCredential) {
@@ -164,8 +162,8 @@ export const Credentials: React.FC = () => {
   };
 
   // Generate credential list items
-  const credentialItems = credentials.map(credential => {
-    const type = credentialTypes.find(t => t.name === credential.type);
+  const credentialItems = credentials.map((credential) => {
+    const type = credentialTypes.find((t) => t.name === credential.type);
 
     return ComponentGenerator.generateComponent({
       id: `credential-${credential.id}`,
@@ -190,35 +188,58 @@ export const Credentials: React.FC = () => {
                     </span>
                   )}
                 </div>
-                {ComponentGenerator.generateActionBar([
-                  {
-                    label: testingCredential === credential.id ? 'Testing...' : 'Test',
-                    onClick: () => testCredential(credential.id).then(result => alert(result.message)),
-                    disabled: testingCredential === credential.id,
-                  },
-                  ...(credential.type !== 'gmailOAuth2' ? [{
-                    label: 'Edit',
-                    onClick: () => {
-                      setSelectedType(type!);
-                      setEditingCredential(credential);
-                      setShowCreateForm(true);
+                {ComponentGenerator.generateActionBar(
+                  [
+                    {
+                      label: testingCredential === credential.id ? 'Testing...' : 'Test',
+                      onClick: () =>
+                        testCredential(credential.id).then((result) => alert(result.message)),
+                      disabled: testingCredential === credential.id,
                     },
-                  }] : []),
-                  {
-                    label: credential.type === 'gmailOAuth2' ? 'Revoke Access' : 'Delete',
-                    type: 'danger' as const,
-                    onClick: () => {
-                      const action = credential.type === 'gmailOAuth2'
-                        ? () => revokeGmailCredential(credential.id)
-                        : () => deleteCredential(credential.id);
+                    ...(credential.type !== 'gmailOAuth2'
+                      ? [
+                          {
+                            label: 'Edit',
+                            onClick: () => {
+                              setSelectedType(type!);
+                              setEditingCredential(credential);
+                              setShowCreateForm(true);
+                            },
+                          },
+                        ]
+                      : []),
+                    {
+                      label: credential.type === 'gmailOAuth2' ? 'Revoke Access' : 'Delete',
+                      type: 'danger' as const,
+                      onClick: () => {
+                        const action =
+                          credential.type === 'gmailOAuth2'
+                            ? () => revokeGmailCredential(credential.id)
+                            : () => deleteCredential(credential.id);
 
-                      if (confirm(`Are you sure you want to ${credential.type === 'gmailOAuth2' ? 'revoke access for' : 'delete'} "${credential.name}"?`)) {
-                        action().then(() => alert(`Credential ${credential.type === 'gmailOAuth2' ? 'revoked' : 'deleted'} successfully`))
-                          .catch((error: any) => alert(error.message || `Failed to ${credential.type === 'gmailOAuth2' ? 'revoke' : 'delete'} credential`));
-                      }
+                        if (
+                          confirm(
+                            `Are you sure you want to ${credential.type === 'gmailOAuth2' ? 'revoke access for' : 'delete'} "${credential.name}"?`
+                          )
+                        ) {
+                          action()
+                            .then(() =>
+                              alert(
+                                `Credential ${credential.type === 'gmailOAuth2' ? 'revoked' : 'deleted'} successfully`
+                              )
+                            )
+                            .catch((error: any) =>
+                              alert(
+                                error.message ||
+                                  `Failed to ${credential.type === 'gmailOAuth2' ? 'revoke' : 'delete'} credential`
+                              )
+                            );
+                        }
+                      },
                     },
-                  },
-                ], 'right')}
+                  ],
+                  'right'
+                )}
               </div>
             ),
           },
@@ -238,14 +259,22 @@ export const Credentials: React.FC = () => {
 
           <UniversalForm
             properties={createFormProperties(selectedType)}
-            initialValues={editingCredential ? {
-              name: editingCredential.name,
-              ...editingCredential.data
-            } : {}}
+            initialValues={
+              editingCredential
+                ? {
+                    name: editingCredential.name,
+                    ...editingCredential.data,
+                  }
+                : {}
+            }
             onSubmit={handleSave}
-            submitText={selectedType.name === 'gmailOAuth2' && !editingCredential
-              ? 'Connect with Google'
-              : editingCredential ? 'Update' : 'Create'}
+            submitText={
+              selectedType.name === 'gmailOAuth2' && !editingCredential
+                ? 'Connect with Google'
+                : editingCredential
+                  ? 'Update'
+                  : 'Create'
+            }
             showCancel={true}
             onCancel={() => {
               setShowCreateForm(false);
@@ -265,7 +294,7 @@ export const Credentials: React.FC = () => {
         <div className="p-6">
           <h2 className="text-lg font-semibold mb-4">Select Credential Type</h2>
           <div className="space-y-2">
-            {credentialTypes.map(type => (
+            {credentialTypes.map((type) => (
               <button
                 key={type.name}
                 onClick={() => setSelectedType(type)}
@@ -298,18 +327,22 @@ export const Credentials: React.FC = () => {
       {PageTemplates.list(
         'Credentials',
         credentialItems,
-        (item, index) => <div key={index}>{item}</div>,
+        (item, index) => (
+          <div key={index}>{item}</div>
+        ),
         actions[0],
         'No credentials configured. Create your first credential to get started.'
       )}
 
       {/* Custom stats section overlay */}
       <div className="mb-6">
-        {ComponentGenerator.generateStatsGrid(stats.map(stat => ({
-          title: stat.title,
-          value: stat.value,
-          prefix: stat.icon,
-        })))}
+        {ComponentGenerator.generateStatsGrid(
+          stats.map((stat) => ({
+            title: stat.title,
+            value: stat.value,
+            prefix: stat.icon,
+          }))
+        )}
       </div>
 
       {typeSelectionModal}

@@ -99,7 +99,7 @@ describe('slug generation', () =>
       ];
 
       for (const testCase of testCases) {
-        const dto: CreateTenantDto = {
+        const _dto: CreateTenantDto = {
           name: testCase.name,
           organizationId: `org-${Math.random()}`,
           ownerId: 'user-123'

@@ -1,5 +1,5 @@
 // Base node implementation reusing patterns from workflow-engine
-import { NodeExecutionContext } from '../execution/ExecutionContext';
+import type { NodeExecutionContext } from '../execution/ExecutionContext';
 
 export interface BaseNodeOptions {
   id: string;
@@ -28,7 +28,7 @@ export abstract class BaseNode {
 
   protected validateInput(inputData: any, requiredFields: string[] = []): void {
     for (const field of requiredFields) {
-      if (!inputData || !(field in inputData)) {
+      if (!(inputData && field in inputData)) {
         throw new Error(`Required field missing: ${field}`);
       }
     }

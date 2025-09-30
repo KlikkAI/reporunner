@@ -369,7 +369,9 @@ export class OperationalTransformService {
    * Check if two operations have position conflicts
    */
   private hasPositionConflict(op1: IOperation, op2: IOperation): boolean {
-    if (!op1.position.x || !op2.position.x) return false;
+    if (!(op1.position.x && op2.position.x)) {
+      return false;
+    }
 
     const distance = Math.sqrt(
       (op1.position.x - op2.position.x) ** 2 + ((op1.position.y || 0) - (op2.position.y || 0)) ** 2

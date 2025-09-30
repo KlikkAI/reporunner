@@ -20,7 +20,7 @@ export class ErrorHandler {
 
   handle(error: Error, context?: string): void {
     const message = context ? `${context}: ${error.message}` : error.message;
-    
+
     this.options.logger.error(message, {
       error: error.name,
       stack: this.options.enableStackTrace ? error.stack : undefined,
@@ -33,24 +33,24 @@ export class ErrorHandler {
     retries: number = this.options.maxRetries
   ): Promise<T> {
     let lastError: Error;
-    
+
     for (let attempt = 0; attempt <= retries; attempt++) {
       try {
         return await operation();
       } catch (error) {
         lastError = error instanceof Error ? error : new Error(String(error));
-        
+
         if (attempt === retries) {
           this.handle(lastError, context);
           throw lastError;
         }
-        
+
         // Exponential backoff
-        const delay = Math.pow(2, attempt) * 1000;
-        await new Promise(resolve => setTimeout(resolve, delay));
+        const delay = 2 ** attempt * 1000;
+        await new Promise((resolve) => setTimeout(resolve, delay));
       }
     }
-    
+
     throw lastError!;
   }
 

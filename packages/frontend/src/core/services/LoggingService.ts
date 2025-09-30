@@ -358,7 +358,9 @@ class Logger {
       const token = localStorage.getItem(configService.get('auth').tokenKey);
       if (token) {
         const tokenPart = token.split('.')[1];
-        if (!tokenPart) return undefined;
+        if (!tokenPart) {
+          return undefined;
+        }
         const payload = JSON.parse(atob(tokenPart));
         return payload.userId || payload.sub;
       }
@@ -374,7 +376,7 @@ class Logger {
   flush(): void {
     const config = configService.getConfig();
 
-    if (!config.logging.enableRemote || !config.logging.remoteEndpoint) {
+    if (!(config.logging.enableRemote && config.logging.remoteEndpoint)) {
       // If remote logging is disabled, just clear buffers
       this.clearBuffers();
       return;

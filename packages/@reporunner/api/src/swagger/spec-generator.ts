@@ -38,7 +38,10 @@ export function generateOpenAPISpec(): OpenAPIV3.Document {
           properties: {
             id: { type: 'string' },
             workflowId: { type: 'string' },
-            status: { type: 'string', enum: ['pending', 'running', 'completed', 'failed', 'cancelled'] },
+            status: {
+              type: 'string',
+              enum: ['pending', 'running', 'completed', 'failed', 'cancelled'],
+            },
             startTime: { type: 'string', format: 'date-time' },
             endTime: { type: 'string', format: 'date-time' },
             results: { type: 'object' },
@@ -57,7 +60,7 @@ export function generateOpenAPISpec(): OpenAPIV3.Document {
           },
           required: ['id', 'email', 'name', 'role'],
         },
-        
+
         // Common schemas
         ...commonSchemas,
       },

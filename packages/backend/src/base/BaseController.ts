@@ -72,8 +72,8 @@ export abstract class BaseController {
    * Extract pagination parameters from request
    */
   protected getPaginationParams(req: Request): { page: number; limit: number; skip: number } {
-    const page = parseInt(req.query.page as string, 10) || 1;
-    const limit = Math.min(parseInt(req.query.limit as string, 10) || 20, 100); // Max 100 items
+    const page = Number.parseInt(req.query.page as string, 10) || 1;
+    const limit = Math.min(Number.parseInt(req.query.limit as string, 10) || 20, 100); // Max 100 items
     const skip = (page - 1) * limit;
 
     return { page, limit, skip };

@@ -89,11 +89,11 @@ export class PromptTemplate {
   }
 
   getRequiredVariables(): PromptVariable[] {
-    return this.variables.filter(v => v.required !== false);
+    return this.variables.filter((v) => v.required !== false);
   }
 
   getOptionalVariables(): PromptVariable[] {
-    return this.variables.filter(v => v.required === false);
+    return this.variables.filter((v) => v.required === false);
   }
 
   private validateVariables(variables: Record<string, any>): void {
@@ -130,13 +130,17 @@ export class PromptTemplate {
 
   private validateVariableRules(value: any, variable: PromptVariable): void {
     const validation = variable.validation;
-    if (!validation) return;
+    if (!validation) {
+      return;
+    }
 
     // Pattern validation for strings
     if (validation.pattern && typeof value === 'string') {
       const regex = new RegExp(validation.pattern);
       if (!regex.test(value)) {
-        throw new Error(`Variable '${variable.name}' does not match pattern '${validation.pattern}'`);
+        throw new Error(
+          `Variable '${variable.name}' does not match pattern '${validation.pattern}'`
+        );
       }
     }
 
@@ -146,7 +150,9 @@ export class PromptTemplate {
         throw new Error(`Variable '${variable.name}' must be at least ${validation.min}`);
       }
       if (typeof value === 'string' && value.length < validation.min) {
-        throw new Error(`Variable '${variable.name}' must be at least ${validation.min} characters`);
+        throw new Error(
+          `Variable '${variable.name}' must be at least ${validation.min} characters`
+        );
       }
     }
 
@@ -204,20 +210,20 @@ export class PromptTemplateManager {
   }
 
   getByCategory(category: string): PromptTemplate[] {
-    return this.getAll().filter(t => t.category === category);
+    return this.getAll().filter((t) => t.category === category);
   }
 
   getByTag(tag: string): PromptTemplate[] {
-    return this.getAll().filter(t => t.tags?.includes(tag));
+    return this.getAll().filter((t) => t.tags?.includes(tag));
   }
 
   search(query: string): PromptTemplate[] {
     const lowercaseQuery = query.toLowerCase();
     return this.getAll().filter(
-      t =>
+      (t) =>
         t.name.toLowerCase().includes(lowercaseQuery) ||
         t.description?.toLowerCase().includes(lowercaseQuery) ||
-        t.tags?.some(tag => tag.toLowerCase().includes(lowercaseQuery))
+        t.tags?.some((tag) => tag.toLowerCase().includes(lowercaseQuery))
     );
   }
 

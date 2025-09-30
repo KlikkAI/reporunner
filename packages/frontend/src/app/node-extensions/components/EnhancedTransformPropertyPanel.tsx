@@ -71,7 +71,9 @@ const EnhancedTransformPropertyPanel: React.FC<EnhancedTransformPropertyPanelPro
       let current = newParameters;
 
       for (let i = 0; i < keys.length - 1; i++) {
-        if (!current[keys[i]]) current[keys[i]] = {};
+        if (!current[keys[i]]) {
+          current[keys[i]] = {};
+        }
         current = current[keys[i]];
       }
 
@@ -126,7 +128,9 @@ const EnhancedTransformPropertyPanel: React.FC<EnhancedTransformPropertyPanelPro
 
   // Get input field suggestions
   const getInputFieldSuggestions = useCallback(() => {
-    if (!inputData || !inputData.length) return [];
+    if (!inputData?.length) {
+      return [];
+    }
 
     const fieldNames = new Set<string>();
     inputData.forEach((item) => {

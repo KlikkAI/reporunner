@@ -8,43 +8,43 @@ export const createBaseConfig = (packageName: string) => ({
     url: process.env.DATABASE_URL || 'mongodb://localhost:27017/reporunner',
     options: {
       useNewUrlParser: true,
-      useUnifiedTopology: true
-    }
+      useUnifiedTopology: true,
+    },
   },
   redis: {
     host: process.env.REDIS_HOST || 'localhost',
-    port: process.env.REDIS_PORT || 6379
+    port: process.env.REDIS_PORT || 6379,
   },
   auth: {
     jwtSecret: process.env.JWT_SECRET || 'default-secret',
     jwtExpiration: '24h',
-    bcryptRounds: 12
+    bcryptRounds: 12,
   },
   logging: {
     level: process.env.LOG_LEVEL || 'info',
-    format: 'json'
-  }
+    format: 'json',
+  },
 });
 
 export const createServiceConfig = (serviceName: string, specificConfig: any = {}) => ({
   ...createBaseConfig(serviceName),
   service: {
     name: serviceName,
-    ...specificConfig
-  }
+    ...specificConfig,
+  },
 });
 
 export const createMiddlewareConfig = (middlewareName: string) => ({
   name: middlewareName,
   enabled: true,
-  options: {}
+  options: {},
 });
 
 // Common validation schemas
 export const commonValidationRules = {
   email: { required: true, pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/ },
   password: { required: true, minLength: 8 },
-  id: { required: true, pattern: /^[a-fA-F0-9]{24}$/ }
+  id: { required: true, pattern: /^[a-fA-F0-9]{24}$/ },
 };
 
 // Common error messages
@@ -53,7 +53,7 @@ export const commonErrorMessages = {
   UNAUTHORIZED: 'Unauthorized access',
   NOT_FOUND: 'Resource not found',
   INTERNAL_ERROR: 'Internal server error',
-  DUPLICATE_ENTRY: 'Duplicate entry'
+  DUPLICATE_ENTRY: 'Duplicate entry',
 };
 
 // Common response formats
@@ -62,5 +62,5 @@ export const createResponse = (success: boolean, data?: any, message?: string, e
   data,
   message,
   error,
-  timestamp: new Date().toISOString()
+  timestamp: new Date().toISOString(),
 });

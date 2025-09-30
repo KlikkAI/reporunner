@@ -1,5 +1,5 @@
-import { ValidationContext } from '../context/ValidationContext';
-import { ValidationResult } from '../types/ValidationResult';
+import type { ValidationContext } from '../context/ValidationContext';
+import type { ValidationResult } from '../types/ValidationResult';
 
 /**
  * Interface for validation rules
@@ -51,7 +51,7 @@ export abstract class BaseValidationRule implements ValidationRule {
   /**
    * Check if rule applies to request
    */
-  public async applies(context: ValidationContext): Promise<boolean> {
+  public async applies(_context: ValidationContext): Promise<boolean> {
     return true;
   }
 
@@ -108,11 +108,7 @@ export class FunctionValidationRule extends BaseValidationRule {
 export class CompositeValidationRule extends BaseValidationRule {
   private rules: ValidationRule[];
 
-  constructor(
-    name: string,
-    rules: ValidationRule[],
-    description?: string
-  ) {
+  constructor(name: string, rules: ValidationRule[], description?: string) {
     super(name, description);
     this.rules = rules;
   }
@@ -125,7 +121,7 @@ export class CompositeValidationRule extends BaseValidationRule {
       const childContext = context.createChild(rule.name);
 
       // Check if rule applies
-      if (rule.applies && !await rule.applies(childContext)) {
+      if (rule.applies && !(await rule.applies(childContext))) {
         continue;
       }
 
@@ -163,7 +159,7 @@ export class CompositeValidationRule extends BaseValidationRule {
     const merged: ValidationResult = {
       valid: true,
       errors: [],
-      transformed: {}
+      transformed: {},
     };
 
     for (const result of results) {
@@ -177,7 +173,7 @@ export class CompositeValidationRule extends BaseValidationRule {
       if (result.transformed) {
         merged.transformed = {
           ...merged.transformed,
-          ...result.transformed
+          ...result.transformed,
         };
       }
 
@@ -187,17 +183,16 @@ export class CompositeValidationRule extends BaseValidationRule {
           merged.meta = {};
         }
 
-        merged.meta.rulesExecuted = (merged.meta.rulesExecuted || 0) + 
-          (result.meta.rulesExecuted || 0);
+        merged.meta.rulesExecuted =
+          (merged.meta.rulesExecuted || 0) + (result.meta.rulesExecuted || 0);
 
-        merged.meta.transformations = (merged.meta.transformations || 0) +
-          (result.meta.transformations || 0);
+        merged.meta.transformations =
+          (merged.meta.transformations || 0) + (result.meta.transformations || 0);
 
-        merged.meta.sanitizations = (merged.meta.sanitizations || 0) +
-          (result.meta.sanitizations || 0);
+        merged.meta.sanitizations =
+          (merged.meta.sanitizations || 0) + (result.meta.sanitizations || 0);
 
-        merged.meta.cacheHits = (merged.meta.cacheHits || 0) +
-          (result.meta.cacheHits || 0);
+        merged.meta.cacheHits = (merged.meta.cacheHits || 0) + (result.meta.cacheHits || 0);
       }
     }
 
@@ -266,7 +261,7 @@ export function createAsyncRule(
             validateFn(context),
             new Promise<never>((_, reject) =>
               setTimeout(() => reject(new Error('Validation timeout')), timeout)
-            )
+            ),
           ]);
 
           return result;
@@ -274,9 +269,7 @@ export function createAsyncRule(
           lastError = error as Error;
           if (i < retries - 1) {
             // Wait before retrying
-            await new Promise(resolve => 
-              setTimeout(resolve, backoff * Math.pow(2, i))
-            );
+            await new Promise((resolve) => setTimeout(resolve, backoff * 2 ** i));
           }
         }
       }

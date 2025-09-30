@@ -20,7 +20,9 @@ const HoverActions: React.FC<HoverActionsProps> = ({
   onDelete,
   customActions = [],
 }) => {
-  if (!isVisible) return null;
+  if (!isVisible) {
+    return null;
+  }
 
   return (
     <div className="absolute -top-8 right-0 flex gap-1 bg-gray-900 rounded p-1 shadow-lg z-50">

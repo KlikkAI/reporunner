@@ -3,25 +3,21 @@
  * Reusing patterns from workflow-engine and provider management
  */
 
+import type { BaseAIProvider, IEmbeddingProvider, ILLMProvider } from './base/ai-provider';
+import { AnthropicProvider } from './providers/anthropic-provider';
+import { OpenAIProvider } from './providers/openai-provider';
 import type {
   AIProviderType,
-  ProviderConfig,
-  LLMCompletion,
-  LLMResponse,
   EmbeddingRequest,
   EmbeddingResponse,
+  LLMCompletion,
+  LLMResponse,
+  ProviderConfig,
 } from './types';
-import { BaseAIProvider, ILLMProvider, IEmbeddingProvider } from './base/ai-provider';
-import { OpenAIProvider } from './providers/openai-provider';
-import { AnthropicProvider } from './providers/anthropic-provider';
 
 export class LLMManager {
   private providers: Map<AIProviderType, BaseAIProvider> = new Map();
   private defaultProvider?: AIProviderType;
-
-  constructor() {
-    // Initialize with basic configuration
-  }
 
   registerProvider(type: AIProviderType, config: ProviderConfig): void {
     let provider: BaseAIProvider;
@@ -85,7 +81,10 @@ export class LLMManager {
     yield* provider.stream(request);
   }
 
-  async createEmbeddings(request: EmbeddingRequest, providerType?: AIProviderType): Promise<EmbeddingResponse> {
+  async createEmbeddings(
+    request: EmbeddingRequest,
+    providerType?: AIProviderType
+  ): Promise<EmbeddingResponse> {
     const provider = this.getEmbeddingProvider(providerType);
     return provider.createEmbeddings(request);
   }
@@ -120,7 +119,11 @@ export class LLMManager {
     return 'complete' in provider && 'stream' in provider && 'getModels' in provider;
   }
 
-  private isEmbeddingProvider(provider: BaseAIProvider): provider is BaseAIProvider & IEmbeddingProvider {
-    return 'createEmbeddings' in provider && 'getDimensions' in provider && 'getMaxTokens' in provider;
+  private isEmbeddingProvider(
+    provider: BaseAIProvider
+  ): provider is BaseAIProvider & IEmbeddingProvider {
+    return (
+      'createEmbeddings' in provider && 'getDimensions' in provider && 'getMaxTokens' in provider
+    );
   }
 }

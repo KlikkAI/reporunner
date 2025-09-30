@@ -25,9 +25,9 @@ import { Header } from '../components/Landing/Header';
 
 export const Terms: React.FC = () => {
   const [lastUpdated] = useState('January 20, 2025');
-  const [activeSection, setActiveSection] = useState('overview');
+  const [_activeSection, _setActiveSection] = useState('overview');
 
-  const sections = [
+  const _sections = [
     { id: 'overview', title: 'Overview', icon: Eye },
     { id: 'acceptance', title: 'Acceptance', icon: CheckCircle },
     { id: 'services', title: 'Services', icon: Globe },
@@ -136,26 +136,26 @@ export const Terms: React.FC = () => {
             </div>
 
             <div className="max-w-4xl mx-auto">
-            <div className="flex items-start gap-4">
-              <AlertTriangle className="w-8 h-8 text-orange-600 mt-1 flex-shrink-0" />
-              <div>
-                <h3 className="text-xl font-bold text-orange-900 mb-3">Important Legal Notice</h3>
-                <div className="text-orange-800 space-y-3">
-                  <p>
-                    These Terms of Service constitute a legally binding agreement. Please read them
-                    carefully and contact our legal team if you have any questions.
-                  </p>
-                  <p>
-                    For enterprise customers, additional terms may apply as outlined in your Master
-                    Service Agreement or other executed contracts.
-                  </p>
-                  <p>
-                    These Terms are governed by the laws of Delaware, USA, and any disputes will be
-                    resolved in Delaware courts.
-                  </p>
+              <div className="flex items-start gap-4">
+                <AlertTriangle className="w-8 h-8 text-orange-600 mt-1 flex-shrink-0" />
+                <div>
+                  <h3 className="text-xl font-bold text-orange-900 mb-3">Important Legal Notice</h3>
+                  <div className="text-orange-800 space-y-3">
+                    <p>
+                      These Terms of Service constitute a legally binding agreement. Please read
+                      them carefully and contact our legal team if you have any questions.
+                    </p>
+                    <p>
+                      For enterprise customers, additional terms may apply as outlined in your
+                      Master Service Agreement or other executed contracts.
+                    </p>
+                    <p>
+                      These Terms are governed by the laws of Delaware, USA, and any disputes will
+                      be resolved in Delaware courts.
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
             </div>
           </div>
         </div>

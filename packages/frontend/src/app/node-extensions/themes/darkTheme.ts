@@ -3,9 +3,8 @@
  * Modern dark theme optimized for low-light environments
  */
 
-import type { NodeTheme } from '../types';
-
 import { createTheme } from '@/design-system/tokens/baseTheme';
+import type { NodeTheme } from '../types';
 
 export const darkTheme: NodeTheme = createTheme(
   'dark',

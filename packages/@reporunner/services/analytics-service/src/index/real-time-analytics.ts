@@ -35,7 +35,8 @@ end: Date;
     timestamp: timeWindow.start,
   });
 
-  if (existing) return; // Already aggregated
+  if (existing) { return; // Already aggregated
+}
 
   // Perform aggregation
   const pipeline = [

@@ -3,17 +3,14 @@ export * from './components/form';
 
 // Overlay Components
 export { Dialog } from './components/overlay/dialog';
-
+export { useAsync } from './hooks/useAsync';
 // Hooks
 export { useDebounce } from './hooks/useDebounce';
-export { useAsync } from './hooks/useAsync';
 export { useDisclosure } from './hooks/useDisclosure';
-export { usePrevious } from './hooks/usePrevious';
 export { useEventListener } from './hooks/useEventListener';
-
-// Utils
-export * from './utils/withHOC';
-export * from './utils/styles';
-
+export { usePrevious } from './hooks/usePrevious';
 // Types
 export * from './types';
+export * from './utils/styles';
+// Utils
+export * from './utils/withHOC';

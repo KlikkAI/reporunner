@@ -1,4 +1,4 @@
-import type { ApiResponse, ExecutionResult, WorkflowDefinition } from '@reporunner/core';
+import type { ApiResponse, WorkflowDefinition } from '@reporunner/core';
 import axios, { type AxiosInstance } from 'axios';
 import { WebSocketClient } from './WebSocketClient.js';
 
@@ -13,7 +13,6 @@ export interface ReporunnerClientConfig {
 export class ReporunnerClient {
   private http: AxiosInstance;
   private config: Required<ReporunnerClientConfig>;
-  private ws?: WebSocketClient;
 
   constructor(config: ReporunnerClientConfig = {}) {
     this.config = {
@@ -97,4 +96,4 @@ export class ReporunnerClient {
     return response.data.data;
   }
 
-  async deleteWorkflow(id: string): Promise<void> {
+  async deleteWorkflow(_id: string): Promise<void> {

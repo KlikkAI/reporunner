@@ -1,4 +1,3 @@
-import { logger } from '@reporunner/shared/logger';
 import type { NextFunction, Request, Response } from 'express';
 import { z } from 'zod';
 import type { WorkflowDefinition, WorkflowService } from '../index';
@@ -446,7 +445,7 @@ export class WorkflowController {
     }
   }
 
-  async getTemplates(req: Request, res: Response, next: NextFunction): Promise<void> {
+  async getTemplates(_req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       // This would query a templates collection
       const templates = [
@@ -483,7 +482,7 @@ export class WorkflowController {
     try {
       const { templateId } = req.params;
       const { name, organizationId } = req.body;
-      const userId = (req as any).user?.id;
+      const _userId = (req as any).user?.id;
 
       // This would fetch the template and create a new workflow
       res.json({
@@ -519,7 +518,7 @@ export class WorkflowController {
 
   private incrementMajorVersion(version: string): string {
     const parts = version.split('.');
-    const major = parseInt(parts[0]) + 1;
+    const major = Number.parseInt(parts[0], 10) + 1;
     return `${major}.0.0`;
   }
 }

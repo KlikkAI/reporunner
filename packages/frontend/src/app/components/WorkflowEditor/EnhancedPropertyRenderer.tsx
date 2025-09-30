@@ -106,7 +106,7 @@ const PropertyField: React.FC<PropertyFieldProps> = ({
         );
 
       case 'boolean':
-        return <Switch checked={value || false} onChange={onChange} disabled={disabled} />;
+        return <Switch checked={value} onChange={onChange} disabled={disabled} />;
 
       case 'select':
         return (

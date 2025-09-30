@@ -65,7 +65,7 @@ class EnhancedDebuggingService {
    */
   startDebugSession(workflowId: string): DebugSession {
     const sessionId = `debug-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-    
+
     const session: DebugSession = {
       id: sessionId,
       workflowId,
@@ -94,7 +94,7 @@ class EnhancedDebuggingService {
       session.status = 'stopped';
       session.endTime = new Date().toISOString();
       this.sessions.set(sessionId, session);
-      
+
       this.emitEvent(sessionId, 'session-stopped', session);
     }
   }
@@ -130,9 +130,9 @@ class EnhancedDebuggingService {
   removeBreakpoint(sessionId: string, breakpointId: string): void {
     const session = this.sessions.get(sessionId);
     if (session) {
-      session.breakpoints = session.breakpoints.filter(bp => bp.id !== breakpointId);
+      session.breakpoints = session.breakpoints.filter((bp) => bp.id !== breakpointId);
       this.sessions.set(sessionId, session);
-      
+
       this.emitEvent(sessionId, 'breakpoint-removed', { breakpointId });
     }
   }
@@ -143,11 +143,11 @@ class EnhancedDebuggingService {
   toggleBreakpoint(sessionId: string, breakpointId: string): void {
     const session = this.sessions.get(sessionId);
     if (session) {
-      const breakpoint = session.breakpoints.find(bp => bp.id === breakpointId);
+      const breakpoint = session.breakpoints.find((bp) => bp.id === breakpointId);
       if (breakpoint) {
         breakpoint.enabled = !breakpoint.enabled;
         this.sessions.set(sessionId, session);
-        
+
         this.emitEvent(sessionId, 'breakpoint-toggled', breakpoint);
       }
     }
@@ -162,7 +162,7 @@ class EnhancedDebuggingService {
       session.stepMode = 'over';
       session.status = 'active';
       this.sessions.set(sessionId, session);
-      
+
       this.emitEvent(sessionId, 'step-over', session);
     }
   }
@@ -176,7 +176,7 @@ class EnhancedDebuggingService {
       session.stepMode = 'into';
       session.status = 'active';
       this.sessions.set(sessionId, session);
-      
+
       this.emitEvent(sessionId, 'step-into', session);
     }
   }
@@ -190,7 +190,7 @@ class EnhancedDebuggingService {
       session.stepMode = 'continue';
       session.status = 'active';
       this.sessions.set(sessionId, session);
-      
+
       this.emitEvent(sessionId, 'continue', session);
     }
   }
@@ -203,7 +203,7 @@ class EnhancedDebuggingService {
     if (session) {
       session.status = 'paused';
       this.sessions.set(sessionId, session);
-      
+
       this.emitEvent(sessionId, 'paused', session);
     }
   }
@@ -212,14 +212,14 @@ class EnhancedDebuggingService {
    * Add debug log entry
    */
   addDebugLog(
-    sessionId: string, 
-    level: DebugLog['level'], 
-    message: string, 
-    nodeId?: string, 
+    sessionId: string,
+    level: DebugLog['level'],
+    message: string,
+    nodeId?: string,
     data?: any
   ): void {
     const logs = this.debugLogs.get(sessionId) || [];
-    
+
     const logEntry: DebugLog = {
       id: `log-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`,
       timestamp: new Date().toISOString(),
@@ -257,7 +257,7 @@ class EnhancedDebuggingService {
     const stack = this.callStacks.get(sessionId) || [];
     stack.push(frame);
     this.callStacks.set(sessionId, stack);
-    
+
     this.emitEvent(sessionId, 'call-frame-pushed', frame);
   }
 
@@ -268,11 +268,11 @@ class EnhancedDebuggingService {
     const stack = this.callStacks.get(sessionId) || [];
     const frame = stack.pop();
     this.callStacks.set(sessionId, stack);
-    
+
     if (frame) {
       this.emitEvent(sessionId, 'call-frame-popped', frame);
     }
-    
+
     return frame;
   }
 
@@ -281,11 +281,11 @@ class EnhancedDebuggingService {
    */
   getDebugLogs(sessionId: string, level?: DebugLog['level']): DebugLog[] {
     const logs = this.debugLogs.get(sessionId) || [];
-    
+
     if (level) {
-      return logs.filter(log => log.level === level);
+      return logs.filter((log) => log.level === level);
     }
-    
+
     return logs.sort((a, b) => b.timestamp.localeCompare(a.timestamp));
   }
 
@@ -294,11 +294,11 @@ class EnhancedDebuggingService {
    */
   getVariables(sessionId: string, scope?: DebugVariable['scope']): DebugVariable[] {
     const variables = this.variables.get(sessionId) || [];
-    
+
     if (scope) {
-      return variables.filter(variable => variable.scope === scope);
+      return variables.filter((variable) => variable.scope === scope);
     }
-    
+
     return variables;
   }
 
@@ -308,9 +308,9 @@ class EnhancedDebuggingService {
   evaluateExpression(sessionId: string, expression: string): any {
     const variables = this.getVariables(sessionId);
     const context: Record<string, any> = {};
-    
+
     // Build evaluation context from variables
-    variables.forEach(variable => {
+    variables.forEach((variable) => {
       context[variable.name] = variable.value;
     });
 
@@ -320,8 +320,8 @@ class EnhancedDebuggingService {
       return func(...Object.values(context));
     } catch (error) {
       this.addDebugLog(
-        sessionId, 
-        'error', 
+        sessionId,
+        'error',
         `Expression evaluation failed: ${expression}`,
         undefined,
         { expression, error: error instanceof Error ? error.message : error }
@@ -354,8 +354,8 @@ class EnhancedDebuggingService {
   private emitEvent(sessionId: string, eventType: string, data: any): void {
     const listeners = this.eventListeners.get(sessionId) || [];
     const event = { type: eventType, data, timestamp: new Date().toISOString() };
-    
-    listeners.forEach(listener => {
+
+    listeners.forEach((listener) => {
       try {
         listener(event);
       } catch (error) {
@@ -368,8 +368,9 @@ class EnhancedDebuggingService {
    * Get active debug sessions
    */
   getActiveSessions(): DebugSession[] {
-    return Array.from(this.sessions.values())
-      .filter(session => session.status === 'active' || session.status === 'paused');
+    return Array.from(this.sessions.values()).filter(
+      (session) => session.status === 'active' || session.status === 'paused'
+    );
   }
 
   /**

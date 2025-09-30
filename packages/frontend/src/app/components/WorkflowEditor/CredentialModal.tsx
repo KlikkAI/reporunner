@@ -7,18 +7,14 @@
  * Reduction: ~600 lines → ~150 lines (75% reduction)
  */
 
-import React, { useState, useEffect, useMemo } from 'react';
-import { Modal, Tabs } from 'antd';
-import { CredentialApiService } from '@/core';
-import { useLeanWorkflowStore } from '@/core';
 import { Logger } from '@reporunner/core';
+import { Modal, Tabs } from 'antd';
+import type React from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { CredentialApiService, useLeanWorkflowStore } from '@/core';
 import type { CredentialTypeApiResponse } from '@/core/types/frontend-credentials';
-import {
-  UniversalForm,
-  PropertyRendererFactory,
-  FormGenerators,
-} from '@/design-system';
 import type { PropertyRendererConfig } from '@/design-system';
+import { FormGenerators, UniversalForm } from '@/design-system';
 
 const credentialApiService = new CredentialApiService();
 const logger = new Logger('CredentialModal');
@@ -50,7 +46,9 @@ export const CredentialModal: React.FC<CredentialModalProps> = ({
   const { nodes, edges, saveWorkflow } = useLeanWorkflowStore();
 
   // Get credential type definition
-  const [credentialTypeDef, setCredentialTypeDef] = useState<CredentialTypeApiResponse | undefined>();
+  const [credentialTypeDef, setCredentialTypeDef] = useState<
+    CredentialTypeApiResponse | undefined
+  >();
 
   useEffect(() => {
     const fetchCredentialType = async () => {
@@ -71,7 +69,9 @@ export const CredentialModal: React.FC<CredentialModalProps> = ({
 
   // Convert credential type definition to form properties
   const formProperties = useMemo((): PropertyRendererConfig[] => {
-    if (!credentialTypeDef) return [];
+    if (!credentialTypeDef) {
+      return [];
+    }
 
     const properties: PropertyRendererConfig[] = [
       {
@@ -90,9 +90,7 @@ export const CredentialModal: React.FC<CredentialModalProps> = ({
         type: 'select',
         label: 'Authentication Type',
         defaultValue: 'oAuth2',
-        options: [
-          { label: 'OAuth2 (Recommended)', value: 'oAuth2' },
-        ],
+        options: [{ label: 'OAuth2 (Recommended)', value: 'oAuth2' }],
         description: 'Gmail uses OAuth2 for secure authentication',
       });
       return properties;
@@ -100,7 +98,7 @@ export const CredentialModal: React.FC<CredentialModalProps> = ({
 
     // Handle AI Provider fields
     if (isAIProvider && credentialTypeDef.fields) {
-      credentialTypeDef.fields.forEach(field => {
+      credentialTypeDef.fields.forEach((field) => {
         const property: PropertyRendererConfig = {
           id: field.name,
           type: field.type === 'password' ? 'password' : 'text',
@@ -112,7 +110,7 @@ export const CredentialModal: React.FC<CredentialModalProps> = ({
 
         if (field.type === 'options' && field.options) {
           property.type = 'select';
-          property.options = field.options.map(option => ({
+          property.options = field.options.map((option) => ({
             label: option.name,
             value: option.value,
           }));
@@ -171,7 +169,9 @@ export const CredentialModal: React.FC<CredentialModalProps> = ({
 
   // Initial form values
   const initialValues = useMemo(() => {
-    if (!editingCredential) return {};
+    if (!editingCredential) {
+      return {};
+    }
 
     const values: Record<string, any> = {
       name: editingCredential.name || '',
@@ -190,7 +190,7 @@ export const CredentialModal: React.FC<CredentialModalProps> = ({
     try {
       const credentialName = formData.name;
       const credentialData = { ...formData };
-      delete credentialData.name;
+      credentialData.name = undefined;
 
       // Handle Gmail OAuth2 special flow
       if (isGmailOAuth && !editingCredential) {
@@ -215,11 +215,11 @@ export const CredentialModal: React.FC<CredentialModalProps> = ({
   };
 
   // Handle credential testing
-  const handleTest = async (formData: Record<string, any>) => {
+  const handleTest = async (_formData: Record<string, any>) => {
     setIsTesting(true);
     try {
       // Mock test for now - would call actual test endpoint
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
       setTestResult({
         success: true,
         message: 'Connection successful!',
@@ -264,8 +264,8 @@ export const CredentialModal: React.FC<CredentialModalProps> = ({
                     isGmailOAuth && !editingCredential
                       ? 'Connect with Google'
                       : editingCredential
-                      ? 'Update Credential'
-                      : 'Create Credential'
+                        ? 'Update Credential'
+                        : 'Create Credential'
                   }
                   showCancel={true}
                   onCancel={onClose}
@@ -285,11 +285,13 @@ export const CredentialModal: React.FC<CredentialModalProps> = ({
                     </button>
 
                     {testResult && (
-                      <div className={`mt-2 p-3 rounded-md text-sm ${
-                        testResult.success
-                          ? 'bg-green-50 text-green-800 border border-green-200'
-                          : 'bg-red-50 text-red-800 border border-red-200'
-                      }`}>
+                      <div
+                        className={`mt-2 p-3 rounded-md text-sm ${
+                          testResult.success
+                            ? 'bg-green-50 text-green-800 border border-green-200'
+                            : 'bg-red-50 text-red-800 border border-red-200'
+                        }`}
+                      >
                         {testResult.message}
                       </div>
                     )}

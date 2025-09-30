@@ -188,7 +188,9 @@ export class QueueManager {
   } | null> {
     try {
       const job = await this.workflowQueue.getJob(executionId);
-      if (!job) return null;
+      if (!job) {
+        return null;
+      }
 
       const state = await job.getState();
 
@@ -210,7 +212,9 @@ export class QueueManager {
   async cancelJob(executionId: string): Promise<boolean> {
     try {
       const job = await this.workflowQueue.getJob(executionId);
-      if (!job) return false;
+      if (!job) {
+        return false;
+      }
 
       await job.remove();
 

@@ -11,7 +11,7 @@ export enum ConnectionType {
   Success = 'success',
   Condition = 'condition',
   AI_LanguageModel = 'ai_languageModel',
-  AI_Embedding = 'ai_embedding', 
+  AI_Embedding = 'ai_embedding',
   AI_VectorStore = 'ai_vectorStore',
   AI_Tool = 'ai_tool',
   Data = 'data',
@@ -92,7 +92,7 @@ export class ConnectionUtils {
     // AI-specific connection validation
     if (connectionType.startsWith('ai_')) {
       const aiTypes = ['ai-agent', 'llm', 'embedding', 'vector-store'];
-      if (!aiTypes.includes(sourceNodeType) && !aiTypes.includes(targetNodeType)) {
+      if (!(aiTypes.includes(sourceNodeType) || aiTypes.includes(targetNodeType))) {
         return {
           valid: false,
           error: 'AI connections can only be made between AI-compatible nodes',
@@ -121,10 +121,7 @@ export class ConnectionUtils {
   /**
    * Get default connection type between two node types
    */
-  static getDefaultConnectionType(
-    sourceNodeType: string,
-    targetNodeType: string
-  ): ConnectionType {
+  static getDefaultConnectionType(sourceNodeType: string, targetNodeType: string): ConnectionType {
     // AI nodes prefer AI connections
     const aiTypes = ['ai-agent', 'llm', 'embedding', 'vector-store'];
     if (aiTypes.includes(sourceNodeType) || aiTypes.includes(targetNodeType)) {
@@ -185,7 +182,7 @@ export class ConnectionUtils {
    */
   static getConnectionStyle(connectionType: ConnectionType): React.CSSProperties {
     return {
-      stroke: this.getConnectionColor(connectionType),
+      stroke: ConnectionUtils.getConnectionColor(connectionType),
       strokeWidth: 2,
       strokeDasharray: connectionType === ConnectionType.Condition ? '5,5' : undefined,
     };

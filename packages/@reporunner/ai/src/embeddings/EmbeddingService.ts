@@ -3,14 +3,14 @@
  * Reusing patterns from ai-provider.ts and workflow services
  */
 
+import { aiRegistry } from '../ai-registry';
 import type {
   AIProviderType,
+  EmbeddingComparison,
   EmbeddingRequest,
   EmbeddingSearchOptions,
   EmbeddingSearchResult,
-  EmbeddingComparison,
 } from '../types';
-import { aiRegistry } from '../ai-registry';
 
 export interface EmbeddingServiceConfig {
   defaultProvider?: AIProviderType;
@@ -144,18 +144,18 @@ export class EmbeddingService {
     const threshold = options.threshold || 0;
 
     // Calculate similarities
-    const similarities = candidateEmbeddings.map(candidate => ({
+    const similarities = candidateEmbeddings.map((candidate) => ({
       ...candidate,
       similarity: this.calculateCosineSimilarity(queryEmbedding, candidate.embedding),
     }));
 
     // Filter by threshold and sort by similarity
     const filtered = similarities
-      .filter(item => item.similarity >= threshold)
+      .filter((item) => item.similarity >= threshold)
       .sort((a, b) => b.similarity - a.similarity)
       .slice(0, limit);
 
-    return filtered.map(item => ({
+    return filtered.map((item) => ({
       id: item.id,
       score: item.similarity,
       values: options.includeValues ? item.embedding : undefined,
@@ -217,7 +217,7 @@ export class EmbeddingService {
       throw new Error('Vectors must have the same length');
     }
 
-    return Math.sqrt(a.reduce((sum, val, i) => sum + Math.pow(val - b[i], 2), 0));
+    return Math.sqrt(a.reduce((sum, val, i) => sum + (val - b[i]) ** 2, 0));
   }
 
   private calculateDotProduct(a: number[], b: number[]): number {

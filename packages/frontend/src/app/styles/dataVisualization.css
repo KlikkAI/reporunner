@@ -16,7 +16,7 @@
 }
 
 .dark-tabs .ant-tabs-tab-active {
-  color: #3b82f6 !important;
+  color: #3b82f6;
   background: #111827;
   border-color: #374151;
 }
@@ -176,52 +176,52 @@
 
 /* Dark Select */
 .ant-select-dark .ant-select-selector {
-  background: #374151 !important;
-  border-color: #4b5563 !important;
-  color: #ffffff !important;
+  background: #374151;
+  border-color: #4b5563;
+  color: #ffffff;
 }
 
 .ant-select-dark .ant-select-selection-placeholder {
-  color: #9ca3af !important;
+  color: #9ca3af;
 }
 
 .ant-select-dark .ant-select-arrow {
-  color: #9ca3af !important;
+  color: #9ca3af;
 }
 
 /* Multi-Select Tags Dark Mode */
 .ant-select-multiple .ant-select-selection-item {
-  background: #1f2937 !important;
-  border: 1px solid #4b5563 !important;
-  color: #ffffff !important;
+  background: #1f2937;
+  border: 1px solid #4b5563;
+  color: #ffffff;
 }
 
 .ant-select-multiple .ant-select-selection-item-remove {
-  color: #9ca3af !important;
+  color: #9ca3af;
 }
 
 .ant-select-multiple .ant-select-selection-item-remove:hover {
-  color: #ffffff !important;
+  color: #ffffff;
 }
 
 /* Dark Dropdown */
 .custom-dark-dropdown {
-  background: #374151 !important;
-  border: 1px solid #4b5563 !important;
+  background: #374151;
+  border: 1px solid #4b5563;
 }
 
 .custom-dark-dropdown .ant-select-item {
-  background: #374151 !important;
-  color: #ffffff !important;
+  background: #374151;
+  color: #ffffff;
 }
 
 .custom-dark-dropdown .ant-select-item:hover {
-  background: #4b5563 !important;
+  background: #4b5563;
 }
 
 .custom-dark-dropdown .ant-select-item-option-selected {
-  background: #3b82f6 !important;
-  color: #ffffff !important;
+  background: #3b82f6;
+  color: #ffffff;
 }
 
 /* JSON Syntax Highlighting */
@@ -288,7 +288,7 @@
 
 /* Field Path Breadcrumb */
 .field-path {
-  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-family: "Monaco", "Menlo", "Ubuntu Mono", monospace;
   font-size: 12px;
   color: #6b7280;
   background: #374151;
@@ -327,26 +327,26 @@
 
 /* Global Dark Mode Overrides for Ant Design */
 .ant-select-dropdown {
-  background: #374151 !important;
-  border: 1px solid #4b5563 !important;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5) !important;
+  background: #374151;
+  border: 1px solid #4b5563;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
 }
 
 .ant-select-item {
-  color: #ffffff !important;
+  color: #ffffff;
 }
 
 .ant-select-item:hover {
-  background: #4b5563 !important;
+  background: #4b5563;
 }
 
 .ant-select-item-option-selected {
-  background: #3b82f6 !important;
-  color: #ffffff !important;
+  background: #3b82f6;
+  color: #ffffff;
 }
 
 .ant-select-item-option-active {
-  background: #4b5563 !important;
+  background: #4b5563;
 }
 
 /* Dark mode for Tree component in schema view */
@@ -355,7 +355,7 @@
 }
 
 .ant-tree .ant-tree-node-content-wrapper:hover {
-  background: #374151 !important;
+  background: #374151;
 }
 
 .ant-tree .ant-tree-switcher {
@@ -364,7 +364,7 @@
 
 /* Dark mode for tags in schema view */
 .ant-tag {
-  background: #374151 !important;
-  border-color: #4b5563 !important;
-  color: #ffffff !important;
+  background: #374151;
+  border-color: #4b5563;
+  color: #ffffff;
 }

@@ -13,16 +13,18 @@ export const WorkflowExecutionSchema = BaseEntitySchema.extend({
   startTime: z.date(),
   endTime: z.date().optional(),
   executionTime: z.number().optional(),
-  nodeExecutions: z.record(
-    z.object({
-      nodeId: z.string(),
-      status: z.enum(['pending', 'running', 'success', 'error', 'skipped', 'waiting']),
-      startTime: z.date().optional(),
-      endTime: z.date().optional(),
-      data: z.any().optional(),
-      error: z.string().optional(),
-    })
-  ).optional(),
+  nodeExecutions: z
+    .record(
+      z.object({
+        nodeId: z.string(),
+        status: z.enum(['pending', 'running', 'success', 'error', 'skipped', 'waiting']),
+        startTime: z.date().optional(),
+        endTime: z.date().optional(),
+        data: z.any().optional(),
+        error: z.string().optional(),
+      })
+    )
+    .optional(),
   context: z.record(z.any()).optional(),
   error: z.string().optional(),
 });

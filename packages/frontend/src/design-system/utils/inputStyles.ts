@@ -14,22 +14,13 @@ export const baseInputStyles = cn(
 );
 
 // Select dropdown styles
-export const selectStyles = cn(
-  baseInputStyles,
-  'min-h-[32px]'
-);
+export const selectStyles = cn(baseInputStyles, 'min-h-[32px]');
 
 // Multi-select styles
-export const multiSelectStyles = cn(
-  selectStyles,
-  'min-h-[40px]'
-);
+export const multiSelectStyles = cn(selectStyles, 'min-h-[40px]');
 
 // Textarea styles for larger text inputs
-export const textareaStyles = cn(
-  baseInputStyles,
-  'min-h-[80px] resize-vertical'
-);
+export const textareaStyles = cn(baseInputStyles, 'min-h-[80px] resize-vertical');
 
 // Color input styles
 export const colorInputStyles = cn(
@@ -38,10 +29,7 @@ export const colorInputStyles = cn(
 );
 
 // Number input styles
-export const numberInputStyles = cn(
-  baseInputStyles,
-  'text-right'
-);
+export const numberInputStyles = cn(baseInputStyles, 'text-right');
 
 // Boolean/checkbox styles
 export const checkboxStyles = cn(

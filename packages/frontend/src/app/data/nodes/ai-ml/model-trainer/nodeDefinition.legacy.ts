@@ -43,46 +43,65 @@ export class ModelTrainerNodeDefinition extends BaseNodeDefinition {
         'Model Configuration',
         'modelConfig',
         [
-          this.createSelectProperty('Model Type', 'modelType', [
-            { name: 'Language Model', value: 'language_model' },
-            { name: 'Text Classification', value: 'classification' },
-            { name: 'Text Regression', value: 'regression' },
-            { name: 'Embedding Model', value: 'embedding' },
-            { name: 'Computer Vision', value: 'computer_vision' },
-            { name: 'Time Series', value: 'time_series' },
-            { name: 'Anomaly Detection', value: 'anomaly_detection' },
-          ], {
-            required: true,
-            description: 'Type of AI model to train',
-          }),
+          this.createSelectProperty(
+            'Model Type',
+            'modelType',
+            [
+              { name: 'Language Model', value: 'language_model' },
+              { name: 'Text Classification', value: 'classification' },
+              { name: 'Text Regression', value: 'regression' },
+              { name: 'Embedding Model', value: 'embedding' },
+              { name: 'Computer Vision', value: 'computer_vision' },
+              { name: 'Time Series', value: 'time_series' },
+              { name: 'Anomaly Detection', value: 'anomaly_detection' },
+            ],
+            {
+              required: true,
+              description: 'Type of AI model to train',
+            }
+          ),
           this.createStringProperty('Model Name', 'modelName', {
             required: true,
             placeholder: 'my-custom-model',
             description: 'Name for the trained model',
           }),
-          this.createSelectProperty('Base Model', 'baseModel', [
-            { name: 'BERT Base', value: 'bert-base-uncased' },
-            { name: 'BERT Large', value: 'bert-large-uncased' },
-            { name: 'RoBERTa Base', value: 'roberta-base' },
-            { name: 'DistilBERT', value: 'distilbert-base-uncased' },
-            { name: 'GPT-2', value: 'gpt2' },
-            { name: 'T5 Base', value: 't5-base' },
-          ], {
-            required: true,
-            displayOptions: this.showWhen('modelType', ['language_model', 'classification', 'embedding']),
-            description: 'Pre-trained model to use as base',
-          }),
-          this.createSelectProperty('Vision Model', 'visionModel', [
-            { name: 'ResNet-50', value: 'resnet50' },
-            { name: 'ResNet-101', value: 'resnet101' },
-            { name: 'EfficientNet-B0', value: 'efficientnet-b0' },
-            { name: 'Vision Transformer', value: 'vit-base-patch16-224' },
-            { name: 'CLIP', value: 'clip-vit-base-patch32' },
-          ], {
-            required: true,
-            displayOptions: this.showWhen('modelType', ['computer_vision']),
-            description: 'Pre-trained vision model to use',
-          }),
+          this.createSelectProperty(
+            'Base Model',
+            'baseModel',
+            [
+              { name: 'BERT Base', value: 'bert-base-uncased' },
+              { name: 'BERT Large', value: 'bert-large-uncased' },
+              { name: 'RoBERTa Base', value: 'roberta-base' },
+              { name: 'DistilBERT', value: 'distilbert-base-uncased' },
+              { name: 'GPT-2', value: 'gpt2' },
+              { name: 'T5 Base', value: 't5-base' },
+            ],
+            {
+              required: true,
+              displayOptions: this.showWhen('modelType', [
+                'language_model',
+                'classification',
+                'embedding',
+              ]),
+              description: 'Pre-trained model to use as base',
+            }
+          ),
+          this.createSelectProperty(
+            'Vision Model',
+            'visionModel',
+            [
+              { name: 'ResNet-50', value: 'resnet50' },
+              { name: 'ResNet-101', value: 'resnet101' },
+              { name: 'EfficientNet-B0', value: 'efficientnet-b0' },
+              { name: 'Vision Transformer', value: 'vit-base-patch16-224' },
+              { name: 'CLIP', value: 'clip-vit-base-patch32' },
+            ],
+            {
+              required: true,
+              displayOptions: this.showWhen('modelType', ['computer_vision']),
+              description: 'Pre-trained vision model to use',
+            }
+          ),
           this.createTextAreaProperty('Model Description', 'description', {
             placeholder: 'Describe what this model does...',
             description: 'Optional description of the model purpose',
@@ -114,15 +133,20 @@ export class ModelTrainerNodeDefinition extends BaseNodeDefinition {
             typeOptions: { minValue: 1e-6, maxValue: 1e-1, numberPrecision: 6 },
             description: 'Learning rate for training',
           }),
-          this.createSelectProperty('Optimizer', 'optimizer', [
-            { name: 'AdamW', value: 'adamw' },
-            { name: 'Adam', value: 'adam' },
-            { name: 'SGD', value: 'sgd' },
-            { name: 'RMSprop', value: 'rmsprop' },
-          ], {
-            required: true,
-            description: 'Optimization algorithm',
-          }),
+          this.createSelectProperty(
+            'Optimizer',
+            'optimizer',
+            [
+              { name: 'AdamW', value: 'adamw' },
+              { name: 'Adam', value: 'adam' },
+              { name: 'SGD', value: 'sgd' },
+              { name: 'RMSprop', value: 'rmsprop' },
+            ],
+            {
+              required: true,
+              description: 'Optimization algorithm',
+            }
+          ),
           this.createNumberProperty('Weight Decay', 'weightDecay', {
             default: 0.01,
             typeOptions: { minValue: 0, maxValue: 1, numberPrecision: 4 },
@@ -166,7 +190,11 @@ export class ModelTrainerNodeDefinition extends BaseNodeDefinition {
           }),
           this.createNumberProperty('Max Sequence Length', 'maxLength', {
             default: 512,
-            displayOptions: this.showWhen('/modelConfig/modelType', ['language_model', 'classification', 'embedding']),
+            displayOptions: this.showWhen('/modelConfig/modelType', [
+              'language_model',
+              'classification',
+              'embedding',
+            ]),
             typeOptions: { minValue: 64, maxValue: 4096 },
             description: 'Maximum sequence length for tokenization',
           }),

@@ -18,11 +18,10 @@ export class DatabaseServiceImpl implements DatabaseService {
   async initialize(config: DatabaseConfig): Promise<void> {
     this.config = config;
     this.isInitialized = true;
-    console.log('Database service initialized with config');
   }
 
   async query<T>(_collection: string, _options?: QueryOptions): Promise<QueryResult<T>> {
-    if (!this.isInitialized || !this.config) {
+    if (!(this.isInitialized && this.config)) {
       throw new Error('Database service not initialized');
     }
 
@@ -30,7 +29,7 @@ export class DatabaseServiceImpl implements DatabaseService {
     return {
       data: [] as T[],
       total: 0,
-      hasMore: false
+      hasMore: false,
     };
   }
 

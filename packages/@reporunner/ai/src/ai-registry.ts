@@ -3,15 +3,15 @@
  * Reusing patterns from NodeRegistry.ts
  */
 
+import { LLMManager } from './llm-manager';
 import type {
   AIProviderType,
-  ProviderConfig,
-  ProviderCapabilities,
-  ProviderLimits,
-  LLMModelInfo,
   EmbeddingModelInfo,
+  LLMModelInfo,
+  ProviderCapabilities,
+  ProviderConfig,
+  ProviderLimits,
 } from './types';
-import { LLMManager } from './llm-manager';
 
 export interface AIProviderDefinition {
   type: AIProviderType;
@@ -59,7 +59,7 @@ export class AIRegistry {
   }
 
   getProvidersByCapability(capability: keyof ProviderCapabilities): AIProviderDefinition[] {
-    return this.getAllProviders().filter(provider => provider.capabilities[capability]);
+    return this.getAllProviders().filter((provider) => provider.capabilities[capability]);
   }
 
   getLLMProviders(): AIProviderDefinition[] {

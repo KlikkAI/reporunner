@@ -77,7 +77,7 @@ export class AuthMiddleware {
 
       // Verify user still exists and is active
       const user = await this.userRepository.findById(decoded.userId);
-      if (!user || !user.isActive) {
+      if (!user?.isActive) {
         throw new AppError('User account not found or inactive', 401);
       }
 

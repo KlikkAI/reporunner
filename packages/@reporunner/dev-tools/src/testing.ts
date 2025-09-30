@@ -125,8 +125,12 @@ export class WorkflowTester {
         .filter((r) => r.status === 'failed')
         .forEach((r) => {
           report.push(`  ❌ ${r.testCaseId}`);
-          if (r.error) report.push(`     Error: ${r.error}`);
-          if (r.assertion) report.push(`     Assertion: ${r.assertion}`);
+          if (r.error) {
+            report.push(`     Error: ${r.error}`);
+          }
+          if (r.assertion) {
+            report.push(`     Assertion: ${r.assertion}`);
+          }
         });
     }
 

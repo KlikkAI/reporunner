@@ -294,7 +294,11 @@ const Settings: React.FC = () => {
                       aria-label="security-session time out"
                       value={settings.security.sessionTimeout}
                       onChange={(e) =>
-                        updateSetting('security', 'sessionTimeout', parseInt(e.target.value, 10))
+                        updateSetting(
+                          'security',
+                          'sessionTimeout',
+                          Number.parseInt(e.target.value, 10)
+                        )
                       }
                       className="w-full px-3 py-2 bg-white/10 border border-white/30 text-white rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-blue-400 backdrop-blur-sm"
                     >

@@ -1,5 +1,5 @@
-import { Request } from 'express';
 import { AuthenticationError } from '@reporunner/core';
+import type { Request } from 'express';
 import Redis from 'ioredis';
 
 export interface SessionConfig {
@@ -47,7 +47,7 @@ export class SessionService {
       id: this.generateSessionId(),
       user,
       createdAt: new Date(),
-      expiresAt: new Date(Date.now() + ttl * 1000)
+      expiresAt: new Date(Date.now() + ttl * 1000),
     };
 
     await this.store.set(session.id, session, ttl);
@@ -149,7 +149,7 @@ class MemorySessionStore implements SessionStore {
   public async set(id: string, session: Session, ttl: number): Promise<void> {
     this.sessions.set(id, {
       session,
-      expiresAt: Date.now() + ttl * 1000
+      expiresAt: Date.now() + ttl * 1000,
     });
   }
 
@@ -180,12 +180,7 @@ class RedisSessionStore implements SessionStore {
   }
 
   public async set(id: string, session: Session, ttl: number): Promise<void> {
-    await this.client.set(
-      this.getKey(id),
-      JSON.stringify(session),
-      'EX',
-      ttl
-    );
+    await this.client.set(this.getKey(id), JSON.stringify(session), 'EX', ttl);
   }
 
   public async delete(id: string): Promise<void> {

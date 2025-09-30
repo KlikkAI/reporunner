@@ -1,3 +1,10 @@
+import {
+  EdgeSchema as ApiEdgeSchema,
+  NodeSchema as ApiNodeSchema,
+  WorkflowSchema as ApiWorkflowSchema,
+  ExecutionStatus,
+  WorkflowStatus,
+} from '@reporunner/api-types';
 import { z } from 'zod';
 import {
   ApiResponseSchema,
@@ -8,14 +15,6 @@ import {
   PaginatedResponseSchema,
   TimestampSchema,
 } from './BaseSchemas';
-import {
-  WorkflowStatus,
-  ExecutionStatus,
-  NodeType,
-  NodeSchema as ApiNodeSchema,
-  EdgeSchema as ApiEdgeSchema,
-  WorkflowSchema as ApiWorkflowSchema,
-} from '@reporunner/api-types';
 
 // Node schemas
 export const WorkflowNodeSchema = ApiNodeSchema.extend({

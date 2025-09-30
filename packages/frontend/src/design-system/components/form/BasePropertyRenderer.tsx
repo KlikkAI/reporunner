@@ -1,4 +1,4 @@
-import React from 'react';
+import type React from 'react';
 import type { ReactNode } from 'react';
 
 interface BasePropertyRendererProps {
@@ -31,13 +31,9 @@ export const BasePropertyRenderer: React.FC<BasePropertyRendererProps> = ({
 
       {children}
 
-      {description && (
-        <p className="text-xs text-gray-400">{description}</p>
-      )}
+      {description && <p className="text-xs text-gray-400">{description}</p>}
 
-      {error && (
-        <p className="text-xs text-red-400">{error}</p>
-      )}
+      {error && <p className="text-xs text-red-400">{error}</p>}
     </div>
   );
 };

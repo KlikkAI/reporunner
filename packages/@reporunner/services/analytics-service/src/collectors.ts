@@ -28,7 +28,9 @@ export abstract class BaseCollector {
   }
 
   protected addToBuffer(event: Omit<AnalyticsEvent, 'id' | 'timestamp'>): void {
-    if (!this.shouldSample()) return;
+    if (!this.shouldSample()) {
+      return;
+    }
 
     this.buffer.push({
       ...event,
@@ -42,7 +44,9 @@ export abstract class BaseCollector {
   }
 
   protected flush(): void {
-    if (this.buffer.length === 0) return;
+    if (this.buffer.length === 0) {
+      return;
+    }
     this.buffer = [];
   }
 

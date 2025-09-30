@@ -1,12 +1,12 @@
 /**
  * Node Generator
- * 
+ *
  * Utilities for generating workflow nodes dynamically
  */
 
 import type { Node } from 'reactflow';
-import type { WorkflowNodeData } from '../types/workflow';
 import { nodeRegistry } from '../nodes/registry';
+import type { WorkflowNodeData } from '../types/workflow';
 
 export interface NodeGenerationConfig {
   type: string;
@@ -51,7 +51,7 @@ class NodeGenerator {
   createNode(config: NodeGenerationConfig): Node<WorkflowNodeData> {
     const nodeId = this.generateNodeId(config.type);
     const nodeType = nodeRegistry.getNodeType(config.type);
-    
+
     if (!nodeType) {
       throw new Error(`Unknown node type: ${config.type}`);
     }
@@ -65,11 +65,13 @@ class NodeGenerator {
         ...nodeType.defaults,
         ...config.properties,
       },
-      integrationData: config.integration ? {
-        id: config.integration,
-        name: config.integration,
-        version: '1.0.0',
-      } : undefined,
+      integrationData: config.integration
+        ? {
+            id: config.integration,
+            name: config.integration,
+            version: '1.0.0',
+          }
+        : undefined,
       version: 1,
       inputs: nodeType.inputs || [],
       outputs: nodeType.outputs || [],
@@ -87,15 +89,18 @@ class NodeGenerator {
    * Create multiple nodes from configs
    */
   createNodes(configs: NodeGenerationConfig[]): Node<WorkflowNodeData>[] {
-    return configs.map(config => this.createNode(config));
+    return configs.map((config) => this.createNode(config));
   }
 
   /**
    * Create a node from template
    */
-  createNodeFromTemplate(templateId: string, position?: { x: number; y: number }): Node<WorkflowNodeData> {
+  createNodeFromTemplate(
+    templateId: string,
+    position?: { x: number; y: number }
+  ): Node<WorkflowNodeData> {
     const template = this.getNodeTemplate(templateId);
-    
+
     if (!template) {
       throw new Error(`Unknown node template: ${templateId}`);
     }
@@ -111,7 +116,10 @@ class NodeGenerator {
   /**
    * Clone an existing node
    */
-  cloneNode(node: Node<WorkflowNodeData>, offset?: { x: number; y: number }): Node<WorkflowNodeData> {
+  cloneNode(
+    node: Node<WorkflowNodeData>,
+    offset?: { x: number; y: number }
+  ): Node<WorkflowNodeData> {
     const clonedNode = {
       ...node,
       id: this.generateNodeId(node.data?.type || 'unknown'),
@@ -119,11 +127,13 @@ class NodeGenerator {
         x: node.position.x + (offset?.x || 50),
         y: node.position.y + (offset?.y || 50),
       },
-      data: node.data ? {
-        ...node.data,
-        id: this.generateNodeId(node.data.type),
-        name: `${node.data.name} (Copy)`,
-      } : undefined,
+      data: node.data
+        ? {
+            ...node.data,
+            id: this.generateNodeId(node.data.type),
+            name: `${node.data.name} (Copy)`,
+          }
+        : undefined,
       selected: false,
       dragging: false,
     };
@@ -142,9 +152,7 @@ class NodeGenerator {
       properties?: Record<string, any>;
     }>
   ): Node<WorkflowNodeData>[] {
-    return templateNodes.map(nodeConfig => 
-      this.createNode(nodeConfig)
-    );
+    return templateNodes.map((nodeConfig) => this.createNode(nodeConfig));
   }
 
   /**
@@ -166,7 +174,10 @@ class NodeGenerator {
           headers: {},
         },
         inputs: [{ name: 'trigger', type: 'main', required: false }],
-        outputs: [{ name: 'success', type: 'main' }, { name: 'error', type: 'main' }],
+        outputs: [
+          { name: 'success', type: 'main' },
+          { name: 'error', type: 'main' },
+        ],
       },
       {
         id: 'data-transformer',
@@ -193,7 +204,10 @@ class NodeGenerator {
           condition: 'true',
         },
         inputs: [{ name: 'input', type: 'main', required: true }],
-        outputs: [{ name: 'true', type: 'main' }, { name: 'false', type: 'main' }],
+        outputs: [
+          { name: 'true', type: 'main' },
+          { name: 'false', type: 'main' },
+        ],
       },
     ];
   }
@@ -202,13 +216,15 @@ class NodeGenerator {
    * Get node template by ID
    */
   getNodeTemplate(templateId: string): NodeTemplate | undefined {
-    return this.getAvailableTemplates().find(template => template.id === templateId);
+    return this.getAvailableTemplates().find((template) => template.id === templateId);
   }
 
   /**
    * Generate nodes for common workflow patterns
    */
-  generateCommonPattern(pattern: 'api-to-database' | 'email-automation' | 'data-processing'): Node<WorkflowNodeData>[] {
+  generateCommonPattern(
+    pattern: 'api-to-database' | 'email-automation' | 'data-processing'
+  ): Node<WorkflowNodeData>[] {
     switch (pattern) {
       case 'api-to-database':
         return this.createNodes([
@@ -269,14 +285,14 @@ class NodeGenerator {
    */
   getSuggestedPosition(
     existingNodes: Node<WorkflowNodeData>[],
-    nodeType: string
+    _nodeType: string
   ): { x: number; y: number } {
     if (existingNodes.length === 0) {
       return { x: 100, y: 100 };
     }
 
     // Find the rightmost node and place new node to its right
-    const rightmostNode = existingNodes.reduce((rightmost, node) => 
+    const rightmostNode = existingNodes.reduce((rightmost, node) =>
       node.position.x > rightmost.position.x ? node : rightmost
     );
 

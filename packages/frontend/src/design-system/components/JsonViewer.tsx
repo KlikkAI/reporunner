@@ -35,20 +35,32 @@ export const JsonViewer: React.FC<JsonViewerProps> = ({
       return '...';
     }
 
-    if (obj === null) return 'null';
-    if (obj === undefined) return 'undefined';
-    if (typeof obj === 'string') return `"${obj}"`;
-    if (typeof obj === 'number' || typeof obj === 'boolean') return String(obj);
+    if (obj === null) {
+      return 'null';
+    }
+    if (obj === undefined) {
+      return 'undefined';
+    }
+    if (typeof obj === 'string') {
+      return `"${obj}"`;
+    }
+    if (typeof obj === 'number' || typeof obj === 'boolean') {
+      return String(obj);
+    }
 
     if (Array.isArray(obj)) {
-      if (obj.length === 0) return '[]';
+      if (obj.length === 0) {
+        return '[]';
+      }
       const items = obj.map((item) => formatJson(item, depth + 1)).join(', ');
       return `[${items}]`;
     }
 
     if (typeof obj === 'object') {
       const keys = Object.keys(obj);
-      if (keys.length === 0) return '{}';
+      if (keys.length === 0) {
+        return '{}';
+      }
 
       const pairs = keys
         .map((key) => {

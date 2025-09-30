@@ -92,7 +92,7 @@ healthCheck();
           activeSessions
         }
       };
-  } catch (error) {
+  } catch (_error) {
     return {
         status: 'unhealthy',
         metrics: {

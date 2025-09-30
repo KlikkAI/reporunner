@@ -1,6 +1,6 @@
-import { Request, Response } from 'express';
-import { injectable } from 'inversify';
 import { CrudControllerBase } from '@reporunner/shared';
+import type { Request, Response } from 'express';
+import { injectable } from 'inversify';
 
 @injectable()
 export class WorkflowController extends CrudControllerBase {
@@ -8,15 +8,12 @@ export class WorkflowController extends CrudControllerBase {
   async getWorkflows(req: Request, res: Response) {
     try {
       const { page, limit, skip: _skip } = this.getPaginationParams(req);
-      const filters = this.buildQueryFilters(req, ['status', 'name', 'tags']);
+      const _filters = this.buildQueryFilters(req, ['status', 'name', 'tags']);
 
       // Mock response for now - replace with actual service call
       // TODO: Use filters to query workflows
       const workflows: any[] = [];
       const total = 0;
-
-      // Log filters to avoid unused variable warning
-      console.log('Filters:', filters);
 
       return this.sendSuccess(res, {
         workflows,
@@ -24,8 +21,8 @@ export class WorkflowController extends CrudControllerBase {
           page,
           limit,
           total,
-          pages: Math.ceil(total / limit)
-        }
+          pages: Math.ceil(total / limit),
+        },
       });
     } catch (error) {
       return this.handleError(res, error, 'Get workflows');
@@ -42,10 +39,10 @@ export class WorkflowController extends CrudControllerBase {
     try {
       // Mock response for now - replace with actual service call
       const workflow = {
-        id: 'workflow_' + Date.now(),
+        id: `workflow_${Date.now()}`,
         ...req.body,
         createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
+        updatedAt: new Date().toISOString(),
       };
 
       return this.sendSuccess(res, workflow, 'Workflow created successfully', 201);
@@ -81,7 +78,7 @@ export class WorkflowController extends CrudControllerBase {
       const workflow = {
         id,
         ...req.body,
-        updatedAt: new Date().toISOString()
+        updatedAt: new Date().toISOString(),
       };
 
       return this.sendSuccess(res, workflow, 'Workflow updated successfully');
@@ -111,10 +108,10 @@ export class WorkflowController extends CrudControllerBase {
 
       // Mock response for now - replace with actual service call
       const execution = {
-        id: 'exec_' + Date.now(),
+        id: `exec_${Date.now()}`,
         workflowId: id,
         status: 'running',
-        startedAt: new Date().toISOString()
+        startedAt: new Date().toISOString(),
       };
 
       return this.sendSuccess(res, execution, 'Workflow execution started');
@@ -139,8 +136,8 @@ export class WorkflowController extends CrudControllerBase {
           page,
           limit,
           total,
-          pages: Math.ceil(total / limit)
-        }
+          pages: Math.ceil(total / limit),
+        },
       });
     } catch (error) {
       return this.handleError(res, error, 'Get workflow executions');
@@ -156,7 +153,7 @@ export class WorkflowController extends CrudControllerBase {
       const workflow = {
         id,
         status: 'active',
-        updatedAt: new Date().toISOString()
+        updatedAt: new Date().toISOString(),
       };
 
       return this.sendSuccess(res, workflow, 'Workflow activated successfully');
@@ -174,7 +171,7 @@ export class WorkflowController extends CrudControllerBase {
       const workflow = {
         id,
         status: 'inactive',
-        updatedAt: new Date().toISOString()
+        updatedAt: new Date().toISOString(),
       };
 
       return this.sendSuccess(res, workflow, 'Workflow deactivated successfully');

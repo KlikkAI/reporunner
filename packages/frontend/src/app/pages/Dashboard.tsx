@@ -10,16 +10,23 @@
  * - This version: ~80 lines using advanced factories (73% reduction)
  */
 
-import React, { useEffect } from 'react';
-import { PlusOutlined, PlayCircleOutlined, CheckCircleOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
+import {
+  CheckCircleOutlined,
+  ExclamationCircleOutlined,
+  PlayCircleOutlined,
+  PlusOutlined,
+} from '@ant-design/icons';
+import type React from 'react';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLeanWorkflowStore } from '@/core/stores/leanWorkflowStore';
-import { PageGenerator, ComponentGenerator, PageTemplates } from '@/design-system';
-import type { PageAction, Statistic, PageSectionConfig } from '@/design-system';
+import type { PageAction, PageSectionConfig, Statistic } from '@/design-system';
+import { ComponentGenerator, PageTemplates } from '@/design-system';
 
 export const Dashboard: React.FC = () => {
   const navigate = useNavigate();
-  const { workflows, executions, isLoading, fetchWorkflows, fetchExecutions } = useLeanWorkflowStore();
+  const { workflows, executions, isLoading, fetchWorkflows, fetchExecutions } =
+    useLeanWorkflowStore();
 
   useEffect(() => {
     fetchWorkflows();
@@ -38,7 +45,7 @@ export const Dashboard: React.FC = () => {
     },
     {
       title: 'Active Workflows',
-      value: workflows.filter(w => w.isActive).length,
+      value: workflows.filter((w) => w.isActive).length,
       icon: <CheckCircleOutlined />,
       color: 'green',
       loading: isLoading,
@@ -52,9 +59,10 @@ export const Dashboard: React.FC = () => {
     },
     {
       title: 'Success Rate',
-      value: executions.length > 0
-        ? `${Math.round((executions.filter(e => e.status === 'success').length / executions.length) * 100)}%`
-        : '0%',
+      value:
+        executions.length > 0
+          ? `${Math.round((executions.filter((e) => e.status === 'success').length / executions.length) * 100)}%`
+          : '0%',
       icon: <ExclamationCircleOutlined />,
       color: 'orange',
       loading: isLoading,
@@ -79,26 +87,27 @@ export const Dashboard: React.FC = () => {
       type: 'list',
       data: workflows.slice(0, 5),
       config: {
-        renderItem: (workflow: any) => ComponentGenerator.generateComponent({
-          id: `workflow-${workflow.id}`,
-          type: 'card',
-          title: workflow.name,
-          subtitle: workflow.description,
-          hoverable: true,
-          actions: ComponentGenerator.generateActionBar([
-            {
-              label: 'Edit',
-              onClick: () => navigate(`/workflows/${workflow.id}/edit`),
-            },
-            {
-              label: 'Run',
-              type: 'primary',
-              onClick: () => {
-                // Execute workflow logic
+        renderItem: (workflow: any) =>
+          ComponentGenerator.generateComponent({
+            id: `workflow-${workflow.id}`,
+            type: 'card',
+            title: workflow.name,
+            subtitle: workflow.description,
+            hoverable: true,
+            actions: ComponentGenerator.generateActionBar([
+              {
+                label: 'Edit',
+                onClick: () => navigate(`/workflows/${workflow.id}/edit`),
               },
-            },
-          ]),
-        }),
+              {
+                label: 'Run',
+                type: 'primary',
+                onClick: () => {
+                  // Execute workflow logic
+                },
+              },
+            ]),
+          }),
         emptyText: 'No workflows created yet. Create your first workflow to get started.',
       },
       actions: [
@@ -115,15 +124,16 @@ export const Dashboard: React.FC = () => {
       type: 'list',
       data: executions.slice(0, 5),
       config: {
-        renderItem: (execution: any) => ComponentGenerator.generateComponent({
-          id: `execution-${execution.id}`,
-          type: 'list-item',
-          props: {
-            title: `Execution ${execution.id.slice(-8)}`,
-            description: `${execution.workflowName} • ${new Date(execution.startedAt).toLocaleString()}`,
-            status: execution.status,
-          },
-        }),
+        renderItem: (execution: any) =>
+          ComponentGenerator.generateComponent({
+            id: `execution-${execution.id}`,
+            type: 'list-item',
+            props: {
+              title: `Execution ${execution.id.slice(-8)}`,
+              description: `${execution.workflowName} • ${new Date(execution.startedAt).toLocaleString()}`,
+              status: execution.status,
+            },
+          }),
         emptyText: 'No executions yet. Run a workflow to see execution history.',
       },
       actions: [
@@ -137,12 +147,7 @@ export const Dashboard: React.FC = () => {
   ];
 
   // Generate the complete dashboard using PageTemplates
-  return PageTemplates.dashboard(
-    'Workflows',
-    stats,
-    sections,
-    actions
-  );
+  return PageTemplates.dashboard('Workflows', stats, sections, actions);
 };
 
 export default Dashboard;

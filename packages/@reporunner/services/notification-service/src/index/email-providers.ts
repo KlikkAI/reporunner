@@ -42,7 +42,7 @@ getNotificationHistory(
     organizationId: string,
     filters?: {
       channelId?: string;
-status?: NotificationResult['status'];
+status?: NotificationResult.status;
 startDate?: Date;
 endDate?: Date;
 },
@@ -61,11 +61,11 @@ endDate?: Date;
   // Build query from request collection to include organizationId
   const requestQuery: any = { organizationId };
 
-  if (filters?.channelId) requestQuery.channelId = filters.channelId;
+  if (filters?.channelId) { requestQuery.channelId = filters.channelId; }
   if (filters?.startDate || filters?.endDate) {
     requestQuery.createdAt = {};
-    if (filters.startDate) requestQuery.createdAt.$gte = filters.startDate;
-    if (filters.endDate) requestQuery.createdAt.$lte = filters.endDate;
+    if (filters.startDate) { requestQuery.createdAt.$gte = filters.startDate; }
+    if (filters.endDate) { requestQuery.createdAt.$lte = filters.endDate; }
   }
 
   // Get matching request IDs
@@ -74,7 +74,7 @@ endDate?: Date;
 
   // Build results query
   const resultsQuery: any = { requestId: { $in: requestIds } };
-  if (filters?.status) resultsQuery.status = filters.status;
+  if (filters?.status) { resultsQuery.status = filters.status; }
 
   // Apply pagination
   const skip = pagination ? (pagination.page - 1) * pagination.limit : 0;
@@ -112,7 +112,7 @@ healthCheck();
     try {
       const last24h = new Date(Date.now() - 24 * 60 * 60 * 1000);
 
-      const [queueSize, sent24h, failed24h] = await Promise.all([
+      const [_queueSize, _sent24h, _failed24h] = await Promise.all([
         this.notificationQueue.count(),
         this.results.countDocuments({ status: 'sent', sentAt: { $gte: last24h } }),
         this.results.countDocuments({ status: 'failed', failedAt: { $gte: last24h } })

@@ -1,18 +1,18 @@
 /**
  * Type Validation Utils
- * 
+ *
  * Utilities for validating and checking data types
  */
 
-export type DataType = 
-  | 'string' 
-  | 'number' 
-  | 'boolean' 
-  | 'object' 
-  | 'array' 
-  | 'null' 
-  | 'undefined' 
-  | 'date' 
+export type DataType =
+  | 'string'
+  | 'number'
+  | 'boolean'
+  | 'object'
+  | 'array'
+  | 'null'
+  | 'undefined'
+  | 'date'
   | 'function';
 
 export interface ValidationRule {
@@ -36,11 +36,19 @@ class TypeValidation {
    * Get the type of a value
    */
   getType(value: any): DataType {
-    if (value === null) return 'null';
-    if (value === undefined) return 'undefined';
-    if (Array.isArray(value)) return 'array';
-    if (value instanceof Date) return 'date';
-    
+    if (value === null) {
+      return 'null';
+    }
+    if (value === undefined) {
+      return 'undefined';
+    }
+    if (Array.isArray(value)) {
+      return 'array';
+    }
+    if (value instanceof Date) {
+      return 'date';
+    }
+
     const type = typeof value;
     return type as DataType;
   }
@@ -74,15 +82,15 @@ class TypeValidation {
       case 'string':
         this.validateString(value, rule, errors, warnings);
         break;
-      
+
       case 'number':
         this.validateNumber(value, rule, errors, warnings);
         break;
-      
+
       case 'array':
         this.validateArray(value, rule, errors, warnings);
         break;
-      
+
       case 'object':
         this.validateObject(value, rule, errors, warnings);
         break;
@@ -113,7 +121,12 @@ class TypeValidation {
   /**
    * Validate string value
    */
-  private validateString(value: any, rule: ValidationRule, errors: string[], warnings: string[]): void {
+  private validateString(
+    value: any,
+    rule: ValidationRule,
+    errors: string[],
+    _warnings: string[]
+  ): void {
     if (typeof value !== 'string') {
       return;
     }
@@ -134,12 +147,17 @@ class TypeValidation {
   /**
    * Validate number value
    */
-  private validateNumber(value: any, rule: ValidationRule, errors: string[], warnings: string[]): void {
+  private validateNumber(
+    value: any,
+    rule: ValidationRule,
+    errors: string[],
+    warnings: string[]
+  ): void {
     if (typeof value !== 'number') {
       return;
     }
 
-    if (isNaN(value)) {
+    if (Number.isNaN(value)) {
       errors.push('Number value is NaN');
       return;
     }
@@ -152,7 +170,7 @@ class TypeValidation {
       errors.push(`Number must be no more than ${rule.max}`);
     }
 
-    if (!isFinite(value)) {
+    if (!Number.isFinite(value)) {
       warnings.push('Number is infinite');
     }
   }
@@ -160,7 +178,12 @@ class TypeValidation {
   /**
    * Validate array value
    */
-  private validateArray(value: any, rule: ValidationRule, errors: string[], warnings: string[]): void {
+  private validateArray(
+    value: any,
+    rule: ValidationRule,
+    errors: string[],
+    _warnings: string[]
+  ): void {
     if (!Array.isArray(value)) {
       return;
     }
@@ -177,7 +200,12 @@ class TypeValidation {
   /**
    * Validate object value
    */
-  private validateObject(value: any, rule: ValidationRule, errors: string[], warnings: string[]): void {
+  private validateObject(
+    value: any,
+    rule: ValidationRule,
+    errors: string[],
+    _warnings: string[]
+  ): void {
     if (typeof value !== 'object' || value === null || Array.isArray(value)) {
       return;
     }
@@ -196,18 +224,21 @@ class TypeValidation {
   /**
    * Validate multiple values against rules
    */
-  validateObject(obj: Record<string, any>, rules: Record<string, ValidationRule>): ValidationResult {
+  validateObject(
+    obj: Record<string, any>,
+    rules: Record<string, ValidationRule>
+  ): ValidationResult {
     const errors: string[] = [];
     const warnings: string[] = [];
 
     for (const [key, rule] of Object.entries(rules)) {
       const result = this.validate(obj[key], rule);
-      
+
       if (!result.isValid) {
-        errors.push(...result.errors.map(error => `${key}: ${error}`));
+        errors.push(...result.errors.map((error) => `${key}: ${error}`));
       }
-      
-      warnings.push(...result.warnings.map(warning => `${key}: ${warning}`));
+
+      warnings.push(...result.warnings.map((warning) => `${key}: ${warning}`));
     }
 
     return {
@@ -226,7 +257,7 @@ class TypeValidation {
     }
 
     const currentType = this.getType(value);
-    
+
     if (currentType === targetType) {
       return value;
     }
@@ -234,25 +265,30 @@ class TypeValidation {
     switch (targetType) {
       case 'string':
         return String(value);
-      
-      case 'number':
+
+      case 'number': {
         const num = Number(value);
-        return isNaN(num) ? value : num;
-      
+        return Number.isNaN(num) ? value : num;
+      }
+
       case 'boolean':
         if (typeof value === 'string') {
           const lower = value.toLowerCase();
-          if (lower === 'true' || lower === '1' || lower === 'yes') return true;
-          if (lower === 'false' || lower === '0' || lower === 'no') return false;
+          if (lower === 'true' || lower === '1' || lower === 'yes') {
+            return true;
+          }
+          if (lower === 'false' || lower === '0' || lower === 'no') {
+            return false;
+          }
         }
         return Boolean(value);
-      
+
       case 'array':
         return Array.isArray(value) ? value : [value];
-      
+
       case 'date':
         return new Date(value);
-      
+
       default:
         return value;
     }

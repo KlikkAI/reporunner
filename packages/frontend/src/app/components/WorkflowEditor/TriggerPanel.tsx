@@ -252,7 +252,9 @@ export const TriggerPanel: React.FC<TriggerPanelProps> = ({ workflowId, visible,
   };
 
   const parseKeyValuePairs = (input: string): Record<string, string> => {
-    if (!input) return {};
+    if (!input) {
+      return {};
+    }
 
     const pairs: Record<string, string> = {};
     input.split('\n').forEach((line) => {
@@ -549,7 +551,9 @@ export const TriggerPanel: React.FC<TriggerPanelProps> = ({ workflowId, visible,
       </Form.Item>
       <Form.Item dependencies={['rateLimitEnabled']} noStyle>
         {({ getFieldValue }) => {
-          if (!getFieldValue('rateLimitEnabled')) return null;
+          if (!getFieldValue('rateLimitEnabled')) {
+            return null;
+          }
           return (
             <div className="grid grid-cols-2 gap-4">
               <Form.Item name="maxTriggersPerMinute" label="Max/Minute">
@@ -780,7 +784,9 @@ export const TriggerPanel: React.FC<TriggerPanelProps> = ({ workflowId, visible,
   );
 
   const renderMetrics = () => {
-    if (!metrics) return <div>Select a trigger to view metrics</div>;
+    if (!metrics) {
+      return <div>Select a trigger to view metrics</div>;
+    }
 
     return (
       <Space direction="vertical" size="large" style={{ width: '100%' }}>

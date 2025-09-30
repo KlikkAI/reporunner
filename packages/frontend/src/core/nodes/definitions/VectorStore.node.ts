@@ -282,7 +282,7 @@ export class VectorStoreNode implements INodeType {
             const vector = item.json[vectorField];
             const id = item.json[idField];
 
-            if (!vector || !id) {
+            if (!(vector && id)) {
               continue;
             }
 

@@ -23,14 +23,20 @@ export class NodeExecutionError extends WorkflowEngineError {
 }
 
 export class WorkflowValidationError extends WorkflowEngineError {
-  constructor(message: string, public validationErrors: string[]) {
+  constructor(
+    message: string,
+    public validationErrors: string[]
+  ) {
     super(message, 'WORKFLOW_VALIDATION_ERROR', { validationErrors });
     this.name = 'WorkflowValidationError';
   }
 }
 
 export class ExecutionTimeoutError extends WorkflowEngineError {
-  constructor(message: string, public executionId: string) {
+  constructor(
+    message: string,
+    public executionId: string
+  ) {
     super(message, 'EXECUTION_TIMEOUT', { executionId });
     this.name = 'ExecutionTimeoutError';
   }

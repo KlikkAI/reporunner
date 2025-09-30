@@ -194,7 +194,9 @@ export const ContainerNode: React.FC<ContainerNodeProps> = ({ id, data, selected
 
       try {
         const data = event.dataTransfer.getData('application/reactflow');
-        if (!data) return;
+        if (!data) {
+          return;
+        }
 
         const { type, nodeTypeData, integrationData } = JSON.parse(data);
 

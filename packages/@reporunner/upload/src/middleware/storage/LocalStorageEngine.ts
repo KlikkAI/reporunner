@@ -1,12 +1,12 @@
-import { StorageEngine } from './StorageEngine';
-import { UploadedFile } from '../types/UploadedFile';
-import { UploadOptions } from '../types/UploadOptions';
-import { UploadError } from '../errors/UploadError';
-import { createHash } from 'crypto';
-import { promises as fs, createReadStream, createWriteStream } from 'fs';
-import { join, dirname, basename, extname } from 'path';
-import { tmpdir } from 'os';
+import { createHash } from 'node:crypto';
+import { createReadStream, createWriteStream, promises as fs } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { basename, dirname, extname, join } from 'node:path';
 import { v4 as uuidv4 } from 'uuid';
+import { UploadError } from '../errors/UploadError';
+import type { UploadedFile } from '../types/UploadedFile';
+import type { UploadOptions } from '../types/UploadOptions';
+import type { StorageEngine } from './StorageEngine';
 
 export class LocalStorageEngine implements StorageEngine {
   private options: Required<UploadOptions>;
@@ -28,7 +28,7 @@ export class LocalStorageEngine implements StorageEngine {
       hashFiles: false,
       hashAlgorithm: 'sha256',
       cleanupTemp: true,
-      ...options
+      ...options,
     };
 
     this.uploadDir = this.options.uploadDir;
@@ -53,11 +53,8 @@ export class LocalStorageEngine implements StorageEngine {
       }
 
       // Check if file exists
-      if (!this.options.overwrite && await this.exists(fullPath)) {
-        throw new UploadError(
-          'FILE_EXISTS',
-          `File ${file.filename} already exists`
-        );
+      if (!this.options.overwrite && (await this.exists(fullPath))) {
+        throw new UploadError('FILE_EXISTS', `File ${file.filename} already exists`);
       }
 
       // Move file to destination
@@ -83,7 +80,7 @@ export class LocalStorageEngine implements StorageEngine {
         ctime: stats.ctime,
         mode: stats.mode,
         uid: stats.uid,
-        gid: stats.gid
+        gid: stats.gid,
       };
 
       return file;
@@ -146,8 +143,8 @@ export class LocalStorageEngine implements StorageEngine {
         ctime: stats.ctime,
         mode: stats.mode,
         uid: stats.uid,
-        gid: stats.gid
-      }
+        gid: stats.gid,
+      },
     };
   }
 
@@ -206,9 +203,7 @@ export class LocalStorageEngine implements StorageEngine {
     if (this.options.cleanupTemp) {
       try {
         const files = await fs.readdir(this.tempDir);
-        await Promise.all(
-          files.map(file => this.remove(join(this.tempDir, file)))
-        );
+        await Promise.all(files.map((file) => this.remove(join(this.tempDir, file))));
       } catch {
         // Ignore cleanup errors
       }
@@ -221,7 +216,7 @@ export class LocalStorageEngine implements StorageEngine {
   public async list(directory: string = this.uploadDir): Promise<UploadedFile[]> {
     const files = await fs.readdir(directory);
     return Promise.all(
-      files.map(async file => {
+      files.map(async (file) => {
         const path = join(directory, file);
         const stats = await fs.stat(path);
         if (stats.isFile()) {
@@ -229,7 +224,7 @@ export class LocalStorageEngine implements StorageEngine {
         }
         return null;
       })
-    ).then(results => results.filter((file): file is UploadedFile => file !== null));
+    ).then((results) => results.filter((file): file is UploadedFile => file !== null));
   }
 
   /**
@@ -260,7 +255,7 @@ export class LocalStorageEngine implements StorageEngine {
       const stream = createReadStream(path);
 
       stream.on('error', reject);
-      stream.on('data', chunk => hash.update(chunk));
+      stream.on('data', (chunk) => hash.update(chunk));
       stream.on('end', () => resolve(hash.digest('hex')));
     });
   }
@@ -278,7 +273,7 @@ export class LocalStorageEngine implements StorageEngine {
       '.png': 'image/png',
       '.gif': 'image/gif',
       '.pdf': 'application/pdf',
-      '.txt': 'text/plain'
+      '.txt': 'text/plain',
     };
 
     return mimeTypes[ext] || 'application/octet-stream';

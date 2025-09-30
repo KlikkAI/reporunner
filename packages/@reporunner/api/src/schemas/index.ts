@@ -2,8 +2,8 @@
  * Zod schemas for API validation
  */
 
-import { z } from 'zod';
 import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi';
+import { z } from 'zod';
 
 extendZodWithOpenApi(z);
 
@@ -49,18 +49,22 @@ export const ExecutionSchema = z.object({
   status: z.enum(['pending', 'running', 'completed', 'failed', 'cancelled']),
   startTime: z.string().datetime(),
   endTime: z.string().datetime().optional(),
-  progress: z.object({
-    completedNodes: z.number().min(0),
-    totalNodes: z.number().min(0),
-    currentNode: z.string().optional(),
-  }).optional(),
+  progress: z
+    .object({
+      completedNodes: z.number().min(0),
+      totalNodes: z.number().min(0),
+      currentNode: z.string().optional(),
+    })
+    .optional(),
   results: z.record(z.string(), z.any()).optional(),
   error: z.string().optional(),
-  metrics: z.object({
-    duration: z.number().min(0),
-    nodesExecuted: z.number().min(0),
-    errorsCount: z.number().min(0),
-  }).optional(),
+  metrics: z
+    .object({
+      duration: z.number().min(0),
+      nodesExecuted: z.number().min(0),
+      errorsCount: z.number().min(0),
+    })
+    .optional(),
 });
 
 // Common response schemas
@@ -87,10 +91,10 @@ export const PaginationSchema = z.object({
 });
 
 // Request schemas for validation
-export const CreateWorkflowRequestSchema = WorkflowSchema.omit({ 
-  id: true, 
-  createdAt: true, 
-  updatedAt: true 
+export const CreateWorkflowRequestSchema = WorkflowSchema.omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
 });
 
 export const UpdateWorkflowRequestSchema = WorkflowSchema.partial().omit({

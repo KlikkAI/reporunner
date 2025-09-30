@@ -321,7 +321,9 @@ export const WorkflowTemplatesPanel: React.FC<WorkflowTemplatesPanelProps> = ({
   };
 
   const renderTemplateModal = () => {
-    if (!selectedTemplate) return null;
+    if (!selectedTemplate) {
+      return null;
+    }
 
     return (
       <Modal

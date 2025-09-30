@@ -96,8 +96,8 @@ export class ValidationError extends Error {
         name: this.name,
         message: this.message,
         status: this.status,
-        details: this.details
-      }
+        details: this.details,
+      },
     };
   }
 
@@ -106,103 +106,123 @@ export class ValidationError extends Error {
    */
 
   public static required(path: string): ValidationError {
-    return new ValidationError([{
-      path,
-      message: `${path} is required`,
-      code: 'REQUIRED'
-    }]);
+    return new ValidationError([
+      {
+        path,
+        message: `${path} is required`,
+        code: 'REQUIRED',
+      },
+    ]);
   }
 
   public static type(path: string, expected: string, actual: string): ValidationError {
-    return new ValidationError([{
-      path,
-      message: `${path} must be of type ${expected}`,
-      code: 'TYPE_ERROR',
-      type: actual,
-      expected,
-      actual
-    }]);
+    return new ValidationError([
+      {
+        path,
+        message: `${path} must be of type ${expected}`,
+        code: 'TYPE_ERROR',
+        type: actual,
+        expected,
+        actual,
+      },
+    ]);
   }
 
   public static format(path: string, format: string): ValidationError {
-    return new ValidationError([{
-      path,
-      message: `${path} must be a valid ${format}`,
-      code: 'FORMAT_ERROR',
-      rule: format
-    }]);
+    return new ValidationError([
+      {
+        path,
+        message: `${path} must be a valid ${format}`,
+        code: 'FORMAT_ERROR',
+        rule: format,
+      },
+    ]);
   }
 
   public static min(path: string, min: number, actual: number): ValidationError {
-    return new ValidationError([{
-      path,
-      message: `${path} must be greater than or equal to ${min}`,
-      code: 'MIN_ERROR',
-      rule: 'min',
-      expected: min,
-      actual
-    }]);
+    return new ValidationError([
+      {
+        path,
+        message: `${path} must be greater than or equal to ${min}`,
+        code: 'MIN_ERROR',
+        rule: 'min',
+        expected: min,
+        actual,
+      },
+    ]);
   }
 
   public static max(path: string, max: number, actual: number): ValidationError {
-    return new ValidationError([{
-      path,
-      message: `${path} must be less than or equal to ${max}`,
-      code: 'MAX_ERROR',
-      rule: 'max',
-      expected: max,
-      actual
-    }]);
+    return new ValidationError([
+      {
+        path,
+        message: `${path} must be less than or equal to ${max}`,
+        code: 'MAX_ERROR',
+        rule: 'max',
+        expected: max,
+        actual,
+      },
+    ]);
   }
 
   public static minLength(path: string, min: number, actual: number): ValidationError {
-    return new ValidationError([{
-      path,
-      message: `${path} must be at least ${min} characters long`,
-      code: 'MIN_LENGTH_ERROR',
-      rule: 'minLength',
-      expected: min,
-      actual
-    }]);
+    return new ValidationError([
+      {
+        path,
+        message: `${path} must be at least ${min} characters long`,
+        code: 'MIN_LENGTH_ERROR',
+        rule: 'minLength',
+        expected: min,
+        actual,
+      },
+    ]);
   }
 
   public static maxLength(path: string, max: number, actual: number): ValidationError {
-    return new ValidationError([{
-      path,
-      message: `${path} must be at most ${max} characters long`,
-      code: 'MAX_LENGTH_ERROR',
-      rule: 'maxLength',
-      expected: max,
-      actual
-    }]);
+    return new ValidationError([
+      {
+        path,
+        message: `${path} must be at most ${max} characters long`,
+        code: 'MAX_LENGTH_ERROR',
+        rule: 'maxLength',
+        expected: max,
+        actual,
+      },
+    ]);
   }
 
   public static pattern(path: string, pattern: RegExp): ValidationError {
-    return new ValidationError([{
-      path,
-      message: `${path} must match pattern ${pattern}`,
-      code: 'PATTERN_ERROR',
-      rule: 'pattern',
-      expected: pattern.toString()
-    }]);
+    return new ValidationError([
+      {
+        path,
+        message: `${path} must match pattern ${pattern}`,
+        code: 'PATTERN_ERROR',
+        rule: 'pattern',
+        expected: pattern.toString(),
+      },
+    ]);
   }
 
   public static enum(path: string, allowed: any[]): ValidationError {
-    return new ValidationError([{
-      path,
-      message: `${path} must be one of: ${allowed.join(', ')}`,
-      code: 'ENUM_ERROR',
-      rule: 'enum',
-      expected: allowed
-    }]);
+    return new ValidationError([
+      {
+        path,
+        message: `${path} must be one of: ${allowed.join(', ')}`,
+        code: 'ENUM_ERROR',
+        rule: 'enum',
+        expected: allowed,
+      },
+    ]);
   }
 
   public static custom(path: string, message: string, code = 'CUSTOM_ERROR'): ValidationError {
-    return new ValidationError([{
-      path,
-      message,
-      code
-    }]);
+    return new ValidationError([
+      {
+        path,
+        message,
+        code,
+      },
+    ]);
   }
 
   public static multiple(errors: ValidationError[]): ValidationError {
@@ -220,7 +240,7 @@ export class ValidationError extends Error {
         details.push({
           path,
           message,
-          code: 'VALIDATION_ERROR'
+          code: 'VALIDATION_ERROR',
         });
       }
     }
@@ -232,11 +252,11 @@ export class ValidationError extends Error {
    */
 
   public hasPath(path: string): boolean {
-    return this.details.some(detail => detail.path === path);
+    return this.details.some((detail) => detail.path === path);
   }
 
   public getErrorsForPath(path: string): ValidationErrorDetail[] {
-    return this.details.filter(detail => detail.path === path);
+    return this.details.filter((detail) => detail.path === path);
   }
 
   public toObject(): Record<string, string[]> {
@@ -251,8 +271,6 @@ export class ValidationError extends Error {
   }
 
   public toString(): string {
-    return this.details
-      .map(detail => `${detail.path}: ${detail.message}`)
-      .join('\n');
+    return this.details.map((detail) => `${detail.path}: ${detail.message}`).join('\n');
   }
 }

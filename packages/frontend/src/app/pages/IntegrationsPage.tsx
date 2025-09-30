@@ -9,12 +9,10 @@ import {
   ArrowRight,
   BarChart3,
   Brain,
-  ChevronDown,
   Code,
   CreditCard,
   Database,
   ExternalLink,
-  Filter,
   Globe,
   MessageSquare,
   Play,
@@ -32,7 +30,7 @@ import { Header } from '../components/Landing/Header';
 export const IntegrationsPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
-  const [showFilters, setShowFilters] = useState(false);
+  const [_showFilters, _setShowFilters] = useState(false);
 
   const categories = [
     { id: 'all', name: 'All Integrations', icon: Globe, count: 150 },

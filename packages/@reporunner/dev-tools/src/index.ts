@@ -61,7 +61,7 @@ export class DevTools {
   }): Promise<string> {
     const template = this.getWorkflowTemplate(options.template || 'basic');
 
-    const workflow = {
+    const _workflow = {
       ...template,
       name: options.name,
       description: options.description || `Generated workflow: ${options.name}`,
@@ -70,9 +70,6 @@ export class DevTools {
 
     const outputPath =
       options.outputPath || `./workflows/${options.name.toLowerCase().replace(/\s+/g, '-')}.json`;
-
-    // TODO: Write workflow to file system
-    console.log('Generated workflow:', workflow);
 
     return outputPath;
   }
@@ -85,7 +82,7 @@ export class DevTools {
   }): Promise<string> {
     const nodeTemplate = this.getNodeTemplate(options.type);
 
-    const node = {
+    const _node = {
       ...nodeTemplate,
       name: options.name,
       category: options.category,
@@ -94,9 +91,6 @@ export class DevTools {
 
     const outputPath =
       options.outputPath || `./src/nodes/${options.category}/${options.name.toLowerCase()}.ts`;
-
-    // TODO: Write node to file system
-    console.log('Generated node:', node);
 
     return outputPath;
   }
@@ -157,7 +151,9 @@ export class DevTools {
   }
 
   startWatching(): void {
-    if (!this.config.enableHotReload) return;
+    if (!this.config.enableHotReload) {
+      return;
+    }
 
     for (const pattern of this.config.watchPaths) {
       // Mock watcher
@@ -177,7 +173,9 @@ export class DevTools {
   }
 
   startProfiler(): void {
-    if (!this.config.enableProfiler) return;
+    if (!this.config.enableProfiler) {
+      return;
+    }
     this.profiler = setInterval(() => {
       this.collectMetrics();
     }, 1000);

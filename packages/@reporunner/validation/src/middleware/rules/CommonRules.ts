@@ -1,7 +1,7 @@
-import { BaseValidationRule } from './ValidationRule';
-import { ValidationContext } from '../context/ValidationContext';
-import { ValidationResult } from '../types/ValidationResult';
+import type { ValidationContext } from '../context/ValidationContext';
 import { ValidationError } from '../errors/ValidationError';
+import type { ValidationResult } from '../types/ValidationResult';
+import { BaseValidationRule } from './ValidationRule';
 
 /**
  * Require authenticated user
@@ -13,11 +13,13 @@ export class RequireAuthRule extends BaseValidationRule {
 
   public async validate(context: ValidationContext): Promise<ValidationResult> {
     if (!context.isAuthenticated()) {
-      throw new ValidationError([{
-        path: '',
-        message: 'Authentication required',
-        code: 'UNAUTHORIZED'
-      }]);
+      throw new ValidationError([
+        {
+          path: '',
+          message: 'Authentication required',
+          code: 'UNAUTHORIZED',
+        },
+      ]);
     }
 
     return { valid: true, errors: [] };
@@ -38,22 +40,26 @@ export class RequireRolesRule extends BaseValidationRule {
   public async validate(context: ValidationContext): Promise<ValidationResult> {
     const user = context.getUser();
     if (!user) {
-      throw new ValidationError([{
-        path: '',
-        message: 'Authentication required',
-        code: 'UNAUTHORIZED'
-      }]);
+      throw new ValidationError([
+        {
+          path: '',
+          message: 'Authentication required',
+          code: 'UNAUTHORIZED',
+        },
+      ]);
     }
 
     const userRoles = user.roles || [];
-    const hasRole = this.roles.some(role => userRoles.includes(role));
+    const hasRole = this.roles.some((role) => userRoles.includes(role));
 
     if (!hasRole) {
-      throw new ValidationError([{
-        path: '',
-        message: `Required roles: ${this.roles.join(', ')}`,
-        code: 'FORBIDDEN'
-      }]);
+      throw new ValidationError([
+        {
+          path: '',
+          message: `Required roles: ${this.roles.join(', ')}`,
+          code: 'FORBIDDEN',
+        },
+      ]);
     }
 
     return { valid: true, errors: [] };
@@ -83,15 +89,17 @@ export class RateLimitRule extends BaseValidationRule {
     let timestamps = this.store.get(key) || [];
 
     // Remove old timestamps
-    timestamps = timestamps.filter(time => now - time < this.window);
+    timestamps = timestamps.filter((time) => now - time < this.window);
 
     // Check limit
     if (timestamps.length >= this.limit) {
-      throw new ValidationError([{
-        path: '',
-        message: 'Rate limit exceeded',
-        code: 'RATE_LIMIT_EXCEEDED'
-      }]);
+      throw new ValidationError([
+        {
+          path: '',
+          message: 'Rate limit exceeded',
+          code: 'RATE_LIMIT_EXCEEDED',
+        },
+      ]);
     }
 
     // Add new timestamp
@@ -122,14 +130,16 @@ export class RequestSizeRule extends BaseValidationRule {
   }
 
   public async validate(context: ValidationContext): Promise<ValidationResult> {
-    const contentLength = parseInt(context.req.headers['content-length'] || '0', 10);
+    const contentLength = Number.parseInt(context.req.headers['content-length'] || '0', 10);
 
     if (contentLength > this.maxSize) {
-      throw new ValidationError([{
-        path: '',
-        message: `Request too large. Maximum size is ${this.maxSize} bytes`,
-        code: 'REQUEST_TOO_LARGE'
-      }]);
+      throw new ValidationError([
+        {
+          path: '',
+          message: `Request too large. Maximum size is ${this.maxSize} bytes`,
+          code: 'REQUEST_TOO_LARGE',
+        },
+      ]);
     }
 
     return { valid: true, errors: [] };
@@ -143,30 +153,37 @@ export class ContentTypeRule extends BaseValidationRule {
   private allowedTypes: string[];
 
   constructor(types: string | string[]) {
-    super('contentType', `Allowed content types: ${Array.isArray(types) ? types.join(', ') : types}`);
+    super(
+      'contentType',
+      `Allowed content types: ${Array.isArray(types) ? types.join(', ') : types}`
+    );
     this.allowedTypes = Array.isArray(types) ? types : [types];
   }
 
   public async validate(context: ValidationContext): Promise<ValidationResult> {
     const contentType = context.req.headers['content-type'];
     if (!contentType) {
-      throw new ValidationError([{
-        path: '',
-        message: 'Content-Type header is required',
-        code: 'CONTENT_TYPE_REQUIRED'
-      }]);
+      throw new ValidationError([
+        {
+          path: '',
+          message: 'Content-Type header is required',
+          code: 'CONTENT_TYPE_REQUIRED',
+        },
+      ]);
     }
 
-    const matches = this.allowedTypes.some(type =>
+    const matches = this.allowedTypes.some((type) =>
       contentType.toLowerCase().startsWith(type.toLowerCase())
     );
 
     if (!matches) {
-      throw new ValidationError([{
-        path: '',
-        message: `Content-Type must be one of: ${this.allowedTypes.join(', ')}`,
-        code: 'INVALID_CONTENT_TYPE'
-      }]);
+      throw new ValidationError([
+        {
+          path: '',
+          message: `Content-Type must be one of: ${this.allowedTypes.join(', ')}`,
+          code: 'INVALID_CONTENT_TYPE',
+        },
+      ]);
     }
 
     return { valid: true, errors: [] };
@@ -187,11 +204,13 @@ export class MethodRule extends BaseValidationRule {
   public async validate(context: ValidationContext): Promise<ValidationResult> {
     const method = context.getMethod();
     if (!this.allowedMethods.includes(method.toUpperCase())) {
-      throw new ValidationError([{
-        path: '',
-        message: `Method must be one of: ${this.allowedMethods.join(', ')}`,
-        code: 'METHOD_NOT_ALLOWED'
-      }]);
+      throw new ValidationError([
+        {
+          path: '',
+          message: `Method must be one of: ${this.allowedMethods.join(', ')}`,
+          code: 'METHOD_NOT_ALLOWED',
+        },
+      ]);
     }
 
     return { valid: true, errors: [] };
@@ -228,15 +247,18 @@ export class CORSRule extends BaseValidationRule {
     }
 
     // Check origin
-    const allowedOrigin = this.options.origins.includes('*') ? '*' : 
-      this.options.origins.find(o => o === origin);
+    const allowedOrigin = this.options.origins.includes('*')
+      ? '*'
+      : this.options.origins.find((o) => o === origin);
 
     if (!allowedOrigin) {
-      throw new ValidationError([{
-        path: '',
-        message: 'CORS origin not allowed',
-        code: 'CORS_ORIGIN_NOT_ALLOWED'
-      }]);
+      throw new ValidationError([
+        {
+          path: '',
+          message: 'CORS origin not allowed',
+          code: 'CORS_ORIGIN_NOT_ALLOWED',
+        },
+      ]);
     }
 
     // Set CORS headers
@@ -247,17 +269,11 @@ export class CORSRule extends BaseValidationRule {
     }
 
     if (this.options.headers) {
-      context.res.setHeader(
-        'Access-Control-Allow-Headers',
-        this.options.headers.join(', ')
-      );
+      context.res.setHeader('Access-Control-Allow-Headers', this.options.headers.join(', '));
     }
 
     if (this.options.methods) {
-      context.res.setHeader(
-        'Access-Control-Allow-Methods',
-        this.options.methods.join(', ')
-      );
+      context.res.setHeader('Access-Control-Allow-Methods', this.options.methods.join(', '));
     }
 
     if (this.options.maxAge) {
@@ -326,8 +342,8 @@ export class CachedRule extends BaseValidationRule {
         ...cached.result,
         meta: {
           ...cached.result.meta,
-          cacheHits: (cached.result.meta?.cacheHits || 0) + 1
-        }
+          cacheHits: (cached.result.meta?.cacheHits || 0) + 1,
+        },
       };
     }
 
@@ -337,7 +353,7 @@ export class CachedRule extends BaseValidationRule {
     // Cache result
     this.cache.set(key, {
       result,
-      expires: now + this.ttl
+      expires: now + this.ttl,
     });
 
     return result;
@@ -348,7 +364,7 @@ export class CachedRule extends BaseValidationRule {
       context.getMethod(),
       context.getRequestPath(),
       JSON.stringify(context.getQuery()),
-      JSON.stringify(context.getBody())
+      JSON.stringify(context.getBody()),
     ];
 
     return parts.join(':');
@@ -394,7 +410,7 @@ export class ParallelRule extends BaseValidationRule {
 
   public async validate(context: ValidationContext): Promise<ValidationResult> {
     const results = await Promise.all(
-      this.rules.map(rule => {
+      this.rules.map((rule) => {
         const childContext = context.fork();
         return rule.validate(childContext);
       })
@@ -407,7 +423,7 @@ export class ParallelRule extends BaseValidationRule {
     const merged: ValidationResult = {
       valid: true,
       errors: [],
-      transformed: {}
+      transformed: {},
     };
 
     for (const result of results) {
@@ -417,7 +433,7 @@ export class ParallelRule extends BaseValidationRule {
       if (result.transformed) {
         merged.transformed = {
           ...merged.transformed,
-          ...result.transformed
+          ...result.transformed,
         };
       }
     }

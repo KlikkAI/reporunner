@@ -32,28 +32,31 @@ import { Header } from '../components/Landing/Header';
 export const Enterprise: React.FC = () => {
   const [activeTab, setActiveTab] = useState('security');
 
-  const testimonials = [
+  const _testimonials = [
     {
-      quote: "Reporunner has transformed our compliance reporting. What used to take weeks now happens automatically with full audit trails.",
-      author: "Sarah Chen",
-      title: "CTO",
-      company: "Global Financial Corp",
-      logo: "🏦"
+      quote:
+        'Reporunner has transformed our compliance reporting. What used to take weeks now happens automatically with full audit trails.',
+      author: 'Sarah Chen',
+      title: 'CTO',
+      company: 'Global Financial Corp',
+      logo: '🏦',
     },
     {
-      quote: "The security features and air-gap deployment capability gave us confidence to automate our most sensitive workflows.",
-      author: "Michael Rodriguez",
-      title: "Head of Security",
-      company: "Defense Solutions Inc",
-      logo: "🛡️"
+      quote:
+        'The security features and air-gap deployment capability gave us confidence to automate our most sensitive workflows.',
+      author: 'Michael Rodriguez',
+      title: 'Head of Security',
+      company: 'Defense Solutions Inc',
+      logo: '🛡️',
     },
     {
-      quote: "Our development velocity increased 300% after implementing Reporunner for our CI/CD and incident response workflows.",
-      author: "Emma Thompson",
-      title: "VP Engineering",
-      company: "TechScale",
-      logo: "⚡"
-    }
+      quote:
+        'Our development velocity increased 300% after implementing Reporunner for our CI/CD and incident response workflows.',
+      author: 'Emma Thompson',
+      title: 'VP Engineering',
+      company: 'TechScale',
+      logo: '⚡',
+    },
   ];
 
   const enterpriseFeatures = {
@@ -138,7 +141,7 @@ export const Enterprise: React.FC = () => {
     ],
   };
 
-  const useCases = [
+  const _useCases = [
     {
       title: 'Financial Services',
       description: 'Automate compliance reporting, fraud detection, and customer onboarding',
@@ -200,7 +203,7 @@ export const Enterprise: React.FC = () => {
     },
   ];
 
-  const pricing = {
+  const _pricing = {
     starter: {
       name: 'Enterprise Starter',
       price: '$500/month',
@@ -404,39 +407,43 @@ export const Enterprise: React.FC = () => {
             {[
               {
                 title: 'Financial Services',
-                description: 'Automated compliance reporting, fraud detection, and customer onboarding',
+                description:
+                  'Automated compliance reporting, fraud detection, and customer onboarding',
                 icon: Building,
-                features: ['Regulatory compliance', 'Real-time monitoring', 'Audit trails']
+                features: ['Regulatory compliance', 'Real-time monitoring', 'Audit trails'],
               },
               {
                 title: 'Healthcare',
-                description: 'HIPAA-compliant patient data processing and care coordination workflows',
+                description:
+                  'HIPAA-compliant patient data processing and care coordination workflows',
                 icon: Award,
-                features: ['HIPAA compliance', 'Patient privacy', 'Clinical workflows']
+                features: ['HIPAA compliance', 'Patient privacy', 'Clinical workflows'],
               },
               {
                 title: 'Manufacturing',
-                description: 'Supply chain automation, quality control, and production optimization',
+                description:
+                  'Supply chain automation, quality control, and production optimization',
                 icon: Settings,
-                features: ['IoT integration', 'Quality automation', 'Supply chain visibility']
+                features: ['IoT integration', 'Quality automation', 'Supply chain visibility'],
               },
               {
                 title: 'Government',
                 description: 'Citizen services automation with the highest security standards',
                 icon: Shield,
-                features: ['FedRAMP ready', 'Citizen services', 'Multi-level security']
+                features: ['FedRAMP ready', 'Citizen services', 'Multi-level security'],
               },
               {
                 title: 'Technology',
                 description: 'DevOps automation, incident response, and customer success workflows',
                 icon: TrendingUp,
-                features: ['CI/CD integration', 'Incident automation', 'Customer workflows']
+                features: ['CI/CD integration', 'Incident automation', 'Customer workflows'],
               },
               {
                 title: 'Energy & Utilities',
-                description: 'Grid monitoring, regulatory reporting, and customer service automation',
+                description:
+                  'Grid monitoring, regulatory reporting, and customer service automation',
                 icon: Globe,
-                features: ['Grid management', 'Regulatory compliance', 'Customer service']
+                features: ['Grid management', 'Regulatory compliance', 'Customer service'],
               },
             ].map((useCase, index) => {
               const Icon = useCase.icon;
@@ -524,7 +531,7 @@ export const Enterprise: React.FC = () => {
                   'Standard support',
                   'Basic analytics',
                   'Single sign-on',
-                ]
+                ],
               },
               {
                 name: 'Enterprise',
@@ -539,7 +546,7 @@ export const Enterprise: React.FC = () => {
                   'Advanced analytics',
                   'Enterprise SSO',
                   'Audit logging',
-                ]
+                ],
               },
               {
                 name: 'Enterprise Plus',
@@ -553,8 +560,8 @@ export const Enterprise: React.FC = () => {
                   'Professional services',
                   'Custom SLA',
                   'Air-gap deployment',
-                ]
-              }
+                ],
+              },
             ].map((plan, index) => (
               <div
                 key={index}

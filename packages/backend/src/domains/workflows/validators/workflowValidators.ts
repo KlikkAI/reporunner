@@ -1,5 +1,5 @@
-import { z } from 'zod';
 import { BaseValidationMiddleware } from '@reporunner/core';
+import { z } from 'zod';
 
 /**
  * Workflow Validation Schemas using BaseValidationMiddleware
@@ -36,7 +36,11 @@ const WorkflowEdgeSchema = z.object({
 
 // Core workflow schemas
 const CreateWorkflowSchema = z.object({
-  name: z.string().trim().min(1, 'Name is required').max(100, 'Name must be at most 100 characters'),
+  name: z
+    .string()
+    .trim()
+    .min(1, 'Name is required')
+    .max(100, 'Name must be at most 100 characters'),
   description: z.string().trim().max(500, 'Description must be at most 500 characters').optional(),
   nodes: z.array(WorkflowNodeSchema).default([]),
   edges: z.array(WorkflowEdgeSchema).default([]),
@@ -88,18 +92,22 @@ const ExecutionParamsSchema = z.object({
 
 // Exported validation middleware
 export const validateWorkflowParams = BaseValidationMiddleware.validateParams(WorkflowParamsSchema);
-export const validateExecutionParams = BaseValidationMiddleware.validateParams(ExecutionParamsSchema);
+export const validateExecutionParams =
+  BaseValidationMiddleware.validateParams(ExecutionParamsSchema);
 
 export const validateCreateWorkflow = BaseValidationMiddleware.validateBody(CreateWorkflowSchema, {
   stripExtraFields: true,
 });
 
-export const validateUpdateWorkflow = BaseValidationMiddleware.validateRequest({
-  params: WorkflowParamsSchema,
-  body: UpdateWorkflowSchema,
-}, {
-  stripExtraFields: true,
-});
+export const validateUpdateWorkflow = BaseValidationMiddleware.validateRequest(
+  {
+    params: WorkflowParamsSchema,
+    body: UpdateWorkflowSchema,
+  },
+  {
+    stripExtraFields: true,
+  }
+);
 
 export const validateExecuteWorkflow = BaseValidationMiddleware.validateRequest({
   params: WorkflowParamsSchema,
@@ -108,36 +116,48 @@ export const validateExecuteWorkflow = BaseValidationMiddleware.validateRequest(
 
 export const validateWorkflowTest = BaseValidationMiddleware.validateBody(WorkflowTestSchema);
 
-export const validateWorkflowList = BaseValidationMiddleware.validateQuery(WorkflowListQuerySchema, {
-  stripExtraFields: true,
-});
+export const validateWorkflowList = BaseValidationMiddleware.validateQuery(
+  WorkflowListQuerySchema,
+  {
+    stripExtraFields: true,
+  }
+);
 
-export const validateExecutionList = BaseValidationMiddleware.validateQuery(ExecutionListQuerySchema, {
-  stripExtraFields: true,
-});
+export const validateExecutionList = BaseValidationMiddleware.validateQuery(
+  ExecutionListQuerySchema,
+  {
+    stripExtraFields: true,
+  }
+);
 
 export const validateStatistics = BaseValidationMiddleware.validateRequest({
   params: WorkflowParamsSchema,
   query: StatisticsQuerySchema,
 });
 
-export const validateExecutionStats = BaseValidationMiddleware.validateQuery(ExecutionStatsQuerySchema);
+export const validateExecutionStats =
+  BaseValidationMiddleware.validateQuery(ExecutionStatsQuerySchema);
 
 // Complex composite validations
-export const validateWorkflowManagement = BaseValidationMiddleware.validateRequest({
-  params: WorkflowParamsSchema,
-  body: UpdateWorkflowSchema,
-  query: z.object({
-    validate: z.boolean().default(false).optional(),
-    dryRun: z.boolean().default(false).optional(),
-  }).optional(),
-}, {
-  stripExtraFields: true,
-  customErrorMessages: {
-    'params.id': 'Invalid workflow ID provided',
-    'body.name': 'Workflow name must be valid and unique',
+export const validateWorkflowManagement = BaseValidationMiddleware.validateRequest(
+  {
+    params: WorkflowParamsSchema,
+    body: UpdateWorkflowSchema,
+    query: z
+      .object({
+        validate: z.boolean().default(false).optional(),
+        dryRun: z.boolean().default(false).optional(),
+      })
+      .optional(),
   },
-});
+  {
+    stripExtraFields: true,
+    customErrorMessages: {
+      'params.id': 'Invalid workflow ID provided',
+      'body.name': 'Workflow name must be valid and unique',
+    },
+  }
+);
 
 // Export schemas for reuse
 export const workflowSchemas = {

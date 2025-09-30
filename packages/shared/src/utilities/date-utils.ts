@@ -43,6 +43,6 @@ export class DateUtils {
   }
 
   static isValid(date: Date): boolean {
-    return date instanceof Date && !isNaN(date.getTime());
+    return date instanceof Date && !Number.isNaN(date.getTime());
   }
 }

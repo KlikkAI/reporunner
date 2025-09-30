@@ -1,5 +1,5 @@
-import { FileTransform } from './FileTransform';
-import { UploadedFile } from '../types/UploadedFile';
+import type { UploadedFile } from '../types/UploadedFile';
+import type { FileTransform } from './FileTransform';
 
 /**
  * A transform that does nothing to the file
@@ -11,7 +11,7 @@ export class NoopTransform implements FileTransform {
   public async transform(file: UploadedFile): Promise<UploadedFile> {
     return {
       ...file,
-      modified: false
+      modified: false,
     };
   }
 }

@@ -361,7 +361,7 @@ export function requireRole(...requiredRoles: string[]) {
       return;
     }
 
-    if (!req.user.roles || !requiredRoles.some((role) => req.user?.roles?.includes(role))) {
+    if (!(req.user.roles && requiredRoles.some((role) => req.user?.roles?.includes(role)))) {
       res.status(403).json({
         success: false,
         error: {
@@ -393,8 +393,10 @@ export function requirePermission(...requiredPermissions: string[]) {
     }
 
     if (
-      !req.user.permissions ||
-      !requiredPermissions.some((perm) => req.user?.permissions?.includes(perm))
+      !(
+        req.user.permissions &&
+        requiredPermissions.some((perm) => req.user?.permissions?.includes(perm))
+      )
     ) {
       res.status(403).json({
         success: false,

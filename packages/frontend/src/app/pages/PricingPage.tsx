@@ -5,25 +5,14 @@
  * Different plans and enterprise options
  */
 
-import {
-  ArrowRight,
-  Check,
-  ChevronDown,
-  ChevronUp,
-  Cloud,
-  Phone,
-  Star,
-  Users,
-  X,
-  Zap,
-} from 'lucide-react';
+import { ArrowRight, Check, Cloud, Phone, Star, Users, X, Zap } from 'lucide-react';
 import React, { useState } from 'react';
 import { Footer } from '../components/Landing/Footer';
 import { Header } from '../components/Landing/Header';
 
 export const PricingPage: React.FC = () => {
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly');
-  const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
+  const [_expandedFaq, _setExpandedFaq] = useState<number | null>(null);
 
   const plans = [
     {
@@ -116,7 +105,7 @@ export const PricingPage: React.FC = () => {
     },
   ];
 
-  const addOns = [
+  const _addOns = [
     {
       name: 'Additional Executions',
       description: 'Extra workflow executions beyond your plan limit',
@@ -310,7 +299,7 @@ export const PricingPage: React.FC = () => {
     },
   ];
 
-  const faqs = [
+  const _faqs = [
     {
       question: 'What happens after the free trial?',
       answer:

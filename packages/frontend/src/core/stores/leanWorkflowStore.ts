@@ -15,7 +15,9 @@ interface LeanWorkflowState {
   // Actions
   fetchWorkflows: () => Promise<void>;
   fetchExecutions: () => Promise<void>;
-  createWorkflow: (workflow: Omit<WorkflowDefinition, 'id' | 'createdAt' | 'updatedAt'>) => Promise<void>;
+  createWorkflow: (
+    workflow: Omit<WorkflowDefinition, 'id' | 'createdAt' | 'updatedAt'>
+  ) => Promise<void>;
   updateWorkflow: (id: string, updates: Partial<WorkflowDefinition>) => Promise<void>;
   deleteWorkflow: (id: string) => Promise<void>;
   setActiveWorkflow: (workflow: WorkflowDefinition | null) => void;
@@ -61,7 +63,7 @@ export const useLeanWorkflowStore = create<LeanWorkflowState>()(
           const { workflows } = get();
           set({
             workflows: [...workflows, response.data],
-            isLoading: false
+            isLoading: false,
           });
         } catch (error) {
           const message = error instanceof Error ? error.message : 'Failed to create workflow';
@@ -75,10 +77,8 @@ export const useLeanWorkflowStore = create<LeanWorkflowState>()(
           const response = await workflowApiService.updateWorkflow(id, updates);
           const { workflows } = get();
           set({
-            workflows: workflows.map(workflow =>
-              workflow.id === id ? response.data : workflow
-            ),
-            isLoading: false
+            workflows: workflows.map((workflow) => (workflow.id === id ? response.data : workflow)),
+            isLoading: false,
           });
         } catch (error) {
           const message = error instanceof Error ? error.message : 'Failed to update workflow';
@@ -92,8 +92,8 @@ export const useLeanWorkflowStore = create<LeanWorkflowState>()(
           await workflowApiService.deleteWorkflow(id);
           const { workflows } = get();
           set({
-            workflows: workflows.filter(workflow => workflow.id !== id),
-            isLoading: false
+            workflows: workflows.filter((workflow) => workflow.id !== id),
+            isLoading: false,
           });
         } catch (error) {
           const message = error instanceof Error ? error.message : 'Failed to delete workflow';

@@ -44,7 +44,6 @@ export class AuditLogger extends EventEmitter {
 
     // Log to console in development
     if (process.env.NODE_ENV === 'development') {
-      console.log('[AUDIT]', JSON.stringify(logEntry));
     }
   }
 

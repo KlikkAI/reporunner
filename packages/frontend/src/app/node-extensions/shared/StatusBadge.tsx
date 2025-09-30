@@ -20,7 +20,9 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({
 }) => {
   // Auto-determine color based on type if not specified
   const getColor = () => {
-    if (color) return color;
+    if (color) {
+      return color;
+    }
     switch (type) {
       case 'disabled':
         return 'red';
@@ -41,7 +43,9 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({
 
   // Auto-determine content based on type if not specified
   const getContent = () => {
-    if (content !== undefined) return content;
+    if (content !== undefined) {
+      return content;
+    }
     switch (type) {
       case 'disabled':
         return '!';

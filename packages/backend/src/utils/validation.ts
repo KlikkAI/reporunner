@@ -33,8 +33,8 @@ export class ValidationUtils {
    * Validate pagination parameters
    */
   static validatePagination(page?: string | number, limit?: string | number) {
-    const pageNum = typeof page === 'string' ? parseInt(page, 10) : page || 1;
-    const limitNum = typeof limit === 'string' ? parseInt(limit, 10) : limit || 20;
+    const pageNum = typeof page === 'string' ? Number.parseInt(page, 10) : page || 1;
+    const limitNum = typeof limit === 'string' ? Number.parseInt(limit, 10) : limit || 20;
 
     return {
       page: Math.max(1, pageNum),

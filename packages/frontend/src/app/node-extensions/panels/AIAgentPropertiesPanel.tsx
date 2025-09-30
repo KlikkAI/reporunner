@@ -269,7 +269,9 @@ const AIAgentPropertiesPanel: React.FC<CustomPropertiesPanelProps> = ({
             values?.includes(formValues[key])
           );
 
-        if (!shouldShow) return null;
+        if (!shouldShow) {
+          return null;
+        }
 
         return (
           <PropertyField
@@ -315,7 +317,9 @@ const AIAgentPropertiesPanel: React.FC<CustomPropertiesPanelProps> = ({
                       values?.includes(formValues[key])
                     );
 
-                  if (!shouldShow) return null;
+                  if (!shouldShow) {
+                    return null;
+                  }
 
                   return (
                     <PropertyField

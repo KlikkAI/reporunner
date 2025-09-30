@@ -1,7 +1,7 @@
 // Data transformer reusing patterns from workflow-engine
 export class DataTransformer {
   static transform(data: any, transformations: Record<string, any>): any {
-    if (!data || !transformations) {
+    if (!(data && transformations)) {
       return data;
     }
 
@@ -14,7 +14,7 @@ export class DataTransformer {
   }
 
   static extractValue(data: any, path: string): any {
-    if (!data || !path) {
+    if (!(data && path)) {
       return undefined;
     }
 
@@ -34,7 +34,7 @@ export class DataTransformer {
   }
 
   static setValue(data: any, path: string, value: any): any {
-    if (!data || !path) {
+    if (!(data && path)) {
       return data;
     }
 
@@ -55,7 +55,7 @@ export class DataTransformer {
   }
 
   static merge(target: any, source: any): any {
-    if (!target || !source) {
+    if (!(target && source)) {
       return target || source;
     }
 

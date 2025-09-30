@@ -17,7 +17,7 @@ class ConfigService {
     this.config = {
       logLevel: (import.meta.env.VITE_LOG_LEVEL as LogLevel) || 'info',
       apiUrl: import.meta.env.VITE_API_URL || 'http://localhost:5000',
-      isDevelopment: import.meta.env.DEV || false,
+      isDevelopment: import.meta.env.DEV,
       version: import.meta.env.VITE_APP_VERSION || '1.0.0',
     };
   }

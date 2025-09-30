@@ -34,22 +34,32 @@
 
 /* Gmail Animations */
 @keyframes gmail-pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.7; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
 }
 
 @keyframes gmail-glow {
-  0%, 100% { 
+  0%,
+  100% {
     box-shadow: 0 0 10px rgba(234, 67, 53, 0.3);
   }
-  50% { 
+  50% {
     box-shadow: 0 0 20px rgba(234, 67, 53, 0.6);
   }
 }
 
 @keyframes gmail-spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* Polling Indicator */
@@ -210,9 +220,7 @@
 
 /* Gmail Properties Panel Header */
 .gmail-properties-panel .panel-header {
-  background: linear-gradient(135deg, 
-    rgba(234, 67, 53, 0.05) 0%, 
-    rgba(66, 133, 244, 0.05) 100%);
+  background: linear-gradient(135deg, rgba(234, 67, 53, 0.05) 0%, rgba(66, 133, 244, 0.05) 100%);
   border-bottom: 1px solid rgba(234, 67, 53, 0.1);
 }
 
@@ -222,12 +230,12 @@
     min-width: 240px;
     max-width: 280px;
   }
-  
+
   .gmail-stats-grid {
     grid-template-columns: 1fr;
     gap: 4px;
   }
-  
+
   .gmail-stats-item {
     padding: 4px 0;
   }
@@ -240,19 +248,19 @@
     color: #f9fafb;
     border-color: #ea4335;
   }
-  
+
   .gmail-trigger-node.node-connected {
     background-color: rgba(52, 168, 83, 0.1);
   }
-  
+
   .gmail-trigger-node.node-disconnected {
     background-color: rgba(251, 188, 4, 0.1);
   }
-  
+
   .gmail-stats-grid {
     background-color: #374151;
   }
-  
+
   .gmail-stats-label {
     color: #9ca3af;
   }
@@ -265,24 +273,23 @@
 }
 
 .gmail-loading::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(234, 67, 53, 0.1),
-    transparent
-  );
+  background: linear-gradient(90deg, transparent, rgba(234, 67, 53, 0.1), transparent);
   animation: gmail-loading-shimmer 1.5s infinite;
 }
 
 @keyframes gmail-loading-shimmer {
-  0% { left: -100%; }
-  100% { left: 100%; }
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
 }
 
 /* Accessibility */
@@ -296,7 +303,7 @@
   .gmail-trigger-node {
     border-width: 2px;
   }
-  
+
   .gmail-connection-status {
     border: 1px solid currentColor;
   }

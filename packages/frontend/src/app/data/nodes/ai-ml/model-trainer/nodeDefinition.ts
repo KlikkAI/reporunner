@@ -8,7 +8,6 @@
  */
 
 import { BaseNodeDefinition, type NodeProperty } from '@/core/nodes/BaseNodeDefinition';
-import { PropertyRendererFactory } from '@/design-system';
 import type { PropertyRendererConfig } from '@/design-system';
 
 /**
@@ -246,7 +245,7 @@ export class ModelTrainerNodeDefinition extends BaseNodeDefinition {
   protected getProperties(): NodeProperty[] {
     const configs = this.getPropertyConfigs();
 
-    return configs.map(config => this.convertConfigToNodeProperty(config));
+    return configs.map((config) => this.convertConfigToNodeProperty(config));
   }
 
   /**
@@ -260,8 +259,8 @@ export class ModelTrainerNodeDefinition extends BaseNodeDefinition {
       description: config.description,
       placeholder: config.placeholder,
       default: config.defaultValue,
-      required: config.required || false,
-      options: config.options?.map(option => ({
+      required: config.required,
+      options: config.options?.map((option) => ({
         name: option.label,
         value: option.value,
         description: option.description,
@@ -279,24 +278,24 @@ export class ModelTrainerNodeDefinition extends BaseNodeDefinition {
    */
   private mapRendererTypeToNodeType(rendererType: string): string {
     const typeMap: Record<string, string> = {
-      'text': 'string',
-      'password': 'password',
-      'number': 'number',
-      'checkbox': 'boolean',
-      'switch': 'boolean',
-      'select': 'options',
-      'multiselect': 'multiOptions',
-      'textarea': 'string',
-      'datetime': 'dateTime',
-      'date': 'dateTime',
-      'color': 'color',
-      'file': 'file',
-      'json': 'json',
-      'collection': 'collection',
-      'fixedcollection': 'fixedCollection',
-      'credentials': 'credentialsSelect',
-      'resource': 'resourceLocator',
-      'expression': 'expression',
+      text: 'string',
+      password: 'password',
+      number: 'number',
+      checkbox: 'boolean',
+      switch: 'boolean',
+      select: 'options',
+      multiselect: 'multiOptions',
+      textarea: 'string',
+      datetime: 'dateTime',
+      date: 'dateTime',
+      color: 'color',
+      file: 'file',
+      json: 'json',
+      collection: 'collection',
+      fixedcollection: 'fixedCollection',
+      credentials: 'credentialsSelect',
+      resource: 'resourceLocator',
+      expression: 'expression',
     };
 
     return typeMap[rendererType] || 'string';

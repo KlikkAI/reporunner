@@ -1,5 +1,5 @@
-import { Request, Response, NextFunction } from 'express';
 import { BaseMiddleware, Logger } from '@reporunner/core';
+import type { NextFunction, Request, Response } from 'express';
 
 export interface SecurityContext {
   req: Request;
@@ -41,7 +41,7 @@ export abstract class SecurityMiddleware extends BaseMiddleware {
     this.config = {
       enableLogging: true,
       debug: false,
-      ...config
+      ...config,
     };
 
     this.logger = config.logger || new Logger(this.constructor.name);
@@ -92,7 +92,7 @@ export abstract class SecurityMiddleware extends BaseMiddleware {
       method: req.method,
       path: req.path,
       ip: req.ip,
-      headers: this.config.debug ? req.headers : undefined
+      headers: this.config.debug ? req.headers : undefined,
     });
   }
 
@@ -102,7 +102,7 @@ export abstract class SecurityMiddleware extends BaseMiddleware {
   protected logSuccess(req: Request): void {
     this.logger.debug('Request processed successfully', {
       method: req.method,
-      path: req.path
+      path: req.path,
     });
   }
 
@@ -116,8 +116,8 @@ export abstract class SecurityMiddleware extends BaseMiddleware {
       error: {
         name: error.name,
         message: error.message,
-        stack: this.config.debug ? error.stack : undefined
-      }
+        stack: this.config.debug ? error.stack : undefined,
+      },
     });
   }
 

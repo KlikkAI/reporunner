@@ -3,8 +3,8 @@
  * Professional light theme with modern design principles
  */
 
-import type { NodeTheme } from '../types';
 import { createTheme } from '@/design-system/tokens/baseTheme';
+import type { NodeTheme } from '../types';
 
 export const defaultTheme: NodeTheme = createTheme(
   'default',

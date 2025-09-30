@@ -187,7 +187,9 @@ export class WorkflowTemplatesService {
     variables: Record<string, any> = {}
   ): { nodes: WorkflowNodeInstance[]; edges: WorkflowEdge[] } | null {
     const template = this.getTemplate(templateId);
-    if (!template) return null;
+    if (!template) {
+      return null;
+    }
 
     // Track usage
     template.metadata.usageCount++;
@@ -300,7 +302,9 @@ export class WorkflowTemplatesService {
    */
   rateTemplate(templateId: string, rating: number, comment?: string): void {
     const template = this.getTemplate(templateId);
-    if (!template) return;
+    if (!template) {
+      return;
+    }
 
     const review: TemplateReview = {
       userId: 'current-user', // Would come from auth context

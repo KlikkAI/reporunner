@@ -1,7 +1,7 @@
-import { FileFilter } from './FileFilter';
-import { UploadedFile } from '../types/UploadedFile';
-import { UploadOptions } from '../types/UploadOptions';
 import { UploadError } from '../errors/UploadError';
+import type { UploadedFile } from '../types/UploadedFile';
+import type { UploadOptions } from '../types/UploadOptions';
+import type { FileFilter } from './FileFilter';
 
 export class BasicFileFilter implements FileFilter {
   private options: Required<UploadOptions>;
@@ -16,7 +16,7 @@ export class BasicFileFilter implements FileFilter {
       validateMimeType: true,
       createDirectory: true,
       overwrite: false,
-      ...options
+      ...options,
     };
   }
 
@@ -26,11 +26,7 @@ export class BasicFileFilter implements FileFilter {
   public async shouldAccept(file: UploadedFile): Promise<boolean> {
     // Check file size
     if (file.size > this.options.maxFileSize) {
-      throw UploadError.fileTooLarge(
-        file.originalname,
-        file.size,
-        this.options.maxFileSize
-      );
+      throw UploadError.fileTooLarge(file.originalname, file.size, this.options.maxFileSize);
     }
 
     // Check file type
@@ -51,7 +47,7 @@ export class BasicFileFilter implements FileFilter {
    */
   private async validateMimeType(file: UploadedFile): Promise<void> {
     const allowed = this.options.allowedTypes;
-    const matches = allowed.some(type => this.matchMimeType(file.mimetype, type));
+    const matches = allowed.some((type) => this.matchMimeType(file.mimetype, type));
 
     if (!matches) {
       throw UploadError.invalidFileType(file.originalname, file.mimetype);

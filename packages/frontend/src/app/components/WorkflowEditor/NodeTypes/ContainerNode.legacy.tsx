@@ -59,7 +59,9 @@ const ContainerNode: React.FC<ContainerNodeProps> = ({ data, selected }) => {
 
   const handleMouseDown = useCallback(
     (e: React.MouseEvent) => {
-      if (e.target !== resizeRef.current) return;
+      if (e.target !== resizeRef.current) {
+        return;
+      }
 
       e.preventDefault();
       setIsResizing(true);
@@ -100,7 +102,9 @@ const ContainerNode: React.FC<ContainerNodeProps> = ({ data, selected }) => {
       e.preventDefault();
 
       const nodeData = e.dataTransfer.getData('application/reactflow');
-      if (!nodeData) return;
+      if (!nodeData) {
+        return;
+      }
 
       const nodeInfo = JSON.parse(nodeData);
       const rect = e.currentTarget.getBoundingClientRect();

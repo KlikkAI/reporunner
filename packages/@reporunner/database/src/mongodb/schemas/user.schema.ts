@@ -7,13 +7,13 @@ enum UserRole {
   ADMIN = 'admin',
   EDITOR = 'editor',
   VIEWER = 'viewer',
-  GUEST = 'guest'
+  GUEST = 'guest',
 }
 
 enum PermissionType {
   SYSTEM_ADMIN = 'system:admin',
   USER_VIEW = 'user:view',
-  WORKFLOW_CREATE = 'workflow:create'
+  WORKFLOW_CREATE = 'workflow:create',
 }
 
 // Define basic User interface locally
@@ -149,7 +149,9 @@ UserSchema.virtual('fullName').get(function (this: IUserDocument) {
 // Password hashing middleware
 UserSchema.pre('save', async function (this: IUserDocument, next) {
   // Only hash the password if it has been modified
-  if (!this.isModified('password')) return next();
+  if (!this.isModified('password')) {
+    return next();
+  }
 
   try {
     const salt = await bcrypt.genSalt(12);
@@ -173,7 +175,10 @@ UserSchema.methods.comparePassword = async function (candidatePassword: string):
 // Check if password changed after JWT was issued
 UserSchema.methods.changedPasswordAfter = function (JWTTimestamp: number): boolean {
   if (this.passwordChangedAt) {
-    const changedTimestamp = parseInt((this.passwordChangedAt.getTime() / 1000).toString(), 10);
+    const changedTimestamp = Number.parseInt(
+      (this.passwordChangedAt.getTime() / 1000).toString(),
+      10
+    );
     return JWTTimestamp < changedTimestamp;
   }
   return false;

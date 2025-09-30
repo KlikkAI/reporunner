@@ -181,7 +181,9 @@ const CredentialModal: React.FC<CredentialModalProps> = ({
   const handleCredentialDataChange = (field: string, value: any) => {
     setCredentialData((prev) => ({ ...prev, [field]: value }));
     // Clear test result when data changes
-    if (testResult) setTestResult(null);
+    if (testResult) {
+      setTestResult(null);
+    }
   };
 
   const handleTestCredential = async () => {

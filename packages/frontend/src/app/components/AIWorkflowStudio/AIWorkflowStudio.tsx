@@ -253,7 +253,9 @@ export const AIWorkflowStudio: React.FC<AIWorkflowStudioProps> = ({ visible, onC
       key: 'duration',
       width: 100,
       render: (_: unknown, record: AIWorkflowExecution) => {
-        if (!record.endTime) return '-';
+        if (!record.endTime) {
+          return '-';
+        }
         const duration = record.endTime.getTime() - record.startTime.getTime();
         return <Text>{(duration / 1000).toFixed(1)}s</Text>;
       },
@@ -308,7 +310,9 @@ export const AIWorkflowStudio: React.FC<AIWorkflowStudioProps> = ({ visible, onC
                   {selectedModel &&
                     (() => {
                       const model = availableModels.find((m) => m.id === selectedModel);
-                      if (!model) return null;
+                      if (!model) {
+                        return null;
+                      }
 
                       return (
                         <div>
@@ -505,7 +509,7 @@ export const AIWorkflowStudio: React.FC<AIWorkflowStudioProps> = ({ visible, onC
                     size="large"
                     onClick={handleExecuteWorkflow}
                     loading={isExecuting}
-                    disabled={!selectedModel || !nodeConfig.prompt}
+                    disabled={!(selectedModel && nodeConfig.prompt)}
                     icon={<PlayCircleOutlined />}
                     style={{ width: '100%' }}
                   >
@@ -516,7 +520,9 @@ export const AIWorkflowStudio: React.FC<AIWorkflowStudioProps> = ({ visible, onC
                     nodeConfig.prompt &&
                     (() => {
                       const model = availableModels.find((m) => m.id === selectedModel);
-                      if (!model) return null;
+                      if (!model) {
+                        return null;
+                      }
 
                       const estimatedTokens = Math.ceil((nodeConfig.prompt?.length || 0) / 4);
                       const estimatedCost = (estimatedTokens / 1000) * model.costPer1kTokens;

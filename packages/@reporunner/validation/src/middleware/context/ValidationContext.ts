@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import type { Request, Response } from 'express';
 import { ValidationError } from '../errors/ValidationError';
 
 export class ValidationContext {
@@ -205,11 +205,13 @@ export class ValidationContext {
    * Create error at current path
    */
   public createError(message: string, code?: string): ValidationError {
-    return new ValidationError([{
-      path: this.getPath(),
-      message,
-      code: code || 'VALIDATION_ERROR'
-    }]);
+    return new ValidationError([
+      {
+        path: this.getPath(),
+        message,
+        code: code || 'VALIDATION_ERROR',
+      },
+    ]);
   }
 
   /**

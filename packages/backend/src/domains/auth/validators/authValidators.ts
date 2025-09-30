@@ -1,5 +1,5 @@
-import { z } from 'zod';
 import { BaseValidationMiddleware } from '@reporunner/core';
+import { z } from 'zod';
 
 /**
  * Auth Validation Schemas and Middleware using BaseValidationMiddleware
@@ -62,7 +62,7 @@ const ChangePasswordSchema = z.object({
 // Export validation middleware using BaseValidationMiddleware
 export const registerValidation = BaseValidationMiddleware.validateBody(RegisterSchema, {
   customErrorMessages: {
-    'acceptTerms': 'You must accept the terms and conditions to register',
+    acceptTerms: 'You must accept the terms and conditions to register',
   },
 });
 
@@ -74,11 +74,14 @@ export const updateProfileValidation = BaseValidationMiddleware.validateBody(Upd
   stripExtraFields: true,
 });
 
-export const changePasswordValidation = BaseValidationMiddleware.validateBody(ChangePasswordSchema, {
-  customErrorMessages: {
-    'newPassword': 'New password must be strong and secure',
-  },
-});
+export const changePasswordValidation = BaseValidationMiddleware.validateBody(
+  ChangePasswordSchema,
+  {
+    customErrorMessages: {
+      newPassword: 'New password must be strong and secure',
+    },
+  }
+);
 
 // Export schemas for testing and reuse
 export const authSchemas = {
@@ -92,15 +95,23 @@ export const authSchemas = {
 // Composite validation for complex scenarios
 export const validateUserRegistration = BaseValidationMiddleware.validateRequest({
   body: RegisterSchema,
-  headers: z.object({
-    'content-type': z.string().includes('application/json').optional(),
-  }).optional(),
+  headers: z
+    .object({
+      'content-type': z.string().includes('application/json').optional(),
+    })
+    .optional(),
 });
 
 // Example of custom validation combining multiple schemas
 export const validateCompleteUserSetup = (req: any, res: any, next: any) => {
-  const profileResult = BaseValidationMiddleware.validateData(req.body.profile, UpdateProfileSchema);
-  const passwordResult = BaseValidationMiddleware.validateData(req.body.password, ChangePasswordSchema);
+  const profileResult = BaseValidationMiddleware.validateData(
+    req.body.profile,
+    UpdateProfileSchema
+  );
+  const passwordResult = BaseValidationMiddleware.validateData(
+    req.body.password,
+    ChangePasswordSchema
+  );
 
   const combinedResult = BaseValidationMiddleware.combineValidationResults([
     profileResult,

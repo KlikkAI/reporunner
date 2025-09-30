@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { UserRole, PermissionType } from './auth-enums';
+import { PermissionType, UserRole } from './auth-enums';
 
 export interface IUser {
   id: string;

@@ -1,4 +1,11 @@
-import { Collection, Db, Filter, UpdateFilter, FindOptions, OptionalUnlessRequiredId } from 'mongodb';
+import type {
+  Collection,
+  Db,
+  Filter,
+  FindOptions,
+  OptionalUnlessRequiredId,
+  UpdateFilter,
+} from 'mongodb';
 
 export interface BaseEntity {
   _id?: any;
@@ -38,11 +45,7 @@ export abstract class BaseRepository<T extends BaseEntity> {
   protected collectionName: string;
   protected options: RepositoryOptions;
 
-  constructor(
-    db: Db,
-    collectionName: string,
-    options: RepositoryOptions = {}
-  ) {
+  constructor(db: Db, collectionName: string, options: RepositoryOptions = {}) {
     this.db = db;
     this.collectionName = collectionName;
     this.collection = db.collection<T>(collectionName);
@@ -76,7 +79,7 @@ export abstract class BaseRepository<T extends BaseEntity> {
    */
   async createMany(data: Array<Omit<T, '_id' | 'createdAt' | 'updatedAt'>>): Promise<T[]> {
     const now = new Date();
-    const documents = data.map(item => ({
+    const documents = data.map((item) => ({
       ...item,
       ...(this.options.enableTimestamps && {
         createdAt: now,
@@ -110,10 +113,7 @@ export abstract class BaseRepository<T extends BaseEntity> {
   /**
    * Find multiple documents
    */
-  async find(
-    filter: Filter<T> = {},
-    options?: FindOptions<T>
-  ): Promise<T[]> {
+  async find(filter: Filter<T> = {}, options?: FindOptions<T>): Promise<T[]> {
     const baseFilter = this.applyBaseFilter(filter);
     return (await this.collection.find(baseFilter, options).toArray()) as T[];
   }
@@ -125,22 +125,13 @@ export abstract class BaseRepository<T extends BaseEntity> {
     filter: Filter<T> = {},
     paginationOptions: PaginationOptions = {}
   ): Promise<PaginatedResult<T>> {
-    const {
-      page = 1,
-      limit = 10,
-      sort = { _id: -1 },
-    } = paginationOptions;
+    const { page = 1, limit = 10, sort = { _id: -1 } } = paginationOptions;
 
     const skip = (page - 1) * limit;
     const baseFilter = this.applyBaseFilter(filter);
 
     const [items, total] = await Promise.all([
-      this.collection
-        .find(baseFilter)
-        .sort(sort)
-        .skip(skip)
-        .limit(limit)
-        .toArray(),
+      this.collection.find(baseFilter).sort(sort).skip(skip).limit(limit).toArray(),
       this.collection.countDocuments(baseFilter),
     ]);
 
@@ -160,18 +151,13 @@ export abstract class BaseRepository<T extends BaseEntity> {
   /**
    * Update a document by ID
    */
-  async updateById(
-    id: any,
-    update: UpdateFilter<T> | Partial<T>
-  ): Promise<T | null> {
+  async updateById(id: any, update: UpdateFilter<T> | Partial<T>): Promise<T | null> {
     const filter = this.applyBaseFilter({ _id: id });
     const updateDoc = this.applyTimestampToUpdate(update);
 
-    const result = await this.collection.findOneAndUpdate(
-      filter,
-      updateDoc,
-      { returnDocument: 'after' }
-    );
+    const result = await this.collection.findOneAndUpdate(filter, updateDoc, {
+      returnDocument: 'after',
+    });
 
     return (result as T) || null;
   }
@@ -179,18 +165,13 @@ export abstract class BaseRepository<T extends BaseEntity> {
   /**
    * Update a single document
    */
-  async updateOne(
-    filter: Filter<T>,
-    update: UpdateFilter<T> | Partial<T>
-  ): Promise<T | null> {
+  async updateOne(filter: Filter<T>, update: UpdateFilter<T> | Partial<T>): Promise<T | null> {
     const baseFilter = this.applyBaseFilter(filter);
     const updateDoc = this.applyTimestampToUpdate(update);
 
-    const result = await this.collection.findOneAndUpdate(
-      baseFilter,
-      updateDoc,
-      { returnDocument: 'after' }
-    );
+    const result = await this.collection.findOneAndUpdate(baseFilter, updateDoc, {
+      returnDocument: 'after',
+    });
 
     return (result as T) || null;
   }
@@ -198,10 +179,7 @@ export abstract class BaseRepository<T extends BaseEntity> {
   /**
    * Update multiple documents
    */
-  async updateMany(
-    filter: Filter<T>,
-    update: UpdateFilter<T> | Partial<T>
-  ): Promise<number> {
+  async updateMany(filter: Filter<T>, update: UpdateFilter<T> | Partial<T>): Promise<number> {
     const baseFilter = this.applyBaseFilter(filter);
     const updateDoc = this.applyTimestampToUpdate(update);
 
@@ -279,15 +257,13 @@ export abstract class BaseRepository<T extends BaseEntity> {
   /**
    * Apply timestamp to update operations
    */
-  protected applyTimestampToUpdate(
-    update: UpdateFilter<T> | Partial<T>
-  ): UpdateFilter<T> {
+  protected applyTimestampToUpdate(update: UpdateFilter<T> | Partial<T>): UpdateFilter<T> {
     if (!this.options.enableTimestamps) {
       return update as UpdateFilter<T>;
     }
 
     // If it's a direct partial update
-    if (!('$set' in update) && !('$unset' in update) && !('$inc' in update)) {
+    if (!('$set' in update || '$unset' in update || '$inc' in update)) {
       return {
         $set: {
           ...update,

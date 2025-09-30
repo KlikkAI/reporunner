@@ -1,11 +1,5 @@
 // Base theme configuration that provides common structure and default values
-import type {
-  NodeColorScheme,
-  NodeTypography,
-  NodeSpacing,
-  NodeAnimationConfig,
-  NodeTheme
-} from '@/app/node-extensions/types';
+import type { NodeColorScheme, NodeTheme } from '@/app/node-extensions/types';
 
 // Base theme configuration shared across all themes
 export const baseThemeConfig: Omit<NodeTheme, 'name' | 'colors' | 'shadows'> = {

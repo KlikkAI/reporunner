@@ -1,4 +1,4 @@
-import { IDomainEvent, IDomainEventHandler } from '../service/base-service.interface';
+import type { IDomainEvent, IDomainEventHandler } from '../service/base-service.interface';
 
 /**
  * Simple in-memory event bus implementation
@@ -19,10 +19,7 @@ export class EventBus {
   /**
    * Subscribe to an event type
    */
-  subscribe<T extends IDomainEvent>(
-    eventType: string,
-    handler: IDomainEventHandler<T>
-  ): void {
+  subscribe<T extends IDomainEvent>(eventType: string, handler: IDomainEventHandler<T>): void {
     const handlers = this.handlers.get(eventType) || [];
     handlers.push(handler);
     this.handlers.set(eventType, handlers);
@@ -31,10 +28,7 @@ export class EventBus {
   /**
    * Unsubscribe from an event type
    */
-  unsubscribe<T extends IDomainEvent>(
-    eventType: string,
-    handler: IDomainEventHandler<T>
-  ): void {
+  unsubscribe<T extends IDomainEvent>(eventType: string, handler: IDomainEventHandler<T>): void {
     const handlers = this.handlers.get(eventType) || [];
     const index = handlers.indexOf(handler);
     if (index > -1) {
@@ -48,9 +42,7 @@ export class EventBus {
    */
   async publish<T extends IDomainEvent>(event: T): Promise<void> {
     const handlers = this.handlers.get(event.eventType) || [];
-    await Promise.all(
-      handlers.map(handler => this.handleSafely(handler, event))
-    );
+    await Promise.all(handlers.map((handler) => this.handleSafely(handler, event)));
   }
 
   /**
@@ -62,8 +54,7 @@ export class EventBus {
   ): Promise<void> {
     try {
       await handler.handle(event);
-    } catch (error) {
-      console.error('Error handling event:', error);
+    } catch (_error) {
       // Here you could add error reporting, retries, etc.
     }
   }

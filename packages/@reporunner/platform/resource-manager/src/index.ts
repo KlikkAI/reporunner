@@ -158,7 +158,9 @@ export class ResourceManager {
       p.allocatedWorkflows.includes(workflowId)
     );
 
-    if (!pool) return false;
+    if (!pool) {
+      return false;
+    }
 
     // Remove allocation
     const index = pool.allocatedWorkflows.indexOf(workflowId);
@@ -185,7 +187,9 @@ export class ResourceManager {
 
   async updateScalingPolicy(id: string, updates: Partial<ScalingPolicy>): Promise<boolean> {
     const policy = this.policies.get(id);
-    if (!policy) return false;
+    if (!policy) {
+      return false;
+    }
 
     Object.assign(policy, updates);
     return true;
@@ -229,7 +233,9 @@ export class ResourceManager {
 
         for (const workflowId of movableWorkflows) {
           const profile = this.profiles.get(workflowId);
-          if (!profile) continue;
+          if (!profile) {
+            continue;
+          }
 
           const betterPool = await this.findBetterPool(workflowId, pool.id, profile);
           if (betterPool) {
@@ -348,7 +354,9 @@ export class ResourceManager {
     const cpuFit = cpuCapacity >= profile.estimatedResources.cpu / 100;
     const memoryFit = memoryCapacity >= profile.estimatedResources.memory / limits.memory.maxGB;
 
-    if (!cpuFit || !memoryFit) return 0;
+    if (!(cpuFit && memoryFit)) {
+      return 0;
+    }
 
     // Score based on available capacity and current load
     return cpuCapacity * 0.4 + memoryCapacity * 0.4 + storageCapacity * 0.2;
@@ -367,7 +375,9 @@ export class ResourceManager {
 
   private async updatePoolUsage(poolId: string): Promise<void> {
     const pool = this.pools.get(poolId);
-    if (!pool) return;
+    if (!pool) {
+      return;
+    }
 
     // Update current usage
     pool.currentUsage = await this.getCurrentSystemUsage();
@@ -437,7 +447,9 @@ export class ResourceManager {
     const fromPool = this.pools.get(fromPoolId);
     const toPool = this.pools.get(toPoolId);
 
-    if (!fromPool || !toPool) return;
+    if (!(fromPool && toPool)) {
+      return;
+    }
 
     // Remove from old pool
     const index = fromPool.allocatedWorkflows.indexOf(workflowId);
@@ -476,7 +488,8 @@ export class ResourceManager {
 
   private async evaluateScalingPolicies(): Promise<void> {
     for (const policy of this.policies.values()) {
-      if (!policy.enabled) continue;
+      if (!policy.enabled) {
+      }
 
       // TODO: Implement scaling policy evaluation
       // This would check triggers and execute actions

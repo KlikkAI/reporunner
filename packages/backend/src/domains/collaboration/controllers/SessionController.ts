@@ -11,8 +11,6 @@ import { asyncHandler } from '../../../utils/asyncHandler';
 import { ApiResponse } from '../../../utils/response';
 
 export class SessionController {
-  private collaborationService: CollaborationService;
-
   constructor() {
     this.collaborationService = CollaborationService.getInstance();
   }
@@ -27,67 +25,66 @@ export class SessionController {
 
     if (!workflowId) {
       res.status(400).json(ApiResponse.error('Workflow ID is required'));
-        return;
-      }
-
-      const startDate = new Date();
-      startDate.setDate(startDate.getDate() - Number(dateRange));
-
-      // Get session analytics
-      const sessionStats = await CollaborationSession.aggregate([
-        {
-          $match: {
-            workflowId,
-            createdAt: { $gte: startDate },
-          },
-        },
-        {
-          $group: {
-            _id: null,
-            totalSessions: { $sum: 1 },
-            activeSessions: {
-              $sum: { $cond: [{ $eq: ['$isActive', true] }, 1, 0] },
-            },
-            averageParticipants: { $avg: { $size: '$participants' } },
-            totalParticipants: { $sum: { $size: '$participants' } },
-          },
-        },
-      ]);
-
-      // Get operation analytics
-      const operationStats = await Operation.aggregate([
-        {
-          $match: {
-            workflowId,
-            timestamp: { $gte: startDate },
-          },
-        },
-        {
-          $group: {
-            _id: '$type',
-            count: { $sum: 1 },
-          },
-        },
-      ]);
-
-      const analytics = {
-        dateRange: Number(dateRange),
-        sessions: sessionStats[0] || {
-          totalSessions: 0,
-          activeSessions: 0,
-          averageParticipants: 0,
-          totalParticipants: 0,
-        },
-        operations: operationStats.reduce(
-          (acc, stat) => {
-            acc[stat._id] = stat.count;
-            return acc;
-          },
-          {} as Record<string, number>
-        ),
-      };
-
-      res.json(ApiResponse.success(analytics));
+      return;
     }
-  );
+
+    const startDate = new Date();
+    startDate.setDate(startDate.getDate() - Number(dateRange));
+
+    // Get session analytics
+    const sessionStats = await CollaborationSession.aggregate([
+      {
+        $match: {
+          workflowId,
+          createdAt: { $gte: startDate },
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          totalSessions: { $sum: 1 },
+          activeSessions: {
+            $sum: { $cond: [{ $eq: ['$isActive', true] }, 1, 0] },
+          },
+          averageParticipants: { $avg: { $size: '$participants' } },
+          totalParticipants: { $sum: { $size: '$participants' } },
+        },
+      },
+    ]);
+
+    // Get operation analytics
+    const operationStats = await Operation.aggregate([
+      {
+        $match: {
+          workflowId,
+          timestamp: { $gte: startDate },
+        },
+      },
+      {
+        $group: {
+          _id: '$type',
+          count: { $sum: 1 },
+        },
+      },
+    ]);
+
+    const analytics = {
+      dateRange: Number(dateRange),
+      sessions: sessionStats[0] || {
+        totalSessions: 0,
+        activeSessions: 0,
+        averageParticipants: 0,
+        totalParticipants: 0,
+      },
+      operations: operationStats.reduce(
+        (acc, stat) => {
+          acc[stat._id] = stat.count;
+          return acc;
+        },
+        {} as Record<string, number>
+      ),
+    };
+
+    res.json(ApiResponse.success(analytics));
+  });
 }

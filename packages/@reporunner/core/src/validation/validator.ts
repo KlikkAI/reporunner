@@ -1,4 +1,4 @@
-import { IValidator, ValidationResult } from '../service/base-service.interface';
+import type { IValidator, ValidationResult } from '../service/base-service.interface';
 
 /**
  * Validation rule definition
@@ -35,45 +35,45 @@ export abstract class BaseValidator<T> implements IValidator<T> {
    */
   protected rules = {
     required: (message = 'Field is required'): ValidationRule<any> => ({
-      validate: value => value !== undefined && value !== null && value !== '',
+      validate: (value) => value !== undefined && value !== null && value !== '',
       message,
-      code: 'REQUIRED'
+      code: 'REQUIRED',
     }),
 
     minLength: (min: number, message = `Minimum length is ${min}`): ValidationRule<any> => ({
-      validate: value => !value || String(value).length >= min,
+      validate: (value) => !value || String(value).length >= min,
       message,
-      code: 'MIN_LENGTH'
+      code: 'MIN_LENGTH',
     }),
 
     maxLength: (max: number, message = `Maximum length is ${max}`): ValidationRule<any> => ({
-      validate: value => !value || String(value).length <= max,
+      validate: (value) => !value || String(value).length <= max,
       message,
-      code: 'MAX_LENGTH'
+      code: 'MAX_LENGTH',
     }),
 
     pattern: (pattern: RegExp, message = 'Invalid format'): ValidationRule<any> => ({
-      validate: value => !value || pattern.test(String(value)),
+      validate: (value) => !value || pattern.test(String(value)),
       message,
-      code: 'PATTERN'
+      code: 'PATTERN',
     }),
 
     email: (message = 'Invalid email format'): ValidationRule<any> => ({
-      validate: value => !value || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(value)),
+      validate: (value) => !value || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(value)),
       message,
-      code: 'EMAIL'
+      code: 'EMAIL',
     }),
 
     min: (min: number, message = `Minimum value is ${min}`): ValidationRule<any> => ({
-      validate: value => !value || Number(value) >= min,
+      validate: (value) => !value || Number(value) >= min,
       message,
-      code: 'MIN'
+      code: 'MIN',
     }),
 
     max: (max: number, message = `Maximum value is ${max}`): ValidationRule<any> => ({
-      validate: value => !value || Number(value) <= max,
+      validate: (value) => !value || Number(value) <= max,
       message,
-      code: 'MAX'
+      code: 'MAX',
     }),
 
     custom: (
@@ -83,8 +83,8 @@ export abstract class BaseValidator<T> implements IValidator<T> {
     ): ValidationRule<any> => ({
       validate: validateFn,
       message,
-      code
-    })
+      code,
+    }),
   };
 
   /**
@@ -103,7 +103,7 @@ export abstract class BaseValidator<T> implements IValidator<T> {
           errors.push({
             field: validation.field as string,
             message: rule.message,
-            code: rule.code
+            code: rule.code,
           });
           break; // Stop on first error for this field
         }
@@ -112,7 +112,7 @@ export abstract class BaseValidator<T> implements IValidator<T> {
 
     return {
       valid: errors.length === 0,
-      errors
+      errors,
     };
   }
 }

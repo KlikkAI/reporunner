@@ -7,7 +7,8 @@
 
 /* Floating Animation */
 @keyframes float {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0px);
   }
   50% {
@@ -58,7 +59,8 @@
 
 /* Pulse Glow Effect */
 @keyframes pulse-glow {
-  0%, 100% {
+  0%,
+  100% {
     box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
   }
   50% {
@@ -84,11 +86,14 @@
   overflow: hidden;
   border-right: 3px solid #3b82f6;
   white-space: nowrap;
-  animation: typewriter 3s steps(40, end), blink-caret 0.75s step-end infinite;
+  animation:
+    typewriter 3s steps(40, end),
+    blink-caret 0.75s step-end infinite;
 }
 
 @keyframes blink-caret {
-  from, to {
+  from,
+  to {
     border-color: transparent;
   }
   50% {
@@ -165,12 +170,24 @@
   animation: fade-in-up 0.6s ease-out forwards;
 }
 
-.animate-fade-in-stagger > *:nth-child(1) { animation-delay: 0.1s; }
-.animate-fade-in-stagger > *:nth-child(2) { animation-delay: 0.2s; }
-.animate-fade-in-stagger > *:nth-child(3) { animation-delay: 0.3s; }
-.animate-fade-in-stagger > *:nth-child(4) { animation-delay: 0.4s; }
-.animate-fade-in-stagger > *:nth-child(5) { animation-delay: 0.5s; }
-.animate-fade-in-stagger > *:nth-child(6) { animation-delay: 0.6s; }
+.animate-fade-in-stagger > *:nth-child(1) {
+  animation-delay: 0.1s;
+}
+.animate-fade-in-stagger > *:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.animate-fade-in-stagger > *:nth-child(3) {
+  animation-delay: 0.3s;
+}
+.animate-fade-in-stagger > *:nth-child(4) {
+  animation-delay: 0.4s;
+}
+.animate-fade-in-stagger > *:nth-child(5) {
+  animation-delay: 0.5s;
+}
+.animate-fade-in-stagger > *:nth-child(6) {
+  animation-delay: 0.6s;
+}
 
 @keyframes fade-in-up {
   to {
@@ -217,7 +234,9 @@
 
 /* Interactive Hover Effects */
 .hover-lift {
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
 }
 
 .hover-lift:hover {
@@ -283,7 +302,9 @@
 .fade-in-on-scroll {
   opacity: 0;
   transform: translateY(30px);
-  transition: opacity 0.8s ease, transform 0.8s ease;
+  transition:
+    opacity 0.8s ease,
+    transform 0.8s ease;
 }
 
 .fade-in-on-scroll.visible {
@@ -294,7 +315,9 @@
 .slide-in-left-on-scroll {
   opacity: 0;
   transform: translateX(-50px);
-  transition: opacity 0.8s ease, transform 0.8s ease;
+  transition:
+    opacity 0.8s ease,
+    transform 0.8s ease;
 }
 
 .slide-in-left-on-scroll.visible {
@@ -305,7 +328,9 @@
 .slide-in-right-on-scroll {
   opacity: 0;
   transform: translateX(50px);
-  transition: opacity 0.8s ease, transform 0.8s ease;
+  transition:
+    opacity 0.8s ease,
+    transform 0.8s ease;
 }
 
 .slide-in-right-on-scroll.visible {
@@ -321,7 +346,7 @@
 }
 
 .btn-gradient-hover::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: -100%;

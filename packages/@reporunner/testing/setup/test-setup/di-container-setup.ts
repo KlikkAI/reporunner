@@ -104,7 +104,7 @@ clean();
 
 // Test data builders for creating test fixtures
 export class TestDataBuilder {
-  static createTenant(overrides?: any) {
+  static createTenant(_overrides?: any) {
     return {
       id: 'test-tenant-id',
       name: 'Test Tenant',

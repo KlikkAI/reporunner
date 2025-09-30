@@ -176,7 +176,9 @@ export class CursorTrackingService {
     const workflowId = this.socketToWorkflow.get(socketId);
     const userId = this.socketToUser.get(socketId);
 
-    if (!workflowId || !userId) return;
+    if (!(workflowId && userId)) {
+      return;
+    }
 
     const workflowUsers = this.workflowPresence.get(workflowId);
     if (workflowUsers) {
@@ -213,7 +215,9 @@ export class CursorTrackingService {
     const workflowId = this.socketToWorkflow.get(socketId);
     const userId = this.socketToUser.get(socketId);
 
-    if (!workflowId || !userId) return;
+    if (!(workflowId && userId)) {
+      return;
+    }
 
     const workflowUsers = this.workflowPresence.get(workflowId);
     const userPresence = workflowUsers?.get(userId);
@@ -252,7 +256,9 @@ export class CursorTrackingService {
     const workflowId = this.socketToWorkflow.get(socketId);
     const userId = this.socketToUser.get(socketId);
 
-    if (!workflowId || !userId) return;
+    if (!(workflowId && userId)) {
+      return;
+    }
 
     const workflowUsers = this.workflowPresence.get(workflowId);
     const userPresence = workflowUsers?.get(userId);
@@ -290,7 +296,9 @@ export class CursorTrackingService {
     const workflowId = this.socketToWorkflow.get(socketId);
     const userId = this.socketToUser.get(socketId);
 
-    if (!workflowId || !userId) return;
+    if (!(workflowId && userId)) {
+      return;
+    }
 
     const workflowUsers = this.workflowPresence.get(workflowId);
     const userPresence = workflowUsers?.get(userId);
@@ -374,7 +382,7 @@ export class CursorTrackingService {
         statusCounts: { active: 0, idle: 0, away: 0 },
         totalSessionTime: 0,
         mostActiveUser: null as string | null,
-        mostActiveScore: Infinity,
+        mostActiveScore: Number.POSITIVE_INFINITY,
       }
     );
 
@@ -392,7 +400,9 @@ export class CursorTrackingService {
    * Setup Socket.IO event handlers
    */
   private setupEventHandlers(): void {
-    if (!this.io) return;
+    if (!this.io) {
+      return;
+    }
 
     this.io.on('connection', (socket) => {
       // Join workflow presence
@@ -470,7 +480,9 @@ export class CursorTrackingService {
     event: PresenceEvent,
     excludeSocketId?: string
   ): void {
-    if (!this.io) return;
+    if (!this.io) {
+      return;
+    }
 
     const room = `workflow-${workflowId}`;
     if (excludeSocketId) {

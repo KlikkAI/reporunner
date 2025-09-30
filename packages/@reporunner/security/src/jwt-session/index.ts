@@ -8,7 +8,11 @@ export interface JWTSessionManager {
 
   // Additional methods used by auth.middleware.ts - reusing the same interface
   extractTokenFromHeader(authorization: string): string | null;
-  refreshAccessToken(refreshToken: string, ipAddress?: string, userAgent?: string): Promise<{ accessToken: string; refreshToken: string }>;
+  refreshAccessToken(
+    refreshToken: string,
+    ipAddress?: string,
+    userAgent?: string
+  ): Promise<{ accessToken: string; refreshToken: string }>;
   revokeAllUserTokens(userId: string): Promise<void>;
   revokeSession(sessionId: string): Promise<void>;
   getUserSessions(userId: string): any[];

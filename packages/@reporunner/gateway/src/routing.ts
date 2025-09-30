@@ -1,5 +1,3 @@
-import { Route as _Route } from './index';
-
 export interface RouteConfig {
   path: string;
   method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
@@ -36,22 +34,22 @@ export const defaultRoutes: RouteConfig[] = [
     path: '/health',
     method: 'GET',
     handler: 'healthCheck',
-    auth: false
+    auth: false,
   },
   {
     path: '/api/v1/*',
     method: 'GET',
     handler: 'apiHandler',
     middleware: ['cors', 'rateLimit'],
-    auth: true
-  }
+    auth: true,
+  },
 ];
 
 export function createRouter(): Router {
   const router = new Router();
 
   // Register default routes
-  defaultRoutes.forEach(route => {
+  defaultRoutes.forEach((route) => {
     router.registerRoute(route);
   });
 

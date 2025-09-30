@@ -7,10 +7,8 @@ export class RoleService {
       return false;
     }
 
-    return requiredRoles.every(role => 
-      Array.isArray(user.roles) 
-        ? user.roles.includes(role)
-        : user.roles === role
+    return requiredRoles.every((role) =>
+      Array.isArray(user.roles) ? user.roles.includes(role) : user.roles === role
     );
   }
 
@@ -22,7 +20,7 @@ export class RoleService {
       return false;
     }
 
-    return requiredPermissions.every(permission =>
+    return requiredPermissions.every((permission) =>
       Array.isArray(user.permissions)
         ? user.permissions.includes(permission)
         : user.permissions === permission
@@ -33,7 +31,7 @@ export class RoleService {
    * Check if user owns a resource
    */
   public async checkResourceOwnership(user: any, resourceId: string): Promise<boolean> {
-    if (!user || !resourceId) {
+    if (!(user && resourceId)) {
       return false;
     }
 
@@ -44,9 +42,11 @@ export class RoleService {
     // 4. Consider resource-specific rules
 
     // Example implementation:
-    return await this.checkDirectOwnership(user.id, resourceId) ||
-           await this.checkTeamOwnership(user.id, resourceId) ||
-           await this.checkOrganizationOwnership(user.id, resourceId);
+    return (
+      (await this.checkDirectOwnership(user.id, resourceId)) ||
+      (await this.checkTeamOwnership(user.id, resourceId)) ||
+      (await this.checkOrganizationOwnership(user.id, resourceId))
+    );
   }
 
   /**

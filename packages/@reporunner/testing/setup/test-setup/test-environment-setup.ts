@@ -1,7 +1,6 @@
 import 'reflect-metadata';
-import { container, TYPES } from '@reporunner/shared/di/container';
+import type { EventEmitter } from 'node:events';
 import { logger } from '@reporunner/shared/utils/logger';
-import type { EventEmitter } from 'events';
 import Redis from 'ioredis-mock';
 import { type Db, MongoClient } from 'mongodb';
 import { MongoMemoryServer } from 'mongodb-memory-server';

@@ -7,10 +7,10 @@
  * Target: Replace 25+ duplicate property renderer files
  */
 
-import React, { useState, useCallback, useMemo } from 'react';
-import type { ReactNode } from 'react';
-import { z } from 'zod';
 import { Logger } from '@reporunner/core';
+import type { ReactNode } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
+import type { z } from 'zod';
 
 const logger = new Logger('PropertyRendererFactory');
 
@@ -32,12 +32,34 @@ export interface PropertyRendererConfig {
 }
 
 export type PropertyType =
-  | 'text' | 'email' | 'password' | 'number' | 'tel' | 'url'
-  | 'textarea' | 'select' | 'multiselect' | 'checkbox' | 'radio' | 'switch'
-  | 'date' | 'datetime' | 'time' | 'color' | 'file' | 'range'
-  | 'json' | 'code' | 'markdown' | 'richtext'
-  | 'collection' | 'fixedcollection' | 'keyvalue'
-  | 'credentials' | 'expression' | 'resource'
+  | 'text'
+  | 'email'
+  | 'password'
+  | 'number'
+  | 'tel'
+  | 'url'
+  | 'textarea'
+  | 'select'
+  | 'multiselect'
+  | 'checkbox'
+  | 'radio'
+  | 'switch'
+  | 'date'
+  | 'datetime'
+  | 'time'
+  | 'color'
+  | 'file'
+  | 'range'
+  | 'json'
+  | 'code'
+  | 'markdown'
+  | 'richtext'
+  | 'collection'
+  | 'fixedcollection'
+  | 'keyvalue'
+  | 'credentials'
+  | 'expression'
+  | 'resource'
   | 'custom';
 
 export interface PropertyOption {
@@ -110,41 +132,41 @@ export class PropertyRendererFactory {
    * Register a property renderer component
    */
   static registerRenderer(type: PropertyType, component: React.ComponentType<any>) {
-    this.rendererRegistry.set(type, component);
+    PropertyRendererFactory.rendererRegistry.set(type, component);
   }
 
   /**
    * Register a custom validator
    */
   static registerValidator(name: string, validator: Function) {
-    this.validatorRegistry.set(name, validator);
+    PropertyRendererFactory.validatorRegistry.set(name, validator);
   }
 
   /**
    * Register a value transformer
    */
   static registerTransformer(name: string, transformer: Function) {
-    this.transformerRegistry.set(name, transformer);
+    PropertyRendererFactory.transformerRegistry.set(name, transformer);
   }
 
   /**
    * Create a property renderer from configuration
    */
   static createRenderer(config: PropertyRendererConfig, context: PropertyContext): ReactNode {
-    const Renderer = this.rendererRegistry.get(config.type);
+    const Renderer = PropertyRendererFactory.rendererRegistry.get(config.type);
 
     if (!Renderer) {
       logger.warn('Property renderer not found', { type: config.type, configId: config.id });
-      return this.createFallbackRenderer(config, context);
+      return PropertyRendererFactory.createFallbackRenderer(config, context);
     }
 
     // Check conditional rendering
-    if (!this.shouldRender(config.conditional, context)) {
+    if (!PropertyRendererFactory.shouldRender(config.conditional, context)) {
       return null;
     }
 
     // Build props
-    const props = this.buildRendererProps(config, context);
+    const props = PropertyRendererFactory.buildRendererProps(config, context);
 
     return React.createElement(Renderer, props);
   }
@@ -171,7 +193,9 @@ export class PropertyRendererFactory {
     configs: PropertyRendererConfig[],
     context: PropertyContext
   ): ReactNode[] {
-    return configs.map(config => this.createRenderer(config, context)).filter(Boolean);
+    return configs
+      .map((config) => PropertyRendererFactory.createRenderer(config, context))
+      .filter(Boolean);
   }
 
   /**
@@ -182,7 +206,11 @@ export class PropertyRendererFactory {
 
     if (schema.properties) {
       Object.entries(schema.properties).forEach(([key, propSchema]: [string, any]) => {
-        const config = this.convertSchemaProperty(key, propSchema, schema.required?.includes(key));
+        const config = PropertyRendererFactory.convertSchemaProperty(
+          key,
+          propSchema,
+          schema.required?.includes(key)
+        );
         properties.push(config);
       });
     }
@@ -193,7 +221,7 @@ export class PropertyRendererFactory {
   /**
    * Generate configuration from Zod schema
    */
-  static fromZodSchema(schema: z.ZodSchema): PropertyRendererConfig[] {
+  static fromZodSchema(_schema: z.ZodSchema): PropertyRendererConfig[] {
     // This would parse Zod schema and convert to configurations
     // Implementation would depend on Zod schema introspection
     throw new Error('Zod schema conversion not yet implemented');
@@ -215,8 +243,8 @@ export class PropertyRendererFactory {
       label: config.label,
       description: config.description,
       placeholder: config.placeholder,
-      required: this.isRequired(config, context),
-      disabled: this.isDisabled(config, context),
+      required: PropertyRendererFactory.isRequired(config, context),
+      disabled: PropertyRendererFactory.isDisabled(config, context),
       value,
       error: isTouched ? error : undefined,
       options: config.options,
@@ -241,7 +269,9 @@ export class PropertyRendererFactory {
    * Check if property should render based on conditional configuration
    */
   private static shouldRender(conditional?: ConditionalConfig, context?: PropertyContext): boolean {
-    if (!conditional || !context) return true;
+    if (!(conditional && context)) {
+      return true;
+    }
 
     const { formData } = context;
 
@@ -250,7 +280,9 @@ export class PropertyRendererFactory {
       const shouldShow = Object.entries(conditional.showWhen).some(([field, values]) =>
         values.includes(formData[field])
       );
-      if (!shouldShow) return false;
+      if (!shouldShow) {
+        return false;
+      }
     }
 
     // Check hide conditions
@@ -258,7 +290,9 @@ export class PropertyRendererFactory {
       const shouldHide = Object.entries(conditional.hideWhen).some(([field, values]) =>
         values.includes(formData[field])
       );
-      if (shouldHide) return false;
+      if (shouldHide) {
+        return false;
+      }
     }
 
     return true;
@@ -268,7 +302,9 @@ export class PropertyRendererFactory {
    * Check if property is required based on conditional configuration
    */
   private static isRequired(config: PropertyRendererConfig, context: PropertyContext): boolean {
-    if (!config.conditional?.requiredWhen) return config.required || false;
+    if (!config.conditional?.requiredWhen) {
+      return config.required;
+    }
 
     const { formData } = context;
     return Object.entries(config.conditional.requiredWhen).some(([field, values]) =>
@@ -280,8 +316,12 @@ export class PropertyRendererFactory {
    * Check if property is disabled based on conditional configuration
    */
   private static isDisabled(config: PropertyRendererConfig, context: PropertyContext): boolean {
-    if (config.disabled) return true;
-    if (!config.conditional?.disableWhen) return false;
+    if (config.disabled) {
+      return true;
+    }
+    if (!config.conditional?.disableWhen) {
+      return false;
+    }
 
     const { formData } = context;
     return Object.entries(config.conditional.disableWhen).some(([field, values]) =>
@@ -302,13 +342,21 @@ export class PropertyRendererFactory {
     // Map JSON schema types to property types
     switch (propSchema.type) {
       case 'string':
-        if (propSchema.format === 'email') type = 'email';
-        else if (propSchema.format === 'password') type = 'password';
-        else if (propSchema.format === 'url') type = 'url';
-        else if (propSchema.format === 'date') type = 'date';
-        else if (propSchema.format === 'date-time') type = 'datetime';
-        else if (propSchema.enum) type = 'select';
-        else type = 'text';
+        if (propSchema.format === 'email') {
+          type = 'email';
+        } else if (propSchema.format === 'password') {
+          type = 'password';
+        } else if (propSchema.format === 'url') {
+          type = 'url';
+        } else if (propSchema.format === 'date') {
+          type = 'date';
+        } else if (propSchema.format === 'date-time') {
+          type = 'datetime';
+        } else if (propSchema.enum) {
+          type = 'select';
+        } else {
+          type = 'text';
+        }
         break;
       case 'number':
       case 'integer':
@@ -337,7 +385,7 @@ export class PropertyRendererFactory {
         value,
       })),
       validation: {
-        rules: this.buildValidationRules(propSchema),
+        rules: PropertyRendererFactory.buildValidationRules(propSchema),
       },
     };
   }
@@ -378,20 +426,27 @@ export class PropertyRendererFactory {
   /**
    * Create fallback renderer for unknown types
    */
-  private static createFallbackRenderer(config: PropertyRendererConfig, context: PropertyContext): ReactNode {
-    return React.createElement('div', {
-      key: config.id,
-      className: 'property-fallback',
-    }, [
-      React.createElement('label', { key: 'label' }, config.label),
-      React.createElement('input', {
-        key: 'input',
-        type: 'text',
-        placeholder: config.placeholder,
-        value: context.formData[config.id] || '',
-        onChange: (e: any) => context.setFieldValue(config.id, e.target.value),
-      }),
-    ]);
+  private static createFallbackRenderer(
+    config: PropertyRendererConfig,
+    context: PropertyContext
+  ): ReactNode {
+    return React.createElement(
+      'div',
+      {
+        key: config.id,
+        className: 'property-fallback',
+      },
+      [
+        React.createElement('label', { key: 'label' }, config.label),
+        React.createElement('input', {
+          key: 'input',
+          type: 'text',
+          placeholder: config.placeholder,
+          value: context.formData[config.id] || '',
+          onChange: (e: any) => context.setFieldValue(config.id, e.target.value),
+        }),
+      ]
+    );
   }
 }
 
@@ -410,98 +465,117 @@ const UniversalPropertyForm: React.FC<{
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const setFieldValue = useCallback((name: string, value: any) => {
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   }, []);
 
   const setFieldError = useCallback((name: string, error: string) => {
-    setErrors(prev => ({ ...prev, [name]: error }));
+    setErrors((prev) => ({ ...prev, [name]: error }));
   }, []);
 
-  const validateField = useCallback(async (name: string) => {
-    const property = properties.find(p => p.id === name);
-    if (!property?.validation) return;
-
-    const value = formData[name];
-    let error = '';
-
-    // Run validation rules
-    if (property.validation.rules) {
-      for (const rule of property.validation.rules) {
-        switch (rule.type) {
-          case 'required':
-            if (!value && property.required) {
-              error = rule.message;
-            }
-            break;
-          case 'min':
-            if (value && value.length < rule.value) {
-              error = rule.message;
-            }
-            break;
-          case 'max':
-            if (value && value.length > rule.value) {
-              error = rule.message;
-            }
-            break;
-          case 'pattern':
-            if (value && !new RegExp(rule.value).test(value)) {
-              error = rule.message;
-            }
-            break;
-        }
-        if (error) break;
+  const validateField = useCallback(
+    async (name: string) => {
+      const property = properties.find((p) => p.id === name);
+      if (!property?.validation) {
+        return;
       }
-    }
 
-    // Run custom validator
-    if (!error && property.validation.customValidator) {
-      error = await property.validation.customValidator(value) || '';
-    }
+      const value = formData[name];
+      let error = '';
 
-    setFieldError(name, error);
-    setTouched(prev => ({ ...prev, [name]: true }));
-  }, [formData, properties, setFieldError]);
+      // Run validation rules
+      if (property.validation.rules) {
+        for (const rule of property.validation.rules) {
+          switch (rule.type) {
+            case 'required':
+              if (!value && property.required) {
+                error = rule.message;
+              }
+              break;
+            case 'min':
+              if (value && value.length < rule.value) {
+                error = rule.message;
+              }
+              break;
+            case 'max':
+              if (value && value.length > rule.value) {
+                error = rule.message;
+              }
+              break;
+            case 'pattern':
+              if (value && !new RegExp(rule.value).test(value)) {
+                error = rule.message;
+              }
+              break;
+          }
+          if (error) {
+            break;
+          }
+        }
+      }
 
-  const context: PropertyContext = useMemo(() => ({
-    formData,
-    errors,
-    touched,
-    isSubmitting,
-    setFieldValue,
-    setFieldError,
-    validateField,
-  }), [formData, errors, touched, isSubmitting, setFieldValue, setFieldError, validateField]);
+      // Run custom validator
+      if (!error && property.validation.customValidator) {
+        error = (await property.validation.customValidator(value)) || '';
+      }
 
-  const handleSubmit = useCallback(async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
+      setFieldError(name, error);
+      setTouched((prev) => ({ ...prev, [name]: true }));
+    },
+    [formData, properties, setFieldError]
+  );
 
-    // Validate all fields
-    await Promise.all(properties.map(p => validateField(p.id)));
+  const context: PropertyContext = useMemo(
+    () => ({
+      formData,
+      errors,
+      touched,
+      isSubmitting,
+      setFieldValue,
+      setFieldError,
+      validateField,
+    }),
+    [formData, errors, touched, isSubmitting, setFieldValue, setFieldError, validateField]
+  );
 
-    // Check if there are any errors
-    const hasErrors = Object.values(errors).some(error => error);
-    if (!hasErrors && onSubmit) {
-      onSubmit(formData);
-    }
+  const handleSubmit = useCallback(
+    async (e: React.FormEvent) => {
+      e.preventDefault();
+      setIsSubmitting(true);
 
-    setIsSubmitting(false);
-  }, [properties, validateField, errors, formData, onSubmit]);
+      // Validate all fields
+      await Promise.all(properties.map((p) => validateField(p.id)));
 
-  return React.createElement('form', {
-    className: `universal-form layout-${layout}`,
-    onSubmit: handleSubmit,
-  }, [
-    ...properties.map(property =>
-      PropertyRendererFactory.createRenderer(property, context)
-    ),
-    React.createElement('button', {
-      key: 'submit',
-      type: 'submit',
-      disabled: isSubmitting,
-      className: 'submit-button',
-    }, isSubmitting ? 'Submitting...' : 'Submit'),
-  ]);
+      // Check if there are any errors
+      const hasErrors = Object.values(errors).some((error) => error);
+      if (!hasErrors && onSubmit) {
+        onSubmit(formData);
+      }
+
+      setIsSubmitting(false);
+    },
+    [properties, validateField, errors, formData, onSubmit]
+  );
+
+  return React.createElement(
+    'form',
+    {
+      className: `universal-form layout-${layout}`,
+      onSubmit: handleSubmit,
+    },
+    [
+      ...properties.map((property) => PropertyRendererFactory.createRenderer(property, context)),
+      React.createElement(
+        'button',
+        {
+          key: 'submit',
+          type: 'submit',
+          disabled: isSubmitting,
+          className: 'submit-button',
+        },
+        isSubmitting ? 'Submitting...' : 'Submit'
+      ),
+    ]
+  );
 };
 
 export default PropertyRendererFactory;

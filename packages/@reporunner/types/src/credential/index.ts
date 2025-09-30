@@ -2,7 +2,7 @@
  * Credential Types - Authentication and API credentials
  */
 
-import type { ID, Timestamp, BaseEntity } from '../common';
+import type { BaseEntity, ID, Timestamp } from '../common';
 
 /**
  * Credential type
@@ -19,11 +19,7 @@ export type CredentialType =
 /**
  * OAuth2 grant type
  */
-export type OAuth2GrantType =
-  | 'authorizationCode'
-  | 'clientCredentials'
-  | 'password'
-  | 'implicit';
+export type OAuth2GrantType = 'authorizationCode' | 'clientCredentials' | 'password' | 'implicit';
 
 /**
  * Credential data - varies by type

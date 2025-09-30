@@ -3,11 +3,8 @@
  * Advanced displayOptions evaluation matching n8n's complex conditional logic
  */
 
-import type React from 'react';
-import { useCallback, useMemo } from 'react';
 import type { INodeProperty } from '@/core/nodes/types';
 import type { PropertyRendererProps } from './PropertyRenderers';
-import { PropertyRenderer } from './PropertyRenderers';
 
 // Define display options interface locally
 interface INodePropertyDisplayOptions {
@@ -251,10 +248,18 @@ class DisplayOptionsEvaluator {
 
   // Helper: Check if value is empty
   private isEmpty(value: any): boolean {
-    if (value === null || value === undefined) return true;
-    if (typeof value === 'string') return value.trim() === '';
-    if (Array.isArray(value)) return value.length === 0;
-    if (typeof value === 'object') return Object.keys(value).length === 0;
+    if (value === null || value === undefined) {
+      return true;
+    }
+    if (typeof value === 'string') {
+      return value.trim() === '';
+    }
+    if (Array.isArray(value)) {
+      return value.length === 0;
+    }
+    if (typeof value === 'object') {
+      return Object.keys(value).length === 0;
+    }
     return false;
   }
 
@@ -303,7 +308,7 @@ class PropertyDependencyTracker {
   }
 
   // Extract dependencies from display options
-  extractDependencies(propertyName: string, displayOptions: EnhancedDisplayOptions): string[] {
+  extractDependencies(_propertyName: string, displayOptions: EnhancedDisplayOptions): string[] {
     const dependencies = new Set<string>();
 
     // Extract from show/hide conditions
@@ -331,7 +336,7 @@ class PropertyDependencyTracker {
 
     return Array.from(dependencies);
   }
-};
+}
 
 export { DisplayOptionsEvaluator, PropertyDependencyTracker };
 

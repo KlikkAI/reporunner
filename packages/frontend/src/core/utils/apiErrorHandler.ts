@@ -1,5 +1,5 @@
-import type { AxiosError } from 'axios';
 import { Logger } from '@reporunner/core';
+import type { AxiosError } from 'axios';
 
 const logger = new Logger('ApiErrorHandler');
 
@@ -32,12 +32,8 @@ export class ApiErrorHandler {
   /**
    * Process and standardize API errors from various sources
    */
-  static handleError(
-    error: any,
-    context?: string,
-    options?: ApiErrorHandlerOptions
-  ): ApiError {
-    const opts = { ...this.defaultOptions, ...options };
+  static handleError(error: any, context?: string, options?: ApiErrorHandlerOptions): ApiError {
+    const opts = { ...ApiErrorHandler.defaultOptions, ...options };
 
     const apiError: ApiError = {
       message: opts.defaultMessage!,
@@ -45,7 +41,7 @@ export class ApiErrorHandler {
     };
 
     // Handle Axios errors
-    if (this.isAxiosError(error)) {
+    if (ApiErrorHandler.isAxiosError(error)) {
       apiError.statusCode = error.response?.status;
       apiError.code = error.code;
 
@@ -57,7 +53,7 @@ export class ApiErrorHandler {
           responseData.message ||
           responseData.error ||
           responseData.detail ||
-          this.getStatusMessage(error.response.status) ||
+          ApiErrorHandler.getStatusMessage(error.response.status) ||
           opts.defaultMessage!;
 
         apiError.details = responseData.details || responseData.errors;
@@ -103,7 +99,7 @@ export class ApiErrorHandler {
 
     // Show toast notification if enabled
     if (opts.showToast) {
-      this.showErrorToast(apiError);
+      ApiErrorHandler.showErrorToast(apiError);
     }
 
     return apiError;
@@ -112,12 +108,12 @@ export class ApiErrorHandler {
   /**
    * Create a standardized error response for API methods
    */
-  static createErrorResponse<T = any>(
+  static createErrorResponse<_T = any>(
     error: any,
     context?: string,
     options?: ApiErrorHandlerOptions
   ): { success: false; error: ApiError; data: null } {
-    const apiError = this.handleError(error, context, options);
+    const apiError = ApiErrorHandler.handleError(error, context, options);
 
     return {
       success: false,
@@ -144,12 +140,14 @@ export class ApiErrorHandler {
     operation: () => Promise<T>,
     context?: string,
     options?: ApiErrorHandlerOptions
-  ): Promise<{ success: true; data: T; error: null } | { success: false; error: ApiError; data: null }> {
+  ): Promise<
+    { success: true; data: T; error: null } | { success: false; error: ApiError; data: null }
+  > {
     try {
       const data = await operation();
-      return this.createSuccessResponse(data);
+      return ApiErrorHandler.createSuccessResponse(data);
     } catch (error) {
-      return this.createErrorResponse(error, context, options);
+      return ApiErrorHandler.createErrorResponse(error, context, options);
     }
   }
 
@@ -171,7 +169,7 @@ export class ApiErrorHandler {
         lastError = error;
 
         // Don't retry on client errors (4xx) except 429 (rate limit)
-        if (this.isAxiosError(error) && error.response?.status) {
+        if (ApiErrorHandler.isAxiosError(error) && error.response?.status) {
           const status = error.response.status;
           if (status >= 400 && status < 500 && status !== 429) {
             throw error;
@@ -184,8 +182,8 @@ export class ApiErrorHandler {
         }
 
         // Exponential backoff delay
-        const delay = baseDelay * Math.pow(2, attempt - 1);
-        await new Promise(resolve => setTimeout(resolve, delay));
+        const delay = baseDelay * 2 ** (attempt - 1);
+        await new Promise((resolve) => setTimeout(resolve, delay));
 
         logger.warn('API retry attempt', { attempt, maxRetries, context, error });
       }
@@ -236,10 +234,10 @@ export class ApiErrorHandler {
  * Decorator for API service methods to automatically handle errors
  */
 export function handleApiErrors(context?: string, options?: ApiErrorHandlerOptions) {
-  return function(target: any, propertyKey: string, descriptor: PropertyDescriptor) {
+  return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
     const originalMethod = descriptor.value;
 
-    descriptor.value = async function(...args: any[]) {
+    descriptor.value = async function (...args: any[]) {
       try {
         const result = await originalMethod.apply(this, args);
         return ApiErrorHandler.createSuccessResponse(result);

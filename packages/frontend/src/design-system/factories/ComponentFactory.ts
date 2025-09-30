@@ -7,9 +7,9 @@
  * Target: Eliminate 1,500+ lines of duplicated component patterns
  */
 
-import React from 'react';
-import type { ComponentType, ReactNode } from 'react';
 import { Logger } from '@reporunner/core';
+import type { ComponentType, ReactNode } from 'react';
+import React from 'react';
 
 const logger = new Logger('ComponentFactory');
 
@@ -62,7 +62,19 @@ export interface FormConfig {
 
 export interface FieldConfig {
   name: string;
-  type: 'text' | 'email' | 'password' | 'number' | 'select' | 'multiselect' | 'checkbox' | 'radio' | 'textarea' | 'date' | 'file' | 'json';
+  type:
+    | 'text'
+    | 'email'
+    | 'password'
+    | 'number'
+    | 'select'
+    | 'multiselect'
+    | 'checkbox'
+    | 'radio'
+    | 'textarea'
+    | 'date'
+    | 'file'
+    | 'json';
   label: string;
   placeholder?: string;
   required?: boolean;
@@ -125,45 +137,50 @@ export class ComponentFactory {
    * Register a component type for factory use
    */
   static registerComponent(type: string, component: ComponentType<any>) {
-    this.componentRegistry.set(type, component);
+    ComponentFactory.componentRegistry.set(type, component);
   }
 
   /**
    * Register a layout configuration
    */
   static registerLayout(name: string, layoutFn: Function) {
-    this.layoutRegistry.set(name, layoutFn);
+    ComponentFactory.layoutRegistry.set(name, layoutFn);
   }
 
   /**
    * Register a theme configuration
    */
   static registerTheme(name: string, theme: any) {
-    this.themeRegistry.set(name, theme);
+    ComponentFactory.themeRegistry.set(name, theme);
   }
 
   /**
    * Create a component from configuration
    */
   static create(config: ComponentConfig, context?: any): ReactNode {
-    const Component = this.componentRegistry.get(config.type);
+    const Component = ComponentFactory.componentRegistry.get(config.type);
 
     if (!Component) {
-      logger.warn('Component type not found in registry', { type: config.type, configId: config.id });
+      logger.warn('Component type not found in registry', {
+        type: config.type,
+        configId: config.id,
+      });
       return null;
     }
 
     // Process conditional logic
-    const shouldRender = this.evaluateConditions(config.conditions, context);
-    if (!shouldRender) return null;
+    const shouldRender = ComponentFactory.evaluateConditions(config.conditions, context);
+    if (!shouldRender) {
+      return null;
+    }
 
     // Build props from configuration
-    const props = this.buildProps(config, context);
+    const props = ComponentFactory.buildProps(config, context);
 
     // Handle children
-    const children = config.children?.map((childConfig, index) =>
-      this.create(childConfig, context)
-    ).filter(Boolean);
+    const children = config.children
+      ?.map((childConfig, _index) => ComponentFactory.create(childConfig, context))
+      .filter(Boolean);
 
     return React.createElement(Component, { key: config.id, ...props }, children);
   }
@@ -176,16 +193,16 @@ export class ComponentFactory {
       id: 'generated-form',
       type: 'form',
       form: config,
-      children: config.fields.map(field => this.createField(field, context))
+      children: config.fields.map((field) => ComponentFactory.createField(field, context)),
     };
 
-    return this.create(formConfig, context);
+    return ComponentFactory.create(formConfig, context);
   }
 
   /**
    * Create a field from configuration
    */
-  static createField(config: FieldConfig, context?: any): ComponentConfig {
+  static createField(config: FieldConfig, _context?: any): ComponentConfig {
     return {
       id: `field-${config.name}`,
       type: 'field',
@@ -205,13 +222,16 @@ export class ComponentFactory {
   /**
    * Create a page layout from configuration
    */
-  static createPage(config: {
-    title: string;
-    subtitle?: string;
-    sections: ComponentConfig[];
-    actions?: any[];
-    theme?: string;
-  }, context?: any): ReactNode {
+  static createPage(
+    config: {
+      title: string;
+      subtitle?: string;
+      sections: ComponentConfig[];
+      actions?: any[];
+      theme?: string;
+    },
+    context?: any
+  ): ReactNode {
     const pageConfig: ComponentConfig = {
       id: 'generated-page',
       type: 'page',
@@ -226,17 +246,20 @@ export class ComponentFactory {
       children: config.sections,
     };
 
-    return this.create(pageConfig, context);
+    return ComponentFactory.create(pageConfig, context);
   }
 
   /**
    * Create a data visualization from configuration
    */
-  static createDataViz(config: {
-    data: any;
-    type: 'table' | 'chart' | 'schema' | 'json';
-    options?: any;
-  }, context?: any): ReactNode {
+  static createDataViz(
+    config: {
+      data: any;
+      type: 'table' | 'chart' | 'schema' | 'json';
+      options?: any;
+    },
+    context?: any
+  ): ReactNode {
     const vizConfig: ComponentConfig = {
       id: 'generated-dataviz',
       type: 'datavisualization',
@@ -250,16 +273,18 @@ export class ComponentFactory {
       },
     };
 
-    return this.create(vizConfig, context);
+    return ComponentFactory.create(vizConfig, context);
   }
 
   /**
    * Evaluate conditional rules
    */
   private static evaluateConditions(conditions?: ConditionalRule[], context?: any): boolean {
-    if (!conditions?.length) return true;
+    if (!conditions?.length) {
+      return true;
+    }
 
-    return conditions.every(rule => {
+    return conditions.every((rule) => {
       try {
         // Safe evaluation of condition string
         const conditionFn = new Function('context', `return ${rule.condition}`);
@@ -279,7 +304,7 @@ export class ComponentFactory {
 
     // Add styling
     if (config.styling) {
-      props.className = this.buildClassName(config.className, config.styling);
+      props.className = ComponentFactory.buildClassName(config.className, config.styling);
       props.theme = config.styling.theme;
       props.variant = config.styling.variant;
       props.size = config.styling.size;
@@ -297,15 +322,16 @@ export class ComponentFactory {
 
     // Add data props
     if (config.data) {
-      props.data = this.resolveData(config.data, context);
+      props.data = ComponentFactory.resolveData(config.data, context);
     }
 
     // Add event handlers
     if (config.events) {
-      config.events.forEach(event => {
+      config.events.forEach((event) => {
         props[`on${event.event.charAt(0).toUpperCase()}${event.event.slice(1)}`] =
-          typeof event.handler === 'function' ? event.handler :
-          new Function('event', 'context', event.handler as string);
+          typeof event.handler === 'function'
+            ? event.handler
+            : new Function('event', 'context', event.handler as string);
       });
     }
 
@@ -319,10 +345,18 @@ export class ComponentFactory {
     const classes = [baseClassName].filter(Boolean);
 
     if (styling) {
-      if (styling.variant) classes.push(`variant-${styling.variant}`);
-      if (styling.size) classes.push(`size-${styling.size}`);
-      if (styling.color) classes.push(`color-${styling.color}`);
-      if (styling.customClasses) classes.push(...styling.customClasses);
+      if (styling.variant) {
+        classes.push(`variant-${styling.variant}`);
+      }
+      if (styling.size) {
+        classes.push(`size-${styling.size}`);
+      }
+      if (styling.color) {
+        classes.push(`color-${styling.color}`);
+      }
+      if (styling.customClasses) {
+        classes.push(...styling.customClasses);
+      }
     }
 
     return classes.join(' ');
@@ -376,7 +410,9 @@ export class ComponentFactory {
       }),
 
       // Stats Dashboard Template
-      statsDashboard: (stats: Array<{ title: string; value: any; icon?: string }>): ComponentConfig => ({
+      statsDashboard: (
+        stats: Array<{ title: string; value: any; icon?: string }>
+      ): ComponentConfig => ({
         id: 'stats-dashboard',
         type: 'container',
         layout: {
@@ -393,7 +429,11 @@ export class ComponentFactory {
       }),
 
       // Modal Template
-      modal: (title: string, content: ComponentConfig[], actions?: ComponentConfig[]): ComponentConfig => ({
+      modal: (
+        title: string,
+        content: ComponentConfig[],
+        actions?: ComponentConfig[]
+      ): ComponentConfig => ({
         id: 'modal',
         type: 'modal',
         props: {
@@ -405,12 +445,16 @@ export class ComponentFactory {
             type: 'container',
             children: content,
           },
-          ...(actions ? [{
-            id: 'modal-actions',
-            type: 'container',
-            className: 'modal-actions',
-            children: actions,
-          }] : []),
+          ...(actions
+            ? [
+                {
+                  id: 'modal-actions',
+                  type: 'container',
+                  className: 'modal-actions',
+                  children: actions,
+                },
+              ]
+            : []),
         ],
       }),
 

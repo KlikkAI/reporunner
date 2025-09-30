@@ -1,6 +1,6 @@
 /**
  * Advanced Trigger System
- * 
+ *
  * Reuses existing infrastructure to provide advanced trigger capabilities
  */
 
@@ -84,7 +84,7 @@ class AdvancedTriggerSystem {
    */
   async executeTrigger(triggerId: string, data?: any): Promise<TriggerExecution> {
     const trigger = this.triggers.get(triggerId);
-    
+
     if (!trigger) {
       throw new Error(`Trigger not found: ${triggerId}`);
     }
@@ -106,7 +106,7 @@ class AdvancedTriggerSystem {
     try {
       // Notify listeners
       const listeners = this.listeners.get(triggerId) || [];
-      listeners.forEach(listener => listener(data));
+      listeners.forEach((listener) => listener(data));
 
       // Update execution status
       execution.status = 'completed';
@@ -117,7 +117,7 @@ class AdvancedTriggerSystem {
       execution.status = 'failed';
       execution.error = error instanceof Error ? error.message : 'Unknown error';
       this.executions.set(execution.id, execution);
-      
+
       throw error;
     }
   }
@@ -145,7 +145,7 @@ class AdvancedTriggerSystem {
    */
   getTriggerExecutions(triggerId: string): TriggerExecution[] {
     return Array.from(this.executions.values())
-      .filter(execution => execution.triggerId === triggerId)
+      .filter((execution) => execution.triggerId === triggerId)
       .sort((a, b) => b.timestamp.localeCompare(a.timestamp));
   }
 

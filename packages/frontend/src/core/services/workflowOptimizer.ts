@@ -343,8 +343,8 @@ export class WorkflowOptimizer {
 
     // Find nodes without error handling
     const nodesWithoutErrorHandling = nodes.filter((node) => {
-      return (
-        !node.parameters?.continueOnFail && !this.hasErrorHandlingDownstream(node, nodes, edges)
+      return !(
+        node.parameters?.continueOnFail || this.hasErrorHandlingDownstream(node, nodes, edges)
       );
     });
 
@@ -511,9 +511,15 @@ export class WorkflowOptimizer {
     branching: number
   ): 'simple' | 'moderate' | 'complex' | 'very_complex' {
     const score = nodes + edges * 0.5 + branching * 10;
-    if (score < 10) return 'simple';
-    if (score < 25) return 'moderate';
-    if (score < 50) return 'complex';
+    if (score < 10) {
+      return 'simple';
+    }
+    if (score < 25) {
+      return 'moderate';
+    }
+    if (score < 50) {
+      return 'complex';
+    }
     return 'very_complex';
   }
 
@@ -538,7 +544,9 @@ export class WorkflowOptimizer {
     const visited = new Set<string>();
 
     for (const node of nodes) {
-      if (visited.has(node.id)) continue;
+      if (visited.has(node.id)) {
+        continue;
+      }
 
       const independentNodes = this.findConnectedIndependentNodes(node, nodes, edges, visited);
       if (independentNodes.length > 0) {

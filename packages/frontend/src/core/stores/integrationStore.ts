@@ -70,7 +70,7 @@ export const useIntegrationStore = create<IntegrationState>((set) => ({
 
           const integrationsWithStatus = allIntegrations.map((integration: Integration) => ({
             ...integration,
-            isConnected: connectionStatuses[integration.id]?.connected || false,
+            isConnected: connectionStatuses[integration.id]?.connected,
             connectionConfig: connectionStatuses[integration.id]?.config,
           }));
 

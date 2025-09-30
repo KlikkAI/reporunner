@@ -113,7 +113,9 @@ export class LoopNode implements INodeType {
     for (let i = 0; i < iterations; i++) {
       if (mode === 'condition') {
         // Mock condition evaluation - in real implementation would evaluate expression
-        if (i >= 10) break; // Simple mock condition
+        if (i >= 10) {
+          break; // Simple mock condition
+        }
       }
 
       // Process data for this iteration

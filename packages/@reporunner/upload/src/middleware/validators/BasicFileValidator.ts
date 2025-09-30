@@ -1,10 +1,10 @@
-import { FileValidator, ValidationRule } from './FileValidator';
-import { UploadedFile } from '../types/UploadedFile';
-import { UploadOptions } from '../types/UploadOptions';
-import { UploadError } from '../errors/UploadError';
-import { createHash } from 'crypto';
-import { promises as fs } from 'fs';
+import { createHash } from 'node:crypto';
+import { promises as fs } from 'node:fs';
 import { fileTypeFromFile } from 'file-type';
+import { UploadError } from '../errors/UploadError';
+import type { UploadedFile } from '../types/UploadedFile';
+import type { UploadOptions } from '../types/UploadOptions';
+import type { FileValidator, ValidationRule } from './FileValidator';
 
 export class BasicFileValidator implements FileValidator {
   private options: Required<UploadOptions>;
@@ -23,13 +23,10 @@ export class BasicFileValidator implements FileValidator {
       hashFiles: false,
       hashAlgorithm: 'sha256',
       virusScan: false,
-      ...options
+      ...options,
     };
 
-    this.rules = new Set([
-      this.validateSize.bind(this),
-      this.validateType.bind(this)
-    ]);
+    this.rules = new Set([this.validateSize.bind(this), this.validateType.bind(this)]);
 
     // Add optional validations
     if (this.options.hashFiles) {
@@ -69,7 +66,7 @@ export class BasicFileValidator implements FileValidator {
     file.validationResults = {
       passed: true,
       errors: [],
-      warnings: []
+      warnings: [],
     };
   }
 
@@ -103,11 +100,7 @@ export class BasicFileValidator implements FileValidator {
     }
 
     if (stats.size > this.options.maxFileSize) {
-      throw UploadError.fileTooLarge(
-        file.originalname,
-        stats.size,
-        this.options.maxFileSize
-      );
+      throw UploadError.fileTooLarge(file.originalname, stats.size, this.options.maxFileSize);
     }
   }
 
@@ -138,7 +131,7 @@ export class BasicFileValidator implements FileValidator {
 
     // Check if type is allowed
     const allowed = this.options.allowedTypes;
-    const matches = allowed.some(type => this.matchMimeType(fileType.mime, type));
+    const matches = allowed.some((type) => this.matchMimeType(fileType.mime, type));
 
     if (!matches) {
       throw UploadError.invalidFileType(file.originalname, fileType.mime);
@@ -156,10 +149,7 @@ export class BasicFileValidator implements FileValidator {
     const actualHash = await this.computeHash(file.path);
 
     if (actualHash !== file.hash) {
-      throw new UploadError(
-        'VALIDATION_ERROR',
-        `File hash mismatch for ${file.originalname}`
-      );
+      throw new UploadError('VALIDATION_ERROR', `File hash mismatch for ${file.originalname}`);
     }
   }
 
@@ -172,7 +162,7 @@ export class BasicFileValidator implements FileValidator {
     file.virusScanned = true;
     file.virusScanResult = {
       clean: true,
-      timestamp: new Date()
+      timestamp: new Date(),
     };
   }
 
@@ -198,8 +188,6 @@ export class BasicFileValidator implements FileValidator {
    */
   private async computeHash(path: string): Promise<string> {
     const content = await fs.readFile(path);
-    return createHash(this.options.hashAlgorithm)
-      .update(content)
-      .digest('hex');
+    return createHash(this.options.hashAlgorithm).update(content).digest('hex');
   }
 }

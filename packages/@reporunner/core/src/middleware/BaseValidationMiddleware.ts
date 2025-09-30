@@ -1,5 +1,5 @@
-import { Request, Response, NextFunction } from 'express';
-import { ZodSchema, ZodError } from 'zod';
+import type { NextFunction, Request, Response } from 'express';
+import { ZodError, type ZodSchema } from 'zod';
 
 export interface ValidationMiddlewareOptions {
   abortEarly?: boolean;
@@ -42,10 +42,10 @@ export class BaseValidationMiddleware {
    */
   static validateBody(schema: ZodSchema, options: ValidationOptions = {}) {
     return (req: Request, res: Response, next: NextFunction): void => {
-      const result = this.validateData(req.body, schema, options);
+      const result = BaseValidationMiddleware.validateData(req.body, schema, options);
 
       if (!result.success) {
-        this.sendValidationError(res, result.errors || [], 'body');
+        BaseValidationMiddleware.sendValidationError(res, result.errors || [], 'body');
         return;
       }
 
@@ -59,10 +59,10 @@ export class BaseValidationMiddleware {
    */
   static validateQuery(schema: ZodSchema, options: ValidationOptions = {}) {
     return (req: Request, res: Response, next: NextFunction): void => {
-      const result = this.validateData(req.query, schema, options);
+      const result = BaseValidationMiddleware.validateData(req.query, schema, options);
 
       if (!result.success) {
-        this.sendValidationError(res, result.errors || [], 'query');
+        BaseValidationMiddleware.sendValidationError(res, result.errors || [], 'query');
         return;
       }
 
@@ -76,10 +76,10 @@ export class BaseValidationMiddleware {
    */
   static validateParams(schema: ZodSchema, options: ValidationOptions = {}) {
     return (req: Request, res: Response, next: NextFunction): void => {
-      const result = this.validateData(req.params, schema, options);
+      const result = BaseValidationMiddleware.validateData(req.params, schema, options);
 
       if (!result.success) {
-        this.sendValidationError(res, result.errors || [], 'params');
+        BaseValidationMiddleware.sendValidationError(res, result.errors || [], 'params');
         return;
       }
 
@@ -93,10 +93,10 @@ export class BaseValidationMiddleware {
    */
   static validateHeaders(schema: ZodSchema, options: ValidationOptions = {}) {
     return (req: Request, res: Response, next: NextFunction): void => {
-      const result = this.validateData(req.headers, schema, options);
+      const result = BaseValidationMiddleware.validateData(req.headers, schema, options);
 
       if (!result.success) {
-        this.sendValidationError(res, result.errors || [], 'headers');
+        BaseValidationMiddleware.sendValidationError(res, result.errors || [], 'headers');
         return;
       }
 
@@ -108,27 +108,34 @@ export class BaseValidationMiddleware {
   /**
    * Comprehensive validation middleware that validates multiple parts of the request
    */
-  static validateRequest(schemas: {
-    body?: ZodSchema;
-    query?: ZodSchema;
-    params?: ZodSchema;
-    headers?: ZodSchema;
-  }, options: ValidationOptions = {}) {
+  static validateRequest(
+    schemas: {
+      body?: ZodSchema;
+      query?: ZodSchema;
+      params?: ZodSchema;
+      headers?: ZodSchema;
+    },
+    options: ValidationOptions = {}
+  ) {
     return (req: Request, res: Response, next: NextFunction): void => {
       const allErrors: ValidationError[] = [];
 
       // Validate each part of the request
       for (const [part, schema] of Object.entries(schemas)) {
-        if (!schema) continue;
+        if (!schema) {
+          continue;
+        }
 
         const data = (req as any)[part];
-        const result = this.validateData(data, schema, options);
+        const result = BaseValidationMiddleware.validateData(data, schema, options);
 
         if (!result.success) {
-          allErrors.push(...(result.errors || []).map(error => ({
-            ...error,
-            field: `${part}.${error.field}`,
-          })));
+          allErrors.push(
+            ...(result.errors || []).map((error) => ({
+              ...error,
+              field: `${part}.${error.field}`,
+            }))
+          );
         } else {
           // Update the request with validated data
           if (part !== 'headers') {
@@ -138,7 +145,7 @@ export class BaseValidationMiddleware {
       }
 
       if (allErrors.length > 0) {
-        this.sendValidationError(res, allErrors, 'request');
+        BaseValidationMiddleware.sendValidationError(res, allErrors, 'request');
         return;
       }
 
@@ -176,7 +183,10 @@ export class BaseValidationMiddleware {
       };
     } catch (error) {
       if (error instanceof ZodError) {
-        const validationErrors = this.formatZodErrors(error, options.customErrorMessages);
+        const validationErrors = BaseValidationMiddleware.formatZodErrors(
+          error,
+          options.customErrorMessages
+        );
 
         if (options.onValidationError) {
           options.onValidationError(validationErrors);
@@ -191,11 +201,13 @@ export class BaseValidationMiddleware {
       // Handle non-Zod errors
       return {
         success: false,
-        errors: [{
-          field: 'unknown',
-          message: error instanceof Error ? error.message : 'Unknown validation error',
-          code: 'UNKNOWN_ERROR',
-        }],
+        errors: [
+          {
+            field: 'unknown',
+            message: error instanceof Error ? error.message : 'Unknown validation error',
+            code: 'UNKNOWN_ERROR',
+          },
+        ],
       };
     }
   }
@@ -273,10 +285,13 @@ export class BaseValidationMiddleware {
     const errorResponse = {
       success: false,
       message: `Validation failed for ${source}`,
-      errors: errors.reduce((acc, error) => {
-        acc[error.field] = error.message;
-        return acc;
-      }, {} as Record<string, string>),
+      errors: errors.reduce(
+        (acc, error) => {
+          acc[error.field] = error.message;
+          return acc;
+        },
+        {} as Record<string, string>
+      ),
       details: errors,
       timestamp: new Date().toISOString(),
     };
@@ -289,7 +304,7 @@ export class BaseValidationMiddleware {
    */
   static createValidator(schema: ZodSchema, options: ValidationOptions = {}) {
     return (data: any): ValidationResult => {
-      return this.validateData(data, schema, options);
+      return BaseValidationMiddleware.validateData(data, schema, options);
     };
   }
 
@@ -308,11 +323,13 @@ export class BaseValidationMiddleware {
         data: validatedData,
       };
     } catch (error) {
-      const validationErrors: ValidationError[] = [{
-        field: 'async_validation',
-        message: error instanceof Error ? error.message : 'Async validation failed',
-        code: 'ASYNC_VALIDATION_ERROR',
-      }];
+      const validationErrors: ValidationError[] = [
+        {
+          field: 'async_validation',
+          message: error instanceof Error ? error.message : 'Async validation failed',
+          code: 'ASYNC_VALIDATION_ERROR',
+        },
+      ];
 
       if (options.onValidationError) {
         options.onValidationError(validationErrors);

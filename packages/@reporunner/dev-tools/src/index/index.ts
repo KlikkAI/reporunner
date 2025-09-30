@@ -1,3 +1,3 @@
 export * from '../generators';
-export * from '../testing';
 export * from '../index';
+export * from '../testing';

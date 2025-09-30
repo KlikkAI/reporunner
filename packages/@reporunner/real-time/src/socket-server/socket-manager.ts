@@ -218,7 +218,9 @@ export class SocketManager {
     const workflowId = socket.data.workflowId;
     const session = this.sessions.get(sessionId);
 
-    if (!session || !workflowId) return;
+    if (!(session && workflowId)) {
+      return;
+    }
 
     // Update session cursor
     session.cursor = data;
@@ -240,7 +242,9 @@ export class SocketManager {
     const workflowId = socket.data.workflowId;
     const session = this.sessions.get(sessionId);
 
-    if (!session || !workflowId) return;
+    if (!(session && workflowId)) {
+      return;
+    }
 
     // Update session selection
     session.selection = data;
@@ -258,7 +262,9 @@ export class SocketManager {
     const workflowId = socket.data.workflowId;
     const user = socket.data.user as IJwtPayload;
 
-    if (!workflowId) return;
+    if (!workflowId) {
+      return;
+    }
 
     try {
       // Apply operational transform
@@ -289,7 +295,9 @@ export class SocketManager {
     const workflowId = socket.data.workflowId;
     const user = socket.data.user as IJwtPayload;
 
-    if (!workflowId) return;
+    if (!workflowId) {
+      return;
+    }
 
     // Broadcast node addition
     socket.to(`workflow:${workflowId}`).emit('node:added', {
@@ -303,7 +311,9 @@ export class SocketManager {
     const workflowId = socket.data.workflowId;
     const user = socket.data.user as IJwtPayload;
 
-    if (!workflowId) return;
+    if (!workflowId) {
+      return;
+    }
 
     // Check for conflicts
     const isLocked = this.checkNodeLock(workflowId, data.nodeId, user.sub);
@@ -324,7 +334,9 @@ export class SocketManager {
     const workflowId = socket.data.workflowId;
     const user = socket.data.user as IJwtPayload;
 
-    if (!workflowId) return;
+    if (!workflowId) {
+      return;
+    }
 
     socket.to(`workflow:${workflowId}`).emit('node:deleted', {
       ...data,
@@ -337,7 +349,9 @@ export class SocketManager {
     const workflowId = socket.data.workflowId;
     const user = socket.data.user as IJwtPayload;
 
-    if (!workflowId) return;
+    if (!workflowId) {
+      return;
+    }
 
     socket.to(`workflow:${workflowId}`).emit('node:moved', {
       ...data,
@@ -350,7 +364,9 @@ export class SocketManager {
     const workflowId = socket.data.workflowId;
     const user = socket.data.user as IJwtPayload;
 
-    if (!workflowId) return;
+    if (!workflowId) {
+      return;
+    }
 
     socket.to(`workflow:${workflowId}`).emit('edge:added', {
       ...data,
@@ -363,7 +379,9 @@ export class SocketManager {
     const workflowId = socket.data.workflowId;
     const user = socket.data.user as IJwtPayload;
 
-    if (!workflowId) return;
+    if (!workflowId) {
+      return;
+    }
 
     socket.to(`workflow:${workflowId}`).emit('edge:updated', {
       ...data,
@@ -376,7 +394,9 @@ export class SocketManager {
     const workflowId = socket.data.workflowId;
     const user = socket.data.user as IJwtPayload;
 
-    if (!workflowId) return;
+    if (!workflowId) {
+      return;
+    }
 
     socket.to(`workflow:${workflowId}`).emit('edge:deleted', {
       ...data,
@@ -389,7 +409,9 @@ export class SocketManager {
     const workflowId = socket.data.workflowId;
     const user = socket.data.user as IJwtPayload;
 
-    if (!workflowId) return;
+    if (!workflowId) {
+      return;
+    }
 
     const comment = {
       id: `comment-${Date.now()}`,
@@ -407,7 +429,9 @@ export class SocketManager {
     const workflowId = socket.data.workflowId;
     const user = socket.data.user as IJwtPayload;
 
-    if (!workflowId) return;
+    if (!workflowId) {
+      return;
+    }
 
     const reply = {
       id: `reply-${Date.now()}`,
@@ -424,7 +448,9 @@ export class SocketManager {
     const workflowId = socket.data.workflowId;
     const user = socket.data.user as IJwtPayload;
 
-    if (!workflowId) return;
+    if (!workflowId) {
+      return;
+    }
 
     this.io.to(`workflow:${workflowId}`).emit('comment:resolved', {
       ...data,
@@ -438,7 +464,9 @@ export class SocketManager {
     const user = socket.data.user as IJwtPayload;
     const sessionId = socket.data.sessionId;
 
-    if (!workflowId) return;
+    if (!workflowId) {
+      return;
+    }
 
     socket.to(`workflow:${workflowId}`).emit('typing:started', {
       ...data,
@@ -453,7 +481,9 @@ export class SocketManager {
     const user = socket.data.user as IJwtPayload;
     const sessionId = socket.data.sessionId;
 
-    if (!workflowId) return;
+    if (!workflowId) {
+      return;
+    }
 
     socket.to(`workflow:${workflowId}`).emit('typing:stopped', {
       ...data,
@@ -467,7 +497,9 @@ export class SocketManager {
     const sessionId = socket.data.sessionId;
     const user = socket.data.user as IJwtPayload;
 
-    if (!workflowId) return;
+    if (!workflowId) {
+      return;
+    }
 
     // Leave room
     socket.leave(`workflow:${workflowId}`);

@@ -16,12 +16,12 @@ const getEnvironmentConfig = (): EnvironmentConfig => {
   return {
     apiBaseUrl: env.VITE_API_BASE_URL || 'http://localhost:5000/api/v1',
     environment: (env.VITE_NODE_ENV as any) || 'development',
-    enableDebugLogs: env.VITE_DEBUG_LOGS === 'true' || false,
+    enableDebugLogs: env.VITE_DEBUG_LOGS === 'true',
     features: {
       aiAssistant: env.VITE_FEATURE_AI_ASSISTANT !== 'false',
       collaboration: env.VITE_FEATURE_COLLABORATION !== 'false',
       analytics: env.VITE_FEATURE_ANALYTICS !== 'false',
-    }
+    },
   };
 };
 

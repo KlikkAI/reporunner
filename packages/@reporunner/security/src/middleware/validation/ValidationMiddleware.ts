@@ -1,10 +1,10 @@
-import { Request } from 'express';
 import {
   BaseMiddleware,
+  type SchemaDefinition,
   SchemaValidator,
-  SchemaDefinition,
-  ValidationError
+  ValidationError,
 } from '@reporunner/core';
+import type { Request } from 'express';
 
 export interface ValidationConfig {
   /**
@@ -140,7 +140,7 @@ export class ValidationMiddleware extends BaseMiddleware {
       if (typeof value === 'string') {
         sanitized[key] = this.sanitizeString(value);
       } else if (Array.isArray(value)) {
-        sanitized[key] = value.map(item =>
+        sanitized[key] = value.map((item) =>
           typeof item === 'string' ? this.sanitizeString(item) : item
         );
       } else if (typeof value === 'object' && value !== null) {

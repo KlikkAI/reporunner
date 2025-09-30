@@ -21,7 +21,9 @@ const EmailInputPanel: React.FC<EmailInputPanelProps> = ({
 
   // Filter emails based on search term
   const filteredEmails = emails.filter((email) => {
-    if (!searchTerm) return true;
+    if (!searchTerm) {
+      return true;
+    }
     const searchLower = searchTerm.toLowerCase();
     return (
       email.subject?.toLowerCase().includes(searchLower) ||
@@ -55,7 +57,9 @@ const EmailInputPanel: React.FC<EmailInputPanelProps> = ({
 
   // Extract sender name from email
   const getSenderName = (from: string) => {
-    if (!from) return 'Unknown';
+    if (!from) {
+      return 'Unknown';
+    }
 
     // Handle "Name <email@domain.com>" format
     const match = from.match(/^(.+?)\s*<(.+)>$/);
@@ -87,7 +91,9 @@ const EmailInputPanel: React.FC<EmailInputPanelProps> = ({
     return colors[hash % colors.length];
   };
 
-  if (!isVisible) return null;
+  if (!isVisible) {
+    return null;
+  }
 
   return (
     <div className="flex flex-col h-full bg-gray-900">

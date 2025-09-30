@@ -7,17 +7,11 @@
  * Reduction: ~1200 lines → ~200 lines (83% reduction)
  */
 
-import React, { useMemo } from 'react';
-import {
-  PropertyRendererFactory,
-  PropertyRenderer,
-} from '@/design-system';
-import type {
-  PropertyRendererConfig,
-  PropertyContext,
-  PropertyType
-} from '@/design-system';
+import type React from 'react';
+import { useMemo } from 'react';
 import type { INodePropertyTypeOptions, NodePropertyType } from '@/core/nodes/types';
+import type { PropertyContext, PropertyRendererConfig, PropertyType } from '@/design-system';
+import { PropertyRenderer, PropertyRendererFactory } from '@/design-system';
 
 // Legacy property interface for backward compatibility
 export interface PropertyRendererProps {
@@ -51,7 +45,9 @@ export interface PropertyRendererProps {
 /**
  * Convert legacy property to PropertyRendererConfig
  */
-const convertLegacyProperty = (property: PropertyRendererProps['property']): PropertyRendererConfig => {
+const convertLegacyProperty = (
+  property: PropertyRendererProps['property']
+): PropertyRendererConfig => {
   // Map legacy types to new factory types
   const getFactoryType = (legacyType: NodePropertyType): PropertyType => {
     switch (legacyType) {
@@ -112,7 +108,7 @@ const convertLegacyProperty = (property: PropertyRendererProps['property']): Pro
 
   // Handle options
   if (property.options) {
-    config.options = property.options.map(option => ({
+    config.options = property.options.map((option) => ({
       label: option.name,
       value: option.value ?? option.name,
       description: option.description,
@@ -176,26 +172,24 @@ export const UniversalPropertyRenderer: React.FC<PropertyRendererProps> = ({
   const config = useMemo(() => convertLegacyProperty(property), [property]);
 
   // Create property context
-  const propertyContext: PropertyContext = useMemo(() => ({
-    formData: { ...formState, [property.name]: value },
-    errors: {}, // Would be populated by validation system
-    touched: {}, // Would track field interactions
-    isSubmitting: disabled,
-    setFieldValue: (name: string, newValue: any) => {
-      if (name === property.name) {
-        onChange(newValue);
-      }
-    },
-    setFieldError: () => {}, // Would be handled by validation system
-    validateField: async () => {}, // Would be handled by validation system
-  }), [formState, value, property.name, onChange, disabled]);
-
-  return (
-    <PropertyRenderer
-      config={config}
-      context={propertyContext}
-    />
+  const propertyContext: PropertyContext = useMemo(
+    () => ({
+      formData: { ...formState, [property.name]: value },
+      errors: {}, // Would be populated by validation system
+      touched: {}, // Would track field interactions
+      isSubmitting: disabled,
+      setFieldValue: (name: string, newValue: any) => {
+        if (name === property.name) {
+          onChange(newValue);
+        }
+      },
+      setFieldError: () => {}, // Would be handled by validation system
+      validateField: async () => {}, // Would be handled by validation system
+    }),
+    [formState, value, property.name, onChange, disabled]
   );
+
+  return <PropertyRenderer config={config} context={propertyContext} />;
 };
 
 /**
@@ -217,15 +211,13 @@ export const createPropertyRenderers = (
     formData: formState,
     errors: {},
     touched: {},
-    isSubmitting: options?.disabled || false,
+    isSubmitting: options?.disabled,
     setFieldValue: onChange,
     setFieldError: () => {},
     validateField: async () => {},
   };
 
-  return configs.map(config =>
-    PropertyRendererFactory.createRenderer(config, propertyContext)
-  );
+  return configs.map((config) => PropertyRendererFactory.createRenderer(config, propertyContext));
 };
 
 /**
@@ -246,8 +238,8 @@ export const BulkPropertyRenderer: React.FC<{
   theme = 'dark',
   layout = 'vertical',
 }) => {
-  const renderers = useMemo(() =>
-    createPropertyRenderers(properties, formState, onChange, { disabled, theme }),
+  const renderers = useMemo(
+    () => createPropertyRenderers(properties, formState, onChange, { disabled, theme }),
     [properties, formState, onChange, disabled, theme]
   );
 
@@ -262,11 +254,7 @@ export const BulkPropertyRenderer: React.FC<{
     }
   }, [layout]);
 
-  return (
-    <div className={`bulk-property-renderer ${layoutClasses}`}>
-      {renderers}
-    </div>
-  );
+  return <div className={`bulk-property-renderer ${layoutClasses}`}>{renderers}</div>;
 };
 
 /**

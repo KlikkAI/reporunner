@@ -2,8 +2,8 @@
  * Base repository with common MongoDB operations
  * Reduces duplication across domain repositories
  */
-import { Model, Document } from 'mongoose';
-import { IRepository } from './interfaces';
+import type { Document, Model } from 'mongoose';
+import type { IRepository } from './interfaces';
 
 export abstract class BaseRepository<T extends Document, K = string> implements IRepository<T, K> {
   constructor(protected model: Model<T>) {}
@@ -22,11 +22,9 @@ export abstract class BaseRepository<T extends Document, K = string> implements 
   }
 
   async update(id: K, updates: Partial<T>): Promise<T | null> {
-    return this.model.findByIdAndUpdate(
-      id as any,
-      updates,
-      { new: true, runValidators: true }
-    ).exec();
+    return this.model
+      .findByIdAndUpdate(id as any, updates, { new: true, runValidators: true })
+      .exec();
   }
 
   async delete(id: K): Promise<boolean> {

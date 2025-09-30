@@ -81,7 +81,9 @@ const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({
   }, [workflow, loadAnalysis, loadSuggestions]);
 
   const loadSuggestions = useCallback(async () => {
-    if (!workflow) return;
+    if (!workflow) {
+      return;
+    }
 
     try {
       const workflowSuggestions = await aiAssistantService.analyzeWorkflow(workflow);
@@ -90,7 +92,9 @@ const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({
   }, [workflow]);
 
   const loadAnalysis = useCallback(async () => {
-    if (!workflow) return;
+    if (!workflow) {
+      return;
+    }
 
     try {
       // Simulate analysis loading
@@ -121,7 +125,9 @@ const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({
   }, [workflow]);
 
   const handleGenerateWorkflow = useCallback(async () => {
-    if (!naturalLanguageInput.trim()) return;
+    if (!naturalLanguageInput.trim()) {
+      return;
+    }
 
     setIsGenerating(true);
     try {
@@ -259,7 +265,9 @@ const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({
   );
 
   const renderAnalysisMetrics = () => {
-    if (!analysis) return null;
+    if (!analysis) {
+      return null;
+    }
 
     return (
       <div className="space-y-4">

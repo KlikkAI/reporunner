@@ -409,40 +409,55 @@ export class CredentialApiService {
 
     switch (type) {
       case 'gmailOAuth2':
-        if (!config.clientId) errors.push({ field: 'clientId', message: 'Client ID is required' });
-        if (!config.clientSecret)
+        if (!config.clientId) {
+          errors.push({ field: 'clientId', message: 'Client ID is required' });
+        }
+        if (!config.clientSecret) {
           errors.push({
             field: 'clientSecret',
             message: 'Client Secret is required',
           });
+        }
         break;
 
       case 'ollamaApi':
-        if (!config.endpoint)
+        if (!config.endpoint) {
           errors.push({
             field: 'endpoint',
             message: 'Endpoint URL is required',
           });
+        }
         if (config.endpoint && !this.isValidUrl(config.endpoint)) {
           errors.push({ field: 'endpoint', message: 'Invalid endpoint URL' });
         }
         break;
 
       case 'postgres':
-        if (!config.host) errors.push({ field: 'host', message: 'Host is required' });
-        if (!config.port) errors.push({ field: 'port', message: 'Port is required' });
-        if (!config.database)
+        if (!config.host) {
+          errors.push({ field: 'host', message: 'Host is required' });
+        }
+        if (!config.port) {
+          errors.push({ field: 'port', message: 'Port is required' });
+        }
+        if (!config.database) {
           errors.push({
             field: 'database',
             message: 'Database name is required',
           });
-        if (!config.username) errors.push({ field: 'username', message: 'Username is required' });
-        if (!config.password) errors.push({ field: 'password', message: 'Password is required' });
+        }
+        if (!config.username) {
+          errors.push({ field: 'username', message: 'Username is required' });
+        }
+        if (!config.password) {
+          errors.push({ field: 'password', message: 'Password is required' });
+        }
         break;
 
       case 'openai':
       case 'anthropic':
-        if (!config.apiKey) errors.push({ field: 'apiKey', message: 'API Key is required' });
+        if (!config.apiKey) {
+          errors.push({ field: 'apiKey', message: 'API Key is required' });
+        }
         break;
     }
 

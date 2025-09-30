@@ -199,7 +199,9 @@ export function VirtualizedList<T>({
       <div style={totalSizeStyle}>
         {virtualItems.map((virtualRow) => {
           const item = items[virtualRow.index];
-          if (!item) return null;
+          if (!item) {
+            return null;
+          }
           const key = getItemKey ? getItemKey(item, virtualRow.index) : virtualRow.index;
 
           return (

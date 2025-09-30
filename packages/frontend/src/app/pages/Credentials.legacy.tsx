@@ -59,7 +59,9 @@ const Credentials: React.FC = () => {
 
   const handleEdit = (credential: Credential) => {
     const type = credentialTypes.find((t) => t.name === credential.type);
-    if (!type) return;
+    if (!type) {
+      return;
+    }
 
     setSelectedType(type);
     setFormData(credential.data || {});
@@ -69,7 +71,9 @@ const Credentials: React.FC = () => {
   };
 
   const handleSave = async () => {
-    if (!selectedType || !credentialName.trim()) return;
+    if (!(selectedType && credentialName.trim())) {
+      return;
+    }
 
     try {
       // Handle Gmail OAuth2 differently - initiate OAuth flow

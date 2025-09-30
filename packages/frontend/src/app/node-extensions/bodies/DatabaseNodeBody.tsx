@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { Button, Form, Input, Select, Space, Typography } from 'antd';
 import { DatabaseOutlined, PlayCircleOutlined } from '@ant-design/icons';
+import { Button, Form, Input, Select, Space, Typography } from 'antd';
+import type React from 'react';
 
 const { Text } = Typography;
 const { Option } = Select;
@@ -16,11 +16,11 @@ export const DatabaseNodeBody: React.FC<DatabaseNodeBodyProps> = ({
   nodeId,
   data,
   onUpdate,
-  onTest
+  onTest,
 }) => {
   const [form] = Form.useForm();
 
-  const handleFormChange = (changedFields: any, allFields: any) => {
+  const handleFormChange = (_changedFields: any, _allFields: any) => {
     const formData = form.getFieldsValue();
     onUpdate?.(nodeId, { ...data, ...formData });
   };
@@ -66,34 +66,17 @@ export const DatabaseNodeBody: React.FC<DatabaseNodeBodyProps> = ({
           <Input placeholder="e.g., users, products" />
         </Form.Item>
 
-        <Form.Item
-          label="Query/Filter"
-          name="query"
-        >
-          <Input.TextArea
-            placeholder='{"status": "active"}'
-            rows={3}
-          />
+        <Form.Item label="Query/Filter" name="query">
+          <Input.TextArea placeholder='{"status": "active"}' rows={3} />
         </Form.Item>
 
-        <Form.Item
-          label="Data (for insert/update)"
-          name="data"
-        >
-          <Input.TextArea
-            placeholder='{"name": "John", "email": "john@example.com"}'
-            rows={3}
-          />
+        <Form.Item label="Data (for insert/update)" name="data">
+          <Input.TextArea placeholder='{"name": "John", "email": "john@example.com"}' rows={3} />
         </Form.Item>
 
         <Form.Item>
           <Space>
-            <Button
-              type="primary"
-              icon={<PlayCircleOutlined />}
-              onClick={handleTest}
-              size="small"
-            >
+            <Button type="primary" icon={<PlayCircleOutlined />} onClick={handleTest} size="small">
               Test Query
             </Button>
           </Space>

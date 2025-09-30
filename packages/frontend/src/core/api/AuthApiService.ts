@@ -1,5 +1,4 @@
 import { z } from 'zod';
-import { ApiErrorHandler } from '../utils/apiErrorHandler';
 import type {
   ApiKey,
   AuthTokens,
@@ -27,6 +26,7 @@ import {
   SessionInfoApiResponseSchema,
 } from '../schemas';
 import { configService } from '../services/ConfigService';
+import { ApiErrorHandler } from '../utils/apiErrorHandler';
 import { ApiClientError, apiClient } from './ApiClient';
 
 /**

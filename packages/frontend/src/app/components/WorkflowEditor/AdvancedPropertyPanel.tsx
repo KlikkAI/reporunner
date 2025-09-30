@@ -71,7 +71,9 @@ const ResizablePanel: React.FC<ResizablePanelProps> = ({
 
   const handleMouseMove = useCallback(
     (e: MouseEvent) => {
-      if (!isResizing) return;
+      if (!isResizing) {
+        return;
+      }
 
       const deltaX = e.clientX - startX;
       const newWidth = Math.max(minWidth, Math.min(maxWidth, startWidth + deltaX));
@@ -220,7 +222,9 @@ const ConfigurationPanel: React.FC<{ nodeId: string }> = ({ nodeId }) => {
 
   // Get enhanced properties for this node
   const enhancedProperties = useMemo(() => {
-    if (!nodeDefinition) return [];
+    if (!nodeDefinition) {
+      return [];
+    }
 
     // Use basic properties for now, can be enhanced later
     return nodeDefinition.properties || [];
@@ -446,7 +450,7 @@ export const AdvancedPropertyPanel: React.FC<AdvancedPropertyPanelProps> = ({
 
   const node = nodeId ? getNodeById(nodeId) : null;
 
-  if (!isOpen || !nodeId || !node) {
+  if (!(isOpen && nodeId && node)) {
     return null;
   }
 

@@ -57,7 +57,7 @@ export class TenantServiceBootstrap {
     this.container.registerSingleton('RedisCache', () => {
       return createRedisClient({
         host: process.env.REDIS_HOST || 'localhost',
-        port: parseInt(process.env.REDIS_PORT || '6379'),
+        port: Number.parseInt(process.env.REDIS_PORT || '6379', 10),
         retryDelayOnFailover: 100,
         maxRetriesPerRequest: 3,
       });
@@ -139,7 +139,7 @@ export class TenantServiceBootstrap {
 
       // Start HTTP server
       const app = await this.createExpressApp();
-      const port = parseInt(process.env.PORT || '3001');
+      const port = Number.parseInt(process.env.PORT || '3001', 10);
 
       app.listen(port, () => {
         this.logger.info(`🚀 Tenant Service listening on port ${port}`);
@@ -215,7 +215,7 @@ export class TenantServiceBootstrap {
     app.use(express.urlencoded({ extended: true }));
 
     // Health check endpoint
-    app.get('/health', (req, res) => {
+    app.get('/health', (_req, res) => {
       res.json({
         service: 'tenant-service',
         status: 'healthy',
@@ -229,7 +229,7 @@ export class TenantServiceBootstrap {
     app.use('/api/tenants', controller.getRoutes());
 
     // Error handling
-    app.use((error: any, req: any, res: any, next: any) => {
+    app.use((error: any, req: any, res: any, _next: any) => {
       this.logger.error('Unhandled API error', { error, url: req.url, method: req.method });
       res.status(500).json({
         error: 'Internal Server Error',
@@ -298,8 +298,7 @@ process.on('SIGINT', async () => {
 
 // Start the service if this file is run directly
 if (require.main === module) {
-  bootstrap.start().catch((error) => {
-    console.error('Failed to start service:', error);
+  bootstrap.start().catch((_error) => {
     process.exit(1);
   });
 }

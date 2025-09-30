@@ -1,7 +1,11 @@
-import { BaseMiddleware, MiddlewareContext, BaseMiddlewareOptions } from '../BaseMiddleware';
+import {
+  BaseMiddleware,
+  type BaseMiddlewareOptions,
+  type MiddlewareContext,
+} from '../BaseMiddleware';
 import { ValidationError } from './errors/ValidationError';
-import { ValidationResult } from './types/ValidationResult';
-import { ValidationRule } from './rules/ValidationRule';
+import type { ValidationRule } from './rules/ValidationRule';
+import type { ValidationResult } from './types/ValidationResult';
 
 /**
  * Extended context for validation
@@ -81,7 +85,7 @@ export abstract class BaseValidationMiddleware extends BaseMiddleware {
       allowUnknown: false,
       stripUnknown: true,
       messages: {},
-      ...options
+      ...options,
     };
 
     this.rules = new Set();
@@ -115,7 +119,7 @@ export abstract class BaseValidationMiddleware extends BaseMiddleware {
    * Add multiple validation rules
    */
   public addRules(rules: ValidationRule[]): this {
-    rules.forEach(rule => this.rules.add(rule));
+    rules.forEach((rule) => this.rules.add(rule));
     return this;
   }
 
@@ -134,14 +138,14 @@ export abstract class BaseValidationMiddleware extends BaseMiddleware {
     const result: ValidationResult = {
       success: true,
       valid: true,
-      errors: []
+      errors: [],
     };
 
     // Track metadata
     const meta = {
       rulesExecuted: 0,
       transformations: 0,
-      startTime: Date.now()
+      startTime: Date.now(),
     };
 
     try {
@@ -157,7 +161,7 @@ export abstract class BaseValidationMiddleware extends BaseMiddleware {
       result.meta = {
         duration: Date.now() - meta.startTime,
         rulesExecuted: meta.rulesExecuted,
-        transformations: meta.transformations
+        transformations: meta.transformations,
       };
 
       return result;
@@ -169,7 +173,10 @@ export abstract class BaseValidationMiddleware extends BaseMiddleware {
   /**
    * Update request with validated data
    */
-  protected async updateRequest(context: ValidationContext, result: ValidationResult): Promise<void> {
+  protected async updateRequest(
+    context: ValidationContext,
+    result: ValidationResult
+  ): Promise<void> {
     if (this.validationOptions.validateQuery && result.query) {
       context.req.query = result.query;
     }
@@ -199,16 +206,22 @@ export abstract class BaseValidationMiddleware extends BaseMiddleware {
   /**
    * Validate using schema
    */
-  protected abstract validateWithSchema(context: ValidationContext, result: ValidationResult): Promise<void>;
+  protected abstract validateWithSchema(
+    context: ValidationContext,
+    result: ValidationResult
+  ): Promise<void>;
 
   /**
    * Validate using custom rules
    */
-  protected async validateWithRules(context: ValidationContext, result: ValidationResult): Promise<void> {
+  protected async validateWithRules(
+    context: ValidationContext,
+    result: ValidationResult
+  ): Promise<void> {
     for (const rule of this.rules) {
       try {
         // Check if rule applies
-        if (rule.applies && !await rule.applies(context)) {
+        if (rule.applies && !(await rule.applies(context))) {
           continue;
         }
 
@@ -216,14 +229,14 @@ export abstract class BaseValidationMiddleware extends BaseMiddleware {
         let ruleResult: any = { errors: [] };
         if (rule.validate) {
           ruleResult = await rule.validate(context, {});
-          result.errors!.push(...(ruleResult.errors || []));
+          result.errors?.push(...(ruleResult.errors || []));
         }
 
         // Handle transforms
         if (ruleResult.transformed) {
           result.transformed = {
             ...result.transformed,
-            ...ruleResult.transformed
+            ...ruleResult.transformed,
           };
         }
 
@@ -233,7 +246,7 @@ export abstract class BaseValidationMiddleware extends BaseMiddleware {
         }
       } catch (error) {
         if (error instanceof ValidationError) {
-          result.errors!.push(...((error as any).details || []));
+          result.errors?.push(...((error as any).details || []));
           if (this.validationOptions.abortEarly) {
             break;
           }
@@ -254,11 +267,13 @@ export abstract class BaseValidationMiddleware extends BaseMiddleware {
       return error;
     }
 
-    return new ValidationError(error.message, [{
-      path: '',
-      message: error.message,
-      code: 'VALIDATION_ERROR',
-      context: { error }
-    }]);
+    return new ValidationError(error.message, [
+      {
+        path: '',
+        message: error.message,
+        code: 'VALIDATION_ERROR',
+        context: { error },
+      },
+    ]);
   }
 }

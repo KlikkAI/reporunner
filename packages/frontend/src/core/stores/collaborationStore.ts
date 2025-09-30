@@ -1,6 +1,6 @@
 /**
  * Collaboration Store
- * 
+ *
  * Manages real-time collaboration features for workflow editing
  */
 
@@ -39,20 +39,20 @@ interface Comment {
 interface CollaborationState {
   // Current user
   currentUser: User | null;
-  
+
   // User presence
   connectedUsers: Map<string, UserPresence>;
   userPresences: UserPresence[];
-  
+
   // Comments and annotations
   comments: Map<string, Comment>;
   activeComments: Comment[];
   selectedComment: string | null;
-  
+
   // Real-time collaboration
   isConnected: boolean;
   connectionStatus: 'connecting' | 'connected' | 'disconnected' | 'error';
-  
+
   // Actions
   setCurrentUser: (user: User) => void;
   updateUserPresence: (userId: string, presence: Partial<UserPresence>) => void;
@@ -84,9 +84,9 @@ export const useCollaborationStore = create<CollaborationState>()(
 
     // Update user presence
     updateUserPresence: (userId: string, presence: Partial<UserPresence>): void => {
-      set(state => {
+      set((state) => {
         const existingPresence = state.connectedUsers.get(userId);
-        const updatedPresence = existingPresence 
+        const updatedPresence = existingPresence
           ? { ...existingPresence, ...presence, lastActive: new Date().toISOString() }
           : {
               userId,
@@ -108,7 +108,7 @@ export const useCollaborationStore = create<CollaborationState>()(
 
     // Remove user
     removeUser: (userId: string): void => {
-      set(state => {
+      set((state) => {
         const newConnectedUsers = new Map(state.connectedUsers);
         newConnectedUsers.delete(userId);
 
@@ -130,13 +130,13 @@ export const useCollaborationStore = create<CollaborationState>()(
         replies: [],
       };
 
-      set(state => {
+      set((state) => {
         const newComments = new Map(state.comments);
         newComments.set(commentId, newComment);
 
         return {
           comments: newComments,
-          activeComments: Array.from(newComments.values()).filter(c => !c.resolved),
+          activeComments: Array.from(newComments.values()).filter((c) => !c.resolved),
         };
       });
 
@@ -145,9 +145,11 @@ export const useCollaborationStore = create<CollaborationState>()(
 
     // Update comment
     updateComment: (commentId: string, updates: Partial<Comment>): void => {
-      set(state => {
+      set((state) => {
         const comment = state.comments.get(commentId);
-        if (!comment) return state;
+        if (!comment) {
+          return state;
+        }
 
         const updatedComment = { ...comment, ...updates };
         const newComments = new Map(state.comments);
@@ -155,20 +157,20 @@ export const useCollaborationStore = create<CollaborationState>()(
 
         return {
           comments: newComments,
-          activeComments: Array.from(newComments.values()).filter(c => !c.resolved),
+          activeComments: Array.from(newComments.values()).filter((c) => !c.resolved),
         };
       });
     },
 
     // Delete comment
     deleteComment: (commentId: string): void => {
-      set(state => {
+      set((state) => {
         const newComments = new Map(state.comments);
         newComments.delete(commentId);
 
         return {
           comments: newComments,
-          activeComments: Array.from(newComments.values()).filter(c => !c.resolved),
+          activeComments: Array.from(newComments.values()).filter((c) => !c.resolved),
           selectedComment: state.selectedComment === commentId ? null : state.selectedComment,
         };
       });
@@ -186,7 +188,7 @@ export const useCollaborationStore = create<CollaborationState>()(
 
     // Set connection status
     setConnectionStatus: (status: CollaborationState['connectionStatus']): void => {
-      set({ 
+      set({
         connectionStatus: status,
         isConnected: status === 'connected',
       });

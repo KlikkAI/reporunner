@@ -2,7 +2,7 @@
  * Integration Types - Third-party service integrations
  */
 
-import type { ID, Timestamp, BaseEntity } from '../common';
+import type { BaseEntity, ID, Timestamp } from '../common';
 import type { INodeType } from '../node';
 
 /**

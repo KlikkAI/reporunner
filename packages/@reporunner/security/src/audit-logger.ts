@@ -163,10 +163,14 @@ export class AuditLogger extends EventEmitter {
    * Log an audit event
    */
   async log(event: Omit<AuditEvent, 'id' | 'timestamp' | 'hash' | 'previousHash'>): Promise<void> {
-    if (!this.config.enabled) return;
+    if (!this.config.enabled) {
+      return;
+    }
 
     // Check if event meets log level requirement
-    if (!this.shouldLog(event.severity)) return;
+    if (!this.shouldLog(event.severity)) {
+      return;
+    }
 
     const auditEvent: AuditEvent = {
       ...event,
@@ -304,13 +308,27 @@ export class AuditLogger extends EventEmitter {
 
     return logs
       .filter((log) => {
-        if (filters.startDate && log.timestamp < filters.startDate) return false;
-        if (filters.endDate && log.timestamp > filters.endDate) return false;
-        if (filters.userId && log.userId !== filters.userId) return false;
-        if (filters.type && log.type !== filters.type) return false;
-        if (filters.severity && log.severity !== filters.severity) return false;
-        if (filters.resource && log.resource !== filters.resource) return false;
-        if (filters.result && log.result !== filters.result) return false;
+        if (filters.startDate && log.timestamp < filters.startDate) {
+          return false;
+        }
+        if (filters.endDate && log.timestamp > filters.endDate) {
+          return false;
+        }
+        if (filters.userId && log.userId !== filters.userId) {
+          return false;
+        }
+        if (filters.type && log.type !== filters.type) {
+          return false;
+        }
+        if (filters.severity && log.severity !== filters.severity) {
+          return false;
+        }
+        if (filters.resource && log.resource !== filters.resource) {
+          return false;
+        }
+        if (filters.result && log.result !== filters.result) {
+          return false;
+        }
         return true;
       })
       .slice(0, filters.limit || 1000);
@@ -485,7 +503,9 @@ export class AuditLogger extends EventEmitter {
    * Process event queue
    */
   private async processQueue(): Promise<void> {
-    if (this.isProcessing || this.eventQueue.length === 0) return;
+    if (this.isProcessing || this.eventQueue.length === 0) {
+      return;
+    }
 
     this.isProcessing = true;
     const events = [...this.eventQueue];
@@ -610,7 +630,9 @@ export class AuditLogger extends EventEmitter {
   private checkAlertThresholds(event: AuditEvent): void {
     const thresholds = this.config.alertThresholds;
 
-    if (!thresholds) return;
+    if (!thresholds) {
+      return;
+    }
 
     // Track failed logins
     if (event.type === AuditEventType.LOGIN_FAILED && thresholds.failedLogins) {
@@ -658,7 +680,9 @@ export class AuditLogger extends EventEmitter {
   private async checkRotation(): Promise<void> {
     const logPath = path.join(this.config.filePath, this.currentLogFile);
 
-    if (!fs.existsSync(logPath)) return;
+    if (!fs.existsSync(logPath)) {
+      return;
+    }
 
     const stats = fs.statSync(logPath);
     const sizeInMB = stats.size / (1024 * 1024);
@@ -745,7 +769,7 @@ export const auditLogger = new AuditLogger({
   storageType: (process.env.AUDIT_STORAGE as any) || 'file',
   filePath: process.env.AUDIT_LOG_PATH || path.join(process.cwd(), 'audit-logs'),
   enableHashing: process.env.AUDIT_ENABLE_HASHING !== 'false',
-  retentionDays: parseInt(process.env.AUDIT_RETENTION_DAYS || '90', 10),
+  retentionDays: Number.parseInt(process.env.AUDIT_RETENTION_DAYS || '90', 10),
 });
 
 export default AuditLogger;

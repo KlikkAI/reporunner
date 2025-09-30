@@ -7,9 +7,10 @@
  * Targets: 20+ page components with duplicate layout patterns
  */
 
-import React, { useMemo } from 'react';
-import { Grid, Row, Col, Card, Divider, Space, Flex } from 'antd';
-import type { ComponentConfig, LayoutConfig } from '../factories/ComponentFactory';
+import { Card, Col, Divider, Flex, Grid, Row, Space } from 'antd';
+import type React from 'react';
+import { useMemo } from 'react';
+import type { LayoutConfig } from '../factories/ComponentFactory';
 import { cn } from '../utils';
 
 const { useBreakpoint } = Grid;
@@ -94,17 +95,17 @@ export const ResponsiveGrid: React.FC<ResponsiveGridProps> = ({
     return 1;
   }, [columns, screens, responsive]);
 
-  const gridStyle = useMemo(() => ({
-    display: 'grid',
-    gridTemplateColumns: `repeat(${gridColumns}, 1fr)`,
-    gap: typeof gap === 'number' ? `${gap}px` : gap,
-  }), [gridColumns, gap]);
+  const gridStyle = useMemo(
+    () => ({
+      display: 'grid',
+      gridTemplateColumns: `repeat(${gridColumns}, 1fr)`,
+      gap: typeof gap === 'number' ? `${gap}px` : gap,
+    }),
+    [gridColumns, gap]
+  );
 
   return (
-    <div
-      className={cn('responsive-grid', className)}
-      style={gridStyle}
-    >
+    <div className={cn('responsive-grid', className)} style={gridStyle}>
       {children}
     </div>
   );
@@ -182,11 +183,7 @@ export const ContainerLayout: React.FC<ContainerLayoutProps> = ({
 }) => {
   return (
     <div
-      className={cn(
-        'container-layout',
-        centered && 'mx-auto',
-        className
-      )}
+      className={cn('container-layout', centered && 'mx-auto', className)}
       style={{
         maxWidth,
         padding: typeof padding === 'number' ? `${padding}px` : padding,
@@ -217,27 +214,17 @@ export const SectionLayout: React.FC<SectionLayoutProps> = ({
           <div className="flex items-start justify-between">
             <div>
               {title && (
-                <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
-                  {title}
-                </h2>
+                <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">{title}</h2>
               )}
               {subtitle && (
-                <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                  {subtitle}
-                </p>
+                <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">{subtitle}</p>
               )}
             </div>
-            {actions && (
-              <div className="flex items-center gap-2">
-                {actions}
-              </div>
-            )}
+            {actions && <div className="flex items-center gap-2">{actions}</div>}
           </div>
         </div>
       )}
-      <div className="section-content">
-        {children}
-      </div>
+      <div className="section-content">{children}</div>
     </>
   );
 
@@ -270,11 +257,7 @@ export const SectionLayout: React.FC<SectionLayoutProps> = ({
 /**
  * Dynamic Layout Renderer
  */
-export const DynamicLayout: React.FC<DynamicLayoutProps> = ({
-  config,
-  children,
-  className,
-}) => {
+export const DynamicLayout: React.FC<DynamicLayoutProps> = ({ config, children, className }) => {
   switch (config.type) {
     case 'grid':
       return (
@@ -290,32 +273,21 @@ export const DynamicLayout: React.FC<DynamicLayoutProps> = ({
 
     case 'flex':
       return (
-        <FlexLayout
-          direction="row"
-          gap={config.gap}
-          className={className}
-        >
+        <FlexLayout direction="row" gap={config.gap} className={className}>
           {children}
         </FlexLayout>
       );
 
     case 'stack':
       return (
-        <StackLayout
-          spacing={config.gap}
-          direction="vertical"
-          className={className}
-        >
+        <StackLayout spacing={config.gap} direction="vertical" className={className}>
           {children}
         </StackLayout>
       );
 
     case 'container':
       return (
-        <ContainerLayout
-          padding={config.padding}
-          className={className}
-        >
+        <ContainerLayout padding={config.padding} className={className}>
           {children}
         </ContainerLayout>
       );
@@ -333,11 +305,7 @@ export const DynamicLayout: React.FC<DynamicLayoutProps> = ({
       );
 
     default:
-      return (
-        <div className={cn('dynamic-layout', className)}>
-          {children}
-        </div>
-      );
+      return <div className={cn('dynamic-layout', className)}>{children}</div>;
   }
 };
 
@@ -349,11 +317,7 @@ export const LayoutPatterns = {
    * Dashboard Grid - 4 column responsive grid
    */
   dashboardGrid: (children: React.ReactNode) => (
-    <ResponsiveGrid
-      columns={{ xs: 1, sm: 2, lg: 4 }}
-      gap="1.5rem"
-      responsive={true}
-    >
+    <ResponsiveGrid columns={{ xs: 1, sm: 2, lg: 4 }} gap="1.5rem" responsive={true}>
       {children}
     </ResponsiveGrid>
   ),
@@ -363,12 +327,8 @@ export const LayoutPatterns = {
    */
   twoColumn: (left: React.ReactNode, right: React.ReactNode, leftSpan = 16) => (
     <Row gutter={24}>
-      <Col span={leftSpan}>
-        {left}
-      </Col>
-      <Col span={24 - leftSpan}>
-        {right}
-      </Col>
+      <Col span={leftSpan}>{left}</Col>
+      <Col span={24 - leftSpan}>{right}</Col>
     </Row>
   ),
 
@@ -378,14 +338,10 @@ export const LayoutPatterns = {
   sidebarLayout: (sidebar: React.ReactNode, main: React.ReactNode) => (
     <Row gutter={24} className="min-h-screen">
       <Col xs={24} md={6} lg={5} xl={4}>
-        <div className="sticky top-0 h-screen overflow-y-auto">
-          {sidebar}
-        </div>
+        <div className="sticky top-0 h-screen overflow-y-auto">{sidebar}</div>
       </Col>
       <Col xs={24} md={18} lg={19} xl={20}>
-        <div className="min-h-screen">
-          {main}
-        </div>
+        <div className="min-h-screen">{main}</div>
       </Col>
     </Row>
   ),
@@ -408,12 +364,8 @@ export const LayoutPatterns = {
    */
   splitView: (left: React.ReactNode, right: React.ReactNode) => (
     <div className="flex h-full">
-      <div className="flex-1 border-r border-gray-200 dark:border-gray-700">
-        {left}
-      </div>
-      <div className="flex-1">
-        {right}
-      </div>
+      <div className="flex-1 border-r border-gray-200 dark:border-gray-700">{left}</div>
+      <div className="flex-1">{right}</div>
     </div>
   ),
 
@@ -423,14 +375,10 @@ export const LayoutPatterns = {
   masterDetail: (master: React.ReactNode, detail: React.ReactNode) => (
     <Row gutter={0} className="h-full">
       <Col span={8} className="border-r border-gray-200 dark:border-gray-700">
-        <div className="h-full overflow-y-auto">
-          {master}
-        </div>
+        <div className="h-full overflow-y-auto">{master}</div>
       </Col>
       <Col span={16}>
-        <div className="h-full overflow-y-auto">
-          {detail}
-        </div>
+        <div className="h-full overflow-y-auto">{detail}</div>
       </Col>
     </Row>
   ),
@@ -440,9 +388,7 @@ export const LayoutPatterns = {
    */
   centeredContent: (children: React.ReactNode, maxWidth = '600px') => (
     <ContainerLayout maxWidth={maxWidth} centered>
-      <div className="py-12">
-        {children}
-      </div>
+      <div className="py-12">{children}</div>
     </ContainerLayout>
   ),
 

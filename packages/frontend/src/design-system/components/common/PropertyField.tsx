@@ -155,7 +155,9 @@ const PropertyField: React.FC<PropertyFieldProps> = ({
       allErrors.push(validationError);
     }
 
-    if (allErrors.length === 0) return null;
+    if (allErrors.length === 0) {
+      return null;
+    }
 
     return (
       <div

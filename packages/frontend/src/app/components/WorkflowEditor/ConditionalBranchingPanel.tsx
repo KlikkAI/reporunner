@@ -158,7 +158,7 @@ export const ConditionalBranchingPanel: React.FC<ConditionalBranchingPanelProps>
         operator: properties.operator || 'equals',
         value: properties.value,
         dataType: properties.dataType || 'string',
-        negate: properties.negate || false,
+        negate: properties.negate,
         caseSensitive: properties.caseSensitive !== false,
       });
     } else if (properties.conditions) {
@@ -170,7 +170,7 @@ export const ConditionalBranchingPanel: React.FC<ConditionalBranchingPanelProps>
           operator: cond.operator,
           value: cond.value,
           dataType: cond.dataType || 'string',
-          negate: cond.negate || false,
+          negate: cond.negate,
           caseSensitive: cond.caseSensitive !== false,
         });
       });
@@ -193,7 +193,7 @@ export const ConditionalBranchingPanel: React.FC<ConditionalBranchingPanelProps>
         sourceNodeId: values.sourceNodeId,
         conditions: values.conditions || [],
         logicalOperator: values.logicalOperator || 'AND',
-        defaultBranch: values.defaultBranch || false,
+        defaultBranch: values.defaultBranch,
         priority: values.priority || 1,
         targetNodes: values.targetNodes || [],
         metadata: {
@@ -227,7 +227,7 @@ export const ConditionalBranchingPanel: React.FC<ConditionalBranchingPanelProps>
       operator: values.operator,
       value: values.value,
       dataType: values.dataType,
-      negate: values.negate || false,
+      negate: values.negate,
       caseSensitive: values.caseSensitive !== false,
     };
 
@@ -256,7 +256,9 @@ export const ConditionalBranchingPanel: React.FC<ConditionalBranchingPanelProps>
   };
 
   const evaluateBranchConditions = (branch: BranchConfiguration, data: any): boolean => {
-    if (branch.conditions.length === 0) return true;
+    if (branch.conditions.length === 0) {
+      return true;
+    }
 
     const results = branch.conditions.map((condition) => evaluateCondition(condition, data));
 

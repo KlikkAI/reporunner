@@ -4,7 +4,7 @@ export enum UserRole {
   ADMIN = 'admin',
   EDITOR = 'editor',
   VIEWER = 'viewer',
-  GUEST = 'guest'
+  GUEST = 'guest',
 }
 
 // Permission Type Enum
@@ -46,7 +46,7 @@ export enum PermissionType {
   API_KEY_MANAGE = 'api:key:manage',
 
   // Audit permissions
-  AUDIT_VIEW = 'audit:view'
+  AUDIT_VIEW = 'audit:view',
 }
 
 // These execution/node status enums are defined in workflow.types

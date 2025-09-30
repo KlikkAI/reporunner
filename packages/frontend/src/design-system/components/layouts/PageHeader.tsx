@@ -1,7 +1,7 @@
 // Shared Page Header Component
 // Eliminates duplicate header patterns across multiple page components
 
-import React from 'react';
+import type React from 'react';
 
 interface PageHeaderProps {
   title: string;
@@ -16,13 +16,13 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
   subtitle,
   className = '',
   children,
-  variant = 'default'
+  variant = 'default',
 }) => {
   const baseClasses = 'bg-white border-b border-gray-200';
   const variantClasses = {
     default: 'py-6 px-6',
     hero: 'py-12 px-6 bg-gradient-to-r from-blue-500 to-purple-600 text-white',
-    minimal: 'py-3 px-4'
+    minimal: 'py-3 px-4',
   };
 
   return (

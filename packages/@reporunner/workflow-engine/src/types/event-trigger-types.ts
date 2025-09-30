@@ -38,7 +38,7 @@ export enum WorkflowEvent {
   NODE_FAILED = 'node.failed',
   ENGINE_STARTED = 'engine.started',
   ENGINE_STOPPED = 'engine.stopped',
-  ENGINE_ERROR = 'engine.error'
+  ENGINE_ERROR = 'engine.error',
 }
 
 export interface WorkflowEventData {

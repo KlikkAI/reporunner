@@ -17,7 +17,7 @@ completed;
 for tenant ${tenantId}`);
 } catch (error)
 {
-  logger.error(`Failed
+  logger.error(` { Failed }
 to;
 perform;
 backup;
@@ -114,7 +114,7 @@ private
 getPlanLimits(plan: string)
 : Tenant['limits']
 {
-    const planLimits = {
+    const _planLimits = {
       starter: {
         maxUsers: 5,
         maxWorkflows: 20,

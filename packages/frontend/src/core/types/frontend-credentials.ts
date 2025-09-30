@@ -16,7 +16,7 @@
  * - Predefined credential configurations
  */
 
-import type { ICredential, ICredentialData, ID, Timestamp } from '@reporunner/types';
+import type { ICredential } from '@reporunner/types';
 
 // ============================================================================
 // Extended Credential Types
@@ -25,7 +25,11 @@ import type { ICredential, ICredentialData, ID, Timestamp } from '@reporunner/ty
 /**
  * Frontend Credential - extends ICredential with UI-specific fields
  */
-export interface Credential extends Omit<ICredential, 'credentialType' | 'organizationId' | 'ownerId' | 'sharedWith' | 'encryptedData'> {
+export interface Credential
+  extends Omit<
+    ICredential,
+    'credentialType' | 'organizationId' | 'ownerId' | 'sharedWith' | 'encryptedData'
+  > {
   _id?: string; // MongoDB _id for backward compatibility
   type: string; // Credential type identifier
   integration?: string; // Associated integration
@@ -297,21 +301,23 @@ export const credentialTypes: CredentialType[] = [
  * Get credential type by name
  */
 export function getCredentialType(name: string): CredentialType | undefined {
-  return credentialTypes.find(ct => ct.name === name);
+  return credentialTypes.find((ct) => ct.name === name);
 }
 
 /**
  * Get all credential type names
  */
 export function getCredentialTypeNames(): string[] {
-  return credentialTypes.map(ct => ct.name);
+  return credentialTypes.map((ct) => ct.name);
 }
 
 /**
  * Check if credential is expired
  */
 export function isCredentialExpired(credential: Credential): boolean {
-  if (!credential.expiresAt) return false;
+  if (!credential.expiresAt) {
+    return false;
+  }
   return new Date(credential.expiresAt) < new Date();
 }
 
@@ -319,7 +325,9 @@ export function isCredentialExpired(credential: Credential): boolean {
  * Check if credential needs testing
  */
 export function needsCredentialTest(credential: Credential): boolean {
-  if (!credential.testedAt) return true;
+  if (!credential.testedAt) {
+    return true;
+  }
 
   // Test if older than 24 hours
   const testDate = new Date(credential.testedAt);

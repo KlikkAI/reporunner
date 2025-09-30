@@ -125,7 +125,9 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ workflowId, executionId, classN
   }, []);
 
   const startDebugging = useCallback(async () => {
-    if (!workflowId || !executionId) return;
+    if (!(workflowId && executionId)) {
+      return;
+    }
 
     try {
       await enhancedDebuggingService.startDebugging(workflowId, executionId);
@@ -215,14 +217,22 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ workflowId, executionId, classN
   );
 
   const getStatusColor = () => {
-    if (!isDebugging) return 'gray';
-    if (isPaused) return 'orange';
+    if (!isDebugging) {
+      return 'gray';
+    }
+    if (isPaused) {
+      return 'orange';
+    }
     return 'green';
   };
 
   const getStatusText = () => {
-    if (!isDebugging) return 'Not Debugging';
-    if (isPaused) return 'Paused';
+    if (!isDebugging) {
+      return 'Not Debugging';
+    }
+    if (isPaused) {
+      return 'Paused';
+    }
     return 'Running';
   };
 
@@ -251,7 +261,7 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ workflowId, executionId, classN
               type="primary"
               icon={<PlayCircleOutlined />}
               onClick={startDebugging}
-              disabled={!workflowId || !executionId}
+              disabled={!(workflowId && executionId)}
             >
               Start Debugging
             </Button>

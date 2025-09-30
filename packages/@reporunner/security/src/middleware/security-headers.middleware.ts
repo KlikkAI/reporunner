@@ -157,7 +157,9 @@ export function createCSPMiddleware(
     const mergedDirectives = { ...DEFAULT_CSP_DIRECTIVES, ...directives };
 
     for (const [key, value] of Object.entries(mergedDirectives)) {
-      if (value === undefined || value === null) continue;
+      if (value === undefined || value === null) {
+        continue;
+      }
 
       const directiveName = key.replace(/([A-Z])/g, '-$1').toLowerCase();
 

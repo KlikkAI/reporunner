@@ -16,7 +16,7 @@
  * - API key management
  */
 
-import type { IUser, IUserSettings, ID, Timestamp } from '@reporunner/types';
+import type { ID, IUser, IUserSettings, Timestamp } from '@reporunner/types';
 
 // ============================================================================
 // Extended User Types
@@ -86,9 +86,9 @@ export interface UserRole {
   id: string;
   name: string;
   description: string;
-  level: number;            // 0-10, higher = more privileges
+  level: number; // 0-10, higher = more privileges
   permissions: Permission[];
-  isSystem: boolean;        // System roles cannot be deleted
+  isSystem: boolean; // System roles cannot be deleted
   createdAt: Timestamp;
   updatedAt: Timestamp;
 }
@@ -113,14 +113,7 @@ export type ResourceType =
   | 'settings'
   | 'api_key';
 
-export type Action =
-  | 'create'
-  | 'read'
-  | 'update'
-  | 'delete'
-  | 'execute'
-  | 'share'
-  | 'manage';
+export type Action = 'create' | 'read' | 'update' | 'delete' | 'execute' | 'share' | 'manage';
 
 export interface PermissionCondition {
   field: string;
@@ -138,8 +131,8 @@ export interface PermissionCondition {
 export interface APIKey {
   id: ID;
   name: string;
-  key: string;                    // Visible key (prefix shown)
-  keyHash: string;                // Hashed key stored in DB
+  key: string; // Visible key (prefix shown)
+  keyHash: string; // Hashed key stored in DB
   permissions: Permission[];
   expiresAt?: Timestamp;
   lastUsedAt?: Timestamp;
@@ -163,7 +156,7 @@ export interface APIKey {
 export interface UserInvitation {
   id: ID;
   email: string;
-  role: string;                   // Role ID to assign
+  role: string; // Role ID to assign
   permissions: Permission[];
   projects: string[];
   invitedBy: ID;
@@ -198,7 +191,7 @@ export interface SSOProvider {
 export interface SSOConfiguration {
   issuer: string;
   clientId: string;
-  clientSecret?: string;      // Never sent to frontend in production
+  clientSecret?: string; // Never sent to frontend in production
   redirectUri: string;
   scopes: string[];
   endpoints: {
@@ -208,7 +201,7 @@ export interface SSOConfiguration {
     revocation?: string;
   };
   attributes: {
-    email: string;            // Claim mapping
+    email: string; // Claim mapping
     name: string;
     groups?: string;
   };
@@ -272,14 +265,8 @@ export interface Session {
 /**
  * Check if user has specific permission
  */
-export function hasPermission(
-  user: User,
-  resource: ResourceType,
-  action: Action
-): boolean {
-  return user.permissions.some(
-    (p) => p.resource === resource && p.actions.includes(action)
-  );
+export function hasPermission(user: User, resource: ResourceType, action: Action): boolean {
+  return user.permissions.some((p) => p.resource === resource && p.actions.includes(action));
 }
 
 /**
@@ -300,18 +287,19 @@ export function isAdmin(user: User): boolean {
  * Check if invitation is still valid
  */
 export function isInvitationValid(invitation: UserInvitation): boolean {
-  return (
-    invitation.status === 'pending' &&
-    invitation.expiresAt > Date.now()
-  );
+  return invitation.status === 'pending' && invitation.expiresAt > Date.now();
 }
 
 /**
  * Check if API key is usable
  */
 export function isAPIKeyActive(apiKey: APIKey): boolean {
-  if (apiKey.status !== 'active') return false;
-  if (!apiKey.expiresAt) return true;
+  if (apiKey.status !== 'active') {
+    return false;
+  }
+  if (!apiKey.expiresAt) {
+    return true;
+  }
   return apiKey.expiresAt > Date.now();
 }
 

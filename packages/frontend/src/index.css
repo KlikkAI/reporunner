@@ -13,7 +13,8 @@
 }
 
 /* Set consistent dark gradient background to prevent white flash */
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
   min-width: 320px;
@@ -74,7 +75,8 @@ button:focus-visible {
     color-scheme: dark;
   }
 
-  html, body {
+  html,
+  body {
     background: linear-gradient(to bottom right, #0f172a, #1e3a8a, #312e81);
     background-color: #0f172a;
   }

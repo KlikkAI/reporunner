@@ -22,10 +22,12 @@ export function useEventListener<T extends EventType>(
   useEffect(() => {
     const targetElement = element;
 
-    if (!targetElement?.addEventListener) return;
+    if (!targetElement?.addEventListener) {
+      return;
+    }
 
     // Create event listener that calls handler function stored in ref
-    const listener: typeof handler = event => savedHandler.current(event);
+    const listener: typeof handler = (event) => savedHandler.current(event);
     targetElement.addEventListener(eventName, listener as EventListener, options);
 
     return () => {

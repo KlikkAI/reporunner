@@ -4,16 +4,15 @@
  * BEFORE: Custom controller with duplicate response handling
  * AFTER: Extends BaseController, focuses on business logic
  */
-import { Request, Response } from 'express';
+
+import { BaseController, LoggingUtils, StringUtils } from '@reporunner/shared';
+import type { Request, Response } from 'express';
 import { inject, injectable } from 'inversify';
-import { BaseController, StringUtils, LoggingUtils } from '@reporunner/shared';
-import { GetUserByIdUseCase } from '../use-cases/GetUserByIdUseCase';
+import type { GetUserByIdUseCase } from '../use-cases/GetUserByIdUseCase';
 
 @injectable()
 export class AuthController extends BaseController {
-  constructor(
-    @inject('GetUserByIdUseCase') private getUserByIdUseCase: GetUserByIdUseCase
-  ) {
+  constructor(@inject('GetUserByIdUseCase') private getUserByIdUseCase: GetUserByIdUseCase) {
     super();
   }
 
@@ -38,7 +37,6 @@ export class AuthController extends BaseController {
 
       // Use inherited response methods
       return this.sendSuccess(res, user, 'User profile retrieved successfully');
-
     } catch (error) {
       // Use inherited error handling
       return this.handleError(res, error, 'Get user profile');
@@ -48,7 +46,7 @@ export class AuthController extends BaseController {
   async updateProfile(req: Request, res: Response): Promise<Response> {
     try {
       const userId = this.extractUserId(req);
-      const updates = req.body;
+      const _updates = req.body;
 
       // Domain-specific validation using shared utilities
       if (!userId || StringUtils.trim(userId).length === 0) {
@@ -59,7 +57,6 @@ export class AuthController extends BaseController {
       LoggingUtils.info('Profile update requested', { userId });
 
       return this.sendSuccess(res, null, 'Profile updated successfully');
-
     } catch (error) {
       return this.handleError(res, error, 'Update profile');
     }

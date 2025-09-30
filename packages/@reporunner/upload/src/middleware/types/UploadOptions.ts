@@ -1,7 +1,7 @@
-import { StorageEngine } from '../storage/StorageEngine';
-import { FileFilter } from '../filters/FileFilter';
-import { FileTransform } from '../transforms/FileTransform';
-import { FileValidator } from '../validators/FileValidator';
+import type { FileFilter } from '../filters/FileFilter';
+import type { StorageEngine } from '../storage/StorageEngine';
+import type { FileTransform } from '../transforms/FileTransform';
+import type { FileValidator } from '../validators/FileValidator';
 
 /**
  * Configuration options for file upload middleware

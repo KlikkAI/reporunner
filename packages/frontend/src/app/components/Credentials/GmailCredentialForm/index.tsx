@@ -1,4 +1,3 @@
-import React from 'react';
 import { Alert } from '@reporunner/ui/components/base/alert';
 import { cn } from '@reporunner/ui/utils/styles';
 import { CredentialNameField } from '../shared/CredentialNameField';
@@ -9,17 +8,17 @@ interface GmailCredentialFormProps {
    * Current value of the credential name
    */
   credentialName: string;
-  
+
   /**
    * Called when credential name changes
    */
   onNameChange: (name: string) => void;
-  
+
   /**
    * Whether the connection is in progress
    */
   isConnecting: boolean;
-  
+
   /**
    * Called when the connect button is clicked
    */
@@ -30,7 +29,7 @@ export const GmailCredentialForm = ({
   credentialName,
   onNameChange,
   isConnecting,
-  onConnect
+  onConnect,
 }: GmailCredentialFormProps) => {
   return (
     <div className="space-y-6">
@@ -54,16 +53,14 @@ export const GmailCredentialForm = ({
           onClick={onConnect}
           disabled={isConnecting || !credentialName.trim()}
           className={cn(
-            "w-full py-3 px-4 rounded-lg",
-            "bg-blue-600 text-white hover:bg-blue-700",
-            "flex items-center justify-center space-x-2 text-sm font-medium",
-            "disabled:opacity-50 disabled:cursor-not-allowed"
+            'w-full py-3 px-4 rounded-lg',
+            'bg-blue-600 text-white hover:bg-blue-700',
+            'flex items-center justify-center space-x-2 text-sm font-medium',
+            'disabled:opacity-50 disabled:cursor-not-allowed'
           )}
         >
           <span>🔗</span>
-          <span>
-            {isConnecting ? 'Connecting...' : 'Connect with Google'}
-          </span>
+          <span>{isConnecting ? 'Connecting...' : 'Connect with Google'}</span>
         </button>
       </div>
     </div>

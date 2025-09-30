@@ -121,7 +121,9 @@ const ContainerNodePanel: React.FC<ContainerNodePanelProps> = ({ onAddContainer,
   };
 
   const handleCreateContainer = (values: any) => {
-    if (!selectedTemplate) return;
+    if (!selectedTemplate) {
+      return;
+    }
 
     const container = selectedTemplate.createFunction(
       `container_${Date.now()}`,

@@ -36,29 +36,49 @@ export const ExecutionStateOverlay: React.FC<ExecutionStateOverlayProps> = ({
   const hasBreakpoint = breakpoints.has(nodeId);
 
   // Don't render overlay if there's no execution state
-  if (!nodeState && !isActive && !isPending && !isCompleted && !isFailed) {
+  if (!(nodeState || isActive || isPending || isCompleted || isFailed)) {
     return null;
   }
 
   const getStatusColor = () => {
-    if (isFailed) return 'bg-red-500';
-    if (isCompleted) return 'bg-green-500';
-    if (isActive) return 'bg-blue-500';
-    if (isPending) return 'bg-yellow-500';
+    if (isFailed) {
+      return 'bg-red-500';
+    }
+    if (isCompleted) {
+      return 'bg-green-500';
+    }
+    if (isActive) {
+      return 'bg-blue-500';
+    }
+    if (isPending) {
+      return 'bg-yellow-500';
+    }
     return 'bg-gray-400';
   };
 
   const getStatusText = () => {
-    if (isFailed) return 'Failed';
-    if (isCompleted) return 'Completed';
-    if (isActive) return 'Running';
-    if (isPending) return 'Pending';
+    if (isFailed) {
+      return 'Failed';
+    }
+    if (isCompleted) {
+      return 'Completed';
+    }
+    if (isActive) {
+      return 'Running';
+    }
+    if (isPending) {
+      return 'Pending';
+    }
     return 'Idle';
   };
 
   const formatDuration = (duration?: number) => {
-    if (!duration) return '';
-    if (duration < 1000) return `${duration}ms`;
+    if (!duration) {
+      return '';
+    }
+    if (duration < 1000) {
+      return `${duration}ms`;
+    }
     return `${(duration / 1000).toFixed(1)}s`;
   };
 

@@ -310,13 +310,22 @@ export const About: React.FC = () => {
                   <p className="text-blue-600 font-medium mb-3">{member.role}</p>
                   <p className="text-gray-600 text-sm mb-4">{member.bio}</p>
                   <div className="flex justify-center gap-3">
-                    <a href={member.linkedin} className="text-gray-400 hover:text-blue-600 transition-colors">
+                    <a
+                      href={member.linkedin}
+                      className="text-gray-400 hover:text-blue-600 transition-colors"
+                    >
                       <Linkedin className="w-5 h-5" />
                     </a>
-                    <a href={member.twitter} className="text-gray-400 hover:text-blue-600 transition-colors">
+                    <a
+                      href={member.twitter}
+                      className="text-gray-400 hover:text-blue-600 transition-colors"
+                    >
                       <Twitter className="w-5 h-5" />
                     </a>
-                    <a href={member.github} className="text-gray-400 hover:text-blue-600 transition-colors">
+                    <a
+                      href={member.github}
+                      className="text-gray-400 hover:text-blue-600 transition-colors"
+                    >
                       <Github className="w-5 h-5" />
                     </a>
                   </div>

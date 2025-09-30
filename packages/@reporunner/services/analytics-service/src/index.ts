@@ -1,6 +1,6 @@
+import { EventEmitter } from 'node:events';
 import type { DistributedEventBus } from '@reporunner/platform/event-bus';
 import { logger } from '@reporunner/shared/logger';
-import { EventEmitter } from 'events';
 import { Redis } from 'ioredis';
 import type { Collection, Db, MongoClient } from 'mongodb';
 import { v4 as uuidv4 } from 'uuid';
@@ -179,7 +179,7 @@ export class AnalyticsService extends EventEmitter {
 
   constructor(
     private config: AnalyticsConfig,
-    private mongoClient: MongoClient,
+    mongoClient: MongoClient,
     eventBus: DistributedEventBus
   ) {
     super();
@@ -922,7 +922,9 @@ export class AnalyticsService extends EventEmitter {
       timestamp: timeWindow.start,
     });
 
-    if (existing) return; // Already aggregated
+    if (existing) {
+      return; // Already aggregated
+    }
 
     // Perform aggregation
     const pipeline = [
@@ -1019,7 +1021,9 @@ export class AnalyticsService extends EventEmitter {
   }
 
   private calculatePercentile(values: number[], percentile: number): number {
-    if (values.length === 0) return 0;
+    if (values.length === 0) {
+      return 0;
+    }
 
     const sorted = values.sort((a, b) => a - b);
     const index = Math.ceil((percentile / 100) * sorted.length) - 1;
@@ -1184,7 +1188,7 @@ export class AnalyticsService extends EventEmitter {
           activeSessions,
         },
       };
-    } catch (error) {
+    } catch (_error) {
       return {
         status: 'unhealthy',
         metrics: {
@@ -1307,7 +1311,7 @@ class UserSessionManager {
 class MetricCollector {
   constructor(
     private metrics: Collection<MetricValue>,
-    private definitions: Collection<MetricDefinition>
+    _definitions: Collection<MetricDefinition>
   ) {}
 
   async record(metric: MetricValue): Promise<void> {

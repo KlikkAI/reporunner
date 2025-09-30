@@ -27,7 +27,9 @@ export const useScrollAnimations = (options: UseScrollAnimationsOptions = {}) =>
       '.fade-in-on-scroll, .slide-in-left-on-scroll, .slide-in-right-on-scroll'
     );
 
-    if (!animatedElements.length) return;
+    if (!animatedElements.length) {
+      return;
+    }
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -115,7 +117,9 @@ export const useCountUpAnimation = (
     }
 
     const element = elementRef.current;
-    if (!element) return;
+    if (!element) {
+      return;
+    }
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -147,7 +151,9 @@ export const useTypewriterEffect = (text: string, speed: number = 50, startDelay
 
   useEffect(() => {
     const element = elementRef.current;
-    if (!element) return;
+    if (!element) {
+      return;
+    }
 
     let index = 0;
     element.textContent = '';
@@ -192,7 +198,9 @@ export const useGlowEffect = (intensity: number = 0.5) => {
 
   useEffect(() => {
     const element = elementRef.current;
-    if (!element) return;
+    if (!element) {
+      return;
+    }
 
     const handleMouseMove = (e: MouseEvent) => {
       const rect = element.getBoundingClientRect();
@@ -229,7 +237,9 @@ export const useMorphingText = (
 
   useEffect(() => {
     const element = elementRef.current;
-    if (!element || texts.length === 0) return;
+    if (!element || texts.length === 0) {
+      return;
+    }
 
     let currentIndex = 0;
     element.textContent = texts[0];

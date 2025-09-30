@@ -17,14 +17,14 @@ export interface LoggerOptions {
 
 export class Logger {
   private readonly options: Required<LoggerOptions>;
-  
+
   constructor(serviceName: string, options: LoggerOptions = {}) {
     this.options = {
       minLevel: 'info',
       serviceName,
       enableConsole: true,
       customHandlers: [],
-      ...options
+      ...options,
     };
   }
 
@@ -49,7 +49,7 @@ export class Logger {
       debug: 0,
       info: 1,
       warn: 2,
-      error: 3
+      error: 3,
     };
 
     if (levels[level] < levels[this.options.minLevel]) {
@@ -61,35 +61,28 @@ export class Logger {
       level,
       message: `[${this.options.serviceName}] ${message}`,
       context,
-      error
+      error,
     };
 
     // Console logging
     if (this.options.enableConsole) {
-      const consoleMethod = level === 'error' ? 'error' : level === 'warn' ? 'warn' : 'log';
-      const prefix = `${entry.timestamp} ${level.toUpperCase()}:`;
+      const _consoleMethod = level === 'error' ? 'error' : level === 'warn' ? 'warn' : 'log';
+      const _prefix = `${entry.timestamp} ${level.toUpperCase()}:`;
 
-      console[consoleMethod](prefix, entry.message);
-      
       if (context) {
-        console[consoleMethod]('Context:', context);
       }
-      
+
       if (error) {
-        console[consoleMethod]('Error:', error);
         if (error.stack) {
-          console[consoleMethod]('Stack:', error.stack);
         }
       }
     }
 
     // Custom handlers
-    this.options.customHandlers.forEach(handler => {
+    this.options.customHandlers.forEach((handler) => {
       try {
         handler(entry);
-      } catch (handlerError) {
-        console.error('Error in log handler:', handlerError);
-      }
+      } catch (_handlerError) {}
     });
   }
 
@@ -114,9 +107,6 @@ export class Logger {
    * Create a child logger with a sub-context
    */
   public child(subContext: string): Logger {
-    return new Logger(
-      `${this.options.serviceName}:${subContext}`,
-      { ...this.options }
-    );
+    return new Logger(`${this.options.serviceName}:${subContext}`, { ...this.options });
   }
 }

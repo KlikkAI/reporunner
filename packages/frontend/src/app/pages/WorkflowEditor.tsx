@@ -7,16 +7,14 @@
  * Reduction: ~80 lines → ~60 lines (25% reduction + better UX)
  */
 
-import React, { useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import { SaveOutlined, PlayCircleOutlined, TestOutlined, HistoryOutlined } from '@ant-design/icons';
-import { useLeanWorkflowStore } from '@/core';
+import { HistoryOutlined, PlayCircleOutlined, SaveOutlined, TestOutlined } from '@ant-design/icons';
 import { Logger } from '@reporunner/core';
-import {
-  PageGenerator,
-  ComponentGenerator,
-} from '@/design-system';
+import type React from 'react';
+import { useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+import { useLeanWorkflowStore } from '@/core';
 import type { PageAction, PageSectionConfig } from '@/design-system';
+import { ComponentGenerator, PageGenerator } from '@/design-system';
 import WorkflowEditorComponent from '../components/WorkflowEditor';
 
 const logger = new Logger('WorkflowEditor');
@@ -90,46 +88,52 @@ export const WorkflowEditor: React.FC = () => {
   ];
 
   // Generate workflow info card if workflow exists
-  const workflowInfoCard = currentWorkflow && ComponentGenerator.generateCard({
-    id: 'workflow-info',
-    type: 'card',
-    size: 'small',
-    className: 'mb-4',
-    children: [
-      {
-        id: 'workflow-details',
-        type: 'content',
-        props: {
-          children: (
-            <div className="grid grid-cols-3 gap-4 text-sm">
-              <div>
-                <span className="font-medium text-gray-600 dark:text-gray-400">Status:</span>
-                <span className={`ml-2 px-2 py-1 rounded-full text-xs ${
-                  (currentWorkflow as any)?.isActive
-                    ? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400'
-                    : 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-400'
-                }`}>
-                  {(currentWorkflow as any)?.isActive ? 'Active' : 'Inactive'}
-                </span>
+  const workflowInfoCard =
+    currentWorkflow &&
+    ComponentGenerator.generateCard({
+      id: 'workflow-info',
+      type: 'card',
+      size: 'small',
+      className: 'mb-4',
+      children: [
+        {
+          id: 'workflow-details',
+          type: 'content',
+          props: {
+            children: (
+              <div className="grid grid-cols-3 gap-4 text-sm">
+                <div>
+                  <span className="font-medium text-gray-600 dark:text-gray-400">Status:</span>
+                  <span
+                    className={`ml-2 px-2 py-1 rounded-full text-xs ${
+                      (currentWorkflow as any)?.isActive
+                        ? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400'
+                        : 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-400'
+                    }`}
+                  >
+                    {(currentWorkflow as any)?.isActive ? 'Active' : 'Inactive'}
+                  </span>
+                </div>
+                <div>
+                  <span className="font-medium text-gray-600 dark:text-gray-400">Nodes:</span>
+                  <span className="ml-2">{(currentWorkflow as any)?.nodes?.length || 0}</span>
+                </div>
+                <div>
+                  <span className="font-medium text-gray-600 dark:text-gray-400">
+                    Last Modified:
+                  </span>
+                  <span className="ml-2">
+                    {(currentWorkflow as any)?.updatedAt
+                      ? new Date((currentWorkflow as any).updatedAt).toLocaleDateString()
+                      : 'Never'}
+                  </span>
+                </div>
               </div>
-              <div>
-                <span className="font-medium text-gray-600 dark:text-gray-400">Nodes:</span>
-                <span className="ml-2">{(currentWorkflow as any)?.nodes?.length || 0}</span>
-              </div>
-              <div>
-                <span className="font-medium text-gray-600 dark:text-gray-400">Last Modified:</span>
-                <span className="ml-2">
-                  {(currentWorkflow as any)?.updatedAt
-                    ? new Date((currentWorkflow as any).updatedAt).toLocaleDateString()
-                    : 'Never'}
-                </span>
-              </div>
-            </div>
-          ),
+            ),
+          },
         },
-      },
-    ],
-  });
+      ],
+    });
 
   // Add workflow info section if workflow exists
   if (currentWorkflow && workflowInfoCard) {
@@ -149,11 +153,7 @@ export const WorkflowEditor: React.FC = () => {
     loading: isLoading,
   };
 
-  return (
-    <div className="h-screen flex flex-col">
-      {PageGenerator.generatePage(pageConfig)}
-    </div>
-  );
+  return <div className="h-screen flex flex-col">{PageGenerator.generatePage(pageConfig)}</div>;
 };
 
 export default WorkflowEditor;

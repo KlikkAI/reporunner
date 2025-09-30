@@ -6,7 +6,7 @@ import { useLocation } from 'react-router-dom';
  * Ensures dark background persists during navigation
  */
 export function RouteTransition({ children }: { children: React.ReactNode }) {
-  const location = useLocation();
+  const _location = useLocation();
 
   useEffect(() => {
     // Ensure dark mode persists on route change
@@ -24,7 +24,7 @@ export function RouteTransition({ children }: { children: React.ReactNode }) {
     }, 0);
 
     return () => clearTimeout(timer);
-  }, [location.pathname]);
+  }, []);
 
   return <>{children}</>;
 }

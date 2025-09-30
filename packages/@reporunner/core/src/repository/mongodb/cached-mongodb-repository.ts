@@ -1,15 +1,18 @@
-import { Collection, ObjectId, ClientSession, WithId } from 'mongodb';
+import { type ClientSession, type Collection, ObjectId } from 'mongodb';
+import type { ICache } from '../../interfaces/ICache';
+import type { Filter, Pagination, Sort } from '../../types';
 import { CachedRepository } from '../cached-repository';
-import { ICache } from '../../interfaces/ICache';
-import { Filter, Sort, Pagination } from '../../types';
 
 /**
  * Base MongoDB repository implementation that includes caching.
  * Combines MongoDB-specific functionality with caching capabilities.
  */
-export abstract class CachedMongoDBRepository<T extends { _id?: ObjectId }, ID = string> extends CachedRepository<T, ID> {
+export abstract class CachedMongoDBRepository<
+  T extends { _id?: ObjectId },
+  ID = string,
+> extends CachedRepository<T, ID> {
   protected session: ClientSession | undefined = undefined;
-  
+
   constructor(
     protected readonly collection: Collection<T>,
     cache: ICache,
@@ -18,14 +21,14 @@ export abstract class CachedMongoDBRepository<T extends { _id?: ObjectId }, ID =
   ) {
     super(cache, cacheTtl, cachePrefix);
   }
-  
+
   /**
    * Convert string ID to ObjectId
    */
   protected toObjectId(id: ID): ObjectId {
     return new ObjectId(id as string);
   }
-  
+
   /**
    * Transform repository filter to MongoDB filter
    */
@@ -37,13 +40,17 @@ export abstract class CachedMongoDBRepository<T extends { _id?: ObjectId }, ID =
         transformed._id = this.toObjectId(transformed._id as unknown as ID);
       } else if (typeof transformed._id === 'object') {
         const idFilter = transformed._id as any;
-        if (idFilter.$eq) idFilter.$eq = this.toObjectId(idFilter.$eq);
-        if (idFilter.$in) idFilter.$in = idFilter.$in.map((id: string) => this.toObjectId(id as unknown as ID));
+        if (idFilter.$eq) {
+          idFilter.$eq = this.toObjectId(idFilter.$eq);
+        }
+        if (idFilter.$in) {
+          idFilter.$in = idFilter.$in.map((id: string) => this.toObjectId(id as unknown as ID));
+        }
       }
     }
     return transformed;
   }
-  
+
   /**
    * Transform repository sort to MongoDB sort
    */
@@ -54,11 +61,11 @@ export abstract class CachedMongoDBRepository<T extends { _id?: ObjectId }, ID =
     }
     return transformed;
   }
-  
+
   protected serialize(entity: T): string {
     return JSON.stringify(entity);
   }
-  
+
   protected deserialize(data: string): T {
     const parsed = JSON.parse(data);
     if (parsed._id) {
@@ -66,21 +73,22 @@ export abstract class CachedMongoDBRepository<T extends { _id?: ObjectId }, ID =
     }
     return parsed;
   }
-  
+
   protected getId(entity: T): ID {
     return entity._id?.toString() as ID;
   }
-  
+
   async findById(id: ID): Promise<T | null> {
     return this.wrapError(async () => {
       const cached = await this.getFromCache(id);
-      if (cached) return cached;
-      
-      const document = await this.collection.findOne(
-        { _id: this.toObjectId(id) } as any,
-        { session: this.session }
-      );
-      
+      if (cached) {
+        return cached;
+      }
+
+      const document = await this.collection.findOne({ _id: this.toObjectId(id) } as any, {
+        session: this.session,
+      });
+
       if (document) {
         await this.saveToCache(id, document as T);
       }
@@ -88,28 +96,24 @@ export abstract class CachedMongoDBRepository<T extends { _id?: ObjectId }, ID =
       return document as T | null;
     });
   }
-  
+
   async findOne(filter: Filter<T>): Promise<T | null> {
     return this.wrapError(async () => {
-      const document = await this.collection.findOne(
-        this.transformFilter(filter),
-        { session: this.session }
-      );
+      const document = await this.collection.findOne(this.transformFilter(filter), {
+        session: this.session,
+      });
       return document as T | null;
     });
   }
-  
+
   async find(filter?: Filter<T>, sort?: Sort<T>, pagination?: Pagination): Promise<T[]> {
     return this.wrapError(async () => {
-      let query = this.collection.find(
-        this.transformFilter(filter),
-        { session: this.session }
-      );
-      
+      let query = this.collection.find(this.transformFilter(filter), { session: this.session });
+
       if (sort) {
         query = query.sort(this.transformSort(sort));
       }
-      
+
       if (pagination) {
         if (pagination.offset !== undefined) {
           query = query.skip(pagination.offset);
@@ -118,65 +122,58 @@ export abstract class CachedMongoDBRepository<T extends { _id?: ObjectId }, ID =
           query = query.limit(pagination.limit);
         }
       }
-      
+
       const documents = await query.toArray();
       return documents as T[];
     });
   }
-  
+
   async count(filter?: Filter<T>): Promise<number> {
     return this.wrapError(async () => {
-      return this.collection.countDocuments(
-        this.transformFilter(filter),
-        { session: this.session }
-      );
+      return this.collection.countDocuments(this.transformFilter(filter), {
+        session: this.session,
+      });
     });
   }
-  
+
   async create(data: Partial<T>): Promise<T> {
     return this.wrapError(async () => {
-      const result = await this.collection.insertOne(
-        data as any,
-        { session: this.session }
-      );
+      const result = await this.collection.insertOne(data as any, { session: this.session });
       const entity = { ...data, _id: result.insertedId } as T;
       await this.saveToCache(this.getId(entity), entity);
       return entity;
     });
   }
-  
+
   async createMany(data: Partial<T>[]): Promise<T[]> {
     return this.wrapError(async () => {
-      const result = await this.collection.insertMany(
-        data as any[],
-        { session: this.session }
-      );
+      const result = await this.collection.insertMany(data as any[], { session: this.session });
       const entities = data.map((item, index) => ({
         ...item,
-        _id: result.insertedIds[index]
+        _id: result.insertedIds[index],
       })) as unknown as T[];
       await this.saveManyToCache(entities);
       return entities;
     });
   }
-  
+
   async update(id: ID, data: Partial<T>): Promise<T> {
     return this.wrapError(async () => {
       const result = await this.collection.findOneAndUpdate(
         { _id: this.toObjectId(id) } as any,
         { $set: data },
-        { 
+        {
           session: this.session,
-          returnDocument: 'after'
+          returnDocument: 'after',
         }
       );
-      
+
       const entity = this.throwIfNotFound(result as T | null, id);
       await this.saveToCache(id, entity);
       return entity;
     });
   }
-  
+
   async updateMany(filter: Filter<T>, data: Partial<T>): Promise<number> {
     return this.wrapError(async () => {
       const result = await this.collection.updateMany(
@@ -187,43 +184,41 @@ export abstract class CachedMongoDBRepository<T extends { _id?: ObjectId }, ID =
       return result.modifiedCount;
     });
   }
-  
+
   async delete(id: ID): Promise<boolean> {
     return this.wrapError(async () => {
-      const result = await this.collection.deleteOne(
-        { _id: this.toObjectId(id) } as any,
-        { session: this.session }
-      );
-      
+      const result = await this.collection.deleteOne({ _id: this.toObjectId(id) } as any, {
+        session: this.session,
+      });
+
       if (result.deletedCount > 0) {
         await this.invalidateCache(id);
       }
-      
+
       return result.deletedCount > 0;
     });
   }
-  
+
   async deleteMany(filter: Filter<T>): Promise<number> {
     return this.wrapError(async () => {
-      const result = await this.collection.deleteMany(
-        this.transformFilter(filter),
-        { session: this.session }
-      );
+      const result = await this.collection.deleteMany(this.transformFilter(filter), {
+        session: this.session,
+      });
       return result.deletedCount;
     });
   }
-  
+
   protected async beginTransactionImpl(): Promise<void> {
     this.session = await this.collection.db.client.startSession();
     await this.session.startTransaction();
   }
-  
+
   protected async commitTransactionImpl(): Promise<void> {
     await this.session?.commitTransaction();
     await this.session?.endSession();
     this.session = undefined;
   }
-  
+
   protected async rollbackTransactionImpl(): Promise<void> {
     await this.session?.abortTransaction();
     await this.session?.endSession();
@@ -232,29 +227,22 @@ export abstract class CachedMongoDBRepository<T extends { _id?: ObjectId }, ID =
 
   // Implement the abstract methods required by CachedRepository
   protected async findByIdImpl(id: ID): Promise<T | null> {
-    const document = await this.collection.findOne(
-      { _id: this.toObjectId(id) } as any,
-      { session: this.session }
-    );
+    const document = await this.collection.findOne({ _id: this.toObjectId(id) } as any, {
+      session: this.session,
+    });
     return document as T | null;
   }
 
   protected async createImpl(data: Partial<T>): Promise<T> {
-    const result = await this.collection.insertOne(
-      data as any,
-      { session: this.session }
-    );
+    const result = await this.collection.insertOne(data as any, { session: this.session });
     return { ...data, _id: result.insertedId } as T;
   }
 
   protected async createManyImpl(data: Partial<T>[]): Promise<T[]> {
-    const result = await this.collection.insertMany(
-      data as any[],
-      { session: this.session }
-    );
+    const result = await this.collection.insertMany(data as any[], { session: this.session });
     return data.map((item, index) => ({
       ...item,
-      _id: result.insertedIds[index]
+      _id: result.insertedIds[index],
     })) as unknown as T[];
   }
 
@@ -264,7 +252,7 @@ export abstract class CachedMongoDBRepository<T extends { _id?: ObjectId }, ID =
       { $set: data },
       {
         session: this.session,
-        returnDocument: 'after'
+        returnDocument: 'after',
       }
     );
     return this.throwIfNotFound(result as T | null, id);
@@ -280,18 +268,16 @@ export abstract class CachedMongoDBRepository<T extends { _id?: ObjectId }, ID =
   }
 
   protected async deleteImpl(id: ID): Promise<boolean> {
-    const result = await this.collection.deleteOne(
-      { _id: this.toObjectId(id) } as any,
-      { session: this.session }
-    );
+    const result = await this.collection.deleteOne({ _id: this.toObjectId(id) } as any, {
+      session: this.session,
+    });
     return result.deletedCount > 0;
   }
 
   protected async deleteManyImpl(filter: Filter<T>): Promise<number> {
-    const result = await this.collection.deleteMany(
-      this.transformFilter(filter),
-      { session: this.session }
-    );
+    const result = await this.collection.deleteMany(this.transformFilter(filter), {
+      session: this.session,
+    });
     return result.deletedCount;
   }
 }

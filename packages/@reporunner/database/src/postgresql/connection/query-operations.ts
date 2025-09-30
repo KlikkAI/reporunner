@@ -59,19 +59,22 @@ export class PostgreSQLQueryBuilder implements QueryBuilder {
     }
 
     // Add other clauses
-    if (this.orderByClause) sql += ` ${this.orderByClause}`;
-    if (this.limitClause) sql += ` ${this.limitClause}`;
-    if (this.offsetClause) sql += ` ${this.offsetClause}`;
+    if (this.orderByClause) {
+      sql += ` ${this.orderByClause}`;
+    }
+    if (this.limitClause) {
+      sql += ` ${this.limitClause}`;
+    }
+    if (this.offsetClause) {
+      sql += ` ${this.offsetClause}`;
+    }
 
     return { sql, params };
   }
 }
 
 export class PostgreSQLQueryOperations {
-  static buildSelectQuery(
-    table: string,
-    options?: QueryOptions
-  ): { sql: string; params: any[] } {
+  static buildSelectQuery(table: string, options?: QueryOptions): { sql: string; params: any[] } {
     const builder = new PostgreSQLQueryBuilder();
 
     if (options?.filter) {
@@ -89,7 +92,7 @@ export class PostgreSQLQueryOperations {
     const query = builder.build();
     return {
       sql: `SELECT * FROM ${table}${query.sql.replace('SELECT * FROM ', '')}`,
-      params: query.params
+      params: query.params,
     };
   }
 
@@ -103,7 +106,7 @@ export class PostgreSQLQueryOperations {
 
     return {
       sql: `INSERT INTO ${table} (${keys.join(', ')}) VALUES (${placeholders}) RETURNING *`,
-      params
+      params,
     };
   }
 
@@ -120,14 +123,14 @@ export class PostgreSQLQueryOperations {
 
     return {
       sql: `UPDATE ${table} SET ${setClauses} WHERE id = $${params.length} RETURNING *`,
-      params
+      params,
     };
   }
 
   static buildDeleteQuery(table: string, id: string): { sql: string; params: any[] } {
     return {
       sql: `DELETE FROM ${table} WHERE id = $1`,
-      params: [id]
+      params: [id],
     };
   }
 }

@@ -1,12 +1,12 @@
-import { ComponentPropsWithoutRef, ElementType } from 'react';
+import type { ComponentPropsWithoutRef, ElementType } from 'react';
 
 /**
  * Generic component props with 'as' prop for polymorphic components
  */
-export type PolymorphicComponentProps<
-  E extends ElementType,
-  P = {}
-> = Omit<ComponentPropsWithoutRef<E>, keyof P> &
+export type PolymorphicComponentProps<E extends ElementType, P = {}> = Omit<
+  ComponentPropsWithoutRef<E>,
+  keyof P
+> &
   P & {
     as?: E;
   };
@@ -19,13 +19,7 @@ export type ComponentSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 /**
  * Component color variants
  */
-export type ComponentColor =
-  | 'primary'
-  | 'secondary'
-  | 'success'
-  | 'warning'
-  | 'error'
-  | 'info';
+export type ComponentColor = 'primary' | 'secondary' | 'success' | 'warning' | 'error' | 'info';
 
 /**
  * Component variant types

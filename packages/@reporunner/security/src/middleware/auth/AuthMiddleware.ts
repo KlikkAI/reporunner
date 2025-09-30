@@ -1,9 +1,13 @@
-import { Request } from 'express';
-import { SecurityMiddleware, SecurityContext, SecurityConfig } from '../base/SecurityMiddleware';
 import { AuthenticationError, AuthorizationError } from '@reporunner/core';
-import { JWTTokenService } from './services/TokenService';
-import { SessionService } from './services/SessionService';
+import type { Request } from 'express';
+import {
+  type SecurityConfig,
+  type SecurityContext,
+  SecurityMiddleware,
+} from '../base/SecurityMiddleware';
 import { RoleService } from './services/RoleService';
+import { SessionService } from './services/SessionService';
+import { JWTTokenService } from './services/TokenService';
 
 export interface AuthConfig extends SecurityConfig {
   /**
@@ -75,7 +79,7 @@ export class AuthMiddleware extends SecurityMiddleware {
     const tokenConfig = config.auth?.token || {
       secret: 'default-secret',
       expiresIn: '1h',
-      refreshExpiresIn: '7d'
+      refreshExpiresIn: '7d',
     };
 
     this.tokenService = new JWTTokenService(tokenConfig);
@@ -102,7 +106,7 @@ export class AuthMiddleware extends SecurityMiddleware {
         req.user = {
           ...user,
           roles: user.roles || [],
-          permissions: user.permissions || []
+          permissions: user.permissions || [],
         };
         return;
       }
@@ -119,13 +123,13 @@ export class AuthMiddleware extends SecurityMiddleware {
       if (error instanceof AuthenticationError) {
         throw error;
       }
-      throw new AuthenticationError('Authentication failed: ' + (error as Error).message);
+      throw new AuthenticationError(`Authentication failed: ${(error as Error).message}`);
     }
   }
 
   private async authorize(req: Request): Promise<void> {
     const { rbac } = this.config;
-    
+
     try {
       // Check roles if specified
       if (rbac?.roles?.length) {
@@ -139,10 +143,7 @@ export class AuthMiddleware extends SecurityMiddleware {
 
       // Check permissions if specified
       if (rbac?.permissions?.length) {
-        const hasPermissions = await this.roleService.checkPermissions(
-          req.user,
-          rbac.permissions
-        );
+        const hasPermissions = await this.roleService.checkPermissions(req.user, rbac.permissions);
         if (!hasPermissions) {
           throw new AuthorizationError(
             `User lacks required permissions. Required: ${rbac.permissions.join(', ')}`
@@ -172,7 +173,7 @@ export class AuthMiddleware extends SecurityMiddleware {
       if (error instanceof AuthorizationError) {
         throw error;
       }
-      throw new AuthorizationError('Authorization failed: ' + (error as Error).message);
+      throw new AuthorizationError(`Authorization failed: ${(error as Error).message}`);
     }
   }
 

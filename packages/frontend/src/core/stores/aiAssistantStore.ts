@@ -170,7 +170,9 @@ export const useAIAssistantStore = create<AIAssistantState>()(
 
     sendChatMessage: async (message, context) => {
       const state = get();
-      if (!state.isEnabled || state.isProcessingChat) return;
+      if (!state.isEnabled || state.isProcessingChat) {
+        return;
+      }
 
       set({
         isProcessingChat: true,
@@ -225,7 +227,9 @@ export const useAIAssistantStore = create<AIAssistantState>()(
     // Analysis actions
     analyzeWorkflow: async (_nodes, _edges) => {
       const state = get();
-      if (!state.isEnabled || state.isAnalyzing) return;
+      if (!state.isEnabled || state.isAnalyzing) {
+        return;
+      }
 
       set({ isAnalyzing: true });
 
@@ -297,7 +301,9 @@ export const useAIAssistantStore = create<AIAssistantState>()(
     // Suggestion actions
     getNodeSuggestions: async (context) => {
       const state = get();
-      if (!state.isEnabled) return;
+      if (!state.isEnabled) {
+        return;
+      }
 
       try {
         const suggestions: WorkflowSuggestion[] = [];
@@ -326,7 +332,9 @@ export const useAIAssistantStore = create<AIAssistantState>()(
       const state = get();
       const suggestion = state.activeSuggestions.find((s) => s.id === suggestionId);
 
-      if (!suggestion) return;
+      if (!suggestion) {
+        return;
+      }
 
       try {
         // Apply the suggestion based on its type
@@ -402,7 +410,7 @@ export const useAIAssistantStore = create<AIAssistantState>()(
       const state = get();
       const issue = state.activeIssues.find((i) => i.id === issueId);
 
-      if (!issue || !issue.autoFixAvailable) {
+      if (!issue?.autoFixAvailable) {
         return false;
       }
 

@@ -1,7 +1,7 @@
-import React from 'react';
-import type { ReactNode } from 'react';
-import { Card, Breadcrumb, Button, Space } from 'antd';
 import { ArrowLeftOutlined } from '@ant-design/icons';
+import { Breadcrumb, Button, Card, Space } from 'antd';
+import type React from 'react';
+import type { ReactNode } from 'react';
 import { cn } from '@/design-system/utils';
 
 interface BreadcrumbItem {
@@ -55,9 +55,11 @@ export const BasePage: React.FC<BasePageProps> = ({
   children,
 }) => {
   const renderBreadcrumbs = () => {
-    if (!breadcrumbs || breadcrumbs.length === 0) return null;
+    if (!breadcrumbs || breadcrumbs.length === 0) {
+      return null;
+    }
 
-    const items = breadcrumbs.map((item, index) => ({
+    const items = breadcrumbs.map((item, _index) => ({
       title: item.href ? (
         <a
           href={item.href}
@@ -85,7 +87,9 @@ export const BasePage: React.FC<BasePageProps> = ({
   };
 
   const renderActions = () => {
-    if (!actions || actions.length === 0) return null;
+    if (!actions || actions.length === 0) {
+      return null;
+    }
 
     return (
       <Space>
@@ -111,7 +115,9 @@ export const BasePage: React.FC<BasePageProps> = ({
   };
 
   const renderBackButton = () => {
-    if (!backButton?.show) return null;
+    if (!backButton?.show) {
+      return null;
+    }
 
     return (
       <Button
@@ -126,7 +132,9 @@ export const BasePage: React.FC<BasePageProps> = ({
   };
 
   const renderError = () => {
-    if (!error) return null;
+    if (!error) {
+      return null;
+    }
 
     return (
       <Card className="mb-6 bg-red-900/20 border-red-700">
@@ -146,14 +154,10 @@ export const BasePage: React.FC<BasePageProps> = ({
       <div className="flex items-start justify-between">
         <div>
           <h1 className="text-3xl font-bold text-white mb-2">{title}</h1>
-          {subtitle && (
-            <p className="text-lg text-gray-400">{subtitle}</p>
-          )}
+          {subtitle && <p className="text-lg text-gray-400">{subtitle}</p>}
         </div>
 
-        <div className="flex-shrink-0">
-          {renderActions()}
-        </div>
+        <div className="flex-shrink-0">{renderActions()}</div>
       </div>
     </div>
   );
@@ -172,11 +176,7 @@ export const BasePage: React.FC<BasePageProps> = ({
       );
     }
 
-    return (
-      <div className={cn('space-y-6', contentClassName)}>
-        {children}
-      </div>
-    );
+    return <div className={cn('space-y-6', contentClassName)}>{children}</div>;
   };
 
   return (
@@ -209,16 +209,16 @@ export const PageSection: React.FC<PageSectionProps> = ({
   children,
 }) => {
   const renderSectionHeader = () => {
-    if (!title && !actions) return null;
+    if (!(title || actions)) {
+      return null;
+    }
 
     return (
       <div className="flex items-start justify-between mb-4">
         {title && (
           <div>
             <h2 className="text-xl font-semibold text-white">{title}</h2>
-            {subtitle && (
-              <p className="text-gray-400 mt-1">{subtitle}</p>
-            )}
+            {subtitle && <p className="text-gray-400 mt-1">{subtitle}</p>}
           </div>
         )}
 
@@ -286,9 +286,7 @@ export const StatsCard: React.FC<StatsCardProps> = ({
         <div>
           <p className="text-gray-400 text-sm mb-1">{title}</p>
           <p className="text-2xl font-bold text-white">{value}</p>
-          {subtitle && (
-            <p className="text-gray-500 text-sm mt-1">{subtitle}</p>
-          )}
+          {subtitle && <p className="text-gray-500 text-sm mt-1">{subtitle}</p>}
           {trend && (
             <div className="flex items-center mt-2">
               <span
@@ -297,17 +295,14 @@ export const StatsCard: React.FC<StatsCardProps> = ({
                   trend.isPositive ? 'text-green-400' : 'text-red-400'
                 )}
               >
-                {trend.isPositive ? '+' : ''}{trend.value}%
+                {trend.isPositive ? '+' : ''}
+                {trend.value}%
               </span>
               <span className="text-gray-500 text-sm ml-2">{trend.label}</span>
             </div>
           )}
         </div>
-        {icon && (
-          <div className="text-gray-400 text-2xl">
-            {icon}
-          </div>
-        )}
+        {icon && <div className="text-gray-400 text-2xl">{icon}</div>}
       </div>
     </Card>
   );

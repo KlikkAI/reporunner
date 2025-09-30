@@ -7,15 +7,12 @@
  * Reduction: ~30 lines → ~60 lines (expansion for better UX)
  */
 
-import React from 'react';
+import { LockOutlined, UserOutlined } from '@ant-design/icons';
+import type React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { LoginOutlined, UserOutlined, LockOutlined } from '@ant-design/icons';
 import { useAuthStore } from '@/core/stores/authStore';
-import {
-  UniversalForm,
-  ComponentGenerator,
-} from '@/design-system';
 import type { PropertyRendererConfig } from '@/design-system';
+import { ComponentGenerator, UniversalForm } from '@/design-system';
 
 export const Login: React.FC = () => {
   const navigate = useNavigate();
@@ -32,7 +29,11 @@ export const Login: React.FC = () => {
       validation: {
         rules: [
           { type: 'required', message: 'Email is required' },
-          { type: 'pattern', value: '^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$', message: 'Please enter a valid email' },
+          {
+            type: 'pattern',
+            value: '^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$',
+            message: 'Please enter a valid email',
+          },
         ],
       },
       styling: {
@@ -178,9 +179,7 @@ export const Login: React.FC = () => {
             </div>
           </div>
 
-          <div className="mt-4">
-            {alternativeActions}
-          </div>
+          <div className="mt-4">{alternativeActions}</div>
         </div>
       </div>
     </div>

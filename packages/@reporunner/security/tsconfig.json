@@ -3,13 +3,7 @@
   "compilerOptions": {
     "outDir": "./dist/security"
   },
-  "include": [
-    "src/**/*"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "**/*.test.*"
-  ],
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist", "**/*.test.*"],
   "_package": "security"
 }

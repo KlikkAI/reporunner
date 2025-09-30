@@ -241,7 +241,7 @@ export class Tenant extends BaseEntity {
       throw new InvalidTenantDataError('Subdomain is required');
     }
 
-    if (!this.adminEmail || !this.isValidEmail(this.adminEmail)) {
+    if (!(this.adminEmail && this.isValidEmail(this.adminEmail))) {
       throw new InvalidTenantDataError('Valid admin email is required');
     }
   }
@@ -302,7 +302,7 @@ export class Tenant extends BaseEntity {
     return customSettings ? TenantSettings.merge(defaults, customSettings) : defaults;
   }
 
-  private validatePlanChange(newPlan: TenantPlan): void {
+  private validatePlanChange(_newPlan: TenantPlan): void {
     if (this._status !== TenantStatus.ACTIVE) {
       throw new InvalidTenantDataError('Can only change plan for active tenants');
     }
@@ -388,7 +388,9 @@ export class Tenant extends BaseEntity {
 
   // Additional business methods can be added here
   public calculateMonthlyRevenue(): number {
-    if (!this.isActive()) return 0;
+    if (!this.isActive()) {
+      return 0;
+    }
     return this._plan.getMonthlyPrice();
   }
 

@@ -5,16 +5,13 @@
  */
 
 import {
-  AlertCircle,
   ArrowRight,
   Calendar,
-  CheckCircle,
   Eye,
   FileText,
   Lock,
   Mail,
   Phone,
-  Settings,
   Shield,
   Users,
 } from 'lucide-react';
@@ -261,15 +258,18 @@ export const Privacy: React.FC = () => {
               {[
                 {
                   title: 'End-to-End Encryption',
-                  description: 'All data is encrypted both in transit and at rest using AES-256 encryption.',
+                  description:
+                    'All data is encrypted both in transit and at rest using AES-256 encryption.',
                 },
                 {
                   title: 'Zero Trust Architecture',
-                  description: 'Every request is verified and authenticated before granting access.',
+                  description:
+                    'Every request is verified and authenticated before granting access.',
                 },
                 {
                   title: 'Regular Security Audits',
-                  description: 'Third-party security audits and penetration testing conducted quarterly.',
+                  description:
+                    'Third-party security audits and penetration testing conducted quarterly.',
                 },
                 {
                   title: 'SOC2 Type II Certified',
@@ -281,7 +281,8 @@ export const Privacy: React.FC = () => {
                 },
                 {
                   title: 'Access Controls',
-                  description: 'Strict role-based access with multi-factor authentication required.',
+                  description:
+                    'Strict role-based access with multi-factor authentication required.',
                 },
               ].map((measure, index) => (
                 <div

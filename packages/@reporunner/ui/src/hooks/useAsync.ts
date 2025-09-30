@@ -14,10 +14,7 @@ export interface UseAsyncOptions {
 /**
  * Hook that manages state for an async operation
  */
-export function useAsync<T>(
-  asyncFunction: () => Promise<T>,
-  options: UseAsyncOptions = {}
-) {
+export function useAsync<T>(asyncFunction: () => Promise<T>, options: UseAsyncOptions = {}) {
   const [state, setState] = useState<UseAsyncState<T>>({
     isLoading: false,
     isError: false,

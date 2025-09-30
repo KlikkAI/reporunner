@@ -1,7 +1,7 @@
 // Workflow Engine implementation reusing patterns from @reporunner/workflow
 import { EventEmitter } from 'node:events';
 import { v4 as uuid } from 'uuid';
-import { WorkflowExecution, ExecutionStatus, TriggerType } from './types/execution-types';
+import { ExecutionStatus, TriggerType, type WorkflowExecution } from './types/execution-types';
 
 export interface WorkflowEngineOptions {
   maxConcurrentExecutions?: number;

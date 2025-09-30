@@ -74,10 +74,18 @@ const getTypeColor = (type: string) => {
 };
 
 const inferType = (value: any): string => {
-  if (value === null) return 'null';
-  if (value === undefined) return 'undefined';
-  if (Array.isArray(value)) return 'array';
-  if (typeof value === 'object') return 'object';
+  if (value === null) {
+    return 'null';
+  }
+  if (value === undefined) {
+    return 'undefined';
+  }
+  if (Array.isArray(value)) {
+    return 'array';
+  }
+  if (typeof value === 'object') {
+    return 'object';
+  }
   if (typeof value === 'string') {
     // Check if it's a date string
     if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/.test(value)) {
@@ -97,7 +105,9 @@ const inferType = (value: any): string => {
 };
 
 const getValuePreview = (value: any, type: string): string => {
-  if (value === null || value === undefined) return '';
+  if (value === null || value === undefined) {
+    return '';
+  }
 
   switch (type) {
     case 'string':
@@ -118,7 +128,9 @@ const buildSchemaTree = (
   path: string = '',
   onFieldClick?: (fieldPath: string) => void
 ): SchemaNode[] => {
-  if (!obj || typeof obj !== 'object') return [];
+  if (!obj || typeof obj !== 'object') {
+    return [];
+  }
 
   return Object.entries(obj).map(([key, value]) => {
     const currentPath = path ? `${path}.${key}` : key;

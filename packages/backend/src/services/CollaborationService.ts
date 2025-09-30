@@ -4,16 +4,10 @@
  */
 
 import type { Server as SocketIOServer } from 'socket.io';
-import {
-  CollaborationSession,
-  type ICollaborationSession,
-} from '../models/CollaborationSession';
+import { CollaborationSession, type ICollaborationSession } from '../models/CollaborationSession';
 import { Comment, type IComment } from '../models/Comment';
 import { type IOperation, Operation } from '../models/Operation';
-import {
-  OperationalTransformService,
-  type TransformResult,
-} from './OperationalTransformService';
+import { OperationalTransformService, type TransformResult } from './OperationalTransformService';
 
 export interface ParticipantData {
   userId: string;
@@ -130,10 +124,14 @@ export class CollaborationService {
    */
   public async leaveSession(socketId: string): Promise<void> {
     const workflowId = this.socketToWorkflow.get(socketId);
-    if (!workflowId) return;
+    if (!workflowId) {
+      return;
+    }
 
     const session = this.activeSessions.get(workflowId);
-    if (!session) return;
+    if (!session) {
+      return;
+    }
 
     // Remove participant from session
     session.participants = session.participants.filter((p) => p.socketId !== socketId);
@@ -271,8 +269,7 @@ export class CollaborationService {
         conflicts: transformResult?.conflicts || [],
         requiresManualResolution: false,
       };
-    } catch (error) {
-      console.error('Error handling operation:', error);
+    } catch (_error) {
       return { success: false };
     }
   }
@@ -286,7 +283,9 @@ export class CollaborationService {
     cursor: ParticipantData['cursor']
   ): Promise<void> {
     const session = this.activeSessions.get(workflowId);
-    if (!session) return;
+    if (!session) {
+      return;
+    }
 
     // Update participant cursor in session
     const participant = session.participants.find((p) => p.socketId === socketId);
@@ -318,7 +317,9 @@ export class CollaborationService {
     selection: ParticipantData['selection']
   ): Promise<void> {
     const session = this.activeSessions.get(workflowId);
-    if (!session) return;
+    if (!session) {
+      return;
+    }
 
     const participant = session.participants.find((p) => p.socketId === socketId);
     if (participant) {
@@ -349,7 +350,9 @@ export class CollaborationService {
     commentData: Partial<IComment>
   ): Promise<IComment | null> {
     const session = this.activeSessions.get(workflowId);
-    if (!session) return null;
+    if (!session) {
+      return null;
+    }
 
     try {
       const comment = new Comment({
@@ -367,8 +370,7 @@ export class CollaborationService {
       });
 
       return comment;
-    } catch (error) {
-      console.error('Error adding comment:', error);
+    } catch (_error) {
       return null;
     }
   }
@@ -378,7 +380,9 @@ export class CollaborationService {
    */
   public getSessionParticipants(workflowId: string): ParticipantData[] {
     const session = this.activeSessions.get(workflowId);
-    if (!session) return [];
+    if (!session) {
+      return [];
+    }
 
     return session.participants.map((p) => ({
       userId: p.userId,
@@ -429,7 +433,9 @@ export class CollaborationService {
    * Setup Socket.IO event handlers
    */
   private setupSocketHandlers(): void {
-    if (!this.io) return;
+    if (!this.io) {
+      return;
+    }
 
     this.io.on('connection', (socket) => {
       socket.on('join_collaboration', async (data) => {
@@ -467,7 +473,9 @@ export class CollaborationService {
 
       socket.on('collaboration_operation', async (data) => {
         const workflowId = this.socketToWorkflow.get(socket.id);
-        if (!workflowId) return;
+        if (!workflowId) {
+          return;
+        }
 
         const result = await this.handleOperation(workflowId, socket.id, data.operation);
 
@@ -646,7 +654,9 @@ export class CollaborationService {
     data: any,
     excludeSocketId?: string
   ): void {
-    if (!this.io) return;
+    if (!this.io) {
+      return;
+    }
 
     const room = `workflow-${workflowId}`;
     if (excludeSocketId) {

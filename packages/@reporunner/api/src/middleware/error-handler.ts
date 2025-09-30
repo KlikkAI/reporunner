@@ -12,17 +12,6 @@ export function errorHandler(
   res: Response,
   _next: NextFunction
 ): void {
-  // Log error
-  console.error('Error:', {
-    message: error.message,
-    stack: error.stack,
-    code: error.code,
-    statusCode: error.statusCode,
-    details: error.details,
-    path: req.path,
-    method: req.method,
-  });
-
   // Set default status code
   const statusCode = error.statusCode || 500;
 

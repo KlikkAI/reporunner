@@ -27,7 +27,7 @@ export class DatabaseHealthMonitor implements HealthMonitor {
     return {
       mongodb: { connected: true },
       postgresql: { connected: true },
-      overall: 'healthy'
+      overall: 'healthy',
     };
   }
 

@@ -7,13 +7,16 @@
  * Reduction: ~800 lines → ~120 lines (85% reduction)
  */
 
-import React, { useMemo } from 'react';
-import type { INodeProperty, PropertyEvaluationContext, PropertyFormState, PropertyValue } from '@/core';
-import {
-  PropertyRendererFactory,
-  PropertyRenderer,
-} from '@/design-system';
-import type { PropertyRendererConfig, PropertyContext } from '@/design-system';
+import type React from 'react';
+import { useMemo } from 'react';
+import type {
+  INodeProperty,
+  PropertyEvaluationContext,
+  PropertyFormState,
+  PropertyValue,
+} from '@/core';
+import type { PropertyContext, PropertyRendererConfig } from '@/design-system';
+import { PropertyRenderer } from '@/design-system';
 
 interface DynamicPropertyRendererProps {
   properties: INodeProperty[];
@@ -99,7 +102,7 @@ const convertNodePropertyToConfig = (property: INodeProperty): PropertyRendererC
     };
 
     if (property.required) {
-      config.validation.rules!.push({
+      config.validation.rules?.push({
         type: 'required',
         message: `${property.displayName} is required`,
       });
@@ -132,15 +135,18 @@ export const DynamicPropertyRenderer: React.FC<DynamicPropertyRendererProps> = (
   }, [properties]);
 
   // Create property context
-  const propertyContext: PropertyContext = useMemo(() => ({
-    formData: formState,
-    errors: {}, // Simplified - would be integrated with validation system
-    touched: {}, // Simplified - would track field interactions
-    isSubmitting: disabled,
-    setFieldValue: onChange,
-    setFieldError: () => {}, // Simplified
-    validateField: async () => {}, // Simplified
-  }), [formState, onChange, disabled]);
+  const propertyContext: PropertyContext = useMemo(
+    () => ({
+      formData: formState,
+      errors: {}, // Simplified - would be integrated with validation system
+      touched: {}, // Simplified - would track field interactions
+      isSubmitting: disabled,
+      setFieldValue: onChange,
+      setFieldError: () => {}, // Simplified
+      validateField: async () => {}, // Simplified
+    }),
+    [formState, onChange, disabled]
+  );
 
   // Register custom theme styling if needed
   const themeConfig = useMemo(() => {
@@ -158,7 +164,7 @@ export const DynamicPropertyRenderer: React.FC<DynamicPropertyRendererProps> = (
 
   // Apply theme to all configs
   const themedConfigs = useMemo(() => {
-    return rendererConfigs.map(config => ({
+    return rendererConfigs.map((config) => ({
       ...config,
       styling: {
         ...config.styling,
@@ -169,12 +175,8 @@ export const DynamicPropertyRenderer: React.FC<DynamicPropertyRendererProps> = (
 
   return (
     <div className="dynamic-property-renderer space-y-4">
-      {themedConfigs.map(config => (
-        <PropertyRenderer
-          key={config.id}
-          config={config}
-          context={propertyContext}
-        />
+      {themedConfigs.map((config) => (
+        <PropertyRenderer key={config.id} config={config} context={propertyContext} />
       ))}
     </div>
   );

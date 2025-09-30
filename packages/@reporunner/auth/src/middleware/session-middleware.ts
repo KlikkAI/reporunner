@@ -29,7 +29,9 @@ export class InMemorySessionStore implements SessionStore {
 
   async get(sessionId: string): Promise<Session | null> {
     const session = this.sessions.get(sessionId);
-    if (!session) return null;
+    if (!session) {
+      return null;
+    }
 
     if (session.expiresAt < new Date()) {
       this.sessions.delete(sessionId);
@@ -126,8 +128,8 @@ export function createSessionMiddleware(config: SessionConfig) {
         if (req.sessionId) {
           await store.destroy(req.sessionId);
           res.clearCookie('sessionId');
-          delete req.session;
-          delete req.sessionId;
+          req.session = undefined;
+          req.sessionId = undefined;
         }
       };
 

@@ -73,7 +73,7 @@ export class OAuthController {
       );
     }
 
-    if (!code || !state) {
+    if (!(code && state)) {
       const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
       const defaultReturnUrl = `${frontendUrl}/workflows`;
       return res.redirect(
@@ -89,7 +89,6 @@ export class OAuthController {
       );
       res.redirect(redirectUrl);
     } catch (error: any) {
-      console.error('OAuth callback error:', error);
       const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
       const defaultReturnUrl = `${frontendUrl}/workflows`;
       const urlObj = new URL(defaultReturnUrl);

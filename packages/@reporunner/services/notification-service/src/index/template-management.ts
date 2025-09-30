@@ -54,7 +54,7 @@ async;
 listChannels(
     organizationId: string,
     filters?: {
-      type?: NotificationChannel['type'];
+      type?: NotificationChannel.type;
 enabled?: boolean;
 tags?: string[];
 }
@@ -62,9 +62,9 @@ tags?: string[];
 {
   const query: any = { organizationId };
 
-  if (filters?.type) query.type = filters.type;
-  if (filters?.enabled !== undefined) query.enabled = filters.enabled;
-  if (filters?.tags?.length) query.tags = { $in: filters.tags };
+  if (filters?.type) { query.type = filters.type; }
+  if (filters?.enabled !== undefined) { query.enabled = filters.enabled; }
+  if (filters?.tags?.length) { query.tags = { $in: filters.tags }; }
 
   return await this.channels.find(query).sort({ createdAt: -1 }).toArray();
 }
@@ -107,12 +107,12 @@ getTemplate(id: string)
 async;
 listTemplates(
     organizationId: string,
-    channelType?: NotificationChannel['type']
+    channelType?: NotificationChannel.type
   )
 : Promise<NotificationTemplate[]>
 {
   const query: any = { organizationId };
-  if (channelType) query.channelType = channelType;
+  if (channelType) { query.channelType = channelType; }
 
   return await this.templates.find(query).sort({ createdAt: -1 }).toArray();
 }

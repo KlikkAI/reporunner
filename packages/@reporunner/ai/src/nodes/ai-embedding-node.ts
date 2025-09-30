@@ -13,7 +13,6 @@ export class AIEmbeddingNode {
   async execute(text: string | string[]): Promise<number[] | number[][]> {
     // Mock implementation
     const texts = Array.isArray(text) ? text : [text];
-    console.log('Generating embeddings for:', texts);
 
     const dimensions = this.config.dimensions || 768;
     const embeddings = texts.map(() =>

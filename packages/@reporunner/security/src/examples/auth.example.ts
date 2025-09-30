@@ -9,9 +9,9 @@ const basicAuth = new AuthMiddleware({
     token: {
       secret: process.env.JWT_SECRET || 'your-secret-key',
       expiresIn: '1h',
-      refreshExpiresIn: '7d'
-    }
-  }
+      refreshExpiresIn: '7d',
+    },
+  },
 });
 
 // Session-based authentication with Redis
@@ -23,10 +23,10 @@ const sessionAuth = new AuthMiddleware({
       ttl: 24 * 60 * 60, // 24 hours
       redisConfig: {
         host: 'localhost',
-        port: 6379
-      }
-    }
-  }
+        port: 6379,
+      },
+    },
+  },
 });
 
 // Role-based authentication
@@ -35,12 +35,12 @@ const adminAuth = new AuthMiddleware({
     token: {
       secret: process.env.JWT_SECRET || 'your-secret-key',
       expiresIn: '1h',
-      refreshExpiresIn: '7d'
-    }
+      refreshExpiresIn: '7d',
+    },
   },
   rbac: {
-    roles: ['admin']
-  }
+    roles: ['admin'],
+  },
 });
 
 // Permission-based authentication
@@ -49,12 +49,12 @@ const editorAuth = new AuthMiddleware({
     token: {
       secret: process.env.JWT_SECRET || 'your-secret-key',
       expiresIn: '1h',
-      refreshExpiresIn: '7d'
-    }
+      refreshExpiresIn: '7d',
+    },
   },
   rbac: {
-    permissions: ['create:post', 'edit:post']
-  }
+    permissions: ['create:post', 'edit:post'],
+  },
 });
 
 // Resource ownership check
@@ -63,12 +63,12 @@ const ownerAuth = new AuthMiddleware({
     token: {
       secret: process.env.JWT_SECRET || 'your-secret-key',
       expiresIn: '1h',
-      refreshExpiresIn: '7d'
-    }
+      refreshExpiresIn: '7d',
+    },
   },
   rbac: {
-    requireOwnership: true
-  }
+    requireOwnership: true,
+  },
 });
 
 // Complex auth with multiple requirements
@@ -77,8 +77,8 @@ const complexAuth = new AuthMiddleware({
     token: {
       secret: process.env.JWT_SECRET || 'your-secret-key',
       expiresIn: '1h',
-      refreshExpiresIn: '7d'
-    }
+      refreshExpiresIn: '7d',
+    },
   },
   rbac: {
     roles: ['editor'],
@@ -87,10 +87,10 @@ const complexAuth = new AuthMiddleware({
     // Custom check - e.g., verify user has completed profile
     async customCheck(req) {
       return req.user?.profileCompleted === true;
-    }
+    },
   },
   enableLogging: true,
-  debug: process.env.NODE_ENV !== 'production'
+  debug: process.env.NODE_ENV !== 'production',
 });
 
 // API routes with different auth requirements
@@ -117,19 +117,20 @@ app.post('/api/posts/:id/publish', complexAuth.handle, (_req, res) => {
 });
 
 // Route-specific auth configuration
-app.get('/api/sensitive-data', 
+app.get(
+  '/api/sensitive-data',
   new AuthMiddleware({
     auth: {
       token: {
         secret: process.env.JWT_SECRET || 'your-secret-key',
         expiresIn: '15m', // Shorter expiry for sensitive routes
-        refreshExpiresIn: '1d'
-      }
+        refreshExpiresIn: '1d',
+      },
     },
     rbac: {
       roles: ['admin'],
-      permissions: ['read:sensitive-data']
-    }
+      permissions: ['read:sensitive-data'],
+    },
   }).handle,
   (_req, res) => {
     res.json({ data: 'sensitive content' });
@@ -137,13 +138,14 @@ app.get('/api/sensitive-data',
 );
 
 // Dynamic role checking based on resource type
-app.get('/api/:resourceType/:id',
+app.get(
+  '/api/:resourceType/:id',
   async (req, res, next) => {
     const { resourceType } = req.params;
     const resourceRoles = {
-      'documents': ['document:reader'],
-      'reports': ['report:viewer'],
-      'analytics': ['analytics:user']
+      documents: ['document:reader'],
+      reports: ['report:viewer'],
+      analytics: ['analytics:user'],
     };
 
     const auth = new AuthMiddleware({
@@ -151,13 +153,13 @@ app.get('/api/:resourceType/:id',
         token: {
           secret: process.env.JWT_SECRET || 'your-secret-key',
           expiresIn: '1h',
-          refreshExpiresIn: '7d'
-        }
+          refreshExpiresIn: '7d',
+        },
       },
       rbac: {
         roles: resourceRoles[resourceType as keyof typeof resourceRoles] || [],
-        requireOwnership: true
-      }
+        requireOwnership: true,
+      },
     });
 
     return auth.handle(req, res, next);
@@ -168,10 +170,11 @@ app.get('/api/:resourceType/:id',
 );
 
 // Conditional authentication based on request
-app.get('/api/content/:id',
+app.get(
+  '/api/content/:id',
   (req, res, next) => {
     const isPublic = req.query.access === 'public';
-    
+
     if (isPublic) {
       return next();
     }
@@ -181,9 +184,9 @@ app.get('/api/content/:id',
         token: {
           secret: process.env.JWT_SECRET || 'your-secret-key',
           expiresIn: '1h',
-          refreshExpiresIn: '7d'
-        }
-      }
+          refreshExpiresIn: '7d',
+        },
+      },
     });
 
     return auth.handle(req, res, next);

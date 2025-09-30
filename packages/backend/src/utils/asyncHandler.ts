@@ -27,18 +27,16 @@ export const withTiming = <T extends any[], R>(
     const startTime = Date.now();
     try {
       const result = await fn(...args);
-      const duration = Date.now() - startTime;
+      const _duration = Date.now() - startTime;
 
       if (operationName) {
-        console.log(`Operation ${operationName} completed in ${duration}ms`);
       }
 
       return result;
     } catch (error) {
-      const duration = Date.now() - startTime;
+      const _duration = Date.now() - startTime;
 
       if (operationName) {
-        console.log(`Operation ${operationName} failed after ${duration}ms`);
       }
 
       throw error;

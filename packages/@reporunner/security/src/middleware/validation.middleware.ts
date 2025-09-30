@@ -214,7 +214,9 @@ export function createValidationMiddleware(schema: ValidationSchema) {
  * Validate type of value
  */
 function validateType(value: any, type?: string): string | null {
-  if (!type) return null;
+  if (!type) {
+    return null;
+  }
 
   switch (type) {
     case 'string':
@@ -333,7 +335,9 @@ function validateConstraints(value: any, rule: ValidationRule): string[] {
  * Sanitize input based on rules
  */
 function sanitizeInput(value: any, rule: ValidationRule): any {
-  if (typeof value !== 'string') return value;
+  if (typeof value !== 'string') {
+    return value;
+  }
 
   let sanitized = value;
 
@@ -373,7 +377,9 @@ function sanitizeInput(value: any, rule: ValidationRule): any {
 export function createSQLInjectionProtection() {
   return (req: Request, res: Response, next: NextFunction): void => {
     const checkValue = (value: any, _field: string): boolean => {
-      if (typeof value !== 'string') return true;
+      if (typeof value !== 'string') {
+        return true;
+      }
 
       for (const pattern of SQL_INJECTION_PATTERNS) {
         if (pattern.test(value)) {
@@ -539,7 +545,9 @@ export function createPathTraversalProtection() {
 export function createCommandInjectionProtection() {
   return (req: Request, res: Response, next: NextFunction): void => {
     const checkValue = (value: any): boolean => {
-      if (typeof value !== 'string') return true;
+      if (typeof value !== 'string') {
+        return true;
+      }
 
       for (const pattern of COMMAND_INJECTION_PATTERNS) {
         if (pattern.test(value)) {
@@ -673,7 +681,7 @@ export const CommonSchemas = {
         type: 'number',
         min: 1,
         default: 1,
-        transform: (v: any) => parseInt(v, 10),
+        transform: (v: any) => Number.parseInt(v, 10),
       },
       {
         field: 'limit',
@@ -682,7 +690,7 @@ export const CommonSchemas = {
         min: 1,
         max: 100,
         default: 20,
-        transform: (v: any) => parseInt(v, 10),
+        transform: (v: any) => Number.parseInt(v, 10),
       },
       {
         field: 'sort',

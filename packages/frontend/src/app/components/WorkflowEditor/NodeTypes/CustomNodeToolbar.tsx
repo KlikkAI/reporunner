@@ -24,7 +24,9 @@ const CustomNodeToolbar: React.FC<CustomNodeToolbarProps> = ({
   onDelete,
   onMenuToggle,
 }) => {
-  if (!visible) return null;
+  if (!visible) {
+    return null;
+  }
 
   const handlePlay = (e: React.MouseEvent) => {
     e.stopPropagation();

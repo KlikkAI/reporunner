@@ -201,8 +201,8 @@ export const notFoundHandler = (req: Request, res: Response, _next: NextFunction
 };
 
 export const validatePagination = (req: Request, _res: Response, next: NextFunction): void => {
-  const page = parseInt(req.query.page as string, 10) || 1;
-  const limit = Math.min(parseInt(req.query.limit as string, 10) || 20, 100);
+  const page = Number.parseInt(req.query.page as string, 10) || 1;
+  const limit = Math.min(Number.parseInt(req.query.limit as string, 10) || 20, 100);
   const sortBy = req.query.sortBy as string;
   const sortOrder = (req.query.sortOrder as string) === 'desc' ? 'desc' : 'asc';
 

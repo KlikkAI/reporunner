@@ -17,9 +17,7 @@ export interface AuditLogger {
 
 // Basic implementation placeholder
 export class BasicAuditLogger implements AuditLogger {
-  async log(event: AuditEvent): Promise<void> {
-    console.log('Audit:', event);
-  }
+  async log(_event: AuditEvent): Promise<void> {}
 
   async query(_filters: Record<string, any>): Promise<AuditEvent[]> {
     return [];

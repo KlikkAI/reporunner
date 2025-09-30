@@ -1,22 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState } from 'react';
-import { Modal } from '@reporunner/ui/components/base/modal';
-import { TabContainer } from '@reporunner/ui/components/base/tab-container';
-import { GmailCredentialForm, AIProviderCredentialForm } from '../Credentials';
-import { useCredentialForm } from '@/hooks/useCredentialForm';
-import { useGmailCredential } from '@/hooks/useGmailCredential';
-import type { CredentialData } from '../Credentials';
-import { CredentialApiService } from '@/core';
-import { Modal } from '@reporunner/ui/components/base/modal';
-import { TabContainer } from '@reporunner/ui/components/base/tab-container';
+
 import { Alert } from '@reporunner/ui/components/base/alert';
+import { Modal, Modal } from '@reporunner/ui/components/base/modal';
+import { TabContainer } from '@reporunner/ui/components/base/tab-container';
+import React, { useState } from 'react';
+import { CredentialApiService } from '@/core';
 
 const credentialApiService = new CredentialApiService();
 
 import { useLeanWorkflowStore } from '@/core';
 import type { CredentialTypeApiResponse } from '@/core/types/frontend-credentials';
 
-const GmailConnectionForm: React.FC<{
+const _GmailConnectionForm: React.FC<{
   credentialName: string;
   setCredentialName: (name: string) => void;
   isConnecting: boolean;
@@ -84,7 +79,7 @@ const GmailConnectionForm: React.FC<{
   );
 };
 
-const AIProviderForm: React.FC<{
+const _AIProviderForm: React.FC<{
   credentialTypeDef: any;
   credentialName: string;
   setCredentialName: (name: string) => void;
@@ -190,7 +185,7 @@ const AIProviderForm: React.FC<{
   );
 };
 
-const OAuthForm: React.FC<{
+const _OAuthForm: React.FC<{
   authType: string;
   setAuthType: (type: string) => void;
   clientId: string;
@@ -503,7 +498,7 @@ const CredentialModal: React.FC<CredentialModalProps> = ({
   const handleCredentialDataChange = (field: string, value: any) => {
     setCredentialData((prev) => ({ ...prev, [field]: value }));
     // Clear test result when data changes
-    if (testResult) setTestResult(null);
+    if (testResult) { setTestResult(null); }
   };
 
   const handleTestCredential = async () => {

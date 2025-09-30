@@ -7,12 +7,12 @@
  * Targets: 20+ page components with similar structures
  */
 
-import React from 'react';
+import type React from 'react';
 import { BasePage } from '../components/BasePage';
+import { ResponsiveGrid, SectionLayout } from '../components/DynamicLayout';
 import { PageSection } from '../components/PageSection';
 import { StatsCard } from '../components/StatsCard';
 import { UniversalForm } from '../components/UniversalForm';
-import { ResponsiveGrid, SectionLayout } from '../components/DynamicLayout';
 import type { PropertyRendererConfig } from '../factories/PropertyRendererFactory';
 
 export interface PageAction {
@@ -100,7 +100,7 @@ export class PageGenerator {
         loading={config.loading}
         error={config.error}
       >
-        {config.sections.map(section => this.renderSection(section))}
+        {config.sections.map((section) => PageGenerator.renderSection(section))}
       </BasePage>
     );
   }
@@ -119,10 +119,7 @@ export class PageGenerator {
       >
         {/* Statistics Section */}
         <PageSection title="Overview">
-          <ResponsiveGrid
-            columns={{ xs: 1, sm: 2, lg: 4 }}
-            gap="1.5rem"
-          >
+          <ResponsiveGrid columns={{ xs: 1, sm: 2, lg: 4 }} gap="1.5rem">
             {config.stats.map((stat, index) => (
               <StatsCard
                 key={index}
@@ -138,7 +135,7 @@ export class PageGenerator {
         </PageSection>
 
         {/* Additional Sections */}
-        {config.sections.map(section => this.renderSection(section))}
+        {config.sections.map((section) => PageGenerator.renderSection(section))}
       </BasePage>
     );
   }
@@ -166,7 +163,7 @@ export class PageGenerator {
         </SectionLayout>
 
         {/* Additional Sections */}
-        {config.sections.map(section => this.renderSection(section))}
+        {config.sections.map((section) => PageGenerator.renderSection(section))}
       </BasePage>
     );
   }
@@ -186,9 +183,7 @@ export class PageGenerator {
         <PageSection>
           {config.list.items.length > 0 ? (
             <div className="space-y-4">
-              {config.list.items.map((item, index) =>
-                config.list.renderItem(item, index)
-              )}
+              {config.list.items.map((item, index) => config.list.renderItem(item, index))}
             </div>
           ) : (
             <div className="text-center py-12 text-gray-500">
@@ -198,7 +193,7 @@ export class PageGenerator {
         </PageSection>
 
         {/* Additional Sections */}
-        {config.sections.map(section => this.renderSection(section))}
+        {config.sections.map((section) => PageGenerator.renderSection(section))}
       </BasePage>
     );
   }
@@ -220,10 +215,7 @@ export class PageGenerator {
       case 'stats':
         return (
           <PageSection {...sectionProps}>
-            <ResponsiveGrid
-              columns={{ xs: 1, sm: 2, lg: 4 }}
-              gap="1.5rem"
-            >
+            <ResponsiveGrid columns={{ xs: 1, sm: 2, lg: 4 }} gap="1.5rem">
               {section.data?.map((stat: Statistic, index: number) => (
                 <StatsCard
                   key={index}
@@ -253,21 +245,18 @@ export class PageGenerator {
         );
 
       case 'content':
-        return (
-          <PageSection {...sectionProps}>
-            {section.data}
-          </PageSection>
-        );
+        return <PageSection {...sectionProps}>{section.data}</PageSection>;
 
       case 'list':
         return (
           <PageSection {...sectionProps}>
             {section.data?.length > 0 ? (
               <div className="space-y-4">
-                {section.data.map((item: any, index: number) =>
-                  section.config?.renderItem?.(item, index) || (
-                    <div key={index}>{JSON.stringify(item)}</div>
-                  )
+                {section.data.map(
+                  (item: any, index: number) =>
+                    section.config?.renderItem?.(item, index) || (
+                      <div key={index}>{JSON.stringify(item)}</div>
+                    )
                 )}
               </div>
             ) : (
@@ -285,10 +274,11 @@ export class PageGenerator {
               columns={section.config?.columns || { xs: 1, sm: 2, lg: 3 }}
               gap={section.config?.gap || '1.5rem'}
             >
-              {section.data?.map((item: any, index: number) =>
-                section.config?.renderItem?.(item, index) || (
-                  <div key={index}>{JSON.stringify(item)}</div>
-                )
+              {section.data?.map(
+                (item: any, index: number) =>
+                  section.config?.renderItem?.(item, index) || (
+                    <div key={index}>{JSON.stringify(item)}</div>
+                  )
               )}
             </ResponsiveGrid>
           </PageSection>
@@ -300,20 +290,14 @@ export class PageGenerator {
             {/* Table implementation would go here */}
             <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
               <div className="p-6">
-                <div className="text-center text-gray-500">
-                  Table component not implemented yet
-                </div>
+                <div className="text-center text-gray-500">Table component not implemented yet</div>
               </div>
             </div>
           </PageSection>
         );
 
       default:
-        return (
-          <PageSection {...sectionProps}>
-            {section.data}
-          </PageSection>
-        );
+        return <PageSection {...sectionProps}>{section.data}</PageSection>;
     }
   }
 }
@@ -330,13 +314,14 @@ export const PageTemplates = {
     stats: Statistic[],
     sections: PageSectionConfig[] = [],
     actions?: PageAction[]
-  ) => PageGenerator.generateDashboard({
-    title,
-    subtitle: `Manage and monitor your ${title.toLowerCase()}`,
-    stats,
-    sections,
-    actions,
-  }),
+  ) =>
+    PageGenerator.generateDashboard({
+      title,
+      subtitle: `Manage and monitor your ${title.toLowerCase()}`,
+      stats,
+      sections,
+      actions,
+    }),
 
   /**
    * Settings Template
@@ -346,18 +331,19 @@ export const PageTemplates = {
     properties: PropertyRendererConfig[],
     onSubmit: (values: Record<string, any>) => void,
     initialValues?: Record<string, any>
-  ) => PageGenerator.generateFormPage({
-    title,
-    subtitle: `Configure your ${title.toLowerCase()} settings`,
-    sections: [],
-    form: {
-      properties,
-      onSubmit,
-      initialValues,
-      submitText: 'Save Settings',
-      showCancel: true,
-    },
-  }),
+  ) =>
+    PageGenerator.generateFormPage({
+      title,
+      subtitle: `Configure your ${title.toLowerCase()} settings`,
+      sections: [],
+      form: {
+        properties,
+        onSubmit,
+        initialValues,
+        submitText: 'Save Settings',
+        showCancel: true,
+      },
+    }),
 
   /**
    * List/Index Template
@@ -368,34 +354,34 @@ export const PageTemplates = {
     renderItem: (item: any, index: number) => React.ReactNode,
     createAction?: PageAction,
     emptyText?: string
-  ) => PageGenerator.generateListPage({
-    title,
-    subtitle: `Browse and manage ${title.toLowerCase()}`,
-    sections: [],
-    actions: createAction ? [createAction] : [],
-    list: {
-      items,
-      renderItem,
-      emptyText,
-    },
-  }),
+  ) =>
+    PageGenerator.generateListPage({
+      title,
+      subtitle: `Browse and manage ${title.toLowerCase()}`,
+      sections: [],
+      actions: createAction ? [createAction] : [],
+      list: {
+        items,
+        renderItem,
+        emptyText,
+      },
+    }),
 
   /**
    * Detail Template
    */
-  detail: (
-    title: string,
-    content: React.ReactNode,
-    actions?: PageAction[]
-  ) => PageGenerator.generatePage({
-    title,
-    sections: [{
-      id: 'detail-content',
-      type: 'content',
-      data: content,
-    }],
-    actions,
-  }),
+  detail: (title: string, content: React.ReactNode, actions?: PageAction[]) =>
+    PageGenerator.generatePage({
+      title,
+      sections: [
+        {
+          id: 'detail-content',
+          type: 'content',
+          data: content,
+        },
+      ],
+      actions,
+    }),
 
   /**
    * Create/Edit Template
@@ -406,32 +392,30 @@ export const PageTemplates = {
     onSubmit: (values: Record<string, any>) => void,
     initialValues?: Record<string, any>,
     isEdit = false
-  ) => PageGenerator.generateFormPage({
-    title,
-    subtitle: `${isEdit ? 'Edit' : 'Create'} ${title.toLowerCase()}`,
-    sections: [],
-    form: {
-      properties,
-      onSubmit,
-      initialValues,
-      submitText: isEdit ? 'Update' : 'Create',
-      showCancel: true,
-    },
-  }),
+  ) =>
+    PageGenerator.generateFormPage({
+      title,
+      subtitle: `${isEdit ? 'Edit' : 'Create'} ${title.toLowerCase()}`,
+      sections: [],
+      form: {
+        properties,
+        onSubmit,
+        initialValues,
+        submitText: isEdit ? 'Update' : 'Create',
+        showCancel: true,
+      },
+    }),
 
   /**
    * Analytics Template
    */
-  analytics: (
-    title: string,
-    stats: Statistic[],
-    charts: PageSectionConfig[]
-  ) => PageGenerator.generateDashboard({
-    title,
-    subtitle: `Analytics and insights for ${title.toLowerCase()}`,
-    stats,
-    sections: charts,
-  }),
+  analytics: (title: string, stats: Statistic[], charts: PageSectionConfig[]) =>
+    PageGenerator.generateDashboard({
+      title,
+      subtitle: `Analytics and insights for ${title.toLowerCase()}`,
+      stats,
+      sections: charts,
+    }),
 };
 
 export default PageGenerator;

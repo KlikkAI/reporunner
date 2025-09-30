@@ -72,7 +72,9 @@ const RegistryNode: React.FC<RegistryNodeProps> = ({ data, selected, id }) => {
 
   // Render handles based on node definition
   const renderHandles = () => {
-    if (!nodeDefinition) return null;
+    if (!nodeDefinition) {
+      return null;
+    }
 
     const handles = [];
 
@@ -234,7 +236,9 @@ const RegistryNode: React.FC<RegistryNodeProps> = ({ data, selected, id }) => {
 
   // Check for custom body component
   const CustomBodyComponent = useMemo(() => {
-    if (!nodeDefinition?.customBodyComponent) return null;
+    if (!nodeDefinition?.customBodyComponent) {
+      return null;
+    }
     return getCustomBodyComponent(nodeDefinition.customBodyComponent);
   }, [nodeDefinition]);
 

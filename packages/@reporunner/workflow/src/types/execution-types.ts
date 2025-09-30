@@ -5,7 +5,7 @@ export enum ExecutionStatus {
   SUCCESS = 'success',
   ERROR = 'error',
   CANCELLED = 'cancelled',
-  TIMEOUT = 'timeout'
+  TIMEOUT = 'timeout',
 }
 
 export enum NodeStatus {
@@ -13,14 +13,14 @@ export enum NodeStatus {
   RUNNING = 'running',
   SUCCESS = 'success',
   ERROR = 'error',
-  SKIPPED = 'skipped'
+  SKIPPED = 'skipped',
 }
 
 export enum TriggerType {
   MANUAL = 'manual',
   WEBHOOK = 'webhook',
   SCHEDULE = 'schedule',
-  API = 'api'
+  API = 'api',
 }
 
 export interface ExecutionResult {

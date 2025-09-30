@@ -1,4 +1,4 @@
-import { Router, Request, Response } from 'express';
+import { type Request, type Response, Router } from 'express';
 import { rateLimit } from 'express-rate-limit';
 import { param, query } from 'express-validator';
 import { authRequired } from '../middleware/auth';
@@ -35,10 +35,7 @@ router.get(
   '/',
   authRequired,
   nodeRateLimit,
-  [
-    query('category').optional().isString(),
-    query('search').optional().isString(),
-  ],
+  [query('category').optional().isString(), query('search').optional().isString()],
   validateRequest,
   async (_req: Request, res: Response) => {
     res.json({ message: 'Node routes not implemented yet' });

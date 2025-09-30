@@ -236,8 +236,12 @@ collaborationSessionSchema.methods.updateParticipantPresence = function (
 ) {
   const participant = this.participants.find((p: any) => p.userId === userId);
   if (participant) {
-    if (presence.cursor) participant.cursor = presence.cursor;
-    if (presence.selection) participant.selection = presence.selection;
+    if (presence.cursor) {
+      participant.cursor = presence.cursor;
+    }
+    if (presence.selection) {
+      participant.selection = presence.selection;
+    }
     participant.lastSeen = new Date();
     this.lastActivity = new Date();
     return this.save();

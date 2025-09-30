@@ -2,7 +2,7 @@
  * Base controller class with common functionality
  * Reduces duplication across domain controllers
  */
-import { Request, Response } from 'express';
+import type { Request, Response } from 'express';
 import '../types/express';
 
 export interface ApiResponse<T = any> {
@@ -19,7 +19,7 @@ export abstract class BaseController {
       success: true,
       data,
       message,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
     return res.status(200).json(response);
   }
@@ -29,7 +29,7 @@ export abstract class BaseController {
       success: true,
       data,
       message: message || 'Resource created successfully',
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
     return res.status(201).json(response);
   }
@@ -38,7 +38,7 @@ export abstract class BaseController {
     const response: ApiResponse = {
       success: false,
       error: message,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
     return res.status(statusCode).json(response);
   }
@@ -61,12 +61,14 @@ export abstract class BaseController {
 
   protected extractUserId(req: Request): string {
     // Common logic to extract user ID from request
-    return req.user?.id || req.headers['x-user-id'] as string;
+    return req.user?.id || (req.headers['x-user-id'] as string);
   }
 
-  protected handleError(res: Response, error: Error | any, context: string = 'Operation'): Response {
-    console.error(`${context} error:`, error);
-
+  protected handleError(
+    res: Response,
+    error: Error | any,
+    context: string = 'Operation'
+  ): Response {
     if (error.name === 'ValidationError') {
       return this.sendBadRequest(res, error.message);
     }

@@ -288,25 +288,41 @@ export class EncryptionService {
     const suggestions: string[] = [];
 
     // Check length
-    if (masterKey.length >= 32) score += 25;
-    else if (masterKey.length >= 16) score += 15;
-    else suggestions.push('Use at least 32 characters');
+    if (masterKey.length >= 32) {
+      score += 25;
+    } else if (masterKey.length >= 16) {
+      score += 15;
+    } else {
+      suggestions.push('Use at least 32 characters');
+    }
 
     // Check for uppercase
-    if (/[A-Z]/.test(masterKey)) score += 25;
-    else suggestions.push('Include uppercase letters');
+    if (/[A-Z]/.test(masterKey)) {
+      score += 25;
+    } else {
+      suggestions.push('Include uppercase letters');
+    }
 
     // Check for lowercase
-    if (/[a-z]/.test(masterKey)) score += 25;
-    else suggestions.push('Include lowercase letters');
+    if (/[a-z]/.test(masterKey)) {
+      score += 25;
+    } else {
+      suggestions.push('Include lowercase letters');
+    }
 
     // Check for numbers
-    if (/\d/.test(masterKey)) score += 12.5;
-    else suggestions.push('Include numbers');
+    if (/\d/.test(masterKey)) {
+      score += 12.5;
+    } else {
+      suggestions.push('Include numbers');
+    }
 
     // Check for special characters
-    if (/[!@#$%^&*(),.?":{}|<>]/.test(masterKey)) score += 12.5;
-    else suggestions.push('Include special characters');
+    if (/[!@#$%^&*(),.?":{}|<>]/.test(masterKey)) {
+      score += 12.5;
+    } else {
+      suggestions.push('Include special characters');
+    }
 
     return {
       isStrong: score >= 75,

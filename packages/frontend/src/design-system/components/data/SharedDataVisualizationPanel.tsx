@@ -1,8 +1,9 @@
-import React, { useState, useMemo } from 'react';
-import { Tabs, Button, Empty, Card } from 'antd';
-import { JsonViewer } from '@/design-system/components/JsonViewer';
-import { TableView } from '@/design-system/components/DataVisualization/TableView';
+import { Button, Card, Empty, Tabs } from 'antd';
+import type React from 'react';
+import { useMemo, useState } from 'react';
 import { SchemaView } from '@/design-system/components/DataVisualization/SchemaView';
+import { TableView } from '@/design-system/components/DataVisualization/TableView';
+import { JsonViewer } from '@/design-system/components/JsonViewer';
 import { cn } from '@/design-system/utils';
 
 const { TabPane } = Tabs;
@@ -50,10 +51,14 @@ export const SharedDataVisualizationPanel: React.FC<SharedDataVisualizationPanel
 
   // Memoized data processing for performance
   const processedData = useMemo(() => {
-    if (!data) return null;
+    if (!data) {
+      return null;
+    }
 
     const hasData = Array.isArray(data) ? data.length > 0 : Object.keys(data).length > 0;
-    if (!hasData) return null;
+    if (!hasData) {
+      return null;
+    }
 
     return {
       json: data,
@@ -84,7 +89,7 @@ export const SharedDataVisualizationPanel: React.FC<SharedDataVisualizationPanel
       case 'csv':
         if (Array.isArray(data) && data.length > 0) {
           const headers = Object.keys(data[0]).join(',');
-          const rows = data.map(row => Object.values(row).join(',')).join('\n');
+          const rows = data.map((row) => Object.values(row).join(',')).join('\n');
           content = `${headers}\n${rows}`;
         } else {
           content = JSON.stringify(data, null, 2);
@@ -114,14 +119,8 @@ export const SharedDataVisualizationPanel: React.FC<SharedDataVisualizationPanel
 
   if (!processedData) {
     return (
-      <Card
-        title={title}
-        className={cn('bg-gray-800 border-gray-700', className)}
-      >
-        <Empty
-          description={emptyMessage}
-          className="text-gray-400"
-        />
+      <Card title={title} className={cn('bg-gray-800 border-gray-700', className)}>
+        <Empty description={emptyMessage} className="text-gray-400" />
       </Card>
     );
   }
@@ -159,28 +158,19 @@ export const SharedDataVisualizationPanel: React.FC<SharedDataVisualizationPanel
         >
           {showJson && (
             <TabPane tab="JSON" key="json">
-              <JsonViewer
-                data={processedData.json}
-                className="bg-gray-900 border-gray-600"
-              />
+              <JsonViewer data={processedData.json} className="bg-gray-900 border-gray-600" />
             </TabPane>
           )}
 
           {showTable && (
             <TabPane tab="Table" key="table">
-              <TableView
-                data={processedData.table}
-                className="bg-gray-900"
-              />
+              <TableView data={processedData.table} className="bg-gray-900" />
             </TabPane>
           )}
 
           {showSchema && (
             <TabPane tab="Schema" key="schema">
-              <SchemaView
-                data={processedData.schema}
-                className="bg-gray-900"
-              />
+              <SchemaView data={processedData.schema} className="bg-gray-900" />
             </TabPane>
           )}
 

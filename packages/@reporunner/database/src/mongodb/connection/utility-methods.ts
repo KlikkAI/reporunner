@@ -6,7 +6,9 @@ export class MongoDBUtils {
    * Convert query options to MongoDB format
    */
   static buildMongoQuery(options?: QueryOptions) {
-    if (!options) return {};
+    if (!options) {
+      return {};
+    }
 
     const mongoQuery: any = {};
 
@@ -21,7 +23,9 @@ export class MongoDBUtils {
    * Build MongoDB find options
    */
   static buildFindOptions(options?: QueryOptions) {
-    if (!options) return {};
+    if (!options) {
+      return {};
+    }
 
     const findOptions: any = {};
 
@@ -49,7 +53,7 @@ export class MongoDBUtils {
     }
 
     if (Array.isArray(input)) {
-      return input.map(item => this.sanitizeInput(item));
+      return input.map((item) => MongoDBUtils.sanitizeInput(item));
     }
 
     if (typeof input === 'object' && input !== null) {
@@ -57,7 +61,7 @@ export class MongoDBUtils {
       for (const [key, value] of Object.entries(input)) {
         // Remove MongoDB operators from user input
         if (!key.startsWith('$')) {
-          sanitized[key] = this.sanitizeInput(value);
+          sanitized[key] = MongoDBUtils.sanitizeInput(value);
         }
       }
       return sanitized;

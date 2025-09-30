@@ -1,4 +1,4 @@
-import { Response } from 'express';
+import type { Response } from 'express';
 
 export interface SecurityHeadersBuilderConfig {
   frameProtection?: {
@@ -110,19 +110,19 @@ export class SecurityHeadersBuilder {
     this.config = {
       frameProtection: {
         enabled: true,
-        action: 'DENY'
+        action: 'DENY',
       },
       contentTypeOptions: {
         enabled: true,
-        nosniff: true
+        nosniff: true,
       },
       xssProtection: {
         enabled: true,
-        mode: '1; mode=block'
+        mode: '1; mode=block',
       },
       referrerPolicy: {
         enabled: true,
-        policy: 'strict-origin-when-cross-origin'
+        policy: 'strict-origin-when-cross-origin',
       },
       permissionsPolicy: {
         enabled: true,
@@ -131,9 +131,9 @@ export class SecurityHeadersBuilder {
           microphone: ["'none'"],
           camera: ["'none'"],
           payment: ["'self'"],
-          usb: ["'none'"]
-        }
-      }
+          usb: ["'none'"],
+        },
+      },
     };
     return this;
   }
@@ -145,23 +145,23 @@ export class SecurityHeadersBuilder {
     this.config = {
       frameProtection: {
         enabled: true,
-        action: 'SAMEORIGIN'
+        action: 'SAMEORIGIN',
       },
       contentTypeOptions: {
         enabled: true,
-        nosniff: true
+        nosniff: true,
       },
       xssProtection: {
         enabled: true,
-        mode: '1; mode=block'
+        mode: '1; mode=block',
       },
       referrerPolicy: {
         enabled: true,
-        policy: 'no-referrer-when-downgrade'
+        policy: 'no-referrer-when-downgrade',
       },
       permissionsPolicy: {
-        enabled: false
-      }
+        enabled: false,
+      },
     };
     return this;
   }

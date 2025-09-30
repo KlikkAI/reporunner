@@ -51,7 +51,9 @@ export const ExecutionToolbar: React.FC<ExecutionToolbarProps> = ({
   };
 
   const handleRun = async () => {
-    if (!canRun) return;
+    if (!canRun) {
+      return;
+    }
 
     // Validate workflow first
     const validation = validateWorkflowForExport(nodes, edges);
@@ -86,7 +88,9 @@ export const ExecutionToolbar: React.FC<ExecutionToolbarProps> = ({
   };
 
   const handleStop = async () => {
-    if (!currentExecution) return;
+    if (!currentExecution) {
+      return;
+    }
 
     try {
       await workflowApiService.stopExecution(currentExecution.id);

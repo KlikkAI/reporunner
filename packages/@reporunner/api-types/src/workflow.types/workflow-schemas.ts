@@ -35,13 +35,15 @@ export const WorkflowSchema = z.object({
   description: z.string().optional(),
   nodes: z.array(NodeSchema),
   edges: z.array(EdgeSchema),
-  settings: z.object({
-    timezone: z.string().optional(),
-    errorWorkflow: z.string().optional(),
-    callerPolicy: z.enum(['workflowsFromSameOwner', 'workflowsFromAList', 'any']).optional(),
-  }).optional(),
+  settings: z
+    .object({
+      timezone: z.string().optional(),
+      errorWorkflow: z.string().optional(),
+      callerPolicy: z.enum(['workflowsFromSameOwner', 'workflowsFromAList', 'any']).optional(),
+    })
+    .optional(),
   meta: z.record(z.string(), z.any()).optional(),
-})
+});
 
 export type Node = z.infer<typeof NodeSchema>;
 export type Edge = z.infer<typeof EdgeSchema>;

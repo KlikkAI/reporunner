@@ -7,16 +7,13 @@
  * Reduction: ~237 lines → ~110 lines (54% reduction)
  */
 
-import React, { useEffect, useMemo, useState } from 'react';
-import { LinkOutlined, CheckCircleOutlined, RocketOutlined } from '@ant-design/icons';
-import { nodeRegistry } from '@/core';
+import { CheckCircleOutlined, LinkOutlined, RocketOutlined } from '@ant-design/icons';
 import { Logger } from '@reporunner/core';
-import {
-  PageTemplates,
-  ComponentGenerator,
-  ComponentPatterns,
-} from '@/design-system';
-import type { Statistic, PageSectionConfig } from '@/design-system';
+import type React from 'react';
+import { useMemo, useState } from 'react';
+import { nodeRegistry } from '@/core';
+import type { PageSectionConfig, Statistic } from '@/design-system';
+import { ComponentGenerator, PageTemplates } from '@/design-system';
 
 const logger = new Logger('Integrations');
 
@@ -36,12 +33,14 @@ export const Integrations: React.FC = () => {
       version: 1.0,
       status: 'available',
       isConnected: false, // Mock data
-      nodeTypes: [{
-        id: nodeType.name,
-        name: nodeType.displayName,
-        description: nodeType.description,
-        type: 'action',
-      }],
+      nodeTypes: [
+        {
+          id: nodeType.name,
+          name: nodeType.displayName,
+          description: nodeType.description,
+          type: 'action',
+        },
+      ],
     }));
   }, []);
 
@@ -52,7 +51,8 @@ export const Integrations: React.FC = () => {
 
   const filteredIntegrations = useMemo(() => {
     return integrations.filter((integration) => {
-      const matchesCategory = selectedCategory === 'All' || integration.category === selectedCategory;
+      const matchesCategory =
+        selectedCategory === 'All' || integration.category === selectedCategory;
       const matchesSearch =
         integration.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         (integration.description || '').toLowerCase().includes(searchTerm.toLowerCase());
@@ -96,7 +96,7 @@ export const Integrations: React.FC = () => {
   ];
 
   // Generate integration cards using ComponentGenerator
-  const integrationCards = filteredIntegrations.map(integration =>
+  const integrationCards = filteredIntegrations.map((integration) =>
     ComponentGenerator.generateCard({
       id: `integration-${integration.id}`,
       type: 'card',
@@ -115,7 +115,9 @@ export const Integrations: React.FC = () => {
                   <div className="flex items-center">
                     <div className="text-3xl mr-3">{integration.icon}</div>
                     <div>
-                      <h3 className="font-semibold text-gray-900 dark:text-gray-100">{integration.name}</h3>
+                      <h3 className="font-semibold text-gray-900 dark:text-gray-100">
+                        {integration.name}
+                      </h3>
                       <p className="text-sm text-gray-500">{integration.category}</p>
                     </div>
                   </div>
@@ -126,11 +128,14 @@ export const Integrations: React.FC = () => {
                   )}
                 </div>
 
-                <p className="text-gray-600 dark:text-gray-400 text-sm mb-4">{integration.description}</p>
+                <p className="text-gray-600 dark:text-gray-400 text-sm mb-4">
+                  {integration.description}
+                </p>
 
                 <div className="mb-4">
                   <p className="text-xs text-gray-500 mb-2">
-                    {integration.nodeTypes.length} node type{integration.nodeTypes.length !== 1 ? 's' : ''} available
+                    {integration.nodeTypes.length} node type
+                    {integration.nodeTypes.length !== 1 ? 's' : ''} available
                   </p>
                   <div className="flex flex-wrap gap-1">
                     {integration.nodeTypes.slice(0, 3).map((nodeType: any) => (
@@ -230,17 +235,10 @@ export const Integrations: React.FC = () => {
     },
   };
 
-  const sections: PageSectionConfig[] = [
-    filterSection,
-    integrationsSection,
-  ];
+  const sections: PageSectionConfig[] = [filterSection, integrationsSection];
 
   // Generate the complete page using PageTemplates
-  return PageTemplates.dashboard(
-    'Integrations',
-    stats,
-    sections
-  );
+  return PageTemplates.dashboard('Integrations', stats, sections);
 };
 
 export default Integrations;

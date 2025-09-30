@@ -1,4 +1,4 @@
-import { createHash } from 'crypto';
+import { createHash } from 'node:crypto';
 
 /**
  * Utility functions for preventing code duplication
@@ -9,13 +9,13 @@ export class DeduplicationHelper {
   private static contentHashes = new Map<string, any>();
 
   static registerContent<T>(key: string, factory: () => T): T {
-    const hash = this.hashKey(key);
+    const hash = DeduplicationHelper.hashKey(key);
 
-    if (!this.contentHashes.has(hash)) {
-      this.contentHashes.set(hash, factory());
+    if (!DeduplicationHelper.contentHashes.has(hash)) {
+      DeduplicationHelper.contentHashes.set(hash, factory());
     }
 
-    return this.contentHashes.get(hash);
+    return DeduplicationHelper.contentHashes.get(hash);
   }
 
   static hashKey(key: string): string {
@@ -23,7 +23,7 @@ export class DeduplicationHelper {
   }
 
   static clearCache(): void {
-    this.contentHashes.clear();
+    DeduplicationHelper.contentHashes.clear();
   }
 }
 

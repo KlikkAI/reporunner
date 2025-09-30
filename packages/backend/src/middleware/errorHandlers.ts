@@ -91,11 +91,21 @@ export const errorHandler = (err: any, _req: Request, res: Response, _next: Next
     let error = { ...err };
     error.message = err.message;
 
-    if (error.name === 'CastError') error = handleCastErrorDB(error);
-    if (error.code === 11000) error = handleDuplicateFieldsDB(error);
-    if (error.name === 'ValidationError') error = handleValidationErrorDB(error);
-    if (error.name === 'JsonWebTokenError') error = handleJWTError();
-    if (error.name === 'TokenExpiredError') error = handleJWTExpiredError();
+    if (error.name === 'CastError') {
+      error = handleCastErrorDB(error);
+    }
+    if (error.code === 11000) {
+      error = handleDuplicateFieldsDB(error);
+    }
+    if (error.name === 'ValidationError') {
+      error = handleValidationErrorDB(error);
+    }
+    if (error.name === 'JsonWebTokenError') {
+      error = handleJWTError();
+    }
+    if (error.name === 'TokenExpiredError') {
+      error = handleJWTExpiredError();
+    }
 
     sendErrorProd(error, res);
   }

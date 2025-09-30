@@ -1,5 +1,5 @@
 // Enhanced Base Controller - Eliminates controller duplications
-import { Request, Response, NextFunction } from 'express';
+import type { NextFunction, Request, Response } from 'express';
 import { injectable } from 'inversify';
 
 @injectable()
@@ -10,7 +10,7 @@ export abstract class EnhancedBaseController {
       success: true,
       message,
       data,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   }
 
@@ -19,7 +19,7 @@ export abstract class EnhancedBaseController {
       success: false,
       error,
       details,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   }
 
@@ -35,27 +35,28 @@ export abstract class EnhancedBaseController {
 
   // Common pagination
   protected getPaginationParams(req: Request) {
-    const page = parseInt(req.query.page as string) || 1;
-    const limit = parseInt(req.query.limit as string) || 10;
+    const page = Number.parseInt(req.query.page as string, 10) || 1;
+    const limit = Number.parseInt(req.query.limit as string, 10) || 10;
     const skip = (page - 1) * limit;
     return { page, limit, skip };
   }
 
   // Common error handling
   protected handleError(res: Response, error: any, operation = 'Operation') {
-    console.error(`${operation} error:`, error);
     return this.sendError(res, `${operation} failed`, 500, error.message);
   }
 
   // Common async wrapper
-  protected asyncHandler = (fn: (req: Request, res: Response, next: NextFunction) => Promise<any>) => (req: Request, res: Response, next: NextFunction) => {
-    Promise.resolve(fn(req, res, next)).catch(next);
-  };
+  protected asyncHandler =
+    (fn: (req: Request, res: Response, next: NextFunction) => Promise<any>) =>
+    (req: Request, res: Response, next: NextFunction) => {
+      Promise.resolve(fn(req, res, next)).catch(next);
+    };
 
   // Common query filters
   protected buildQueryFilters(req: Request, allowedFilters: string[]) {
     const filters: any = {};
-    allowedFilters.forEach(field => {
+    allowedFilters.forEach((field) => {
       if (req.query[field]) {
         filters[field] = req.query[field];
       }
@@ -90,7 +91,12 @@ export abstract class WorkflowControllerBase extends EnhancedBaseController {
 @injectable()
 export abstract class CrudControllerBase extends EnhancedBaseController {
   // Common CRUD operations
-  protected async handleCreate(req: Request, res: Response, service: any, requiredFields: string[]) {
+  protected async handleCreate(
+    req: Request,
+    res: Response,
+    service: any,
+    requiredFields: string[]
+  ) {
     const validationError = this.validateRequestBody(req, requiredFields);
     if (validationError) {
       return this.sendError(res, validationError, 400);

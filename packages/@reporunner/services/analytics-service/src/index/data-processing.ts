@@ -112,7 +112,7 @@ getActiveUsers(
     try {
       const since = new Date(Date.now() - timeWindow * 60 * 60 * 1000);
 
-      const count = await this.userSessions.countDocuments({
+      const _count = await this.userSessions.countDocuments({
         organizationId,
         $or: [
           { endedAt: { $gte: since } },

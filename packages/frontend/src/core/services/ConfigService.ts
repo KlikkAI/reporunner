@@ -48,7 +48,7 @@ export class ConfigService {
       timeout: 30000, // 30 seconds
       retryAttempts: 3,
       enableCaching: true,
-      features: environmentConfig.features
+      features: environmentConfig.features,
     };
   }
 

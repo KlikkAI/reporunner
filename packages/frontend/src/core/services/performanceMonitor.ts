@@ -116,7 +116,9 @@ export class PerformanceMonitorService {
    */
   endTrace(executionId: string, status: 'completed' | 'failed' | 'cancelled'): void {
     const trace = this.activeTraces.get(executionId);
-    if (!trace) return;
+    if (!trace) {
+      return;
+    }
 
     trace.endTime = performance.now();
     const totalDuration = trace.endTime - trace.startTime;
@@ -185,7 +187,9 @@ export class PerformanceMonitorService {
    */
   endSpan(spanId: string, status: 'ok' | 'error' | 'timeout' = 'ok', error?: Error): void {
     const span = this.activeSpans.get(spanId);
-    if (!span) return;
+    if (!span) {
+      return;
+    }
 
     span.endTime = performance.now();
     span.duration = span.endTime - span.startTime;
@@ -369,10 +373,18 @@ export class PerformanceMonitorService {
         totalMemory += span.tags.memoryUsage;
         peakMemory = Math.max(peakMemory, span.tags.memoryUsage);
       }
-      if (span.tags.cpuUsage) totalCpu += span.tags.cpuUsage;
-      if (span.tags.networkBytesIn) networkIn += span.tags.networkBytesIn;
-      if (span.tags.networkBytesOut) networkOut += span.tags.networkBytesOut;
-      if (span.tags.networkRequests) apiCalls += span.tags.networkRequests;
+      if (span.tags.cpuUsage) {
+        totalCpu += span.tags.cpuUsage;
+      }
+      if (span.tags.networkBytesIn) {
+        networkIn += span.tags.networkBytesIn;
+      }
+      if (span.tags.networkBytesOut) {
+        networkOut += span.tags.networkBytesOut;
+      }
+      if (span.tags.networkRequests) {
+        apiCalls += span.tags.networkRequests;
+      }
     });
 
     const estimatedCost = this.calculateEstimatedCost(
@@ -506,10 +518,18 @@ export class PerformanceMonitorService {
   }
 
   private classifyErrorType(message: string): ExecutionError['type'] {
-    if (message.includes('timeout') || message.includes('timed out')) return 'timeout';
-    if (message.includes('network') || message.includes('connection')) return 'network';
-    if (message.includes('auth') || message.includes('unauthorized')) return 'auth';
-    if (message.includes('validation') || message.includes('invalid')) return 'validation';
+    if (message.includes('timeout') || message.includes('timed out')) {
+      return 'timeout';
+    }
+    if (message.includes('network') || message.includes('connection')) {
+      return 'network';
+    }
+    if (message.includes('auth') || message.includes('unauthorized')) {
+      return 'auth';
+    }
+    if (message.includes('validation') || message.includes('invalid')) {
+      return 'validation';
+    }
     return 'runtime';
   }
 
@@ -554,7 +574,9 @@ export class PerformanceMonitorService {
   }
 
   private startGlobalResourceMonitoring(): void {
-    if (this.monitoringInterval) return;
+    if (this.monitoringInterval) {
+      return;
+    }
 
     this.monitoringInterval = setInterval(() => {
       this.resourceMonitors.forEach((monitor) => {

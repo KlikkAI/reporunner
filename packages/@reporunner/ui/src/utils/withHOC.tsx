@@ -1,14 +1,12 @@
 import React from 'react';
-import { PolymorphicComponentProps } from '../types/component';
 import { useAsync } from '../hooks/useAsync';
+import type { PolymorphicComponentProps } from '../types/component';
 import { cn } from './styles';
 
 /**
  * Type for a HOC function
  */
-export type HOC<P> = (
-  Component: React.ComponentType<P>
-) => React.ComponentType<P>;
+export type HOC<P> = (Component: React.ComponentType<P>) => React.ComponentType<P>;
 
 /**
  * Type for a HOC with additional props
@@ -20,8 +18,10 @@ export type HOCWithProps<InjectProps, RequiredProps = {}> = <BaseProps extends R
 /**
  * Composes multiple HOCs from right to left
  */
-export const composeHOCs = <P extends object>(...hocs: HOC<any>[]) => (Component: React.ComponentType<P>) =>
-  hocs.reduceRight((acc, hoc) => hoc(acc), Component);
+export const composeHOCs =
+  <P extends object>(...hocs: HOC<any>[]) =>
+  (Component: React.ComponentType<P>) =>
+    hocs.reduceRight((acc, hoc) => hoc(acc), Component);
 
 /**
  * Creates a HOC that injects props
@@ -44,10 +44,7 @@ export function withStyles<BaseProps extends { className?: string }>(
 ) {
   return (WrappedComponent: React.ComponentType<BaseProps>) => {
     return React.forwardRef<any, BaseProps>((props, ref) => {
-      const className =
-        typeof styles === 'function'
-          ? styles(props as BaseProps)
-          : styles;
+      const className = typeof styles === 'function' ? styles(props as BaseProps) : styles;
 
       return (
         <WrappedComponent
@@ -104,9 +101,12 @@ export function withAsync<Data, BaseProps extends { data?: Data }>(
 ) {
   return (WrappedComponent: React.ComponentType<BaseProps>) => {
     return React.forwardRef<any, Omit<BaseProps, 'data'>>((props, ref) => {
-      const { isLoading, isError, error, data } = useAsync(() => asyncFn({ ...props, data: undefined } as unknown as BaseProps), {
-        immediate: true,
-      });
+      const { isLoading, isError, error, data } = useAsync(
+        () => asyncFn({ ...props, data: undefined } as unknown as BaseProps),
+        {
+          immediate: true,
+        }
+      );
 
       if (isLoading && options.LoadingComponent) {
         return <options.LoadingComponent />;
@@ -124,8 +124,11 @@ export function withAsync<Data, BaseProps extends { data?: Data }>(
 /**
  * Creates a HOC that makes a component polymorphic
  */
-export function withPolymorphic<Props extends object, DefaultElement extends React.ElementType = 'div'>(
-  WrappedComponent: React.ComponentType<Props>,
+export function withPolymorphic<
+  Props extends object,
+  DefaultElement extends React.ElementType = 'div',
+>(
+  _WrappedComponent: React.ComponentType<Props>,
   defaultElement: DefaultElement = 'div' as DefaultElement
 ) {
   return React.forwardRef<any, PolymorphicComponentProps<DefaultElement, Props>>(

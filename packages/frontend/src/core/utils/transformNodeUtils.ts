@@ -1,6 +1,6 @@
 /**
  * Transform Node Utils
- * 
+ *
  * Utilities for working with transform nodes and data transformation
  */
 
@@ -26,11 +26,11 @@ class TransformNodeUtils {
    */
   transform(data: any, operations: TransformOperation[]): TransformResult {
     const startTime = Date.now();
-    
+
     try {
       let result = data;
-      let inputCount = Array.isArray(data) ? data.length : 1;
-      
+      const inputCount = Array.isArray(data) ? data.length : 1;
+
       for (const operation of operations) {
         result = this.applyOperation(result, operation);
       }
@@ -63,25 +63,25 @@ class TransformNodeUtils {
     switch (operation.type) {
       case 'map':
         return this.mapOperation(data, operation.config);
-      
+
       case 'filter':
         return this.filterOperation(data, operation.config);
-      
+
       case 'reduce':
         return this.reduceOperation(data, operation.config);
-      
+
       case 'sort':
         return this.sortOperation(data, operation.config);
-      
+
       case 'group':
         return this.groupOperation(data, operation.config);
-      
+
       case 'merge':
         return this.mergeOperation(data, operation.config);
-      
+
       case 'split':
         return this.splitOperation(data, operation.config);
-      
+
       default:
         throw new Error(`Unknown transform operation: ${operation.type}`);
     }
@@ -103,7 +103,7 @@ class TransformNodeUtils {
         }
         return mapped;
       }
-      
+
       return item;
     });
   }
@@ -138,20 +138,21 @@ class TransformNodeUtils {
     switch (operation) {
       case 'sum':
         return data.reduce((acc, item) => acc + (item[field] || 0), initialValue);
-      
+
       case 'count':
         return data.length;
-      
-      case 'average':
+
+      case 'average': {
         const sum = data.reduce((acc, item) => acc + (item[field] || 0), 0);
         return data.length > 0 ? sum / data.length : 0;
-      
+      }
+
       case 'min':
-        return Math.min(...data.map(item => item[field] || 0));
-      
+        return Math.min(...data.map((item) => item[field] || 0));
+
       case 'max':
-        return Math.max(...data.map(item => item[field] || 0));
-      
+        return Math.max(...data.map((item) => item[field] || 0));
+
       default:
         return data;
     }
@@ -166,11 +167,11 @@ class TransformNodeUtils {
     }
 
     const { field, direction = 'asc' } = config;
-    
+
     return [...data].sort((a, b) => {
       const aValue = field ? a[field] : a;
       const bValue = field ? b[field] : b;
-      
+
       if (direction === 'desc') {
         return bValue > aValue ? 1 : bValue < aValue ? -1 : 0;
       } else {
@@ -188,7 +189,7 @@ class TransformNodeUtils {
     }
 
     const { field } = config;
-    
+
     return data.reduce((groups: any, item: any) => {
       const key = item[field] || 'undefined';
       if (!groups[key]) {
@@ -210,7 +211,7 @@ class TransformNodeUtils {
         return data.flat();
       }
     }
-    
+
     return data;
   }
 
@@ -219,9 +220,9 @@ class TransformNodeUtils {
    */
   private splitOperation(data: any, config: any): any {
     const { field, delimiter = ',' } = config;
-    
+
     if (Array.isArray(data)) {
-      return data.map(item => {
+      return data.map((item) => {
         if (field && typeof item[field] === 'string') {
           return {
             ...item,
@@ -231,11 +232,11 @@ class TransformNodeUtils {
         return item;
       });
     }
-    
+
     if (typeof data === 'string') {
       return data.split(delimiter);
     }
-    
+
     return data;
   }
 
@@ -292,7 +293,7 @@ class TransformNodeUtils {
           };
         }
         break;
-      
+
       case 'sort':
         if (operation.config.direction && !['asc', 'desc'].includes(operation.config.direction)) {
           return {

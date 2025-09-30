@@ -42,7 +42,7 @@ export interface NotificationProvider {
 
 // Provider implementations
 class EmailProvider implements NotificationProvider {
-  constructor(private config: any) {}
+  constructor(_config: any) {}
 
   async send(params: any): Promise<any> {
     // Implementation would use nodemailer, SendGrid, SES, etc.
@@ -52,7 +52,7 @@ class EmailProvider implements NotificationProvider {
 }
 
 class SMSProvider implements NotificationProvider {
-  constructor(private config: any) {}
+  constructor(_config: any) {}
 
   async send(params: any): Promise<any> {
     // Implementation would use Twilio, AWS SNS, etc.
@@ -62,7 +62,7 @@ class SMSProvider implements NotificationProvider {
 }
 
 class SlackProvider implements NotificationProvider {
-  constructor(private config: any) {}
+  constructor(_config: any) {}
 
   async send(params: any): Promise<any> {
     // Implementation would use Slack API or webhooks
@@ -72,7 +72,7 @@ class SlackProvider implements NotificationProvider {
 }
 
 class TeamsProvider implements NotificationProvider {
-  constructor(private config: any) {}
+  constructor(_config: any) {}
 
   async send(params: any): Promise<any> {
     // Implementation would use Microsoft Teams webhooks
@@ -82,7 +82,7 @@ class TeamsProvider implements NotificationProvider {
 }
 
 class DiscordProvider implements NotificationProvider {
-  constructor(private config: any) {}
+  constructor(_config: any) {}
 
   async send(params: any): Promise<any> {
     // Implementation would use Discord webhooks
@@ -92,7 +92,7 @@ class DiscordProvider implements NotificationProvider {
 }
 
 class WebhookProvider implements NotificationProvider {
-  constructor(private config: any) {}
+  constructor(_config: any) {}
 
   async send(params: any): Promise<any> {
     // Implementation would make HTTP requests to webhooks

@@ -1,4 +1,4 @@
-import { Router, Request, Response } from 'express';
+import { type Request, type Response, Router } from 'express';
 import { rateLimit } from 'express-rate-limit';
 import { body, param, query } from 'express-validator';
 import { authRequired } from '../middleware/auth';
@@ -70,11 +70,7 @@ router.post(
   '/',
   authRequired,
   credentialRateLimit,
-  [
-    body('name').trim().notEmpty(),
-    body('type').isString().notEmpty(),
-    body('data').isObject(),
-  ],
+  [body('name').trim().notEmpty(), body('type').isString().notEmpty(), body('data').isObject()],
   validateRequest,
   async (_req: Request, res: Response) => {
     res.json({ message: 'Credential creation not implemented yet' });

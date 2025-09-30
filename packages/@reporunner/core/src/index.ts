@@ -3,12 +3,8 @@
  * Provides base classes, interfaces, and utilities for consistent architecture
  */
 
-// Base classes - using existing implementations from repository and base directories
-export { BaseRepository, BaseEntity, PaginatedResult, PaginationOptions, RepositoryOptions } from './repository/BaseRepository';
-export { BaseService } from './base/BaseService';
 export { BaseMiddleware } from './base/BaseMiddleware';
-export { BaseValidationMiddleware } from './middleware/BaseValidationMiddleware';
-export type { ValidationMiddlewareOptions } from './middleware/BaseValidationMiddleware';
+export { BaseService } from './base/BaseService';
 export { Cacheable } from './decorators/Cacheable';
 // Decorators
 export { Injectable } from './decorators/Injectable';
@@ -24,13 +20,6 @@ export {
   NotFoundError,
   UnauthorizedError,
 } from './errors';
-export {
-  AuthenticationError,
-  AuthorizationError,
-  BaseError,
-  ErrorTypes,
-  ValidationError, // Use ValidationError from utils/errors (supports details)
-} from './utils/errors';
 export type { ICache } from './interfaces/ICache';
 export type { IEventBus } from './interfaces/IEventBus';
 export type { ILogger } from './interfaces/ILogger';
@@ -39,21 +28,38 @@ export type { IMapper } from './interfaces/IMapper';
 export type { IRepository } from './interfaces/IRepository';
 export type { IService } from './interfaces/IService';
 export type { IUseCase } from './interfaces/IUseCase';
+export type { ValidationMiddlewareOptions } from './middleware/BaseValidationMiddleware';
+export { BaseValidationMiddleware } from './middleware/BaseValidationMiddleware';
+// Base classes - using existing implementations from repository and base directories
+export {
+  BaseEntity,
+  BaseRepository,
+  PaginatedResult,
+  PaginationOptions,
+  RepositoryOptions,
+} from './repository/BaseRepository';
 // PaginatedResult and RepositoryOptions already exported from BaseRepository above
 // Common types
 export type { Result } from './types/Result';
 export type { ServiceDependencies } from './types/ServiceDependencies';
-export { Cache } from './utils/Cache';
-export { ErrorHandler } from './utils/ErrorHandler';
-// Utilities
-export { Logger } from './utils/logger';
-export type { LogLevel, LogEntry, LoggerOptions } from './utils/logger';
-export { Retry } from './utils/Retry';
-export { Validator, SchemaValidator } from './utils/validation';
-export type { ValidationRule, SchemaDefinition } from './utils/validation';
+export { CatchUseCase } from './use-cases/Catch.use-case';
+export { ErrorUseCase } from './use-cases/Error.use-case';
+export { FilterUseCase } from './use-cases/Filter.use-case';
 // Use cases
 export { IfUseCase } from './use-cases/If.use-case';
 export { MapUseCase } from './use-cases/Map.use-case';
-export { FilterUseCase } from './use-cases/Filter.use-case';
-export { CatchUseCase } from './use-cases/Catch.use-case';
-export { ErrorUseCase } from './use-cases/Error.use-case';
+export { Cache } from './utils/Cache';
+export { ErrorHandler } from './utils/ErrorHandler';
+export {
+  AuthenticationError,
+  AuthorizationError,
+  BaseError,
+  ErrorTypes,
+  ValidationError, // Use ValidationError from utils/errors (supports details)
+} from './utils/errors';
+export type { LogEntry, LoggerOptions, LogLevel } from './utils/logger';
+// Utilities
+export { Logger } from './utils/logger';
+export { Retry } from './utils/Retry';
+export type { SchemaDefinition, ValidationRule } from './utils/validation';
+export { SchemaValidator, Validator } from './utils/validation';

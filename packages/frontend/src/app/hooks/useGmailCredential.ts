@@ -1,6 +1,5 @@
 import { useState } from 'react';
-import { CredentialApiService } from '@/core';
-import { useLeanWorkflowStore } from '@/core';
+import { CredentialApiService, useLeanWorkflowStore } from '@/core';
 
 interface UseGmailCredentialOptions {
   /**
@@ -9,9 +8,7 @@ interface UseGmailCredentialOptions {
   onSave?: () => void;
 }
 
-export const useGmailCredential = ({
-  onSave
-}: UseGmailCredentialOptions = {}) => {
+export const useGmailCredential = ({ onSave }: UseGmailCredentialOptions = {}) => {
   const [credentialName, setCredentialName] = useState('');
   const [isConnecting, setIsConnecting] = useState(false);
 
@@ -41,7 +38,7 @@ export const useGmailCredential = ({
 
       // Start Gmail OAuth flow - this will redirect the user but return to current URL
       await credentialApiService.startGmailOAuthFlow(credentialName, window.location.href);
-      
+
       // User will be redirected, so we trigger onSave
       onSave?.();
     } catch (error: any) {
@@ -54,6 +51,6 @@ export const useGmailCredential = ({
     credentialName,
     setCredentialName,
     isConnecting,
-    handleConnect
+    handleConnect,
   };
 };

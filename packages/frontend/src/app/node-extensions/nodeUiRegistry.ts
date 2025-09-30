@@ -70,7 +70,9 @@ class NodeUIRegistry {
   getCustomBodyComponent(componentName?: string): ComponentType<any> | null | undefined {
     this.ensureInitialized(); // Ensure components are registered before lookup
 
-    if (!componentName) return undefined;
+    if (!componentName) {
+      return undefined;
+    }
     const component = componentFactory.createNodeBody(componentName);
 
     // Additional debug logging for Gmail specifically
@@ -83,7 +85,9 @@ class NodeUIRegistry {
   getCustomPropertiesPanel(componentName?: string): ComponentType<any> | null | undefined {
     this.ensureInitialized(); // Ensure components are registered before lookup
 
-    if (!componentName) return undefined;
+    if (!componentName) {
+      return undefined;
+    }
     return componentFactory.createPropertiesPanel(componentName);
   }
 

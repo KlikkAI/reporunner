@@ -7,7 +7,7 @@ export const ErrorTypes = {
   ServiceError: 'ServiceError',
 } as const;
 
-export type ErrorType = typeof ErrorTypes[keyof typeof ErrorTypes];
+export type ErrorType = (typeof ErrorTypes)[keyof typeof ErrorTypes];
 
 export class BaseError extends Error {
   constructor(

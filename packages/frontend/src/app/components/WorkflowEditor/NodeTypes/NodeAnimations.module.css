@@ -8,7 +8,9 @@
 
 .nodeContainer:hover {
   transform: scale(1.02);
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  box-shadow:
+    0 10px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04);
 }
 
 .nodeContainer.selected {
@@ -91,7 +93,8 @@
 }
 
 @keyframes pulse {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 1;
     transform: scale(1);
   }
@@ -107,7 +110,7 @@
 }
 
 .aiNodeGlow::before {
-  content: '';
+  content: "";
   position: absolute;
   inset: -2px;
   border-radius: inherit;
@@ -115,7 +118,9 @@
   background: linear-gradient(45deg, #8b5cf6, #06b6d4, #10b981, #f59e0b);
   background-size: 300% 300%;
   animation: gradientShift 3s ease infinite;
-  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
   mask-composite: exclude;
   opacity: 0;
   transition: opacity 0.3s ease;
@@ -126,9 +131,15 @@
 }
 
 @keyframes gradientShift {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 /* Condition node branch indicators */
@@ -137,7 +148,7 @@
 }
 
 .conditionBranch::after {
-  content: '';
+  content: "";
   position: absolute;
   right: -8px;
   top: 50%;
@@ -168,8 +179,12 @@
 }
 
 @keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .statusSuccess {
@@ -198,9 +213,23 @@
 }
 
 @keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  10%, 30%, 50%, 70%, 90% { transform: translateX(-2px); }
-  20%, 40%, 60%, 80% { transform: translateX(2px); }
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  10%,
+  30%,
+  50%,
+  70%,
+  90% {
+    transform: translateX(-2px);
+  }
+  20%,
+  40%,
+  60%,
+  80% {
+    transform: translateX(2px);
+  }
 }
 
 /* Focus and accessibility */
@@ -219,9 +248,11 @@
     background: #374151;
     color: white;
   }
-  
+
   .nodeContainer:hover {
-    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.1);
+    box-shadow:
+      0 10px 25px -5px rgba(0, 0, 0, 0.3),
+      0 10px 10px -5px rgba(0, 0, 0, 0.1);
   }
 }
 
@@ -236,7 +267,7 @@
     transition: none;
     animation: none;
   }
-  
+
   .nodeContainer:hover {
     transform: none;
   }

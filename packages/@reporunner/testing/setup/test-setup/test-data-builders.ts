@@ -89,7 +89,7 @@ createExecution(overrides?: any)
 
 // Mock factories for creating mock implementations
 export class MockFactory {
-  static createMockRepository<T>(): any {
+  static createMockRepository<_T>(): any {
     return {
       findById: jest.fn(),
       findAll: jest.fn(),

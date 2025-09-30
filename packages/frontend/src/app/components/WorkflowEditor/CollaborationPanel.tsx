@@ -103,7 +103,9 @@ export const CollaborationPanel: React.FC<CollaborationPanelProps> = ({ isVisibl
 
   // Handle adding a comment
   const handleAddComment = useCallback(async () => {
-    if (!newCommentContent.trim() || !newCommentPosition) return;
+    if (!(newCommentContent.trim() && newCommentPosition)) {
+      return;
+    }
 
     try {
       await addComment({
@@ -124,7 +126,9 @@ export const CollaborationPanel: React.FC<CollaborationPanelProps> = ({ isVisibl
   const handleReplyToComment = useCallback(
     async (commentId: string) => {
       const content = replyContents[commentId];
-      if (!content?.trim()) return;
+      if (!content?.trim()) {
+        return;
+      }
 
       try {
         await replyToComment(commentId, content);
@@ -291,7 +295,7 @@ export const CollaborationPanel: React.FC<CollaborationPanelProps> = ({ isVisibl
                 type="primary"
                 icon={<SendOutlined />}
                 onClick={handleAddComment}
-                disabled={!newCommentContent.trim() || !newCommentPosition}
+                disabled={!(newCommentContent.trim() && newCommentPosition)}
               >
                 Post Comment
               </Button>

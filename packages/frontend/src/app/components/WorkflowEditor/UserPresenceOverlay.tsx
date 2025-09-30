@@ -59,7 +59,9 @@ export const UserPresenceOverlay: React.FC<UserPresenceOverlayProps> = ({
   const getNodeBounds = useCallback(
     (nodeId: string) => {
       const node = nodes.find((n) => n.id === nodeId);
-      if (!node) return null;
+      if (!node) {
+        return null;
+      }
 
       const screenPos = workflowToScreen(node.position.x, node.position.y);
       return {
@@ -75,7 +77,9 @@ export const UserPresenceOverlay: React.FC<UserPresenceOverlayProps> = ({
   // Render user cursor
   const renderUserCursor = useCallback(
     (presence: UserPresence) => {
-      if (!presence.cursor || !showUserCursors) return null;
+      if (!(presence.cursor && showUserCursors)) {
+        return null;
+      }
 
       const screenPos = workflowToScreen(presence.cursor.x, presence.cursor.y);
       const userColor = getUserColor(presence.userId);
@@ -126,14 +130,18 @@ export const UserPresenceOverlay: React.FC<UserPresenceOverlayProps> = ({
   // Render user selection highlights
   const renderUserSelections = useCallback(
     (presence: UserPresence) => {
-      if (!presence.selection?.nodeIds || !showUserSelections) return null;
+      if (!(presence.selection?.nodeIds && showUserSelections)) {
+        return null;
+      }
 
       const userColor = getUserColor(presence.userId);
 
       return presence.selection.nodeIds
         .map((nodeId) => {
           const bounds = getNodeBounds(nodeId);
-          if (!bounds) return null;
+          if (!bounds) {
+            return null;
+          }
 
           return (
             <div
@@ -182,7 +190,9 @@ export const UserPresenceOverlay: React.FC<UserPresenceOverlayProps> = ({
   // Render viewport indicators (mini rectangles showing what other users see)
   const renderViewportIndicators = useCallback(
     (presence: UserPresence) => {
-      if (!presence.viewport) return null;
+      if (!presence.viewport) {
+        return null;
+      }
 
       const userColor = getUserColor(presence.userId);
       const viewport = presence.viewport;
@@ -223,7 +233,9 @@ export const UserPresenceOverlay: React.FC<UserPresenceOverlayProps> = ({
   );
 
   // Don't render if container is not available
-  if (!containerRef.current) return null;
+  if (!containerRef.current) {
+    return null;
+  }
 
   return (
     <div className="absolute inset-0 pointer-events-none overflow-hidden">

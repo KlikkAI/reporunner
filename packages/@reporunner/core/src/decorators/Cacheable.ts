@@ -2,7 +2,7 @@
  * Cacheable decorator for caching method results
  */
 export function Cacheable(ttl: number = 300) {
-  return function (_target: any, propertyKey: string, descriptor: PropertyDescriptor) {
+  return (_target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
     const originalMethod = descriptor.value;
     const cache = new Map<string, { value: any; expiry: number }>();
 

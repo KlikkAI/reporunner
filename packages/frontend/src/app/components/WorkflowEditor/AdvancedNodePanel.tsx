@@ -205,7 +205,9 @@ const AdvancedNodePanel: React.FC<AdvancedNodePanelProps> = ({ isCollapsed, onTo
 
   // Helper function to find the rightmost node (last in sequence)
   const findLastNode = useCallback(() => {
-    if (nodes.length === 0) return null;
+    if (nodes.length === 0) {
+      return null;
+    }
 
     // Find node with no outgoing connections (target but no source edges)
     const nodesWithOutgoing = new Set(edges.map((edge) => edge.source));

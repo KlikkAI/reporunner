@@ -1,4 +1,8 @@
-import { SecurityMiddleware, SecurityContext, SecurityConfig } from '../base/SecurityMiddleware';
+import {
+  type SecurityConfig,
+  type SecurityContext,
+  SecurityMiddleware,
+} from '../base/SecurityMiddleware';
 import { CSPBuilder } from './builders/CSPBuilder';
 import { HSTSBuilder } from './builders/HSTSBuilder';
 import { SecurityHeadersBuilder } from './builders/SecurityHeadersBuilder';
@@ -92,14 +96,14 @@ const DEFAULT_CONFIG: Partial<SecurityHeadersConfig> = {
       'media-src': ["'self'"],
       'frame-src': ["'none'"],
       'base-uri': ["'self'"],
-      'form-action': ["'self'"]
-    }
+      'form-action': ["'self'"],
+    },
   },
   hsts: {
     enabled: true,
     maxAge: 31536000, // 1 year
     includeSubDomains: true,
-    preload: true
+    preload: true,
   },
   cors: {
     enabled: true,
@@ -107,23 +111,23 @@ const DEFAULT_CONFIG: Partial<SecurityHeadersConfig> = {
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
     headers: ['Content-Type', 'Authorization'],
     credentials: true,
-    maxAge: 86400 // 24 hours
+    maxAge: 86400, // 24 hours
   },
   frameProtection: {
     enabled: true,
-    action: 'DENY'
+    action: 'DENY',
   },
   contentTypeOptions: {
     enabled: true,
-    nosniff: true
+    nosniff: true,
   },
   xssProtection: {
     enabled: true,
-    mode: '1; mode=block'
+    mode: '1; mode=block',
   },
   referrerPolicy: {
     enabled: true,
-    policy: 'strict-origin-when-cross-origin'
+    policy: 'strict-origin-when-cross-origin',
   },
   permissionsPolicy: {
     enabled: true,
@@ -132,9 +136,9 @@ const DEFAULT_CONFIG: Partial<SecurityHeadersConfig> = {
       microphone: ["'none'"],
       camera: ["'none'"],
       payment: ["'self'"],
-      usb: ["'none'"]
-    }
-  }
+      usb: ["'none'"],
+    },
+  },
 };
 
 export class SecurityHeadersMiddleware extends SecurityMiddleware {
@@ -152,7 +156,9 @@ export class SecurityHeadersMiddleware extends SecurityMiddleware {
   protected async implementation({ req, res }: SecurityContext): Promise<void> {
     // Set CSP headers
     if (this.config.csp?.enabled) {
-      const cspHeader = this.config.csp.reportOnly ? 'Content-Security-Policy-Report-Only' : 'Content-Security-Policy';
+      const cspHeader = this.config.csp.reportOnly
+        ? 'Content-Security-Policy-Report-Only'
+        : 'Content-Security-Policy';
       res.setHeader(cspHeader, this.cspBuilder.build());
     }
 
@@ -172,7 +178,7 @@ export class SecurityHeadersMiddleware extends SecurityMiddleware {
     // Log headers if debug enabled
     if (this.config.debug) {
       this.logger.debug('Security headers applied', {
-        headers: res.getHeaders()
+        headers: res.getHeaders(),
       });
     }
   }
@@ -185,7 +191,7 @@ export class SecurityHeadersMiddleware extends SecurityMiddleware {
       contentTypeOptions: this.config.contentTypeOptions,
       xssProtection: this.config.xssProtection,
       referrerPolicy: this.config.referrerPolicy,
-      permissionsPolicy: this.config.permissionsPolicy
+      permissionsPolicy: this.config.permissionsPolicy,
     });
   }
 

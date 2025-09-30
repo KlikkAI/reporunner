@@ -3,8 +3,8 @@
  * Reduces duplication across domain services
  */
 import { injectable } from 'inversify';
-import { IRepository, IService } from './interfaces';
 import { LoggingUtils } from '../utilities';
+import type { IRepository, IService } from './interfaces';
 
 @injectable()
 export abstract class BaseService<T, K = string> implements IService<T, K> {

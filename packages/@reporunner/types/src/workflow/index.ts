@@ -3,7 +3,7 @@
  */
 
 import { z } from 'zod';
-import type { ID, Timestamp, BaseEntity, EntityStatus } from '../common';
+import type { BaseEntity, EntityStatus, ID, Timestamp } from '../common';
 
 /**
  * Node position in the workflow canvas

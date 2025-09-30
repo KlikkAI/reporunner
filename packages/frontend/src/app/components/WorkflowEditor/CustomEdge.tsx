@@ -152,12 +152,24 @@ const CustomEdge: React.FC<CustomEdgeProps> = ({
 
   // Dynamic edge styling
   const getEdgeColor = () => {
-    if (status === 'success') return '#10b981'; // green
-    if (status === 'error') return '#ef4444'; // red
-    if (status === 'running') return '#f59e0b'; // yellow
-    if (status === 'pinned') return '#8b5cf6'; // purple
-    if (!isMainConnection) return '#6b7280'; // gray for supplemental
-    if (selected) return '#1f2937'; // dark gray for selected
+    if (status === 'success') {
+      return '#10b981'; // green
+    }
+    if (status === 'error') {
+      return '#ef4444'; // red
+    }
+    if (status === 'running') {
+      return '#f59e0b'; // yellow
+    }
+    if (status === 'pinned') {
+      return '#8b5cf6'; // purple
+    }
+    if (!isMainConnection) {
+      return '#6b7280'; // gray for supplemental
+    }
+    if (selected) {
+      return '#1f2937'; // dark gray for selected
+    }
     return '#E2DFD0'; // default dark gray
   };
 

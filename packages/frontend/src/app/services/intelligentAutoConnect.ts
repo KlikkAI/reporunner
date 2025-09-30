@@ -71,7 +71,9 @@ export class IntelligentAutoConnectService {
    * Find the best node to auto-connect to (rightmost without outgoing connections)
    */
   findLastNode(nodes: Node[], edges: Edge[]): Node | null {
-    if (nodes.length === 0) return null;
+    if (nodes.length === 0) {
+      return null;
+    }
 
     // Find nodes with no outgoing connections
     const nodesWithOutgoing = new Set(edges.map((edge) => edge.source));
@@ -135,7 +137,7 @@ export class IntelligentAutoConnectService {
       const sourceDefinition = nodeRegistry.getNodeTypeDescription(sourceNodeType);
       const targetDefinition = nodeRegistry.getNodeTypeDescription(targetNodeType);
 
-      if (!sourceDefinition || !targetDefinition) {
+      if (!(sourceDefinition && targetDefinition)) {
         return false;
       }
 
@@ -285,7 +287,7 @@ export class IntelligentAutoConnectService {
   private validateAIConnection(sourceHandle?: string, targetHandle?: string): boolean {
     const aiConnectionTypes = ['ai_languageModel', 'ai_embedding', 'ai_vectorStore', 'ai_tool'];
 
-    if (!sourceHandle || !targetHandle) {
+    if (!(sourceHandle && targetHandle)) {
       return false;
     }
 

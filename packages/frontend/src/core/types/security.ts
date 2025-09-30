@@ -623,7 +623,9 @@ export const getRiskScore = (findings: ComplianceFinding[]): number => {
 };
 
 export const shouldRotateSecret = (secret: SecretManager): boolean => {
-  if (!secret.rotationPolicy.enabled) return false;
+  if (!secret.rotationPolicy.enabled) {
+    return false;
+  }
 
   const now = Date.now();
   const lastRotation = secret.updatedAt;

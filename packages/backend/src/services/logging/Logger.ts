@@ -8,21 +8,13 @@ export interface LogContext {
 }
 
 class Logger {
-  info(message: string, context?: LogContext) {
-    console.log('[INFO]', message, context || '');
-  }
+  info(_message: string, _context?: LogContext) {}
 
-  error(message: string, context?: LogContext) {
-    console.error('[ERROR]', message, context || '');
-  }
+  error(_message: string, _context?: LogContext) {}
 
-  warn(message: string, context?: LogContext) {
-    console.warn('[WARN]', message, context || '');
-  }
+  warn(_message: string, _context?: LogContext) {}
 
-  debug(message: string, context?: LogContext) {
-    console.debug('[DEBUG]', message, context || '');
-  }
+  debug(_message: string, _context?: LogContext) {}
 }
 
 export const logger = new Logger();

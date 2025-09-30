@@ -194,7 +194,7 @@ export class EnhancedPropertyEvaluator {
     let evaluation: EnhancedPropertyEvaluation = {
       visible: true,
       disabled: false,
-      required: property.required || false,
+      required: property.required,
     };
 
     // Evaluate display conditions
@@ -278,9 +278,9 @@ export class EnhancedPropertyEvaluator {
         );
 
       case 'notIn':
-        return (
-          !Array.isArray(dependency.value) ||
-          !dependency.value.some((val) =>
+        return !(
+          Array.isArray(dependency.value) &&
+          dependency.value.some((val) =>
             this.compareValues(currentValue, val, dependency.ignoreCase)
           )
         );
@@ -349,7 +349,7 @@ export class EnhancedPropertyEvaluator {
         break;
 
       case 'maxLength':
-        if (typeof value === 'string' && value.length > (rule.value || Infinity)) {
+        if (typeof value === 'string' && value.length > (rule.value || Number.POSITIVE_INFINITY)) {
           return rule.message || `Maximum length is ${rule.value}`;
         }
         break;
@@ -378,7 +378,7 @@ export class EnhancedPropertyEvaluator {
     currentValue: PropertyValue
   ): string | undefined {
     // Generate contextual AI suggestions based on property type and current value
-    if (!property.aiPrompt && !currentValue) {
+    if (!(property.aiPrompt || currentValue)) {
       // Generate default suggestions based on property type
       switch (property.type) {
         case 'string':

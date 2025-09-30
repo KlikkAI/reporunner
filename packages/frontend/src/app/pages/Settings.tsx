@@ -7,17 +7,14 @@
  * Reduction: ~250 lines → ~90 lines (64% reduction)
  */
 
-import React, { useEffect, useState } from 'react';
-import { SaveOutlined } from '@ant-design/icons';
-import { AuthApiService } from '@/core';
 import { Logger } from '@reporunner/core';
-import {
-  PageTemplates,
-  UniversalForm,
-} from '@/design-system';
-import type { PropertyRendererConfig, PageAction } from '@/design-system';
+import type React from 'react';
+import { useEffect, useState } from 'react';
+import { AuthApiService } from '@/core';
+import type { PageAction, PropertyRendererConfig } from '@/design-system';
+import { PageTemplates, UniversalForm } from '@/design-system';
 
-const authApiService = new AuthApiService();
+const _authApiService = new AuthApiService();
 const logger = new Logger('Settings');
 
 interface SettingsData {
@@ -223,7 +220,7 @@ export const Settings: React.FC = () => {
     setIsLoading(true);
     try {
       // Update settings in state
-      setSettings(prev => ({
+      setSettings((prev) => ({
         ...prev,
         [section]: { ...prev[section as keyof SettingsData], ...formData },
       }));

@@ -121,7 +121,7 @@ export class WorkflowService {
             errorHandling: workflowData.settings.errorHandling || 'stop',
             timeout: workflowData.settings.timeout || 300000,
             retryAttempts: workflowData.settings.retryPolicy?.maxRetries || 3,
-            concurrent: workflowData.settings.concurrent || false,
+            concurrent: workflowData.settings.concurrent,
           }
         : undefined,
     };
@@ -313,8 +313,12 @@ export class WorkflowService {
     const skip = (filters.page - 1) * filters.limit;
 
     const query: any = { userId };
-    if (filters.workflowId) query.workflowId = filters.workflowId;
-    if (filters.status) query.status = filters.status;
+    if (filters.workflowId) {
+      query.workflowId = filters.workflowId;
+    }
+    if (filters.status) {
+      query.status = filters.status;
+    }
 
     const [executions, total] = await Promise.all([
       this.executionRepository.findWithPaginationAndPopulate(query, skip, filters.limit),
@@ -362,7 +366,9 @@ export class WorkflowService {
    */
   async getExecutionStatistics(userId: string, workflowId?: string) {
     const query: any = { userId };
-    if (workflowId) query.workflowId = workflowId;
+    if (workflowId) {
+      query.workflowId = workflowId;
+    }
 
     const stats = await this.executionRepository.getExecutionStatistics(query);
     return (

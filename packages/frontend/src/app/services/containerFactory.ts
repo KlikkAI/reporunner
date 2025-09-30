@@ -1,13 +1,13 @@
 /**
  * Container Factory Service - Reusing existing implementations
- * 
+ *
  * This service reuses the existing ComponentFactory to provide
  * container creation and management capabilities.
  */
 
 import type { Node } from 'reactflow';
-import { ComponentFactory } from '../node-extensions/ComponentFactory';
 import type { WorkflowNodeData } from '@/core/types/workflow';
+import { ComponentFactory } from '../node-extensions/ComponentFactory';
 
 // Container templates for different use cases
 export const CONTAINER_TEMPLATES = {
@@ -45,7 +45,7 @@ export const CONTAINER_TEMPLATES = {
   },
 } as const;
 
-export type ContainerTemplate = typeof CONTAINER_TEMPLATES[keyof typeof CONTAINER_TEMPLATES];
+export type ContainerTemplate = (typeof CONTAINER_TEMPLATES)[keyof typeof CONTAINER_TEMPLATES];
 
 interface ContainerFactoryConfig {
   templateId: string;
@@ -67,7 +67,7 @@ class ContainerFactoryService {
    */
   createContainer(config: ContainerFactoryConfig): Node<WorkflowNodeData> {
     const template = CONTAINER_TEMPLATES[config.templateId as keyof typeof CONTAINER_TEMPLATES];
-    
+
     if (!template) {
       throw new Error(`Container template '${config.templateId}' not found`);
     }
@@ -109,7 +109,7 @@ class ContainerFactoryService {
    * Create multiple containers from templates
    */
   createContainersFromTemplates(configs: ContainerFactoryConfig[]): Node<WorkflowNodeData>[] {
-    return configs.map(config => this.createContainer(config));
+    return configs.map((config) => this.createContainer(config));
   }
 
   /**
@@ -184,7 +184,9 @@ class ContainerFactoryService {
       errors.push('Container node missing data');
     }
 
-    if (!node.data?.properties?.containedNodes || !Array.isArray(node.data.properties.containedNodes)) {
+    if (
+      !(node.data?.properties?.containedNodes && Array.isArray(node.data.properties.containedNodes))
+    ) {
       errors.push('Container must have contained nodes array');
     }
 

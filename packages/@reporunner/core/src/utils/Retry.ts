@@ -7,10 +7,7 @@ export interface RetryOptions {
 }
 
 export class Retry {
-  static async execute<T>(
-    operation: () => Promise<T>,
-    options: RetryOptions = {}
-  ): Promise<T> {
+  static async execute<T>(operation: () => Promise<T>, options: RetryOptions = {}): Promise<T> {
     const {
       maxAttempts = 3,
       delay = 1000,
@@ -32,7 +29,7 @@ export class Retry {
           throw lastError;
         }
 
-        await new Promise(resolve => setTimeout(resolve, currentDelay));
+        await new Promise((resolve) => setTimeout(resolve, currentDelay));
         currentDelay = Math.min(currentDelay * backoffMultiplier, maxDelay);
       }
     }
@@ -49,7 +46,7 @@ export class Retry {
       maxAttempts,
       delay: baseDelay,
       backoffMultiplier: 2,
-      maxDelay: baseDelay * Math.pow(2, maxAttempts - 1),
+      maxDelay: baseDelay * 2 ** (maxAttempts - 1),
     });
   }
 

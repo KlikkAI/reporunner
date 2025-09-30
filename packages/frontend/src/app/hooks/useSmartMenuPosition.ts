@@ -58,7 +58,7 @@ export const useSmartMenuPosition = ({
 
   // Calculate initial position based on trigger only (Phase 1: Immediate)
   useLayoutEffect(() => {
-    if (!isOpen || !triggerRef?.current) {
+    if (!(isOpen && triggerRef?.current)) {
       setIsPositioned(false);
       return;
     }
@@ -140,7 +140,7 @@ export const useSmartMenuPosition = ({
 
   // Refine position after menu DOM is available (Phase 2: Precise)
   useEffect(() => {
-    if (!isOpen || !triggerRef?.current || !menuRef?.current || !isPositioned) {
+    if (!(isOpen && triggerRef?.current && menuRef?.current && isPositioned)) {
       return;
     }
 

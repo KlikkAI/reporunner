@@ -3,7 +3,7 @@
  * Replaces identical FindById, Create, Update, Delete use-cases across domains
  */
 import { injectable } from 'inversify';
-import { IRepository, IUseCase } from './interfaces';
+import type { IRepository, IUseCase } from './interfaces';
 
 @injectable()
 export abstract class BaseGetByIdUseCase<T, K = string> implements IUseCase<K, T | null> {
@@ -33,10 +33,12 @@ export abstract class BaseCreateUseCase<T, TInput = Partial<T>> implements IUseC
 }
 
 @injectable()
-export abstract class BaseUpdateUseCase<T, K = string> implements IUseCase<{id: K, data: Partial<T>}, T | null> {
+export abstract class BaseUpdateUseCase<T, K = string>
+  implements IUseCase<{ id: K; data: Partial<T> }, T | null>
+{
   constructor(protected repository: IRepository<T, K>) {}
 
-  async execute(input: {id: K, data: Partial<T>}): Promise<T | null> {
+  async execute(input: { id: K; data: Partial<T> }): Promise<T | null> {
     return this.repository.update(input.id, input.data);
   }
 }

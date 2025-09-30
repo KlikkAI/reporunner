@@ -1,7 +1,7 @@
 // Shared Page Footer Component
 // Eliminates duplicate footer patterns across multiple page components
 
-import React from 'react';
+import type React from 'react';
 
 interface PageFooterProps {
   className?: string;
@@ -12,13 +12,13 @@ interface PageFooterProps {
 export const PageFooter: React.FC<PageFooterProps> = ({
   className = '',
   children,
-  variant = 'default'
+  variant = 'default',
 }) => {
   const baseClasses = 'bg-gray-50 border-t border-gray-200';
   const variantClasses = {
     default: 'py-8 px-6',
     compact: 'py-4 px-4',
-    minimal: 'py-2 px-3'
+    minimal: 'py-2 px-3',
   };
 
   return (

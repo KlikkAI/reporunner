@@ -4,13 +4,7 @@
     "outDir": "./dist/auth-service",
     "rootDir": "./src"
   },
-  "include": [
-    "src/**/*"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "**/*.test.*"
-  ],
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist", "**/*.test.*"],
   "_package": "auth-service"
 }

@@ -5,7 +5,7 @@ const app = express();
 
 // Basic security headers (defaults)
 const basicHeaders = new SecurityHeadersMiddleware({
-  enableLogging: true
+  enableLogging: true,
 });
 
 // Development headers (less strict)
@@ -18,16 +18,16 @@ const devHeaders = new SecurityHeadersMiddleware({
       'style-src': ["'self'", "'unsafe-inline'"],
       'img-src': ["'self'", 'data:', 'blob:'],
       'font-src': ["'self'", 'data:'],
-      'connect-src': ["'self'", 'http://localhost:*', 'ws://localhost:*']
-    }
+      'connect-src': ["'self'", 'http://localhost:*', 'ws://localhost:*'],
+    },
   },
   hsts: {
-    enabled: false
+    enabled: false,
   },
   frameProtection: {
     enabled: true,
-    action: 'SAMEORIGIN'
-  }
+    action: 'SAMEORIGIN',
+  },
 });
 
 // Production headers (strict)
@@ -45,20 +45,20 @@ const prodHeaders = new SecurityHeadersMiddleware({
       'base-uri': ["'self'"],
       'frame-ancestors': ["'none'"],
       'form-action': ["'self'"],
-      'upgrade-insecure-requests': []
+      'upgrade-insecure-requests': [],
     },
-    reportUri: '/csp-report'
+    reportUri: '/csp-report',
   },
   hsts: {
     enabled: true,
     maxAge: 31536000,
     includeSubDomains: true,
-    preload: true
+    preload: true,
   },
   frameProtection: {
     enabled: true,
-    action: 'DENY'
-  }
+    action: 'DENY',
+  },
 });
 
 // Headers for API routes
@@ -67,20 +67,20 @@ const apiHeaders = new SecurityHeadersMiddleware({
     enabled: true,
     directives: {
       'default-src': ["'none'"],
-      'connect-src': ["'self'"]
-    }
+      'connect-src': ["'self'"],
+    },
   },
   frameProtection: {
     enabled: true,
-    action: 'DENY'
+    action: 'DENY',
   },
   cors: {
     enabled: true,
     origins: ['https://api.example.com'],
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     headers: ['Content-Type', 'Authorization'],
-    credentials: true
-  }
+    credentials: true,
+  },
 });
 
 // Headers for static content
@@ -92,12 +92,12 @@ const staticHeaders = new SecurityHeadersMiddleware({
       'script-src': ["'self'"],
       'style-src': ["'self'"],
       'img-src': ["'self'", 'data:'],
-      'font-src': ["'self'", 'data:']
-    }
+      'font-src': ["'self'", 'data:'],
+    },
   },
   frameProtection: {
     enabled: true,
-    action: 'SAMEORIGIN'
+    action: 'SAMEORIGIN',
   },
   // Cache control headers can be set manually if needed
 });
@@ -125,15 +125,15 @@ app.use((req, res, next) => {
         'script-src': [
           "'self'",
           // Add nonce for inline scripts
-          `'nonce-${res.locals.nonce}'`
+          `'nonce-${res.locals.nonce}'`,
         ],
         'connect-src': [
           "'self'",
           // Add dynamic API origin
-          req.headers.origin || ''
-        ]
-      }
-    }
+          req.headers.origin || '',
+        ],
+      },
+    },
   });
 
   return headers.handle(req, res, next);
@@ -154,9 +154,9 @@ app.use((req, res, next) => {
         enabled: true,
         directives: {
           'default-src': ["'none'"],
-          'connect-src': ["'self'"]
-        }
-      }
+          'connect-src': ["'self'"],
+        },
+      },
     });
     return ajaxHeaders.handle(req, res, next);
   }
@@ -166,8 +166,7 @@ app.use((req, res, next) => {
 });
 
 // Handle CSP reports
-app.post('/csp-report', express.json({ type: 'application/csp-report' }), (req, res) => {
-  console.log('CSP Violation:', req.body);
+app.post('/csp-report', express.json({ type: 'application/csp-report' }), (_req, res) => {
   res.status(204).end();
 });
 

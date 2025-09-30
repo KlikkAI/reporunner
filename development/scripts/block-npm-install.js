@@ -7,8 +7,10 @@ const userAgent = process.env.npm_config_user_agent || '';
 const execPath = process.env.npm_execpath || '';
 
 // Only block if it's specifically npm (not pnpm)
-if ((userAgent.includes('npm') && !userAgent.includes('pnpm')) ||
-    (execPath.includes('npm') && !execPath.includes('pnpm'))) {
+if (
+  (userAgent.includes('npm') && !userAgent.includes('pnpm')) ||
+  (execPath.includes('npm') && !execPath.includes('pnpm'))
+) {
   console.error('');
   console.error('🚫 This repository requires pnpm as the package manager.');
   console.error('');
@@ -47,7 +49,7 @@ if (userAgent.includes('yarn') || execPath.includes('yarn')) {
 // Check pnpm version
 try {
   const pnpmVersion = execSync('pnpm --version', { encoding: 'utf8' }).trim();
-  const majorVersion = parseInt(pnpmVersion.split('.')[0], 10);
+  const majorVersion = Number.parseInt(pnpmVersion.split('.')[0], 10);
 
   if (majorVersion < 8) {
     console.error(`❌ This repository requires pnpm version 8 or higher.`);

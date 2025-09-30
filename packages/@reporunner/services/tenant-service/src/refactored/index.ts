@@ -1,8 +1,8 @@
+import type { Server } from 'node:http';
 import compression from 'compression';
 import cors from 'cors';
 import express, { type Application } from 'express';
 import helmet from 'helmet';
-import type { Server } from 'http';
 import { ServiceConfig } from './config/service.config';
 import { RedisCache } from './infrastructure/cache/redis-cache';
 import { DatabaseConnection } from './infrastructure/database/connection';
@@ -104,17 +104,17 @@ export class TenantServiceBootstrap {
 
     // Business routes
     this.app.use(
-      apiPrefix + '/tenants',
+      `${apiPrefix}/tenants`,
       new TenantRouter(this.database, this.cache, this.eventBus).getRouter()
     );
 
     this.app.use(
-      apiPrefix + '/members',
+      `${apiPrefix}/members`,
       new MemberRouter(this.database, this.cache, this.eventBus).getRouter()
     );
 
     this.app.use(
-      apiPrefix + '/invitations',
+      `${apiPrefix}/invitations`,
       new InvitationRouter(this.database, this.cache, this.eventBus).getRouter()
     );
   }

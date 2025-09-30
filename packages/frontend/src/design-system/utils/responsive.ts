@@ -23,7 +23,9 @@ export function mediaQuery(breakpoint: keyof typeof breakpoints) {
  * Check if screen matches breakpoint (client-side only)
  */
 export function useBreakpoint(breakpoint: keyof typeof breakpoints): boolean {
-  if (typeof window === 'undefined') return false;
+  if (typeof window === 'undefined') {
+    return false;
+  }
 
   return window.matchMedia(`(min-width: ${breakpoints[breakpoint]})`).matches;
 }

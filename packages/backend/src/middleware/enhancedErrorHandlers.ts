@@ -3,7 +3,7 @@
  * TODO: Implement enhanced error handling middleware
  */
 
-import type { Request, Response, NextFunction } from 'express';
+import type { NextFunction, Request, Response } from 'express';
 
 export const enhancedCatchAsync = (fn: Function) => {
   return (req: Request, res: Response, next: NextFunction) => {

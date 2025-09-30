@@ -1,4 +1,4 @@
-import { UserRole, PermissionType } from './auth-enums';
+import type { PermissionType, UserRole } from './auth-enums';
 
 // Editor Preferences Interface
 export interface IEditorPreferences {

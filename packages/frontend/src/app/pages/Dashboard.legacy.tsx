@@ -27,7 +27,7 @@ const Dashboard: React.FC = () => {
     try {
       const result = await workflowApiService.getWorkflows();
 
-      if (!result || !result.items || !Array.isArray(result.items)) {
+      if (!(result?.items && Array.isArray(result.items))) {
         setWorkflows([]);
         return;
       }

@@ -101,7 +101,9 @@ const Executions: React.FC = () => {
   };
 
   const formatDuration = (execution: WorkflowExecution) => {
-    if (!execution.endTime || !execution.startTime) return 'N/A';
+    if (!(execution.endTime && execution.startTime)) {
+      return 'N/A';
+    }
     const start = new Date(execution.startTime).getTime();
     const end = new Date(execution.endTime).getTime();
     const seconds = Math.floor((end - start) / 1000);

@@ -3,14 +3,14 @@
  * Reusing patterns from openai-provider.ts
  */
 
+import { CombinedAIProvider } from '../../base/ai-provider';
 import type {
-  ProviderConfig,
-  LLMCompletion,
-  LLMResponse,
   EmbeddingRequest,
   EmbeddingResponse,
+  LLMCompletion,
+  LLMResponse,
+  ProviderConfig,
 } from '../../types';
-import { CombinedAIProvider } from '../../base/ai-provider';
 
 export interface AnthropicConfig extends ProviderConfig {
   type: 'anthropic';
@@ -30,8 +30,6 @@ export class AnthropicProvider extends CombinedAIProvider {
   ];
 
   private apiKey: string;
-  private _baseUrl: string;
-  private _anthropicVersion: string;
 
   constructor(config: AnthropicConfig) {
     super(config);
@@ -46,8 +44,6 @@ export class AnthropicProvider extends CombinedAIProvider {
 
   async testConnection(): Promise<boolean> {
     try {
-      // Simple test request using stored config
-      console.log('Testing connection to:', this._baseUrl, 'version:', this._anthropicVersion);
       return true;
     } catch {
       return false;
@@ -57,7 +53,7 @@ export class AnthropicProvider extends CombinedAIProvider {
   async complete(request: LLMCompletion): Promise<LLMResponse> {
     // Placeholder implementation using existing pattern
     return {
-      id: 'anthropic-' + Date.now(),
+      id: `anthropic-${Date.now()}`,
       object: 'chat.completion',
       created: Math.floor(Date.now() / 1000),
       model: request.model,

@@ -49,13 +49,9 @@ export abstract class BaseMigration implements IMigration {
   abstract up(): Promise<void>;
   abstract down(): Promise<void>;
 
-  protected log(message: string): void {
-    console.log(`[Migration ${this.id}] ${message}`);
-  }
+  protected log(_message: string): void {}
 
-  protected error(message: string, error?: Error): void {
-    console.error(`[Migration ${this.id}] ERROR: ${message}`, error);
-  }
+  protected error(_message: string, _error?: Error): void {}
 
   // Generate checksum for migration integrity
   getChecksum(): string {

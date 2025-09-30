@@ -2,8 +2,7 @@
 
 import { CheckCircle, Edit, Pin } from 'lucide-react';
 import type React from 'react';
-import { useMemo, useState } from 'react';
-import { SharedDataVisualizationPanel } from '@/design-system/components/data/SharedDataVisualizationPanel';
+import { useMemo } from 'react';
 
 interface EmailOutputPanelProps {
   selectedEmail?: any;
@@ -11,10 +10,11 @@ interface EmailOutputPanelProps {
 }
 
 const EmailOutputPanel: React.FC<EmailOutputPanelProps> = ({ selectedEmail, isVisible = true }) => {
-
   // Filter data based on search term
   const filteredData = useMemo(() => {
-    if (!searchTerm || !selectedEmail) return selectedEmail;
+    if (!(searchTerm && selectedEmail)) {
+      return selectedEmail;
+    }
 
     const filterObject = (obj: any, path = ''): any => {
       if (typeof obj === 'string') {
@@ -49,7 +49,7 @@ const EmailOutputPanel: React.FC<EmailOutputPanelProps> = ({ selectedEmail, isVi
     };
 
     return filterObject(selectedEmail);
-  }, [selectedEmail, searchTerm]);
+  }, [selectedEmail]);
 
   const toggleExpanded = (path: string) => {
     const newExpanded = new Set(expandedItems);
@@ -148,8 +148,9 @@ const EmailOutputPanel: React.FC<EmailOutputPanelProps> = ({ selectedEmail, isVi
 
   // Render table view
   const renderTableView = () => {
-    if (!selectedEmail)
+    if (!selectedEmail) {
       return <div className="text-gray-400 text-center py-8">No email selected</div>;
+    }
 
     const flattenObject = (obj: any, prefix = ''): Record<string, any> => {
       const result: Record<string, any> = {};
@@ -202,8 +203,9 @@ const EmailOutputPanel: React.FC<EmailOutputPanelProps> = ({ selectedEmail, isVi
 
   // Render JSON view
   const renderJsonView = () => {
-    if (!selectedEmail)
+    if (!selectedEmail) {
       return <div className="text-gray-400 text-center py-8">No email selected</div>;
+    }
 
     return (
       <div className="overflow-auto">
@@ -249,7 +251,9 @@ const EmailOutputPanel: React.FC<EmailOutputPanelProps> = ({ selectedEmail, isVi
     }
   };
 
-  if (!isVisible) return null;
+  if (!isVisible) {
+    return null;
+  }
 
   return (
     <div className="flex flex-col h-full bg-gray-900">

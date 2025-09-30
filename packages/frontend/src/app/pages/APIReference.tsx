@@ -6,7 +6,6 @@
  */
 
 import {
-  ArrowRight,
   CheckCircle,
   Clock,
   Code,
@@ -662,14 +661,14 @@ console.log('Execution result:', execution.data);`;
                   <h4 className="font-semibold text-gray-900 mb-2">Standard Plan</h4>
                   <p className="text-gray-600 mb-2">1,000 requests per hour</p>
                   <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div className="bg-orange-600 h-2 rounded-full" style={{width: '60%'}}></div>
+                    <div className="bg-orange-600 h-2 rounded-full" style={{ width: '60%' }}></div>
                   </div>
                 </div>
                 <div className="bg-gray-50 rounded-lg p-4">
                   <h4 className="font-semibold text-gray-900 mb-2">Pro Plan</h4>
                   <p className="text-gray-600 mb-2">10,000 requests per hour</p>
                   <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div className="bg-blue-600 h-2 rounded-full" style={{width: '30%'}}></div>
+                    <div className="bg-blue-600 h-2 rounded-full" style={{ width: '30%' }}></div>
                   </div>
                 </div>
               </div>

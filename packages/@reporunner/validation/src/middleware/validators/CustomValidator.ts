@@ -1,8 +1,8 @@
-import { ValidationOptions } from '../ValidationMiddleware';
-import { ValidationContext } from '../context/ValidationContext';
+import type { ValidationContext } from '../context/ValidationContext';
 import { ValidationError } from '../errors/ValidationError';
-import { ValidationRule } from '../rules/ValidationRule';
-import { ValidationResult } from '../types/ValidationResult';
+import type { ValidationRule } from '../rules/ValidationRule';
+import type { ValidationResult } from '../types/ValidationResult';
+import type { ValidationOptions } from '../ValidationMiddleware';
 
 export class CustomValidator {
   private options: Required<ValidationOptions>;
@@ -22,7 +22,7 @@ export class CustomValidator {
       messages: {},
       ...options,
       onError: options.onError || (() => {}),
-      onSuccess: options.onSuccess || (() => {})
+      onSuccess: options.onSuccess || (() => {}),
     };
 
     this.rules = new Set();
@@ -51,14 +51,14 @@ export class CustomValidator {
     const result: ValidationResult = {
       valid: true,
       errors: [],
-      transformed: {}
+      transformed: {},
     };
 
     // Track metadata
     const meta = {
       rulesExecuted: 0,
       transformations: 0,
-      startTime: Date.now()
+      startTime: Date.now(),
     };
 
     try {
@@ -76,7 +76,7 @@ export class CustomValidator {
           if (ruleResult.transformed) {
             result.transformed = {
               ...result.transformed,
-              ...ruleResult.transformed
+              ...ruleResult.transformed,
             };
             meta.transformations++;
           }
@@ -105,17 +105,19 @@ export class CustomValidator {
       result.meta = {
         duration: Date.now() - meta.startTime,
         rulesExecuted: meta.rulesExecuted,
-        transformations: meta.transformations
+        transformations: meta.transformations,
       };
 
       return result;
     } catch (error) {
-      throw new ValidationError([{
-        path: '',
-        message: 'Validation failed',
-        code: 'VALIDATION_ERROR',
-        context: { error }
-      }]);
+      throw new ValidationError([
+        {
+          path: '',
+          message: 'Validation failed',
+          code: 'VALIDATION_ERROR',
+          context: { error },
+        },
+      ]);
     }
   }
 }

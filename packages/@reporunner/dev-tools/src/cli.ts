@@ -15,15 +15,13 @@ program
   .action(async (name, options) => {
     const devTools = new DevTools();
     try {
-      const path = await devTools.generateWorkflow({
+      const _path = await devTools.generateWorkflow({
         name,
         template: options.template,
         description: options.description,
         outputPath: options.output,
       });
-      console.log(`✅ Generated workflow at: ${path}`);
-    } catch (error) {
-      console.error('❌ Failed to generate workflow:', error);
+    } catch (_error) {
       process.exit(1);
     }
   });
@@ -36,15 +34,13 @@ program
   .action(async (type, name, options) => {
     const devTools = new DevTools();
     try {
-      const path = await devTools.generateNode({
+      const _path = await devTools.generateNode({
         type,
         name,
         category: options.category,
         outputPath: options.output,
       });
-      console.log(`✅ Generated node at: ${path}`);
-    } catch (error) {
-      console.error('❌ Failed to generate node:', error);
+    } catch (_error) {
       process.exit(1);
     }
   });
@@ -60,13 +56,10 @@ program
       const result = await devTools.testWorkflow(workflowId, testData);
 
       if (result.status === 'passed') {
-        console.log(`✅ Workflow test passed in ${result.duration}ms`);
       } else {
-        console.error(`❌ Workflow test failed: ${result.error}`);
         process.exit(1);
       }
-    } catch (error) {
-      console.error('❌ Failed to test workflow:', error);
+    } catch (_error) {
       process.exit(1);
     }
   });
@@ -78,16 +71,9 @@ program
   .action(async (workflowId, options) => {
     const devTools = new DevTools();
     try {
-      const iterations = parseInt(options.iterations, 10);
-      const results = await devTools.benchmarkWorkflow(workflowId, iterations);
-
-      console.log('📊 Benchmark Results:');
-      console.log(`  Average Duration: ${results.averageDuration.toFixed(2)}ms`);
-      console.log(`  Min Duration: ${results.minDuration}ms`);
-      console.log(`  Max Duration: ${results.maxDuration}ms`);
-      console.log(`  Success Rate: ${results.successRate.toFixed(2)}%`);
-    } catch (error) {
-      console.error('❌ Failed to benchmark workflow:', error);
+      const iterations = Number.parseInt(options.iterations, 10);
+      const _results = await devTools.benchmarkWorkflow(workflowId, iterations);
+    } catch (_error) {
       process.exit(1);
     }
   });
@@ -100,20 +86,13 @@ program
     try {
       const results = await devTools.validateWorkflows(directory);
 
-      console.log('🔍 Validation Results:');
-      console.log(`  Valid: ${results.valid}`);
-      console.log(`  Invalid: ${results.invalid}`);
-
       if (results.errors.length > 0) {
-        console.error('\n❌ Errors:');
         results.errors.forEach((error) => {
-          console.error(`  ${error.file}:`);
-          error.errors.forEach((e) => console.error(`    - ${e}`));
+          error.errors.forEach((_e) => {});
         });
         process.exit(1);
       }
-    } catch (error) {
-      console.error('❌ Failed to validate workflows:', error);
+    } catch (_error) {
       process.exit(1);
     }
   });

@@ -29,7 +29,7 @@ const evaluateINodeProperty = (property: INodeProperty, context: PropertyEvaluat
 
   let visible = true;
   const disabled = false;
-  const required = property.required || false;
+  const required = property.required;
 
   if (displayOptions?.show) {
     visible = Object.entries(displayOptions.show).every(([key, values]) => {
@@ -53,7 +53,9 @@ const evaluateINodeProperty = (property: INodeProperty, context: PropertyEvaluat
         values.includes(currentValue as string | number | boolean)
       );
     });
-    if (shouldHide) visible = false;
+    if (shouldHide) {
+      visible = false;
+    }
   }
 
   return { visible, disabled, required };
@@ -199,9 +201,7 @@ const PropertyField: React.FC<PropertyFieldProps> = ({
         );
 
       case 'boolean':
-        return (
-          <Switch checked={(value as boolean) || false} onChange={onChange} disabled={isDisabled} />
-        );
+        return <Switch checked={value as boolean} onChange={onChange} disabled={isDisabled} />;
 
       case 'select':
         return (

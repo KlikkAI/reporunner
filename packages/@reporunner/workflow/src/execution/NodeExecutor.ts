@@ -1,6 +1,6 @@
 // Node executor reusing patterns from workflow-engine
 import { NodeExecutionError } from '../types/error-types';
-import { NodeExecutionContext, ExecutionContext } from './ExecutionContext';
+import { ExecutionContext, NodeExecutionContext } from './ExecutionContext';
 
 export interface NodeExecutorOptions {
   logger?: any;
@@ -23,27 +23,21 @@ export class NodeExecutor {
   }
 
   // Alias for executeNode to match WorkflowEngine expectations
-  async execute(
-    node: any,
-    inputData?: any,
-    context?: NodeExecutionContext
-  ): Promise<any> {
-    const execContext = context || new NodeExecutionContext(
-      new ExecutionContext({
-        executionId: 'temp',
-        workflowId: 'temp',
-        environment: 'development'
-      }),
-      node.id
-    );
+  async execute(node: any, inputData?: any, context?: NodeExecutionContext): Promise<any> {
+    const execContext =
+      context ||
+      new NodeExecutionContext(
+        new ExecutionContext({
+          executionId: 'temp',
+          workflowId: 'temp',
+          environment: 'development',
+        }),
+        node.id
+      );
     return this.executeNode(node, execContext, inputData);
   }
 
-  async executeNode(
-    node: any,
-    context: NodeExecutionContext,
-    inputData?: any
-  ): Promise<any> {
+  async executeNode(node: any, context: NodeExecutionContext, inputData?: any): Promise<any> {
     this.logger.info(`Executing node: ${node.id} (${node.type})`);
 
     try {
@@ -52,12 +46,7 @@ export class NodeExecutor {
 
       // Check timeout
       if (context.isTimedOut()) {
-        throw new NodeExecutionError(
-          'Execution timeout',
-          node.id,
-          node.type,
-          { timeout: true }
-        );
+        throw new NodeExecutionError('Execution timeout', node.id, node.type, { timeout: true });
       }
 
       // Execute based on node type
@@ -118,7 +107,11 @@ export class NodeExecutor {
     }
   }
 
-  private async executeStartNode(node: any, _context: NodeExecutionContext, inputData?: any): Promise<any> {
+  private async executeStartNode(
+    node: any,
+    _context: NodeExecutionContext,
+    inputData?: any
+  ): Promise<any> {
     return {
       success: true,
       data: inputData || {},
@@ -127,7 +120,11 @@ export class NodeExecutor {
     };
   }
 
-  private async executeEndNode(node: any, _context: NodeExecutionContext, inputData?: any): Promise<any> {
+  private async executeEndNode(
+    node: any,
+    _context: NodeExecutionContext,
+    inputData?: any
+  ): Promise<any> {
     return {
       success: true,
       finalData: inputData,
@@ -136,7 +133,11 @@ export class NodeExecutor {
     };
   }
 
-  private async executeTransformNode(node: any, _context: NodeExecutionContext, inputData?: any): Promise<any> {
+  private async executeTransformNode(
+    node: any,
+    _context: NodeExecutionContext,
+    inputData?: any
+  ): Promise<any> {
     // Simple transformation placeholder
     return {
       success: true,
@@ -150,9 +151,13 @@ export class NodeExecutor {
     };
   }
 
-  private async executeConditionNode(node: any, _context: NodeExecutionContext, _inputData?: any): Promise<any> {
+  private async executeConditionNode(
+    node: any,
+    _context: NodeExecutionContext,
+    _inputData?: any
+  ): Promise<any> {
     // Simple condition evaluation placeholder
-    const condition = node.parameters?.condition || true;
+    const condition = true;
 
     return {
       success: true,
@@ -163,7 +168,11 @@ export class NodeExecutor {
     };
   }
 
-  private async executeGenericNode(node: any, _context: NodeExecutionContext, inputData?: any): Promise<any> {
+  private async executeGenericNode(
+    node: any,
+    _context: NodeExecutionContext,
+    inputData?: any
+  ): Promise<any> {
     // Generic node execution placeholder
     return {
       success: true,

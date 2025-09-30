@@ -159,7 +159,9 @@ export const NodeHandleGroup: React.FC<NodeHandleGroupProps> = ({
   onConnect,
   onDisconnect,
 }) => {
-  if (!handles || handles.length === 0) return null;
+  if (!handles || handles.length === 0) {
+    return null;
+  }
 
   return (
     <>
@@ -168,7 +170,7 @@ export const NodeHandleGroup: React.FC<NodeHandleGroupProps> = ({
           key={handle.id}
           handle={handle}
           theme={theme}
-          connected={connections[handle.id] || false}
+          connected={connections[handle.id]}
           onConnect={onConnect ? (handleId) => onConnect(handleId, nodeId) : undefined}
           onDisconnect={onDisconnect ? (handleId) => onDisconnect(handleId, nodeId) : undefined}
         />

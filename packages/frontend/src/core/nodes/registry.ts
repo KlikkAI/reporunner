@@ -467,7 +467,7 @@ class NodeRegistry {
     const tenantRegistry = this.tenantRegistries.get(tenantId);
     let nodeType = tenantRegistry?.get(nodeId) || this.enhancedNodeTypes.get(nodeId);
 
-    if (!nodeType || !context) {
+    if (!(nodeType && context)) {
       return nodeType;
     }
 
@@ -610,10 +610,18 @@ class NodeRegistry {
   ): ('trigger' | 'action' | 'webhook' | 'poll')[] {
     const modes: ('trigger' | 'action' | 'webhook' | 'poll')[] = [];
 
-    if (nodeType.type === 'trigger') modes.push('trigger');
-    if (nodeType.type === 'action') modes.push('action');
-    if (nodeType.type === 'webhook') modes.push('webhook');
-    if (nodeType.configuration?.polling?.enabled) modes.push('poll');
+    if (nodeType.type === 'trigger') {
+      modes.push('trigger');
+    }
+    if (nodeType.type === 'action') {
+      modes.push('action');
+    }
+    if (nodeType.type === 'webhook') {
+      modes.push('webhook');
+    }
+    if (nodeType.configuration?.polling?.enabled) {
+      modes.push('poll');
+    }
 
     // Default modes if none specified
     if (!modes.length) {
@@ -655,7 +663,9 @@ class NodeRegistry {
       if (prop.name === 'operation' && prop.options) {
         prop.options.forEach((opt: any) => {
           const resource = prop.displayOptions?.show?.resource?.[0] || 'default';
-          if (!operations[resource]) operations[resource] = [];
+          if (!operations[resource]) {
+            operations[resource] = [];
+          }
           operations[resource].push(opt.value as string);
         });
       }

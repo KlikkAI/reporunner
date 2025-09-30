@@ -7,17 +7,19 @@
  * Reduction: ~280 lines → ~120 lines (57% reduction)
  */
 
-import React, { useCallback, useEffect, useState } from 'react';
-import { PlayCircleOutlined, CheckCircleOutlined, ExclamationCircleOutlined, CloseCircleOutlined, SyncOutlined } from '@ant-design/icons';
-import { WorkflowApiService } from '@/core';
-import { Logger } from '@reporunner/core';
-import type { WorkflowExecution } from '@/core/types/execution';
 import {
-  PageTemplates,
-  ComponentGenerator,
-  ComponentPatterns,
-} from '@/design-system';
-import type { Statistic, PageSectionConfig } from '@/design-system';
+  CheckCircleOutlined,
+  ExclamationCircleOutlined,
+  PlayCircleOutlined,
+  SyncOutlined,
+} from '@ant-design/icons';
+import { Logger } from '@reporunner/core';
+import type React from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import { WorkflowApiService } from '@/core';
+import type { WorkflowExecution } from '@/core/types/execution';
+import type { PageSectionConfig, Statistic } from '@/design-system';
+import { ComponentPatterns, PageTemplates } from '@/design-system';
 
 const workflowApiService = new WorkflowApiService();
 const logger = new Logger('Executions');
@@ -25,7 +27,9 @@ const logger = new Logger('Executions');
 export const Executions: React.FC = () => {
   const [executions, setExecutions] = useState<WorkflowExecution[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [filter, setFilter] = useState<'all' | 'pending' | 'running' | 'success' | 'error' | 'cancelled'>('all');
+  const [filter, setFilter] = useState<
+    'all' | 'pending' | 'running' | 'success' | 'error' | 'cancelled'
+  >('all');
   const [page, setPage] = useState(1);
 
   const loadExecutions = useCallback(async () => {
@@ -47,14 +51,19 @@ export const Executions: React.FC = () => {
             : execution.error
           : undefined,
         logs: Array.isArray(execution.logs)
-          ? execution.logs.map((log: any) => typeof log === 'string' ? log : log.message || String(log))
+          ? execution.logs.map((log: any) =>
+              typeof log === 'string' ? log : log.message || String(log)
+            )
           : [],
         results: Array.isArray(execution.results)
           ? execution.results.map((nodeResult) => ({
               ...nodeResult,
-              status: nodeResult.status === 'completed' ? 'success' as const
-                : nodeResult.status === 'failed' ? 'error' as const
-                : nodeResult.status as 'success' | 'error' | 'skipped',
+              status:
+                nodeResult.status === 'completed'
+                  ? ('success' as const)
+                  : nodeResult.status === 'failed'
+                    ? ('error' as const)
+                    : (nodeResult.status as 'success' | 'error' | 'skipped'),
             }))
           : undefined,
       }));
@@ -86,7 +95,9 @@ export const Executions: React.FC = () => {
   };
 
   const formatDuration = (execution: WorkflowExecution) => {
-    if (!execution.endTime || !execution.startTime) return 'N/A';
+    if (!(execution.endTime && execution.startTime)) {
+      return 'N/A';
+    }
     const start = new Date(execution.startTime).getTime();
     const end = new Date(execution.endTime).getTime();
     const seconds = Math.floor((end - start) / 1000);
@@ -106,21 +117,21 @@ export const Executions: React.FC = () => {
     },
     {
       title: 'Running',
-      value: executions.filter(e => e.status === 'running').length,
+      value: executions.filter((e) => e.status === 'running').length,
       icon: <SyncOutlined />,
       color: 'purple',
       loading: isLoading,
     },
     {
       title: 'Success',
-      value: executions.filter(e => e.status === 'success').length,
+      value: executions.filter((e) => e.status === 'success').length,
       icon: <CheckCircleOutlined />,
       color: 'green',
       loading: isLoading,
     },
     {
       title: 'Failed',
-      value: executions.filter(e => e.status === 'error').length,
+      value: executions.filter((e) => e.status === 'error').length,
       icon: <ExclamationCircleOutlined />,
       color: 'red',
       loading: isLoading,
@@ -138,14 +149,12 @@ export const Executions: React.FC = () => {
   ];
 
   // Generate execution items using ComponentPatterns
-  const executionItems = executions.map(execution =>
+  const _executionItems = executions.map((execution) =>
     ComponentPatterns.executionItem(
       {
         ...execution,
         workflowName: `Workflow ${execution.workflowId}`,
-        startedAt: execution.startTime
-          ? new Date(execution.startTime).toLocaleString()
-          : 'N/A',
+        startedAt: execution.startTime ? new Date(execution.startTime).toLocaleString() : 'N/A',
       },
       () => {
         // View execution details
@@ -182,7 +191,7 @@ export const Executions: React.FC = () => {
   };
 
   // Enhanced execution items with detailed view
-  const enhancedExecutionItems = executions.map(execution => (
+  const enhancedExecutionItems = executions.map((execution) => (
     <div
       key={execution.id}
       className="bg-white/5 backdrop-blur-sm border border-white/20 rounded-lg p-4 hover:bg-white/10 transition-all duration-300"
@@ -190,16 +199,18 @@ export const Executions: React.FC = () => {
       <div className="flex items-center justify-between">
         <div className="flex-1">
           <div className="flex items-center space-x-3">
-            <h3 className="font-medium text-white">
-              Workflow ID: {execution.workflowId}
-            </h3>
+            <h3 className="font-medium text-white">Workflow ID: {execution.workflowId}</h3>
             <span
               className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                execution.status === 'success' ? 'bg-green-500/20 text-green-300 border border-green-500/30' :
-                execution.status === 'running' ? 'bg-blue-500/20 text-blue-300 border border-blue-500/30' :
-                execution.status === 'pending' ? 'bg-yellow-500/20 text-yellow-300 border border-yellow-500/30' :
-                execution.status === 'error' ? 'bg-red-500/20 text-red-300 border border-red-500/30' :
-                'bg-slate-500/20 text-slate-300 border border-slate-500/30'
+                execution.status === 'success'
+                  ? 'bg-green-500/20 text-green-300 border border-green-500/30'
+                  : execution.status === 'running'
+                    ? 'bg-blue-500/20 text-blue-300 border border-blue-500/30'
+                    : execution.status === 'pending'
+                      ? 'bg-yellow-500/20 text-yellow-300 border border-yellow-500/30'
+                      : execution.status === 'error'
+                        ? 'bg-red-500/20 text-red-300 border border-red-500/30'
+                        : 'bg-slate-500/20 text-slate-300 border border-slate-500/30'
               }`}
             >
               {execution.status}
@@ -207,7 +218,8 @@ export const Executions: React.FC = () => {
           </div>
           <div className="mt-2 flex items-center space-x-6 text-sm text-slate-300">
             <span>
-              Started: {execution.startTime ? new Date(execution.startTime).toLocaleString() : 'N/A'}
+              Started:{' '}
+              {execution.startTime ? new Date(execution.startTime).toLocaleString() : 'N/A'}
             </span>
             <span>Duration: {formatDuration(execution)}</span>
             <span>Triggered by: {execution.triggerType}</span>
@@ -226,16 +238,17 @@ export const Executions: React.FC = () => {
                       </span>
                       <span
                         className={`ml-2 ${
-                          nodeExec.status === 'completed' ? 'text-green-300' :
-                          nodeExec.status === 'failed' ? 'text-red-300' : 'text-blue-300'
+                          nodeExec.status === 'completed'
+                            ? 'text-green-300'
+                            : nodeExec.status === 'failed'
+                              ? 'text-red-300'
+                              : 'text-blue-300'
                         }`}
                       >
                         {nodeExec.status}
                       </span>
                       {nodeExec.duration && (
-                        <span className="ml-2 text-slate-400">
-                          ({nodeExec.duration}ms)
-                        </span>
+                        <span className="ml-2 text-slate-400">({nodeExec.duration}ms)</span>
                       )}
                     </div>
                   ))}
@@ -266,24 +279,19 @@ export const Executions: React.FC = () => {
       title: 'Execution History',
       type: 'content',
       loading: isLoading,
-      data: executions.length === 0 ? (
-        <div className="text-center py-8">
-          <p className="text-slate-300">No executions found</p>
-        </div>
-      ) : (
-        <div className="space-y-4">
-          {enhancedExecutionItems}
-        </div>
-      ),
+      data:
+        executions.length === 0 ? (
+          <div className="text-center py-8">
+            <p className="text-slate-300">No executions found</p>
+          </div>
+        ) : (
+          <div className="space-y-4">{enhancedExecutionItems}</div>
+        ),
     },
   ];
 
   // Generate the complete page using PageTemplates
-  return PageTemplates.dashboard(
-    'Workflow Executions',
-    stats,
-    sections
-  );
+  return PageTemplates.dashboard('Workflow Executions', stats, sections);
 };
 
 export default Executions;

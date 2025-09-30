@@ -2,17 +2,13 @@ import { Logger } from '../utils/logger';
 
 // Method logging decorator
 export function log(logger?: Logger) {
-  return function (
-    target: any,
-    propertyKey: string,
-    descriptor: PropertyDescriptor
-  ) {
+  return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
     const originalMethod = descriptor.value;
     const className = target.constructor.name;
 
     descriptor.value = async function (...args: any[]) {
       const methodLogger = logger || new Logger(`${className}:${propertyKey}`);
-      
+
       try {
         methodLogger.debug('Method call', { args });
         const result = await originalMethod.apply(this, args);
@@ -30,32 +26,28 @@ export function log(logger?: Logger) {
 
 // Method timing decorator
 export function timer(logger?: Logger) {
-  return function (
-    target: any,
-    propertyKey: string,
-    descriptor: PropertyDescriptor
-  ) {
+  return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
     const originalMethod = descriptor.value;
     const className = target.constructor.name;
 
     descriptor.value = async function (...args: any[]) {
       const methodLogger = logger || new Logger(`${className}:${propertyKey}`);
       const start = process.hrtime();
-      
+
       try {
         const result = await originalMethod.apply(this, args);
         const [seconds, nanoseconds] = process.hrtime(start);
         const duration = seconds * 1000 + nanoseconds / 1000000;
-        
+
         methodLogger.debug('Method timing', { duration: `${duration.toFixed(3)}ms` });
         return result;
       } catch (error) {
         const [seconds, nanoseconds] = process.hrtime(start);
         const duration = seconds * 1000 + nanoseconds / 1000000;
-        
+
         methodLogger.error('Method error timing', {
           duration: `${duration.toFixed(3)}ms`,
-          error
+          error,
         });
         throw error;
       }
@@ -67,11 +59,7 @@ export function timer(logger?: Logger) {
 
 // Retry decorator with exponential backoff
 export function retry(maxAttempts = 3, baseDelay = 1000) {
-  return function (
-    target: any,
-    propertyKey: string,
-    descriptor: PropertyDescriptor
-  ) {
+  return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
     const originalMethod = descriptor.value;
     const className = target.constructor.name;
     const logger = new Logger(`${className}:${propertyKey}`);
@@ -86,14 +74,14 @@ export function retry(maxAttempts = 3, baseDelay = 1000) {
           lastError = error as Error;
 
           if (attempt < maxAttempts) {
-            const delay = baseDelay * Math.pow(2, attempt - 1);
+            const delay = baseDelay * 2 ** (attempt - 1);
             logger.warn(`Attempt ${attempt} failed, retrying in ${delay}ms`, {
               error: lastError,
               attempt,
-              nextDelay: delay
+              nextDelay: delay,
             });
 
-            await new Promise(resolve => setTimeout(resolve, delay));
+            await new Promise((resolve) => setTimeout(resolve, delay));
           }
         }
       }
@@ -108,11 +96,7 @@ export function retry(maxAttempts = 3, baseDelay = 1000) {
 
 // Cache decorator
 export function cache(ttlMs = 60000) {
-  return function (
-    target: any,
-    propertyKey: string,
-    descriptor: PropertyDescriptor
-  ) {
+  return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
     const originalMethod = descriptor.value;
     const cacheKey = `${target.constructor.name}:${propertyKey}`;
     const cacheMap = new Map<string, { value: any; timestamp: number }>();
@@ -123,7 +107,7 @@ export function cache(ttlMs = 60000) {
       const now = Date.now();
 
       const cached = cacheMap.get(key);
-      if (cached && (now - cached.timestamp) < ttlMs) {
+      if (cached && now - cached.timestamp < ttlMs) {
         return cached.value;
       }
 

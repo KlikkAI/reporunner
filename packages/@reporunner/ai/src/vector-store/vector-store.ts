@@ -79,7 +79,9 @@ export class VectorStore {
   async addDocuments(
     documents: Omit<VectorStoreDocument, 'embedding' | 'createdAt' | 'updatedAt'>[]
   ): Promise<void> {
-    if (documents.length === 0) return;
+    if (documents.length === 0) {
+      return;
+    }
 
     try {
       // Generate embeddings for all documents
@@ -195,12 +197,14 @@ export class VectorStore {
           id: row.id,
           score: row.similarity,
           values: params.includeMetadata ? this.parseVector(row.embedding) : undefined,
-          metadata: params.includeMetadata ? {
-            content: row.content,
-            createdAt: row.created_at,
-            updatedAt: row.updated_at,
-            ...row.metadata,
-          } : undefined,
+          metadata: params.includeMetadata
+            ? {
+                content: row.content,
+                createdAt: row.created_at,
+                updatedAt: row.updated_at,
+                ...row.metadata,
+              }
+            : undefined,
         }));
       } finally {
         client.release();
@@ -252,7 +256,9 @@ export class VectorStore {
    * Delete documents
    */
   async deleteDocuments(ids: string[]): Promise<number> {
-    if (ids.length === 0) return 0;
+    if (ids.length === 0) {
+      return 0;
+    }
 
     try {
       const client = await this.pool.connect();
@@ -304,7 +310,7 @@ export class VectorStore {
         }
 
         const result = await client.query(sql, queryParams);
-        return parseInt(result.rows[0].count, 10);
+        return Number.parseInt(result.rows[0].count, 10);
       } finally {
         client.release();
       }
@@ -326,6 +332,6 @@ export class VectorStore {
   private parseVector(vectorString: string): number[] {
     // Remove brackets and parse as array
     const cleanString = vectorString.replace(/^\[|\]$/g, '');
-    return cleanString.split(',').map((n) => parseFloat(n.trim()));
+    return cleanString.split(',').map((n) => Number.parseFloat(n.trim()));
   }
 }

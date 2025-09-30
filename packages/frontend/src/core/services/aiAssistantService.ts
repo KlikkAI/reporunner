@@ -1,6 +1,6 @@
 /**
  * AI Assistant Service
- * 
+ *
  * Provides AI-powered assistance for workflow development
  */
 
@@ -88,7 +88,7 @@ class AIAssistantService {
    */
   async analyzeWorkflow(workflowData: any): Promise<WorkflowAnalysis> {
     const analysisId = `analysis-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-    
+
     // Mock analysis - in production, this would call actual AI service
     const analysis: WorkflowAnalysis = {
       id: analysisId,
@@ -148,7 +148,7 @@ class AIAssistantService {
    * Get workflow suggestions based on current state
    */
   async getWorkflowSuggestions(
-    workflowData: any,
+    _workflowData: any,
     context?: { nodeId?: string; position?: { x: number; y: number } }
   ): Promise<AIWorkflowSuggestion[]> {
     // Mock suggestions based on context
@@ -236,7 +236,7 @@ class AIAssistantService {
   /**
    * Get node-specific help
    */
-  async getNodeHelp(nodeType: string, nodeConfig?: any): Promise<string> {
+  async getNodeHelp(nodeType: string, _nodeConfig?: any): Promise<string> {
     // Mock help content - in production, generate using AI
     const helpContent = `
 Here's help for the ${nodeType} node:
@@ -265,7 +265,7 @@ Here's help for the ${nodeType} node:
   /**
    * Get workflow optimization suggestions
    */
-  async optimizeWorkflow(workflowData: any): Promise<AIWorkflowSuggestion[]> {
+  async optimizeWorkflow(_workflowData: any): Promise<AIWorkflowSuggestion[]> {
     // Mock optimization suggestions
     return [
       {
@@ -323,7 +323,7 @@ Here's help for the ${nodeType} node:
     }
 
     if (lowerMessage.includes('optimize') || lowerMessage.includes('improve')) {
-      return "I can suggest several optimizations for your workflow. Would you like me to analyze it for performance improvements?";
+      return 'I can suggest several optimizations for your workflow. Would you like me to analyze it for performance improvements?';
     }
 
     if (context?.type === 'workflow-analysis') {

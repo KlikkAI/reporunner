@@ -16,11 +16,7 @@ export class UploadError extends Error {
   public readonly status: number;
   public readonly details?: Record<string, unknown>;
 
-  constructor(
-    code: UploadErrorCode,
-    message: string,
-    details?: Record<string, unknown>
-  ) {
+  constructor(code: UploadErrorCode, message: string, details?: Record<string, unknown>) {
     super(message);
     this.name = 'UploadError';
     this.code = code;
@@ -62,8 +58,8 @@ export class UploadError extends Error {
         code: this.code,
         message: this.message,
         status: this.status,
-        ...(this.details && { details: this.details })
-      }
+        ...(this.details && { details: this.details }),
+      },
     };
   }
 
@@ -71,31 +67,23 @@ export class UploadError extends Error {
    * Create an invalid content type error
    */
   public static invalidContentType(contentType: string): UploadError {
-    return new UploadError(
-      'INVALID_CONTENT_TYPE',
-      `Invalid content type: ${contentType}`
-    );
+    return new UploadError('INVALID_CONTENT_TYPE', `Invalid content type: ${contentType}`);
   }
 
   /**
    * Create an invalid file type error
    */
   public static invalidFileType(filename: string, type: string): UploadError {
-    return new UploadError(
-      'INVALID_FILE_TYPE',
-      `Invalid file type for ${filename}: ${type}`,
-      { filename, type }
-    );
+    return new UploadError('INVALID_FILE_TYPE', `Invalid file type for ${filename}: ${type}`, {
+      filename,
+      type,
+    });
   }
 
   /**
    * Create a file too large error
    */
-  public static fileTooLarge(
-    filename: string,
-    size: number,
-    maxSize: number
-  ): UploadError {
+  public static fileTooLarge(filename: string, size: number, maxSize: number): UploadError {
     return new UploadError(
       'FILE_TOO_LARGE',
       `File ${filename} is too large (${size} bytes). Maximum size is ${maxSize} bytes`,
@@ -107,87 +95,57 @@ export class UploadError extends Error {
    * Create a too many files error
    */
   public static tooManyFiles(count: number, maxFiles: number): UploadError {
-    return new UploadError(
-      'TOO_MANY_FILES',
-      `Too many files. Maximum ${maxFiles} files allowed`,
-      { count, maxFiles }
-    );
+    return new UploadError('TOO_MANY_FILES', `Too many files. Maximum ${maxFiles} files allowed`, {
+      count,
+      maxFiles,
+    });
   }
 
   /**
    * Create a file not allowed error
    */
-  public static fileNotAllowed(
-    filename: string,
-    reason: string
-  ): UploadError {
-    return new UploadError(
-      'FILE_NOT_ALLOWED',
-      `File ${filename} not allowed: ${reason}`,
-      { filename, reason }
-    );
+  public static fileNotAllowed(filename: string, reason: string): UploadError {
+    return new UploadError('FILE_NOT_ALLOWED', `File ${filename} not allowed: ${reason}`, {
+      filename,
+      reason,
+    });
   }
 
   /**
    * Create a file exists error
    */
   public static fileExists(filename: string): UploadError {
-    return new UploadError(
-      'FILE_EXISTS',
-      `File ${filename} already exists`,
-      { filename }
-    );
+    return new UploadError('FILE_EXISTS', `File ${filename} already exists`, { filename });
   }
 
   /**
    * Create a storage error
    */
-  public static storageError(
-    operation: string,
-    details: Record<string, unknown>
-  ): UploadError {
-    return new UploadError(
-      'STORAGE_ERROR',
-      `Storage error during ${operation}`,
-      details
-    );
+  public static storageError(operation: string, details: Record<string, unknown>): UploadError {
+    return new UploadError('STORAGE_ERROR', `Storage error during ${operation}`, details);
   }
 
   /**
    * Create a validation error
    */
-  public static validationError(
-    filename: string,
-    errors: string[]
-  ): UploadError {
-    return new UploadError(
-      'VALIDATION_ERROR',
-      `Validation failed for ${filename}`,
-      { filename, errors }
-    );
+  public static validationError(filename: string, errors: string[]): UploadError {
+    return new UploadError('VALIDATION_ERROR', `Validation failed for ${filename}`, {
+      filename,
+      errors,
+    });
   }
 
   /**
    * Create a virus detected error
    */
-  public static virusDetected(
-    filename: string,
-    details: Record<string, unknown>
-  ): UploadError {
-    return new UploadError(
-      'VIRUS_DETECTED',
-      `Virus detected in file ${filename}`,
-      details
-    );
+  public static virusDetected(filename: string, details: Record<string, unknown>): UploadError {
+    return new UploadError('VIRUS_DETECTED', `Virus detected in file ${filename}`, details);
   }
 
   /**
    * Create a transform error
    */
-  public static transformError(
-    filename: string,
-    error: Error
-  ): UploadError {
+  public static transformError(filename: string, error: Error): UploadError {
     return new UploadError(
       'TRANSFORM_ERROR',
       `Error transforming file ${filename}: ${error.message}`,

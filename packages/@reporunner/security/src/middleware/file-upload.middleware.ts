@@ -363,7 +363,7 @@ async function scanFileForVirus(
   clean: boolean;
   threat?: string;
 }> {
-  if (!clamavPath || !fs.existsSync(clamavPath)) {
+  if (!(clamavPath && fs.existsSync(clamavPath))) {
     return { scanned: false, clean: true };
   }
 

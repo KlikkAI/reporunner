@@ -30,7 +30,7 @@ const GmailNodeBody: React.FC<CustomNodeBodyProps> = ({
   // Extract Gmail-specific configuration
   const filters = nodeData.parameters?.filters || {};
   const pollTimes = nodeData.parameters?.pollTimes || { mode: 'everyMinute' };
-  const options = nodeData.parameters?.options || {};
+  const _options = nodeData.parameters?.options || {};
   const credential = nodeData.parameters?.credential;
   const nodeType = nodeData.type || 'gmail-trigger';
 
@@ -62,10 +62,18 @@ const GmailNodeBody: React.FC<CustomNodeBodyProps> = ({
   // Get filters display
   const getFiltersDisplay = (filters: any) => {
     const activeFilters = [];
-    if (filters.from) activeFilters.push(`From: ${filters.from}`);
-    if (filters.subject) activeFilters.push(`Subject: ${filters.subject}`);
-    if (filters.label) activeFilters.push(`Label: ${filters.label}`);
-    if (filters.unreadOnly) activeFilters.push('Unread Only');
+    if (filters.from) {
+      activeFilters.push(`From: ${filters.from}`);
+    }
+    if (filters.subject) {
+      activeFilters.push(`Subject: ${filters.subject}`);
+    }
+    if (filters.label) {
+      activeFilters.push(`Label: ${filters.label}`);
+    }
+    if (filters.unreadOnly) {
+      activeFilters.push('Unread Only');
+    }
     return activeFilters;
   };
 
@@ -79,7 +87,10 @@ const GmailNodeBody: React.FC<CustomNodeBodyProps> = ({
       onMouseLeave={onMouseLeave}
       style={{
         borderColor: selected ? '#1890ff' : isHovered ? '#40a9ff' : '#d9d9d9',
-        boxShadow: selected || isHovered ? '0 4px 12px rgba(24, 144, 255, 0.15)' : '0 2px 4px rgba(0, 0, 0, 0.1)',
+        boxShadow:
+          selected || isHovered
+            ? '0 4px 12px rgba(24, 144, 255, 0.15)'
+            : '0 2px 4px rgba(0, 0, 0, 0.1)',
       }}
     >
       {/* Input Handle for action nodes */}
@@ -109,17 +120,16 @@ const GmailNodeBody: React.FC<CustomNodeBodyProps> = ({
             }}
           />
           <div>
-            <div className="font-medium text-gray-800">Gmail {isTrigger ? 'Trigger' : 'Action'}</div>
+            <div className="font-medium text-gray-800">
+              Gmail {isTrigger ? 'Trigger' : 'Action'}
+            </div>
             <div className="text-xs text-gray-500">
               {isConnected ? 'Connected' : 'Not Connected'}
             </div>
           </div>
         </div>
         <div className="flex items-center gap-1">
-          <Badge
-            status={isConnected ? 'success' : 'error'}
-            dot
-          />
+          <Badge status={isConnected ? 'success' : 'error'} dot />
           {(selected || isHovered) && (
             <Button
               type="text"

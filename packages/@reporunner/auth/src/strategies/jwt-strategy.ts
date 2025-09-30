@@ -16,7 +16,7 @@ export class JWTStrategy {
     this.options = {
       algorithms: ['HS256'],
       expiresIn: '24h',
-      ...options
+      ...options,
     };
   }
 

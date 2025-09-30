@@ -1,4 +1,4 @@
-import { Router, Request, Response } from 'express';
+import { type Request, type Response, Router } from 'express';
 import { rateLimit } from 'express-rate-limit';
 import { body, param } from 'express-validator';
 import { authRequired } from '../middleware/auth';
@@ -31,14 +31,9 @@ const orgRateLimit = rateLimit({
  *       500:
  *         $ref: '#/components/responses/InternalServerError'
  */
-router.get(
-  '/',
-  authRequired,
-  orgRateLimit,
-  async (_req: Request, res: Response) => {
-    res.json({ message: 'Organization routes not implemented yet' });
-  }
-);
+router.get('/', authRequired, orgRateLimit, async (_req: Request, res: Response) => {
+  res.json({ message: 'Organization routes not implemented yet' });
+});
 
 /**
  * @swagger
@@ -64,10 +59,7 @@ router.post(
   '/',
   authRequired,
   orgRateLimit,
-  [
-    body('name').trim().notEmpty(),
-    body('description').optional().trim(),
-  ],
+  [body('name').trim().notEmpty(), body('description').optional().trim()],
   validateRequest,
   async (_req: Request, res: Response) => {
     res.json({ message: 'Organization creation not implemented yet' });

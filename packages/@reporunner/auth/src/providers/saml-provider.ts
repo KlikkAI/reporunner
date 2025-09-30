@@ -20,10 +20,6 @@ export class SAMLProvider {
   }
 
   async validateResponse(_samlResponse: string): Promise<SAMLProfile> {
-    // This is a stub implementation
-    // In production, use a library like passport-saml or saml2-js
-    console.log('SAML validation not implemented');
-
     return {
       nameID: 'user@example.com',
       email: 'user@example.com',

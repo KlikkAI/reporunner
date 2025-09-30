@@ -41,7 +41,7 @@ export class IntegrationEventBus extends EventEmitter {
     this.config = {
       maxListeners: config.maxListeners || 100,
       enableLogging: config.enableLogging !== false,
-      persistEvents: config.persistEvents || false,
+      persistEvents: config.persistEvents,
       maxEventHistory: config.maxEventHistory || 1000,
     };
 
@@ -107,7 +107,7 @@ export class IntegrationEventBus extends EventEmitter {
       pattern,
       handler,
       filter: options.filter,
-      once: options.once || false,
+      once: options.once,
       priority: options.priority || 0,
       createdAt: new Date(),
     };
@@ -143,7 +143,9 @@ export class IntegrationEventBus extends EventEmitter {
 
     while (this.processingQueue.length > 0) {
       const payload = this.processingQueue.shift();
-      if (!payload) continue;
+      if (!payload) {
+        continue;
+      }
 
       await this.processEvent(payload);
     }

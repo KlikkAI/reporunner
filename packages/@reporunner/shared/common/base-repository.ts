@@ -44,11 +44,15 @@ export abstract class BaseRepository<T extends { id: string }, D extends Documen
     try {
       // Try cache first
       const cached = await this.getFromCache(id);
-      if (cached) return cached;
+      if (cached) {
+        return cached;
+      }
 
       // Query database
       const document = await this.collection.findOne({ _id: id } as any);
-      if (!document) return null;
+      if (!document) {
+        return null;
+      }
 
       // Map to domain entity
       const entity = this.mapper.toDomain(document);
@@ -126,7 +130,9 @@ export abstract class BaseRepository<T extends { id: string }, D extends Documen
   // Cache management methods
 
   protected async getFromCache(id: string): Promise<T | null> {
-    if (!this.cache.isConnected()) return null;
+    if (!this.cache.isConnected()) {
+      return null;
+    }
 
     try {
       const key = this.getCacheKey(id);
@@ -146,7 +152,9 @@ export abstract class BaseRepository<T extends { id: string }, D extends Documen
   }
 
   protected async saveToCache(id: string, entity: T): Promise<void> {
-    if (!this.cache.isConnected()) return;
+    if (!this.cache.isConnected()) {
+      return;
+    }
 
     try {
       const key = this.getCacheKey(id);
@@ -161,7 +169,9 @@ export abstract class BaseRepository<T extends { id: string }, D extends Documen
   }
 
   protected async invalidateCache(id: string): Promise<void> {
-    if (!this.cache.isConnected()) return;
+    if (!this.cache.isConnected()) {
+      return;
+    }
 
     try {
       const key = this.getCacheKey(id);
@@ -179,7 +189,9 @@ export abstract class BaseRepository<T extends { id: string }, D extends Documen
   // Batch operations for performance
 
   async saveMany(entities: T[]): Promise<void> {
-    if (entities.length === 0) return;
+    if (entities.length === 0) {
+      return;
+    }
 
     try {
       const documents = entities.map((e) => this.mapper.toPersistence(e));
@@ -205,7 +217,9 @@ export abstract class BaseRepository<T extends { id: string }, D extends Documen
   }
 
   async findByIds(ids: string[]): Promise<T[]> {
-    if (ids.length === 0) return [];
+    if (ids.length === 0) {
+      return [];
+    }
 
     try {
       // Try to get from cache first

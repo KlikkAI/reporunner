@@ -190,9 +190,11 @@ userSchema.index({ passwordResetToken: 1 });
 
 // Pre-save middleware to hash password
 userSchema.pre('save', async function (next) {
-  if (!this.isModified('password')) return next();
+  if (!this.isModified('password')) {
+    return next();
+  }
 
-  const saltRounds = parseInt(process.env.BCRYPT_SALT_ROUNDS || '12', 10);
+  const saltRounds = Number.parseInt(process.env.BCRYPT_SALT_ROUNDS || '12', 10);
   this.password = await bcrypt.hash(this.password, saltRounds);
   next();
 });
@@ -213,7 +215,9 @@ userSchema.methods.comparePassword = async function (candidatePassword: string):
 // Method to check if user has specific permission
 userSchema.methods.hasPermission = function (permission: string): boolean {
   // Super admin has all permissions
-  if (this.role === 'super_admin') return true;
+  if (this.role === 'super_admin') {
+    return true;
+  }
 
   // Check if user has the specific permission
   return this.permissions.includes(permission);

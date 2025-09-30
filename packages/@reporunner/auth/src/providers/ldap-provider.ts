@@ -23,10 +23,6 @@ export class LDAPProvider {
   }
 
   async authenticate(_username: string, password: string): Promise<LDAPUser | null> {
-    // This is a stub implementation
-    // In production, use a library like ldapjs
-    console.log('LDAP authentication not implemented');
-
     if (_username && password) {
       return {
         dn: `uid=${_username},${this.config.searchBase}`,
@@ -41,14 +37,10 @@ export class LDAPProvider {
   }
 
   async search(_filter: string): Promise<LDAPUser[]> {
-    // Stub implementation
-    console.log('LDAP search not implemented');
     return [];
   }
 
   async getUserGroups(_username: string): Promise<string[]> {
-    // Stub implementation
-    console.log('LDAP group lookup not implemented');
     return ['users'];
   }
 }

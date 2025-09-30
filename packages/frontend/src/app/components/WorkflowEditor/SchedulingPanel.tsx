@@ -325,7 +325,9 @@ export const SchedulingPanel: React.FC<SchedulingPanelProps> = ({
 
       <Form.Item dependencies={['retryEnabled']} noStyle>
         {({ getFieldValue }) => {
-          if (!getFieldValue('retryEnabled')) return null;
+          if (!getFieldValue('retryEnabled')) {
+            return null;
+          }
           return (
             <>
               <Form.Item name="maxAttempts" label="Max Retry Attempts">
@@ -552,7 +554,9 @@ export const SchedulingPanel: React.FC<SchedulingPanelProps> = ({
   );
 
   const renderAnalytics = () => {
-    if (!analytics) return <div>Select a schedule to view analytics</div>;
+    if (!analytics) {
+      return <div>Select a schedule to view analytics</div>;
+    }
 
     return (
       <Space direction="vertical" size="large" style={{ width: '100%' }}>

@@ -112,7 +112,9 @@ export class ComplianceFramework {
   }
 
   private checkViolation(rule: ComplianceRule, event: AuditEvent): boolean {
-    if (!rule.enabled) return false;
+    if (!rule.enabled) {
+      return false;
+    }
 
     return rule.conditions.some((condition) => {
       const eventValue = this.getFieldValue(event, condition.field);

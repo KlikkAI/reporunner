@@ -5,25 +5,24 @@
  * providing pattern-based component and page generation.
  */
 
-// Generators
-export { PageGenerator, PageTemplates } from './PageGenerator';
+export type {
+  CardConfig,
+  FormItemConfig,
+  GeneratorConfig,
+  ListConfig,
+  TableConfig,
+} from './ComponentGenerator';
 export { ComponentGenerator, ComponentPatterns } from './ComponentGenerator';
 
 // Types
 export type {
-  PageAction,
-  Statistic,
-  PageConfig,
-  PageSectionConfig,
-  StatsPageConfig,
   FormPageConfig,
   ListPageConfig,
+  PageAction,
+  PageConfig,
+  PageSectionConfig,
+  Statistic,
+  StatsPageConfig,
 } from './PageGenerator';
-
-export type {
-  GeneratorConfig,
-  CardConfig,
-  ListConfig,
-  TableConfig,
-  FormItemConfig,
-} from './ComponentGenerator';
+// Generators
+export { PageGenerator, PageTemplates } from './PageGenerator';

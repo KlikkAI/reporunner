@@ -1,6 +1,7 @@
 // Node registry reusing patterns from workflow-engine
-import { BaseNode, StartNode, EndNode, TransformNode } from './BaseNode';
-import { NodeDefinition } from '../types/node-types';
+
+import type { NodeDefinition } from '../types/node-types';
+import { type BaseNode, EndNode, StartNode, TransformNode } from './BaseNode';
 
 export class NodeRegistry {
   private static instance: NodeRegistry;

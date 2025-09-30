@@ -17,15 +17,6 @@ interface TokenServiceInterface {
 }
 
 export class JWTTokenService implements TokenServiceInterface {
-  constructor(config: {
-    secret: string;
-    expiresIn: string | number;
-    refreshExpiresIn: string | number;
-  }) {
-    // TODO: Store config for actual JWT implementation
-    console.log('TokenService initialized with config:', config);
-  }
-
   async generateToken(payload: TokenPayload): Promise<string> {
     // TODO: Implement JWT generation
     return Buffer.from(JSON.stringify(payload)).toString('base64');
@@ -36,7 +27,7 @@ export class JWTTokenService implements TokenServiceInterface {
       // TODO: Implement JWT verification
       const payload = JSON.parse(Buffer.from(token, 'base64').toString());
       return payload;
-    } catch (error) {
+    } catch (_error) {
       throw new AuthenticationError('Invalid token');
     }
   }
@@ -51,12 +42,9 @@ export class JWTTokenService implements TokenServiceInterface {
     return this.generateToken(payload);
   }
 
-  async revokeToken(token: string): Promise<void> {
-    // TODO: Implement token revocation
-    console.log('Token revoked:', token);
-  }
+  async revokeToken(_token: string): Promise<void> {}
 }
 
 // Export as default and named export for compatibility
 export default JWTTokenService;
-export { JWTTokenService as TokenService, TokenServiceInterface };
+export { JWTTokenService as TokenService, type TokenServiceInterface };

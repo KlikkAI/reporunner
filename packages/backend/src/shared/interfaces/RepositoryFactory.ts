@@ -1,17 +1,17 @@
 // Repository Factory
 // Provides consistent repository creation patterns
 
-import { IBaseRepository } from './IBaseRepository';
+import type { IBaseRepository } from './IBaseRepository';
 
 export class RepositoryFactory {
   private static repositories = new Map<string, IBaseRepository>();
 
   static register<T extends IBaseRepository>(name: string, repository: T): void {
-    this.repositories.set(name, repository);
+    RepositoryFactory.repositories.set(name, repository);
   }
 
   static get<T extends IBaseRepository>(name: string): T {
-    const repository = this.repositories.get(name);
+    const repository = RepositoryFactory.repositories.get(name);
     if (!repository) {
       throw new Error(`Repository '${name}' not found`);
     }
@@ -19,7 +19,7 @@ export class RepositoryFactory {
   }
 
   static has(name: string): boolean {
-    return this.repositories.has(name);
+    return RepositoryFactory.repositories.has(name);
   }
 }
 

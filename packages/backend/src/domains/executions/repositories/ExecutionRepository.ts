@@ -1,14 +1,14 @@
-import { Execution } from '../../../models/Execution';
 import { BaseRepository } from '@reporunner/core';
 import type { Db } from 'mongodb';
+import { Execution } from '../../../models/Execution';
 
 export class ExecutionRepository extends BaseRepository<any> {
   constructor(db?: Db) {
-    // @ts-ignore - Allow optional db for now until proper DI is implemented
+    // @ts-expect-error - Allow optional db for now until proper DI is implemented
     super(db, 'executions', {
       enableTimestamps: true,
       enableSoftDelete: false,
-      cacheTTL: 300
+      cacheTTL: 300,
     });
   }
 
@@ -53,7 +53,9 @@ export class ExecutionRepository extends BaseRepository<any> {
    */
   async findOneAndPopulate(query: any) {
     const execution = await this.findOne(query);
-    if (!execution) return null;
+    if (!execution) {
+      return null;
+    }
 
     // Custom population logic would go here
     return execution;

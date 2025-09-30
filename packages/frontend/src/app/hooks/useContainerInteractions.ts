@@ -61,7 +61,9 @@ export const useContainerInteractions = () => {
 
       containerNodes.forEach((containerNode) => {
         const element = containerRefs.current.get(containerNode.id);
-        if (!element) return;
+        if (!element) {
+          return;
+        }
 
         const bounds = element.getBoundingClientRect();
 
@@ -88,7 +90,9 @@ export const useContainerInteractions = () => {
 
       // Sort by depth (deepest first) and score
       return containers.sort((a, b) => {
-        if (a.depth !== b.depth) return b.depth - a.depth;
+        if (a.depth !== b.depth) {
+          return b.depth - a.depth;
+        }
         return b.score - a.score;
       });
     },
@@ -166,7 +170,9 @@ export const useContainerInteractions = () => {
       event.preventDefault();
       event.dataTransfer.dropEffect = 'move';
 
-      if (!draggedNode) return;
+      if (!draggedNode) {
+        return;
+      }
 
       const nodes = getNodes();
       const validation = validateDrop(draggedNode.type!, containerId, nodes);
@@ -188,7 +194,9 @@ export const useContainerInteractions = () => {
       event.preventDefault();
       setHoveredContainer(null);
 
-      if (!draggedNode) return;
+      if (!draggedNode) {
+        return;
+      }
 
       const nodes = getNodes();
       const validation = validateDrop(draggedNode.type!, containerId, nodes);
@@ -199,7 +207,9 @@ export const useContainerInteractions = () => {
 
       // Calculate position within container
       const containerElement = containerRefs.current.get(containerId);
-      if (!containerElement) return;
+      if (!containerElement) {
+        return;
+      }
 
       const containerRect = containerElement.getBoundingClientRect();
       const relativePosition = {
@@ -294,10 +304,14 @@ export const useContainerInteractions = () => {
       const nodes = getNodes();
       const containerNode = nodes.find((n) => n.id === containerId);
 
-      if (!containerNode || !containerNode.data?.autoResize) return;
+      if (!containerNode?.data?.autoResize) {
+        return;
+      }
 
       const children = containerNode.data.children || [];
-      if (children.length === 0) return;
+      if (children.length === 0) {
+        return;
+      }
 
       // Calculate bounding box of all children
       const childPositions = children.map((child: Node) => ({
@@ -372,10 +386,14 @@ export const useContainerInteractions = () => {
 // Helper functions
 function getContainerDepth(containerId: string, nodes: Node[]): number {
   const containerNode = nodes.find((n) => n.id === containerId);
-  if (!containerNode) return 0;
+  if (!containerNode) {
+    return 0;
+  }
 
   const parentContainer = containerNode.data?.parentContainer;
-  if (!parentContainer) return 0;
+  if (!parentContainer) {
+    return 0;
+  }
 
   return 1 + getContainerDepth(parentContainer, nodes);
 }

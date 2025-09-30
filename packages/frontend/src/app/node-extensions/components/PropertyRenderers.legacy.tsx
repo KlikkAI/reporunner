@@ -8,8 +8,6 @@ import { DeleteOutlined, FilterOutlined, PlusOutlined } from '@ant-design/icons'
 import { Button, Collapse, DatePicker, Input, Select, Switch, Tag, Upload } from 'antd';
 import type React from 'react';
 import { useCallback, useMemo, useState } from 'react';
-import { BasePropertyRenderer } from '@/design-system/components/form/BasePropertyRenderer';
-import { baseInputStyles, colorInputStyles, datePickerStyles, textareaStyles, selectStyles } from '@/design-system/utils/inputStyles';
 // Simplified version without drag-and-drop for now
 // TODO: Add back @dnd-kit when needed for advanced assignment collection
 import type { INodePropertyTypeOptions, NodePropertyType } from '@/core/nodes/types';

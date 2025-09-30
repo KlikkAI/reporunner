@@ -1,4 +1,4 @@
-import { Store } from './Store';
+import type { Store } from './Store';
 
 interface Hit {
   timestamp: number;
@@ -27,12 +27,12 @@ export class MemoryStore implements Store {
       return 0;
     }
 
-    return data.hits.filter(hit => hit.timestamp >= windowStart).length;
+    return data.hits.filter((hit) => hit.timestamp >= windowStart).length;
   }
 
   public async incrementHits(key: string, timestamp: number, windowMs: number): Promise<void> {
     let data = this.store.get(key);
-    
+
     if (!data) {
       data = { hits: [] };
       this.store.set(key, data);
@@ -43,7 +43,7 @@ export class MemoryStore implements Store {
 
     // Clean up old hits for this key
     const windowStart = timestamp - windowMs;
-    data.hits = data.hits.filter(hit => hit.timestamp >= windowStart);
+    data.hits = data.hits.filter((hit) => hit.timestamp >= windowStart);
   }
 
   public async resetKey(key: string): Promise<void> {
@@ -52,7 +52,7 @@ export class MemoryStore implements Store {
 
   public async deleteOldHits(windowStart: number): Promise<void> {
     for (const [key, data] of this.store.entries()) {
-      data.hits = data.hits.filter(hit => hit.timestamp >= windowStart);
+      data.hits = data.hits.filter((hit) => hit.timestamp >= windowStart);
 
       // Remove key if no hits remain
       if (data.hits.length === 0) {

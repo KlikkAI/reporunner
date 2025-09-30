@@ -12,15 +12,15 @@ export class CatchUseCase implements IUseCase<CatchInput<any>, any> {
       return await input.operation();
     } catch (error) {
       const err = error instanceof Error ? error : new Error(String(error));
-      
+
       if (input.shouldCatch && !input.shouldCatch(err)) {
         throw err;
       }
-      
+
       if (typeof input.fallback === 'function') {
         return await (input.fallback as (error: Error) => T | Promise<T>)(err);
       }
-      
+
       return input.fallback as T;
     }
   }

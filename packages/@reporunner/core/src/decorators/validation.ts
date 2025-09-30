@@ -1,13 +1,9 @@
 import { ValidationError } from '../utils/errors';
-import { Validator, SchemaValidator, SchemaDefinition } from '../utils/validation';
+import { type SchemaDefinition, SchemaValidator, type Validator } from '../utils/validation';
 
 // Validate individual parameter
 export function validate(validator: Validator) {
-  return function (
-    target: any,
-    propertyKey: string,
-    parameterIndex: number
-  ) {
+  return (target: any, propertyKey: string, parameterIndex: number) => {
     const originalMethod = target[propertyKey];
     const methodName = propertyKey;
 
@@ -22,7 +18,7 @@ export function validate(validator: Validator) {
         throw new ValidationError(`Parameter validation failed`, {
           method: methodName,
           parameter: parameterIndex,
-          error: (error as Error).message
+          error: (error as Error).message,
         });
       }
     };
@@ -31,11 +27,7 @@ export function validate(validator: Validator) {
 
 // Validate method input schema
 export function validateInput(schema: SchemaDefinition) {
-  return function (
-    target: any,
-    propertyKey: string,
-    descriptor: PropertyDescriptor
-  ) {
+  return (_target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
     const originalMethod = descriptor.value;
     const methodName = propertyKey;
     const validator = new SchemaValidator(schema);
@@ -50,7 +42,7 @@ export function validateInput(schema: SchemaDefinition) {
         }
         throw new ValidationError(`Input validation failed`, {
           method: methodName,
-          error: (error as Error).message
+          error: (error as Error).message,
         });
       }
     };
@@ -61,18 +53,14 @@ export function validateInput(schema: SchemaDefinition) {
 
 // Validate method output schema
 export function validateOutput(schema: SchemaDefinition) {
-  return function (
-    target: any,
-    propertyKey: string,
-    descriptor: PropertyDescriptor
-  ) {
+  return (_target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
     const originalMethod = descriptor.value;
     const methodName = propertyKey;
     const validator = new SchemaValidator(schema);
 
     descriptor.value = async function (...args: any[]) {
       const result = await originalMethod.apply(this, args);
-      
+
       try {
         await validator.validate(result);
         return result;
@@ -82,7 +70,7 @@ export function validateOutput(schema: SchemaDefinition) {
         }
         throw new ValidationError(`Output validation failed`, {
           method: methodName,
-          error: (error as Error).message
+          error: (error as Error).message,
         });
       }
     };
@@ -95,11 +83,11 @@ export function validateOutput(schema: SchemaDefinition) {
 export function validatable(constructor: Function) {
   constructor.prototype.validators = new Map<string, Validator>();
 
-  constructor.prototype.addValidator = function(field: string, validator: Validator) {
+  constructor.prototype.addValidator = function (field: string, validator: Validator) {
     this.validators.set(field, validator);
   };
 
-  constructor.prototype.validate = async function() {
+  constructor.prototype.validate = async function () {
     const errors: Record<string, string[]> = {};
 
     for (const [field, validator] of this.validators) {
@@ -122,17 +110,17 @@ export function validatable(constructor: Function) {
 
 // Validate property with rules
 export function validateProperty(validator: Validator) {
-  return function (target: any, propertyKey: string) {
+  return (target: any, propertyKey: string) => {
     const constructor = target.constructor;
-    
+
     // Ensure the validatable decorator is applied
     if (!constructor.prototype.validators) {
       validatable(constructor);
     }
 
     // Add validator for this property
-    const originalInit = constructor.prototype.init || function() {};
-    constructor.prototype.init = function() {
+    const originalInit = constructor.prototype.init || (() => {});
+    constructor.prototype.init = function () {
       this.addValidator(propertyKey, validator);
       originalInit.call(this);
     };

@@ -8,7 +8,6 @@
  */
 
 import { BaseNodeDefinition, type NodeProperty } from '@/core/nodes/BaseNodeDefinition';
-import { PropertyRendererFactory } from '@/design-system';
 import type { PropertyRendererConfig } from '@/design-system';
 
 /**
@@ -19,7 +18,8 @@ export class MLPipelineNodeDefinition extends BaseNodeDefinition {
     super({
       name: 'ml-pipeline',
       displayName: 'ML Pipeline Orchestrator',
-      description: 'Orchestrate end-to-end machine learning pipelines with data preprocessing, training, validation, and deployment',
+      description:
+        'Orchestrate end-to-end machine learning pipelines with data preprocessing, training, validation, and deployment',
       group: ['AI/ML', 'MLOps'],
       version: 1,
       defaults: {
@@ -61,7 +61,11 @@ export class MLPipelineNodeDefinition extends BaseNodeDefinition {
         validation: {
           rules: [
             { type: 'required', message: 'Pipeline name is required' },
-            { type: 'pattern', value: '^[a-zA-Z0-9-_]+$', message: 'Only alphanumeric, dash, and underscore allowed' },
+            {
+              type: 'pattern',
+              value: '^[a-zA-Z0-9-_]+$',
+              message: 'Only alphanumeric, dash, and underscore allowed',
+            },
           ],
         },
       },
@@ -316,7 +320,7 @@ export class MLPipelineNodeDefinition extends BaseNodeDefinition {
    */
   protected getProperties(): NodeProperty[] {
     const configs = this.getPropertyConfigs();
-    return configs.map(config => this.convertConfigToNodeProperty(config));
+    return configs.map((config) => this.convertConfigToNodeProperty(config));
   }
 
   /**
@@ -330,8 +334,8 @@ export class MLPipelineNodeDefinition extends BaseNodeDefinition {
       description: config.description,
       placeholder: config.placeholder,
       default: config.defaultValue,
-      required: config.required || false,
-      options: config.options?.map(option => ({
+      required: config.required,
+      options: config.options?.map((option) => ({
         name: option.label,
         value: option.value,
         description: option.description,
@@ -349,24 +353,24 @@ export class MLPipelineNodeDefinition extends BaseNodeDefinition {
    */
   private mapRendererTypeToNodeType(rendererType: string): string {
     const typeMap: Record<string, string> = {
-      'text': 'string',
-      'password': 'password',
-      'number': 'number',
-      'checkbox': 'boolean',
-      'switch': 'boolean',
-      'select': 'options',
-      'multiselect': 'multiOptions',
-      'textarea': 'string',
-      'datetime': 'dateTime',
-      'date': 'dateTime',
-      'color': 'color',
-      'file': 'file',
-      'json': 'json',
-      'collection': 'collection',
-      'fixedcollection': 'fixedCollection',
-      'credentials': 'credentialsSelect',
-      'resource': 'resourceLocator',
-      'expression': 'expression',
+      text: 'string',
+      password: 'password',
+      number: 'number',
+      checkbox: 'boolean',
+      switch: 'boolean',
+      select: 'options',
+      multiselect: 'multiOptions',
+      textarea: 'string',
+      datetime: 'dateTime',
+      date: 'dateTime',
+      color: 'color',
+      file: 'file',
+      json: 'json',
+      collection: 'collection',
+      fixedcollection: 'fixedCollection',
+      credentials: 'credentialsSelect',
+      resource: 'resourceLocator',
+      expression: 'expression',
     };
 
     return typeMap[rendererType] || 'string';

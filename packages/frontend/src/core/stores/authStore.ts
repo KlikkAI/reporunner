@@ -130,7 +130,9 @@ export const useAuthStore = create<AuthState>()(
       },
 
       updateProfile: async (updates: Partial<Pick<User, 'firstName' | 'lastName' | 'email'>>) => {
-        if (!get().user) return;
+        if (!get().user) {
+          return;
+        }
 
         set({ isLoading: true, error: null });
         try {

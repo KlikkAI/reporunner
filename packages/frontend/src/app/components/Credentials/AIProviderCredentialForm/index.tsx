@@ -1,51 +1,50 @@
-import React from 'react';
 import { Alert } from '@reporunner/ui/components/base/alert';
 import { CredentialNameField } from '../shared/CredentialNameField';
 import { TestCredentialButton } from '../shared/TestCredentialButton';
-import { AIProviderFields } from './AIProviderFields';
 import type { CredentialTypeDef, TestResult } from '../shared/types';
+import { AIProviderFields } from './AIProviderFields';
 
 interface AIProviderCredentialFormProps {
   /**
    * The credential type definition
    */
   credentialType: CredentialTypeDef;
-  
+
   /**
    * Current credential name
    */
   credentialName: string;
-  
+
   /**
    * Called when credential name changes
    */
   onNameChange: (name: string) => void;
-  
+
   /**
    * Current values for credential fields
    */
   values: Record<string, any>;
-  
+
   /**
    * Called when a field value changes
    */
   onFieldChange: (field: string, value: any) => void;
-  
+
   /**
    * Whether currently testing the credential
    */
   isTesting: boolean;
-  
+
   /**
    * Called when test button is clicked
    */
   onTest: () => void;
-  
+
   /**
    * Current test result, if any
    */
   testResult?: TestResult | null;
-  
+
   /**
    * Whether we're editing an existing credential
    */
@@ -61,15 +60,11 @@ export const AIProviderCredentialForm = ({
   isTesting,
   onTest,
   testResult,
-  isEditing
+  isEditing,
 }: AIProviderCredentialFormProps) => {
   return (
     <div className="space-y-6">
-      <Alert
-        type="info"
-        title={credentialType.name}
-        message={credentialType.description}
-      />
+      <Alert type="info" title={credentialType.name} message={credentialType.description} />
 
       <CredentialNameField
         value={credentialName}

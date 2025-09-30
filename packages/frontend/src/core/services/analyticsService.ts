@@ -34,7 +34,7 @@ export class AnalyticsService {
       name: eventName,
       properties,
       timestamp: new Date(),
-      sessionId: this.sessionId
+      sessionId: this.sessionId,
     };
 
     this.events.push(event);
@@ -54,7 +54,7 @@ export class AnalyticsService {
       value,
       unit,
       timestamp: new Date(),
-      tags
+      tags,
     };
 
     this.metrics.push(metric);
@@ -72,7 +72,7 @@ export class AnalyticsService {
       action,
       workflowId,
       nodeType,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
   }
 
@@ -82,7 +82,7 @@ export class AnalyticsService {
       action,
       nodeType,
       nodeId,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
   }
 

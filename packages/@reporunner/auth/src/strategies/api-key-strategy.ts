@@ -12,7 +12,7 @@ export class APIKeyStrategy {
     this.options = {
       headerName: 'x-api-key',
       queryName: 'api_key',
-      ...options
+      ...options,
     };
   }
 

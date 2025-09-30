@@ -49,7 +49,6 @@ interface IWorkflowDocument extends Omit<IWorkflow, 'id'> {
   metadata?: Record<string, any>;
 }
 
-
 const NodeSchema = new Schema({
   id: { type: String, required: true },
   type: { type: String, required: true },
@@ -80,7 +79,7 @@ const WorkflowSettingsSchema = new Schema({
   errorHandling: {
     type: String,
     enum: ['stop', 'continue', 'retry'],
-    default: 'stop'
+    default: 'stop',
   },
   timeout: Number,
   retryAttempts: Number,

@@ -49,7 +49,7 @@ export class TwoFactorService {
    */
   async verifyBackupCode(userId: string, code: string): Promise<boolean> {
     const codes = this.backupCodes.get(userId);
-    if (!codes || !codes.has(code)) {
+    if (!codes?.has(code)) {
       return false;
     }
 

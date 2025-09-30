@@ -309,7 +309,9 @@ const EnhancedNodeToolbar: React.FC<EnhancedNodeToolbarProps> = ({
     return <Menu items={menuItems} />;
   };
 
-  if (!visible) return null;
+  if (!visible) {
+    return null;
+  }
 
   return (
     <div ref={toolbarRef} style={getPositionStyles()}>
