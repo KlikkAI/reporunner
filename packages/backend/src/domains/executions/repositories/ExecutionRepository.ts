@@ -1,14 +1,28 @@
 import { Execution } from '../../../models/Execution';
-import { BaseRepository } from '@reporunner/core/src/repository/BaseRepository';
+import { BaseRepository } from '@reporunner/core';
 import type { Db } from 'mongodb';
 
 export class ExecutionRepository extends BaseRepository<any> {
-  constructor(db: Db) {
+  constructor(db?: Db) {
+    // @ts-ignore - Allow optional db for now until proper DI is implemented
     super(db, 'executions', {
       enableTimestamps: true,
       enableSoftDelete: false,
       cacheTTL: 300
     });
+  }
+
+  // Delegate methods to Mongoose model for backward compatibility
+  async findOne(query: any) {
+    return Execution.findOne(query);
+  }
+
+  async deleteMany(query: any) {
+    return Execution.deleteMany(query);
+  }
+
+  async countDocuments(query: any) {
+    return Execution.countDocuments(query);
   }
   // deleteMany is now provided by BaseRepository
 

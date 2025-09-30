@@ -23,6 +23,7 @@ export class SessionController {
    */
   public getSession = asyncHandler(async (req: Request, res: Response): Promise<void> => {
     const { workflowId } = req.params;
+    const { dateRange = 30 } = req.query;
 
     if (!workflowId) {
       res.status(400).json(ApiResponse.error('Workflow ID is required'));

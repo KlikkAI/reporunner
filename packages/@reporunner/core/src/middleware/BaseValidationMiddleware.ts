@@ -41,11 +41,12 @@ export class BaseValidationMiddleware {
    * Create a validation middleware for request body
    */
   static validateBody(schema: ZodSchema, options: ValidationOptions = {}) {
-    return (req: Request, res: Response, next: NextFunction) => {
+    return (req: Request, res: Response, next: NextFunction): void => {
       const result = this.validateData(req.body, schema, options);
 
       if (!result.success) {
-        return this.sendValidationError(res, result.errors || [], 'body');
+        this.sendValidationError(res, result.errors || [], 'body');
+        return;
       }
 
       req.body = result.data;
@@ -57,11 +58,12 @@ export class BaseValidationMiddleware {
    * Create a validation middleware for query parameters
    */
   static validateQuery(schema: ZodSchema, options: ValidationOptions = {}) {
-    return (req: Request, res: Response, next: NextFunction) => {
+    return (req: Request, res: Response, next: NextFunction): void => {
       const result = this.validateData(req.query, schema, options);
 
       if (!result.success) {
-        return this.sendValidationError(res, result.errors || [], 'query');
+        this.sendValidationError(res, result.errors || [], 'query');
+        return;
       }
 
       req.query = result.data;
@@ -73,11 +75,12 @@ export class BaseValidationMiddleware {
    * Create a validation middleware for request parameters
    */
   static validateParams(schema: ZodSchema, options: ValidationOptions = {}) {
-    return (req: Request, res: Response, next: NextFunction) => {
+    return (req: Request, res: Response, next: NextFunction): void => {
       const result = this.validateData(req.params, schema, options);
 
       if (!result.success) {
-        return this.sendValidationError(res, result.errors || [], 'params');
+        this.sendValidationError(res, result.errors || [], 'params');
+        return;
       }
 
       req.params = result.data;
@@ -89,11 +92,12 @@ export class BaseValidationMiddleware {
    * Create a validation middleware for request headers
    */
   static validateHeaders(schema: ZodSchema, options: ValidationOptions = {}) {
-    return (req: Request, res: Response, next: NextFunction) => {
+    return (req: Request, res: Response, next: NextFunction): void => {
       const result = this.validateData(req.headers, schema, options);
 
       if (!result.success) {
-        return this.sendValidationError(res, result.errors || [], 'headers');
+        this.sendValidationError(res, result.errors || [], 'headers');
+        return;
       }
 
       // Don't override headers, just validate them
@@ -110,7 +114,7 @@ export class BaseValidationMiddleware {
     params?: ZodSchema;
     headers?: ZodSchema;
   }, options: ValidationOptions = {}) {
-    return (req: Request, res: Response, next: NextFunction) => {
+    return (req: Request, res: Response, next: NextFunction): void => {
       const allErrors: ValidationError[] = [];
 
       // Validate each part of the request
@@ -134,7 +138,8 @@ export class BaseValidationMiddleware {
       }
 
       if (allErrors.length > 0) {
-        return this.sendValidationError(res, allErrors, 'request');
+        this.sendValidationError(res, allErrors, 'request');
+        return;
       }
 
       next();
@@ -202,7 +207,7 @@ export class BaseValidationMiddleware {
     zodError: ZodError,
     customMessages?: Record<string, string>
   ): ValidationError[] {
-    return zodError.errors.map(error => {
+    return zodError.issues.map((error: any) => {
       const field = error.path.join('.');
       const code = error.code;
 

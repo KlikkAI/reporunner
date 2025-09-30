@@ -9,6 +9,8 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
+    "@reporunner/api-types": "workspace:*",
+    "@reporunner/core": "workspace:*",
     "@types/compression": "^1.8.1",
     "@types/pg": "^8.15.5",
     "bcryptjs": "^2.4.3",

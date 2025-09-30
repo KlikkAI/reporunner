@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { BaseValidationMiddleware } from '@reporunner/core/src/middleware/BaseValidationMiddleware';
+import { BaseValidationMiddleware } from '@reporunner/core';
 
 /**
  * Auth Validation Schemas and Middleware using BaseValidationMiddleware

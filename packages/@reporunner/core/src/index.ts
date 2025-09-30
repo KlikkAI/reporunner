@@ -7,6 +7,8 @@
 export { BaseRepository, BaseEntity, PaginatedResult, PaginationOptions, RepositoryOptions } from './repository/BaseRepository';
 export { BaseService } from './base/BaseService';
 export { BaseMiddleware } from './base/BaseMiddleware';
+export { BaseValidationMiddleware } from './middleware/BaseValidationMiddleware';
+export type { ValidationMiddlewareOptions } from './middleware/BaseValidationMiddleware';
 export { Cacheable } from './decorators/Cacheable';
 // Decorators
 export { Injectable } from './decorators/Injectable';

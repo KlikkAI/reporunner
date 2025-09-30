@@ -2,7 +2,12 @@
  * Workflows domain interfaces
  */
 
-import { INode, IEdge, IWorkflow as ApiWorkflow, IWorkflowSettings as ApiWorkflowSettings, WorkflowStatus } from '@reporunner/api-types';
+import type {
+  IWorkflow as ApiWorkflow,
+  IWorkflowSettings as ApiWorkflowSettings,
+  IEdge,
+  INode,
+} from '@reporunner/api-types';
 
 export interface IWorkflow extends ApiWorkflow {
   userId: string;
@@ -20,7 +25,11 @@ export interface IWorkflowStatistics {
   lastExecuted?: Date;
 }
 
-export interface IWorkflowCreateRequest extends Omit<ApiWorkflow, 'id' | 'createdAt' | 'updatedAt' | 'createdBy' | 'status' | 'version' | 'meta'> {
+export interface IWorkflowCreateRequest
+  extends Omit<
+    ApiWorkflow,
+    'id' | 'createdAt' | 'updatedAt' | 'createdBy' | 'status' | 'version' | 'meta'
+  > {
   nodes: INode[];
   edges: IEdge[];
   settings?: ApiWorkflowSettings;

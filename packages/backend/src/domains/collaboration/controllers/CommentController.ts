@@ -28,6 +28,7 @@ export class CommentController {
       includeReplies = true,
       sortBy = 'createdAt',
       sortOrder = 'desc',
+      dateRange = 30,
     } = req.query;
 
     if (!workflowId) {
