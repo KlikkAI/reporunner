@@ -1,8 +1,12 @@
 /**
  * Enhanced Debugging Service
- * 
+ *
  * Provides debugging capabilities for workflow development
  */
+
+import { Logger } from '@reporunner/core';
+
+const logger = new Logger('EnhancedDebuggingService');
 
 export interface DebugSession {
   id: string;
@@ -355,7 +359,7 @@ class EnhancedDebuggingService {
       try {
         listener(event);
       } catch (error) {
-        console.error('Debug event listener error:', error);
+        logger.error('Debug event listener error', { error, sessionId, eventType });
       }
     });
   }

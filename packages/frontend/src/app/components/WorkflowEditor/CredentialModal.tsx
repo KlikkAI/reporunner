@@ -11,7 +11,8 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { Modal, Tabs } from 'antd';
 import { CredentialApiService } from '@/core';
 import { useLeanWorkflowStore } from '@/core';
-import type { CredentialTypeApiResponse } from '@/core/types/credentials';
+import { Logger } from '@reporunner/core';
+import type { CredentialTypeApiResponse } from '@/core/types/frontend-credentials';
 import {
   UniversalForm,
   PropertyRendererFactory,
@@ -20,6 +21,7 @@ import {
 import type { PropertyRendererConfig } from '@/design-system';
 
 const credentialApiService = new CredentialApiService();
+const logger = new Logger('CredentialModal');
 
 interface CredentialModalProps {
   isOpen: boolean;
@@ -205,7 +207,7 @@ export const CredentialModal: React.FC<CredentialModalProps> = ({
 
       onClose();
     } catch (error: any) {
-      console.error('Failed to save credential:', error);
+      logger.error('Failed to save credential', { error, credentialType });
       alert(error.message || 'Failed to save credential');
     } finally {
       setIsConnecting(false);
@@ -310,7 +312,7 @@ export const CredentialModal: React.FC<CredentialModalProps> = ({
                     { key: 'team', label: 'Team (Your organization)', type: 'radio' },
                     { key: 'public', label: 'Public (Everyone)', type: 'radio' },
                   ],
-                  (values) => console.log('Sharing settings:', values)
+                  (values) => logger.info('Sharing settings changed', { values })
                 )}
               </div>
             ),

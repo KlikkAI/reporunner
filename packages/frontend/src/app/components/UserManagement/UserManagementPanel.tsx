@@ -54,7 +54,7 @@ import type {
   User,
   UserInvitation,
   UserRole,
-} from '@/core/types/authentication';
+} from '@/core/types/frontend-auth';
 import { cn } from '@/design-system/utils';
 
 const { Title, Text } = Typography;

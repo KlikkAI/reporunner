@@ -10,6 +10,7 @@
 import React, { useEffect, useState } from 'react';
 import { SaveOutlined } from '@ant-design/icons';
 import { AuthApiService } from '@/core';
+import { Logger } from '@reporunner/core';
 import {
   PageTemplates,
   UniversalForm,
@@ -17,6 +18,7 @@ import {
 import type { PropertyRendererConfig, PageAction } from '@/design-system';
 
 const authApiService = new AuthApiService();
+const logger = new Logger('Settings');
 
 interface SettingsData {
   profile: {
@@ -74,9 +76,9 @@ export const Settings: React.FC = () => {
     const loadSettings = async () => {
       try {
         // Mock API call - would fetch actual user settings
-        console.log('Loading user settings...');
+        logger.debug('Loading user settings');
       } catch (error) {
-        console.error('Failed to load settings:', error);
+        logger.error('Failed to load settings', { error });
       }
     };
     loadSettings();
@@ -227,12 +229,12 @@ export const Settings: React.FC = () => {
       }));
 
       // Save to API
-      console.log(`Saving ${section} settings:`, formData);
+      logger.info('Saving settings', { section, formData });
       // await authApiService.updateUserSettings({ [section]: formData });
 
       alert(`${section.charAt(0).toUpperCase() + section.slice(1)} settings saved successfully!`);
     } catch (error) {
-      console.error(`Failed to save ${section} settings:`, error);
+      logger.error('Failed to save settings', { section, error });
       alert(`Failed to save ${section} settings`);
     } finally {
       setIsLoading(false);

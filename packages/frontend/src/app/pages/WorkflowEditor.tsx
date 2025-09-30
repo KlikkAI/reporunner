@@ -11,12 +11,15 @@ import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { SaveOutlined, PlayCircleOutlined, TestOutlined, HistoryOutlined } from '@ant-design/icons';
 import { useLeanWorkflowStore } from '@/core';
+import { Logger } from '@reporunner/core';
 import {
   PageGenerator,
   ComponentGenerator,
 } from '@/design-system';
 import type { PageAction, PageSectionConfig } from '@/design-system';
 import WorkflowEditorComponent from '../components/WorkflowEditor';
+
+const logger = new Logger('WorkflowEditor');
 
 export const WorkflowEditor: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -35,11 +38,11 @@ export const WorkflowEditor: React.FC = () => {
   };
 
   const handleTestRun = () => {
-    console.log('Test run workflow');
+    logger.info('Test run workflow', { workflowId: id });
   };
 
   const handleViewHistory = () => {
-    console.log('View workflow history');
+    logger.info('View workflow history', { workflowId: id });
   };
 
   // Page actions for workflow editor
@@ -62,7 +65,7 @@ export const WorkflowEditor: React.FC = () => {
       label: 'Execute',
       type: 'primary',
       icon: <PlayCircleOutlined />,
-      onClick: () => console.log('Execute workflow'),
+      onClick: () => logger.info('Execute workflow', { workflowId: id }),
     },
     {
       label: 'History',

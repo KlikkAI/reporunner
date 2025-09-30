@@ -10,6 +10,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { PlayCircleOutlined, CheckCircleOutlined, ExclamationCircleOutlined, CloseCircleOutlined, SyncOutlined } from '@ant-design/icons';
 import { WorkflowApiService } from '@/core';
+import { Logger } from '@reporunner/core';
 import type { WorkflowExecution } from '@/core/types/execution';
 import {
   PageTemplates,
@@ -19,6 +20,7 @@ import {
 import type { Statistic, PageSectionConfig } from '@/design-system';
 
 const workflowApiService = new WorkflowApiService();
+const logger = new Logger('Executions');
 
 export const Executions: React.FC = () => {
   const [executions, setExecutions] = useState<WorkflowExecution[]>([]);
@@ -147,7 +149,7 @@ export const Executions: React.FC = () => {
       },
       () => {
         // View execution details
-        console.log('View execution:', execution.id);
+        logger.info('View execution', { executionId: execution.id });
       }
     )
   );

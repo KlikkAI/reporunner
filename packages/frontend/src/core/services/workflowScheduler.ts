@@ -1,8 +1,12 @@
 /**
  * Workflow Scheduler
- * 
+ *
  * Manages scheduling and execution of workflows
  */
+
+import { Logger } from '@reporunner/core';
+
+const logger = new Logger('WorkflowScheduler');
 
 export interface ScheduleConfig {
   id: string;
@@ -239,8 +243,8 @@ class WorkflowScheduler {
    */
   private async mockWorkflowExecution(workflowId: string): Promise<void> {
     // Mock implementation - replace with actual workflow engine integration
-    console.log(`Executing scheduled workflow: ${workflowId}`);
-    
+    logger.info('Executing scheduled workflow', { workflowId });
+
     // Simulate execution time
     await new Promise(resolve => setTimeout(resolve, 1000));
     

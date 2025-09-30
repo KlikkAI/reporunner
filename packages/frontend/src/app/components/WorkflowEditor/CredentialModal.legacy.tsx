@@ -5,7 +5,7 @@ import { CredentialApiService } from '@/core';
 const credentialApiService = new CredentialApiService();
 
 import { useLeanWorkflowStore } from '@/core';
-import type { CredentialTypeApiResponse } from '@/core/types/credentials';
+import type { CredentialTypeApiResponse } from '@/core/types/frontend-credentials';
 
 interface CredentialModalProps {
   isOpen: boolean;

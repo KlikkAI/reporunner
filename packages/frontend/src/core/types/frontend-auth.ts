@@ -1,0 +1,361 @@
+/**
+ * Frontend-Specific Authentication Types
+ *
+ * This file extends @reporunner/types with frontend-specific auth types
+ * following the "extend, don't replace" pattern.
+ *
+ * Base types from @reporunner/types:
+ * - IUser: Basic user entity
+ * - IAuthToken: JWT tokens
+ * - IUserSettings: User preferences
+ *
+ * Frontend extensions:
+ * - Enhanced user preferences (dashboard, editor, notifications)
+ * - Enterprise features (roles, permissions, SSO)
+ * - Team collaboration (invitations)
+ * - API key management
+ */
+
+import type { IUser, IUserSettings, ID, Timestamp } from '@reporunner/types';
+
+// ============================================================================
+// Extended User Types
+// ============================================================================
+
+/**
+ * Frontend-specific user preferences
+ * Extends the baseline IUserSettings with UI-specific configuration
+ */
+export interface FrontendUserPreferences extends IUserSettings {
+  theme: 'light' | 'dark';
+  language: string;
+  timezone: string;
+  notifications: {
+    email: boolean;
+    push: boolean;
+    inApp: boolean;
+    workflows: boolean;
+    executions: boolean;
+    security: boolean;
+  };
+  dashboard: {
+    layout: 'grid' | 'list';
+    widgets: string[];
+    refreshInterval: number;
+  };
+  editor: {
+    autoSave: boolean;
+    autoComplete: boolean;
+    syntaxHighlighting: boolean;
+    wordWrap: boolean;
+  };
+}
+
+/**
+ * Frontend User - extends IUser with UI-specific fields
+ *
+ * Adds:
+ * - name, avatar: Display information
+ * - role: Frontend role system (enterprise)
+ * - mfaEnabled: Security status
+ * - preferences: Enhanced UI preferences
+ * - permissions: Granular permission system
+ * - projects: Project associations
+ * - lastLoginAt: Session tracking
+ */
+export interface User extends Omit<IUser, 'settings' | 'preferences'> {
+  name: string;
+  avatar?: string;
+  role: UserRole;
+  mfaEnabled: boolean;
+  preferences: FrontendUserPreferences;
+  permissions: Permission[];
+  projects: string[];
+  lastLoginAt?: Timestamp;
+}
+
+// ============================================================================
+// Enterprise Role & Permission System
+// ============================================================================
+
+/**
+ * User Role Definition
+ * Enterprise-grade role system with hierarchical levels
+ */
+export interface UserRole {
+  id: string;
+  name: string;
+  description: string;
+  level: number;            // 0-10, higher = more privileges
+  permissions: Permission[];
+  isSystem: boolean;        // System roles cannot be deleted
+  createdAt: Timestamp;
+  updatedAt: Timestamp;
+}
+
+/**
+ * Granular Permission System
+ */
+export interface Permission {
+  id: string;
+  resource: ResourceType;
+  actions: Action[];
+  conditions?: PermissionCondition[];
+}
+
+export type ResourceType =
+  | 'workflow'
+  | 'execution'
+  | 'credential'
+  | 'integration'
+  | 'user'
+  | 'organization'
+  | 'settings'
+  | 'api_key';
+
+export type Action =
+  | 'create'
+  | 'read'
+  | 'update'
+  | 'delete'
+  | 'execute'
+  | 'share'
+  | 'manage';
+
+export interface PermissionCondition {
+  field: string;
+  operator: 'equals' | 'contains' | 'in' | 'notIn';
+  value: string | string[];
+}
+
+// ============================================================================
+// API Key Management
+// ============================================================================
+
+/**
+ * API Key for programmatic access
+ */
+export interface APIKey {
+  id: ID;
+  name: string;
+  key: string;                    // Visible key (prefix shown)
+  keyHash: string;                // Hashed key stored in DB
+  permissions: Permission[];
+  expiresAt?: Timestamp;
+  lastUsedAt?: Timestamp;
+  createdAt: Timestamp;
+  createdBy: ID;
+  status: 'active' | 'revoked' | 'expired';
+  metadata: {
+    description?: string;
+    ipWhitelist?: string[];
+    rateLimitTier?: 'standard' | 'premium' | 'enterprise';
+  };
+}
+
+// ============================================================================
+// User Invitation System
+// ============================================================================
+
+/**
+ * User Invitation for team collaboration
+ */
+export interface UserInvitation {
+  id: ID;
+  email: string;
+  role: string;                   // Role ID to assign
+  permissions: Permission[];
+  projects: string[];
+  invitedBy: ID;
+  invitedAt: Timestamp;
+  expiresAt: Timestamp;
+  acceptedAt?: Timestamp;
+  status: 'pending' | 'accepted' | 'expired' | 'revoked';
+  token: string;
+  message?: string;
+}
+
+// ============================================================================
+// Enterprise SSO Configuration
+// ============================================================================
+
+/**
+ * Single Sign-On Provider Configuration
+ */
+export interface SSOProvider {
+  id: string;
+  name: string;
+  type: 'oauth2' | 'saml' | 'oidc' | 'ldap';
+  enabled: boolean;
+  configuration: SSOConfiguration;
+  metadata: {
+    logo?: string;
+    description?: string;
+    supportUrl?: string;
+  };
+}
+
+export interface SSOConfiguration {
+  issuer: string;
+  clientId: string;
+  clientSecret?: string;      // Never sent to frontend in production
+  redirectUri: string;
+  scopes: string[];
+  endpoints: {
+    authorization: string;
+    token: string;
+    userInfo: string;
+    revocation?: string;
+  };
+  attributes: {
+    email: string;            // Claim mapping
+    name: string;
+    groups?: string;
+  };
+  security?: {
+    pkce?: boolean;
+    state?: boolean;
+    nonce?: boolean;
+  };
+}
+
+// ============================================================================
+// Multi-Factor Authentication (MFA)
+// ============================================================================
+
+/**
+ * MFA Configuration
+ */
+export interface MFAConfig {
+  enabled: boolean;
+  methods: MFAMethod[];
+  backupCodes?: string[];
+  lastVerifiedAt?: Timestamp;
+}
+
+export interface MFAMethod {
+  id: string;
+  type: 'totp' | 'sms' | 'email' | 'hardware_key';
+  name: string;
+  isPrimary: boolean;
+  isVerified: boolean;
+  createdAt: Timestamp;
+  lastUsedAt?: Timestamp;
+}
+
+// ============================================================================
+// Session Management
+// ============================================================================
+
+/**
+ * User Session Information
+ */
+export interface Session {
+  id: ID;
+  userId: ID;
+  token: string;
+  deviceInfo: {
+    userAgent: string;
+    ip: string;
+    location?: string;
+  };
+  createdAt: Timestamp;
+  expiresAt: Timestamp;
+  lastActivityAt: Timestamp;
+  isActive: boolean;
+}
+
+// ============================================================================
+// Type Guards and Utilities
+// ============================================================================
+
+/**
+ * Check if user has specific permission
+ */
+export function hasPermission(
+  user: User,
+  resource: ResourceType,
+  action: Action
+): boolean {
+  return user.permissions.some(
+    (p) => p.resource === resource && p.actions.includes(action)
+  );
+}
+
+/**
+ * Check if user has role level at or above threshold
+ */
+export function hasRoleLevel(user: User, minLevel: number): boolean {
+  return user.role.level >= minLevel;
+}
+
+/**
+ * Check if user is admin
+ */
+export function isAdmin(user: User): boolean {
+  return user.role.level >= 8;
+}
+
+/**
+ * Check if invitation is still valid
+ */
+export function isInvitationValid(invitation: UserInvitation): boolean {
+  return (
+    invitation.status === 'pending' &&
+    invitation.expiresAt > Date.now()
+  );
+}
+
+/**
+ * Check if API key is usable
+ */
+export function isAPIKeyActive(apiKey: APIKey): boolean {
+  if (apiKey.status !== 'active') return false;
+  if (!apiKey.expiresAt) return true;
+  return apiKey.expiresAt > Date.now();
+}
+
+// ============================================================================
+// Factory Functions
+// ============================================================================
+
+/**
+ * Create default user preferences
+ */
+export function createDefaultPreferences(): FrontendUserPreferences {
+  return {
+    theme: 'dark',
+    language: 'en',
+    timezone: 'UTC',
+    notifications: {
+      email: true,
+      push: false,
+      inApp: true,
+      workflows: true,
+      executions: true,
+      security: true,
+    },
+    dashboard: {
+      layout: 'grid',
+      widgets: ['workflows', 'executions', 'recent'],
+      refreshInterval: 30000,
+    },
+    editor: {
+      autoSave: true,
+      autoComplete: true,
+      syntaxHighlighting: true,
+      wordWrap: true,
+    },
+  };
+}
+
+/**
+ * Create MFA configuration
+ */
+export function createMFAConfig(): MFAConfig {
+  return {
+    enabled: false,
+    methods: [],
+    backupCodes: [],
+  };
+}

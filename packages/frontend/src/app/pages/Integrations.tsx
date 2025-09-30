@@ -10,12 +10,15 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { LinkOutlined, CheckCircleOutlined, RocketOutlined } from '@ant-design/icons';
 import { nodeRegistry } from '@/core';
+import { Logger } from '@reporunner/core';
 import {
   PageTemplates,
   ComponentGenerator,
   ComponentPatterns,
 } from '@/design-system';
 import type { Statistic, PageSectionConfig } from '@/design-system';
+
+const logger = new Logger('Integrations');
 
 export const Integrations: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
@@ -61,12 +64,12 @@ export const Integrations: React.FC = () => {
 
   const handleConnect = async (_integration: any) => {
     // Mock connection logic
-    console.log('Connecting integration:', _integration);
+    logger.info('Connecting integration', { integration: _integration });
   };
 
   const handleDisconnect = async (_integrationId: string) => {
     if (confirm('Are you sure you want to disconnect this integration?')) {
-      console.log('Disconnecting integration:', _integrationId);
+      logger.info('Disconnecting integration', { integrationId: _integrationId });
     }
   };
 

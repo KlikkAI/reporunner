@@ -20,6 +20,8 @@
     "@reactflow/controls": "^11.2.14",
     "@reactflow/core": "^11.11.4",
     "@reactflow/minimap": "^11.7.14",
+    "@reporunner/core": "workspace:*",
+    "@reporunner/types": "workspace:*",
     "@tanstack/react-query": "^5.90.2",
     "@tanstack/react-virtual": "^3.13.12",
     "@types/lodash": "^4.17.20",

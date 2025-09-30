@@ -14,7 +14,7 @@ import { Alert } from '@reporunner/ui/components/base/alert';
 const credentialApiService = new CredentialApiService();
 
 import { useLeanWorkflowStore } from '@/core';
-import type { CredentialTypeApiResponse } from '@/core/types/credentials';
+import type { CredentialTypeApiResponse } from '@/core/types/frontend-credentials';
 
 const GmailConnectionForm: React.FC<{
   credentialName: string;

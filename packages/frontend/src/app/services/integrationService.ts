@@ -1,13 +1,17 @@
 /**
  * Integration Service - Reusing existing implementations
- * 
+ *
  * This service reuses the existing ConfigService and other infrastructure
  * to provide integration management capabilities.
  */
 
+import { Logger } from '@reporunner/core';
 import { configService } from '@/core/services/ConfigService';
 import { nodeRegistry } from '@/core';
 import type { Integration } from '@/core/types/integration';
+
+// Create service-level logger
+const logger = new Logger('IntegrationService');
 
 class IntegrationService {
   /**
@@ -36,8 +40,8 @@ class IntegrationService {
    */
   async connectIntegration(id: string, config: Record<string, unknown>): Promise<void> {
     // Mock implementation - replace with actual API call when backend is ready
-    console.log(`Connecting to integration ${id} with config:`, config);
-    
+    logger.info(`Connecting to integration`, { integrationId: id, config });
+
     // In a real implementation, this would:
     // 1. Validate the configuration
     // 2. Test the connection
@@ -50,8 +54,8 @@ class IntegrationService {
    */
   async disconnectIntegration(id: string): Promise<void> {
     // Mock implementation - replace with actual API call when backend is ready
-    console.log(`Disconnecting from integration ${id}`);
-    
+    logger.info(`Disconnecting from integration`, { integrationId: id });
+
     // In a real implementation, this would:
     // 1. Remove stored credentials
     // 2. Clean up any active connections
@@ -71,7 +75,7 @@ class IntegrationService {
    */
   async testConnection(id: string, config: Record<string, unknown>): Promise<boolean> {
     // Mock implementation - replace with actual connection test
-    console.log(`Testing connection for integration ${id}`);
+    logger.info(`Testing connection for integration`, { integrationId: id, config });
     return true;
   }
 }

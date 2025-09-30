@@ -1,4 +1,8 @@
 // Analytics service for tracking user interactions and performance metrics
+import { Logger } from '@reporunner/core';
+
+const logger = new Logger('AnalyticsService');
+
 export interface AnalyticsEvent {
   name: string;
   properties?: Record<string, any>;
@@ -35,9 +39,9 @@ export class AnalyticsService {
 
     this.events.push(event);
 
-    // In development, log to console
+    // In development, log event
     if (import.meta.env.DEV) {
-      console.log('Analytics Event:', event);
+      logger.debug('Analytics Event', event);
     }
 
     // TODO: Send to actual analytics service
@@ -56,7 +60,7 @@ export class AnalyticsService {
     this.metrics.push(metric);
 
     if (import.meta.env.DEV) {
-      console.log('Performance Metric:', metric);
+      logger.debug('Performance Metric', metric);
     }
 
     // TODO: Send to actual metrics service

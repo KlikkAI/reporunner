@@ -1,4 +1,7 @@
 import type { AxiosError } from 'axios';
+import { Logger } from '@reporunner/core';
+
+const logger = new Logger('ApiErrorHandler');
 
 export interface ApiError {
   message: string;
@@ -86,7 +89,7 @@ export class ApiErrorHandler {
 
     // Log error if enabled
     if (opts.logErrors) {
-      console.error('API Error:', {
+      logger.error('API Error', {
         context,
         error: apiError,
         originalError: error,
@@ -184,7 +187,7 @@ export class ApiErrorHandler {
         const delay = baseDelay * Math.pow(2, attempt - 1);
         await new Promise(resolve => setTimeout(resolve, delay));
 
-        console.warn(`API retry attempt ${attempt}/${maxRetries} for ${context}`, error);
+        logger.warn('API retry attempt', { attempt, maxRetries, context, error });
       }
     }
 
@@ -225,8 +228,7 @@ export class ApiErrorHandler {
    */
   private static showErrorToast(error: ApiError): void {
     // TODO: Integrate with actual toast notification system
-    // For now, use console.error as placeholder
-    console.error('Toast notification:', error.message);
+    logger.debug('Toast notification placeholder', { message: error.message });
   }
 }
 
