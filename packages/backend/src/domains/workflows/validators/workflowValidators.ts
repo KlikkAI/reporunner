@@ -22,7 +22,7 @@ const WorkflowNodeSchema = z.object({
     x: z.number(),
     y: z.number(),
   }),
-  data: z.record(z.any()),
+  data: z.record(z.string(), z.any()),
 });
 
 // Workflow edge schema
@@ -42,7 +42,7 @@ const CreateWorkflowSchema = z.object({
   edges: z.array(WorkflowEdgeSchema).default([]),
   tags: z.array(z.string()).default([]).optional(),
   isPublic: z.boolean().default(false).optional(),
-  settings: z.record(z.any()).default({}).optional(),
+  settings: z.record(z.string(), z.any()).default({}).optional(),
 });
 
 const UpdateWorkflowSchema = CreateWorkflowSchema.partial().extend({
@@ -50,11 +50,11 @@ const UpdateWorkflowSchema = CreateWorkflowSchema.partial().extend({
 });
 
 const ExecuteWorkflowSchema = z.object({
-  triggerData: z.record(z.any()).optional(),
+  triggerData: z.record(z.string(), z.any()).optional(),
 });
 
 const WorkflowTestSchema = z.object({
-  workflow: z.record(z.any()),
+  workflow: z.record(z.string(), z.any()),
 });
 
 // Query schemas
