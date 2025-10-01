@@ -23,3 +23,6 @@ export { default as ExecutionToolbar } from './ExecutionToolbar';
 export { default as NodePropertyPanel } from './NodePropertyPanel';
 export { default as SchedulingPanel } from './SchedulingPanel';
 export { default as TriggerPanel } from './TriggerPanel';
+
+// Re-export main WorkflowEditor component as default
+export { default } from './index.tsx';

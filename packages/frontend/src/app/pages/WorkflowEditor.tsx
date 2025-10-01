@@ -7,7 +7,12 @@
  * Reduction: ~80 lines → ~60 lines (25% reduction + better UX)
  */
 
-import { ExperimentOutlined, HistoryOutlined, PlayCircleOutlined, SaveOutlined } from '@ant-design/icons';
+import {
+  ExperimentOutlined,
+  HistoryOutlined,
+  PlayCircleOutlined,
+  SaveOutlined,
+} from '@ant-design/icons';
 import { Logger } from '@reporunner/core';
 import type React from 'react';
 import { useEffect } from 'react';

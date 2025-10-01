@@ -1,6 +1,11 @@
 import { EventEmitter } from 'node:events';
 import WebSocket from 'ws';
 
+interface WebSocketMessage {
+  type: string;
+  data?: unknown;
+}
+
 export class WebSocketClient extends EventEmitter {
   private ws?: WebSocket;
   private url: string;
@@ -31,7 +36,9 @@ export class WebSocketClient extends EventEmitter {
         try {
           const message = JSON.parse(data.toString());
           this.handleMessage(message);
-        } catch (_error) {}
+        } catch (_error) {
+          // Ignore malformed messages
+        }
       });
 
       this.ws.on('close', (_code, _reason) => {
@@ -47,7 +54,7 @@ export class WebSocketClient extends EventEmitter {
     }
   }
 
-  private handleMessage(message: any): void {
+  private handleMessage(message: WebSocketMessage): void {
     const { type, data } = message;
 
     switch (type) {
@@ -79,11 +86,11 @@ export class WebSocketClient extends EventEmitter {
     }
   }
 
-  send(message: any): void {
+  send(message: unknown): void {
     if (this.ws && this.ws.readyState === WebSocket.OPEN) {
       this.ws.send(JSON.stringify(message));
-    } else {
     }
+    // Message is dropped if WebSocket is not open
   }
 
   disconnect(): void {

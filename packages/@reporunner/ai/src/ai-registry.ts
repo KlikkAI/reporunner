@@ -21,7 +21,7 @@ export interface AIProviderDefinition {
   limits: ProviderLimits;
   configSchema: {
     required: string[];
-    properties: Record<string, any>;
+    properties: Record<string, unknown>;
   };
   models: {
     llm: LLMModelInfo[];

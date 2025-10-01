@@ -130,7 +130,20 @@
       "__filename",
       "module",
       "require",
-      "exports"
+      "exports",
+      "db",
+      "print",
+      "printjson",
+      "ObjectId",
+      "jest",
+      "describe",
+      "it",
+      "test",
+      "expect",
+      "beforeAll",
+      "beforeEach",
+      "afterAll",
+      "afterEach"
     ]
   },
   "json": {
@@ -288,6 +301,20 @@
         "indentWidth": 2,
         "lineWidth": 100,
         "bracketSameLine": false
+      }
+    },
+    {
+      "includes": ["examples/**/*"],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noExplicitAny": "off",
+            "noConsole": "off"
+          },
+          "complexity": {
+            "noExcessiveCognitiveComplexity": "off"
+          }
+        }
       }
     },
     {

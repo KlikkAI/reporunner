@@ -5,7 +5,11 @@
 
 import React, { useMemo } from 'react';
 import type { INodeProperty } from '@/core/nodes/types';
-import type { PropertyEvaluationContext, PropertyFormState, PropertyValue } from '@/core/types/dynamicProperties';
+import type {
+  PropertyEvaluationContext,
+  PropertyFormState,
+  PropertyValue,
+} from '@/core/types/dynamicProperties';
 import DynamicPropertyRenderer from '../../components/WorkflowEditor/DynamicPropertyRenderer';
 import type { PropertyRendererProps } from './PropertyRenderers';
 

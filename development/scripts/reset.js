@@ -11,31 +11,38 @@ process.chdir(rootDir);
 function findDirectories(dir, targetNames) {
   const results = [];
 
+  function processItem(currentDir, item, relativePath) {
+    const fullPath = path.join(currentDir, item);
+    const relativeItemPath = path.join(relativePath, item);
+
+    try {
+      const stats = statSync(fullPath);
+      if (!stats.isDirectory()) {
+        return;
+      }
+
+      if (targetNames.includes(item)) {
+        results.push(relativeItemPath);
+        return;
+      }
+
+      // Don't recurse into node_modules
+      if (item !== 'node_modules') {
+        search(fullPath, relativeItemPath);
+      }
+    } catch (_error) {
+      // Ignore files/directories we can't stat
+    }
+  }
+
   function search(currentDir, relativePath = '') {
     try {
       const items = readdirSync(currentDir);
-
       for (const item of items) {
-        const fullPath = path.join(currentDir, item);
-        const relativeItemPath = path.join(relativePath, item);
-
-        try {
-          const stats = statSync(fullPath);
-          if (stats.isDirectory()) {
-            if (targetNames.includes(item)) {
-              results.push(relativeItemPath);
-            } else {
-              // Don't recurse into node_modules
-              if (item !== 'node_modules') {
-                search(fullPath, relativeItemPath);
-              }
-            }
-          }
-        } catch (_error) {}
+        processItem(currentDir, item, relativePath);
       }
     } catch (_error) {
       // Skip directories we can't read
-      return;
     }
   }
 
@@ -94,10 +101,12 @@ try {
           } else if (stats.isDirectory() && item !== 'node_modules') {
             removeTsBuildInfo(fullPath);
           }
-        } catch (_error) {}
+        } catch (_error) {
+          // Ignore files we can't stat or remove
+        }
       }
     } catch (_error) {
-      return;
+      // Ignore directories we can't read
     }
   }
   removeTsBuildInfo(rootDir);
