@@ -235,7 +235,7 @@ export const SectionLayout: React.FC<SectionLayoutProps> = ({
         bodyStyle={{
           padding: typeof padding === 'number' ? `${padding}px` : padding,
         }}
-        bordered={border}
+        variant={border ? 'outlined' : 'borderless'}
       >
         {content}
       </Card>

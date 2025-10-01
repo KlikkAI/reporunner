@@ -43,8 +43,9 @@ class ConfigService {
   constructor() {
     const logLevel = (import.meta.env.VITE_LOG_LEVEL as LogLevel) || 'info';
     const isDev = import.meta.env.DEV;
-    const environment = (import.meta.env.VITE_ENVIRONMENT as Config['environment']) ||
-                       (isDev ? 'development' : 'production');
+    const environment =
+      (import.meta.env.VITE_ENVIRONMENT as Config['environment']) ||
+      (isDev ? 'development' : 'production');
     const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
     this.config = {
@@ -67,10 +68,11 @@ class ConfigService {
         bufferSize: 100,
       },
       features: {
-        enablePerformanceMonitoring: import.meta.env.VITE_ENABLE_PERFORMANCE_MONITORING === 'true' || isDev,
+        enablePerformanceMonitoring:
+          import.meta.env.VITE_ENABLE_PERFORMANCE_MONITORING === 'true' || isDev,
         enableErrorReporting: import.meta.env.VITE_ENABLE_ERROR_REPORTING === 'true' || !isDev,
-        enableRemoteLogging: import.meta.env.VITE_ENABLE_REMOTE_LOGGING === 'true' || false,
-        enableAnalytics: import.meta.env.VITE_ENABLE_ANALYTICS === 'true' || false,
+        enableRemoteLogging: import.meta.env.VITE_ENABLE_REMOTE_LOGGING === 'true',
+        enableAnalytics: import.meta.env.VITE_ENABLE_ANALYTICS === 'true',
         enableDevTools: import.meta.env.VITE_ENABLE_DEV_TOOLS === 'true' || isDev,
       },
     };

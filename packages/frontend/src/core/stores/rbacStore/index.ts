@@ -118,7 +118,9 @@ export const useRBACStore = create<RBACState>()(
 
       canManageOrganization: () => {
         const { currentRole, hasPermission } = get();
-        return currentRole === 'admin' || currentRole === 'owner' || hasPermission('organization:write');
+        return (
+          currentRole === 'admin' || currentRole === 'owner' || hasPermission('organization:write')
+        );
       },
 
       canEditWorkflow: () => {
@@ -133,7 +135,9 @@ export const useRBACStore = create<RBACState>()(
 
       canDeleteWorkflow: () => {
         const { currentRole, hasPermission } = get();
-        return currentRole === 'admin' || currentRole === 'owner' || hasPermission('workflow:delete');
+        return (
+          currentRole === 'admin' || currentRole === 'owner' || hasPermission('workflow:delete')
+        );
       },
 
       canExecuteWorkflow: () => {

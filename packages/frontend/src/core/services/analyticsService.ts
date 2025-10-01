@@ -151,7 +151,10 @@ export class AnalyticsService {
       try {
         callback(analytics);
       } catch (error) {
-        logger.error('Error in analytics subscriber', error instanceof Error ? error : new Error(String(error)));
+        logger.error(
+          'Error in analytics subscriber',
+          error instanceof Error ? error : new Error(String(error))
+        );
       }
     });
   }

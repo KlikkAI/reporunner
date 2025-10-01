@@ -232,10 +232,20 @@ class PerformanceMonitoringService {
       const supportedEntryTypes = ['navigation', 'resource', 'measure', 'paint'];
 
       // Conditionally add entry types based on browser support
-      const allEntryTypes = ['navigation', 'resource', 'measure', 'long-task', 'layout-shift', 'paint'];
+      const allEntryTypes = [
+        'navigation',
+        'resource',
+        'measure',
+        'long-task',
+        'layout-shift',
+        'paint',
+      ];
       const entryTypesToObserve = allEntryTypes.filter((type) => {
         try {
-          return PerformanceObserver.supportedEntryTypes?.includes(type) ?? supportedEntryTypes.includes(type);
+          return (
+            PerformanceObserver.supportedEntryTypes?.includes(type) ??
+            supportedEntryTypes.includes(type)
+          );
         } catch {
           return supportedEntryTypes.includes(type);
         }

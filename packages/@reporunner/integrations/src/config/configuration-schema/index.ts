@@ -1,4 +1,2 @@
-export * from './configuration-schema-part1';
-export * from './configuration-schema-part2';
-export * from './configuration-schema-part3';
-export * from './configuration-schema-part4';
+// Re-export everything from the main configuration schema file
+export * from '../configuration-schema';

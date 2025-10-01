@@ -59,6 +59,15 @@ export class DevTools {
     template?: 'basic' | 'api' | 'data-processing' | 'ai-workflow';
     outputPath?: string;
   }): Promise<string> {
+    const template = this.getWorkflowTemplate(options.template || 'basic');
+
+    const _workflow = {
+      ...template,
+      name: options.name,
+      description: options.description || `Generated workflow: ${options.name}`,
+      createdAt: new Date().toISOString(),
+    };
+
     const outputPath =
       options.outputPath || `./workflows/${options.name.toLowerCase().replace(/\s+/g, '-')}.json`;
 
@@ -71,6 +80,15 @@ export class DevTools {
     category: string;
     outputPath?: string;
   }): Promise<string> {
+    const nodeTemplate = this.getNodeTemplate(options.type);
+
+    const _node = {
+      ...nodeTemplate,
+      name: options.name,
+      category: options.category,
+      createdAt: new Date().toISOString(),
+    };
+
     const outputPath =
       options.outputPath || `./src/nodes/${options.category}/${options.name.toLowerCase()}.ts`;
 
@@ -215,6 +233,93 @@ export class DevTools {
       timestamp: new Date().toISOString(),
       data: 'mock data',
     };
+  }
+
+  private getWorkflowTemplate(type: string): any {
+    const templates = {
+      basic: {
+        nodes: [
+          {
+            id: 'start',
+            type: 'trigger',
+            position: { x: 100, y: 100 },
+            data: { label: 'Start' },
+          },
+          {
+            id: 'end',
+            type: 'action',
+            position: { x: 300, y: 100 },
+            data: { label: 'End' },
+          },
+        ],
+        edges: [
+          {
+            id: 'start-end',
+            source: 'start',
+            target: 'end',
+          },
+        ],
+      },
+      api: {
+        nodes: [
+          {
+            id: 'webhook',
+            type: 'webhook-trigger',
+            position: { x: 100, y: 100 },
+            data: { label: 'Webhook Trigger' },
+          },
+          {
+            id: 'http',
+            type: 'http-request',
+            position: { x: 300, y: 100 },
+            data: { label: 'HTTP Request' },
+          },
+          {
+            id: 'response',
+            type: 'webhook-response',
+            position: { x: 500, y: 100 },
+            data: { label: 'Send Response' },
+          },
+        ],
+        edges: [
+          { id: 'webhook-http', source: 'webhook', target: 'http' },
+          { id: 'http-response', source: 'http', target: 'response' },
+        ],
+      },
+    };
+
+    return templates[type as keyof typeof templates] || templates.basic;
+  }
+
+  private getNodeTemplate(type: string): any {
+    const templates = {
+      action: {
+        type: 'action',
+        properties: {
+          operation: {
+            type: 'select',
+            required: true,
+            options: ['create', 'read', 'update', 'delete'],
+          },
+        },
+        inputs: [{ type: 'main' }],
+        outputs: [{ type: 'main' }],
+      },
+      trigger: {
+        type: 'trigger',
+        properties: {
+          schedule: {
+            type: 'string',
+            required: false,
+            description: 'Cron expression for scheduling',
+          },
+        },
+        inputs: [],
+        outputs: [{ type: 'main' }],
+      },
+    };
+
+    return templates[type as keyof typeof templates] || templates.action;
   }
 
   private collectMetrics(): PerformanceMetrics {

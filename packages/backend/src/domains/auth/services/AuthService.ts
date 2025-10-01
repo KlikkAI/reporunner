@@ -3,12 +3,7 @@
  * TODO: Implement authentication logic
  */
 
-import type {
-  IAuthToken,
-  IRegistrationData,
-  IUser,
-  IUserProfile,
-} from '@reporunner/types';
+import type { IAuthToken, IRegistrationData, IUser, IUserProfile } from '@reporunner/types';
 
 export class AuthService {
   private static instance: AuthService;

@@ -27,7 +27,7 @@ export interface CardConfig extends GeneratorConfig {
   actions?: React.ReactNode;
   cover?: React.ReactNode;
   hoverable?: boolean;
-  bordered?: boolean;
+  variant?: 'outlined' | 'borderless';
   size?: 'default' | 'small';
 }
 
@@ -71,7 +71,7 @@ export class ComponentGenerator {
         extra={config.actions}
         cover={config.cover}
         hoverable={config.hoverable}
-        bordered={config.bordered}
+        variant={config.variant}
         size={config.size}
         className={cn('generated-card', config.className)}
         {...config.props}
@@ -369,6 +369,14 @@ export class ComponentGenerator {
         return ComponentGenerator.generateList(config as ListConfig);
       case 'table':
         return ComponentGenerator.generateTable(config as TableConfig);
+      case 'content':
+        // Content type is a simple wrapper that renders its children
+        return (
+          <div key={config.id} className={config.className} {...config.props}>
+            {config.props?.children}
+            {config.children && ComponentGenerator.generateChildren(config.children)}
+          </div>
+        );
       default:
         return <div key={config.id}>Unknown component type: {config.type}</div>;
     }

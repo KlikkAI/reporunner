@@ -140,7 +140,9 @@ export class ReporunnerClient {
     return response.data.data || [];
   }
 
-  async createCredential(credential: Omit<ICredential, 'id' | 'createdAt' | 'updatedAt'>): Promise<ICredential> {
+  async createCredential(
+    credential: Omit<ICredential, 'id' | 'createdAt' | 'updatedAt'>
+  ): Promise<ICredential> {
     const response = await this.http.post<ApiResponse<ICredential>>('/api/credentials', credential);
     if (!response.data.data) {
       throw new Error('Failed to create credential');
@@ -149,7 +151,10 @@ export class ReporunnerClient {
   }
 
   async updateCredential(id: string, credential: Partial<ICredential>): Promise<ICredential> {
-    const response = await this.http.put<ApiResponse<ICredential>>(`/api/credentials/${id}`, credential);
+    const response = await this.http.put<ApiResponse<ICredential>>(
+      `/api/credentials/${id}`,
+      credential
+    );
     if (!response.data.data) {
       throw new Error(`Failed to update credential ${id}`);
     }

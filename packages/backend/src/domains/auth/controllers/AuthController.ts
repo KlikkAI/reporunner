@@ -1,5 +1,5 @@
-import type { Request, Response } from 'express';
 import type { IUser } from '@reporunner/types';
+import type { Request, Response } from 'express';
 import { BaseController } from '../../../base/BaseController';
 import { AppError } from '../../../middleware/errorHandlers';
 import { logger } from '../../../utils/logger';
