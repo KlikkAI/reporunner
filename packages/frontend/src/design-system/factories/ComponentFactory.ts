@@ -55,7 +55,7 @@ export interface LayoutConfig {
 
 export interface FormConfig {
   fields: FieldConfig[];
-  validation?: ValidationConfig;
+  validation?: FormValidationConfig;
   submission?: SubmissionConfig;
   layout?: 'vertical' | 'horizontal' | 'grid';
 }
@@ -92,7 +92,7 @@ export interface FieldValidation {
   message?: string;
 }
 
-export interface ValidationConfig {
+export interface FormValidationConfig {
   realTime?: boolean;
   onSubmit?: boolean;
   showErrors?: 'inline' | 'summary' | 'both';

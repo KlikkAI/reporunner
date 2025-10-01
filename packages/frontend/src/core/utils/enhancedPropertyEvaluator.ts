@@ -595,5 +595,8 @@ export function useEnhancedPropertyEvaluator(
   };
 }
 
+// Default singleton instance for backward compatibility
+export const enhancedPropertyEvaluator = new EnhancedPropertyEvaluator({}, {});
+
 // Import React for the hook
 import React from 'react';

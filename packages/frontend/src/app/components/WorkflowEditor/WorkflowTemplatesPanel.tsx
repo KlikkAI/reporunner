@@ -680,3 +680,5 @@ export const WorkflowTemplatesPanel: React.FC<WorkflowTemplatesPanelProps> = ({
     </Modal>
   );
 };
+
+export default WorkflowTemplatesPanel;

@@ -1,5 +1,11 @@
 import { z } from 'zod';
 
+// Common field schemas
+export const IdSchema = z.string().min(1);
+export const MetadataSchema = z.record(z.any());
+export const NodeParametersSchema = z.record(z.any());
+export const StatusSchema = z.enum(['active', 'inactive', 'expired', 'pending', 'error']);
+
 // Base schemas for common data structures
 export const BaseResponseSchema = z.object({
   success: z.boolean(),
@@ -17,6 +23,21 @@ export const SuccessResponseSchema = BaseResponseSchema.extend({
   success: z.literal(true),
   data: z.any().optional(),
 });
+
+/**
+ * Generic API response wrapper function
+ * Wraps a data schema with success/error response structure
+ */
+export function ApiResponseSchema<T extends z.ZodTypeAny>(dataSchema: T) {
+  return z.union([
+    SuccessResponseSchema.extend({
+      data: dataSchema,
+    }),
+    ErrorResponseSchema,
+  ]);
+}
+
+export const OptionalIdSchema = IdSchema.optional();
 
 export const PaginationSchema = z.object({
   page: z.number().min(1).default(1),
@@ -36,7 +57,11 @@ export const IdParamSchema = z.object({
   id: z.string().min(1),
 });
 
-export const TimestampSchema = z.object({
+// Individual timestamp field (ISO datetime string)
+export const TimestampSchema = z.string().datetime();
+
+// Object with created/updated timestamps
+export const TimestampsSchema = z.object({
   createdAt: z.string(),
   updatedAt: z.string(),
 });
@@ -46,7 +71,7 @@ export const UserReferenceSchema = z.object({
   organizationId: z.string().optional(),
 });
 
-// Common field schemas
+// Additional field validation schemas
 export const EmailSchema = z.string().email();
 export const UrlSchema = z.string().url();
 export const UuidSchema = z.string().uuid();
@@ -59,4 +84,8 @@ export type Pagination = z.infer<typeof PaginationSchema>;
 export type PaginatedResponse = z.infer<typeof PaginatedResponseSchema>;
 export type IdParam = z.infer<typeof IdParamSchema>;
 export type Timestamp = z.infer<typeof TimestampSchema>;
+export type Timestamps = z.infer<typeof TimestampsSchema>;
 export type UserReference = z.infer<typeof UserReferenceSchema>;
+export type Metadata = z.infer<typeof MetadataSchema>;
+export type NodeParameters = z.infer<typeof NodeParametersSchema>;
+export type Status = z.infer<typeof StatusSchema>;

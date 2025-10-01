@@ -15,7 +15,7 @@ import { WorkflowApiService } from '@/core';
 const workflowApiService = new WorkflowApiService();
 
 import type { Edge, Node } from 'reactflow';
-import { useExecutionMonitor } from '@/app/services/executionMonitor';
+import { useExecutionMonitor } from '@/app/services/executionmonitor';
 import type { WorkflowExecution } from '@/core/types/execution';
 import { exportWorkflowToBackend } from '@/core/utils/workflowExporter';
 

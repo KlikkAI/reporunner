@@ -724,3 +724,5 @@ export const SchedulingPanel: React.FC<SchedulingPanelProps> = ({
     </Modal>
   );
 };
+
+export default SchedulingPanel;

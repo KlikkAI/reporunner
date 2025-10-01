@@ -16,7 +16,7 @@ import ReactFlow, {
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 import { Logger } from '@reporunner/core';
-import { executionMonitor, useExecutionMonitor } from '@/app/services/executionMonitor';
+import { executionMonitor, useExecutionMonitor } from '@/app/services/executionmonitor';
 import { intelligentAutoConnect } from '@/app/services/intelligentAutoConnect';
 import { nodeRegistry, useLeanWorkflowStore } from '@/core';
 import { useAIAssistantStore } from '@/core/stores/aiAssistantStore';

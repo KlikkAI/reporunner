@@ -75,7 +75,7 @@ export class APIServer {
     const speedLimiter = slowDown({
       windowMs: 15 * 60 * 1000, // 15 minutes
       delayAfter: 100, // allow 100 requests per windowMs without delay
-      delayMs: 500, // add 500ms delay per request after delayAfter
+      delayMs: () => 500, // add constant 500ms delay per request after delayAfter
     });
     this.app.use('/api/', speedLimiter);
 

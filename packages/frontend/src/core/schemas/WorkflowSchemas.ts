@@ -3,7 +3,6 @@ import {
   NodeSchema as ApiNodeSchema,
   WorkflowSchema as ApiWorkflowSchema,
   ExecutionStatus,
-  WorkflowStatus,
 } from '@reporunner/api-types';
 import { z } from 'zod';
 import {
@@ -15,6 +14,9 @@ import {
   PaginatedResponseSchema,
   TimestampSchema,
 } from './BaseSchemas';
+
+// Define WorkflowStatus locally (not exported from api-types)
+export const WorkflowStatus = z.enum(['active', 'inactive', 'draft']);
 
 // Node schemas
 export const WorkflowNodeSchema = ApiNodeSchema.extend({
@@ -68,7 +70,7 @@ export const WorkflowSchema = WorkflowDefinitionSchema.and(
     _id: IdSchema.optional(), // MongoDB ObjectId
     userId: IdSchema.optional(), // Owner of the workflow
     isPublic: z.boolean().optional(), // Whether workflow is public
-    status: z.nativeEnum(WorkflowStatus).optional(), // Made optional, computed from isActive
+    status: WorkflowStatus.optional(), // Made optional, computed from isActive
     successRate: z.number().min(0).max(100).optional(), // Success rate percentage
     lastExecution: z
       .object({
@@ -261,7 +263,7 @@ export const ExecuteWorkflowRequestSchema = z.object({
 });
 
 export const WorkflowFilterSchema = z.object({
-  status: z.nativeEnum(WorkflowStatus).optional(),
+  status: WorkflowStatus.optional(),
   tags: z.array(z.string()).optional(),
   createdBy: z.string().optional(),
   search: z.string().optional(), // Search in name/description
@@ -294,6 +296,7 @@ export const ExecutionListResponseSchema = ApiResponseSchema(
 export const ExecutionStatsResponseSchema = ApiResponseSchema(ExecutionStatsSchema);
 
 // Type exports for TypeScript
+export type WorkflowStatusType = z.infer<typeof WorkflowStatus>;
 export type WorkflowNode = z.infer<typeof WorkflowNodeSchema>;
 export type WorkflowEdge = z.infer<typeof WorkflowEdgeSchema>;
 export type WorkflowDefinition = z.infer<typeof WorkflowDefinitionSchema>;

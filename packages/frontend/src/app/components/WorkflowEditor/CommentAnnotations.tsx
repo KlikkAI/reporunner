@@ -441,3 +441,5 @@ export const CommentAnnotations: React.FC<CommentAnnotationsProps> = ({
     </>
   );
 };
+
+export default CommentAnnotations;

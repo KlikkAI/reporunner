@@ -2,8 +2,15 @@
   "name": "@reporunner/api-types",
   "version": "0.0.1",
   "description": "Shared TypeScript types and interfaces for Reporunner API",
+  "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
   "files": [
     "dist"
   ],

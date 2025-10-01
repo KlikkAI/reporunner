@@ -667,3 +667,5 @@ export const CollaborationPanel: React.FC<CollaborationPanelProps> = ({ isVisibl
     </>
   );
 };
+
+export default CollaborationPanel;

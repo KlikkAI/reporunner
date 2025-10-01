@@ -1,8 +1,8 @@
 import { Button, Card, Empty, Tabs } from 'antd';
 import type React from 'react';
 import { useMemo, useState } from 'react';
-import { SchemaView } from '@/design-system/components/DataVisualization/SchemaView';
-import { TableView } from '@/design-system/components/DataVisualization/TableView';
+import SchemaView from '@/design-system/components/DataVisualization/SchemaView';
+import TableView from '@/design-system/components/DataVisualization/TableView';
 import { JsonViewer } from '@/design-system/components/JsonViewer';
 import { cn } from '@/design-system/utils';
 

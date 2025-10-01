@@ -748,3 +748,5 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
     </Modal>
   );
 };
+
+export default AnalyticsDashboard;

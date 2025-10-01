@@ -285,3 +285,5 @@ export const ExecutionToolbar: React.FC<ExecutionToolbarProps> = ({
     </div>
   );
 };
+
+export default ExecutionToolbar;

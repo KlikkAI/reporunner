@@ -989,3 +989,5 @@ export const TriggerPanel: React.FC<TriggerPanelProps> = ({ workflowId, visible,
     </>
   );
 };
+
+export default TriggerPanel;

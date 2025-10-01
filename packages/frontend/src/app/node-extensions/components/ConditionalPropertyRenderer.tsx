@@ -3,7 +3,10 @@
  * Advanced displayOptions evaluation matching n8n's complex conditional logic
  */
 
+import React, { useMemo } from 'react';
 import type { INodeProperty } from '@/core/nodes/types';
+import type { PropertyEvaluationContext, PropertyFormState, PropertyValue } from '@/core/types/dynamicProperties';
+import DynamicPropertyRenderer from '../../components/WorkflowEditor/DynamicPropertyRenderer';
 import type { PropertyRendererProps } from './PropertyRenderers';
 
 // Define display options interface locally
@@ -340,4 +343,58 @@ class PropertyDependencyTracker {
 
 export { DisplayOptionsEvaluator, PropertyDependencyTracker };
 
-export default ConditionalPropertyRenderer;
+/**
+ * Property Group Renderer with Conditional Display Logic
+ *
+ * Renders a group of properties with advanced conditional visibility evaluation.
+ * Uses DisplayOptionsEvaluator to determine which properties should be shown.
+ */
+export interface PropertyGroupRendererProps {
+  properties: Array<INodeProperty & { displayOptions?: EnhancedDisplayOptions }>;
+  values: PropertyFormState;
+  onChange: (name: string, value: PropertyValue) => void;
+  evaluationContext?: Record<string, any>;
+  context?: Partial<PropertyEvaluationContext>;
+  disabled?: boolean;
+  theme?: 'light' | 'dark';
+}
+
+export const PropertyGroupRenderer: React.FC<PropertyGroupRendererProps> = ({
+  properties,
+  values,
+  onChange,
+  evaluationContext: _evaluationContext = {},
+  context,
+  disabled = false,
+  theme = 'dark',
+}) => {
+  // Evaluate which properties should be visible
+  const visibleProperties = useMemo(() => {
+    const evaluator = new DisplayOptionsEvaluator(values);
+
+    return properties.filter((property) => {
+      // If no display options, always show
+      if (!property.displayOptions) {
+        return true;
+      }
+
+      // Evaluate display options
+      const evaluation = evaluator.evaluateDisplayOptions(property.displayOptions);
+      return evaluation.visible && !evaluation.disabled;
+    });
+  }, [properties, values]);
+
+  // Render visible properties using DynamicPropertyRenderer
+  return (
+    <div className="space-y-4">
+      <DynamicPropertyRenderer
+        properties={visibleProperties as INodeProperty[]}
+        formState={values}
+        onChange={onChange}
+        context={context}
+        disabled={disabled}
+        theme={theme}
+      />
+    </div>
+  );
+};

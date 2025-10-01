@@ -290,6 +290,8 @@ export const UserPresenceOverlay: React.FC<UserPresenceOverlayProps> = ({
   );
 };
 
+export default UserPresenceOverlay;
+
 // CSS styles for smooth cursor animations
 export const userPresenceStyles = `
   .cursor-pointer {

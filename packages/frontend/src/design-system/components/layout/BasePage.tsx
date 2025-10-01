@@ -197,6 +197,7 @@ interface PageSectionProps {
   title?: string;
   subtitle?: string;
   actions?: PageAction[];
+  loading?: boolean;
   className?: string;
   children: ReactNode;
 }
@@ -205,6 +206,7 @@ export const PageSection: React.FC<PageSectionProps> = ({
   title,
   subtitle,
   actions,
+  loading = false,
   className = '',
   children,
 }) => {
@@ -248,10 +250,25 @@ export const PageSection: React.FC<PageSectionProps> = ({
     );
   };
 
+  const renderContent = () => {
+    if (loading) {
+      return (
+        <div className="flex items-center justify-center py-12">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
+            <p className="text-gray-400">Loading...</p>
+          </div>
+        </div>
+      );
+    }
+
+    return children;
+  };
+
   return (
     <Card className={cn('bg-gray-800 border-gray-700', className)}>
       {renderSectionHeader()}
-      {children}
+      {renderContent()}
     </Card>
   );
 };

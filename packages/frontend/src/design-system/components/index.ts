@@ -13,6 +13,7 @@ export type {
   EventHandler,
   FieldConfig,
   FormConfig,
+  FormValidationConfig,
   LayoutConfig,
   StylingConfig,
 } from '../factories/ComponentFactory';
@@ -54,6 +55,5 @@ export {
 // export { default as PageSection } from './PageSection';
 // Advanced Components
 export { PropertyRenderer } from './PropertyRenderer';
-export { default as StatsCard } from './StatsCard';
 export type { UniversalFormProps } from './UniversalForm';
 export { FormGenerators, UniversalForm, useFormBuilder } from './UniversalForm';
