@@ -228,10 +228,25 @@ class PerformanceMonitoringService {
         });
       });
 
-      // Observe various performance entry types
-      this.observer.observe({
-        entryTypes: ['navigation', 'resource', 'measure', 'long-task', 'layout-shift', 'paint'],
+      // Check which entry types are supported
+      const supportedEntryTypes = ['navigation', 'resource', 'measure', 'paint'];
+
+      // Conditionally add entry types based on browser support
+      const allEntryTypes = ['navigation', 'resource', 'measure', 'long-task', 'layout-shift', 'paint'];
+      const entryTypesToObserve = allEntryTypes.filter((type) => {
+        try {
+          return PerformanceObserver.supportedEntryTypes?.includes(type) ?? supportedEntryTypes.includes(type);
+        } catch {
+          return supportedEntryTypes.includes(type);
+        }
       });
+
+      // Observe supported performance entry types
+      if (entryTypesToObserve.length > 0) {
+        this.observer.observe({
+          entryTypes: entryTypesToObserve,
+        });
+      }
     } catch (error) {
       logger.error(
         'Failed to initialize PerformanceObserver',

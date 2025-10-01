@@ -19,10 +19,17 @@ export interface PerformanceMetric {
   tags?: Record<string, string>;
 }
 
+export interface WorkflowAnalytics {
+  events: AnalyticsEvent[];
+  metrics: PerformanceMetric[];
+  sessionId: string;
+}
+
 export class AnalyticsService {
   private events: AnalyticsEvent[] = [];
   private metrics: PerformanceMetric[] = [];
   private sessionId: string;
+  private subscribers: Set<(analytics: WorkflowAnalytics) => void> = new Set();
 
   constructor() {
     this.sessionId = this.generateSessionId();
@@ -44,6 +51,13 @@ export class AnalyticsService {
       logger.debug('Analytics Event', event);
     }
 
+    // Notify subscribers of analytics update
+    this.notifySubscribers({
+      events: [...this.events],
+      metrics: [...this.metrics],
+      sessionId: this.sessionId,
+    });
+
     // TODO: Send to actual analytics service
   }
 
@@ -62,6 +76,13 @@ export class AnalyticsService {
     if (import.meta.env.DEV) {
       logger.debug('Performance Metric', metric);
     }
+
+    // Notify subscribers of analytics update
+    this.notifySubscribers({
+      events: [...this.events],
+      metrics: [...this.metrics],
+      sessionId: this.sessionId,
+    });
 
     // TODO: Send to actual metrics service
   }
@@ -109,6 +130,30 @@ export class AnalyticsService {
   clear(): void {
     this.events = [];
     this.metrics = [];
+  }
+
+  /**
+   * Subscribe to analytics updates
+   * Returns an unsubscribe function
+   */
+  subscribeToAnalytics(callback: (analytics: WorkflowAnalytics) => void): () => void {
+    this.subscribers.add(callback);
+    return () => {
+      this.subscribers.delete(callback);
+    };
+  }
+
+  /**
+   * Notify all subscribers with new analytics data
+   */
+  private notifySubscribers(analytics: WorkflowAnalytics): void {
+    this.subscribers.forEach((callback) => {
+      try {
+        callback(analytics);
+      } catch (error) {
+        logger.error('Error in analytics subscriber', error instanceof Error ? error : new Error(String(error)));
+      }
+    });
   }
 
   private generateSessionId(): string {

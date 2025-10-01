@@ -46,12 +46,16 @@ export const PaginationSchema = z.object({
   pages: z.number().min(0),
 });
 
-export const PaginatedResponseSchema = SuccessResponseSchema.extend({
-  data: z.object({
-    items: z.array(z.any()),
+/**
+ * Generic paginated response wrapper function
+ * Wraps an items schema with pagination metadata
+ */
+export function PaginatedResponseSchema<T extends z.ZodTypeAny>(itemSchema: T) {
+  return z.object({
+    items: z.array(itemSchema),
     pagination: PaginationSchema,
-  }),
-});
+  });
+}
 
 export const IdParamSchema = z.object({
   id: z.string().min(1),
@@ -81,7 +85,10 @@ export type BaseResponse = z.infer<typeof BaseResponseSchema>;
 export type ErrorResponse = z.infer<typeof ErrorResponseSchema>;
 export type SuccessResponse = z.infer<typeof SuccessResponseSchema>;
 export type Pagination = z.infer<typeof PaginationSchema>;
-export type PaginatedResponse = z.infer<typeof PaginatedResponseSchema>;
+export type PaginatedResponse<T = unknown> = {
+  items: T[];
+  pagination: Pagination;
+};
 export type IdParam = z.infer<typeof IdParamSchema>;
 export type Timestamp = z.infer<typeof TimestampSchema>;
 export type Timestamps = z.infer<typeof TimestampsSchema>;

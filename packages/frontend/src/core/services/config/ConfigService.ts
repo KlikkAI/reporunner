@@ -19,6 +19,13 @@ interface FeatureFlags {
   enableDevTools: boolean;
 }
 
+interface ApiConfig {
+  baseUrl: string;
+  timeout: number;
+  retryAttempts: number;
+  retryDelay: number;
+}
+
 interface Config {
   logLevel: LogLevel;
   apiUrl: string;
@@ -27,6 +34,7 @@ interface Config {
   logging: LoggingConfig;
   features: FeatureFlags;
   environment: 'development' | 'staging' | 'production';
+  api: ApiConfig;
 }
 
 class ConfigService {
@@ -37,13 +45,20 @@ class ConfigService {
     const isDev = import.meta.env.DEV;
     const environment = (import.meta.env.VITE_ENVIRONMENT as Config['environment']) ||
                        (isDev ? 'development' : 'production');
+    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
     this.config = {
       logLevel,
-      apiUrl: import.meta.env.VITE_API_URL || 'http://localhost:5000',
+      apiUrl,
       isDevelopment: isDev,
       version: import.meta.env.VITE_APP_VERSION || '1.0.0',
       environment,
+      api: {
+        baseUrl: apiUrl,
+        timeout: Number.parseInt(import.meta.env.VITE_API_TIMEOUT || '30000', 10),
+        retryAttempts: Number.parseInt(import.meta.env.VITE_API_RETRY_ATTEMPTS || '3', 10),
+        retryDelay: Number.parseInt(import.meta.env.VITE_API_RETRY_DELAY || '1000', 10),
+      },
       logging: {
         level: logLevel,
         enableConsole: true,
@@ -99,4 +114,4 @@ class ConfigService {
 }
 
 export const configService = new ConfigService();
-export type { Config, FeatureFlags, LoggingConfig };
+export type { Config, FeatureFlags, LoggingConfig, ApiConfig };
