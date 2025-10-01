@@ -1,8 +1,16 @@
 import type { Request, Response } from 'express';
+import type { IUser } from '@reporunner/types';
 import { BaseController } from '../../../base/BaseController';
 import { AppError } from '../../../middleware/errorHandlers';
 import { logger } from '../../../utils/logger';
 import { AuthService } from '../services/AuthService';
+
+/**
+ * Authenticated request with user information
+ */
+export interface AuthenticatedRequest extends Request {
+  user?: Pick<IUser, 'id' | 'email' | 'role'>;
+}
 
 export class AuthController extends BaseController {
   private authService: AuthService;
@@ -97,8 +105,8 @@ export class AuthController extends BaseController {
   /**
    * Update user profile
    */
-  updateProfile = async (req: Request, res: Response) => {
-    const userId = (req as any).user?.id;
+  updateProfile = async (req: AuthenticatedRequest, res: Response) => {
+    const userId = req.user?.id;
     if (!userId) {
       throw new AppError('Not authenticated', 401);
     }
@@ -112,8 +120,8 @@ export class AuthController extends BaseController {
   /**
    * Change user password
    */
-  changePassword = async (req: Request, res: Response) => {
-    const userId = (req as any).user?.id;
+  changePassword = async (req: AuthenticatedRequest, res: Response) => {
+    const userId = req.user?.id;
     if (!userId) {
       throw new AppError('Not authenticated', 401);
     }

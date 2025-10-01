@@ -12,9 +12,9 @@ export { SharedDataVisualizationPanel } from './components/data/SharedDataVisual
 export { BasePropertyRenderer } from './components/form/BasePropertyRenderer';
 // Re-export existing components
 export { JsonViewer } from './components/JsonViewer';
-export { VirtualizedList } from './components/VirtualizedList';
 // Layout Components
 export { BasePage, PageSection, StatsCard } from './components/layout/BasePage';
+export { VirtualizedList } from './components/VirtualizedList';
 export * from './factories/ComponentFactory';
 export * from './factories/PropertyRendererFactory';
 export * from './generators';

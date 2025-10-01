@@ -35,7 +35,7 @@ export abstract class BaseController {
   /**
    * Send success response
    */
-  protected sendSuccess<T>(res: Response, data?: T, message?: string, meta?: any): void {
+  protected sendSuccess<T>(res: Response, data?: T, message?: string, meta?: Record<string, unknown>): void {
     const response: IApiResponse<T> = {
       success: true,
       ...(message && { message }),

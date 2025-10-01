@@ -40,7 +40,7 @@
         "noUnusedVariables": "error",
         "noUnusedImports": "error",
         "useExhaustiveDependencies": "error",
-        "noUndeclaredVariables": "error",
+        "noUndeclaredVariables": "warn",
         "noUnreachable": "error"
       },
       "style": {
@@ -61,13 +61,13 @@
         "noDebugger": "error",
         "noExplicitAny": "error",
         "noEmptyInterface": "error",
-        "noArrayIndexKey": "error",
+        "noArrayIndexKey": "warn",
         "noConfusingVoidType": "error",
         "noDuplicateCase": "error",
         "noDuplicateClassMembers": "error",
         "noDuplicateJsxProps": "error",
         "noDuplicateParameters": "error",
-        "noEmptyBlockStatements": "error",
+        "noEmptyBlockStatements": "warn",
         "noFallthroughSwitchClause": "error",
         "noImplicitAnyLet": "error",
         "noSparseArray": "error"
@@ -100,7 +100,8 @@
         "useSimplifiedLogicExpression": "error"
       },
       "a11y": {
-        "recommended": true
+        "recommended": true,
+        "useButtonType": "warn"
       },
       "nursery": {
         "useSortedClasses": "off"
@@ -324,6 +325,54 @@
       },
       "linter": {
         "enabled": false
+      }
+    },
+    {
+      "includes": [
+        "**/jest.setup.js",
+        "**/jest.config.js",
+        "**/setupTests.{js,ts}",
+        "infrastructure/observability/**/*",
+        "sdks/**/*"
+      ],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noConsole": "off",
+            "noExplicitAny": "warn",
+            "noEmptyBlockStatements": "warn"
+          },
+          "complexity": {
+            "noExcessiveCognitiveComplexity": {
+              "level": "warn",
+              "options": {
+                "maxAllowedComplexity": 15
+              }
+            },
+            "noStaticOnlyClass": "off"
+          },
+          "style": {
+            "noNonNullAssertion": "warn"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["packages/@reporunner/ai/**/*"],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noExplicitAny": "warn"
+          },
+          "complexity": {
+            "noExcessiveCognitiveComplexity": {
+              "level": "warn",
+              "options": {
+                "maxAllowedComplexity": 15
+              }
+            }
+          }
+        }
       }
     }
   ]

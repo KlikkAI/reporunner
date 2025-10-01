@@ -6,7 +6,7 @@
 import { useEffect, useState } from 'react';
 import type { NodeTheme } from '../types';
 import { defaultTheme } from './defaultTheme';
-import { themeManager, ThemeManager } from './ThemeManager';
+import { ThemeManager, themeManager } from './ThemeManager';
 
 export { darkTheme } from './darkTheme';
 export { defaultTheme } from './defaultTheme';

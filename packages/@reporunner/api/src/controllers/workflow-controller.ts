@@ -1,6 +1,6 @@
+import type { IExecution, Workflow } from '@reporunner/api-types';
 import { CrudControllerBase } from '@reporunner/shared';
 import type { Request, Response } from 'express';
-import type { IExecution, Workflow } from '@reporunner/api-types';
 import { injectable } from 'inversify';
 
 @injectable()

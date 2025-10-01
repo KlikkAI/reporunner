@@ -6,6 +6,24 @@ import type { Response } from 'express';
 import { HTTP_STATUS } from '../constants/httpStatus';
 import type { IApiResponse, IPaginationResult } from '../types/common';
 
+/**
+ * Validation error structure
+ */
+export interface IValidationError {
+  field: string;
+  message: string;
+  value?: unknown;
+}
+
+/**
+ * Error details structure
+ */
+export interface IErrorDetails {
+  stack?: string;
+  code?: string;
+  context?: Record<string, unknown>;
+}
+
 export class ResponseUtils {
   /**
    * Send success response
@@ -39,7 +57,7 @@ export class ResponseUtils {
     res: Response,
     message: string,
     statusCode: number = HTTP_STATUS.INTERNAL_SERVER_ERROR,
-    details?: any
+    details?: IErrorDetails
   ): Response {
     const response: IApiResponse = {
       success: false,
@@ -124,10 +142,13 @@ export class ResponseUtils {
   /**
    * Send validation error response
    */
-  static validationError(res: Response, errors: any[]): Response {
+  static validationError(res: Response, errors: IValidationError[] | string[]): Response {
+    const errorMessages = errors.map((err) =>
+      typeof err === 'string' ? err : `${err.field}: ${err.message}`
+    );
     return ResponseUtils.fail(
       res,
-      `Validation failed: ${errors.join(', ')}`,
+      `Validation failed: ${errorMessages.join(', ')}`,
       HTTP_STATUS.UNPROCESSABLE_ENTITY
     );
   }
@@ -145,7 +166,7 @@ export class ApiResponse {
     };
   }
 
-  static error(message: string, statusCode?: number, details?: any) {
+  static error(message: string, statusCode?: number, details?: IErrorDetails) {
     return {
       success: false,
       message,

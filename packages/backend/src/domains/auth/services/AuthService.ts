@@ -3,6 +3,13 @@
  * TODO: Implement authentication logic
  */
 
+import type {
+  IAuthToken,
+  IRegistrationData,
+  IUser,
+  IUserProfile,
+} from '@reporunner/types';
+
 export class AuthService {
   private static instance: AuthService;
 
@@ -15,27 +22,27 @@ export class AuthService {
     return AuthService.instance;
   }
 
-  async register(_userData: any): Promise<any> {
+  async register(_userData: IRegistrationData): Promise<{ user: IUser; token: IAuthToken }> {
     // TODO: Implement user registration
     throw new Error('User registration not yet implemented');
   }
 
-  async login(_email: string, _password: string): Promise<any> {
+  async login(_email: string, _password: string): Promise<{ user: IUser; token: IAuthToken }> {
     // TODO: Implement user login
     throw new Error('User login not yet implemented');
   }
 
-  async refreshToken(_token: string): Promise<any> {
+  async refreshToken(_token: string): Promise<IAuthToken> {
     // TODO: Implement token refresh
     throw new Error('Token refresh not yet implemented');
   }
 
-  async getUserProfile(_userId: string): Promise<any> {
+  async getUserProfile(_userId: string): Promise<IUserProfile> {
     // TODO: Implement get user profile
     throw new Error('Get user profile not yet implemented');
   }
 
-  async updateProfile(_userId: string, _updates: any): Promise<any> {
+  async updateProfile(_userId: string, _updates: Partial<IUser>): Promise<IUser> {
     // TODO: Implement profile update
     throw new Error('Profile update not yet implemented');
   }

@@ -17,9 +17,6 @@ interface TokenServiceInterface {
 }
 
 export class JWTTokenService implements TokenServiceInterface {
-  // @ts-ignore - Config stored for future JWT implementation
-  private config: any;
-
   constructor(config?: any) {
     this.config = config;
   }

@@ -50,7 +50,6 @@ export interface AuthPayload {
 }
 
 export class AuthMiddleware {
-  private permissionService: any;
   private userRepository: UserRepository;
 
   constructor() {

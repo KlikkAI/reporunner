@@ -27,7 +27,7 @@ export class ConfigService {
     return value;
   }
 
-  getDatabaseConfig(): any {
+  getDatabaseConfig(): { uri: string; dbName: string } {
     // TODO: Implement database configuration
     return {
       uri: this.get('MONGODB_URI') || 'mongodb://localhost:27017/reporunner',

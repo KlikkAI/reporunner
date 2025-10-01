@@ -20,9 +20,8 @@ export { default as EmailOutputPanel } from './EmailOutputPanel';
 export { default as EnhancedPropertyRenderer } from './EnhancedPropertyRenderer';
 export { default as ExecutionPanel } from './ExecutionPanel';
 export { default as ExecutionToolbar } from './ExecutionToolbar';
+// Re-export main WorkflowEditor component as default
+export { default } from './index.tsx';
 export { default as NodePropertyPanel } from './NodePropertyPanel';
 export { default as SchedulingPanel } from './SchedulingPanel';
 export { default as TriggerPanel } from './TriggerPanel';
-
-// Re-export main WorkflowEditor component as default
-export { default } from './index.tsx';

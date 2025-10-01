@@ -1,4 +1,5 @@
 import type { ApiResponse, ExecutionResult, WorkflowDefinition } from '@reporunner/core';
+import type { ICredential } from '@reporunner/types';
 import axios, { type AxiosInstance } from 'axios';
 import { WebSocketClient } from './WebSocketClient.js';
 
@@ -102,7 +103,7 @@ export class ReporunnerClient {
   }
 
   // Workflow Execution
-  async executeWorkflow(id: string, input?: Record<string, any>): Promise<ExecutionResult> {
+  async executeWorkflow(id: string, input?: Record<string, unknown>): Promise<ExecutionResult> {
     const response = await this.http.post<ApiResponse<ExecutionResult>>(
       `/api/workflows/${id}/execute`,
       { input }
@@ -134,21 +135,21 @@ export class ReporunnerClient {
   }
 
   // Credential Management
-  async getCredentials(): Promise<any[]> {
-    const response = await this.http.get<ApiResponse<any[]>>('/api/credentials');
+  async getCredentials(): Promise<ICredential[]> {
+    const response = await this.http.get<ApiResponse<ICredential[]>>('/api/credentials');
     return response.data.data || [];
   }
 
-  async createCredential(credential: any): Promise<any> {
-    const response = await this.http.post<ApiResponse<any>>('/api/credentials', credential);
+  async createCredential(credential: Omit<ICredential, 'id' | 'createdAt' | 'updatedAt'>): Promise<ICredential> {
+    const response = await this.http.post<ApiResponse<ICredential>>('/api/credentials', credential);
     if (!response.data.data) {
       throw new Error('Failed to create credential');
     }
     return response.data.data;
   }
 
-  async updateCredential(id: string, credential: any): Promise<any> {
-    const response = await this.http.put<ApiResponse<any>>(`/api/credentials/${id}`, credential);
+  async updateCredential(id: string, credential: Partial<ICredential>): Promise<ICredential> {
+    const response = await this.http.put<ApiResponse<ICredential>>(`/api/credentials/${id}`, credential);
     if (!response.data.data) {
       throw new Error(`Failed to update credential ${id}`);
     }

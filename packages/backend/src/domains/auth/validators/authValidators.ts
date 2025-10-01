@@ -1,4 +1,5 @@
 import { BaseValidationMiddleware } from '@reporunner/core';
+import type { Request, Response, NextFunction } from 'express';
 import { z } from 'zod';
 
 /**
@@ -103,7 +104,7 @@ export const validateUserRegistration = BaseValidationMiddleware.validateRequest
 });
 
 // Example of custom validation combining multiple schemas
-export const validateCompleteUserSetup = (req: any, res: any, next: any) => {
+export const validateCompleteUserSetup = (req: Request, res: Response, next: NextFunction): void => {
   const profileResult = BaseValidationMiddleware.validateData(
     req.body.profile,
     UpdateProfileSchema

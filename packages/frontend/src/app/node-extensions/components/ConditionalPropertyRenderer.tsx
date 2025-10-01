@@ -3,7 +3,8 @@
  * Advanced displayOptions evaluation matching n8n's complex conditional logic
  */
 
-import React, { useMemo } from 'react';
+import type React from 'react';
+import { useMemo } from 'react';
 import type { INodeProperty } from '@/core/nodes/types';
 import type {
   PropertyEvaluationContext,

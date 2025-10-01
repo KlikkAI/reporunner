@@ -8,8 +8,8 @@
  */
 
 import type React from 'react';
-import { BasePage, PageSection, StatsCard } from '../components/layout/BasePage';
 import { ResponsiveGrid, SectionLayout } from '../components/DynamicLayout';
+import { BasePage, PageSection, StatsCard } from '../components/layout/BasePage';
 import { UniversalForm } from '../components/UniversalForm';
 import type { PropertyRendererConfig } from '../factories/PropertyRendererFactory';
 
