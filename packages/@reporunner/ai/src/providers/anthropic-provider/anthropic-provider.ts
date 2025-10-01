@@ -30,12 +30,18 @@ export class AnthropicProvider extends CombinedAIProvider {
   ];
 
   private apiKey: string;
+  private _baseUrl: string;
+  private _anthropicVersion: string;
 
   constructor(config: AnthropicConfig) {
     super(config);
     this.apiKey = config.apiKey;
     this._baseUrl = config.baseUrl || 'https://api.anthropic.com';
     this._anthropicVersion = config.anthropicVersion || '2023-06-01';
+
+    // Suppress unused variable warnings - will be used in future implementation
+    void this._baseUrl;
+    void this._anthropicVersion;
   }
 
   async validateConfig(): Promise<boolean> {

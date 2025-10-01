@@ -9,8 +9,11 @@ import dotenv from 'dotenv';
 // Load environment variables
 dotenv.config();
 
+// Import routes
+import authRoutes from './domains/auth/routes/authRoutes.js';
+
 const app = express();
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 5000;
 
 // Middleware
 app.use(helmet());
@@ -33,6 +36,9 @@ app.get('/health', (_req, res) => {
     service: '@reporunner/backend',
   });
 });
+
+// Register auth routes
+app.use('/auth', authRoutes);
 
 // API routes placeholder
 app.get('/api', (_req, res) => {

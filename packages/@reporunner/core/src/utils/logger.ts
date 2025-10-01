@@ -66,10 +66,13 @@ export class Logger {
 
     // Console logging
     if (this.options.enableConsole) {
-      // @ts-expect-error - Variables stored for future console output implementation
+      // Variables stored for future console output implementation
       const _consoleMethod = level === 'error' ? 'error' : level === 'warn' ? 'warn' : 'log';
-      // @ts-expect-error - Prefix stored for future console output implementation
       const _prefix = `${entry.timestamp} ${level.toUpperCase()}:`;
+
+      // Suppress unused variable warnings - these will be used in future implementation
+      void _consoleMethod;
+      void _prefix;
 
       if (context) {
         // TODO: Implement context logging

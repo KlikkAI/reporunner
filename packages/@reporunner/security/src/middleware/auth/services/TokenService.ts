@@ -17,8 +17,12 @@ interface TokenServiceInterface {
 }
 
 export class JWTTokenService implements TokenServiceInterface {
+  private config?: any;
+
   constructor(config?: any) {
     this.config = config;
+    // Suppress unused variable warning - will be used in future JWT implementation
+    void this.config;
   }
 
   async generateToken(payload: TokenPayload): Promise<string> {
