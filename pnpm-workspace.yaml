@@ -15,7 +15,7 @@ auditConfig:
 catalog:
   '@ant-design/icons': ^6.0.0
   '@anthropic-ai/sdk': ^0.57.0
-  '@biomejs/biome': ^2.2.4
+  '@biomejs/biome': ^2.2.5
   '@langchain/core': ^0.3.26
   '@reactflow/background': ^11.3.14
   '@reactflow/controls': ^11.2.14
@@ -28,7 +28,7 @@ catalog:
   '@types/jest': ^29.5.3
   '@types/jsonwebtoken': ^9.0.5
   '@types/lodash': ^4.17.20
-  '@types/node': ^24.0.13
+  '@types/node': ^24.6.2
   '@types/react': ^19.1.8
   '@types/react-dom': ^19.1.6
   '@types/supertest': ^6.0.2
@@ -65,7 +65,7 @@ catalog:
   tsup: ^8.5.0
   tsx: ^4.7.0
   turbo: ^2.5.6
-  typescript: ^5.8.3
+  typescript: ^5.9.3
   vite: ^7.0.4
   vitest: ^3.2.4
   winston: ^3.11.0

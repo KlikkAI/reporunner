@@ -8,7 +8,7 @@
  * - Initializing test utilities
  */
 
-import { beforeAll, afterAll, beforeEach, afterEach } from 'vitest';
+import { afterAll, beforeAll } from 'vitest';
 
 // Set NODE_ENV to test
 process.env.NODE_ENV = 'test';
@@ -27,7 +27,9 @@ beforeAll(() => {
 
   // Set global timeout
   if (typeof global.setTimeout !== 'undefined') {
-    global.setTimeout(() => {}, GLOBAL_TIMEOUT);
+    global.setTimeout(() => {
+      // Intentional no-op for timeout
+    }, GLOBAL_TIMEOUT);
   }
 
   console.log('✅ Global test setup complete\n');
@@ -44,25 +46,33 @@ afterAll(() => {
   console.log('✅ Global test cleanup complete');
 });
 
-beforeEach(() => {
-  // Reset mocks before each test
-  // Reset test state
-});
+// beforeEach(() => {
+//   // Reset mocks before each test
+//   // Reset test state
+// });
 
-afterEach(() => {
-  // Cleanup after each test
-  // Clear timers
-  // Reset modules
-});
+// afterEach(() => {
+//   // Cleanup after each test
+//   // Clear timers
+//   // Reset modules
+// });
 
 // Suppress console logs during tests (optional)
 if (process.env.SUPPRESS_TEST_LOGS === 'true') {
   global.console = {
     ...console,
-    log: () => {},
-    debug: () => {},
-    info: () => {},
-    warn: () => {},
+    log: () => {
+      /* Intentionally suppressed */
+    },
+    debug: () => {
+      /* Intentionally suppressed */
+    },
+    info: () => {
+      /* Intentionally suppressed */
+    },
+    warn: () => {
+      /* Intentionally suppressed */
+    },
   };
 }
 

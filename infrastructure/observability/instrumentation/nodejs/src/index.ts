@@ -15,6 +15,7 @@ import { JaegerExporter, JaegerPropagator } from '@opentelemetry/exporter-jaeger
 import { OTLPMetricExporter } from '@opentelemetry/exporter-metrics-otlp-http';
 import { PrometheusExporter } from '@opentelemetry/exporter-prometheus';
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
+import type { Instrumentation } from '@opentelemetry/instrumentation';
 import { ExpressInstrumentation } from '@opentelemetry/instrumentation-express';
 import { HttpInstrumentation } from '@opentelemetry/instrumentation-http';
 import { IORedisInstrumentation } from '@opentelemetry/instrumentation-ioredis';
@@ -27,6 +28,7 @@ import { gcpDetector } from '@opentelemetry/resource-detector-gcp';
 import { Resource } from '@opentelemetry/resources';
 import { NodeSDK } from '@opentelemetry/sdk-node';
 import { SemanticResourceAttributes } from '@opentelemetry/semantic-conventions';
+import type { NextFunction, Request, Response } from 'express';
 
 export interface InstrumentationConfig {
   serviceName: string;
@@ -58,7 +60,7 @@ export interface InstrumentationConfig {
     enabled?: boolean;
     correlation?: boolean;
   };
-  customInstrumentations?: any[];
+  customInstrumentations?: Instrumentation[];
 }
 
 export class ReporunnerInstrumentation {
@@ -108,8 +110,8 @@ export class ReporunnerInstrumentation {
     // Create resource with service information
     const resource = new Resource({
       [SemanticResourceAttributes.SERVICE_NAME]: this.config.serviceName,
-      [SemanticResourceAttributes.SERVICE_VERSION]: this.config.serviceVersion!,
-      [SemanticResourceAttributes.DEPLOYMENT_ENVIRONMENT]: this.config.environment!,
+      [SemanticResourceAttributes.SERVICE_VERSION]: this.config.serviceVersion || '1.0.0',
+      [SemanticResourceAttributes.DEPLOYMENT_ENVIRONMENT]: this.config.environment || 'development',
       [SemanticResourceAttributes.SERVICE_NAMESPACE]: 'reporunner',
       'reporunner.component': this.getComponentType(),
     });
@@ -328,7 +330,7 @@ export function reporunnerTracingMiddleware(
     excludePaths = ['/health', '/metrics'],
   } = options;
 
-  return (req: any, res: any, next: any) => {
+  return (req: Request, res: Response, next: NextFunction) => {
     // Skip excluded paths
     if (excludePaths.some((path) => req.path.startsWith(path))) {
       return next();
@@ -355,7 +357,7 @@ export function reporunnerTracingMiddleware(
 
       // Add response attributes
       const originalSend = res.send;
-      res.send = function (body: any) {
+      res.send = function (body: unknown) {
         span.setAttributes({
           'reporunner.response.status': res.statusCode,
           'reporunner.response.size': Buffer.byteLength(body || ''),
