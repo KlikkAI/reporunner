@@ -5,23 +5,53 @@ Welcome to the Reporunner documentation hub. This directory contains comprehensi
 ## 📁 Documentation Structure
 
 ### 📋 [Project Planning](./project-planning/)
-Strategic documentation and active development planning:
-- **Active Roadmap** - Current development priorities and future plans
-- **Infrastructure Scaling Roadmap** - Enterprise scaling plans
-- **Integration Ecosystem Plan** - 50+ planned integrations
+Strategic documentation and active development planning ([View Full Index](./project-planning/INDEX.md)):
+
+#### 🗺️ [Roadmaps](./project-planning/roadmaps/)
+- **Active Roadmap** - Current development priorities and active sprints
+- **Infrastructure Scaling Roadmap** - Enterprise scaling strategies
+- **Integration Ecosystem Plan** - 50+ planned integrations across tiers
 - **Advanced Features Roadmap** - Future platform capabilities
-- **LLM Implementation Guide** - AI/ML integration strategies
-- **Enterprise Architecture** - System architecture and scaling
-- **Agents Documentation** - AI agent system design
+
+#### 🏗️ [Architecture](./project-planning/architecture/)
+- **Enterprise Architecture** - Microservices design and system architecture
+- **Agents Documentation** - AI agent system architecture and patterns
+
+#### 📖 [Guides](./project-planning/guides/)
+- **LLM Implementation Guide** - Structured development approach for AI
 - **SDK Comparison** - Multi-language SDK development planning
 
+#### 📊 [Diagrams](./project-planning/diagrams/)
+- **API Diagrams** - Authentication flows and endpoint sequences
+- **Architecture Diagrams** - System components and microservices
+- **Workflow Diagrams** - Execution flows and node sequences
+
 ### 📚 [History](./history/)
-Historical documentation and transformation records:
-- **Project History** - Comprehensive development timeline and major transformations
-- **Duplication Reduction** - Technical details of 95% code reduction achievement
-- **Implemented Features** - Consolidated documentation of completed features (Phases 1-5)
-- **Implementation Status** - Historical implementation tracking
-- **Real-time Collaboration** - Documentation of implemented real-time features
+Historical documentation organized by category ([View Full Index](./history/INDEX.md)):
+
+#### 📦 [Migrations](./history/migrations/)
+- **First Migration Success** - Initial monorepo migration achievements
+- **Frontend Migration Status** - Component reorganization progress
+- **Migration Guide** - Comprehensive migration procedures
+- **Migration Progress Review** - Detailed progress tracking and metrics
+- **Workflow Store Migration** - Zustand store migration documentation
+
+#### 🔐 [Security](./history/security/)
+- **Security Audit Report** - Comprehensive security audit results
+- **Security Fixes Applied** - Remediation steps and verification
+
+#### 📝 [Sessions](./history/sessions/)
+- **Session Summary 2025-09-30** - Daily development logs and progress
+
+#### 🚀 [Sprints](./history/sprints/)
+- **Logger Sprint Complete** - Logger system implementation and refactor
+
+#### 🏗️ Core Historical Documents
+- **Project History** - Complete project timeline and major milestones
+- **Implementation Status** - Overall implementation tracking
+- **Implemented Real-Time Collaboration** - Real-time features documentation
+- **Code Deduplication Guide** - Deduplication strategies and patterns
+- **Duplication Reduction** - Metrics and achievements (95% reduction)
 
 ### 🔧 [API Documentation](./api/)
 API reference and integration guides:
@@ -49,15 +79,19 @@ User-facing documentation and tutorials:
 ## 📊 Documentation Statistics
 
 - **Active Planning**: 7 documents focused on future development
-- **Historical Records**: 5 documents tracking completed implementations
-- **Coverage Areas**: Active Planning, Historical Records, Architecture
+- **Historical Records**: Organized into 4 categories (migrations, security, sessions, sprints)
+- **Migration Docs**: 5 comprehensive migration guides
+- **Security Docs**: 2 audit and fix reports
+- **Coverage Areas**: Active Planning, Historical Records, Architecture, Security
 - **Organized Structure**: Clear separation between active plans and completed work
 
 ## 🔄 Recent Updates
 
-- **September 27, 2025**: Reorganized docs - moved implemented features to history, created active roadmap
-- **September 27, 2025**: Consolidated documentation structure from docs + documentation directories
-- **September 27, 2025**: Created comprehensive project history
+- **October 2, 2025**: Reorganized history documentation into categorized subdirectories
+- **October 2, 2025**: Created comprehensive history INDEX.md for easy navigation
+- **October 2, 2025**: Implemented complete JWT authentication system
+- **October 2, 2025**: Restored login/register pages with full UI/UX
+- **September 27, 2025**: Reorganized docs - moved implemented features to history
 - **September 2025**: Major project optimization (95% file reduction)
 - **September 2025**: Enterprise architecture implementation
 

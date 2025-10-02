@@ -11,15 +11,31 @@ dotenv.config();
 
 // Import routes
 import authRoutes from './domains/auth/routes/authRoutes.js';
+import { DatabaseConfig } from './config/database.js';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+
+// Connect to MongoDB
+const dbConfig = DatabaseConfig.getInstance();
+dbConfig
+  .connect()
+  .then(() => {
+    console.log('✅ MongoDB connected successfully');
+  })
+  .catch((error) => {
+    console.error('❌ MongoDB connection failed:', error);
+    process.exit(1);
+  });
 
 // Middleware
 app.use(helmet());
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+    origin: process.env.CORS_ORIGIN?.split(',') || [
+      'http://localhost:3000',
+      'http://localhost:3002',
+    ],
     credentials: true,
   })
 );
@@ -59,6 +75,9 @@ app.use('*', (_req, res) => {
 });
 
 // Start server
-app.listen(PORT, () => {});
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on port ${PORT}`);
+  console.log(`📍 Environment: ${process.env.NODE_ENV || 'development'}`);
+});
 
 export default app;
