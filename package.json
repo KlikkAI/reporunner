@@ -58,6 +58,8 @@
     "docs": "typedoc",
     "docs:build": "turbo run docs:build",
     "docs:serve": "pnpm docs && cd docs/api && python -m http.server 8080",
+    "openapi:export": "node development/scripts/export-openapi.js",
+    "openapi:export:watch": "nodemon -w packages/@reporunner/api/src -x pnpm openapi:export",
     "start": "pnpm run dev:backend",
     "start:full": "pnpm run dev:full",
     "watch": "turbo run watch --concurrency=30",
