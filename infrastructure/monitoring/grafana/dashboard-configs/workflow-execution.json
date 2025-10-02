@@ -1,0 +1,40 @@
+{
+  "annotations": {"list": []},
+  "editable": true,
+  "panels": [
+    {
+      "type": "timeseries",
+      "title": "Executions Started",
+      "targets": [
+        {"expr": "sum(rate(reporunner_executions_started_total[5m]))", "legendFormat": "started/s"}
+      ],
+      "datasource": {"type": "prometheus", "uid": "PROM_DS"}
+    },
+    {
+      "type": "timeseries",
+      "title": "Executions Succeeded/Failed",
+      "targets": [
+        {"expr": "sum(rate(reporunner_executions_succeeded_total[5m]))", "legendFormat": "success/s"},
+        {"expr": "sum(rate(reporunner_executions_failed_total[5m]))", "legendFormat": "failed/s"}
+      ],
+      "datasource": {"type": "prometheus", "uid": "PROM_DS"}
+    },
+    {
+      "type": "timeseries",
+      "title": "Average Execution Duration",
+      "targets": [
+        {"expr": "rate(reporunner_execution_duration_seconds_sum[5m]) / rate(reporunner_execution_duration_seconds_count[5m])", "legendFormat": "avg s"}
+      ],
+      "datasource": {"type": "prometheus", "uid": "PROM_DS"}
+    }
+  ],
+  "refresh": "30s",
+  "schemaVersion": 37,
+  "style": "dark",
+  "tags": ["reporunner", "workflows"],
+  "templating": {"list": []},
+  "time": {"from": "now-6h", "to": "now"},
+  "timezone": "",
+  "title": "Workflow Executions",
+  "version": 1
+}

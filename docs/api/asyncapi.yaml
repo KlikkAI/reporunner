@@ -1,0 +1,95 @@
+asyncapi: '2.6.0'
+info:
+  title: Reporunner Real-time API
+  version: '1.0.0'
+  description: |
+    Socket.IO-based real-time API for workflow collaboration and execution events.
+servers:
+  production:
+    url: wss://api.reporunner.com
+    protocol: wss
+  development:
+    url: ws://localhost:3001
+    protocol: ws
+channels:
+  workflow-events:
+    description: Events scoped to a workflow room: `workflow:{workflowId}`
+    publish:
+      summary: Client emits events to server
+      message:
+        oneOf:
+          - $ref: '#/components/messages/CursorMove'
+          - $ref: '#/components/messages/SelectionChange'
+          - $ref: '#/components/messages/OperationApply'
+    subscribe:
+      summary: Server broadcasts events to clients
+      message:
+        oneOf:
+          - $ref: '#/components/messages/UserJoined'
+          - $ref: '#/components/messages/CursorMoved'
+          - $ref: '#/components/messages/SelectionChanged'
+          - $ref: '#/components/messages/OperationApplied'
+components:
+  messages:
+    CursorMove:
+      name: cursor:move
+      payload:
+        type: object
+        properties:
+          x: { type: number }
+          y: { type: number }
+          nodeId: { type: string, nullable: true }
+    SelectionChange:
+      name: selection:change
+      payload:
+        type: object
+        properties:
+          nodeIds: { type: array, items: { type: string } }
+          edgeIds: { type: array, items: { type: string } }
+    OperationApply:
+      name: operation:apply
+      payload:
+        type: object
+        additionalProperties: true
+    UserJoined:
+      name: user:joined
+      payload:
+        type: object
+        properties:
+          userId: { type: string }
+          userName: { type: string }
+          userColor: { type: string }
+          sessionId: { type: string }
+    CursorMoved:
+      name: cursor:moved
+      payload:
+        type: object
+        properties:
+          userId: { type: string }
+          sessionId: { type: string }
+          cursor:
+            type: object
+            properties:
+              x: { type: number }
+              y: { type: number }
+              nodeId: { type: string, nullable: true }
+    SelectionChanged:
+      name: selection:changed
+      payload:
+        type: object
+        properties:
+          userId: { type: string }
+          sessionId: { type: string }
+          selection:
+            type: object
+            properties:
+              nodeIds: { type: array, items: { type: string } }
+              edgeIds: { type: array, items: { type: string } }
+    OperationApplied:
+      name: operation:applied
+      payload:
+        type: object
+        properties:
+          operation: { type: object, additionalProperties: true }
+          userId: { type: string }
+          timestamp: { type: string, format: date-time }
