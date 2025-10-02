@@ -1,0 +1,466 @@
+{
+  "annotations": {"list": []},
+  "editable": true,
+  "gnetId": null,
+  "graphTooltip": 1,
+  "id": null,
+  "iteration": 1,
+  "links": [],
+  "panels": [
+    {
+      "type": "row",
+      "title": "MongoDB Metrics",
+      "gridPos": {"h": 1, "w": 24, "x": 0, "y": 0},
+      "collapsed": false
+    },
+    {
+      "type": "stat",
+      "title": "MongoDB Connections",
+      "gridPos": {"h": 4, "w": 6, "x": 0, "y": 1},
+      "targets": [
+        {
+          "expr": "mongodb_connections{state=\"current\"}",
+          "legendFormat": "Current",
+          "refId": "A"
+        }
+      ],
+      "datasource": {"type": "prometheus", "uid": "PROM_DS"},
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {"color": "green", "value": null},
+              {"color": "yellow", "value": 80},
+              {"color": "red", "value": 100}
+            ]
+          }
+        }
+      }
+    },
+    {
+      "type": "stat",
+      "title": "MongoDB Operations/sec",
+      "gridPos": {"h": 4, "w": 6, "x": 6, "y": 1},
+      "targets": [
+        {
+          "expr": "rate(mongodb_op_counters_total[5m])",
+          "legendFormat": "{{type}}",
+          "refId": "A"
+        }
+      ],
+      "datasource": {"type": "prometheus", "uid": "PROM_DS"},
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ops",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {"color": "green", "value": null}
+            ]
+          }
+        }
+      }
+    },
+    {
+      "type": "stat",
+      "title": "MongoDB Memory Usage",
+      "gridPos": {"h": 4, "w": 6, "x": 12, "y": 1},
+      "targets": [
+        {
+          "expr": "mongodb_memory{type=\"resident\"} / 1024 / 1024",
+          "legendFormat": "Resident",
+          "refId": "A"
+        }
+      ],
+      "datasource": {"type": "prometheus", "uid": "PROM_DS"},
+      "fieldConfig": {
+        "defaults": {
+          "unit": "decmbytes",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {"color": "green", "value": null},
+              {"color": "yellow", "value": 1024},
+              {"color": "red", "value": 2048}
+            ]
+          }
+        }
+      }
+    },
+    {
+      "type": "stat",
+      "title": "MongoDB Replication Lag",
+      "gridPos": {"h": 4, "w": 6, "x": 18, "y": 1},
+      "targets": [
+        {
+          "expr": "mongodb_mongod_replset_member_replication_lag",
+          "legendFormat": "{{name}}",
+          "refId": "A"
+        }
+      ],
+      "datasource": {"type": "prometheus", "uid": "PROM_DS"},
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {"color": "green", "value": null},
+              {"color": "yellow", "value": 10},
+              {"color": "red", "value": 30}
+            ]
+          }
+        }
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "MongoDB Query Execution Time",
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 5},
+      "targets": [
+        {
+          "expr": "rate(mongodb_mongod_metrics_query_executor_total[5m])",
+          "legendFormat": "{{state}}",
+          "refId": "A"
+        }
+      ],
+      "datasource": {"type": "prometheus", "uid": "PROM_DS"},
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ops",
+          "color": {"mode": "palette-classic"}
+        }
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "MongoDB Document Operations",
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 5},
+      "targets": [
+        {
+          "expr": "rate(mongodb_mongod_metrics_document_total[5m])",
+          "legendFormat": "{{state}}",
+          "refId": "A"
+        }
+      ],
+      "datasource": {"type": "prometheus", "uid": "PROM_DS"},
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ops",
+          "color": {"mode": "palette-classic"}
+        }
+      }
+    },
+    {
+      "type": "row",
+      "title": "PostgreSQL Metrics",
+      "gridPos": {"h": 1, "w": 24, "x": 0, "y": 13},
+      "collapsed": false
+    },
+    {
+      "type": "stat",
+      "title": "PostgreSQL Active Connections",
+      "gridPos": {"h": 4, "w": 6, "x": 0, "y": 14},
+      "targets": [
+        {
+          "expr": "pg_stat_activity_count{state=\"active\"}",
+          "legendFormat": "Active",
+          "refId": "A"
+        }
+      ],
+      "datasource": {"type": "prometheus", "uid": "PROM_DS"},
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {"color": "green", "value": null},
+              {"color": "yellow", "value": 50},
+              {"color": "red", "value": 80}
+            ]
+          }
+        }
+      }
+    },
+    {
+      "type": "stat",
+      "title": "PostgreSQL TPS",
+      "gridPos": {"h": 4, "w": 6, "x": 6, "y": 14},
+      "targets": [
+        {
+          "expr": "rate(pg_stat_database_xact_commit[5m]) + rate(pg_stat_database_xact_rollback[5m])",
+          "legendFormat": "TPS",
+          "refId": "A"
+        }
+      ],
+      "datasource": {"type": "prometheus", "uid": "PROM_DS"},
+      "fieldConfig": {
+        "defaults": {
+          "unit": "tps",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {"color": "green", "value": null}
+            ]
+          }
+        }
+      }
+    },
+    {
+      "type": "stat",
+      "title": "PostgreSQL Cache Hit Ratio",
+      "gridPos": {"h": 4, "w": 6, "x": 12, "y": 14},
+      "targets": [
+        {
+          "expr": "avg(rate(pg_stat_database_blks_hit[5m]) / (rate(pg_stat_database_blks_hit[5m]) + rate(pg_stat_database_blks_read[5m]))) * 100",
+          "legendFormat": "Hit %",
+          "refId": "A"
+        }
+      ],
+      "datasource": {"type": "prometheus", "uid": "PROM_DS"},
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {"color": "red", "value": null},
+              {"color": "yellow", "value": 90},
+              {"color": "green", "value": 95}
+            ]
+          }
+        }
+      }
+    },
+    {
+      "type": "stat",
+      "title": "PostgreSQL Deadlocks",
+      "gridPos": {"h": 4, "w": 6, "x": 18, "y": 14},
+      "targets": [
+        {
+          "expr": "rate(pg_stat_database_deadlocks[5m])",
+          "legendFormat": "Deadlocks/s",
+          "refId": "A"
+        }
+      ],
+      "datasource": {"type": "prometheus", "uid": "PROM_DS"},
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {"color": "green", "value": 0},
+              {"color": "yellow", "value": 1},
+              {"color": "red", "value": 5}
+            ]
+          }
+        }
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "PostgreSQL Query Duration",
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 18},
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, rate(pg_stat_statements_mean_time_seconds_bucket[5m]))",
+          "legendFormat": "p95",
+          "refId": "A"
+        },
+        {
+          "expr": "histogram_quantile(0.99, rate(pg_stat_statements_mean_time_seconds_bucket[5m]))",
+          "legendFormat": "p99",
+          "refId": "B"
+        }
+      ],
+      "datasource": {"type": "prometheus", "uid": "PROM_DS"},
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "color": {"mode": "palette-classic"}
+        }
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "PostgreSQL Database Size",
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 18},
+      "targets": [
+        {
+          "expr": "pg_database_size_bytes / 1024 / 1024",
+          "legendFormat": "{{datname}}",
+          "refId": "A"
+        }
+      ],
+      "datasource": {"type": "prometheus", "uid": "PROM_DS"},
+      "fieldConfig": {
+        "defaults": {
+          "unit": "decmbytes",
+          "color": {"mode": "palette-classic"}
+        }
+      }
+    },
+    {
+      "type": "row",
+      "title": "Redis Metrics",
+      "gridPos": {"h": 1, "w": 24, "x": 0, "y": 26},
+      "collapsed": false
+    },
+    {
+      "type": "stat",
+      "title": "Redis Connected Clients",
+      "gridPos": {"h": 4, "w": 6, "x": 0, "y": 27},
+      "targets": [
+        {
+          "expr": "redis_connected_clients",
+          "legendFormat": "Clients",
+          "refId": "A"
+        }
+      ],
+      "datasource": {"type": "prometheus", "uid": "PROM_DS"},
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {"color": "green", "value": null},
+              {"color": "yellow", "value": 100},
+              {"color": "red", "value": 500}
+            ]
+          }
+        }
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Redis Memory Usage",
+      "gridPos": {"h": 4, "w": 6, "x": 6, "y": 27},
+      "targets": [
+        {
+          "expr": "redis_memory_used_bytes / 1024 / 1024",
+          "legendFormat": "Used",
+          "refId": "A"
+        }
+      ],
+      "datasource": {"type": "prometheus", "uid": "PROM_DS"},
+      "fieldConfig": {
+        "defaults": {
+          "unit": "decmbytes",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {"color": "green", "value": null},
+              {"color": "yellow", "value": 512},
+              {"color": "red", "value": 1024}
+            ]
+          }
+        }
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Redis Hit Rate",
+      "gridPos": {"h": 4, "w": 6, "x": 12, "y": 27},
+      "targets": [
+        {
+          "expr": "redis_keyspace_hits_total / (redis_keyspace_hits_total + redis_keyspace_misses_total) * 100",
+          "legendFormat": "Hit %",
+          "refId": "A"
+        }
+      ],
+      "datasource": {"type": "prometheus", "uid": "PROM_DS"},
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {"color": "red", "value": null},
+              {"color": "yellow", "value": 80},
+              {"color": "green", "value": 90}
+            ]
+          }
+        }
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Redis Evicted Keys",
+      "gridPos": {"h": 4, "w": 6, "x": 18, "y": 27},
+      "targets": [
+        {
+          "expr": "rate(redis_evicted_keys_total[5m])",
+          "legendFormat": "Evictions/s",
+          "refId": "A"
+        }
+      ],
+      "datasource": {"type": "prometheus", "uid": "PROM_DS"},
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {"color": "green", "value": 0},
+              {"color": "yellow", "value": 10},
+              {"color": "red", "value": 100}
+            ]
+          }
+        }
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "Redis Commands/sec",
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 31},
+      "targets": [
+        {
+          "expr": "rate(redis_commands_processed_total[5m])",
+          "legendFormat": "Commands",
+          "refId": "A"
+        }
+      ],
+      "datasource": {"type": "prometheus", "uid": "PROM_DS"},
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ops",
+          "color": {"mode": "palette-classic"}
+        }
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "Redis Keys by Database",
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 31},
+      "targets": [
+        {
+          "expr": "redis_db_keys",
+          "legendFormat": "db{{db}}",
+          "refId": "A"
+        }
+      ],
+      "datasource": {"type": "prometheus", "uid": "PROM_DS"},
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "color": {"mode": "palette-classic"}
+        }
+      }
+    }
+  ],
+  "refresh": "30s",
+  "schemaVersion": 37,
+  "style": "dark",
+  "tags": ["reporunner", "database", "mongodb", "postgresql", "redis"],
+  "templating": {"list": []},
+  "time": {"from": "now-6h", "to": "now"},
+  "timezone": "",
+  "title": "Reporunner Database Performance",
+  "uid": "reporunner-database-performance",
+  "version": 1
+}
