@@ -19,7 +19,7 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@reporunner/api-types": "workspace:*",
+    "@reporunner/types": "workspace:*",
     "@reporunner/constants": "workspace:*",
     "@reporunner/database": "workspace:*",
     "@types/winston": "^2.4.4",
@@ -28,13 +28,13 @@
     "ioredis": "^5.5.1",
     "uuid": "^11.0.6",
     "winston": "^3.17.0",
-    "zod": "^3.24.1"
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@types/node": "^22.13.7",
     "@types/uuid": "^10.0.0",
-    "typescript": "^5.3.3",
-    "vitest": "^2.1.9"
+    "typescript": "catalog:",
+    "vitest": "catalog:"
   },
   "engines": {
     "node": ">=18.0.0"

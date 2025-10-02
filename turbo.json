@@ -72,48 +72,6 @@
       "inputs": ["packages/@reporunner/cli/src/**", "packages/@reporunner/cli/package.json"],
       "outputs": ["packages/@reporunner/cli/dist/**"]
     },
-    "build:sdk": {
-      "dependsOn": ["@reporunner/core#build"],
-      "inputs": ["packages/@reporunner/sdk/src/**", "packages/@reporunner/sdk/package.json"],
-      "outputs": ["packages/@reporunner/sdk/dist/**"]
-    },
-    "build:go-sdk": {
-      "dependsOn": ["@reporunner/core#build"],
-      "inputs": ["packages/@reporunner/go-sdk/**/*.go", "packages/@reporunner/go-sdk/go.mod"],
-      "outputs": ["packages/@reporunner/go-sdk/dist/**"]
-    },
-    "build:rust-sdk": {
-      "dependsOn": ["@reporunner/core#build"],
-      "inputs": [
-        "packages/@reporunner/rust-sdk/src/**",
-        "packages/@reporunner/rust-sdk/Cargo.toml"
-      ],
-      "outputs": ["packages/@reporunner/rust-sdk/target/**"]
-    },
-    "build:java-sdk": {
-      "dependsOn": ["@reporunner/core#build"],
-      "inputs": ["packages/@reporunner/java-sdk/src/**", "packages/@reporunner/java-sdk/pom.xml"],
-      "outputs": ["packages/@reporunner/java-sdk/target/**"]
-    },
-    "build:php-sdk": {
-      "dependsOn": ["@reporunner/core#build"],
-      "inputs": [
-        "packages/@reporunner/php-sdk/src/**",
-        "packages/@reporunner/php-sdk/composer.json"
-      ],
-      "outputs": ["packages/@reporunner/php-sdk/vendor/**"]
-    },
-    "build:dotnet-sdk": {
-      "dependsOn": ["@reporunner/core#build"],
-      "inputs": [
-        "packages/@reporunner/dotnet-sdk/src/**",
-        "packages/@reporunner/dotnet-sdk/src/**/*.csproj"
-      ],
-      "outputs": [
-        "packages/@reporunner/dotnet-sdk/src/**/bin/**",
-        "packages/@reporunner/dotnet-sdk/src/**/obj/**"
-      ]
-    },
     "build:nodes": {
       "dependsOn": ["@reporunner/core#build", "@reporunner/workflow#build"],
       "inputs": [

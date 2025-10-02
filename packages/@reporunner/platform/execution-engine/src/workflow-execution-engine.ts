@@ -7,7 +7,7 @@ import {
   type INodeExecutionData,
   type IWorkflow,
   NodeType,
-} from '@reporunner/api-types';
+} from '@reporunner/types';
 import { ERROR_CODES, EVENTS, SYSTEM } from '@reporunner/constants';
 import type { DatabaseService } from '@reporunner/database';
 import { type Job, Queue, Worker } from 'bullmq';

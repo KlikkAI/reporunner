@@ -20,12 +20,12 @@
     "automation"
   ],
   "dependencies": {
-    "zod": "^3.22.4"
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@types/node": "^20.3.1",
     "rimraf": "^5.0.1",
-    "typescript": "^5.3.3"
+    "typescript": "catalog:"
   },
   "files": [
     "dist",

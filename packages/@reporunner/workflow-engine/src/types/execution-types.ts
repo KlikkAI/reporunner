@@ -1,4 +1,4 @@
-// Execution types reusing patterns from @reporunner/api-types
+// Execution types reusing patterns from @reporunner/types
 export enum ExecutionStatus {
   PENDING = 'pending',
   RUNNING = 'running',

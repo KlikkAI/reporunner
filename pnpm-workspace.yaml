@@ -88,6 +88,9 @@ packageExtensions:
   '@reactflow/minimap':
     peerDependencies:
       reactflow: '*'
+  'openai':
+    peerDependencies:
+      zod: '*'
 
 packageManager: pnpm@9.15.2
 

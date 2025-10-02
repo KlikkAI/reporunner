@@ -5,7 +5,7 @@ import {
   type IRegisterRequest,
   type IUser,
   UserRole,
-} from '@reporunner/api-types';
+} from '@reporunner/types';
 import { AUTH, ERROR_CODES } from '@reporunner/constants';
 import type { DatabaseService } from '@reporunner/database';
 import bcrypt from 'bcrypt';

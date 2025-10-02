@@ -1,0 +1,47 @@
+{
+  "name": "@reporunner/upload",
+  "version": "1.0.0",
+  "description": "File upload handling with validation, storage, and streaming support",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "vitest",
+    "type-check": "tsc --noEmit",
+    "clean": "rimraf dist",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "format": "biome format --write ."
+  },
+  "dependencies": {
+    "@reporunner/types": "workspace:*",
+    "@reporunner/core": "workspace:*",
+    "@reporunner/security": "workspace:*",
+    "multer": "^2.0.2",
+    "zod": "catalog:",
+    "winston": "catalog:"
+  },
+  "devDependencies": {
+    "@types/multer": "^2.0.0",
+    "@types/node": "catalog:",
+    "rimraf": "^6.0.1",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  },
+  "keywords": [
+    "reporunner",
+    "upload",
+    "file",
+    "storage",
+    "multer",
+    "validation"
+  ],
+  "author": "Reporunner Team",
+  "license": "MIT",
+  "files": [
+    "dist",
+    "src",
+    "README.md"
+  ]
+}

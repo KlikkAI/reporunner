@@ -41,7 +41,7 @@
     "framer-motion": "^10.12.16",
     "react-hook-form": "^7.44.2",
     "tailwind-merge": "^1.13.0",
-    "zod": "^3.21.4"
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@storybook/addon-actions": "^7.0.18",

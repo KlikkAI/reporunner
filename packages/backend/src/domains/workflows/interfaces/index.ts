@@ -7,7 +7,7 @@ import type {
   IWorkflowSettings as ApiWorkflowSettings,
   IEdge,
   INode,
-} from '@reporunner/api-types';
+} from '@reporunner/types';
 
 export interface IWorkflow extends ApiWorkflow {
   userId: string;

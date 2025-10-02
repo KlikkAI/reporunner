@@ -1,0 +1,46 @@
+{
+  "name": "@reporunner/real-time",
+  "version": "1.0.0",
+  "description": "Real-time communication with Socket.IO for workflow execution updates",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "vitest",
+    "type-check": "tsc --noEmit",
+    "clean": "rimraf dist",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "format": "biome format --write ."
+  },
+  "dependencies": {
+    "@reporunner/types": "workspace:*",
+    "@reporunner/auth": "workspace:*",
+    "@reporunner/monitoring": "workspace:*",
+    "socket.io": "catalog:",
+    "winston": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "rimraf": "^6.0.1",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  },
+  "keywords": [
+    "reporunner",
+    "real-time",
+    "socket.io",
+    "websocket",
+    "workflow",
+    "updates"
+  ],
+  "author": "Reporunner Team",
+  "license": "MIT",
+  "files": [
+    "dist",
+    "src",
+    "README.md"
+  ]
+}

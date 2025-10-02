@@ -1,4 +1,4 @@
-import { IUser } from '@reporunner/api-types';
+import { IUser } from '@reporunner/types';
 
 declare global {
   namespace Express {

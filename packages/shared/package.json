@@ -13,7 +13,7 @@
     "inversify": "^6.0.1"
   },
   "devDependencies": {
-    "typescript": "^5.8.3",
+    "typescript": "catalog:",
     "rimraf": "^3.0.2"
   }
 }

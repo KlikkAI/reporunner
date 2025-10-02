@@ -37,7 +37,7 @@
     "mustache": "^4.2.0",
     "glob": "^10.3.0",
     "chokidar": "^3.5.0",
-    "zod": "^3.22.0"
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@types/inquirer": "^9.0.0",
