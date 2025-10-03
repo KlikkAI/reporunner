@@ -1,3 +1,2 @@
-export * from './debugging-part1';
-export * from './debugging-part2';
-export * from './debugging-part3';
+// Re-export from consolidated debugging.ts file
+export * from '../debugging';

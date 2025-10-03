@@ -1,5 +1,2 @@
-// TODO: Implement credential type files
-// export * from './credentials-part1';
-// export * from './credentials-part2';
-// export * from './credentials-part3';
-// export * from './credentials-part4';
+// Re-export credential types from the main frontend-credentials file
+export * from '../frontend-credentials';

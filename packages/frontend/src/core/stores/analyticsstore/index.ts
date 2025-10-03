@@ -1,4 +1,2 @@
-export * from './analyticsStore-part1';
-export * from './analyticsStore-part2';
-export * from './analyticsStore-part3';
-export * from './analyticsStore-part4';
+// Re-export from parent directory consolidated file
+export * from '../analyticsStore';

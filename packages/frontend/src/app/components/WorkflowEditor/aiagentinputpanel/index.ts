@@ -1,1 +1,1 @@
-export * from './AIAgentInputPanel';
+export * from '../AIAgentInputPanel';

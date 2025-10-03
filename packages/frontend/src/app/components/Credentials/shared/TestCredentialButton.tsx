@@ -1,5 +1,5 @@
-import { Alert } from '@reporunner/ui/components/base/alert';
-import { cn } from '@reporunner/ui/utils/styles';
+import { Alert } from 'antd';
+import { cn } from '@/design-system';
 import type { TestResult } from './types';
 
 interface TestCredentialButtonProps {
@@ -48,18 +48,19 @@ export const TestCredentialButton = ({
       </button>
 
       {testResult && (
-        <Alert
-          type={testResult.success ? 'success' : 'error'}
-          title={testResult.success ? 'Connection Successful!' : 'Connection Failed'}
-          message={testResult.message}
-          details={
-            testResult.details && (
-              <pre className="text-xs bg-gray-800 p-2 rounded overflow-auto">
-                {JSON.stringify(testResult.details, null, 2)}
-              </pre>
-            )
-          }
-        />
+        <div className="space-y-2">
+          <Alert
+            type={testResult.success ? 'success' : 'error'}
+            message={testResult.success ? 'Connection Successful!' : 'Connection Failed'}
+            description={testResult.message}
+            showIcon
+          />
+          {testResult.details && (
+            <pre className="text-xs bg-gray-800 text-gray-100 p-2 rounded overflow-auto">
+              {JSON.stringify(testResult.details, null, 2)}
+            </pre>
+          )}
+        </div>
       )}
     </div>
   );

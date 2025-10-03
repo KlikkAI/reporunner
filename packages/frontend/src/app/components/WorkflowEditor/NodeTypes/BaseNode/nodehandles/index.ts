@@ -1,1 +1,1 @@
-export * from './NodeHandles';
+export * from '../NodeHandles';

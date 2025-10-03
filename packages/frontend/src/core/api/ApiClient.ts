@@ -3,7 +3,7 @@ import axios from 'axios';
 import type { ZodSchema } from 'zod';
 import { z } from 'zod';
 import type { ApiError, ApiResponse, PaginatedResponse, PaginationParams } from '../schemas';
-import { configService } from '../services/config/ConfigService';
+import { configService } from '../services/ConfigService';
 import { logger } from '../services/LoggingService';
 
 // API Client error types

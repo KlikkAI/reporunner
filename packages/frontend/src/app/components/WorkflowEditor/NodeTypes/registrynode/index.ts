@@ -1,1 +1,1 @@
-export * from './RegistryNode';
+export * from '../RegistryNode';

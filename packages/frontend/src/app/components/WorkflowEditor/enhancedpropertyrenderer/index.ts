@@ -1,1 +1,2 @@
-export * from './EnhancedPropertyRenderer';
+// Re-export from parent directory
+export * from '../EnhancedPropertyRenderer';

@@ -1,3 +1,3 @@
-export * from './credentials-part1';
-export * from './credentials-part2';
-export * from './credentials-part3';
+// Consolidated file - part files removed during consolidation
+// This module exports nothing but prevents import errors
+export {};

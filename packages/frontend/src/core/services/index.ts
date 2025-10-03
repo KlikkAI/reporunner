@@ -1,19 +1,23 @@
-// Core services exports
+/**
+ * Core Frontend Services
+ *
+ * Consolidated from 24 to 6 core services for better maintainability
+ */
 
-// Workflow services
-export * from './advancedTriggerSystem';
+// AI Assistant - User-facing AI features
 export * from './aiAssistantService';
-// AI services
-export * from './aiorchestration';
-// Other services
+
+// Analytics - Client-side analytics and tracking
+export * from './analyticsService';
+
+// Audit - Frontend audit logging (consider moving to backend)
 export * from './auditService';
-export * from './containerConnectionValidator';
-export * from './costOptimizer';
-export * from './enhancedDebuggingService';
+
+// Config - Application configuration
+export * from './ConfigService';
+
+// Logging - Client-side logging (consider moving to backend)
 export * from './LoggingService';
+
+// Performance - Client-side performance monitoring
 export * from './PerformanceService';
-export * from './performanceMonitor';
-export * from './securityService';
-export * from './workflowOptimizer';
-export * from './workflowScheduler';
-export * from './workflowTemplates';

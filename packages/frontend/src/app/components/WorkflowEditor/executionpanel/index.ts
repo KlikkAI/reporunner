@@ -1,1 +1,2 @@
-export * from './ExecutionPanel';
+// Re-export from parent directory
+export * from '../ExecutionPanel';

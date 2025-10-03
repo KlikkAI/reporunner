@@ -1,1 +1,2 @@
-export * from './CredentialModal';
+// Re-export from parent directory
+export * from '../CredentialModal';

@@ -1,4 +1,2 @@
-export * from './WorkflowSchemas-part1';
-export * from './WorkflowSchemas-part2';
-export * from './WorkflowSchemas-part3';
-export * from './WorkflowSchemas-part4';
+// Re-export from parent directory consolidated file
+export * from '../WorkflowSchemas';

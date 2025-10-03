@@ -11,7 +11,7 @@
  * - User action tracking
  */
 
-import { configService, type LogLevel } from './config/ConfigService';
+import { configService, type LogLevel } from './ConfigService';
 
 export interface LogContext {
   userId?: string;

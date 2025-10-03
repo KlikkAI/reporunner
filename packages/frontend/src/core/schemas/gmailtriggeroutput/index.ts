@@ -1,3 +1,3 @@
-export * from './gmailTriggerOutput-part1';
-export * from './gmailTriggerOutput-part2';
-export * from './gmailTriggerOutput-part3';
+// Gmail trigger output types - stub for backward compatibility
+// This was removed during consolidation
+export type GmailTriggerOutput = Record<string, unknown>;

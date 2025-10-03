@@ -1,5 +1,5 @@
-import { Alert } from '@reporunner/ui/components/base/alert';
-import { cn } from '@reporunner/ui/utils/styles';
+import { Alert } from 'antd';
+import { cn } from '@/design-system';
 import { CredentialNameField } from '../shared/CredentialNameField';
 import { GmailSetupSteps } from './GmailSetupSteps';
 
@@ -35,8 +35,9 @@ export const GmailCredentialForm = ({
     <div className="space-y-6">
       <Alert
         type="info"
-        title="Easy Setup!"
-        message="No technical configuration required. We'll connect to Gmail using secure OAuth2 authentication."
+        message="Easy Setup!"
+        description="No technical configuration required. We'll connect to Gmail using secure OAuth2 authentication."
+        showIcon
       />
 
       <GmailSetupSteps />

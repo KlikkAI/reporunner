@@ -1,1 +1,1 @@
-export * from './FeatureShowcase';
+export * from '../FeatureShowcase';

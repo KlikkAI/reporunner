@@ -1,4 +1,3 @@
-export * from './types-part1';
-export * from './types-part2';
-export * from './types-part3';
-export * from './types-part4';
+// Consolidated file - part files removed during consolidation
+// This module exports nothing but prevents import errors
+export {};

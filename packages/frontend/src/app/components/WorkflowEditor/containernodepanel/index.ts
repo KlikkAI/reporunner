@@ -1,1 +1,2 @@
-export * from './ContainerNodePanel';
+// Re-export from parent directory
+export * from '../ContainerNodePanel';

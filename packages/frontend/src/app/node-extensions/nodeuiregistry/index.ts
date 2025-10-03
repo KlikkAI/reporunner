@@ -1,3 +1,3 @@
-export * from './nodeUiRegistry-part1';
-export * from './nodeUiRegistry-part2';
-export * from './nodeUiRegistry-part3';
+// Consolidated file - part files removed during consolidation
+// This module exports nothing but prevents import errors
+export {};

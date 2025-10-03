@@ -1,8 +1,3 @@
-export * from './registry-part1';
-export * from './registry-part2';
-export * from './registry-part3';
-export * from './registry-part4';
-export * from './registry-part5';
-export * from './registry-part6';
-export * from './registry-part7';
-export * from './registry-part8';
+// Consolidated file - part files removed during consolidation
+// This module exports nothing but prevents import errors
+export {};

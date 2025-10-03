@@ -1,1 +1,2 @@
-export * from './CustomEdge';
+// Re-export from parent directory
+export * from '../CustomEdge';

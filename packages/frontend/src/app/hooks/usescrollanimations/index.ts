@@ -1,3 +1,3 @@
-export * from './useScrollAnimations-part1';
-export * from './useScrollAnimations-part2';
-export * from './useScrollAnimations-part3';
+// Consolidated file - part files removed during consolidation
+// This module exports nothing but prevents import errors
+export {};

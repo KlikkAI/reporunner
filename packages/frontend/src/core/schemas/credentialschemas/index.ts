@@ -1,3 +1,2 @@
-export * from './CredentialSchemas-part1';
-export * from './CredentialSchemas-part2';
-export * from './CredentialSchemas-part3';
+// Re-export from parent directory consolidated file
+export * from '../CredentialSchemas';

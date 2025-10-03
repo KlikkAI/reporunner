@@ -1,9 +1,3 @@
-export * from './actions-part1';
-export * from './actions-part2';
-export * from './actions-part3';
-export * from './actions-part4';
-export * from './actions-part5';
-export * from './actions-part6';
-export * from './actions-part7';
-export * from './actions-part8';
-export * from './actions-part9';
+// Consolidated file - part files removed during consolidation
+// This module exports nothing but prevents import errors
+export {};

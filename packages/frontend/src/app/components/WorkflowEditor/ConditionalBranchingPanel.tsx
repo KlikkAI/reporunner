@@ -99,7 +99,7 @@ type ComparisonOperator =
   | 'not_exists';
 
 export const ConditionalBranchingPanel: React.FC<ConditionalBranchingPanelProps> = ({
-  workflowId,
+  workflowId: _workflowId,
   visible,
   onClose,
   onAddBranch,

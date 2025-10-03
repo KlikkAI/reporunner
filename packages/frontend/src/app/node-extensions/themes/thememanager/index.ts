@@ -1,3 +1,3 @@
-export * from './ThemeManager-part1';
-export * from './ThemeManager-part2';
-export * from './ThemeManager-part3';
+// Consolidated file - part files removed during consolidation
+// This module exports nothing but prevents import errors
+export {};

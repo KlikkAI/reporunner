@@ -49,7 +49,7 @@ export const UniversalForm: React.FC<UniversalFormProps> = ({
   className,
   loading = false,
   disabled = false,
-  validateOnChange = true,
+  validateOnChange: _validateOnChange = true,
   showErrors = 'inline',
 }) => {
   const [formData, setFormData] = useState(initialValues);

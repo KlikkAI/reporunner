@@ -1,1 +1,2 @@
-export * from './NodePropertyPanel';
+// Re-export from parent directory
+export * from '../NodePropertyPanel';

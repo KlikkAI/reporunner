@@ -1,4 +1,4 @@
-import { FormField } from '@reporunner/ui/components/form';
+import { Input } from 'antd';
 
 interface CredentialNameFieldProps {
   /**
@@ -29,13 +29,19 @@ export const CredentialNameField = ({
   helperText = 'Choose a name to identify this credential',
 }: CredentialNameFieldProps) => {
   return (
-    <FormField
-      label="Credential Name"
-      required
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-      placeholder={placeholder}
-      helperText={helperText}
-    />
+    <div className="space-y-2">
+      <label className="block text-sm font-medium text-gray-700">
+        Credential Name <span className="text-red-500">*</span>
+      </label>
+      <Input
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
+        className="w-full"
+      />
+      {helperText && (
+        <p className="text-sm text-gray-500">{helperText}</p>
+      )}
+    </div>
   );
 };

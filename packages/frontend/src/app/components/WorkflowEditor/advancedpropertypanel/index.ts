@@ -1,1 +1,1 @@
-export * from './AdvancedPropertyPanel';
+export * from '../AdvancedPropertyPanel';

@@ -1,1 +1,2 @@
-export * from './intelligentAutoConnectService';
+// Re-export from parent directory
+export * from '../intelligentAutoConnect';

@@ -1,1 +1,2 @@
-export * from './CommentAnnotations';
+// Re-export from parent directory
+export * from '../CommentAnnotations';

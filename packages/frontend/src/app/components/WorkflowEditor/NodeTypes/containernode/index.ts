@@ -1,1 +1,1 @@
-export * from './ContainerNode';
+export * from '../ContainerNode';

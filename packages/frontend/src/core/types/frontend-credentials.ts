@@ -16,7 +16,7 @@
  * - Predefined credential configurations
  */
 
-import type { ICredential } from '@reporunner/types';
+import type { ICredential, CredentialType } from '@reporunner/types';
 
 // ============================================================================
 // Extended Credential Types
@@ -28,10 +28,10 @@ import type { ICredential } from '@reporunner/types';
 export interface Credential
   extends Omit<
     ICredential,
-    'credentialType' | 'organizationId' | 'ownerId' | 'sharedWith' | 'encryptedData'
+    'credentialType' | 'organizationId' | 'ownerId' | 'sharedWith' | 'encryptedData' | 'type'
   > {
   _id?: string; // MongoDB _id for backward compatibility
-  type: string; // Credential type identifier
+  type: CredentialType; // Credential type identifier (use base type)
   integration?: string; // Associated integration
   testedAt?: string; // Last test timestamp
   isValid?: boolean; // Test validation status

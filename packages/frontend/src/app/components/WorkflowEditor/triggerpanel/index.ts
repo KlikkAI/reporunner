@@ -1,1 +1,2 @@
-export * from './TriggerPanel';
+// Re-export from parent directory
+export * from '../TriggerPanel';

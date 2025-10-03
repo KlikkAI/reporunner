@@ -1,1 +1,1 @@
-export * from './SecurityDashboard';
+export * from '../SecurityDashboard';

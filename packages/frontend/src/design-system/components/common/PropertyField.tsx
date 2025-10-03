@@ -29,7 +29,7 @@ import type React from 'react';
 import { useEffect, useState } from 'react';
 import type { INodeProperty } from '@/core/nodes/types';
 import { useNodeTheme } from '../../themes';
-import type { NodeTheme } from '../types';
+import type { NodeTheme } from '@/app/node-extensions/types';
 
 const { Option } = Select;
 const { TextArea } = Input;

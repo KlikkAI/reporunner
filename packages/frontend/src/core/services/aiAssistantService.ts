@@ -14,6 +14,13 @@ export interface AIWorkflowSuggestion {
   targetNodeId?: string;
   config?: Record<string, any>;
   reasoning: string;
+  impact?: 'low' | 'medium' | 'high';
+  category?: string;
+  estimatedBenefit?: {
+    performance?: number;
+    reliability?: number;
+    maintainability?: number;
+  };
 }
 
 export interface WorkflowAnalysis {
@@ -37,6 +44,13 @@ export interface WorkflowAnalysis {
     maintainability: number;
     testability: number;
   };
+  // Top-level properties for easier access
+  complexity?: number;
+  performance?: {
+    estimatedImprovement: number;
+    bottlenecks?: string[];
+  };
+  maintainability?: number;
 }
 
 export interface AIAssistantConfig {

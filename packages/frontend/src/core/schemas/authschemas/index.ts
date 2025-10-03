@@ -1,3 +1,2 @@
-export * from './AuthSchemas-part1';
-export * from './AuthSchemas-part2';
-export * from './AuthSchemas-part3';
+// Re-export from parent directory consolidated file
+export * from '../AuthSchemas';

@@ -1,1 +1,2 @@
-export * from './ConditionalBranchingPanel';
+// Re-export from parent directory
+export * from '../ConditionalBranchingPanel';

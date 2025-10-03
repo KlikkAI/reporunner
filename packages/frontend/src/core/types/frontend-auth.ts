@@ -16,7 +16,7 @@
  * - API key management
  */
 
-import type { ID, IUser, IUserSettings, Timestamp } from '@reporunner/types';
+import type { ID, IUser, IUserSettings, Timestamp, UserRole as BaseUserRole } from '@reporunner/types';
 
 // ============================================================================
 // Extended User Types
@@ -26,14 +26,22 @@ import type { ID, IUser, IUserSettings, Timestamp } from '@reporunner/types';
  * Frontend-specific user preferences
  * Extends the baseline IUserSettings with UI-specific configuration
  */
-export interface FrontendUserPreferences extends IUserSettings {
+export interface FrontendUserPreferences extends Omit<IUserSettings, 'notifications'> {
   theme: 'light' | 'dark';
   language: string;
   timezone: string;
   notifications: {
-    email: boolean;
+    email: {
+      workflowSuccess?: boolean;
+      workflowFailure?: boolean;
+      weeklyDigest?: boolean;
+    };
     push: boolean;
-    inApp: boolean;
+    inApp: {
+      workflowEvents?: boolean;
+      mentions?: boolean;
+      systemUpdates?: boolean;
+    };
     workflows: boolean;
     executions: boolean;
     security: boolean;
@@ -56,17 +64,17 @@ export interface FrontendUserPreferences extends IUserSettings {
  *
  * Adds:
  * - name, avatar: Display information
- * - role: Frontend role system (enterprise)
+ * - role: Base user role (from @reporunner/types)
  * - mfaEnabled: Security status
  * - preferences: Enhanced UI preferences
  * - permissions: Granular permission system
  * - projects: Project associations
  * - lastLoginAt: Session tracking
  */
-export interface User extends Omit<IUser, 'settings' | 'preferences'> {
+export interface User extends Omit<IUser, 'settings' | 'preferences' | 'role'> {
   name: string;
   avatar?: string;
-  role: UserRole;
+  role: BaseUserRole; // Use the base type alias from @reporunner/types
   mfaEnabled: boolean;
   preferences: FrontendUserPreferences;
   permissions: Permission[];
@@ -79,10 +87,11 @@ export interface User extends Omit<IUser, 'settings' | 'preferences'> {
 // ============================================================================
 
 /**
- * User Role Definition
+ * User Role Definition (Full Enterprise Object)
  * Enterprise-grade role system with hierarchical levels
+ * Note: This is different from BaseUserRole which is just a string type
  */
-export interface UserRole {
+export interface UserRoleDefinition {
   id: string;
   name: string;
   description: string;

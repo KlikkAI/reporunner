@@ -231,7 +231,7 @@ export class PropertyRendererFactory {
    * Build renderer props from configuration
    */
   private static buildRendererProps(config: PropertyRendererConfig, context: PropertyContext) {
-    const { formData, errors, touched, setFieldValue, setFieldError, validateField } = context;
+    const { formData, errors, touched, setFieldValue, setFieldError: _setFieldError, validateField } = context;
 
     const value = formData[config.id] ?? config.defaultValue;
     const error = errors[config.id];

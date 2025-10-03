@@ -1,1 +1,1 @@
-export * from './AdvancedNodePanel';
+export * from '../AdvancedNodePanel';

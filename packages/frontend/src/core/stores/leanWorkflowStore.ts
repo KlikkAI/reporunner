@@ -18,6 +18,7 @@ interface LeanWorkflowState {
   createWorkflow: (
     workflow: Omit<WorkflowDefinition, 'id' | 'createdAt' | 'updatedAt'>
   ) => Promise<void>;
+  createNewWorkflow: (name: string, navigate?: any) => Promise<void>;
   updateWorkflow: (id: string, updates: Partial<WorkflowDefinition>) => Promise<void>;
   deleteWorkflow: (id: string) => Promise<void>;
   setActiveWorkflow: (workflow: WorkflowDefinition | null) => void;
@@ -38,7 +39,7 @@ export const useLeanWorkflowStore = create<LeanWorkflowState>()(
         try {
           set({ isLoading: true, error: null });
           const response = await workflowApiService.getWorkflows();
-          set({ workflows: response.data, isLoading: false });
+          set({ workflows: response.items, isLoading: false });
         } catch (error) {
           const message = error instanceof Error ? error.message : 'Failed to fetch workflows';
           set({ error: message, isLoading: false });
@@ -49,7 +50,7 @@ export const useLeanWorkflowStore = create<LeanWorkflowState>()(
         try {
           set({ isLoading: true, error: null });
           const response = await workflowApiService.getExecutions();
-          set({ executions: response.data, isLoading: false });
+          set({ executions: response.items, isLoading: false });
         } catch (error) {
           const message = error instanceof Error ? error.message : 'Failed to fetch executions';
           set({ error: message, isLoading: false });
@@ -59,10 +60,10 @@ export const useLeanWorkflowStore = create<LeanWorkflowState>()(
       createWorkflow: async (workflow) => {
         try {
           set({ isLoading: true, error: null });
-          const response = await workflowApiService.createWorkflow(workflow);
+          const createdWorkflow = await workflowApiService.createWorkflow(workflow);
           const { workflows } = get();
           set({
-            workflows: [...workflows, response.data],
+            workflows: [...workflows, createdWorkflow],
             isLoading: false,
           });
         } catch (error) {
@@ -71,13 +72,46 @@ export const useLeanWorkflowStore = create<LeanWorkflowState>()(
         }
       },
 
+      createNewWorkflow: async (name, navigate) => {
+        const newWorkflow = {
+          name,
+          description: '',
+          nodes: [],
+          edges: [],
+          active: false,
+          isActive: false,
+          tags: [],
+          version: 1,
+        };
+
+        try {
+          set({ isLoading: true, error: null });
+          const createdWorkflow = await workflowApiService.createWorkflow(newWorkflow);
+          const { workflows } = get();
+          set({
+            workflows: [...workflows, createdWorkflow],
+            activeWorkflow: createdWorkflow,
+            isLoading: false,
+          });
+
+          // Navigate to the workflow editor if navigate function is provided
+          if (navigate && createdWorkflow.id) {
+            navigate(`/workflows/${createdWorkflow.id}`);
+          }
+        } catch (error) {
+          const message = error instanceof Error ? error.message : 'Failed to create workflow';
+          set({ error: message, isLoading: false });
+          throw error; // Re-throw so components can handle it
+        }
+      },
+
       updateWorkflow: async (id, updates) => {
         try {
           set({ isLoading: true, error: null });
-          const response = await workflowApiService.updateWorkflow(id, updates);
+          const updatedWorkflow = await workflowApiService.updateWorkflow(id, updates);
           const { workflows } = get();
           set({
-            workflows: workflows.map((workflow) => (workflow.id === id ? response.data : workflow)),
+            workflows: workflows.map((workflow) => (workflow.id === id ? updatedWorkflow : workflow)),
             isLoading: false,
           });
         } catch (error) {
@@ -108,7 +142,7 @@ export const useLeanWorkflowStore = create<LeanWorkflowState>()(
       executeWorkflow: async (id) => {
         try {
           set({ isLoading: true, error: null });
-          await workflowApiService.executeWorkflow(id);
+          await workflowApiService.executeWorkflow({ workflowId: id, triggerData: {} });
           set({ isLoading: false });
         } catch (error) {
           const message = error instanceof Error ? error.message : 'Failed to execute workflow';

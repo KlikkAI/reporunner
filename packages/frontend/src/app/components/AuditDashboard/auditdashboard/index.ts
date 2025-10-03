@@ -1,1 +1,1 @@
-export * from './AuditDashboard';
+export * from '../AuditDashboard';

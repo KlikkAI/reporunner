@@ -1,1 +1,1 @@
-export * from './IntegrationEcosystem';
+export * from '../IntegrationEcosystem';

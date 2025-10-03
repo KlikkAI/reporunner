@@ -1,1 +1,2 @@
-export * from './CredentialApiService';
+// Re-export from parent directory
+export * from '../CredentialApiService';

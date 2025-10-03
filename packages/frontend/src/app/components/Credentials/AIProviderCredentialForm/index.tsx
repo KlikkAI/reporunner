@@ -1,4 +1,4 @@
-import { Alert } from '@reporunner/ui/components/base/alert';
+import { Alert } from 'antd';
 import { CredentialNameField } from '../shared/CredentialNameField';
 import { TestCredentialButton } from '../shared/TestCredentialButton';
 import type { CredentialTypeDef, TestResult } from '../shared/types';
@@ -64,7 +64,7 @@ export const AIProviderCredentialForm = ({
 }: AIProviderCredentialFormProps) => {
   return (
     <div className="space-y-6">
-      <Alert type="info" title={credentialType.name} message={credentialType.description} />
+      <Alert type="info" message={credentialType.name} description={credentialType.description} showIcon />
 
       <CredentialNameField
         value={credentialName}

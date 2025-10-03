@@ -23,8 +23,8 @@ export const NodeSchema = z.object({
     x: z.number(),
     y: z.number(),
   }),
-  data: z.record(z.any()).optional(),
-  integrationData: z.record(z.any()).optional(),
+  data: z.record(z.string(), z.any()).optional(),
+  integrationData: z.record(z.string(), z.any()).optional(),
 });
 
 /**
@@ -37,7 +37,7 @@ export const EdgeSchema = z.object({
   sourceHandle: z.string().optional(),
   targetHandle: z.string().optional(),
   type: z.string().optional(),
-  data: z.record(z.any()).optional(),
+  data: z.record(z.string(), z.any()).optional(),
 });
 
 /**
@@ -50,7 +50,7 @@ export const WorkflowSchema = z.object({
   nodes: z.array(NodeSchema),
   edges: z.array(EdgeSchema),
   active: z.boolean().default(false),
-  settings: z.record(z.any()).optional(),
+  settings: z.record(z.string(), z.any()).optional(),
   tags: z.array(z.string()).optional(),
 });
 

@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { Alert } from '@reporunner/ui/components/base/alert';
-import { Modal } from '@reporunner/ui/components/base/modal';
+import { Alert, Modal } from 'antd';
 import React, { useState } from 'react';
 import { CredentialApiService } from '@/core';
 

@@ -15,7 +15,7 @@ import type { PropertyRendererConfig } from '../factories/PropertyRendererFactor
 
 export interface PageAction {
   label: string;
-  type: 'primary' | 'secondary' | 'danger' | 'link';
+  type?: 'default' | 'primary' | 'dashed' | 'link' | 'text';
   icon?: React.ReactNode;
   onClick: () => void;
   disabled?: boolean;

@@ -1,1 +1,1 @@
-export * from './OrganizationSettings';
+export * from '../OrganizationSettings';

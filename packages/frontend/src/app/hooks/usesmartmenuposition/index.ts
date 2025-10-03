@@ -1,3 +1,3 @@
-export * from './useSmartMenuPosition-part1';
-export * from './useSmartMenuPosition-part2';
-export * from './useSmartMenuPosition-part3';
+// Consolidated file - part files removed during consolidation
+// This module exports nothing but prevents import errors
+export {};

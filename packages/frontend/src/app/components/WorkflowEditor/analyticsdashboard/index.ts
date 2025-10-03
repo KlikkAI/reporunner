@@ -1,1 +1,2 @@
-export * from './AnalyticsDashboard';
+// Re-export from parent directory
+export * from '../AnalyticsDashboard';

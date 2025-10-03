@@ -11,7 +11,7 @@
  * - Core Web Vitals tracking
  */
 
-import { configService } from './config/ConfigService';
+import { configService } from './ConfigService';
 import { logger } from './LoggingService';
 
 export interface PerformanceMetric {

@@ -1,3 +1,3 @@
-export * from './HttpRequest.node-part1';
-export * from './HttpRequest.node-part2';
-export * from './HttpRequest.node-part3';
+// Consolidated file - part files removed during consolidation
+// This module exports nothing but prevents import errors
+export {};

@@ -1,1 +1,2 @@
-export * from './DynamicPropertyRenderer';
+// Re-export from parent directory
+export * from '../DynamicPropertyRenderer';

@@ -1,1 +1,1 @@
-export * from './EnterpriseDashboard';
+export * from '../EnterpriseDashboard';

@@ -9,11 +9,15 @@ export interface WorkflowConnection {
 }
 
 export interface WorkflowNodeData {
+  // Core node properties
+  id?: string; // Node ID (required by some utilities)
+  type?: string; // Node type identifier (e.g., 'trigger', 'action', 'condition')
   label: string;
   integration?: string;
   nodeType?: string;
   configuration?: Record<string, any>; // Node parameters/config
   credentials?: string[]; // Array of credential IDs
+  properties?: Record<string, any>; // Node properties for execution
   // Frontend-specific properties
   onDelete?: (nodeId: string) => void;
   onConnect?: (sourceNodeId: string) => void;

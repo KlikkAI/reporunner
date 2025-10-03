@@ -1,1 +1,2 @@
-export * from './WorkflowApiService';
+// Re-export from parent directory
+export * from '../WorkflowApiService';

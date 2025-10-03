@@ -46,6 +46,13 @@ export const PaginationSchema = z.object({
   pages: z.number().min(0),
 });
 
+// Pagination query parameters (for API requests)
+export const PaginationParamsSchema = z.object({
+  page: z.number().min(1).optional(),
+  limit: z.number().min(1).max(100).optional(),
+  offset: z.number().min(0).optional(),
+});
+
 /**
  * Generic paginated response wrapper function
  * Wraps an items schema with pagination metadata
@@ -85,9 +92,14 @@ export type BaseResponse = z.infer<typeof BaseResponseSchema>;
 export type ErrorResponse = z.infer<typeof ErrorResponseSchema>;
 export type SuccessResponse = z.infer<typeof SuccessResponseSchema>;
 export type Pagination = z.infer<typeof PaginationSchema>;
+export type PaginationParams = z.infer<typeof PaginationParamsSchema>;
 export type PaginatedResponse<T = unknown> = {
   items: T[];
   pagination: Pagination;
+  // Convenience properties for direct access
+  total?: number;
+  page?: number;
+  limit?: number;
 };
 export type IdParam = z.infer<typeof IdParamSchema>;
 export type Timestamp = z.infer<typeof TimestampSchema>;

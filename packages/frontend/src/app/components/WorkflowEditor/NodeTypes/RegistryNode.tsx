@@ -4,6 +4,7 @@ import type { NodeProps } from 'reactflow';
 import { Handle, Position } from 'reactflow';
 import { getCustomBodyComponent } from '@/app/node-extensions/nodeUiRegistry';
 import { nodeRegistry, type WorkflowNodeInstance } from '@/core';
+import { useSmartMenuPosition } from '@/app/hooks/useSmartMenuPosition';
 import NodeToolbar from './BaseNode/NodeToolbar';
 
 interface RegistryNodeData extends WorkflowNodeInstance {
