@@ -1,5 +1,5 @@
 {
-  "extends": "../shared/configs/tsconfig.base.json",
+  "extends": "../../shared/tsconfig.json",
   "compilerOptions": {
     "outDir": "./dist/backend-common",
     "rootDir": "./src"
