@@ -20,7 +20,7 @@ class IntegrationService {
     // Reuse existing node registry to get available integrations
     const integrations = nodeRegistry.getAvailableIntegrations();
 
-    return integrations.map((integration) => ({
+    return integrations.map((integration: any) => ({
       id: integration.id,
       name: integration.name,
       description: integration.description || `${integration.name} integration`,

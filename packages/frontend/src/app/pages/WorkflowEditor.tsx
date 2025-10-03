@@ -30,7 +30,7 @@ export const WorkflowEditor: React.FC = () => {
 
   useEffect(() => {
     if (id) {
-      loadWorkflow(id).catch((_error) => {
+      loadWorkflow(id).catch((_error: any) => {
         // If workflow not found, redirect to dashboard or show error
       });
     }
@@ -60,7 +60,7 @@ export const WorkflowEditor: React.FC = () => {
     },
     {
       label: 'Test Run',
-      type: 'secondary',
+      type: 'default',
       icon: <ExperimentOutlined />,
       onClick: handleTestRun,
     },

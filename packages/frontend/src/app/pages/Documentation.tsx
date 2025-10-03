@@ -274,25 +274,26 @@ export const Documentation: React.FC = () => {
     ],
   };
 
-  const _filteredDocs =
-    documentation[selectedCategory as keyof typeof documentation]?.filter(
-      (doc) =>
-        doc.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        doc.description.toLowerCase().includes(searchQuery.toLowerCase())
-    ) || [];
+  // Helper functions for future implementation
+  // const _filteredDocs =
+  //   documentation[selectedCategory as keyof typeof documentation]?.filter(
+  //     (doc) =>
+  //       doc.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+  //       doc.description.toLowerCase().includes(searchQuery.toLowerCase())
+  //   ) || [];
 
-  const _getTypeIcon = (type: string) => {
-    switch (type) {
-      case 'guide':
-        return BookOpen;
-      case 'tutorial':
-        return Play;
-      case 'reference':
-        return FileText;
-      default:
-        return FileText;
-    }
-  };
+  // const _getTypeIcon = (type: string) => {
+  //   switch (type) {
+  //     case 'guide':
+  //       return BookOpen;
+  //     case 'tutorial':
+  //       return Play;
+  //     case 'reference':
+  //       return FileText;
+  //     default:
+  //       return FileText;
+  //   }
+  // };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">

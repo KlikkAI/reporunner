@@ -44,7 +44,6 @@ export const EmailOutputPanel: React.FC<EmailOutputPanelProps> = ({
     if (!selectedEmail) {
       return;
     }
-    const _filename = `email-${selectedEmail.id || 'unknown'}-${Date.now()}`;
     // Implementation would be handled by SharedDataVisualizationPanel
   };
 
@@ -157,13 +156,8 @@ export const EmailOutputPanel: React.FC<EmailOutputPanelProps> = ({
 
               <SharedDataVisualizationPanel
                 title={emailTitle}
-                subtitle={emailSubtitle}
                 data={selectedEmail}
                 onExport={handleExport}
-                darkMode={true}
-                showMetrics={false}
-                allowedFormats={['json', 'csv', 'xml']}
-                className="border-0 bg-transparent"
               />
             </div>
           ),

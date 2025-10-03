@@ -157,7 +157,7 @@ const DatabaseNodeBody: React.FC<CustomNodeBodyProps> = ({
       <EnhancedNodeToolbar
         nodeId={nodeId}
         visible={isHovered && selected}
-        onActionClick={(actionId, nodeId) => {
+        onActionClick={(actionId: any, nodeId: string) => {
           switch (actionId) {
             case 'play':
               handlePlay();

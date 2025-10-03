@@ -89,8 +89,8 @@ const convertNodePropertyToConfig = (property: INodeProperty): PropertyRendererC
   // Handle conditional display
   if (property.displayOptions) {
     config.conditional = {
-      showWhen: property.displayOptions.show,
-      hideWhen: property.displayOptions.hide,
+      showWhen: property.displayOptions.show as Record<string, any[]> | undefined,
+      hideWhen: property.displayOptions.hide as Record<string, any[]> | undefined,
     };
   }
 
@@ -125,7 +125,7 @@ export const DynamicPropertyRenderer: React.FC<DynamicPropertyRendererProps> = (
   properties,
   formState,
   onChange,
-  context = {},
+  context: _context = {},
   disabled = false,
   theme = 'dark',
 }) => {

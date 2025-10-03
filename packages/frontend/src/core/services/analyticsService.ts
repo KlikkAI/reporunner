@@ -162,6 +162,35 @@ export class AnalyticsService {
   private generateSessionId(): string {
     return `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
   }
+
+  // Stub methods for advanced analytics features
+  async generateWorkflowAnalytics(_workflowId: string): Promise<WorkflowAnalytics> {
+    return {
+      events: this.events,
+      metrics: this.metrics,
+      sessionId: this.sessionId,
+    };
+  }
+
+  async recordExecutionMetrics(_executionId: string, _metrics: any): Promise<void> {
+    // Stub implementation
+  }
+
+  async updateNodeMetrics(_nodeId: string, _metrics: any): Promise<void> {
+    // Stub implementation
+  }
+
+  async detectBottlenecks(_workflowId: string): Promise<any[]> {
+    return [];
+  }
+
+  async generatePredictiveInsights(_workflowId: string): Promise<any> {
+    return null;
+  }
+
+  async generateCostOptimization(_workflowId: string): Promise<any> {
+    return null;
+  }
 }
 
 export const analyticsService = new AnalyticsService();

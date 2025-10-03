@@ -197,7 +197,7 @@ export const CommentAnnotations: React.FC<CommentAnnotationsProps> = ({
           {/* Replies */}
           {comment.replies.length > 0 && (
             <div className="space-y-2 pl-4 border-l-2 border-gray-200 dark:border-gray-700">
-              {comment.replies.map((reply) => (
+              {comment.replies.map((reply: any) => (
                 <div key={reply.id} className="space-y-1">
                   <div className="flex items-center space-x-2">
                     <Avatar

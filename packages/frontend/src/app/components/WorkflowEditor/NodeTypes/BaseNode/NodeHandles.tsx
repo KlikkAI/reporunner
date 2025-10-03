@@ -114,7 +114,7 @@ const createHandle = (
 export const NodeHandles: React.FC<NodeHandlesProps> = ({
   config,
   nodeType,
-  integration,
+  integration: _integration,
   aiHandleConnections = {},
   hasOutgoingConnection,
 }) => {

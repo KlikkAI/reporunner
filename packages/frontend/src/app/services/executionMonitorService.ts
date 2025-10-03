@@ -56,7 +56,7 @@ class ExecutionMonitorService {
       status: 'running',
       startTime: new Date().toISOString(),
       progress: {
-        completedNodes: 0,
+        completedNodes: [],
         totalNodes: 10,
         currentNode: 'start',
       },

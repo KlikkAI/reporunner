@@ -86,13 +86,13 @@ export const SchedulingPanel: React.FC<SchedulingPanelProps> = ({
 
   const loadSchedules = () => {
     const allSchedules = workflowScheduler.getAllSchedules();
-    const workflowSchedules = allSchedules.filter((s) => s.workflowId === workflowId);
+    const workflowSchedules = allSchedules.filter((s: any) => s.workflowId === workflowId);
     setSchedules(workflowSchedules);
   };
 
   const loadActiveExecutions = () => {
     const allExecutions = workflowScheduler.getActiveExecutions();
-    const workflowExecutions = allExecutions.filter((e) => e.workflowId === workflowId);
+    const workflowExecutions = allExecutions.filter((e: any) => e.workflowId === workflowId);
     setActiveExecutions(workflowExecutions);
   };
 

@@ -33,7 +33,6 @@ export const ExecutionPanel: React.FC<ExecutionPanelProps> = ({
     performanceMetrics,
     executionHistory,
     isConnected,
-    lastUpdateTimestamp,
     debugMode,
     setDebugMode,
   } = useEnhancedExecutionStore();
@@ -56,9 +55,9 @@ export const ExecutionPanel: React.FC<ExecutionPanelProps> = ({
       timestamp: string;
     }> = [];
 
-    nodeStates.forEach((state, nodeId) => {
+    nodeStates.forEach((state: any, nodeId: string) => {
       if (state.debugInfo?.logs) {
-        state.debugInfo.logs.forEach((log) => {
+        state.debugInfo.logs.forEach((log: any) => {
           logs.push({
             nodeId,
             ...log,
@@ -74,7 +73,7 @@ export const ExecutionPanel: React.FC<ExecutionPanelProps> = ({
   const getExecutionVariables = () => {
     const variables: Record<string, any> = {};
 
-    nodeStates.forEach((state, nodeId) => {
+    nodeStates.forEach((state: any, nodeId: string) => {
       if (state.outputData) {
         variables[`${nodeId}_output`] = state.outputData;
       }
@@ -277,7 +276,7 @@ export const ExecutionPanel: React.FC<ExecutionPanelProps> = ({
           {executionHistory.length === 0 ? (
             <div className="text-gray-500 text-center py-4">No execution history</div>
           ) : (
-            executionHistory.slice(0, 10).map((execution) => (
+            executionHistory.slice(0, 10).map((execution: any) => (
               <div
                 key={execution.id}
                 className="bg-gray-900 rounded border border-gray-700 p-2 hover:bg-gray-800 cursor-pointer"

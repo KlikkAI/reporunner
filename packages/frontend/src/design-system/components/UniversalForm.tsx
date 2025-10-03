@@ -134,7 +134,9 @@ export const UniversalForm: React.FC<UniversalFormProps> = ({
       isSubmitting: isSubmitting || loading,
       setFieldValue,
       setFieldError,
-      validateField,
+      validateField: async (name: string) => {
+        await validateField(name);
+      },
     }),
     [formData, errors, touched, isSubmitting, loading, setFieldValue, setFieldError, validateField]
   );

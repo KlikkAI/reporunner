@@ -164,13 +164,17 @@ export const SharedDataVisualizationPanel: React.FC<SharedDataVisualizationPanel
 
           {showTable && (
             <TabPane tab="Table" key="table">
-              <TableView data={processedData.table} className="bg-gray-900" />
+              <div className="bg-gray-900">
+                <TableView data={processedData.table} />
+              </div>
             </TabPane>
           )}
 
           {showSchema && (
             <TabPane tab="Schema" key="schema">
-              <SchemaView data={processedData.schema} className="bg-gray-900" />
+              <div className="bg-gray-900">
+                <SchemaView data={processedData.schema} />
+              </div>
             </TabPane>
           )}
 

@@ -174,7 +174,7 @@ export const SelectRenderer: React.FC<PropertyRendererProps> = ({ config, contex
       onFocus={onFocus}
       onBlur={onBlur}
     >
-      {options?.map((option) => (
+      {options?.map((option: any) => (
         <Option key={option.value} value={option.value} disabled={option.disabled}>
           {option.icon && <span className="mr-2">{option.icon}</span>}
           {option.label}
@@ -202,7 +202,7 @@ export const MultiSelectRenderer: React.FC<PropertyRendererProps> = ({ config, c
       onFocus={onFocus}
       onBlur={onBlur}
     >
-      {options?.map((option) => (
+      {options?.map((option: any) => (
         <Option key={option.value} value={option.value} disabled={option.disabled}>
           {option.icon && <span className="mr-2">{option.icon}</span>}
           {option.label}

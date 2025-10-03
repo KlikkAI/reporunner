@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { Alert, Modal } from 'antd';
+import { Modal } from 'antd';
 import React, { useState } from 'react';
 import { CredentialApiService } from '@/core';
 
@@ -9,308 +9,10 @@ const credentialApiService = new CredentialApiService();
 import { useLeanWorkflowStore } from '@/core';
 import type { CredentialTypeApiResponse } from '@/core/types/frontend-credentials';
 
-const _GmailConnectionForm: React.FC<{
-  credentialName: string;
-  setCredentialName: (name: string) => void;
-  isConnecting: boolean;
-  handleGmailConnect: () => void;
-}> = ({ credentialName, setCredentialName, isConnecting, handleGmailConnect }) => {
-  return (
-    <>
-      <Alert
-        type="info"
-        title="Easy Setup!"
-        message="No technical configuration required. We'll connect to Gmail using secure OAuth2 authentication."
-      />
-
-      <div className="space-y-4">
-        <h3 className="text-lg font-medium text-white">Connect your Gmail account</h3>
-        <div className="space-y-3">
-          <div className="flex items-center space-x-3 p-3 bg-gray-800 border border-gray-600">
-            <div className="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-bold">
-              1
-            </div>
-            <span className="text-gray-300">Enter a name for this credential</span>
-          </div>
-          <div className="flex items-center space-x-3 p-3 bg-gray-800 border border-gray-600">
-            <div className="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-bold">
-              2
-            </div>
-            <span className="text-gray-300">Click "Connect with Google" to authorize access</span>
-          </div>
-          <div className="flex items-center space-x-3 p-3 bg-gray-800 border border-gray-600">
-            <div className="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-bold">
-              3
-            </div>
-            <span className="text-gray-300">Grant permissions to read and send emails</span>
-          </div>
-        </div>
-      </div>
-
-      <div>
-        <label className="block text-sm font-medium text-gray-300 mb-2">
-          Credential Name <span className="text-red-400">*</span>
-        </label>
-        <input
-          type="text"
-          value={credentialName}
-          onChange={(e) => setCredentialName(e.target.value)}
-          className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-          placeholder="e.g., Personal Gmail, Work Gmail"
-        />
-        <p className="text-xs text-gray-400 mt-1">
-          Choose a name to identify this Gmail connection
-        </p>
-      </div>
-
-      <div className="pt-4">
-        <button
-          onClick={handleGmailConnect}
-          disabled={isConnecting || !credentialName.trim()}
-          className="w-full py-3 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2 text-sm font-medium"
-        >
-          <span>🔗</span>
-          <span>{isConnecting ? 'Connecting...' : 'Connect with Google'}</span>
-        </button>
-      </div>
-    </>
-  );
-};
-
-const _AIProviderForm: React.FC<{
-  credentialTypeDef: any;
-  credentialName: string;
-  setCredentialName: (name: string) => void;
-  credentialData: Record<string, any>;
-  handleCredentialDataChange: (field: string, value: any) => void;
-  isTesting: boolean;
-  handleTestCredential: () => void;
-  testResult: { success: boolean; message: string; details?: any } | null;
-  editingCredential?: any;
-}> = ({
-  credentialTypeDef,
-  credentialName,
-  setCredentialName,
-  credentialData,
-  handleCredentialDataChange,
-  isTesting,
-  handleTestCredential,
-  testResult,
-  editingCredential,
-}) => {
-  return (
-    <>
-      <Alert type="info" title={credentialTypeDef.name} message={credentialTypeDef.description} />
-
-      {/* Credential Name Input */}
-      <div>
-        <label className="block text-sm font-medium text-gray-300 mb-2">
-          Credential Name <span className="text-red-400">*</span>
-        </label>
-        <input
-          type="text"
-          value={credentialName}
-          onChange={(e) => setCredentialName(e.target.value)}
-          className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-          placeholder={`e.g., ${credentialTypeDef.name} Account`}
-        />
-        <p className="text-xs text-gray-400 mt-1">
-          Choose a name to identify this {credentialTypeDef.name} connection
-        </p>
-      </div>
-
-      {/* Dynamic Credential Properties */}
-      {credentialTypeDef.fields.map((property: any) => (
-        <div key={property.name}>
-          <label className="block text-sm font-medium text-gray-300 mb-2">
-            {property.name} {property.required && <span className="text-red-400">*</span>}
-          </label>
-          <input
-            type={property.type === 'password' ? 'password' : 'text'}
-            value={credentialData[property.name] || ''}
-            onChange={(e) => handleCredentialDataChange(property.name, e.target.value)}
-            className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            placeholder={
-              property.type === 'password' && editingCredential && !credentialData[property.name]
-                ? '••••••••••• (hidden - enter new value to update)'
-                : property.placeholder
-            }
-            required={property.required && !editingCredential} // Not required when editing (keep existing value)
-          />
-          {property.description && (
-            <p className="text-xs text-gray-400 mt-1">{property.description}</p>
-          )}
-        </div>
-      ))}
-
-      {/* Test Credential Button */}
-      <div className="pt-4">
-        <button
-          onClick={handleTestCredential}
-          disabled={isTesting}
-          className="w-full py-2 px-4 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2 text-sm font-medium mb-4"
-        >
-          <span>{isTesting ? '⏳' : '🧪'}</span>
-          <span>{isTesting ? 'Testing Connection...' : 'Test Connection'}</span>
-        </button>
-      </div>
-
-      {/* Test Result Display */}
-      {testResult && (
-        <Alert
-          type={testResult.success ? 'success' : 'error'}
-          title={testResult.success ? 'Connection Successful!' : 'Connection Failed'}
-          message={testResult.message}
-          details={
-            testResult.details && (
-              <pre className="text-xs bg-gray-800 p-2 rounded overflow-auto">
-                {JSON.stringify(testResult.details, null, 2)}
-              </pre>
-            )
-          }
-        />
-      )}
-    </>
-  );
-};
-
-const _OAuthForm: React.FC<{
-  authType: string;
-  setAuthType: (type: string) => void;
-  clientId: string;
-  setClientId: (id: string) => void;
-  clientSecret: string;
-  setClientSecret: (secret: string) => void;
-  credentialType: string;
-}> = ({
-  authType,
-  setAuthType,
-  clientId,
-  setClientId,
-  clientSecret,
-  setClientSecret,
-  credentialType,
-}) => {
-  return (
-    <>
-      <Alert
-        type="warning"
-        message={
-          <>
-            Need help filling out these fields?{' '}
-            <a
-              href="https://docs.n8n.io/integrations/builtin/credentials/google/oauth-single-service/"
-              rel="noopener"
-              target="_blank"
-              className="text-orange-400 underline hover:text-orange-300"
-            >
-              Open docs
-            </a>
-          </>
-        }
-      />
-
-      {/* Auth Type Selection */}
-      <div>
-        <label className="block text-sm font-medium text-gray-300 mb-3">
-          Connect using <span className="text-red-400">*</span>
-        </label>
-        <div className="space-y-2">
-          <label className="flex items-center space-x-3 p-3 border border-gray-600 rounded cursor-pointer hover:bg-gray-800">
-            <input
-              type="radio"
-              value="oAuth2"
-              checked={authType === 'oAuth2'}
-              onChange={(e) => setAuthType(e.target.value)}
-              className="text-orange-600 focus:ring-orange-500"
-            />
-            <span className="text-white">OAuth2 (recommended)</span>
-          </label>
-          <label className="flex items-center space-x-3 p-3 border border-gray-600 rounded cursor-pointer hover:bg-gray-800">
-            <input
-              type="radio"
-              value="serviceAccount"
-              checked={authType === 'serviceAccount'}
-              onChange={(e) => setAuthType(e.target.value)}
-              className="text-orange-600 focus:ring-orange-500"
-            />
-            <span className="text-white">Service Account</span>
-          </label>
-        </div>
-      </div>
-
-      {/* OAuth Redirect URL */}
-      <div>
-        <label className="block text-sm font-medium text-gray-300 mb-2">OAuth Redirect URL</label>
-        <div className="flex items-center space-x-2 p-3 bg-gray-800 border border-gray-600 rounded">
-          <span className="text-gray-300 text-sm flex-1">
-            https://workflow.lxroot.net/rest/oauth2-credential/callback
-          </span>
-          <button
-            onClick={() =>
-              navigator.clipboard.writeText(
-                'https://workflow.lxroot.net/rest/oauth2-credential/callback'
-              )
-            }
-            className="px-3 py-1 bg-gray-700 text-white rounded text-xs hover:bg-gray-600"
-          >
-            Copy
-          </button>
-        </div>
-        <p className="text-xs text-gray-400 mt-1">
-          In {credentialType}, use the URL above when prompted to enter an OAuth callback or
-          redirect URL
-        </p>
-      </div>
-
-      {/* Client ID */}
-      <div>
-        <label className="block text-sm font-medium text-gray-300 mb-2">
-          Client ID <span className="text-red-400">*</span>
-        </label>
-        <input
-          type="text"
-          value={clientId}
-          onChange={(e) => setClientId(e.target.value)}
-          className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white text-sm focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-          placeholder="Enter your OAuth2 Client ID"
-        />
-      </div>
-
-      {/* Client Secret */}
-      <div>
-        <label className="block text-sm font-medium text-gray-300 mb-2">
-          Client Secret <span className="text-red-400">*</span>
-        </label>
-        <input
-          type="password"
-          value={clientSecret}
-          onChange={(e) => setClientSecret(e.target.value)}
-          className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white text-sm focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-          placeholder="Enter your OAuth2 Client Secret"
-        />
-      </div>
-
-      {/* Enterprise Note */}
-      <Alert
-        type="info"
-        message={
-          <>
-            Enterprise plan users can pull in credentials from external vaults.{' '}
-            <a
-              href="https://docs.n8n.io/external-secrets/"
-              target="_blank"
-              rel="noopener"
-              className="text-blue-400 underline hover:text-blue-300"
-            >
-              More info
-            </a>
-          </>
-        }
-      />
-    </>
-  );
-};
+/**
+ * Legacy form components - kept for reference but not used
+ * These are now inlined in the main CredentialModal component
+ */
 
 interface CredentialModalProps {
   isOpen: boolean;
@@ -606,33 +308,25 @@ const CredentialModal: React.FC<CredentialModalProps> = ({
     }
   };
 
-  const headerActions = isGmailOAuth ? (
-    <button
-      onClick={handleGmailConnect}
-      disabled={isConnecting || !credentialName.trim()}
-      className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
-    >
-      <span>🔗</span>
-      <span>{isConnecting ? 'Connecting...' : 'Connect with Google'}</span>
-    </button>
-  ) : (
-    <button
-      onClick={handleSave}
-      disabled={isAIProvider && !credentialName.trim()}
-      className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-    >
-      Save {credentialTypeDef?.name || 'Credential'}
-    </button>
-  );
+  // Header actions are rendered inline in the modal header below
 
   return (
     <Modal
-      isOpen={isOpen}
-      onClose={onClose}
-      title={`${editingCredential ? 'Edit' : 'Create'} ${credentialName || credentialTypeDef?.name || `${credentialType} account`}`}
-      description={`${editingCredential ? 'Update your' : 'Create new'} ${credentialTypeDef?.description?.toLowerCase() || `${credentialType} ${isGmailOAuth ? 'OAuth2' : 'API'}`}`}
-      icon={getCredentialIcon(credentialType)}
-      headerActions={headerActions}
+      open={isOpen}
+      onCancel={onClose}
+      title={
+        <div className="flex items-center space-x-3">
+          <span>{getCredentialIcon(credentialType)}</span>
+          <div>
+            <div>{`${editingCredential ? 'Edit' : 'Create'} ${credentialName || credentialTypeDef?.name || `${credentialType} account`}`}</div>
+            <div className="text-sm text-gray-400 font-normal">
+              {`${editingCredential ? 'Update your' : 'Create new'} ${credentialTypeDef?.description?.toLowerCase() || `${credentialType} ${isGmailOAuth ? 'OAuth2' : 'API'}`}`}
+            </div>
+          </div>
+        </div>
+      }
+      footer={null}
+      width={800}
     >
       {/* Header */}
       <div className="p-6 border-b border-gray-700 flex items-center justify-between">

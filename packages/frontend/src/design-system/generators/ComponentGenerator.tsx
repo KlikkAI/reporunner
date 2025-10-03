@@ -35,7 +35,7 @@ export interface ListConfig extends GeneratorConfig {
   items: any[];
   renderItem?: (item: any, index: number) => React.ReactNode;
   emptyText?: string;
-  pagination?: boolean;
+  pagination?: false | { pageSize?: number; total?: number; current?: number };
   split?: boolean;
   size?: 'default' | 'large' | 'small';
 }
@@ -43,9 +43,9 @@ export interface ListConfig extends GeneratorConfig {
 export interface TableConfig extends GeneratorConfig {
   columns: any[];
   dataSource: any[];
-  pagination?: boolean;
+  pagination?: false | { pageSize?: number; total?: number; current?: number };
   loading?: boolean;
-  size?: 'default' | 'middle' | 'small';
+  size?: 'large' | 'middle' | 'small';
   scroll?: { x?: number; y?: number };
 }
 
@@ -299,7 +299,7 @@ export class ComponentGenerator {
               <p className="text-sm text-gray-500 dark:text-gray-400 truncate">{user.email}</p>
             )}
             {user.role && (
-              <Tag size="small" color="blue">
+              <Tag color="blue">
                 {user.role}
               </Tag>
             )}

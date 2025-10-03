@@ -11,7 +11,7 @@ import { NodeIcon, NodeLabel, StatusBadge } from './shared';
  * Gmail-style UI with AI-specific features and handles
  */
 const AIAgentNodeBody: React.FC<CustomNodeBodyProps> = ({
-  nodeId,
+  nodeId: _nodeId,
   nodeData,
   selected,
   isHovered,

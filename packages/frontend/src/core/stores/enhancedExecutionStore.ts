@@ -89,7 +89,7 @@ export const useEnhancedExecutionStore = create<EnhancedExecutionState>()(
         status: 'running',
         startTime: new Date().toISOString(),
         progress: {
-          completedNodes: 0,
+          completedNodes: [],
           totalNodes: executionData.nodeCount || 0,
           currentNode: executionData.startNode || 'start',
         },

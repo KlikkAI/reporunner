@@ -242,7 +242,7 @@ export const Settings: React.FC = () => {
   const actions: PageAction[] = [
     {
       label: 'Export Settings',
-      type: 'secondary',
+      type: 'default',
       onClick: () => {
         const dataStr = JSON.stringify(settings, null, 2);
         const dataBlob = new Blob([dataStr], { type: 'application/json' });

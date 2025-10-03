@@ -33,7 +33,9 @@ export const WorkflowTester: React.FC<{
   const [triggerData, setTriggerData] = useState('');
   const [testMode, setTestMode] = useState<'validate' | 'dry_run' | 'full_test'>('validate');
 
-  const { execution, isConnected } = useExecutionMonitor(executionId);
+  const executionMonitor = useExecutionMonitor(executionId);
+  const execution = executionMonitor?.executionState;
+  const isConnected = executionMonitor?.isConnected || false;
 
   const runTest = async () => {
     setTesting(true);
@@ -51,19 +53,10 @@ export const WorkflowTester: React.FC<{
           nodes: workflowJson.nodes.map((node) => ({
             id: node.id,
             type: node.type,
-            position: { x: node.position[0], y: node.position[1] },
-            data: {
-              label: node.name,
-              parameters: node.parameters,
-              credentials:
-                typeof node.credentials === 'object' && node.credentials
-                  ? Object.keys(node.credentials)[0] || undefined
-                  : (node.credentials as string | undefined),
-              disabled: node.disabled,
-              notes: node.notes,
-            },
+            position: node.position,
+            data: node.data || {},
           })),
-          edges: [], // Convert connections to edges if needed
+          edges: workflowJson.edges || [],
           tags: ['test'],
           isActive: true,
         };
@@ -81,19 +74,10 @@ export const WorkflowTester: React.FC<{
           nodes: workflowJson.nodes.map((node) => ({
             id: node.id,
             type: node.type,
-            position: { x: node.position[0], y: node.position[1] },
-            data: {
-              label: node.name,
-              parameters: node.parameters,
-              credentials:
-                typeof node.credentials === 'object' && node.credentials
-                  ? Object.keys(node.credentials)[0] || undefined
-                  : (node.credentials as string | undefined),
-              disabled: node.disabled,
-              notes: node.notes,
-            },
+            position: node.position,
+            data: node.data || {},
           })),
-          edges: [], // Convert connections to edges if needed
+          edges: workflowJson.edges || [],
           tags: ['test'],
           isActive: true,
         };
@@ -106,7 +90,7 @@ export const WorkflowTester: React.FC<{
         // Full test execution
         const triggerPayload = triggerData ? JSON.parse(triggerData) : undefined;
         const result = await workflowApiService.executeWorkflow({
-          workflow: workflowJson,
+          workflow: workflowJson as any,
           triggerData: triggerPayload,
           options: {
             timeout: 300000, // 5 minutes
@@ -207,7 +191,7 @@ export const WorkflowTester: React.FC<{
 
       <Card title="Node Execution Timeline" size="small">
         <Timeline>
-          {exec.results?.map((result) => (
+          {exec.results?.map((result: any) => (
             <Timeline.Item
               key={result.nodeId}
               color={

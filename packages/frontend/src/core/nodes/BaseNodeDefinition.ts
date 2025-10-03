@@ -61,7 +61,7 @@ export abstract class BaseNodeDefinition implements INodeType {
       name: config.name,
       icon: this.getNodeIcon(),
       group: config.group,
-      version: config.version,
+      version: Array.isArray(config.version) ? config.version[config.version.length - 1] : config.version,
       description: config.description,
       defaults: {
         name: config.defaults?.name || config.displayName,
@@ -70,9 +70,13 @@ export abstract class BaseNodeDefinition implements INodeType {
       inputs: config.inputs || ['main'],
       outputs: config.outputs || ['main'],
       credentials: config.credentials || [],
-      properties: this.getProperties(),
+      properties: this.getProperties() as any,
       polling: config.polling,
-      webhooks: config.webhooks,
+      webhooks: config.webhooks?.map((webhook) => ({
+        ...webhook,
+        httpMethod: Array.isArray(webhook.httpMethod) ? webhook.httpMethod[0] : webhook.httpMethod,
+        responseMode: webhook.responseMode || 'onReceived',
+      })),
     };
   }
 

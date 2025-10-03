@@ -123,13 +123,13 @@ export const ConditionalBranchingPanel: React.FC<ConditionalBranchingPanelProps>
   const loadExistingBranches = () => {
     // Extract conditional branches from existing workflow
     const conditionNodes = nodes.filter(
-      (node) =>
+      (node: any) =>
         node.parameters?.type === 'condition' ||
         node.parameters?.integrationData?.id === 'condition' ||
         node.type === 'condition'
     );
 
-    const extractedBranches: BranchConfiguration[] = conditionNodes.map((node) => ({
+    const extractedBranches: BranchConfiguration[] = conditionNodes.map((node: any) => ({
       id: node.id,
       name: node.parameters?.name || node.name || `Branch from ${node.id}`,
       description: node.parameters?.description || '',
@@ -180,7 +180,7 @@ export const ConditionalBranchingPanel: React.FC<ConditionalBranchingPanelProps>
   };
 
   const getTargetNodes = (sourceNodeId: string): string[] => {
-    return edges.filter((edge) => edge.source === sourceNodeId).map((edge) => edge.target);
+    return edges.filter((edge: any) => edge.source === sourceNodeId).map((edge: any) => edge.target);
   };
 
   const handleCreateBranch = async (values: any) => {
@@ -371,7 +371,7 @@ export const ConditionalBranchingPanel: React.FC<ConditionalBranchingPanelProps>
             rules={[{ required: true, message: 'Please select a source node' }]}
           >
             <Select placeholder="Select node to branch from">
-              {nodes.map((node) => (
+              {nodes.map((node: any) => (
                 <Option key={node.id} value={node.id}>
                   {node.parameters?.name || node.name || node.id}
                 </Option>

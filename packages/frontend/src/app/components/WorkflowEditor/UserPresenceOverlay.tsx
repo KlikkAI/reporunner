@@ -58,7 +58,7 @@ export const UserPresenceOverlay: React.FC<UserPresenceOverlayProps> = ({
   // Get node position and dimensions
   const getNodeBounds = useCallback(
     (nodeId: string) => {
-      const node = nodes.find((n) => n.id === nodeId);
+      const node = nodes.find((n: any) => n.id === nodeId);
       if (!node) {
         return null;
       }
@@ -137,7 +137,7 @@ export const UserPresenceOverlay: React.FC<UserPresenceOverlayProps> = ({
       const userColor = getUserColor(presence.userId);
 
       return presence.selection.nodeIds
-        .map((nodeId) => {
+        .map((nodeId: string) => {
           const bounds = getNodeBounds(nodeId);
           if (!bounds) {
             return null;

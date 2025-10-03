@@ -184,10 +184,10 @@ class NodeRegistry {
           name: enhancedNode.displayName || enhancedNode.name,
           color: (enhancedNode as any).color || '#DD4B39',
         },
-        inputs: (enhancedNode.inputs || [{ type: 'main' }]).map((input) =>
+        inputs: (enhancedNode.inputs || [{ type: 'main' }]).map((input: any) =>
           typeof input === 'string' ? input : input.type || 'main'
         ),
-        outputs: (enhancedNode.outputs || [{ type: 'main' }]).map((output) =>
+        outputs: (enhancedNode.outputs || [{ type: 'main' }]).map((output: any) =>
           typeof output === 'string' ? output : output.type || 'main'
         ),
         categories: enhancedNode.codex?.categories || [],
@@ -241,10 +241,10 @@ class NodeRegistry {
           name: enhancedNode.displayName || enhancedNode.name,
           color: (enhancedNode as any).color || '#DD4B39',
         },
-        inputs: (enhancedNode.inputs || [{ type: 'main' }]).map((input) =>
+        inputs: (enhancedNode.inputs || [{ type: 'main' }]).map((input: any) =>
           typeof input === 'string' ? input : input.type || 'main'
         ),
-        outputs: (enhancedNode.outputs || [{ type: 'main' }]).map((output) =>
+        outputs: (enhancedNode.outputs || [{ type: 'main' }]).map((output: any) =>
           typeof output === 'string' ? output : output.type || 'main'
         ),
         categories: enhancedNode.codex?.categories || [],

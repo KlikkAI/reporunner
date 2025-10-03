@@ -91,7 +91,7 @@ export function convertNodePropertyToINodeProperty(nodeProperty: NodeProperty): 
       property.values = nodeProperty.values.map(convertNodePropertyToINodeProperty);
     } else {
       // For other types, use the standard collection mapping
-      property.collection = nodeProperty.values.map((collection) => ({
+      property.collection = nodeProperty.values.map((collection: any) => ({
         name: collection.name,
         displayName: collection.displayName,
         values: collection.values?.map(convertNodePropertyToINodeProperty) || [],

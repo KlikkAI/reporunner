@@ -46,20 +46,18 @@ class NodeUIRegistry {
 
       componentFactory.registerPropertiesPanel('GmailPropertiesPanel', GmailPropertiesPanel);
 
-      // Verify registration immediately
-      const _gmailBodyComponent = componentFactory.createNodeBody('GmailTriggerNodeBody');
-      const _gmailPropertiesPanel = componentFactory.createPropertiesPanel('GmailPropertiesPanel');
+      // Registration is verified during component creation
     } catch (_error) {}
 
     // Register other specialized components with lazy loading
     componentFactory.registerLazyBodyComponent(
       'DatabaseNodeBody',
-      () => import('./bodies/DatabaseNodeBody')
+      () => import('./bodies/DatabaseNodeBody') as any
     );
 
     componentFactory.registerLazyPropertiesPanel(
       'AIAgentPropertiesPanel',
-      () => import('./panels/AIAgentPropertiesPanel')
+      () => import('./panels/AIAgentPropertiesPanel') as any
     );
   }
 

@@ -260,14 +260,14 @@ export const useAIAssistantStore = create<AIAssistantState>()(
           isAnalyzing: false,
           analysisTimestamp: new Date().toISOString(),
           activeIssues: (analysis.reliability?.missingErrorHandling || [])
-            .map((issue, index) => ({
+            .map((issue: any, index: number) => ({
               id: `issue_${index}`,
               message: issue,
               type: 'error_handling',
             }))
             .filter((issue: any) => !get().dismissedIssues.has(issue.id)),
           activeSuggestions: (analysis.reliability?.suggestions || [])
-            .map((suggestion, index) => ({
+            .map((suggestion: any, index: number) => ({
               id: `suggestion_${index}`,
               type: 'enhancement' as const,
               title: `Reliability Suggestion ${index + 1}`,

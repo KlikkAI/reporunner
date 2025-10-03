@@ -113,7 +113,7 @@ export const useAnalyticsStore = create<AnalyticsState>()(
         const costHistory = analytics.resourceTrends.costTrend;
 
         // Calculate reliability history from execution stats
-        const reliabilityHistory: TimeSeriesPoint[] = performanceHistory.map((point) => ({
+        const reliabilityHistory: TimeSeriesPoint[] = performanceHistory.map((point: any) => ({
           timestamp: point.timestamp,
           value:
             analytics.executionStats.total > 0
@@ -172,7 +172,7 @@ export const useAnalyticsStore = create<AnalyticsState>()(
 
         if (execution) {
           const existingIndex = execution.nodeMetrics.findIndex(
-            (nm) => nm.nodeId === nodeMetrics.nodeId
+            (nm: any) => nm.nodeId === nodeMetrics.nodeId
           );
 
           if (existingIndex >= 0) {

@@ -278,7 +278,7 @@ const AIAgentPropertiesPanel: React.FC<CustomPropertiesPanelProps> = ({
             key={property.name}
             property={property}
             value={formValues[property.name]}
-            onChange={(value) => handleFieldChange(property.name, value)}
+            onChange={(value: any) => handleFieldChange(property.name, value)}
             errors={errors[property.name]}
             theme={theme}
             context={formValues}
@@ -326,7 +326,7 @@ const AIAgentPropertiesPanel: React.FC<CustomPropertiesPanelProps> = ({
                       key={property.name}
                       property={property}
                       value={formValues[property.name]}
-                      onChange={(value) => handleFieldChange(property.name, value)}
+                      onChange={(value: any) => handleFieldChange(property.name, value)}
                       errors={errors[property.name]}
                       theme={theme}
                       context={formValues}
@@ -362,7 +362,7 @@ const AIAgentPropertiesPanel: React.FC<CustomPropertiesPanelProps> = ({
               rows: 4,
             }}
             value={formValues.testInput || ''}
-            onChange={(value) => handleFieldChange('testInput', value)}
+            onChange={(value: any) => handleFieldChange('testInput', value)}
             theme={theme}
           />
 

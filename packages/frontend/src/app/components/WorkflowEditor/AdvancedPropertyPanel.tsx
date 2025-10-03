@@ -138,10 +138,10 @@ const InputDataPanel: React.FC<{
 
   // Find incoming connections to this node
   const incomingData = useMemo(() => {
-    const incomingEdges = edges.filter((edge) => edge.target === nodeId);
+    const incomingEdges = edges.filter((edge: any) => edge.target === nodeId);
     const data: Record<string, any> = {};
 
-    incomingEdges.forEach((edge) => {
+    incomingEdges.forEach((edge: any) => {
       const sourceNodeState = getNodeState(edge.source);
       if (sourceNodeState?.outputData) {
         data[edge.source] = sourceNodeState.outputData;

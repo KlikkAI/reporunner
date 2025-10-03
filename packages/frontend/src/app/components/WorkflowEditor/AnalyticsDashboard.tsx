@@ -560,7 +560,7 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
                     <div>
                       <span className="font-medium text-gray-600">Recommended Actions:</span>
                       <ul className="mt-2 space-y-1">
-                        {insight.recommendedActions.map((action, index) => (
+                        {insight.recommendedActions.map((action: any, index: number) => (
                           <li key={index} className="text-sm text-green-600">
                             • {action}
                           </li>

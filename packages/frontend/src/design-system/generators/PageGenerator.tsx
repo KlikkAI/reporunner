@@ -29,6 +29,7 @@ export interface Statistic {
   trend?: {
     value: number;
     isPositive: boolean;
+    label: string;
   };
   color?: string;
   loading?: boolean;
@@ -125,8 +126,6 @@ export class PageGenerator {
                 value={stat.value}
                 icon={stat.icon}
                 trend={stat.trend}
-                color={stat.color}
-                loading={stat.loading}
               />
             ))}
           </ResponsiveGrid>
@@ -221,8 +220,6 @@ export class PageGenerator {
                   value={stat.value}
                   icon={stat.icon}
                   trend={stat.trend}
-                  color={stat.color}
-                  loading={stat.loading}
                 />
               ))}
             </ResponsiveGrid>

@@ -71,7 +71,7 @@ export const ExecutionToolbar: React.FC<ExecutionToolbarProps> = ({
       const workflowJson = exportWorkflowToBackend(nodes, edges);
 
       const execution = await workflowApiService.executeWorkflow({
-        workflow: workflowJson,
+        workflow: workflowJson as any,
         triggerData: {},
         options: {
           timeout: 600000, // 10 minutes
@@ -116,7 +116,7 @@ export const ExecutionToolbar: React.FC<ExecutionToolbarProps> = ({
         description: 'Saved from workflow editor',
         nodes: workflowJson.nodes.map((node) => ({
           id: node.id,
-          type: node.type,
+          type: node.type || 'unknown',
           position: { x: node.position[0], y: node.position[1] },
           data: {
             label: node.name,
@@ -128,7 +128,7 @@ export const ExecutionToolbar: React.FC<ExecutionToolbarProps> = ({
             disabled: node.disabled,
             notes: node.notes,
           },
-        })),
+        })) as any,
         edges: [], // Convert connections to edges if needed
         version: 1,
         isActive: true,

@@ -17,7 +17,7 @@ import type { CustomNodeBodyProps } from '../types';
  * Versatile UI component for Gmail nodes (both trigger and action modes)
  */
 const GmailNodeBody: React.FC<CustomNodeBodyProps> = ({
-  nodeId,
+  nodeId: _nodeId,
   nodeData,
   selected,
   isHovered,
@@ -30,7 +30,6 @@ const GmailNodeBody: React.FC<CustomNodeBodyProps> = ({
   // Extract Gmail-specific configuration
   const filters = nodeData.parameters?.filters || {};
   const pollTimes = nodeData.parameters?.pollTimes || { mode: 'everyMinute' };
-  const _options = nodeData.parameters?.options || {};
   const credential = nodeData.parameters?.credential;
   const nodeType = nodeData.type || 'gmail-trigger';
 
@@ -176,13 +175,13 @@ const GmailNodeBody: React.FC<CustomNodeBodyProps> = ({
             </div>
             <div className="flex flex-wrap gap-1">
               {activeFilters.slice(0, 2).map((filter, index) => (
-                <Tag key={index} size="small" color="blue">
+                <Tag key={index} color="blue">
                   {filter}
                 </Tag>
               ))}
               {activeFilters.length > 2 && (
                 <Tooltip title={activeFilters.slice(2).join(', ')}>
-                  <Tag size="small">+{activeFilters.length - 2} more</Tag>
+                  <Tag>+{activeFilters.length - 2} more</Tag>
                 </Tooltip>
               )}
             </div>

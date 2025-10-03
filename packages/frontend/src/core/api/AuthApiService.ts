@@ -92,7 +92,7 @@ export class AuthApiService {
       throw new ApiClientError(result.error.message, result.error.statusCode || 0, 'LOGIN_ERROR');
     }
 
-    return result.data;
+    return result.data as LoginResponse;
   }
 
   /**
@@ -110,7 +110,7 @@ export class AuthApiService {
         localStorage.setItem(configService.get('auth').refreshTokenKey, response.refreshToken);
       }
 
-      return response;
+      return response as LoginResponse;
     } catch (error) {
       throw new ApiClientError('Registration failed', 0, 'REGISTRATION_ERROR', error);
     }
@@ -126,7 +126,7 @@ export class AuthApiService {
       // Clear stored tokens
       this.clearAuthData();
 
-      return response;
+      return response as { message: string; sessionId: string };
     } catch (error) {
       // Even if logout fails on server, clear local tokens
       this.clearAuthData();
@@ -157,7 +157,7 @@ export class AuthApiService {
         localStorage.setItem(configService.get('auth').refreshTokenKey, response.refreshToken);
       }
 
-      return response;
+      return response as AuthTokens;
     } catch (error) {
       // If refresh fails, clear tokens and throw error
       this.clearAuthData();

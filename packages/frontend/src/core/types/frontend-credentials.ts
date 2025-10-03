@@ -95,7 +95,7 @@ export interface CredentialProperty {
  * Credential type definition for UI
  * Includes form properties and authentication config
  */
-export interface CredentialType {
+export interface CredentialTypeDefinition {
   name: string;
   displayName: string;
   description: string;
@@ -132,7 +132,7 @@ export interface CredentialTestResult {
  * Predefined credential types for workflow automation
  * Frontend-specific configurations for common integrations
  */
-export const credentialTypes: CredentialType[] = [
+export const credentialTypes: CredentialTypeDefinition[] = [
   {
     name: 'gmailOAuth2',
     displayName: 'Gmail',
@@ -300,7 +300,7 @@ export const credentialTypes: CredentialType[] = [
 /**
  * Get credential type by name
  */
-export function getCredentialType(name: string): CredentialType | undefined {
+export function getCredentialType(name: string): CredentialTypeDefinition | undefined {
   return credentialTypes.find((ct) => ct.name === name);
 }
 

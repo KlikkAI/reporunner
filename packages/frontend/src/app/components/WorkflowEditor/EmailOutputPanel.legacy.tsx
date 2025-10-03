@@ -16,15 +16,7 @@ const EmailOutputPanel: React.FC<EmailOutputPanelProps> = ({ selectedEmail, isVi
       return 'Email Output';
     }
     const from = selectedEmail.from || 'Unknown sender';
-    const _subject = selectedEmail.subject || 'No subject';
     return `Email from ${from}`;
-  }, [selectedEmail]);
-
-  const _emailSubtitle = useMemo(() => {
-    if (!selectedEmail) {
-      return undefined;
-    }
-    return selectedEmail.subject || 'No subject';
   }, [selectedEmail]);
 
   const handleExport = (_format: 'json' | 'csv' | 'xml') => {
@@ -32,9 +24,7 @@ const EmailOutputPanel: React.FC<EmailOutputPanelProps> = ({ selectedEmail, isVi
       return;
     }
 
-    // Custom export logic for email data
-    const _filename = `email-${selectedEmail.id || 'unknown'}-${Date.now()}`;
-    // Implementation would be handled by SharedDataVisualizationPanel
+    // Custom export logic for email data - handled by SharedDataVisualizationPanel
   };
 
   if (!isVisible) {

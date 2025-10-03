@@ -23,6 +23,7 @@ interface LeanWorkflowState {
   deleteWorkflow: (id: string) => Promise<void>;
   setActiveWorkflow: (workflow: WorkflowDefinition | null) => void;
   executeWorkflow: (id: string) => Promise<void>;
+  importWorkflow: (workflowData: any) => Promise<void>;
   clearError: () => void;
 }
 
@@ -146,6 +147,22 @@ export const useLeanWorkflowStore = create<LeanWorkflowState>()(
           set({ isLoading: false });
         } catch (error) {
           const message = error instanceof Error ? error.message : 'Failed to execute workflow';
+          set({ error: message, isLoading: false });
+        }
+      },
+
+      importWorkflow: async (workflowData) => {
+        try {
+          set({ isLoading: true, error: null });
+          const importedWorkflow = await workflowApiService.createWorkflow(workflowData);
+          const { workflows } = get();
+          set({
+            workflows: [...workflows, importedWorkflow],
+            activeWorkflow: importedWorkflow,
+            isLoading: false,
+          });
+        } catch (error) {
+          const message = error instanceof Error ? error.message : 'Failed to import workflow';
           set({ error: message, isLoading: false });
         }
       },

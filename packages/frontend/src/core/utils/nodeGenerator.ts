@@ -136,7 +136,7 @@ class NodeGenerator {
         : undefined,
       selected: false,
       dragging: false,
-    };
+    } as Node<WorkflowNodeData>;
 
     return clonedNode;
   }

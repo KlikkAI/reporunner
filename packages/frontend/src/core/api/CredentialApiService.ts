@@ -271,7 +271,7 @@ export class CredentialApiService {
           })
         )
       );
-      return response;
+      return response as { authUrl: string; state: string };
     } catch (error) {
       throw new ApiClientError(
         'Failed to initiate Gmail OAuth:',

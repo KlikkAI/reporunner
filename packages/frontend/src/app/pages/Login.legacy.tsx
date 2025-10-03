@@ -16,7 +16,7 @@ const Login: React.FC = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <AuthForm type="login" onSubmit={handleLogin} loading={loading} error={error} />
+      <AuthForm type="login" onSubmit={handleLogin} loading={loading} error={error || undefined} />
     </div>
   );
 };

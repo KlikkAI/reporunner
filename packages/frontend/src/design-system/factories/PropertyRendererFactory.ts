@@ -303,7 +303,7 @@ export class PropertyRendererFactory {
    */
   private static isRequired(config: PropertyRendererConfig, context: PropertyContext): boolean {
     if (!config.conditional?.requiredWhen) {
-      return config.required;
+      return config.required || false;
     }
 
     const { formData } = context;

@@ -11,7 +11,7 @@ import { NodeIcon, NodeLabel, StatusBadge } from './shared';
  * Gmail-style UI with condition-specific features and dual outputs
  */
 const ConditionNodeBody: React.FC<CustomNodeBodyProps> = ({
-  nodeId,
+  nodeId: _nodeId,
   nodeData,
   selected,
   isHovered,

@@ -110,11 +110,7 @@ const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({
           missingErrorHandling: ['http-node-1'],
           suggestions: ['Add try-catch containers', 'Implement retry logic'],
         },
-        maintainability: {
-          codeQuality: 0.7,
-          documentation: 0.5,
-          modularity: 0.8,
-        },
+        maintainability: 0.7,
         patterns: {
           detected: ['Sequential Pattern', 'Data Transformation Pattern'],
           recommendations: ['Use Parallel Container', 'Add Error Handling'],

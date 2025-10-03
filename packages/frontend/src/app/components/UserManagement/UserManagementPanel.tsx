@@ -53,7 +53,7 @@ import type {
   SSOProvider,
   User,
   UserInvitation,
-  UserRole,
+  UserRoleDefinition,
 } from '@/core/types/frontend-auth';
 import { cn } from '@/design-system/utils';
 
@@ -68,7 +68,7 @@ interface UserManagementPanelProps {
 const UserManagementPanel: React.FC<UserManagementPanelProps> = ({ className }) => {
   const [activeTab, setActiveTab] = useState('users');
   const [users, setUsers] = useState<User[]>([]);
-  const [roles, setRoles] = useState<UserRole[]>([]);
+  const [roles, setRoles] = useState<UserRoleDefinition[]>([]);
   const [apiKeys, setApiKeys] = useState<APIKey[]>([]);
   const [invitations, setInvitations] = useState<UserInvitation[]>([]);
   const [ssoProviders, setSSOProviders] = useState<SSOProvider[]>([]);
@@ -98,28 +98,27 @@ const UserManagementPanel: React.FC<UserManagementPanelProps> = ({ className }) 
           id: 'user_1',
           email: 'admin@reporunner.com',
           name: 'Admin User',
-          role: {
-            id: 'admin',
-            name: 'Administrator',
-            description: 'System administration',
-            level: 8,
-            permissions: [],
-            isSystem: true,
-            createdAt: Date.now(),
-            updatedAt: Date.now(),
-          },
+          role: 'admin',
           status: 'active',
-          createdAt: Date.now(),
-          lastLoginAt: Date.now() - 3600000,
+          createdAt: new Date().toISOString(),
+          lastLoginAt: new Date(Date.now() - 3600000).toISOString(),
           mfaEnabled: true,
           preferences: {
             theme: 'dark',
             language: 'en',
             timezone: 'UTC',
             notifications: {
-              email: true,
+              email: {
+                workflowSuccess: true,
+                workflowFailure: true,
+                weeklyDigest: true,
+              },
               push: false,
-              inApp: true,
+              inApp: {
+                workflowEvents: true,
+                mentions: true,
+                systemUpdates: true,
+              },
               workflows: true,
               executions: true,
               security: true,
@@ -143,28 +142,27 @@ const UserManagementPanel: React.FC<UserManagementPanelProps> = ({ className }) 
           id: 'user_2',
           email: 'editor@reporunner.com',
           name: 'Editor User',
-          role: {
-            id: 'editor',
-            name: 'Editor',
-            description: 'Create and edit workflows',
-            level: 4,
-            permissions: [],
-            isSystem: false,
-            createdAt: Date.now(),
-            updatedAt: Date.now(),
-          },
+          role: 'member',
           status: 'active',
-          createdAt: Date.now() - 86400000,
-          lastLoginAt: Date.now() - 7200000,
+          createdAt: new Date(Date.now() - 86400000).toISOString(),
+          lastLoginAt: new Date(Date.now() - 7200000).toISOString(),
           mfaEnabled: false,
           preferences: {
             theme: 'light',
             language: 'en',
             timezone: 'UTC',
             notifications: {
-              email: true,
+              email: {
+                workflowSuccess: true,
+                workflowFailure: true,
+                weeklyDigest: true,
+              },
               push: false,
-              inApp: true,
+              inApp: {
+                workflowEvents: true,
+                mentions: true,
+                systemUpdates: true,
+              },
               workflows: true,
               executions: true,
               security: true,
@@ -188,27 +186,26 @@ const UserManagementPanel: React.FC<UserManagementPanelProps> = ({ className }) 
           id: 'user_3',
           email: 'viewer@reporunner.com',
           name: 'Viewer User',
-          role: {
-            id: 'viewer',
-            name: 'Viewer',
-            description: 'View-only access',
-            level: 2,
-            permissions: [],
-            isSystem: true,
-            createdAt: Date.now(),
-            updatedAt: Date.now(),
-          },
+          role: 'viewer',
           status: 'pending',
-          createdAt: Date.now() - 172800000,
+          createdAt: new Date(Date.now() - 172800000).toISOString(),
           mfaEnabled: false,
           preferences: {
             theme: 'dark',
             language: 'en',
             timezone: 'UTC',
             notifications: {
-              email: false,
+              email: {
+                workflowSuccess: false,
+                workflowFailure: false,
+                weeklyDigest: false,
+              },
               push: false,
-              inApp: true,
+              inApp: {
+                workflowEvents: true,
+                mentions: false,
+                systemUpdates: true,
+              },
               workflows: false,
               executions: false,
               security: true,
@@ -239,7 +236,7 @@ const UserManagementPanel: React.FC<UserManagementPanelProps> = ({ className }) 
   const loadRoles = useCallback(async () => {
     try {
       // Simulate API call
-      const mockRoles: UserRole[] = [
+      const mockRoles: UserRoleDefinition[] = [
         {
           id: 'owner',
           name: 'Owner',
@@ -247,8 +244,8 @@ const UserManagementPanel: React.FC<UserManagementPanelProps> = ({ className }) 
           level: 10,
           permissions: [],
           isSystem: true,
-          createdAt: Date.now(),
-          updatedAt: Date.now(),
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
         },
         {
           id: 'admin',
@@ -257,8 +254,8 @@ const UserManagementPanel: React.FC<UserManagementPanelProps> = ({ className }) 
           level: 8,
           permissions: [],
           isSystem: true,
-          createdAt: Date.now(),
-          updatedAt: Date.now(),
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
         },
         {
           id: 'manager',
@@ -267,8 +264,8 @@ const UserManagementPanel: React.FC<UserManagementPanelProps> = ({ className }) 
           level: 6,
           permissions: [],
           isSystem: false,
-          createdAt: Date.now(),
-          updatedAt: Date.now(),
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
         },
         {
           id: 'editor',
@@ -277,8 +274,8 @@ const UserManagementPanel: React.FC<UserManagementPanelProps> = ({ className }) 
           level: 4,
           permissions: [],
           isSystem: false,
-          createdAt: Date.now(),
-          updatedAt: Date.now(),
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
         },
         {
           id: 'viewer',
@@ -287,8 +284,8 @@ const UserManagementPanel: React.FC<UserManagementPanelProps> = ({ className }) 
           level: 2,
           permissions: [],
           isSystem: true,
-          createdAt: Date.now(),
-          updatedAt: Date.now(),
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
         },
       ];
       setRoles(mockRoles);
@@ -305,9 +302,9 @@ const UserManagementPanel: React.FC<UserManagementPanelProps> = ({ className }) 
           key: 'rr_dev_1234567890abcdef',
           keyHash: 'hash1',
           permissions: [],
-          expiresAt: Date.now() + 365 * 24 * 60 * 60 * 1000,
-          lastUsedAt: Date.now() - 3600000,
-          createdAt: Date.now() - 86400000,
+          expiresAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(),
+          lastUsedAt: new Date(Date.now() - 3600000).toISOString(),
+          createdAt: new Date(Date.now() - 86400000).toISOString(),
           createdBy: 'user_1',
           status: 'active',
           metadata: {
@@ -320,9 +317,9 @@ const UserManagementPanel: React.FC<UserManagementPanelProps> = ({ className }) 
           key: 'rr_prod_abcdef1234567890',
           keyHash: 'hash2',
           permissions: [],
-          expiresAt: Date.now() + 30 * 24 * 60 * 60 * 1000,
-          lastUsedAt: Date.now() - 1800000,
-          createdAt: Date.now() - 172800000,
+          expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+          lastUsedAt: new Date(Date.now() - 1800000).toISOString(),
+          createdAt: new Date(Date.now() - 172800000).toISOString(),
           createdBy: 'user_1',
           status: 'active',
           metadata: {
@@ -345,8 +342,8 @@ const UserManagementPanel: React.FC<UserManagementPanelProps> = ({ className }) 
           permissions: [],
           projects: [],
           invitedBy: 'user_1',
-          invitedAt: Date.now() - 86400000,
-          expiresAt: Date.now() + 6 * 24 * 60 * 60 * 1000,
+          invitedAt: new Date(Date.now() - 86400000).toISOString(),
+          expiresAt: new Date(Date.now() + 6 * 24 * 60 * 60 * 1000).toISOString(),
           status: 'pending',
           token: 'token123',
           message: 'Welcome to Reporunner!',
@@ -453,7 +450,7 @@ const UserManagementPanel: React.FC<UserManagementPanelProps> = ({ className }) 
       user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       user.email.toLowerCase().includes(searchTerm.toLowerCase());
 
-    const matchesRole = selectedRole === 'all' || user.role.id === selectedRole;
+    const matchesRole = selectedRole === 'all' || user.role === selectedRole;
 
     return matchesSearch && matchesRole;
   });
@@ -475,7 +472,7 @@ const UserManagementPanel: React.FC<UserManagementPanelProps> = ({ className }) 
     {
       title: 'Role',
       key: 'role',
-      render: (record: User) => <Tag color={getRoleColor(record.role.id)}>{record.role.name}</Tag>,
+      render: (record: User) => <Tag color={getRoleColor(record.role)}>{record.role}</Tag>,
     },
     {
       title: 'Status',
@@ -909,7 +906,7 @@ const UserManagementPanel: React.FC<UserManagementPanelProps> = ({ className }) 
               <Input value={selectedUser.email} />
             </Form.Item>
             <Form.Item label="Role">
-              <Select value={selectedUser.role.id}>
+              <Select value={selectedUser.role}>
                 {roles.map((role) => (
                   <Option key={role.id} value={role.id}>
                     {role.name}

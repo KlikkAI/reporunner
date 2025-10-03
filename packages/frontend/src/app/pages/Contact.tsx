@@ -12,7 +12,6 @@ import {
   Code,
   ExternalLink,
   Globe,
-  Heart,
   HelpCircle,
   Mail,
   MapPin,
@@ -22,31 +21,32 @@ import {
   Zap,
 } from 'lucide-react';
 import type React from 'react';
-import { useState } from 'react';
 import { Footer } from '../components/Landing/Footer';
 import { Header } from '../components/Landing/Header';
 
 export const Contact: React.FC = () => {
-  const [_formData, setFormData] = useState({
-    name: '',
-    email: '',
-    company: '',
-    role: '',
-    inquiry: 'general',
-    subject: '',
-    message: '',
-    newsletter: false,
-  });
-  const [_isSubmitted, setIsSubmitted] = useState(false);
+  // Form state for future form implementation
+  // const [_formData, setFormData] = useState({
+  //   name: '',
+  //   email: '',
+  //   company: '',
+  //   role: '',
+  //   inquiry: 'general',
+  //   subject: '',
+  //   message: '',
+  //   newsletter: false,
+  // });
+  // const [_isSubmitted, setIsSubmitted] = useState(false);
 
-  const _inquiryTypes = [
-    { value: 'sales', label: 'Sales Inquiry', icon: Briefcase },
-    { value: 'support', label: 'Technical Support', icon: HelpCircle },
-    { value: 'partnership', label: 'Partnership', icon: Users },
-    { value: 'general', label: 'General Question', icon: MessageSquare },
-    { value: 'press', label: 'Press & Media', icon: Globe },
-    { value: 'careers', label: 'Careers', icon: Heart },
-  ];
+  // Inquiry types for future form implementation
+  // const _inquiryTypes = [
+  //   { value: 'sales', label: 'Sales Inquiry', icon: Briefcase },
+  //   { value: 'support', label: 'Technical Support', icon: HelpCircle },
+  //   { value: 'partnership', label: 'Partnership', icon: Users },
+  //   { value: 'general', label: 'General Question', icon: MessageSquare },
+  //   { value: 'press', label: 'Press & Media', icon: Globe },
+  //   { value: 'careers', label: 'Careers', icon: Heart },
+  // ];
 
   const contactMethods = [
     {
@@ -140,42 +140,43 @@ export const Contact: React.FC = () => {
     },
   ];
 
-  const _handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
-  ) => {
-    const { name, value, type } = e.target;
-    if (type === 'checkbox') {
-      setFormData((prev) => ({
-        ...prev,
-        [name]: (e.target as HTMLInputElement).checked,
-      }));
-    } else {
-      setFormData((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
-    }
-  };
+  // Form handlers for future implementation
+  // const _handleInputChange = (
+  //   e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  // ) => {
+  //   const { name, value, type } = e.target;
+  //   if (type === 'checkbox') {
+  //     setFormData((prev) => ({
+  //       ...prev,
+  //       [name]: (e.target as HTMLInputElement).checked,
+  //     }));
+  //   } else {
+  //     setFormData((prev) => ({
+  //       ...prev,
+  //       [name]: value,
+  //     }));
+  //   }
+  // };
 
-  const _handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitted(true);
-
-    // Reset form after 3 seconds
-    setTimeout(() => {
-      setIsSubmitted(false);
-      setFormData({
-        name: '',
-        email: '',
-        company: '',
-        role: '',
-        inquiry: 'general',
-        subject: '',
-        message: '',
-        newsletter: false,
-      });
-    }, 3000);
-  };
+  // const _handleSubmit = (e: React.FormEvent) => {
+  //   e.preventDefault();
+  //   setIsSubmitted(true);
+  //
+  //   // Reset form after 3 seconds
+  //   setTimeout(() => {
+  //     setIsSubmitted(false);
+  //     setFormData({
+  //       name: '',
+  //       email: '',
+  //       company: '',
+  //       role: '',
+  //       inquiry: 'general',
+  //       subject: '',
+  //       message: '',
+  //       newsletter: false,
+  //     });
+  //   }, 3000);
+  // };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">

@@ -118,7 +118,7 @@ export const Credentials: React.FC = () => {
       };
 
       if (property.type === 'options' && property.options) {
-        config.options = property.options.map((option) => ({
+        config.options = property.options.map((option: any) => ({
           label: option.name,
           value: option.value,
         }));
@@ -210,7 +210,6 @@ export const Credentials: React.FC = () => {
                       : []),
                     {
                       label: credential.type === 'gmailOAuth2' ? 'Revoke Access' : 'Delete',
-                      type: 'danger' as const,
                       onClick: () => {
                         const action =
                           credential.type === 'gmailOAuth2'

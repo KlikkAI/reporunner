@@ -23,7 +23,9 @@ const getCategoryMetadata = (category: string) => {
 };
 
 const AdvancedNodePanel: React.FC<AdvancedNodePanelProps> = ({ isCollapsed, onToggle }) => {
-  const { addNode, addEdge, nodes, edges } = useLeanWorkflowStore();
+  const { activeWorkflow } = useLeanWorkflowStore();
+  const nodes = activeWorkflow?.nodes || [];
+  const edges = activeWorkflow?.edges || [];
   const { isEnabled: isAIEnabled, nodeSuggestions, getNodeSuggestions } = useAIAssistantStore();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
@@ -51,18 +53,18 @@ const AdvancedNodePanel: React.FC<AdvancedNodePanelProps> = ({ isCollapsed, onTo
 
   // Add container nodes
   const containerNodes = Object.values(CONTAINER_TEMPLATES).map((template) => ({
-    id: `container-${template.type}`,
-    displayName: template.label,
+    id: `container-${template.id}`,
+    displayName: template.name,
     description: template.description,
     icon: template.icon,
     category: template.category,
     color: '#8B5CF6', // Purple color for containers
     type: 'container',
-    containerType: template.type,
+    containerType: template.id,
     nodeTypeData: {
       name: 'container',
-      displayName: template.label,
-      containerType: template.type,
+      displayName: template.name,
+      containerType: template.id,
     },
     isCore: true,
   })) as Array<{
@@ -126,55 +128,12 @@ const AdvancedNodePanel: React.FC<AdvancedNodePanelProps> = ({ isCollapsed, onTo
   const handleAISuggestionAdd = useCallback(
     (suggestion: (typeof aiSuggestedNodes)[0]) => {
       if (suggestion.aiSuggestion) {
-        // Use default position since AIWorkflowSuggestion doesn't have placement
-        const defaultPosition = { x: 100, y: 100 };
-
-        // Create node at default position
-        const newNodeId = `node-${Date.now()}-${Math.random().toString(36).substr(2, 9)}-${suggestion.type}`;
-        const enhancedNodeType = nodeRegistry.getNodeTypeDescription(suggestion.type);
-
-        const newNode = {
-          id: newNodeId,
-          type: suggestion.type,
-          position: defaultPosition,
-          parameters: {
-            label: suggestion.displayName,
-            nodeType: suggestion.nodeTypeData.name,
-            configuration: {},
-            credentials: [],
-            icon: enhancedNodeType?.icon || suggestion.icon,
-            enhancedNodeType: enhancedNodeType,
-            nodeTypeData: suggestion.nodeTypeData,
-            config: {},
-          },
-        };
-
-        addNode(newNode);
-
-        // Skip auto-connect since AI suggestion doesn't have connections
-        const connections: any[] = [];
-        connections.forEach((connection: any) => {
-          if (connection.sourceNodeId && connection.type === 'input') {
-            const newEdge = {
-              id: `edge-${connection.sourceNodeId}-${newNodeId}`,
-              source: connection.sourceNodeId,
-              target: newNodeId,
-              type: 'default',
-            };
-            addEdge(newEdge);
-          } else if (connection.targetNodeId && connection.type === 'output') {
-            const newEdge = {
-              id: `edge-${newNodeId}-${connection.targetNodeId}`,
-              source: newNodeId,
-              target: connection.targetNodeId,
-              type: 'default',
-            };
-            addEdge(newEdge);
-          }
-        });
+        // TODO: Implement AI suggestion adding through parent component
+        // This should trigger a drag event or call a parent handler
+        console.log('AI suggestion add not yet implemented:', suggestion);
       }
     },
-    [addNode, addEdge]
+    []
   );
 
   // Filter and sort nodes in ascending order

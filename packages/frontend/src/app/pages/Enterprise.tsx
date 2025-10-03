@@ -32,32 +32,33 @@ import { Header } from '../components/Landing/Header';
 export const Enterprise: React.FC = () => {
   const [activeTab, setActiveTab] = useState('security');
 
-  const _testimonials = [
-    {
-      quote:
-        'Reporunner has transformed our compliance reporting. What used to take weeks now happens automatically with full audit trails.',
-      author: 'Sarah Chen',
-      title: 'CTO',
-      company: 'Global Financial Corp',
-      logo: '🏦',
-    },
-    {
-      quote:
-        'The security features and air-gap deployment capability gave us confidence to automate our most sensitive workflows.',
-      author: 'Michael Rodriguez',
-      title: 'Head of Security',
-      company: 'Defense Solutions Inc',
-      logo: '🛡️',
-    },
-    {
-      quote:
-        'Our development velocity increased 300% after implementing Reporunner for our CI/CD and incident response workflows.',
-      author: 'Emma Thompson',
-      title: 'VP Engineering',
-      company: 'TechScale',
-      logo: '⚡',
-    },
-  ];
+  // Testimonials for future implementation
+  // const _testimonials = [
+  //   {
+  //     quote:
+  //       'Reporunner has transformed our compliance reporting. What used to take weeks now happens automatically with full audit trails.',
+  //     author: 'Sarah Chen',
+  //     title: 'CTO',
+  //     company: 'Global Financial Corp',
+  //     logo: '🏦',
+  //   },
+  //   {
+  //     quote:
+  //       'The security features and air-gap deployment capability gave us confidence to automate our most sensitive workflows.',
+  //     author: 'Michael Rodriguez',
+  //     title: 'Head of Security',
+  //     company: 'Defense Solutions Inc',
+  //     logo: '🛡️',
+  //   },
+  //   {
+  //     quote:
+  //       'Our development velocity increased 300% after implementing Reporunner for our CI/CD and incident response workflows.',
+  //     author: 'Emma Thompson',
+  //     title: 'VP Engineering',
+  //     company: 'TechScale',
+  //     logo: '⚡',
+  //   },
+  // ];
 
   const enterpriseFeatures = {
     security: [
@@ -141,40 +142,41 @@ export const Enterprise: React.FC = () => {
     ],
   };
 
-  const _useCases = [
-    {
-      title: 'Financial Services',
-      description: 'Automate compliance reporting, fraud detection, and customer onboarding',
-      icon: Building,
-      challenges: ['Regulatory compliance', 'Data security', 'High availability'],
-      solutions: ['SOC2 certified platform', 'End-to-end encryption', '99.99% SLA'],
-      results: '50% reduction in compliance costs, 80% faster onboarding',
-    },
-    {
-      title: 'Healthcare',
-      description: 'HIPAA-compliant patient data processing and clinical workflow automation',
-      icon: Shield,
-      challenges: ['HIPAA compliance', 'Patient privacy', 'System integration'],
-      solutions: ['HIPAA-ready deployment', 'PHI encryption', 'HL7 integrations'],
-      results: '100% HIPAA compliance, 60% faster patient processing',
-    },
-    {
-      title: 'Manufacturing',
-      description: 'Supply chain optimization, quality control, and predictive maintenance',
-      icon: Settings,
-      challenges: ['Legacy system integration', 'Real-time processing', 'Scalability'],
-      solutions: ['Custom connectors', 'Edge deployment', 'Auto-scaling'],
-      results: '30% reduction in downtime, $2M annual savings',
-    },
-    {
-      title: 'Government',
-      description: 'Secure data processing, inter-agency workflows, and citizen services',
-      icon: Lock,
-      challenges: ['Security clearances', 'Air-gap deployment', 'Compliance'],
-      solutions: ['FedRAMP ready', 'Air-gap support', 'Government cloud'],
-      results: 'Accelerated digital transformation, improved citizen experience',
-    },
-  ];
+  // Use cases for future implementation
+  // const _useCases = [
+  //   {
+  //     title: 'Financial Services',
+  //     description: 'Automate compliance reporting, fraud detection, and customer onboarding',
+  //     icon: Building,
+  //     challenges: ['Regulatory compliance', 'Data security', 'High availability'],
+  //     solutions: ['SOC2 certified platform', 'End-to-end encryption', '99.99% SLA'],
+  //     results: '50% reduction in compliance costs, 80% faster onboarding',
+  //   },
+  //   {
+  //     title: 'Healthcare',
+  //     description: 'HIPAA-compliant patient data processing and clinical workflow automation',
+  //     icon: Shield,
+  //     challenges: ['HIPAA compliance', 'Patient privacy', 'System integration'],
+  //     solutions: ['HIPAA-ready deployment', 'PHI encryption', 'HL7 integrations'],
+  //     results: '100% HIPAA compliance, 60% faster patient processing',
+  //   },
+  //   {
+  //     title: 'Manufacturing',
+  //     description: 'Supply chain optimization, quality control, and predictive maintenance',
+  //     icon: Settings,
+  //     challenges: ['Legacy system integration', 'Real-time processing', 'Scalability'],
+  //     solutions: ['Custom connectors', 'Edge deployment', 'Auto-scaling'],
+  //     results: '30% reduction in downtime, $2M annual savings',
+  //   },
+  //   {
+  //     title: 'Government',
+  //     description: 'Secure data processing, inter-agency workflows, and citizen services',
+  //     icon: Lock,
+  //     challenges: ['Security clearances', 'Air-gap deployment', 'Compliance'],
+  //     solutions: ['FedRAMP ready', 'Air-gap support', 'Government cloud'],
+  //     results: 'Accelerated digital transformation, improved citizen experience',
+  //   },
+  // ];
 
   const customerTestimonials = [
     {
@@ -203,46 +205,47 @@ export const Enterprise: React.FC = () => {
     },
   ];
 
-  const _pricing = {
-    starter: {
-      name: 'Enterprise Starter',
-      price: '$500/month',
-      description: 'For teams of 25-100 users',
-      features: [
-        'Up to 100 users',
-        'Enterprise SSO',
-        'Advanced security',
-        'Priority support',
-        'SLA: 99.9%',
-      ],
-    },
-    growth: {
-      name: 'Enterprise Growth',
-      price: '$1,500/month',
-      description: 'For organizations of 100-500 users',
-      features: [
-        'Up to 500 users',
-        'All Starter features',
-        'Advanced analytics',
-        'Custom integrations',
-        '24/7 phone support',
-        'SLA: 99.95%',
-      ],
-    },
-    scale: {
-      name: 'Enterprise Scale',
-      price: 'Custom',
-      description: 'For large organizations 500+ users',
-      features: [
-        'Unlimited users',
-        'All Growth features',
-        'Air-gap deployment',
-        'Dedicated support',
-        'Professional services',
-        'Custom SLA up to 99.99%',
-      ],
-    },
-  };
+  // Pricing tiers for future implementation
+  // const _pricing = {
+  //   starter: {
+  //     name: 'Enterprise Starter',
+  //     price: '$500/month',
+  //     description: 'For teams of 25-100 users',
+  //     features: [
+  //       'Up to 100 users',
+  //       'Enterprise SSO',
+  //       'Advanced security',
+  //       'Priority support',
+  //       'SLA: 99.9%',
+  //     ],
+  //   },
+  //   growth: {
+  //     name: 'Enterprise Growth',
+  //     price: '$1,500/month',
+  //     description: 'For organizations of 100-500 users',
+  //     features: [
+  //       'Up to 500 users',
+  //       'All Starter features',
+  //       'Advanced analytics',
+  //       'Custom integrations',
+  //       '24/7 phone support',
+  //       'SLA: 99.95%',
+  //     ],
+  //   },
+  //   scale: {
+  //     name: 'Enterprise Scale',
+  //     price: 'Custom',
+  //     description: 'For large organizations 500+ users',
+  //     features: [
+  //       'Unlimited users',
+  //       'All Growth features',
+  //       'Air-gap deployment',
+  //       'Dedicated support',
+  //       'Professional services',
+  //       'Custom SLA up to 99.99%',
+  //     ],
+  //   },
+  // };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">

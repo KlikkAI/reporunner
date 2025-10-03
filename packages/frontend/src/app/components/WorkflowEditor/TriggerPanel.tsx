@@ -94,16 +94,16 @@ export const TriggerPanel: React.FC<TriggerPanelProps> = ({ workflowId, visible,
 
   const loadTriggers = () => {
     const allTriggers = advancedTriggerSystem.getAllTriggers();
-    const workflowTriggers = allTriggers.filter((t) => t.workflowId === workflowId);
+    const workflowTriggers = allTriggers.filter((t: any) => t.workflowId === workflowId);
     setTriggers(workflowTriggers);
   };
 
   const loadRecentEvents = () => {
     const allTriggers = advancedTriggerSystem.getAllTriggers();
-    const workflowTriggers = allTriggers.filter((t) => t.workflowId === workflowId);
+    const workflowTriggers = allTriggers.filter((t: any) => t.workflowId === workflowId);
 
     const events: TriggerEvent[] = [];
-    workflowTriggers.forEach((trigger) => {
+    workflowTriggers.forEach((trigger: any) => {
       const triggerEvents = advancedTriggerSystem.getRecentEvents(trigger.id, 50);
       events.push(...triggerEvents);
     });

@@ -6,7 +6,7 @@ interface NodeToolbarProps {
   onStop: () => void;
   onDelete: (event: React.MouseEvent) => void;
   onMenuToggle: () => void;
-  menuTriggerRef?: React.RefObject<HTMLButtonElement | null>;
+  menuTriggerRef?: React.RefObject<HTMLButtonElement>;
 }
 
 const NodeToolbar: React.FC<NodeToolbarProps> = ({

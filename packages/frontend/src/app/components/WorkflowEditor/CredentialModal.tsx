@@ -110,7 +110,7 @@ export const CredentialModal: React.FC<CredentialModalProps> = ({
 
         if (field.type === 'options' && field.options) {
           property.type = 'select';
-          property.options = field.options.map((option) => ({
+          property.options = field.options.map((option: any) => ({
             label: option.name,
             value: option.value,
           }));

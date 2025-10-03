@@ -55,8 +55,7 @@ class ComponentFactory implements UIComponentFactory {
 
     this.bodyComponents.set(name, component);
 
-    // Immediate verification
-    const _retrieved = this.bodyComponents.get(name);
+    // Verification happens during component retrieval
   }
 
   registerPropertiesPanel(
@@ -69,8 +68,7 @@ class ComponentFactory implements UIComponentFactory {
 
     this.propertiesPanels.set(name, component);
 
-    // Immediate verification
-    const _retrieved = this.propertiesPanels.get(name);
+    // Verification happens during component retrieval
   }
 
   registerHandleRenderer(name: string, component: ComponentType<CustomHandleRendererProps>): void {

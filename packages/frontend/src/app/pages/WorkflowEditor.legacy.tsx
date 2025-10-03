@@ -12,7 +12,7 @@ const WorkflowEditor: React.FC = () => {
   useEffect(() => {
     if (id) {
       // Load specific workflow from API
-      loadWorkflow(id).catch((_error) => {
+      loadWorkflow(id).catch((_error: any) => {
         // If workflow not found, redirect to dashboard or show error
       });
     } else {

@@ -156,7 +156,7 @@ export const WorkflowTemplatesPanel: React.FC<WorkflowTemplatesPanelProps> = ({
 
   const handleToggleFavorite = (templateId: string) => {
     const favorites = workflowTemplates.getFavoriteTemplates();
-    const isFavorite = favorites.some((t) => t.id === templateId);
+    const isFavorite = favorites.some((t: any) => t.id === templateId);
 
     if (isFavorite) {
       workflowTemplates.removeFromFavorites(templateId);
@@ -200,7 +200,7 @@ export const WorkflowTemplatesPanel: React.FC<WorkflowTemplatesPanelProps> = ({
 
   const renderTemplateCard = (template: WorkflowTemplate) => {
     const favorites = workflowTemplates.getFavoriteTemplates();
-    const isFavorite = favorites.some((t) => t.id === template.id);
+    const isFavorite = favorites.some((t: any) => t.id === template.id);
 
     if (viewMode === 'list') {
       return (
@@ -352,7 +352,7 @@ export const WorkflowTemplatesPanel: React.FC<WorkflowTemplatesPanelProps> = ({
           <div>
             <Paragraph>{selectedTemplate.description}</Paragraph>
             <Space wrap>
-              {selectedTemplate.tags.map((tag) => (
+              {selectedTemplate.tags.map((tag: any) => (
                 <Tag key={tag}>{tag}</Tag>
               ))}
             </Space>
@@ -387,7 +387,7 @@ export const WorkflowTemplatesPanel: React.FC<WorkflowTemplatesPanelProps> = ({
           <div>
             <Title level={5}>Required Integrations</Title>
             <Space wrap>
-              {selectedTemplate.configuration.requiredIntegrations.map((integration) => (
+              {selectedTemplate.configuration.requiredIntegrations.map((integration: any) => (
                 <Tag key={integration} color="blue">
                   {integration}
                 </Tag>
@@ -515,7 +515,7 @@ export const WorkflowTemplatesPanel: React.FC<WorkflowTemplatesPanelProps> = ({
                 </Space>
                 <div>
                   <Text strong>Benefits: </Text>
-                  {pattern.benefits.map((benefit, index) => (
+                  {pattern.benefits.map((benefit: any, index: number) => (
                     <Tag key={index} color="blue">
                       {benefit}
                     </Tag>

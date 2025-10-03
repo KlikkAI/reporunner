@@ -37,7 +37,6 @@ import type React from 'react';
 import { useCallback, useState } from 'react';
 import type { CollaborationConflict } from '../../../core/services/collaborationService';
 import { useCollaborationStore } from '../../../core/stores/collaborationStore';
-import { useLeanWorkflowStore } from '../../../core/stores/leanWorkflowStore';
 
 const { TextArea } = Input;
 const { TabPane } = Tabs;
@@ -62,26 +61,32 @@ export const CollaborationPanel: React.FC<CollaborationPanelProps> = ({ isVisibl
     connectionStatus,
     currentUser,
     userPresences,
-    operationHistory,
     activeComments,
-    activeConflicts,
-    selectedCommentId,
-    showUserCursors,
-    showUserSelections,
-    showComments,
-    commentMode,
+    selectedComment: selectedCommentId,
     addComment,
-    replyToComment,
     resolveComment,
-    resolveConflict,
-    selectComment,
-    toggleCommentMode,
-    toggleUserCursors,
-    toggleUserSelections,
-    toggleComments,
+    setSelectedComment: selectComment,
   } = useCollaborationStore();
 
-  const { selectedNodeIds, currentWorkflow } = useLeanWorkflowStore();
+  // activeWorkflow would be used for collaboration features
+  // const { activeWorkflow } = useLeanWorkflowStore();
+
+  // Stub values for features not yet implemented
+  const operationHistory: any[] = [];
+  const activeConflicts: any[] = [];
+  const showUserCursors = true;
+  const showUserSelections = true;
+  const showComments = true;
+  const commentMode = false;
+  const selectedNodeIds: string[] = [];
+
+  // Stub functions for features not yet implemented
+  const replyToComment = (_commentId: string, _content: string) => {};
+  const resolveConflict = (_conflictId: string, _resolution: any) => {};
+  const toggleCommentMode = () => {};
+  const toggleUserCursors = () => {};
+  const toggleUserSelections = () => {};
+  const toggleComments = () => {};
 
   // Generate user colors for consistent display
   const getUserColor = useCallback((userId: string): string => {
@@ -208,8 +213,8 @@ export const CollaborationPanel: React.FC<CollaborationPanelProps> = ({ isVisibl
               </div>
               <div className="flex flex-col items-end">
                 <Badge
-                  status={presence.user.status === 'online' ? 'success' : 'default'}
-                  text={presence.user.status}
+                  status={presence.status === 'active' ? 'success' : 'default'}
+                  text={presence.status}
                 />
                 {presence.cursor && (
                   <div className="text-xs text-gray-500 mt-1">
@@ -321,14 +326,14 @@ export const CollaborationPanel: React.FC<CollaborationPanelProps> = ({ isVisibl
                   <div className="flex items-center space-x-2">
                     <Avatar
                       size={24}
-                      src={comment.author.avatar}
-                      style={{ backgroundColor: getUserColor(comment.author.id) }}
+                      src={comment.user.avatar}
+                      style={{ backgroundColor: getUserColor(comment.user.id) }}
                     >
-                      {comment.author.name.charAt(0).toUpperCase()}
+                      {comment.user.name.charAt(0).toUpperCase()}
                     </Avatar>
                     <div>
                       <div className="font-medium text-sm text-gray-900 dark:text-gray-100">
-                        {comment.author.name}
+                        {comment.user.name}
                       </div>
                       <div className="text-xs text-gray-500">
                         {new Date(comment.timestamp).toLocaleString()}
@@ -357,21 +362,21 @@ export const CollaborationPanel: React.FC<CollaborationPanelProps> = ({ isVisibl
                 </div>
 
                 {/* Replies */}
-                {comment.replies.length > 0 && (
+                {comment.replies && comment.replies.length > 0 && (
                   <div className="ml-8 space-y-2 pt-2 border-t border-gray-200 dark:border-gray-700">
                     {comment.replies.map((reply) => (
                       <div key={reply.id} className="flex space-x-2">
                         <Avatar
                           size={20}
-                          src={reply.author.avatar}
-                          style={{ backgroundColor: getUserColor(reply.author.id) }}
+                          src={reply.user.avatar}
+                          style={{ backgroundColor: getUserColor(reply.user.id) }}
                         >
-                          {reply.author.name.charAt(0).toUpperCase()}
+                          {reply.user.name.charAt(0).toUpperCase()}
                         </Avatar>
                         <div className="flex-1">
                           <div className="flex items-center space-x-2">
                             <span className="font-medium text-xs text-gray-900 dark:text-gray-100">
-                              {reply.author.name}
+                              {reply.user.name}
                             </span>
                             <span className="text-xs text-gray-500">
                               {new Date(reply.timestamp).toLocaleString()}

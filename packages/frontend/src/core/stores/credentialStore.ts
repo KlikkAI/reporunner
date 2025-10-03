@@ -60,7 +60,7 @@ export const useCredentialStore = create<CredentialState>()(
           const response = await credentialApiService.createCredential(credential);
           const { credentials } = get();
           set({
-            credentials: [...credentials, response.data],
+            credentials: [...credentials, response.data as Credential],
             isLoading: false,
           });
         } catch (error) {
@@ -75,7 +75,7 @@ export const useCredentialStore = create<CredentialState>()(
           const response = await credentialApiService.updateCredential(id, updates);
           const { credentials } = get();
           set({
-            credentials: credentials.map((cred) => (cred.id === id ? response.data : cred)),
+            credentials: credentials.map((cred) => (cred.id === id ? (response.data as Credential) : cred)),
             isLoading: false,
           });
         } catch (error) {

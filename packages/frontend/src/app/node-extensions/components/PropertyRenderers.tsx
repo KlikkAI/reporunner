@@ -164,9 +164,9 @@ export const UniversalPropertyRenderer: React.FC<PropertyRendererProps> = ({
   value,
   onChange,
   formState,
-  context = {},
+  context: _context = {},
   disabled = false,
-  theme = 'dark',
+  theme: _theme = 'dark',
 }) => {
   // Convert legacy property to factory config
   const config = useMemo(() => convertLegacyProperty(property), [property]);
@@ -211,7 +211,7 @@ export const createPropertyRenderers = (
     formData: formState,
     errors: {},
     touched: {},
-    isSubmitting: options?.disabled,
+    isSubmitting: options?.disabled || false,
     setFieldValue: onChange,
     setFieldError: () => {},
     validateField: async () => {},

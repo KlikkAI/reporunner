@@ -65,16 +65,17 @@ export const ContainerNode: React.FC<ContainerNodeProps> = ({ id, data, selected
     [id]
   );
 
-  const _handleResize = useCallback(
-    (newDimensions: { width: number; height: number }) => {
-      const resizeEvent: ContainerResizeEvent = {
-        containerId: id,
-        newDimensions,
-      };
-      logger.debug('Container resize event', { resizeEvent });
-    },
-    [id]
-  );
+  // Resize handler kept for future implementation
+  // const _handleResize = useCallback(
+  //   (newDimensions: { width: number; height: number }) => {
+  //     const resizeEvent: ContainerResizeEvent = {
+  //       containerId: id,
+  //       newDimensions,
+  //     };
+  //     logger.debug('Container resize event', { resizeEvent });
+  //   },
+  //   [id]
+  // );
 
   // Configuration form properties based on container type
   const getConfigProperties = (): PropertyRendererConfig[] => {
@@ -212,7 +213,6 @@ export const ContainerNode: React.FC<ContainerNodeProps> = ({ id, data, selected
     },
     {
       label: 'Stop',
-      type: 'danger',
       icon: <StopOutlined />,
       onClick: () => logger.info('Container execution stopped', { containerId: id }),
       disabled: data.executionState?.status !== 'running',
