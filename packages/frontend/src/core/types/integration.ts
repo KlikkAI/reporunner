@@ -53,3 +53,30 @@ export interface NodeExecutionResult {
     [key: string]: any;
   };
 }
+
+/**
+ * Credential requirement for nodes
+ */
+export interface CredentialRequirement {
+  name: string;
+  required: boolean;
+  displayName?: string;
+  testedBy?: string;
+}
+
+/**
+ * Integration node type definition
+ */
+export interface IntegrationNodeType {
+  id: string;
+  name: string;
+  description: string;
+  type: 'trigger' | 'action' | 'condition' | 'ai-agent';
+  group?: string[];
+  version?: number;
+  defaults?: Record<string, any>;
+  properties?: any[];
+  credentials?: CredentialRequirement[];
+  inputs?: string[];
+  outputs?: string[];
+}

@@ -12,7 +12,9 @@ export const useGmailCredential = ({ onSave }: UseGmailCredentialOptions = {}) =
   const [credentialName, setCredentialName] = useState('');
   const [isConnecting, setIsConnecting] = useState(false);
 
-  const { nodes, edges, saveWorkflow } = useLeanWorkflowStore();
+  const { activeWorkflow, updateWorkflow } = useLeanWorkflowStore();
+  const nodes = activeWorkflow?.nodes || [];
+  const edges = activeWorkflow?.edges || [];
   const credentialApiService = new CredentialApiService();
 
   const handleConnect = async () => {
@@ -30,7 +32,9 @@ export const useGmailCredential = ({ onSave }: UseGmailCredentialOptions = {}) =
         (nodes.length > 0 || edges.length > 0)
       ) {
         try {
-          await saveWorkflow();
+          if (activeWorkflow?.id) {
+            await updateWorkflow(activeWorkflow.id, { nodes, edges });
+          }
         } catch (_saveError) {
           // Continue with OAuth even if save fails
         }

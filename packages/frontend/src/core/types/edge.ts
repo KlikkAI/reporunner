@@ -191,3 +191,6 @@ export class ConnectionUtils {
 
 // Export commonly used types
 export type WorkflowEdge = Edge<WorkflowEdgeData>;
+
+// Alias for CustomEdgeData (backward compatibility)
+export type CustomEdgeData = WorkflowEdgeData;

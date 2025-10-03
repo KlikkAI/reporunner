@@ -22,6 +22,21 @@ export interface Comment {
   resolved?: boolean;
 }
 
+export interface CollaborationComment extends Comment {
+  replies?: Comment[];
+  mentions?: string[];
+}
+
+export interface CollaborationConflict {
+  id: string;
+  type: 'node' | 'edge' | 'property';
+  nodeId?: string;
+  description: string;
+  users: string[];
+  timestamp: Date;
+  resolved: boolean;
+}
+
 // Stub service class
 class CollaborationService {
   async getUserPresence(): Promise<UserPresence[]> {

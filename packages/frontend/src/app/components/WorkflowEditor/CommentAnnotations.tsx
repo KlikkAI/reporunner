@@ -49,7 +49,7 @@ export const CommentAnnotations: React.FC<CommentAnnotationsProps> = ({
     addComment,
     replyToComment,
   } = useCollaborationStore();
-  const { currentWorkflow } = useLeanWorkflowStore();
+  const { activeWorkflow: currentWorkflow } = useLeanWorkflowStore();
 
   const [replyContents, setReplyContents] = useState<Record<string, string>>({});
   const [newCommentContent, setNewCommentContent] = useState('');

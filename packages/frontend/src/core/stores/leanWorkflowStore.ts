@@ -25,6 +25,10 @@ interface LeanWorkflowState {
   executeWorkflow: (id: string) => Promise<void>;
   importWorkflow: (workflowData: any) => Promise<void>;
   clearError: () => void;
+
+  // Helper methods
+  getNodeById: (nodeId: string) => any;
+  updateNodeParameters: (nodeId: string, parameters: any) => void;
 }
 
 export const useLeanWorkflowStore = create<LeanWorkflowState>()(
@@ -170,6 +174,33 @@ export const useLeanWorkflowStore = create<LeanWorkflowState>()(
       clearError: () => {
         set({ error: null });
       },
+
+      // Helper methods
+      getNodeById: (nodeId: string) => {
+        const { activeWorkflow } = get();
+        if (!activeWorkflow || !activeWorkflow.nodes) {
+          return undefined;
+        }
+        return activeWorkflow.nodes.find((node: any) => node.id === nodeId);
+      },
+
+      updateNodeParameters: (nodeId: string, parameters: any) => {
+        const { activeWorkflow, updateWorkflow } = get();
+        if (!activeWorkflow || !activeWorkflow.nodes) {
+          return;
+        }
+
+        const updatedNodes = activeWorkflow.nodes.map((node: any) => {
+          if (node.id === nodeId) {
+            return { ...node, data: { ...node.data, parameters } };
+          }
+          return node;
+        });
+
+        if (activeWorkflow.id) {
+          updateWorkflow(activeWorkflow.id, { nodes: updatedNodes });
+        }
+      },
     }),
     {
       name: 'lean-workflow-store',
@@ -180,3 +211,6 @@ export const useLeanWorkflowStore = create<LeanWorkflowState>()(
     }
   )
 );
+
+// Re-export WorkflowEdge for backward compatibility
+export type { WorkflowEdge } from '@/core/types/edge';

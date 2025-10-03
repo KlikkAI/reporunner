@@ -26,7 +26,8 @@ export const UserPresenceOverlay: React.FC<UserPresenceOverlayProps> = ({
 }) => {
   const { userPresences, showUserCursors, showUserSelections } = useCollaborationStore();
 
-  const { nodes } = useLeanWorkflowStore();
+  const { activeWorkflow } = useLeanWorkflowStore();
+  const nodes = activeWorkflow?.nodes || [];
 
   // Generate consistent user colors
   const getUserColor = useCallback((userId: string): string => {

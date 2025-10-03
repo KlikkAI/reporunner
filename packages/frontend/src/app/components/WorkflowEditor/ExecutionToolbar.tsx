@@ -128,11 +128,10 @@ export const ExecutionToolbar: React.FC<ExecutionToolbarProps> = ({
             disabled: node.disabled,
             notes: node.notes,
           },
-        })) as any,
+        })),
         edges: [], // Convert connections to edges if needed
-        version: 1,
-        isActive: true,
         tags: ['editor'],
+        isActive: true,
       });
 
       message.success('Workflow saved successfully');

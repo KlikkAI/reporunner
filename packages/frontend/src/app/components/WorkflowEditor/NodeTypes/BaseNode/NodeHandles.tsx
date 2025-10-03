@@ -119,7 +119,7 @@ export const NodeHandles: React.FC<NodeHandlesProps> = ({
   hasOutgoingConnection,
 }) => {
   // Generate input handles
-  const inputHandles = config.input.show
+  const inputHandles = config.input?.show
     ? [createHandle('input', 'target', Position.Left, nodeType)]
     : [];
 
@@ -139,14 +139,14 @@ export const NodeHandles: React.FC<NodeHandlesProps> = ({
     : [];
 
   // Generate output handles
-  const outputHandles = config.outputs.map((output, index) => {
+  const outputHandles = config.outputs?.map((output, index) => {
     const style =
-      config.outputs.length > 1
-        ? { top: `${((index + 1) / (config.outputs.length + 1)) * 100}%` }
+      (config.outputs?.length ?? 0) > 1
+        ? { top: `${((index + 1) / ((config.outputs?.length ?? 0) + 1)) * 100}%` }
         : undefined;
 
     return createHandle(output.id || 'output', 'source', Position.Right, nodeType, style);
-  });
+  }) ?? [];
 
   // Generate dynamic outputs for condition nodes
   const dynamicOutputHandles =
@@ -213,7 +213,7 @@ export const NodeHandles: React.FC<NodeHandlesProps> = ({
       {connectionIndicator}
 
       {/* Handle labels for complex nodes */}
-      {config.outputs.length > 1 && (
+      {config.outputs && config.outputs.length > 1 && (
         <div className="absolute right-0 top-0 bottom-0 flex flex-col justify-center mr-8 space-y-2">
           {config.outputs.map((output, index) => (
             <span

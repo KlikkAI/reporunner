@@ -104,7 +104,9 @@ export const ConditionalBranchingPanel: React.FC<ConditionalBranchingPanelProps>
   onClose,
   onAddBranch,
 }) => {
-  const { nodes, edges } = useLeanWorkflowStore();
+  const { activeWorkflow } = useLeanWorkflowStore();
+  const nodes = activeWorkflow?.nodes || [];
+  const edges = activeWorkflow?.edges || [];
   const [branches, setBranches] = useState<BranchConfiguration[]>([]);
   const [selectedBranch, setSelectedBranch] = useState<BranchConfiguration | null>(null);
   const [activeTab, setActiveTab] = useState('builder');

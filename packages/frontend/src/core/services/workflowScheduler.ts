@@ -11,6 +11,32 @@ export interface ScheduledWorkflow {
   enabled: boolean;
 }
 
+export interface ScheduleConfiguration {
+  type: 'cron' | 'interval' | 'once';
+  cronExpression?: string;
+  interval?: number;
+  startDate?: Date;
+  endDate?: Date;
+  timezone?: string;
+}
+
+export interface ScheduledExecution {
+  id: string;
+  workflowId: string;
+  scheduledTime: Date;
+  executionTime?: Date;
+  status: 'pending' | 'running' | 'completed' | 'failed';
+  result?: any;
+}
+
+export interface ScheduleAnalytics {
+  totalSchedules: number;
+  activeSchedules: number;
+  executionCount: number;
+  successRate: number;
+  upcomingExecutions: ScheduledExecution[];
+}
+
 // Stub service class
 class WorkflowScheduler {
   async getSchedules(): Promise<ScheduledWorkflow[]> {

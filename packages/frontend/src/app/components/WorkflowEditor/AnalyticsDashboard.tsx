@@ -374,7 +374,7 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
               dataIndex: 'averageDuration',
               key: 'averageDuration',
               sorter: (a: NodePerformanceStats, b: NodePerformanceStats) =>
-                a.averageDuration - b.averageDuration,
+                (a.averageDuration ?? 0) - (b.averageDuration ?? 0),
               render: (duration: number) => formatDuration(duration),
             },
             {
@@ -382,7 +382,7 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
               dataIndex: 'failureRate',
               key: 'failureRate',
               sorter: (a: NodePerformanceStats, b: NodePerformanceStats) =>
-                a.failureRate - b.failureRate,
+                (a.failureRate ?? 0) - (b.failureRate ?? 0),
               render: (failureRate: number) => (
                 <span style={{ color: failureRate > 0.1 ? '#ff4d4f' : '#52c41a' }}>
                   {((1 - failureRate) * 100).toFixed(1)}%
@@ -557,20 +557,24 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
                       </div>
                     </div>
 
-                    <div>
-                      <span className="font-medium text-gray-600">Recommended Actions:</span>
-                      <ul className="mt-2 space-y-1">
-                        {insight.recommendedActions.map((action: any, index: number) => (
-                          <li key={index} className="text-sm text-green-600">
-                            • {action}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
+                    {insight.recommendedActions && insight.recommendedActions.length > 0 && (
+                      <div>
+                        <span className="font-medium text-gray-600">Recommended Actions:</span>
+                        <ul className="mt-2 space-y-1">
+                          {insight.recommendedActions.map((action: any, index: number) => (
+                            <li key={index} className="text-sm text-green-600">
+                              • {action}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
 
-                    <div className="text-xs text-gray-500">
-                      Based on: {insight.basedOn.join(', ')}
-                    </div>
+                    {insight.basedOn && Array.isArray(insight.basedOn) && (
+                      <div className="text-xs text-gray-500">
+                        Based on: {insight.basedOn.join(', ')}
+                      </div>
+                    )}
                   </div>
                 </Card>
               </List.Item>
@@ -601,7 +605,7 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
                                 : 'text-yellow-500'
                           }`}
                         />
-                        {bottleneck.type.replace('_', ' ').toUpperCase()}
+                        {(bottleneck.type ?? 'unknown').replace('_', ' ').toUpperCase()}
                       </h4>
                       <Tag
                         color={

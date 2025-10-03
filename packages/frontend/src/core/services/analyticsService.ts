@@ -23,6 +23,77 @@ export interface WorkflowAnalytics {
   events: AnalyticsEvent[];
   metrics: PerformanceMetric[];
   sessionId: string;
+  workflowId?: string;
+  nodePerformance?: Record<string, NodePerformanceStats>;
+}
+
+export interface NodePerformanceStats {
+  nodeId: string;
+  nodeType: string;
+  avgExecutionTime: number;
+  executionCount: number;
+  errorCount: number;
+  lastExecuted?: Date;
+  averageDuration?: number;
+  failureRate?: number;
+}
+
+export interface ExecutionMetrics {
+  executionId: string;
+  totalDuration: number;
+  nodeMetrics: NodePerformanceStats[];
+  status: 'success' | 'error' | 'cancelled';
+  timestamp: Date;
+}
+
+export interface NodeMetrics {
+  nodeId: string;
+  totalExecutions: number;
+  averageTime: number;
+  errorRate: number;
+  lastError?: string;
+}
+
+export interface BottleneckAnalysis {
+  nodeId: string;
+  impact: 'low' | 'medium' | 'high';
+  suggestions: string[];
+  metrics: NodePerformanceStats;
+  severity?: 'low' | 'medium' | 'high';
+  description?: string;
+  recommendation?: string;
+  type?: string;
+  estimatedImprovement?: number;
+}
+
+export interface PredictiveInsight {
+  type: 'performance' | 'reliability' | 'cost';
+  severity: 'info' | 'warning' | 'critical';
+  message: string;
+  prediction: any;
+  confidence: number;
+  description?: string;
+  predictedImpact?: string;
+  timeframe?: string;
+  recommendedActions?: string[];
+  basedOn?: string;
+}
+
+export interface TimeSeriesPoint {
+  timestamp: Date;
+  value: number;
+  label?: string;
+}
+
+export interface CostOptimization {
+  currentCost: number;
+  optimizedCost: number;
+  savings: number;
+  recommendations: string[];
+  description?: string;
+  estimatedSavings?: string;
+  implementation?: string;
+  impact?: 'low' | 'medium' | 'high';
 }
 
 export class AnalyticsService {

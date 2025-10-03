@@ -21,6 +21,10 @@ export interface AIWorkflowSuggestion {
     reliability?: number;
     maintainability?: number;
   };
+  suggestedChanges?: Array<{
+    type: string;
+    reason: string;
+  }>;
 }
 
 export interface WorkflowAnalysis {
@@ -50,7 +54,12 @@ export interface WorkflowAnalysis {
     estimatedImprovement: number;
     bottlenecks?: string[];
   };
-  maintainability?: number;
+  maintainability?: number | {
+    codeQuality: number;
+    missingErrorHandling?: number;
+  };
+  reliability?: number;
+  codeQuality?: number;
 }
 
 export interface AIAssistantConfig {
@@ -70,6 +79,25 @@ export interface ChatMessage {
     nodeId?: string;
     type?: 'workflow-analysis' | 'node-help' | 'general';
   };
+}
+
+export interface ErrorDiagnosis {
+  errorType: string;
+  severity: 'low' | 'medium' | 'high' | 'critical';
+  message: string;
+  nodeId?: string;
+  suggestedFix?: string;
+  documentation?: string;
+}
+
+export interface NaturalLanguageRequest {
+  query: string;
+  context?: {
+    workflowId?: string;
+    nodeId?: string;
+    currentState?: any;
+  };
+  expectedOutput?: 'suggestion' | 'action' | 'explanation';
 }
 
 class AIAssistantService {
@@ -376,6 +404,20 @@ Here's help for the ${nodeType} node:
     } else {
       this.analysisCache.clear();
     }
+  }
+
+  /**
+   * Generate workflow from natural language text
+   */
+  async generateWorkflowFromText(text: string): Promise<any> {
+    // Mock implementation - in production, this would use AI to generate workflow structure
+    return {
+      name: 'Generated Workflow',
+      description: `Workflow generated from: ${text}`,
+      nodes: [],
+      edges: [],
+      tags: ['ai-generated'],
+    };
   }
 }
 

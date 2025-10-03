@@ -48,18 +48,18 @@ export const WorkflowTester: React.FC<{
         // Just validate the workflow structure
         // Convert BackendWorkflow to WorkflowDefinition format
         const workflowDefinition = {
+          id: `test-${Date.now()}`,
           name: `Test Workflow ${Date.now()}`,
-          version: 1,
           nodes: workflowJson.nodes.map((node) => ({
             id: node.id,
-            type: node.type,
-            position: node.position,
+            type: node.type || 'unknown',
+            position: { x: node.position[0], y: node.position[1] },
             data: node.data || {},
           })),
           edges: workflowJson.edges || [],
           tags: ['test'],
           isActive: true,
-        };
+        } as any;
         const result = await workflowApiService.testWorkflow(workflowDefinition);
         setTestResult({
           type: 'validation',
@@ -69,18 +69,18 @@ export const WorkflowTester: React.FC<{
         // Dry run - validate and simulate execution
         // Convert BackendWorkflow to WorkflowDefinition format
         const workflowDefinition = {
+          id: `test-${Date.now()}`,
           name: `Test Workflow ${Date.now()}`,
-          version: 1,
           nodes: workflowJson.nodes.map((node) => ({
             id: node.id,
-            type: node.type,
-            position: node.position,
+            type: node.type || 'unknown',
+            position: { x: node.position[0], y: node.position[1] },
             data: node.data || {},
           })),
           edges: workflowJson.edges || [],
           tags: ['test'],
           isActive: true,
-        };
+        } as any;
         const result = await workflowApiService.testWorkflow(workflowDefinition);
         setTestResult({
           type: 'dry_run',

@@ -91,13 +91,13 @@ export const useCredentialForm = ({
 
       const testCredentialPayload = {
         name: `${credentialName.trim()}_test_${Date.now()}`,
-        type: credentialType,
+        type: credentialType as any,
         integration: credentialType,
         data: credentialData,
         testOnCreate: true,
       };
 
-      const testCredential = await credentialApiService.createCredential(testCredentialPayload);
+      const testCredential = await credentialApiService.createCredential(testCredentialPayload as any);
 
       try {
         const result = await credentialApiService.testCredential(testCredential.id);
@@ -146,15 +146,15 @@ export const useCredentialForm = ({
     try {
       const credentialPayload = {
         name: credentialName.trim(),
-        type: credentialType,
+        type: credentialType as any,
         integration: credentialType,
         data: credentialData,
         testOnCreate: true,
       };
 
       const savedCredential = editingCredential
-        ? await credentialApiService.updateCredential(editingCredential.id, credentialPayload)
-        : await credentialApiService.createCredential(credentialPayload);
+        ? await credentialApiService.updateCredential(editingCredential.id || '', credentialPayload as any)
+        : await credentialApiService.createCredential(credentialPayload as any);
 
       const credentialForUI: CredentialData = {
         id: editingCredential?.id || savedCredential.id || `cred-${Date.now()}`,

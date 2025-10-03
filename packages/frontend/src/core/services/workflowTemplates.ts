@@ -28,6 +28,14 @@ export interface AutomationPattern {
   category: string;
 }
 
+export interface TemplateCategory {
+  id: string;
+  name: string;
+  description: string;
+  icon?: string;
+  templateCount?: number;
+}
+
 // Stub service class
 class WorkflowTemplates {
   async getTemplates(): Promise<WorkflowTemplate[]> {

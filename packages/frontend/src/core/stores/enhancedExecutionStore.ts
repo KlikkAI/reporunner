@@ -57,6 +57,7 @@ interface EnhancedExecutionState {
   stopExecution: (executionId: string) => Promise<void>;
   getExecution: (executionId: string) => WorkflowExecution | undefined;
   getNodeExecution: (executionId: string, nodeId: string) => NodeExecution | undefined;
+  getNodeState: (nodeId: string) => any;
   updateNodeExecution: (
     executionId: string,
     nodeId: string,
@@ -137,6 +138,29 @@ export const useEnhancedExecutionStore = create<EnhancedExecutionState>()(
     getNodeExecution: (executionId: string, nodeId: string): NodeExecution | undefined => {
       const nodeExecutions = get().nodeExecutions.get(executionId);
       return nodeExecutions?.get(nodeId);
+    },
+
+    // Get node state for any active execution
+    getNodeState: (nodeId: string): any => {
+      const { activeExecutions, nodeExecutions } = get();
+
+      // Find the most recent execution for this node
+      for (const [executionId, execution] of activeExecutions) {
+        if (execution.status === 'running' || execution.status === 'completed') {
+          const nodeExecs = nodeExecutions.get(executionId);
+          const nodeState = nodeExecs?.get(nodeId);
+          if (nodeState) {
+            return {
+              status: nodeState.status,
+              output: nodeState.output,
+              error: nodeState.error,
+              duration: nodeState.duration,
+            };
+          }
+        }
+      }
+
+      return null;
     },
 
     // Update node execution

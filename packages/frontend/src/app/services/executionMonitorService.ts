@@ -149,23 +149,28 @@ class ExecutionMonitorService {
     }
 
     // Mock update - replace with actual API call
+    const totalNodes = execution.progress.totalNodes || 0;
     const update = {
       timestamp: new Date().toISOString(),
       progress: {
         ...execution.progress,
         completedNodes: Math.min(
           execution.progress.completedNodes + 1,
-          execution.progress.totalNodes
+          totalNodes
         ),
       },
       status:
-        execution.progress.completedNodes >= execution.progress.totalNodes - 1
+        execution.progress.completedNodes >= totalNodes - 1
           ? 'completed'
           : 'running',
     };
 
     // Update execution
-    const updatedExecution = { ...execution, ...update };
+    const updatedExecution: WorkflowExecution = {
+      ...execution,
+      progress: update.progress,
+      status: update.status as any
+    };
     state.activeExecutions.set(executionId, updatedExecution);
 
     // Add to updates

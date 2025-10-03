@@ -116,3 +116,6 @@ class ExpressionEvaluator {
 }
 
 export const expressionEvaluator = new ExpressionEvaluator();
+
+// Alias for backward compatibility
+export const ExpressionUtils = expressionEvaluator;

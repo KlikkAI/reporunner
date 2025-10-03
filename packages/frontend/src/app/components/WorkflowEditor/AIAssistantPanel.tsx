@@ -86,8 +86,9 @@ const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({
     }
 
     try {
-      const workflowSuggestions = await aiAssistantService.analyzeWorkflow(workflow);
-      setSuggestions(workflowSuggestions);
+      const workflowAnalysis = await aiAssistantService.analyzeWorkflow(workflow);
+      setAnalysis(workflowAnalysis);
+      setSuggestions(workflowAnalysis.suggestions);
     } catch (_error) {}
   }, [workflow]);
 
@@ -135,7 +136,7 @@ const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({
         },
       };
 
-      const result = await aiAssistantService.generateWorkflowFromText(request);
+      const result = await aiAssistantService.generateWorkflowFromText(request.text);
       onGenerateWorkflow?.(result.workflow);
 
       // Show success message
@@ -240,7 +241,7 @@ const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({
             <span className="text-white font-medium text-sm">{suggestion.title}</span>
           </div>
           <div className="flex items-center gap-1">
-            <Tag color={getImpactColor(suggestion.impact)}>{suggestion.impact}</Tag>
+            <Tag color={getImpactColor(suggestion.impact || 'medium')}>{suggestion.impact || 'medium'}</Tag>
             <Badge
               count={`${(suggestion.confidence * 100).toFixed(0)}%`}
               style={{ backgroundColor: '#1890ff' }}
@@ -252,7 +253,7 @@ const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({
 
         <div className="flex items-center gap-2 text-xs text-gray-500">
           <span>Category: {suggestion.category}</span>
-          {suggestion.estimatedBenefit.performance && (
+          {suggestion.estimatedBenefit?.performance && (
             <span>Performance: +{(suggestion.estimatedBenefit.performance * 100).toFixed(0)}%</span>
           )}
         </div>
@@ -276,10 +277,12 @@ const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({
             <div>
               <div className="flex justify-between text-sm mb-1">
                 <span className="text-gray-300">Complexity</span>
-                <span className="text-gray-400">{(analysis.complexity * 100).toFixed(0)}%</span>
+                <span className="text-gray-400">
+                  {typeof analysis.complexity === 'number' ? (analysis.complexity * 100).toFixed(0) : '0'}%
+                </span>
               </div>
               <Progress
-                percent={analysis.complexity * 100}
+                percent={typeof analysis.complexity === 'number' ? analysis.complexity * 100 : 0}
                 strokeColor="#3b82f6"
                 showInfo={false}
                 size="small"
@@ -290,12 +293,12 @@ const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({
               <div className="flex justify-between text-sm mb-1">
                 <span className="text-gray-300">Performance</span>
                 <span className="text-gray-400">
-                  {(analysis.performance.estimatedImprovement * 100).toFixed(0)}% improvement
+                  {(analysis.performance?.estimatedImprovement ? analysis.performance.estimatedImprovement * 100 : 0).toFixed(0)}% improvement
                   possible
                 </span>
               </div>
               <Progress
-                percent={analysis.performance.estimatedImprovement * 100}
+                percent={analysis.performance?.estimatedImprovement ? analysis.performance.estimatedImprovement * 100 : 0}
                 strokeColor="#22c55e"
                 showInfo={false}
                 size="small"
@@ -306,11 +309,15 @@ const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({
               <div className="flex justify-between text-sm mb-1">
                 <span className="text-gray-300">Maintainability</span>
                 <span className="text-gray-400">
-                  {(analysis.maintainability.codeQuality * 100).toFixed(0)}%
+                  {typeof analysis.maintainability === 'object' && analysis.maintainability?.codeQuality
+                    ? (analysis.maintainability.codeQuality * 100).toFixed(0)
+                    : '0'}%
                 </span>
               </div>
               <Progress
-                percent={analysis.maintainability.codeQuality * 100}
+                percent={typeof analysis.maintainability === 'object' && analysis.maintainability?.codeQuality
+                  ? analysis.maintainability.codeQuality * 100
+                  : 0}
                 strokeColor="#f59e0b"
                 showInfo={false}
                 size="small"
@@ -319,7 +326,7 @@ const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({
           </div>
         </Card>
 
-        {analysis.performance.bottlenecks.length > 0 && (
+        {analysis.performance?.bottlenecks && analysis.performance.bottlenecks.length > 0 && (
           <Alert
             message="Performance Bottlenecks Detected"
             description={
@@ -337,7 +344,9 @@ const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({
           />
         )}
 
-        {analysis.reliability.missingErrorHandling.length > 0 && (
+        {typeof analysis.reliability === 'object' &&
+         analysis.reliability?.missingErrorHandling &&
+         analysis.reliability.missingErrorHandling.length > 0 && (
           <Alert
             message="Missing Error Handling"
             description={`${analysis.reliability.missingErrorHandling.length} nodes need error handling`}
@@ -523,7 +532,7 @@ const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({
               <Text className="text-gray-600">{selectedSuggestion.reasoning}</Text>
             </div>
 
-            {selectedSuggestion.suggestedChanges.length > 0 && (
+            {selectedSuggestion.suggestedChanges && selectedSuggestion.suggestedChanges.length > 0 && (
               <div>
                 <Title level={5}>Suggested Changes</Title>
                 <List
@@ -541,7 +550,7 @@ const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({
               </div>
             )}
 
-            {Object.keys(selectedSuggestion.estimatedBenefit).length > 0 && (
+            {selectedSuggestion.estimatedBenefit && Object.keys(selectedSuggestion.estimatedBenefit).length > 0 && (
               <div>
                 <Title level={5}>Estimated Benefits</Title>
                 <div className="space-y-2">

@@ -304,3 +304,8 @@ class TypeValidation {
 
 export const typeValidation = new TypeValidation();
 export { TypeValidation };
+
+// Aliases for backward compatibility
+export const AdvancedTypeValidator = typeValidation;
+export const AssignmentValidator = typeValidation;
+export const TypeInferenceEngine = typeValidation;

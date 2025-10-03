@@ -78,3 +78,6 @@ export class ConfigService {
 }
 
 export const configService = new ConfigService();
+
+// LogLevel type for logging service
+export type LogLevel = 'debug' | 'info' | 'warn' | 'error';

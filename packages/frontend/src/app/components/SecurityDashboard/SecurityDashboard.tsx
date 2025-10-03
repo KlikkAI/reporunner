@@ -98,18 +98,18 @@ const SecurityDashboard: React.FC<SecurityDashboardProps> = ({ className }) => {
         await Promise.all([
           enterpriseSecurityService.getSecurityMetrics(),
           enterpriseSecurityService.getAuditLogs({ limit: 100 }),
-          Promise.resolve([]), // getSecurityIncidents - method doesn't exist yet
+          Promise.resolve<SecurityIncident[]>([]), // getSecurityIncidents - method doesn't exist yet
           enterpriseSecurityService.getVulnerabilityScans(),
-          Promise.resolve([]), // getComplianceReports - method doesn't exist yet
-          Promise.resolve([]), // getSecrets - method doesn't exist yet
+          Promise.resolve<ComplianceReport[]>([]), // getComplianceReports - method doesn't exist yet
+          Promise.resolve<SecretManager[]>([]), // getSecrets - method doesn't exist yet
         ]);
 
       setMetrics(metricsData);
       setAuditLogs(auditLogsData);
-      setIncidents(incidentsData as SecurityIncident[]);
+      setIncidents(incidentsData);
       setVulnerabilityScans(scansData);
-      setComplianceReports(reportsData as ComplianceReport[]);
-      setSecrets(secretsData as SecretManager[]);
+      setComplianceReports(reportsData);
+      setSecrets(secretsData);
     } catch (_error) {
     } finally {
       setIsLoading(false);

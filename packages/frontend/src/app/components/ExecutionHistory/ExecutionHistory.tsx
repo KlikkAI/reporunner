@@ -55,7 +55,7 @@ export const ExecutionHistory: React.FC<{
     try {
       const result = await workflowApiService.getExecutions(filter);
       setExecutions(result.items);
-      setTotal(result.total);
+      setTotal(result.total || result.pagination.total);
     } catch (error) {
       logger.error('Failed to load executions', error instanceof Error ? error : undefined);
     } finally {

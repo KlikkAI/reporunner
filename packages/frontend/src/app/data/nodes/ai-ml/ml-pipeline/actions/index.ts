@@ -1,3 +1,5 @@
 // Consolidated file - part files removed during consolidation
 // This module exports nothing but prevents import errors
-export {};
+
+// Stub export for backward compatibility
+export const mlPipelineActions = {};

@@ -43,11 +43,16 @@ interface CollaborationState {
   // User presence
   connectedUsers: Map<string, UserPresence>;
   userPresences: UserPresence[];
+  showUserCursors?: boolean;
+  showUserSelections?: boolean;
 
   // Comments and annotations
   comments: Map<string, Comment>;
   activeComments: Comment[];
   selectedComment: string | null;
+  selectedCommentId?: string | null;
+  showComments?: boolean;
+  commentMode?: 'view' | 'edit' | 'add';
 
   // Real-time collaboration
   isConnected: boolean;
@@ -61,7 +66,9 @@ interface CollaborationState {
   updateComment: (commentId: string, updates: Partial<Comment>) => void;
   deleteComment: (commentId: string) => void;
   resolveComment: (commentId: string) => void;
+  replyToComment?: (commentId: string, content: string) => void;
   setSelectedComment: (commentId: string | null) => void;
+  selectComment?: (commentId: string | null) => void;
   setConnectionStatus: (status: CollaborationState['connectionStatus']) => void;
 }
 

@@ -43,7 +43,9 @@ export const CredentialModal: React.FC<CredentialModalProps> = ({
     details?: any;
   } | null>(null);
 
-  const { nodes, edges, saveWorkflow } = useLeanWorkflowStore();
+  const { activeWorkflow, updateWorkflow } = useLeanWorkflowStore();
+  const nodes = activeWorkflow?.nodes || [];
+  const edges = activeWorkflow?.edges || [];
 
   // Get credential type definition
   const [credentialTypeDef, setCredentialTypeDef] = useState<
@@ -194,7 +196,9 @@ export const CredentialModal: React.FC<CredentialModalProps> = ({
 
       // Handle Gmail OAuth2 special flow
       if (isGmailOAuth && !editingCredential) {
-        await saveWorkflow(nodes, edges);
+        if (activeWorkflow?.id) {
+          await updateWorkflow(activeWorkflow.id, { nodes, edges });
+        }
         await credentialApiService.startGmailOAuthFlow(credentialName);
         return;
       }

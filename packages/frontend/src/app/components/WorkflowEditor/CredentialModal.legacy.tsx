@@ -37,7 +37,9 @@ const CredentialModal: React.FC<CredentialModalProps> = ({
   } | null>(null);
 
   // Access workflow store for auto-save before OAuth
-  const { nodes, edges, saveWorkflow } = useLeanWorkflowStore();
+  const { activeWorkflow, updateWorkflow } = useLeanWorkflowStore();
+  const nodes = activeWorkflow?.nodes || [];
+  const edges = activeWorkflow?.edges || [];
 
   // Check if this is Gmail OAuth2 which uses shared app credentials
   const isGmailOAuth = credentialType === 'gmail' || credentialType === 'gmailOAuth2';
@@ -262,7 +264,9 @@ const CredentialModal: React.FC<CredentialModalProps> = ({
         (nodes.length > 0 || edges.length > 0)
       ) {
         try {
-          await saveWorkflow();
+          if (activeWorkflow?.id) {
+            await updateWorkflow(activeWorkflow.id, { nodes, edges });
+          }
         } catch (_saveError) {
           // Continue with OAuth even if save fails
         }

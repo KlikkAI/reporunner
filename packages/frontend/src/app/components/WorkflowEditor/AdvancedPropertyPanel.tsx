@@ -133,11 +133,12 @@ const InputDataPanel: React.FC<{
   width: number;
   onResize: (width: number) => void;
 }> = ({ nodeId, width, onResize }) => {
-  const { edges } = useLeanWorkflowStore();
+  const { activeWorkflow } = useLeanWorkflowStore();
   const { getNodeState } = useEnhancedExecutionStore();
 
   // Find incoming connections to this node
   const incomingData = useMemo(() => {
+    const edges = activeWorkflow?.edges || [];
     const incomingEdges = edges.filter((edge: any) => edge.target === nodeId);
     const data: Record<string, any> = {};
 
@@ -149,7 +150,7 @@ const InputDataPanel: React.FC<{
     });
 
     return data;
-  }, [edges, nodeId, getNodeState]);
+  }, [activeWorkflow?.edges, nodeId, getNodeState]);
 
   const actions = [
     <Tooltip key="refresh" title="Refresh data">

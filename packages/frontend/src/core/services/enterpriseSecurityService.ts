@@ -37,6 +37,14 @@ export interface SecurityMetrics {
   resolvedThreats: number;
 }
 
+export interface VulnerabilityScan {
+  id: string;
+  timestamp: string;
+  status: 'pending' | 'running' | 'completed' | 'failed';
+  findings: any[];
+  severity: AuditSeverity;
+}
+
 // Stub service class
 class EnterpriseSecurityService {
   async getAuditLogs(): Promise<AuditLog[]> {
@@ -57,6 +65,10 @@ class EnterpriseSecurityService {
       activeThreats: 0,
       resolvedThreats: 0,
     };
+  }
+
+  async getVulnerabilityScans(): Promise<VulnerabilityScan[]> {
+    return [];
   }
 }
 

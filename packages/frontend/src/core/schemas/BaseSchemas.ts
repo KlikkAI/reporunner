@@ -108,3 +108,7 @@ export type UserReference = z.infer<typeof UserReferenceSchema>;
 export type Metadata = z.infer<typeof MetadataSchema>;
 export type NodeParameters = z.infer<typeof NodeParametersSchema>;
 export type Status = z.infer<typeof StatusSchema>;
+
+// Alias exports for backward compatibility
+export type ApiError = ErrorResponse;
+export type ApiResponse<T = any> = SuccessResponse & { data?: T };

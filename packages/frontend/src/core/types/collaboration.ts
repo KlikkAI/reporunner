@@ -245,6 +245,11 @@ export interface CollaborationComment {
   createdAt: number;
   updatedAt: number;
   metadata: Record<string, any>;
+  author?: {
+    name: string;
+    email: string;
+    avatar?: string;
+  };
 }
 
 export interface CommentReply {
@@ -344,6 +349,12 @@ export interface CollaborationConflict {
   resolvedAt?: number;
   resolvedBy?: string;
   resolution?: ConflictResolution;
+  operations?: Array<{
+    type: string;
+    userId: string;
+    timestamp: number;
+  }>;
+  affectedNodes?: string[];
 }
 
 export interface CollaborationPresence {

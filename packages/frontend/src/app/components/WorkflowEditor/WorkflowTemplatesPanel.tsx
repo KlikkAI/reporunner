@@ -89,9 +89,9 @@ export const WorkflowTemplatesPanel: React.FC<WorkflowTemplatesPanelProps> = ({
     filterTemplates();
   }, [filterTemplates]);
 
-  const loadTemplatesAndPatterns = () => {
+  const loadTemplatesAndPatterns = async () => {
     const allTemplates = workflowTemplates.getAllTemplates();
-    const allPatterns = workflowTemplates.getAutomationPatterns();
+    const allPatterns = await workflowTemplates.getAutomationPatterns();
 
     setTemplates(allTemplates);
     setPatterns(allPatterns);
@@ -119,12 +119,12 @@ export const WorkflowTemplatesPanel: React.FC<WorkflowTemplatesPanelProps> = ({
         case 'name':
           return a.name.localeCompare(b.name);
         case 'rating':
-          return b.metadata.rating - a.metadata.rating;
+          return (b.metadata?.rating ?? 0) - (a.metadata?.rating ?? 0);
         case 'usage':
-          return b.metadata.usageCount - a.metadata.usageCount;
+          return (b.metadata?.usageCount ?? 0) - (a.metadata?.usageCount ?? 0);
         case 'recent':
           return (
-            new Date(b.metadata.updatedAt).getTime() - new Date(a.metadata.updatedAt).getTime()
+            new Date(b.metadata?.updatedAt ?? 0).getTime() - new Date(a.metadata?.updatedAt ?? 0).getTime()
           );
         default:
           return 0;
@@ -233,12 +233,12 @@ export const WorkflowTemplatesPanel: React.FC<WorkflowTemplatesPanelProps> = ({
           ]}
         >
           <List.Item.Meta
-            avatar={<Avatar>{getCategoryIcon(template.category)}</Avatar>}
+            avatar={<Avatar>{getCategoryIcon(template.category as TemplateCategory)}</Avatar>}
             title={
               <Space>
                 {template.name}
-                <Tag color={getDifficultyColor(template.difficulty)}>{template.difficulty}</Tag>
-                <Rate disabled defaultValue={template.metadata.rating} />
+                <Tag color={getDifficultyColor(template.difficulty || 'beginner')}>{template.difficulty || 'beginner'}</Tag>
+                <Rate disabled defaultValue={template.metadata?.rating ?? 0} />
               </Space>
             }
             description={
@@ -250,7 +250,7 @@ export const WorkflowTemplatesPanel: React.FC<WorkflowTemplatesPanelProps> = ({
                     <ClockCircleOutlined /> {template.estimatedSetupTime} min
                   </Text>
                   <Text type="secondary">
-                    <EyeOutlined /> {template.metadata.usageCount} uses
+                    <EyeOutlined /> {template.metadata?.usageCount ?? 0} uses
                   </Text>
                 </Space>
               </Space>
@@ -267,7 +267,7 @@ export const WorkflowTemplatesPanel: React.FC<WorkflowTemplatesPanelProps> = ({
         className="template-card"
         cover={
           <div className="h-32 bg-gradient-to-br from-blue-50 to-purple-50 flex items-center justify-center text-4xl">
-            {getCategoryIcon(template.category)}
+            {getCategoryIcon(template.category as TemplateCategory)}
           </div>
         }
         actions={[
@@ -297,8 +297,8 @@ export const WorkflowTemplatesPanel: React.FC<WorkflowTemplatesPanelProps> = ({
             <Space direction="vertical" size="small">
               <Text strong>{template.name}</Text>
               <Space>
-                <Tag color={getDifficultyColor(template.difficulty)}>{template.difficulty}</Tag>
-                <Rate disabled defaultValue={template.metadata.rating} />
+                <Tag color={getDifficultyColor(template.difficulty || 'beginner')}>{template.difficulty || 'beginner'}</Tag>
+                <Rate disabled defaultValue={template.metadata?.rating ?? 0} />
               </Space>
             </Space>
           }
@@ -310,7 +310,7 @@ export const WorkflowTemplatesPanel: React.FC<WorkflowTemplatesPanelProps> = ({
                   <ClockCircleOutlined /> {template.estimatedSetupTime} min
                 </Text>
                 <Text type="secondary">
-                  <EyeOutlined /> {template.metadata.usageCount}
+                  <EyeOutlined /> {template.metadata?.usageCount ?? 0}
                 </Text>
               </Space>
             </Space>
@@ -362,9 +362,9 @@ export const WorkflowTemplatesPanel: React.FC<WorkflowTemplatesPanelProps> = ({
             <Col span={8}>
               <Statistic
                 title="Difficulty"
-                value={selectedTemplate.difficulty}
+                value={selectedTemplate.difficulty || 'beginner'}
                 valueStyle={{
-                  color: getDifficultyColor(selectedTemplate.difficulty),
+                  color: getDifficultyColor(selectedTemplate.difficulty || 'beginner'),
                 }}
               />
             </Col>
@@ -378,7 +378,7 @@ export const WorkflowTemplatesPanel: React.FC<WorkflowTemplatesPanelProps> = ({
             <Col span={8}>
               <Statistic
                 title="Rating"
-                value={selectedTemplate.metadata.rating}
+                value={selectedTemplate.metadata?.rating ?? 0}
                 suffix={<StarOutlined />}
               />
             </Col>

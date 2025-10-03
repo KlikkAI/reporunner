@@ -130,7 +130,7 @@ class NodeGenerator {
       data: node.data
         ? {
             ...node.data,
-            id: this.generateNodeId(node.data.type),
+            id: this.generateNodeId(node.data.type || 'unknown'),
             name: `${node.data.name} (Copy)`,
           }
         : undefined,
