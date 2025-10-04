@@ -1,0 +1,58 @@
+name: Bundle Analysis
+
+on:
+  pull_request:
+    paths:
+      - 'packages/frontend/**'
+      - 'packages/@reporunner/design-system/**'
+      - 'pnpm-lock.yaml'
+  push:
+    branches: [main]
+    paths:
+      - 'packages/frontend/**'
+      - 'packages/@reporunner/design-system/**'
+
+jobs:
+  bundle-analysis:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Use Node.js 18
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build frontend
+        run: pnpm build:frontend
+
+      - name: Analyze bundle size
+        run: pnpm analyze:bundle
+        env:
+          BUNDLEMON_PROJECT_ID: ${{ secrets.BUNDLEMON_PROJECT_ID }}
+          BUNDLEMON_PROJECT_API_KEY: ${{ secrets.BUNDLEMON_PROJECT_API_KEY }}
+          CI_COMMIT_SHA: ${{ github.sha }}
+          CI_BRANCH: ${{ github.ref_name }}
+
+      - name: Check bundle size limits
+        run: pnpm analyze:size
+
+      - name: Upload bundle analysis
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: bundle-analysis
+          path: |
+            packages/frontend/dist/
+            reports/bundle-analysis/
+          retention-days: 7

@@ -1,0 +1,36 @@
+{
+  "$schema": "https://unpkg.com/knip@5/schema.json",
+  "workspaces": {
+    ".": {
+      "entry": [
+        "packages/*/src/index.{js,ts}",
+        "packages/@reporunner/*/src/index.{js,ts}",
+        "packages/backend/src/server.ts",
+        "packages/frontend/src/main.tsx"
+      ],
+      "project": ["packages/*/src/**/*.{js,ts,tsx}", "packages/@reporunner/*/src/**/*.{js,ts,tsx}"]
+    },
+    "packages/backend": {
+      "entry": ["src/server.ts"],
+      "project": ["src/**/*.{js,ts}"]
+    },
+    "packages/frontend": {
+      "entry": ["src/main.tsx", "src/App.tsx"],
+      "project": ["src/**/*.{js,ts,tsx}"]
+    }
+  },
+  "ignore": [
+    "**/*.d.ts",
+    "**/*.test.{js,ts,tsx}",
+    "**/*.spec.{js,ts,tsx}",
+    "**/test/**",
+    "**/tests/**",
+    "**/__tests__/**",
+    "**/coverage/**",
+    "**/dist/**",
+    "**/build/**"
+  ],
+  "ignoreDependencies": ["@types/*", "typescript", "tsx", "vitest", "@vitest/*", "@biomejs/biome"],
+  "ignoreExportsUsedInFile": true,
+  "includeEntryExports": true
+}

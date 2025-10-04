@@ -1,0 +1,20 @@
+[
+  {
+    "name": "Frontend Bundle (gzipped)",
+    "path": "packages/frontend/dist/assets/*.js",
+    "limit": "500 KB",
+    "gzip": true
+  },
+  {
+    "name": "Core Package",
+    "path": "packages/@reporunner/core/dist/index.js",
+    "limit": "50 KB",
+    "gzip": true
+  },
+  {
+    "name": "Backend Bundle",
+    "path": "packages/backend/dist/server.js",
+    "limit": "200 KB",
+    "gzip": true
+  }
+]

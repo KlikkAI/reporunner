@@ -32,10 +32,13 @@
         "!**/*.spec.{js,ts,tsx}",
         "!**/coverage/**",
         "!**/node_modules/**",
-        "!**/.next/cache/**"
+        "!**/.next/cache/**",
+        "!**/test-results/**",
+        "!**/playwright-report/**"
       ],
       "outputs": ["dist/**", ".next/**", "build/**", "lib/**", "es/**"],
-      "env": ["NODE_ENV", "DATABASE_URL", "API_URL", "VITE_API_URL"]
+      "env": ["NODE_ENV", "DATABASE_URL", "API_URL", "VITE_API_URL"],
+      "persistent": false
     },
     "build:core": {
       "inputs": [

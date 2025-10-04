@@ -1,0 +1,30 @@
+{
+  "budget": [
+    {
+      "type": "bundle",
+      "name": "frontend",
+      "baseline": "main",
+      "maximumWarning": "500kb",
+      "maximumError": "1mb"
+    },
+    {
+      "type": "initial",
+      "maximumWarning": "300kb",
+      "maximumError": "500kb"
+    },
+    {
+      "type": "anyComponentStyle",
+      "maximumWarning": "10kb",
+      "maximumError": "20kb"
+    },
+    {
+      "type": "any",
+      "maximumWarning": "100kb",
+      "maximumError": "200kb"
+    }
+  ],
+  "options": {
+    "outputPath": "./reports/bundle-analysis/",
+    "configPath": "./performance-budget.json"
+  }
+}

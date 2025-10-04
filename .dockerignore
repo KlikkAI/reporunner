@@ -1,30 +1,28 @@
-# Git
-.git
-.gitignore
-.gitattributes
-
 # Dependencies
 node_modules
-*/node_modules
-**/node_modules
-.pnpm-store
-.npm
-.yarn
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
 
-# Build output
+# Build outputs
 dist
 build
 .next
-out
 .turbo
 .cache
 
 # Development files
-.env
 .env.local
-.env.*.local
-*.log
-logs
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Testing
+coverage
+test-results
+playwright-report
+.nyc_output
 
 # IDE
 .vscode
@@ -37,103 +35,59 @@ logs
 .DS_Store
 Thumbs.db
 
-# Testing
-coverage
-.nyc_output
-test-results
-playwright-report
+# Logs
+logs
+*.log
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
 
 # Documentation
 docs
 *.md
 !README.md
 
+# Git
+.git
+.gitignore
+
 # CI/CD
 .github
 .gitlab-ci.yml
-.travis.yml
-.circleci
 
-# Package managers
-package-lock.json
-yarn.lock
-pnpm-lock.yaml
+# Development tools
+.eslintrc*
+.prettierrc*
+biome.json
+jest.config.*
+vitest.config.*
+playwright.config.*
+tsconfig.json
+turbo.json
 
-# TypeScript
-*.tsbuildinfo
-
-# ESLint
-.eslintcache
-
-# Prettier
-.prettierignore
-
-# Biome
-.biomeignore
+# Reports
+reports
+bundle-analysis
 
 # Temporary files
 tmp
 temp
 .tmp
 
-# Source maps
-*.map
+# Package manager files
+pnpm-lock.yaml
+yarn.lock
+package-lock.json
 
-# Storybook
-.storybook
-storybook-static
+# Development scripts
+development
+scripts
+Makefile
 
-# Changeset
-.changeset
-
-# Database
-*.db
-*.sqlite
-*.sqlite3
-
-# Certificates
-*.pem
-*.key
-*.crt
-
-# Backups
-*.backup
-*.bak
-
-# Archive files
-*.tar
-*.tar.gz
-*.zip
-*.rar
-
-# Python
-__pycache__
-*.pyc
-*.pyo
-*.egg-info
-.venv
-venv
-
-# Go
-vendor
-*.mod
-*.sum
-
-# Java
-target
-*.jar
-*.war
-
-# .NET
-bin
-obj
-*.dll
-*.exe
-
-# Rust
-target
-Cargo.lock
-
-# PHP
-vendor
-composer.lock
+# Docker
+Dockerfile*
+docker-compose*
+.dockerignore

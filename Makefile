@@ -189,3 +189,28 @@ info: ## Show environment information
 	@echo "pnpm: $$(pnpm --version)"
 	@echo "Docker: $$(docker --version)"
 	@echo "OS: $$(uname -s)"
+
+# Optimization commands
+optimize: ## Run all optimization checks
+	@echo "🚀 Running optimization checks..."
+	@pnpm optimize
+
+analyze-bundle: ## Analyze bundle size
+	@echo "📊 Analyzing bundle size..."
+	@pnpm analyze:bundle
+
+analyze-deps: ## Analyze dependencies
+	@echo "🔍 Analyzing dependencies..."
+	@pnpm analyze:deps
+
+check-unused: ## Check for unused dependencies
+	@echo "🧹 Checking for unused dependencies..."
+	@pnpm deps:unused
+
+project-stats: ## Show detailed project statistics
+	@echo "📊 Project Statistics:"
+	@echo "Project size: $$(du -sh . 2>/dev/null | cut -f1)"
+	@echo "node_modules size: $$(du -sh node_modules 2>/dev/null | cut -f1)"
+	@echo "Package count: $$(find . -name 'package.json' -not -path './node_modules/*' | wc -l)"
+	@echo "TypeScript files: $$(find packages -name '*.ts' -o -name '*.tsx' | wc -l)"
+	@echo "JavaScript files: $$(find packages -name '*.js' -o -name '*.jsx' | wc -l)"

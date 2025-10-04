@@ -1,0 +1,36 @@
+{
+  "baseDir": "./packages/frontend/dist",
+  "files": [
+    {
+      "path": "assets/*.js",
+      "maxSize": "500kb",
+      "compression": "gzip"
+    },
+    {
+      "path": "assets/*.css",
+      "maxSize": "50kb",
+      "compression": "gzip"
+    }
+  ],
+  "groups": [
+    {
+      "name": "Vendor chunks",
+      "path": "assets/vendor-*.js",
+      "maxSize": "300kb"
+    },
+    {
+      "name": "App chunks",
+      "path": "assets/index-*.js",
+      "maxSize": "200kb"
+    }
+  ],
+  "defaultCompression": "gzip",
+  "reportOutput": [
+    "github",
+    "console"
+  ],
+  "ci": {
+    "trackBranches": ["main", "develop"],
+    "subProject": "frontend"
+  }
+}

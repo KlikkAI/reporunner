@@ -54,7 +54,6 @@
     "@reporunner/core": "workspace:*",
     "chromadb": "^1.7.0",
     "cohere-ai": "^7.0.0",
-    "faiss-node": "^0.5.0",
     "openai": "catalog:",
     "pg": "catalog:",
     "pgvector": "catalog:",

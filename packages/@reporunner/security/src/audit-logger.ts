@@ -1,775 +1,748 @@
-import { randomBytes } from 'node:crypto';
 import { EventEmitter } from 'node:events';
-import fs from 'node:fs';
-import path from 'node:path';
-import { promisify } from 'node:util';
-
-// const writeFile = promisify(fs.writeFile); // Removed unused function
-const appendFile = promisify(fs.appendFile);
-const mkdir = promisify(fs.mkdir);
-
-export enum AuditEventType {
-  // Authentication events
-  LOGIN_SUCCESS = 'LOGIN_SUCCESS',
-  LOGIN_FAILED = 'LOGIN_FAILED',
-  LOGOUT = 'LOGOUT',
-  TOKEN_REFRESH = 'TOKEN_REFRESH',
-  TOKEN_REVOKED = 'TOKEN_REVOKED',
-  PASSWORD_RESET = 'PASSWORD_RESET',
-  PASSWORD_CHANGED = 'PASSWORD_CHANGED',
-  MFA_ENABLED = 'MFA_ENABLED',
-  MFA_DISABLED = 'MFA_DISABLED',
-
-  // Authorization events
-  ACCESS_GRANTED = 'ACCESS_GRANTED',
-  ACCESS_DENIED = 'ACCESS_DENIED',
-  PERMISSION_CHANGED = 'PERMISSION_CHANGED',
-  ROLE_CHANGED = 'ROLE_CHANGED',
-
-  // Data events
-  DATA_CREATE = 'DATA_CREATE',
-  DATA_READ = 'DATA_READ',
-  DATA_UPDATE = 'DATA_UPDATE',
-  DATA_DELETE = 'DATA_DELETE',
-  DATA_EXPORT = 'DATA_EXPORT',
-  DATA_IMPORT = 'DATA_IMPORT',
-
-  // System events
-  CONFIG_CHANGED = 'CONFIG_CHANGED',
-  SERVICE_START = 'SERVICE_START',
-  SERVICE_STOP = 'SERVICE_STOP',
-  ERROR_OCCURRED = 'ERROR_OCCURRED',
-  SECURITY_ALERT = 'SECURITY_ALERT',
-
-  // Workflow events
-  WORKFLOW_CREATED = 'WORKFLOW_CREATED',
-  WORKFLOW_UPDATED = 'WORKFLOW_UPDATED',
-  WORKFLOW_DELETED = 'WORKFLOW_DELETED',
-  WORKFLOW_EXECUTED = 'WORKFLOW_EXECUTED',
-  WORKFLOW_FAILED = 'WORKFLOW_FAILED',
-
-  // API events
-  API_KEY_CREATED = 'API_KEY_CREATED',
-  API_KEY_REVOKED = 'API_KEY_REVOKED',
-  API_RATE_LIMIT = 'API_RATE_LIMIT',
-
-  // File events
-  FILE_UPLOADED = 'FILE_UPLOADED',
-  FILE_DOWNLOADED = 'FILE_DOWNLOADED',
-  FILE_DELETED = 'FILE_DELETED',
-  FILE_SHARED = 'FILE_SHARED',
-
-  // User management
-  USER_CREATED = 'USER_CREATED',
-  USER_UPDATED = 'USER_UPDATED',
-  USER_DELETED = 'USER_DELETED',
-  USER_SUSPENDED = 'USER_SUSPENDED',
-  USER_ACTIVATED = 'USER_ACTIVATED',
-}
-
-export enum AuditSeverity {
-  LOW = 'LOW',
-  MEDIUM = 'MEDIUM',
-  HIGH = 'HIGH',
-  CRITICAL = 'CRITICAL',
-}
+import { Logger } from '@reporunner/core';
+import { z } from 'zod';
 
 export interface AuditEvent {
   id: string;
   timestamp: Date;
-  type: AuditEventType;
-  severity: AuditSeverity;
   userId?: string;
-  userEmail?: string;
   sessionId?: string;
-  ipAddress?: string;
-  userAgent?: string;
-  resource?: string;
-  resourceId?: string;
+  organizationId?: string;
+
+  // Event classification
+  category: 'authentication' | 'authorization' | 'data' | 'system' | 'workflow' | 'security';
   action: string;
-  result: 'SUCCESS' | 'FAILURE';
-  details?: any;
-  metadata?: Record<string, any>;
-  hash?: string;
-  previousHash?: string;
+  resource: string;
+  resourceId?: string;
+
+  // Event details
+  severity: 'low' | 'medium' | 'high' | 'critical';
+  status: 'success' | 'failure' | 'error';
+  message: string;
+
+  // Context information
+  metadata: {
+    ip?: string;
+    userAgent?: string;
+    method?: string;
+    path?: string;
+    duration?: number;
+    [key: string]: any;
+  };
+
+  // Data changes (for data events)
+  changes?: {
+    before?: any;
+    after?: any;
+    fields?: string[];
+  };
+
+  // Risk assessment
+  riskScore?: number;
+  riskFactors?: string[];
+
+  // Compliance tags
+  complianceTags?: string[];
 }
 
-export interface AuditLoggerConfig {
-  enabled?: boolean;
-  logLevel?: AuditSeverity;
-  storageType?: 'file' | 'database' | 'both';
-  filePath?: string;
-  rotationEnabled?: boolean;
-  rotationSize?: number; // Size in MB
-  rotationInterval?: number; // Interval in days
-  enableHashing?: boolean; // For tamper detection
-  enableEncryption?: boolean;
-  encryptionKey?: string;
-  retentionDays?: number;
-  realTimeAlerts?: boolean;
-  alertThresholds?: {
-    failedLogins?: number;
-    accessDenied?: number;
-    dataExports?: number;
-  };
+export interface AuditQuery {
+  userId?: string;
+  organizationId?: string;
+  category?: string;
+  action?: string;
+  resource?: string;
+  severity?: string;
+  status?: string;
+  startDate?: Date;
+  endDate?: Date;
+  riskScoreMin?: number;
+  riskScoreMax?: number;
+  complianceTags?: string[];
+  limit?: number;
+  offset?: number;
 }
+
+export interface AuditReport {
+  id: string;
+  generatedAt: Date;
+  generatedBy: string;
+  reportType: 'compliance' | 'security' | 'activity' | 'risk';
+  timeRange: {
+    start: Date;
+    end: Date;
+  };
+  filters: AuditQuery;
+  summary: {
+    totalEvents: number;
+    eventsByCategory: Record<string, number>;
+    eventsBySeverity: Record<string, number>;
+    riskDistribution: Record<string, number>;
+    topUsers: Array<{ userId: string; eventCount: number }>;
+    topResources: Array<{ resource: string; eventCount: number }>;
+  };
+  events: AuditEvent[];
+  recommendations?: string[];
+}
+
+const AuditEventSchema = z.object({
+  id: z.string(),
+  timestamp: z.date(),
+  userId: z.string().optional(),
+  sessionId: z.string().optional(),
+  organizationId: z.string().optional(),
+  category: z.enum(['authentication', 'authorization', 'data', 'system', 'workflow', 'security']),
+  action: z.string(),
+  resource: z.string(),
+  resourceId: z.string().optional(),
+  severity: z.enum(['low', 'medium', 'high', 'critical']),
+  status: z.enum(['success', 'failure', 'error']),
+  message: z.string(),
+  metadata: z.record(z.any()),
+  changes: z
+    .object({
+      before: z.any().optional(),
+      after: z.any().optional(),
+      fields: z.array(z.string()).optional(),
+    })
+    .optional(),
+  riskScore: z.number().min(0).max(100).optional(),
+  riskFactors: z.array(z.string()).optional(),
+  complianceTags: z.array(z.string()).optional(),
+});
 
 export class AuditLogger extends EventEmitter {
-  private config: Required<AuditLoggerConfig>;
-  private currentLogFile: string;
-  private lastHash: string = '';
-  private eventQueue: AuditEvent[] = [];
-  private isProcessing: boolean = false;
-  private alertCounters: Map<string, number> = new Map();
+  private logger: Logger;
+  private events: AuditEvent[] = [];
+  private maxEvents: number;
+  private retentionDays: number;
+  private complianceMode: boolean;
 
-  constructor(config: AuditLoggerConfig = {}) {
+  constructor(
+    options: {
+      maxEvents?: number;
+      retentionDays?: number;
+      complianceMode?: boolean;
+    } = {}
+  ) {
     super();
+    this.logger = new Logger('AuditLogger');
+    this.maxEvents = options.maxEvents || 100000;
+    this.retentionDays = options.retentionDays || 365;
+    this.complianceMode = options.complianceMode;
 
-    this.config = {
-      enabled: true,
-      logLevel: AuditSeverity.LOW,
-      storageType: 'file',
-      filePath: path.join(process.cwd(), 'audit-logs'),
-      rotationEnabled: true,
-      rotationSize: 100, // 100 MB
-      rotationInterval: 30, // 30 days
-      enableHashing: true,
-      enableEncryption: false,
-      encryptionKey: '',
-      retentionDays: 90,
-      realTimeAlerts: true,
-      alertThresholds: {
-        failedLogins: 5,
-        accessDenied: 10,
-        dataExports: 20,
-      },
-      ...config,
-    };
-
-    this.currentLogFile = this.getLogFileName();
-    this.initializeStorage();
-    this.startProcessor();
-
-    if (this.config.rotationEnabled) {
-      this.startRotationSchedule();
-    }
-
-    if (this.config.retentionDays > 0) {
-      this.startRetentionSchedule();
-    }
+    // Start cleanup interval
+    this.startCleanupInterval();
   }
 
   /**
    * Log an audit event
    */
-  async log(event: Omit<AuditEvent, 'id' | 'timestamp' | 'hash' | 'previousHash'>): Promise<void> {
-    if (!this.config.enabled) {
-      return;
-    }
+  async logEvent(event: Omit<AuditEvent, 'id' | 'timestamp'>): Promise<string> {
+    try {
+      const auditEvent: AuditEvent = {
+        ...event,
+        id: this.generateEventId(),
+        timestamp: new Date(),
+        riskScore: event.riskScore || this.calculateRiskScore(event),
+        riskFactors: event.riskFactors || this.identifyRiskFactors(event),
+        complianceTags: event.complianceTags || this.generateComplianceTags(event),
+      };
 
-    // Check if event meets log level requirement
-    if (!this.shouldLog(event.severity)) {
-      return;
-    }
+      // Validate event
+      AuditEventSchema.parse(auditEvent);
 
-    const auditEvent: AuditEvent = {
-      ...event,
-      id: this.generateEventId(),
-      timestamp: new Date(),
-    };
+      // Store event
+      this.events.push(auditEvent);
 
-    // Add hash for tamper detection
-    if (this.config.enableHashing) {
-      auditEvent.previousHash = this.lastHash;
-      auditEvent.hash = this.generateHash(auditEvent);
-      this.lastHash = auditEvent.hash;
-    }
+      // Maintain size limit
+      if (this.events.length > this.maxEvents) {
+        this.events = this.events.slice(-this.maxEvents);
+      }
 
-    // Add to queue for processing
-    this.eventQueue.push(auditEvent);
+      // Emit event for real-time processing
+      this.emit('audit_event', auditEvent);
 
-    // Check for security alerts
-    if (this.config.realTimeAlerts) {
-      this.checkAlertThresholds(auditEvent);
-    }
+      // Log high-severity events
+      if (auditEvent.severity === 'high' || auditEvent.severity === 'critical') {
+        this.logger.warn('High-severity audit event', {
+          eventId: auditEvent.id,
+          category: auditEvent.category,
+          action: auditEvent.action,
+          severity: auditEvent.severity,
+          riskScore: auditEvent.riskScore,
+        });
+      }
 
-    // Emit event for real-time monitoring
-    this.emit('audit', auditEvent);
+      // Compliance mode logging
+      if (this.complianceMode) {
+        this.logger.info('Compliance audit event', {
+          eventId: auditEvent.id,
+          userId: auditEvent.userId,
+          action: auditEvent.action,
+          resource: auditEvent.resource,
+          complianceTags: auditEvent.complianceTags,
+        });
+      }
 
-    // Process queue if not already processing
-    if (!this.isProcessing) {
-      await this.processQueue();
+      return auditEvent.id;
+    } catch (error) {
+      this.logger.error('Failed to log audit event', { error, event });
+      throw error;
     }
   }
 
   /**
-   * Log login attempt
+   * Authentication events
    */
-  async logLogin(
-    userId: string,
-    email: string,
-    success: boolean,
-    ipAddress?: string,
-    userAgent?: string,
-    details?: any
-  ): Promise<void> {
-    await this.log({
-      type: success ? AuditEventType.LOGIN_SUCCESS : AuditEventType.LOGIN_FAILED,
-      severity: success ? AuditSeverity.LOW : AuditSeverity.MEDIUM,
-      userId: success ? userId : undefined,
-      userEmail: email,
-      ipAddress,
-      userAgent,
-      action: `User ${email} attempted to login`,
-      result: success ? 'SUCCESS' : 'FAILURE',
-      details,
+  async logAuthentication(
+    action:
+      | 'login'
+      | 'logout'
+      | 'login_failed'
+      | 'password_change'
+      | 'mfa_enabled'
+      | 'mfa_disabled',
+    userId?: string,
+    metadata: Record<string, any> = {}
+  ): Promise<string> {
+    return this.logEvent({
+      category: 'authentication',
+      action,
+      resource: 'user_session',
+      resourceId: userId,
+      severity: action.includes('failed') ? 'medium' : 'low',
+      status: action.includes('failed') ? 'failure' : 'success',
+      message: `User ${action.replace('_', ' ')}`,
+      userId,
+      metadata,
+      complianceTags: ['authentication', 'access_control'],
     });
   }
 
   /**
-   * Log data access
+   * Authorization events
    */
-  async logDataAccess(
+  async logAuthorization(
+    action:
+      | 'access_granted'
+      | 'access_denied'
+      | 'permission_changed'
+      | 'role_assigned'
+      | 'role_removed',
     userId: string,
     resource: string,
-    resourceId: string,
-    action: 'CREATE' | 'READ' | 'UPDATE' | 'DELETE',
-    success: boolean,
-    details?: any
-  ): Promise<void> {
-    const typeMap = {
-      CREATE: AuditEventType.DATA_CREATE,
-      READ: AuditEventType.DATA_READ,
-      UPDATE: AuditEventType.DATA_UPDATE,
-      DELETE: AuditEventType.DATA_DELETE,
-    };
-
-    await this.log({
-      type: typeMap[action],
-      severity: action === 'DELETE' ? AuditSeverity.HIGH : AuditSeverity.LOW,
-      userId,
+    resourceId?: string,
+    metadata: Record<string, any> = {}
+  ): Promise<string> {
+    return this.logEvent({
+      category: 'authorization',
+      action,
       resource,
       resourceId,
-      action: `${action} ${resource}`,
-      result: success ? 'SUCCESS' : 'FAILURE',
-      details,
+      severity: action === 'access_denied' ? 'medium' : 'low',
+      status: action === 'access_denied' ? 'failure' : 'success',
+      message: `Authorization ${action.replace('_', ' ')} for ${resource}`,
+      userId,
+      metadata,
+      complianceTags: ['authorization', 'rbac'],
     });
   }
 
   /**
-   * Log security event
+   * Data events
+   */
+  async logDataEvent(
+    action: 'create' | 'read' | 'update' | 'delete' | 'export' | 'import',
+    resource: string,
+    resourceId: string,
+    userId?: string,
+    changes?: AuditEvent['changes'],
+    metadata: Record<string, any> = {}
+  ): Promise<string> {
+    const severity = action === 'delete' ? 'high' : action === 'export' ? 'medium' : 'low';
+
+    return this.logEvent({
+      category: 'data',
+      action,
+      resource,
+      resourceId,
+      severity,
+      status: 'success',
+      message: `Data ${action} on ${resource}`,
+      userId,
+      changes,
+      metadata,
+      complianceTags: ['data_access', 'gdpr', 'data_protection'],
+    });
+  }
+
+  /**
+   * Workflow events
+   */
+  async logWorkflowEvent(
+    action: 'created' | 'updated' | 'deleted' | 'executed' | 'failed' | 'shared',
+    workflowId: string,
+    userId?: string,
+    metadata: Record<string, any> = {}
+  ): Promise<string> {
+    return this.logEvent({
+      category: 'workflow',
+      action,
+      resource: 'workflow',
+      resourceId: workflowId,
+      severity: action === 'failed' ? 'medium' : 'low',
+      status: action === 'failed' ? 'failure' : 'success',
+      message: `Workflow ${action}`,
+      userId,
+      metadata,
+      complianceTags: ['workflow_management', 'automation'],
+    });
+  }
+
+  /**
+   * Security events
    */
   async logSecurityEvent(
-    type: AuditEventType,
-    severity: AuditSeverity,
-    description: string,
+    action: string,
+    severity: AuditEvent['severity'],
+    message: string,
     userId?: string,
-    details?: any
-  ): Promise<void> {
-    await this.log({
-      type,
+    metadata: Record<string, any> = {}
+  ): Promise<string> {
+    return this.logEvent({
+      category: 'security',
+      action,
+      resource: 'security_system',
       severity,
+      status: severity === 'critical' || severity === 'high' ? 'failure' : 'success',
+      message,
       userId,
-      action: description,
-      result: 'SUCCESS',
-      details,
+      metadata,
+      complianceTags: ['security', 'threat_detection'],
     });
-
-    // Emit security alert for critical events
-    if (severity === AuditSeverity.CRITICAL) {
-      this.emit('security-alert', {
-        type,
-        severity,
-        description,
-        userId,
-        details,
-        timestamp: new Date(),
-      });
-    }
   }
 
   /**
-   * Query audit logs
+   * Query audit events
    */
-  async query(filters: {
-    startDate?: Date;
-    endDate?: Date;
-    userId?: string;
-    type?: AuditEventType;
-    severity?: AuditSeverity;
-    resource?: string;
-    result?: 'SUCCESS' | 'FAILURE';
-    limit?: number;
-  }): Promise<AuditEvent[]> {
-    // This would be implemented based on storage type
-    // For file storage, read and filter logs
-    // For database, run query
-    const logs = await this.readLogs();
-
-    return logs
-      .filter((log) => {
-        if (filters.startDate && log.timestamp < filters.startDate) {
-          return false;
-        }
-        if (filters.endDate && log.timestamp > filters.endDate) {
-          return false;
-        }
-        if (filters.userId && log.userId !== filters.userId) {
-          return false;
-        }
-        if (filters.type && log.type !== filters.type) {
-          return false;
-        }
-        if (filters.severity && log.severity !== filters.severity) {
-          return false;
-        }
-        if (filters.resource && log.resource !== filters.resource) {
-          return false;
-        }
-        if (filters.result && log.result !== filters.result) {
-          return false;
-        }
-        return true;
-      })
-      .slice(0, filters.limit || 1000);
-  }
-
-  /**
-   * Verify log integrity
-   */
-  async verifyIntegrity(
-    startDate?: Date,
-    endDate?: Date
-  ): Promise<{
-    valid: boolean;
-    errors: string[];
-    totalEvents: number;
-    validEvents: number;
-  }> {
-    if (!this.config.enableHashing) {
-      return {
-        valid: false,
-        errors: ['Hashing is not enabled'],
-        totalEvents: 0,
-        validEvents: 0,
-      };
-    }
-
-    const logs = await this.query({ startDate, endDate });
-    const errors: string[] = [];
-    let validEvents = 0;
-    let previousHash = '';
-
-    for (const log of logs) {
-      if (!log.hash) {
-        errors.push(`Event ${log.id} missing hash`);
-        continue;
-      }
-
-      if (log.previousHash !== previousHash) {
-        errors.push(`Event ${log.id} has invalid previous hash`);
-        continue;
-      }
-
-      const expectedHash = this.generateHash({
-        ...log,
-        // hash: undefined, // Removed as not part of base event
-      });
-
-      if (log.hash !== expectedHash) {
-        errors.push(`Event ${log.id} has been tampered with`);
-        continue;
-      }
-
-      validEvents++;
-      previousHash = log.hash;
-    }
-
-    return {
-      valid: errors.length === 0,
-      errors,
-      totalEvents: logs.length,
-      validEvents,
-    };
-  }
-
-  /**
-   * Get audit statistics
-   */
-  async getStatistics(
-    startDate?: Date,
-    endDate?: Date
-  ): Promise<{
-    totalEvents: number;
-    byType: Record<string, number>;
-    bySeverity: Record<string, number>;
-    byResult: Record<string, number>;
-    topUsers: Array<{ userId: string; count: number }>;
-    failureRate: number;
-  }> {
-    const logs = await this.query({ startDate, endDate });
-
-    const stats = {
-      totalEvents: logs.length,
-      byType: {} as Record<string, number>,
-      bySeverity: {} as Record<string, number>,
-      byResult: { SUCCESS: 0, FAILURE: 0 },
-      topUsers: [] as Array<{ userId: string; count: number }>,
-      failureRate: 0,
-    };
-
-    const userCounts = new Map<string, number>();
-
-    for (const log of logs) {
-      // Count by type
-      stats.byType[log.type] = (stats.byType[log.type] || 0) + 1;
-
-      // Count by severity
-      stats.bySeverity[log.severity] = (stats.bySeverity[log.severity] || 0) + 1;
-
-      // Count by result
-      stats.byResult[log.result]++;
-
-      // Count by user
-      if (log.userId) {
-        userCounts.set(log.userId, (userCounts.get(log.userId) || 0) + 1);
-      }
-    }
-
-    // Calculate failure rate
-    if (stats.totalEvents > 0) {
-      stats.failureRate = (stats.byResult.FAILURE / stats.totalEvents) * 100;
-    }
-
-    // Get top users
-    stats.topUsers = Array.from(userCounts.entries())
-      .sort((a, b) => b[1] - a[1])
-      .slice(0, 10)
-      .map(([userId, count]) => ({ userId, count }));
-
-    return stats;
-  }
-
-  /**
-   * Export audit logs
-   */
-  async export(format: 'json' | 'csv', filters?: any): Promise<string> {
-    const logs = await this.query(filters || {});
-
-    // Log the export action
-    await this.log({
-      type: AuditEventType.DATA_EXPORT,
-      severity: AuditSeverity.MEDIUM,
-      action: 'Audit logs exported',
-      result: 'SUCCESS',
-      details: { format, recordCount: logs.length, filters },
-    });
-
-    if (format === 'json') {
-      return JSON.stringify(logs, null, 2);
-    } else {
-      // Convert to CSV
-      const headers = [
-        'ID',
-        'Timestamp',
-        'Type',
-        'Severity',
-        'User ID',
-        'Email',
-        'IP Address',
-        'Resource',
-        'Action',
-        'Result',
-      ];
-
-      const rows = logs.map((log) => [
-        log.id,
-        log.timestamp.toISOString(),
-        log.type,
-        log.severity,
-        log.userId || '',
-        log.userEmail || '',
-        log.ipAddress || '',
-        log.resource || '',
-        log.action,
-        log.result,
-      ]);
-
-      return [headers, ...rows].map((row) => row.join(',')).join('\n');
-    }
-  }
-
-  /**
-   * Process event queue
-   */
-  private async processQueue(): Promise<void> {
-    if (this.isProcessing || this.eventQueue.length === 0) {
-      return;
-    }
-
-    this.isProcessing = true;
-    const events = [...this.eventQueue];
-    this.eventQueue = [];
-
+  async queryEvents(query: AuditQuery = {}): Promise<AuditEvent[]> {
     try {
-      for (const event of events) {
-        await this.persistEvent(event);
+      let filteredEvents = [...this.events];
+
+      // Apply filters
+      if (query.userId) {
+        filteredEvents = filteredEvents.filter((e) => e.userId === query.userId);
       }
-    } catch (_error) {
-      // Re-add failed events to queue
-      this.eventQueue.unshift(...events);
-    } finally {
-      this.isProcessing = false;
-    }
-  }
 
-  /**
-   * Persist event to storage
-   */
-  private async persistEvent(event: AuditEvent): Promise<void> {
-    if (this.config.storageType === 'file' || this.config.storageType === 'both') {
-      await this.writeToFile(event);
-    }
-
-    if (this.config.storageType === 'database' || this.config.storageType === 'both') {
-      // Database implementation would go here
-      // await this.writeToDatabase(event);
-    }
-  }
-
-  /**
-   * Write event to file
-   */
-  private async writeToFile(event: AuditEvent): Promise<void> {
-    const logLine = `${JSON.stringify(event)}\n`;
-    const logPath = path.join(this.config.filePath, this.currentLogFile);
-
-    await appendFile(logPath, logLine);
-
-    // Check for rotation
-    if (this.config.rotationEnabled) {
-      await this.checkRotation();
-    }
-  }
-
-  /**
-   * Read logs from file
-   */
-  private async readLogs(): Promise<AuditEvent[]> {
-    const logPath = path.join(this.config.filePath, this.currentLogFile);
-
-    if (!fs.existsSync(logPath)) {
-      return [];
-    }
-
-    const content = fs.readFileSync(logPath, 'utf-8');
-    const lines = content.split('\n').filter((line) => line.trim());
-
-    return lines.map((line) => {
-      const event = JSON.parse(line);
-      event.timestamp = new Date(event.timestamp);
-      return event;
-    });
-  }
-
-  /**
-   * Initialize storage
-   */
-  private async initializeStorage(): Promise<void> {
-    if (this.config.storageType === 'file' || this.config.storageType === 'both') {
-      if (!fs.existsSync(this.config.filePath)) {
-        await mkdir(this.config.filePath, { recursive: true });
+      if (query.organizationId) {
+        filteredEvents = filteredEvents.filter((e) => e.organizationId === query.organizationId);
       }
+
+      if (query.category) {
+        filteredEvents = filteredEvents.filter((e) => e.category === query.category);
+      }
+
+      if (query.action) {
+        filteredEvents = filteredEvents.filter((e) => e.action === query.action);
+      }
+
+      if (query.resource) {
+        filteredEvents = filteredEvents.filter((e) => e.resource === query.resource);
+      }
+
+      if (query.severity) {
+        filteredEvents = filteredEvents.filter((e) => e.severity === query.severity);
+      }
+
+      if (query.status) {
+        filteredEvents = filteredEvents.filter((e) => e.status === query.status);
+      }
+
+      if (query.startDate) {
+        filteredEvents = filteredEvents.filter((e) => e.timestamp >= query.startDate!);
+      }
+
+      if (query.endDate) {
+        filteredEvents = filteredEvents.filter((e) => e.timestamp <= query.endDate!);
+      }
+
+      if (query.riskScoreMin !== undefined) {
+        filteredEvents = filteredEvents.filter((e) => (e.riskScore || 0) >= query.riskScoreMin!);
+      }
+
+      if (query.riskScoreMax !== undefined) {
+        filteredEvents = filteredEvents.filter((e) => (e.riskScore || 0) <= query.riskScoreMax!);
+      }
+
+      if (query.complianceTags && query.complianceTags.length > 0) {
+        filteredEvents = filteredEvents.filter((e) =>
+          e.complianceTags?.some((tag) => query.complianceTags?.includes(tag))
+        );
+      }
+
+      // Sort by timestamp (newest first)
+      filteredEvents.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
+
+      // Apply pagination
+      const offset = query.offset || 0;
+      const limit = query.limit || 100;
+
+      return filteredEvents.slice(offset, offset + limit);
+    } catch (error) {
+      this.logger.error('Failed to query audit events', { error, query });
+      throw error;
     }
   }
 
   /**
-   * Generate event ID
+   * Generate compliance report
    */
+  async generateReport(
+    reportType: AuditReport['reportType'],
+    timeRange: { start: Date; end: Date },
+    filters: AuditQuery = {},
+    generatedBy: string
+  ): Promise<AuditReport> {
+    try {
+      const query: AuditQuery = {
+        ...filters,
+        startDate: timeRange.start,
+        endDate: timeRange.end,
+        limit: 10000, // Get all events for report
+      };
+
+      const events = await this.queryEvents(query);
+
+      // Generate summary statistics
+      const summary = this.generateSummary(events);
+
+      // Generate recommendations based on report type
+      const recommendations = this.generateRecommendations(reportType, events, summary);
+
+      const report: AuditReport = {
+        id: this.generateReportId(),
+        generatedAt: new Date(),
+        generatedBy,
+        reportType,
+        timeRange,
+        filters,
+        summary,
+        events,
+        recommendations,
+      };
+
+      this.logger.info('Audit report generated', {
+        reportId: report.id,
+        reportType,
+        eventCount: events.length,
+        generatedBy,
+      });
+
+      return report;
+    } catch (error) {
+      this.logger.error('Failed to generate audit report', { error, reportType });
+      throw error;
+    }
+  }
+
+  /**
+   * Export events for external systems
+   */
+  async exportEvents(
+    query: AuditQuery = {},
+    format: 'json' | 'csv' | 'xml' = 'json'
+  ): Promise<string> {
+    try {
+      const events = await this.queryEvents(query);
+
+      switch (format) {
+        case 'json':
+          return JSON.stringify(events, null, 2);
+
+        case 'csv':
+          return this.convertToCSV(events);
+
+        case 'xml':
+          return this.convertToXML(events);
+
+        default:
+          throw new Error(`Unsupported export format: ${format}`);
+      }
+    } catch (error) {
+      this.logger.error('Failed to export audit events', { error, query, format });
+      throw error;
+    }
+  }
+
   private generateEventId(): string {
-    return `${Date.now()}-${randomBytes(8).toString('hex')}`;
+    return `audit_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
   }
 
-  /**
-   * Generate hash for event
-   */
-  private generateHash(event: Omit<AuditEvent, 'hash'>): string {
-    const data = JSON.stringify({
-      ...event,
-      // hash property already omitted from type
+  private generateReportId(): string {
+    return `report_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  }
+
+  private calculateRiskScore(event: Omit<AuditEvent, 'id' | 'timestamp'>): number {
+    let score = 0;
+
+    // Base score by severity
+    const severityScores = { low: 10, medium: 30, high: 60, critical: 90 };
+    score += severityScores[event.severity];
+
+    // Increase score for failures
+    if (event.status === 'failure' || event.status === 'error') {
+      score += 20;
+    }
+
+    // Increase score for sensitive actions
+    const sensitiveActions = ['delete', 'export', 'permission_change', 'role_change'];
+    if (sensitiveActions.some((action) => event.action.includes(action))) {
+      score += 15;
+    }
+
+    // Increase score for administrative resources
+    const adminResources = ['user', 'role', 'permission', 'system'];
+    if (adminResources.includes(event.resource)) {
+      score += 10;
+    }
+
+    return Math.min(100, score);
+  }
+
+  private identifyRiskFactors(event: Omit<AuditEvent, 'id' | 'timestamp'>): string[] {
+    const factors: string[] = [];
+
+    if (event.status === 'failure') {
+      factors.push('operation_failed');
+    }
+    if (event.severity === 'critical') {
+      factors.push('critical_severity');
+    }
+    if (event.action.includes('delete')) {
+      factors.push('destructive_action');
+    }
+    if (event.action.includes('export')) {
+      factors.push('data_export');
+    }
+    if (event.resource === 'user' || event.resource === 'role') {
+      factors.push('identity_management');
+    }
+    if (event.metadata.ip && this.isUnusualIP(event.metadata.ip)) {
+      factors.push('unusual_ip');
+    }
+
+    return factors;
+  }
+
+  private generateComplianceTags(event: Omit<AuditEvent, 'id' | 'timestamp'>): string[] {
+    const tags: string[] = [];
+
+    // GDPR tags
+    if (event.category === 'data' || event.resource === 'user') {
+      tags.push('gdpr');
+    }
+
+    // SOX tags
+    if (event.category === 'data' && ['create', 'update', 'delete'].includes(event.action)) {
+      tags.push('sox');
+    }
+
+    // HIPAA tags (if healthcare data)
+    if (event.metadata.dataType === 'healthcare') {
+      tags.push('hipaa');
+    }
+
+    // PCI DSS tags (if payment data)
+    if (event.metadata.dataType === 'payment') {
+      tags.push('pci_dss');
+    }
+
+    // ISO 27001 tags
+    if (event.category === 'security' || event.category === 'authentication') {
+      tags.push('iso27001');
+    }
+
+    return tags;
+  }
+
+  private generateSummary(events: AuditEvent[]) {
+    const summary = {
+      totalEvents: events.length,
+      eventsByCategory: {} as Record<string, number>,
+      eventsBySeverity: {} as Record<string, number>,
+      riskDistribution: {} as Record<string, number>,
+      topUsers: [] as Array<{ userId: string; eventCount: number }>,
+      topResources: [] as Array<{ resource: string; eventCount: number }>,
+    };
+
+    // Count by category
+    events.forEach((event) => {
+      summary.eventsByCategory[event.category] =
+        (summary.eventsByCategory[event.category] || 0) + 1;
+      summary.eventsBySeverity[event.severity] =
+        (summary.eventsBySeverity[event.severity] || 0) + 1;
+
+      const riskRange = this.getRiskRange(event.riskScore || 0);
+      summary.riskDistribution[riskRange] = (summary.riskDistribution[riskRange] || 0) + 1;
     });
-    return require('node:crypto').createHash('sha256').update(data).digest('hex');
+
+    // Top users
+    const userCounts = new Map<string, number>();
+    events.forEach((event) => {
+      if (event.userId) {
+        userCounts.set(event.userId, (userCounts.get(event.userId) || 0) + 1);
+      }
+    });
+
+    summary.topUsers = Array.from(userCounts.entries())
+      .map(([userId, eventCount]) => ({ userId, eventCount }))
+      .sort((a, b) => b.eventCount - a.eventCount)
+      .slice(0, 10);
+
+    // Top resources
+    const resourceCounts = new Map<string, number>();
+    events.forEach((event) => {
+      resourceCounts.set(event.resource, (resourceCounts.get(event.resource) || 0) + 1);
+    });
+
+    summary.topResources = Array.from(resourceCounts.entries())
+      .map(([resource, eventCount]) => ({ resource, eventCount }))
+      .sort((a, b) => b.eventCount - a.eventCount)
+      .slice(0, 10);
+
+    return summary;
   }
 
-  /**
-   * Get log file name
-   */
-  private getLogFileName(): string {
-    const date = new Date();
-    return `audit-${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}.log`;
+  private generateRecommendations(
+    reportType: string,
+    events: AuditEvent[],
+    _summary: any
+  ): string[] {
+    const recommendations: string[] = [];
+
+    // Security recommendations
+    if (reportType === 'security') {
+      const failedLogins = events.filter((e) => e.action === 'login_failed').length;
+      if (failedLogins > 10) {
+        recommendations.push(
+          'Consider implementing account lockout policies due to high number of failed login attempts'
+        );
+      }
+
+      const highRiskEvents = events.filter((e) => (e.riskScore || 0) > 70).length;
+      if (highRiskEvents > events.length * 0.1) {
+        recommendations.push(
+          'High number of high-risk events detected. Review security policies and access controls'
+        );
+      }
+    }
+
+    // Compliance recommendations
+    if (reportType === 'compliance') {
+      const dataExports = events.filter((e) => e.action === 'export').length;
+      if (dataExports > 0) {
+        recommendations.push(
+          'Data exports detected. Ensure proper authorization and data protection measures are in place'
+        );
+      }
+    }
+
+    return recommendations;
   }
 
-  /**
-   * Check if event should be logged based on severity
-   */
-  private shouldLog(severity: AuditSeverity): boolean {
-    const levels = [
-      AuditSeverity.LOW,
-      AuditSeverity.MEDIUM,
-      AuditSeverity.HIGH,
-      AuditSeverity.CRITICAL,
+  private getRiskRange(score: number): string {
+    if (score < 25) {
+      return 'Low (0-24)';
+    }
+    if (score < 50) {
+      return 'Medium (25-49)';
+    }
+    if (score < 75) {
+      return 'High (50-74)';
+    }
+    return 'Critical (75-100)';
+  }
+
+  private isUnusualIP(_ip: string): boolean {
+    // Simplified implementation - would typically check against known IP ranges
+    return false;
+  }
+
+  private convertToCSV(events: AuditEvent[]): string {
+    const headers = [
+      'ID',
+      'Timestamp',
+      'User ID',
+      'Category',
+      'Action',
+      'Resource',
+      'Severity',
+      'Status',
+      'Message',
+      'Risk Score',
     ];
-    const eventLevel = levels.indexOf(severity);
-    const configLevel = levels.indexOf(this.config.logLevel);
-    return eventLevel >= configLevel;
+
+    const rows = events.map((event) => [
+      event.id,
+      event.timestamp.toISOString(),
+      event.userId || '',
+      event.category,
+      event.action,
+      event.resource,
+      event.severity,
+      event.status,
+      event.message,
+      event.riskScore || 0,
+    ]);
+
+    return [headers, ...rows].map((row) => row.join(',')).join('\n');
   }
 
-  /**
-   * Check alert thresholds
-   */
-  private checkAlertThresholds(event: AuditEvent): void {
-    const thresholds = this.config.alertThresholds;
+  private convertToXML(events: AuditEvent[]): string {
+    const xmlEvents = events
+      .map(
+        (event) => `
+    <event>
+      <id>${event.id}</id>
+      <timestamp>${event.timestamp.toISOString()}</timestamp>
+      <userId>${event.userId || ''}</userId>
+      <category>${event.category}</category>
+      <action>${event.action}</action>
+      <resource>${event.resource}</resource>
+      <severity>${event.severity}</severity>
+      <status>${event.status}</status>
+      <message><![CDATA[${event.message}]]></message>
+      <riskScore>${event.riskScore || 0}</riskScore>
+    </event>`
+      )
+      .join('');
 
-    if (!thresholds) {
-      return;
-    }
-
-    // Track failed logins
-    if (event.type === AuditEventType.LOGIN_FAILED && thresholds.failedLogins) {
-      const key = `login_failed:${event.userEmail || event.ipAddress}`;
-      const count = (this.alertCounters.get(key) || 0) + 1;
-      this.alertCounters.set(key, count);
-
-      if (count >= thresholds.failedLogins) {
-        this.emit('threshold-exceeded', {
-          type: 'FAILED_LOGINS',
-          threshold: thresholds.failedLogins,
-          count,
-          identifier: event.userEmail || event.ipAddress,
-        });
-        this.alertCounters.delete(key);
-      }
-    }
-
-    // Track access denied
-    if (event.type === AuditEventType.ACCESS_DENIED && thresholds.accessDenied) {
-      const key = `access_denied:${event.userId || event.ipAddress}`;
-      const count = (this.alertCounters.get(key) || 0) + 1;
-      this.alertCounters.set(key, count);
-
-      if (count >= thresholds.accessDenied) {
-        this.emit('threshold-exceeded', {
-          type: 'ACCESS_DENIED',
-          threshold: thresholds.accessDenied,
-          count,
-          identifier: event.userId || event.ipAddress,
-        });
-        this.alertCounters.delete(key);
-      }
-    }
-
-    // Reset counters periodically
-    setTimeout(() => {
-      this.alertCounters.clear();
-    }, 3600000); // 1 hour
+    return `<?xml version="1.0" encoding="UTF-8"?>
+<auditEvents>
+  ${xmlEvents}
+</auditEvents>`;
   }
 
-  /**
-   * Check if log rotation is needed
-   */
-  private async checkRotation(): Promise<void> {
-    const logPath = path.join(this.config.filePath, this.currentLogFile);
-
-    if (!fs.existsSync(logPath)) {
-      return;
-    }
-
-    const stats = fs.statSync(logPath);
-    const sizeInMB = stats.size / (1024 * 1024);
-
-    if (sizeInMB >= this.config.rotationSize) {
-      await this.rotateLog();
-    }
-  }
-
-  /**
-   * Rotate log file
-   */
-  private async rotateLog(): Promise<void> {
-    const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-    const oldPath = path.join(this.config.filePath, this.currentLogFile);
-    const newPath = path.join(this.config.filePath, `${this.currentLogFile}.${timestamp}`);
-
-    fs.renameSync(oldPath, newPath);
-    this.currentLogFile = this.getLogFileName();
-
-    this.emit('log-rotated', { oldFile: oldPath, newFile: newPath });
-  }
-
-  /**
-   * Start rotation schedule
-   */
-  private startRotationSchedule(): void {
+  private startCleanupInterval(): void {
+    // Clean up old events every hour
     setInterval(
-      async () => {
-        const newFileName = this.getLogFileName();
-        if (newFileName !== this.currentLogFile) {
-          this.currentLogFile = newFileName;
+      () => {
+        const cutoffDate = new Date();
+        cutoffDate.setDate(cutoffDate.getDate() - this.retentionDays);
+
+        const originalLength = this.events.length;
+        this.events = this.events.filter((event) => event.timestamp > cutoffDate);
+
+        if (this.events.length < originalLength) {
+          this.logger.info('Cleaned up old audit events', {
+            removed: originalLength - this.events.length,
+            remaining: this.events.length,
+          });
         }
       },
-      24 * 60 * 60 * 1000
-    ); // Check daily
-  }
-
-  /**
-   * Start retention schedule
-   */
-  private startRetentionSchedule(): void {
-    setInterval(
-      async () => {
-        await this.cleanOldLogs();
-      },
-      24 * 60 * 60 * 1000
-    ); // Run daily
-  }
-
-  /**
-   * Clean old logs based on retention policy
-   */
-  private async cleanOldLogs(): Promise<void> {
-    const files = fs.readdirSync(this.config.filePath);
-    const cutoffDate = new Date();
-    cutoffDate.setDate(cutoffDate.getDate() - this.config.retentionDays);
-
-    for (const file of files) {
-      const filePath = path.join(this.config.filePath, file);
-      const stats = fs.statSync(filePath);
-
-      if (stats.mtime < cutoffDate) {
-        fs.unlinkSync(filePath);
-        this.emit('log-deleted', { file: filePath, age: stats.mtime });
-      }
-    }
-  }
-
-  /**
-   * Start background processor
-   */
-  private startProcessor(): void {
-    setInterval(async () => {
-      await this.processQueue();
-    }, 5000); // Process every 5 seconds
+      60 * 60 * 1000
+    ); // 1 hour
   }
 }
-
-// Export singleton instance
-export const auditLogger = new AuditLogger({
-  enabled: process.env.AUDIT_ENABLED !== 'false',
-  logLevel: (process.env.AUDIT_LOG_LEVEL as AuditSeverity) || AuditSeverity.LOW,
-  storageType: (process.env.AUDIT_STORAGE as any) || 'file',
-  filePath: process.env.AUDIT_LOG_PATH || path.join(process.cwd(), 'audit-logs'),
-  enableHashing: process.env.AUDIT_ENABLE_HASHING !== 'false',
-  retentionDays: Number.parseInt(process.env.AUDIT_RETENTION_DAYS || '90', 10),
-});
 
 export default AuditLogger;
