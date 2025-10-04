@@ -1,14 +1,13 @@
 /**
  * App Services Index
- * Central export for all application-level services
+ * UI-only services - business logic moved to backend
  */
 
-// Container factory service
+// Container factory service (UI only)
 export * from './containerFactory';
-// Execution monitoring service
-export * from './executionMonitorService';
-// Integration service
+
+// Integration service (UI only - calls backend API)
 export * from './integrationService';
 
-// Intelligent auto-connect service
+// Intelligent auto-connect service (UI only)
 export * from './intelligentAutoConnect';

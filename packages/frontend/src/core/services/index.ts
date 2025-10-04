@@ -1,23 +1,20 @@
 /**
  * Core Frontend Services
  *
- * Consolidated from 24 to 6 core services for better maintainability
+ * UI-only services - all business logic moved to backend for security
  */
 
-// AI Assistant - User-facing AI features
+// AI Assistant - User-facing AI features (UI only)
 export * from './aiAssistantService';
 
-// Analytics - Client-side analytics and tracking
+// Analytics - Client-side analytics and tracking (UI only)
 export * from './analyticsService';
 
-// Audit - Frontend audit logging (consider moving to backend)
-export * from './auditService';
-
-// Config - Application configuration
+// Config - Application configuration (UI only)
 export * from './ConfigService';
 
-// Logging - Client-side logging (consider moving to backend)
+// Logging - Client-side logging (UI only, sends to backend)
 export * from './LoggingService';
 
-// Performance - Client-side performance monitoring
+// Performance - Client-side performance monitoring (UI only)
 export * from './PerformanceService';
