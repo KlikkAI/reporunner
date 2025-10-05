@@ -21,8 +21,14 @@ export {
 } from './bundle-size-analyzer.js';
 export { BuildAnalyzerCLI } from './cli/build-analyzer-cli.js';
 export { BundleAnalyzerCLI } from './cli/bundle-analyzer-cli.js';
+export { DevExperienceCLI } from './cli/dev-experience-cli.js';
 export { ValidationController } from './controller/ValidationController.js';
+// Developer Experience Metrics
+export * from './developer-experience/index.js';
 export type * from './interfaces/index.js';
+export { MemoryLeakDetector } from './monitoring/MemoryLeakDetector.js';
+export { MemoryMonitor } from './monitoring/MemoryMonitor.js';
+export { MemoryOptimizer } from './monitoring/MemoryOptimizer.js';
 export { PerformanceMonitor } from './monitoring/PerformanceMonitor.js';
 export { ReportingEngine } from './reporting/ReportingEngine.js';
 // System validation components
