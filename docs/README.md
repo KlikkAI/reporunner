@@ -17,7 +17,10 @@ Strategic documentation and active development planning ([View Full Index](./pro
 - **Enterprise Architecture** - Microservices design and system architecture
 - **Agents Documentation** - AI agent system architecture and patterns
 
-#### 📖 [Guides](./project-planning/guides/)
+#### 📖 [Guides](./project-planning/guides/) ([View Full Index](./project-planning/guides/INDEX.md))
+- **Implementation Roadmap** - Clean architecture transition plan (7-week roadmap)
+- **Simplified Node System** - Design specification for node management redesign
+- **Optimization Guide** - Performance optimization strategies and tooling
 - **LLM Implementation Guide** - Structured development approach for AI
 - **SDK Comparison** - Multi-language SDK development planning
 
@@ -39,6 +42,20 @@ Historical documentation organized by category ([View Full Index](./history/INDE
 - **Migration Guide** - Comprehensive migration procedures
 - **Migration Progress Review** - Detailed progress tracking and metrics
 - **Workflow Store Migration** - Zustand store migration documentation
+
+#### 📊 [Package Consolidation](./history/consolidation/) ([View Full Index](./history/consolidation/INDEX.md))
+- **Completion Roadmap** - Complete roadmap for all 6 consolidation phases
+- **Phase 1 Success** - Successfully consolidated 3 core packages (29→26 packages)
+- **Consolidation Summary** - Technical implementation details and benefits
+- **Consolidation Analysis** - Strategic analysis and planning for all phases
+- **Consolidation Plan** - Original planning document with risk-based phasing
+
+#### 🔍 [Analysis](./history/analysis/) ([View Full Index](./history/analysis/INDEX.md))
+- **Frontend-Backend Analysis** - Identified duplication and architectural issues
+- **Enterprise Architecture Analysis** - Scalability and security architecture review
+- **Directory Structure Analysis** - Led to 95% file reduction achievement
+- **Security Cleanup Summary** - Removed 6 security-risk services from frontend
+- **Open Source Essentials** - Implemented community infrastructure and governance
 
 #### 🔐 [Security](./history/security/)
 - **Security Audit Report** - Comprehensive security audit results
@@ -84,15 +101,27 @@ User-facing documentation and tutorials:
 
 ## 📊 Documentation Statistics
 
-- **Active Planning**: 7 documents focused on future development
-- **Historical Records**: Organized into 4 categories (migrations, security, sessions, sprints)
+- **Active Planning**: 10+ documents focused on future development
+- **Historical Records**: Organized into 6 categories (migrations, consolidation, analysis, security, sessions, sprints)
+- **Planning Guides**: 5 comprehensive implementation and optimization guides
 - **Migration Docs**: 5 comprehensive migration guides
+- **Consolidation Docs**: 5 package consolidation documents tracking 17.6% progress
+- **Analysis Docs**: 7 architectural and security analysis documents
 - **Security Docs**: 2 audit and fix reports
-- **Coverage Areas**: Active Planning, Historical Records, Architecture, Security
+- **Coverage Areas**: Active Planning, Historical Records, Architecture, Security, Performance, AI/ML
 - **Organized Structure**: Clear separation between active plans and completed work
 
 ## 🔄 Recent Updates
 
+- **October 5, 2025**: Major documentation reorganization
+  - Moved 17 root MD files to organized docs/ structure
+  - Created consolidation/ directory with 5 package consolidation documents
+  - Created analysis/ directory with 7 architectural analysis documents
+  - Added 3 planning guides to project-planning/guides/
+  - Created comprehensive INDEX.md files for all new directories
+  - Kept COMPLETION_ROADMAP.md in root for easy reference
+  - Removed redundant WARP.md file
+  - **Result**: Clean root with only 9 standard open-source MD files
 - **October 2, 2025 Session 4**: Perfect code quality achieved (100/100) - Platform score 92/100
 - **October 2, 2025 Session 3**: Multi-cloud infrastructure (26 Terraform modules across AWS, GCP, Azure)
 - **October 2, 2025 Sessions 1-2**: Community infrastructure, E2E testing (106+ tests), 7 Grafana dashboards
