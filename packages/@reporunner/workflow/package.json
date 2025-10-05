@@ -24,6 +24,11 @@
       "types": "./dist/execution/index.d.ts",
       "import": "./dist/execution/index.js",
       "require": "./dist/execution/index.js"
+    },
+    "./engine": {
+      "types": "./dist/engine/index.d.ts",
+      "import": "./dist/engine/index.js",
+      "require": "./dist/engine/index.js"
     }
   },
   "scripts": {

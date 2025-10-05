@@ -1,5 +1,5 @@
 import { EventEmitter } from 'node:events';
-import type { DatabaseService } from '@reporunner/database';
+import type { DatabaseService } from '@reporunner/backend/database';
 import {
   ERROR_CODES,
   EVENTS,

@@ -2,6 +2,12 @@
   "name": "@reporunner/backend",
   "version": "1.0.0",
   "type": "module",
+  "exports": {
+    ".": "./dist/index.js",
+    "./common": "./dist/common/index.js",
+    "./database": "./dist/database/index.js",
+    "./monitoring": "./dist/monitoring/index.js"
+  },
   "scripts": {
     "dev": "tsx watch src/server.ts",
     "build": "tsc",

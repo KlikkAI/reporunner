@@ -18,8 +18,7 @@
     "@reporunner/shared": "workspace:*",
     "@reporunner/core": "workspace:*",
     "@reporunner/auth": "workspace:*",
-    "@reporunner/database": "workspace:*",
-    "@reporunner/monitoring": "workspace:*",
+    "@reporunner/backend": "workspace:*",
     "express": "catalog:",
     "zod": "catalog:",
     "winston": "catalog:"

@@ -15,8 +15,8 @@
   },
   "dependencies": {
     "@reporunner/shared": "workspace:*",
-    "@reporunner/database": "workspace:*",
-    "@reporunner/security": "workspace:*",
+    "@reporunner/backend": "workspace:*",
+    "@reporunner/auth": "workspace:*",
     "uuid": "^9.0.1",
     "date-fns": "^3.6.0",
     "stripe": "^14.21.0"

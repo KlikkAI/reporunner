@@ -1,5 +1,5 @@
 import { randomBytes } from 'node:crypto';
-import type { DatabaseService } from '@reporunner/database';
+import type { DatabaseService } from '@reporunner/backend/database';
 import {
   AUTH,
   ERROR_CODES,

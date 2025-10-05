@@ -83,16 +83,20 @@ cd infrastructure/kubernetes && helm install reporunner ./helm/reporunner \
 
 ```
 reporunner/
-├── packages/              # Main application packages (monorepo)
+├── packages/              # Optimized monorepo (12 packages, 58.6% reduction)
 │   ├── frontend/          # React 19 web application
-│   ├── backend/           # Express.js API server
-│   ├── core/              # Shared business logic
-│   └── @reporunner/       # Scoped packages
-│       ├── ai/            # AI/ML capabilities
-│       ├── workflow-engine/ # Workflow execution engine
-│       ├── auth/          # Authentication services
-│       ├── database/      # Database abstractions
-│       └── design-system/ # UI component library
+│   ├── backend/           # Express.js API server (includes common, database, monitoring)
+│   ├── shared/            # Shared utilities, types, validation, API definitions
+│   └── @reporunner/       # Scoped packages (9 total)
+│       ├── ai/            # AI/ML capabilities and services
+│       ├── auth/          # Authentication & security services
+│       ├── cli/           # CLI tools and dev utilities
+│       ├── core/          # Core utilities and base classes
+│       ├── enterprise/    # Enterprise SSO, RBAC, compliance
+│       ├── integrations/  # Integration framework & plugins
+│       ├── platform/      # Platform services (gateway, real-time, upload, etc.)
+│       ├── services/      # Microservices (analytics, audit, tenant, workflow, etc.)
+│       └── workflow/      # Workflow execution engine and core logic
 ├── infrastructure/        # Infrastructure as Code
 │   ├── docker/            # Docker Compose configurations
 │   ├── kubernetes/        # Kubernetes manifests and Helm charts
@@ -103,10 +107,10 @@ reporunner/
 ├── development/           # Development tools and scripts
 │   ├── scripts/           # Build and development scripts
 │   └── tools/             # Development tooling
-└── documentation/         # Project documentation
-    ├── project-docs/      # Technical documentation
-    ├── api-docs/          # API documentation
-    └── guides/            # User guides and tutorials
+└── docs/                  # Project documentation
+    ├── project-planning/  # Planning and roadmaps
+    ├── history/           # Historical documentation and analysis
+    └── api/               # API documentation
 ```
 
 > 📋 **See [DIRECTORY_STRUCTURE.md](./DIRECTORY_STRUCTURE.md) for detailed documentation of the reorganized structure.**

@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "@reporunner/shared": "workspace:*",
-    "@reporunner/database": "workspace:*",
+    "@reporunner/backend": "workspace:*",
     "drizzle-orm": "catalog:",
     "postgres": "catalog:",
     "pg": "catalog:",

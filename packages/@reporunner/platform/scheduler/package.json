@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "@reporunner/shared": "workspace:*",
-    "@reporunner/database": "workspace:*",
+    "@reporunner/backend": "workspace:*",
     "node-cron": "^3.0.3",
     "cron-parser": "^4.9.0",
     "bullmq": "catalog:",

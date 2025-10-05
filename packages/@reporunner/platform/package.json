@@ -1,9 +1,47 @@
 {
   "name": "@reporunner/platform",
   "version": "1.0.0",
-  "description": "Core platform services: event-bus, execution-engine, resource-manager, scheduler, state-store",
+  "description": "Core platform services: event-bus, execution-engine, resource-manager, scheduler, state-store, gateway, real-time, upload",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./event-bus": {
+      "types": "./dist/event-bus/index.d.ts",
+      "default": "./dist/event-bus/index.js"
+    },
+    "./execution-engine": {
+      "types": "./dist/execution-engine/index.d.ts",
+      "default": "./dist/execution-engine/index.js"
+    },
+    "./resource-manager": {
+      "types": "./dist/resource-manager/index.d.ts",
+      "default": "./dist/resource-manager/index.js"
+    },
+    "./scheduler": {
+      "types": "./dist/scheduler/index.d.ts",
+      "default": "./dist/scheduler/index.js"
+    },
+    "./state-store": {
+      "types": "./dist/state-store/index.d.ts",
+      "default": "./dist/state-store/index.js"
+    },
+    "./gateway": {
+      "types": "./dist/gateway/index.d.ts",
+      "default": "./dist/gateway/index.js"
+    },
+    "./real-time": {
+      "types": "./dist/real-time/index.d.ts",
+      "default": "./dist/real-time/index.js"
+    },
+    "./upload": {
+      "types": "./dist/upload/index.d.ts",
+      "default": "./dist/upload/index.js"
+    }
+  },
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",
@@ -17,8 +55,8 @@
   "dependencies": {
     "@reporunner/shared": "workspace:*",
     "@reporunner/core": "workspace:*",
-    "@reporunner/workflow-engine": "workspace:*",
-    "@reporunner/monitoring": "workspace:*",
+    "@reporunner/workflow": "workspace:*",
+    "@reporunner/backend": "workspace:*",
     "bullmq": "catalog:",
     "ioredis": "catalog:",
     "winston": "catalog:",
@@ -37,12 +75,16 @@
     "execution-engine",
     "scheduler",
     "state-store",
-    "resource-manager"
+    "resource-manager",
+    "gateway",
+    "real-time",
+    "upload"
   ],
   "author": "Reporunner Team",
   "license": "MIT",
   "files": [
     "dist",
+    "src",
     "event-bus",
     "execution-engine",
     "resource-manager",

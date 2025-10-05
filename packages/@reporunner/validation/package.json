@@ -1,0 +1,77 @@
+{
+  "name": "@reporunner/validation",
+  "version": "1.0.0",
+  "description": "Phase A validation framework for consolidated package architecture",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "clean": "rimraf dist",
+    "type-check": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest watch",
+    "analyze:build": "node dist/cli/build-analyzer-cli.js",
+    "analyze:build:baseline": "node dist/cli/build-analyzer-cli.js --baseline",
+    "analyze:build:compare": "node dist/cli/build-analyzer-cli.js --compare",
+    "analyze:build:report": "node dist/cli/build-analyzer-cli.js --report",
+    "analyze:bundle": "node dist/cli/bundle-analyzer-cli.js",
+    "analyze:bundle:baseline": "node dist/cli/bundle-analyzer-cli.js --baseline",
+    "analyze:bundle:compare": "node dist/cli/bundle-analyzer-cli.js --compare",
+    "analyze:bundle:report": "node dist/cli/bundle-analyzer-cli.js --report"
+  },
+  "dependencies": {
+    "@reporunner/core": "workspace:*",
+    "axios": "^1.6.0",
+    "madge": "^8.0.0",
+    "vitest": "catalog:",
+    "playwright": "^1.40.0"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "typescript": "catalog:",
+    "rimraf": "^6.0.1"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.js"
+    },
+    "./controller": {
+      "types": "./dist/controller/index.d.ts",
+      "import": "./dist/controller/index.js",
+      "require": "./dist/controller/index.js"
+    },
+    "./monitoring": {
+      "types": "./dist/monitoring/index.d.ts",
+      "import": "./dist/monitoring/index.js",
+      "require": "./dist/monitoring/index.js"
+    },
+    "./reporting": {
+      "types": "./dist/reporting/index.d.ts",
+      "import": "./dist/reporting/index.js",
+      "require": "./dist/reporting/index.js"
+    },
+    "./build-analyzer": {
+      "types": "./dist/build-time-analyzer.d.ts",
+      "import": "./dist/build-time-analyzer.js",
+      "require": "./dist/build-time-analyzer.js"
+    },
+    "./cli/build-analyzer": {
+      "types": "./dist/cli/build-analyzer-cli.d.ts",
+      "import": "./dist/cli/build-analyzer-cli.js",
+      "require": "./dist/cli/build-analyzer-cli.js"
+    },
+    "./bundle-analyzer": {
+      "types": "./dist/bundle-size-analyzer.d.ts",
+      "import": "./dist/bundle-size-analyzer.js",
+      "require": "./dist/bundle-size-analyzer.js"
+    },
+    "./cli/bundle-analyzer": {
+      "types": "./dist/cli/bundle-analyzer-cli.d.ts",
+      "import": "./dist/cli/bundle-analyzer-cli.js",
+      "require": "./dist/cli/bundle-analyzer-cli.js"
+    }
+  }
+}

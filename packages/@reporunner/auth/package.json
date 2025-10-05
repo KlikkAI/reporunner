@@ -19,6 +19,11 @@
       "types": "./dist/providers/index.d.ts",
       "import": "./dist/providers/index.mjs",
       "require": "./dist/providers/index.js"
+    },
+    "./security": {
+      "types": "./dist/security/index.d.ts",
+      "import": "./dist/security/index.mjs",
+      "require": "./dist/security/index.js"
     }
   },
   "scripts": {

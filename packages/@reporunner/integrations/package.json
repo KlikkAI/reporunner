@@ -4,6 +4,16 @@
   "description": "Integration framework for third-party services and workflow nodes",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./plugins": {
+      "types": "./dist/plugins/index.d.ts",
+      "default": "./dist/plugins/index.js"
+    }
+  },
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",
@@ -18,8 +28,7 @@
     "@reporunner/shared": "workspace:*",
     "@reporunner/core": "workspace:*",
     "@reporunner/auth": "workspace:*",
-    "@reporunner/monitoring": "workspace:*",
-    "@reporunner/security": "workspace:*",
+    "@reporunner/backend": "workspace:*",
     "axios": "catalog:",
     "zod": "catalog:",
     "winston": "catalog:"
@@ -37,7 +46,9 @@
     "webhook",
     "gmail",
     "workflow",
-    "automation"
+    "automation",
+    "plugins",
+    "framework"
   ],
   "author": "Reporunner Team",
   "license": "MIT",

@@ -16,9 +16,9 @@
   "dependencies": {
     "bullmq": "^5.23.3",
     "ioredis": "^5.4.1",
-    "@reporunner/workflow-engine": "workspace:*",
+    "@reporunner/workflow": "workspace:*",
     "@reporunner/platform": "workspace:*",
-    "@reporunner/monitoring": "workspace:*"
+    "@reporunner/backend": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^22.4.0"

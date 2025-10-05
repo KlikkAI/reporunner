@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "@reporunner/shared": "workspace:*",
-    "@reporunner/database": "workspace:*",
+    "@reporunner/backend": "workspace:*",
     "ioredis": "catalog:",
     "uuid": "^9.0.1",
     "date-fns": "^3.6.0",

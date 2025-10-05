@@ -14,9 +14,9 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@reporunner/workflow-engine": "workspace:*",
-    "@reporunner/database": "workspace:*",
-    "@reporunner/real-time": "workspace:*",
+    "@reporunner/workflow": "workspace:*",
+    "@reporunner/backend": "workspace:*",
+    "@reporunner/platform": "workspace:*",
     "@reporunner/shared": "workspace:*"
   },
   "keywords": [
