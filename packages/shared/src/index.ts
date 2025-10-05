@@ -1,18 +1,29 @@
 /**
  * @reporunner/shared - Main export file
  *
- * This package consolidates utilities and base classes that were previously
- * duplicated across 326 use-case files in the backend domains.
+ * This package consolidates utilities, types, validation, and constants that were previously
+ * duplicated across multiple packages and services.
  *
- * Key reductions:
- * - 40+ utility use-cases → 6 utility classes
- * - 15+ CRUD use-cases per domain → 5 base classes
- * - Identical controller patterns → 1 base controller
- * - Repository duplication → 1 base repository
+ * Key consolidations:
+ * - Security types and validation schemas
+ * - Audit types and validation schemas
+ * - Trigger types and validation schemas
+ * - Schedule types and validation schemas
+ * - Common constants and error codes
+ * - Shared validation utilities
+ * - Base classes and utilities
  *
- * Estimated file reduction: 326 → ~50 files (85% reduction)
+ * Benefits:
+ * - Single source of truth for types
+ * - Consistent validation across services
+ * - Reduced code duplication
+ * - Better type safety and maintainability
  */
 
+// Legacy exports (maintain compatibility)
 export * from './base';
+export * from './constants';
+// Core consolidated exports
 export * from './types';
 export * from './utilities';
+export * from './validation';
