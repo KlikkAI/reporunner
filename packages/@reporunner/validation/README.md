@@ -29,21 +29,39 @@ pnpm add @reporunner/validation
 ### Basic Usage
 
 ```typescript
-import { ValidationController, PerformanceMonitor, ReportingEngine } from '@reporunner/validation';
+import {
+  ValidationController,
+  PerformanceMonitor,
+  ReportingEngine,
+  DevExperienceMetrics,
+  IDEPerformanceAnalyzer,
+  ProductivityTracker
+} from '@reporunner/validation';
 
 // Initialize validation components
 const controller = new ValidationController();
 const performanceMonitor = new PerformanceMonitor();
 const reportingEngine = new ReportingEngine('./reports');
 
+// Initialize developer experience metrics
+const devMetrics = new DevExperienceMetrics();
+const ideAnalyzer = new IDEPerformanceAnalyzer();
+const productivityTracker = new ProductivityTracker();
+
 // Execute validation
 const results = await controller.executeValidation();
 
-// Generate report
+// Analyze developer experience
+const devReport = await devMetrics.generateReport();
+const ideReport = await ideAnalyzer.analyzeIDEPerformance();
+
+// Generate reports
 const report = await reportingEngine.generateValidationReport(results);
 
 console.log(`Validation status: ${results.status}`);
 console.log(`Build improvement: ${results.performanceAnalysis.buildMetrics.improvementPercentage}%`);
+console.log(`Developer Experience Score: ${devReport.score}/100`);
+console.log(`IDE Performance Score: ${ideReport.overallScore}/100`);
 ```
 
 ### CLI Usage
@@ -57,6 +75,18 @@ npx @reporunner/validation -o ./my-reports -f json
 
 # Verbose mode
 npx @reporunner/validation --verbose
+
+# Developer experience analysis
+npx dev-experience-cli analyze
+
+# IDE performance benchmark
+npx dev-experience-cli benchmark
+
+# Start productivity tracking
+npx dev-experience-cli track
+
+# Generate productivity report
+npx dev-experience-cli report 30
 
 # Show help
 npx @reporunner/validation --help
@@ -78,6 +108,13 @@ Monitors and measures performance metrics:
 - Bundle size analysis and optimization suggestions
 - Memory profiling and leak detection
 - Developer experience metrics
+
+### Developer Experience Metrics System
+Comprehensive measurement and analysis of development workflows:
+- IDE performance analysis (TypeScript, autocomplete, navigation, IntelliSense)
+- Development workflow timing (hot reload, build startup, testing, linting)
+- Productivity tracking with session management and trend analysis
+- Automated reporting with actionable optimization recommendations
 
 ### ReportingEngine
 Generates comprehensive reports and dashboards:
@@ -109,6 +146,35 @@ class PerformanceMonitor {
 }
 ```
 
+### Developer Experience Metrics
+
+```typescript
+class DevExperienceMetrics {
+  async measureIDEPerformance(): Promise<IDEPerformanceMetrics>
+  async measureWorkflowTiming(): Promise<WorkflowTimingMetrics>
+  async measureProductivity(): Promise<ProductivityMetrics>
+  async generateReport(): Promise<DevExperienceReport>
+  recordMeasurement(metric: string, value: number): void
+}
+
+class IDEPerformanceAnalyzer {
+  async analyzeIDEPerformance(): Promise<IDEPerformanceReport>
+  async analyzeTypeScriptPerformance(): Promise<TypeScriptPerformance>
+  async analyzeAutocompletePerformance(): Promise<AutocompletePerformance>
+  async analyzeNavigationPerformance(): Promise<NavigationPerformance>
+  async analyzeIntelliSensePerformance(): Promise<IntelliSensePerformance>
+}
+
+class ProductivityTracker {
+  async startSession(sessionId?: string): Promise<string>
+  async endSession(): Promise<ProductivitySession | null>
+  async startActivity(type: ActivityType, description?: string): Promise<void>
+  async endActivity(success?: boolean, errorCount?: number): Promise<void>
+  async getProductivityTrends(days?: number): Promise<ProductivityTrends>
+  async generateProductivityReport(days?: number): Promise<string>
+}
+```
+
 ### ReportingEngine
 
 ```typescript
@@ -133,7 +199,13 @@ The framework provides comprehensive validation results including:
 - Build time measurements and improvement calculations
 - Bundle size analysis and reduction tracking
 - Memory usage profiling and optimization suggestions
-- Developer experience metrics and IDE performance
+- Developer experience metrics and IDE performance analysis
+
+### Developer Experience Analysis
+- IDE performance benchmarking (TypeScript, autocomplete, navigation, IntelliSense)
+- Development workflow timing analysis (hot reload, build startup, testing, linting)
+- Productivity tracking with session management and activity monitoring
+- Automated optimization recommendations and trend analysis
 
 ### Architecture Validation
 - Dependency analysis and circular dependency detection
@@ -177,6 +249,16 @@ See the `examples/` directory for complete usage examples:
 - `basic-validation.ts`: Simple validation execution
 - `advanced-monitoring.ts`: Custom performance monitoring
 - `custom-reporting.ts`: Custom report generation
+- `dev-experience-example.ts`: Developer experience metrics demonstration
+- `memory-monitoring-example.ts`: Memory profiling and leak detection
+
+## Detailed Documentation
+
+For comprehensive documentation on specific components:
+
+- [Developer Experience Metrics](./README-dev-experience.md) - IDE performance, workflow timing, and productivity tracking
+- [Build Time Analyzer](./README-build-analyzer.md) - Build performance analysis and optimization
+- [Bundle Size Analyzer](./README-bundle-analyzer.md) - Bundle size analysis and reduction strategies
 
 ## Integration
 
