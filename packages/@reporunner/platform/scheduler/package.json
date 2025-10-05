@@ -14,7 +14,7 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@reporunner/constants": "workspace:*",
+    "@reporunner/shared": "workspace:*",
     "@reporunner/database": "workspace:*",
     "node-cron": "^3.0.3",
     "cron-parser": "^4.9.0",

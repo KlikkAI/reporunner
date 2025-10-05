@@ -17,7 +17,7 @@
     "@reporunner/workflow-engine": "workspace:*",
     "@reporunner/database": "workspace:*",
     "@reporunner/real-time": "workspace:*",
-    "@reporunner/constants": "workspace:*"
+    "@reporunner/shared": "workspace:*"
   },
   "keywords": [
     "workflow",

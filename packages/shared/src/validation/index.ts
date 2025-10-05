@@ -1,6 +1,7 @@
 /**
  * Shared Validation Schemas
  * Centralized validation schemas for API requests and responses
+ * Consolidated from @reporunner/validation and existing shared validation
  */
 
 import { z } from 'zod';
@@ -11,6 +12,9 @@ export * from '../types/schedules';
 export * from '../types/security';
 export * from '../types/triggers';
 
+// Export validation middleware
+export * from './middleware';
+
 // ============================================================================
 // COMMON VALIDATION SCHEMAS
 // ============================================================================
@@ -20,7 +24,7 @@ export const IdSchema = z.string().min(1, 'ID is required');
 export const OptionalIdSchema = z.string().optional();
 export const EmailSchema = z.string().email('Invalid email format');
 export const UrlSchema = z.string().url('Invalid URL format');
-export const IpAddressSchema = z.string().ip('Invalid IP address');
+export const IpAddressSchema = z.string().regex(/^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/, 'Invalid IP address');
 export const DateTimeSchema = z.string().datetime('Invalid datetime format');
 export const OptionalDateTimeSchema = z.string().datetime().optional();
 
@@ -45,7 +49,7 @@ export const PaginationResponseSchema = z.object({
 export const SearchQuerySchema = z.object({
   q: z.string().min(1, 'Search query is required'),
   fields: z.array(z.string()).optional(),
-  filters: z.record(z.any()).optional(),
+  filters: z.record(z.string(), z.any()).optional(),
 });
 
 // Organization and user schemas
@@ -55,7 +59,7 @@ export const OptionalOrganizationIdSchema = z.string().optional();
 export const OptionalUserIdSchema = z.string().optional();
 
 // Metadata schema
-export const MetadataSchema = z.record(z.any()).optional();
+export const MetadataSchema = z.record(z.string(), z.any()).optional();
 
 // Tags schema
 export const TagsSchema = z.array(z.string()).optional();
@@ -91,7 +95,7 @@ export const ErrorResponseSchema = z.object({
   error: z.string(),
   message: z.string().optional(),
   code: z.string().optional(),
-  details: z.record(z.any()).optional(),
+  details: z.record(z.string(), z.any()).optional(),
   timestamp: z.string().datetime().optional(),
 });
 
@@ -101,7 +105,7 @@ export const ErrorResponseSchema = z.object({
 
 export const BulkOperationSchema = z.object({
   operation: z.enum(['create', 'update', 'delete']),
-  items: z.array(z.record(z.any())).min(1).max(100),
+  items: z.array(z.record(z.string(), z.any())).min(1).max(100),
   options: z
     .object({
       continueOnError: z.boolean().default(false),
@@ -168,7 +172,7 @@ export const WebhookEventSchema = z.object({
   type: z.string(),
   timestamp: DateTimeSchema,
   source: z.string(),
-  data: z.record(z.any()),
+  data: z.record(z.string(), z.any()),
   signature: z.string().optional(),
   retryCount: z.number().default(0),
 });
@@ -179,8 +183,8 @@ export const WebhookDeliverySchema = z.object({
   eventId: z.string(),
   url: z.string().url(),
   method: z.enum(['GET', 'POST', 'PUT', 'PATCH', 'DELETE']),
-  headers: z.record(z.string()),
-  payload: z.record(z.any()),
+  headers: z.record(z.string(), z.string()),
+  payload: z.record(z.string(), z.any()),
   status: z.enum(['pending', 'delivered', 'failed', 'retrying']),
   attempts: z.number(),
   lastAttemptAt: DateTimeSchema.optional(),
@@ -188,7 +192,7 @@ export const WebhookDeliverySchema = z.object({
   response: z
     .object({
       statusCode: z.number(),
-      headers: z.record(z.string()),
+      headers: z.record(z.string(), z.string()),
       body: z.string(),
     })
     .optional(),
@@ -204,7 +208,7 @@ export const HealthCheckSchema = z.object({
   timestamp: DateTimeSchema,
   version: z.string(),
   uptime: z.number(),
-  services: z.record(
+  services: z.record(z.string(),
     z.object({
       status: z.enum(['operational', 'degraded', 'down']),
       responseTime: z.number().optional(),
@@ -321,8 +325,8 @@ export function createUpdateSchema<T extends z.ZodRawShape>(baseSchema: z.ZodObj
 /**
  * Create a query schema with common filters
  */
-export function createQuerySchema<T extends z.ZodRawShape>(
-  specificFilters: z.ZodObject<T>,
+export function createQuerySchema(
+  specificFilters: z.ZodObject<any>,
   options: {
     includePagination?: boolean;
     includeSearch?: boolean;
@@ -332,11 +336,11 @@ export function createQuerySchema<T extends z.ZodRawShape>(
   let schema = specificFilters;
 
   if (options.includePagination) {
-    schema = schema.merge(PaginationQuerySchema);
+    schema = schema.merge(PaginationQuerySchema) as any;
   }
 
   if (options.includeSearch) {
-    schema = schema.merge(SearchQuerySchema.partial());
+    schema = schema.merge(SearchQuerySchema.partial()) as any;
   }
 
   return schema;
@@ -373,4 +377,3 @@ export function createConditionalSchema<T extends string>(
 ) {
   return z.discriminatedUnion(discriminator as any, Object.values(schemas) as any);
 }
-"

@@ -1,8 +1,9 @@
 /**
  * User Types - User accounts and authentication
+ * Consolidated from @reporunner/types
  */
 
-import type { BaseEntity, ID, Timestamp } from '../common';
+import type { BaseEntity, ID, Timestamp } from './common';
 
 /**
  * User role

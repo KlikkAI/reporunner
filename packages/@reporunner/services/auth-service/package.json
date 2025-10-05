@@ -19,7 +19,7 @@
     "passport-oauth2": "^1.8.0",
     "bcryptjs": "^2.4.3",
     "@reporunner/database": "workspace:*",
-    "@reporunner/constants": "workspace:*"
+    "@reporunner/shared": "workspace:*"
   },
   "devDependencies": {
     "@types/jsonwebtoken": "^9.0.6",

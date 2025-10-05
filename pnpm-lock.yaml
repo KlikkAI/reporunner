@@ -632,12 +632,12 @@ importers:
 
   packages/@reporunner/backend-common:
     dependencies:
-      '@reporunner/constants':
-        specifier: workspace:*
-        version: link:../constants
       '@reporunner/security':
         specifier: workspace:*
         version: link:../security
+      '@reporunner/shared':
+        specifier: workspace:*
+        version: link:../../shared
       compression:
         specifier: ^1.7.4
         version: 1.8.1
@@ -782,12 +782,6 @@ importers:
         specifier: ^5.9.3
         version: 5.9.3
 
-  packages/@reporunner/constants:
-    devDependencies:
-      typescript:
-        specifier: ^5.9.3
-        version: 5.9.3
-
   packages/@reporunner/core:
     dependencies:
       express:
@@ -821,15 +815,12 @@ importers:
       '@neondatabase/serverless':
         specifier: ^0.9.0
         version: 0.9.5
-      '@reporunner/constants':
-        specifier: workspace:*
-        version: link:../constants
       '@reporunner/core':
         specifier: workspace:*
         version: link:../core
-      '@reporunner/types':
+      '@reporunner/shared':
         specifier: workspace:*
-        version: link:../types
+        version: link:../../shared
       bcrypt:
         specifier: ^5.1.1
         version: 5.1.1(encoding@0.1.13)
@@ -914,12 +905,12 @@ importers:
 
   packages/@reporunner/dev-tools:
     dependencies:
-      '@reporunner/constants':
-        specifier: workspace:*
-        version: link:../constants
       '@reporunner/database':
         specifier: workspace:*
         version: link:../database
+      '@reporunner/shared':
+        specifier: workspace:*
+        version: link:../../shared
       boxen:
         specifier: ^7.1.1
         version: 7.1.1
@@ -1019,9 +1010,9 @@ importers:
       '@reporunner/security':
         specifier: workspace:*
         version: link:../security
-      '@reporunner/types':
+      '@reporunner/shared':
         specifier: workspace:*
-        version: link:../types
+        version: link:../../shared
       axios:
         specifier: 1.12.0
         version: 1.12.0
@@ -1072,9 +1063,9 @@ importers:
       '@reporunner/monitoring':
         specifier: workspace:*
         version: link:../monitoring
-      '@reporunner/types':
+      '@reporunner/shared':
         specifier: workspace:*
-        version: link:../types
+        version: link:../../shared
       '@reporunner/workflow-engine':
         specifier: workspace:*
         version: link:../workflow-engine
@@ -1109,9 +1100,9 @@ importers:
       '@reporunner/core':
         specifier: workspace:*
         version: link:../core
-      '@reporunner/types':
+      '@reporunner/shared':
         specifier: workspace:*
-        version: link:../types
+        version: link:../../shared
       '@reporunner/workflow-engine':
         specifier: workspace:*
         version: link:../workflow-engine
@@ -1143,9 +1134,9 @@ importers:
       '@reporunner/monitoring':
         specifier: workspace:*
         version: link:../monitoring
-      '@reporunner/types':
+      '@reporunner/shared':
         specifier: workspace:*
-        version: link:../types
+        version: link:../../shared
       socket.io:
         specifier: 'catalog:'
         version: 4.8.1
@@ -1171,9 +1162,9 @@ importers:
 
   packages/@reporunner/security:
     dependencies:
-      '@reporunner/constants':
+      '@reporunner/shared':
         specifier: workspace:*
-        version: link:../constants
+        version: link:../../shared
       bcrypt:
         specifier: ^5.1.1
         version: 5.1.1(encoding@0.1.13)
@@ -1259,9 +1250,9 @@ importers:
       '@reporunner/monitoring':
         specifier: workspace:*
         version: link:../monitoring
-      '@reporunner/types':
+      '@reporunner/shared':
         specifier: workspace:*
-        version: link:../types
+        version: link:../../shared
       express:
         specifier: 'catalog:'
         version: 4.21.2
@@ -1287,22 +1278,6 @@ importers:
       vitest:
         specifier: 'catalog:'
         version: 3.2.4(@types/debug@4.1.12)(@types/node@24.6.2)(@vitest/ui@3.2.4)(jiti@2.6.0)(jsdom@27.0.0(postcss@8.5.6))(terser@5.44.0)(tsx@4.20.5)(yaml@2.8.1)
-
-  packages/@reporunner/types:
-    dependencies:
-      zod:
-        specifier: 'catalog:'
-        version: 4.1.11
-    devDependencies:
-      '@types/node':
-        specifier: ^24.6.2
-        version: 24.6.2
-      rimraf:
-        specifier: ^5.0.1
-        version: 5.0.10
-      typescript:
-        specifier: ^5.9.3
-        version: 5.9.3
 
   packages/@reporunner/ui:
     dependencies:
@@ -1385,9 +1360,9 @@ importers:
       '@reporunner/security':
         specifier: workspace:*
         version: link:../security
-      '@reporunner/types':
+      '@reporunner/shared':
         specifier: workspace:*
-        version: link:../types
+        version: link:../../shared
       multer:
         specifier: ^2.0.2
         version: 2.0.2
@@ -1401,31 +1376,6 @@ importers:
       '@types/multer':
         specifier: ^2.0.0
         version: 2.0.0
-      '@types/node':
-        specifier: ^24.6.2
-        version: 24.6.2
-      rimraf:
-        specifier: ^6.0.1
-        version: 6.0.1
-      typescript:
-        specifier: ^5.9.3
-        version: 5.9.3
-      vitest:
-        specifier: 'catalog:'
-        version: 3.2.4(@types/debug@4.1.12)(@types/node@24.6.2)(@vitest/ui@3.2.4)(jiti@2.6.0)(jsdom@27.0.0(postcss@8.5.6))(terser@5.44.0)(tsx@4.20.5)(yaml@2.8.1)
-
-  packages/@reporunner/validation:
-    dependencies:
-      '@reporunner/types':
-        specifier: workspace:*
-        version: link:../types
-      winston:
-        specifier: 'catalog:'
-        version: 3.17.0
-      zod:
-        specifier: 'catalog:'
-        version: 4.1.11
-    devDependencies:
       '@types/node':
         specifier: ^24.6.2
         version: 24.6.2
@@ -1569,9 +1519,9 @@ importers:
       '@reporunner/core':
         specifier: workspace:*
         version: link:../@reporunner/core
-      '@reporunner/types':
+      '@reporunner/shared':
         specifier: workspace:*
-        version: link:../@reporunner/types
+        version: link:../shared
       bcryptjs:
         specifier: 'catalog:'
         version: 2.4.3
@@ -1693,9 +1643,9 @@ importers:
       '@reporunner/core':
         specifier: workspace:*
         version: link:../@reporunner/core
-      '@reporunner/types':
+      '@reporunner/shared':
         specifier: workspace:*
-        version: link:../@reporunner/types
+        version: link:../shared
       '@tanstack/react-query':
         specifier: 'catalog:'
         version: 5.90.2(react@19.1.1)
@@ -1778,6 +1728,9 @@ importers:
       inversify:
         specifier: ^6.0.1
         version: 6.2.2(reflect-metadata@0.2.2)
+      zod:
+        specifier: ^3.22.4
+        version: 3.25.76
     devDependencies:
       rimraf:
         specifier: ^3.0.2

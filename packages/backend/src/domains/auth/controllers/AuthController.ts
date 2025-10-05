@@ -1,4 +1,4 @@
-import type { IUser } from '@reporunner/types';
+import type { IUser } from '@reporunner/shared';
 import type { Request, Response } from 'express';
 import { BaseController } from '../../../base/BaseController';
 import { AppError } from '../../../middleware/errorHandlers';

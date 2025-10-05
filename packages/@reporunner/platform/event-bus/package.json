@@ -16,7 +16,7 @@
   "dependencies": {
     "amqplib": "^0.10.4",
     "eventemitter3": "^5.0.1",
-    "@reporunner/constants": "workspace:*"
+    "@reporunner/shared": "workspace:*"
   },
   "devDependencies": {
     "@types/amqplib": "^0.10.5"

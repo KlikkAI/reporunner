@@ -3,7 +3,7 @@ import {
   NodeSchema as ApiNodeSchema,
   WorkflowSchema as ApiWorkflowSchema,
   ExecutionStatus,
-} from '@reporunner/types';
+} from '@reporunner/shared';
 import { z } from 'zod';
 import {
   ApiResponseSchema,

@@ -2,7 +2,7 @@
  * Centralized logging utilities
  * Replaces Log.use-case.ts files across domains
  */
-export type LogLevel = 'debug' | 'info' | 'warn' | 'error';
+import type { LogLevel } from '../types/common';
 
 export class LoggingUtils {
   static log(message: string, level: LogLevel = 'info', context?: any): void {

@@ -19,7 +19,7 @@
     "@reactflow/background": "catalog:",
     "@reactflow/controls": "catalog:",
     "@reactflow/minimap": "catalog:",
-    "@reporunner/types": "workspace:*",
+    "@reporunner/shared": "workspace:*",
     "@reporunner/core": "workspace:*",
     "@tanstack/react-query": "catalog:",
     "@tanstack/react-virtual": "catalog:",

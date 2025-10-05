@@ -1,6 +1,7 @@
 /**
  * Common Types - Shared across all Reporunner packages
  * Single source of truth for base type definitions
+ * Consolidated from @reporunner/types
  */
 
 /**

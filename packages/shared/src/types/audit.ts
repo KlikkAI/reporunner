@@ -224,7 +224,7 @@ export const LogAuditEventSchema = z.object({
   resourceId: z.string().optional(),
   message: z.string().min(1).max(500),
   severity: AuditSeveritySchema,
-  metadata: z.record(z.any()).optional(),
+  metadata: z.record(z.string(), z.any()).optional(),
   riskScore: z.number().min(0).max(100).optional(),
   userId: z.string().optional(),
   organizationId: z.string().optional()
@@ -371,6 +371,6 @@ export function isComplianceViolation(event: AuditEvent): boolean {
     event.severity === 'critical' ||
     (event.severity === 'error' && violationCategories.includes(event.category)) ||
     violationActions.includes(event.action) ||
-    (event.riskScore && event.riskScore > 80)
+    (event.riskScore !== undefined && event.riskScore > 80)
   );
-}"
+}

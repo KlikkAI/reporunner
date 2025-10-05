@@ -1,4 +1,4 @@
-import { type IUser, PermissionType, UserRole } from '@reporunner/types';
+import { type IUser, PermissionType, UserRole } from '@reporunner/shared';
 
 export interface PermissionCheck {
   user: IUser;

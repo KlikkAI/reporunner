@@ -3,11 +3,11 @@
  * Handles user registration, login, token management, and profile operations
  */
 
-import type { IRegistrationData, IUser, IUserProfile } from '@reporunner/types';
+import type { IRegistrationData, IUser, IUserProfile } from '@reporunner/shared';
 import { AppError } from '../../../middleware/errorHandlers';
 import { User } from '../../../models/User';
-import { logger } from '../../../utils/logger';
 import { JWTService } from '../../../utils/jwt';
+import { logger } from '../../../utils/logger';
 
 interface AuthResult {
   user: IUser;

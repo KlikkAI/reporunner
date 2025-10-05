@@ -3,54 +3,43 @@
  * Provides secure access to enterprise security features
  */
 
-import { Router, Request, Response } from 'express';
-import { enterpriseSecurityService } from '../services/EnterpriseSecurityService';
-import { z } from 'zod';
+import {
+  AcknowledgeAlertSchema,
+  AlertQuerySchema,
+  CreateThreatSchema,
+  fromSecurityEvidenceDTO,
+  ScanQuerySchema,
+  StartVulnerabilityScanSchema,
+  ThreatQuerySchema,
+  toSecurityAlertDTO,
+  toSecurityMetricsDTO,
+  toSecurityThreatDTO,
+  toVulnerabilityScanDTO,
+  UpdateThreatStatusSchema,
+} from '@reporunner/shared';
+import { type Request, type Response, Router } from 'express';
+
+// import { enterpriseSecurityService } from '../services/EnterpriseSecurityService';
 
 const router = Router();
-
-// Security threat schemas
-const CreateThreatSchema = z.object({
-  type: z.enum(['brute_force', 'suspicious_activity', 'data_breach', 'privilege_escalation', 'malware', 'phishing']),
-  severity: z.enum(['low', 'medium', 'high', 'critical']),
-  title: z.string(),
-  description: z.string(),
-  userId: z.string().optional(),
-  organizationId: z.string().optional(),
-  sourceIp: z.string().optional(),
-  userAgent: z.string().optional(),
-  evidence: z.array(z.object({
-    type: z.enum(['log_entry', 'network_traffic', 'file_access', 'api_call', 'user_behavior']),
-    timestamp: z.string().datetime(),
-    source: z.string(),
-    data: z.record(z.any()),
-    severity: z.enum(['info', 'warning', 'error', 'critical'])
-  })),
-  riskScore: z.number().min(0).max(100),
-  affectedResources: z.array(z.string())
-});
-
-const VulnerabilityScanSchema = z.object({
-  type: z.enum(['dependency', 'code', 'infrastructure', 'configuration']),
-  metadata: z.record(z.any()).optional()
-});
 
 /**
  * GET /api/security/metrics
  * Get current security metrics
  */
-router.get('/metrics', async (req: Request, res: Response) => {
+router.get('/metrics', async (_req: Request, res: Response) => {
   try {
     const metrics = enterpriseSecurityService.getSecurityMetrics();
+    const metricsDTO = toSecurityMetricsDTO(metrics);
 
     return res.json({
       success: true,
-      data: metrics
+      data: metricsDTO,
     });
   } catch (error) {
     return res.status(500).json({
       success: false,
-      error: error instanceof Error ? error.message : 'Failed to get security metrics'
+      error: error instanceof Error ? error.message : 'Failed to get security metrics',
     });
   }
 });
@@ -61,21 +50,18 @@ router.get('/metrics', async (req: Request, res: Response) => {
  */
 router.get('/threats', async (req: Request, res: Response) => {
   try {
-    const schema = z.object({
-      status: z.enum(['open', 'investigating', 'resolved', 'false_positive']).optional()
-    });
-
-    const { status } = schema.parse(req.query);
+    const { status } = ThreatQuerySchema.parse(req.query);
     const threats = enterpriseSecurityService.getSecurityThreats(status);
+    const threatsDTO = threats.map(toSecurityThreatDTO);
 
     return res.json({
       success: true,
-      data: threats
+      data: threatsDTO,
     });
   } catch (error) {
     return res.status(400).json({
       success: false,
-      error: error instanceof Error ? error.message : 'Invalid query parameters'
+      error: error instanceof Error ? error.message : 'Invalid query parameters',
     });
   }
 });
@@ -84,29 +70,32 @@ router.get('/threats', async (req: Request, res: Response) => {
  * POST /api/security/threats
  * Create a new security threat
  */
-router.post('/threats', async (req, res) => {
+router.post('/threats', async (req: Request, res: Response) => {
   try {
     const threatData = CreateThreatSchema.parse(req.body);
 
     // Convert timestamp strings to Date objects
     const processedThreatData = {
       ...threatData,
-      evidence: threatData.evidence.map(e => ({
-        ...e,
-        timestamp: new Date(e.timestamp)
-      }))
+      evidence: threatData.evidence.map((e) =>
+        fromSecurityEvidenceDTO({
+          ...e,
+          timestamp: e.timestamp,
+        })
+      ),
     };
 
     const threat = await enterpriseSecurityService.createThreat(processedThreatData);
+    const threatDTO = toSecurityThreatDTO(threat);
 
     return res.status(201).json({
       success: true,
-      data: threat
+      data: threatDTO,
     });
   } catch (error) {
     return res.status(400).json({
       success: false,
-      error: error instanceof Error ? error.message : 'Failed to create threat'
+      error: error instanceof Error ? error.message : 'Failed to create threat',
     });
   }
 });
@@ -118,13 +107,7 @@ router.post('/threats', async (req, res) => {
 router.put('/threats/:id/status', async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const schema = z.object({
-      status: z.enum(['open', 'investigating', 'resolved', 'false_positive']),
-      resolution: z.string().optional(),
-      assignedTo: z.string().optional()
-    });
-
-    const { status, resolution, assignedTo } = schema.parse(req.body);
+    const { status, resolution, assignedTo } = UpdateThreatStatusSchema.parse(req.body);
 
     const threat = await enterpriseSecurityService.updateThreatStatus(
       id,
@@ -136,18 +119,20 @@ router.put('/threats/:id/status', async (req: Request, res: Response) => {
     if (!threat) {
       return res.status(404).json({
         success: false,
-        error: 'Threat not found'
+        error: 'Threat not found',
       });
     }
 
+    const threatDTO = toSecurityThreatDTO(threat);
+
     return res.json({
       success: true,
-      data: threat
+      data: threatDTO,
     });
   } catch (error) {
     return res.status(400).json({
       success: false,
-      error: error instanceof Error ? error.message : 'Failed to update threat status'
+      error: error instanceof Error ? error.message : 'Failed to update threat status',
     });
   }
 });
@@ -158,18 +143,19 @@ router.put('/threats/:id/status', async (req: Request, res: Response) => {
  */
 router.post('/scans', async (req: Request, res: Response) => {
   try {
-    const { type, metadata = {} } = VulnerabilityScanSchema.parse(req.body);
+    const { type, metadata = {} } = StartVulnerabilityScanSchema.parse(req.body);
 
     const scan = await enterpriseSecurityService.startVulnerabilityScan(type, metadata);
+    const scanDTO = toVulnerabilityScanDTO(scan);
 
     return res.status(201).json({
       success: true,
-      data: scan
+      data: scanDTO,
     });
   } catch (error) {
     return res.status(400).json({
       success: false,
-      error: error instanceof Error ? error.message : 'Failed to start vulnerability scan'
+      error: error instanceof Error ? error.message : 'Failed to start vulnerability scan',
     });
   }
 });
@@ -180,21 +166,18 @@ router.post('/scans', async (req: Request, res: Response) => {
  */
 router.get('/scans', async (req: Request, res: Response) => {
   try {
-    const schema = z.object({
-      type: z.enum(['dependency', 'code', 'infrastructure', 'configuration']).optional()
-    });
-
-    const { type } = schema.parse(req.query);
+    const { type } = ScanQuerySchema.parse(req.query);
     const scans = enterpriseSecurityService.getVulnerabilityScans(type);
+    const scansDTO = scans.map(toVulnerabilityScanDTO);
 
     return res.json({
       success: true,
-      data: scans
+      data: scansDTO,
     });
   } catch (error) {
     return res.status(400).json({
       success: false,
-      error: error instanceof Error ? error.message : 'Invalid query parameters'
+      error: error instanceof Error ? error.message : 'Invalid query parameters',
     });
   }
 });
@@ -205,21 +188,18 @@ router.get('/scans', async (req: Request, res: Response) => {
  */
 router.get('/alerts', async (req: Request, res: Response) => {
   try {
-    const schema = z.object({
-      acknowledged: z.boolean().optional()
-    });
-
-    const { acknowledged } = schema.parse(req.query);
+    const { acknowledged } = AlertQuerySchema.parse(req.query);
     const alerts = enterpriseSecurityService.getSecurityAlerts(acknowledged);
+    const alertsDTO = alerts.map(toSecurityAlertDTO);
 
     return res.json({
       success: true,
-      data: alerts
+      data: alertsDTO,
     });
   } catch (error) {
     return res.status(400).json({
       success: false,
-      error: error instanceof Error ? error.message : 'Invalid query parameters'
+      error: error instanceof Error ? error.message : 'Invalid query parameters',
     });
   }
 });
@@ -231,29 +211,27 @@ router.get('/alerts', async (req: Request, res: Response) => {
 router.post('/alerts/:id/acknowledge', async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const schema = z.object({
-      acknowledgedBy: z.string()
-    });
-
-    const { acknowledgedBy } = schema.parse(req.body);
+    const { acknowledgedBy } = AcknowledgeAlertSchema.parse(req.body);
 
     const alert = await enterpriseSecurityService.acknowledgeAlert(id, acknowledgedBy);
 
     if (!alert) {
       return res.status(404).json({
         success: false,
-        error: 'Alert not found'
+        error: 'Alert not found',
       });
     }
 
+    const alertDTO = toSecurityAlertDTO(alert);
+
     return res.json({
       success: true,
-      data: alert
+      data: alertDTO,
     });
   } catch (error) {
     return res.status(400).json({
       success: false,
-      error: error instanceof Error ? error.message : 'Failed to acknowledge alert'
+      error: error instanceof Error ? error.message : 'Failed to acknowledge alert',
     });
   }
 });
@@ -262,18 +240,19 @@ router.post('/alerts/:id/acknowledge', async (req: Request, res: Response) => {
  * GET /api/security/compliance
  * Get compliance frameworks
  */
-router.get('/compliance', async (req: Request, res: Response) => {
+router.get('/compliance', async (_req: Request, res: Response) => {
   try {
     const frameworks = enterpriseSecurityService.getComplianceFrameworks();
+    const frameworksDTO = frameworks.map(toSecurityComplianceFrameworkDTO);
 
     return res.json({
       success: true,
-      data: frameworks
+      data: frameworksDTO,
     });
   } catch (error) {
     return res.status(500).json({
       success: false,
-      error: error instanceof Error ? error.message : 'Failed to get compliance frameworks'
+      error: error instanceof Error ? error.message : 'Failed to get compliance frameworks',
     });
   }
 });
@@ -291,18 +270,20 @@ router.post('/compliance/:id/assess', async (req: Request, res: Response) => {
     if (!framework) {
       return res.status(404).json({
         success: false,
-        error: 'Compliance framework not found'
+        error: 'Compliance framework not found',
       });
     }
 
+    const frameworkDTO = toSecurityComplianceFrameworkDTO(framework);
+
     return res.json({
       success: true,
-      data: framework
+      data: frameworkDTO,
     });
   } catch (error) {
     return res.status(400).json({
       success: false,
-      error: error instanceof Error ? error.message : 'Failed to assess compliance'
+      error: error instanceof Error ? error.message : 'Failed to assess compliance',
     });
   }
 });

@@ -288,10 +288,10 @@ export const CreateScheduleSchema = z.object({
   priority: ExecutionPrioritySchema.default('normal'),
   enabled: z.boolean().default(true),
   tags: z.array(z.string()).optional(),
-  metadata: z.record(z.any()).optional()
+  metadata: z.record(z.string(), z.any()).optional()
 });
 
-export const UpdateScheduleSchema = CreateScheduleSchema.partial().omit(['workflowId']);
+export const UpdateScheduleSchema = CreateScheduleSchema.partial().omit({ workflowId: true });
 
 export const ScheduleQuerySchema = z.object({
   status: ScheduleStatusSchema.optional(),
@@ -304,7 +304,7 @@ export const ScheduleQuerySchema = z.object({
 
 export const TriggerScheduleSchema = z.object({
   force: z.boolean().optional(),
-  metadata: z.record(z.any()).optional()
+  metadata: z.record(z.string(), z.any()).optional()
 });
 
 export const ScheduleAnalyticsQuerySchema = z.object({
@@ -493,4 +493,4 @@ export function getScheduleDescription(config: ScheduleConfig): string {
   }
 
   return 'Custom schedule';
-}"
+}

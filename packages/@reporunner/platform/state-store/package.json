@@ -14,7 +14,7 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@reporunner/constants": "workspace:*",
+    "@reporunner/shared": "workspace:*",
     "@reporunner/database": "workspace:*",
     "ioredis": "catalog:",
     "uuid": "^9.0.1",

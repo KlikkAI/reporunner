@@ -1,4 +1,4 @@
-import { ERROR_CODES } from '@reporunner/constants';
+import { ERROR_CODES } from '@reporunner/shared';
 import type { NextFunction, Request, Response } from 'express';
 // Removed unused JwtPayload import
 import type { JWTSessionManager } from '../jwt-session';

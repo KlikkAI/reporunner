@@ -1,4 +1,4 @@
-import { ERROR_CODES } from '@reporunner/constants';
+import { ERROR_CODES } from '@reporunner/shared';
 import type { NextFunction, Request, Response } from 'express';
 import type { AdvancedRateLimiter } from '../rate-limiter';
 

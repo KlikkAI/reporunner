@@ -9,7 +9,7 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@reporunner/types": "workspace:*",
+    "@reporunner/shared": "workspace:*",
     "@reporunner/core": "workspace:*",
     "bcryptjs": "catalog:",
     "compression": "catalog:",

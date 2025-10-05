@@ -9,7 +9,7 @@ import {
   AuditLogger,
   type AuditQuery,
   type AuditReport,
-} from '@reporunner/security';
+} from '@reporunner/shared';
 
 export class AuditService {
   private auditLogger: AuditLogger;

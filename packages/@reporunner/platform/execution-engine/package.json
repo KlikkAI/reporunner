@@ -19,8 +19,7 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@reporunner/types": "workspace:*",
-    "@reporunner/constants": "workspace:*",
+    "@reporunner/shared": "workspace:*",
     "@reporunner/database": "workspace:*",
     "@types/winston": "^2.4.4",
     "bullmq": "^5.30.1",

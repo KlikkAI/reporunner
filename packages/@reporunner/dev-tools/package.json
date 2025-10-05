@@ -17,7 +17,7 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@reporunner/constants": "workspace:*",
+    "@reporunner/shared": "workspace:*",
     "@reporunner/database": "workspace:*",
     "commander": "^11.1.0",
     "inquirer": "^9.2.12",

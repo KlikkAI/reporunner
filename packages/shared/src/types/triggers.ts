@@ -57,7 +57,7 @@ export const EVENT_TYPES = [
   'custom'
 ] as const;
 
-export const EXECUTION_STATUSES = [
+export const TRIGGER_EXECUTION_STATUSES = [
   'pending',
   'running',
   'completed',
@@ -75,7 +75,7 @@ export type TriggerStatus = typeof TRIGGER_STATUSES[number];
 export type TriggerCondition = typeof TRIGGER_CONDITIONS[number];
 export type WebhookMethod = typeof WEBHOOK_METHODS[number];
 export type EventType = typeof EVENT_TYPES[number];
-export type ExecutionStatus = typeof EXECUTION_STATUSES[number];
+export type TriggerExecutionStatus = typeof TRIGGER_EXECUTION_STATUSES[number];
 
 // ============================================================================
 // CORE INTERFACES
@@ -106,7 +106,7 @@ export interface EventConfig {
   filters?: Record<string, any>;
 }
 
-export interface ScheduleConfig {
+export interface TriggerScheduleConfig {
   cronExpression: string;
   timezone?: string;
   startDate?: Date;
@@ -128,7 +128,7 @@ export interface Trigger {
   // Configuration based on trigger type
   webhookConfig?: WebhookConfig;
   eventConfig?: EventConfig;
-  scheduleConfig?: ScheduleConfig;
+  scheduleConfig?: TriggerScheduleConfig;
 
   // Conditions and actions
   conditions?: TriggerConditionRule[];
@@ -147,7 +147,7 @@ export interface Trigger {
 export interface TriggerExecution {
   id: string;
   triggerId: string;
-  status: ExecutionStatus;
+  status: TriggerExecutionStatus;
   startedAt: Date;
   completedAt?: Date;
   duration?: number;
@@ -202,10 +202,10 @@ export interface TriggerDTO extends Omit<Trigger, 'createdAt' | 'updatedAt' | 'l
   createdAt: string;
   updatedAt: string;
   lastTriggered?: string;
-  scheduleConfig?: ScheduleConfigDTO;
+  scheduleConfig?: TriggerScheduleConfigDTO;
 }
 
-export interface ScheduleConfigDTO extends Omit<ScheduleConfig, 'startDate' | 'endDate'> {
+export interface TriggerScheduleConfigDTO extends Omit<TriggerScheduleConfig, 'startDate' | 'endDate'> {
   startDate?: string;
   endDate?: string;
 }
@@ -232,7 +232,7 @@ export const TriggerStatusSchema = z.enum(TRIGGER_STATUSES);
 export const TriggerConditionSchema = z.enum(TRIGGER_CONDITIONS);
 export const WebhookMethodSchema = z.enum(WEBHOOK_METHODS);
 export const EventTypeSchema = z.enum(EVENT_TYPES);
-export const ExecutionStatusSchema = z.enum(EXECUTION_STATUSES);
+export const TriggerExecutionStatusSchema = z.enum(TRIGGER_EXECUTION_STATUSES);
 
 export const TriggerConditionRuleSchema = z.object({
   field: z.string().min(1),
@@ -244,10 +244,10 @@ export const TriggerConditionRuleSchema = z.object({
 export const WebhookConfigSchema = z.object({
   url: z.string().url(),
   method: WebhookMethodSchema,
-  headers: z.record(z.string()).optional(),
+  headers: z.record(z.string(), z.string()).optional(),
   authentication: z.object({
     type: z.enum(['none', 'basic', 'bearer', 'api_key']),
-    credentials: z.record(z.string()).optional()
+    credentials: z.record(z.string(), z.string()).optional()
   }).optional(),
   timeout: z.number().min(1000).max(300000).optional(), // 1s to 5min
   retries: z.number().min(0).max(10).optional()
@@ -256,10 +256,10 @@ export const WebhookConfigSchema = z.object({
 export const EventConfigSchema = z.object({
   eventType: EventTypeSchema,
   source: z.string().optional(),
-  filters: z.record(z.any()).optional()
+  filters: z.record(z.string(), z.any()).optional()
 });
 
-export const ScheduleConfigSchema = z.object({
+export const TriggerScheduleConfigSchema = z.object({
   cronExpression: z.string().min(1),
   timezone: z.string().optional(),
   startDate: z.string().datetime().optional(),
@@ -275,19 +275,19 @@ export const CreateTriggerSchema = z.object({
   // Configuration based on type
   webhookConfig: WebhookConfigSchema.optional(),
   eventConfig: EventConfigSchema.optional(),
-  scheduleConfig: ScheduleConfigSchema.optional(),
+  scheduleConfig: TriggerScheduleConfigSchema.optional(),
 
   // Conditions and actions
   conditions: z.array(TriggerConditionRuleSchema).optional(),
   workflowId: z.string().optional(),
-  actionConfig: z.record(z.any()).optional(),
+  actionConfig: z.record(z.string(), z.any()).optional(),
 
   // Settings
   enabled: z.boolean().default(true),
   priority: z.number().min(1).max(10).default(5),
   maxExecutions: z.number().min(1).optional(),
   tags: z.array(z.string()).optional(),
-  metadata: z.record(z.any()).optional()
+  metadata: z.record(z.string(), z.any()).optional()
 });
 
 export const UpdateTriggerSchema = CreateTriggerSchema.partial();
@@ -301,7 +301,7 @@ export const TriggerQuerySchema = z.object({
 });
 
 export const TestTriggerSchema = z.object({
-  inputData: z.record(z.any()).optional()
+  inputData: z.record(z.string(), z.any()).optional()
 });
 
 // ============================================================================
@@ -393,14 +393,7 @@ export function getTriggerStatusColor(status: TriggerStatus): string {
   return colors[status];
 }
 
-/**
- * Validate cron expression
- */
-export function isValidCronExpression(expression: string): boolean {
-  // Basic cron validation - in production, use a proper cron parser
-  const cronRegex = /^(\*|([0-9]|1[0-9]|2[0-9]|3[0-9]|4[0-9]|5[0-9])|\*\/([0-9]|1[0-9]|2[0-9]|3[0-9]|4[0-9]|5[0-9])) (\*|([0-9]|1[0-9]|2[0-3])|\*\/([0-9]|1[0-9]|2[0-3])) (\*|([1-9]|1[0-9]|2[0-9]|3[0-1])|\*\/([1-9]|1[0-9]|2[0-9]|3[0-1])) (\*|([1-9]|1[0-2])|\*\/([1-9]|1[0-2])) (\*|([0-6])|\*\/([0-6]))$/;
-  return cronRegex.test(expression);
-}
+
 
 /**
  * Calculate trigger success rate
@@ -451,4 +444,4 @@ function evaluateConditionInternal(condition: TriggerCondition, fieldValue: any,
 
 function getNestedValue(obj: any, path: string): any {
   return path.split('.').reduce((current, key) => current?.[key], obj);
-}"
+}

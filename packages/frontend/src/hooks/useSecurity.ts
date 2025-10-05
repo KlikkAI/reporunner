@@ -3,124 +3,35 @@
  * React hooks for enterprise security features (calls backend API)
  */
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import type {
+  ComplianceFrameworkDTO,
+  ComplianceRequirementDTO,
+  ScanType,
+  SecurityAlertDTO,
+  SecurityEvidenceDTO,
+  SecurityMetricsDTO,
+  SecurityThreatDTO,
+  SeverityLevel,
+  ThreatStatus,
+  VulnerabilityFinding,
+  VulnerabilityScanDTO,
+} from '@reporunner/shared';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-export interface SecurityThreat {
-  id: string;
-  type: 'brute_force' | 'suspicious_activity' | 'data_breach' | 'privilege_escalation' | 'malware' | 'phishing';
-  severity: 'low' | 'medium' | 'high' | 'critical';
-  title: string;
-  description: string;
-  detectedAt: string;
-  userId?: string;
-  organizationId?: string;
-  sourceIp?: string;
-  userAgent?: string;
-  status: 'open' | 'investigating' | 'resolved' | 'false_positive';
-  assignedTo?: string;
-  resolvedAt?: string;
-  resolution?: string;
-  evidence: SecurityEvidence[];
-  riskScore: number;
-  affectedResources: string[];
-}
-
-export interface SecurityEvidence {
-  type: 'log_entry' | 'network_traffic' | 'file_access' | 'api_call' | 'user_behavior';
-  timestamp: string;
-  source: string;
-  data: Record<string, any>;
-  severity: 'info' | 'warning' | 'error' | 'critical';
-}
-
-export interface VulnerabilityScan {
-  id: string;
-  type: 'dependency' | 'code' | 'infrastructure' | 'configuration';
-  status: 'pending' | 'running' | 'completed' | 'failed';
-  startedAt: string;
-  completedAt?: string;
-  findings: VulnerabilityFinding[];
-  summary: {
-    total: number;
-    critical: number;
-    high: number;
-    medium: number;
-    low: number;
-  };
-  metadata: Record<string, any>;
-}
-
-export interface VulnerabilityFinding {
-  id: string;
-  severity: 'critical' | 'high' | 'medium' | 'low';
-  title: string;
-  description: string;
-  category: string;
-  cve?: string;
-  cvss?: number;
-  location: string;
-  recommendation: string;
-  references: string[];
-  status: 'open' | 'fixed' | 'accepted_risk' | 'false_positive';
-}
-
-export interface SecurityMetrics {
-  threatLevel: 'low' | 'medium' | 'high' | 'critical';
-  activeThreats: number;
-  resolvedThreats: number;
-  vulnerabilities: {
-    total: number;
-    critical: number;
-    high: number;
-    medium: number;
-    low: number;
-  };
-  securityScore: number;
-  complianceScore: number;
-  lastScanDate?: string;
-  trends: {
-    threatsLastWeek: number;
-    vulnerabilitiesLastWeek: number;
-    securityIncidents: number;
-  };
-}
-
-export interface SecurityAlert {
-  id: string;
-  type: 'threat_detected' | 'vulnerability_found' | 'compliance_violation' | 'policy_breach';
-  severity: 'low' | 'medium' | 'high' | 'critical';
-  title: string;
-  message: string;
-  timestamp: string;
-  userId?: string;
-  organizationId?: string;
-  metadata: Record<string, any>;
-  acknowledged: boolean;
-  acknowledgedBy?: string;
-  acknowledgedAt?: string;
-}
-
-export interface ComplianceFramework {
-  id: string;
-  name: string;
-  version: string;
-  requirements: ComplianceRequirement[];
-  status: 'compliant' | 'non_compliant' | 'partial' | 'not_applicable';
-  lastAssessment?: string;
-  score: number;
-}
-
-export interface ComplianceRequirement {
-  id: string;
-  title: string;
-  description: string;
-  category: string;
-  mandatory: boolean;
-  status: 'compliant' | 'non_compliant' | 'partial' | 'not_applicable';
-  evidence?: string[];
-  lastChecked?: string;
-  notes?: string;
-}
+// Re-export types for convenience
+export type {
+  SecurityThreatDTO as SecurityThreat,
+  SecurityEvidenceDTO as SecurityEvidence,
+  VulnerabilityScanDTO as VulnerabilityScan,
+  VulnerabilityFinding,
+  SecurityMetricsDTO as SecurityMetrics,
+  SecurityAlertDTO as SecurityAlert,
+  ComplianceFrameworkDTO as ComplianceFramework,
+  ComplianceRequirementDTO as ComplianceRequirement,
+  ThreatStatus,
+  ScanType,
+  SeverityLevel,
+};
 
 /**
  * Hook to get security metrics
@@ -145,12 +56,12 @@ export const useSecurityMetrics = () => {
 /**
  * Hook to get security threats
  */
-export const useSecurityThreats = (status?: SecurityThreat['status']) => {
+export const useSecurityThreats = (status?: ThreatStatus) => {
   return useQuery({
     queryKey: ['security', 'threats', { status }],
     queryFn: async () => {
       const params = new URLSearchParams();
-      if (status) params.append('status', status);
+      if (status) { params.append('status', status); }
 
       const response = await fetch(`/api/security/threats?${params}`);
 
@@ -171,7 +82,7 @@ export const useCreateThreat = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (threat: Omit<SecurityThreat, 'id' | 'detectedAt' | 'status'>) => {
+    mutationFn: async (threat: Omit<SecurityThreatDTO, 'id' | 'detectedAt' | 'status'>) => {
       const response = await fetch('/api/security/threats', {
         method: 'POST',
         headers: {
@@ -205,10 +116,10 @@ export const useUpdateThreatStatus = () => {
       threatId,
       status,
       resolution,
-      assignedTo
+      assignedTo,
     }: {
       threatId: string;
-      status: SecurityThreat['status'];
+      status: ThreatStatus;
       resolution?: string;
       assignedTo?: string;
     }) => {
@@ -243,9 +154,9 @@ export const useStartVulnerabilityScan = () => {
   return useMutation({
     mutationFn: async ({
       type,
-      metadata = {}
+      metadata = {},
     }: {
-      type: VulnerabilityScan['type'];
+      type: ScanType;
       metadata?: Record<string, any>;
     }) => {
       const response = await fetch('/api/security/scans', {
@@ -272,12 +183,12 @@ export const useStartVulnerabilityScan = () => {
 /**
  * Hook to get vulnerability scans
  */
-export const useVulnerabilityScans = (type?: VulnerabilityScan['type']) => {
+export const useVulnerabilityScans = (type?: ScanType) => {
   return useQuery({
     queryKey: ['security', 'scans', { type }],
     queryFn: async () => {
       const params = new URLSearchParams();
-      if (type) params.append('type', type);
+      if (type) { params.append('type', type); }
 
       const response = await fetch(`/api/security/scans?${params}`);
 
@@ -300,7 +211,7 @@ export const useSecurityAlerts = (acknowledged?: boolean) => {
     queryKey: ['security', 'alerts', { acknowledged }],
     queryFn: async () => {
       const params = new URLSearchParams();
-      if (acknowledged !== undefined) params.append('acknowledged', acknowledged.toString());
+      if (acknowledged !== undefined) { params.append('acknowledged', acknowledged.toString()); }
 
       const response = await fetch(`/api/security/alerts?${params}`);
 
@@ -324,7 +235,7 @@ export const useAcknowledgeAlert = () => {
   return useMutation({
     mutationFn: async ({
       alertId,
-      acknowledgedBy
+      acknowledgedBy,
     }: {
       alertId: string;
       acknowledgedBy: string;

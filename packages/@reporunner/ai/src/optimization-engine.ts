@@ -1,5 +1,5 @@
 import { Logger } from '@reporunner/core';
-import type { Workflow, WorkflowEdge, WorkflowNode } from '@reporunner/types';
+import type { Workflow, WorkflowEdge, WorkflowNode } from '@reporunner/shared';
 import { OpenAI } from 'openai';
 
 export interface OptimizationRule {

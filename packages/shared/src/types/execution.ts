@@ -1,8 +1,9 @@
 /**
  * Execution Types - Workflow execution tracking and results
+ * Consolidated from @reporunner/types
  */
 
-import type { BaseEntity, ExecutionMode, ID, Timestamp } from '../common';
+import type { BaseEntity, ExecutionMode, ID, Timestamp } from './common';
 
 /**
  * Execution status

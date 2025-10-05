@@ -7,7 +7,7 @@ import {
   PlayCircleOutlined,
   SaveOutlined,
 } from '@ant-design/icons';
-import { Badge, Button, Space, } from 'antd';
+import { Badge, Button, Space } from 'antd';
 import type React from 'react';
 import { useCallback, useMemo, useState } from 'react';
 import ReactFlow, {
@@ -42,8 +42,8 @@ export const EnhancedWorkflowCanvas: React.FC<EnhancedWorkflowCanvasProps> = ({
   showControls = true,
   className = '',
 }) => {
-  const reactFlowInstance = useReactFlow();
-  const _reactFlowInstancetIsFullscreen] = useState(false);
+  const _reactFlowInstance = useReactFlow();
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
   const [showExecutionPanel, setShowExecutionPanel] = useState(false);
   const [showDebugPanel, setShowDebugPanel] = useState(false);
@@ -85,7 +85,9 @@ export const EnhancedWorkflowCanvas: React.FC<EnhancedWorkflowCanvasProps> = ({
 
   const onConnect = useCallback(
     (params: Connection) => {
-      if (readOnly) { return; }
+      if (readOnly) {
+        return;
+      }
 
       const newEdge = {
         ...params,
@@ -108,7 +110,9 @@ export const EnhancedWorkflowCanvas: React.FC<EnhancedWorkflowCanvasProps> = ({
   }, []);
 
   const handleSave = useCallback(async () => {
-    if (readOnly) { return; }
+    if (readOnly) {
+      return;
+    }
     await saveWorkflow();
   }, [saveWorkflow, readOnly]);
 
@@ -224,9 +228,15 @@ export const EnhancedWorkflowCanvas: React.FC<EnhancedWorkflowCanvasProps> = ({
           <MiniMap
             nodeColor={(node) => {
               const status = node.data?.executionStatus;
-              if (status === 'success') { return '#52c41a'; }
-              if (status === 'error') { return '#ff4d4f'; }
-              if (status === 'running') { return '#1890ff'; }
+              if (status === 'success') {
+                return '#52c41a';
+              }
+              if (status === 'error') {
+                return '#ff4d4f';
+              }
+              if (status === 'running') {
+                return '#1890ff';
+              }
               return '#d9d9d9';
             }}
             className="!bg-white !border !border-gray-200"

@@ -1,13 +1,14 @@
 import { randomBytes } from 'node:crypto';
+import type { DatabaseService } from '@reporunner/database';
 import {
+  AUTH,
+  ERROR_CODES,
   type ILoginRequest,
   type ILoginResponse,
   type IRegisterRequest,
   type IUser,
   UserRole,
-} from '@reporunner/types';
-import { AUTH, ERROR_CODES } from '@reporunner/constants';
-import type { DatabaseService } from '@reporunner/database';
+} from '@reporunner/shared';
 import bcrypt from 'bcrypt';
 import { v4 as uuidv4 } from 'uuid';
 import type { TokenManager } from '../jwt/token-manager';

@@ -1,9 +1,10 @@
 /**
  * Workflow Types - Workflow definition and configuration
+ * Consolidated from @reporunner/types
  */
 
 import { z } from 'zod';
-import type { BaseEntity, EntityStatus, ID, Timestamp } from '../common';
+import type { BaseEntity, EntityStatus, ID, Timestamp } from './common';
 
 /**
  * Node position in the workflow canvas

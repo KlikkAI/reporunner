@@ -16,7 +16,13 @@
  * - API key management
  */
 
-import type { ID, IUser, IUserSettings, Timestamp, UserRole as BaseUserRole } from '@reporunner/types';
+import type {
+  UserRole as BaseUserRole,
+  ID,
+  IUser,
+  IUserSettings,
+  Timestamp,
+} from '@reporunner/shared';
 
 // ============================================================================
 // Extended User Types

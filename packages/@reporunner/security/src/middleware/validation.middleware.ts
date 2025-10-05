@@ -1,4 +1,4 @@
-import { ERROR_CODES } from '@reporunner/constants';
+import { ERROR_CODES } from '@reporunner/shared';
 import type { NextFunction, Request, Response } from 'express';
 import DOMPurify from 'isomorphic-dompurify';
 import validator from 'validator';

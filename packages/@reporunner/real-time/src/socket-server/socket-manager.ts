@@ -1,5 +1,5 @@
 import type { Server as HTTPServer } from 'node:http';
-import type { IJwtPayload } from '@reporunner/types';
+import type { IJwtPayload } from '@reporunner/shared';
 import { createAdapter } from '@socket.io/redis-adapter';
 import { createClient } from 'redis';
 import { type Socket, Server as SocketIOServer } from 'socket.io';

@@ -16,7 +16,7 @@
  * - Predefined credential configurations
  */
 
-import type { ICredential, CredentialType } from '@reporunner/types';
+import type { CredentialType, ICredential } from '@reporunner/shared';
 
 // ============================================================================
 // Extended Credential Types
