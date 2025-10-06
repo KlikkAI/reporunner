@@ -5,9 +5,10 @@
 
 import { Router } from 'express';
 import auditRoutes from './audit';
-import triggerRoutes from './triggers';
+import marketplaceRoutes from './marketplace';
 import scheduleRoutes from './schedules';
 import securityRoutes from './security';
+import triggerRoutes from './triggers';
 
 const router = Router();
 
@@ -16,9 +17,11 @@ router.use('/audit', auditRoutes);
 router.use('/triggers', triggerRoutes);
 router.use('/schedules', scheduleRoutes);
 router.use('/security', securityRoutes);
+router.use('/marketplace', marketplaceRoutes);
+router.use('/workflow-optimization', workflowOptimizationRoutes);
 
 // Health check endpoint
-router.get('/health', (req, res) => {
+router.get('/health', (_req, res) => {
   res.json({
     success: true,
     message: 'Backend API is healthy',
@@ -26,13 +29,14 @@ router.get('/health', (req, res) => {
     services: {
       audit: 'operational',
       triggers: 'operational',
-      schedules: 'operational'
-    }
+      schedules: 'operational',
+      marketplace: 'operational',
+    },
   });
 });
 
 // API info endpoint
-router.get('/info', (req, res) => {
+router.get('/info', (_req, res) => {
   res.json({
     success: true,
     data: {
@@ -42,9 +46,11 @@ router.get('/info', (req, res) => {
       endpoints: {
         audit: '/api/audit',
         triggers: '/api/triggers',
-        schedules: '/api/schedules'
-      }
-    }
+        schedules: '/api/schedules',
+        marketplace: '/api/marketplace',
+        workflowOptimization: '/api/workflow-optimization',
+      },
+    },
   });
 });
 

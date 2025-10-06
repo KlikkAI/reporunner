@@ -1,6 +1,6 @@
 # Reporunner 🚀
 
-> **Open-source workflow automation platform powered by AI**  
+> **Open-source workflow automation platform powered by AI**
 > The next-generation alternative to n8n with built-in AI/ML capabilities, modern architecture, and enterprise-grade scaling.
 
 [![CI/CD](https://github.com/reporunner/reporunner/actions/workflows/ci.yml/badge.svg)](https://github.com/reporunner/reporunner/actions/workflows/ci.yml)
@@ -15,9 +15,15 @@
 - **Native LLM Integration**: OpenAI, Anthropic, Google AI, and Ollama support
 - **Vector Search**: PostgreSQL with pgvector for semantic workflows
 - **AI Agents**: Intelligent automation with memory and tools
-- **Smart Suggestions**: AI-powered workflow recommendations
+- **Smart Workflow Optimization**: AI-powered performance analysis and suggestions
 
-### 🏗️ Enterprise Architecture  
+### 🏪 Plugin Marketplace
+- **Comprehensive Plugin Registry**: Secure publishing, validation, and distribution
+- **Advanced Security Scanning**: Automated vulnerability detection and code analysis
+- **Developer-Friendly Publishing**: Step-by-step wizard with validation pipeline
+- **Community-Driven**: Reviews, ratings, and featured plugin showcase
+
+### 🏗️ Enterprise Architecture
 - **Hybrid Database**: PostgreSQL + MongoDB for optimal performance
 - **Queue-Based Execution**: BullMQ with Redis for scalable processing
 - **Real-time Monitoring**: WebSocket-based execution tracking
@@ -30,10 +36,17 @@
 - **Hot Reload** development environment
 
 ### 🔧 Extensible Integration System
-- **27+ Built-in Nodes**: Gmail, databases, AI services, and more  
+- **27+ Built-in Nodes**: Gmail, databases, AI services, and more
 - **Dynamic Property System**: n8n-inspired conditional forms
 - **Custom Node Development**: CLI tools and hot reload support
 - **Multi-language SDKs**: TypeScript, Python, Go, Rust, Java, PHP, and .NET
+
+### 📊 Advanced Analytics & Optimization
+- **AI-Powered Workflow Analysis**: Intelligent bottleneck detection and optimization suggestions
+- **Performance Monitoring**: Real-time metrics with historical trend analysis
+- **Cost Optimization**: Resource usage analysis and efficiency recommendations
+- **Reliability Enhancement**: Error pattern detection and retry logic suggestions
+- **Interactive Dashboards**: Real-time performance metrics with Chart.js visualizations
 
 ## 🚀 Quick Start
 
@@ -144,6 +157,12 @@ pnpm run quality          # Run all quality checks
 pnpm run quality:fix      # Fix linting, formatting, and imports
 pnpm run validate         # Full validation including security
 
+# Architecture Validation
+pnpm --filter @reporunner/validation architecture:validate      # Complete architecture validation
+pnpm --filter @reporunner/validation architecture:dependencies # Dependency analysis
+pnpm --filter @reporunner/validation architecture:organization # Code organization validation
+pnpm --filter @reporunner/validation architecture:types        # Type safety validation
+
 # Dependency Management
 pnpm run deps:check       # Check for dependency updates
 pnpm run deps:update      # Update dependencies
@@ -175,7 +194,7 @@ export const myServiceProperties: NodeProperty[] = [
 ```
 
 3. **Implement Execution Logic**
-```typescript  
+```typescript
 // packages/@reporunner/nodes/src/communication/myservice/actions.ts
 export async function execute(node: NodeData, context: ExecutionContext) {
   // Your integration logic here
@@ -220,7 +239,7 @@ helm install reporunner reporunner/reporunner
 Reporunner includes comprehensive monitoring out of the box:
 
 - **Prometheus** for metrics collection
-- **Grafana** for visualization and alerting  
+- **Grafana** for visualization and alerting
 - **Jaeger** for distributed tracing
 - **Winston** for structured logging
 
@@ -290,7 +309,7 @@ client := reporunner.NewClient(reporunner.ClientOptions{
     APIKey:  "your-api-key",
 })
 
-execution, err := client.ExecuteWorkflow(ctx, "workflow-123", 
+execution, err := client.ExecuteWorkflow(ctx, "workflow-123",
     map[string]interface{}{
         "email": "user@example.com",
     }, true)
@@ -311,7 +330,7 @@ let execution = client.execute_workflow(
 ### Java SDK
 ```java
 ReporunnerClient client = new ReporunnerClient(
-    "http://localhost:3001", 
+    "http://localhost:3001",
     "your-api-key"
 );
 
@@ -337,7 +356,7 @@ $execution = $client->executeWorkflow('workflow-123', [
 ```csharp
 var client = new ReporunnerClient(httpClient, options, logger);
 
-var execution = await client.ExecuteWorkflowAsync("workflow-123", 
+var execution = await client.ExecuteWorkflowAsync("workflow-123",
     new Dictionary<string, object> {
         ["email"] = "user@example.com"
     });
