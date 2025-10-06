@@ -1,43 +1,76 @@
-// Phase A Validation Framework
+// TypeScript Analysis & Validation
+export * from './typescript';
 
-// Build Time Analysis
-export {
-  type BuildAnalysisReport,
-  type BuildBottleneck,
-  type BuildComparison,
-  type BuildMetrics,
-  BuildTimeAnalyzer,
-  type OptimizationRecommendation,
-} from './build-time-analyzer.js';
+// IDE Performance Validation
+export * from './ide-performance';
 
-// Bundle Size Analysis
-export {
-  type BundleAnalysisReport,
-  type BundleFile,
-  type BundleMetrics,
-  type BundleOptimization,
-  BundleSizeAnalyzer,
-  type BundleSizeComparison,
-} from './bundle-size-analyzer.js';
-export { BuildAnalyzerCLI } from './cli/build-analyzer-cli.js';
-export { BundleAnalyzerCLI } from './cli/bundle-analyzer-cli.js';
-export { DevExperienceCLI } from './cli/dev-experience-cli.js';
-export { ValidationController } from './controller/ValidationController.js';
-// Developer Experience Metrics
-export * from './developer-experience/index.js';
-export type * from './interfaces/index.js';
-export { MemoryLeakDetector } from './monitoring/MemoryLeakDetector.js';
-export { MemoryMonitor } from './monitoring/MemoryMonitor.js';
-export { MemoryOptimizer } from './monitoring/MemoryOptimizer.js';
-export { PerformanceMonitor } from './monitoring/PerformanceMonitor.js';
-export { ReportingEngine } from './reporting/ReportingEngine.js';
-// System validation components
-export * from './system/index.js';
-export type * from './types/index.js';
+// Import Path Optimization
+export * from './import-optimization';
 
-export {
-  type TurboCacheStats,
-  TurboMetricsCollector,
-  type TurboRunSummary,
-  type TurboTaskMetrics,
-} from './utils/turbo-metrics.js';
+// Architecture Validation
+export * from './architecture';
+
+// Re-export main classes for convenience
+export { TypeScriptAnalyzer } from './typescript/analyzer';
+export { IDEPerformanceValidator } from './ide-performance/ide-performance-validator';
+export { ImportPathOptimizer } from './import-optimization/import-path-optimizer';
+export { DependencyAnalyzer } from './architecture/dependency-analyzer';
+export { CodeOrganizationChecker } from './architecture/code-organization-checker';
+export { TypeSafetyValidator } from './architecture/type-safety-validator';
+
+// Orchestration and Integration
+export { ValidationController } from './controller/ValidationController';
+export { ValidationOrchestratorCLI } from './cli/validation-orchestrator-cli';
+export { ContinuousValidationIntegration } from './integration/ContinuousValidationIntegration';
+
+// Re-export key types
+export type {
+  TypeScriptAnalysisReport,
+  AutocompleteTestResult,
+  TypeResolutionResult,
+  CompilationMetrics
+} from './typescript/types';
+
+export type {
+  IDEPerformanceReport,
+  NavigationTestResult,
+  IntelliSenseTestResult,
+  SourceMappingTestResult
+} from './ide-performance/types';
+
+export type {
+  ImportOptimizationReport,
+  ImportPathAnalysis,
+  CircularDependency,
+  ImportSuggestion
+} from './import-optimization/types';
+
+export type {
+  ArchitectureValidationResult,
+  ArchitectureValidationOptions,
+  CircularDependencyReport,
+  PackageBoundaryReport,
+  DependencyGraph,
+  CodeOrganizationReport,
+  TypeSafetyReport
+} from './architecture/types';
+
+// Core validation types
+export type {
+  ValidationResults,
+  ValidationSummary,
+  ValidationError,
+  OptimizationRecommendation,
+  ValidationReport
+} from './types';
+
+// CI Integration types
+export type {
+  CIValidationConfig,
+  CIExecutionOptions,
+  CIValidationResult,
+  ValidationAnalysis,
+  CIArtifact,
+  CINotification,
+  NotificationChannel
+} from './integration';

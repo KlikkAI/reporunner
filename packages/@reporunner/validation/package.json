@@ -22,14 +22,29 @@
     "dx:analyze": "node dist/cli/dev-experience-cli.js analyze",
     "dx:benchmark": "node dist/cli/dev-experience-cli.js benchmark",
     "dx:track": "node dist/cli/dev-experience-cli.js track",
-    "dx:report": "node dist/cli/dev-experience-cli.js report"
+    "dx:report": "node dist/cli/dev-experience-cli.js report",
+    "typescript:analyze": "node dist/cli/typescript-analyzer-cli.js analyze",
+    "typescript:report": "node dist/cli/typescript-analyzer-cli.js report",
+    "ide:validate": "node dist/cli/ide-performance-cli.js validate",
+    "ide:report": "node dist/cli/ide-performance-cli.js report",
+    "imports:analyze": "node dist/cli/import-optimizer-cli.js analyze",
+    "imports:fix": "node dist/cli/import-optimizer-cli.js fix",
+    "imports:report": "node dist/cli/import-optimizer-cli.js report",
+    "architecture:validate": "node dist/cli/architecture-validator-cli.js validate",
+    "architecture:dependencies": "node dist/cli/architecture-validator-cli.js dependencies",
+    "architecture:organization": "node dist/cli/architecture-validator-cli.js organization",
+    "architecture:types": "node dist/cli/architecture-validator-cli.js types"
   },
   "dependencies": {
     "@reporunner/core": "workspace:*",
     "axios": "^1.6.0",
     "madge": "^8.0.0",
     "vitest": "catalog:",
-    "playwright": "^1.40.0"
+    "playwright": "^1.40.0",
+    "typescript": "catalog:",
+    "commander": "^12.0.0",
+    "chalk": "^5.3.0",
+    "ora": "^8.0.1"
   },
   "devDependencies": {
     "@types/node": "catalog:",
@@ -86,6 +101,46 @@
       "types": "./dist/cli/dev-experience-cli.d.ts",
       "import": "./dist/cli/dev-experience-cli.js",
       "require": "./dist/cli/dev-experience-cli.js"
+    },
+    "./typescript": {
+      "types": "./dist/typescript/index.d.ts",
+      "import": "./dist/typescript/index.js",
+      "require": "./dist/typescript/index.js"
+    },
+    "./cli/typescript-analyzer": {
+      "types": "./dist/cli/typescript-analyzer-cli.d.ts",
+      "import": "./dist/cli/typescript-analyzer-cli.js",
+      "require": "./dist/cli/typescript-analyzer-cli.js"
+    },
+    "./ide-performance": {
+      "types": "./dist/ide-performance/index.d.ts",
+      "import": "./dist/ide-performance/index.js",
+      "require": "./dist/ide-performance/index.js"
+    },
+    "./cli/ide-performance": {
+      "types": "./dist/cli/ide-performance-cli.d.ts",
+      "import": "./dist/cli/ide-performance-cli.js",
+      "require": "./dist/cli/ide-performance-cli.js"
+    },
+    "./import-optimization": {
+      "types": "./dist/import-optimization/index.d.ts",
+      "import": "./dist/import-optimization/index.js",
+      "require": "./dist/import-optimization/index.js"
+    },
+    "./cli/import-optimizer": {
+      "types": "./dist/cli/import-optimizer-cli.d.ts",
+      "import": "./dist/cli/import-optimizer-cli.js",
+      "require": "./dist/cli/import-optimizer-cli.js"
+    },
+    "./architecture": {
+      "types": "./dist/architecture/index.d.ts",
+      "import": "./dist/architecture/index.js",
+      "require": "./dist/architecture/index.js"
+    },
+    "./cli/architecture-validator": {
+      "types": "./dist/cli/architecture-validator-cli.d.ts",
+      "import": "./dist/cli/architecture-validator-cli.js",
+      "require": "./dist/cli/architecture-validator-cli.js"
     }
   }
 }

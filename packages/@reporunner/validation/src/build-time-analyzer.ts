@@ -100,7 +100,7 @@ export class BuildTimeAnalyzer {
     };
 
     await this.saveMetrics(metrics);
-    console.log('Build analysis comp
+    console.log('Build analysis completed');
   }
 
   async compareWithBaseline(currentMetrics: BuildMetrics): Promise<BuildComparison | null> {
