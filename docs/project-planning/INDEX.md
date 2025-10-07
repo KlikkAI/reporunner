@@ -1,6 +1,6 @@
 # Reporunner Project Planning Index
 
-**Last Updated**: October 2, 2025
+**Last Updated**: October 7, 2025
 
 This directory contains active development planning and strategic documentation for the Reporunner platform.
 
@@ -12,6 +12,7 @@ This directory contains active development planning and strategic documentation 
 docs/project-planning/
 ├── INDEX.md (this file)
 ├── roadmaps/            # Development roadmaps and active priorities
+├── strategies/          # Launch and growth strategies
 ├── architecture/        # System architecture and design documents
 ├── guides/              # Implementation guides and comparisons
 └── diagrams/            # Visual architecture and flow diagrams
@@ -74,6 +75,31 @@ Strategic planning documents outlining development priorities, timelines, and fe
 - 🏢 Phase 2: Enterprise Scaling (4-6 weeks)
 - 🔌 Phase 3: Integration Ecosystem (6-8 weeks)
 - 🤖 Future: Advanced AI Features (3-6 months)
+
+---
+
+## 🚀 Strategies
+
+Launch, growth, and go-to-market strategies for platform scaling and adoption.
+
+### Files
+
+1. **[POST_LAUNCH_STRATEGY.md](./strategies/POST_LAUNCH_STRATEGY.md)**
+   - Complete launch strategy and execution plan
+   - Go-to-market approach and positioning
+   - Community building and engagement strategies
+   - Developer ecosystem growth
+   - Content marketing and thought leadership
+   - Partnership and integration strategy
+   - Metrics and KPIs for success measurement
+   - **Status**: Active strategy guiding Q1-Q2 2026 priorities
+
+**Strategy Highlights:**
+- 📢 **Launch Phases**: Soft launch → Public launch → Growth acceleration
+- 👥 **Community Focus**: Developer evangelism, contributor programs, showcase features
+- 🎯 **Target Segments**: Indie developers, SMBs, enterprise teams
+- 📊 **Success Metrics**: MAU growth, integration adoption, community engagement
+- 🤝 **Partnerships**: Integration partners, cloud providers, developer tools
 
 ---
 
