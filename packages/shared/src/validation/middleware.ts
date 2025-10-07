@@ -194,7 +194,7 @@ export class ValidationMiddleware {
     }
 
     if (result.errors.length > 0) {
-      throw new Error(`Validation failed: ${result.errors.map(e => e.message).join(', ')}`);
+      throw new Error(`Validation failed: ${result.errors.map((e) => e.message).join(', ')}`);
     }
 
     return result;

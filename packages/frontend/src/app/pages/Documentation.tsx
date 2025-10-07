@@ -15,7 +15,6 @@ import {
   Code,
   Download,
   ExternalLink,
-  FileText,
   GitBranch,
   Layers,
   Play,

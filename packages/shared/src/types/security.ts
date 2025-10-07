@@ -1,4 +1,3 @@
-
 import { z } from 'zod';
 import type { AuditSeverity } from './audit';
 import { AuditSeveritySchema } from './audit';
@@ -13,7 +12,7 @@ export const THREAT_TYPES = [
   'data_breach',
   'privilege_escalation',
   'malware',
-  'phishing'
+  'phishing',
 ] as const;
 
 export const SEVERITY_LEVELS = ['low', 'medium', 'high', 'critical'] as const;
@@ -22,24 +21,32 @@ export const EVIDENCE_TYPES = ['log', 'file', 'network', 'system', 'user_action'
 export const SCAN_TYPES = ['vulnerability', 'malware', 'compliance', 'penetration'] as const;
 export const SCAN_STATUSES = ['pending', 'running', 'completed', 'failed', 'cancelled'] as const;
 export const VULNERABILITY_STATUSES = ['open', 'acknowledged', 'fixed', 'accepted_risk'] as const;
-export const ALERT_TYPES = ['security_breach', 'suspicious_login', 'data_access', 'system_anomaly'] as const;
-export const COMPLIANCE_STATUSES = ['compliant', 'non_compliant', 'partial', 'not_assessed'] as const;
-
+export const ALERT_TYPES = [
+  'security_breach',
+  'suspicious_login',
+  'data_access',
+  'system_anomaly',
+] as const;
+export const COMPLIANCE_STATUSES = [
+  'compliant',
+  'non_compliant',
+  'partial',
+  'not_assessed',
+] as const;
 
 // ============================================================================
 // TYPE DEFINITIONS
 // ============================================================================
 
-export type ThreatType = typeof THREAT_TYPES[number];
-export type SeverityLevel = typeof SEVERITY_LEVELS[number];
-export type ThreatStatus = typeof THREAT_STATUSES[number];
-export type EvidenceType = typeof EVIDENCE_TYPES[number];
-export type ScanType = typeof SCAN_TYPES[number];
-export type ScanStatus = typeof SCAN_STATUSES[number];
-export type VulnerabilityStatus = typeof VULNERABILITY_STATUSES[number];
-export type AlertType = typeof ALERT_TYPES[number];
-export type ComplianceStatus = typeof COMPLIANCE_STATUSES[number];
-
+export type ThreatType = (typeof THREAT_TYPES)[number];
+export type SeverityLevel = (typeof SEVERITY_LEVELS)[number];
+export type ThreatStatus = (typeof THREAT_STATUSES)[number];
+export type EvidenceType = (typeof EVIDENCE_TYPES)[number];
+export type ScanType = (typeof SCAN_TYPES)[number];
+export type ScanStatus = (typeof SCAN_STATUSES)[number];
+export type VulnerabilityStatus = (typeof VULNERABILITY_STATUSES)[number];
+export type AlertType = (typeof ALERT_TYPES)[number];
+export type ComplianceStatus = (typeof COMPLIANCE_STATUSES)[number];
 
 // ============================================================================
 // CORE INTERFACES
@@ -167,7 +174,8 @@ export interface SecurityComplianceFramework {
 // ============================================================================
 
 // Frontend-compatible versions with string dates
-export interface SecurityThreatDTO extends Omit<SecurityThreat, 'detectedAt' | 'resolvedAt' | 'evidence'> {
+export interface SecurityThreatDTO
+  extends Omit<SecurityThreat, 'detectedAt' | 'resolvedAt' | 'evidence'> {
   detectedAt: string;
   resolvedAt?: string;
   evidence: SecurityEvidenceDTO[];
@@ -191,7 +199,8 @@ export interface SecurityAlertDTO extends Omit<SecurityAlert, 'timestamp' | 'ack
   acknowledgedAt?: string;
 }
 
-export interface SecurityComplianceFrameworkDTO extends Omit<SecurityComplianceFramework, 'lastAssessment' | 'requirements'> {
+export interface SecurityComplianceFrameworkDTO
+  extends Omit<SecurityComplianceFramework, 'lastAssessment' | 'requirements'> {
   lastAssessment?: string;
   requirements: ComplianceRequirementDTO[];
 }
@@ -215,14 +224,13 @@ export const VulnerabilityStatusSchema = z.enum(VULNERABILITY_STATUSES);
 export const AlertTypeSchema = z.enum(ALERT_TYPES);
 export const ComplianceStatusSchema = z.enum(COMPLIANCE_STATUSES);
 
-
 // Evidence schema
 export const SecurityEvidenceSchema = z.object({
   type: EvidenceTypeSchema,
   timestamp: z.string().datetime(),
   source: z.string(),
   data: z.record(z.string(), z.any()),
-  severity: AuditSeveritySchema
+  severity: AuditSeveritySchema,
 });
 
 // Threat schemas
@@ -237,37 +245,37 @@ export const CreateThreatSchema = z.object({
   userAgent: z.string().optional(),
   evidence: z.array(SecurityEvidenceSchema),
   riskScore: z.number().min(0).max(100),
-  affectedResources: z.array(z.string())
+  affectedResources: z.array(z.string()),
 });
 
 export const UpdateThreatStatusSchema = z.object({
   status: ThreatStatusSchema,
   resolution: z.string().optional(),
-  assignedTo: z.string().optional()
+  assignedTo: z.string().optional(),
 });
 
 // Vulnerability scan schemas
 export const StartVulnerabilityScanSchema = z.object({
   type: ScanTypeSchema,
-  metadata: z.record(z.string(), z.any()).optional()
+  metadata: z.record(z.string(), z.any()).optional(),
 });
 
 // Alert schemas
 export const AcknowledgeAlertSchema = z.object({
-  acknowledgedBy: z.string().min(1)
+  acknowledgedBy: z.string().min(1),
 });
 
 // Query parameter schemas
 export const ThreatQuerySchema = z.object({
-  status: ThreatStatusSchema.optional()
+  status: ThreatStatusSchema.optional(),
 });
 
 export const ScanQuerySchema = z.object({
-  type: ScanTypeSchema.optional()
+  type: ScanTypeSchema.optional(),
 });
 
 export const AlertQuerySchema = z.object({
-  acknowledged: z.boolean().optional()
+  acknowledged: z.boolean().optional(),
 });
 
 // ============================================================================
@@ -282,14 +290,14 @@ export function toSecurityThreatDTO(threat: SecurityThreat): SecurityThreatDTO {
     ...threat,
     detectedAt: threat.detectedAt.toISOString(),
     resolvedAt: threat.resolvedAt?.toISOString(),
-    evidence: threat.evidence.map(toSecurityEvidenceDTO)
+    evidence: threat.evidence.map(toSecurityEvidenceDTO),
   };
 }
 
 export function toSecurityEvidenceDTO(evidence: SecurityEvidence): SecurityEvidenceDTO {
   return {
     ...evidence,
-    timestamp: evidence.timestamp.toISOString()
+    timestamp: evidence.timestamp.toISOString(),
   };
 }
 
@@ -297,14 +305,14 @@ export function toVulnerabilityScanDTO(scan: VulnerabilityScan): VulnerabilitySc
   return {
     ...scan,
     startedAt: scan.startedAt.toISOString(),
-    completedAt: scan.completedAt?.toISOString()
+    completedAt: scan.completedAt?.toISOString(),
   };
 }
 
 export function toSecurityMetricsDTO(metrics: SecurityMetrics): SecurityMetricsDTO {
   return {
     ...metrics,
-    lastScanDate: metrics.lastScanDate?.toISOString()
+    lastScanDate: metrics.lastScanDate?.toISOString(),
   };
 }
 
@@ -312,18 +320,20 @@ export function toSecurityAlertDTO(alert: SecurityAlert): SecurityAlertDTO {
   return {
     ...alert,
     timestamp: alert.timestamp.toISOString(),
-    acknowledgedAt: alert.acknowledgedAt?.toISOString()
+    acknowledgedAt: alert.acknowledgedAt?.toISOString(),
   };
 }
 
-export function toSecurityComplianceFrameworkDTO(framework: SecurityComplianceFramework): SecurityComplianceFrameworkDTO {
+export function toSecurityComplianceFrameworkDTO(
+  framework: SecurityComplianceFramework
+): SecurityComplianceFrameworkDTO {
   return {
     ...framework,
     lastAssessment: framework.lastAssessment?.toISOString(),
-    requirements: framework.requirements.map(req => ({
+    requirements: framework.requirements.map((req) => ({
       ...req,
-      lastChecked: req.lastChecked?.toISOString()
-    }))
+      lastChecked: req.lastChecked?.toISOString(),
+    })),
   };
 }
 
@@ -335,14 +345,14 @@ export function fromSecurityThreatDTO(threatDTO: SecurityThreatDTO): SecurityThr
     ...threatDTO,
     detectedAt: new Date(threatDTO.detectedAt),
     resolvedAt: threatDTO.resolvedAt ? new Date(threatDTO.resolvedAt) : undefined,
-    evidence: threatDTO.evidence.map(fromSecurityEvidenceDTO)
+    evidence: threatDTO.evidence.map(fromSecurityEvidenceDTO),
   };
 }
 
 export function fromSecurityEvidenceDTO(evidenceDTO: SecurityEvidenceDTO): SecurityEvidence {
   return {
     ...evidenceDTO,
-    timestamp: new Date(evidenceDTO.timestamp)
+    timestamp: new Date(evidenceDTO.timestamp),
   };
 }
 
@@ -364,7 +374,7 @@ export function getThreatTypeDisplayName(type: ThreatType): string {
     data_breach: 'Data Breach',
     privilege_escalation: 'Privilege Escalation',
     malware: 'Malware Detection',
-    phishing: 'Phishing Attempt'
+    phishing: 'Phishing Attempt',
   };
   return names[type];
 }
@@ -374,10 +384,10 @@ export function getThreatTypeDisplayName(type: ThreatType): string {
  */
 export function getSeverityColor(severity: SeverityLevel): string {
   const colors = {
-    low: '#10B981',      // green
-    medium: '#F59E0B',   // yellow
-    high: '#EF4444',     // red
-    critical: '#7C2D12'  // dark red
+    low: '#10B981', // green
+    medium: '#F59E0B', // yellow
+    high: '#EF4444', // red
+    critical: '#7C2D12', // dark red
   };
   return colors[severity];
 }
@@ -392,8 +402,8 @@ export function calculateSecurityScore(
   let score = 100;
 
   // Deduct points for active threats
-  const activeThreats = threats.filter(t => t.status === 'open' || t.status === 'investigating');
-  activeThreats.forEach(threat => {
+  const activeThreats = threats.filter((t) => t.status === 'open' || t.status === 'investigating');
+  activeThreats.forEach((threat) => {
     const severityPenalty = { low: 5, medium: 10, high: 20, critical: 30 };
     score -= severityPenalty[threat.severity];
   });

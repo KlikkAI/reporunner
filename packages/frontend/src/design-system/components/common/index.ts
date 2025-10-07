@@ -1,6 +1,7 @@
 // Common Design System Components
-export { PropertyField } from './PropertyField';
+
 export { EnhancedNodeToolbar } from './EnhancedNodeToolbar';
+export { PropertyField } from './PropertyField';
 
 // Helper functions for badges (stub implementations for now)
 export const createStatusBadge = (status: string) => ({ status, color: 'default' });

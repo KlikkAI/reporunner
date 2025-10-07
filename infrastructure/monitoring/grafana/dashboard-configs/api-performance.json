@@ -1,5 +1,5 @@
 {
-  "annotations": {"list": []},
+  "annotations": { "list": [] },
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
@@ -11,33 +11,42 @@
       "type": "timeseries",
       "title": "API Request Rate",
       "targets": [
-        {"expr": "sum(rate(http_requests_total{job=\"reporunner-api\"}[5m]))", "legendFormat": "req/s"}
+        {
+          "expr": "sum(rate(http_requests_total{job=\"reporunner-api\"}[5m]))",
+          "legendFormat": "req/s"
+        }
       ],
-      "datasource": {"type": "prometheus", "uid": "PROM_DS"}
+      "datasource": { "type": "prometheus", "uid": "PROM_DS" }
     },
     {
       "type": "timeseries",
       "title": "API Error Rate (5xx)",
       "targets": [
-        {"expr": "sum(rate(http_requests_total{job=\"reporunner-api\",status=~\"5..\"}[5m]))", "legendFormat": "5xx/s"}
+        {
+          "expr": "sum(rate(http_requests_total{job=\"reporunner-api\",status=~\"5..\"}[5m]))",
+          "legendFormat": "5xx/s"
+        }
       ],
-      "datasource": {"type": "prometheus", "uid": "PROM_DS"}
+      "datasource": { "type": "prometheus", "uid": "PROM_DS" }
     },
     {
       "type": "timeseries",
       "title": "Latency p95",
       "targets": [
-        {"expr": "histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket{job=\"reporunner-api\"}[5m])) by (le))", "legendFormat": "p95"}
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket{job=\"reporunner-api\"}[5m])) by (le))",
+          "legendFormat": "p95"
+        }
       ],
-      "datasource": {"type": "prometheus", "uid": "PROM_DS"}
+      "datasource": { "type": "prometheus", "uid": "PROM_DS" }
     }
   ],
   "refresh": "30s",
   "schemaVersion": 37,
   "style": "dark",
   "tags": ["reporunner", "api"],
-  "templating": {"list": []},
-  "time": {"from": "now-6h", "to": "now"},
+  "templating": { "list": [] },
+  "time": { "from": "now-6h", "to": "now" },
   "timezone": "",
   "title": "Reporunner API Performance",
   "version": 1

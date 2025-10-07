@@ -1,6 +1,6 @@
 import { EventEmitter } from 'node:events';
 import { Logger } from '@reporunner/core';
-import type { ExecutionStatus, } from '@reporunner/shared';
+import type { ExecutionStatus } from '@reporunner/shared';
 import type { Server as SocketIOServer } from 'socket.io';
 
 export interface ExecutionEvent {

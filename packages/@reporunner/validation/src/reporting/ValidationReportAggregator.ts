@@ -1,15 +1,14 @@
 import type {
-  ValidationResults,
-  ValidationReport,
-  ValidationSummary,
-  OptimizationRecommendation,
-  PerformanceDashboard,
   ChartData,
-  MetricCard,
-  TrendAnalysis,
   ComparisonData,
-  RecommendationList,
   DocumentationUpdate,
+  MetricCard,
+  PerformanceDashboard,
+  RecommendationList,
+  TrendAnalysis,
+  ValidationReport,
+  ValidationResults,
+  ValidationSummary,
 } from '../types/index.js';
 
 /**
@@ -68,15 +67,23 @@ export class ValidationReportAggregator {
 
     // Count completed validations based on available data
     let completedValidations = 0;
-    let totalValidations = 3; // System, Performance, Architecture
+    const totalValidations = 3; // System, Performance, Architecture
 
-    if (results.systemValidation) completedValidations++;
-    if (results.performanceAnalysis) completedValidations++;
-    if (results.architectureValidation) completedValidations++;
+    if (results.systemValidation) {
+      completedValidations++;
+    }
+    if (results.performanceAnalysis) {
+      completedValidations++;
+    }
+    if (results.architectureValidation) {
+      completedValidations++;
+    }
 
     // Calculate performance improvements
-    const buildTimeImprovement = results.performanceAnalysis?.buildMetrics?.improvementPercentage || 0;
-    const bundleSizeReduction = results.performanceAnalysis?.bundleMetrics?.reductionPercentage || 0;
+    const buildTimeImprovement =
+      results.performanceAnalysis?.buildMetrics?.improvementPercentage || 0;
+    const bundleSizeReduction =
+      results.performanceAnalysis?.bundleMetrics?.reductionPercentage || 0;
 
     return {
       overallStatus: results.status,
@@ -143,7 +150,10 @@ export class ValidationReportAggregator {
           ([pkg, size]) => ({
             package: pkg,
             size: Math.round(size / 1024), // Convert to KB
-            percentage: ((size / results.performanceAnalysis.bundleMetrics.totalSize) * 100).toFixed(1),
+            percentage: (
+              (size / results.performanceAnalysis.bundleMetrics.totalSize) *
+              100
+            ).toFixed(1),
           })
         ),
       });
@@ -154,18 +164,30 @@ export class ValidationReportAggregator {
       const memoryData = [
         {
           phase: 'Development',
-          heapUsed: Math.round(results.performanceAnalysis.memoryProfile.development.heapUsed / 1024 / 1024),
-          heapTotal: Math.round(results.performanceAnalysis.memoryProfile.development.heapTotal / 1024 / 1024),
+          heapUsed: Math.round(
+            results.performanceAnalysis.memoryProfile.development.heapUsed / 1024 / 1024
+          ),
+          heapTotal: Math.round(
+            results.performanceAnalysis.memoryProfile.development.heapTotal / 1024 / 1024
+          ),
         },
         {
           phase: 'Build',
-          heapUsed: Math.round(results.performanceAnalysis.memoryProfile.build.heapUsed / 1024 / 1024),
-          heapTotal: Math.round(results.performanceAnalysis.memoryProfile.build.heapTotal / 1024 / 1024),
+          heapUsed: Math.round(
+            results.performanceAnalysis.memoryProfile.build.heapUsed / 1024 / 1024
+          ),
+          heapTotal: Math.round(
+            results.performanceAnalysis.memoryProfile.build.heapTotal / 1024 / 1024
+          ),
         },
         {
           phase: 'Runtime',
-          heapUsed: Math.round(results.performanceAnalysis.memoryProfile.runtime.heapUsed / 1024 / 1024),
-          heapTotal: Math.round(results.performanceAnalysis.memoryProfile.runtime.heapTotal / 1024 / 1024),
+          heapUsed: Math.round(
+            results.performanceAnalysis.memoryProfile.runtime.heapUsed / 1024 / 1024
+          ),
+          heapTotal: Math.round(
+            results.performanceAnalysis.memoryProfile.runtime.heapTotal / 1024 / 1024
+          ),
         },
       ];
 
@@ -223,7 +245,9 @@ export class ValidationReportAggregator {
         data: [
           {
             category: 'Healthy Dependencies',
-            count: depAnalysis.dependencyGraph.metrics.totalEdges - depAnalysis.circularDependencies.length,
+            count:
+              depAnalysis.dependencyGraph.metrics.totalEdges -
+              depAnalysis.circularDependencies.length,
             color: '#28a745',
           },
           {
@@ -259,8 +283,12 @@ export class ValidationReportAggregator {
         unit: '%',
         trend: buildMetrics.improvementPercentage > 0 ? 'up' : 'down',
         trendValue: buildMetrics.improvementPercentage,
-        status: buildMetrics.improvementPercentage >= 30 ? 'success' :
-                buildMetrics.improvementPercentage >= 15 ? 'warning' : 'error',
+        status:
+          buildMetrics.improvementPercentage >= 30
+            ? 'success'
+            : buildMetrics.improvementPercentage >= 15
+              ? 'warning'
+              : 'error',
       });
 
       // Cache hit rate metric
@@ -269,8 +297,12 @@ export class ValidationReportAggregator {
         title: 'Build Cache Hit Rate',
         value: buildMetrics.cacheHitRate,
         unit: '%',
-        status: buildMetrics.cacheHitRate >= 80 ? 'success' :
-                buildMetrics.cacheHitRate >= 60 ? 'warning' : 'error',
+        status:
+          buildMetrics.cacheHitRate >= 80
+            ? 'success'
+            : buildMetrics.cacheHitRate >= 60
+              ? 'warning'
+              : 'error',
       });
 
       // Parallel efficiency metric
@@ -279,8 +311,12 @@ export class ValidationReportAggregator {
         title: 'Build Parallel Efficiency',
         value: buildMetrics.parallelEfficiency,
         unit: '%',
-        status: buildMetrics.parallelEfficiency >= 70 ? 'success' :
-                buildMetrics.parallelEfficiency >= 50 ? 'warning' : 'error',
+        status:
+          buildMetrics.parallelEfficiency >= 70
+            ? 'success'
+            : buildMetrics.parallelEfficiency >= 50
+              ? 'warning'
+              : 'error',
       });
     }
 
@@ -294,8 +330,12 @@ export class ValidationReportAggregator {
         unit: '%',
         trend: bundleMetrics.reductionPercentage > 0 ? 'up' : 'down',
         trendValue: bundleMetrics.reductionPercentage,
-        status: bundleMetrics.reductionPercentage >= 20 ? 'success' :
-                bundleMetrics.reductionPercentage >= 10 ? 'warning' : 'error',
+        status:
+          bundleMetrics.reductionPercentage >= 20
+            ? 'success'
+            : bundleMetrics.reductionPercentage >= 10
+              ? 'warning'
+              : 'error',
       });
     }
 
@@ -307,8 +347,12 @@ export class ValidationReportAggregator {
         title: 'Overall Test Coverage',
         value: testResults.coverage.overall,
         unit: '%',
-        status: testResults.coverage.overall >= 80 ? 'success' :
-                testResults.coverage.overall >= 60 ? 'warning' : 'error',
+        status:
+          testResults.coverage.overall >= 80
+            ? 'success'
+            : testResults.coverage.overall >= 60
+              ? 'warning'
+              : 'error',
       });
 
       // Test success rate
@@ -329,16 +373,22 @@ export class ValidationReportAggregator {
         title: 'Architecture Health Score',
         value: results.architectureValidation.dependencyAnalysis.healthScore,
         unit: '/100',
-        status: results.architectureValidation.dependencyAnalysis.healthScore >= 90 ? 'success' :
-                results.architectureValidation.dependencyAnalysis.healthScore >= 70 ? 'warning' : 'error',
+        status:
+          results.architectureValidation.dependencyAnalysis.healthScore >= 90
+            ? 'success'
+            : results.architectureValidation.dependencyAnalysis.healthScore >= 70
+              ? 'warning'
+              : 'error',
       });
     }
 
     // API endpoint health
     if (results.systemValidation?.apiValidation) {
       const apiValidation = results.systemValidation.apiValidation;
-      const healthPercentage = ((apiValidation.validatedEndpoints - apiValidation.failedEndpoints.length) /
-                               apiValidation.totalEndpoints) * 100;
+      const healthPercentage =
+        ((apiValidation.validatedEndpoints - apiValidation.failedEndpoints.length) /
+          apiValidation.totalEndpoints) *
+        100;
       metrics.push({
         id: 'api-endpoint-health',
         title: 'API Endpoint Health',
@@ -352,12 +402,12 @@ export class ValidationReportAggregator {
     if (results.performanceAnalysis?.devExperienceMetrics) {
       const devMetrics = results.performanceAnalysis.devExperienceMetrics;
       // Calculate composite DX score
-      const dxScore = (
-        (devMetrics.typeScriptPerformance.typeResolutionAccuracy * 0.3) +
-        ((10000 - Math.min(devMetrics.typeScriptPerformance.autocompleteSpeed, 10000)) / 100 * 0.3) +
-        ((10000 - Math.min(devMetrics.idePerformance.navigationSpeed, 10000)) / 100 * 0.2) +
-        (devMetrics.idePerformance.sourceMapAccuracy * 0.2)
-      );
+      const dxScore =
+        devMetrics.typeScriptPerformance.typeResolutionAccuracy * 0.3 +
+        ((10000 - Math.min(devMetrics.typeScriptPerformance.autocompleteSpeed, 10000)) / 100) *
+          0.3 +
+        ((10000 - Math.min(devMetrics.idePerformance.navigationSpeed, 10000)) / 100) * 0.2 +
+        devMetrics.idePerformance.sourceMapAccuracy * 0.2;
 
       metrics.push({
         id: 'developer-experience-score',
@@ -402,13 +452,16 @@ export class ValidationReportAggregator {
     // Test coverage trend (if historical data available)
     if (this.historicalData.length > 0 && results.systemValidation?.testResults) {
       const currentCoverage = results.systemValidation.testResults.coverage.overall;
-      const previousCoverage = this.historicalData[this.historicalData.length - 1]?.systemValidation?.testResults?.coverage?.overall;
+      const previousCoverage =
+        this.historicalData[this.historicalData.length - 1]?.systemValidation?.testResults?.coverage
+          ?.overall;
 
       if (previousCoverage !== undefined) {
         const coverageChange = ((currentCoverage - previousCoverage) / previousCoverage) * 100;
         trends.push({
           metric: 'Test Coverage',
-          direction: coverageChange > 1 ? 'improving' : coverageChange < -1 ? 'degrading' : 'stable',
+          direction:
+            coverageChange > 1 ? 'improving' : coverageChange < -1 ? 'degrading' : 'stable',
           changePercentage: Math.abs(coverageChange),
           timeframe: 'Since last validation',
         });
@@ -546,7 +599,9 @@ export class ValidationReportAggregator {
     }
 
     // Troubleshooting guide
-    const criticalRecommendations = results.recommendations.filter((r) => r.priority === 'critical');
+    const criticalRecommendations = results.recommendations.filter(
+      (r) => r.priority === 'critical'
+    );
     if (criticalRecommendations.length > 0) {
       updates.push({
         file: 'docs/troubleshooting/validation-issues.md',
@@ -583,20 +638,31 @@ Validation completed on: ${results.timestamp.toISOString()}
 - Overall Status: ${results.status.toUpperCase()}
 
 ## Package Dependencies
-${depAnalysis.dependencyGraph.nodes.map(node =>
-  `- **${node.packageName}** (${node.type}) - Size: ${Math.round(node.size / 1024)}KB`
-).join('\n')}
+${depAnalysis.dependencyGraph.nodes
+  .map(
+    (node) => `- **${node.packageName}** (${node.type}) - Size: ${Math.round(node.size / 1024)}KB`
+  )
+  .join('\n')}
 
 ## Issues Found
-${depAnalysis.circularDependencies.length > 0 ?
-  `### Circular Dependencies\n${depAnalysis.circularDependencies.map(dep =>
-    `- ${dep.packages.join(' → ')} (${dep.severity})`
-  ).join('\n')}` : '✅ No circular dependencies found'}
+${
+  depAnalysis.circularDependencies.length > 0
+    ? `### Circular Dependencies\n${depAnalysis.circularDependencies
+        .map((dep) => `- ${dep.packages.join(' → ')} (${dep.severity})`)
+        .join('\n')}`
+    : '✅ No circular dependencies found'
+}
 
-${depAnalysis.packageBoundaryViolations.length > 0 ?
-  `### Boundary Violations\n${depAnalysis.packageBoundaryViolations.map(violation =>
-    `- ${violation.fromPackage} → ${violation.toPackage}: ${violation.violationType}`
-  ).join('\n')}` : '✅ No boundary violations found'}
+${
+  depAnalysis.packageBoundaryViolations.length > 0
+    ? `### Boundary Violations\n${depAnalysis.packageBoundaryViolations
+        .map(
+          (violation) =>
+            `- ${violation.fromPackage} → ${violation.toPackage}: ${violation.violationType}`
+        )
+        .join('\n')}`
+    : '✅ No boundary violations found'
+}
 `;
   }
 
@@ -621,19 +687,22 @@ ${depAnalysis.packageBoundaryViolations.length > 0 ?
 
 ## Package Build Times
 ${Object.entries(buildMetrics.packageBuildTimes)
-  .sort(([,a], [,b]) => b - a)
+  .sort(([, a], [, b]) => b - a)
   .map(([pkg, time]) => `- **${pkg}**: ${Math.round(time / 1000)}s`)
   .join('\n')}
 
 ## Bottlenecks Identified
-${buildMetrics.bottlenecks.map(bottleneck =>
-  `### ${bottleneck.packageName} (${Math.round(bottleneck.buildTime / 1000)}s)
-${bottleneck.suggestions.map(s => `- ${s}`).join('\n')}`
-).join('\n\n')}
+${buildMetrics.bottlenecks
+  .map(
+    (bottleneck) =>
+      `### ${bottleneck.packageName} (${Math.round(bottleneck.buildTime / 1000)}s)
+${bottleneck.suggestions.map((s) => `- ${s}`).join('\n')}`
+  )
+  .join('\n\n')}
 
 ## Bundle Size by Package
 ${Object.entries(bundleMetrics.packageSizes)
-  .sort(([,a], [,b]) => b - a)
+  .sort(([, a], [, b]) => b - a)
   .map(([pkg, size]) => `- **${pkg}**: ${Math.round(size / 1024)}KB`)
   .join('\n')}
 `;
@@ -663,7 +732,7 @@ ${Object.entries(bundleMetrics.packageSizes)
 - **Inconsistent Paths**: ${devMetrics.importPathMetrics.inconsistentPaths}
 
 ## Optimization Opportunities
-${devMetrics.importPathMetrics.optimizationOpportunities.map(opp => `- ${opp}`).join('\n')}
+${devMetrics.importPathMetrics.optimizationOpportunities.map((opp) => `- ${opp}`).join('\n')}
 
 ## Best Practices
 - Use consistent import paths across packages
@@ -677,13 +746,15 @@ ${devMetrics.importPathMetrics.optimizationOpportunities.map(opp => `- ${opp}`).
    * Generate troubleshooting content
    */
   private generateTroubleshootingContent(results: ValidationResults): string {
-    const criticalIssues = results.recommendations.filter(r => r.priority === 'critical');
-    const highIssues = results.recommendations.filter(r => r.priority === 'high');
+    const criticalIssues = results.recommendations.filter((r) => r.priority === 'critical');
+    const highIssues = results.recommendations.filter((r) => r.priority === 'high');
 
     return `# Validation Issues Troubleshooting Guide
 
 ## Critical Issues (${criticalIssues.length})
-${criticalIssues.map(issue => `
+${criticalIssues
+  .map(
+    (issue) => `
 ### ${issue.title}
 **Category**: ${issue.category}
 **Impact**: ${issue.impact}
@@ -692,17 +763,23 @@ ${criticalIssues.map(issue => `
 **Problem**: ${issue.description}
 
 **Solution Steps**:
-${issue.steps.map(step => `1. ${step}`).join('\n')}
+${issue.steps.map((step) => `1. ${step}`).join('\n')}
 
 **Affected Packages**: ${issue.affectedPackages.join(', ')}
-`).join('\n')}
+`
+  )
+  .join('\n')}
 
 ## High Priority Issues (${highIssues.length})
-${highIssues.map(issue => `
+${highIssues
+  .map(
+    (issue) => `
 ### ${issue.title}
 **Problem**: ${issue.description}
 **Solution**: ${issue.steps.join(' → ')}
-`).join('\n')}
+`
+  )
+  .join('\n')}
 
 ## Quick Fixes
 - Run \`pnpm run build\` to check for build issues

@@ -1,7 +1,7 @@
+import * as fs from 'node:fs';
+import * as path from 'node:path';
 import * as ts from 'typescript';
-import * as path from 'path';
-import * as fs from 'fs';
-import { IntelliSenseTestResult, IntelliSenseTestCase } from './types';
+import type { IntelliSenseTestCase, IntelliSenseTestResult } from './types';
 
 export class IntelliSenseTester {
   private workspaceRoot: string;
@@ -19,8 +19,7 @@ export class IntelliSenseTester {
       try {
         const result = await this.runSingleIntelliSenseTest(testCase);
         results.push(result);
-      } catch (error) {
-        console.error(`Failed to run IntelliSense test ${testCase.testName}:`, error);
+      } catch (_error) {
         results.push({
           testName: testCase.testName,
           sourceFile: testCase.sourceFile,
@@ -29,7 +28,7 @@ export class IntelliSenseTester {
           actualFeatures: [],
           responseTime: 0,
           accuracy: 0,
-          successful: false
+          successful: false,
         });
       }
     }
@@ -37,7 +36,9 @@ export class IntelliSenseTester {
     return results;
   }
 
-  private async runSingleIntelliSenseTest(testCase: IntelliSenseTestCase): Promise<IntelliSenseTestResult> {
+  private async runSingleIntelliSenseTest(
+    testCase: IntelliSenseTestCase
+  ): Promise<IntelliSenseTestResult> {
     const startTime = Date.now();
 
     try {
@@ -62,9 +63,11 @@ export class IntelliSenseTester {
         if (completions && completions.entries.length > 0) {
           actualFeatures.push('completions');
           // Add specific completion items that match expected features
-          const completionNames = completions.entries.map(entry => entry.name);
-          testCase.expectedFeatures.forEach(expected => {
-            if (completionNames.some(name => name.includes(expected) || expected.includes(name))) {
+          const completionNames = completions.entries.map((entry) => entry.name);
+          testCase.expectedFeatures.forEach((expected) => {
+            if (
+              completionNames.some((name) => name.includes(expected) || expected.includes(name))
+            ) {
               actualFeatures.push(`completion:${expected}`);
             }
           });
@@ -96,19 +99,20 @@ export class IntelliSenseTester {
 
         // 6. Rename
         const renameInfo = languageService.getRenameInfo(sourceFilePath, position);
-        if (renameInfo && renameInfo.canRename) {
+        if (renameInfo?.canRename) {
           actualFeatures.push('rename');
         }
 
         const responseTime = Date.now() - startTime;
 
         // Calculate accuracy
-        const matchedFeatures = testCase.expectedFeatures.filter(expected =>
-          actualFeatures.some(actual => actual.includes(expected) || expected.includes(actual))
+        const matchedFeatures = testCase.expectedFeatures.filter((expected) =>
+          actualFeatures.some((actual) => actual.includes(expected) || expected.includes(actual))
         );
-        const accuracy = testCase.expectedFeatures.length > 0
-          ? (matchedFeatures.length / testCase.expectedFeatures.length) * 100
-          : 0;
+        const accuracy =
+          testCase.expectedFeatures.length > 0
+            ? (matchedFeatures.length / testCase.expectedFeatures.length) * 100
+            : 0;
 
         const successful = accuracy >= 60; // Consider 60% accuracy as successful
 
@@ -120,17 +124,15 @@ export class IntelliSenseTester {
           actualFeatures,
           responseTime,
           accuracy,
-          successful
+          successful,
         };
-
       } finally {
         // Clean up test file
         if (!testFileExists && fs.existsSync(sourceFilePath)) {
           fs.unlinkSync(sourceFilePath);
         }
       }
-
-    } catch (error) {
+    } catch (_error) {
       const responseTime = Date.now() - startTime;
       return {
         testName: testCase.testName,
@@ -140,7 +142,7 @@ export class IntelliSenseTester {
         actualFeatures: [],
         responseTime,
         accuracy: 0,
-        successful: false
+        successful: false,
       };
     }
   }
@@ -154,7 +156,7 @@ export class IntelliSenseTester {
       sourceFile: 'test-intellisense-core.ts',
       position: { line: 3, character: 15 },
       expectedFeatures: ['completions', 'WorkflowEngine', 'NodeRegistry', 'quickInfo'],
-      description: 'Test IntelliSense for core package exports'
+      description: 'Test IntelliSense for core package exports',
     });
 
     testCases.push({
@@ -162,7 +164,7 @@ export class IntelliSenseTester {
       sourceFile: 'test-intellisense-auth.ts',
       position: { line: 3, character: 12 },
       expectedFeatures: ['completions', 'AuthService', 'UserManager', 'quickInfo'],
-      description: 'Test IntelliSense for auth package exports'
+      description: 'Test IntelliSense for auth package exports',
     });
 
     // Test method completions
@@ -171,7 +173,7 @@ export class IntelliSenseTester {
       sourceFile: 'test-intellisense-methods.ts',
       position: { line: 4, character: 8 },
       expectedFeatures: ['completions', 'signatureHelp', 'quickInfo'],
-      description: 'Test method completions and signature help'
+      description: 'Test method completions and signature help',
     });
 
     // Test type information
@@ -180,7 +182,7 @@ export class IntelliSenseTester {
       sourceFile: 'test-intellisense-types.ts',
       position: { line: 2, character: 20 },
       expectedFeatures: ['quickInfo', 'definition', 'references'],
-      description: 'Test type information and navigation'
+      description: 'Test type information and navigation',
     });
 
     // Test cross-package references
@@ -189,7 +191,7 @@ export class IntelliSenseTester {
       sourceFile: 'test-intellisense-cross.ts',
       position: { line: 5, character: 10 },
       expectedFeatures: ['definition', 'references', 'rename'],
-      description: 'Test cross-package symbol references'
+      description: 'Test cross-package symbol references',
     });
 
     return testCases;
@@ -251,7 +253,10 @@ export {};
     fs.writeFileSync(testFilePath, testContent);
   }
 
-  private getPositionOffset(fileName: string, position: { line: number; character: number }): number {
+  private getPositionOffset(
+    fileName: string,
+    position: { line: number; character: number }
+  ): number {
     if (!fs.existsSync(fileName)) {
       return 0;
     }
@@ -290,13 +295,13 @@ export {};
     const allFiles = [...fileNames, ...packageFiles];
 
     const files: { [fileName: string]: { version: number } } = {};
-    allFiles.forEach(fileName => {
+    allFiles.forEach((fileName) => {
       files[fileName] = { version: 0 };
     });
 
     const servicesHost: ts.LanguageServiceHost = {
       getScriptFileNames: () => Object.keys(files),
-      getScriptVersion: (fileName) => files[fileName] && files[fileName].version.toString(),
+      getScriptVersion: (fileName) => files[fileName]?.version.toString(),
       getScriptSnapshot: (fileName) => {
         if (!fs.existsSync(fileName)) {
           return undefined;
@@ -322,14 +327,20 @@ export {};
     const packagesDir = path.join(this.workspaceRoot, 'packages');
 
     const scanDirectory = (dir: string) => {
-      if (!fs.existsSync(dir)) return;
+      if (!fs.existsSync(dir)) {
+        return;
+      }
 
       const entries = fs.readdirSync(dir, { withFileTypes: true });
 
       for (const entry of entries) {
         const fullPath = path.join(dir, entry.name);
 
-        if (entry.isDirectory() && !entry.name.includes('node_modules') && !entry.name.includes('dist')) {
+        if (
+          entry.isDirectory() &&
+          !entry.name.includes('node_modules') &&
+          !entry.name.includes('dist')
+        ) {
           scanDirectory(fullPath);
         } else if (entry.isFile() && (entry.name.endsWith('.ts') || entry.name.endsWith('.tsx'))) {
           files.push(fullPath);

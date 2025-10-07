@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /* eslint-disable no-console */
-const { writeFileSync, mkdirSync } = require('fs');
-const { join } = require('path');
+const { writeFileSync, mkdirSync } = require('node:fs');
+const { join } = require('node:path');
 
 async function main() {
   // Import compiled TS on the fly with tsx register if available
@@ -12,7 +12,15 @@ async function main() {
     // ignore if not available; assume ts is already transpiled or paths work
   }
   // Resolve path to spec generator using absolute from repo root
-  const generatorPath = join(process.cwd(), 'packages', '@reporunner', 'api', 'src', 'swagger', 'spec-generator.ts');
+  const generatorPath = join(
+    process.cwd(),
+    'packages',
+    '@reporunner',
+    'api',
+    'src',
+    'swagger',
+    'spec-generator.ts'
+  );
   const { generateOpenAPISpec } = require(generatorPath);
 
   const spec = generateOpenAPISpec();

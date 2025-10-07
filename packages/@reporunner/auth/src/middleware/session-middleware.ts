@@ -1,12 +1,19 @@
 import * as crypto from 'node:crypto';
 import type { NextFunction, Request, Response } from 'express';
 
+export interface SessionRequest extends Request {
+  session?: Session;
+  sessionId?: string;
+  createSession?: (userId: string, data?: Record<string, unknown>) => Promise<Session>;
+  destroySession?: () => Promise<void>;
+}
+
 export interface Session {
   id: string;
   userId: string;
   createdAt: Date;
   expiresAt: Date;
-  data: Record<string, any>;
+  data: Record<string, unknown>;
 }
 
 export interface SessionConfig {
@@ -98,7 +105,10 @@ export function createSessionMiddleware(config: SessionConfig) {
       }
 
       // Add session management functions to request
-      (req as any).createSession = async (userId: string, data: Record<string, any> = {}) => {
+      (req as SessionRequest).createSession = async (
+        userId: string,
+        data: Record<string, unknown> = {}
+      ) => {
         const newSessionId = generateSessionId();
         const session: Session = {
           id: newSessionId,
@@ -124,7 +134,7 @@ export function createSessionMiddleware(config: SessionConfig) {
         return session;
       };
 
-      (req as any).destroySession = async () => {
+      (req as SessionRequest).destroySession = async () => {
         if (req.sessionId) {
           await store.destroy(req.sessionId);
           res.clearCookie('sessionId');

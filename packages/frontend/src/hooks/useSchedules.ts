@@ -3,7 +3,7 @@
  * React hooks for workflow scheduling (calls backend API)
  */
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 export interface ScheduledWorkflow {
   id: string;
@@ -44,7 +44,9 @@ export const useSchedules = (workflowId?: string) => {
     queryKey: ['schedules', { workflowId }],
     queryFn: async () => {
       const params = new URLSearchParams();
-      if (workflowId) params.append('workflowId', workflowId);
+      if (workflowId) {
+        params.append('workflowId', workflowId);
+      }
 
       const response = await fetch(`/api/schedules?${params}`);
 
@@ -120,10 +122,7 @@ export const useUpdateSchedule = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ id, updates }: {
-      id: string;
-      updates: Partial<ScheduledWorkflow>
-    }) => {
+    mutationFn: async ({ id, updates }: { id: string; updates: Partial<ScheduledWorkflow> }) => {
       const response = await fetch(`/api/schedules/${id}`, {
         method: 'PUT',
         headers: {
@@ -233,7 +232,9 @@ export const useScheduledExecutions = (workflowId?: string) => {
     queryKey: ['schedules', 'executions', { workflowId }],
     queryFn: async () => {
       const params = new URLSearchParams();
-      if (workflowId) params.append('workflowId', workflowId);
+      if (workflowId) {
+        params.append('workflowId', workflowId);
+      }
 
       const response = await fetch(`/api/schedules/executions?${params}`);
 

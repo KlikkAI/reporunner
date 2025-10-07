@@ -182,7 +182,9 @@ export const ConditionalBranchingPanel: React.FC<ConditionalBranchingPanelProps>
   };
 
   const getTargetNodes = (sourceNodeId: string): string[] => {
-    return edges.filter((edge: any) => edge.source === sourceNodeId).map((edge: any) => edge.target);
+    return edges
+      .filter((edge: any) => edge.source === sourceNodeId)
+      .map((edge: any) => edge.target);
   };
 
   const handleCreateBranch = async (values: any) => {

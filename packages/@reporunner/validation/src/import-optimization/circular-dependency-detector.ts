@@ -1,6 +1,6 @@
-import * as path from 'path';
-import * as fs from 'fs';
-import { CircularDependency } from './types';
+import * as fs from 'node:fs';
+import * as path from 'node:path';
+import type { CircularDependency } from './types';
 
 export class CircularDependencyDetector {
   private workspaceRoot: string;
@@ -18,7 +18,7 @@ export class CircularDependencyDetector {
     const cycles = this.findCycles();
 
     // Convert cycles to CircularDependency objects with analysis
-    return cycles.map(cycle => this.analyzeCycle(cycle));
+    return cycles.map((cycle) => this.analyzeCycle(cycle));
   }
 
   private async buildDependencyGraph(): Promise<void> {
@@ -31,8 +31,7 @@ export class CircularDependencyDetector {
       try {
         const dependencies = await this.extractDependencies(filePath);
         this.dependencyGraph.set(filePath, new Set(dependencies));
-      } catch (error) {
-        console.warn(`Could not extract dependencies from ${filePath}:`, error);
+      } catch (_error) {
         this.dependencyGraph.set(filePath, new Set());
       }
     }
@@ -55,9 +54,11 @@ export class CircularDependencyDetector {
         if (resolvedPath) {
           dependencies.push(resolvedPath);
         }
-      } else if (importPath.startsWith('@reporunner/') ||
-                 importPath.startsWith('../packages/') ||
-                 importPath.startsWith('./packages/')) {
+      } else if (
+        importPath.startsWith('@reporunner/') ||
+        importPath.startsWith('../packages/') ||
+        importPath.startsWith('./packages/')
+      ) {
         // Handle workspace package imports
         const resolvedPath = this.resolveWorkspaceImport(importPath);
         if (resolvedPath) {
@@ -71,7 +72,7 @@ export class CircularDependencyDetector {
 
   private resolveRelativeImport(fromFile: string, importPath: string): string | null {
     const fromDir = path.dirname(fromFile);
-    let resolvedPath = path.resolve(fromDir, importPath);
+    const resolvedPath = path.resolve(fromDir, importPath);
 
     // Try different extensions
     const extensions = ['.ts', '.tsx', '.js', '.jsx'];
@@ -112,7 +113,7 @@ export class CircularDependencyDetector {
             if (fs.existsSync(mainPath)) {
               return mainPath;
             }
-          } catch (error) {
+          } catch (_error) {
             // Fallback to src/index.ts
           }
         }
@@ -128,11 +129,11 @@ export class CircularDependencyDetector {
     // Handle other workspace imports
     if (importPath.includes('packages/')) {
       const resolvedPath = path.resolve(this.workspaceRoot, importPath);
-      if (fs.existsSync(resolvedPath + '.ts')) {
-        return resolvedPath + '.ts';
+      if (fs.existsSync(`${resolvedPath}.ts`)) {
+        return `${resolvedPath}.ts`;
       }
-      if (fs.existsSync(resolvedPath + '.tsx')) {
-        return resolvedPath + '.tsx';
+      if (fs.existsSync(`${resolvedPath}.tsx`)) {
+        return `${resolvedPath}.tsx`;
       }
     }
 
@@ -191,8 +192,8 @@ export class CircularDependencyDetector {
 
     // Check if cycle involves core packages (more critical)
     const corePackages = ['@reporunner/core', 'shared'];
-    const involvesCorePackage = cycle.some(filePath =>
-      corePackages.some(pkg => filePath.includes(pkg))
+    const involvesCorePackage = cycle.some((filePath) =>
+      corePackages.some((pkg) => filePath.includes(pkg))
     );
 
     if (involvesCorePackage) {
@@ -207,11 +208,19 @@ export class CircularDependencyDetector {
     }
 
     // Generate specific suggestions based on file types
-    const fileTypes = cycle.map(filePath => {
-      if (filePath.includes('/types/')) return 'types';
-      if (filePath.includes('/services/')) return 'services';
-      if (filePath.includes('/controllers/')) return 'controllers';
-      if (filePath.includes('/components/')) return 'components';
+    const fileTypes = cycle.map((filePath) => {
+      if (filePath.includes('/types/')) {
+        return 'types';
+      }
+      if (filePath.includes('/services/')) {
+        return 'services';
+      }
+      if (filePath.includes('/controllers/')) {
+        return 'controllers';
+      }
+      if (filePath.includes('/components/')) {
+        return 'components';
+      }
       return 'other';
     });
 
@@ -220,7 +229,9 @@ export class CircularDependencyDetector {
     }
 
     if (fileTypes.includes('services') && fileTypes.includes('controllers')) {
-      suggestions.push('Use dependency injection or event-driven patterns to decouple services and controllers');
+      suggestions.push(
+        'Use dependency injection or event-driven patterns to decouple services and controllers'
+      );
     }
 
     // Default suggestions
@@ -231,14 +242,14 @@ export class CircularDependencyDetector {
     }
 
     // Create readable cycle description
-    const relativePaths = cycle.map(filePath => path.relative(this.workspaceRoot, filePath));
+    const relativePaths = cycle.map((filePath) => path.relative(this.workspaceRoot, filePath));
     const description = `Circular dependency chain: ${relativePaths.join(' → ')}`;
 
     return {
       cycle: relativePaths,
       severity,
       description,
-      suggestions
+      suggestions,
     };
   }
 
@@ -247,17 +258,21 @@ export class CircularDependencyDetector {
     const packagesDir = path.join(this.workspaceRoot, 'packages');
 
     const scanDirectory = (dir: string) => {
-      if (!fs.existsSync(dir)) return;
+      if (!fs.existsSync(dir)) {
+        return;
+      }
 
       const entries = fs.readdirSync(dir, { withFileTypes: true });
 
       for (const entry of entries) {
         const fullPath = path.join(dir, entry.name);
 
-        if (entry.isDirectory() &&
-            !entry.name.includes('node_modules') &&
-            !entry.name.includes('dist') &&
-            !entry.name.includes('build')) {
+        if (
+          entry.isDirectory() &&
+          !entry.name.includes('node_modules') &&
+          !entry.name.includes('dist') &&
+          !entry.name.includes('build')
+        ) {
           scanDirectory(fullPath);
         } else if (entry.isFile() && (entry.name.endsWith('.ts') || entry.name.endsWith('.tsx'))) {
           files.push(fullPath);
@@ -282,9 +297,7 @@ export class CircularDependencyDetector {
     this.dependencyGraph.set(fromFile, tempDeps);
 
     const cycles = this.findCycles();
-    const wouldCreate = cycles.some(cycle =>
-      cycle.includes(fromFile) && cycle.includes(toFile)
-    );
+    const wouldCreate = cycles.some((cycle) => cycle.includes(fromFile) && cycle.includes(toFile));
 
     // Restore original dependencies
     this.dependencyGraph.set(fromFile, originalDeps);

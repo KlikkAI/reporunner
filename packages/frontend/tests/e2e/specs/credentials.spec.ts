@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import { login } from '../helpers/test-utils';
 
 test.describe('Credentials Management', () => {
@@ -100,7 +100,9 @@ test.describe('Credentials Management', () => {
     const count = await credentials.count();
 
     for (let i = 0; i < count; i++) {
-      await expect(credentials.nth(i).locator('[data-testid="credential-type"]')).toContainText('gmail');
+      await expect(credentials.nth(i).locator('[data-testid="credential-type"]')).toContainText(
+        'gmail'
+      );
     }
   });
 
@@ -208,6 +210,8 @@ test.describe('Credentials Management', () => {
     await page.click('[data-testid="save-credential"]');
 
     // Should show error
-    await expect(page.locator('[data-testid="error-message"]')).toContainText(/already exists|duplicate/i);
+    await expect(page.locator('[data-testid="error-message"]')).toContainText(
+      /already exists|duplicate/i
+    );
   });
 });

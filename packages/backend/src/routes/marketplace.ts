@@ -289,8 +289,8 @@ router.post(
  */
 router.get(
   '/stats',
-  asyncHandler(async (req, res) => {
-    const [registrySta_req downloadStats] = await Promise.all([
+  asyncHandler(async (_req, res) => {
+    const [_registrySta_req downloadStats] = await Promise.all([
       pluginRegistry.getMarketplaceStats(),
       pluginDistribution.getDownloadStats(),
     ]);
@@ -311,13 +311,8 @@ router.get(
  */
 router.get(
   '/categories',
-  asyncHandler(async (req, res) => {
-    const categories =_req
-      { id: 'integration', name: 'Integrations', description: 'Connect with external services' },
-      { id: 'trigger', name: 'Triggers', description: 'Start workflows automatically' },
-      { id: 'action', name: 'Actions', description: 'Perform specific tasks' },
-      { id: 'utility', name: 'Utilities', description: 'Helper functions and tools' },
-      { id: 'ai', name: 'AI & ML', description: 'Artificial intelligence and machine learning' },
+  asyncHandler(async (_req, res) => {
+    const categories =_reqid: 'integration', name: 'Integrations', description: 'Connect with external services' ,id: 'trigger', name: 'Triggers', description: 'Start workflows automatically' ,id: 'action', name: 'Actions', description: 'Perform specific tasks' ,id: 'utility', name: 'Utilities', description: 'Helper functions and tools' ,id: 'ai', name: 'AI & ML', description: 'Artificial intelligence and machine learning' ,
     ];
 
     res.json({
@@ -333,12 +328,12 @@ router.get(
  */
 router.get(
   '/featured',
-  asyncHandler(async (req, res) => {
-    const searchQuery _req
+  asyncHandler(async (_req, _res) => {
+    const _searchQuery _req
       featured: true,
       limit: 10,
-      sortBy: 'downloads' as const,
-      sortOrder: 'desc' as const,
+      sortBy: 'downloads' as 
+const _sortOrder: 'desc' as const,
     };
 
     const result = await pluginRegistry.searchPlugins(searchQuery);

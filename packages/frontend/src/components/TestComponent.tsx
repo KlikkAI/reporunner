@@ -1,10 +1,8 @@
 // Test React component for source mapping validation
-import React from 'react';
+import type React from 'react';
 
 export const TestComponent: React.FC = () => {
-  const handleClick = () => {
-    console.log('Button clicked');
-  };
+  const handleClick = () => {};
 
   return (
     <div>

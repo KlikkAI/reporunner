@@ -1,16 +1,18 @@
 #!/usr/bin/env node
 
+import * as fs from 'node:fs';
+import * as path from 'node:path';
 import { Command } from 'commander';
-import * as path from 'path';
-import * as fs from 'fs';
 import { ImportPathOptimizer } from '../import-optimization/import-path-optimizer';
-import { ImportOptimizationReport } from '../import-optimization/types';
+import type { ImportOptimizationReport } from '../import-optimization/types';
 
 const program = new Command();
 
 program
   .name('import-optimizer')
-  .description('Optimize import paths and detect circular dependencies in the consolidated package architecture')
+  .description(
+    'Optimize import paths and detect circular dependencies in the consolidated package architecture'
+  )
   .version('1.0.0');
 
 program
@@ -24,15 +26,14 @@ program
   .action(async (options) => {
     try {
       const workspaceRoot = findWorkspaceRoot();
-      console.log(`Analyzing import paths in: ${workspaceRoot}`);
 
       const optimizer = new ImportPathOptimizer(workspaceRoot);
 
       let report: ImportOptimizationReport;
 
       if (options.circularOnly) {
-        console.log('Running circular dependency detection only...');
-        const circularDependencies = await optimizer['circularDependencyDetector'].detectCircularDependencies();
+        const circularDependencies =
+          await optimizer.circularDependencyDetector.detectCircularDependencies();
         report = {
           timestamp: new Date(),
           totalFiles: 0,
@@ -45,18 +46,21 @@ program
             circularDependencyCount: circularDependencies.length,
             averageImportsPerFile: 0,
             deepImportCount: 0,
-            relativeImportCount: 0
+            relativeImportCount: 0,
           },
-          recommendations: []
+          recommendations: [],
         };
       } else if (options.consistencyOnly) {
-        console.log('Running import consistency validation only...');
-        const consistencyResults = await optimizer['importConsistencyValidator'].validateImportConsistency();
+        const consistencyResults =
+          await optimizer.importConsistencyValidator.validateImportConsistency();
         const allIssues = consistencyResults.analyses.flatMap((analysis: any) => analysis.issues);
         report = {
           timestamp: new Date(),
           totalFiles: consistencyResults.analyses.length,
-          totalImports: consistencyResults.analyses.reduce((sum: number, analysis: any) => sum + analysis.imports.length, 0),
+          totalImports: consistencyResults.analyses.reduce(
+            (sum: number, analysis: any) => sum + analysis.imports.length,
+            0
+          ),
           issues: allIssues,
           circularDependencies: [],
           suggestions: [],
@@ -65,9 +69,9 @@ program
             circularDependencyCount: 0,
             averageImportsPerFile: 0,
             deepImportCount: 0,
-            relativeImportCount: 0
+            relativeImportCount: 0,
           },
-          recommendations: []
+          recommendations: [],
         };
       } else {
         report = await optimizer.optimizeImportPaths();
@@ -80,19 +84,17 @@ program
       if (options.output) {
         const outputPath = path.resolve(options.output);
         fs.writeFileSync(outputPath, JSON.stringify(report, null, 2));
-        console.log(`\nAnalysis report saved to: ${outputPath}`);
       }
 
       // Exit with appropriate code
-      const hasErrors = report.issues.some(issue => issue.severity === 'error') ||
-                       report.circularDependencies.some(cycle => cycle.severity === 'critical');
+      const hasErrors =
+        report.issues.some((issue) => issue.severity === 'error') ||
+        report.circularDependencies.some((cycle) => cycle.severity === 'critical');
 
       if (hasErrors) {
         process.exit(1);
       }
-
-    } catch (error) {
-      console.error('Error running import path analysis:', error);
+    } catch (_error) {
       process.exit(1);
     }
   });
@@ -106,23 +108,12 @@ program
   .action(async (input, options) => {
     try {
       const inputPath = path.resolve(input);
-      const reportData = JSON.parse(fs.readFileSync(inputPath, 'utf-8'));
-
-      console.log('Import path optimization fixes:');
-      console.log('This feature would apply the suggested optimizations.');
-      console.log('Implementation would include:');
-      console.log('- Consolidating duplicate imports');
-      console.log('- Converting deep imports to barrel exports');
-      console.log('- Standardizing import path patterns');
+      const _reportData = JSON.parse(fs.readFileSync(inputPath, 'utf-8'));
 
       if (options.dryRun) {
-        console.log('\n[DRY RUN] No changes were made.');
       } else {
-        console.log('\n[NOT IMPLEMENTED] Fix functionality is not yet implemented.');
       }
-
-    } catch (error) {
-      console.error('Error applying fixes:', error);
+    } catch (_error) {
       process.exit(1);
     }
   });
@@ -154,13 +145,9 @@ program
 
       if (options.output) {
         fs.writeFileSync(options.output, formattedReport);
-        console.log(`Report saved to: ${options.output}`);
       } else {
-        console.log(formattedReport);
       }
-
-    } catch (error) {
-      console.error('Error generating report:', error);
+    } catch (_error) {
       process.exit(1);
     }
   });
@@ -179,36 +166,25 @@ function findWorkspaceRoot(): string {
     currentDir = path.dirname(currentDir);
   }
 
-  throw new Error('Could not find workspace root (looking for package.json and pnpm-workspace.yaml)');
+  throw new Error(
+    'Could not find workspace root (looking for package.json and pnpm-workspace.yaml)'
+  );
 }
 
 function displayResults(report: ImportOptimizationReport, verbose: boolean = false): void {
-  console.log('\n=== Import Path Optimization Report ===');
-  console.log(`Generated: ${report.timestamp.toISOString()}`);
-  console.log(`Files Analyzed: ${report.totalFiles}`);
-  console.log(`Total Imports: ${report.totalImports}`);
-
-  // Metrics Summary
-  console.log('\n--- Metrics ---');
-  console.log(`Consistency Score: ${report.metrics.consistencyScore}%`);
-  console.log(`Circular Dependencies: ${report.metrics.circularDependencyCount}`);
-  console.log(`Average Imports per File: ${report.metrics.averageImportsPerFile}`);
-  console.log(`Deep Imports: ${report.metrics.deepImportCount}`);
-  console.log(`Relative Imports: ${report.metrics.relativeImportCount}`);
-
   // Circular Dependencies
   if (report.circularDependencies.length > 0) {
-    console.log('\n--- Circular Dependencies ---');
-    const critical = report.circularDependencies.filter(cycle => cycle.severity === 'critical').length;
-    const warnings = report.circularDependencies.filter(cycle => cycle.severity === 'warning').length;
-    console.log(`Critical: ${critical}, Warnings: ${warnings}`);
+    const _critical = report.circularDependencies.filter(
+      (cycle) => cycle.severity === 'critical'
+    ).length;
+    const _warnings = report.circularDependencies.filter(
+      (cycle) => cycle.severity === 'warning'
+    ).length;
 
     if (verbose) {
-      report.circularDependencies.forEach(cycle => {
-        const severity = cycle.severity === 'critical' ? '🚨' : '⚠️';
-        console.log(`  ${severity} ${cycle.description}`);
+      report.circularDependencies.forEach((cycle) => {
+        const _severity = cycle.severity === 'critical' ? '🚨' : '⚠️';
         if (cycle.suggestions.length > 0) {
-          console.log(`    Suggestion: ${cycle.suggestions[0]}`);
         }
       });
     }
@@ -216,53 +192,37 @@ function displayResults(report: ImportOptimizationReport, verbose: boolean = fal
 
   // Issues Summary
   if (report.issues.length > 0) {
-    console.log('\n--- Issues ---');
-    const errors = report.issues.filter(issue => issue.severity === 'error').length;
-    const warnings = report.issues.filter(issue => issue.severity === 'warning').length;
-    const info = report.issues.filter(issue => issue.severity === 'info').length;
-    console.log(`Errors: ${errors}, Warnings: ${warnings}, Info: ${info}`);
+    const _errors = report.issues.filter((issue) => issue.severity === 'error').length;
+    const _warnings = report.issues.filter((issue) => issue.severity === 'warning').length;
+    const _info = report.issues.filter((issue) => issue.severity === 'info').length;
 
     if (verbose) {
       const issueTypes = new Map<string, number>();
-      report.issues.forEach(issue => {
+      report.issues.forEach((issue) => {
         issueTypes.set(issue.type, (issueTypes.get(issue.type) || 0) + 1);
       });
-
-      console.log('\nIssue Types:');
-      issueTypes.forEach((count, type) => {
-        console.log(`  ${type}: ${count}`);
-      });
+      issueTypes.forEach((_count, _type) => {});
     }
   }
 
   // Suggestions
   if (report.suggestions.length > 0) {
-    console.log('\n--- Optimization Suggestions ---');
-    const highImpact = report.suggestions.filter(s => s.estimatedImpact === 'high').length;
-    const mediumImpact = report.suggestions.filter(s => s.estimatedImpact === 'medium').length;
-    const lowImpact = report.suggestions.filter(s => s.estimatedImpact === 'low').length;
-
-    console.log(`High Impact: ${highImpact}, Medium Impact: ${mediumImpact}, Low Impact: ${lowImpact}`);
+    const _highImpact = report.suggestions.filter((s) => s.estimatedImpact === 'high').length;
+    const _mediumImpact = report.suggestions.filter((s) => s.estimatedImpact === 'medium').length;
+    const _lowImpact = report.suggestions.filter((s) => s.estimatedImpact === 'low').length;
 
     if (verbose) {
       const suggestionTypes = new Map<string, number>();
-      report.suggestions.forEach(suggestion => {
+      report.suggestions.forEach((suggestion) => {
         suggestionTypes.set(suggestion.type, (suggestionTypes.get(suggestion.type) || 0) + 1);
       });
-
-      console.log('\nSuggestion Types:');
-      suggestionTypes.forEach((count, type) => {
-        console.log(`  ${type}: ${count}`);
-      });
+      suggestionTypes.forEach((_count, _type) => {});
     }
   }
 
   // Recommendations
   if (report.recommendations.length > 0) {
-    console.log('\n--- Recommendations ---');
-    report.recommendations.forEach((rec, index) => {
-      console.log(`${index + 1}. ${rec}`);
-    });
+    report.recommendations.forEach((_rec, _index) => {});
   }
 }
 

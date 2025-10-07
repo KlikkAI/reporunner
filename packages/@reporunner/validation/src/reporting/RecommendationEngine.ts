@@ -1,14 +1,14 @@
 import type {
-  ValidationResults,
-  OptimizationRecommendation,
   BuildMetrics,
   BundleMetrics,
-  MemoryProfile,
   DependencyReport,
-  OrganizationReport,
-  TypeSafetyReport,
-  TestResults,
   EndpointResults,
+  MemoryProfile,
+  OptimizationRecommendation,
+  OrganizationReport,
+  TestResults,
+  TypeSafetyReport,
+  ValidationResults,
   WorkflowResults,
 } from '../types/index.js';
 
@@ -74,7 +74,9 @@ export class RecommendationEngine {
   /**
    * Analyze performance metrics and generate recommendations
    */
-  private analyzePerformanceMetrics(performanceAnalysis: ValidationResults['performanceAnalysis']): OptimizationRecommendation[] {
+  private analyzePerformanceMetrics(
+    performanceAnalysis: ValidationResults['performanceAnalysis']
+  ): OptimizationRecommendation[] {
     const recommendations: OptimizationRecommendation[] = [];
 
     // Build time analysis
@@ -94,7 +96,9 @@ export class RecommendationEngine {
 
     // Developer experience analysis
     if (performanceAnalysis.devExperienceMetrics) {
-      recommendations.push(...this.analyzeDeveloperExperience(performanceAnalysis.devExperienceMetrics));
+      recommendations.push(
+        ...this.analyzeDeveloperExperience(performanceAnalysis.devExperienceMetrics)
+      );
     }
 
     return recommendations;
@@ -123,7 +127,7 @@ export class RecommendationEngine {
           'Consider splitting large packages into smaller, focused modules',
           'Use parallel build execution where possible',
         ],
-        affectedPackages: buildMetrics.bottlenecks.map(b => b.packageName),
+        affectedPackages: buildMetrics.bottlenecks.map((b) => b.packageName),
       });
     } else if (totalBuildTimeSeconds > this.performanceThresholds.buildTime.good) {
       recommendations.push({
@@ -149,7 +153,8 @@ export class RecommendationEngine {
         priority: 'high',
         title: 'Improve Build Cache Efficiency',
         description: `Cache hit rate of ${buildMetrics.cacheHitRate.toFixed(1)}% is below optimal threshold`,
-        impact: 'Poor cache utilization leads to unnecessary rebuilds and slower development cycles',
+        impact:
+          'Poor cache utilization leads to unnecessary rebuilds and slower development cycles',
         effort: 'medium',
         steps: [
           'Review Turbo cache configuration and ensure proper cache keys',
@@ -177,13 +182,14 @@ export class RecommendationEngine {
           'Consider breaking up large packages to enable better parallelization',
           'Ensure build tasks are properly configured for parallel execution',
         ],
-        affectedPackages: buildMetrics.bottlenecks.map(b => b.packageName),
+        affectedPackages: buildMetrics.bottlenecks.map((b) => b.packageName),
       });
     }
 
     // Package-specific bottleneck recommendations
-    buildMetrics.bottlenecks.forEach(bottleneck => {
-      if (bottleneck.buildTime > 30000) { // 30 seconds
+    buildMetrics.bottlenecks.forEach((bottleneck) => {
+      if (bottleneck.buildTime > 30000) {
+        // 30 seconds
         recommendations.push({
           category: 'performance',
           priority: 'high',
@@ -223,14 +229,15 @@ export class RecommendationEngine {
           'Consider using dynamic imports for large modules',
           'Analyze bundle composition with webpack-bundle-analyzer',
         ],
-        affectedPackages: bundleMetrics.largestBundles.map(b => b.packageName),
+        affectedPackages: bundleMetrics.largestBundles.map((b) => b.packageName),
       });
     }
 
     // Package-specific bundle recommendations
-    bundleMetrics.largestBundles.forEach(bundle => {
+    bundleMetrics.largestBundles.forEach((bundle) => {
       const sizeMB = bundle.size / 1024 / 1024;
-      if (sizeMB > 2) { // 2MB threshold for individual packages
+      if (sizeMB > 2) {
+        // 2MB threshold for individual packages
         recommendations.push({
           category: 'performance',
           priority: 'medium',
@@ -274,7 +281,7 @@ export class RecommendationEngine {
 
     // Memory leak recommendations
     if (memoryProfile.leaks.length > 0) {
-      const criticalLeaks = memoryProfile.leaks.filter(leak => leak.severity === 'high');
+      const criticalLeaks = memoryProfile.leaks.filter((leak) => leak.severity === 'high');
 
       if (criticalLeaks.length > 0) {
         recommendations.push({
@@ -284,12 +291,16 @@ export class RecommendationEngine {
           description: `${criticalLeaks.length} critical memory leaks detected`,
           impact: 'Memory leaks can cause application crashes and performance degradation',
           effort: 'high',
-          steps: criticalLeaks.map(leak => `Fix memory leak in ${leak.location}: ${leak.suggestion}`),
-          affectedPackages: criticalLeaks.map(leak => leak.location.split('/')[0]).filter((v, i, a) => a.indexOf(v) === i),
+          steps: criticalLeaks.map(
+            (leak) => `Fix memory leak in ${leak.location}: ${leak.suggestion}`
+          ),
+          affectedPackages: criticalLeaks
+            .map((leak) => leak.location.split('/')[0])
+            .filter((v, i, a) => a.indexOf(v) === i),
         });
       }
 
-      const moderateLeaks = memoryProfile.leaks.filter(leak => leak.severity === 'medium');
+      const moderateLeaks = memoryProfile.leaks.filter((leak) => leak.severity === 'medium');
       if (moderateLeaks.length > 0) {
         recommendations.push({
           category: 'performance',
@@ -298,15 +309,18 @@ export class RecommendationEngine {
           description: `${moderateLeaks.length} memory leaks need attention`,
           impact: 'Addressing memory leaks improves application stability',
           effort: 'medium',
-          steps: moderateLeaks.map(leak => leak.suggestion),
-          affectedPackages: moderateLeaks.map(leak => leak.location.split('/')[0]).filter((v, i, a) => a.indexOf(v) === i),
+          steps: moderateLeaks.map((leak) => leak.suggestion),
+          affectedPackages: moderateLeaks
+            .map((leak) => leak.location.split('/')[0])
+            .filter((v, i, a) => a.indexOf(v) === i),
         });
       }
     }
 
     // Memory optimization recommendations
-    memoryProfile.optimizations.forEach(optimization => {
-      if (optimization.potentialSavings > 100 * 1024 * 1024) { // 100MB potential savings
+    memoryProfile.optimizations.forEach((optimization) => {
+      if (optimization.potentialSavings > 100 * 1024 * 1024) {
+        // 100MB potential savings
         recommendations.push({
           category: 'performance',
           priority: 'medium',
@@ -346,11 +360,14 @@ export class RecommendationEngine {
   /**
    * Analyze developer experience metrics
    */
-  private analyzeDeveloperExperience(devMetrics: ValidationResults['performanceAnalysis']['devExperienceMetrics']): OptimizationRecommendation[] {
+  private analyzeDeveloperExperience(
+    devMetrics: ValidationResults['performanceAnalysis']['devExperienceMetrics']
+  ): OptimizationRecommendation[] {
     const recommendations: OptimizationRecommendation[] = [];
 
     // TypeScript performance
-    if (devMetrics.typeScriptPerformance.autocompleteSpeed > 1000) { // 1 second
+    if (devMetrics.typeScriptPerformance.autocompleteSpeed > 1000) {
+      // 1 second
       recommendations.push({
         category: 'developer-experience',
         priority: 'medium',
@@ -369,7 +386,8 @@ export class RecommendationEngine {
     }
 
     // IDE performance
-    if (devMetrics.idePerformance.navigationSpeed > 500) { // 500ms
+    if (devMetrics.idePerformance.navigationSpeed > 500) {
+      // 500ms
       recommendations.push({
         category: 'developer-experience',
         priority: 'medium',
@@ -429,7 +447,9 @@ export class RecommendationEngine {
   /**
    * Analyze system validation results
    */
-  private analyzeSystemValidation(systemValidation: ValidationResults['systemValidation']): OptimizationRecommendation[] {
+  private analyzeSystemValidation(
+    systemValidation: ValidationResults['systemValidation']
+  ): OptimizationRecommendation[] {
     const recommendations: OptimizationRecommendation[] = [];
 
     // Test results analysis
@@ -472,7 +492,8 @@ export class RecommendationEngine {
           'Set up automated coverage reporting and enforcement',
         ],
         affectedPackages: Object.keys(testResults.coverage.packageCoverage).filter(
-          pkg => testResults.coverage.packageCoverage[pkg] < this.performanceThresholds.testCoverage.poor
+          (pkg) =>
+            testResults.coverage.packageCoverage[pkg] < this.performanceThresholds.testCoverage.poor
         ),
       });
     } else if (testResults.coverage.overall < this.performanceThresholds.testCoverage.good) {
@@ -489,7 +510,8 @@ export class RecommendationEngine {
           'Add integration tests where missing',
         ],
         affectedPackages: Object.keys(testResults.coverage.packageCoverage).filter(
-          pkg => testResults.coverage.packageCoverage[pkg] < this.performanceThresholds.testCoverage.good
+          (pkg) =>
+            testResults.coverage.packageCoverage[pkg] < this.performanceThresholds.testCoverage.good
         ),
       });
     }
@@ -510,8 +532,8 @@ export class RecommendationEngine {
           'Implement proper test isolation',
         ],
         affectedPackages: testResults.packageResults
-          .filter(pkg => pkg.status === 'failure')
-          .map(pkg => pkg.packageName),
+          .filter((pkg) => pkg.status === 'failure')
+          .map((pkg) => pkg.packageName),
       });
     }
 
@@ -544,7 +566,8 @@ export class RecommendationEngine {
     }
 
     // Response time analysis
-    if (apiValidation.responseTimeMetrics.p95 > 2000) { // 2 seconds
+    if (apiValidation.responseTimeMetrics.p95 > 2000) {
+      // 2 seconds
       recommendations.push({
         category: 'performance',
         priority: 'medium',
@@ -606,7 +629,7 @@ export class RecommendationEngine {
           'Review package boundaries and dependencies',
         ],
         affectedPackages: e2eResults.crossPackageIntegration.failedIntegrations
-          .flatMap(f => [f.fromPackage, f.toPackage])
+          .flatMap((f) => [f.fromPackage, f.toPackage])
           .filter((v, i, a) => a.indexOf(v) === i),
       });
     }
@@ -617,17 +640,23 @@ export class RecommendationEngine {
   /**
    * Analyze architecture validation results
    */
-  private analyzeArchitectureValidation(architectureValidation: ValidationResults['architectureValidation']): OptimizationRecommendation[] {
+  private analyzeArchitectureValidation(
+    architectureValidation: ValidationResults['architectureValidation']
+  ): OptimizationRecommendation[] {
     const recommendations: OptimizationRecommendation[] = [];
 
     // Dependency analysis
     if (architectureValidation.dependencyAnalysis) {
-      recommendations.push(...this.analyzeDependencyReport(architectureValidation.dependencyAnalysis));
+      recommendations.push(
+        ...this.analyzeDependencyReport(architectureValidation.dependencyAnalysis)
+      );
     }
 
     // Code organization analysis
     if (architectureValidation.codeOrganization) {
-      recommendations.push(...this.analyzeCodeOrganization(architectureValidation.codeOrganization));
+      recommendations.push(
+        ...this.analyzeCodeOrganization(architectureValidation.codeOrganization)
+      );
     }
 
     // Type safety analysis
@@ -641,12 +670,16 @@ export class RecommendationEngine {
   /**
    * Analyze dependency report
    */
-  private analyzeDependencyReport(dependencyReport: DependencyReport): OptimizationRecommendation[] {
+  private analyzeDependencyReport(
+    dependencyReport: DependencyReport
+  ): OptimizationRecommendation[] {
     const recommendations: OptimizationRecommendation[] = [];
 
     // Circular dependencies
     if (dependencyReport.circularDependencies.length > 0) {
-      const criticalCircular = dependencyReport.circularDependencies.filter(dep => dep.severity === 'high');
+      const criticalCircular = dependencyReport.circularDependencies.filter(
+        (dep) => dep.severity === 'high'
+      );
 
       if (criticalCircular.length > 0) {
         recommendations.push({
@@ -656,8 +689,8 @@ export class RecommendationEngine {
           description: `${criticalCircular.length} critical circular dependencies found`,
           impact: 'Circular dependencies can cause build failures and runtime issues',
           effort: 'high',
-          steps: criticalCircular.map(dep => dep.suggestion),
-          affectedPackages: criticalCircular.flatMap(dep => dep.packages),
+          steps: criticalCircular.map((dep) => dep.suggestion),
+          affectedPackages: criticalCircular.flatMap((dep) => dep.packages),
         });
       }
     }
@@ -671,9 +704,9 @@ export class RecommendationEngine {
         description: `${dependencyReport.packageBoundaryViolations.length} package boundary violations found`,
         impact: 'Boundary violations compromise architectural integrity',
         effort: 'medium',
-        steps: dependencyReport.packageBoundaryViolations.map(violation => violation.suggestion),
+        steps: dependencyReport.packageBoundaryViolations.map((violation) => violation.suggestion),
         affectedPackages: dependencyReport.packageBoundaryViolations
-          .flatMap(v => [v.fromPackage, v.toPackage])
+          .flatMap((v) => [v.fromPackage, v.toPackage])
           .filter((v, i, a) => a.indexOf(v) === i),
       });
     }
@@ -703,7 +736,9 @@ export class RecommendationEngine {
   /**
    * Analyze code organization
    */
-  private analyzeCodeOrganization(codeOrganization: OrganizationReport): OptimizationRecommendation[] {
+  private analyzeCodeOrganization(
+    codeOrganization: OrganizationReport
+  ): OptimizationRecommendation[] {
     const recommendations: OptimizationRecommendation[] = [];
 
     // Separation of concerns
@@ -736,7 +771,7 @@ export class RecommendationEngine {
           'Establish code reuse patterns',
         ],
         affectedPackages: codeOrganization.codeDuplication.duplicatedFiles
-          .flatMap(f => f.files.map(file => file.split('/')[0]))
+          .flatMap((f) => f.files.map((file) => file.split('/')[0]))
           .filter((v, i, a) => a.indexOf(v) === i),
       });
     }
@@ -794,7 +829,7 @@ export class RecommendationEngine {
         effort: 'medium',
         steps: typeSafety.interfaceCompatibility.suggestions,
         affectedPackages: typeSafety.interfaceCompatibility.incompatibleInterfaces
-          .flatMap(i => i.packages)
+          .flatMap((i) => i.packages)
           .filter((v, i, a) => a.indexOf(v) === i),
       });
     }
@@ -805,14 +840,18 @@ export class RecommendationEngine {
   /**
    * Prioritize recommendations based on impact and effort
    */
-  private prioritizeRecommendations(recommendations: OptimizationRecommendation[]): OptimizationRecommendation[] {
+  private prioritizeRecommendations(
+    recommendations: OptimizationRecommendation[]
+  ): OptimizationRecommendation[] {
     const priorityOrder = { critical: 4, high: 3, medium: 2, low: 1 };
     const effortOrder = { low: 3, medium: 2, high: 1 };
 
     return recommendations.sort((a, b) => {
       // First sort by priority
       const priorityDiff = priorityOrder[b.priority] - priorityOrder[a.priority];
-      if (priorityDiff !== 0) return priorityDiff;
+      if (priorityDiff !== 0) {
+        return priorityDiff;
+      }
 
       // Then by effort (lower effort first for same priority)
       return effortOrder[b.effort] - effortOrder[a.effort];
@@ -822,21 +861,30 @@ export class RecommendationEngine {
   /**
    * Filter recommendations by category
    */
-  filterByCategory(recommendations: OptimizationRecommendation[], category: OptimizationRecommendation['category']): OptimizationRecommendation[] {
-    return recommendations.filter(rec => rec.category === category);
+  filterByCategory(
+    recommendations: OptimizationRecommendation[],
+    category: OptimizationRecommendation['category']
+  ): OptimizationRecommendation[] {
+    return recommendations.filter((rec) => rec.category === category);
   }
 
   /**
    * Filter recommendations by priority
    */
-  filterByPriority(recommendations: OptimizationRecommendation[], priority: OptimizationRecommendation['priority']): OptimizationRecommendation[] {
-    return recommendations.filter(rec => rec.priority === priority);
+  filterByPriority(
+    recommendations: OptimizationRecommendation[],
+    priority: OptimizationRecommendation['priority']
+  ): OptimizationRecommendation[] {
+    return recommendations.filter((rec) => rec.priority === priority);
   }
 
   /**
    * Get recommendations for specific packages
    */
-  getPackageRecommendations(recommendations: OptimizationRecommendation[], packageName: string): OptimizationRecommendation[] {
-    return recommendations.filter(rec => rec.affectedPackages.includes(packageName));
+  getPackageRecommendations(
+    recommendations: OptimizationRecommendation[],
+    packageName: string
+  ): OptimizationRecommendation[] {
+    return recommendations.filter((rec) => rec.affectedPackages.includes(packageName));
   }
 }

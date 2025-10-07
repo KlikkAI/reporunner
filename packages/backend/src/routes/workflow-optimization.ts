@@ -3,7 +3,7 @@
  * Handles AI-powered workflow analysis and optimization suggestions
  */
 
-import { WorkflowAnalysisSchema, } from '@reporunner/ai';
+import { WorkflowAnalysisSchema } from '@reporunner/ai';
 import { Logger } from '@reporunner/core';
 import { Router } from 'express';
 import { z } from 'zod';

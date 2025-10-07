@@ -375,7 +375,7 @@ export const OnboardingTour: React.FC<OnboardingTourProps> = ({
     setShowResources(true);
   };
 
-  const progress = (completedSteps.length / steps.length) * 100;
+  const _progress = (completedSteps.length / steps.length) * 100;
   _progress;
   return (
     <>

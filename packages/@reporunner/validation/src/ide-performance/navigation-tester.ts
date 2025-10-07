@@ -1,7 +1,7 @@
+import * as fs from 'node:fs';
+import * as path from 'node:path';
 import * as ts from 'typescript';
-import * as path from 'path';
-import * as fs from 'fs';
-import { NavigationTestResult, NavigationTestCase } from './types';
+import type { NavigationTestCase, NavigationTestResult } from './types';
 
 export class NavigationTester {
   private workspaceRoot: string;
@@ -20,14 +20,13 @@ export class NavigationTester {
         const result = await this.runSingleNavigationTest(testCase);
         results.push(result);
       } catch (error) {
-        console.error(`Failed to run navigation test ${testCase.testName}:`, error);
         results.push({
           testName: testCase.testName,
           sourceFile: testCase.sourceFile,
           targetFile: testCase.expectedTargetFile,
           navigationTime: 0,
           successful: false,
-          errorMessage: error instanceof Error ? error.message : 'Unknown error'
+          errorMessage: error instanceof Error ? error.message : 'Unknown error',
         });
       }
     }
@@ -35,7 +34,9 @@ export class NavigationTester {
     return results;
   }
 
-  private async runSingleNavigationTest(testCase: NavigationTestCase): Promise<NavigationTestResult> {
+  private async runSingleNavigationTest(
+    testCase: NavigationTestCase
+  ): Promise<NavigationTestResult> {
     const startTime = Date.now();
 
     try {
@@ -72,7 +73,7 @@ export class NavigationTester {
             targetFile: testCase.expectedTargetFile,
             navigationTime,
             successful: false,
-            errorMessage: 'No definitions found for symbol'
+            errorMessage: 'No definitions found for symbol',
           };
         }
 
@@ -80,9 +81,10 @@ export class NavigationTester {
         const actualTargetFile = path.relative(this.workspaceRoot, definitions[0].fileName);
         const expectedTargetFile = testCase.expectedTargetFile;
 
-        const successful = actualTargetFile === expectedTargetFile ||
-                          actualTargetFile.endsWith(expectedTargetFile) ||
-                          expectedTargetFile.endsWith(actualTargetFile);
+        const successful =
+          actualTargetFile === expectedTargetFile ||
+          actualTargetFile.endsWith(expectedTargetFile) ||
+          expectedTargetFile.endsWith(actualTargetFile);
 
         return {
           testName: testCase.testName,
@@ -90,16 +92,16 @@ export class NavigationTester {
           targetFile: actualTargetFile,
           navigationTime,
           successful,
-          errorMessage: successful ? undefined : `Expected ${expectedTargetFile}, got ${actualTargetFile}`
+          errorMessage: successful
+            ? undefined
+            : `Expected ${expectedTargetFile}, got ${actualTargetFile}`,
         };
-
       } finally {
         // Clean up test file
         if (!testFileExists && fs.existsSync(sourceFilePath)) {
           fs.unlinkSync(sourceFilePath);
         }
       }
-
     } catch (error) {
       const navigationTime = Date.now() - startTime;
       return {
@@ -108,7 +110,7 @@ export class NavigationTester {
         targetFile: testCase.expectedTargetFile,
         navigationTime,
         successful: false,
-        errorMessage: error instanceof Error ? error.message : 'Unknown error'
+        errorMessage: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }
@@ -122,7 +124,7 @@ export class NavigationTester {
       sourceFile: 'test-navigation-core.ts',
       targetSymbol: 'WorkflowEngine',
       expectedTargetFile: 'packages/@reporunner/core/src/workflow/engine.ts',
-      description: 'Test navigation from consumer to core WorkflowEngine'
+      description: 'Test navigation from consumer to core WorkflowEngine',
     });
 
     testCases.push({
@@ -130,7 +132,7 @@ export class NavigationTester {
       sourceFile: 'test-navigation-auth.ts',
       targetSymbol: 'AuthService',
       expectedTargetFile: 'packages/@reporunner/auth/src/services/auth.service.ts',
-      description: 'Test navigation from consumer to auth service'
+      description: 'Test navigation from consumer to auth service',
     });
 
     testCases.push({
@@ -138,7 +140,7 @@ export class NavigationTester {
       sourceFile: 'test-navigation-shared.ts',
       targetSymbol: 'BaseEntity',
       expectedTargetFile: 'packages/shared/src/types/base.ts',
-      description: 'Test navigation to shared type definitions'
+      description: 'Test navigation to shared type definitions',
     });
 
     // Intra-package navigation tests
@@ -147,7 +149,7 @@ export class NavigationTester {
       sourceFile: 'test-navigation-backend.ts',
       targetSymbol: 'UserController',
       expectedTargetFile: 'packages/backend/src/controllers/user.controller.ts',
-      description: 'Test navigation within backend package'
+      description: 'Test navigation within backend package',
     });
 
     testCases.push({
@@ -155,7 +157,7 @@ export class NavigationTester {
       sourceFile: 'test-navigation-frontend.ts',
       targetSymbol: 'UserService',
       expectedTargetFile: 'packages/frontend/src/services/user.service.ts',
-      description: 'Test navigation within frontend package'
+      description: 'Test navigation within frontend package',
     });
 
     return testCases;
@@ -239,13 +241,13 @@ export {};
     const allFiles = [...fileNames, ...packageFiles];
 
     const files: { [fileName: string]: { version: number } } = {};
-    allFiles.forEach(fileName => {
+    allFiles.forEach((fileName) => {
       files[fileName] = { version: 0 };
     });
 
     const servicesHost: ts.LanguageServiceHost = {
       getScriptFileNames: () => Object.keys(files),
-      getScriptVersion: (fileName) => files[fileName] && files[fileName].version.toString(),
+      getScriptVersion: (fileName) => files[fileName]?.version.toString(),
       getScriptSnapshot: (fileName) => {
         if (!fs.existsSync(fileName)) {
           return undefined;
@@ -271,14 +273,20 @@ export {};
     const packagesDir = path.join(this.workspaceRoot, 'packages');
 
     const scanDirectory = (dir: string) => {
-      if (!fs.existsSync(dir)) return;
+      if (!fs.existsSync(dir)) {
+        return;
+      }
 
       const entries = fs.readdirSync(dir, { withFileTypes: true });
 
       for (const entry of entries) {
         const fullPath = path.join(dir, entry.name);
 
-        if (entry.isDirectory() && !entry.name.includes('node_modules') && !entry.name.includes('dist')) {
+        if (
+          entry.isDirectory() &&
+          !entry.name.includes('node_modules') &&
+          !entry.name.includes('dist')
+        ) {
           scanDirectory(fullPath);
         } else if (entry.isFile() && (entry.name.endsWith('.ts') || entry.name.endsWith('.tsx'))) {
           files.push(fullPath);

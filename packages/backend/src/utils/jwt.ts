@@ -28,8 +28,8 @@ export class JWTService {
       type: 'access',
     };
 
-    return jwt.sign(payload, this.JWT_SECRET, {
-      expiresIn: this.ACCESS_TOKEN_EXPIRES_IN,
+    return jwt.sign(payload, JWTService.JWT_SECRET, {
+      expiresIn: JWTService.ACCESS_TOKEN_EXPIRES_IN,
     });
   }
 
@@ -44,8 +44,8 @@ export class JWTService {
       type: 'refresh',
     };
 
-    return jwt.sign(payload, this.JWT_SECRET, {
-      expiresIn: this.REFRESH_TOKEN_EXPIRES_IN,
+    return jwt.sign(payload, JWTService.JWT_SECRET, {
+      expiresIn: JWTService.REFRESH_TOKEN_EXPIRES_IN,
     });
   }
 
@@ -54,7 +54,7 @@ export class JWTService {
    */
   static verifyToken(token: string): DecodedToken {
     try {
-      return jwt.verify(token, this.JWT_SECRET) as DecodedToken;
+      return jwt.verify(token, JWTService.JWT_SECRET) as DecodedToken;
     } catch (error) {
       if (error instanceof jwt.TokenExpiredError) {
         throw new Error('Token expired');
@@ -81,8 +81,10 @@ export class JWTService {
    * Check if token is expired
    */
   static isTokenExpired(token: string): boolean {
-    const decoded = this.decodeToken(token);
-    if (!decoded) return true;
+    const decoded = JWTService.decodeToken(token);
+    if (!decoded) {
+      return true;
+    }
 
     return decoded.exp * 1000 < Date.now();
   }
@@ -91,8 +93,10 @@ export class JWTService {
    * Get token expiration date
    */
   static getTokenExpiration(token: string): Date | null {
-    const decoded = this.decodeToken(token);
-    if (!decoded) return null;
+    const decoded = JWTService.decodeToken(token);
+    if (!decoded) {
+      return null;
+    }
 
     return new Date(decoded.exp * 1000);
   }

@@ -332,8 +332,12 @@ export class MemoryLeakDetector extends EventEmitter {
    * Categorize leak severity based on growth rate
    */
   private categorizeSeverity(growthRate: number): 'low' | 'medium' | 'high' {
-    if (growthRate > 0.3) { return 'high'; }
-    if (growthRate > 0.15) { return 'medium'; }
+    if (growthRate > 0.3) {
+      return 'high';
+    }
+    if (growthRate > 0.15) {
+      return 'medium';
+    }
     return 'low';
   }
 

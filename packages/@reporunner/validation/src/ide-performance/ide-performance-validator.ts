@@ -1,11 +1,9 @@
-import * as path from 'path';
-import { NavigationTester } from './navigation-tester';
 import { IntelliSenseTester } from './intellisense-tester';
+import { NavigationTester } from './navigation-tester';
 import { SourceMappingValidator } from './source-mapping-validator';
-import { IDEPerformanceReport } from './types';
+import type { IDEPerformanceReport } from './types';
 
 export class IDEPerformanceValidator {
-  private workspaceRoot: string;
   private navigationTester: NavigationTester;
   private intelliSenseTester: IntelliSenseTester;
   private sourceMappingValidator: SourceMappingValidator;
@@ -18,24 +16,12 @@ export class IDEPerformanceValidator {
   }
 
   async validateIDEPerformance(): Promise<IDEPerformanceReport> {
-    console.log('Starting IDE performance validation...');
-
-    const startTime = Date.now();
-
-    // Run navigation tests
-    console.log('Testing navigation performance...');
+    const _startTime = Date.now();
     const navigationResults = await this.navigationTester.runNavigationTests();
-
-    // Run IntelliSense tests
-    console.log('Testing IntelliSense functionality...');
     const intelliSenseResults = await this.intelliSenseTester.runIntelliSenseTests();
-
-    // Run source mapping validation
-    console.log('Validating source mapping...');
     const sourceMappingResults = await this.sourceMappingValidator.validateSourceMapping();
 
-    const endTime = Date.now();
-    console.log(`IDE performance validation completed in ${endTime - startTime}ms`);
+    const _endTime = Date.now();
 
     // Calculate performance metrics
     const performanceMetrics = this.calculatePerformanceMetrics(
@@ -62,7 +48,7 @@ export class IDEPerformanceValidator {
       sourceMappingResults,
       overallScore,
       recommendations,
-      performanceMetrics
+      performanceMetrics,
     };
   }
 
@@ -72,51 +58,58 @@ export class IDEPerformanceValidator {
     sourceMappingResults: any[]
   ) {
     // Navigation metrics
-    const successfulNavigations = navigationResults.filter(r => r.successful);
-    const averageNavigationTime = successfulNavigations.length > 0
-      ? successfulNavigations.reduce((sum, r) => sum + r.navigationTime, 0) / successfulNavigations.length
-      : 0;
-    const navigationSuccessRate = navigationResults.length > 0
-      ? successfulNavigations.length / navigationResults.length
-      : 0;
+    const successfulNavigations = navigationResults.filter((r) => r.successful);
+    const averageNavigationTime =
+      successfulNavigations.length > 0
+        ? successfulNavigations.reduce((sum, r) => sum + r.navigationTime, 0) /
+          successfulNavigations.length
+        : 0;
+    const navigationSuccessRate =
+      navigationResults.length > 0 ? successfulNavigations.length / navigationResults.length : 0;
 
     // IntelliSense metrics
-    const successfulIntelliSense = intelliSenseResults.filter(r => r.successful);
-    const averageIntelliSenseTime = successfulIntelliSense.length > 0
-      ? successfulIntelliSense.reduce((sum, r) => sum + r.responseTime, 0) / successfulIntelliSense.length
-      : 0;
-    const intelliSenseAccuracy = intelliSenseResults.length > 0
-      ? intelliSenseResults.reduce((sum, r) => sum + r.accuracy, 0) / intelliSenseResults.length
-      : 0;
+    const successfulIntelliSense = intelliSenseResults.filter((r) => r.successful);
+    const averageIntelliSenseTime =
+      successfulIntelliSense.length > 0
+        ? successfulIntelliSense.reduce((sum, r) => sum + r.responseTime, 0) /
+          successfulIntelliSense.length
+        : 0;
+    const intelliSenseAccuracy =
+      intelliSenseResults.length > 0
+        ? intelliSenseResults.reduce((sum, r) => sum + r.accuracy, 0) / intelliSenseResults.length
+        : 0;
 
     // Source mapping metrics
-    const reliableSourceMappings = sourceMappingResults.filter(r =>
-      r.sourceMappingAccurate && r.debuggingExperience !== 'broken'
+    const reliableSourceMappings = sourceMappingResults.filter(
+      (r) => r.sourceMappingAccurate && r.debuggingExperience !== 'broken'
     );
-    const sourceMappingReliability = sourceMappingResults.length > 0
-      ? reliableSourceMappings.length / sourceMappingResults.length
-      : 0;
+    const sourceMappingReliability =
+      sourceMappingResults.length > 0
+        ? reliableSourceMappings.length / sourceMappingResults.length
+        : 0;
 
     return {
       averageNavigationTime,
       averageIntelliSenseTime,
       navigationSuccessRate,
       intelliSenseAccuracy,
-      sourceMappingReliability
+      sourceMappingReliability,
     };
   }
 
   private calculateOverallScore(performanceMetrics: any): number {
     // Navigation score (0-30 points)
-    const navigationScore = Math.min(30,
-      (performanceMetrics.navigationSuccessRate * 20) +
-      (Math.max(0, (2000 - performanceMetrics.averageNavigationTime) / 2000) * 10)
+    const navigationScore = Math.min(
+      30,
+      performanceMetrics.navigationSuccessRate * 20 +
+        Math.max(0, (2000 - performanceMetrics.averageNavigationTime) / 2000) * 10
     );
 
     // IntelliSense score (0-40 points)
-    const intelliSenseScore = Math.min(40,
-      (performanceMetrics.intelliSenseAccuracy / 100 * 25) +
-      (Math.max(0, (1000 - performanceMetrics.averageIntelliSenseTime) / 1000) * 15)
+    const intelliSenseScore = Math.min(
+      40,
+      (performanceMetrics.intelliSenseAccuracy / 100) * 25 +
+        Math.max(0, (1000 - performanceMetrics.averageIntelliSenseTime) / 1000) * 15
     );
 
     // Source mapping score (0-30 points)
@@ -126,8 +119,8 @@ export class IDEPerformanceValidator {
   }
 
   private generateRecommendations(
-    navigationResults: any[],
-    intelliSenseResults: any[],
+    _navigationResults: any[],
+    _intelliSenseResults: any[],
     sourceMappingResults: any[],
     performanceMetrics: any
   ): string[] {
@@ -137,14 +130,14 @@ export class IDEPerformanceValidator {
     if (performanceMetrics.navigationSuccessRate < 0.8) {
       recommendations.push(
         `Improve navigation reliability: ${Math.round((1 - performanceMetrics.navigationSuccessRate) * 100)}% of navigation tests failed. ` +
-        'Check TypeScript configuration and ensure proper module resolution.'
+          'Check TypeScript configuration and ensure proper module resolution.'
       );
     }
 
     if (performanceMetrics.averageNavigationTime > 1000) {
       recommendations.push(
         `Optimize navigation speed: Average navigation time is ${Math.round(performanceMetrics.averageNavigationTime)}ms. ` +
-        'Consider optimizing TypeScript project references and reducing compilation overhead.'
+          'Consider optimizing TypeScript project references and reducing compilation overhead.'
       );
     }
 
@@ -152,14 +145,14 @@ export class IDEPerformanceValidator {
     if (performanceMetrics.intelliSenseAccuracy < 70) {
       recommendations.push(
         `Enhance IntelliSense accuracy: Current accuracy is ${Math.round(performanceMetrics.intelliSenseAccuracy)}%. ` +
-        'Review type definitions and ensure proper export/import patterns.'
+          'Review type definitions and ensure proper export/import patterns.'
       );
     }
 
     if (performanceMetrics.averageIntelliSenseTime > 500) {
       recommendations.push(
         `Improve IntelliSense response time: Average response time is ${Math.round(performanceMetrics.averageIntelliSenseTime)}ms. ` +
-        'Consider enabling incremental compilation and optimizing TypeScript configuration.'
+          'Consider enabling incremental compilation and optimizing TypeScript configuration.'
       );
     }
 
@@ -167,16 +160,18 @@ export class IDEPerformanceValidator {
     if (performanceMetrics.sourceMappingReliability < 0.9) {
       recommendations.push(
         `Fix source mapping issues: ${Math.round((1 - performanceMetrics.sourceMappingReliability) * 100)}% of source mappings are unreliable. ` +
-        'Ensure source maps are generated correctly and paths are properly configured.'
+          'Ensure source maps are generated correctly and paths are properly configured.'
       );
     }
 
     // Check for specific issues
-    const brokenSourceMappings = sourceMappingResults.filter(r => r.debuggingExperience === 'broken');
+    const brokenSourceMappings = sourceMappingResults.filter(
+      (r) => r.debuggingExperience === 'broken'
+    );
     if (brokenSourceMappings.length > 0) {
       recommendations.push(
         `Critical: ${brokenSourceMappings.length} source mappings are completely broken. ` +
-        'This severely impacts debugging experience and should be fixed immediately.'
+          'This severely impacts debugging experience and should be fixed immediately.'
       );
     }
 

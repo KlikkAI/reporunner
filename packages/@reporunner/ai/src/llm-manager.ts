@@ -4,8 +4,8 @@
  */
 
 import type { BaseAIProvider, IEmbeddingProvider, ILLMProvider } from './base/ai-provider';
-import { AnthropicProvider } from './providers/anthropic-provider';
-import { OpenAIProvider } from './providers/openai-provider';
+import { type AnthropicConfig, AnthropicProvider } from './providers/anthropic-provider';
+import { type OpenAIConfig, OpenAIProvider } from './providers/openai-provider';
 import type {
   AIProviderType,
   EmbeddingRequest,
@@ -15,20 +15,34 @@ import type {
   ProviderConfig,
 } from './types';
 
+type SpecificProviderConfig = OpenAIConfig | AnthropicConfig;
+
 export class LLMManager {
   private providers: Map<AIProviderType, BaseAIProvider> = new Map();
   private defaultProvider?: AIProviderType;
 
-  registerProvider(type: AIProviderType, config: ProviderConfig): void {
+  registerProvider(type: AIProviderType, config: ProviderConfig | SpecificProviderConfig): void {
     let provider: BaseAIProvider;
 
     switch (type) {
-      case 'openai':
-        provider = new OpenAIProvider(config as any);
+      case 'openai': {
+        const openaiConfig: OpenAIConfig = {
+          ...config,
+          type: 'openai',
+          apiKey: config.apiKey || '',
+        };
+        provider = new OpenAIProvider(openaiConfig);
         break;
-      case 'anthropic':
-        provider = new AnthropicProvider(config as any);
+      }
+      case 'anthropic': {
+        const anthropicConfig: AnthropicConfig = {
+          ...config,
+          type: 'anthropic',
+          apiKey: config.apiKey || '',
+        };
+        provider = new AnthropicProvider(anthropicConfig);
         break;
+      }
       default:
         throw new Error(`Unsupported provider type: ${type}`);
     }

@@ -3,4 +3,4 @@
  * Exports all onboarding-related components
  */
 
-export { OnboardingTour, OnboardingProgress, useOnboarding } from './OnboardingTour';
+export { OnboardingProgress, OnboardingTour, useOnboarding } from './OnboardingTour';

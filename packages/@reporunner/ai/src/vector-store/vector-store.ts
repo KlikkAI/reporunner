@@ -5,6 +5,14 @@
 
 import { Pool } from 'pg';
 import type { Logger } from 'winston';
+
+interface ConsoleLogger {
+  log: (message: string) => void;
+  error: (message: string) => void;
+  warn: (message: string) => void;
+  info: (message: string) => void;
+}
+
 import type { EmbeddingService } from '../embeddings/EmbeddingService';
 import {
   type VectorSearchParams,
@@ -19,14 +27,14 @@ export class VectorStore {
   private embeddingService: EmbeddingService;
   private tableName: string;
   private dimensions: number;
-  private logger: Logger;
+  private logger: Logger | ConsoleLogger;
 
   constructor(config: VectorStoreConfig, embeddingService: EmbeddingService, logger?: Logger) {
     this.pool = new Pool({ connectionString: config.connectionString });
     this.embeddingService = embeddingService;
     this.tableName = config.tableName;
     this.dimensions = config.dimensions;
-    this.logger = logger || (console as any);
+    this.logger = logger || console;
 
     this.initialize();
   }
@@ -55,13 +63,13 @@ export class VectorStore {
 
       // Create indexes for better performance
       await client.query(`
-        CREATE INDEX IF NOT EXISTS ${this.tableName}_embedding_idx 
+        CREATE INDEX IF NOT EXISTS ${this.tableName}_embedding_idx
         ON ${this.tableName} USING ivfflat (embedding vector_cosine_ops)
         WITH (lists = 100)
       `);
 
       await client.query(`
-        CREATE INDEX IF NOT EXISTS ${this.tableName}_metadata_idx 
+        CREATE INDEX IF NOT EXISTS ${this.tableName}_metadata_idx
         ON ${this.tableName} USING GIN (metadata)
       `);
 
@@ -101,8 +109,8 @@ export class VectorStore {
             `
             INSERT INTO ${this.tableName} (id, content, embedding, metadata)
             VALUES ($1, $2, $3, $4)
-            ON CONFLICT (id) 
-            DO UPDATE SET 
+            ON CONFLICT (id)
+            DO UPDATE SET
               content = EXCLUDED.content,
               embedding = EXCLUDED.embedding,
               metadata = EXCLUDED.metadata,
@@ -150,10 +158,10 @@ export class VectorStore {
 
       try {
         let sql = `
-          SELECT 
-            id, 
-            content, 
-            embedding, 
+          SELECT
+            id,
+            content,
+            embedding,
             metadata,
             created_at,
             updated_at,
@@ -161,7 +169,7 @@ export class VectorStore {
           FROM ${this.tableName}
         `;
 
-        const queryParams: any[] = [`[${queryEmbedding.join(',')}]`];
+        const queryParams: (string | number)[] = [`[${queryEmbedding.join(',')}]`];
         let paramIndex = 2;
 
         // Add metadata filter
@@ -290,13 +298,13 @@ export class VectorStore {
   /**
    * Get document count
    */
-  async getDocumentCount(filter?: Record<string, any>): Promise<number> {
+  async getDocumentCount(filter?: Record<string, string | number | boolean>): Promise<number> {
     try {
       const client = await this.pool.connect();
 
       try {
         let sql = `SELECT COUNT(*) as count FROM ${this.tableName}`;
-        const queryParams: any[] = [];
+        const queryParams: (string | number)[] = [];
         let paramIndex = 1;
 
         if (filter && Object.keys(filter).length > 0) {

@@ -463,7 +463,7 @@ export enum ValidationErrorType {
   PERFORMANCE_REGRESSION = 'performance_regression',
   ARCHITECTURE_VIOLATION = 'architecture_violation',
   TYPE_ERROR = 'type_error',
-  DEPENDENCY_ISSUE = 'dependency_issue'
+  DEPENDENCY_ISSUE = 'dependency_issue',
 }
 
 export interface ValidationError {

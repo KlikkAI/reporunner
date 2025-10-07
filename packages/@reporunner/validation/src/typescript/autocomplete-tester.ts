@@ -1,7 +1,7 @@
+import * as fs from 'node:fs';
+import * as path from 'node:path';
 import * as ts from 'typescript';
-import * as path from 'path';
-import * as fs from 'fs';
-import { AutocompleteTestResult, AutocompleteTestCase } from './types';
+import type { AutocompleteTestCase, AutocompleteTestResult } from './types';
 
 export class AutocompleteTester {
   private workspaceRoot: string;
@@ -19,8 +19,7 @@ export class AutocompleteTester {
       try {
         const result = await this.runSingleAutocompleteTest(testCase);
         results.push(result);
-      } catch (error) {
-        console.error(`Failed to run autocomplete test for ${testCase.packageName}:`, error);
+      } catch (_error) {
         results.push({
           packageName: testCase.packageName,
           testFile: testCase.testFile,
@@ -29,7 +28,7 @@ export class AutocompleteTester {
           actualSuggestions: [],
           accuracy: 0,
           responseTime: 0,
-          passed: false
+          passed: false,
         });
       }
     }
@@ -37,7 +36,9 @@ export class AutocompleteTester {
     return results;
   }
 
-  private async runSingleAutocompleteTest(testCase: AutocompleteTestCase): Promise<AutocompleteTestResult> {
+  private async runSingleAutocompleteTest(
+    testCase: AutocompleteTestCase
+  ): Promise<AutocompleteTestResult> {
     const startTime = Date.now();
 
     // Create a temporary test file if it doesn't exist
@@ -56,16 +57,17 @@ export class AutocompleteTester {
         {}
       );
 
-      const actualSuggestions = completions?.entries.map(entry => entry.name) || [];
+      const actualSuggestions = completions?.entries.map((entry) => entry.name) || [];
       const responseTime = Date.now() - startTime;
 
       // Calculate accuracy based on how many expected suggestions were found
-      const foundSuggestions = testCase.expectedSuggestions.filter(expected =>
-        actualSuggestions.some(actual => actual.includes(expected))
+      const foundSuggestions = testCase.expectedSuggestions.filter((expected) =>
+        actualSuggestions.some((actual) => actual.includes(expected))
       );
-      const accuracy = testCase.expectedSuggestions.length > 0
-        ? (foundSuggestions.length / testCase.expectedSuggestions.length) * 100
-        : 0;
+      const accuracy =
+        testCase.expectedSuggestions.length > 0
+          ? (foundSuggestions.length / testCase.expectedSuggestions.length) * 100
+          : 0;
 
       const passed = accuracy >= 70; // Consider 70% accuracy as passing
 
@@ -77,7 +79,7 @@ export class AutocompleteTester {
         actualSuggestions,
         accuracy,
         responseTime,
-        passed
+        passed,
       };
     } finally {
       // Clean up temporary test file
@@ -96,7 +98,7 @@ export class AutocompleteTester {
       testFile: 'test-autocomplete-core.ts',
       position: { line: 2, character: 20 },
       expectedSuggestions: ['WorkflowEngine', 'NodeRegistry', 'ExecutionContext'],
-      description: 'Test autocomplete for core package exports'
+      description: 'Test autocomplete for core package exports',
     });
 
     testCases.push({
@@ -104,7 +106,7 @@ export class AutocompleteTester {
       testFile: 'test-autocomplete-auth.ts',
       position: { line: 2, character: 20 },
       expectedSuggestions: ['AuthService', 'UserManager', 'TokenValidator'],
-      description: 'Test autocomplete for auth package exports'
+      description: 'Test autocomplete for auth package exports',
     });
 
     testCases.push({
@@ -112,7 +114,7 @@ export class AutocompleteTester {
       testFile: 'test-autocomplete-workflow.ts',
       position: { line: 2, character: 25 },
       expectedSuggestions: ['WorkflowBuilder', 'NodeExecutor', 'TriggerManager'],
-      description: 'Test autocomplete for workflow package exports'
+      description: 'Test autocomplete for workflow package exports',
     });
 
     // Test cases for main packages
@@ -121,7 +123,7 @@ export class AutocompleteTester {
       testFile: 'test-autocomplete-shared.ts',
       position: { line: 2, character: 15 },
       expectedSuggestions: ['types', 'utils', 'constants'],
-      description: 'Test autocomplete for shared package exports'
+      description: 'Test autocomplete for shared package exports',
     });
 
     return testCases;
@@ -141,7 +143,7 @@ ${packageImport}
     fs.writeFileSync(testFilePath, testContent);
   }
 
-  private async getLanguageService(packageName: string): Promise<ts.LanguageService> {
+  private async getLanguageService(_packageName: string): Promise<ts.LanguageService> {
     if (this.languageService) {
       return this.languageService;
     }
@@ -158,7 +160,7 @@ ${packageImport}
     const files: { [fileName: string]: { version: number } } = {};
     const servicesHost: ts.LanguageServiceHost = {
       getScriptFileNames: () => Object.keys(files),
-      getScriptVersion: (fileName) => files[fileName] && files[fileName].version.toString(),
+      getScriptVersion: (fileName) => files[fileName]?.version.toString(),
       getScriptSnapshot: (fileName) => {
         if (!fs.existsSync(fileName)) {
           return undefined;
@@ -179,7 +181,10 @@ ${packageImport}
     return this.languageService;
   }
 
-  private getPositionOffset(fileName: string, position: { line: number; character: number }): number {
+  private getPositionOffset(
+    fileName: string,
+    position: { line: number; character: number }
+  ): number {
     const filePath = path.join(this.workspaceRoot, fileName);
     if (!fs.existsSync(filePath)) {
       return 0;

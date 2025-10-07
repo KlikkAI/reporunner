@@ -1,6 +1,6 @@
-import * as path from 'path';
-import * as fs from 'fs';
-import { ImportSuggestion, ImportPathAnalysis } from './types';
+import * as fs from 'node:fs';
+import * as path from 'node:path';
+import type { ImportPathAnalysis, ImportSuggestion } from './types';
 
 export class PathSuggestionEngine {
   private workspaceRoot: string;
@@ -83,7 +83,11 @@ export class PathSuggestionEngine {
       return parts.length > 2 && parts.includes('src');
     }
 
-    if (importPath.includes('/src/') && !importPath.startsWith('./') && !importPath.startsWith('../')) {
+    if (
+      importPath.includes('/src/') &&
+      !importPath.startsWith('./') &&
+      !importPath.startsWith('../')
+    ) {
       return importPath.split('/').length > 3;
     }
 
@@ -91,20 +95,26 @@ export class PathSuggestionEngine {
   }
 
   private isComplexRelativeImport(importPath: string): boolean {
-    if (!importPath.startsWith('../')) return false;
+    if (!importPath.startsWith('../')) {
+      return false;
+    }
 
     const upLevels = (importPath.match(/\.\.\//g) || []).length;
     return upLevels > 2;
   }
 
   private isPackageImport(importPath: string): boolean {
-    return importPath.startsWith('@reporunner/') ||
-           importPath.startsWith('../packages/') ||
-           (!importPath.startsWith('./') && !importPath.startsWith('../') && !importPath.startsWith('/'));
+    return (
+      importPath.startsWith('@reporunner/') ||
+      importPath.startsWith('../packages/') ||
+      !(importPath.startsWith('./') || importPath.startsWith('../') || importPath.startsWith('/'))
+    );
   }
 
   private suggestBarrelExport(importStmt: any): ImportSuggestion | null {
-    if (!importStmt.source.startsWith('@reporunner/')) return null;
+    if (!importStmt.source.startsWith('@reporunner/')) {
+      return null;
+    }
 
     const parts = importStmt.source.split('/');
     const packageName = parts.slice(0, 2).join('/');
@@ -114,12 +124,14 @@ export class PathSuggestionEngine {
       description: `Use barrel export instead of deep import`,
       currentImport: `import { ${importStmt.specifiers.join(', ')} } from '${importStmt.source}'`,
       suggestedImport: `import { ${importStmt.specifiers.join(', ')} } from '${packageName}'`,
-      estimatedImpact: 'medium'
+      estimatedImpact: 'medium',
     };
   }
 
   private suggestAbsoluteImport(importStmt: any, filePath: string): ImportSuggestion | null {
-    if (!importStmt.source.startsWith('../')) return null;
+    if (!importStmt.source.startsWith('../')) {
+      return null;
+    }
 
     try {
       // Try to convert relative path to absolute workspace path
@@ -137,10 +149,10 @@ export class PathSuggestionEngine {
           description: `Use absolute package import instead of relative path`,
           currentImport: `import { ${importStmt.specifiers.join(', ')} } from '${importStmt.source}'`,
           suggestedImport: `import { ${importStmt.specifiers.join(', ')} } from '${packageName}'`,
-          estimatedImpact: 'high'
+          estimatedImpact: 'high',
         };
       }
-    } catch (error) {
+    } catch (_error) {
       // Ignore resolution errors
     }
 
@@ -149,7 +161,9 @@ export class PathSuggestionEngine {
 
   private suggestOptimizedPackageImport(importStmt: any): ImportSuggestion | null {
     const packageInfo = this.packageExports.get(importStmt.source);
-    if (!packageInfo) return null;
+    if (!packageInfo) {
+      return null;
+    }
 
     // Check if there's a more efficient way to import
     if (packageInfo.hasBarrelExport && importStmt.source.includes('/src/')) {
@@ -160,7 +174,7 @@ export class PathSuggestionEngine {
         description: `Use package barrel export for cleaner imports`,
         currentImport: `import { ${importStmt.specifiers.join(', ')} } from '${importStmt.source}'`,
         suggestedImport: `import { ${importStmt.specifiers.join(', ')} } from '${packageName}'`,
-        estimatedImpact: 'medium'
+        estimatedImpact: 'medium',
       };
     }
 
@@ -172,26 +186,30 @@ export class PathSuggestionEngine {
 
     // Group imports by source
     const importGroups = new Map<string, any[]>();
-    analysis.imports.forEach(imp => {
+    analysis.imports.forEach((imp) => {
       if (!importGroups.has(imp.source)) {
         importGroups.set(imp.source, []);
       }
-      importGroups.get(imp.source)!.push(imp);
+      importGroups.get(imp.source)?.push(imp);
     });
 
     // Suggest consolidation for multiple imports from same source
     importGroups.forEach((imports, source) => {
       if (imports.length > 1) {
-        const allSpecifiers = imports.flatMap(imp => imp.specifiers);
-        const hasTypeImports = imports.some(imp => imp.isTypeOnly);
-        const hasValueImports = imports.some(imp => !imp.isTypeOnly);
+        const allSpecifiers = imports.flatMap((imp) => imp.specifiers);
+        const hasTypeImports = imports.some((imp) => imp.isTypeOnly);
+        const hasValueImports = imports.some((imp) => !imp.isTypeOnly);
 
         let suggestedImport: string;
 
         if (hasTypeImports && hasValueImports) {
           // Mixed type and value imports
-          const typeSpecifiers = imports.filter(imp => imp.isTypeOnly).flatMap(imp => imp.specifiers);
-          const valueSpecifiers = imports.filter(imp => !imp.isTypeOnly).flatMap(imp => imp.specifiers);
+          const typeSpecifiers = imports
+            .filter((imp) => imp.isTypeOnly)
+            .flatMap((imp) => imp.specifiers);
+          const valueSpecifiers = imports
+            .filter((imp) => !imp.isTypeOnly)
+            .flatMap((imp) => imp.specifiers);
 
           suggestedImport = `import { ${valueSpecifiers.join(', ')}, type ${typeSpecifiers.join(', type ')} } from '${source}'`;
         } else {
@@ -203,9 +221,9 @@ export class PathSuggestionEngine {
         suggestions.push({
           type: 'consolidate-imports',
           description: `Consolidate ${imports.length} imports from ${source}`,
-          currentImport: imports.map(imp => imp.raw).join('\n'),
+          currentImport: imports.map((imp) => imp.raw).join('\n'),
           suggestedImport,
-          estimatedImpact: 'low'
+          estimatedImpact: 'low',
         });
       }
     });
@@ -217,11 +235,11 @@ export class PathSuggestionEngine {
     const suggestions: ImportSuggestion[] = [];
 
     // Analyze patterns across all files
-    const allImports = analyses.flatMap(analysis => analysis.imports);
+    const allImports = analyses.flatMap((analysis) => analysis.imports);
 
     // Suggest creating barrel exports for frequently imported packages
     const importCounts = new Map<string, number>();
-    allImports.forEach(imp => {
+    allImports.forEach((imp) => {
       if (this.isDeepImport(imp.source)) {
         const packageName = this.extractPackageName(imp.source);
         importCounts.set(packageName, (importCounts.get(packageName) || 0) + 1);
@@ -229,13 +247,14 @@ export class PathSuggestionEngine {
     });
 
     importCounts.forEach((count, packageName) => {
-      if (count > 5) { // Threshold for suggesting barrel exports
+      if (count > 5) {
+        // Threshold for suggesting barrel exports
         suggestions.push({
           type: 'use-barrel',
           description: `Create barrel export for ${packageName} (used in ${count} deep imports)`,
           currentImport: `Multiple deep imports from ${packageName}`,
           suggestedImport: `Create index.ts barrel export in ${packageName}`,
-          estimatedImpact: 'high'
+          estimatedImpact: 'high',
         });
       }
     });
@@ -268,16 +287,20 @@ export class PathSuggestionEngine {
 
     // This is a simplified check - in a real implementation, you'd need
     // to parse the file content to see if imports are actually used
-    analyses.forEach(analysis => {
-      analysis.imports.forEach(imp => {
-        if (imp.specifiers.length === 0 && !imp.source.endsWith('.css') && !imp.source.endsWith('.scss')) {
+    analyses.forEach((analysis) => {
+      analysis.imports.forEach((imp) => {
+        if (
+          imp.specifiers.length === 0 &&
+          !imp.source.endsWith('.css') &&
+          !imp.source.endsWith('.scss')
+        ) {
           // Side-effect import that might be unused
           suggestions.push({
             type: 'remove-unused',
             description: `Verify if side-effect import is needed`,
             currentImport: imp.raw,
             suggestedImport: `// Remove if not needed: ${imp.raw}`,
-            estimatedImpact: 'low'
+            estimatedImpact: 'low',
           });
         }
       });
@@ -299,9 +322,10 @@ export class PathSuggestionEngine {
     // Load @reporunner packages
     const reporunnerDir = path.join(packagesDir, '@reporunner');
     if (fs.existsSync(reporunnerDir)) {
-      const reporunnerPackages = fs.readdirSync(reporunnerDir, { withFileTypes: true })
-        .filter(dirent => dirent.isDirectory())
-        .map(dirent => dirent.name);
+      const reporunnerPackages = fs
+        .readdirSync(reporunnerDir, { withFileTypes: true })
+        .filter((dirent) => dirent.isDirectory())
+        .map((dirent) => dirent.name);
 
       for (const pkg of reporunnerPackages) {
         const pkgPath = path.join(reporunnerDir, pkg);
@@ -311,7 +335,9 @@ export class PathSuggestionEngine {
   }
 
   private async loadPackageInfo(packageName: string, packagePath: string): Promise<void> {
-    if (!fs.existsSync(packagePath)) return;
+    if (!fs.existsSync(packagePath)) {
+      return;
+    }
 
     const packageJsonPath = path.join(packagePath, 'package.json');
     const indexPath = path.join(packagePath, 'src', 'index.ts');
@@ -319,7 +345,7 @@ export class PathSuggestionEngine {
     const info: any = {
       hasBarrelExport: fs.existsSync(indexPath),
       exports: {},
-      main: null
+      main: null,
     };
 
     if (fs.existsSync(packageJsonPath)) {
@@ -327,9 +353,7 @@ export class PathSuggestionEngine {
         const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'));
         info.exports = packageJson.exports || {};
         info.main = packageJson.main;
-      } catch (error) {
-        console.warn(`Could not read package.json for ${packageName}:`, error);
-      }
+      } catch (_error) {}
     }
 
     this.packageExports.set(packageName, info);

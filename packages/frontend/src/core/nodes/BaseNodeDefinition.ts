@@ -61,7 +61,9 @@ export abstract class BaseNodeDefinition implements INodeType {
       name: config.name,
       icon: this.getNodeIcon(),
       group: config.group,
-      version: Array.isArray(config.version) ? config.version[config.version.length - 1] : config.version,
+      version: Array.isArray(config.version)
+        ? config.version[config.version.length - 1]
+        : config.version,
       description: config.description,
       defaults: {
         name: config.defaults?.name || config.displayName,

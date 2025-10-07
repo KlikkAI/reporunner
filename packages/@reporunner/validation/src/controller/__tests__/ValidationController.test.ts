@@ -1,6 +1,6 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { ValidationController } from '../ValidationController.js';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ValidationErrorType } from '../../types/index.js';
+import { ValidationController } from '../ValidationController.js';
 
 // Mock all the validation components
 vi.mock('../../system/TestSuiteRunner.js');
@@ -106,7 +106,7 @@ describe('ValidationController', () => {
       // Mock a component to fail
       const mockError = new Error('Component failed');
       vi.mocked(controller as any).testSuiteRunner = {
-        runAllTests: vi.fn().mockRejectedValue(mockError)
+        runAllTests: vi.fn().mockRejectedValue(mockError),
       };
 
       const results = await controller.executeValidation();
@@ -170,7 +170,7 @@ describe('ValidationController', () => {
   describe('error handling', () => {
     it('should handle component initialization errors', () => {
       // Mock component constructor to throw
-      const mockError = new Error('Initialization failed');
+      const _mockError = new Error('Initialization failed');
 
       expect(() => {
         // This would need to be tested by mocking the component constructors
@@ -185,7 +185,7 @@ describe('ValidationController', () => {
       // Mock a component to fail
       const mockError = new Error('Test error');
       vi.mocked(controller as any).testSuiteRunner = {
-        runAllTests: vi.fn().mockRejectedValue(mockError)
+        runAllTests: vi.fn().mockRejectedValue(mockError),
       };
 
       await controller.executeValidation();
@@ -197,17 +197,17 @@ describe('ValidationController', () => {
           severity: 'warning',
           message: expect.stringContaining('Component test-suite failed'),
           context: expect.objectContaining({
-            component: 'test-suite'
+            component: 'test-suite',
           }),
           suggestions: expect.arrayContaining([
-            expect.stringContaining('Review test-suite configuration')
-          ])
+            expect.stringContaining('Review test-suite configuration'),
+          ]),
         })
       );
     });
 
     it('should handle uncaught exceptions during validation', async () => {
-      const originalHandler = process.listeners('uncaughtException');
+      const _originalHandler = process.listeners('uncaughtException');
 
       // Simulate uncaught exception during validation
       const validationPromise = controller.executeValidation();
@@ -218,7 +218,7 @@ describe('ValidationController', () => {
       await validationPromise;
 
       const status = controller.getValidationStatus();
-      expect(status.errors.some(e => e.context.phase === 'uncaught-exception')).toBe(true);
+      expect(status.errors.some((e) => e.context.phase === 'uncaught-exception')).toBe(true);
     });
   });
 
@@ -227,7 +227,7 @@ describe('ValidationController', () => {
       // Mock components to generate errors
       const mockError = new Error('Test error');
       vi.mocked(controller as any).testSuiteRunner = {
-        runAllTests: vi.fn().mockRejectedValue(mockError)
+        runAllTests: vi.fn().mockRejectedValue(mockError),
       };
 
       const results = await controller.executeValidation();
@@ -253,13 +253,15 @@ describe('ValidationController', () => {
       expect(results.nextSteps.length).toBeGreaterThan(0);
 
       if (results.status === 'success') {
-        expect(results.nextSteps.some(step =>
-          step.includes('Phase A validation completed successfully')
-        )).toBe(true);
+        expect(
+          results.nextSteps.some((step) =>
+            step.includes('Phase A validation completed successfully')
+          )
+        ).toBe(true);
       } else if (results.status === 'failure') {
-        expect(results.nextSteps.some(step =>
-          step.includes('Address critical issues')
-        )).toBe(true);
+        expect(results.nextSteps.some((step) => step.includes('Address critical issues'))).toBe(
+          true
+        );
       }
     });
   });
@@ -268,12 +270,20 @@ describe('ValidationController', () => {
     it('should provide default values when components fail', async () => {
       // Mock all components to fail
       const mockError = new Error('Component failed');
-      const mockFailingComponent = { mockMethod: vi.fn().mockRejectedValue(mockError) };
+      const _mockFailingComponent = { mockMethod: vi.fn().mockRejectedValue(mockError) };
 
-      vi.mocked(controller as any).testSuiteRunner = { runAllTests: vi.fn().mockRejectedValue(mockError) };
-      vi.mocked(controller as any).apiValidator = { validateEndpoints: vi.fn().mockRejectedValue(mockError) };
-      vi.mocked(controller as any).e2eValidator = { runFrontendWorkflows: vi.fn().mockRejectedValue(mockError) };
-      vi.mocked(controller as any).buildValidator = { validateBuilds: vi.fn().mockRejectedValue(mockError) };
+      vi.mocked(controller as any).testSuiteRunner = {
+        runAllTests: vi.fn().mockRejectedValue(mockError),
+      };
+      vi.mocked(controller as any).apiValidator = {
+        validateEndpoints: vi.fn().mockRejectedValue(mockError),
+      };
+      vi.mocked(controller as any).e2eValidator = {
+        runFrontendWorkflows: vi.fn().mockRejectedValue(mockError),
+      };
+      vi.mocked(controller as any).buildValidator = {
+        validateBuilds: vi.fn().mockRejectedValue(mockError),
+      };
 
       const results = await controller.executeValidation();
 

@@ -103,37 +103,52 @@ const WorkflowEditor: React.FC = () => {
   const edges = activeWorkflow?.edges || [];
 
   // Stub methods - these should be refactored to use activeWorkflow properly
-  const updateNodes = useCallback((nodes: any[]) => {
-    if (activeWorkflow?.id) {
-      updateWorkflow(activeWorkflow.id, { nodes });
-    }
-  }, [activeWorkflow?.id, updateWorkflow]);
+  const updateNodes = useCallback(
+    (nodes: any[]) => {
+      if (activeWorkflow?.id) {
+        updateWorkflow(activeWorkflow.id, { nodes });
+      }
+    },
+    [activeWorkflow?.id, updateWorkflow]
+  );
 
-  const updateEdges = useCallback((edges: any[]) => {
-    if (activeWorkflow?.id) {
-      updateWorkflow(activeWorkflow.id, { edges });
-    }
-  }, [activeWorkflow?.id, updateWorkflow]);
+  const updateEdges = useCallback(
+    (edges: any[]) => {
+      if (activeWorkflow?.id) {
+        updateWorkflow(activeWorkflow.id, { edges });
+      }
+    },
+    [activeWorkflow?.id, updateWorkflow]
+  );
 
-  const addNode = useCallback((node: any) => {
-    if (activeWorkflow?.id) {
-      updateWorkflow(activeWorkflow.id, { nodes: [...leanNodes, node] });
-    }
-  }, [activeWorkflow?.id, leanNodes, updateWorkflow]);
+  const addNode = useCallback(
+    (node: any) => {
+      if (activeWorkflow?.id) {
+        updateWorkflow(activeWorkflow.id, { nodes: [...leanNodes, node] });
+      }
+    },
+    [activeWorkflow?.id, leanNodes, updateWorkflow]
+  );
 
-  const addEdgeToStore = useCallback((edge: any) => {
-    if (activeWorkflow?.id) {
-      updateWorkflow(activeWorkflow.id, { edges: [...edges, edge] });
-    }
-  }, [activeWorkflow?.id, edges, updateWorkflow]);
+  const addEdgeToStore = useCallback(
+    (edge: any) => {
+      if (activeWorkflow?.id) {
+        updateWorkflow(activeWorkflow.id, { edges: [...edges, edge] });
+      }
+    },
+    [activeWorkflow?.id, edges, updateWorkflow]
+  );
 
-  const removeNode = useCallback((nodeId: string) => {
-    if (activeWorkflow?.id) {
-      updateWorkflow(activeWorkflow.id, {
-        nodes: leanNodes.filter(n => n.id !== nodeId)
-      });
-    }
-  }, [activeWorkflow?.id, leanNodes, updateWorkflow]);
+  const removeNode = useCallback(
+    (nodeId: string) => {
+      if (activeWorkflow?.id) {
+        updateWorkflow(activeWorkflow.id, {
+          nodes: leanNodes.filter((n) => n.id !== nodeId),
+        });
+      }
+    },
+    [activeWorkflow?.id, leanNodes, updateWorkflow]
+  );
 
   // Local UI state for selection
   const [selectedNodeIds, setSelectedNodeIds] = useState<string[]>([]);
@@ -157,9 +172,7 @@ const WorkflowEditor: React.FC = () => {
   } = useAIAssistantStore();
 
   // Collaboration state
-  const {
-    isConnected: isCollaborationConnected,
-  } = useCollaborationStore();
+  const { isConnected: isCollaborationConnected } = useCollaborationStore();
 
   // Stub collaboration methods
   const collaborationPanelOpen = false;
@@ -755,7 +768,6 @@ const WorkflowEditor: React.FC = () => {
   }, [
     // Reload credentials to show the new one in dropdowns
     loadCredentials,
-    loadWorkflow,
   ]);
 
   const memoizedNodes = useMemo(

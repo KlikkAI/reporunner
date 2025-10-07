@@ -225,8 +225,12 @@ export class TestResultAnalyzer {
       durationChange > 1000, // Significantly slower
     ].filter(Boolean).length;
 
-    if (positiveChanges > negativeChanges) { return 'improving'; }
-    if (negativeChanges > positiveChanges) { return 'degrading'; }
+    if (positiveChanges > negativeChanges) {
+      return 'improving';
+    }
+    if (negativeChanges > positiveChanges) {
+      return 'degrading';
+    }
     return 'stable';
   }
 
@@ -271,8 +275,12 @@ export class TestResultAnalyzer {
    * Calculate severity for a failing package
    */
   private calculatePackageSeverity(pkg: PackageTestResult): 'low' | 'medium' | 'high' {
-    if (pkg.failedCount > 10 || pkg.coverage < 30) { return 'high'; }
-    if (pkg.failedCount > 5 || pkg.coverage < 50) { return 'medium'; }
+    if (pkg.failedCount > 10 || pkg.coverage < 30) {
+      return 'high';
+    }
+    if (pkg.failedCount > 5 || pkg.coverage < 50) {
+      return 'medium';
+    }
     return 'low';
   }
 
@@ -305,8 +313,12 @@ export class TestResultAnalyzer {
    * Categorize performance based on duration
    */
   private categorizePerformance(duration: number): 'fast' | 'moderate' | 'slow' {
-    if (duration < 5000) { return 'fast'; }
-    if (duration < 15000) { return 'moderate'; }
+    if (duration < 5000) {
+      return 'fast';
+    }
+    if (duration < 15000) {
+      return 'moderate';
+    }
     return 'slow';
   }
 }

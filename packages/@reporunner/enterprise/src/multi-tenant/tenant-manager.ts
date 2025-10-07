@@ -4,8 +4,8 @@
  * Phase D: Community & Growth - Multi-tenant architecture
  */
 
-import { z } from 'zod';
 import { Logger } from '@reporunner/core';
+import { z } from 'zod';
 
 // Tenant schema
 export const TenantSchema = z.object({
@@ -16,12 +16,14 @@ export const TenantSchema = z.object({
   plan: z.enum(['free', 'starter', 'professional', 'enterprise']),
   status: z.enum(['active', 'suspended', 'pending', 'cancelled']),
   settings: z.object({
-    branding: z.object({
-      logo: z.string().optional(),
-      primaryColor: z.string().optional(),
-      secondaryColor: z.string().optional(),
-      customCss: z.string().optional(),
-    }).optional(),
+    branding: z
+      .object({
+        logo: z.string().optional(),
+        primaryColor: z.string().optional(),
+        secondaryColor: z.string().optional(),
+        customCss: z.string().optional(),
+      })
+      .optional(),
     features: z.object({
       aiOptimization: z.boolean().default(false),
       advancedAnalytics: z.boolean().default(false),
@@ -427,13 +429,15 @@ export class TenantManager {
     utilizationPercentages: Record<string, number>;
   } | null> {
     const tenant = this.tenants.get(tenantId);
-    if (!tenant) return null;
+    if (!tenant) {
+      return null;
+    }
 
     const tenantQuotas = this.quotas.get(tenantId);
     const quotas = tenantQuotas ? Array.from(tenantQuotas.values()) : [];
 
     const utilizationPercentages: Record<string, number> = {};
-    quotas.forEach(quota => {
+    quotas.forEach((quota) => {
       if (quota.limit > 0) {
         utilizationPercentages[quota.resource] = (quota.used / quota.limit) * 100;
       }
@@ -469,7 +473,10 @@ export class TenantManager {
 
     // Check feature access
     const featureKey = this.getFeatureKey(resource, action);
-    if (featureKey && !tenant.settings.features[featureKey as keyof typeof tenant.settings.features]) {
+    if (
+      featureKey &&
+      !tenant.settings.features[featureKey as keyof typeof tenant.settings.features]
+    ) {
       return { allowed: false, reason: 'Feature not available in current plan' };
     }
 
@@ -500,10 +507,10 @@ export class TenantManager {
 
     // Apply filters
     if (filters?.status) {
-      tenants = tenants.filter(t => t.status === filters.status);
+      tenants = tenants.filter((t) => t.status === filters.status);
     }
     if (filters?.plan) {
-      tenants = tenants.filter(t => t.plan === filters.plan);
+      tenants = tenants.filter((t) => t.plan === filters.plan);
     }
 
     const total = tenants.length;
@@ -522,7 +529,10 @@ export class TenantManager {
   /**
    * Initialize tenant quotas
    */
-  private async initializeTenantQuotas(tenantId: string, limits: Tenant['settings']['limits']): Promise<void> {
+  private async initializeTenantQuotas(
+    tenantId: string,
+    limits: Tenant['settings']['limits']
+  ): Promise<void> {
     const quotas = new Map<string, ResourceQuota>();
     const now = new Date();
 
@@ -547,7 +557,10 @@ export class TenantManager {
   /**
    * Update tenant quotas
    */
-  private async updateTenantQuotas(tenantId: string, limits: Tenant['settings']['limits']): Promise<void> {
+  private async updateTenantQuotas(
+    tenantId: string,
+    limits: Tenant['settings']['limits']
+  ): Promise<void> {
     const existingQuotas = this.quotas.get(tenantId) || new Map();
 
     Object.entries(limits).forEach(([resource, limit]) => {
@@ -597,11 +610,12 @@ export class TenantManager {
       case 'daily':
         return timeSinceReset >= 24 * 60 * 60 * 1000;
       case 'monthly':
-        return now.getMonth() !== quota.lastReset.getMonth() ||
-               now.getFullYear() !== quota.lastReset.getFullYear();
+        return (
+          now.getMonth() !== quota.lastReset.getMonth() ||
+          now.getFullYear() !== quota.lastReset.getFullYear()
+        );
       case 'yearly':
         return now.getFullYear() !== quota.lastReset.getFullYear();
-      case 'never':
       default:
         return false;
     }
@@ -614,19 +628,21 @@ export class TenantManager {
     const lastReset = quota.lastReset;
 
     switch (quota.resetPeriod) {
-      case 'daily':
+      case 'daily': {
         const nextDay = new Date(lastReset);
         nextDay.setDate(nextDay.getDate() + 1);
         return nextDay;
-      case 'monthly':
+      }
+      case 'monthly': {
         const nextMonth = new Date(lastReset);
         nextMonth.setMonth(nextMonth.getMonth() + 1);
         return nextMonth;
-      case 'yearly':
+      }
+      case 'yearly': {
         const nextYear = new Date(lastReset);
         nextYear.setFullYear(nextYear.getFullYear() + 1);
         return nextYear;
-      case 'never':
+      }
       default:
         return undefined;
     }
@@ -649,9 +665,15 @@ export class TenantManager {
   /**
    * Update tenant usage
    */
-  private async updateTenantUsage(tenantId: string, resource: string, amount: number): Promise<void> {
+  private async updateTenantUsage(
+    tenantId: string,
+    resource: string,
+    amount: number
+  ): Promise<void> {
     const tenant = this.tenants.get(tenantId);
-    if (!tenant) return;
+    if (!tenant) {
+      return;
+    }
 
     // Map resource to usage field
     const usageField = this.getUsageField(resource);
@@ -687,11 +709,21 @@ export class TenantManager {
    * Get feature key for resource and action
    */
   private getFeatureKey(resource: string, action: string): string | null {
-    if (resource === 'ai' && action === 'optimize') return 'aiOptimization';
-    if (resource === 'analytics' && action === 'advanced') return 'advancedAnalytics';
-    if (resource === 'integration' && action === 'custom') return 'customIntegrations';
-    if (resource === 'auth' && action === 'sso') return 'ssoIntegration';
-    if (resource === 'audit' && action === 'read') return 'auditLogs';
+    if (resource === 'ai' && action === 'optimize') {
+      return 'aiOptimization';
+    }
+    if (resource === 'analytics' && action === 'advanced') {
+      return 'advancedAnalytics';
+    }
+    if (resource === 'integration' && action === 'custom') {
+      return 'customIntegrations';
+    }
+    if (resource === 'auth' && action === 'sso') {
+      return 'ssoIntegration';
+    }
+    if (resource === 'audit' && action === 'read') {
+      return 'auditLogs';
+    }
     return null;
   }
 }

@@ -1,76 +1,66 @@
 // TypeScript Analysis & Validation
-export * from './typescript';
-
-// IDE Performance Validation
-export * from './ide-performance';
-
-// Import Path Optimization
-export * from './import-optimization';
 
 // Architecture Validation
 export * from './architecture';
-
-// Re-export main classes for convenience
-export { TypeScriptAnalyzer } from './typescript/analyzer';
-export { IDEPerformanceValidator } from './ide-performance/ide-performance-validator';
-export { ImportPathOptimizer } from './import-optimization/import-path-optimizer';
-export { DependencyAnalyzer } from './architecture/dependency-analyzer';
 export { CodeOrganizationChecker } from './architecture/code-organization-checker';
+export { DependencyAnalyzer } from './architecture/dependency-analyzer';
 export { TypeSafetyValidator } from './architecture/type-safety-validator';
-
+export type {
+  ArchitectureValidationOptions,
+  ArchitectureValidationResult,
+  CircularDependencyReport,
+  CodeOrganizationReport,
+  DependencyGraph,
+  PackageBoundaryReport,
+  TypeSafetyReport,
+} from './architecture/types';
+export { ValidationOrchestratorCLI } from './cli/validation-orchestrator-cli';
 // Orchestration and Integration
 export { ValidationController } from './controller/ValidationController';
-export { ValidationOrchestratorCLI } from './cli/validation-orchestrator-cli';
-export { ContinuousValidationIntegration } from './integration/ContinuousValidationIntegration';
-
-// Re-export key types
-export type {
-  TypeScriptAnalysisReport,
-  AutocompleteTestResult,
-  TypeResolutionResult,
-  CompilationMetrics
-} from './typescript/types';
-
+// IDE Performance Validation
+export * from './ide-performance';
+export { IDEPerformanceValidator } from './ide-performance/ide-performance-validator';
 export type {
   IDEPerformanceReport,
-  NavigationTestResult,
   IntelliSenseTestResult,
-  SourceMappingTestResult
+  NavigationTestResult,
+  SourceMappingTestResult,
 } from './ide-performance/types';
-
+// Import Path Optimization
+export * from './import-optimization';
+export { ImportPathOptimizer } from './import-optimization/import-path-optimizer';
 export type {
+  CircularDependency,
   ImportOptimizationReport,
   ImportPathAnalysis,
-  CircularDependency,
-  ImportSuggestion
+  ImportSuggestion,
 } from './import-optimization/types';
-
-export type {
-  ArchitectureValidationResult,
-  ArchitectureValidationOptions,
-  CircularDependencyReport,
-  PackageBoundaryReport,
-  DependencyGraph,
-  CodeOrganizationReport,
-  TypeSafetyReport
-} from './architecture/types';
-
-// Core validation types
-export type {
-  ValidationResults,
-  ValidationSummary,
-  ValidationError,
-  OptimizationRecommendation,
-  ValidationReport
-} from './types';
-
 // CI Integration types
 export type {
-  CIValidationConfig,
-  CIExecutionOptions,
-  CIValidationResult,
-  ValidationAnalysis,
   CIArtifact,
+  CIExecutionOptions,
   CINotification,
-  NotificationChannel
+  CIValidationConfig,
+  CIValidationResult,
+  NotificationChannel,
+  ValidationAnalysis,
 } from './integration';
+export { ContinuousValidationIntegration } from './integration/ContinuousValidationIntegration';
+// Core validation types
+export type {
+  OptimizationRecommendation,
+  ValidationError,
+  ValidationReport,
+  ValidationResults,
+  ValidationSummary,
+} from './types';
+export * from './typescript';
+// Re-export main classes for convenience
+export { TypeScriptAnalyzer } from './typescript/analyzer';
+// Re-export key types
+export type {
+  AutocompleteTestResult,
+  CompilationMetrics,
+  TypeResolutionResult,
+  TypeScriptAnalysisReport,
+} from './typescript/types';

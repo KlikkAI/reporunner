@@ -1,7 +1,7 @@
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { existsSync, rmSync, readFileSync } from 'node:fs';
+import { existsSync, readFileSync, rmSync } from 'node:fs';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import type { ValidationReport, ValidationResults } from '../../types/index.js';
 import { DocumentationGenerator } from '../DocumentationGenerator.js';
-import type { ValidationResults, ValidationReport } from '../../types/index.js';
 
 describe('DocumentationGenerator', () => {
   let generator: DocumentationGenerator;
@@ -381,7 +381,7 @@ describe('DocumentationGenerator', () => {
 
       expect(docs.length).toBeGreaterThan(0);
 
-      const packageStructureDoc = docs.find(d => d.template === 'package-structure');
+      const packageStructureDoc = docs.find((d) => d.template === 'package-structure');
       expect(packageStructureDoc).toBeDefined();
       expect(packageStructureDoc?.content).toContain('Package Structure');
       expect(packageStructureDoc?.content).toContain('Total Packages: 2');
@@ -411,7 +411,7 @@ describe('DocumentationGenerator', () => {
 
       expect(docs.length).toBeGreaterThan(0);
 
-      const packageStructureDoc = docs.find(d => d.template === 'package-structure');
+      const packageStructureDoc = docs.find((d) => d.template === 'package-structure');
       expect(packageStructureDoc?.content).toContain('Total Packages: 0');
       expect(packageStructureDoc?.content).toContain('Health Score: 0/100');
     });
@@ -423,7 +423,7 @@ describe('DocumentationGenerator', () => {
 
       expect(docs.length).toBeGreaterThan(0);
 
-      const setupGuideDoc = docs.find(d => d.template === 'development-setup');
+      const setupGuideDoc = docs.find((d) => d.template === 'development-setup');
       expect(setupGuideDoc).toBeDefined();
       expect(setupGuideDoc?.content).toContain('Development Setup Guide');
       expect(setupGuideDoc?.content).toContain('Prerequisites');
@@ -470,7 +470,7 @@ describe('DocumentationGenerator', () => {
 
       const docs = await generator.generateSetupGuides(resultsWithIssues);
 
-      const troubleshootingDoc = docs.find(d => d.template === 'troubleshooting-guide');
+      const troubleshootingDoc = docs.find((d) => d.template === 'troubleshooting-guide');
       expect(troubleshootingDoc).toBeDefined();
       expect(troubleshootingDoc?.content).toContain('Slow Build Times');
       expect(troubleshootingDoc?.content).toContain('Low Cache Hit Rate');
@@ -485,7 +485,7 @@ describe('DocumentationGenerator', () => {
 
       expect(docs.length).toBeGreaterThan(0);
 
-      const bestPracticesDoc = docs.find(d => d.template === 'development-best-practices');
+      const bestPracticesDoc = docs.find((d) => d.template === 'development-best-practices');
       expect(bestPracticesDoc).toBeDefined();
       expect(bestPracticesDoc?.content).toContain('Development Best Practices');
       expect(bestPracticesDoc?.content).toContain('Code Organization');
@@ -496,7 +496,7 @@ describe('DocumentationGenerator', () => {
     it('should include code examples', async () => {
       const docs = await generator.generateBestPracticesDocumentation(mockValidationResults);
 
-      const bestPracticesDoc = docs.find(d => d.template === 'development-best-practices');
+      const bestPracticesDoc = docs.find((d) => d.template === 'development-best-practices');
       expect(bestPracticesDoc?.content).toContain('```typescript');
       expect(bestPracticesDoc?.content).toContain('Consistent Import Paths');
       expect(bestPracticesDoc?.content).toContain('@/services/UserService');
@@ -505,14 +505,14 @@ describe('DocumentationGenerator', () => {
     it('should generate performance best practices', async () => {
       const docs = await generator.generateBestPracticesDocumentation(mockValidationResults);
 
-      const perfBestPracticesDoc = docs.find(d => d.template === 'performance-best-practices');
+      const perfBestPracticesDoc = docs.find((d) => d.template === 'performance-best-practices');
       expect(perfBestPracticesDoc).toBeDefined();
     });
 
     it('should generate testing best practices', async () => {
       const docs = await generator.generateBestPracticesDocumentation(mockValidationResults);
 
-      const testingBestPracticesDoc = docs.find(d => d.template === 'testing-best-practices');
+      const testingBestPracticesDoc = docs.find((d) => d.template === 'testing-best-practices');
       expect(testingBestPracticesDoc).toBeDefined();
     });
   });
@@ -524,7 +524,7 @@ describe('DocumentationGenerator', () => {
       expect(docs.length).toBeGreaterThan(5); // Should have multiple docs
 
       // Check for different types of documentation
-      const templateNames = docs.map(d => d.template);
+      const templateNames = docs.map((d) => d.template);
       expect(templateNames).toContain('package-structure');
       expect(templateNames).toContain('development-setup');
       expect(templateNames).toContain('development-best-practices');
@@ -542,7 +542,7 @@ describe('DocumentationGenerator', () => {
     it('should generate validation report documentation', async () => {
       const docs = await generator.generateComprehensiveDocumentation(mockValidationReport);
 
-      const reportDoc = docs.find(d => d.template === 'validation-report');
+      const reportDoc = docs.find((d) => d.template === 'validation-report');
       expect(reportDoc).toBeDefined();
       expect(reportDoc?.content).toContain('Phase A Validation Report');
       expect(reportDoc?.content).toContain('Overall Status: SUCCESS');

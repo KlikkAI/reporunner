@@ -9,8 +9,24 @@ import type {
   EmbeddingResponse,
   LLMCompletion,
   LLMResponse,
+  LLMTool,
   ProviderConfig,
 } from '../../types';
+
+// OpenAI-specific message format with optional fields
+interface OpenAIMessage {
+  role: 'system' | 'user' | 'assistant' | 'function' | 'tool';
+  content: string | null;
+  name?: string;
+  tool_call_id?: string;
+}
+
+// Token usage details from OpenAI API
+export interface TokenUsageDetails {
+  cachedTokens?: number;
+  reasoningTokens?: number;
+  audioTokens?: number;
+}
 
 export interface OpenAIConfig extends ProviderConfig {
   type: 'openai';
@@ -66,7 +82,7 @@ export class OpenAIProvider extends CombinedAIProvider {
       const completion = await this.client.chat.completions.create({
         model: request.model,
         messages: messages.map((msg) => {
-          const baseMsg: any = {
+          const baseMsg: OpenAIMessage = {
             role: msg.role,
             content: msg.content,
           };
@@ -103,8 +119,16 @@ export class OpenAIProvider extends CombinedAIProvider {
               promptTokens: completion.usage.prompt_tokens,
               completionTokens: completion.usage.completion_tokens,
               totalTokens: completion.usage.total_tokens,
-              promptTokensDetails: completion.usage.prompt_tokens_details as any,
-              completionTokensDetails: completion.usage.completion_tokens_details as any,
+              promptTokensDetails: completion.usage.prompt_tokens_details
+                ? {
+                    cachedTokens: completion.usage.prompt_tokens_details.cached_tokens,
+                  }
+                : undefined,
+              completionTokensDetails: completion.usage.completion_tokens_details
+                ? {
+                    reasoningTokens: completion.usage.completion_tokens_details.reasoning_tokens,
+                  }
+                : undefined,
             }
           : undefined,
         systemFingerprint: completion.system_fingerprint,
@@ -126,7 +150,7 @@ export class OpenAIProvider extends CombinedAIProvider {
       const stream = await this.client.chat.completions.create({
         model: request.model,
         messages: messages.map((msg) => {
-          const baseMsg: any = {
+          const baseMsg: OpenAIMessage = {
             role: msg.role,
             content: msg.content,
           };
@@ -245,13 +269,13 @@ export class OpenAIProvider extends CombinedAIProvider {
     }
   }
 
-  private formatTools(tools: any[]) {
+  private formatTools(tools: LLMTool[]) {
     return tools.map((tool) => ({
       type: 'function' as const,
       function: {
-        name: tool.function?.name || tool.name,
-        description: tool.function?.description || tool.description,
-        parameters: tool.function?.parameters || tool.parameters,
+        name: tool.function.name,
+        description: tool.function.description,
+        parameters: tool.function.parameters,
       },
     }));
   }

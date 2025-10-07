@@ -208,10 +208,30 @@ export class APIValidator implements IAPIValidator {
       { path: '/api/schedules', method: 'GET', expectedStatus: 200 },
       { path: '/api/workflows', method: 'GET', expectedStatus: 200 },
       { path: '/api/users', method: 'GET', expectedStatus: 200 },
-      { path: '/api/auth/login', method: 'POST', expectedStatus: 200, testData: { email: 'test@example.com', password: 'password' } },
-      { path: '/api/workflows', method: 'POST', expectedStatus: 201, testData: { name: 'Test Workflow', description: 'Test' } },
-      { path: '/api/schedules', method: 'POST', expectedStatus: 201, testData: { name: 'Test Schedule', cron: '0 0 * * *' } },
-      { path: '/api/audit/events', method: 'POST', expectedStatus: 201, testData: { event: 'test', data: {} } },
+      {
+        path: '/api/auth/login',
+        method: 'POST',
+        expectedStatus: 200,
+        testData: { email: 'test@example.com', password: 'password' },
+      },
+      {
+        path: '/api/workflows',
+        method: 'POST',
+        expectedStatus: 201,
+        testData: { name: 'Test Workflow', description: 'Test' },
+      },
+      {
+        path: '/api/schedules',
+        method: 'POST',
+        expectedStatus: 201,
+        testData: { name: 'Test Schedule', cron: '0 0 * * *' },
+      },
+      {
+        path: '/api/audit/events',
+        method: 'POST',
+        expectedStatus: 201,
+        testData: { event: 'test', data: {} },
+      },
     ];
   }
 
@@ -483,7 +503,10 @@ export class APIValidator implements IAPIValidator {
       validateStatus: () => true, // Don't throw on any status code
     };
 
-    if (endpoint.testData && (endpoint.method === 'POST' || endpoint.method === 'PUT' || endpoint.method === 'PATCH')) {
+    if (
+      endpoint.testData &&
+      (endpoint.method === 'POST' || endpoint.method === 'PUT' || endpoint.method === 'PATCH')
+    ) {
       config.data = endpoint.testData;
     }
 
@@ -505,7 +528,8 @@ export class APIValidator implements IAPIValidator {
     }
 
     const sorted = [...this.responseTimes].sort((a, b) => a - b);
-    const average = this.responseTimes.reduce((sum, time) => sum + time, 0) / this.responseTimes.length;
+    const average =
+      this.responseTimes.reduce((sum, time) => sum + time, 0) / this.responseTimes.length;
     const median = sorted[Math.floor(sorted.length / 2)];
     const p95 = sorted[Math.floor(sorted.length * 0.95)];
     const p99 = sorted[Math.floor(sorted.length * 0.99)];

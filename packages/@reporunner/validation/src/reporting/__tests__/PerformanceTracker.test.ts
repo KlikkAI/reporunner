@@ -1,7 +1,7 @@
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { existsSync, rmSync } from 'node:fs';
-import { PerformanceTracker } from '../PerformanceTracker.js';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import type { ValidationResults } from '../../types/index.js';
+import { PerformanceTracker } from '../PerformanceTracker.js';
 
 describe('PerformanceTracker', () => {
   let tracker: PerformanceTracker;
@@ -232,7 +232,7 @@ describe('PerformanceTracker', () => {
     });
 
     it('should limit data points to maxDataPoints', async () => {
-      const smallTracker = new PerformanceTracker(testDataDir + '-small', 2);
+      const smallTracker = new PerformanceTracker(`${testDataDir}-small`, 2);
 
       // Add 3 data points
       for (let i = 0; i < 3; i++) {
@@ -290,25 +290,25 @@ describe('PerformanceTracker', () => {
       expect(trends.length).toBeGreaterThan(0);
 
       // Find build time trend (should be improving)
-      const buildTimeTrend = trends.find(t => t.metric === 'Build Time');
+      const buildTimeTrend = trends.find((t) => t.metric === 'Build Time');
       expect(buildTimeTrend).toBeDefined();
       expect(buildTimeTrend?.direction).toBe('improving');
       expect(buildTimeTrend?.changeRate).toBeLessThan(0); // Negative change rate for improving
 
       // Find bundle size trend (should be degrading)
-      const bundleSizeTrend = trends.find(t => t.metric === 'Bundle Size');
+      const bundleSizeTrend = trends.find((t) => t.metric === 'Bundle Size');
       expect(bundleSizeTrend).toBeDefined();
       expect(bundleSizeTrend?.direction).toBe('degrading');
       expect(bundleSizeTrend?.changeRate).toBeGreaterThan(0); // Positive change rate for degrading
 
       // Find test coverage trend (should be stable)
-      const testCoverageTrend = trends.find(t => t.metric === 'Test Coverage');
+      const testCoverageTrend = trends.find((t) => t.metric === 'Test Coverage');
       expect(testCoverageTrend).toBeDefined();
       expect(testCoverageTrend?.direction).toBe('stable');
     });
 
     it('should return empty array for insufficient data', async () => {
-      const emptyTracker = new PerformanceTracker(testDataDir + '-empty');
+      const emptyTracker = new PerformanceTracker(`${testDataDir}-empty`);
       const trends = await emptyTracker.analyzeTrends();
 
       expect(trends).toEqual([]);
@@ -319,7 +319,7 @@ describe('PerformanceTracker', () => {
 
       expect(trends.length).toBeGreaterThan(0);
 
-      const buildTimeTrend = trends.find(t => t.metric === 'Build Time');
+      const buildTimeTrend = trends.find((t) => t.metric === 'Build Time');
       expect(buildTimeTrend?.dataPoints).toBeLessThanOrEqual(6); // Should have fewer data points
     });
   });
@@ -366,7 +366,7 @@ describe('PerformanceTracker', () => {
 
       expect(regressions.length).toBeGreaterThan(0);
 
-      const buildTimeRegression = regressions.find(r => r.metric === 'Build Time');
+      const buildTimeRegression = regressions.find((r) => r.metric === 'Build Time');
       expect(buildTimeRegression).toBeDefined();
       expect(buildTimeRegression?.severity).toBe('critical'); // 100% increase should be critical
       expect(buildTimeRegression?.regressionPercentage).toBeGreaterThan(50);
@@ -375,7 +375,7 @@ describe('PerformanceTracker', () => {
     });
 
     it('should return empty array for no regressions', async () => {
-      const goodTracker = new PerformanceTracker(testDataDir + '-good');
+      const goodTracker = new PerformanceTracker(`${testDataDir}-good`);
 
       // Add only good data
       for (let i = 0; i < 3; i++) {
@@ -460,7 +460,7 @@ describe('PerformanceTracker', () => {
 
       expect(comparisons.length).toBeGreaterThan(0);
 
-      const buildTimeComparison = comparisons.find(c => c.metric === 'Build Time');
+      const buildTimeComparison = comparisons.find((c) => c.metric === 'Build Time');
       expect(buildTimeComparison).toBeDefined();
       expect(buildTimeComparison?.current).toBeDefined();
       expect(buildTimeComparison?.previous).toBeDefined();
@@ -472,7 +472,7 @@ describe('PerformanceTracker', () => {
     it('should calculate correct change percentages', async () => {
       const comparisons = await tracker.generateComparisons();
 
-      const buildTimeComparison = comparisons.find(c => c.metric === 'Build Time');
+      const buildTimeComparison = comparisons.find((c) => c.metric === 'Build Time');
       expect(buildTimeComparison).toBeDefined();
 
       // Should show improvement from previous (negative change for build time is good)
@@ -481,7 +481,7 @@ describe('PerformanceTracker', () => {
     });
 
     it('should return empty array for insufficient data', async () => {
-      const emptyTracker = new PerformanceTracker(testDataDir + '-empty');
+      const emptyTracker = new PerformanceTracker(`${testDataDir}-empty`);
       const comparisons = await emptyTracker.generateComparisons();
 
       expect(comparisons).toEqual([]);
@@ -528,7 +528,7 @@ describe('PerformanceTracker', () => {
     });
 
     it('should handle empty data', () => {
-      const emptyTracker = new PerformanceTracker(testDataDir + '-empty');
+      const emptyTracker = new PerformanceTracker(`${testDataDir}-empty`);
       const stats = emptyTracker.getMetricStatistics('buildTime');
 
       expect(stats.min).toBe(0);
@@ -554,7 +554,7 @@ describe('PerformanceTracker', () => {
 
       expect(existsSync(csvPath)).toBe(true);
 
-      const fs = require('fs');
+      const fs = require('node:fs');
       const csvContent = fs.readFileSync(csvPath, 'utf-8');
 
       expect(csvContent).toContain('timestamp,buildTime,bundleSize');
@@ -564,7 +564,7 @@ describe('PerformanceTracker', () => {
     });
 
     it('should handle empty data', () => {
-      const emptyTracker = new PerformanceTracker(testDataDir + '-empty');
+      const emptyTracker = new PerformanceTracker(`${testDataDir}-empty`);
       const csvPath = emptyTracker.exportToCSV();
 
       expect(csvPath).toBeDefined();
@@ -604,7 +604,7 @@ describe('PerformanceTracker', () => {
       const data = tracker.getHistoricalData(startDate);
 
       expect(data.length).toBeLessThan(5);
-      expect(data.every(point => new Date(point.timestamp) >= startDate)).toBe(true);
+      expect(data.every((point) => new Date(point.timestamp) >= startDate)).toBe(true);
     });
 
     it('should filter by end date', () => {
@@ -612,7 +612,7 @@ describe('PerformanceTracker', () => {
       const data = tracker.getHistoricalData(undefined, endDate);
 
       expect(data.length).toBeLessThan(5);
-      expect(data.every(point => new Date(point.timestamp) <= endDate)).toBe(true);
+      expect(data.every((point) => new Date(point.timestamp) <= endDate)).toBe(true);
     });
 
     it('should filter by date range', () => {
@@ -621,10 +621,12 @@ describe('PerformanceTracker', () => {
       const data = tracker.getHistoricalData(startDate, endDate);
 
       expect(data.length).toBeLessThanOrEqual(3);
-      expect(data.every(point => {
-        const pointDate = new Date(point.timestamp);
-        return pointDate >= startDate && pointDate <= endDate;
-      })).toBe(true);
+      expect(
+        data.every((point) => {
+          const pointDate = new Date(point.timestamp);
+          return pointDate >= startDate && pointDate <= endDate;
+        })
+      ).toBe(true);
     });
   });
 });

@@ -1,5 +1,18 @@
 // LLM types reusing patterns from workflow-types.ts
 
+// JSON Schema property type for function parameters
+export interface JSONSchemaProperty {
+  type?: string | string[];
+  description?: string;
+  enum?: unknown[];
+  items?: JSONSchemaProperty;
+  properties?: Record<string, JSONSchemaProperty>;
+  required?: string[];
+  additionalProperties?: boolean | JSONSchemaProperty;
+  // Allow additional schema properties
+  [key: string]: unknown;
+}
+
 export interface LLMCompletion {
   model: string;
   prompt?: string;
@@ -46,7 +59,7 @@ export interface LLMChoice {
   message?: LLMMessage;
   delta?: Partial<LLMMessage>;
   finishReason: 'stop' | 'length' | 'function_call' | 'tool_calls' | 'content_filter' | null;
-  logprobs?: any;
+  logprobs?: unknown; // Opaque log probability data from provider
 }
 
 export interface LLMUsage {
@@ -66,7 +79,7 @@ export interface LLMFunction {
   description?: string;
   parameters: {
     type: 'object';
-    properties: Record<string, any>;
+    properties: Record<string, JSONSchemaProperty>;
     required?: string[];
   };
 }

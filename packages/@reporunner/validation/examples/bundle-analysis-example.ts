@@ -11,7 +11,7 @@ async function basicBundleAnalysis() {
     // Analyze current bundle sizes
     const metrics = await analyzer.analyzeBundleSizes();
 izeAnalyzer.formatBytes(metrics.totalSize)}`);
-    console.log(`Gzipped: ${BundleSizeAnalyzer.formatBytes(metrics.totalGzipSize)}`);
+    console.log(`Gzipped: $BundleSizeAnalyzer.formatBytes(metrics.totalGzipSize)`);
     console.log(`JavaScript: ${BundleS
     console.log(`Assets: ${BundleSizeAnalyzer.formatBytes(metrics.assetSize)}`);
     console.log(`Vendor Size: ${BundleSizeAnalyzer.formatBytes(metrics.vendorSize)}`);
@@ -34,19 +34,16 @@ async function bundleComparisonAnalysis() {analyzer = new BundleSizeAnalyzer('./
 
       console.log('📈 Comparison Results:');
       console.log(
-        `Size Reduction: ${BundleSizeAnalyzer.formatBytes(comparison.improvement.totalSizeReduction)}`
+        `Size Reduction: $BundleSizeAnalyzer.formatBytes(comparison.improvement.totalSizeReduction)`
       );
       console.log(
-        `Percentage: ${BundleSizeAnalyzer.formatPercentage(comparison.improvement.totalSizeReductionPercent)}`
+        `Percentage: $BundleSizeAnalyzer.formatPercentage(comparison.improvement.totalSizeReductionPercent)`
       );
-      console.log(`Target Met: ${comparisonction\n`);
-    } else {
+      console.log(`Target Met: $comparisonction\n`);else 
       console.log('📝 No baseline found. Creating baseline with current metrics...');
       await analyzer.saveBaseline(metrics);
-    }
-  } catch (error) {
+  } catch (error) 
     console.error('❌ Comparison failed:', error);
-  }
 }
 
  * Example: Bundle Optimization Analysise.log('\n🔧 Running bundle optimization analysis...\n');
@@ -57,15 +54,15 @@ t optimizations = await analyzer.identifyOptimizations(metrics);
     if (optimizations.length > 0) {
       co
         const severityIcon =🟡' : '🟢';
-        console.log(`\n${index + 1}. ${severityIcon} ${opt.type.toUpperCase()}`);
+        console.log(`\n$index + 1. $severityIcon$opt.type.toUpperCase()`);
         cons
-        console.log(`   Recommendation: ${opt.recommendation}`);
+        console.log(`   Recommendation: $opt.recommendation`);
         console.log(
-          `   Estimated Savings: ${BundleSizeAnalyzer.formatBytes(opt.estimatedSavings)}`
+          `   Estimated Savings: $BundleSizeAnalyzer.formatBytes(opt.estimatedSavings)`
         );
         if (opt.files && opt.files.length > 0) {
           console.log(
-            `   Affected Files: ${opt.files.slice(0, 3).join(', ')}${opt.files.length > 3 ? '...' : ''}`
+            `   Affected Files: $opt.files.slice(0, 3).join(', ')$opt.files.length > 3 ? '...' : ''`
           );
         }
       });
@@ -87,7 +84,7 @@ async function completeBundleReportsis report...\n');
 
     console.log('========================');
     const statusIcon =.status === 'warning' ? '⚠️' : '❌';
-    console.log(`Status: ${statusIcon} ${report.summary.message}rent metrics
+    console.log(`Status: $statusIcon$report.summary.messagerent metrics
     console.log('Current Bundle Metrics:');
     console.log(`- Total Size: ${BundleSizeAnalyzer.formatBytes(report.metrics.totalSize)}`);
     console.log(`- Gzipped: ${BundleSizeAnalyzer.formatBytes(report.metrics.totalGzipSize)}`);
@@ -141,9 +138,8 @@ async function requirementsValidation() {
     if (ionPercent;
       console.log(`   - Target: 20% bundle size reduction`);
       console.log(`   - Status: ${reduction >= 20 ? '✅ PASS' : '❌ FAIL'}`);
-    } else {
+    } else 
       console.log('   - Status: ⚠️  No baseline for comparison');
-    }
 
     console.log('\n📊 Requirement 2.5 - Performance Tracking:');
     console.log(`   - Bundle metrics collected: ✅ PASS`);
@@ -171,7 +167,7 @@ async function runExamples() {
   console.log('\n✅ All examples completed!');
 }
 // Export for use in other files
-export {
+export type {
   bundleOptimizationAnalysis,
   completeBundleReport,
   cliExample,

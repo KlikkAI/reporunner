@@ -1,12 +1,11 @@
-import { writeFileSync, mkdirSync, existsSync } from 'node:fs';
+import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import type {
-  ValidationResults,
-  PerformanceDashboard,
   ChartData,
-  MetricCard,
-  TrendAnalysis,
   ComparisonData,
+  MetricCard,
+  PerformanceDashboard,
+  TrendAnalysis,
   ValidationReport,
 } from '../types/index.js';
 
@@ -53,7 +52,9 @@ export class DashboardGenerator {
 
       return htmlPath;
     } catch (error) {
-      throw new Error(`Failed to generate dashboard: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `Failed to generate dashboard: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
     }
   }
 
@@ -127,7 +128,7 @@ export class DashboardGenerator {
         <section class="metrics-section">
             <h2>Performance Metrics</h2>
             <div class="metrics-grid">
-                ${performanceDashboard.metrics.map(metric => this.generateMetricCard(metric)).join('')}
+                ${performanceDashboard.metrics.map((metric) => this.generateMetricCard(metric)).join('')}
             </div>
         </section>
 
@@ -143,7 +144,7 @@ export class DashboardGenerator {
         <section class="trends-section">
             <h2>Performance Trends</h2>
             <div class="trends-grid">
-                ${performanceDashboard.trends.map(trend => this.generateTrendCard(trend)).join('')}
+                ${performanceDashboard.trends.map((trend) => this.generateTrendCard(trend)).join('')}
             </div>
         </section>
 
@@ -151,7 +152,7 @@ export class DashboardGenerator {
         <section class="comparisons-section">
             <h2>Performance Comparisons</h2>
             <div class="comparisons-grid">
-                ${performanceDashboard.comparisons.map(comparison => this.generateComparisonCard(comparison)).join('')}
+                ${performanceDashboard.comparisons.map((comparison) => this.generateComparisonCard(comparison)).join('')}
             </div>
         </section>
 
@@ -197,9 +198,13 @@ export class DashboardGenerator {
             <div class="metric-value">
                 ${metric.value}${metric.unit || ''}
             </div>
-            ${metric.trendValue ? `<div class="metric-trend">
+            ${
+              metric.trendValue
+                ? `<div class="metric-trend">
                 ${metric.trend === 'up' ? '+' : metric.trend === 'down' ? '-' : ''}${Math.abs(metric.trendValue || 0)}%
-            </div>` : ''}
+            </div>`
+                : ''
+            }
         </div>
     `;
   }
@@ -228,8 +233,14 @@ export class DashboardGenerator {
    * Generate trend card HTML
    */
   private generateTrendCard(trend: TrendAnalysis): string {
-    const directionIcon = trend.direction === 'improving' ? '📈' : trend.direction === 'degrading' ? '📉' : '📊';
-    const directionClass = trend.direction === 'improving' ? 'success' : trend.direction === 'degrading' ? 'error' : 'neutral';
+    const directionIcon =
+      trend.direction === 'improving' ? '📈' : trend.direction === 'degrading' ? '📉' : '📊';
+    const directionClass =
+      trend.direction === 'improving'
+        ? 'success'
+        : trend.direction === 'degrading'
+          ? 'error'
+          : 'neutral';
 
     return `
         <div class="trend-card ${directionClass}">
@@ -248,11 +259,13 @@ export class DashboardGenerator {
    * Generate comparison card HTML
    */
   private generateComparisonCard(comparison: ComparisonData): string {
-    const currentVsBaseline = ((comparison.current - comparison.baseline) / comparison.baseline) * 100;
+    const currentVsBaseline =
+      ((comparison.current - comparison.baseline) / comparison.baseline) * 100;
     const currentVsTarget = ((comparison.current - comparison.target) / comparison.target) * 100;
 
     const baselineStatus = currentVsBaseline < 0 ? 'success' : 'warning';
-    const targetStatus = Math.abs(currentVsTarget) < 5 ? 'success' : currentVsTarget < 0 ? 'success' : 'warning';
+    const targetStatus =
+      Math.abs(currentVsTarget) < 5 ? 'success' : currentVsTarget < 0 ? 'success' : 'warning';
 
     return `
         <div class="comparison-card">
@@ -291,11 +304,20 @@ export class DashboardGenerator {
   /**
    * Generate recommendations content HTML
    */
-  private generateRecommendationsContent(recommendations: ValidationReport['recommendations']): string {
-    const generateRecommendationList = (recs: ValidationReport['recommendations']['critical'], priority: string) => `
+  private generateRecommendationsContent(
+    recommendations: ValidationReport['recommendations']
+  ): string {
+    const generateRecommendationList = (
+      recs: ValidationReport['recommendations']['critical'],
+      priority: string
+    ) => `
         <div class="tab-content" id="tab-${priority}" ${priority === 'critical' ? 'style="display: block;"' : ''}>
-            ${recs.length === 0 ? `<p class="no-recommendations">No ${priority} priority recommendations</p>` :
-              recs.map(rec => `
+            ${
+              recs.length === 0
+                ? `<p class="no-recommendations">No ${priority} priority recommendations</p>`
+                : recs
+                    .map(
+                      (rec) => `
                 <div class="recommendation-card priority-${priority}">
                     <div class="recommendation-header">
                         <h4>${rec.title}</h4>
@@ -311,15 +333,17 @@ export class DashboardGenerator {
                     <div class="recommendation-steps">
                         <strong>Steps:</strong>
                         <ol>
-                            ${rec.steps.map(step => `<li>${step}</li>`).join('')}
+                            ${rec.steps.map((step) => `<li>${step}</li>`).join('')}
                         </ol>
                     </div>
                     <div class="recommendation-packages">
                         <strong>Affected Packages:</strong>
-                        ${rec.affectedPackages.map(pkg => `<span class="package-tag">${pkg}</span>`).join('')}
+                        ${rec.affectedPackages.map((pkg) => `<span class="package-tag">${pkg}</span>`).join('')}
                     </div>
                 </div>
-              `).join('')
+              `
+                    )
+                    .join('')
             }
         </div>
     `;

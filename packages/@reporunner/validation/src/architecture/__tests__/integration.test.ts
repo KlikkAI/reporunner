@@ -1,5 +1,5 @@
-import { DependencyAnalyzer } from '../dependency-analyzer';
 import { CodeOrganizationChecker } from '../code-organization-checker';
+import { DependencyAnalyzer } from '../dependency-analyzer';
 import { TypeSafetyValidator } from '../type-safety-validator';
 
 describe('Architecture Validation Integration', () => {
@@ -11,7 +11,9 @@ describe('Architecture Validation Integration', () => {
 
   test('should have correct exports from index', async () => {
     const { DependencyAnalyzer: ExportedAnalyzer } = await import('../dependency-analyzer');
-    const { CodeOrganizationChecker: ExportedChecker } = await import('../code-organization-checker');
+    const { CodeOrganizationChecker: ExportedChecker } = await import(
+      '../code-organization-checker'
+    );
     const { TypeSafetyValidator: ExportedValidator } = await import('../type-safety-validator');
 
     expect(ExportedAnalyzer).toBeDefined();

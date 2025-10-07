@@ -16,15 +16,10 @@ export const TRIGGER_TYPES = [
   'manual',
   'api',
   'file_change',
-  'database_change'
+  'database_change',
 ] as const;
 
-export const TRIGGER_STATUSES = [
-  'active',
-  'inactive',
-  'paused',
-  'error'
-] as const;
+export const TRIGGER_STATUSES = ['active', 'inactive', 'paused', 'error'] as const;
 
 export const TRIGGER_CONDITIONS = [
   'equals',
@@ -35,16 +30,10 @@ export const TRIGGER_CONDITIONS = [
   'less_than',
   'regex_match',
   'exists',
-  'not_exists'
+  'not_exists',
 ] as const;
 
-export const WEBHOOK_METHODS = [
-  'GET',
-  'POST',
-  'PUT',
-  'PATCH',
-  'DELETE'
-] as const;
+export const WEBHOOK_METHODS = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'] as const;
 
 export const EVENT_TYPES = [
   'workflow_started',
@@ -54,7 +43,7 @@ export const EVENT_TYPES = [
   'user_updated',
   'data_changed',
   'system_alert',
-  'custom'
+  'custom',
 ] as const;
 
 export const TRIGGER_EXECUTION_STATUSES = [
@@ -63,19 +52,19 @@ export const TRIGGER_EXECUTION_STATUSES = [
   'completed',
   'failed',
   'cancelled',
-  'timeout'
+  'timeout',
 ] as const;
 
 // ============================================================================
 // TYPE DEFINITIONS
 // ============================================================================
 
-export type TriggerType = typeof TRIGGER_TYPES[number];
-export type TriggerStatus = typeof TRIGGER_STATUSES[number];
-export type TriggerCondition = typeof TRIGGER_CONDITIONS[number];
-export type WebhookMethod = typeof WEBHOOK_METHODS[number];
-export type EventType = typeof EVENT_TYPES[number];
-export type TriggerExecutionStatus = typeof TRIGGER_EXECUTION_STATUSES[number];
+export type TriggerType = (typeof TRIGGER_TYPES)[number];
+export type TriggerStatus = (typeof TRIGGER_STATUSES)[number];
+export type TriggerCondition = (typeof TRIGGER_CONDITIONS)[number];
+export type WebhookMethod = (typeof WEBHOOK_METHODS)[number];
+export type EventType = (typeof EVENT_TYPES)[number];
+export type TriggerExecutionStatus = (typeof TRIGGER_EXECUTION_STATUSES)[number];
 
 // ============================================================================
 // CORE INTERFACES
@@ -198,14 +187,16 @@ export interface TriggerMetrics {
 // API TRANSFER OBJECTS (DTOs)
 // ============================================================================
 
-export interface TriggerDTO extends Omit<Trigger, 'createdAt' | 'updatedAt' | 'lastTriggered' | 'scheduleConfig'> {
+export interface TriggerDTO
+  extends Omit<Trigger, 'createdAt' | 'updatedAt' | 'lastTriggered' | 'scheduleConfig'> {
   createdAt: string;
   updatedAt: string;
   lastTriggered?: string;
   scheduleConfig?: TriggerScheduleConfigDTO;
 }
 
-export interface TriggerScheduleConfigDTO extends Omit<TriggerScheduleConfig, 'startDate' | 'endDate'> {
+export interface TriggerScheduleConfigDTO
+  extends Omit<TriggerScheduleConfig, 'startDate' | 'endDate'> {
   startDate?: string;
   endDate?: string;
 }
@@ -238,32 +229,34 @@ export const TriggerConditionRuleSchema = z.object({
   field: z.string().min(1),
   condition: TriggerConditionSchema,
   value: z.any(),
-  caseSensitive: z.boolean().optional()
+  caseSensitive: z.boolean().optional(),
 });
 
 export const WebhookConfigSchema = z.object({
   url: z.string().url(),
   method: WebhookMethodSchema,
   headers: z.record(z.string(), z.string()).optional(),
-  authentication: z.object({
-    type: z.enum(['none', 'basic', 'bearer', 'api_key']),
-    credentials: z.record(z.string(), z.string()).optional()
-  }).optional(),
+  authentication: z
+    .object({
+      type: z.enum(['none', 'basic', 'bearer', 'api_key']),
+      credentials: z.record(z.string(), z.string()).optional(),
+    })
+    .optional(),
   timeout: z.number().min(1000).max(300000).optional(), // 1s to 5min
-  retries: z.number().min(0).max(10).optional()
+  retries: z.number().min(0).max(10).optional(),
 });
 
 export const EventConfigSchema = z.object({
   eventType: EventTypeSchema,
   source: z.string().optional(),
-  filters: z.record(z.string(), z.any()).optional()
+  filters: z.record(z.string(), z.any()).optional(),
 });
 
 export const TriggerScheduleConfigSchema = z.object({
   cronExpression: z.string().min(1),
   timezone: z.string().optional(),
   startDate: z.string().datetime().optional(),
-  endDate: z.string().datetime().optional()
+  endDate: z.string().datetime().optional(),
 });
 
 export const CreateTriggerSchema = z.object({
@@ -287,7 +280,7 @@ export const CreateTriggerSchema = z.object({
   priority: z.number().min(1).max(10).default(5),
   maxExecutions: z.number().min(1).optional(),
   tags: z.array(z.string()).optional(),
-  metadata: z.record(z.string(), z.any()).optional()
+  metadata: z.record(z.string(), z.any()).optional(),
 });
 
 export const UpdateTriggerSchema = CreateTriggerSchema.partial();
@@ -297,11 +290,11 @@ export const TriggerQuerySchema = z.object({
   status: TriggerStatusSchema.optional(),
   organizationId: z.string().optional(),
   enabled: z.boolean().optional(),
-  tags: z.array(z.string()).optional()
+  tags: z.array(z.string()).optional(),
 });
 
 export const TestTriggerSchema = z.object({
-  inputData: z.record(z.string(), z.any()).optional()
+  inputData: z.record(z.string(), z.any()).optional(),
 });
 
 // ============================================================================
@@ -317,11 +310,13 @@ export function toTriggerDTO(trigger: Trigger): TriggerDTO {
     createdAt: trigger.createdAt.toISOString(),
     updatedAt: trigger.updatedAt.toISOString(),
     lastTriggered: trigger.lastTriggered?.toISOString(),
-    scheduleConfig: trigger.scheduleConfig ? {
-      ...trigger.scheduleConfig,
-      startDate: trigger.scheduleConfig.startDate?.toISOString(),
-      endDate: trigger.scheduleConfig.endDate?.toISOString()
-    } : undefined
+    scheduleConfig: trigger.scheduleConfig
+      ? {
+          ...trigger.scheduleConfig,
+          startDate: trigger.scheduleConfig.startDate?.toISOString(),
+          endDate: trigger.scheduleConfig.endDate?.toISOString(),
+        }
+      : undefined,
   };
 }
 
@@ -329,21 +324,21 @@ export function toTriggerExecutionDTO(execution: TriggerExecution): TriggerExecu
   return {
     ...execution,
     startedAt: execution.startedAt.toISOString(),
-    completedAt: execution.completedAt?.toISOString()
+    completedAt: execution.completedAt?.toISOString(),
   };
 }
 
 export function toTriggerEventDTO(event: TriggerEvent): TriggerEventDTO {
   return {
     ...event,
-    timestamp: event.timestamp.toISOString()
+    timestamp: event.timestamp.toISOString(),
   };
 }
 
 export function toTriggerMetricsDTO(metrics: TriggerMetrics): TriggerMetricsDTO {
   return {
     ...metrics,
-    lastExecution: metrics.lastExecution?.toISOString()
+    lastExecution: metrics.lastExecution?.toISOString(),
   };
 }
 
@@ -356,11 +351,17 @@ export function fromTriggerDTO(triggerDTO: TriggerDTO): Trigger {
     createdAt: new Date(triggerDTO.createdAt),
     updatedAt: new Date(triggerDTO.updatedAt),
     lastTriggered: triggerDTO.lastTriggered ? new Date(triggerDTO.lastTriggered) : undefined,
-    scheduleConfig: triggerDTO.scheduleConfig ? {
-      ...triggerDTO.scheduleConfig,
-      startDate: triggerDTO.scheduleConfig.startDate ? new Date(triggerDTO.scheduleConfig.startDate) : undefined,
-      endDate: triggerDTO.scheduleConfig.endDate ? new Date(triggerDTO.scheduleConfig.endDate) : undefined
-    } : undefined
+    scheduleConfig: triggerDTO.scheduleConfig
+      ? {
+          ...triggerDTO.scheduleConfig,
+          startDate: triggerDTO.scheduleConfig.startDate
+            ? new Date(triggerDTO.scheduleConfig.startDate)
+            : undefined,
+          endDate: triggerDTO.scheduleConfig.endDate
+            ? new Date(triggerDTO.scheduleConfig.endDate)
+            : undefined,
+        }
+      : undefined,
   };
 }
 
@@ -375,7 +376,7 @@ export function getTriggerTypeDisplayName(type: TriggerType): string {
     manual: 'Manual',
     api: 'API',
     file_change: 'File Change',
-    database_change: 'Database Change'
+    database_change: 'Database Change',
   };
   return names[type];
 }
@@ -385,21 +386,21 @@ export function getTriggerTypeDisplayName(type: TriggerType): string {
  */
 export function getTriggerStatusColor(status: TriggerStatus): string {
   const colors = {
-    active: '#10B981',    // green
-    inactive: '#6B7280',  // gray
-    paused: '#F59E0B',    // yellow
-    error: '#EF4444'      // red
+    active: '#10B981', // green
+    inactive: '#6B7280', // gray
+    paused: '#F59E0B', // yellow
+    error: '#EF4444', // red
   };
   return colors[status];
 }
-
-
 
 /**
  * Calculate trigger success rate
  */
 export function calculateSuccessRate(successful: number, total: number): number {
-  if (total === 0) { return 100; }
+  if (total === 0) {
+    return 100;
+  }
   return Math.round((successful / total) * 100);
 }
 
@@ -411,13 +412,21 @@ export function evaluateCondition(rule: TriggerConditionRule, data: any): boolea
   const ruleValue = rule.value;
 
   if (!rule.caseSensitive && typeof fieldValue === 'string' && typeof ruleValue === 'string') {
-    return evaluateConditionInternal(rule.condition, fieldValue.toLowerCase(), ruleValue.toLowerCase());
+    return evaluateConditionInternal(
+      rule.condition,
+      fieldValue.toLowerCase(),
+      ruleValue.toLowerCase()
+    );
   }
 
   return evaluateConditionInternal(rule.condition, fieldValue, ruleValue);
 }
 
-function evaluateConditionInternal(condition: TriggerCondition, fieldValue: any, ruleValue: any): boolean {
+function evaluateConditionInternal(
+  condition: TriggerCondition,
+  fieldValue: any,
+  ruleValue: any
+): boolean {
   switch (condition) {
     case 'equals':
       return fieldValue === ruleValue;

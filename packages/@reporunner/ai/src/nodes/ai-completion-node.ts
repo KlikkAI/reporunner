@@ -6,12 +6,9 @@ export interface AICompletionNodeConfig {
 }
 
 export class AICompletionNode {
-  private _config: AICompletionNodeConfig;
-
   constructor(config: AICompletionNodeConfig = {}) {
     this._config = config;
-    // Suppress unused variable warning - will be used in future implementation
-    void this._config;
+    // Config will be used in future implementation
   }
 
   async execute(prompt: string): Promise<string> {

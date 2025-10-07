@@ -30,7 +30,6 @@ import {
   Table,
   Tabs,
   Tag,
-  Toolhy,
 } from 'antd';
 import dayjs from 'dayjs';
 import type React from 'react';
@@ -38,8 +37,6 @@ import { useEffect, useState } from 'react';
 import {
   Area,
   AreaChart,
-  Bar,
-  BarChart,
   Legend,
   Line,
   LineChart,
@@ -131,10 +128,10 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
   timeRange = [dayjs().subtract(7, 'days'), dayjs()],
   onTimeRangeChange,
 }) => {
-  const [loading, setLoading] = useState(false);
-  const [data, setData] = useState<AnalyticsData | null>(null);
-  const [selectedMetric, setSelectedMetric] = useState<string>('executions');
-  const [activeTab, setActiveTab] = useState('overview');
+  const [_loading, setLoading] = useState(false);
+  const [_data, setData] = useState<AnalyticsData | null>(null);
+  const [_selectedMetric, _setSelectedMetric] = useState<string>('executions');
+  const [_activeTab, _setActiveTab] = useState('overview');
 
   // Mock data - in production, this would come from API
   useEffect(() => {
@@ -275,9 +272,9 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
       });
       setLoading(false);
     }, 1000);
-  }, [timeRange]);
+  }, []);
 
-  const getStatusColor = (status: string) => {
+  const _getStatusColor = (status: string) => {
     switch (status) {
       cess':
         return 'green';
@@ -480,7 +477,7 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
                   dataKey="count"
                   label={({ type, percentage }) => `${type}: ${percentage}%`}
                 >
-                  {data?.performance.errorPatterns.map((entry, index) => (
+                  {data?.performance.errorPatterns.map((_entry, index) => (
                     <Cell
                       key={`cell-${index}`}
                       fill={['#ff4d4f', '#faad14', '#1890ff', '#52c41a'][index % 4]}
@@ -614,7 +611,7 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
             {
               title: 'Action',
               key: 'action',
-              render: (_, record) => (
+              render: (_, _record) => (
                 <Button type="primary" size="small">
                   Apply
                 </Button>

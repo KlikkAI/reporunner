@@ -3,17 +3,21 @@
  * Reusing patterns from workflow data transformation and expression evaluation
  */
 
+// Define type for variable values
+type VariableValue = string | number | boolean | Record<string, unknown> | unknown[];
+type ValidationOption = string | number | boolean;
+
 export interface PromptVariable {
   name: string;
   type: 'string' | 'number' | 'boolean' | 'object' | 'array';
   description?: string;
   required?: boolean;
-  default?: any;
+  default?: VariableValue;
   validation?: {
     pattern?: string;
     min?: number;
     max?: number;
-    options?: any[];
+    options?: ValidationOption[];
   };
 }
 
@@ -51,7 +55,7 @@ export class PromptTemplate {
     this.version = config.version;
   }
 
-  render(variables: Record<string, any> = {}): string {
+  render(variables: Record<string, VariableValue> = {}): string {
     let renderedTemplate = this.template;
 
     // Validate required variables
@@ -76,7 +80,7 @@ export class PromptTemplate {
     return renderedTemplate;
   }
 
-  validate(variables: Record<string, any> = {}): { valid: boolean; errors: string[] } {
+  validate(variables: Record<string, VariableValue> = {}): { valid: boolean; errors: string[] } {
     const errors: string[] = [];
 
     try {
@@ -96,7 +100,7 @@ export class PromptTemplate {
     return this.variables.filter((v) => v.required === false);
   }
 
-  private validateVariables(variables: Record<string, any>): void {
+  private validateVariables(variables: Record<string, VariableValue>): void {
     for (const variable of this.variables) {
       const value = variables[variable.name];
 
@@ -118,7 +122,7 @@ export class PromptTemplate {
     }
   }
 
-  private validateVariableType(value: any, variable: PromptVariable): void {
+  private validateVariableType(value: VariableValue, variable: PromptVariable): void {
     const actualType = Array.isArray(value) ? 'array' : typeof value;
 
     if (actualType !== variable.type) {
@@ -128,52 +132,64 @@ export class PromptTemplate {
     }
   }
 
-  private validateVariableRules(value: any, variable: PromptVariable): void {
+  private validateVariableRules(value: VariableValue, variable: PromptVariable): void {
     const validation = variable.validation;
     if (!validation) {
       return;
     }
 
-    // Pattern validation for strings
-    if (validation.pattern && typeof value === 'string') {
-      const regex = new RegExp(validation.pattern);
+    this.validatePattern(value, variable.name, validation.pattern);
+    this.validateMin(value, variable.name, validation.min);
+    this.validateMax(value, variable.name, validation.max);
+    this.validateOptions(value, variable.name, validation.options);
+  }
+
+  private validatePattern(value: VariableValue, varName: string, pattern?: string): void {
+    if (pattern && typeof value === 'string') {
+      const regex = new RegExp(pattern);
       if (!regex.test(value)) {
-        throw new Error(
-          `Variable '${variable.name}' does not match pattern '${validation.pattern}'`
-        );
+        throw new Error(`Variable '${varName}' does not match pattern '${pattern}'`);
       }
-    }
-
-    // Min/max validation for numbers and strings
-    if (validation.min !== undefined) {
-      if (typeof value === 'number' && value < validation.min) {
-        throw new Error(`Variable '${variable.name}' must be at least ${validation.min}`);
-      }
-      if (typeof value === 'string' && value.length < validation.min) {
-        throw new Error(
-          `Variable '${variable.name}' must be at least ${validation.min} characters`
-        );
-      }
-    }
-
-    if (validation.max !== undefined) {
-      if (typeof value === 'number' && value > validation.max) {
-        throw new Error(`Variable '${variable.name}' must be at most ${validation.max}`);
-      }
-      if (typeof value === 'string' && value.length > validation.max) {
-        throw new Error(`Variable '${variable.name}' must be at most ${validation.max} characters`);
-      }
-    }
-
-    // Options validation
-    if (validation.options && !validation.options.includes(value)) {
-      throw new Error(
-        `Variable '${variable.name}' must be one of: ${validation.options.join(', ')}`
-      );
     }
   }
 
-  private processVariableValue(value: any, variable: PromptVariable): string {
+  private validateMin(value: VariableValue, varName: string, min?: number): void {
+    if (min === undefined) {
+      return;
+    }
+
+    if (typeof value === 'number' && value < min) {
+      throw new Error(`Variable '${varName}' must be at least ${min}`);
+    }
+    if (typeof value === 'string' && value.length < min) {
+      throw new Error(`Variable '${varName}' must be at least ${min} characters`);
+    }
+  }
+
+  private validateMax(value: VariableValue, varName: string, max?: number): void {
+    if (max === undefined) {
+      return;
+    }
+
+    if (typeof value === 'number' && value > max) {
+      throw new Error(`Variable '${varName}' must be at most ${max}`);
+    }
+    if (typeof value === 'string' && value.length > max) {
+      throw new Error(`Variable '${varName}' must be at most ${max} characters`);
+    }
+  }
+
+  private validateOptions(
+    value: VariableValue,
+    varName: string,
+    options?: ValidationOption[]
+  ): void {
+    if (options && !options.includes(value as ValidationOption)) {
+      throw new Error(`Variable '${varName}' must be one of: ${options.join(', ')}`);
+    }
+  }
+
+  private processVariableValue(value: VariableValue | undefined, variable: PromptVariable): string {
     if (value === undefined || value === null) {
       return '';
     }

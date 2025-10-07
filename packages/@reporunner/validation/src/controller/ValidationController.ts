@@ -1,4 +1,20 @@
 import { EventEmitter } from 'node:events';
+import { CodeOrganizationChecker } from '../architecture/code-organization-checker.js';
+import { DependencyAnalyzer } from '../architecture/dependency-analyzer.js';
+import { TypeSafetyValidator } from '../architecture/type-safety-validator.js';
+import { BuildTimeAnalyzer } from '../build-time-analyzer.js';
+import { BundleSizeAnalyzer } from '../bundle-size-analyzer.js';
+import { DevExperienceMetrics } from '../developer-experience/DevExperienceMetrics.js';
+import { IDEPerformanceValidator } from '../ide-performance/ide-performance-validator.js';
+import { ImportPathOptimizer } from '../import-optimization/import-path-optimizer.js';
+import { MemoryMonitor } from '../monitoring/MemoryMonitor.js';
+import { RecommendationEngine } from '../reporting/RecommendationEngine.js';
+import { ValidationReportAggregator } from '../reporting/ValidationReportAggregator.js';
+import { APIValidator } from '../system/APIValidator.js';
+import { BuildValidator } from '../system/BuildValidator.js';
+import { E2EValidator } from '../system/E2EValidator.js';
+// Import validation components
+import { TestSuiteRunner } from '../system/TestSuiteRunner.js';
 import type {
   OptimizationRecommendation,
   ValidationError,
@@ -6,24 +22,7 @@ import type {
   ValidationSummary,
 } from '../types/index.js';
 import { ValidationErrorType } from '../types/index.js';
-
-// Import validation components
-import { TestSuiteRunner } from '../system/TestSuiteRunner.js';
-import { APIValidator } from '../system/APIValidator.js';
-import { E2EValidator } from '../system/E2EValidator.js';
-import { BuildValidator } from '../system/BuildValidator.js';
-import { BuildTimeAnalyzer } from '../build-time-analyzer.js';
-import { BundleSizeAnalyzer } from '../bundle-size-analyzer.js';
-import { MemoryMonitor } from '../monitoring/MemoryMonitor.js';
-import { DevExperienceMetrics } from '../developer-experience/DevExperienceMetrics.js';
 import { TypeScriptAnalyzer } from '../typescript/analyzer.js';
-import { IDEPerformanceValidator } from '../ide-performance/ide-performance-validator.js';
-import { ImportPathOptimizer } from '../import-optimization/import-path-optimizer.js';
-import { DependencyAnalyzer } from '../architecture/dependency-analyzer.js';
-import { CodeOrganizationChecker } from '../architecture/code-organization-checker.js';
-import { TypeSafetyValidator } from '../architecture/type-safety-validator.js';
-import { ValidationReportAggregator } from '../reporting/ValidationReportAggregator.js';
-import { RecommendationEngine } from '../reporting/RecommendationEngine.js';
 
 /**
  * Main validation controller that orchestrates all validation phases
@@ -51,8 +50,6 @@ export class ValidationController extends EventEmitter {
   private dependencyAnalyzer: DependencyAnalyzer;
   private codeOrganizationChecker: CodeOrganizationChecker;
   private typeSafetyValidator: TypeSafetyValidator;
-  private reportAggregator: ValidationReportAggregator;
-  private recommendationEngine: RecommendationEngine;
 
   constructor(workspaceRoot: string = process.cwd()) {
     super();
@@ -456,8 +453,7 @@ export class ValidationController extends EventEmitter {
    * Setup error handling for the validation controller
    */
   private setupErrorHandling(): void {
-    this.on('error', (_error) => {
-    });
+    this.on('error', (_error) => {});
 
     // Handle uncaught exceptions during validation
     process.on('uncaughtException', (error) => {

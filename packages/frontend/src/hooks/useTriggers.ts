@@ -3,7 +3,7 @@
  * React hooks for trigger management (calls backend API)
  */
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 export interface TriggerConfig {
   id: string;
@@ -39,8 +39,12 @@ export const useTriggers = (workflowId?: string, type?: string) => {
     queryKey: ['triggers', { workflowId, type }],
     queryFn: async () => {
       const params = new URLSearchParams();
-      if (workflowId) params.append('workflowId', workflowId);
-      if (type) params.append('type', type);
+      if (workflowId) {
+        params.append('workflowId', workflowId);
+      }
+      if (type) {
+        params.append('type', type);
+      }
 
       const response = await fetch(`/api/triggers?${params}`);
 

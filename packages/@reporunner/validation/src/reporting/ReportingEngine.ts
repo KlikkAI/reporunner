@@ -70,9 +70,15 @@ export class ReportingEngine {
 
     // Count completed validations
     let completedValidations = 0;
-    if (results.systemValidation) { completedValidations++; }
-    if (results.performanceAnalysis) { completedValidations++; }
-    if (results.architectureValidation) { completedValidations++; }
+    if (results.systemValidation) {
+      completedValidations++;
+    }
+    if (results.performanceAnalysis) {
+      completedValidations++;
+    }
+    if (results.architectureValidation) {
+      completedValidations++;
+    }
 
     return {
       overallStatus: results.status,
@@ -554,9 +560,10 @@ Last updated: ${results.timestamp.toISOString()}
       // Save CSV metrics
       const csvMetrics = this.generateCSVMetrics(report);
       writeFileSync(join(this.outputDirectory, 'metrics.csv'), csvMetrics);
-
     } catch (error) {
-      throw new Error(`Failed to save report: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `Failed to save report: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
     }
   }
 

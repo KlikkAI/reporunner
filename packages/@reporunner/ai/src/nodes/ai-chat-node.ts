@@ -11,12 +11,9 @@ export interface AIChatNodeConfig {
 }
 
 export class AIChatNode {
-  private _config: AIChatNodeConfig;
-
   constructor(config: AIChatNodeConfig = {}) {
     this._config = config;
-    // Suppress unused variable warning - will be used in future implementation
-    void this._config;
+    // Config will be used in future implementation
   }
 
   async execute(messages: ChatMessage[]): Promise<string> {

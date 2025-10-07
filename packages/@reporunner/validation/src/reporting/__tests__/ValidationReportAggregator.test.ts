@@ -1,6 +1,6 @@
-import { describe, it, expect, beforeEach } from 'vitest';
-import { ValidationReportAggregator } from '../ValidationReportAggregator.js';
+import { beforeEach, describe, expect, it } from 'vitest';
 import type { ValidationResults } from '../../types/index.js';
+import { ValidationReportAggregator } from '../ValidationReportAggregator.js';
 
 describe('ValidationReportAggregator', () => {
   let aggregator: ValidationReportAggregator;
@@ -453,13 +453,13 @@ describe('ValidationReportAggregator', () => {
       const report = await aggregator.generateComprehensiveReport();
 
       const buildTimeMetric = report.performanceDashboard.metrics.find(
-        m => m.id === 'build-time-improvement'
+        (m) => m.id === 'build-time-improvement'
       );
       expect(buildTimeMetric).toBeDefined();
       expect(buildTimeMetric?.status).toBe('success'); // 35% > 30% threshold
 
       const bundleSizeMetric = report.performanceDashboard.metrics.find(
-        m => m.id === 'bundle-size-reduction'
+        (m) => m.id === 'bundle-size-reduction'
       );
       expect(bundleSizeMetric).toBeDefined();
       expect(bundleSizeMetric?.status).toBe('success'); // 25% > 20% threshold
@@ -473,7 +473,7 @@ describe('ValidationReportAggregator', () => {
       expect(report.performanceDashboard.trends.length).toBeGreaterThan(0);
 
       const buildTimeTrend = report.performanceDashboard.trends.find(
-        t => t.metric === 'Build Time'
+        (t) => t.metric === 'Build Time'
       );
       expect(buildTimeTrend).toBeDefined();
       expect(buildTimeTrend?.direction).toBe('improving');
@@ -487,7 +487,7 @@ describe('ValidationReportAggregator', () => {
       expect(report.performanceDashboard.comparisons.length).toBeGreaterThan(0);
 
       const buildTimeComparison = report.performanceDashboard.comparisons.find(
-        c => c.metric === 'Build Time'
+        (c) => c.metric === 'Build Time'
       );
       expect(buildTimeComparison).toBeDefined();
       expect(buildTimeComparison?.current).toBeDefined();
@@ -517,7 +517,7 @@ describe('ValidationReportAggregator', () => {
       expect(report.documentation.length).toBeGreaterThan(0);
 
       const archDoc = report.documentation.find(
-        d => d.file === 'docs/architecture/package-structure.md'
+        (d) => d.file === 'docs/architecture/package-structure.md'
       );
       expect(archDoc).toBeDefined();
       expect(archDoc?.type).toBe('update');

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-const { readFileSync, writeFileSync, mkdirSync, readdirSync, statSync, cpSync } = require('node:fs');
+const { readFileSync, writeFileSync, mkdirSync, readdirSync, statSync } = require('node:fs');
 const path = require('node:path');
 
 /**
@@ -21,7 +21,7 @@ const CATEGORIES = [
   'marketing',
   'finance',
   'crm',
-  'e-commerce'
+  'e-commerce',
 ];
 
 function toKebabCase(str) {
@@ -43,7 +43,9 @@ async function createIntegration() {
     console.error('Example: pnpm create-integration Slack communication');
     console.error('');
     console.error('Available categories:');
-    CATEGORIES.forEach(cat => console.error(`  - ${cat}`));
+    for (const cat of CATEGORIES) {
+      console.error(`  - ${cat}`);
+    }
     process.exit(1);
   }
 
@@ -54,7 +56,9 @@ async function createIntegration() {
     console.error(`❌ Error: Invalid category "${category}"`);
     console.error('');
     console.error('Available categories:');
-    CATEGORIES.forEach(cat => console.error(`  - ${cat}`));
+    for (const cat of CATEGORIES) {
+      console.error(`  - ${cat}`);
+    }
     process.exit(1);
   }
 
@@ -126,7 +130,9 @@ async function createIntegration() {
   console.log('');
   console.log('📝 Next steps:');
   console.log('');
-  console.log(`1. Navigate to: packages/frontend/src/app/data/nodes/${categoryKebab}/${integrationId}/`);
+  console.log(
+    `1. Navigate to: packages/frontend/src/app/data/nodes/${categoryKebab}/${integrationId}/`
+  );
   console.log('');
   console.log('2. Update the integration files:');
   console.log('   - node.ts: Update icon, description, inputs/outputs');
@@ -150,7 +156,7 @@ async function createIntegration() {
   console.log('');
 }
 
-createIntegration().catch(error => {
+createIntegration().catch((error) => {
   console.error('❌ Error creating integration:', error.message);
   process.exit(1);
 });

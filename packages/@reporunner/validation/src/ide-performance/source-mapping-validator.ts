@@ -1,6 +1,6 @@
-import * as path from 'path';
-import * as fs from 'fs';
-import { SourceMappingTestResult, SourceMappingTestCase } from './types';
+import * as fs from 'node:fs';
+import * as path from 'node:path';
+import type { SourceMappingTestCase, SourceMappingTestResult } from './types';
 
 export class SourceMappingValidator {
   private workspaceRoot: string;
@@ -18,14 +18,13 @@ export class SourceMappingValidator {
         const result = await this.validateSingleSourceMapping(testCase);
         results.push(result);
       } catch (error) {
-        console.error(`Failed to validate source mapping for ${testCase.testName}:`, error);
         results.push({
           testName: testCase.testName,
           sourceFile: testCase.sourceFile,
           compiledFile: testCase.compiledFile,
           sourceMappingAccurate: false,
           debuggingExperience: 'broken',
-          issues: [error instanceof Error ? error.message : 'Unknown error']
+          issues: [error instanceof Error ? error.message : 'Unknown error'],
         });
       }
     }
@@ -33,7 +32,9 @@ export class SourceMappingValidator {
     return results;
   }
 
-  private async validateSingleSourceMapping(testCase: SourceMappingTestCase): Promise<SourceMappingTestResult> {
+  private async validateSingleSourceMapping(
+    testCase: SourceMappingTestCase
+  ): Promise<SourceMappingTestResult> {
     const issues: string[] = [];
     let sourceMappingAccurate = true;
     let debuggingExperience: 'excellent' | 'good' | 'poor' | 'broken' = 'excellent';
@@ -54,7 +55,7 @@ export class SourceMappingValidator {
         debuggingExperience = 'broken';
       } else {
         // Check for source map file
-        const sourceMapPath = compiledFilePath + '.map';
+        const sourceMapPath = `${compiledFilePath}.map`;
         if (!fs.existsSync(sourceMapPath)) {
           issues.push(`Source map file not found: ${sourceMapPath}`);
           sourceMappingAccurate = false;
@@ -94,9 +95,8 @@ export class SourceMappingValidator {
         compiledFile: testCase.compiledFile,
         sourceMappingAccurate,
         debuggingExperience,
-        issues
+        issues,
       };
-
     } catch (error) {
       return {
         testName: testCase.testName,
@@ -104,7 +104,7 @@ export class SourceMappingValidator {
         compiledFile: testCase.compiledFile,
         sourceMappingAccurate: false,
         debuggingExperience: 'broken',
-        issues: [error instanceof Error ? error.message : 'Unknown validation error']
+        issues: [error instanceof Error ? error.message : 'Unknown validation error'],
       };
     }
   }
@@ -119,9 +119,9 @@ export class SourceMappingValidator {
       compiledFile: 'packages/backend/dist/controllers/test.controller.js',
       testBreakpoints: [
         { line: 5, expectedSourceLine: 5 },
-        { line: 10, expectedSourceLine: 10 }
+        { line: 10, expectedSourceLine: 10 },
       ],
-      description: 'Test source mapping for backend TypeScript compilation'
+      description: 'Test source mapping for backend TypeScript compilation',
     });
 
     testCases.push({
@@ -130,9 +130,9 @@ export class SourceMappingValidator {
       compiledFile: 'packages/frontend/dist/components/TestComponent.js',
       testBreakpoints: [
         { line: 3, expectedSourceLine: 3 },
-        { line: 8, expectedSourceLine: 8 }
+        { line: 8, expectedSourceLine: 8 },
       ],
-      description: 'Test source mapping for frontend React component'
+      description: 'Test source mapping for frontend React component',
     });
 
     testCases.push({
@@ -141,9 +141,9 @@ export class SourceMappingValidator {
       compiledFile: 'packages/@reporunner/core/dist/workflow/test-engine.js',
       testBreakpoints: [
         { line: 4, expectedSourceLine: 4 },
-        { line: 12, expectedSourceLine: 12 }
+        { line: 12, expectedSourceLine: 12 },
       ],
-      description: 'Test source mapping for core package compilation'
+      description: 'Test source mapping for core package compilation',
     });
 
     testCases.push({
@@ -152,9 +152,9 @@ export class SourceMappingValidator {
       compiledFile: 'packages/shared/dist/types/test-types.js',
       testBreakpoints: [
         { line: 2, expectedSourceLine: 2 },
-        { line: 6, expectedSourceLine: 6 }
+        { line: 6, expectedSourceLine: 6 },
       ],
-      description: 'Test source mapping for shared type definitions'
+      description: 'Test source mapping for shared type definitions',
     });
 
     return testCases;
@@ -277,10 +277,14 @@ export class TestClass {
 
   private async validateSourceMapContent(
     sourceFilePath: string,
-    compiledFilePath: string,
+    _compiledFilePath: string,
     sourceMapPath: string,
-    testBreakpoints: Array<{ line: number; expectedSourceLine: number }>
-  ): Promise<{ isValid: boolean; issues: string[]; severity: 'excellent' | 'good' | 'poor' | 'broken' }> {
+    _testBreakpoints: Array<{ line: number; expectedSourceLine: number }>
+  ): Promise<{
+    isValid: boolean;
+    issues: string[];
+    severity: 'excellent' | 'good' | 'poor' | 'broken';
+  }> {
     const issues: string[] = [];
     let isValid = true;
     let severity: 'excellent' | 'good' | 'poor' | 'broken' = 'excellent';
@@ -291,7 +295,7 @@ export class TestClass {
       const sourceMap = JSON.parse(sourceMapContent);
 
       // Basic source map structure validation
-      if (!sourceMap.version || !sourceMap.sources || !sourceMap.mappings) {
+      if (!(sourceMap.version && sourceMap.sources && sourceMap.mappings)) {
         issues.push('Invalid source map structure');
         isValid = false;
         severity = 'broken';
@@ -302,10 +306,11 @@ export class TestClass {
       const relativeSourcePath = path.relative(path.dirname(sourceMapPath), sourceFilePath);
       const normalizedSourcePath = relativeSourcePath.replace(/\\/g, '/');
 
-      const sourceFound = sourceMap.sources.some((source: string) =>
-        source.includes(path.basename(sourceFilePath)) ||
-        source === normalizedSourcePath ||
-        source === relativeSourcePath
+      const sourceFound = sourceMap.sources.some(
+        (source: string) =>
+          source.includes(path.basename(sourceFilePath)) ||
+          source === normalizedSourcePath ||
+          source === relativeSourcePath
       );
 
       if (!sourceFound) {
@@ -317,17 +322,21 @@ export class TestClass {
       // Check source content
       if (sourceMap.sourcesContent && sourceMap.sourcesContent.length > 0) {
         const originalContent = fs.readFileSync(sourceFilePath, 'utf-8');
-        const hasMatchingContent = sourceMap.sourcesContent.some((content: string) =>
-          content && content.trim() === originalContent.trim()
+        const hasMatchingContent = sourceMap.sourcesContent.some(
+          (content: string) => content && content.trim() === originalContent.trim()
         );
 
         if (!hasMatchingContent) {
           issues.push('Source content in source map does not match original file');
-          if (severity === 'excellent') severity = 'good';
+          if (severity === 'excellent') {
+            severity = 'good';
+          }
         }
       } else {
         issues.push('Source map does not contain source content');
-        if (severity === 'excellent') severity = 'good';
+        if (severity === 'excellent') {
+          severity = 'good';
+        }
       }
 
       // Validate mappings exist
@@ -336,9 +345,10 @@ export class TestClass {
         isValid = false;
         severity = 'broken';
       }
-
     } catch (error) {
-      issues.push(`Failed to parse source map: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      issues.push(
+        `Failed to parse source map: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
       isValid = false;
       severity = 'broken';
     }
@@ -375,11 +385,14 @@ export class TestClass {
 
       // Check for inline source maps (less ideal for debugging)
       if (config.compilerOptions.inlineSourceMap) {
-        issues.push('Using inline source maps instead of separate .map files (may impact debugging performance)');
+        issues.push(
+          'Using inline source maps instead of separate .map files (may impact debugging performance)'
+        );
       }
-
     } catch (error) {
-      issues.push(`Failed to validate TypeScript configuration: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      issues.push(
+        `Failed to validate TypeScript configuration: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
     }
 
     return issues;

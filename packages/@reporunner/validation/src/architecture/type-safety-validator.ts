@@ -1,16 +1,16 @@
-import * as fs from 'fs/promises';
-import * as path from 'path';
+import * as fs from 'node:fs/promises';
+import * as path from 'node:path';
 import * as ts from 'typescript';
-import {
-  TypeSafetyReport,
-  TypeConsistencyReport,
-  InterfaceCompatibilityReport,
-  ExportStructureReport,
-  TypeInconsistency,
-  InterfaceIncompatibility,
+import type {
+  ArchitectureValidationOptions,
   ExportIssue,
+  ExportStructureReport,
+  InterfaceCompatibilityReport,
+  InterfaceIncompatibility,
+  TypeConsistencyReport,
   TypeDefinition,
-  ArchitectureValidationOptions
+  TypeInconsistency,
+  TypeSafetyReport,
 } from './types';
 
 export class TypeSafetyValidator {
@@ -55,13 +55,12 @@ export class TypeSafetyValidator {
             packages.push(pkgPath);
           }
         }
-      } catch (error) {
+      } catch (_error) {
         // @reporunner directory might not exist
       }
 
       return packages;
-    } catch (error) {
-      console.warn('Failed to discover packages:', error);
+    } catch (_error) {
       return [];
     }
   }
@@ -78,7 +77,6 @@ export class TypeSafetyValidator {
       }
 
       if (allFiles.length === 0) {
-        console.warn('No TypeScript files found');
         return;
       }
 
@@ -99,33 +97,41 @@ export class TypeSafetyValidator {
         baseUrl: '.',
         paths: {
           '@reporunner/*': ['packages/@reporunner/*/src'],
-          'shared': ['packages/shared/src'],
-          'backend': ['packages/backend/src'],
-          'frontend': ['packages/frontend/src']
-        }
+          shared: ['packages/shared/src'],
+          backend: ['packages/backend/src'],
+          frontend: ['packages/frontend/src'],
+        },
       };
 
       this.program = ts.createProgram(allFiles, compilerOptions);
       this.typeChecker = this.program.getTypeChecker();
-    } catch (error) {
-      console.warn('Failed to initialize TypeScript:', error);
-    }
+    } catch (_error) {}
   }
 
-  async validateTypeSafety(options: ArchitectureValidationOptions = {}): Promise<TypeSafetyReport> {
+  async validateTypeSafety(
+    _options: ArchitectureValidationOptions = {}
+  ): Promise<TypeSafetyReport> {
     const crossPackageConsistency = await this.validateCrossPackageConsistency();
     const interfaceCompatibility = await this.validateInterfaceCompatibility();
     const exportStructure = await this.validateExportStructure();
 
-    const overallScore = this.calculateOverallScore(crossPackageConsistency, interfaceCompatibility, exportStructure);
-    const recommendations = this.generateTypeSafetyRecommendations(crossPackageConsistency, interfaceCompatibility, exportStructure);
+    const overallScore = this.calculateOverallScore(
+      crossPackageConsistency,
+      interfaceCompatibility,
+      exportStructure
+    );
+    const recommendations = this.generateTypeSafetyRecommendations(
+      crossPackageConsistency,
+      interfaceCompatibility,
+      exportStructure
+    );
 
     return {
       crossPackageConsistency,
       interfaceCompatibility,
       exportStructure,
       overallScore,
-      recommendations
+      recommendations,
     };
   }
 
@@ -149,9 +155,9 @@ export class TypeSafetyValidator {
             if (!typeDefinitions.has(type.typeName)) {
               typeDefinitions.set(type.typeName, []);
             }
-            typeDefinitions.get(type.typeName)!.push(type);
+            typeDefinitions.get(type.typeName)?.push(type);
           }
-        } catch (error) {
+        } catch (_error) {
           // Skip files that can't be read
         }
       }
@@ -164,29 +170,36 @@ export class TypeSafetyValidator {
         if (uniqueDefinitions.length > 1) {
           inconsistencies.push({
             typeName,
-            packages: Array.from(new Set(definitions.map(d => d.packageName))),
+            packages: Array.from(new Set(definitions.map((d) => d.packageName))),
             definitions: uniqueDefinitions,
             conflictType: this.determineConflictType(uniqueDefinitions),
             severity: this.determineSeverity(uniqueDefinitions),
-            suggestion: this.generateTypeSuggestion(typeName, uniqueDefinitions)
+            suggestion: this.generateTypeSuggestion(typeName, uniqueDefinitions),
           });
         }
       }
     });
 
     const totalTypes = typeDefinitions.size;
-    const consistencyScore = totalTypes > 0 ? Math.max(0, (totalTypes - inconsistencies.length) / totalTypes * 100) : 100;
+    const consistencyScore =
+      totalTypes > 0
+        ? Math.max(0, ((totalTypes - inconsistencies.length) / totalTypes) * 100)
+        : 100;
 
     return {
       inconsistencies,
       totalTypes,
-      consistencyScore
+      consistencyScore,
     };
   }
 
-  private extractTypeDefinitions(content: string, packageName: string, filePath: string): TypeDefinition[] {
+  private extractTypeDefinitions(
+    content: string,
+    packageName: string,
+    filePath: string
+  ): TypeDefinition[] {
     const definitions: TypeDefinition[] = [];
-    const lines = content.split('\n');
+    const _lines = content.split('\n');
 
     // Extract interface definitions
     const interfaceRegex = /interface\s+([A-Z][a-zA-Z0-9]*)\s*{/g;
@@ -201,7 +214,7 @@ export class TypeSafetyValidator {
         filePath,
         definition: definition.trim(),
         lineNumber,
-        typeName: match[1]
+        typeName: match[1],
       });
     }
 
@@ -217,7 +230,7 @@ export class TypeSafetyValidator {
         filePath,
         definition: definition.trim(),
         lineNumber,
-        typeName: match[1]
+        typeName: match[1],
       });
     }
 
@@ -233,7 +246,7 @@ export class TypeSafetyValidator {
         filePath,
         definition: definition.trim(),
         lineNumber,
-        typeName: match[1]
+        typeName: match[1],
       });
     }
 
@@ -261,10 +274,8 @@ export class TypeSafetyValidator {
             return i + 1;
           }
         }
-      } else {
-        if (char === stringChar && prevChar !== '\\') {
-          inString = false;
-        }
+      } else if (char === stringChar && prevChar !== '\\') {
+        inString = false;
       }
     }
 
@@ -291,10 +302,8 @@ export class TypeSafetyValidator {
         } else if ((char === ';' || char === '\n') && depth === 0) {
           return i;
         }
-      } else {
-        if (char === stringChar && prevChar !== '\\') {
-          inString = false;
-        }
+      } else if (char === stringChar && prevChar !== '\\') {
+        inString = false;
       }
     }
 
@@ -321,29 +330,35 @@ export class TypeSafetyValidator {
   }
 
   private normalizeDefinition(definition: string): string {
-    return definition
-      .replace(/\s+/g, ' ')
-      .replace(/;\s*}/g, '}')
-      .replace(/,\s*}/g, '}')
-      .trim();
+    return definition.replace(/\s+/g, ' ').replace(/;\s*}/g, '}').replace(/,\s*}/g, '}').trim();
   }
 
-  private determineConflictType(definitions: TypeDefinition[]): 'structure' | 'naming' | 'compatibility' {
+  private determineConflictType(
+    definitions: TypeDefinition[]
+  ): 'structure' | 'naming' | 'compatibility' {
     // Simple heuristic to determine conflict type
-    const hasStructuralDifferences = definitions.some(def =>
-      def.definition.includes('{') && definitions.some(other =>
-        other.definition.includes('{') &&
-        this.getStructureSignature(def.definition) !== this.getStructureSignature(other.definition)
-      )
+    const hasStructuralDifferences = definitions.some(
+      (def) =>
+        def.definition.includes('{') &&
+        definitions.some(
+          (other) =>
+            other.definition.includes('{') &&
+            this.getStructureSignature(def.definition) !==
+              this.getStructureSignature(other.definition)
+        )
     );
 
-    if (hasStructuralDifferences) return 'structure';
+    if (hasStructuralDifferences) {
+      return 'structure';
+    }
 
-    const hasNamingDifferences = definitions.some(def =>
-      definitions.some(other => def.typeName !== other.typeName)
+    const hasNamingDifferences = definitions.some((def) =>
+      definitions.some((other) => def.typeName !== other.typeName)
     );
 
-    if (hasNamingDifferences) return 'naming';
+    if (hasNamingDifferences) {
+      return 'naming';
+    }
 
     return 'compatibility';
   }
@@ -356,7 +371,7 @@ export class TypeSafetyValidator {
 
   private determineSeverity(definitions: TypeDefinition[]): 'warning' | 'error' {
     // If definitions are in different packages and structurally different, it's an error
-    const packages = new Set(definitions.map(d => d.packageName));
+    const packages = new Set(definitions.map((d) => d.packageName));
     if (packages.size > 1 && this.hasStructuralDifferences(definitions)) {
       return 'error';
     }
@@ -364,13 +379,15 @@ export class TypeSafetyValidator {
   }
 
   private hasStructuralDifferences(definitions: TypeDefinition[]): boolean {
-    if (definitions.length < 2) return false;
+    if (definitions.length < 2) {
+      return false;
+    }
     const first = this.getStructureSignature(definitions[0].definition);
-    return definitions.slice(1).some(def => this.getStructureSignature(def.definition) !== first);
+    return definitions.slice(1).some((def) => this.getStructureSignature(def.definition) !== first);
   }
 
   private generateTypeSuggestion(typeName: string, definitions: TypeDefinition[]): string {
-    const packages = Array.from(new Set(definitions.map(d => d.packageName)));
+    const packages = Array.from(new Set(definitions.map((d) => d.packageName)));
 
     if (packages.length > 1) {
       return `Move ${typeName} to a shared package (e.g., @reporunner/core or shared) to ensure consistency across ${packages.join(', ')}`;
@@ -382,18 +399,18 @@ export class TypeSafetyValidator {
   private async validateInterfaceCompatibility(): Promise<InterfaceCompatibilityReport> {
     const incompatibilities: InterfaceIncompatibility[] = [];
 
-    if (!this.program || !this.typeChecker) {
+    if (!(this.program && this.typeChecker)) {
       return {
         incompatibilities: [],
         totalInterfaces: 0,
-        compatibilityScore: 100
+        compatibilityScore: 100,
       };
     }
 
     // Get all source files
-    const sourceFiles = this.program.getSourceFiles().filter(sf =>
-      !sf.isDeclarationFile && sf.fileName.includes('packages/')
-    );
+    const sourceFiles = this.program
+      .getSourceFiles()
+      .filter((sf) => !sf.isDeclarationFile && sf.fileName.includes('packages/'));
 
     let totalInterfaces = 0;
 
@@ -403,7 +420,7 @@ export class TypeSafetyValidator {
       ts.forEachChild(sourceFile, (node) => {
         if (ts.isInterfaceDeclaration(node) && node.name) {
           totalInterfaces++;
-          const interfaceName = node.name.text;
+          const _interfaceName = node.name.text;
 
           // Check for compatibility issues
           const issues = this.checkInterfaceCompatibility(node, sourceFile, packageName);
@@ -412,19 +429,21 @@ export class TypeSafetyValidator {
       });
     }
 
-    const compatibilityScore = totalInterfaces > 0 ?
-      Math.max(0, (totalInterfaces - incompatibilities.length) / totalInterfaces * 100) : 100;
+    const compatibilityScore =
+      totalInterfaces > 0
+        ? Math.max(0, ((totalInterfaces - incompatibilities.length) / totalInterfaces) * 100)
+        : 100;
 
     return {
       incompatibilities,
       totalInterfaces,
-      compatibilityScore
+      compatibilityScore,
     };
   }
 
   private checkInterfaceCompatibility(
     interfaceNode: ts.InterfaceDeclaration,
-    sourceFile: ts.SourceFile,
+    _sourceFile: ts.SourceFile,
     packageName: string
   ): InterfaceIncompatibility[] {
     const incompatibilities: InterfaceIncompatibility[] = [];
@@ -447,7 +466,7 @@ export class TypeSafetyValidator {
                 incompatibilityType: 'breaking_change',
                 details: `Interface ${interfaceName} extends ${baseInterfaceName} but introduces breaking changes`,
                 severity: 'error',
-                suggestion: `Review interface inheritance and ensure backward compatibility`
+                suggestion: `Review interface inheritance and ensure backward compatibility`,
               });
             }
           }
@@ -467,7 +486,7 @@ export class TypeSafetyValidator {
           incompatibilityType: 'missing_property',
           details: `Missing properties: ${missingProperties.join(', ')}`,
           severity: 'error',
-          suggestion: `Add missing properties or make them optional`
+          suggestion: `Add missing properties or make them optional`,
         });
       }
     }
@@ -475,16 +494,23 @@ export class TypeSafetyValidator {
     return incompatibilities;
   }
 
-  private findInterfaceInOtherPackages(interfaceName: string, excludePackage: string): { packageName: string; node: ts.InterfaceDeclaration } | null {
-    if (!this.program) return null;
+  private findInterfaceInOtherPackages(
+    interfaceName: string,
+    excludePackage: string
+  ): { packageName: string; node: ts.InterfaceDeclaration } | null {
+    if (!this.program) {
+      return null;
+    }
 
-    const sourceFiles = this.program.getSourceFiles().filter(sf =>
-      !sf.isDeclarationFile && sf.fileName.includes('packages/')
-    );
+    const sourceFiles = this.program
+      .getSourceFiles()
+      .filter((sf) => !sf.isDeclarationFile && sf.fileName.includes('packages/'));
 
     for (const sourceFile of sourceFiles) {
       const packageName = this.extractPackageNameFromPath(sourceFile.fileName);
-      if (packageName === excludePackage) continue;
+      if (packageName === excludePackage) {
+        continue;
+      }
 
       let foundInterface: ts.InterfaceDeclaration | null = null;
 
@@ -502,18 +528,26 @@ export class TypeSafetyValidator {
     return null;
   }
 
-  private areInterfacesCompatible(derived: ts.InterfaceDeclaration, base: ts.InterfaceDeclaration): boolean {
+  private areInterfacesCompatible(
+    derived: ts.InterfaceDeclaration,
+    base: ts.InterfaceDeclaration
+  ): boolean {
     // Simplified compatibility check - in practice, this would be more sophisticated
     const derivedProps = this.getInterfaceProperties(derived);
     const baseProps = this.getInterfaceProperties(base);
 
     // Check if all base properties exist in derived
     for (const baseProp of baseProps) {
-      const derivedProp = derivedProps.find(p => p.name === baseProp.name);
-      if (!derivedProp) return false;
+      const derivedProp = derivedProps.find((p) => p.name === baseProp.name);
+      if (!derivedProp) {
+        return false;
+      }
 
       // Simple type compatibility check
-      if (derivedProp.type !== baseProp.type && !this.areTypesCompatible(derivedProp.type, baseProp.type)) {
+      if (
+        derivedProp.type !== baseProp.type &&
+        !this.areTypesCompatible(derivedProp.type, baseProp.type)
+      ) {
         return false;
       }
     }
@@ -521,7 +555,9 @@ export class TypeSafetyValidator {
     return true;
   }
 
-  private getInterfaceProperties(interfaceNode: ts.InterfaceDeclaration): Array<{ name: string; type: string; optional: boolean }> {
+  private getInterfaceProperties(
+    interfaceNode: ts.InterfaceDeclaration
+  ): Array<{ name: string; type: string; optional: boolean }> {
     const properties: Array<{ name: string; type: string; optional: boolean }> = [];
 
     for (const member of interfaceNode.members) {
@@ -543,12 +579,18 @@ export class TypeSafetyValidator {
     return normalize(type1) === normalize(type2);
   }
 
-  private findInterfaceUsages(interfaceName: string, sourcePackage: string): Array<{ packageName: string; usage: string }> {
+  private findInterfaceUsages(
+    _interfaceName: string,
+    _sourcePackage: string
+  ): Array<{ packageName: string; usage: string }> {
     // Simplified usage finding - in practice, this would analyze imports and usage patterns
     return [];
   }
 
-  private findMissingProperties(interfaceNode: ts.InterfaceDeclaration, usage: { packageName: string; usage: string }): string[] {
+  private findMissingProperties(
+    _interfaceNode: ts.InterfaceDeclaration,
+    _usage: { packageName: string; usage: string }
+  ): string[] {
     // Simplified missing property detection
     return [];
   }
@@ -572,29 +614,38 @@ export class TypeSafetyValidator {
           // Count exports
           const exportCount = (content.match(/export\s+/g) || []).length;
           totalExports += exportCount;
-        } catch (error) {
+        } catch (_error) {
           // Skip files that can't be read
         }
       }
     }
 
-    const structureScore = totalExports > 0 ? Math.max(0, (totalExports - issues.length) / totalExports * 100) : 100;
+    const structureScore =
+      totalExports > 0 ? Math.max(0, ((totalExports - issues.length) / totalExports) * 100) : 100;
     const optimizationOpportunities = this.generateOptimizationOpportunities(issues);
 
     return {
       issues,
       totalExports,
       structureScore,
-      optimizationOpportunities
+      optimizationOpportunities,
     };
   }
 
-  private analyzeExportStructure(content: string, packageName: string, filePath: string): ExportIssue[] {
+  private analyzeExportStructure(
+    content: string,
+    packageName: string,
+    filePath: string
+  ): ExportIssue[] {
     const issues: ExportIssue[] = [];
 
     // Check for unused exports (simplified - would need usage analysis)
-    const exportMatches = Array.from(content.matchAll(/export\s+(?:const|let|var|function|class|interface|type|enum)\s+([a-zA-Z_][a-zA-Z0-9_]*)/g));
-    exportMatches.forEach(match => {
+    const exportMatches = Array.from(
+      content.matchAll(
+        /export\s+(?:const|let|var|function|class|interface|type|enum)\s+([a-zA-Z_][a-zA-Z0-9_]*)/g
+      )
+    );
+    exportMatches.forEach((match) => {
       const exportName = match[1];
 
       // Simple heuristic: if export is not used in other files, it might be unused
@@ -606,7 +657,7 @@ export class TypeSafetyValidator {
           issueType: 'unused_export',
           description: `Export '${exportName}' appears to be unused`,
           severity: 'info',
-          suggestion: `Consider removing unused export or documenting its purpose`
+          suggestion: `Consider removing unused export or documenting its purpose`,
         });
       }
     });
@@ -621,32 +672,36 @@ export class TypeSafetyValidator {
           issueType: 'missing_export',
           description: 'Index file should re-export from other modules',
           severity: 'warning',
-          suggestion: 'Use re-export syntax to expose module contents'
+          suggestion: 'Use re-export syntax to expose module contents',
         });
       }
     }
 
     // Check for circular exports
     const circularExports = this.detectCircularExports(content, filePath);
-    issues.push(...circularExports.map(circular => ({
-      packageName,
-      filePath,
-      issueType: 'circular_export' as const,
-      description: circular,
-      severity: 'warning' as const,
-      suggestion: 'Refactor to avoid circular dependencies'
-    })));
+    issues.push(
+      ...circularExports.map((circular) => ({
+        packageName,
+        filePath,
+        issueType: 'circular_export' as const,
+        description: circular,
+        severity: 'warning' as const,
+        suggestion: 'Refactor to avoid circular dependencies',
+      }))
+    );
 
     // Check for inconsistent naming
     const namingIssues = this.checkExportNaming(content);
-    issues.push(...namingIssues.map(naming => ({
-      packageName,
-      filePath,
-      issueType: 'inconsistent_naming' as const,
-      description: naming,
-      severity: 'info' as const,
-      suggestion: 'Use consistent naming conventions for exports'
-    })));
+    issues.push(
+      ...namingIssues.map((naming) => ({
+        packageName,
+        filePath,
+        issueType: 'inconsistent_naming' as const,
+        description: naming,
+        severity: 'info' as const,
+        suggestion: 'Use consistent naming conventions for exports',
+      }))
+    );
 
     return issues;
   }
@@ -660,12 +715,12 @@ export class TypeSafetyValidator {
     return matches.length <= 1;
   }
 
-  private detectCircularExports(content: string, filePath: string): string[] {
+  private detectCircularExports(content: string, _filePath: string): string[] {
     const circular: string[] = [];
 
     // Look for re-exports that might create cycles
     const reExportMatches = Array.from(content.matchAll(/export\s+\*\s+from\s+['"]([^'"]+)['"]/g));
-    reExportMatches.forEach(match => {
+    reExportMatches.forEach((match) => {
       const importPath = match[1];
 
       // Check if the import path could create a circular dependency
@@ -682,18 +737,26 @@ export class TypeSafetyValidator {
     const issues: string[] = [];
 
     // Check for inconsistent export naming patterns
-    const exportMatches = content.matchAll(/export\s+(?:const|let|var|function|class|interface|type|enum)\s+([a-zA-Z_][a-zA-Z0-9_]*)/g);
-    const exportNames = Array.from(exportMatches).map(match => match[1]);
+    const exportMatches = content.matchAll(
+      /export\s+(?:const|let|var|function|class|interface|type|enum)\s+([a-zA-Z_][a-zA-Z0-9_]*)/g
+    );
+    const exportNames = Array.from(exportMatches).map((match) => match[1]);
 
     // Check for mixed naming conventions
-    const hasCamelCase = exportNames.some(name => /^[a-z][a-zA-Z0-9]*$/.test(name));
-    const hasPascalCase = exportNames.some(name => /^[A-Z][a-zA-Z0-9]*$/.test(name));
-    const hasSnakeCase = exportNames.some(name => /^[a-z_]+$/.test(name));
+    const hasCamelCase = exportNames.some((name) => /^[a-z][a-zA-Z0-9]*$/.test(name));
+    const hasPascalCase = exportNames.some((name) => /^[A-Z][a-zA-Z0-9]*$/.test(name));
+    const hasSnakeCase = exportNames.some((name) => /^[a-z_]+$/.test(name));
 
     let conventionCount = 0;
-    if (hasCamelCase) conventionCount++;
-    if (hasPascalCase) conventionCount++;
-    if (hasSnakeCase) conventionCount++;
+    if (hasCamelCase) {
+      conventionCount++;
+    }
+    if (hasPascalCase) {
+      conventionCount++;
+    }
+    if (hasSnakeCase) {
+      conventionCount++;
+    }
 
     if (conventionCount > 1) {
       issues.push('Mixed naming conventions in exports (camelCase, PascalCase, snake_case)');
@@ -705,21 +768,25 @@ export class TypeSafetyValidator {
   private generateOptimizationOpportunities(issues: ExportIssue[]): string[] {
     const opportunities: string[] = [];
 
-    const unusedExports = issues.filter(i => i.issueType === 'unused_export');
-    const missingExports = issues.filter(i => i.issueType === 'missing_export');
-    const circularExports = issues.filter(i => i.issueType === 'circular_export');
-    const namingIssues = issues.filter(i => i.issueType === 'inconsistent_naming');
+    const unusedExports = issues.filter((i) => i.issueType === 'unused_export');
+    const missingExports = issues.filter((i) => i.issueType === 'missing_export');
+    const circularExports = issues.filter((i) => i.issueType === 'circular_export');
+    const namingIssues = issues.filter((i) => i.issueType === 'inconsistent_naming');
 
     if (unusedExports.length > 0) {
       opportunities.push(`Remove ${unusedExports.length} unused exports to reduce bundle size`);
     }
 
     if (missingExports.length > 0) {
-      opportunities.push(`Add proper re-exports in ${missingExports.length} index files for better API structure`);
+      opportunities.push(
+        `Add proper re-exports in ${missingExports.length} index files for better API structure`
+      );
     }
 
     if (circularExports.length > 0) {
-      opportunities.push(`Resolve ${circularExports.length} potential circular export dependencies`);
+      opportunities.push(
+        `Resolve ${circularExports.length} potential circular export dependencies`
+      );
     }
 
     if (namingIssues.length > 0) {
@@ -746,11 +813,11 @@ export class TypeSafetyValidator {
         if (entry.isDirectory() && !entry.name.startsWith('.') && entry.name !== 'node_modules') {
           const subFiles = await this.getTypeScriptFiles(fullPath);
           files.push(...subFiles);
-        } else if (entry.isFile() && extensions.some(ext => entry.name.endsWith(ext))) {
+        } else if (entry.isFile() && extensions.some((ext) => entry.name.endsWith(ext))) {
           files.push(fullPath);
         }
       }
-    } catch (error) {
+    } catch (_error) {
       // Directory might not exist or be accessible
     }
 
@@ -762,13 +829,13 @@ export class TypeSafetyValidator {
       const packageJsonPath = path.join(packagePath, 'package.json');
       const packageJson = JSON.parse(await fs.readFile(packageJsonPath, 'utf-8'));
       return packageJson.name || path.basename(packagePath);
-    } catch (error) {
+    } catch (_error) {
       return path.basename(packagePath);
     }
   }
 
   private extractPackageNameFromPath(filePath: string): string {
-    const match = filePath.match(/packages\/([^\/]+(?:\/[^\/]+)?)/);
+    const match = filePath.match(/packages\/([^/]+(?:\/[^/]+)?)/);
     return match ? match[1] : 'unknown';
   }
 
@@ -781,7 +848,7 @@ export class TypeSafetyValidator {
     const weights = {
       consistency: 0.4,
       compatibility: 0.4,
-      exports: 0.2
+      exports: 0.2,
     };
 
     return (
@@ -799,14 +866,22 @@ export class TypeSafetyValidator {
     const recommendations: string[] = [];
 
     // Overall assessment
-    const overallScore = this.calculateOverallScore(consistencyReport, compatibilityReport, exportReport);
+    const overallScore = this.calculateOverallScore(
+      consistencyReport,
+      compatibilityReport,
+      exportReport
+    );
 
     if (overallScore >= 90) {
-      recommendations.push('✅ Excellent type safety! Your types are well-organized and consistent.');
+      recommendations.push(
+        '✅ Excellent type safety! Your types are well-organized and consistent.'
+      );
     } else if (overallScore >= 70) {
       recommendations.push('✅ Good type safety with some areas for improvement.');
     } else {
-      recommendations.push('⚠️ Type safety issues detected. Consider refactoring for better consistency.');
+      recommendations.push(
+        '⚠️ Type safety issues detected. Consider refactoring for better consistency.'
+      );
     }
 
     // Specific recommendations

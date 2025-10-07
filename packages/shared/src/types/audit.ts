@@ -25,7 +25,7 @@ export const AUDIT_ACTIONS = [
   'export',
   'import',
   'backup',
-  'restore'
+  'restore',
 ] as const;
 
 export const AUDIT_CATEGORIES = [
@@ -36,40 +36,24 @@ export const AUDIT_CATEGORIES = [
   'security',
   'compliance',
   'workflow',
-  'integration'
+  'integration',
 ] as const;
 
-export const AUDIT_SEVERITIES = [
-  'info',
-  'warning',
-  'error',
-  'critical'
-] as const;
+export const AUDIT_SEVERITIES = ['info', 'warning', 'error', 'critical'] as const;
 
-export const REPORT_FORMATS = [
-  'json',
-  'csv',
-  'pdf',
-  'xlsx'
-] as const;
+export const REPORT_FORMATS = ['json', 'csv', 'pdf', 'xlsx'] as const;
 
-export const COMPLIANCE_FRAMEWORKS = [
-  'soc2',
-  'gdpr',
-  'hipaa',
-  'pci_dss',
-  'iso27001'
-] as const;
+export const COMPLIANCE_FRAMEWORKS = ['soc2', 'gdpr', 'hipaa', 'pci_dss', 'iso27001'] as const;
 
 // ============================================================================
 // TYPE DEFINITIONS
 // ============================================================================
 
-export type AuditAction = typeof AUDIT_ACTIONS[number];
-export type AuditCategory = typeof AUDIT_CATEGORIES[number];
-export type AuditSeverity = typeof AUDIT_SEVERITIES[number];
-export type ReportFormat = typeof REPORT_FORMATS[number];
-export type ComplianceFramework = typeof COMPLIANCE_FRAMEWORKS[number];
+export type AuditAction = (typeof AUDIT_ACTIONS)[number];
+export type AuditCategory = (typeof AUDIT_CATEGORIES)[number];
+export type AuditSeverity = (typeof AUDIT_SEVERITIES)[number];
+export type ReportFormat = (typeof REPORT_FORMATS)[number];
+export type ComplianceFramework = (typeof COMPLIANCE_FRAMEWORKS)[number];
 
 // ============================================================================
 // CORE INTERFACES
@@ -164,7 +148,8 @@ export interface AuditEventFilterDTO extends Omit<AuditEventFilter, 'startDate' 
   endDate?: string;
 }
 
-export interface ComplianceReportDTO extends Omit<ComplianceReport, 'generatedAt' | 'startDate' | 'endDate' | 'sections'> {
+export interface ComplianceReportDTO
+  extends Omit<ComplianceReport, 'generatedAt' | 'startDate' | 'endDate' | 'sections'> {
   generatedAt: string;
   startDate: string;
   endDate: string;
@@ -175,7 +160,8 @@ export interface ComplianceSectionDTO extends Omit<ComplianceSection, 'events'> 
   events: AuditEventDTO[];
 }
 
-export interface AuditExportDTO extends Omit<AuditExport, 'requestedAt' | 'completedAt' | 'expiresAt' | 'filter'> {
+export interface AuditExportDTO
+  extends Omit<AuditExport, 'requestedAt' | 'completedAt' | 'expiresAt' | 'filter'> {
   requestedAt: string;
   completedAt?: string;
   expiresAt?: string;
@@ -202,19 +188,19 @@ export const AuditEventFilterSchema = z.object({
   severity: AuditSeveritySchema.optional(),
   resource: z.string().optional(),
   riskScoreMin: z.number().min(0).max(100).optional(),
-  riskScoreMax: z.number().min(0).max(100).optional()
+  riskScoreMax: z.number().min(0).max(100).optional(),
 });
 
 export const GenerateReportSchema = z.object({
   framework: ComplianceFrameworkSchema,
   startDate: z.string().datetime(),
   endDate: z.string().datetime(),
-  organizationId: z.string().optional()
+  organizationId: z.string().optional(),
 });
 
 export const ExportAuditSchema = z.object({
   format: ReportFormatSchema,
-  filter: AuditEventFilterSchema
+  filter: AuditEventFilterSchema,
 });
 
 export const LogAuditEventSchema = z.object({
@@ -227,7 +213,7 @@ export const LogAuditEventSchema = z.object({
   metadata: z.record(z.string(), z.any()).optional(),
   riskScore: z.number().min(0).max(100).optional(),
   userId: z.string().optional(),
-  organizationId: z.string().optional()
+  organizationId: z.string().optional(),
 });
 
 // ============================================================================
@@ -240,7 +226,7 @@ export const LogAuditEventSchema = z.object({
 export function toAuditEventDTO(event: AuditEvent): AuditEventDTO {
   return {
     ...event,
-    timestamp: event.timestamp.toISOString()
+    timestamp: event.timestamp.toISOString(),
   };
 }
 
@@ -248,7 +234,7 @@ export function toAuditEventFilterDTO(filter: AuditEventFilter): AuditEventFilte
   return {
     ...filter,
     startDate: filter.startDate?.toISOString(),
-    endDate: filter.endDate?.toISOString()
+    endDate: filter.endDate?.toISOString(),
   };
 }
 
@@ -258,10 +244,10 @@ export function toComplianceReportDTO(report: ComplianceReport): ComplianceRepor
     generatedAt: report.generatedAt.toISOString(),
     startDate: report.startDate.toISOString(),
     endDate: report.endDate.toISOString(),
-    sections: report.sections.map(section => ({
+    sections: report.sections.map((section) => ({
       ...section,
-      events: section.events.map(toAuditEventDTO)
-    }))
+      events: section.events.map(toAuditEventDTO),
+    })),
   };
 }
 
@@ -271,7 +257,7 @@ export function toAuditExportDTO(exportData: AuditExport): AuditExportDTO {
     requestedAt: exportData.requestedAt.toISOString(),
     completedAt: exportData.completedAt?.toISOString(),
     expiresAt: exportData.expiresAt?.toISOString(),
-    filter: toAuditEventFilterDTO(exportData.filter)
+    filter: toAuditEventFilterDTO(exportData.filter),
   };
 }
 
@@ -282,7 +268,7 @@ export function fromAuditEventFilterDTO(filterDTO: AuditEventFilterDTO): AuditEv
   return {
     ...filterDTO,
     startDate: filterDTO.startDate ? new Date(filterDTO.startDate) : undefined,
-    endDate: filterDTO.endDate ? new Date(filterDTO.endDate) : undefined
+    endDate: filterDTO.endDate ? new Date(filterDTO.endDate) : undefined,
   };
 }
 
@@ -306,7 +292,7 @@ export function getAuditActionDisplayName(action: AuditAction): string {
     export: 'Export',
     import: 'Import',
     backup: 'Backup',
-    restore: 'Restore'
+    restore: 'Restore',
   };
   return names[action];
 }
@@ -323,7 +309,7 @@ export function getAuditCategoryDisplayName(category: AuditCategory): string {
     security: 'Security',
     compliance: 'Compliance',
     workflow: 'Workflow',
-    integration: 'Integration'
+    integration: 'Integration',
   };
   return names[category];
 }
@@ -333,10 +319,10 @@ export function getAuditCategoryDisplayName(category: AuditCategory): string {
  */
 export function getAuditSeverityColor(severity: AuditSeverity): string {
   const colors = {
-    info: '#3B82F6',     // blue
-    warning: '#F59E0B',  // yellow
-    error: '#EF4444',    // red
-    critical: '#7C2D12'  // dark red
+    info: '#3B82F6', // blue
+    warning: '#F59E0B', // yellow
+    error: '#EF4444', // red
+    critical: '#7C2D12', // dark red
   };
   return colors[severity];
 }
@@ -345,12 +331,14 @@ export function getAuditSeverityColor(severity: AuditSeverity): string {
  * Calculate compliance score based on audit events
  */
 export function calculateComplianceScore(events: AuditEvent[]): number {
-  if (events.length === 0) { return 100; }
+  if (events.length === 0) {
+    return 100;
+  }
 
   let score = 100;
-  const criticalEvents = events.filter(e => e.severity === 'critical').length;
-  const errorEvents = events.filter(e => e.severity === 'error').length;
-  const warningEvents = events.filter(e => e.severity === 'warning').length;
+  const criticalEvents = events.filter((e) => e.severity === 'critical').length;
+  const errorEvents = events.filter((e) => e.severity === 'error').length;
+  const warningEvents = events.filter((e) => e.severity === 'warning').length;
 
   // Deduct points based on severity
   score -= criticalEvents * 20;

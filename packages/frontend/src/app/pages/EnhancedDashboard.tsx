@@ -4,43 +4,43 @@
  * Phase C: Polish & User Experience - Modern, intuitive dashboard
  */
 
-import React, { useState, useEffect } from 'react';
 import {
-  Card,
-  Row,
-  Col,
-  Statistic,
-  Button,
-  Space,
-  Typography,
-  Alert,
-  Tabs,
-  List,
-  Avatar,
-  Tag,
-  Progress,
-  Tooltip,
-  FloatButton,
-} from 'antd';
-import {
-  RocketOutlined,
-  TrophyOutlined,
+  AppstoreOutlined,
+  BarChartOutlined,
   BulbOutlined,
+  DashboardOutlined,
   PlayCircleOutlined,
   PlusOutlined,
-  SettingOutlined,
   QuestionCircleOutlined,
-  DashboardOutlined,
-  BarChartOutlined,
-  AppstoreOutlined,
+  RocketOutlined,
+  SettingOutlined,
   TeamOutlined,
+  TrophyOutlined,
 } from '@ant-design/icons';
-import { AnalyticsDashboard } from '../components/Analytics';
-import { OnboardingTour, OnboardingProgress, useOnboarding } from '../components/Onboarding';
-import { useAccessibility, useScreenReaderAnnouncements } from '../components/Accessibility';
-import { useResponsive } from '../components/Layout';
-import { useCachedFetch, usePerformanceMonitor, LazyImage } from '../utils/performance';
+import {
+  Alert,
+  Avatar,
+  Button,
+  Card,
+  Col,
+  FloatButton,
+  List,
+  Row,
+  Space,
+  Statistic,
+  Tabs,
+  Tag,
+  Tooltip,
+  Typography,
+} from 'antd';
 import dayjs from 'dayjs';
+import type React from 'react';
+import { useEffect, useState } from 'react';
+import { useAccessibility, useScreenReaderAnnouncements } from '../components/Accessibility';
+import { AnalyticsDashboard } from '../components/Analytics';
+import { useResponsive } from '../components/Layout';
+import { OnboardingProgress, OnboardingTour, useOnboarding } from '../components/Onboarding';
+import { useCachedFetch, usePerformanceMonitor } from '../utils/performance';
 
 const { Title, Text, Paragraph } = Typography;
 const { TabPane } = Tabs;
@@ -89,11 +89,23 @@ export const EnhancedDashboard: React.FC = () => {
   const { isMobile, isTablet } = useResponsive();
   const { settings } = useAccessibility();
   const { announceNavigation, announceSuccess } = useScreenReaderAnnouncements();
-  const { isOnboardingOpen, completedSteps, userType, completeOnboarding, resumeOnboarding, closeOnboarding } = useOnboarding();
+  const {
+    isOnboardingOpen,
+    completedSteps,
+    userType,
+    completeOnboarding,
+    resumeOnboarding,
+    closeOnboarding,
+  } = useOnboarding();
   const performanceMonitor = usePerformanceMonitor('dashboard-load');
 
   // Fetch dashboard data with caching
-  const { data: dashboardData, loading, error, refetch } = useCachedFetch<DashboardData>(
+  const {
+    data: dashboardData,
+    loading,
+    error,
+    refetch,
+  } = useCachedFetch<DashboardData>(
     '/api/dashboard/overview',
     {},
     5 * 60 * 1000 // 5 minutes cache
@@ -107,7 +119,7 @@ export const EnhancedDashboard: React.FC = () => {
     return () => {
       performanceMonitor.end();
     };
-  }, []);
+  }, [announceNavigation, performanceMonitor.end, performanceMonitor.start]);
 
   // Mock data for demonstration
   const mockDashboardData: DashboardData = {
@@ -183,7 +195,7 @@ export const EnhancedDashboard: React.FC = () => {
         title: 'Create Workflow',
         description: 'Start building a new automation',
         icon: <PlusOutlined />,
-        action: () => console.log('Create workflow'),
+        action: () => {},
         color: '#1890ff',
       },
       {
@@ -191,7 +203,7 @@ export const EnhancedDashboard: React.FC = () => {
         title: 'Browse Marketplace',
         description: 'Discover new plugins and integrations',
         icon: <AppstoreOutlined />,
-        action: () => console.log('Browse marketplace'),
+        action: () => {},
         color: '#52c41a',
       },
       {
@@ -207,7 +219,7 @@ export const EnhancedDashboard: React.FC = () => {
         title: 'Manage Team',
         description: 'Invite team members and manage permissions',
         icon: <TeamOutlined />,
-        action: () => console.log('Manage team'),
+        action: () => {},
         color: '#fa8c16',
       },
     ],
@@ -217,42 +229,59 @@ export const EnhancedDashboard: React.FC = () => {
 
   const getActivityIcon = (type: string) => {
     switch (type) {
-      case 'workflow_created': return <PlusOutlined />;
-      case 'workflow_executed': return <PlayCircleOutlined />;
-      case 'plugin_installed': return <AppstoreOutlined />;
-      case 'optimization_applied': return <RocketOutlined />;
-      default: return <DashboardOutlined />;
+      case 'workflow_created':
+        return <PlusOutlined />;
+      case 'workflow_executed':
+        return <PlayCircleOutlined />;
+      case 'plugin_installed':
+        return <AppstoreOutlined />;
+      case 'optimization_applied':
+        return <RocketOutlined />;
+      default:
+        return <DashboardOutlined />;
     }
   };
 
   const getActivityColor = (status: string) => {
     switch (status) {
-      case 'success': return '#52c41a';
-      case 'warning': return '#faad14';
-      case 'error': return '#ff4d4f';
-      default: return '#1890ff';
+      case 'success':
+        return '#52c41a';
+      case 'warning':
+        return '#faad14';
+      case 'error':
+        return '#ff4d4f';
+      default:
+        return '#1890ff';
     }
   };
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case 'high': return 'red';
-      case 'medium': return 'orange';
-      case 'low': return 'green';
-      default: return 'default';
+      case 'high':
+        return 'red';
+      case 'medium':
+        return 'orange';
+      case 'low':
+        return 'green';
+      default:
+        return 'default';
     }
   };
 
   const handleRecommendationAction = (recommendation: any) => {
     announceSuccess(`${recommendation.action} initiated`);
-    // Handle action based on type
-    console.log('Recommendation action:', recommendation);
   };
 
   const renderOverviewTab = () => (
     <div>
       {/* Welcome Section */}
-      <Card style={{ marginBottom: 24, background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', border: 'none' }}>
+      <Card
+        style={{
+          marginBottom: 24,
+          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          border: 'none',
+        }}
+      >
         <div style={{ color: 'white' }}>
           <Space direction="vertical" size="large" style={{ width: '100%' }}>
             <div>
@@ -260,8 +289,8 @@ export const EnhancedDashboard: React.FC = () => {
                 Welcome back! 👋
               </Title>
               <Paragraph style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '16px', margin: 0 }}>
-                Your workflows have processed {data.quickStats.totalExecutions.toLocaleString()} executions
-                with a {data.quickStats.successRate}% success rate.
+                Your workflows have processed {data.quickStats.totalExecutions.toLocaleString()}{' '}
+                executions with a {data.quickStats.successRate}% success rate.
               </Paragraph>
             </div>
 
@@ -340,11 +369,7 @@ export const EnhancedDashboard: React.FC = () => {
                 bodyStyle={{ padding: '20px' }}
               >
                 <Space direction="vertical" size="middle">
-                  <Avatar
-                    size={48}
-                    icon={action.icon}
-                    style={{ backgroundColor: action.color }}
-                  />
+                  <Avatar size={48} icon={action.icon} style={{ backgroundColor: action.color }} />
                   <div>
                     <Text strong>{action.title}</Text>
                     <br />
@@ -457,14 +482,21 @@ export const EnhancedDashboard: React.FC = () => {
   return (
     <div style={{ padding: isMobile ? 16 : 24 }}>
       {/* Header */}
-      <div style={{ marginBottom: 24, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
+      <div
+        style={{
+          marginBottom: 24,
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          flexWrap: 'wrap',
+          gap: 16,
+        }}
+      >
         <div>
           <Title level={2} style={{ margin: 0 }}>
             Dashboard
           </Title>
-          <Text type="secondary">
-            Monitor your workflows and system performance
-          </Text>
+          <Text type="secondary">Monitor your workflows and system performance</Text>
         </div>
 
         <Space wrap>
@@ -484,10 +516,7 @@ export const EnhancedDashboard: React.FC = () => {
         </TabPane>
 
         <TabPane tab="Analytics" key="analytics">
-          <AnalyticsDashboard
-            timeRange={timeRange}
-            onTimeRangeChange={setTimeRange}
-          />
+          <AnalyticsDashboard timeRange={timeRange} onTimeRangeChange={setTimeRange} />
         </TabPane>
       </Tabs>
 
@@ -515,11 +544,7 @@ export const EnhancedDashboard: React.FC = () => {
           icon={<PlusOutlined />}
           tooltip="Quick Actions"
         >
-          <FloatButton
-            icon={<AppstoreOutlined />}
-            tooltip="New Workflow"
-            onClick={() => console.log('New workflow')}
-          />
+          <FloatButton icon={<AppstoreOutlined />} tooltip="New Workflow" onClick={() => {}} />
           <FloatButton
             icon={<QuestionCircleOutlined />}
             tooltip="Help"

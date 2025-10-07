@@ -1,16 +1,16 @@
+import * as fs from 'node:fs/promises';
+import * as path from 'node:path';
 import * as madge from 'madge';
-import * as fs from 'fs/promises';
-import * as path from 'path';
-import {
-  CircularDependencyReport,
-  PackageBoundaryReport,
-  DependencyGraph,
-  CircularDependency,
+import type {
+  ArchitectureValidationOptions,
   BoundaryViolation,
-  DependencyNode,
+  CircularDependency,
+  CircularDependencyReport,
   DependencyEdge,
+  DependencyGraph,
   DependencyMetrics,
-  ArchitectureValidationOptions
+  DependencyNode,
+  PackageBoundaryReport,
 } from './types';
 
 export class DependencyAnalyzer {
@@ -52,18 +52,19 @@ export class DependencyAnalyzer {
             packages.push(pkgPath);
           }
         }
-      } catch (error) {
+      } catch (_error) {
         // @reporunner directory might not exist
       }
 
       return packages;
-    } catch (error) {
-      console.warn('Failed to discover packages:', error);
+    } catch (_error) {
       return [];
     }
   }
 
-  async checkCircularDependencies(options: ArchitectureValidationOptions = {}): Promise<CircularDependencyReport> {
+  async checkCircularDependencies(
+    _options: ArchitectureValidationOptions = {}
+  ): Promise<CircularDependencyReport> {
     try {
       const config = {
         fileExtensions: ['ts', 'tsx', 'js', 'jsx'],
@@ -74,8 +75,8 @@ export class DependencyAnalyzer {
           /\.spec\./,
           /dist/,
           /build/,
-          /__tests__/
-        ]
+          /__tests__/,
+        ],
       };
 
       // Check for circular dependencies at package level
@@ -93,17 +94,18 @@ export class DependencyAnalyzer {
         totalPackages: this.packagePaths.length,
         affectedPackages,
         severity: this.calculateSeverity(allCirculars),
-        recommendations: this.generateCircularDependencyRecommendations(allCirculars)
+        recommendations: this.generateCircularDependencyRecommendations(allCirculars),
       };
-    } catch (error) {
-      console.error('Error checking circular dependencies:', error);
+    } catch (_error) {
       return {
         hasCircularDependencies: false,
         circularDependencies: [],
         totalPackages: 0,
         affectedPackages: [],
         severity: 'low',
-        recommendations: ['Failed to analyze circular dependencies. Please check the configuration.']
+        recommendations: [
+          'Failed to analyze circular dependencies. Please check the configuration.',
+        ],
       };
     }
   }
@@ -129,8 +131,9 @@ export class DependencyAnalyzer {
 
       const dependencies = packageDependencies.get(packageName) || new Set();
 
-      dependencies.forEach(dep => {
-        if (packageDependencies.has(dep)) { // Only check internal packages
+      dependencies.forEach((dep) => {
+        if (packageDependencies.has(dep)) {
+          // Only check internal packages
           if (!visited.has(dep)) {
             dfs(dep, [...path, packageName]);
           } else if (recursionStack.has(dep)) {
@@ -141,7 +144,7 @@ export class DependencyAnalyzer {
               cycle,
               depth: cycle.length,
               type: 'package',
-              impact: this.calculateImpact(cycle.length)
+              impact: this.calculateImpact(cycle.length),
             });
           }
         }
@@ -150,7 +153,7 @@ export class DependencyAnalyzer {
       recursionStack.delete(packageName);
     };
 
-    Array.from(packageDependencies.keys()).forEach(packageName => {
+    Array.from(packageDependencies.keys()).forEach((packageName) => {
       if (!visited.has(packageName)) {
         dfs(packageName, []);
       }
@@ -165,9 +168,14 @@ export class DependencyAnalyzer {
     for (const packagePath of this.packagePaths) {
       try {
         const srcPath = path.join(packagePath, 'src');
-        const exists = await fs.access(srcPath).then(() => true).catch(() => false);
+        const exists = await fs
+          .access(srcPath)
+          .then(() => true)
+          .catch(() => false);
 
-        if (!exists) continue;
+        if (!exists) {
+          continue;
+        }
 
         const result = await madge(srcPath, config);
         const packageCirculars = result.circular();
@@ -177,12 +185,10 @@ export class DependencyAnalyzer {
             cycle: circular,
             depth: circular.length,
             type: 'file',
-            impact: this.calculateImpact(circular.length)
+            impact: this.calculateImpact(circular.length),
           });
         }
-      } catch (error) {
-        console.warn(`Failed to check circular dependencies for ${packagePath}:`, error);
-      }
+      } catch (_error) {}
     }
 
     return circulars;
@@ -193,7 +199,7 @@ export class DependencyAnalyzer {
       const packageJsonPath = path.join(packagePath, 'package.json');
       const packageJson = JSON.parse(await fs.readFile(packageJsonPath, 'utf-8'));
       return packageJson.name || path.basename(packagePath);
-    } catch (error) {
+    } catch (_error) {
       return path.basename(packagePath);
     }
   }
@@ -206,15 +212,14 @@ export class DependencyAnalyzer {
       const dependencies = [
         ...Object.keys(packageJson.dependencies || {}),
         ...Object.keys(packageJson.devDependencies || {}),
-        ...Object.keys(packageJson.peerDependencies || {})
+        ...Object.keys(packageJson.peerDependencies || {}),
       ];
 
       // Filter to only internal packages
-      return dependencies.filter(dep =>
-        dep.startsWith('@reporunner/') ||
-        ['backend', 'frontend', 'shared'].includes(dep)
+      return dependencies.filter(
+        (dep) => dep.startsWith('@reporunner/') || ['backend', 'frontend', 'shared'].includes(dep)
       );
-    } catch (error) {
+    } catch (_error) {
       return [];
     }
   }
@@ -229,7 +234,9 @@ export class DependencyAnalyzer {
         } else {
           // Extract package name from file path
           const packageName = this.extractPackageFromFilePath(item);
-          if (packageName) affected.add(packageName);
+          if (packageName) {
+            affected.add(packageName);
+          }
         }
       }
     }
@@ -238,26 +245,40 @@ export class DependencyAnalyzer {
   }
 
   private extractPackageFromFilePath(filePath: string): string | null {
-    const match = filePath.match(/packages\/([^\/]+(?:\/[^\/]+)?)/);
+    const match = filePath.match(/packages\/([^/]+(?:\/[^/]+)?)/);
     return match ? match[1] : null;
   }
 
-  private calculateSeverity(circulars: CircularDependency[]): 'low' | 'medium' | 'high' | 'critical' {
-    if (circulars.length === 0) return 'low';
+  private calculateSeverity(
+    circulars: CircularDependency[]
+  ): 'low' | 'medium' | 'high' | 'critical' {
+    if (circulars.length === 0) {
+      return 'low';
+    }
 
-    const hasPackageLevel = circulars.some(c => c.type === 'package');
-    const hasHighImpact = circulars.some(c => c.impact === 'high');
+    const hasPackageLevel = circulars.some((c) => c.type === 'package');
+    const hasHighImpact = circulars.some((c) => c.impact === 'high');
     const totalCirculars = circulars.length;
 
-    if (hasPackageLevel || totalCirculars > 10) return 'critical';
-    if (hasHighImpact || totalCirculars > 5) return 'high';
-    if (totalCirculars > 2) return 'medium';
+    if (hasPackageLevel || totalCirculars > 10) {
+      return 'critical';
+    }
+    if (hasHighImpact || totalCirculars > 5) {
+      return 'high';
+    }
+    if (totalCirculars > 2) {
+      return 'medium';
+    }
     return 'low';
   }
 
   private calculateImpact(cycleLength: number): 'low' | 'medium' | 'high' {
-    if (cycleLength <= 2) return 'low';
-    if (cycleLength <= 4) return 'medium';
+    if (cycleLength <= 2) {
+      return 'low';
+    }
+    if (cycleLength <= 4) {
+      return 'medium';
+    }
     return 'high';
   }
 
@@ -265,12 +286,14 @@ export class DependencyAnalyzer {
     const recommendations: string[] = [];
 
     if (circulars.length === 0) {
-      recommendations.push('✅ No circular dependencies detected. Great job maintaining clean architecture!');
+      recommendations.push(
+        '✅ No circular dependencies detected. Great job maintaining clean architecture!'
+      );
       return recommendations;
     }
 
-    const packageCirculars = circulars.filter(c => c.type === 'package');
-    const fileCirculars = circulars.filter(c => c.type === 'file');
+    const packageCirculars = circulars.filter((c) => c.type === 'package');
+    const fileCirculars = circulars.filter((c) => c.type === 'file');
 
     if (packageCirculars.length > 0) {
       recommendations.push(
@@ -306,7 +329,7 @@ export class DependencyAnalyzer {
 
     // Define package layers and allowed dependencies
     const packageLayers = {
-      'shared': 0,
+      shared: 0,
       '@reporunner/core': 1,
       '@reporunner/auth': 2,
       '@reporunner/services': 2,
@@ -315,10 +338,10 @@ export class DependencyAnalyzer {
       '@reporunner/integrations': 2,
       '@reporunner/platform': 3,
       '@reporunner/enterprise': 3,
-      'backend': 4,
-      'frontend': 4,
+      backend: 4,
+      frontend: 4,
       '@reporunner/cli': 4,
-      '@reporunner/validation': 4
+      '@reporunner/validation': 4,
     };
 
     for (const packagePath of this.packagePaths) {
@@ -339,7 +362,7 @@ export class DependencyAnalyzer {
             violationType: 'layer_violation',
             filePath: path.join(packagePath, 'package.json'),
             severity: 'error',
-            suggestion: `Package ${packageName} (layer ${currentLayer}) should not depend on ${dep} (layer ${depLayer}). Consider restructuring dependencies.`
+            suggestion: `Package ${packageName} (layer ${currentLayer}) should not depend on ${dep} (layer ${depLayer}). Consider restructuring dependencies.`,
           });
         }
 
@@ -351,21 +374,22 @@ export class DependencyAnalyzer {
             violationType: 'unauthorized_access',
             filePath: path.join(packagePath, 'package.json'),
             severity: 'warning',
-            suggestion: `Consider if ${packageName} should directly depend on ${dep}. Use proper interfaces or go through appropriate layers.`
+            suggestion: `Consider if ${packageName} should directly depend on ${dep}. Use proper interfaces or go through appropriate layers.`,
           });
         }
       }
     }
 
     const violationCount = violations.length;
-    const complianceScore = totalChecks > 0 ? Math.max(0, (totalChecks - violationCount) / totalChecks * 100) : 100;
+    const complianceScore =
+      totalChecks > 0 ? Math.max(0, ((totalChecks - violationCount) / totalChecks) * 100) : 100;
 
     return {
       violations,
       totalChecks,
       violationCount,
       complianceScore,
-      recommendations: this.generateBoundaryRecommendations(violations, complianceScore)
+      recommendations: this.generateBoundaryRecommendations(violations, complianceScore),
     };
   }
 
@@ -378,15 +402,18 @@ export class DependencyAnalyzer {
       { source: '@reporunner/cli', target: 'frontend' },
       // Core packages shouldn't depend on higher-level packages
       { source: '@reporunner/core', target: '@reporunner/platform' },
-      { source: '@reporunner/core', target: '@reporunner/enterprise' }
+      { source: '@reporunner/core', target: '@reporunner/enterprise' },
     ];
 
-    return unauthorizedPatterns.some(pattern =>
-      source === pattern.source && target === pattern.target
+    return unauthorizedPatterns.some(
+      (pattern) => source === pattern.source && target === pattern.target
     );
   }
 
-  private generateBoundaryRecommendations(violations: BoundaryViolation[], complianceScore: number): string[] {
+  private generateBoundaryRecommendations(
+    violations: BoundaryViolation[],
+    complianceScore: number
+  ): string[] {
     const recommendations: string[] = [];
 
     if (complianceScore >= 90) {
@@ -394,11 +421,13 @@ export class DependencyAnalyzer {
     } else if (complianceScore >= 70) {
       recommendations.push('✅ Good package boundary compliance with room for improvement.');
     } else {
-      recommendations.push('⚠️ Package boundary violations detected. Review and refactor dependencies.');
+      recommendations.push(
+        '⚠️ Package boundary violations detected. Review and refactor dependencies.'
+      );
     }
 
-    const layerViolations = violations.filter(v => v.violationType === 'layer_violation');
-    const unauthorizedAccess = violations.filter(v => v.violationType === 'unauthorized_access');
+    const layerViolations = violations.filter((v) => v.violationType === 'layer_violation');
+    const unauthorizedAccess = violations.filter((v) => v.violationType === 'unauthorized_access');
 
     if (layerViolations.length > 0) {
       recommendations.push(
@@ -442,23 +471,23 @@ export class DependencyAnalyzer {
         size,
         dependencies: dependencies.length,
         dependents: 0, // Will be calculated below
-        layer: this.getPackageLayer(packageName)
+        layer: this.getPackageLayer(packageName),
       });
     }
 
     // Build edges and calculate dependents
     Array.from(packageDependencies.entries()).forEach(([packageName, dependencies]) => {
-      dependencies.forEach(dep => {
+      dependencies.forEach((dep) => {
         if (packageDependencies.has(dep)) {
           edges.push({
             from: packageName,
             to: dep,
             weight: 1,
-            type: 'direct'
+            type: 'direct',
           });
 
           // Update dependent count
-          const depNode = nodes.find(n => n.id === dep);
+          const depNode = nodes.find((n) => n.id === dep);
           if (depNode) {
             depNode.dependents++;
           }
@@ -473,21 +502,26 @@ export class DependencyAnalyzer {
       nodes,
       edges,
       metrics,
-      visualization
+      visualization,
     };
   }
 
   private async calculatePackageSize(packagePath: string): Promise<number> {
     try {
       const srcPath = path.join(packagePath, 'src');
-      const exists = await fs.access(srcPath).then(() => true).catch(() => false);
+      const exists = await fs
+        .access(srcPath)
+        .then(() => true)
+        .catch(() => false);
 
-      if (!exists) return 0;
+      if (!exists) {
+        return 0;
+      }
 
       // Simple approximation: count TypeScript files
       const files = await this.getFilesRecursively(srcPath, ['.ts', '.tsx']);
       return files.length;
-    } catch (error) {
+    } catch (_error) {
       return 0;
     }
   }
@@ -504,11 +538,11 @@ export class DependencyAnalyzer {
         if (entry.isDirectory()) {
           const subFiles = await this.getFilesRecursively(fullPath, extensions);
           files.push(...subFiles);
-        } else if (extensions.some(ext => entry.name.endsWith(ext))) {
+        } else if (extensions.some((ext) => entry.name.endsWith(ext))) {
           files.push(fullPath);
         }
       }
-    } catch (error) {
+    } catch (_error) {
       // Directory might not exist or be accessible
     }
 
@@ -516,26 +550,50 @@ export class DependencyAnalyzer {
   }
 
   private getPackageLayer(packageName: string): string {
-    if (packageName === 'shared') return 'foundation';
-    if (packageName.startsWith('@reporunner/core')) return 'core';
-    if (['@reporunner/auth', '@reporunner/services', '@reporunner/workflow', '@reporunner/ai'].includes(packageName)) return 'domain';
-    if (['@reporunner/platform', '@reporunner/enterprise'].includes(packageName)) return 'platform';
-    if (['backend', 'frontend', '@reporunner/cli'].includes(packageName)) return 'application';
+    if (packageName === 'shared') {
+      return 'foundation';
+    }
+    if (packageName.startsWith('@reporunner/core')) {
+      return 'core';
+    }
+    if (
+      [
+        '@reporunner/auth',
+        '@reporunner/services',
+        '@reporunner/workflow',
+        '@reporunner/ai',
+      ].includes(packageName)
+    ) {
+      return 'domain';
+    }
+    if (['@reporunner/platform', '@reporunner/enterprise'].includes(packageName)) {
+      return 'platform';
+    }
+    if (['backend', 'frontend', '@reporunner/cli'].includes(packageName)) {
+      return 'application';
+    }
     return 'utility';
   }
 
-  private calculateDependencyMetrics(nodes: DependencyNode[], edges: DependencyEdge[]): DependencyMetrics {
+  private calculateDependencyMetrics(
+    nodes: DependencyNode[],
+    edges: DependencyEdge[]
+  ): DependencyMetrics {
     const totalNodes = nodes.length;
     const totalEdges = edges.length;
-    const averageDependencies = totalNodes > 0 ? nodes.reduce((sum, n) => sum + n.dependencies, 0) / totalNodes : 0;
-    const maxDependencies = Math.max(...nodes.map(n => n.dependencies), 0);
+    const averageDependencies =
+      totalNodes > 0 ? nodes.reduce((sum, n) => sum + n.dependencies, 0) / totalNodes : 0;
+    const maxDependencies = Math.max(...nodes.map((n) => n.dependencies), 0);
 
     // Simple approximation of cyclomatic complexity
     const cyclomaticComplexity = totalEdges - totalNodes + 2;
 
     // Instability: Ce / (Ca + Ce) where Ce = efferent coupling, Ca = afferent coupling
-    const instability = totalNodes > 0 ?
-      nodes.reduce((sum, n) => sum + (n.dependencies / (n.dependencies + n.dependents || 1)), 0) / totalNodes : 0;
+    const instability =
+      totalNodes > 0
+        ? nodes.reduce((sum, n) => sum + n.dependencies / (n.dependencies + n.dependents || 1), 0) /
+          totalNodes
+        : 0;
 
     // Abstractness: placeholder (would need actual analysis of abstract classes/interfaces)
     const abstractness = 0.5;
@@ -547,7 +605,7 @@ export class DependencyAnalyzer {
       maxDependencies,
       cyclomaticComplexity,
       instability,
-      abstractness
+      abstractness,
     };
   }
 
@@ -563,12 +621,14 @@ export class DependencyAnalyzer {
       domain: '#e8f5e8',
       platform: '#fff3e0',
       application: '#ffebee',
-      utility: '#f5f5f5'
+      utility: '#f5f5f5',
     };
 
     for (const node of nodes) {
       const color = layerColors[node.layer] || '#ffffff';
-      lines.push(`  "${node.id}" [fillcolor="${color}", label="${node.name}\\n(${node.dependencies} deps, ${node.dependents} dependents)"];`);
+      lines.push(
+        `  "${node.id}" [fillcolor="${color}", label="${node.name}\\n(${node.dependencies} deps, ${node.dependents} dependents)"];`
+      );
     }
 
     // Add edges

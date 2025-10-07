@@ -131,9 +131,8 @@ async function demonstrateUsagePatterns() {
     const report = await analyzer.generateAnalysisReport();
     ch-priority optimization opportunities`);
     for (const rec of highPriorityRecs.slice(0, 2)) {
-      console.log(`   • ${rec.type}: ${rec.estimatedImp
+      console.log(`   • $rec.type: $rec.estimatedImp
     console.log();
-  }
 }
 
 // Run the example if this file is executed directly
@@ -158,4 +157,4 @@ if (import.meta.url === `file://${process.argv[1]}`) {
       process.exit(1);
 }
 
-export { runBuildAnalysisExample, demonstra
+export { runBuildAnalysisExample, type demonstra

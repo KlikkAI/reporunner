@@ -7,19 +7,22 @@ export interface AuditEvent {
   userId?: string;
   action: string;
   resource: string;
-  details?: Record<string, any>;
+  details?: Record<string, unknown>;
 }
 
 export interface AuditLogger {
   log(event: AuditEvent): Promise<void>;
-  query(filters: Record<string, any>): Promise<AuditEvent[]>;
+  query(filters: Record<string, string | number | boolean>): Promise<AuditEvent[]>;
 }
 
 // Basic implementation placeholder
 export class BasicAuditLogger implements AuditLogger {
-  async log(_event: AuditEvent): Promise<void> {}
+  async log(_event: AuditEvent): Promise<void> {
+    // TODO: Implement actual audit logging
+  }
 
-  async query(_filters: Record<string, any>): Promise<AuditEvent[]> {
+  async query(_filters: Record<string, string | number | boolean>): Promise<AuditEvent[]> {
+    // TODO: Implement actual audit querying
     return [];
   }
 }

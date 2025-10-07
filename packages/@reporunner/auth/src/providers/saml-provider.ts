@@ -9,7 +9,7 @@ export interface SAMLConfig {
 export interface SAMLProfile {
   nameID: string;
   email: string;
-  attributes: Record<string, any>;
+  attributes: Record<string, unknown>;
 }
 
 export class SAMLProvider {

@@ -48,9 +48,7 @@ export const AIProviderFields = ({
             }
             className="w-full"
           />
-          {field.description && (
-            <p className="text-sm text-gray-500">{field.description}</p>
-          )}
+          {field.description && <p className="text-sm text-gray-500">{field.description}</p>}
         </div>
       ))}
     </div>

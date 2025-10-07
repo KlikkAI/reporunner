@@ -1,4 +1,3 @@
-
 import type { MemoryLeak, MemoryOptimization, MemoryProfile, MemoryStats } from '../types/index.js';
 
 /**
@@ -291,7 +290,9 @@ export class MemoryMonitor {
    * Calculate trend from a series of values
    */
   private calculateTrend(values: number[]): number {
-    if (values.length < 2) { return 0; }
+    if (values.length < 2) {
+      return 0;
+    }
 
     const first = values[0];
     const last = values[values.length - 1];

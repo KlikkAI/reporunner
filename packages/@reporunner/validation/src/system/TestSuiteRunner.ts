@@ -89,7 +89,7 @@ export class TestSuiteRunner implements ITestSuiteRunner {
         '--coverage',
         '--reporter=json',
         '--workspace',
-        `packages/${packageName.replace('@reporunner/', '@reporunner/')}`
+        `packages/${packageName.replace('@reporunner/', '@reporunner/')}`,
       ]);
 
       const results = await this.parseTestResults(testResult);

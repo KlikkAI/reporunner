@@ -1,7 +1,7 @@
+import * as fs from 'node:fs';
+import * as path from 'node:path';
 import * as ts from 'typescript';
-import * as path from 'path';
-import * as fs from 'fs';
-import { TypeResolutionResult, TypeResolutionTestCase } from './types';
+import type { TypeResolutionResult, TypeResolutionTestCase } from './types';
 
 export class TypeResolutionValidator {
   private workspaceRoot: string;
@@ -20,14 +20,13 @@ export class TypeResolutionValidator {
         const result = await this.validateSingleTypeResolution(testCase);
         results.push(result);
       } catch (error) {
-        console.error(`Failed to validate type resolution for ${testCase.packageName}:`, error);
         results.push({
           packageName: testCase.packageName,
           typeDefinition: testCase.typeDefinition,
           resolutionTime: 0,
           resolved: false,
           errorMessage: error instanceof Error ? error.message : 'Unknown error',
-          sourceFile: testCase.sourceFile
+          sourceFile: testCase.sourceFile,
         });
       }
     }
@@ -35,7 +34,9 @@ export class TypeResolutionValidator {
     return results;
   }
 
-  private async validateSingleTypeResolution(testCase: TypeResolutionTestCase): Promise<TypeResolutionResult> {
+  private async validateSingleTypeResolution(
+    testCase: TypeResolutionTestCase
+  ): Promise<TypeResolutionResult> {
     const startTime = Date.now();
 
     try {
@@ -75,7 +76,7 @@ export class TypeResolutionValidator {
 
         // Check for compilation errors related to this type
         const diagnostics = program.getSemanticDiagnostics(sourceFile);
-        const typeErrors = diagnostics.filter(diagnostic =>
+        const typeErrors = diagnostics.filter((diagnostic) =>
           diagnostic.messageText.toString().includes(testCase.typeDefinition)
         );
 
@@ -92,7 +93,7 @@ export class TypeResolutionValidator {
           resolutionTime,
           resolved,
           errorMessage,
-          sourceFile: testCase.sourceFile
+          sourceFile: testCase.sourceFile,
         };
       } finally {
         // Clean up temporary test file
@@ -108,7 +109,7 @@ export class TypeResolutionValidator {
         resolutionTime,
         resolved: false,
         errorMessage: error instanceof Error ? error.message : 'Unknown error',
-        sourceFile: testCase.sourceFile
+        sourceFile: testCase.sourceFile,
       };
     }
   }
@@ -121,28 +122,28 @@ export class TypeResolutionValidator {
       packageName: '@reporunner/core',
       typeDefinition: 'WorkflowEngine',
       sourceFile: 'test-types-core.ts',
-      description: 'Test WorkflowEngine type resolution from core package'
+      description: 'Test WorkflowEngine type resolution from core package',
     });
 
     testCases.push({
       packageName: '@reporunner/auth',
       typeDefinition: 'AuthService',
       sourceFile: 'test-types-auth.ts',
-      description: 'Test AuthService type resolution from auth package'
+      description: 'Test AuthService type resolution from auth package',
     });
 
     testCases.push({
       packageName: '@reporunner/workflow',
       typeDefinition: 'WorkflowBuilder',
       sourceFile: 'test-types-workflow.ts',
-      description: 'Test WorkflowBuilder type resolution from workflow package'
+      description: 'Test WorkflowBuilder type resolution from workflow package',
     });
 
     testCases.push({
       packageName: '@reporunner/platform',
       typeDefinition: 'PlatformConfig',
       sourceFile: 'test-types-platform.ts',
-      description: 'Test PlatformConfig type resolution from platform package'
+      description: 'Test PlatformConfig type resolution from platform package',
     });
 
     // Test cross-package type resolution
@@ -150,7 +151,7 @@ export class TypeResolutionValidator {
       packageName: 'shared',
       typeDefinition: 'BaseEntity',
       sourceFile: 'test-types-shared.ts',
-      description: 'Test shared types resolution across packages'
+      description: 'Test shared types resolution across packages',
     });
 
     return testCases;
@@ -194,7 +195,6 @@ export { test };
     );
 
     if (errors.length > 0) {
-      console.warn('TypeScript config parsing warnings:', errors.map(e => e.messageText));
     }
 
     // Get all TypeScript files from packages
@@ -210,14 +210,20 @@ export { test };
     const packagesDir = path.join(this.workspaceRoot, 'packages');
 
     const scanDirectory = (dir: string) => {
-      if (!fs.existsSync(dir)) return;
+      if (!fs.existsSync(dir)) {
+        return;
+      }
 
       const entries = fs.readdirSync(dir, { withFileTypes: true });
 
       for (const entry of entries) {
         const fullPath = path.join(dir, entry.name);
 
-        if (entry.isDirectory() && !entry.name.includes('node_modules') && !entry.name.includes('dist')) {
+        if (
+          entry.isDirectory() &&
+          !entry.name.includes('node_modules') &&
+          !entry.name.includes('dist')
+        ) {
           scanDirectory(fullPath);
         } else if (entry.isFile() && (entry.name.endsWith('.ts') || entry.name.endsWith('.tsx'))) {
           files.push(fullPath);

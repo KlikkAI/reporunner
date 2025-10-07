@@ -1,9 +1,9 @@
+import { exec } from 'node:child_process';
+import * as fs from 'node:fs';
+import * as path from 'node:path';
+import { promisify } from 'node:util';
 import * as ts from 'typescript';
-import * as path from 'path';
-import * as fs from 'fs';
-import { exec } from 'child_process';
-import { promisify } from 'util';
-import { CompilationMetrics, CompilationError, CompilationWarning } from './types';
+import type { CompilationError, CompilationMetrics, CompilationWarning } from './types';
 
 const execAsync = promisify(exec);
 
@@ -23,21 +23,22 @@ export class CompilationAnalyzer {
         const packageMetrics = await this.analyzePackageCompilation(packageDir);
         metrics.push(packageMetrics);
       } catch (error) {
-        console.error(`Failed to analyze compilation for ${packageDir}:`, error);
         // Add failed compilation metrics
         metrics.push({
           packageName: path.basename(packageDir),
           totalFiles: 0,
           compilationTime: 0,
           memoryUsage: 0,
-          errors: [{
-            file: 'unknown',
-            line: 0,
-            column: 0,
-            message: error instanceof Error ? error.message : 'Unknown compilation error',
-            code: 0
-          }],
-          warnings: []
+          errors: [
+            {
+              file: 'unknown',
+              line: 0,
+              column: 0,
+              message: error instanceof Error ? error.message : 'Unknown compilation error',
+              code: 0,
+            },
+          ],
+          warnings: [],
         });
       }
     }
@@ -47,7 +48,6 @@ export class CompilationAnalyzer {
 
   private async analyzePackageCompilation(packageDir: string): Promise<CompilationMetrics> {
     const packageName = this.getPackageName(packageDir);
-    console.log(`Analyzing compilation for ${packageName}...`);
 
     const startTime = Date.now();
     const initialMemory = process.memoryUsage().heapUsed;
@@ -66,9 +66,7 @@ export class CompilationAnalyzer {
     let incrementalBuildTime: number | undefined;
     try {
       incrementalBuildTime = await this.measureIncrementalBuild(packageDir);
-    } catch (error) {
-      console.warn(`Could not measure incremental build time for ${packageName}:`, error);
-    }
+    } catch (_error) {}
 
     return {
       packageName,
@@ -77,7 +75,7 @@ export class CompilationAnalyzer {
       memoryUsage,
       errors,
       warnings,
-      incrementalBuildTime
+      incrementalBuildTime,
     };
   }
 
@@ -109,7 +107,7 @@ export class CompilationAnalyzer {
       ...configErrors,
       ...program.getOptionsDiagnostics(),
       ...program.getGlobalDiagnostics(),
-      ...program.getSemanticDiagnostics()
+      ...program.getSemanticDiagnostics(),
     ];
 
     const errors: CompilationError[] = [];
@@ -123,7 +121,9 @@ export class CompilationAnalyzer {
       let column = 0;
 
       if (diagnostic.file && diagnostic.start !== undefined) {
-        const { line: lineNum, character } = diagnostic.file.getLineAndCharacterOfPosition(diagnostic.start);
+        const { line: lineNum, character } = diagnostic.file.getLineAndCharacterOfPosition(
+          diagnostic.start
+        );
         line = lineNum + 1;
         column = character + 1;
       }
@@ -133,7 +133,7 @@ export class CompilationAnalyzer {
         line,
         column,
         message,
-        code: diagnostic.code
+        code: diagnostic.code,
       };
 
       if (diagnostic.category === ts.DiagnosticCategory.Error) {
@@ -154,15 +154,15 @@ export class CompilationAnalyzer {
       const startTime = Date.now();
       await execAsync(`pnpm turbo run build --filter=${packageName}`, {
         cwd: this.workspaceRoot,
-        timeout: 30000 // 30 second timeout
+        timeout: 30000, // 30 second timeout
       });
       return Date.now() - startTime;
-    } catch (error) {
+    } catch (_error) {
       // Fallback to direct TypeScript compilation
       const startTime = Date.now();
       await execAsync('npx tsc --noEmit --incremental', {
         cwd: packageDir,
-        timeout: 30000
+        timeout: 30000,
       });
       return Date.now() - startTime;
     }
@@ -210,9 +210,10 @@ export class CompilationAnalyzer {
     // Get @reporunner packages
     const reporunnerDir = path.join(packagesDir, '@reporunner');
     if (fs.existsSync(reporunnerDir)) {
-      const reporunnerPackages = fs.readdirSync(reporunnerDir, { withFileTypes: true })
-        .filter(dirent => dirent.isDirectory())
-        .map(dirent => path.join(reporunnerDir, dirent.name));
+      const reporunnerPackages = fs
+        .readdirSync(reporunnerDir, { withFileTypes: true })
+        .filter((dirent) => dirent.isDirectory())
+        .map((dirent) => path.join(reporunnerDir, dirent.name));
       packages.push(...reporunnerPackages);
     }
 
@@ -226,9 +227,7 @@ export class CompilationAnalyzer {
       try {
         const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'));
         return packageJson.name || path.basename(packageDir);
-      } catch (error) {
-        console.warn(`Could not read package.json for ${packageDir}:`, error);
-      }
+      } catch (_error) {}
     }
 
     return path.basename(packageDir);

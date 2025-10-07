@@ -19,6 +19,12 @@ export interface EmbeddingServiceConfig {
   enableMetrics?: boolean;
 }
 
+export interface EmbeddingCandidate {
+  id: string;
+  embedding: number[];
+  metadata?: Record<string, unknown>;
+}
+
 export class EmbeddingService {
   private config: Required<EmbeddingServiceConfig>;
   private cache = new Map<string, { embedding: number[]; timestamp: number }>();
@@ -137,7 +143,7 @@ export class EmbeddingService {
 
   async searchSimilar(
     queryEmbedding: number[],
-    candidateEmbeddings: Array<{ id: string; embedding: number[]; metadata?: any }>,
+    candidateEmbeddings: Array<EmbeddingCandidate>,
     options: Partial<EmbeddingSearchOptions> = {}
   ): Promise<EmbeddingSearchResult[]> {
     const limit = options.limit || 10;

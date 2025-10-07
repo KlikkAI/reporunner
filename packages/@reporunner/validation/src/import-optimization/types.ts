@@ -15,7 +15,12 @@ export interface ImportStatement {
 }
 
 export interface ImportIssue {
-  type: 'circular-dependency' | 'inconsistent-path' | 'unnecessary-relative' | 'missing-barrel' | 'deep-import';
+  type:
+    | 'circular-dependency'
+    | 'inconsistent-path'
+    | 'unnecessary-relative'
+    | 'missing-barrel'
+    | 'deep-import';
   severity: 'error' | 'warning' | 'info';
   message: string;
   filePath: string;

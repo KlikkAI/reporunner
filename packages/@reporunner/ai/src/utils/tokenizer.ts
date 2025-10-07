@@ -46,7 +46,10 @@ export class Tokenizer {
 
     for (const word of words) {
       if (this.vocabulary.has(word)) {
-        tokens.push(this.vocabulary.get(word)!);
+        const tokenId = this.vocabulary.get(word);
+        if (tokenId !== undefined) {
+          tokens.push(tokenId);
+        }
       } else {
         // Unknown token - assign a new ID
         const newId = this.vocabulary.size;

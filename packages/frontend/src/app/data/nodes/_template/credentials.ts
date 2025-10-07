@@ -2,7 +2,6 @@
  * {INTEGRATION_NAME} Credentials Definition
  */
 
-import type { CredentialDefinition } from '@/core/types';
 import { z } from 'zod';
 
 export const {INTEGRATION_NAME}Credentials: CredentialDefinition = {
@@ -42,7 +41,7 @@ export const {INTEGRATION_NAME}Credentials: CredentialDefinition = {
   }),
 
   // Test connection
-  test: async (credentials) => {
+  test: async (_credentials) => {
     try {
       // Implement connection test
       // const response = await fetch('{API_ENDPOINT}/test', {
@@ -50,7 +49,7 @@ export const {INTEGRATION_NAME}Credentials: CredentialDefinition = {
       // });
       // return response.ok;
       return true;
-    } catch (error) {
+    } catch (_error) {
       return false;
     }
   },

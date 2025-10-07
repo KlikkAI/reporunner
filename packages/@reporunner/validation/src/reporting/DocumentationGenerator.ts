@@ -1,11 +1,6 @@
-import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'node:fs';
-import { join, dirname } from 'node:path';
-import type {
-  ValidationResults,
-  ValidationReport,
-  OptimizationRecommendation,
-  DocumentationUpdate,
-} from '../types/index.js';
+import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+import type { DocumentationUpdate, ValidationReport, ValidationResults } from '../types/index.js';
 
 /**
  * Documentation template configuration
@@ -63,7 +58,9 @@ export class DocumentationGenerator {
    * Generate architecture documentation from validation results
    * Requirements: 5.3, 5.4, 5.5
    */
-  async generateArchitectureDocumentation(results: ValidationResults): Promise<GeneratedDocumentation[]> {
+  async generateArchitectureDocumentation(
+    results: ValidationResults
+  ): Promise<GeneratedDocumentation[]> {
     try {
       const docs: GeneratedDocumentation[] = [];
 
@@ -90,7 +87,9 @@ export class DocumentationGenerator {
 
       return docs;
     } catch (error) {
-      throw new Error(`Failed to generate architecture documentation: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `Failed to generate architecture documentation: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
     }
   }
 
@@ -125,7 +124,9 @@ export class DocumentationGenerator {
 
       return docs;
     } catch (error) {
-      throw new Error(`Failed to generate setup guides: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `Failed to generate setup guides: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
     }
   }
 
@@ -133,7 +134,9 @@ export class DocumentationGenerator {
    * Generate best practices documentation
    * Requirements: 5.3, 5.4, 5.5
    */
-  async generateBestPracticesDocumentation(results: ValidationResults): Promise<GeneratedDocumentation[]> {
+  async generateBestPracticesDocumentation(
+    results: ValidationResults
+  ): Promise<GeneratedDocumentation[]> {
     try {
       const docs: GeneratedDocumentation[] = [];
 
@@ -160,7 +163,9 @@ export class DocumentationGenerator {
 
       return docs;
     } catch (error) {
-      throw new Error(`Failed to generate best practices documentation: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `Failed to generate best practices documentation: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
     }
   }
 
@@ -186,7 +191,9 @@ export class DocumentationGenerator {
         }
       }
     } catch (error) {
-      throw new Error(`Failed to update documentation: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `Failed to update documentation: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
     }
   }
 
@@ -194,7 +201,9 @@ export class DocumentationGenerator {
    * Generate comprehensive documentation from validation report
    * Requirements: 5.3, 5.4, 5.5
    */
-  async generateComprehensiveDocumentation(report: ValidationReport): Promise<GeneratedDocumentation[]> {
+  async generateComprehensiveDocumentation(
+    report: ValidationReport
+  ): Promise<GeneratedDocumentation[]> {
     try {
       const allDocs: GeneratedDocumentation[] = [];
 
@@ -207,7 +216,9 @@ export class DocumentationGenerator {
       allDocs.push(...setupDocs);
 
       // Generate best practices documentation
-      const bestPracticesDocs = await this.generateBestPracticesDocumentation(report.detailedResults);
+      const bestPracticesDocs = await this.generateBestPracticesDocumentation(
+        report.detailedResults
+      );
       allDocs.push(...bestPracticesDocs);
 
       // Generate validation report documentation
@@ -219,7 +230,9 @@ export class DocumentationGenerator {
 
       return allDocs;
     } catch (error) {
-      throw new Error(`Failed to generate comprehensive documentation: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `Failed to generate comprehensive documentation: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
     }
   }
 
@@ -233,7 +246,9 @@ export class DocumentationGenerator {
       const templatePath = join(this.templatesDirectory, `${template.name}.md`);
       writeFileSync(templatePath, template.template);
     } catch (error) {
-      throw new Error(`Failed to create template: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `Failed to create template: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
     }
   }
 
@@ -286,16 +301,18 @@ export class DocumentationGenerator {
       healthScore: depAnalysis?.healthScore || 0,
       circularDependencies: depAnalysis?.circularDependencies?.length || 0,
       boundaryViolations: depAnalysis?.packageBoundaryViolations?.length || 0,
-      packageList: depAnalysis?.dependencyGraph?.nodes?.map(node => ({
-        name: node.packageName,
-        type: node.type,
-        size: Math.round(node.size / 1024) + 'KB',
-      })) || [],
-      dependencyList: depAnalysis?.dependencyGraph?.edges?.map(edge => ({
-        from: edge.from,
-        to: edge.to,
-        type: edge.type,
-      })) || [],
+      packageList:
+        depAnalysis?.dependencyGraph?.nodes?.map((node) => ({
+          name: node.packageName,
+          type: node.type,
+          size: `${Math.round(node.size / 1024)}KB`,
+        })) || [],
+      dependencyList:
+        depAnalysis?.dependencyGraph?.edges?.map((edge) => ({
+          from: edge.from,
+          to: edge.to,
+          type: edge.type,
+        })) || [],
     };
   }
 
@@ -307,17 +324,19 @@ export class DocumentationGenerator {
 
     return {
       timestamp: results.timestamp.toISOString(),
-      circularDeps: depAnalysis?.circularDependencies?.map(dep => ({
-        packages: dep.packages.join(' → '),
-        severity: dep.severity,
-        suggestion: dep.suggestion,
-      })) || [],
-      boundaryViolations: depAnalysis?.packageBoundaryViolations?.map(violation => ({
-        from: violation.fromPackage,
-        to: violation.toPackage,
-        type: violation.violationType,
-        suggestion: violation.suggestion,
-      })) || [],
+      circularDeps:
+        depAnalysis?.circularDependencies?.map((dep) => ({
+          packages: dep.packages.join(' → '),
+          severity: dep.severity,
+          suggestion: dep.suggestion,
+        })) || [],
+      boundaryViolations:
+        depAnalysis?.packageBoundaryViolations?.map((violation) => ({
+          from: violation.fromPackage,
+          to: violation.toPackage,
+          type: violation.violationType,
+          suggestion: violation.suggestion,
+        })) || [],
       dependencyGraph: this.generateDependencyGraphVisualization(depAnalysis?.dependencyGraph),
     };
   }
@@ -339,7 +358,7 @@ export class DocumentationGenerator {
       typeConsistencyScore: typeSafety?.crossPackageTypeConsistency || 0,
       interfaceCompatibilityScore: typeSafety?.interfaceCompatibility?.compatibleInterfaces || 0,
       healthStatus: this.getHealthStatus(depAnalysis?.healthScore || 0),
-      recommendations: results.recommendations.filter(r => r.category === 'architecture'),
+      recommendations: results.recommendations.filter((r) => r.category === 'architecture'),
     };
   }
 
@@ -355,10 +374,14 @@ export class DocumentationGenerator {
       buildTime: Math.round((buildMetrics?.totalBuildTime || 0) / 1000),
       cacheHitRate: buildMetrics?.cacheHitRate || 0,
       parallelEfficiency: buildMetrics?.parallelEfficiency || 0,
-      typeScriptCompilationTime: Math.round((devMetrics?.typeScriptPerformance?.compilationTime || 0) / 1000),
+      typeScriptCompilationTime: Math.round(
+        (devMetrics?.typeScriptPerformance?.compilationTime || 0) / 1000
+      ),
       autocompleteSpeed: devMetrics?.typeScriptPerformance?.autocompleteSpeed || 0,
       testCoverage: results.systemValidation?.testResults?.coverage?.overall || 0,
-      packageCount: results.architectureValidation?.dependencyAnalysis?.dependencyGraph?.metrics?.totalNodes || 0,
+      packageCount:
+        results.architectureValidation?.dependencyAnalysis?.dependencyGraph?.metrics?.totalNodes ||
+        0,
       setupSteps: this.generateSetupSteps(results),
       prerequisites: this.generatePrerequisites(results),
     };
@@ -368,15 +391,15 @@ export class DocumentationGenerator {
    * Extract troubleshooting variables from validation results
    */
   private extractTroubleshootingVariables(results: ValidationResults): Record<string, any> {
-    const criticalIssues = results.recommendations.filter(r => r.priority === 'critical');
-    const highIssues = results.recommendations.filter(r => r.priority === 'high');
+    const criticalIssues = results.recommendations.filter((r) => r.priority === 'critical');
+    const highIssues = results.recommendations.filter((r) => r.priority === 'high');
     const commonIssues = [...criticalIssues, ...highIssues];
 
     return {
       timestamp: results.timestamp.toISOString(),
       criticalIssuesCount: criticalIssues.length,
       highIssuesCount: highIssues.length,
-      commonIssues: commonIssues.map(issue => ({
+      commonIssues: commonIssues.map((issue) => ({
         title: issue.title,
         description: issue.description,
         category: issue.category,
@@ -404,11 +427,12 @@ export class DocumentationGenerator {
       parallelEfficiency: buildMetrics?.parallelEfficiency || 0,
       bundleSize: Math.round((bundleMetrics?.totalSize || 0) / 1024 / 1024),
       bundleReduction: bundleMetrics?.reductionPercentage || 0,
-      bottlenecks: buildMetrics?.bottlenecks?.map(b => ({
-        package: b.packageName,
-        time: Math.round(b.buildTime / 1000),
-        suggestions: b.suggestions,
-      })) || [],
+      bottlenecks:
+        buildMetrics?.bottlenecks?.map((b) => ({
+          package: b.packageName,
+          time: Math.round(b.buildTime / 1000),
+          suggestions: b.suggestions,
+        })) || [],
       optimizationTips: this.generateOptimizationTips(results),
     };
   }
@@ -434,7 +458,9 @@ export class DocumentationGenerator {
   /**
    * Extract performance best practices variables
    */
-  private extractPerformanceBestPracticesVariables(results: ValidationResults): Record<string, any> {
+  private extractPerformanceBestPracticesVariables(
+    results: ValidationResults
+  ): Record<string, any> {
     const buildMetrics = results.performanceAnalysis?.buildMetrics;
     const bundleMetrics = results.performanceAnalysis?.bundleMetrics;
     const memoryProfile = results.performanceAnalysis?.memoryProfile;
@@ -457,10 +483,12 @@ export class DocumentationGenerator {
     return {
       timestamp: results.timestamp.toISOString(),
       currentCoverage: testResults?.coverage?.overall || 0,
-      packageCoverage: Object.entries(testResults?.coverage?.packageCoverage || {}).map(([pkg, coverage]) => ({
-        package: pkg,
-        coverage,
-      })),
+      packageCoverage: Object.entries(testResults?.coverage?.packageCoverage || {}).map(
+        ([pkg, coverage]) => ({
+          package: pkg,
+          coverage,
+        })
+      ),
       testingGuidelines: this.generateTestingGuidelines(results),
       coverageImprovements: this.generateCoverageImprovements(results),
     };
@@ -469,7 +497,9 @@ export class DocumentationGenerator {
   /**
    * Generate validation report documentation
    */
-  private async generateValidationReportDoc(report: ValidationReport): Promise<GeneratedDocumentation> {
+  private async generateValidationReportDoc(
+    report: ValidationReport
+  ): Promise<GeneratedDocumentation> {
     const template = `# Phase A Validation Report
 
 ## Executive Summary
@@ -589,7 +619,18 @@ Overall status: {{status}}
 - **Circular Dependencies**: {{circularDependencies}}
 - **Boundary Violations**: {{boundaryViolations}}
 `,
-      variables: ['timestamp', 'status', 'totalPackages', 'totalDependencies', 'maxDepth', 'healthScore', 'packageList', 'dependencyList', 'circularDependencies', 'boundaryViolations'],
+      variables: [
+        'timestamp',
+        'status',
+        'totalPackages',
+        'totalDependencies',
+        'maxDepth',
+        'healthScore',
+        'packageList',
+        'dependencyList',
+        'circularDependencies',
+        'boundaryViolations',
+      ],
       category: 'architecture',
     });
 
@@ -632,7 +673,15 @@ pnpm run type-check
 
 Last updated: {{timestamp}}
 `,
-      variables: ['prerequisites', 'setupSteps', 'buildTime', 'cacheHitRate', 'testCoverage', 'typeScriptCompilationTime', 'timestamp'],
+      variables: [
+        'prerequisites',
+        'setupSteps',
+        'buildTime',
+        'cacheHitRate',
+        'testCoverage',
+        'typeScriptCompilationTime',
+        'timestamp',
+      ],
       category: 'setup',
     });
 
@@ -707,7 +756,16 @@ Last updated: {{timestamp}}
 
 Last updated: {{timestamp}}
 `,
-      variables: ['overallHealthScore', 'healthStatus', 'separationScore', 'duplicationPercentage', 'namingScore', 'typeConsistencyScore', 'recommendations', 'timestamp'],
+      variables: [
+        'overallHealthScore',
+        'healthStatus',
+        'separationScore',
+        'duplicationPercentage',
+        'namingScore',
+        'typeConsistencyScore',
+        'recommendations',
+        'timestamp',
+      ],
       category: 'architecture',
     });
 
@@ -745,7 +803,17 @@ Last updated: {{timestamp}}
 
 Last updated: {{timestamp}}
 `,
-      variables: ['currentBuildTime', 'improvementPercentage', 'cacheHitRate', 'parallelEfficiency', 'bundleSize', 'bundleReduction', 'bottlenecks', 'optimizationTips', 'timestamp'],
+      variables: [
+        'currentBuildTime',
+        'improvementPercentage',
+        'cacheHitRate',
+        'parallelEfficiency',
+        'bundleSize',
+        'bundleReduction',
+        'bottlenecks',
+        'optimizationTips',
+        'timestamp',
+      ],
       category: 'performance',
     });
 
@@ -782,7 +850,13 @@ Last updated: {{timestamp}}
 
 Last updated: {{timestamp}}
 `,
-      variables: ['buildOptimizations', 'bundleOptimizations', 'memoryOptimizations', 'performanceTips', 'timestamp'],
+      variables: [
+        'buildOptimizations',
+        'bundleOptimizations',
+        'memoryOptimizations',
+        'performanceTips',
+        'timestamp',
+      ],
       category: 'best-practices',
     });
 
@@ -815,7 +889,13 @@ Last updated: {{timestamp}}
 
 Last updated: {{timestamp}}
 `,
-      variables: ['currentCoverage', 'packageCoverage', 'testingGuidelines', 'coverageImprovements', 'timestamp'],
+      variables: [
+        'currentCoverage',
+        'packageCoverage',
+        'testingGuidelines',
+        'coverageImprovements',
+        'timestamp',
+      ],
       category: 'best-practices',
     });
 
@@ -872,7 +952,14 @@ Last updated: {{timestamp}}
 
 Last updated: {{timestamp}}
 `,
-      variables: ['criticalIssuesCount', 'commonIssues', 'buildIssues', 'testIssues', 'performanceIssues', 'timestamp'],
+      variables: [
+        'criticalIssuesCount',
+        'commonIssues',
+        'buildIssues',
+        'testIssues',
+        'performanceIssues',
+        'timestamp',
+      ],
       category: 'troubleshooting',
     });
 
@@ -919,7 +1006,15 @@ Current metrics:
 
 Last updated: {{timestamp}}
 `,
-      variables: ['codeDuplicationPercentage', 'namingViolations', 'separationViolations', 'bestPractices', 'importPathOptimizations', 'codeExamples', 'timestamp'],
+      variables: [
+        'codeDuplicationPercentage',
+        'namingViolations',
+        'separationViolations',
+        'bestPractices',
+        'importPathOptimizations',
+        'codeExamples',
+        'timestamp',
+      ],
       category: 'best-practices',
     });
   }
@@ -928,7 +1023,9 @@ Last updated: {{timestamp}}
    * Helper methods for generating content
    */
   private generateDependencyGraphVisualization(graph: any): string {
-    if (!graph) return 'No dependency graph available';
+    if (!graph) {
+      return 'No dependency graph available';
+    }
 
     return `\`\`\`mermaid
 graph TD
@@ -938,14 +1035,22 @@ ${graph.edges?.map((edge: any) => `  ${edge.from} --> ${edge.to}`).join('\n') ||
   }
 
   private getHealthStatus(score: number): string {
-    if (score >= 90) return 'Excellent';
-    if (score >= 80) return 'Good';
-    if (score >= 70) return 'Fair';
-    if (score >= 60) return 'Poor';
+    if (score >= 90) {
+      return 'Excellent';
+    }
+    if (score >= 80) {
+      return 'Good';
+    }
+    if (score >= 70) {
+      return 'Fair';
+    }
+    if (score >= 60) {
+      return 'Poor';
+    }
     return 'Critical';
   }
 
-  private generateSetupSteps(results: ValidationResults): string[] {
+  private generateSetupSteps(_results: ValidationResults): string[] {
     return [
       'Clone the repository',
       'Install Node.js (version 18 or higher)',
@@ -957,7 +1062,7 @@ ${graph.edges?.map((edge: any) => `  ${edge.from} --> ${edge.to}`).join('\n') ||
     ];
   }
 
-  private generatePrerequisites(results: ValidationResults): string[] {
+  private generatePrerequisites(_results: ValidationResults): string[] {
     return [
       'Node.js 18+',
       'pnpm 8+',
@@ -967,7 +1072,9 @@ ${graph.edges?.map((edge: any) => `  ${edge.from} --> ${edge.to}`).join('\n') ||
     ];
   }
 
-  private extractBuildIssues(results: ValidationResults): Array<{title: string, description: string, solution: string}> {
+  private extractBuildIssues(
+    results: ValidationResults
+  ): Array<{ title: string; description: string; solution: string }> {
     const issues = [];
     const buildMetrics = results.performanceAnalysis?.buildMetrics;
 
@@ -990,7 +1097,9 @@ ${graph.edges?.map((edge: any) => `  ${edge.from} --> ${edge.to}`).join('\n') ||
     return issues;
   }
 
-  private extractTestIssues(results: ValidationResults): Array<{title: string, description: string, solution: string}> {
+  private extractTestIssues(
+    results: ValidationResults
+  ): Array<{ title: string; description: string; solution: string }> {
     const issues = [];
     const testResults = results.systemValidation?.testResults;
 
@@ -1013,7 +1122,9 @@ ${graph.edges?.map((edge: any) => `  ${edge.from} --> ${edge.to}`).join('\n') ||
     return issues;
   }
 
-  private extractPerformanceIssues(results: ValidationResults): Array<{title: string, description: string, solution: string}> {
+  private extractPerformanceIssues(
+    results: ValidationResults
+  ): Array<{ title: string; description: string; solution: string }> {
     const issues = [];
     const bundleMetrics = results.performanceAnalysis?.bundleMetrics;
     const memoryProfile = results.performanceAnalysis?.memoryProfile;
@@ -1037,7 +1148,7 @@ ${graph.edges?.map((edge: any) => `  ${edge.from} --> ${edge.to}`).join('\n') ||
     return issues;
   }
 
-  private generateOptimizationTips(results: ValidationResults): string[] {
+  private generateOptimizationTips(_results: ValidationResults): string[] {
     return [
       'Use Turbo for build caching and parallelization',
       'Enable TypeScript incremental compilation',
@@ -1048,7 +1159,9 @@ ${graph.edges?.map((edge: any) => `  ${edge.from} --> ${edge.to}`).join('\n') ||
     ];
   }
 
-  private generateBestPractices(results: ValidationResults): Array<{title: string, description: string, language: string, example: string}> {
+  private generateBestPractices(
+    _results: ValidationResults
+  ): Array<{ title: string; description: string; language: string; example: string }> {
     return [
       {
         title: 'Consistent Import Paths',
@@ -1075,7 +1188,9 @@ import { UserService } from '../../../services/UserService';`,
     ];
   }
 
-  private generateCodeExamples(results: ValidationResults): Array<{title: string, language: string, code: string}> {
+  private generateCodeExamples(
+    _results: ValidationResults
+  ): Array<{ title: string; language: string; code: string }> {
     return [
       {
         title: 'Package Export Pattern',
@@ -1123,7 +1238,7 @@ export type { User, UserCreateRequest } from './types';`,
     return optimizations;
   }
 
-  private generatePerformanceTips(results: ValidationResults): string[] {
+  private generatePerformanceTips(_results: ValidationResults): string[] {
     return [
       'Monitor bundle sizes regularly',
       'Use performance profiling tools',
@@ -1133,7 +1248,7 @@ export type { User, UserCreateRequest } from './types';`,
     ];
   }
 
-  private generateTestingGuidelines(results: ValidationResults): string[] {
+  private generateTestingGuidelines(_results: ValidationResults): string[] {
     return [
       'Aim for 80%+ test coverage',
       'Write unit tests for business logic',
@@ -1161,7 +1276,9 @@ export type { User, UserCreateRequest } from './types';`,
    */
   private formatValue(value: any): string {
     if (Array.isArray(value)) {
-      return value.map(item => typeof item === 'object' ? JSON.stringify(item) : String(item)).join('\n');
+      return value
+        .map((item) => (typeof item === 'object' ? JSON.stringify(item) : String(item)))
+        .join('\n');
     }
 
     if (typeof value === 'object' && value !== null) {
@@ -1195,7 +1312,7 @@ export type { User, UserCreateRequest } from './types';`,
    */
   private async deleteDocumentationFile(filePath: string): Promise<void> {
     if (existsSync(filePath)) {
-      require('fs').unlinkSync(filePath);
+      require('node:fs').unlinkSync(filePath);
     }
   }
 

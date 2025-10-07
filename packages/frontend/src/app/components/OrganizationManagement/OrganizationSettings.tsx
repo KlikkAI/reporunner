@@ -28,10 +28,12 @@ import {
 } from 'antd';
 import type React from 'react';
 import { useEffect, useState } from 'react';
+
 // TODO: Define these types properly
 type Organization = any;
 type OrganizationMember = any;
 type OrganizationSettings = any;
+
 import { useRBACStore } from '@/core/stores/rbacStore';
 
 const { Title, Text, Paragraph } = Typography;
@@ -51,9 +53,7 @@ export const OrganizationSettingsComponent: React.FC<OrganizationSettingsProps> 
   const [inviteModalVisible, setInviteModalVisible] = useState(false);
   const [inviteForm] = Form.useForm();
 
-  const {
-    canManageOrganization,
-  } = useRBACStore();
+  const { canManageOrganization } = useRBACStore();
 
   // TODO: Implement these methods in RBAC store
   const updateOrganization = async (..._args: any[]) => {};

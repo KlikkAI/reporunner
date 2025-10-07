@@ -116,7 +116,9 @@ export const useLeanWorkflowStore = create<LeanWorkflowState>()(
           const updatedWorkflow = await workflowApiService.updateWorkflow(id, updates);
           const { workflows } = get();
           set({
-            workflows: workflows.map((workflow) => (workflow.id === id ? updatedWorkflow : workflow)),
+            workflows: workflows.map((workflow) =>
+              workflow.id === id ? updatedWorkflow : workflow
+            ),
             isLoading: false,
           });
         } catch (error) {
@@ -178,7 +180,7 @@ export const useLeanWorkflowStore = create<LeanWorkflowState>()(
       // Helper methods
       getNodeById: (nodeId: string) => {
         const { activeWorkflow } = get();
-        if (!activeWorkflow || !activeWorkflow.nodes) {
+        if (!activeWorkflow?.nodes) {
           return undefined;
         }
         return activeWorkflow.nodes.find((node: any) => node.id === nodeId);
@@ -186,7 +188,7 @@ export const useLeanWorkflowStore = create<LeanWorkflowState>()(
 
       updateNodeParameters: (nodeId: string, parameters: any) => {
         const { activeWorkflow, updateWorkflow } = get();
-        if (!activeWorkflow || !activeWorkflow.nodes) {
+        if (!activeWorkflow?.nodes) {
           return;
         }
 

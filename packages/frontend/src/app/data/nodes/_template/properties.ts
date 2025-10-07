@@ -4,7 +4,6 @@
  * Define the configuration UI for this integration
  */
 
-import type { NodeProperty } from '@/core/types/dynamicProperties';
 
 export const {INTEGRATION_NAME}Properties: NodeProperty[] = [
   {

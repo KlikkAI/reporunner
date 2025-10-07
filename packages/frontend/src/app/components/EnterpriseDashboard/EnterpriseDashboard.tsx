@@ -106,7 +106,7 @@ export const EnterpriseDashboard: React.FC = () => {
   useEffect(() => {
     loadDashboardData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [loadDashboardData]);
 
   const loadDashboardData = async () => {
     setLoading(true);

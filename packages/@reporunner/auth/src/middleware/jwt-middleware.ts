@@ -9,8 +9,15 @@ export interface JWTConfig {
   expiresIn?: string;
 }
 
+interface JWTPayload {
+  userId?: string;
+  sub?: string;
+  organizationId?: string;
+  [key: string]: unknown;
+}
+
 export interface AuthenticatedRequest extends Request {
-  user?: any;
+  user?: JWTPayload;
   userId?: string;
   organizationId?: string;
 }
@@ -29,7 +36,7 @@ export function createJWTMiddleware(config: JWTConfig) {
         algorithms: config.algorithms || ['HS256'],
         issuer: config.issuer,
         audience: config.audience,
-      }) as any;
+      }) as JWTPayload;
 
       req.user = decoded;
       req.userId = decoded.userId || decoded.sub;

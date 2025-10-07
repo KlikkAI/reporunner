@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 import { TestSuiteRunner } from './TestSuiteRunner.js';
 
 describe('TestSuiteRunner', () => {

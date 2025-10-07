@@ -147,7 +147,10 @@ export class BuildValidator implements IBuildValidator {
     // Run a second build to measure cache effectiveness
     const cachedBuildResult = await this.runCachedBuild();
 
-    const performanceMetrics = this.calculatePerformanceMetrics(cleanBuildResult, cachedBuildResult);
+    const performanceMetrics = this.calculatePerformanceMetrics(
+      cleanBuildResult,
+      cachedBuildResult
+    );
 
     return {
       overallStatus: cachedBuildResult.overallStatus,
@@ -351,7 +354,9 @@ export class BuildValidator implements IBuildValidator {
 
       // Check for lock file
       const lockFiles = ['pnpm-lock.yaml', 'package-lock.json', 'yarn.lock'];
-      const hasLockFile = lockFiles.some((file) => existsSync(join(this.config.workspaceRoot, file)));
+      const hasLockFile = lockFiles.some((file) =>
+        existsSync(join(this.config.workspaceRoot, file))
+      );
 
       if (!hasLockFile) {
         errors.push('No lock file found - dependencies may not be properly locked');

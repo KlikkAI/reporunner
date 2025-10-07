@@ -1,10 +1,10 @@
-export { ContinuousValidationIntegration } from './ContinuousValidationIntegration.js';
 export type {
-  CIValidationConfig,
-  CIExecutionOptions,
-  CIValidationResult,
-  ValidationAnalysis,
   CIArtifact,
+  CIExecutionOptions,
   CINotification,
+  CIValidationConfig,
+  CIValidationResult,
   NotificationChannel,
+  ValidationAnalysis,
 } from './ContinuousValidationIntegration.js';
+export { ContinuousValidationIntegration } from './ContinuousValidationIntegration.js';

@@ -100,7 +100,7 @@ export class TurboMetricsCollector {
 
       const summaryData = await readFile(summaryPath, 'utf-8');
       return this.parseTurboSummary(JSON.parse(summaryData));
-    } catch (error) {
+    } catch (_error) {
       return null;
     }
   }
@@ -224,7 +224,9 @@ export class TurboMetricsCollector {
         });
 
         totalTasks++;
-        if (cached) { cachedTasks++; }
+        if (cached) {
+          cachedTasks++;
+        }
       }
     }
 
@@ -286,7 +288,9 @@ export class TurboMetricsCollector {
 
   private parseDuration(durationStr: string): number {
     const match = durationStr.match(/(\d+(?:\.\d+)?)(ms|s|m)/);
-    if (!match) { return 0; }
+    if (!match) {
+      return 0;
+    }
 
     const [, value, unit] = match;
     const numValue = Number.parseFloat(value);
@@ -304,7 +308,9 @@ export class TurboMetricsCollector {
   }
 
   private calculateParallelism(tasks: TurboTaskMetrics[], totalDuration: number): number {
-    if (totalDuration === 0) { return 0; }
+    if (totalDuration === 0) {
+      return 0;
+    }
 
     const totalTaskTime = tasks.reduce((sum, task) => sum + task.duration, 0);
     return totalTaskTime / totalDuration;

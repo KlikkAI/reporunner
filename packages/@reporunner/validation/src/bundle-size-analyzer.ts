@@ -1,4 +1,3 @@
-
 import { readdir, readFile, stat } from 'node:fs/promises';
 import { basename, extname, join } from 'node:path';
 import { gzipSync } from 'node:zlib';
@@ -335,9 +334,11 @@ export class BundleSizeAnalyzer {
     const ext = extname(filePath).toLowerCase();
 
     let type: BundleFile['type'] = 'other';
-    if (ext === '.js') { type = 'js'; }
-    else if (ext === '.css') { type = 'css'; }
-    else if (['.woff', '.woff2', '.png', '.jpg', '.jpeg', '.svg', '.ico'].includes(ext)) {
+    if (ext === '.js') {
+      type = 'js';
+    } else if (ext === '.css') {
+      type = 'css';
+    } else if (['.woff', '.woff2', '.png', '.jpg', '.jpeg', '.svg', '.ico'].includes(ext)) {
       type = 'asset';
     }
 
@@ -359,7 +360,9 @@ export class BundleSizeAnalyzer {
    * Format bytes to human readable string
    */
   static formatBytes(bytes: number): string {
-    if (bytes === 0) { return '0 B'; }
+    if (bytes === 0) {
+      return '0 B';
+    }
     const k = 1024;
     const sizes = ['B', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));

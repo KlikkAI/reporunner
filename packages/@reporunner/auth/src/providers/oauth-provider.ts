@@ -24,7 +24,7 @@ export interface OAuthUserInfo {
   firstName?: string;
   lastName?: string;
   avatar?: string;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 export class OAuthProvider {

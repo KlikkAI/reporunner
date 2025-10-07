@@ -1,12 +1,11 @@
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import {
-  login,
-  createWorkflow,
   addNode,
   connectNodes,
-  configureNode,
-  saveWorkflow,
+  createWorkflow,
   executeWorkflow,
+  login,
+  saveWorkflow,
   waitForExecution,
 } from '../helpers/test-utils';
 
@@ -159,7 +158,9 @@ test.describe('Workflow Execution', () => {
     const count = await executions.count();
 
     for (let i = 0; i < count; i++) {
-      await expect(executions.nth(i).locator('[data-testid="execution-status"]')).toContainText('success');
+      await expect(executions.nth(i).locator('[data-testid="execution-status"]')).toContainText(
+        'success'
+      );
     }
   });
 

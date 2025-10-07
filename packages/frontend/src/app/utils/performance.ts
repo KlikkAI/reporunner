@@ -4,8 +4,8 @@
  * Phase C: Polish & User Experience - Performance & Scalability
  */
 
-import { useCallback, useEffect, useRef, useState } from 'react';
 import { debounce, throttle } from 'lodash';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 // Cache implementation with TTL support
 class PerformanceCache {
@@ -195,7 +195,7 @@ export const useIntersectionObserver = (
 
   useEffect(() => {
     const target = targetRef.current;
-    if (!target) return;
+    if (!target) { return; }
 
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -251,7 +251,7 @@ export const useVirtualScroll = <T>(
   }, []);
 
   useEffect(() => {
-    if (!containerRef) return;
+    if (!containerRef) { return; }
 
     containerRef.addEventListener('scroll', handleScroll);
     return () => {
@@ -396,8 +396,8 @@ export const LazyImage: React.FC<{
   className?: string;
   style?: React.CSSProperties;
 }> = ({ src, alt, placeholder, className, style }) => {
-  const [imageSrc, setImageSrc] = useState(placeholder || '');
-  const [imageRef, setImageRef] = useState<HTMLImageElement | null>(null);
+  const [_imageSrc, setImageSrc] = useState(placeholder || '');
+  const [imageRef, _setImageRef] = useState<HTMLImageElement | null>(null);
   const { targetRef, hasIntersected } = useIntersectionObserver();
 
   useEffect(() => {
@@ -412,8 +412,8 @@ export const LazyImage: React.FC<{
 
   return (
     <img
-      ref={(el) => {
-        setImageRef(el);
+      ref={(_el) => {
+        setImageRef(_el);
         (targetRef as any).current = el;
       }}
       src={imageSrc}
@@ -434,17 +434,11 @@ export const analyzeBundleSize = () => {
   const scripts = Array.from(document.querySelectorAll('script[src]'));
   const styles = Array.from(document.querySelectorAll('link[rel="stylesheet"]'));
 
-  console.group('Bundle Analysis');
-
-  scripts.forEach((script: any) => {
-    console.log(`Script: ${script.src}`);
+  scripts.forEach((_script: any) => {
   });
 
-  styles.forEach((style: any) => {
-    console.log(`Stylesheet: ${style.href}`);
+  styles.forEach((_style: any) => {
   });
-
-  console.groupEnd();
 };
 
 // Memory usage monitoring

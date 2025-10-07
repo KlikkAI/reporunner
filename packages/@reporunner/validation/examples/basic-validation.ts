@@ -5,41 +5,31 @@
 
 import { PerformanceMonitor, ReportingEngine, ValidationController } from '../src/index.js';
 
-async function runBasicValidation() {
+async function _runBasicValidation() {
 
   try {
     // Initialize components
     const controller = new ValidationController();
-    const performanceMonitor = new PerformanceMonitor();
+    const _performanceMonitor = new PerformanceMonitor();
     const _performanceMonitornew ReportingEngine('./example-reports');
 
     // Setup event listeners for progress tracking
     controller.on('validation:started', () => {
       console.log('📋 Validation process starte
 
-    controller.on('phase:started', (phase: string) => {
-      console.log(`🔄 Starting ${phase}...`);
+    controller.on('phase:started', (_phase: string) => {
     });
-    controller.on('phase:completed', (phase: string) => {
-      console.log(`✅ Completed ${phase}`);
+    controller.on('phase:completed', (_phase: string) => {
     });
-(results) => {
-      console.log('🎉 Validation completed successfully!');
-      console.log(`📊 Overall status: ${results.status}`);
+(_results) => {
     });
 
     const results = await controller.executeValidation();
-    // Generate comprehensive report
-    console.log('\n📄 Generating validation report...');
-    const report = await reportingEngine.generateValidationReport(results);
+    const _report = await reportingEngine.generateValidationReport(results);
 
     // Display summary
       `Build Time Improvement: ${results.performanceAnalysis.buildMetrics.improvementPercentage.toFixed(1)}%`
     );
-    console.log(
-      `Bun_reportze Reduction: ${results.performanceAnalysis.bundleMetrics.architectureValidation.dependencyAnalysis.healthScore}/100`
-    );
-    console.log(`Recommendations: ${results.recommendations.length}`);
 ortingEngine.getOutputDirectory()}`);
     console.log('✨ Example completed successf'❌ Validation failed:',
       error instanceof Error ? error.message : 'Unknown error'

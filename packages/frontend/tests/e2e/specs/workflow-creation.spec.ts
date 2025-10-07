@@ -1,6 +1,5 @@
-import { test, expect } from '@playwright/test';
-import { login, createWorkflow, addNode, saveWorkflow } from '../helpers/test-utils';
-import { simpleWorkflow } from '../fixtures/test-workflows';
+import { expect, test } from '@playwright/test';
+import { addNode, createWorkflow, login, saveWorkflow } from '../helpers/test-utils';
 
 test.describe('Workflow Creation', () => {
   test.beforeEach(async ({ page }) => {
@@ -145,7 +144,9 @@ test.describe('Workflow Creation', () => {
 
     // Should show validation error
     await expect(page.locator('[data-testid="validation-error"]')).toBeVisible();
-    await expect(page.locator('[data-testid="validation-error"]')).toContainText(/incomplete|invalid/i);
+    await expect(page.locator('[data-testid="validation-error"]')).toContainText(
+      /incomplete|invalid/i
+    );
   });
 
   test('should show node configuration panel', async ({ page }) => {
@@ -195,7 +196,9 @@ test.describe('Workflow Creation', () => {
     const count = await workflows.count();
 
     for (let i = 0; i < count; i++) {
-      await expect(workflows.nth(i).locator('[data-testid="workflow-status"]')).toContainText('active');
+      await expect(workflows.nth(i).locator('[data-testid="workflow-status"]')).toContainText(
+        'active'
+      );
     }
   });
 });

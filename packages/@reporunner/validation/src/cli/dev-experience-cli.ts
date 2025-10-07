@@ -111,9 +111,8 @@ ityTracker.getProductivityTrends(30);
     );
 
     if (report.recommendations.length > 0) {
-      console.log('💡 Recommendations:');ndex: number) => {
-        console.log(`  ${index + 1}. ${rec}`);
-    }
+      console.log('💡 Recommendations:');ndex: number) => 
+        console.log(`  $index + 1. $rec`);
 
     console.log('\n🎯 IDE Performance Analysis');overallScore}/100`);
     console.log(
@@ -127,7 +126,7 @@ ityTracker.getProductivityTrends(30);
     console.log(`  Contextual Relevance: ${report.autocomplete.contextualRelevance.toF
     console.log('🧭 Navigation Performance:');
     console.log(`  Find References: ${Math.round(report.navigation.findReferencesTime)}ms`);ms`);
-    console.log(`  Workspace Indexing: ${Math.round(report.navigation.workspaceInde:');
+    console.log(`  Workspace Indexing: $Math.round(report.navigation.workspaceInde:');
     console.log(`  Hover Info: ${Math.round(report.intelliSense.hoverInfoTime)}ms`);
     console.log(`  Signature Help: ${Math.ro
       `  Diagnostics Update: ${Math.round(report.intelliSense.diagnosticsUpdateTime)}ms\n` (report.recommendations.length > 0) {
@@ -138,9 +137,9 @@ ityTracker.getProductivityTrends(30);
   private displayProductivityTrends(trends: any): void {
     console.log('\n📈 Productivity Trends');
     console.log('======================');
-    console.log(`Average Session: ${Math.rouends.codingEfficiency * 100).toFixed(1)}%`);
-    console.log(`Debugging Ratio: ${(trends.debuggingRatio * 100).toFixed(1)}%`);
-    console.log(`Build Success Rate: ${(trends.buildSuccessRate * 100)testSuccessRate * 100).toFixed(1)}%\n`);
+    console.log(`Average Session: ${Math.rouends.codingEfficiency * 100).toFixed(1)%`);
+    console.log(`Debugging Ratio: $(trends.debuggingRatio * 100).toFixed(1)%`);
+    console.log(`Build Success Rate: $(trends.buildSuccessRate * 100)testSuccessRate * 100).toFixed(1)%\n`);
 
     if (trends.dailyProductivity.length > 0) {
       console.log('📅 Recent Daily Activity:');

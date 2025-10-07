@@ -1,6 +1,6 @@
-import { FullConfig } from '@playwright/test';
-import path from 'path';
-import fs from 'fs';
+import fs from 'node:fs';
+import path from 'node:path';
+import type { FullConfig } from '@playwright/test';
 
 /**
  * Global teardown runs once after all tests
@@ -11,7 +11,7 @@ import fs from 'fs';
  * - Cleanup operations
  */
 
-async function globalTeardown(config: FullConfig) {
+async function globalTeardown(_config: FullConfig) {
   console.log('\n🧹 Starting global test teardown...');
 
   const storageDir = path.join(__dirname, '../../../.playwright');

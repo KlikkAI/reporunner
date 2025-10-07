@@ -19,10 +19,4 @@ export const allSchemas = {
   ...credentialSchemas,
 };
 
-export {
-  authSchemas,
-  commonSchemasDetailed,
-  credentialSchemas,
-  executionSchemas,
-  workflowSchemas,
-};
+export { authSchemas, commonSchemasDetailed, credentialSchemas, executionSchemas, workflowSchemas };

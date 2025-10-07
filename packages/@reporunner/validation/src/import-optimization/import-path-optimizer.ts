@@ -1,8 +1,8 @@
-import * as path from 'path';
+import * as path from 'node:path';
 import { CircularDependencyDetector } from './circular-dependency-detector';
 import { ImportConsistencyValidator } from './import-consistency-validator';
 import { PathSuggestionEngine } from './path-suggestion-engine';
-import { ImportOptimizationReport } from './types';
+import type { ImportOptimizationReport } from './types';
 
 export class ImportPathOptimizer {
   private workspaceRoot: string;
@@ -18,37 +18,27 @@ export class ImportPathOptimizer {
   }
 
   async optimizeImportPaths(): Promise<ImportOptimizationReport> {
-    console.log('Starting import path optimization analysis...');
-
-    const startTime = Date.now();
-
-    // Detect circular dependencies
-    console.log('Detecting circular dependencies...');
+    const _startTime = Date.now();
     const circularDependencies = await this.circularDependencyDetector.detectCircularDependencies();
-
-    // Validate import consistency
-    console.log('Validating import consistency...');
     const consistencyResults = await this.importConsistencyValidator.validateImportConsistency();
+    const suggestions = await this.pathSuggestionEngine.generateSuggestions(
+      consistencyResults.analyses
+    );
 
-    // Generate path suggestions
-    console.log('Generating path optimization suggestions...');
-    const suggestions = await this.pathSuggestionEngine.generateSuggestions(consistencyResults.analyses);
-
-    const endTime = Date.now();
-    console.log(`Import path optimization completed in ${endTime - startTime}ms`);
+    const _endTime = Date.now();
 
     // Aggregate all issues
-    const allIssues = consistencyResults.analyses.flatMap(analysis => analysis.issues);
+    const allIssues = consistencyResults.analyses.flatMap((analysis) => analysis.issues);
 
     // Add circular dependency issues
-    circularDependencies.forEach(cycle => {
+    circularDependencies.forEach((cycle) => {
       allIssues.push({
         type: 'circular-dependency',
         severity: cycle.severity === 'critical' ? 'error' : 'warning',
         message: `Circular dependency detected: ${cycle.cycle.join(' → ')}`,
         filePath: cycle.cycle[0],
         line: 0,
-        suggestion: cycle.suggestions[0]
+        suggestion: cycle.suggestions[0],
       });
     });
 
@@ -61,12 +51,15 @@ export class ImportPathOptimizer {
     return {
       timestamp: new Date(),
       totalFiles: consistencyResults.analyses.length,
-      totalImports: consistencyResults.analyses.reduce((sum, analysis) => sum + analysis.imports.length, 0),
+      totalImports: consistencyResults.analyses.reduce(
+        (sum, analysis) => sum + analysis.imports.length,
+        0
+      ),
       issues: allIssues,
       circularDependencies,
       suggestions,
       metrics,
-      recommendations
+      recommendations,
     };
   }
 
@@ -76,15 +69,14 @@ export class ImportPathOptimizer {
 
     // Consistency score (0-100)
     const totalIssues = analyses.reduce((sum, analysis) => sum + analysis.issues.length, 0);
-    const consistencyScore = totalImports > 0
-      ? Math.max(0, 100 - (totalIssues / totalImports * 100))
-      : 100;
+    const consistencyScore =
+      totalImports > 0 ? Math.max(0, 100 - (totalIssues / totalImports) * 100) : 100;
 
     // Count different types of imports
     let deepImportCount = 0;
     let relativeImportCount = 0;
 
-    analyses.forEach(analysis => {
+    analyses.forEach((analysis) => {
       analysis.imports.forEach((imp: any) => {
         if (imp.source.includes('/src/') && imp.source.split('/').length > 3) {
           deepImportCount++;
@@ -100,7 +92,7 @@ export class ImportPathOptimizer {
       circularDependencyCount: circularDependencies.length,
       averageImportsPerFile: totalFiles > 0 ? Math.round(totalImports / totalFiles) : 0,
       deepImportCount,
-      relativeImportCount
+      relativeImportCount,
     };
   }
 
@@ -113,19 +105,19 @@ export class ImportPathOptimizer {
 
     // Circular dependency recommendations
     if (circularDependencies.length > 0) {
-      const criticalCycles = circularDependencies.filter(cycle => cycle.severity === 'critical');
+      const criticalCycles = circularDependencies.filter((cycle) => cycle.severity === 'critical');
       if (criticalCycles.length > 0) {
         recommendations.push(
           `Critical: Fix ${criticalCycles.length} circular dependencies immediately. ` +
-          'These can cause runtime errors and build issues.'
+            'These can cause runtime errors and build issues.'
         );
       }
 
-      const warningCycles = circularDependencies.filter(cycle => cycle.severity === 'warning');
+      const warningCycles = circularDependencies.filter((cycle) => cycle.severity === 'warning');
       if (warningCycles.length > 0) {
         recommendations.push(
           `Address ${warningCycles.length} potential circular dependencies. ` +
-          'Consider refactoring to improve code organization.'
+            'Consider refactoring to improve code organization.'
         );
       }
     }
@@ -134,7 +126,7 @@ export class ImportPathOptimizer {
     if (metrics.consistencyScore < 80) {
       recommendations.push(
         `Improve import consistency: Current score is ${metrics.consistencyScore}%. ` +
-        'Standardize import paths and use barrel exports where appropriate.'
+          'Standardize import paths and use barrel exports where appropriate.'
       );
     }
 
@@ -142,7 +134,7 @@ export class ImportPathOptimizer {
     if (metrics.deepImportCount > 0) {
       recommendations.push(
         `Reduce deep imports: Found ${metrics.deepImportCount} deep imports. ` +
-        'Use barrel exports to provide cleaner import paths.'
+          'Use barrel exports to provide cleaner import paths.'
       );
     }
 
@@ -150,12 +142,12 @@ export class ImportPathOptimizer {
     if (metrics.relativeImportCount > metrics.averageImportsPerFile * 2) {
       recommendations.push(
         `Consider using absolute imports: Found ${metrics.relativeImportCount} relative imports. ` +
-        'Absolute imports can be more maintainable in large codebases.'
+          'Absolute imports can be more maintainable in large codebases.'
       );
     }
 
     // Issue-specific recommendations
-    const issueTypes = new Set(issues.map(issue => issue.type));
+    const issueTypes = new Set(issues.map((issue) => issue.type));
 
     if (issueTypes.has('inconsistent-path')) {
       recommendations.push(
@@ -186,7 +178,7 @@ export class ImportPathOptimizer {
       packageAnalysis[packageName] = {
         path: packageDir,
         exports: await this.analyzePackageExports(packageDir),
-        imports: await this.analyzePackageImports(packageDir)
+        imports: await this.analyzePackageImports(packageDir),
       };
     }
 
@@ -197,7 +189,7 @@ export class ImportPathOptimizer {
     const packagesDir = path.join(this.workspaceRoot, 'packages');
     const packages: string[] = [];
 
-    const fs = require('fs');
+    const fs = require('node:fs');
 
     // Get main packages
     const mainPackages = ['backend', 'frontend', 'shared'];
@@ -211,7 +203,8 @@ export class ImportPathOptimizer {
     // Get @reporunner packages
     const reporunnerDir = path.join(packagesDir, '@reporunner');
     if (fs.existsSync(reporunnerDir)) {
-      const reporunnerPackages = fs.readdirSync(reporunnerDir, { withFileTypes: true })
+      const reporunnerPackages = fs
+        .readdirSync(reporunnerDir, { withFileTypes: true })
         .filter((dirent: any) => dirent.isDirectory())
         .map((dirent: any) => path.join(reporunnerDir, dirent.name));
       packages.push(...reporunnerPackages);
@@ -221,23 +214,21 @@ export class ImportPathOptimizer {
   }
 
   private getPackageName(packageDir: string): string {
-    const fs = require('fs');
+    const fs = require('node:fs');
     const packageJsonPath = path.join(packageDir, 'package.json');
 
     if (fs.existsSync(packageJsonPath)) {
       try {
         const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'));
         return packageJson.name || path.basename(packageDir);
-      } catch (error) {
-        console.warn(`Could not read package.json for ${packageDir}:`, error);
-      }
+      } catch (_error) {}
     }
 
     return path.basename(packageDir);
   }
 
   private async analyzePackageExports(packageDir: string): Promise<any> {
-    const fs = require('fs');
+    const fs = require('node:fs');
     const packageJsonPath = path.join(packageDir, 'package.json');
 
     if (!fs.existsSync(packageJsonPath)) {
@@ -250,16 +241,15 @@ export class ImportPathOptimizer {
         main: packageJson.main,
         exports: packageJson.exports || {},
         types: packageJson.types,
-        files: packageJson.files || []
+        files: packageJson.files || [],
       };
-    } catch (error) {
-      console.warn(`Could not analyze exports for ${packageDir}:`, error);
+    } catch (_error) {
       return { main: null, exports: {}, types: null };
     }
   }
 
   private async analyzePackageImports(packageDir: string): Promise<string[]> {
-    const fs = require('fs');
+    const fs = require('node:fs');
     const imports: string[] = [];
     const srcDir = path.join(packageDir, 'src');
 
@@ -287,9 +277,7 @@ export class ImportPathOptimizer {
                 }
               });
             }
-          } catch (error) {
-            console.warn(`Could not read file ${fullPath}:`, error);
-          }
+          } catch (_error) {}
         }
       }
     };

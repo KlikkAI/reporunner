@@ -3,8 +3,7 @@ import { apiInfo, apiServers } from './info';
 import { commonParameters } from './parameters';
 import { apiPaths } from './paths';
 import { commonResponses } from './responses';
-import { allSchemas } from './schemas';
-import { commonSchemas } from './schemas';
+import { allSchemas, commonSchemas } from './schemas';
 import { defaultSecurity, securitySchemes } from './security';
 import { apiTags } from './tags';
 

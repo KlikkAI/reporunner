@@ -1,8 +1,14 @@
+interface User {
+  id: string;
+  roles?: string | string[];
+  permissions?: string | string[];
+}
+
 export class RoleService {
   /**
    * Check if user has required roles
    */
-  public async checkRoles(user: any, requiredRoles: string[]): Promise<boolean> {
+  public async checkRoles(user: User, requiredRoles: string[]): Promise<boolean> {
     if (!user?.roles) {
       return false;
     }
@@ -15,7 +21,7 @@ export class RoleService {
   /**
    * Check if user has required permissions
    */
-  public async checkPermissions(user: any, requiredPermissions: string[]): Promise<boolean> {
+  public async checkPermissions(user: User, requiredPermissions: string[]): Promise<boolean> {
     if (!user?.permissions) {
       return false;
     }
@@ -30,7 +36,7 @@ export class RoleService {
   /**
    * Check if user owns a resource
    */
-  public async checkResourceOwnership(user: any, resourceId: string): Promise<boolean> {
+  public async checkResourceOwnership(user: User, resourceId: string): Promise<boolean> {
     if (!(user && resourceId)) {
       return false;
     }
@@ -52,7 +58,7 @@ export class RoleService {
   /**
    * Check if user has a specific role
    */
-  public async hasRole(user: any, role: string): Promise<boolean> {
+  public async hasRole(user: User, role: string): Promise<boolean> {
     return this.checkRoles(user, [role]);
   }
 

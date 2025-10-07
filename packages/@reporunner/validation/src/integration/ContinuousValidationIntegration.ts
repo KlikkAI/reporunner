@@ -1,8 +1,8 @@
 import { EventEmitter } from 'node:events';
-import { writeFileSync, readFileSync, existsSync, mkdirSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { ValidationController } from '../controller/ValidationController.js';
-import type { ValidationResults, ValidationSummary } from '../types/index.js';
+import type { ValidationResults } from '../types/index.js';
 
 /**
  * Continuous validation integration for CI/CD pipelines
@@ -67,12 +67,14 @@ export class ContinuousValidationIntegration extends EventEmitter {
         results: null,
         analysis: null,
         artifacts: [],
-        notifications: [{
-          type: 'failure',
-          title: 'Validation Execution Failed',
-          message: error instanceof Error ? error.message : 'Unknown error',
-          severity: 'critical',
-        }],
+        notifications: [
+          {
+            type: 'failure',
+            title: 'Validation Execution Failed',
+            message: error instanceof Error ? error.message : 'Unknown error',
+            severity: 'critical',
+          },
+        ],
         exitCode: 1,
         duration: Date.now() - startTime.getTime(),
       };
@@ -280,9 +282,9 @@ pipeline {
     const defaultConfig: CIValidationConfig = {
       thresholds: {
         buildTimeRegression: 10, // 10% regression threshold
-        bundleSizeIncrease: 5,   // 5% increase threshold
-        coverageDecrease: 2,     // 2% coverage decrease threshold
-        criticalIssues: 0,       // No critical issues allowed
+        bundleSizeIncrease: 5, // 5% increase threshold
+        coverageDecrease: 2, // 2% coverage decrease threshold
+        criticalIssues: 0, // No critical issues allowed
       },
       notifications: {
         enabled: false,
@@ -308,9 +310,7 @@ pipeline {
       try {
         const configData = readFileSync(this.configPath, 'utf8');
         return { ...defaultConfig, ...JSON.parse(configData) };
-      } catch (error) {
-        console.warn('Failed to load CI config, using defaults:', error);
-      }
+      } catch (_error) {}
     }
 
     return defaultConfig;
@@ -352,9 +352,7 @@ pipeline {
       try {
         const data = readFileSync(latestPath, 'utf8');
         return JSON.parse(data);
-      } catch (error) {
-        console.warn('Failed to load previous results:', error);
-      }
+      } catch (_error) {}
     }
 
     return null;
@@ -406,18 +404,20 @@ pipeline {
           -this.config.thresholds.coverageDecrease
         ),
         issues: this.analyzeTrend(
-          current.recommendations.filter(r => r.priority === 'critical').length,
-          previous.recommendations.filter(r => r.priority === 'critical').length,
+          current.recommendations.filter((r) => r.priority === 'critical').length,
+          previous.recommendations.filter((r) => r.priority === 'critical').length,
           0
         ),
       },
     };
 
     // Check for regressions
-    if (analysis.trends.buildTime === 'degrading' ||
-        analysis.trends.bundleSize === 'degrading' ||
-        analysis.trends.coverage === 'degrading' ||
-        analysis.trends.issues === 'degrading') {
+    if (
+      analysis.trends.buildTime === 'degrading' ||
+      analysis.trends.bundleSize === 'degrading' ||
+      analysis.trends.coverage === 'degrading' ||
+      analysis.trends.issues === 'degrading'
+    ) {
       analysis.isRegression = true;
     }
 
@@ -427,7 +427,11 @@ pipeline {
   /**
    * Analyze trend between two values
    */
-  private analyzeTrend(current: number, previous: number, threshold: number): 'improving' | 'degrading' | 'stable' {
+  private analyzeTrend(
+    current: number,
+    previous: number,
+    threshold: number
+  ): 'improving' | 'degrading' | 'stable' {
     const change = ((current - previous) / previous) * 100;
 
     if (Math.abs(change) < Math.abs(threshold)) {
@@ -442,7 +446,7 @@ pipeline {
    */
   private async generateArtifacts(
     results: ValidationResults,
-    options: CIExecutionOptions
+    _options: CIExecutionOptions
   ): Promise<CIArtifact[]> {
     const artifacts: CIArtifact[] = [];
     const timestamp = results.timestamp.toISOString().replace(/[:.]/g, '-');
@@ -487,7 +491,7 @@ pipeline {
       notifications.push({
         type: 'failure',
         title: 'Phase A Validation Failed',
-        message: `Validation failed with ${results.recommendations.filter(r => r.priority === 'critical').length} critical issues`,
+        message: `Validation failed with ${results.recommendations.filter((r) => r.priority === 'critical').length} critical issues`,
         severity: 'critical',
       });
     } else if (results.status === 'warning') {
@@ -521,10 +525,15 @@ pipeline {
   /**
    * Determine exit code for CI
    */
-  private determineExitCode(results: ValidationResults, analysis: ValidationAnalysis | null): number {
+  private determineExitCode(
+    results: ValidationResults,
+    analysis: ValidationAnalysis | null
+  ): number {
     // Critical issues always fail
     if (this.config.failureConditions.criticalIssues) {
-      const criticalIssues = results.recommendations.filter(r => r.priority === 'critical').length;
+      const criticalIssues = results.recommendations.filter(
+        (r) => r.priority === 'critical'
+      ).length;
       if (criticalIssues > this.config.thresholds.criticalIssues) {
         return 1;
       }
@@ -532,13 +541,22 @@ pipeline {
 
     // Check other failure conditions
     if (analysis) {
-      if (this.config.failureConditions.buildTimeRegression && analysis.trends.buildTime === 'degrading') {
+      if (
+        this.config.failureConditions.buildTimeRegression &&
+        analysis.trends.buildTime === 'degrading'
+      ) {
         return 1;
       }
-      if (this.config.failureConditions.bundleSizeIncrease && analysis.trends.bundleSize === 'degrading') {
+      if (
+        this.config.failureConditions.bundleSizeIncrease &&
+        analysis.trends.bundleSize === 'degrading'
+      ) {
         return 1;
       }
-      if (this.config.failureConditions.coverageDecrease && analysis.trends.coverage === 'degrading') {
+      if (
+        this.config.failureConditions.coverageDecrease &&
+        analysis.trends.coverage === 'degrading'
+      ) {
         return 1;
       }
     }
@@ -554,9 +572,7 @@ pipeline {
       for (const channel of this.config.notifications.channels) {
         try {
           await this.sendNotification(notification, channel);
-        } catch (error) {
-          console.error(`Failed to send notification to ${channel.type}:`, error);
-        }
+        } catch (_error) {}
       }
     }
   }
@@ -564,7 +580,10 @@ pipeline {
   /**
    * Send individual notification
    */
-  private async sendNotification(notification: CINotification, channel: NotificationChannel): Promise<void> {
+  private async sendNotification(
+    notification: CINotification,
+    channel: NotificationChannel
+  ): Promise<void> {
     switch (channel.type) {
       case 'slack':
         await this.sendSlackNotification(notification, channel);
@@ -581,26 +600,26 @@ pipeline {
   /**
    * Send Slack notification
    */
-  private async sendSlackNotification(notification: CINotification, channel: NotificationChannel): Promise<void> {
-    // Implementation would depend on Slack API
-    console.log(`Slack notification: ${notification.title}`);
-  }
+  private async sendSlackNotification(
+    _notification: CINotification,
+    _channel: NotificationChannel
+  ): Promise<void> {}
 
   /**
    * Send email notification
    */
-  private async sendEmailNotification(notification: CINotification, channel: NotificationChannel): Promise<void> {
-    // Implementation would depend on email service
-    console.log(`Email notification: ${notification.title}`);
-  }
+  private async sendEmailNotification(
+    _notification: CINotification,
+    _channel: NotificationChannel
+  ): Promise<void> {}
 
   /**
    * Send webhook notification
    */
-  private async sendWebhookNotification(notification: CINotification, channel: NotificationChannel): Promise<void> {
-    // Implementation would depend on webhook endpoint
-    console.log(`Webhook notification: ${notification.title}`);
-  }
+  private async sendWebhookNotification(
+    _notification: CINotification,
+    _channel: NotificationChannel
+  ): Promise<void> {}
 
   /**
    * Cleanup old validation results

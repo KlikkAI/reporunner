@@ -1,13 +1,6 @@
-import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
-import type {
-  ValidationResults,
-  BuildMetrics,
-  BundleMetrics,
-  MemoryProfile,
-  DevExperienceMetrics,
-  OptimizationRecommendation,
-} from '../types/index.js';
+import type { ValidationResults } from '../types/index.js';
 
 /**
  * Historical performance data point
@@ -113,7 +106,9 @@ export class PerformanceTracker {
       // Save updated data
       this.saveHistoricalData(historicalData);
     } catch (error) {
-      throw new Error(`Failed to store performance data: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `Failed to store performance data: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
     }
   }
 
@@ -127,9 +122,7 @@ export class PerformanceTracker {
       const cutoffDate = new Date(Date.now() - timeframeDays * 24 * 60 * 60 * 1000);
 
       // Filter data within timeframe
-      const recentData = historicalData.filter(point =>
-        new Date(point.timestamp) >= cutoffDate
-      );
+      const recentData = historicalData.filter((point) => new Date(point.timestamp) >= cutoffDate);
 
       if (recentData.length < 2) {
         return [];
@@ -145,13 +138,28 @@ export class PerformanceTracker {
         { key: 'memoryUsage', name: 'Memory Usage', unit: 'MB', lowerIsBetter: true },
         { key: 'cacheHitRate', name: 'Cache Hit Rate', unit: '%', lowerIsBetter: false },
         { key: 'parallelEfficiency', name: 'Parallel Efficiency', unit: '%', lowerIsBetter: false },
-        { key: 'architectureHealthScore', name: 'Architecture Health', unit: '/100', lowerIsBetter: false },
-        { key: 'typeScriptCompilationTime', name: 'TypeScript Compilation', unit: 'seconds', lowerIsBetter: true },
+        {
+          key: 'architectureHealthScore',
+          name: 'Architecture Health',
+          unit: '/100',
+          lowerIsBetter: false,
+        },
+        {
+          key: 'typeScriptCompilationTime',
+          name: 'TypeScript Compilation',
+          unit: 'seconds',
+          lowerIsBetter: true,
+        },
         { key: 'autocompleteSpeed', name: 'Autocomplete Speed', unit: 'ms', lowerIsBetter: true },
       ];
 
       for (const metric of metrics) {
-        const trend = this.calculateTrend(recentData, metric.key as keyof PerformanceDataPoint, metric.name, metric.lowerIsBetter);
+        const trend = this.calculateTrend(
+          recentData,
+          metric.key as keyof PerformanceDataPoint,
+          metric.name,
+          metric.lowerIsBetter
+        );
         if (trend) {
           trends.push(trend);
         }
@@ -159,7 +167,9 @@ export class PerformanceTracker {
 
       return trends;
     } catch (error) {
-      throw new Error(`Failed to analyze trends: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `Failed to analyze trends: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
     }
   }
 
@@ -180,13 +190,13 @@ export class PerformanceTracker {
       const comparisonCutoff = new Date(now.getTime() - comparisonDays * 24 * 60 * 60 * 1000);
 
       // Get baseline data (older period)
-      const baselineData = historicalData.filter(point => {
+      const baselineData = historicalData.filter((point) => {
         const pointDate = new Date(point.timestamp);
         return pointDate < baselineCutoff;
       });
 
       // Get recent data (recent period)
-      const recentData = historicalData.filter(point => {
+      const recentData = historicalData.filter((point) => {
         const pointDate = new Date(point.timestamp);
         return pointDate >= comparisonCutoff;
       });
@@ -204,10 +214,30 @@ export class PerformanceTracker {
         { key: 'testCoverage', name: 'Test Coverage', threshold: 5, lowerIsBetter: false },
         { key: 'memoryUsage', name: 'Memory Usage', threshold: 15, lowerIsBetter: true },
         { key: 'cacheHitRate', name: 'Cache Hit Rate', threshold: 10, lowerIsBetter: false },
-        { key: 'parallelEfficiency', name: 'Parallel Efficiency', threshold: 10, lowerIsBetter: false },
-        { key: 'architectureHealthScore', name: 'Architecture Health', threshold: 5, lowerIsBetter: false },
-        { key: 'typeScriptCompilationTime', name: 'TypeScript Compilation', threshold: 20, lowerIsBetter: true },
-        { key: 'autocompleteSpeed', name: 'Autocomplete Speed', threshold: 25, lowerIsBetter: true },
+        {
+          key: 'parallelEfficiency',
+          name: 'Parallel Efficiency',
+          threshold: 10,
+          lowerIsBetter: false,
+        },
+        {
+          key: 'architectureHealthScore',
+          name: 'Architecture Health',
+          threshold: 5,
+          lowerIsBetter: false,
+        },
+        {
+          key: 'typeScriptCompilationTime',
+          name: 'TypeScript Compilation',
+          threshold: 20,
+          lowerIsBetter: true,
+        },
+        {
+          key: 'autocompleteSpeed',
+          name: 'Autocomplete Speed',
+          threshold: 25,
+          lowerIsBetter: true,
+        },
       ];
 
       for (const check of regressionChecks) {
@@ -230,7 +260,9 @@ export class PerformanceTracker {
         return severityOrder[b.severity] - severityOrder[a.severity];
       });
     } catch (error) {
-      throw new Error(`Failed to detect regressions: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `Failed to detect regressions: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
     }
   }
 
@@ -261,9 +293,24 @@ export class PerformanceTracker {
         { key: 'testCoverage', name: 'Test Coverage', target: 80, lowerIsBetter: false },
         { key: 'memoryUsage', name: 'Memory Usage', target: 512, lowerIsBetter: true },
         { key: 'cacheHitRate', name: 'Cache Hit Rate', target: 90, lowerIsBetter: false },
-        { key: 'parallelEfficiency', name: 'Parallel Efficiency', target: 80, lowerIsBetter: false },
-        { key: 'architectureHealthScore', name: 'Architecture Health', target: 90, lowerIsBetter: false },
-        { key: 'typeScriptCompilationTime', name: 'TypeScript Compilation', target: 10, lowerIsBetter: true },
+        {
+          key: 'parallelEfficiency',
+          name: 'Parallel Efficiency',
+          target: 80,
+          lowerIsBetter: false,
+        },
+        {
+          key: 'architectureHealthScore',
+          name: 'Architecture Health',
+          target: 90,
+          lowerIsBetter: false,
+        },
+        {
+          key: 'typeScriptCompilationTime',
+          name: 'TypeScript Compilation',
+          target: 10,
+          lowerIsBetter: true,
+        },
         { key: 'autocompleteSpeed', name: 'Autocomplete Speed', target: 200, lowerIsBetter: true },
       ];
 
@@ -303,7 +350,9 @@ export class PerformanceTracker {
 
       return comparisons;
     } catch (error) {
-      throw new Error(`Failed to generate comparisons: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `Failed to generate comparisons: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
     }
   }
 
@@ -313,14 +362,18 @@ export class PerformanceTracker {
   getHistoricalData(startDate?: Date, endDate?: Date): PerformanceDataPoint[] {
     const historicalData = this.loadHistoricalData();
 
-    if (!startDate && !endDate) {
+    if (!(startDate || endDate)) {
       return historicalData;
     }
 
-    return historicalData.filter(point => {
+    return historicalData.filter((point) => {
       const pointDate = new Date(point.timestamp);
-      if (startDate && pointDate < startDate) return false;
-      if (endDate && pointDate > endDate) return false;
+      if (startDate && pointDate < startDate) {
+        return false;
+      }
+      if (endDate && pointDate > endDate) {
+        return false;
+      }
       return true;
     });
   }
@@ -328,7 +381,10 @@ export class PerformanceTracker {
   /**
    * Get performance statistics for a metric
    */
-  getMetricStatistics(metric: keyof PerformanceDataPoint, timeframeDays?: number): {
+  getMetricStatistics(
+    metric: keyof PerformanceDataPoint,
+    timeframeDays?: number
+  ): {
     min: number;
     max: number;
     average: number;
@@ -340,7 +396,7 @@ export class PerformanceTracker {
 
     if (timeframeDays) {
       const cutoffDate = new Date(Date.now() - timeframeDays * 24 * 60 * 60 * 1000);
-      data = data.filter(point => new Date(point.timestamp) >= cutoffDate);
+      data = data.filter((point) => new Date(point.timestamp) >= cutoffDate);
     }
 
     if (data.length === 0) {
@@ -354,7 +410,9 @@ export class PerformanceTracker {
       };
     }
 
-    const values = data.map(point => point[metric] as number).filter(v => typeof v === 'number');
+    const values = data
+      .map((point) => point[metric] as number)
+      .filter((v) => typeof v === 'number');
 
     if (values.length === 0) {
       return {
@@ -371,11 +429,12 @@ export class PerformanceTracker {
     const min = sorted[0];
     const max = sorted[sorted.length - 1];
     const average = values.reduce((sum, val) => sum + val, 0) / values.length;
-    const median = sorted.length % 2 === 0
-      ? (sorted[sorted.length / 2 - 1] + sorted[sorted.length / 2]) / 2
-      : sorted[Math.floor(sorted.length / 2)];
+    const median =
+      sorted.length % 2 === 0
+        ? (sorted[sorted.length / 2 - 1] + sorted[sorted.length / 2]) / 2
+        : sorted[Math.floor(sorted.length / 2)];
 
-    const variance = values.reduce((sum, val) => sum + Math.pow(val - average, 2), 0) / values.length;
+    const variance = values.reduce((sum, val) => sum + (val - average) ** 2, 0) / values.length;
     const standardDeviation = Math.sqrt(variance);
 
     return {
@@ -426,7 +485,7 @@ export class PerformanceTracker {
     ];
 
     // CSV rows
-    const rows = data.map(point => [
+    const rows = data.map((point) => [
       point.timestamp.toISOString(),
       point.buildTime,
       point.bundleSize,
@@ -445,7 +504,7 @@ export class PerformanceTracker {
     ]);
 
     const csvContent = [headers, ...rows]
-      .map(row => row.map(cell => `"${cell}"`).join(','))
+      .map((row) => row.map((cell) => `"${cell}"`).join(','))
       .join('\n');
 
     writeFileSync(outputPath, csvContent);
@@ -468,8 +527,12 @@ export class PerformanceTracker {
       cacheHitRate: results.performanceAnalysis?.buildMetrics?.cacheHitRate || 0,
       parallelEfficiency: results.performanceAnalysis?.buildMetrics?.parallelEfficiency || 0,
       architectureHealthScore: results.architectureValidation?.dependencyAnalysis?.healthScore || 0,
-      typeScriptCompilationTime: (results.performanceAnalysis?.devExperienceMetrics?.typeScriptPerformance?.compilationTime || 0) / 1000, // Convert to seconds
-      autocompleteSpeed: results.performanceAnalysis?.devExperienceMetrics?.typeScriptPerformance?.autocompleteSpeed || 0,
+      typeScriptCompilationTime:
+        (results.performanceAnalysis?.devExperienceMetrics?.typeScriptPerformance
+          ?.compilationTime || 0) / 1000, // Convert to seconds
+      autocompleteSpeed:
+        results.performanceAnalysis?.devExperienceMetrics?.typeScriptPerformance
+          ?.autocompleteSpeed || 0,
       metadata,
     };
   }
@@ -483,14 +546,20 @@ export class PerformanceTracker {
     metricName: string,
     lowerIsBetter: boolean
   ): PerformanceTrend | null {
-    if (data.length < 2) return null;
+    if (data.length < 2) {
+      return null;
+    }
 
-    const values = data.map(point => ({
-      timestamp: new Date(point.timestamp).getTime(),
-      value: point[metric] as number,
-    })).filter(item => typeof item.value === 'number');
+    const values = data
+      .map((point) => ({
+        timestamp: new Date(point.timestamp).getTime(),
+        value: point[metric] as number,
+      }))
+      .filter((item) => typeof item.value === 'number');
 
-    if (values.length < 2) return null;
+    if (values.length < 2) {
+      return null;
+    }
 
     // Calculate linear regression
     const n = values.length;
@@ -504,13 +573,13 @@ export class PerformanceTracker {
 
     // Calculate R-squared for confidence
     const meanY = sumY / n;
-    const totalSumSquares = values.reduce((sum, item) => sum + Math.pow(item.value - meanY, 2), 0);
+    const totalSumSquares = values.reduce((sum, item) => sum + (item.value - meanY) ** 2, 0);
     const residualSumSquares = values.reduce((sum, item) => {
       const predicted = slope * item.timestamp + intercept;
-      return sum + Math.pow(item.value - predicted, 2);
+      return sum + (item.value - predicted) ** 2;
     }, 0);
 
-    const rSquared = 1 - (residualSumSquares / totalSumSquares);
+    const rSquared = 1 - residualSumSquares / totalSumSquares;
     const confidence = Math.max(0, Math.min(1, rSquared));
 
     // Convert slope to change per day
@@ -539,7 +608,8 @@ export class PerformanceTracker {
       significance = 'low';
     }
 
-    const timeframeDays = (values[values.length - 1].timestamp - values[0].timestamp) / millisecondsPerDay;
+    const timeframeDays =
+      (values[values.length - 1].timestamp - values[0].timestamp) / millisecondsPerDay;
 
     return {
       metric: metricName,
@@ -566,12 +636,18 @@ export class PerformanceTracker {
     const baselineAverage = this.calculateAverage(baselineData, metric);
     const recentAverage = this.calculateAverage(recentData, metric);
 
-    if (baselineAverage === 0) return null;
+    if (baselineAverage === 0) {
+      return null;
+    }
 
     const changePercentage = ((recentAverage - baselineAverage) / baselineAverage) * 100;
-    const isRegression = lowerIsBetter ? changePercentage > threshold : changePercentage < -threshold;
+    const isRegression = lowerIsBetter
+      ? changePercentage > threshold
+      : changePercentage < -threshold;
 
-    if (!isRegression) return null;
+    if (!isRegression) {
+      return null;
+    }
 
     // Determine severity
     let severity: PerformanceRegression['severity'];
@@ -603,16 +679,23 @@ export class PerformanceTracker {
   /**
    * Calculate average value for a metric
    */
-  private calculateAverage(data: PerformanceDataPoint[], metric: keyof PerformanceDataPoint): number {
-    const values = data.map(point => point[metric] as number).filter(v => typeof v === 'number');
-    if (values.length === 0) return 0;
+  private calculateAverage(
+    data: PerformanceDataPoint[],
+    metric: keyof PerformanceDataPoint
+  ): number {
+    const values = data
+      .map((point) => point[metric] as number)
+      .filter((v) => typeof v === 'number');
+    if (values.length === 0) {
+      return 0;
+    }
     return values.reduce((sum, val) => sum + val, 0) / values.length;
   }
 
   /**
    * Generate possible causes for regression
    */
-  private generateRegressionCauses(metric: string, changePercentage: number): string[] {
+  private generateRegressionCauses(metric: string, _changePercentage: number): string[] {
     const causes: string[] = [];
 
     switch (metric) {
@@ -676,7 +759,10 @@ export class PerformanceTracker {
   /**
    * Generate recommendations for regression
    */
-  private generateRegressionRecommendations(metric: string, severity: PerformanceRegression['severity']): string[] {
+  private generateRegressionRecommendations(
+    metric: string,
+    severity: PerformanceRegression['severity']
+  ): string[] {
     const recommendations: string[] = [];
 
     if (severity === 'critical') {
@@ -744,8 +830,7 @@ export class PerformanceTracker {
         ...point,
         timestamp: new Date(point.timestamp),
       }));
-    } catch (error) {
-      console.warn('Failed to load historical data, starting fresh:', error);
+    } catch (_error) {
       return [];
     }
   }
@@ -757,7 +842,9 @@ export class PerformanceTracker {
     try {
       writeFileSync(this.dataFile, JSON.stringify(data, null, 2));
     } catch (error) {
-      throw new Error(`Failed to save historical data: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `Failed to save historical data: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
     }
   }
 

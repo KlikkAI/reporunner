@@ -2,7 +2,6 @@
  * {INTEGRATION_NAME} Node Definition
  */
 
-import type { NodeDefinition } from '@/core/types';
 
 export const {INTEGRATION_NAME}Node: NodeDefinition = {
   id: '{integration-id}',

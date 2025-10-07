@@ -27,7 +27,7 @@ export const {INTEGRATION_NAME}Actions = {
     }
   },
 
-  async get(id: string, credentials: any) {
+  async get(id: string, _credentials: any) {
     // Implement GET logic
     // const response = await fetch(`{API_ENDPOINT}/${id}`, {
     //   headers: { 'Authorization': `Bearer ${credentials.apiKey}` }
@@ -36,17 +36,17 @@ export const {INTEGRATION_NAME}Actions = {
     return { id, data: 'placeholder' };
   },
 
-  async create(data: any, credentials: any) {
+  async create(data: any, _credentials: any) {
     // Implement CREATE logic
     return { id: 'new-id', ...data };
   },
 
-  async update(id: string, data: any, credentials: any) {
+  async update(id: string, data: any, _credentials: any) {
     // Implement UPDATE logic
     return { id, ...data };
   },
 
-  async delete(id: string, credentials: any) {
+  async delete(id: string, _credentials: any) {
     // Implement DELETE logic
     return { success: true, id };
   },

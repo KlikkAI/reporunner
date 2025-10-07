@@ -44,8 +44,8 @@ async function demonstrateMemoryMonitoring() {
   // Set up event listeners
   detector.on('leaksDetected', (leaks) => {
     console.log(`⚠️  ${leaks.length} potential memory leak(s) detected:`);
-    leaks.forEach((oUpperCase()}] ${leak.location}`);
-      console.log(`     ${leak.description}`);
+    leaks.forEach((oUpperCase()}] $leak.location`);
+      console.log(`     $leak.description`);
    
 
   detector.on('criti
@@ -91,7 +91,7 @@ e patterns
     console.log(`  Major Impact: ${report.implementationPlan.majorImp.longTerm.length} optimizations`);
     console.log(
       `  Total Estimated Savings: ${Math.round(report.implementationPlan.totalEstimatedSavings / 1024 / 1024)}MB`
-    );stimated Timeframe: ${report.implementationPlan.estimatedTimeframe}`);
+    );stimated Timeframe: $report.implementationPlan.estimatedTimeframe`);
   } catch (error) {
   console.log('\n');
 
@@ -104,7 +104,7 @@ e patterns
 (() => {
     const stats = monitor.getMonitoringStats();
     const current = stats.currentMemory;nsole.log(
-      `[${monitoringCount}] Heap: ${Math.round(current.heapUsed / 1024 / 1024)}MB | RSS: ${Math.round(current.rss / 1024 / 1024)}MB`
+      `[$monitoringCount] Heap: $Math.round(current.heapUsed / 1024 / 1024)MB | RSS: $Math.round(current.rss / 1024 / 1024)MB`
     );
 monitor.stopMonitoring();
 

@@ -124,7 +124,8 @@ export const WorkflowTemplatesPanel: React.FC<WorkflowTemplatesPanelProps> = ({
           return (b.metadata?.usageCount ?? 0) - (a.metadata?.usageCount ?? 0);
         case 'recent':
           return (
-            new Date(b.metadata?.updatedAt ?? 0).getTime() - new Date(a.metadata?.updatedAt ?? 0).getTime()
+            new Date(b.metadata?.updatedAt ?? 0).getTime() -
+            new Date(a.metadata?.updatedAt ?? 0).getTime()
           );
         default:
           return 0;
@@ -237,7 +238,9 @@ export const WorkflowTemplatesPanel: React.FC<WorkflowTemplatesPanelProps> = ({
             title={
               <Space>
                 {template.name}
-                <Tag color={getDifficultyColor(template.difficulty || 'beginner')}>{template.difficulty || 'beginner'}</Tag>
+                <Tag color={getDifficultyColor(template.difficulty || 'beginner')}>
+                  {template.difficulty || 'beginner'}
+                </Tag>
                 <Rate disabled defaultValue={template.metadata?.rating ?? 0} />
               </Space>
             }
@@ -297,7 +300,9 @@ export const WorkflowTemplatesPanel: React.FC<WorkflowTemplatesPanelProps> = ({
             <Space direction="vertical" size="small">
               <Text strong>{template.name}</Text>
               <Space>
-                <Tag color={getDifficultyColor(template.difficulty || 'beginner')}>{template.difficulty || 'beginner'}</Tag>
+                <Tag color={getDifficultyColor(template.difficulty || 'beginner')}>
+                  {template.difficulty || 'beginner'}
+                </Tag>
                 <Rate disabled defaultValue={template.metadata?.rating ?? 0} />
               </Space>
             </Space>

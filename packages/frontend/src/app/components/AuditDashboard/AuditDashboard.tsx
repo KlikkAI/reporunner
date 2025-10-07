@@ -66,12 +66,12 @@ export const AuditDashboard: React.FC = () => {
   useEffect(() => {
     loadAuditData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [loadAuditData]);
 
   useEffect(() => {
     applyFilters();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [events, dateRange, selectedUser, selectedAction, selectedResource, selectedSeverity, selectedCategory, searchTerm]);
+  }, [applyFilters]);
 
   const loadAuditData = async () => {
     setLoading(true);

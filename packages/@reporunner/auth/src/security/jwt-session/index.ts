@@ -1,8 +1,23 @@
 // Simplified JWT session exports - using existing interface from auth-utilities
 
+interface JWTPayload {
+  userId?: string;
+  sub?: string;
+  [key: string]: unknown;
+}
+
+interface UserSession {
+  sessionId: string;
+  userId: string;
+  createdAt: Date;
+  expiresAt: Date;
+  ipAddress?: string;
+  userAgent?: string;
+}
+
 export interface JWTSessionManager {
-  verifyToken(token: string): Promise<any>;
-  createToken(payload: any): Promise<string>;
+  verifyToken(token: string): Promise<JWTPayload>;
+  createToken(payload: JWTPayload): Promise<string>;
   refreshToken(token: string): Promise<string>;
   revokeToken(token: string): Promise<void>;
 
@@ -15,7 +30,7 @@ export interface JWTSessionManager {
   ): Promise<{ accessToken: string; refreshToken: string }>;
   revokeAllUserTokens(userId: string): Promise<void>;
   revokeSession(sessionId: string): Promise<void>;
-  getUserSessions(userId: string): any[];
+  getUserSessions(userId: string): UserSession[];
 }
 
 export interface SessionConfig {

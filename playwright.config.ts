@@ -113,14 +113,16 @@ export default defineConfig({
   ],
 
   // Run your local dev server before starting the tests
-  webServer: process.env.CI ? undefined : {
-    command: 'pnpm --filter @reporunner/frontend dev',
-    url: 'http://localhost:3000',
-    reuseExistingServer: !process.env.CI,
-    timeout: 120 * 1000, // 2 minutes to start
-    stdout: 'ignore',
-    stderr: 'pipe',
-  },
+  webServer: process.env.CI
+    ? undefined
+    : {
+        command: 'pnpm --filter @reporunner/frontend dev',
+        url: 'http://localhost:3000',
+        reuseExistingServer: !process.env.CI,
+        timeout: 120 * 1000, // 2 minutes to start
+        stdout: 'ignore',
+        stderr: 'pipe',
+      },
 
   // Global setup/teardown
   globalSetup: require.resolve('./packages/frontend/tests/e2e/global-setup.ts'),

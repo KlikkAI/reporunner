@@ -257,7 +257,7 @@ export class PluginDistribution {
 
       // Check if version exists
       const pluginVersions = this.pluginStorage.get(pluginId);
-      if (!(pluginVersions && pluginVersions.has(version))) {
+      if (!pluginVersions?.has(version)) {
         return {
           success: false,
           error: `Version ${version} of plugin ${pluginId} not found`,
@@ -437,14 +437,26 @@ export class PluginDistribution {
     const versionA = parseVersion(a);
     const versionB = parseVersion(b);
 
-    if (versionA.major !== versionB.major) { return versionA.major - versionB.major; }
-    if (versionA.minor !== versionB.minor) { return versionA.minor - versionB.minor; }
-    if (versionA.patch !== versionB.patch) { return versionA.patch - versionB.patch; }
+    if (versionA.major !== versionB.major) {
+      return versionA.major - versionB.major;
+    }
+    if (versionA.minor !== versionB.minor) {
+      return versionA.minor - versionB.minor;
+    }
+    if (versionA.patch !== versionB.patch) {
+      return versionA.patch - versionB.patch;
+    }
 
     // Handle pre-release versions
-    if (versionA.pre && !versionB.pre) { return -1; }
-    if (!versionA.pre && versionB.pre) { return 1; }
-    if (versionA.pre && versionB.pre) { return versionA.pre.localeCompare(versionB.pre); }
+    if (versionA.pre && !versionB.pre) {
+      return -1;
+    }
+    if (!versionA.pre && versionB.pre) {
+      return 1;
+    }
+    if (versionA.pre && versionB.pre) {
+      return versionA.pre.localeCompare(versionB.pre);
+    }
 
     return 0;
   }

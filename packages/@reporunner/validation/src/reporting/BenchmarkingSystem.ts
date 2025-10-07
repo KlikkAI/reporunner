@@ -1,4 +1,4 @@
-import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import type { ValidationResults } from '../types/index.js';
 import type { PerformanceDataPoint } from './PerformanceTracker.js';
@@ -81,7 +81,9 @@ export class BenchmarkingSystem {
       const configPath = join(this.configDirectory, `${config.name}.json`);
       writeFileSync(configPath, JSON.stringify(config, null, 2));
     } catch (error) {
-      throw new Error(`Failed to create benchmark config: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `Failed to create benchmark config: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
     }
   }
 
@@ -112,7 +114,8 @@ export class BenchmarkingSystem {
       }
 
       // Calculate overall score
-      const overallScore = Object.values(scores).reduce((sum, score) => sum + score, 0) / Object.values(scores).length;
+      const overallScore =
+        Object.values(scores).reduce((sum, score) => sum + score, 0) / Object.values(scores).length;
 
       // Determine grade
       const grade = this.calculateGrade(overallScore);
@@ -140,7 +143,9 @@ export class BenchmarkingSystem {
 
       return benchmarkResult;
     } catch (error) {
-      throw new Error(`Failed to run benchmark: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `Failed to run benchmark: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
     }
   }
 
@@ -156,7 +161,7 @@ export class BenchmarkingSystem {
       const baseline = await this.loadBenchmarkResult(baselineResultId);
       const current = await this.loadBenchmarkResult(currentResultId);
 
-      if (!baseline || !current) {
+      if (!(baseline && current)) {
         throw new Error('Benchmark results not found');
       }
 
@@ -173,7 +178,8 @@ export class BenchmarkingSystem {
         const currentValue = current.results[metric];
         const change = ((currentValue - baselineValue) / baselineValue) * 100;
 
-        if (Math.abs(change) > 1) { // Only consider changes > 1%
+        if (Math.abs(change) > 1) {
+          // Only consider changes > 1%
           if (this.isImprovement(metric, change)) {
             improvements[metric] = Math.abs(change);
           } else {
@@ -194,7 +200,9 @@ export class BenchmarkingSystem {
         summary,
       };
     } catch (error) {
-      throw new Error(`Failed to compare benchmarks: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `Failed to compare benchmarks: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
     }
   }
 
@@ -208,7 +216,8 @@ export class BenchmarkingSystem {
         return [];
       }
 
-      const files = require('fs').readdirSync(resultsDir)
+      const files = require('node:fs')
+        .readdirSync(resultsDir)
         .filter((file: string) => file.endsWith('.json'))
         .sort()
         .slice(-limit);
@@ -221,9 +230,13 @@ export class BenchmarkingSystem {
         }
       }
 
-      return results.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+      return results.sort(
+        (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+      );
     } catch (error) {
-      throw new Error(`Failed to get benchmark history: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `Failed to get benchmark history: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
     }
   }
 
@@ -250,7 +263,9 @@ export class BenchmarkingSystem {
 
       return reportPath;
     } catch (error) {
-      throw new Error(`Failed to generate benchmark report: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `Failed to generate benchmark report: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
     }
   }
 
@@ -317,12 +332,7 @@ export class BenchmarkingSystem {
     const devExperienceConfig: BenchmarkConfig = {
       name: 'developer-experience',
       description: 'Developer experience performance benchmark',
-      metrics: [
-        'typeScriptCompilationTime',
-        'autocompleteSpeed',
-        'buildTime',
-        'testCoverage',
-      ],
+      metrics: ['typeScriptCompilationTime', 'autocompleteSpeed', 'buildTime', 'testCoverage'],
       targets: {
         typeScriptCompilationTime: 10, // seconds
         autocompleteSpeed: 200, // ms
@@ -370,8 +380,12 @@ export class BenchmarkingSystem {
       cacheHitRate: results.performanceAnalysis?.buildMetrics?.cacheHitRate || 0,
       parallelEfficiency: results.performanceAnalysis?.buildMetrics?.parallelEfficiency || 0,
       architectureHealthScore: results.architectureValidation?.dependencyAnalysis?.healthScore || 0,
-      typeScriptCompilationTime: (results.performanceAnalysis?.devExperienceMetrics?.typeScriptPerformance?.compilationTime || 0) / 1000,
-      autocompleteSpeed: results.performanceAnalysis?.devExperienceMetrics?.typeScriptPerformance?.autocompleteSpeed || 0,
+      typeScriptCompilationTime:
+        (results.performanceAnalysis?.devExperienceMetrics?.typeScriptPerformance
+          ?.compilationTime || 0) / 1000,
+      autocompleteSpeed:
+        results.performanceAnalysis?.devExperienceMetrics?.typeScriptPerformance
+          ?.autocompleteSpeed || 0,
       metadata: {},
     };
   }
@@ -391,7 +405,7 @@ export class BenchmarkingSystem {
     const good = config.thresholds.good[metric];
     const poor = config.thresholds.poor[metric];
 
-    if (!excellent || !good || !poor) {
+    if (!(excellent && good && poor)) {
       return 50; // Default score if thresholds not defined
     }
 
@@ -399,14 +413,26 @@ export class BenchmarkingSystem {
     const lowerIsBetter = this.isLowerBetter(metric);
 
     if (lowerIsBetter) {
-      if (value <= excellent) return 100;
-      if (value <= good) return 80;
-      if (value <= poor) return 60;
+      if (value <= excellent) {
+        return 100;
+      }
+      if (value <= good) {
+        return 80;
+      }
+      if (value <= poor) {
+        return 60;
+      }
       return Math.max(0, 60 - ((value - poor) / poor) * 30);
     } else {
-      if (value >= excellent) return 100;
-      if (value >= good) return 80;
-      if (value >= poor) return 60;
+      if (value >= excellent) {
+        return 100;
+      }
+      if (value >= good) {
+        return 80;
+      }
+      if (value >= poor) {
+        return 60;
+      }
       return Math.max(0, 60 - ((poor - value) / poor) * 30);
     }
   }
@@ -415,10 +441,18 @@ export class BenchmarkingSystem {
    * Calculate overall grade
    */
   private calculateGrade(score: number): BenchmarkResult['grade'] {
-    if (score >= 90) return 'A';
-    if (score >= 80) return 'B';
-    if (score >= 70) return 'C';
-    if (score >= 60) return 'D';
+    if (score >= 90) {
+      return 'A';
+    }
+    if (score >= 80) {
+      return 'B';
+    }
+    if (score >= 70) {
+      return 'C';
+    }
+    if (score >= 60) {
+      return 'D';
+    }
     return 'F';
   }
 
@@ -430,12 +464,18 @@ export class BenchmarkingSystem {
       const value = results[metric];
       const target = config.targets[metric];
 
-      if (target === undefined) continue;
+      if (target === undefined) {
+        continue;
+      }
 
       const lowerIsBetter = this.isLowerBetter(metric);
 
-      if (lowerIsBetter && value > target) return false;
-      if (!lowerIsBetter && value < target) return false;
+      if (lowerIsBetter && value > target) {
+        return false;
+      }
+      if (!lowerIsBetter && value < target) {
+        return false;
+      }
     }
 
     return true;
@@ -490,14 +530,12 @@ export class BenchmarkingSystem {
     }
 
     if (improvementCount > 0) {
-      const topImprovement = Object.entries(improvements)
-        .sort(([, a], [, b]) => b - a)[0];
+      const topImprovement = Object.entries(improvements).sort(([, a], [, b]) => b - a)[0];
       summary += `Best improvement: ${topImprovement[0]} (+${topImprovement[1].toFixed(1)}%). `;
     }
 
     if (regressionCount > 0) {
-      const topRegression = Object.entries(regressions)
-        .sort(([, a], [, b]) => b - a)[0];
+      const topRegression = Object.entries(regressions).sort(([, a], [, b]) => b - a)[0];
       summary += `Biggest regression: ${topRegression[0]} (-${topRegression[1].toFixed(1)}%). `;
     }
 
@@ -512,9 +550,14 @@ export class BenchmarkingSystem {
     latest: BenchmarkResult,
     history: BenchmarkResult[]
   ): string {
-    const trend = history.length > 1 ?
-      (latest.overallScore - history[1].overallScore > 0 ? '📈' :
-       latest.overallScore - history[1].overallScore < 0 ? '📉' : '➡️') : '➡️';
+    const trend =
+      history.length > 1
+        ? latest.overallScore - history[1].overallScore > 0
+          ? '📈'
+          : latest.overallScore - history[1].overallScore < 0
+            ? '📉'
+            : '➡️'
+        : '➡️';
 
     return `# ${config.name} Benchmark Report
 
@@ -526,42 +569,52 @@ export class BenchmarkingSystem {
 
 ## Metrics Performance
 
-${config.metrics.map(metric => {
-  const value = latest.results[metric];
-  const score = latest.scores[metric];
-  const target = config.targets[metric];
-  const status = this.isLowerBetter(metric) ?
-    (value <= target ? '✅' : '❌') :
-    (value >= target ? '✅' : '❌');
+${config.metrics
+  .map((metric) => {
+    const value = latest.results[metric];
+    const score = latest.scores[metric];
+    const target = config.targets[metric];
+    const status = this.isLowerBetter(metric)
+      ? value <= target
+        ? '✅'
+        : '❌'
+      : value >= target
+        ? '✅'
+        : '❌';
 
-  return `### ${metric}
+    return `### ${metric}
 - **Current**: ${value.toFixed(2)} ${status}
 - **Target**: ${target}
 - **Score**: ${score.toFixed(1)}/100`;
-}).join('\n\n')}
+  })
+  .join('\n\n')}
 
 ## Historical Trend
 
-${history.slice(0, 5).map((result, index) =>
-  `${index + 1}. ${result.timestamp.toISOString().split('T')[0]} - Score: ${result.overallScore.toFixed(1)} (${result.grade})`
-).join('\n')}
+${history
+  .slice(0, 5)
+  .map(
+    (result, index) =>
+      `${index + 1}. ${result.timestamp.toISOString().split('T')[0]} - Score: ${result.overallScore.toFixed(1)} (${result.grade})`
+  )
+  .join('\n')}
 
 ## Thresholds
 
 ### Excellent (90-100 points)
-${Object.entries(config.thresholds.excellent).map(([metric, value]) =>
-  `- ${metric}: ${value}`
-).join('\n')}
+${Object.entries(config.thresholds.excellent)
+  .map(([metric, value]) => `- ${metric}: ${value}`)
+  .join('\n')}
 
 ### Good (80-89 points)
-${Object.entries(config.thresholds.good).map(([metric, value]) =>
-  `- ${metric}: ${value}`
-).join('\n')}
+${Object.entries(config.thresholds.good)
+  .map(([metric, value]) => `- ${metric}: ${value}`)
+  .join('\n')}
 
 ### Poor (60-69 points)
-${Object.entries(config.thresholds.poor).map(([metric, value]) =>
-  `- ${metric}: ${value}`
-).join('\n')}
+${Object.entries(config.thresholds.poor)
+  .map(([metric, value]) => `- ${metric}: ${value}`)
+  .join('\n')}
 
 ---
 Generated: ${new Date().toISOString()}
@@ -598,8 +651,7 @@ Generated: ${new Date().toISOString()}
         ...data,
         timestamp: new Date(data.timestamp),
       };
-    } catch (error) {
-      console.warn(`Failed to load benchmark result ${resultId}:`, error);
+    } catch (_error) {
       return null;
     }
   }
@@ -613,7 +665,8 @@ Generated: ${new Date().toISOString()}
         return;
       }
 
-      const files = require('fs').readdirSync(this.configDirectory)
+      const files = require('node:fs')
+        .readdirSync(this.configDirectory)
         .filter((file: string) => file.endsWith('.json'));
 
       for (const file of files) {
@@ -621,9 +674,7 @@ Generated: ${new Date().toISOString()}
         const config = JSON.parse(readFileSync(configPath, 'utf-8'));
         this.configs.set(config.name, config);
       }
-    } catch (error) {
-      console.warn('Failed to load benchmark configs:', error);
-    }
+    } catch (_error) {}
   }
 
   /**

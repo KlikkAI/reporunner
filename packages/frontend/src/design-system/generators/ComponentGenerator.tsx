@@ -298,11 +298,7 @@ export class ComponentGenerator {
             {user.email && (
               <p className="text-sm text-gray-500 dark:text-gray-400 truncate">{user.email}</p>
             )}
-            {user.role && (
-              <Tag color="blue">
-                {user.role}
-              </Tag>
-            )}
+            {user.role && <Tag color="blue">{user.role}</Tag>}
           </div>
           {user.actions && <div className="flex-shrink-0">{user.actions}</div>}
         </div>

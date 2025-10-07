@@ -1,15 +1,15 @@
-import * as fs from 'fs/promises';
-import * as path from 'path';
-import { execSync } from 'child_process';
-import {
+import { execSync } from 'node:child_process';
+import * as fs from 'node:fs/promises';
+import * as path from 'node:path';
+import type {
+  ArchitectureValidationOptions,
   CodeOrganizationReport,
-  SeparationReport,
+  DuplicatedBlock,
   DuplicationReport,
   NamingReport,
-  SeparationViolation,
-  DuplicatedBlock,
   NamingViolation,
-  ArchitectureValidationOptions
+  SeparationReport,
+  SeparationViolation,
 } from './types';
 
 export class CodeOrganizationChecker {
@@ -51,31 +51,40 @@ export class CodeOrganizationChecker {
             packages.push(pkgPath);
           }
         }
-      } catch (error) {
+      } catch (_error) {
         // @reporunner directory might not exist
       }
 
       return packages;
-    } catch (error) {
-      console.warn('Failed to discover packages:', error);
+    } catch (_error) {
       return [];
     }
   }
 
-  async validateCodeOrganization(options: ArchitectureValidationOptions = {}): Promise<CodeOrganizationReport> {
+  async validateCodeOrganization(
+    _options: ArchitectureValidationOptions = {}
+  ): Promise<CodeOrganizationReport> {
     const separationOfConcerns = await this.validateSeparationOfConcerns();
     const codeDuplication = await this.detectCodeDuplication();
     const namingConventions = await this.validateNamingConventions();
 
-    const overallScore = this.calculateOverallScore(separationOfConcerns, codeDuplication, namingConventions);
-    const recommendations = this.generateOrganizationRecommendations(separationOfConcerns, codeDuplication, namingConventions);
+    const overallScore = this.calculateOverallScore(
+      separationOfConcerns,
+      codeDuplication,
+      namingConventions
+    );
+    const recommendations = this.generateOrganizationRecommendations(
+      separationOfConcerns,
+      codeDuplication,
+      namingConventions
+    );
 
     return {
       separationOfConcerns,
       codeDuplication,
       namingConventions,
       overallScore,
-      recommendations
+      recommendations,
     };
   }
 
@@ -91,25 +100,36 @@ export class CodeOrganizationChecker {
       // Calculate package score based on violations
       const totalFiles = await this.countSourceFiles(packagePath);
       const violationCount = packageViolations.length;
-      packageScores[packageName] = totalFiles > 0 ? Math.max(0, (totalFiles - violationCount) / totalFiles * 100) : 100;
+      packageScores[packageName] =
+        totalFiles > 0 ? Math.max(0, ((totalFiles - violationCount) / totalFiles) * 100) : 100;
     }
 
-    const score = Object.values(packageScores).reduce((sum, score) => sum + score, 0) / Object.keys(packageScores).length || 100;
+    const score =
+      Object.values(packageScores).reduce((sum, score) => sum + score, 0) /
+        Object.keys(packageScores).length || 100;
 
     return {
       score,
       violations,
-      packageScores
+      packageScores,
     };
   }
 
-  private async analyzePackageConcerns(packagePath: string, packageName: string): Promise<SeparationViolation[]> {
+  private async analyzePackageConcerns(
+    packagePath: string,
+    packageName: string
+  ): Promise<SeparationViolation[]> {
     const violations: SeparationViolation[] = [];
     const srcPath = path.join(packagePath, 'src');
 
     try {
-      const exists = await fs.access(srcPath).then(() => true).catch(() => false);
-      if (!exists) return violations;
+      const exists = await fs
+        .access(srcPath)
+        .then(() => true)
+        .catch(() => false);
+      if (!exists) {
+        return violations;
+      }
 
       const files = await this.getSourceFiles(srcPath);
 
@@ -119,25 +139,29 @@ export class CodeOrganizationChecker {
 
         // Check for mixed concerns
         const mixedConcerns = this.detectMixedConcerns(content, filePath);
-        violations.push(...mixedConcerns.map(concern => ({
-          packageName,
-          filePath: relativeFilePath,
-          violationType: 'mixed_concerns' as const,
-          description: concern,
-          severity: 'medium' as const,
-          suggestion: 'Consider separating concerns into different modules or classes'
-        })));
+        violations.push(
+          ...mixedConcerns.map((concern) => ({
+            packageName,
+            filePath: relativeFilePath,
+            violationType: 'mixed_concerns' as const,
+            description: concern,
+            severity: 'medium' as const,
+            suggestion: 'Consider separating concerns into different modules or classes',
+          }))
+        );
 
         // Check for tight coupling
         const tightCoupling = this.detectTightCoupling(content, filePath);
-        violations.push(...tightCoupling.map(coupling => ({
-          packageName,
-          filePath: relativeFilePath,
-          violationType: 'tight_coupling' as const,
-          description: coupling,
-          severity: 'high' as const,
-          suggestion: 'Use dependency injection or interfaces to reduce coupling'
-        })));
+        violations.push(
+          ...tightCoupling.map((coupling) => ({
+            packageName,
+            filePath: relativeFilePath,
+            violationType: 'tight_coupling' as const,
+            description: coupling,
+            severity: 'high' as const,
+            suggestion: 'Use dependency injection or interfaces to reduce coupling',
+          }))
+        );
 
         // Check for god classes/files
         const godClass = this.detectGodClass(content, filePath);
@@ -148,13 +172,11 @@ export class CodeOrganizationChecker {
             violationType: 'god_class',
             description: godClass,
             severity: 'high',
-            suggestion: 'Break down large classes/files into smaller, focused components'
+            suggestion: 'Break down large classes/files into smaller, focused components',
           });
         }
       }
-    } catch (error) {
-      console.warn(`Failed to analyze concerns for ${packagePath}:`, error);
-    }
+    } catch (_error) {}
 
     return violations;
   }
@@ -165,11 +187,26 @@ export class CodeOrganizationChecker {
 
     // Check for mixed responsibilities in a single file
     const patterns = [
-      { pattern: /class.*Controller.*{[\s\S]*database|db|query/i, concern: 'Controller mixing with database logic' },
-      { pattern: /class.*Service.*{[\s\S]*render|component|jsx/i, concern: 'Service mixing with UI logic' },
-      { pattern: /class.*Model.*{[\s\S]*http|fetch|axios/i, concern: 'Model mixing with HTTP logic' },
-      { pattern: /function.*Component.*{[\s\S]*database|db|query/i, concern: 'Component mixing with database logic' },
-      { pattern: /export.*{[\s\S]*}.*from.*['"].*\.(css|scss|less)/i, concern: 'Logic file importing styles directly' }
+      {
+        pattern: /class.*Controller.*{[\s\S]*database|db|query/i,
+        concern: 'Controller mixing with database logic',
+      },
+      {
+        pattern: /class.*Service.*{[\s\S]*render|component|jsx/i,
+        concern: 'Service mixing with UI logic',
+      },
+      {
+        pattern: /class.*Model.*{[\s\S]*http|fetch|axios/i,
+        concern: 'Model mixing with HTTP logic',
+      },
+      {
+        pattern: /function.*Component.*{[\s\S]*database|db|query/i,
+        concern: 'Component mixing with database logic',
+      },
+      {
+        pattern: /export.*{[\s\S]*}.*from.*['"].*\.(css|scss|less)/i,
+        concern: 'Logic file importing styles directly',
+      },
     ];
 
     for (const { pattern, concern } of patterns) {
@@ -186,7 +223,7 @@ export class CodeOrganizationChecker {
       api: /api|endpoint|route|controller/i,
       validation: /validate|schema|joi|zod/i,
       logging: /log|logger|winston/i,
-      config: /config|env|setting/i
+      config: /config|env|setting/i,
     };
 
     const detectedConcerns = Object.entries(concernKeywords)
@@ -200,7 +237,7 @@ export class CodeOrganizationChecker {
     return concerns;
   }
 
-  private detectTightCoupling(content: string, filePath: string): string[] {
+  private detectTightCoupling(content: string, _filePath: string): string[] {
     const coupling: string[] = [];
 
     // Check for direct instantiation of classes (should use DI)
@@ -213,7 +250,7 @@ export class CodeOrganizationChecker {
     const hardcodedPatterns = [
       /require\(['"][^'"]*\/[^'"]*['"]\)/g, // Hardcoded require paths
       /import.*from\s+['"][^'"]*\/[^'"]*['"]/g, // Hardcoded import paths (relative)
-      /process\.env\.[A-Z_]+/g // Direct environment variable access
+      /process\.env\.[A-Z_]+/g, // Direct environment variable access
     ];
 
     for (const pattern of hardcodedPatterns) {
@@ -231,9 +268,13 @@ export class CodeOrganizationChecker {
     return coupling;
   }
 
-  private detectGodClass(content: string, filePath: string): string | null {
+  private detectGodClass(content: string, _filePath: string): string | null {
     const lines = content.split('\n').length;
-    const methods = (content.match(/^\s*(public|private|protected)?\s*(async\s+)?function|^\s*(public|private|protected)?\s*[a-zA-Z_][a-zA-Z0-9_]*\s*\(/gm) || []).length;
+    const methods = (
+      content.match(
+        /^\s*(public|private|protected)?\s*(async\s+)?function|^\s*(public|private|protected)?\s*[a-zA-Z_][a-zA-Z0-9_]*\s*\(/gm
+      ) || []
+    ).length;
     const classes = (content.match(/class\s+[A-Z][a-zA-Z0-9_]*\s*{/g) || []).length;
 
     // Thresholds for god class detection
@@ -255,7 +296,10 @@ export class CodeOrganizationChecker {
     try {
       // Use jscpd for code duplication detection
       const jscpdConfigPath = path.join(this.workspaceRoot, '.jscpd.json');
-      const hasConfig = await fs.access(jscpdConfigPath).then(() => true).catch(() => false);
+      const hasConfig = await fs
+        .access(jscpdConfigPath)
+        .then(() => true)
+        .catch(() => false);
 
       let command = 'npx jscpd --reporters json --output ./reports/duplication';
 
@@ -265,23 +309,24 @@ export class CodeOrganizationChecker {
         command += ' --min-lines 5 --min-tokens 50 --threshold 0 packages/';
       }
 
-      const output = execSync(command, {
+      const _output = execSync(command, {
         cwd: this.workspaceRoot,
         encoding: 'utf-8',
-        stdio: 'pipe'
+        stdio: 'pipe',
       });
 
       const reportPath = path.join(this.workspaceRoot, 'reports/duplication/jscpd-report.json');
-      const reportExists = await fs.access(reportPath).then(() => true).catch(() => false);
+      const reportExists = await fs
+        .access(reportPath)
+        .then(() => true)
+        .catch(() => false);
 
       if (reportExists) {
         const reportContent = await fs.readFile(reportPath, 'utf-8');
         const report = JSON.parse(reportContent);
         return this.parseJscpdReport(report);
       }
-    } catch (error) {
-      console.warn('Failed to run jscpd for duplication detection:', error);
-    }
+    } catch (_error) {}
 
     // Fallback: simple duplication detection
     return await this.simpleDuplicationDetection();
@@ -305,10 +350,10 @@ export class CodeOrganizationChecker {
           tokens,
           similarity: 100, // jscpd finds exact duplicates
           startLines,
-          endLines
+          endLines,
         });
 
-        files.forEach(file => affectedFiles.add(file));
+        files.forEach((file) => affectedFiles.add(file));
       }
     }
 
@@ -320,7 +365,10 @@ export class CodeOrganizationChecker {
       totalDuplication,
       duplicationPercentage,
       affectedFiles: Array.from(affectedFiles),
-      recommendations: this.generateDuplicationRecommendations(duplicatedBlocks, duplicationPercentage)
+      recommendations: this.generateDuplicationRecommendations(
+        duplicatedBlocks,
+        duplicationPercentage
+      ),
     };
   }
 
@@ -340,26 +388,30 @@ export class CodeOrganizationChecker {
 
           // Create hashes for blocks of 5+ lines
           for (let i = 0; i <= lines.length - 5; i++) {
-            const block = lines.slice(i, i + 5).join('\n').trim();
-            if (block.length > 50) { // Minimum block size
+            const block = lines
+              .slice(i, i + 5)
+              .join('\n')
+              .trim();
+            if (block.length > 50) {
+              // Minimum block size
               const hash = this.simpleHash(block);
               if (!fileHashes.has(hash)) {
                 fileHashes.set(hash, []);
               }
-              fileHashes.get(hash)!.push(`${filePath}:${i + 1}`);
+              fileHashes.get(hash)?.push(`${filePath}:${i + 1}`);
             }
           }
-        } catch (error) {
+        } catch (_error) {
           // Skip files that can't be read
         }
       }
     }
 
     // Find duplicates
-    Array.from(fileHashes.entries()).forEach(([hash, locations]) => {
+    Array.from(fileHashes.entries()).forEach(([_hash, locations]) => {
       if (locations.length > 1) {
-        const files = locations.map(loc => loc.split(':')[0]);
-        const startLines = locations.map(loc => parseInt(loc.split(':')[1]));
+        const files = locations.map((loc) => loc.split(':')[0]);
+        const startLines = locations.map((loc) => Number.parseInt(loc.split(':')[1], 10));
 
         duplicatedBlocks.push({
           files,
@@ -367,20 +419,20 @@ export class CodeOrganizationChecker {
           tokens: 50,
           similarity: 100,
           startLines,
-          endLines: startLines.map(line => line + 4)
+          endLines: startLines.map((line) => line + 4),
         });
       }
     });
 
     const totalDuplication = duplicatedBlocks.reduce((sum, block) => sum + block.lines, 0);
-    const affectedFiles = Array.from(new Set(duplicatedBlocks.flatMap(block => block.files)));
+    const affectedFiles = Array.from(new Set(duplicatedBlocks.flatMap((block) => block.files)));
 
     return {
       duplicatedBlocks,
       totalDuplication,
       duplicationPercentage: 0, // Can't calculate without total lines
       affectedFiles,
-      recommendations: this.generateDuplicationRecommendations(duplicatedBlocks, 0)
+      recommendations: this.generateDuplicationRecommendations(duplicatedBlocks, 0),
     };
   }
 
@@ -388,13 +440,16 @@ export class CodeOrganizationChecker {
     let hash = 0;
     for (let i = 0; i < content.length; i++) {
       const char = content.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char;
+      hash = (hash << 5) - hash + char;
       hash = hash & hash; // Convert to 32-bit integer
     }
     return hash.toString();
   }
 
-  private generateDuplicationRecommendations(blocks: DuplicatedBlock[], percentage: number): string[] {
+  private generateDuplicationRecommendations(
+    blocks: DuplicatedBlock[],
+    percentage: number
+  ): string[] {
     const recommendations: string[] = [];
 
     if (blocks.length === 0) {
@@ -403,11 +458,15 @@ export class CodeOrganizationChecker {
     }
 
     if (percentage > 10) {
-      recommendations.push('🚨 High code duplication detected (>10%). Immediate refactoring recommended.');
+      recommendations.push(
+        '🚨 High code duplication detected (>10%). Immediate refactoring recommended.'
+      );
     } else if (percentage > 5) {
       recommendations.push('⚠️ Moderate code duplication detected (>5%). Consider refactoring.');
     } else {
-      recommendations.push('ℹ️ Low code duplication detected. Monitor and refactor when convenient.');
+      recommendations.push(
+        'ℹ️ Low code duplication detected. Monitor and refactor when convenient.'
+      );
     }
 
     recommendations.push(
@@ -435,7 +494,7 @@ export class CodeOrganizationChecker {
           const relativeFilePath = path.relative(this.workspaceRoot, filePath);
           const fileViolations = this.analyzeNamingConventions(content, relativeFilePath);
           violations.push(...fileViolations);
-        } catch (error) {
+        } catch (_error) {
           // Skip files that can't be read
         }
       }
@@ -449,7 +508,7 @@ export class CodeOrganizationChecker {
       violations,
       complianceScore,
       conventionsCovered,
-      recommendations
+      recommendations,
     };
   }
 
@@ -458,7 +517,7 @@ export class CodeOrganizationChecker {
 
     // Class naming (PascalCase)
     const classMatches = Array.from(content.matchAll(/class\s+([a-zA-Z_][a-zA-Z0-9_]*)/g));
-    classMatches.forEach(match => {
+    classMatches.forEach((match) => {
       const className = match[1];
       if (!/^[A-Z][a-zA-Z0-9]*$/.test(className)) {
         violations.push({
@@ -467,46 +526,58 @@ export class CodeOrganizationChecker {
           elementType: 'class',
           expectedPattern: 'PascalCase',
           actualPattern: this.getActualPattern(className),
-          suggestion: `Rename to ${this.toPascalCase(className)}`
+          suggestion: `Rename to ${this.toPascalCase(className)}`,
         });
       }
     });
 
     // Function naming (camelCase)
-    const functionMatches = Array.from(content.matchAll(/(?:function\s+|const\s+|let\s+|var\s+)([a-zA-Z_][a-zA-Z0-9_]*)\s*(?:=\s*(?:async\s+)?(?:function|\()|(?:async\s+)?function|\()/g));
-    functionMatches.forEach(match => {
+    const functionMatches = Array.from(
+      content.matchAll(
+        /(?:function\s+|const\s+|let\s+|var\s+)([a-zA-Z_][a-zA-Z0-9_]*)\s*(?:=\s*(?:async\s+)?(?:function|\()|(?:async\s+)?function|\()/g
+      )
+    );
+    functionMatches.forEach((match) => {
       const functionName = match[1];
-      if (!/^[a-z][a-zA-Z0-9]*$/.test(functionName) && !functionName.startsWith('_')) {
+      if (!(/^[a-z][a-zA-Z0-9]*$/.test(functionName) || functionName.startsWith('_'))) {
         violations.push({
           filePath,
           elementName: functionName,
           elementType: 'function',
           expectedPattern: 'camelCase',
           actualPattern: this.getActualPattern(functionName),
-          suggestion: `Rename to ${this.toCamelCase(functionName)}`
+          suggestion: `Rename to ${this.toCamelCase(functionName)}`,
         });
       }
     });
 
     // Variable naming (camelCase)
-    const variableMatches = Array.from(content.matchAll(/(?:const|let|var)\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*=/g));
-    variableMatches.forEach(match => {
+    const variableMatches = Array.from(
+      content.matchAll(/(?:const|let|var)\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*=/g)
+    );
+    variableMatches.forEach((match) => {
       const variableName = match[1];
-      if (!/^[a-z][a-zA-Z0-9]*$/.test(variableName) && !variableName.startsWith('_') && !/^[A-Z_]+$/.test(variableName)) {
+      if (
+        !(
+          /^[a-z][a-zA-Z0-9]*$/.test(variableName) ||
+          variableName.startsWith('_') ||
+          /^[A-Z_]+$/.test(variableName)
+        )
+      ) {
         violations.push({
           filePath,
           elementName: variableName,
           elementType: 'variable',
           expectedPattern: 'camelCase or CONSTANT_CASE',
           actualPattern: this.getActualPattern(variableName),
-          suggestion: `Rename to ${this.toCamelCase(variableName)} or ${this.toConstantCase(variableName)}`
+          suggestion: `Rename to ${this.toCamelCase(variableName)} or ${this.toConstantCase(variableName)}`,
         });
       }
     });
 
     // Interface naming (PascalCase, optionally with 'I' prefix)
     const interfaceMatches = Array.from(content.matchAll(/interface\s+([a-zA-Z_][a-zA-Z0-9_]*)/g));
-    interfaceMatches.forEach(match => {
+    interfaceMatches.forEach((match) => {
       const interfaceName = match[1];
       if (!/^I?[A-Z][a-zA-Z0-9]*$/.test(interfaceName)) {
         violations.push({
@@ -515,14 +586,14 @@ export class CodeOrganizationChecker {
           elementType: 'interface',
           expectedPattern: 'PascalCase (optionally with I prefix)',
           actualPattern: this.getActualPattern(interfaceName),
-          suggestion: `Rename to ${this.toPascalCase(interfaceName)}`
+          suggestion: `Rename to ${this.toPascalCase(interfaceName)}`,
         });
       }
     });
 
     // Type naming (PascalCase)
     const typeMatches = Array.from(content.matchAll(/type\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*=/g));
-    typeMatches.forEach(match => {
+    typeMatches.forEach((match) => {
       const typeName = match[1];
       if (!/^[A-Z][a-zA-Z0-9]*$/.test(typeName)) {
         violations.push({
@@ -531,7 +602,7 @@ export class CodeOrganizationChecker {
           elementType: 'type',
           expectedPattern: 'PascalCase',
           actualPattern: this.getActualPattern(typeName),
-          suggestion: `Rename to ${this.toPascalCase(typeName)}`
+          suggestion: `Rename to ${this.toPascalCase(typeName)}`,
         });
       }
     });
@@ -540,20 +611,36 @@ export class CodeOrganizationChecker {
   }
 
   private getActualPattern(name: string): string {
-    if (/^[a-z][a-zA-Z0-9]*$/.test(name)) return 'camelCase';
-    if (/^[A-Z][a-zA-Z0-9]*$/.test(name)) return 'PascalCase';
-    if (/^[A-Z_]+$/.test(name)) return 'CONSTANT_CASE';
-    if (/^[a-z_]+$/.test(name)) return 'snake_case';
-    if (/^[a-z-]+$/.test(name)) return 'kebab-case';
+    if (/^[a-z][a-zA-Z0-9]*$/.test(name)) {
+      return 'camelCase';
+    }
+    if (/^[A-Z][a-zA-Z0-9]*$/.test(name)) {
+      return 'PascalCase';
+    }
+    if (/^[A-Z_]+$/.test(name)) {
+      return 'CONSTANT_CASE';
+    }
+    if (/^[a-z_]+$/.test(name)) {
+      return 'snake_case';
+    }
+    if (/^[a-z-]+$/.test(name)) {
+      return 'kebab-case';
+    }
     return 'mixed/unknown';
   }
 
   private toPascalCase(name: string): string {
-    return name.charAt(0).toUpperCase() + name.slice(1).replace(/[_-]([a-z])/g, (_, char) => char.toUpperCase());
+    return (
+      name.charAt(0).toUpperCase() +
+      name.slice(1).replace(/[_-]([a-z])/g, (_, char) => char.toUpperCase())
+    );
   }
 
   private toCamelCase(name: string): string {
-    return name.charAt(0).toLowerCase() + name.slice(1).replace(/[_-]([a-z])/g, (_, char) => char.toUpperCase());
+    return (
+      name.charAt(0).toLowerCase() +
+      name.slice(1).replace(/[_-]([a-z])/g, (_, char) => char.toUpperCase())
+    );
   }
 
   private toConstantCase(name: string): string {
@@ -563,7 +650,7 @@ export class CodeOrganizationChecker {
   private calculateNamingComplianceScore(violations: NamingViolation[]): number {
     // This is a simplified calculation - in practice, you'd want to count total elements
     const totalElements = violations.length + 100; // Assume some compliant elements
-    return Math.max(0, (totalElements - violations.length) / totalElements * 100);
+    return Math.max(0, ((totalElements - violations.length) / totalElements) * 100);
   }
 
   private getCoveredConventions(): string[] {
@@ -572,11 +659,14 @@ export class CodeOrganizationChecker {
       'Function names (camelCase)',
       'Variable names (camelCase/CONSTANT_CASE)',
       'Interface names (PascalCase)',
-      'Type names (PascalCase)'
+      'Type names (PascalCase)',
     ];
   }
 
-  private generateNamingRecommendations(violations: NamingViolation[], complianceScore: number): string[] {
+  private generateNamingRecommendations(
+    violations: NamingViolation[],
+    complianceScore: number
+  ): string[] {
     const recommendations: string[] = [];
 
     if (complianceScore >= 90) {
@@ -584,11 +674,13 @@ export class CodeOrganizationChecker {
     } else if (complianceScore >= 70) {
       recommendations.push('✅ Good naming convention compliance with room for improvement.');
     } else {
-      recommendations.push('⚠️ Naming convention violations detected. Consider refactoring for consistency.');
+      recommendations.push(
+        '⚠️ Naming convention violations detected. Consider refactoring for consistency.'
+      );
     }
 
     if (violations.length > 0) {
-      const violationTypes = Array.from(new Set(violations.map(v => v.elementType)));
+      const violationTypes = Array.from(new Set(violations.map((v) => v.elementType)));
       recommendations.push(
         `📋 Violations found in: ${violationTypes.join(', ')}`,
         '• Use consistent naming patterns across the codebase',
@@ -606,7 +698,7 @@ export class CodeOrganizationChecker {
       const packageJsonPath = path.join(packagePath, 'package.json');
       const packageJson = JSON.parse(await fs.readFile(packageJsonPath, 'utf-8'));
       return packageJson.name || path.basename(packagePath);
-    } catch (error) {
+    } catch (_error) {
       return path.basename(packagePath);
     }
   }
@@ -616,7 +708,7 @@ export class CodeOrganizationChecker {
     try {
       const files = await this.getSourceFiles(srcPath);
       return files.length;
-    } catch (error) {
+    } catch (_error) {
       return 0;
     }
   }
@@ -634,11 +726,11 @@ export class CodeOrganizationChecker {
         if (entry.isDirectory() && !entry.name.startsWith('.') && entry.name !== 'node_modules') {
           const subFiles = await this.getSourceFiles(fullPath);
           files.push(...subFiles);
-        } else if (entry.isFile() && extensions.some(ext => entry.name.endsWith(ext))) {
+        } else if (entry.isFile() && extensions.some((ext) => entry.name.endsWith(ext))) {
           files.push(fullPath);
         }
       }
-    } catch (error) {
+    } catch (_error) {
       // Directory might not exist or be accessible
     }
 
@@ -654,7 +746,7 @@ export class CodeOrganizationChecker {
     const weights = {
       separation: 0.4,
       duplication: 0.3,
-      naming: 0.3
+      naming: 0.3,
     };
 
     const duplicationScore = Math.max(0, 100 - duplicationReport.duplicationPercentage * 10);
@@ -674,7 +766,11 @@ export class CodeOrganizationChecker {
     const recommendations: string[] = [];
 
     // Overall assessment
-    const overallScore = this.calculateOverallScore(separationReport, duplicationReport, namingReport);
+    const overallScore = this.calculateOverallScore(
+      separationReport,
+      duplicationReport,
+      namingReport
+    );
 
     if (overallScore >= 80) {
       recommendations.push('✅ Excellent code organization! Keep up the good work.');

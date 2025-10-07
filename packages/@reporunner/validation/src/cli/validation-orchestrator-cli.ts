@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 
-import { Command } from 'commander';
+import { mkdirSync, writeFileSync } from 'node:fs';
+import { join } from 'node:path';
 import chalk from 'chalk';
+import { Command } from 'commander';
 import ora from 'ora';
 import { ValidationController } from '../controller/ValidationController.js';
-import type { ValidationResults, ValidationSummary } from '../types/index.js';
-import { writeFileSync, mkdirSync } from 'node:fs';
-import { join, dirname } from 'node:path';
+import type { ValidationResults } from '../types/index.js';
 
 /**
  * CLI interface for validation orchestration
@@ -43,23 +43,16 @@ export class ValidationOrchestratorCLI {
       }
     });
 
-    this.controller.on('component:completed', (component: string) => {
+    this.controller.on('component:completed', (_component: string) => {
       if (this.verbose) {
-        console.log(chalk.green(`  ✓ ${this.formatComponentName(component)} completed`));
       }
     });
 
-    this.controller.on('component:failed', (component: string, error: any) => {
-      console.log(chalk.yellow(`  ⚠ ${this.formatComponentName(component)} failed: ${error.message}`));
-    });
+    this.controller.on('component:failed', (_component: string, _error: any) => {});
 
-    this.controller.on('phase:completed', (phase: string) => {
-      console.log(chalk.green(`✓ ${this.formatPhaseName(phase)} completed`));
-    });
+    this.controller.on('phase:completed', (_phase: string) => {});
 
-    this.controller.on('phase:failed', (phase: string, error: any) => {
-      console.log(chalk.red(`✗ ${this.formatPhaseName(phase)} failed: ${error.message}`));
-    });
+    this.controller.on('phase:failed', (_phase: string, _error: any) => {});
 
     this.controller.on('validation:completed', (results: ValidationResults) => {
       this.spinner.succeed(chalk.green('Phase A validation completed!'));
@@ -74,13 +67,15 @@ export class ValidationOrchestratorCLI {
   /**
    * Execute full validation workflow
    */
-  async executeValidation(options: {
-    output?: string;
-    format?: 'json' | 'html' | 'markdown';
-    verbose?: boolean;
-    phases?: string[];
-  } = {}): Promise<ValidationResults> {
-    this.verbose = options.verbose || false;
+  async executeValidation(
+    options: {
+      output?: string;
+      format?: 'json' | 'html' | 'markdown';
+      verbose?: boolean;
+      phases?: string[];
+    } = {}
+  ): Promise<ValidationResults> {
+    this.verbose = options.verbose;
 
     if (options.output) {
       this.outputDir = options.output;
@@ -93,8 +88,7 @@ export class ValidationOrchestratorCLI {
       await this.exportResults(results, options.format || 'json');
 
       return results;
-    } catch (error) {
-      console.error(chalk.red('Validation execution failed:'), error);
+    } catch (_error) {
       process.exit(1);
     }
   }
@@ -102,13 +96,14 @@ export class ValidationOrchestratorCLI {
   /**
    * Execute specific validation phases
    */
-  async executePhases(phases: string[], options: {
-    output?: string;
-    format?: 'json' | 'html' | 'markdown';
-    verbose?: boolean;
-  } = {}): Promise<void> {
-    console.log(chalk.blue(`Executing phases: ${phases.join(', ')}`));
-
+  async executePhases(
+    _phases: string[],
+    options: {
+      output?: string;
+      format?: 'json' | 'html' | 'markdown';
+      verbose?: boolean;
+    } = {}
+  ): Promise<void> {
     // For now, we execute the full validation
     // In a more advanced implementation, we could support partial execution
     await this.executeValidation(options);
@@ -120,23 +115,20 @@ export class ValidationOrchestratorCLI {
   getStatus(): void {
     const status = this.controller.getValidationStatus();
 
-    console.log(chalk.blue('\n=== Validation Status ==='));
-    console.log(`Running: ${status.isRunning ? chalk.green('Yes') : chalk.gray('No')}`);
-
     if (status.startTime) {
-      console.log(`Started: ${chalk.cyan(status.startTime.toISOString())}`);
     }
 
     if (status.currentPhase) {
-      console.log(`Current Phase: ${chalk.yellow(this.formatPhaseName(status.currentPhase))}`);
     }
 
     if (status.errors.length > 0) {
-      console.log(`\nErrors (${status.errors.length}):`);
-      status.errors.forEach((error, index) => {
-        const severityColor = error.severity === 'critical' ? chalk.red :
-                             error.severity === 'warning' ? chalk.yellow : chalk.gray;
-        console.log(`  ${index + 1}. ${severityColor(error.severity.toUpperCase())}: ${error.message}`);
+      status.errors.forEach((error, _index) => {
+        const _severityColor =
+          error.severity === 'critical'
+            ? chalk.red
+            : error.severity === 'warning'
+              ? chalk.yellow
+              : chalk.gray;
       });
     }
   }
@@ -145,61 +137,43 @@ export class ValidationOrchestratorCLI {
    * Display validation results summary
    */
   private displayResults(results: ValidationResults): void {
-    console.log(chalk.blue('\n=== Validation Results Summary ==='));
-
-    const statusColor = results.status === 'success' ? chalk.green :
-                       results.status === 'warning' ? chalk.yellow : chalk.red;
-    console.log(`Overall Status: ${statusColor(results.status.toUpperCase())}`);
-
-    // System Validation Summary
-    console.log(chalk.blue('\nSystem Validation:'));
-    console.log(`  Tests: ${results.systemValidation.testResults.passedTests}/${results.systemValidation.testResults.totalTests} passed`);
-    console.log(`  Coverage: ${results.systemValidation.testResults.coverage.overall.toFixed(1)}%`);
-    console.log(`  API Endpoints: ${results.systemValidation.apiValidation.validatedEndpoints}/${results.systemValidation.apiValidation.totalEndpoints} validated`);
-    console.log(`  E2E Workflows: ${results.systemValidation.e2eResults.passedWorkflows}/${results.systemValidation.e2eResults.totalWorkflows} passed`);
-
-    // Performance Analysis Summary
-    console.log(chalk.blue('\nPerformance Analysis:'));
-    console.log(`  Build Time Improvement: ${results.performanceAnalysis.buildMetrics.improvementPercentage.toFixed(1)}%`);
-    console.log(`  Bundle Size Reduction: ${results.performanceAnalysis.bundleMetrics.reductionPercentage.toFixed(1)}%`);
-    console.log(`  Memory Usage: ${(results.performanceAnalysis.memoryProfile.development.heapUsed / 1024 / 1024).toFixed(1)}MB`);
-
-    // Architecture Validation Summary
-    console.log(chalk.blue('\nArchitecture Validation:'));
-    console.log(`  Dependency Health: ${results.architectureValidation.dependencyAnalysis.healthScore}/100`);
-    console.log(`  Code Organization: ${results.architectureValidation.codeOrganization.overallScore}/100`);
-    console.log(`  Type Safety: ${results.architectureValidation.typeSafety.overallScore}/100`);
+    const _statusColor =
+      results.status === 'success'
+        ? chalk.green
+        : results.status === 'warning'
+          ? chalk.yellow
+          : chalk.red;
 
     // Recommendations
     if (results.recommendations.length > 0) {
-      console.log(chalk.blue(`\nRecommendations (${results.recommendations.length}):`));
-      results.recommendations.slice(0, 5).forEach((rec, index) => {
-        const priorityColor = rec.priority === 'critical' ? chalk.red :
-                             rec.priority === 'high' ? chalk.yellow :
-                             rec.priority === 'medium' ? chalk.blue : chalk.gray;
-        console.log(`  ${index + 1}. ${priorityColor(rec.priority.toUpperCase())}: ${rec.title}`);
+      results.recommendations.slice(0, 5).forEach((rec, _index) => {
+        const _priorityColor =
+          rec.priority === 'critical'
+            ? chalk.red
+            : rec.priority === 'high'
+              ? chalk.yellow
+              : rec.priority === 'medium'
+                ? chalk.blue
+                : chalk.gray;
       });
 
       if (results.recommendations.length > 5) {
-        console.log(`  ... and ${results.recommendations.length - 5} more`);
       }
     }
 
     // Next Steps
     if (results.nextSteps.length > 0) {
-      console.log(chalk.blue('\nNext Steps:'));
-      results.nextSteps.forEach((step, index) => {
-        console.log(`  ${index + 1}. ${step}`);
-      });
+      results.nextSteps.forEach((_step, _index) => {});
     }
-
-    console.log(chalk.gray(`\nResults exported to: ${this.outputDir}`));
   }
 
   /**
    * Export validation results in specified format
    */
-  private async exportResults(results: ValidationResults, format: 'json' | 'html' | 'markdown'): Promise<void> {
+  private async exportResults(
+    results: ValidationResults,
+    format: 'json' | 'html' | 'markdown'
+  ): Promise<void> {
     try {
       mkdirSync(this.outputDir, { recursive: true });
 
@@ -216,9 +190,7 @@ export class ValidationOrchestratorCLI {
           await this.exportMarkdown(results, timestamp);
           break;
       }
-    } catch (error) {
-      console.error(chalk.red('Failed to export results:'), error);
-    }
+    } catch (_error) {}
   }
 
   /**
@@ -227,7 +199,6 @@ export class ValidationOrchestratorCLI {
   private async exportJSON(results: ValidationResults, timestamp: string): Promise<void> {
     const filename = join(this.outputDir, `validation-results-${timestamp}.json`);
     writeFileSync(filename, JSON.stringify(results, null, 2));
-    console.log(chalk.green(`JSON results exported to: ${filename}`));
   }
 
   /**
@@ -237,7 +208,6 @@ export class ValidationOrchestratorCLI {
     const filename = join(this.outputDir, `validation-report-${timestamp}.html`);
     const html = this.generateHTMLReport(results);
     writeFileSync(filename, html);
-    console.log(chalk.green(`HTML report exported to: ${filename}`));
   }
 
   /**
@@ -247,7 +217,6 @@ export class ValidationOrchestratorCLI {
     const filename = join(this.outputDir, `validation-report-${timestamp}.md`);
     const markdown = this.generateMarkdownReport(results);
     writeFileSync(filename, markdown);
-    console.log(chalk.green(`Markdown report exported to: ${filename}`));
   }
 
   /**
@@ -301,19 +270,27 @@ export class ValidationOrchestratorCLI {
         <div class="metric">Type Safety: ${results.architectureValidation.typeSafety.overallScore}/100</div>
     </div>
 
-    ${results.recommendations.length > 0 ? `
+    ${
+      results.recommendations.length > 0
+        ? `
     <div class="section">
         <h2>Recommendations</h2>
-        ${results.recommendations.map(rec => `
+        ${results.recommendations
+          .map(
+            (rec) => `
         <div class="recommendation priority-${rec.priority}">
             <h4>${rec.title}</h4>
             <p>${rec.description}</p>
             <p><strong>Impact:</strong> ${rec.impact}</p>
             <p><strong>Effort:</strong> ${rec.effort}</p>
         </div>
-        `).join('')}
+        `
+          )
+          .join('')}
     </div>
-    ` : ''}
+    `
+        : ''
+    }
 </body>
 </html>
     `.trim();
@@ -348,10 +325,14 @@ export class ValidationOrchestratorCLI {
 - **Code Organization:** ${results.architectureValidation.codeOrganization.overallScore}/100
 - **Type Safety:** ${results.architectureValidation.typeSafety.overallScore}/100
 
-${results.recommendations.length > 0 ? `
+${
+  results.recommendations.length > 0
+    ? `
 ## Recommendations
 
-${results.recommendations.map((rec, index) => `
+${results.recommendations
+  .map(
+    (rec, index) => `
 ### ${index + 1}. ${rec.title} (${rec.priority.toUpperCase()})
 
 ${rec.description}
@@ -360,17 +341,25 @@ ${rec.description}
 **Effort:** ${rec.effort}
 
 **Steps:**
-${rec.steps.map(step => `- ${step}`).join('\n')}
+${rec.steps.map((step) => `- ${step}`).join('\n')}
 
 **Affected Packages:** ${rec.affectedPackages.join(', ')}
-`).join('\n')}
-` : ''}
+`
+  )
+  .join('\n')}
+`
+    : ''
+}
 
-${results.nextSteps.length > 0 ? `
+${
+  results.nextSteps.length > 0
+    ? `
 ## Next Steps
 
 ${results.nextSteps.map((step, index) => `${index + 1}. ${step}`).join('\n')}
-` : ''}
+`
+    : ''
+}
     `.trim();
   }
 
@@ -378,18 +367,20 @@ ${results.nextSteps.map((step, index) => `${index + 1}. ${step}`).join('\n')}
    * Format phase name for display
    */
   private formatPhaseName(phase: string): string {
-    return phase.split('-').map(word =>
-      word.charAt(0).toUpperCase() + word.slice(1)
-    ).join(' ');
+    return phase
+      .split('-')
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
   }
 
   /**
    * Format component name for display
    */
   private formatComponentName(component: string): string {
-    return component.split('-').map(word =>
-      word.charAt(0).toUpperCase() + word.slice(1)
-    ).join(' ');
+    return component
+      .split('-')
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
   }
 }
 

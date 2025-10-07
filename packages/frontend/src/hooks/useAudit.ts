@@ -3,8 +3,7 @@
  * React hooks for audit functionality (calls backend API)
  */
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { apiClient } from '../api/ApiClient';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 export interface AuditQuery {
   userId?: string;
@@ -46,14 +45,20 @@ export const useAuditEvents = (query: AuditQuery = {}) => {
   return useQuery({
     queryKey: ['audit', 'events', query],
     queryFn: async () => {
-      const response = await fetch('/api/audit/events?' + new URLSearchParams(
-        Object.entries(query).reduce((acc, [key, value]) => {
-          if (value !== undefined) {
-            acc[key] = String(value);
-          }
-          return acc;
-        }, {} as Record<string, string>)
-      ));
+      const response = await fetch(
+        '/api/audit/events?' +
+          new URLSearchParams(
+            Object.entries(query).reduce(
+              (acc, [key, value]) => {
+                if (value !== undefined) {
+                  acc[key] = String(value);
+                }
+                return acc;
+              },
+              {} as Record<string, string>
+            )
+          )
+      );
 
       if (!response.ok) {
         throw new Error('Failed to fetch audit events');
@@ -104,10 +109,7 @@ export const useGenerateReport = () => {
  */
 export const useExportAudit = () => {
   return useMutation({
-    mutationFn: async (params: {
-      query?: AuditQuery;
-      format?: 'json' | 'csv' | 'xml';
-    }) => {
+    mutationFn: async (params: { query?: AuditQuery; format?: 'json' | 'csv' | 'xml' }) => {
       const response = await fetch('/api/audit/export', {
         method: 'POST',
         headers: {

@@ -64,7 +64,12 @@ export const AIProviderCredentialForm = ({
 }: AIProviderCredentialFormProps) => {
   return (
     <div className="space-y-6">
-      <Alert type="info" message={credentialType.name} description={credentialType.description} showIcon />
+      <Alert
+        type="info"
+        message={credentialType.name}
+        description={credentialType.description}
+        showIcon
+      />
 
       <CredentialNameField
         value={credentialName}

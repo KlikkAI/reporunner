@@ -39,9 +39,7 @@ export const CredentialNameField = ({
         placeholder={placeholder}
         className="w-full"
       />
-      {helperText && (
-        <p className="text-sm text-gray-500">{helperText}</p>
-      )}
+      {helperText && <p className="text-sm text-gray-500">{helperText}</p>}
     </div>
   );
 };

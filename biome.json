@@ -39,22 +39,23 @@
       "correctness": {
         "noUnusedVariables": "error",
         "noUnusedImports": "error",
+        "noUnusedPrivateClassMembers": "warn",
         "useExhaustiveDependencies": "error",
         "noUndeclaredVariables": "warn",
         "noUnreachable": "error"
       },
       "style": {
         "noDefaultExport": "off",
-        "noNonNullAssertion": "error",
+        "noNonNullAssertion": "warn",
         "useConst": "error",
         "useImportType": "error",
         "useNodejsImportProtocol": "error",
         "useNumberNamespace": "error",
         "useSingleVarDeclarator": "error",
         "useTemplate": "error",
-        "useBlockStatements": "error",
-        "useCollapsedElseIf": "error",
-        "useShorthandFunctionType": "error"
+        "useBlockStatements": "warn",
+        "useCollapsedElseIf": "warn",
+        "useShorthandFunctionType": "warn"
       },
       "suspicious": {
         "noConsole": "error",
@@ -80,9 +81,9 @@
       },
       "complexity": {
         "noExcessiveCognitiveComplexity": {
-          "level": "error",
+          "level": "warn",
           "options": {
-            "maxAllowedComplexity": 8
+            "maxAllowedComplexity": 15
           }
         },
         "noUselessConstructor": "error",

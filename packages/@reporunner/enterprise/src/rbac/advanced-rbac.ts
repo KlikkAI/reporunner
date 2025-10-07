@@ -4,8 +4,8 @@
  * Phase D: Community & Growth - Advanced enterprise capabilities
  */
 
-import { z } from 'zod';
 import { Logger } from '@reporunner/core';
+import { z } from 'zod';
 
 // Permission schema
 export const PermissionSchema = z.object({
@@ -14,11 +14,24 @@ export const PermissionSchema = z.object({
   description: z.string(),
   resource: z.string(), // e.g., 'workflow', 'plugin', 'user', 'organization'
   action: z.string(), // e.g., 'create', 'read', 'update', 'delete', 'execute'
-  conditions: z.array(z.object({
-    field: z.string(),
-    operator: z.enum(['equals', 'not_equals', 'contains', 'not_contains', 'in', 'not_in', 'greater_than', 'less_than']),
-    value: z.any(),
-  })).optional(),
+  conditions: z
+    .array(
+      z.object({
+        field: z.string(),
+        operator: z.enum([
+          'equals',
+          'not_equals',
+          'contains',
+          'not_contains',
+          'in',
+          'not_in',
+          'greater_than',
+          'less_than',
+        ]),
+        value: z.any(),
+      })
+    )
+    .optional(),
   metadata: z.record(z.any()).optional(),
 });
 
@@ -48,14 +61,20 @@ export const UserRoleAssignmentSchema = z.object({
   userId: z.string(),
   roleId: z.string(),
   organizationId: z.string().optional(),
-  scope: z.object({
-    resources: z.array(z.string()).optional(), // Specific resource IDs
-    conditions: z.array(z.object({
-      field: z.string(),
-      operator: z.string(),
-      value: z.any(),
-    })).optional(),
-  }).optional(),
+  scope: z
+    .object({
+      resources: z.array(z.string()).optional(), // Specific resource IDs
+      conditions: z
+        .array(
+          z.object({
+            field: z.string(),
+            operator: z.string(),
+            value: z.any(),
+          })
+        )
+        .optional(),
+    })
+    .optional(),
   expiresAt: z.date().optional(),
   assignedAt: z.date(),
   assignedBy: z.string(),
@@ -268,7 +287,7 @@ export const SYSTEM_ROLES: Omit<Role, 'createdAt' | 'updatedAt' | 'createdBy'>[]
     name: 'Super Administrator',
     description: 'Full system access with all permissions',
     type: 'system',
-    permissions: SYSTEM_PERMISSIONS.map(p => p.id),
+    permissions: SYSTEM_PERMISSIONS.map((p) => p.id),
     isActive: true,
   },
   {
@@ -277,12 +296,30 @@ export const SYSTEM_ROLES: Omit<Role, 'createdAt' | 'updatedAt' | 'createdBy'>[]
     description: 'Full access within organization scope',
     type: 'system',
     permissions: [
-      'workflow:create', 'workflow:read', 'workflow:update', 'workflow:delete', 'workflow:execute', 'workflow:share',
-      'plugin:install', 'plugin:uninstall', 'plugin:manage',
-      'user:create', 'user:read', 'user:update', 'user:delete',
-      'organization:read', 'organization:update', 'organization:billing',
-      'role:create', 'role:read', 'role:update', 'role:delete', 'role:assign',
-      'analytics:read', 'audit:read', 'audit:export',
+      'workflow:create',
+      'workflow:read',
+      'workflow:update',
+      'workflow:delete',
+      'workflow:execute',
+      'workflow:share',
+      'plugin:install',
+      'plugin:uninstall',
+      'plugin:manage',
+      'user:create',
+      'user:read',
+      'user:update',
+      'user:delete',
+      'organization:read',
+      'organization:update',
+      'organization:billing',
+      'role:create',
+      'role:read',
+      'role:update',
+      'role:delete',
+      'role:assign',
+      'analytics:read',
+      'audit:read',
+      'audit:export',
     ],
     isActive: true,
   },
@@ -292,8 +329,15 @@ export const SYSTEM_ROLES: Omit<Role, 'createdAt' | 'updatedAt' | 'createdBy'>[]
     description: 'Full workflow management capabilities',
     type: 'system',
     permissions: [
-      'workflow:create', 'workflow:read', 'workflow:update', 'workflow:delete', 'workflow:execute', 'workflow:share',
-      'plugin:install', 'plugin:uninstall', 'plugin:manage',
+      'workflow:create',
+      'workflow:read',
+      'workflow:update',
+      'workflow:delete',
+      'workflow:execute',
+      'workflow:share',
+      'plugin:install',
+      'plugin:uninstall',
+      'plugin:manage',
       'analytics:read',
     ],
     isActive: true,
@@ -304,8 +348,14 @@ export const SYSTEM_ROLES: Omit<Role, 'createdAt' | 'updatedAt' | 'createdBy'>[]
     description: 'Development and workflow creation access',
     type: 'system',
     permissions: [
-      'workflow:create', 'workflow:read', 'workflow:update', 'workflow:execute', 'workflow:share',
-      'plugin:install', 'plugin:publish', 'plugin:manage',
+      'workflow:create',
+      'workflow:read',
+      'workflow:update',
+      'workflow:execute',
+      'workflow:share',
+      'plugin:install',
+      'plugin:publish',
+      'plugin:manage',
       'analytics:read',
     ],
     isActive: true,
@@ -315,10 +365,7 @@ export const SYSTEM_ROLES: Omit<Role, 'createdAt' | 'updatedAt' | 'createdBy'>[]
     name: 'Analyst',
     description: 'Read-only access with analytics capabilities',
     type: 'system',
-    permissions: [
-      'workflow:read', 'workflow:execute',
-      'analytics:read', 'audit:read',
-    ],
+    permissions: ['workflow:read', 'workflow:execute', 'analytics:read', 'audit:read'],
     isActive: true,
   },
   {
@@ -326,10 +373,7 @@ export const SYSTEM_ROLES: Omit<Role, 'createdAt' | 'updatedAt' | 'createdBy'>[]
     name: 'Viewer',
     description: 'Read-only access to workflows and basic features',
     type: 'system',
-    permissions: [
-      'workflow:read',
-      'plugin:install',
-    ],
+    permissions: ['workflow:read', 'plugin:install'],
     isActive: true,
   },
 ];
@@ -350,7 +394,7 @@ export class AdvancedRBAC {
    * Initialize system permissions
    */
   private initializeSystemPermissions(): void {
-    SYSTEM_PERMISSIONS.forEach(permission => {
+    SYSTEM_PERMISSIONS.forEach((permission) => {
       this.permissions.set(permission.id, permission);
     });
     this.logger.info(`Initialized ${SYSTEM_PERMISSIONS.length} system permissions`);
@@ -361,7 +405,7 @@ export class AdvancedRBAC {
    */
   private initializeSystemRoles(): void {
     const now = new Date();
-    SYSTEM_ROLES.forEach(roleData => {
+    SYSTEM_ROLES.forEach((roleData) => {
       const role: Role = {
         ...roleData,
         createdAt: now,
@@ -402,7 +446,10 @@ export class AdvancedRBAC {
   /**
    * Create custom role
    */
-  async createRole(roleData: Omit<Role, 'id' | 'createdAt' | 'updatedAt'>, createdBy: string): Promise<{
+  async createRole(
+    roleData: Omit<Role, 'id' | 'createdAt' | 'updatedAt'>,
+    createdBy: string
+  ): Promise<{
     success: boolean;
     role?: Role;
     error?: string;
@@ -488,15 +535,18 @@ export class AdvancedRBAC {
   ): Promise<boolean> {
     try {
       const userAssignments = this.userRoleAssignments.get(userId) || [];
-      const activeAssignments = userAssignments.filter(assignment =>
-        assignment.isActive &&
-        (!assignment.expiresAt || assignment.expiresAt > new Date()) &&
-        (!context?.organizationId || assignment.organizationId === context.organizationId)
+      const activeAssignments = userAssignments.filter(
+        (assignment) =>
+          assignment.isActive &&
+          (!assignment.expiresAt || assignment.expiresAt > new Date()) &&
+          (!context?.organizationId || assignment.organizationId === context.organizationId)
       );
 
       for (const assignment of activeAssignments) {
         const role = this.roles.get(assignment.roleId);
-        if (!role || !role.isActive) continue;
+        if (!role?.isActive) {
+          continue;
+        }
 
         // Check direct permissions
         if (role.permissions.includes(permissionId)) {
@@ -506,12 +556,16 @@ export class AdvancedRBAC {
               assignment.scope.conditions,
               context?.resourceData || {}
             );
-            if (!conditionsMet) continue;
+            if (!conditionsMet) {
+              continue;
+            }
           }
 
           // Check resource scope if any
           if (assignment.scope?.resources && context?.resourceId) {
-            if (!assignment.scope.resources.includes(context.resourceId)) continue;
+            if (!assignment.scope.resources.includes(context.resourceId)) {
+              continue;
+            }
           }
 
           return true;
@@ -540,34 +594,37 @@ export class AdvancedRBAC {
    */
   async getUserPermissions(userId: string, organizationId?: string): Promise<Permission[]> {
     const userAssignments = this.userRoleAssignments.get(userId) || [];
-    const activeAssignments = userAssignments.filter(assignment =>
-      assignment.isActive &&
-      (!assignment.expiresAt || assignment.expiresAt > new Date()) &&
-      (!organizationId || assignment.organizationId === organizationId)
+    const activeAssignments = userAssignments.filter(
+      (assignment) =>
+        assignment.isActive &&
+        (!assignment.expiresAt || assignment.expiresAt > new Date()) &&
+        (!organizationId || assignment.organizationId === organizationId)
     );
 
     const permissionIds = new Set<string>();
 
     for (const assignment of activeAssignments) {
       const role = this.roles.get(assignment.roleId);
-      if (!role || !role.isActive) continue;
+      if (!role?.isActive) {
+        continue;
+      }
 
       // Add direct permissions
-      role.permissions.forEach(permissionId => permissionIds.add(permissionId));
+      role.permissions.forEach((permissionId) => permissionIds.add(permissionId));
 
       // Add inherited permissions
       if (role.inheritsFrom) {
         for (const parentRoleId of role.inheritsFrom) {
           const parentRole = this.roles.get(parentRoleId);
           if (parentRole?.isActive) {
-            parentRole.permissions.forEach(permissionId => permissionIds.add(permissionId));
+            parentRole.permissions.forEach((permissionId) => permissionIds.add(permissionId));
           }
         }
       }
     }
 
     return Array.from(permissionIds)
-      .map(id => this.permissions.get(id))
+      .map((id) => this.permissions.get(id))
       .filter((permission): permission is Permission => permission !== undefined);
   }
 
@@ -576,29 +633,36 @@ export class AdvancedRBAC {
    */
   async getUserRoles(userId: string, organizationId?: string): Promise<Role[]> {
     const userAssignments = this.userRoleAssignments.get(userId) || [];
-    const activeAssignments = userAssignments.filter(assignment =>
-      assignment.isActive &&
-      (!assignment.expiresAt || assignment.expiresAt > new Date()) &&
-      (!organizationId || assignment.organizationId === organizationId)
+    const activeAssignments = userAssignments.filter(
+      (assignment) =>
+        assignment.isActive &&
+        (!assignment.expiresAt || assignment.expiresAt > new Date()) &&
+        (!organizationId || assignment.organizationId === organizationId)
     );
 
     return activeAssignments
-      .map(assignment => this.roles.get(assignment.roleId))
-      .filter((role): role is Role => role !== undefined && role.isActive);
+      .map((assignment) => this.roles.get(assignment.roleId))
+      .filter((role): role is Role => role?.isActive);
   }
 
   /**
    * Revoke role from user
    */
-  async revokeRole(userId: string, roleId: string, organizationId?: string): Promise<{
+  async revokeRole(
+    userId: string,
+    roleId: string,
+    organizationId?: string
+  ): Promise<{
     success: boolean;
     error?: string;
   }> {
     try {
       const userAssignments = this.userRoleAssignments.get(userId) || [];
-      const updatedAssignments = userAssignments.map(assignment => {
-        if (assignment.roleId === roleId &&
-            (!organizationId || assignment.organizationId === organizationId)) {
+      const updatedAssignments = userAssignments.map((assignment) => {
+        if (
+          assignment.roleId === roleId &&
+          (!organizationId || assignment.organizationId === organizationId)
+        ) {
           return { ...assignment, isActive: false };
         }
         return assignment;
@@ -618,8 +682,10 @@ export class AdvancedRBAC {
    * Get all roles
    */
   async getAllRoles(organizationId?: string): Promise<Role[]> {
-    return Array.from(this.roles.values()).filter(role =>
-      role.isActive && (!organizationId || !role.organizationId || role.organizationId === organizationId)
+    return Array.from(this.roles.values()).filter(
+      (role) =>
+        role.isActive &&
+        (!(organizationId && role.organizationId) || role.organizationId === organizationId)
     );
   }
 
@@ -634,7 +700,7 @@ export class AdvancedRBAC {
    * Evaluate conditions
    */
   private evaluateConditions(conditions: any[], resourceData: Record<string, any>): boolean {
-    return conditions.every(condition => {
+    return conditions.every((condition) => {
       const fieldValue = resourceData[condition.field];
 
       switch (condition.operator) {
@@ -669,13 +735,15 @@ export class AdvancedRBAC {
     children: Role[];
   } | null> {
     const role = this.roles.get(roleId);
-    if (!role) return null;
+    if (!role) {
+      return null;
+    }
 
     const parents = role.inheritsFrom
-      ? role.inheritsFrom.map(id => this.roles.get(id)).filter((r): r is Role => r !== undefined)
+      ? role.inheritsFrom.map((id) => this.roles.get(id)).filter((r): r is Role => r !== undefined)
       : [];
 
-    const children = Array.from(this.roles.values()).filter(r =>
+    const children = Array.from(this.roles.values()).filter((r) =>
       r.inheritsFrom?.includes(roleId)
     );
 

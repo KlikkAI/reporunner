@@ -139,14 +139,15 @@ export const NodeHandles: React.FC<NodeHandlesProps> = ({
     : [];
 
   // Generate output handles
-  const outputHandles = config.outputs?.map((output, index) => {
-    const style =
-      (config.outputs?.length ?? 0) > 1
-        ? { top: `${((index + 1) / ((config.outputs?.length ?? 0) + 1)) * 100}%` }
-        : undefined;
+  const outputHandles =
+    config.outputs?.map((output, index) => {
+      const style =
+        (config.outputs?.length ?? 0) > 1
+          ? { top: `${((index + 1) / ((config.outputs?.length ?? 0) + 1)) * 100}%` }
+          : undefined;
 
-    return createHandle(output.id || 'output', 'source', Position.Right, nodeType, style);
-  }) ?? [];
+      return createHandle(output.id || 'output', 'source', Position.Right, nodeType, style);
+    }) ?? [];
 
   // Generate dynamic outputs for condition nodes
   const dynamicOutputHandles =

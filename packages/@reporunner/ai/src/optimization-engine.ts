@@ -27,17 +27,31 @@ export interface OptimizationIssue {
   };
 }
 
+export interface WorkflowMetrics {
+  complexity: number;
+  parallelizability: number;
+  errorHandling: number;
+  resourceEfficiency: number;
+}
+
 export interface OptimizationReport {
   workflowId: string;
   analyzedAt: Date;
   overallScore: number; // 0-100
   issues: OptimizationIssue[];
   recommendations: OptimizationRecommendation[];
-  metrics: {
-    complexity: number;
-    parallelizability: number;
-    errorHandling: number;
-    resourceEfficiency: number;
+  metrics: WorkflowMetrics;
+}
+
+// AI-generated recommendation structure (before adding implementation details)
+interface AIGeneratedRecommendation {
+  type: 'parallel_execution' | 'caching' | 'error_handling' | 'resource_optimization' | 'data_flow';
+  title: string;
+  description: string;
+  estimatedBenefit: {
+    performanceGain: number;
+    costReduction: number;
+    reliabilityImprovement: number;
   };
 }
 
@@ -49,7 +63,7 @@ export interface OptimizationRecommendation {
     nodeChanges?: Array<{ nodeId: string; changes: Partial<WorkflowNode> }>;
     newNodes?: WorkflowNode[];
     newEdges?: WorkflowEdge[];
-    configChanges?: Record<string, any>;
+    configChanges?: Record<string, unknown>;
   };
   estimatedBenefit: {
     performanceGain: number; // percentage
@@ -461,10 +475,12 @@ Provide recommendations in JSON format:
         temperature: 0.4,
       });
 
-      const recommendations = JSON.parse(response.choices[0].message.content || '[]');
+      const recommendations = JSON.parse(
+        response.choices[0].message.content || '[]'
+      ) as AIGeneratedRecommendation[];
 
       // Add implementation details for each recommendation
-      return recommendations.map((rec: any) => ({
+      return recommendations.map((rec) => ({
         ...rec,
         implementation: this.generateImplementationPlan(rec.type, workflow),
       }));
@@ -544,7 +560,7 @@ Provide recommendations in JSON format:
     };
   }
 
-  private calculateOverallScore(issues: OptimizationIssue[], metrics: any): number {
+  private calculateOverallScore(issues: OptimizationIssue[], metrics: WorkflowMetrics): number {
     const severityWeights = { low: 1, medium: 2, high: 4, critical: 8 };
     const totalIssueWeight = issues.reduce(
       (sum, issue) => sum + severityWeights[issue.severity],

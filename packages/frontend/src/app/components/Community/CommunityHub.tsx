@@ -4,50 +4,50 @@
  * Phase D: Community & Growth - Enhanced community engagement
  */
 
-import React, { useState, useEffect } from 'react';
 import {
-  Card,
-  Row,
-  Col,
-  Tabs,
-  List,
-  Avatar,
-  Button,
-  Space,
-  Typography,
-  Tag,
-  Progress,
-  Statistic,
-  Badge,
-  Timeline,
-  Alert,
-  Modal,
-  Form,
-  Input,
-  Select,
-  Upload,
-  message,
-  Tooltip,
-  Divider,
-} from 'antd';
-import {
-  TrophyOutlined,
-  StarOutlined,
-  FireOutlined,
-  TeamOutlined,
-  GiftOutlined,
+  BulbOutlined,
   CalendarOutlined,
   CodeOutlined,
-  BulbOutlined,
-  HeartOutlined,
   CrownOutlined,
-  RocketOutlined,
-  PlusOutlined,
-  UploadOutlined,
+  FireOutlined,
+  GiftOutlined,
   GithubOutlined,
-  TwitterOutlined,
+  HeartOutlined,
   LinkedinOutlined,
+  PlusOutlined,
+  RocketOutlined,
+  StarOutlined,
+  TeamOutlined,
+  TrophyOutlined,
+  TwitterOutlined,
+  UploadOutlined,
 } from '@ant-design/icons';
+import {
+  Alert,
+  Avatar,
+  Badge,
+  Button,
+  Card,
+  Col,
+  Form,
+  Input,
+  List,
+  Modal,
+  message,
+  Progress,
+  Row,
+  Select,
+  Space,
+  Statistic,
+  Tabs,
+  Tag,
+  Timeline,
+  Tooltip,
+  Typography,
+  Upload,
+} from 'antd';
+import type React from 'react';
+import { useState } from 'react';
 
 const { Title, Text, Paragraph } = Typography;
 const { TabPane } = Tabs;
@@ -111,7 +111,8 @@ export const CommunityHub: React.FC = () => {
     {
       id: '1',
       title: 'AI-Powered Workflow Challenge',
-      description: 'Create an innovative workflow that leverages AI to solve a real-world problem. Show us how AI can transform business processes!',
+      description:
+        'Create an innovative workflow that leverages AI to solve a real-world problem. Show us how AI can transform business processes!',
       category: 'workflow',
       difficulty: 'intermediate',
       prize: '$1,000 + Featured Plugin Spot',
@@ -125,7 +126,8 @@ export const CommunityHub: React.FC = () => {
     {
       id: '2',
       title: 'Integration Plugin Contest',
-      description: 'Build a plugin that integrates Reporunner with a popular service that doesn\'t have an integration yet.',
+      description:
+        "Build a plugin that integrates Reporunner with a popular service that doesn't have an integration yet.",
       category: 'plugin',
       difficulty: 'advanced',
       prize: '$2,000 + Marketplace Revenue Share',
@@ -139,7 +141,8 @@ export const CommunityHub: React.FC = () => {
     {
       id: '3',
       title: 'Beginner Tutorial Series',
-      description: 'Create comprehensive tutorials for newcomers to workflow automation. Help grow our community!',
+      description:
+        'Create comprehensive tutorials for newcomers to workflow automation. Help grow our community!',
       category: 'tutorial',
       difficulty: 'beginner',
       prize: '$500 + Community Recognition',
@@ -232,40 +235,51 @@ export const CommunityHub: React.FC = () => {
 
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
-      case 'beginner': return 'green';
-      case 'intermediate': return 'orange';
-      case 'advanced': return 'red';
-      default: return 'default';
+      case 'beginner':
+        return 'green';
+      case 'intermediate':
+        return 'orange';
+      case 'advanced':
+        return 'red';
+      default:
+        return 'default';
     }
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'active': return 'green';
-      case 'upcoming': return 'blue';
-      case 'judging': return 'orange';
-      case 'completed': return 'default';
-      default: return 'default';
+      case 'active':
+        return 'green';
+      case 'upcoming':
+        return 'blue';
+      case 'judging':
+        return 'orange';
+      case 'completed':
+        return 'default';
+      default:
+        return 'default';
     }
   };
 
   const getRoleIcon = (role: string) => {
     switch (role) {
-      case 'maintainer': return <CrownOutlined style={{ color: '#faad14' }} />;
-      case 'advocate': return <RocketOutlined style={{ color: '#1890ff' }} />;
-      case 'community_hero': return <HeartOutlined style={{ color: '#f5222d' }} />;
-      default: return <StarOutlined style={{ color: '#52c41a' }} />;
+      case 'maintainer':
+        return <CrownOutlined style={{ color: '#faad14' }} />;
+      case 'advocate':
+        return <RocketOutlined style={{ color: '#1890ff' }} />;
+      case 'community_hero':
+        return <HeartOutlined style={{ color: '#f5222d' }} />;
+      default:
+        return <StarOutlined style={{ color: '#52c41a' }} />;
     }
   };
 
-  const handleChallengeSubmission = async (values: any) => {
+  const handleChallengeSubmission = async (_values: any) => {
     try {
-      // Mock submission
-      console.log('Challenge submission:', values);
       message.success('Submission uploaded successfully!');
       setShowSubmissionModal(false);
       form.resetFields();
-    } catch (error) {
+    } catch (_error) {
       message.error('Failed to submit. Please try again.');
     }
   };
@@ -278,7 +292,7 @@ export const CommunityHub: React.FC = () => {
           <Card>
             <Statistic
               title="Active Challenges"
-              value={mockChallenges.filter(c => c.status === 'active').length}
+              value={mockChallenges.filter((c) => c.status === 'active').length}
               prefix={<FireOutlined />}
               valueStyle={{ color: '#f5222d' }}
             />
@@ -317,7 +331,14 @@ export const CommunityHub: React.FC = () => {
       </Row>
 
       {/* Active Challenges */}
-      <Card title="Community Challenges" extra={<Button type="primary" icon={<PlusOutlined />}>Create Challenge</Button>}>
+      <Card
+        title="Community Challenges"
+        extra={
+          <Button type="primary" icon={<PlusOutlined />}>
+            Create Challenge
+          </Button>
+        }
+      >
         <List
           dataSource={mockChallenges}
           renderItem={(challenge) => (
@@ -332,15 +353,23 @@ export const CommunityHub: React.FC = () => {
                   }}
                   disabled={challenge.status !== 'active'}
                 >
-                  {challenge.status === 'active' ? 'Participate' : challenge.status.charAt(0).toUpperCase() + challenge.status.slice(1)}
+                  {challenge.status === 'active'
+                    ? 'Participate'
+                    : challenge.status.charAt(0).toUpperCase() + challenge.status.slice(1)}
                 </Button>,
-                <Button key="details" type="link">View Details</Button>,
+                <Button key="details" type="link">
+                  View Details
+                </Button>,
               ]}
             >
               <List.Item.Meta
                 avatar={
                   <Badge count={challenge.participants} showZero>
-                    <Avatar size={64} icon={<TrophyOutlined />} style={{ backgroundColor: '#faad14' }} />
+                    <Avatar
+                      size={64}
+                      icon={<TrophyOutlined />}
+                      style={{ backgroundColor: '#faad14' }}
+                    />
                   </Badge>
                 }
                 title={
@@ -363,8 +392,10 @@ export const CommunityHub: React.FC = () => {
                       <Text type="secondary">{challenge.submissions} submissions</Text>
                     </Space>
                     <div style={{ marginTop: 8 }}>
-                      {challenge.tags.map(tag => (
-                        <Tag key={tag} size="small">{tag}</Tag>
+                      {challenge.tags.map((tag) => (
+                        <Tag key={tag} size="small">
+                          {tag}
+                        </Tag>
                       ))}
                     </div>
                   </div>
@@ -418,7 +449,11 @@ export const CommunityHub: React.FC = () => {
             >
               <List.Item.Meta
                 avatar={
-                  <Badge count={index + 1} showZero style={{ backgroundColor: index === 0 ? '#faad14' : '#1890ff' }}>
+                  <Badge
+                    count={index + 1}
+                    showZero
+                    style={{ backgroundColor: index === 0 ? '#faad14' : '#1890ff' }}
+                  >
                     <Avatar size={64} src={contributor.avatar} />
                   </Badge>
                 }
@@ -438,15 +473,13 @@ export const CommunityHub: React.FC = () => {
                         value={contributor.contributions}
                         size="small"
                       />
-                      <Statistic
-                        title="Reputation"
-                        value={contributor.reputation}
-                        size="small"
-                      />
+                      <Statistic title="Reputation" value={contributor.reputation} size="small" />
                     </Space>
                     <div style={{ marginTop: 8 }}>
-                      {contributor.badges.map(badge => (
-                        <Tag key={badge} color="blue" size="small">{badge}</Tag>
+                      {contributor.badges.map((badge) => (
+                        <Tag key={badge} color="blue" size="small">
+                          {badge}
+                        </Tag>
                       ))}
                     </div>
                   </div>
@@ -461,7 +494,14 @@ export const CommunityHub: React.FC = () => {
 
   const renderEventsTab = () => (
     <div>
-      <Card title="Upcoming Events" extra={<Button type="primary" icon={<CalendarOutlined />}>Schedule Event</Button>}>
+      <Card
+        title="Upcoming Events"
+        extra={
+          <Button type="primary" icon={<CalendarOutlined />}>
+            Schedule Event
+          </Button>
+        }
+      >
         <Timeline>
           {mockEvents.map((event) => (
             <Timeline.Item
@@ -471,18 +511,34 @@ export const CommunityHub: React.FC = () => {
             >
               <Card size="small" style={{ marginBottom: 16 }}>
                 <Space direction="vertical" style={{ width: '100%' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <Title level={5} style={{ margin: 0 }}>{event.title}</Title>
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                    }}
+                  >
+                    <Title level={5} style={{ margin: 0 }}>
+                      {event.title}
+                    </Title>
                     <Tag color="blue">{event.type.toUpperCase()}</Tag>
                   </div>
 
                   <Text type="secondary">{event.description}</Text>
 
                   <Space wrap>
-                    <Text><CalendarOutlined /> {new Date(event.date).toLocaleDateString()}</Text>
-                    <Text><ClockCircleOutlined /> {event.duration}</Text>
-                    <Text><UserOutlined /> {event.speaker}</Text>
-                    <Text><TeamOutlined /> {event.registrations}/{event.maxAttendees} registered</Text>
+                    <Text>
+                      <CalendarOutlined /> {new Date(event.date).toLocaleDateString()}
+                    </Text>
+                    <Text>
+                      <ClockCircleOutlined /> {event.duration}
+                    </Text>
+                    <Text>
+                      <UserOutlined /> {event.speaker}
+                    </Text>
+                    <Text>
+                      <TeamOutlined /> {event.registrations}/{event.maxAttendees} registered
+                    </Text>
                   </Space>
 
                   <Progress
@@ -507,7 +563,10 @@ export const CommunityHub: React.FC = () => {
     <div>
       <Row gutter={[16, 16]}>
         <Col xs={24} lg={12}>
-          <Card title="Developer Advocacy Program" extra={<Button type="primary">Apply Now</Button>}>
+          <Card
+            title="Developer Advocacy Program"
+            extra={<Button type="primary">Apply Now</Button>}
+          >
             <Space direction="vertical" style={{ width: '100%' }}>
               <Alert
                 message="Join Our Advocacy Program!"
@@ -527,7 +586,7 @@ export const CommunityHub: React.FC = () => {
                   'Revenue sharing for content creation',
                   'Recognition in our community',
                 ]}
-                renderItem={item => (
+                renderItem={(item) => (
                   <List.Item>
                     <StarOutlined style={{ color: '#faad14', marginRight: 8 }} />
                     {item}
@@ -544,7 +603,7 @@ export const CommunityHub: React.FC = () => {
                   'Contributed to open source projects',
                   'Passionate about helping developers',
                 ]}
-                renderItem={item => (
+                renderItem={(item) => (
                   <List.Item>
                     <BulbOutlined style={{ color: '#1890ff', marginRight: 8 }} />
                     {item}
@@ -612,25 +671,58 @@ export const CommunityHub: React.FC = () => {
         </Title>
         <Paragraph>
           Join our vibrant community of developers, creators, and automation enthusiasts.
-          Participate in challenges, contribute to the project, and help shape the future of workflow automation.
+          Participate in challenges, contribute to the project, and help shape the future of
+          workflow automation.
         </Paragraph>
       </div>
 
       {/* Main Content */}
       <Tabs activeKey={activeTab} onChange={setActiveTab} centered>
-        <TabPane tab={<span><TrophyOutlined />Challenges</span>} key="challenges">
+        <TabPane
+          tab={
+            <span>
+              <TrophyOutlined />
+              Challenges
+            </span>
+          }
+          key="challenges"
+        >
           {renderChallengesTab()}
         </TabPane>
 
-        <TabPane tab={<span><StarOutlined />Contributors</span>} key="contributors">
+        <TabPane
+          tab={
+            <span>
+              <StarOutlined />
+              Contributors
+            </span>
+          }
+          key="contributors"
+        >
           {renderContributorsTab()}
         </TabPane>
 
-        <TabPane tab={<span><CalendarOutlined />Events</span>} key="events">
+        <TabPane
+          tab={
+            <span>
+              <CalendarOutlined />
+              Events
+            </span>
+          }
+          key="events"
+        >
           {renderEventsTab()}
         </TabPane>
 
-        <TabPane tab={<span><RocketOutlined />Advocacy</span>} key="advocacy">
+        <TabPane
+          tab={
+            <span>
+              <RocketOutlined />
+              Advocacy
+            </span>
+          }
+          key="advocacy"
+        >
           {renderAdvocacyTab()}
         </TabPane>
       </Tabs>
@@ -643,11 +735,7 @@ export const CommunityHub: React.FC = () => {
         footer={null}
         width={600}
       >
-        <Form
-          form={form}
-          layout="vertical"
-          onFinish={handleChallengeSubmission}
-        >
+        <Form form={form} layout="vertical" onFinish={handleChallengeSubmission}>
           <Form.Item
             name="title"
             label="Submission Title"
@@ -675,22 +763,12 @@ export const CommunityHub: React.FC = () => {
             <Input placeholder="https://github.com/username/project" />
           </Form.Item>
 
-          <Form.Item
-            name="demo"
-            label="Demo URL (optional)"
-          >
+          <Form.Item name="demo" label="Demo URL (optional)">
             <Input placeholder="https://demo.example.com" />
           </Form.Item>
 
-          <Form.Item
-            name="files"
-            label="Additional Files"
-          >
-            <Upload
-              multiple
-              beforeUpload={() => false}
-              listType="text"
-            >
+          <Form.Item name="files" label="Additional Files">
+            <Upload multiple beforeUpload={() => false} listType="text">
               <Button icon={<UploadOutlined />}>Upload Files</Button>
             </Upload>
           </Form.Item>
@@ -700,9 +778,7 @@ export const CommunityHub: React.FC = () => {
               <Button type="primary" htmlType="submit">
                 Submit Entry
               </Button>
-              <Button onClick={() => setShowSubmissionModal(false)}>
-                Cancel
-              </Button>
+              <Button onClick={() => setShowSubmissionModal(false)}>Cancel</Button>
             </Space>
           </Form.Item>
         </Form>

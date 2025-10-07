@@ -28,7 +28,6 @@ import type {
   ContainerDropEvent,
   ContainerExecutionState,
   ContainerNodeConfig,
-  ContainerResizeEvent,
 } from '@/core/types/containerNodes';
 import type { PropertyRendererConfig } from '@/design-system';
 import { cn } from '@/design-system/utils';

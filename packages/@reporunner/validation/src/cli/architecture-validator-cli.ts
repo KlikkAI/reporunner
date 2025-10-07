@@ -1,12 +1,14 @@
 #!/usr/bin/env node
 
+import * as fs from 'node:fs/promises';
 import { Command } from 'commander';
-import * as fs from 'fs/promises';
-import * as path from 'path';
-import { DependencyAnalyzer } from '../architecture/dependency-analyzer';
 import { CodeOrganizationChecker } from '../architecture/code-organization-checker';
+import { DependencyAnalyzer } from '../architecture/dependency-analyzer';
 import { TypeSafetyValidator } from '../architecture/type-safety-validator';
-import { ArchitectureValidationResult, ArchitectureValidationOptions } from '../architecture/types';
+import type {
+  ArchitectureValidationOptions,
+  ArchitectureValidationResult,
+} from '../architecture/types';
 
 const program = new Command();
 
@@ -27,36 +29,26 @@ program
   .action(async (options) => {
     try {
       const validationOptions: ArchitectureValidationOptions = {
-        includeCircularDependencies: options.dependencies || true,
-        includeBoundaryValidation: options.dependencies || true,
-        includeDependencyGraph: options.dependencies || true,
-        includeCodeOrganization: options.organization || true,
-        includeTypeSafety: options.types || true,
+        includeCircularDependencies: true,
+        includeBoundaryValidation: true,
+        includeDependencyGraph: true,
+        includeCodeOrganization: true,
+        includeTypeSafety: true,
         outputFormat: options.output as 'json' | 'html' | 'markdown',
-        generateVisualization: options.generateVisualization || false
+        generateVisualization: options.generateVisualization,
       };
-
-      console.log('🏗️ Starting architecture validation...');
       const result = await runArchitectureValidation(validationOptions);
 
       await outputResults(result, options.outputFile, validationOptions.outputFormat);
 
-      console.log('\n📊 Architecture Validation Summary:');
-      console.log(`Overall Score: ${result.overallScore.toFixed(1)}/100`);
-      console.log(`Critical Issues: ${result.criticalIssues}`);
-
       if (result.overallScore >= 80) {
-        console.log('✅ Architecture validation passed!');
         process.exit(0);
       } else if (result.overallScore >= 60) {
-        console.log('⚠️ Architecture validation passed with warnings.');
         process.exit(0);
       } else {
-        console.log('❌ Architecture validation failed. Please address the issues.');
         process.exit(1);
       }
-    } catch (error) {
-      console.error('❌ Architecture validation failed:', error);
+    } catch (_error) {
       process.exit(1);
     }
   });
@@ -69,8 +61,6 @@ program
   .option('--generate-graph', 'Generate dependency graph visualization')
   .action(async (options) => {
     try {
-      console.log('🔍 Analyzing dependencies...');
-
       const analyzer = new DependencyAnalyzer();
       await analyzer.initialize();
 
@@ -83,26 +73,17 @@ program
         dependencyAnalysis: {
           circularDependencies: circularDeps,
           packageBoundaries: boundaries,
-          dependencyGraph: graph
-        }
+          dependencyGraph: graph,
+        },
       };
 
       await outputResults(result, options.outputFile, options.output);
 
-      console.log('\n📊 Dependency Analysis Summary:');
-      console.log(`Circular Dependencies: ${circularDeps.circularDependencies.length}`);
-      console.log(`Boundary Violations: ${boundaries.violationCount}`);
-      console.log(`Package Boundary Compliance: ${boundaries.complianceScore.toFixed(1)}%`);
-
       if (options.generateGraph && graph.visualization) {
         const graphPath = 'dependency-graph.dot';
         await fs.writeFile(graphPath, graph.visualization);
-        console.log(`📈 Dependency graph saved to ${graphPath}`);
-        console.log('Generate PNG with: dot -Tpng dependency-graph.dot -o dependency-graph.png');
       }
-
-    } catch (error) {
-      console.error('❌ Dependency analysis failed:', error);
+    } catch (_error) {
       process.exit(1);
     }
   });
@@ -114,23 +95,13 @@ program
   .option('--output-file <path>', 'Output file path')
   .action(async (options) => {
     try {
-      console.log('🏗️ Validating code organization...');
-
       const checker = new CodeOrganizationChecker();
       await checker.initialize();
 
       const result = await checker.validateCodeOrganization();
 
       await outputResults(result, options.outputFile, options.output);
-
-      console.log('\n📊 Code Organization Summary:');
-      console.log(`Overall Score: ${result.overallScore.toFixed(1)}/100`);
-      console.log(`Separation of Concerns: ${result.separationOfConcerns.score.toFixed(1)}/100`);
-      console.log(`Code Duplication: ${result.codeDuplication.duplicationPercentage.toFixed(1)}%`);
-      console.log(`Naming Compliance: ${result.namingConventions.complianceScore.toFixed(1)}%`);
-
-    } catch (error) {
-      console.error('❌ Code organization validation failed:', error);
+    } catch (_error) {
       process.exit(1);
     }
   });
@@ -142,90 +113,89 @@ program
   .option('--output-file <path>', 'Output file path')
   .action(async (options) => {
     try {
-      console.log('🔍 Validating type safety...');
-
       const validator = new TypeSafetyValidator();
       await validator.initialize();
 
       const result = await validator.validateTypeSafety();
 
       await outputResults(result, options.outputFile, options.output);
-
-      console.log('\n📊 Type Safety Summary:');
-      console.log(`Overall Score: ${result.overallScore.toFixed(1)}/100`);
-      console.log(`Type Consistency: ${result.crossPackageConsistency.consistencyScore.toFixed(1)}%`);
-      console.log(`Interface Compatibility: ${result.interfaceCompatibility.compatibilityScore.toFixed(1)}%`);
-      console.log(`Export Structure: ${result.exportStructure.structureScore.toFixed(1)}%`);
-
-    } catch (error) {
-      console.error('❌ Type safety validation failed:', error);
+    } catch (_error) {
       process.exit(1);
     }
   });
 
-async function runArchitectureValidation(options: ArchitectureValidationOptions): Promise<ArchitectureValidationResult> {
+async function runArchitectureValidation(
+  options: ArchitectureValidationOptions
+): Promise<ArchitectureValidationResult> {
   const result: ArchitectureValidationResult = {
     timestamp: new Date(),
     overallScore: 0,
     criticalIssues: 0,
-    recommendations: []
+    recommendations: [],
   };
 
   // Dependency Analysis
-  if (options.includeCircularDependencies || options.includeBoundaryValidation || options.includeDependencyGraph) {
-    console.log('🔍 Analyzing dependencies...');
+  if (
+    options.includeCircularDependencies ||
+    options.includeBoundaryValidation ||
+    options.includeDependencyGraph
+  ) {
     const analyzer = new DependencyAnalyzer();
     await analyzer.initialize();
 
     result.dependencyAnalysis = {
       circularDependencies: await analyzer.checkCircularDependencies(options),
       packageBoundaries: await analyzer.validatePackageBoundaries(),
-      dependencyGraph: await analyzer.generateDependencyGraph()
+      dependencyGraph: await analyzer.generateDependencyGraph(),
     };
 
     // Count critical issues
-    result.criticalIssues += result.dependencyAnalysis.circularDependencies.circularDependencies
-      .filter(cd => cd.impact === 'high' || cd.type === 'package').length;
-    result.criticalIssues += result.dependencyAnalysis.packageBoundaries.violations
-      .filter(v => v.severity === 'error').length;
+    result.criticalIssues +=
+      result.dependencyAnalysis.circularDependencies.circularDependencies.filter(
+        (cd) => cd.impact === 'high' || cd.type === 'package'
+      ).length;
+    result.criticalIssues += result.dependencyAnalysis.packageBoundaries.violations.filter(
+      (v) => v.severity === 'error'
+    ).length;
   }
 
   // Code Organization
   if (options.includeCodeOrganization) {
-    console.log('🏗️ Validating code organization...');
     const checker = new CodeOrganizationChecker();
     await checker.initialize();
 
     result.codeOrganization = await checker.validateCodeOrganization(options);
 
     // Count critical issues
-    result.criticalIssues += result.codeOrganization.separationOfConcerns.violations
-      .filter(v => v.severity === 'high').length;
+    result.criticalIssues += result.codeOrganization.separationOfConcerns.violations.filter(
+      (v) => v.severity === 'high'
+    ).length;
   }
 
   // Type Safety
   if (options.includeTypeSafety) {
-    console.log('🔍 Validating type safety...');
     const validator = new TypeSafetyValidator();
     await validator.initialize();
 
     result.typeSafety = await validator.validateTypeSafety(options);
 
     // Count critical issues
-    result.criticalIssues += result.typeSafety.crossPackageConsistency.inconsistencies
-      .filter(i => i.severity === 'error').length;
-    result.criticalIssues += result.typeSafety.interfaceCompatibility.incompatibilities
-      .filter(i => i.severity === 'error').length;
+    result.criticalIssues += result.typeSafety.crossPackageConsistency.inconsistencies.filter(
+      (i) => i.severity === 'error'
+    ).length;
+    result.criticalIssues += result.typeSafety.interfaceCompatibility.incompatibilities.filter(
+      (i) => i.severity === 'error'
+    ).length;
   }
 
   // Calculate overall score
   const scores: number[] = [];
 
   if (result.dependencyAnalysis) {
-    const depScore = (
-      result.dependencyAnalysis.packageBoundaries.complianceScore +
-      (result.dependencyAnalysis.circularDependencies.hasCircularDependencies ? 50 : 100)
-    ) / 2;
+    const depScore =
+      (result.dependencyAnalysis.packageBoundaries.complianceScore +
+        (result.dependencyAnalysis.circularDependencies.hasCircularDependencies ? 50 : 100)) /
+      2;
     scores.push(depScore);
   }
 
@@ -237,7 +207,8 @@ async function runArchitectureValidation(options: ArchitectureValidationOptions)
     scores.push(result.typeSafety.overallScore);
   }
 
-  result.overallScore = scores.length > 0 ? scores.reduce((sum, score) => sum + score, 0) / scores.length : 100;
+  result.overallScore =
+    scores.length > 0 ? scores.reduce((sum, score) => sum + score, 0) / scores.length : 100;
 
   // Generate recommendations
   result.recommendations = generateOverallRecommendations(result);
@@ -283,7 +254,11 @@ function generateOverallRecommendations(result: ArchitectureValidationResult): s
   return recommendations;
 }
 
-async function outputResults(result: any, outputFile?: string, format: string = 'json'): Promise<void> {
+async function outputResults(
+  result: any,
+  outputFile?: string,
+  format: string = 'json'
+): Promise<void> {
   let output: string;
 
   switch (format) {
@@ -299,10 +274,7 @@ async function outputResults(result: any, outputFile?: string, format: string = 
 
   if (outputFile) {
     await fs.writeFile(outputFile, output);
-    console.log(`📄 Report saved to ${outputFile}`);
   } else {
-    console.log('\n📄 Results:');
-    console.log(output);
   }
 }
 
@@ -335,14 +307,18 @@ function generateHtmlReport(result: any): string {
         <pre>${JSON.stringify(result, null, 2)}</pre>
     </div>
 
-    ${result.recommendations ? `
+    ${
+      result.recommendations
+        ? `
     <div class="recommendations">
         <h2>Recommendations</h2>
         <ul>
             ${result.recommendations.map((rec: string) => `<li>${rec}</li>`).join('')}
         </ul>
     </div>
-    ` : ''}
+    `
+        : ''
+    }
 </body>
 </html>
   `;

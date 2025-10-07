@@ -1,5 +1,14 @@
+import type { Cipher, Decipher } from 'node:crypto';
 import { createCipheriv, createDecipheriv, createHash, randomBytes, scrypt } from 'node:crypto';
 import { promisify } from 'node:util';
+
+interface CipherGCM extends Cipher {
+  getAuthTag(): Buffer;
+}
+
+interface DecipherGCM extends Decipher {
+  setAuthTag(buffer: Buffer): void;
+}
 
 const scryptAsync = promisify(scrypt);
 
@@ -58,7 +67,7 @@ export class EncryptionService {
     const encrypted = Buffer.concat(encryptedBuffers);
 
     // Get auth tag for GCM mode
-    const authTag = (cipher as any).getAuthTag();
+    const authTag = (cipher as CipherGCM).getAuthTag();
 
     return {
       encrypted: encrypted.toString('base64'),
@@ -87,7 +96,7 @@ export class EncryptionService {
     const decipher = createDecipheriv(encryptedData.algorithm || this.options.algorithm, key, iv);
 
     // Set auth tag for GCM mode
-    (decipher as any).setAuthTag(authTag);
+    (decipher as DecipherGCM).setAuthTag(authTag);
 
     // Decrypt data
     const decryptedBuffers: Buffer[] = [];
@@ -116,7 +125,7 @@ export class EncryptionService {
         .pipe(cipher)
         .pipe(outputStream)
         .on('finish', () => {
-          const authTag = (cipher as any).getAuthTag();
+          const authTag = (cipher as CipherGCM).getAuthTag();
           resolve({
             encrypted: '', // Stream output, no base64 string
             salt: salt.toString('base64'),
@@ -142,7 +151,7 @@ export class EncryptionService {
   /**
    * Encrypt specific fields in an object
    */
-  async encryptFields<T extends Record<string, any>>(
+  async encryptFields<T extends Record<string, unknown>>(
     obj: T,
     fields: (keyof T)[],
     masterKey: string
@@ -153,7 +162,7 @@ export class EncryptionService {
       if (obj[field] !== undefined && obj[field] !== null) {
         const fieldKey = await this.generateFieldKey(masterKey, String(field));
         const encryptedData = await this.encrypt(String(obj[field]), fieldKey);
-        (encrypted as any)[field] = JSON.stringify(encryptedData);
+        (encrypted as Record<string, unknown>)[field] = JSON.stringify(encryptedData);
       }
     }
 

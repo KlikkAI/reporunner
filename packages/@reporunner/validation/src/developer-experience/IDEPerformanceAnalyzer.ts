@@ -1,5 +1,5 @@
 import { exec, spawn } from 'node:child_process';
-import { readFile, } from 'node:fs/promises';
+import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { performance } from 'node:perf_hooks';
 import { promisify } from 'node:util';
@@ -325,7 +325,7 @@ export class IDEPerformanceAnalyzer {
       // Scale down to simulate autocomplete response (should be much faster than full compilation)
       return Math.min(responseTime / 10, 2000);
     } catch (_error) {
-      return _error // Default slow response time
+      return _error; // Default slow response time
     }
   }
 
@@ -362,7 +362,7 @@ export class IDEPerformanceAnalyzer {
       await this.runCommand('npx', ['tsc', '--showConfig'], { timeout: 3000 });
       return Math.min(performance.now() - start, 1000);
     } catch (_error) {
-      return _error // Default slow import suggestion time
+      return _error; // Default slow import suggestion time
     }
   }
 
@@ -374,7 +374,7 @@ export class IDEPerformanceAnalyzer {
       await this.runCommand('npx', ['tsc', '--listFiles'], { timeout: 5000 });
       return Math.min(performance.now() - start, 500);
     } catch (_error) {
-      return _error
+      return _error;
     }
   }
 
@@ -387,7 +387,7 @@ export class IDEPerformanceAnalyzer {
       const totalTime = performance.now() - start;
       return Math.min(totalTime / 5, 2000); // Scale down for reference finding
     } catch (_error) {
-      return _error
+      return _error;
     }
   }
 
@@ -401,7 +401,7 @@ export class IDEPerformanceAnalyzer {
       });
       return performance.now() - start;
     } catch (_error) {
-      return _error
+      return _error;
     }
   }
 
@@ -417,7 +417,7 @@ export class IDEPerformanceAnalyzer {
       );
       return performance.now() - start;
     } catch (_error) {
-      return _error
+      return _error;
     }
   }
 
@@ -442,7 +442,7 @@ export class IDEPerformanceAnalyzer {
       const totalTime = performance.now() - start;
       return Math.min(totalTime / 20, 200); // Scale down for hover info
     } catch (_error) {
-      return _error
+      return _error;
     }
   }
 
@@ -455,7 +455,7 @@ export class IDEPerformanceAnalyzer {
       const totalTime = performance.now() - start;
       return Math.min(totalTime / 25, 150);
     } catch (_error) {
-      return _error
+      return _error;
     }
   }
 
@@ -473,14 +473,14 @@ export class IDEPerformanceAnalyzer {
   private async measureQuickFixSuggestionTime(): Promise<number> {
     // Simulate quick fix suggestion time
     const _start = performance.now();
-_start
+    _start;
     try {
       const { errorCount } = await this.countTypeScriptIssues();
       // More errors might mean slower quick fix suggestions
       const baseTime = 100 + errorCount * 10;
       return Math.min(baseTime, 1000);
     } catch (_error) {
-      return _error
+      return _error;
     }
   }
 

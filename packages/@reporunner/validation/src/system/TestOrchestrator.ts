@@ -365,13 +365,16 @@ export class TestOrchestrator {
    * Calculate trend from array of values
    */
   private calculateTrend(values: number[]): 'improving' | 'degrading' | 'stable' {
-    if (values.length < 2) { return 'stable'; }
+    if (values.length < 2) {
+      return 'stable';
+    }
     const first = values[0];
     const last = values[values.length - 1];
     const change = last - first;
 
-    if (Math.abs(change) < 2) { return 'stable'; // Less than 2% change
-}
+    if (Math.abs(change) < 2) {
+      return 'stable'; // Less than 2% change
+    }
     return change > 0 ? 'improving' : 'degrading';
   }
 

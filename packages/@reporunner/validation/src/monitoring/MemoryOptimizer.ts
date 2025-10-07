@@ -39,7 +39,8 @@ export class MemoryOptimizer {
         area: 'Heap allocation efficiency',
         currentUsage: currentMemory.heapTotal,
         potentialSavings: currentMemory.heapTotal * 0.3,
-        recommendation: 'Reduce initial heap size allocation. Consider using --max-old-space-size flag with a smaller value.',
+        recommendation:
+          'Reduce initial heap size allocation. Consider using --max-old-space-size flag with a smaller value.',
       });
     }
 
@@ -84,19 +85,21 @@ export class MemoryOptimizer {
    * Prioritize optimizations based on impact and effort
    */
   private prioritizeOptimizations(optimizations: MemoryOptimization[]): PrioritizedOptimization[] {
-    return optimizations.map(opt => {
-      const impact = this.calculateOptimizationImpact(opt);
-      const effort = this.estimateImplementationEffort(opt);
-      const priority = this.calculatePriority(impact, effort);
+    return optimizations
+      .map((opt) => {
+        const impact = this.calculateOptimizationImpact(opt);
+        const effort = this.estimateImplementationEffort(opt);
+        const priority = this.calculatePriority(impact, effort);
 
-      return {
-        ...opt,
-        impact,
-        effort,
-        priority,
-        roi: impact / effort,
-      };
-    }).sort((a, b) => b.priority - a.priority);
+        return {
+          ...opt,
+          impact,
+          effort,
+          priority,
+          roi: impact / effort,
+        };
+      })
+      .sort((a, b) => b.priority - a.priority);
   }
 
   /**
@@ -105,7 +108,7 @@ export class MemoryOptimizer {
   private calculateOptimizationImpact(optimization: MemoryOptimization): number {
     const savingsRatio = optimization.potentialSavings / optimization.currentUsage;
     const absoluteSavings = optimization.potentialSavings / (1024 * 1024);
-    return (savingsRatio * 50) + (Math.min(absoluteSavings, 100) * 0.5);
+    return savingsRatio * 50 + Math.min(absoluteSavings, 100) * 0.5;
   }
 
   /**
@@ -130,8 +133,10 @@ export class MemoryOptimizer {
   /**
    * Generate actionable recommendations
    */
-  private generateActionableRecommendations(optimizations: PrioritizedOptimization[]): ActionableRecommendation[] {
-    return optimizations.slice(0, 5).map(opt => ({
+  private generateActionableRecommendations(
+    optimizations: PrioritizedOptimization[]
+  ): ActionableRecommendation[] {
+    return optimizations.slice(0, 5).map((opt) => ({
       title: `Optimize ${opt.area}`,
       description: opt.recommendation,
       impact: `Save ${Math.round(opt.potentialSavings / 1024 / 1024)}MB`,
@@ -157,9 +162,15 @@ export class MemoryOptimizer {
    * Estimate implementation timeline
    */
   private estimateTimeline(effort: number): string {
-    if (effort <= 3) { return '1-2 days'; }
-    if (effort <= 5) { return '3-5 days'; }
-    if (effort <= 7) { return '1-2 weeks'; }
+    if (effort <= 3) {
+      return '1-2 days';
+    }
+    if (effort <= 5) {
+      return '3-5 days';
+    }
+    if (effort <= 7) {
+      return '1-2 weeks';
+    }
     return '2-4 weeks';
   }
 
@@ -167,9 +178,9 @@ export class MemoryOptimizer {
    * Create implementation plan
    */
   private createImplementationPlan(optimizations: PrioritizedOptimization[]): ImplementationPlan {
-    const quickWins = optimizations.filter(opt => opt.effort <= 3 && opt.impact >= 20);
-    const majorImpact = optimizations.filter(opt => opt.impact >= 50);
-    const longTerm = optimizations.filter(opt => opt.effort >= 7);
+    const quickWins = optimizations.filter((opt) => opt.effort <= 3 && opt.impact >= 20);
+    const majorImpact = optimizations.filter((opt) => opt.impact >= 50);
+    const longTerm = optimizations.filter((opt) => opt.effort >= 7);
 
     return {
       quickWins: quickWins.slice(0, 3),
@@ -192,7 +203,7 @@ export class MemoryOptimizer {
     const recent = this.optimizationHistory.slice(-5);
 
     const memoryTrend = this.calculateTrendDirection(
-      recent.map(analysis => analysis.totalMemoryUsage)
+      recent.map((analysis) => analysis.totalMemoryUsage)
     );
 
     trends.push({
@@ -212,14 +223,20 @@ export class MemoryOptimizer {
    * Calculate trend direction
    */
   private calculateTrendDirection(values: number[]): 'improving' | 'degrading' | 'stable' {
-    if (values.length < 2) { return 'stable'; }
+    if (values.length < 2) {
+      return 'stable';
+    }
 
     const first = values[0];
     const last = values[values.length - 1];
     const change = (last - first) / first;
 
-    if (change > 0.05) { return 'degrading'; }
-    if (change < -0.05) { return 'improving'; }
+    if (change > 0.05) {
+      return 'degrading';
+    }
+    if (change < -0.05) {
+      return 'improving';
+    }
     return 'stable';
   }
 

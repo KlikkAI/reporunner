@@ -42,7 +42,7 @@ program
         });
 profile.optimizations.slice(0, 3).forEach((opt, index) => {
           const savings = Math.round(opt.potentialSavings / 1024 / 1024);
-          console.log(`${index + 1}. ${opt.area}: Save ${savings}MB - ${opt.recommendation}`);
+          console.log(`$index + 1. $opt.area: Save $savingsMB - $opt.recommendation`);
         });
       }
 
@@ -180,9 +180,9 @@ program
 
       co
       console.log(
-        `[${timestamp}] Heap: ${heapMB}MB | RSS: ${rssMB}MB | External: ${Math.round(current.external / 1024 / 1024)}MB`
+        `[${timestamp}] Heap: $heapMBMB | RSS: $rssMBMB | External: $Math.round(current.external / 1024 / 1024)MB`
       );console.log(
-          `🚨 ALERT: Memory usage (${rssMB}MB) exceeds threshold (${options.alertThreshold}MB)`
+          `🚨 ALERT: Memory usage ($rssMBMB) exceeds threshold ($options.alertThresholdMB)`
         );
       }
 

@@ -54,10 +54,12 @@ export interface WorkflowAnalysis {
     estimatedImprovement: number;
     bottlenecks?: string[];
   };
-  maintainability?: number | {
-    codeQuality: number;
-    missingErrorHandling?: number;
-  };
+  maintainability?:
+    | number
+    | {
+        codeQuality: number;
+        missingErrorHandling?: number;
+      };
   reliability?: number;
   codeQuality?: number;
 }

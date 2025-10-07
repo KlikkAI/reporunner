@@ -1,10 +1,10 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
-import * as path from 'path';
-import * as fs from 'fs';
+import * as fs from 'node:fs';
+import * as path from 'node:path';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { TypeScriptAnalyzer } from '../analyzer';
 import { AutocompleteTester } from '../autocomplete-tester';
-import { TypeResolutionValidator } from '../type-resolution-validator';
 import { CompilationAnalyzer } from '../compilation-analyzer';
+import { TypeResolutionValidator } from '../type-resolution-validator';
 
 // Mock the dependencies
 vi.mock('../autocomplete-tester');
@@ -35,8 +35,8 @@ describe('TypeScriptAnalyzer', () => {
           actualSuggestions: ['WorkflowEngine', 'NodeRegistry'],
           accuracy: 100,
           responseTime: 50,
-          passed: true
-        }
+          passed: true,
+        },
       ];
 
       const mockTypeResolutionResults = [
@@ -45,8 +45,8 @@ describe('TypeScriptAnalyzer', () => {
           typeDefinition: 'WorkflowEngine',
           resolutionTime: 25,
           resolved: true,
-          sourceFile: 'test.ts'
-        }
+          sourceFile: 'test.ts',
+        },
       ];
 
       const mockCompilationMetrics = [
@@ -56,8 +56,8 @@ describe('TypeScriptAnalyzer', () => {
           compilationTime: 1000,
           memoryUsage: 50000000,
           errors: [],
-          warnings: []
-        }
+          warnings: [],
+        },
       ];
 
       // Setup mocks
@@ -65,9 +65,15 @@ describe('TypeScriptAnalyzer', () => {
       const mockTypeResolutionValidator = vi.mocked(TypeResolutionValidator);
       const mockCompilationAnalyzer = vi.mocked(CompilationAnalyzer);
 
-      mockAutocompleteTester.prototype.runAutocompleteTests = vi.fn().mockResolvedValue(mockAutocompleteResults);
-      mockTypeResolutionValidator.prototype.validateTypeResolution = vi.fn().mockResolvedValue(mockTypeResolutionResults);
-      mockCompilationAnalyzer.prototype.analyzeCompilation = vi.fn().mockResolvedValue(mockCompilationMetrics);
+      mockAutocompleteTester.prototype.runAutocompleteTests = vi
+        .fn()
+        .mockResolvedValue(mockAutocompleteResults);
+      mockTypeResolutionValidator.prototype.validateTypeResolution = vi
+        .fn()
+        .mockResolvedValue(mockTypeResolutionResults);
+      mockCompilationAnalyzer.prototype.analyzeCompilation = vi
+        .fn()
+        .mockResolvedValue(mockCompilationMetrics);
 
       // Run analysis
       const report = await analyzer.analyzeTypeScriptSetup();
@@ -84,27 +90,25 @@ describe('TypeScriptAnalyzer', () => {
 
     it('should calculate overall score correctly', async () => {
       // Mock results with mixed success/failure
-      const mockAutocompleteResults = [
-        { passed: true } as any,
-        { passed: false } as any
-      ];
+      const mockAutocompleteResults = [{ passed: true } as any, { passed: false } as any];
 
-      const mockTypeResolutionResults = [
-        { resolved: true } as any,
-        { resolved: true } as any
-      ];
+      const mockTypeResolutionResults = [{ resolved: true } as any, { resolved: true } as any];
 
-      const mockCompilationMetrics = [
-        { errors: [] } as any
-      ];
+      const mockCompilationMetrics = [{ errors: [] } as any];
 
       const mockAutocompleteTester = vi.mocked(AutocompleteTester);
       const mockTypeResolutionValidator = vi.mocked(TypeResolutionValidator);
       const mockCompilationAnalyzer = vi.mocked(CompilationAnalyzer);
 
-      mockAutocompleteTester.prototype.runAutocompleteTests = vi.fn().mockResolvedValue(mockAutocompleteResults);
-      mockTypeResolutionValidator.prototype.validateTypeResolution = vi.fn().mockResolvedValue(mockTypeResolutionResults);
-      mockCompilationAnalyzer.prototype.analyzeCompilation = vi.fn().mockResolvedValue(mockCompilationMetrics);
+      mockAutocompleteTester.prototype.runAutocompleteTests = vi
+        .fn()
+        .mockResolvedValue(mockAutocompleteResults);
+      mockTypeResolutionValidator.prototype.validateTypeResolution = vi
+        .fn()
+        .mockResolvedValue(mockTypeResolutionResults);
+      mockCompilationAnalyzer.prototype.analyzeCompilation = vi
+        .fn()
+        .mockResolvedValue(mockCompilationMetrics);
 
       const report = await analyzer.analyzeTypeScriptSetup();
 
@@ -114,25 +118,27 @@ describe('TypeScriptAnalyzer', () => {
 
     it('should generate appropriate recommendations', async () => {
       // Mock results with failures
-      const mockAutocompleteResults = [
-        { passed: false } as any
-      ];
+      const mockAutocompleteResults = [{ passed: false } as any];
 
-      const mockTypeResolutionResults = [
-        { resolved: false } as any
-      ];
+      const mockTypeResolutionResults = [{ resolved: false } as any];
 
       const mockCompilationMetrics = [
-        { errors: [{ message: 'Type error' }], compilationTime: 6000 } as any
+        { errors: [{ message: 'Type error' }], compilationTime: 6000 } as any,
       ];
 
       const mockAutocompleteTester = vi.mocked(AutocompleteTester);
       const mockTypeResolutionValidator = vi.mocked(TypeResolutionValidator);
       const mockCompilationAnalyzer = vi.mocked(CompilationAnalyzer);
 
-      mockAutocompleteTester.prototype.runAutocompleteTests = vi.fn().mockResolvedValue(mockAutocompleteResults);
-      mockTypeResolutionValidator.prototype.validateTypeResolution = vi.fn().mockResolvedValue(mockTypeResolutionResults);
-      mockCompilationAnalyzer.prototype.analyzeCompilation = vi.fn().mockResolvedValue(mockCompilationMetrics);
+      mockAutocompleteTester.prototype.runAutocompleteTests = vi
+        .fn()
+        .mockResolvedValue(mockAutocompleteResults);
+      mockTypeResolutionValidator.prototype.validateTypeResolution = vi
+        .fn()
+        .mockResolvedValue(mockTypeResolutionResults);
+      mockCompilationAnalyzer.prototype.analyzeCompilation = vi
+        .fn()
+        .mockResolvedValue(mockCompilationMetrics);
 
       const report = await analyzer.analyzeTypeScriptSetup();
 
@@ -159,17 +165,19 @@ describe('TypeScriptAnalyzer', () => {
 
       mockExistsSync.mockImplementation((path: any) => {
         const pathStr = path.toString();
-        return pathStr.includes('packages') ||
-               pathStr.includes('backend') ||
-               pathStr.includes('frontend') ||
-               pathStr.includes('shared') ||
-               pathStr.includes('@reporunner');
+        return (
+          pathStr.includes('packages') ||
+          pathStr.includes('backend') ||
+          pathStr.includes('frontend') ||
+          pathStr.includes('shared') ||
+          pathStr.includes('@reporunner')
+        );
       });
 
       mockReaddirSync.mockReturnValue([
         { name: 'core', isDirectory: () => true },
         { name: 'auth', isDirectory: () => true },
-        { name: 'workflow', isDirectory: () => true }
+        { name: 'workflow', isDirectory: () => true },
       ] as any);
 
       const directories = await analyzer.getPackageDirectories();

@@ -9,9 +9,9 @@ import dotenv from 'dotenv';
 // Load environment variables
 dotenv.config();
 
+import { DatabaseConfig } from './config/database.js';
 // Import routes
 import authRoutes from './domains/auth/routes/authRoutes.js';
-import { DatabaseConfig } from './config/database.js';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -20,11 +20,8 @@ const PORT = process.env.PORT || 5000;
 const dbConfig = DatabaseConfig.getInstance();
 dbConfig
   .connect()
-  .then(() => {
-    console.log('✅ MongoDB connected successfully');
-  })
-  .catch((error) => {
-    console.error('❌ MongoDB connection failed:', error);
+  .then(() => {})
+  .catch((_error) => {
     process.exit(1);
   });
 
@@ -75,9 +72,6 @@ app.use('*', (_req, res) => {
 });
 
 // Start server
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-  console.log(`📍 Environment: ${process.env.NODE_ENV || 'development'}`);
-});
+app.listen(PORT, () => {});
 
 export default app;

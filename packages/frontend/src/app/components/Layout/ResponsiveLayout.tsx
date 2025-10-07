@@ -4,36 +4,37 @@
  * Phase C: Polish & User Experience - Better mobile responsiveness
  */
 
-import React, { useState, useEffect } from 'react';
 import {
+  AppstoreOutlined,
+  ArrowUpOutlined,
+  BarChartOutlined,
+  BellOutlined,
+  DashboardOutlined,
+  HomeOutlined,
+  LogoutOutlined,
+  MenuOutlined,
+  PlusOutlined,
+  QuestionCircleOutlined,
+  SettingOutlined,
+  TeamOutlined,
+  UserOutlined,
+} from '@ant-design/icons';
+import {
+  Affix,
+  Avatar,
+  Badge,
+  Breadcrumb,
+  Button,
+  Drawer,
+  Dropdown,
+  FloatButton,
   Layout,
   Menu,
-  Drawer,
-  Button,
-  Avatar,
-  Dropdown,
-  Badge,
   Space,
   Typography,
-  Breadcrumb,
-  FloatButton,
-  Affix,
 } from 'antd';
-import {
-  MenuOutlined,
-  BellOutlined,
-  UserOutlined,
-  SettingOutlined,
-  LogoutOutlined,
-  HomeOutlined,
-  DashboardOutlined,
-  AppstoreOutlined,
-  BarChartOutlined,
-  TeamOutlined,
-  QuestionCircleOutlined,
-  PlusOutlined,
-  ArrowUpOutlined,
-} from '@ant-design/icons';
+import type React from 'react';
+import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAccessibility } from '../Accessibility/AccessibilityProvider';
 
@@ -153,7 +154,7 @@ export const ResponsiveLayout: React.FC<ResponsiveLayoutProps> = ({ children }) 
     let currentPath = '';
     pathSegments.forEach((segment) => {
       currentPath += `/${segment}`;
-      const menuItem = MENU_ITEMS.find(item => item.path === currentPath);
+      const menuItem = MENU_ITEMS.find((item) => item.path === currentPath);
 
       breadcrumbItems.push({
         title: menuItem ? menuItem.label : segment.charAt(0).toUpperCase() + segment.slice(1),
@@ -195,11 +196,7 @@ export const ResponsiveLayout: React.FC<ResponsiveLayoutProps> = ({ children }) 
   };
 
   const renderMenuItem = (item: MenuItem) => (
-    <Menu.Item
-      key={item.key}
-      icon={item.icon}
-      onClick={() => handleMenuClick(item)}
-    >
+    <Menu.Item key={item.key} icon={item.icon} onClick={() => handleMenuClick(item)}>
       <Space>
         {item.label}
         {item.badge && <Badge count={item.badge} size="small" />}
@@ -251,11 +248,7 @@ export const ResponsiveLayout: React.FC<ResponsiveLayoutProps> = ({ children }) 
           />
         </Badge>
 
-        <Dropdown
-          menu={{ items: userMenuItems }}
-          placement="bottomRight"
-          trigger={['click']}
-        >
+        <Dropdown menu={{ items: userMenuItems }} placement="bottomRight" trigger={['click']}>
           <Button type="text" icon={<UserOutlined />} aria-label="User menu" />
         </Dropdown>
       </Space>
@@ -282,7 +275,7 @@ export const ResponsiveLayout: React.FC<ResponsiveLayoutProps> = ({ children }) 
         />
 
         <Breadcrumb
-          items={generateBreadcrumb().map(item => ({
+          items={generateBreadcrumb().map((item) => ({
             title: item.title,
             onClick: () => navigate(item.path),
           }))}
@@ -298,11 +291,7 @@ export const ResponsiveLayout: React.FC<ResponsiveLayoutProps> = ({ children }) 
           />
         </Badge>
 
-        <Dropdown
-          menu={{ items: userMenuItems }}
-          placement="bottomRight"
-          trigger={['click']}
-        >
+        <Dropdown menu={{ items: userMenuItems }} placement="bottomRight" trigger={['click']}>
           <Space style={{ cursor: 'pointer' }}>
             <Avatar icon={<UserOutlined />} />
             <Text>John Doe</Text>
@@ -340,15 +329,19 @@ export const ResponsiveLayout: React.FC<ResponsiveLayoutProps> = ({ children }) 
       }}
     >
       <Space direction={isMobile ? 'vertical' : 'horizontal'} size="middle">
-        <Text type="secondary">
-          © 2024 Reporunner. All rights reserved.
-        </Text>
+        <Text type="secondary">© 2024 Reporunner. All rights reserved.</Text>
         {!isMobile && (
           <>
             <Text type="secondary">|</Text>
-            <Button type="link" size="small">Privacy Policy</Button>
-            <Button type="link" size="small">Terms of Service</Button>
-            <Button type="link" size="small">Support</Button>
+            <Button type="link" size="small">
+              Privacy Policy
+            </Button>
+            <Button type="link" size="small">
+              Terms of Service
+            </Button>
+            <Button type="link" size="small">
+              Support
+            </Button>
           </>
         )}
       </Space>
@@ -408,9 +401,7 @@ export const ResponsiveLayout: React.FC<ResponsiveLayoutProps> = ({ children }) 
   // Desktop/Tablet layout
   return (
     <Layout style={{ minHeight: '100vh' }}>
-      <Affix offsetTop={0}>
-        {renderDesktopHeader()}
-      </Affix>
+      <Affix offsetTop={0}>{renderDesktopHeader()}</Affix>
 
       <Layout>
         <Sider
@@ -518,7 +509,7 @@ export const useResponsive = () => {
     screenSize,
     isMobile,
     isTablet,
-    isDesktop: !isMobile && !isTablet,
+    isDesktop: !(isMobile || isTablet),
     breakpoints: BREAKPOINTS,
   };
 };

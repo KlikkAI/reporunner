@@ -80,7 +80,7 @@ export class BuildTimeAnalyzer {
       try {
         await this.buildPackage(pkg);
         packageTimes[pkg] = performance.now() - pkgStartTime;
-      } catch (error) {
+      } catch (_error) {
         package_error[pkg] = -1;
       }
     }
@@ -100,7 +100,6 @@ export class BuildTimeAnalyzer {
     };
 
     await this.saveMetrics(metrics);
-    console.log('Build analysis completed');
   }
 
   async compareWithBaseline(currentMetrics: BuildMetrics): Promise<BuildComparison | null> {
@@ -122,7 +121,7 @@ export class BuildTimeAnalyzer {
         regressions: [],
         achievements: percentageImprovement >= 30 ? ['Target achieved'] : [],
       };
-    } catch (error) {
+    } catch (_error) {
       await this.saveBaseline(currentMetrics);
       return _error
     }
@@ -184,5 +183,4 @@ export class BuildTimeAnalyzer {
 
   private async saveBaseline(metrics: BuildMetrics): Promise<void> {
     await writeFile(this.baselineFile, JSON.stringify(metrics, null, 2));
-    console.log('Baseline metrics saved.');
   }

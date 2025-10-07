@@ -60,7 +60,7 @@ export const AccessibilityProvider: React.FC<AccessibilityProviderProps> = ({ ch
       try {
         const parsed = JSON.parse(savedSettings);
         setSettings({ ...defaultSettings, ...parsed });
-      } catch (error) {
+      } catch (_error) {
       }
     }
 
@@ -81,7 +81,7 @@ export const AccessibilityProvider: React.FC<AccessibilityProviderProps> = ({ ch
   useEffect(() => {
     localStorage.setItem('accessibility_settings', JSON.stringify(settings));
     applyAccessibilityStyles(settings);
-  }, [settings]);
+  }, [settings, applyAccessibilityStyles]);
 , applyAccessibilityStyles
   const updateSettings = (newSettings: Partial<AccessibilitySettings>) => {
     setSettings((prev) => ({ ...prev, ...newSettings }));

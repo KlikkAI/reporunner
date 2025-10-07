@@ -4,46 +4,45 @@
  * Phase D: Community & Growth - Integration ecosystem expansion
  */
 
-import React, { useState, useEffect } from 'react';
 import {
-  Card,
-  Row,
-  Col,
-  Tabs,
-  List,
-  Avatar,
-  Button,
-  Space,
-  Typography,
-  Tag,
-  Input,
-  Select,
-  Statistic,
-  Progress,
-  Badge,
-  Tooltip,
-  Modal,
-  Form,
-  Alert,
-  Divider,
-  Rate,
-} from 'antd';
-import {
-  SearchOutlined,
+  ApiOutlined,
+  BarChartOutlined,
+  CheckCircleOutlined,
   CloudOutlined,
   DatabaseOutlined,
-  ApiOutlined,
-  MessageOutlined,
-  BarChartOutlined,
-  FileTextOutlined,
-  SettingOutlined,
-  CheckCircleOutlined,
-  StarOutlined,
   DownloadOutlined,
-  PlusOutlined,
+  FileTextOutlined,
   FireOutlined,
+  MessageOutlined,
+  PlusOutlined,
+  SearchOutlined,
+  SettingOutlined,
+  StarOutlined,
   TrophyOutlined,
 } from '@ant-design/icons';
+import {
+  Alert,
+  Avatar,
+  Badge,
+  Button,
+  Card,
+  Col,
+  Divider,
+  Input,
+  List,
+  Modal,
+  Rate,
+  Row,
+  Select,
+  Space,
+  Statistic,
+  Tabs,
+  Tag,
+  Tooltip,
+  Typography,
+} from 'antd';
+import type React from 'react';
+import { useState } from 'react';
 
 const { Title, Text, Paragraph } = Typography;
 const { TabPane } = Tabs;
@@ -54,7 +53,14 @@ interface Integration {
   id: string;
   name: string;
   description: string;
-  category: 'saas' | 'database' | 'cloud' | 'communication' | 'productivity' | 'analytics' | 'storage';
+  category:
+    | 'saas'
+    | 'database'
+    | 'cloud'
+    | 'communication'
+    | 'productivity'
+    | 'analytics'
+    | 'storage';
   provider: string;
   icon: string;
   pricing: 'free' | 'paid' | 'freemium' | 'enterprise';
@@ -80,7 +86,8 @@ export const IntegrationEcosystem: React.FC = () => {
     {
       id: 'slack',
       name: 'Slack',
-      description: 'Team communication and collaboration platform with powerful automation capabilities',
+      description:
+        'Team communication and collaboration platform with powerful automation capabilities',
       category: 'communication',
       provider: 'Slack Technologies',
       icon: 'https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/slack.svg',
@@ -88,13 +95,20 @@ export const IntegrationEcosystem: React.FC = () => {
       popularity: 95,
       rating: 4.8,
       totalInstalls: 15420,
-      supportedFeatures: ['Send Messages', 'Create Channels', 'File Upload', 'Webhooks', 'Bot Integration'],
+      supportedFeatures: [
+        'Send Messages',
+        'Create Channels',
+        'File Upload',
+        'Webhooks',
+        'Bot Integration',
+      ],
       isPopular: true,
     },
     {
       id: 'notion',
       name: 'Notion',
-      description: 'All-in-one workspace for notes, docs, and collaboration with powerful database features',
+      description:
+        'All-in-one workspace for notes, docs, and collaboration with powerful database features',
       category: 'productivity',
       provider: 'Notion Labs',
       icon: 'https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/notion.svg',
@@ -102,7 +116,12 @@ export const IntegrationEcosystem: React.FC = () => {
       popularity: 92,
       rating: 4.7,
       totalInstalls: 12350,
-      supportedFeatures: ['Create Pages', 'Update Content', 'Database Operations', 'Template Management'],
+      supportedFeatures: [
+        'Create Pages',
+        'Update Content',
+        'Database Operations',
+        'Template Management',
+      ],
       isPopular: true,
     },
     {
@@ -116,13 +135,20 @@ export const IntegrationEcosystem: React.FC = () => {
       popularity: 94,
       rating: 4.9,
       totalInstalls: 18750,
-      supportedFeatures: ['SQL Queries', 'Transactions', 'Bulk Operations', 'JSON Support', 'Full-text Search'],
+      supportedFeatures: [
+        'SQL Queries',
+        'Transactions',
+        'Bulk Operations',
+        'JSON Support',
+        'Full-text Search',
+      ],
       isPopular: true,
     },
     {
       id: 'aws-s3',
       name: 'Amazon S3',
-      description: 'Scalable object storage service with industry-leading durability and availability',
+      description:
+        'Scalable object storage service with industry-leading durability and availability',
       category: 'cloud',
       provider: 'Amazon Web Services',
       icon: 'https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/amazons3.svg',
@@ -130,7 +156,13 @@ export const IntegrationEcosystem: React.FC = () => {
       popularity: 96,
       rating: 4.8,
       totalInstalls: 22100,
-      supportedFeatures: ['File Upload', 'File Download', 'Bucket Management', 'Presigned URLs', 'Lifecycle Policies'],
+      supportedFeatures: [
+        'File Upload',
+        'File Download',
+        'Bucket Management',
+        'Presigned URLs',
+        'Lifecycle Policies',
+      ],
       isPopular: true,
     },
     {
@@ -144,13 +176,20 @@ export const IntegrationEcosystem: React.FC = () => {
       popularity: 88,
       rating: 4.6,
       totalInstalls: 9850,
-      supportedFeatures: ['Send Messages', 'Manage Roles', 'Voice Channels', 'Webhooks', 'Bot Commands'],
+      supportedFeatures: [
+        'Send Messages',
+        'Manage Roles',
+        'Voice Channels',
+        'Webhooks',
+        'Bot Commands',
+      ],
       isNew: true,
     },
     {
       id: 'airtable',
       name: 'Airtable',
-      description: 'Cloud-based database and spreadsheet hybrid with powerful collaboration features',
+      description:
+        'Cloud-based database and spreadsheet hybrid with powerful collaboration features',
       category: 'productivity',
       provider: 'Airtable Inc.',
       icon: 'https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/airtable.svg',
@@ -158,7 +197,12 @@ export const IntegrationEcosystem: React.FC = () => {
       popularity: 85,
       rating: 4.5,
       totalInstalls: 7650,
-      supportedFeatures: ['Record Management', 'View Operations', 'Attachment Handling', 'Formula Fields'],
+      supportedFeatures: [
+        'Record Management',
+        'View Operations',
+        'Attachment Handling',
+        'Formula Fields',
+      ],
     },
     {
       id: 'mongodb',
@@ -171,12 +215,19 @@ export const IntegrationEcosystem: React.FC = () => {
       popularity: 89,
       rating: 4.6,
       totalInstalls: 14200,
-      supportedFeatures: ['Document Operations', 'Aggregation Pipeline', 'Indexing', 'GridFS', 'Change Streams'],
+      supportedFeatures: [
+        'Document Operations',
+        'Aggregation Pipeline',
+        'Indexing',
+        'GridFS',
+        'Change Streams',
+      ],
     },
     {
       id: 'salesforce',
       name: 'Salesforce',
-      description: 'Customer relationship management platform with comprehensive business automation',
+      description:
+        'Customer relationship management platform with comprehensive business automation',
       category: 'saas',
       provider: 'Salesforce Inc.',
       icon: 'https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/salesforce.svg',
@@ -184,7 +235,13 @@ export const IntegrationEcosystem: React.FC = () => {
       popularity: 90,
       rating: 4.4,
       totalInstalls: 11500,
-      supportedFeatures: ['Lead Management', 'Contact Operations', 'Opportunity Tracking', 'Custom Objects', 'Apex Integration'],
+      supportedFeatures: [
+        'Lead Management',
+        'Contact Operations',
+        'Opportunity Tracking',
+        'Custom Objects',
+        'Apex Integration',
+      ],
     },
   ];
 
@@ -199,54 +256,66 @@ export const IntegrationEcosystem: React.FC = () => {
     { key: 'storage', label: 'Storage', icon: <CloudOutlined /> },
   ];
 
-  const filteredIntegrations = mockIntegrations.filter(integration => {
-    const matchesSearch = integration.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         integration.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         integration.provider.toLowerCase().includes(searchQuery.toLowerCase());
+  const filteredIntegrations = mockIntegrations.filter((integration) => {
+    const matchesSearch =
+      integration.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      integration.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      integration.provider.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesCategory = selectedCategory === 'all' || integration.category === selectedCategory;
     return matchesSearch && matchesCategory;
   });
 
-  const popularIntegrations = mockIntegrations.filter(i => i.isPopular).slice(0, 6);
-  const newIntegrations = mockIntegrations.filter(i => i.isNew).slice(0, 6);
+  const popularIntegrations = mockIntegrations.filter((i) => i.isPopular).slice(0, 6);
+  const newIntegrations = mockIntegrations.filter((i) => i.isNew).slice(0, 6);
   const trendingIntegrations = mockIntegrations.sort(() => Math.random() - 0.5).slice(0, 6);
 
   const getCategoryIcon = (category: string) => {
     switch (category) {
-      case 'communication': return <MessageOutlined />;
-      case 'productivity': return <FileTextOutlined />;
-      case 'database': return <DatabaseOutlined />;
-      case 'cloud': return <CloudOutlined />;
-      case 'saas': return <BarChartOutlined />;
-      case 'analytics': return <BarChartOutlined />;
-      case 'storage': return <CloudOutlined />;
-      default: return <ApiOutlined />;
+      case 'communication':
+        return <MessageOutlined />;
+      case 'productivity':
+        return <FileTextOutlined />;
+      case 'database':
+        return <DatabaseOutlined />;
+      case 'cloud':
+        return <CloudOutlined />;
+      case 'saas':
+        return <BarChartOutlined />;
+      case 'analytics':
+        return <BarChartOutlined />;
+      case 'storage':
+        return <CloudOutlined />;
+      default:
+        return <ApiOutlined />;
     }
   };
 
   const getPricingColor = (pricing: string) => {
     switch (pricing) {
-      case 'free': return 'green';
-      case 'paid': return 'red';
-      case 'freemium': return 'blue';
-      case 'enterprise': return 'purple';
-      default: return 'default';
+      case 'free':
+        return 'green';
+      case 'paid':
+        return 'red';
+      case 'freemium':
+        return 'blue';
+      case 'enterprise':
+        return 'purple';
+      default:
+        return 'default';
     }
   };
 
   const handleInstallIntegration = async (integration: Integration) => {
     try {
       // Mock installation process
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      setInstalledIntegrations(prev => new Set([...prev, integration.id]));
+      setInstalledIntegrations((prev) => new Set([...prev, integration.id]));
       setShowInstallModal(false);
 
       // Update install count
       integration.totalInstalls += 1;
-    } catch (error) {
-      console.error('Installation failed:', error);
-    }
+    } catch (_error) {}
   };
 
   const renderIntegrationCard = (integration: Integration) => (
@@ -279,11 +348,7 @@ export const IntegrationEcosystem: React.FC = () => {
       <Card.Meta
         avatar={
           <Badge dot={integration.isNew} color="red">
-            <Avatar
-              size={48}
-              src={integration.icon}
-              style={{ backgroundColor: '#f0f0f0' }}
-            />
+            <Avatar size={48} src={integration.icon} style={{ backgroundColor: '#f0f0f0' }} />
           </Badge>
         }
         title={
@@ -311,12 +376,17 @@ export const IntegrationEcosystem: React.FC = () => {
               <Tag icon={getCategoryIcon(integration.category)} color="blue">
                 {integration.category}
               </Tag>
-              <Tag color={getPricingColor(integration.pricing)}>
-                {integration.pricing}
-              </Tag>
+              <Tag color={getPricingColor(integration.pricing)}>{integration.pricing}</Tag>
             </Space>
 
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginBottom: 8,
+              }}
+            >
               <Space>
                 <Rate disabled value={integration.rating} style={{ fontSize: 12 }} />
                 <Text type="secondary" style={{ fontSize: 12 }}>
@@ -329,9 +399,11 @@ export const IntegrationEcosystem: React.FC = () => {
             </div>
 
             <div>
-              <Text strong style={{ fontSize: 12 }}>Features:</Text>
+              <Text strong style={{ fontSize: 12 }}>
+                Features:
+              </Text>
               <div style={{ marginTop: 4 }}>
-                {integration.supportedFeatures.slice(0, 3).map(feature => (
+                {integration.supportedFeatures.slice(0, 3).map((feature) => (
                   <Tag key={feature} size="small" style={{ marginBottom: 2 }}>
                     {feature}
                   </Tag>
@@ -386,7 +458,7 @@ export const IntegrationEcosystem: React.FC = () => {
         <FireOutlined /> Most Popular
       </Title>
       <Row gutter={[16, 16]}>
-        {popularIntegrations.map(integration => (
+        {popularIntegrations.map((integration) => (
           <Col key={integration.id} xs={24} sm={12} lg={8}>
             {renderIntegrationCard(integration)}
           </Col>
@@ -398,8 +470,8 @@ export const IntegrationEcosystem: React.FC = () => {
   const renderCategoriesTab = () => (
     <div>
       <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
-        {categories.slice(1).map(category => {
-          const categoryIntegrations = mockIntegrations.filter(i => i.category === category.key);
+        {categories.slice(1).map((category) => {
+          const categoryIntegrations = mockIntegrations.filter((i) => i.category === category.key);
           return (
             <Col key={category.key} xs={24} sm={12} md={8} lg={6}>
               <Card
@@ -428,7 +500,7 @@ export const IntegrationEcosystem: React.FC = () => {
         <StarOutlined /> New Integrations
       </Title>
       <Row gutter={[16, 16]}>
-        {newIntegrations.map(integration => (
+        {newIntegrations.map((integration) => (
           <Col key={integration.id} xs={24} sm={12} lg={8}>
             {renderIntegrationCard(integration)}
           </Col>
@@ -457,7 +529,7 @@ export const IntegrationEcosystem: React.FC = () => {
               style={{ width: '100%' }}
               placeholder="Select category"
             >
-              {categories.map(category => (
+              {categories.map((category) => (
                 <Option key={category.key} value={category.key}>
                   <Space>
                     {category.icon}
@@ -468,16 +540,14 @@ export const IntegrationEcosystem: React.FC = () => {
             </Select>
           </Col>
           <Col xs={24} sm={24} md={8}>
-            <Text type="secondary">
-              {filteredIntegrations.length} integrations found
-            </Text>
+            <Text type="secondary">{filteredIntegrations.length} integrations found</Text>
           </Col>
         </Row>
       </Card>
 
       {/* Integration Grid */}
       <Row gutter={[16, 16]}>
-        {filteredIntegrations.map(integration => (
+        {filteredIntegrations.map((integration) => (
           <Col key={integration.id} xs={24} sm={12} lg={8}>
             {renderIntegrationCard(integration)}
           </Col>
@@ -488,7 +558,9 @@ export const IntegrationEcosystem: React.FC = () => {
         <Card style={{ textAlign: 'center', padding: 50 }}>
           <Space direction="vertical">
             <ApiOutlined style={{ fontSize: 48, color: '#d9d9d9' }} />
-            <Title level={4} type="secondary">No integrations found</Title>
+            <Title level={4} type="secondary">
+              No integrations found
+            </Title>
             <Text type="secondary">Try adjusting your search or filters</Text>
           </Space>
         </Card>
@@ -526,26 +598,58 @@ export const IntegrationEcosystem: React.FC = () => {
           <ApiOutlined /> Integration Ecosystem
         </Title>
         <Paragraph>
-          Connect Reporunner with your favorite tools and services. From popular SaaS platforms
-          to databases and cloud services, we've got you covered.
+          Connect Reporunner with your favorite tools and services. From popular SaaS platforms to
+          databases and cloud services, we've got you covered.
         </Paragraph>
       </div>
 
       {/* Main Content */}
       <Tabs activeKey={activeTab} onChange={setActiveTab} centered>
-        <TabPane tab={<span><FireOutlined />Popular</span>} key="popular">
+        <TabPane
+          tab={
+            <span>
+              <FireOutlined />
+              Popular
+            </span>
+          }
+          key="popular"
+        >
           {renderPopularTab()}
         </TabPane>
 
-        <TabPane tab={<span><ApiOutlined />Categories</span>} key="categories">
+        <TabPane
+          tab={
+            <span>
+              <ApiOutlined />
+              Categories
+            </span>
+          }
+          key="categories"
+        >
           {renderCategoriesTab()}
         </TabPane>
 
-        <TabPane tab={<span><SearchOutlined />Browse All</span>} key="browse">
+        <TabPane
+          tab={
+            <span>
+              <SearchOutlined />
+              Browse All
+            </span>
+          }
+          key="browse"
+        >
           {renderBrowseTab()}
         </TabPane>
 
-        <TabPane tab={<span><TrophyOutlined />Trending</span>} key="trending">
+        <TabPane
+          tab={
+            <span>
+              <TrophyOutlined />
+              Trending
+            </span>
+          }
+          key="trending"
+        >
           {renderTrendingTab()}
         </TabPane>
       </Tabs>
@@ -588,7 +692,7 @@ export const IntegrationEcosystem: React.FC = () => {
             <List
               size="small"
               dataSource={selectedIntegration.supportedFeatures}
-              renderItem={feature => (
+              renderItem={(feature) => (
                 <List.Item>
                   <CheckCircleOutlined style={{ color: '#52c41a', marginRight: 8 }} />
                   {feature}

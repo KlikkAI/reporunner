@@ -9,28 +9,11 @@ import { z } from 'zod';
 // ENUMS AND CONSTANTS
 // ============================================================================
 
-export const SCHEDULE_TYPES = [
-  'cron',
-  'interval',
-  'once',
-  'recurring'
-] as const;
+export const SCHEDULE_TYPES = ['cron', 'interval', 'once', 'recurring'] as const;
 
-export const SCHEDULE_STATUSES = [
-  'active',
-  'inactive',
-  'paused',
-  'completed',
-  'error'
-] as const;
+export const SCHEDULE_STATUSES = ['active', 'inactive', 'paused', 'completed', 'error'] as const;
 
-export const RECURRENCE_PATTERNS = [
-  'daily',
-  'weekly',
-  'monthly',
-  'yearly',
-  'custom'
-] as const;
+export const RECURRENCE_PATTERNS = ['daily', 'weekly', 'monthly', 'yearly', 'custom'] as const;
 
 export const WEEKDAYS = [
   'monday',
@@ -39,25 +22,20 @@ export const WEEKDAYS = [
   'thursday',
   'friday',
   'saturday',
-  'sunday'
+  'sunday',
 ] as const;
 
-export const EXECUTION_PRIORITIES = [
-  'low',
-  'normal',
-  'high',
-  'critical'
-] as const;
+export const EXECUTION_PRIORITIES = ['low', 'normal', 'high', 'critical'] as const;
 
 // ============================================================================
 // TYPE DEFINITIONS
 // ============================================================================
 
-export type ScheduleType = typeof SCHEDULE_TYPES[number];
-export type ScheduleStatus = typeof SCHEDULE_STATUSES[number];
-export type RecurrencePattern = typeof RECURRENCE_PATTERNS[number];
-export type Weekday = typeof WEEKDAYS[number];
-export type ExecutionPriority = typeof EXECUTION_PRIORITIES[number];
+export type ScheduleType = (typeof SCHEDULE_TYPES)[number];
+export type ScheduleStatus = (typeof SCHEDULE_STATUSES)[number];
+export type RecurrencePattern = (typeof RECURRENCE_PATTERNS)[number];
+export type Weekday = (typeof WEEKDAYS)[number];
+export type ExecutionPriority = (typeof EXECUTION_PRIORITIES)[number];
 
 // ============================================================================
 // CORE INTERFACES
@@ -208,7 +186,8 @@ export interface ScheduleBatch {
 // API TRANSFER OBJECTS (DTOs)
 // ============================================================================
 
-export interface ScheduleDTO extends Omit<Schedule, 'createdAt' | 'updatedAt' | 'lastExecuted' | 'nextExecution' | 'config'> {
+export interface ScheduleDTO
+  extends Omit<Schedule, 'createdAt' | 'updatedAt' | 'lastExecuted' | 'nextExecution' | 'config'> {
   createdAt: string;
   updatedAt: string;
   lastExecuted?: string;
@@ -221,7 +200,8 @@ export interface ScheduleConfigDTO extends Omit<ScheduleConfig, 'startDate' | 'e
   endDate?: string;
 }
 
-export interface ScheduledExecutionDTO extends Omit<ScheduledExecution, 'scheduledAt' | 'startedAt' | 'completedAt' | 'retryAt'> {
+export interface ScheduledExecutionDTO
+  extends Omit<ScheduledExecution, 'scheduledAt' | 'startedAt' | 'completedAt' | 'retryAt'> {
   scheduledAt: string;
   startedAt?: string;
   completedAt?: string;
@@ -241,7 +221,8 @@ export interface ScheduleAnalyticsDTO extends Omit<ScheduleAnalytics, 'period' |
   }>;
 }
 
-export interface ScheduleBatchDTO extends Omit<ScheduleBatch, 'createdAt' | 'startedAt' | 'completedAt'> {
+export interface ScheduleBatchDTO
+  extends Omit<ScheduleBatch, 'createdAt' | 'startedAt' | 'completedAt'> {
   createdAt: string;
   startedAt?: string;
   completedAt?: string;
@@ -263,7 +244,7 @@ export const RecurrenceConfigSchema = z.object({
   weekdays: z.array(WeekdaySchema).optional(),
   monthDay: z.number().min(1).max(31).optional(),
   yearDay: z.number().min(1).max(365).optional(),
-  customCron: z.string().optional()
+  customCron: z.string().optional(),
 });
 
 export const ScheduleConfigSchema = z.object({
@@ -276,7 +257,7 @@ export const ScheduleConfigSchema = z.object({
   maxExecutions: z.number().min(1).optional(),
   retryOnFailure: z.boolean().optional(),
   retryAttempts: z.number().min(0).max(10).optional(),
-  retryDelay: z.number().min(1).optional()
+  retryDelay: z.number().min(1).optional(),
 });
 
 export const CreateScheduleSchema = z.object({
@@ -288,7 +269,7 @@ export const CreateScheduleSchema = z.object({
   priority: ExecutionPrioritySchema.default('normal'),
   enabled: z.boolean().default(true),
   tags: z.array(z.string()).optional(),
-  metadata: z.record(z.string(), z.any()).optional()
+  metadata: z.record(z.string(), z.any()).optional(),
 });
 
 export const UpdateScheduleSchema = CreateScheduleSchema.partial().omit({ workflowId: true });
@@ -299,18 +280,18 @@ export const ScheduleQuerySchema = z.object({
   workflowId: z.string().optional(),
   enabled: z.boolean().optional(),
   priority: ExecutionPrioritySchema.optional(),
-  tags: z.array(z.string()).optional()
+  tags: z.array(z.string()).optional(),
 });
 
 export const TriggerScheduleSchema = z.object({
   force: z.boolean().optional(),
-  metadata: z.record(z.string(), z.any()).optional()
+  metadata: z.record(z.string(), z.any()).optional(),
 });
 
 export const ScheduleAnalyticsQuerySchema = z.object({
   startDate: z.string().datetime(),
   endDate: z.string().datetime(),
-  granularity: z.enum(['hour', 'day', 'week', 'month']).optional()
+  granularity: z.enum(['hour', 'day', 'week', 'month']).optional(),
 });
 
 // ============================================================================
@@ -330,8 +311,8 @@ export function toScheduleDTO(schedule: Schedule): ScheduleDTO {
     config: {
       ...schedule.config,
       startDate: schedule.config.startDate?.toISOString(),
-      endDate: schedule.config.endDate?.toISOString()
-    }
+      endDate: schedule.config.endDate?.toISOString(),
+    },
   };
 }
 
@@ -341,7 +322,7 @@ export function toScheduledExecutionDTO(execution: ScheduledExecution): Schedule
     scheduledAt: execution.scheduledAt.toISOString(),
     startedAt: execution.startedAt?.toISOString(),
     completedAt: execution.completedAt?.toISOString(),
-    retryAt: execution.retryAt?.toISOString()
+    retryAt: execution.retryAt?.toISOString(),
   };
 }
 
@@ -350,12 +331,12 @@ export function toScheduleAnalyticsDTO(analytics: ScheduleAnalytics): ScheduleAn
     ...analytics,
     period: {
       startDate: analytics.period.startDate.toISOString(),
-      endDate: analytics.period.endDate.toISOString()
+      endDate: analytics.period.endDate.toISOString(),
     },
-    executionTrend: analytics.executionTrend.map(trend => ({
+    executionTrend: analytics.executionTrend.map((trend) => ({
       ...trend,
-      date: trend.date.toISOString()
-    }))
+      date: trend.date.toISOString(),
+    })),
   };
 }
 
@@ -364,7 +345,7 @@ export function toScheduleBatchDTO(batch: ScheduleBatch): ScheduleBatchDTO {
     ...batch,
     createdAt: batch.createdAt.toISOString(),
     startedAt: batch.startedAt?.toISOString(),
-    completedAt: batch.completedAt?.toISOString()
+    completedAt: batch.completedAt?.toISOString(),
   };
 }
 
@@ -381,8 +362,8 @@ export function fromScheduleDTO(scheduleDTO: ScheduleDTO): Schedule {
     config: {
       ...scheduleDTO.config,
       startDate: scheduleDTO.config.startDate ? new Date(scheduleDTO.config.startDate) : undefined,
-      endDate: scheduleDTO.config.endDate ? new Date(scheduleDTO.config.endDate) : undefined
-    }
+      endDate: scheduleDTO.config.endDate ? new Date(scheduleDTO.config.endDate) : undefined,
+    },
   };
 }
 
@@ -394,7 +375,7 @@ export function getScheduleTypeDisplayName(type: ScheduleType): string {
     cron: 'Cron Expression',
     interval: 'Interval',
     once: 'One Time',
-    recurring: 'Recurring'
+    recurring: 'Recurring',
   };
   return names[type];
 }
@@ -404,11 +385,11 @@ export function getScheduleTypeDisplayName(type: ScheduleType): string {
  */
 export function getScheduleStatusColor(status: ScheduleStatus): string {
   const colors = {
-    active: '#10B981',     // green
-    inactive: '#6B7280',   // gray
-    paused: '#F59E0B',     // yellow
-    completed: '#3B82F6',  // blue
-    error: '#EF4444'       // red
+    active: '#10B981', // green
+    inactive: '#6B7280', // gray
+    paused: '#F59E0B', // yellow
+    completed: '#3B82F6', // blue
+    error: '#EF4444', // red
   };
   return colors[status];
 }
@@ -418,10 +399,10 @@ export function getScheduleStatusColor(status: ScheduleStatus): string {
  */
 export function getExecutionPriorityColor(priority: ExecutionPriority): string {
   const colors = {
-    low: '#6B7280',       // gray
-    normal: '#3B82F6',    // blue
-    high: '#F59E0B',      // yellow
-    critical: '#EF4444'   // red
+    low: '#6B7280', // gray
+    normal: '#3B82F6', // blue
+    high: '#F59E0B', // yellow
+    critical: '#EF4444', // red
   };
   return colors[priority];
 }
@@ -429,7 +410,7 @@ export function getExecutionPriorityColor(priority: ExecutionPriority): string {
 /**
  * Calculate next execution time based on cron expression
  */
-export function calculateNextExecution(_cronExpression: string,_timezonee?: string): Date {
+export function calculateNextExecution(_cronExpression: string, _timezonee?: string): Date {
   // This is a simplified implementation
   // In production, use a proper cron parser like 'node-cron' or 'cron-parser'
   const now = new Date();
@@ -444,7 +425,8 @@ export function calculateNextExecution(_cronExpression: string,_timezonee?: stri
  */
 export function isValidCronExpression(expression: string): boolean {
   // Basic cron validation - in production, use a proper cron parser
-  const cronRegex = /^(\*|([0-9]|1[0-9]|2[0-9]|3[0-9]|4[0-9]|5[0-9])|\*\/([0-9]|1[0-9]|2[0-9]|3[0-9]|4[0-9]|5[0-9])) (\*|([0-9]|1[0-9]|2[0-3])|\*\/([0-9]|1[0-9]|2[0-3])) (\*|([1-9]|1[0-9]|2[0-9]|3[0-1])|\*\/([1-9]|1[0-9]|2[0-9]|3[0-1])) (\*|([1-9]|1[0-2])|\*\/([1-9]|1[0-2])) (\*|([0-6])|\*\/([0-6]))$/;
+  const cronRegex =
+    /^(\*|([0-9]|1[0-9]|2[0-9]|3[0-9]|4[0-9]|5[0-9])|\*\/([0-9]|1[0-9]|2[0-9]|3[0-9]|4[0-9]|5[0-9])) (\*|([0-9]|1[0-9]|2[0-3])|\*\/([0-9]|1[0-9]|2[0-3])) (\*|([1-9]|1[0-9]|2[0-9]|3[0-1])|\*\/([1-9]|1[0-9]|2[0-9]|3[0-1])) (\*|([1-9]|1[0-2])|\*\/([1-9]|1[0-2])) (\*|([0-6])|\*\/([0-6]))$/;
   return cronRegex.test(expression);
 }
 
@@ -452,7 +434,9 @@ export function isValidCronExpression(expression: string): boolean {
  * Calculate schedule success rate
  */
 export function calculateScheduleSuccessRate(successCount: number, totalCount: number): number {
-  if (totalCount === 0) { return 100; }
+  if (totalCount === 0) {
+    return 100;
+  }
   return Math.round((successCount / totalCount) * 100);
 }
 

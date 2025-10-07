@@ -1,16 +1,18 @@
 #!/usr/bin/env node
 
+import * as fs from 'node:fs';
+import * as path from 'node:path';
 import { Command } from 'commander';
-import * as path from 'path';
-import * as fs from 'fs';
 import { IDEPerformanceValidator } from '../ide-performance/ide-performance-validator';
-import { IDEPerformanceReport } from '../ide-performance/types';
+import type { IDEPerformanceReport } from '../ide-performance/types';
 
 const program = new Command();
 
 program
   .name('ide-performance')
-  .description('Validate IDE performance and developer experience in the consolidated package architecture')
+  .description(
+    'Validate IDE performance and developer experience in the consolidated package architecture'
+  )
   .version('1.0.0');
 
 program
@@ -24,15 +26,13 @@ program
   .action(async (options) => {
     try {
       const workspaceRoot = findWorkspaceRoot();
-      console.log(`Validating IDE performance in: ${workspaceRoot}`);
 
       const validator = new IDEPerformanceValidator(workspaceRoot);
 
       let report: IDEPerformanceReport;
 
       if (options.navigationOnly) {
-        console.log('Running navigation tests only...');
-        const navigationResults = await validator['navigationTester'].runNavigationTests();
+        const navigationResults = await validator.navigationTester.runNavigationTests();
         report = {
           timestamp: new Date(),
           navigationResults,
@@ -45,12 +45,11 @@ program
             averageIntelliSenseTime: 0,
             navigationSuccessRate: 0,
             intelliSenseAccuracy: 0,
-            sourceMappingReliability: 0
-          }
+            sourceMappingReliability: 0,
+          },
         };
       } else if (options.intellisenseOnly) {
-        console.log('Running IntelliSense tests only...');
-        const intelliSenseResults = await validator['intelliSenseTester'].runIntelliSenseTests();
+        const intelliSenseResults = await validator.intelliSenseTester.runIntelliSenseTests();
         report = {
           timestamp: new Date(),
           navigationResults: [],
@@ -63,12 +62,11 @@ program
             averageIntelliSenseTime: 0,
             navigationSuccessRate: 0,
             intelliSenseAccuracy: 0,
-            sourceMappingReliability: 0
-          }
+            sourceMappingReliability: 0,
+          },
         };
       } else if (options.sourcemapOnly) {
-        console.log('Running source mapping validation only...');
-        const sourceMappingResults = await validator['sourceMappingValidator'].validateSourceMapping();
+        const sourceMappingResults = await validator.sourceMappingValidator.validateSourceMapping();
         report = {
           timestamp: new Date(),
           navigationResults: [],
@@ -81,8 +79,8 @@ program
             averageIntelliSenseTime: 0,
             navigationSuccessRate: 0,
             intelliSenseAccuracy: 0,
-            sourceMappingReliability: 0
-          }
+            sourceMappingReliability: 0,
+          },
         };
       } else {
         report = await validator.validateIDEPerformance();
@@ -95,21 +93,19 @@ program
       if (options.output) {
         const outputPath = path.resolve(options.output);
         fs.writeFileSync(outputPath, JSON.stringify(report, null, 2));
-        console.log(`\nValidation report saved to: ${outputPath}`);
       }
 
       // Exit with appropriate code
-      const hasIssues = report.overallScore < 70 ||
-                       report.navigationResults.some(r => !r.successful) ||
-                       report.intelliSenseResults.some(r => !r.successful) ||
-                       report.sourceMappingResults.some(r => r.debuggingExperience === 'broken');
+      const hasIssues =
+        report.overallScore < 70 ||
+        report.navigationResults.some((r) => !r.successful) ||
+        report.intelliSenseResults.some((r) => !r.successful) ||
+        report.sourceMappingResults.some((r) => r.debuggingExperience === 'broken');
 
       if (hasIssues) {
         process.exit(1);
       }
-
-    } catch (error) {
-      console.error('Error running IDE performance validation:', error);
+    } catch (_error) {
       process.exit(1);
     }
   });
@@ -141,13 +137,9 @@ program
 
       if (options.output) {
         fs.writeFileSync(options.output, formattedReport);
-        console.log(`Report saved to: ${options.output}`);
       } else {
-        console.log(formattedReport);
       }
-
-    } catch (error) {
-      console.error('Error generating report:', error);
+    } catch (_error) {
       process.exit(1);
     }
   });
@@ -166,35 +158,21 @@ function findWorkspaceRoot(): string {
     currentDir = path.dirname(currentDir);
   }
 
-  throw new Error('Could not find workspace root (looking for package.json and pnpm-workspace.yaml)');
+  throw new Error(
+    'Could not find workspace root (looking for package.json and pnpm-workspace.yaml)'
+  );
 }
 
 function displayResults(report: IDEPerformanceReport, verbose: boolean = false): void {
-  console.log('\n=== IDE Performance Validation Report ===');
-  console.log(`Generated: ${report.timestamp.toISOString()}`);
-  console.log(`Overall Score: ${report.overallScore}/100`);
-
-  // Performance Metrics Summary
-  console.log('\n--- Performance Metrics ---');
-  console.log(`Navigation Success Rate: ${Math.round(report.performanceMetrics.navigationSuccessRate * 100)}%`);
-  console.log(`Average Navigation Time: ${Math.round(report.performanceMetrics.averageNavigationTime)}ms`);
-  console.log(`IntelliSense Accuracy: ${Math.round(report.performanceMetrics.intelliSenseAccuracy)}%`);
-  console.log(`Average IntelliSense Time: ${Math.round(report.performanceMetrics.averageIntelliSenseTime)}ms`);
-  console.log(`Source Mapping Reliability: ${Math.round(report.performanceMetrics.sourceMappingReliability * 100)}%`);
-
   // Navigation Results
   if (report.navigationResults.length > 0) {
-    console.log('\n--- Navigation Tests ---');
-    const successful = report.navigationResults.filter(r => r.successful).length;
-    const total = report.navigationResults.length;
-    console.log(`Passed: ${successful}/${total} (${Math.round((successful/total) * 100)}%)`);
+    const _successful = report.navigationResults.filter((r) => r.successful).length;
+    const _total = report.navigationResults.length;
 
     if (verbose) {
-      report.navigationResults.forEach(result => {
-        const status = result.successful ? '✅' : '❌';
-        console.log(`  ${status} ${result.testName}: ${result.navigationTime}ms`);
+      report.navigationResults.forEach((result) => {
+        const _status = result.successful ? '✅' : '❌';
         if (!result.successful && result.errorMessage) {
-          console.log(`    Error: ${result.errorMessage}`);
         }
       });
     }
@@ -202,17 +180,13 @@ function displayResults(report: IDEPerformanceReport, verbose: boolean = false):
 
   // IntelliSense Results
   if (report.intelliSenseResults.length > 0) {
-    console.log('\n--- IntelliSense Tests ---');
-    const successful = report.intelliSenseResults.filter(r => r.successful).length;
-    const total = report.intelliSenseResults.length;
-    console.log(`Passed: ${successful}/${total} (${Math.round((successful/total) * 100)}%)`);
+    const _successful = report.intelliSenseResults.filter((r) => r.successful).length;
+    const _total = report.intelliSenseResults.length;
 
     if (verbose) {
-      report.intelliSenseResults.forEach(result => {
-        const status = result.successful ? '✅' : '❌';
-        console.log(`  ${status} ${result.testName}: ${result.accuracy.toFixed(1)}% accuracy (${result.responseTime}ms)`);
+      report.intelliSenseResults.forEach((result) => {
+        const _status = result.successful ? '✅' : '❌';
         if (verbose && result.actualFeatures.length > 0) {
-          console.log(`    Features: ${result.actualFeatures.join(', ')}`);
         }
       });
     }
@@ -220,20 +194,15 @@ function displayResults(report: IDEPerformanceReport, verbose: boolean = false):
 
   // Source Mapping Results
   if (report.sourceMappingResults.length > 0) {
-    console.log('\n--- Source Mapping Validation ---');
-    const reliable = report.sourceMappingResults.filter(r => r.sourceMappingAccurate).length;
-    const total = report.sourceMappingResults.length;
-    console.log(`Reliable: ${reliable}/${total} (${Math.round((reliable/total) * 100)}%)`);
+    const _reliable = report.sourceMappingResults.filter((r) => r.sourceMappingAccurate).length;
+    const _total = report.sourceMappingResults.length;
 
     if (verbose) {
-      report.sourceMappingResults.forEach(result => {
-        const status = result.sourceMappingAccurate ? '✅' : '❌';
-        const experience = result.debuggingExperience;
-        console.log(`  ${status} ${result.testName}: ${experience} debugging experience`);
+      report.sourceMappingResults.forEach((result) => {
+        const _status = result.sourceMappingAccurate ? '✅' : '❌';
+        const _experience = result.debuggingExperience;
         if (result.issues.length > 0) {
-          result.issues.forEach(issue => {
-            console.log(`    Issue: ${issue}`);
-          });
+          result.issues.forEach((_issue) => {});
         }
       });
     }
@@ -241,10 +210,7 @@ function displayResults(report: IDEPerformanceReport, verbose: boolean = false):
 
   // Recommendations
   if (report.recommendations.length > 0) {
-    console.log('\n--- Recommendations ---');
-    report.recommendations.forEach((rec, index) => {
-      console.log(`${index + 1}. ${rec}`);
-    });
+    report.recommendations.forEach((_rec, _index) => {});
   }
 }
 

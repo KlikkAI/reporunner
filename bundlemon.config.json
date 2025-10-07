@@ -25,10 +25,7 @@
     }
   ],
   "defaultCompression": "gzip",
-  "reportOutput": [
-    "github",
-    "console"
-  ],
+  "reportOutput": ["github", "console"],
   "ci": {
     "trackBranches": ["main", "develop"],
     "subProject": "frontend"

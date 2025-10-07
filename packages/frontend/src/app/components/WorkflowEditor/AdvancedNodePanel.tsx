@@ -125,16 +125,10 @@ const AdvancedNodePanel: React.FC<AdvancedNodePanelProps> = ({ isCollapsed, onTo
     aiSuggestion: suggestion,
   }));
 
-  const handleAISuggestionAdd = useCallback(
-    (suggestion: (typeof aiSuggestedNodes)[0]) => {
-      if (suggestion.aiSuggestion) {
-        // TODO: Implement AI suggestion adding through parent component
-        // This should trigger a drag event or call a parent handler
-        console.log('AI suggestion add not yet implemented:', suggestion);
-      }
-    },
-    []
-  );
+  const handleAISuggestionAdd = useCallback((suggestion: (typeof aiSuggestedNodes)[0]) => {
+    if (suggestion.aiSuggestion) {
+    }
+  }, []);
 
   // Filter and sort nodes in ascending order
   const filteredNodes = allAvailableNodes
@@ -253,7 +247,7 @@ const AdvancedNodePanel: React.FC<AdvancedNodePanelProps> = ({ isCollapsed, onTo
         addEdge(newEdge);
       }
     },
-    [addNode, addEdge, findLastNode]
+    [findLastNode]
   );
 
   // Render function for AI suggestion items

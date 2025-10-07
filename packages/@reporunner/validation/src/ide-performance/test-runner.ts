@@ -1,65 +1,37 @@
 #!/usr/bin/env node
 
+import * as path from 'node:path';
 import { IDEPerformanceValidator } from './ide-performance-validator';
-import * as path from 'path';
 
 async function runIDEPerformanceTest() {
-  console.log('🔍 Running IDE Performance Validation Test...\n');
-
   try {
     // Find workspace root
     const workspaceRoot = findWorkspaceRoot();
-    console.log(`Workspace root: ${workspaceRoot}`);
 
     // Create validator
     const validator = new IDEPerformanceValidator(workspaceRoot);
-
-    // Test navigation functionality
-    console.log('\n🧭 Testing navigation functionality...');
     const navigationTester = (validator as any).navigationTester;
     const navigationResults = await navigationTester.runNavigationTests();
-
-    console.log(`\n📊 Navigation Results:`);
     navigationResults.forEach((result: any) => {
-      const status = result.successful ? '✅' : '❌';
-      console.log(`  ${status} ${result.testName}: ${result.navigationTime}ms`);
+      const _status = result.successful ? '✅' : '❌';
       if (!result.successful && result.errorMessage) {
-        console.log(`    Error: ${result.errorMessage}`);
       }
     });
-
-    // Test IntelliSense functionality
-    console.log('\n🧠 Testing IntelliSense functionality...');
     const intelliSenseTester = (validator as any).intelliSenseTester;
     const intelliSenseResults = await intelliSenseTester.runIntelliSenseTests();
-
-    console.log(`\n📊 IntelliSense Results:`);
     intelliSenseResults.forEach((result: any) => {
-      const status = result.successful ? '✅' : '❌';
-      console.log(`  ${status} ${result.testName}: ${result.accuracy.toFixed(1)}% accuracy (${result.responseTime}ms)`);
+      const _status = result.successful ? '✅' : '❌';
       if (result.actualFeatures.length > 0) {
-        console.log(`    Features: ${result.actualFeatures.slice(0, 3).join(', ')}${result.actualFeatures.length > 3 ? '...' : ''}`);
       }
     });
-
-    // Test source mapping validation
-    console.log('\n🗺️ Testing source mapping validation...');
     const sourceMappingValidator = (validator as any).sourceMappingValidator;
     const sourceMappingResults = await sourceMappingValidator.validateSourceMapping();
-
-    console.log(`\n📊 Source Mapping Results:`);
     sourceMappingResults.forEach((result: any) => {
-      const status = result.sourceMappingAccurate ? '✅' : '❌';
-      console.log(`  ${status} ${result.testName}: ${result.debuggingExperience} debugging experience`);
+      const _status = result.sourceMappingAccurate ? '✅' : '❌';
       if (result.issues.length > 0) {
-        console.log(`    Issues: ${result.issues.slice(0, 2).join(', ')}${result.issues.length > 2 ? '...' : ''}`);
       }
     });
-
-    console.log('\n✅ IDE performance validation test completed successfully!');
-
-  } catch (error) {
-    console.error('❌ IDE performance validation test failed:', error);
+  } catch (_error) {
     process.exit(1);
   }
 }
@@ -72,11 +44,11 @@ function findWorkspaceRoot(): string {
     const pnpmWorkspacePath = path.join(currentDir, 'pnpm-workspace.yaml');
 
     try {
-      const fs = require('fs');
+      const fs = require('node:fs');
       if (fs.existsSync(packageJsonPath) && fs.existsSync(pnpmWorkspacePath)) {
         return currentDir;
       }
-    } catch (error) {
+    } catch (_error) {
       // Continue searching
     }
 

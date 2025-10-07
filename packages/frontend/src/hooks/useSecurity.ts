@@ -61,7 +61,9 @@ export const useSecurityThreats = (status?: ThreatStatus) => {
     queryKey: ['security', 'threats', { status }],
     queryFn: async () => {
       const params = new URLSearchParams();
-      if (status) { params.append('status', status); }
+      if (status) {
+        params.append('status', status);
+      }
 
       const response = await fetch(`/api/security/threats?${params}`);
 
@@ -188,7 +190,9 @@ export const useVulnerabilityScans = (type?: ScanType) => {
     queryKey: ['security', 'scans', { type }],
     queryFn: async () => {
       const params = new URLSearchParams();
-      if (type) { params.append('type', type); }
+      if (type) {
+        params.append('type', type);
+      }
 
       const response = await fetch(`/api/security/scans?${params}`);
 
@@ -211,7 +215,9 @@ export const useSecurityAlerts = (acknowledged?: boolean) => {
     queryKey: ['security', 'alerts', { acknowledged }],
     queryFn: async () => {
       const params = new URLSearchParams();
-      if (acknowledged !== undefined) { params.append('acknowledged', acknowledged.toString()); }
+      if (acknowledged !== undefined) {
+        params.append('acknowledged', acknowledged.toString());
+      }
 
       const response = await fetch(`/api/security/alerts?${params}`);
 

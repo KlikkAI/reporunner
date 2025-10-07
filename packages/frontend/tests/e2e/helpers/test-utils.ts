@@ -1,4 +1,4 @@
-import { Page, expect } from '@playwright/test';
+import { expect, type Page } from '@playwright/test';
 
 /**
  * E2E Test Utility Functions
@@ -187,7 +187,10 @@ export async function dismissToasts(page: Page) {
   const count = await toasts.count();
 
   for (let i = 0; i < count; i++) {
-    await toasts.nth(i).click({ timeout: 1000 }).catch(() => {});
+    await toasts
+      .nth(i)
+      .click({ timeout: 1000 })
+      .catch(() => {});
   }
 }
 
@@ -196,7 +199,9 @@ export async function dismissToasts(page: Page) {
  */
 export async function fillForm(page: Page, fields: Record<string, string>) {
   for (const [name, value] of Object.entries(fields)) {
-    const input = page.locator(`input[name="${name}"], textarea[name="${name}"], select[name="${name}"]`);
+    const input = page.locator(
+      `input[name="${name}"], textarea[name="${name}"], select[name="${name}"]`
+    );
     await input.fill(value);
   }
 }
@@ -205,10 +210,13 @@ export async function fillForm(page: Page, fields: Record<string, string>) {
  * Wait for API response
  */
 export async function waitForAPI(page: Page, urlPattern: string | RegExp, timeout = 10000) {
-  return await page.waitForResponse((response) => {
-    const url = response.url();
-    return typeof urlPattern === 'string' ? url.includes(urlPattern) : urlPattern.test(url);
-  }, { timeout });
+  return await page.waitForResponse(
+    (response) => {
+      const url = response.url();
+      return typeof urlPattern === 'string' ? url.includes(urlPattern) : urlPattern.test(url);
+    },
+    { timeout }
+  );
 }
 
 /**

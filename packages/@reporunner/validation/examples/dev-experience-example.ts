@@ -47,9 +47,9 @@ async function runDevExperienceExample() {
     productivityTracker.recordCodeChanges(120, 4);sion();
 
     if (session) {
-      console.log(`   Session completed: ${Math.round(session.metrics.totalDuration)}ms total`);
-      console.log(`   Activities: ${session.activities.length}`);
-      console.log(`   Code changes: ${session.metrics.linesOfCodeChanged} lines in ${session.metrics.filesModified} files`);
+      console.log(`   Session completed: $Math.round(session.metrics.totalDuration)ms total`);
+      console.log(`   Activities: $session.activities.length`);
+      console.log(`   Code changes: $session.metrics.linesOfCodeChangedlines in $session.metrics.filesModifiedfiles`);
     }ion completed');
   }
 

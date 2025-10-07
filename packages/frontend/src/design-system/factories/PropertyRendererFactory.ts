@@ -231,7 +231,14 @@ export class PropertyRendererFactory {
    * Build renderer props from configuration
    */
   private static buildRendererProps(config: PropertyRendererConfig, context: PropertyContext) {
-    const { formData, errors, touched, setFieldValue, setFieldError: _setFieldError, validateField } = context;
+    const {
+      formData,
+      errors,
+      touched,
+      setFieldValue,
+      setFieldError: _setFieldError,
+      validateField,
+    } = context;
 
     const value = formData[config.id] ?? config.defaultValue;
     const error = errors[config.id];
@@ -303,7 +310,7 @@ export class PropertyRendererFactory {
    */
   private static isRequired(config: PropertyRendererConfig, context: PropertyContext): boolean {
     if (!config.conditional?.requiredWhen) {
-      return config.required || false;
+      return config.required;
     }
 
     const { formData } = context;

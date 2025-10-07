@@ -35,7 +35,7 @@ export const WorkflowTester: React.FC<{
 
   const executionMonitor = useExecutionMonitor(executionId);
   const execution = executionMonitor?.executionState;
-  const isConnected = executionMonitor?.isConnected || false;
+  const isConnected = executionMonitor?.isConnected;
 
   const runTest = async () => {
     setTesting(true);

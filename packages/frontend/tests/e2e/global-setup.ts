@@ -1,6 +1,6 @@
-import { chromium, FullConfig } from '@playwright/test';
-import path from 'path';
-import fs from 'fs';
+import fs from 'node:fs';
+import path from 'node:path';
+import { chromium, type FullConfig } from '@playwright/test';
 
 /**
  * Global setup runs once before all tests

@@ -24,7 +24,9 @@ export const IdSchema = z.string().min(1, 'ID is required');
 export const OptionalIdSchema = z.string().optional();
 export const EmailSchema = z.string().email('Invalid email format');
 export const UrlSchema = z.string().url('Invalid URL format');
-export const IpAddressSchema = z.string().regex(/^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/, 'Invalid IP address');
+export const IpAddressSchema = z
+  .string()
+  .regex(/^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/, 'Invalid IP address');
 export const DateTimeSchema = z.string().datetime('Invalid datetime format');
 export const OptionalDateTimeSchema = z.string().datetime().optional();
 
@@ -208,7 +210,8 @@ export const HealthCheckSchema = z.object({
   timestamp: DateTimeSchema,
   version: z.string(),
   uptime: z.number(),
-  services: z.record(z.string(),
+  services: z.record(
+    z.string(),
     z.object({
       status: z.enum(['operational', 'degraded', 'down']),
       responseTime: z.number().optional(),

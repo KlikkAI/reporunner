@@ -125,7 +125,7 @@ export const CollaborationPanel: React.FC<CollaborationPanelProps> = ({ isVisibl
       setNewCommentContent('');
       setNewCommentPosition(null);
     } catch (_error) {}
-  }, [newCommentContent, newCommentPosition, selectedNodeIds, addComment, currentWorkflow?.id]);
+  }, [newCommentContent, newCommentPosition, addComment]);
 
   // Handle replying to a comment
   const handleReplyToComment = useCallback(
@@ -140,7 +140,7 @@ export const CollaborationPanel: React.FC<CollaborationPanelProps> = ({ isVisibl
         setReplyContents({ ...replyContents, [commentId]: '' });
       } catch (_error) {}
     },
-    [replyContents, replyToComment]
+    [replyContents]
   );
 
   // Handle conflict resolution
@@ -152,7 +152,7 @@ export const CollaborationPanel: React.FC<CollaborationPanelProps> = ({ isVisibl
         setSelectedConflict(null);
       } catch (_error) {}
     },
-    [resolveConflict]
+    []
   );
 
   // Users Tab

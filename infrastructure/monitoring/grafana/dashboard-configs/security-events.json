@@ -1,5 +1,5 @@
 {
-  "annotations": {"list": []},
+  "annotations": { "list": [] },
   "editable": true,
   "gnetId": null,
   "graphTooltip": 1,
@@ -10,7 +10,7 @@
     {
       "type": "stat",
       "title": "Failed Login Attempts (1h)",
-      "gridPos": {"h": 4, "w": 6, "x": 0, "y": 0},
+      "gridPos": { "h": 4, "w": 6, "x": 0, "y": 0 },
       "targets": [
         {
           "expr": "sum(increase(reporunner_auth_failed_total[1h]))",
@@ -18,16 +18,16 @@
           "refId": "A"
         }
       ],
-      "datasource": {"type": "prometheus", "uid": "PROM_DS"},
+      "datasource": { "type": "prometheus", "uid": "PROM_DS" },
       "fieldConfig": {
         "defaults": {
           "unit": "short",
           "thresholds": {
             "mode": "absolute",
             "steps": [
-              {"color": "green", "value": 0},
-              {"color": "yellow", "value": 10},
-              {"color": "red", "value": 50}
+              { "color": "green", "value": 0 },
+              { "color": "yellow", "value": 10 },
+              { "color": "red", "value": 50 }
             ]
           }
         }
@@ -36,7 +36,7 @@
     {
       "type": "stat",
       "title": "Suspicious API Calls (1h)",
-      "gridPos": {"h": 4, "w": 6, "x": 6, "y": 0},
+      "gridPos": { "h": 4, "w": 6, "x": 6, "y": 0 },
       "targets": [
         {
           "expr": "sum(increase(reporunner_api_suspicious_total[1h]))",
@@ -44,16 +44,16 @@
           "refId": "A"
         }
       ],
-      "datasource": {"type": "prometheus", "uid": "PROM_DS"},
+      "datasource": { "type": "prometheus", "uid": "PROM_DS" },
       "fieldConfig": {
         "defaults": {
           "unit": "short",
           "thresholds": {
             "mode": "absolute",
             "steps": [
-              {"color": "green", "value": 0},
-              {"color": "yellow", "value": 5},
-              {"color": "red", "value": 20}
+              { "color": "green", "value": 0 },
+              { "color": "yellow", "value": 5 },
+              { "color": "red", "value": 20 }
             ]
           }
         }
@@ -62,7 +62,7 @@
     {
       "type": "stat",
       "title": "Rate Limit Violations (1h)",
-      "gridPos": {"h": 4, "w": 6, "x": 12, "y": 0},
+      "gridPos": { "h": 4, "w": 6, "x": 12, "y": 0 },
       "targets": [
         {
           "expr": "sum(increase(reporunner_rate_limit_exceeded_total[1h]))",
@@ -70,16 +70,16 @@
           "refId": "A"
         }
       ],
-      "datasource": {"type": "prometheus", "uid": "PROM_DS"},
+      "datasource": { "type": "prometheus", "uid": "PROM_DS" },
       "fieldConfig": {
         "defaults": {
           "unit": "short",
           "thresholds": {
             "mode": "absolute",
             "steps": [
-              {"color": "green", "value": 0},
-              {"color": "yellow", "value": 100},
-              {"color": "red", "value": 1000}
+              { "color": "green", "value": 0 },
+              { "color": "yellow", "value": 100 },
+              { "color": "red", "value": 1000 }
             ]
           }
         }
@@ -88,7 +88,7 @@
     {
       "type": "stat",
       "title": "Invalid Token Attempts (1h)",
-      "gridPos": {"h": 4, "w": 6, "x": 18, "y": 0},
+      "gridPos": { "h": 4, "w": 6, "x": 18, "y": 0 },
       "targets": [
         {
           "expr": "sum(increase(reporunner_auth_invalid_token_total[1h]))",
@@ -96,16 +96,16 @@
           "refId": "A"
         }
       ],
-      "datasource": {"type": "prometheus", "uid": "PROM_DS"},
+      "datasource": { "type": "prometheus", "uid": "PROM_DS" },
       "fieldConfig": {
         "defaults": {
           "unit": "short",
           "thresholds": {
             "mode": "absolute",
             "steps": [
-              {"color": "green", "value": 0},
-              {"color": "yellow", "value": 10},
-              {"color": "red", "value": 50}
+              { "color": "green", "value": 0 },
+              { "color": "yellow", "value": 10 },
+              { "color": "red", "value": 50 }
             ]
           }
         }
@@ -114,7 +114,7 @@
     {
       "type": "timeseries",
       "title": "Authentication Failures by Type",
-      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 4},
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 4 },
       "targets": [
         {
           "expr": "sum(rate(reporunner_auth_failed_total[5m])) by (reason)",
@@ -122,18 +122,18 @@
           "refId": "A"
         }
       ],
-      "datasource": {"type": "prometheus", "uid": "PROM_DS"},
+      "datasource": { "type": "prometheus", "uid": "PROM_DS" },
       "fieldConfig": {
         "defaults": {
           "unit": "ops",
-          "color": {"mode": "palette-classic"}
+          "color": { "mode": "palette-classic" }
         }
       }
     },
     {
       "type": "timeseries",
       "title": "Security Events Timeline",
-      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 4},
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 4 },
       "targets": [
         {
           "expr": "sum(rate(reporunner_security_events_total[5m])) by (type)",
@@ -141,18 +141,18 @@
           "refId": "A"
         }
       ],
-      "datasource": {"type": "prometheus", "uid": "PROM_DS"},
+      "datasource": { "type": "prometheus", "uid": "PROM_DS" },
       "fieldConfig": {
         "defaults": {
           "unit": "ops",
-          "color": {"mode": "palette-classic"}
+          "color": { "mode": "palette-classic" }
         }
       }
     },
     {
       "type": "timeseries",
       "title": "Failed Login Attempts by IP",
-      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 12},
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 12 },
       "targets": [
         {
           "expr": "topk(10, sum(rate(reporunner_auth_failed_total[5m])) by (ip))",
@@ -160,18 +160,18 @@
           "refId": "A"
         }
       ],
-      "datasource": {"type": "prometheus", "uid": "PROM_DS"},
+      "datasource": { "type": "prometheus", "uid": "PROM_DS" },
       "fieldConfig": {
         "defaults": {
           "unit": "ops",
-          "color": {"mode": "palette-classic"}
+          "color": { "mode": "palette-classic" }
         }
       }
     },
     {
       "type": "timeseries",
       "title": "API 403 Forbidden Responses",
-      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 12},
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 12 },
       "targets": [
         {
           "expr": "sum(rate(http_requests_total{status=\"403\"}[5m])) by (path)",
@@ -179,18 +179,18 @@
           "refId": "A"
         }
       ],
-      "datasource": {"type": "prometheus", "uid": "PROM_DS"},
+      "datasource": { "type": "prometheus", "uid": "PROM_DS" },
       "fieldConfig": {
         "defaults": {
           "unit": "ops",
-          "color": {"mode": "palette-classic"}
+          "color": { "mode": "palette-classic" }
         }
       }
     },
     {
       "type": "timeseries",
       "title": "Credential Access Attempts",
-      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 20},
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 20 },
       "targets": [
         {
           "expr": "sum(rate(reporunner_credential_access_total[5m])) by (action, result)",
@@ -198,18 +198,18 @@
           "refId": "A"
         }
       ],
-      "datasource": {"type": "prometheus", "uid": "PROM_DS"},
+      "datasource": { "type": "prometheus", "uid": "PROM_DS" },
       "fieldConfig": {
         "defaults": {
           "unit": "ops",
-          "color": {"mode": "palette-classic"}
+          "color": { "mode": "palette-classic" }
         }
       }
     },
     {
       "type": "timeseries",
       "title": "Permission Denied Events",
-      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 20},
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 20 },
       "targets": [
         {
           "expr": "sum(rate(reporunner_permission_denied_total[5m])) by (resource)",
@@ -217,18 +217,18 @@
           "refId": "A"
         }
       ],
-      "datasource": {"type": "prometheus", "uid": "PROM_DS"},
+      "datasource": { "type": "prometheus", "uid": "PROM_DS" },
       "fieldConfig": {
         "defaults": {
           "unit": "ops",
-          "color": {"mode": "palette-classic"}
+          "color": { "mode": "palette-classic" }
         }
       }
     },
     {
       "type": "table",
       "title": "Top Failed Login IPs (24h)",
-      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 28},
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 28 },
       "targets": [
         {
           "expr": "topk(20, sum(increase(reporunner_auth_failed_total[24h])) by (ip))",
@@ -238,14 +238,14 @@
           "format": "table"
         }
       ],
-      "datasource": {"type": "prometheus", "uid": "PROM_DS"},
+      "datasource": { "type": "prometheus", "uid": "PROM_DS" },
       "transformations": [
         {
           "id": "organize",
           "options": {
-            "excludeByName": {"Time": true, "__name__": true},
-            "indexByName": {"ip": 0, "Value": 1},
-            "renameByName": {"ip": "IP Address", "Value": "Failed Attempts"}
+            "excludeByName": { "Time": true, "__name__": true },
+            "indexByName": { "ip": 0, "Value": 1 },
+            "renameByName": { "ip": "IP Address", "Value": "Failed Attempts" }
           }
         }
       ]
@@ -253,7 +253,7 @@
     {
       "type": "table",
       "title": "Recent Security Events",
-      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 28},
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 28 },
       "targets": [
         {
           "expr": "reporunner_security_events_total",
@@ -263,14 +263,14 @@
           "format": "table"
         }
       ],
-      "datasource": {"type": "prometheus", "uid": "PROM_DS"},
+      "datasource": { "type": "prometheus", "uid": "PROM_DS" },
       "transformations": [
         {
           "id": "organize",
           "options": {
-            "excludeByName": {"Time": true, "__name__": true, "instance": true, "job": true},
-            "indexByName": {"type": 0, "severity": 1, "Value": 2},
-            "renameByName": {"type": "Event Type", "severity": "Severity", "Value": "Count"}
+            "excludeByName": { "Time": true, "__name__": true, "instance": true, "job": true },
+            "indexByName": { "type": 0, "severity": 1, "Value": 2 },
+            "renameByName": { "type": "Event Type", "severity": "Severity", "Value": "Count" }
           }
         }
       ]
@@ -278,7 +278,7 @@
     {
       "type": "timeseries",
       "title": "Brute Force Detection",
-      "gridPos": {"h": 8, "w": 24, "x": 0, "y": 36},
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 36 },
       "targets": [
         {
           "expr": "sum(rate(reporunner_auth_failed_total[1m])) by (ip) > 5",
@@ -286,17 +286,14 @@
           "refId": "A"
         }
       ],
-      "datasource": {"type": "prometheus", "uid": "PROM_DS"},
+      "datasource": { "type": "prometheus", "uid": "PROM_DS" },
       "fieldConfig": {
         "defaults": {
           "unit": "ops",
-          "color": {"mode": "palette-classic"},
+          "color": { "mode": "palette-classic" },
           "thresholds": {
             "mode": "absolute",
-            "steps": [
-              {"color": "yellow", "value": 5},
-              {"color": "red", "value": 10}
-            ]
+            "steps": [{ "color": "yellow", "value": 5 }, { "color": "red", "value": 10 }]
           }
         }
       }
@@ -306,8 +303,8 @@
   "schemaVersion": 37,
   "style": "dark",
   "tags": ["reporunner", "security", "authentication", "events"],
-  "templating": {"list": []},
-  "time": {"from": "now-6h", "to": "now"},
+  "templating": { "list": [] },
+  "time": { "from": "now-6h", "to": "now" },
   "timezone": "",
   "title": "Reporunner Security Events",
   "uid": "reporunner-security-events",

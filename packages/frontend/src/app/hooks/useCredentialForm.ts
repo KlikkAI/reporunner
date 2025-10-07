@@ -97,7 +97,9 @@ export const useCredentialForm = ({
         testOnCreate: true,
       };
 
-      const testCredential = await credentialApiService.createCredential(testCredentialPayload as any);
+      const testCredential = await credentialApiService.createCredential(
+        testCredentialPayload as any
+      );
 
       try {
         const result = await credentialApiService.testCredential(testCredential.id);
@@ -153,7 +155,10 @@ export const useCredentialForm = ({
       };
 
       const savedCredential = editingCredential
-        ? await credentialApiService.updateCredential(editingCredential.id || '', credentialPayload as any)
+        ? await credentialApiService.updateCredential(
+            editingCredential.id || '',
+            credentialPayload as any
+          )
         : await credentialApiService.createCredential(credentialPayload as any);
 
       const credentialForUI: CredentialData = {

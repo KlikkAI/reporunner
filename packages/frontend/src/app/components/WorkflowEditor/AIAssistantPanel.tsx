@@ -241,7 +241,9 @@ const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({
             <span className="text-white font-medium text-sm">{suggestion.title}</span>
           </div>
           <div className="flex items-center gap-1">
-            <Tag color={getImpactColor(suggestion.impact || 'medium')}>{suggestion.impact || 'medium'}</Tag>
+            <Tag color={getImpactColor(suggestion.impact || 'medium')}>
+              {suggestion.impact || 'medium'}
+            </Tag>
             <Badge
               count={`${(suggestion.confidence * 100).toFixed(0)}%`}
               style={{ backgroundColor: '#1890ff' }}
@@ -278,7 +280,10 @@ const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({
               <div className="flex justify-between text-sm mb-1">
                 <span className="text-gray-300">Complexity</span>
                 <span className="text-gray-400">
-                  {typeof analysis.complexity === 'number' ? (analysis.complexity * 100).toFixed(0) : '0'}%
+                  {typeof analysis.complexity === 'number'
+                    ? (analysis.complexity * 100).toFixed(0)
+                    : '0'}
+                  %
                 </span>
               </div>
               <Progress
@@ -293,12 +298,19 @@ const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({
               <div className="flex justify-between text-sm mb-1">
                 <span className="text-gray-300">Performance</span>
                 <span className="text-gray-400">
-                  {(analysis.performance?.estimatedImprovement ? analysis.performance.estimatedImprovement * 100 : 0).toFixed(0)}% improvement
-                  possible
+                  {(analysis.performance?.estimatedImprovement
+                    ? analysis.performance.estimatedImprovement * 100
+                    : 0
+                  ).toFixed(0)}
+                  % improvement possible
                 </span>
               </div>
               <Progress
-                percent={analysis.performance?.estimatedImprovement ? analysis.performance.estimatedImprovement * 100 : 0}
+                percent={
+                  analysis.performance?.estimatedImprovement
+                    ? analysis.performance.estimatedImprovement * 100
+                    : 0
+                }
                 strokeColor="#22c55e"
                 showInfo={false}
                 size="small"
@@ -309,15 +321,20 @@ const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({
               <div className="flex justify-between text-sm mb-1">
                 <span className="text-gray-300">Maintainability</span>
                 <span className="text-gray-400">
-                  {typeof analysis.maintainability === 'object' && analysis.maintainability?.codeQuality
+                  {typeof analysis.maintainability === 'object' &&
+                  analysis.maintainability?.codeQuality
                     ? (analysis.maintainability.codeQuality * 100).toFixed(0)
-                    : '0'}%
+                    : '0'}
+                  %
                 </span>
               </div>
               <Progress
-                percent={typeof analysis.maintainability === 'object' && analysis.maintainability?.codeQuality
-                  ? analysis.maintainability.codeQuality * 100
-                  : 0}
+                percent={
+                  typeof analysis.maintainability === 'object' &&
+                  analysis.maintainability?.codeQuality
+                    ? analysis.maintainability.codeQuality * 100
+                    : 0
+                }
                 strokeColor="#f59e0b"
                 showInfo={false}
                 size="small"
@@ -345,16 +362,16 @@ const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({
         )}
 
         {typeof analysis.reliability === 'object' &&
-         analysis.reliability?.missingErrorHandling &&
-         analysis.reliability.missingErrorHandling.length > 0 && (
-          <Alert
-            message="Missing Error Handling"
-            description={`${analysis.reliability.missingErrorHandling.length} nodes need error handling`}
-            type="error"
-            showIcon
-            className="bg-red-900 border-red-600"
-          />
-        )}
+          analysis.reliability?.missingErrorHandling &&
+          analysis.reliability.missingErrorHandling.length > 0 && (
+            <Alert
+              message="Missing Error Handling"
+              description={`${analysis.reliability.missingErrorHandling.length} nodes need error handling`}
+              type="error"
+              showIcon
+              className="bg-red-900 border-red-600"
+            />
+          )}
       </div>
     );
   };
@@ -532,55 +549,57 @@ const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({
               <Text className="text-gray-600">{selectedSuggestion.reasoning}</Text>
             </div>
 
-            {selectedSuggestion.suggestedChanges && selectedSuggestion.suggestedChanges.length > 0 && (
-              <div>
-                <Title level={5}>Suggested Changes</Title>
-                <List
-                  size="small"
-                  dataSource={selectedSuggestion.suggestedChanges}
-                  renderItem={(change) => (
-                    <List.Item>
-                      <div className="space-y-1">
-                        <div className="font-medium">{change.type}</div>
-                        <div className="text-sm text-gray-600">{change.reason}</div>
-                      </div>
-                    </List.Item>
-                  )}
-                />
-              </div>
-            )}
-
-            {selectedSuggestion.estimatedBenefit && Object.keys(selectedSuggestion.estimatedBenefit).length > 0 && (
-              <div>
-                <Title level={5}>Estimated Benefits</Title>
-                <div className="space-y-2">
-                  {selectedSuggestion.estimatedBenefit.performance && (
-                    <div className="flex justify-between">
-                      <span>Performance:</span>
-                      <span className="text-green-500">
-                        +{(selectedSuggestion.estimatedBenefit.performance * 100).toFixed(0)}%
-                      </span>
-                    </div>
-                  )}
-                  {selectedSuggestion.estimatedBenefit.reliability && (
-                    <div className="flex justify-between">
-                      <span>Reliability:</span>
-                      <span className="text-blue-500">
-                        +{(selectedSuggestion.estimatedBenefit.reliability * 100).toFixed(0)}%
-                      </span>
-                    </div>
-                  )}
-                  {selectedSuggestion.estimatedBenefit.maintainability && (
-                    <div className="flex justify-between">
-                      <span>Maintainability:</span>
-                      <span className="text-purple-500">
-                        +{(selectedSuggestion.estimatedBenefit.maintainability * 100).toFixed(0)}%
-                      </span>
-                    </div>
-                  )}
+            {selectedSuggestion.suggestedChanges &&
+              selectedSuggestion.suggestedChanges.length > 0 && (
+                <div>
+                  <Title level={5}>Suggested Changes</Title>
+                  <List
+                    size="small"
+                    dataSource={selectedSuggestion.suggestedChanges}
+                    renderItem={(change) => (
+                      <List.Item>
+                        <div className="space-y-1">
+                          <div className="font-medium">{change.type}</div>
+                          <div className="text-sm text-gray-600">{change.reason}</div>
+                        </div>
+                      </List.Item>
+                    )}
+                  />
                 </div>
-              </div>
-            )}
+              )}
+
+            {selectedSuggestion.estimatedBenefit &&
+              Object.keys(selectedSuggestion.estimatedBenefit).length > 0 && (
+                <div>
+                  <Title level={5}>Estimated Benefits</Title>
+                  <div className="space-y-2">
+                    {selectedSuggestion.estimatedBenefit.performance && (
+                      <div className="flex justify-between">
+                        <span>Performance:</span>
+                        <span className="text-green-500">
+                          +{(selectedSuggestion.estimatedBenefit.performance * 100).toFixed(0)}%
+                        </span>
+                      </div>
+                    )}
+                    {selectedSuggestion.estimatedBenefit.reliability && (
+                      <div className="flex justify-between">
+                        <span>Reliability:</span>
+                        <span className="text-blue-500">
+                          +{(selectedSuggestion.estimatedBenefit.reliability * 100).toFixed(0)}%
+                        </span>
+                      </div>
+                    )}
+                    {selectedSuggestion.estimatedBenefit.maintainability && (
+                      <div className="flex justify-between">
+                        <span>Maintainability:</span>
+                        <span className="text-purple-500">
+                          +{(selectedSuggestion.estimatedBenefit.maintainability * 100).toFixed(0)}%
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
           </div>
         )}
       </Modal>

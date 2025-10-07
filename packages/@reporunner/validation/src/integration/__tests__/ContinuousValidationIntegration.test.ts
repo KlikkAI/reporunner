@@ -1,7 +1,7 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { ContinuousValidationIntegration } from '../ContinuousValidationIntegration.js';
-import type { ValidationResults, CIValidationResult } from '../../types/index.js';
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import type { ValidationResults } from '../../types/index.js';
+import { ContinuousValidationIntegration } from '../ContinuousValidationIntegration.js';
 
 // Mock dependencies
 vi.mock('node:fs');
@@ -72,7 +72,14 @@ describe('ContinuousValidationIntegration', () => {
           passedTests: 95,
           failedTests: 5,
           skippedTests: 0,
-          coverage: { overall: 85, statements: 85, branches: 80, functions: 90, lines: 85, packageCoverage: {} },
+          coverage: {
+            overall: 85,
+            statements: 85,
+            branches: 80,
+            functions: 90,
+            lines: 85,
+            packageCoverage: {},
+          },
           packageResults: [],
           duration: 30000,
         },
@@ -80,14 +87,24 @@ describe('ContinuousValidationIntegration', () => {
           totalEndpoints: 20,
           validatedEndpoints: 20,
           failedEndpoints: [],
-          responseTimeMetrics: { average: 150, median: 120, p95: 300, p99: 500, slowestEndpoints: [] },
+          responseTimeMetrics: {
+            average: 150,
+            median: 120,
+            p95: 300,
+            p99: 500,
+            slowestEndpoints: [],
+          },
           status: 'success',
         },
         e2eResults: {
           totalWorkflows: 10,
           passedWorkflows: 10,
           failedWorkflows: [],
-          crossPackageIntegration: { testedIntegrations: 5, passedIntegrations: 5, failedIntegrations: [] },
+          crossPackageIntegration: {
+            testedIntegrations: 5,
+            passedIntegrations: 5,
+            failedIntegrations: [],
+          },
           status: 'success',
         },
         buildValidation: {
@@ -114,36 +131,90 @@ describe('ContinuousValidationIntegration', () => {
           largestBundles: [],
         },
         memoryProfile: {
-          development: { heapUsed: 100000000, heapTotal: 150000000, external: 10000000, rss: 200000000, peak: 180000000 },
-          build: { heapUsed: 200000000, heapTotal: 250000000, external: 20000000, rss: 300000000, peak: 280000000 },
-          runtime: { heapUsed: 80000000, heapTotal: 120000000, external: 8000000, rss: 150000000, peak: 140000000 },
+          development: {
+            heapUsed: 100000000,
+            heapTotal: 150000000,
+            external: 10000000,
+            rss: 200000000,
+            peak: 180000000,
+          },
+          build: {
+            heapUsed: 200000000,
+            heapTotal: 250000000,
+            external: 20000000,
+            rss: 300000000,
+            peak: 280000000,
+          },
+          runtime: {
+            heapUsed: 80000000,
+            heapTotal: 120000000,
+            external: 8000000,
+            rss: 150000000,
+            peak: 140000000,
+          },
           leaks: [],
           optimizations: [],
         },
         devExperienceMetrics: {
-          typeScriptPerformance: { compilationTime: 5000, autocompleteSpeed: 100, typeResolutionAccuracy: 95, errorCount: 2 },
-          idePerformance: { navigationSpeed: 50, intelliSenseResponseTime: 80, sourceMapAccuracy: 98, memoryUsage: 150000000 },
-          importPathMetrics: { averagePathLength: 25, circularDependencies: 0, inconsistentPaths: 1, optimizationOpportunities: [] },
-          debuggingMetrics: { sourceMapAccuracy: 98, stackTraceClarity: 90, breakpointReliability: 95 },
+          typeScriptPerformance: {
+            compilationTime: 5000,
+            autocompleteSpeed: 100,
+            typeResolutionAccuracy: 95,
+            errorCount: 2,
+          },
+          idePerformance: {
+            navigationSpeed: 50,
+            intelliSenseResponseTime: 80,
+            sourceMapAccuracy: 98,
+            memoryUsage: 150000000,
+          },
+          importPathMetrics: {
+            averagePathLength: 25,
+            circularDependencies: 0,
+            inconsistentPaths: 1,
+            optimizationOpportunities: [],
+          },
+          debuggingMetrics: {
+            sourceMapAccuracy: 98,
+            stackTraceClarity: 90,
+            breakpointReliability: 95,
+          },
         },
       },
       architectureValidation: {
         dependencyAnalysis: {
           circularDependencies: [],
           packageBoundaryViolations: [],
-          dependencyGraph: { nodes: [], edges: [], metrics: { totalNodes: 12, totalEdges: 25, maxDepth: 4, complexity: 15 } },
+          dependencyGraph: {
+            nodes: [],
+            edges: [],
+            metrics: { totalNodes: 12, totalEdges: 25, maxDepth: 4, complexity: 15 },
+          },
           healthScore: 95,
         },
         codeOrganization: {
           separationOfConcerns: { score: 90, violations: [], suggestions: [] },
-          codeDuplication: { duplicatedLines: 50, duplicatedBlocks: 2, duplicatedFiles: [], overallPercentage: 1.2 },
+          codeDuplication: {
+            duplicatedLines: 50,
+            duplicatedBlocks: 2,
+            duplicatedFiles: [],
+            overallPercentage: 1.2,
+          },
           namingConsistency: { consistencyScore: 88, violations: [], suggestions: [] },
           overallScore: 89,
         },
         typeSafety: {
           crossPackageTypeConsistency: 92,
-          interfaceCompatibility: { compatibleInterfaces: 45, incompatibleInterfaces: [], suggestions: [] },
-          exportStructureValidation: { consistentExports: 38, inconsistentExports: [], suggestions: [] },
+          interfaceCompatibility: {
+            compatibleInterfaces: 45,
+            incompatibleInterfaces: [],
+            suggestions: [],
+          },
+          exportStructureValidation: {
+            consistentExports: 38,
+            inconsistentExports: [],
+            suggestions: [],
+          },
           overallScore: 92,
         },
       },
@@ -244,9 +315,9 @@ describe('ContinuousValidationIntegration', () => {
 
       expect(jenkinsfile).toContain('pipeline {');
       expect(jenkinsfile).toContain('agent any');
-      expect(jenkinsfile).toContain('nodejs \'18\'');
+      expect(jenkinsfile).toContain("nodejs '18'");
       expect(jenkinsfile).toContain('triggers {');
-      expect(jenkinsfile).toContain('cron(\'H 2 * * *\')');
+      expect(jenkinsfile).toContain("cron('H 2 * * *')");
       expect(jenkinsfile).toContain('npx @reporunner/validation run');
       expect(jenkinsfile).toContain('archiveArtifacts');
     });
@@ -296,9 +367,12 @@ describe('ContinuousValidationIntegration', () => {
         notifications: { onRegression: true },
       };
 
-      const notifications = (integration as any).generateNotifications(mockValidationResults, analysis);
+      const notifications = (integration as any).generateNotifications(
+        mockValidationResults,
+        analysis
+      );
 
-      expect(notifications.some(n => n.type === 'regression')).toBe(true);
+      expect(notifications.some((n) => n.type === 'regression')).toBe(true);
     });
   });
 

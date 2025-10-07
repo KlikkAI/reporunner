@@ -50,7 +50,10 @@ class WorkflowTemplates {
     return [];
   }
 
-  async createWorkflowFromTemplate(_templateId: string, _variables?: Record<string, any>): Promise<any> {
+  async createWorkflowFromTemplate(
+    _templateId: string,
+    _variables?: Record<string, any>
+  ): Promise<any> {
     return null;
   }
 

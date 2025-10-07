@@ -16,7 +16,6 @@ import {
   Select,
   Space,
   Steps,
-  Tag,
   Typography,
   Upload,
 } from ' type { UploadFile } from '
@@ -69,12 +68,12 @@ export const PublishPlugin: React.FC<PublishPluginProps> = ({ onClose }) => {
   };
 
   // Handle form submission for step 1
-  const handleBasicInfoSubmit = (values: PluginFormData) => {
+  const handleBasicInfoSubmit = (_values: PluginFormData) => {
     setCurrentStep(1);
   };
 
   // Handle plugin validation
-  const handleValidation = async _values{
+  const handleValidation = async _values
     if (!pluginFile) {
       message.error('Please upload a plugin file');
       return;
@@ -112,11 +111,10 @@ export const PublishPlugin: React.FC<PublishPluginProps> = ({ onClose }) => {
       };
 
       reader.readAsDataURL(pluginFile.originFileObj!);
-    } catch (error) {
+    } catch (_error) {
       message.error('Validation failed');
       setCurrentStep(1);
-    }
-  };
+    };
 _error
   // Handle plugin publishing
   const handlePublish = async () => {
@@ -165,7 +163,7 @@ _error
       };
 
       reader.readAsDataURL(pluginFile.originFileObj!);
-    } catch (error) {
+    } catch (_error) {
       message.error('Failed to publish plugin');
     } finally {
       setPublishing(false);

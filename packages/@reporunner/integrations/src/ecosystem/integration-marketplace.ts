@@ -4,16 +4,23 @@
  * Phase D: Community & Growth - Integration ecosystem expansion
  */
 
-import { z } from 'zod';
 import { Logger } from '@reporunner/core';
-import { BaseIntegration } from '../base/base-integration';
+import { z } from 'zod';
 
 // Integration metadata schema
 export const IntegrationMetadataSchema = z.object({
   id: z.string(),
   name: z.string(),
   description: z.string(),
-  category: z.enum(['saas', 'database', 'cloud', 'communication', 'productivity', 'analytics', 'storage']),
+  category: z.enum([
+    'saas',
+    'database',
+    'cloud',
+    'communication',
+    'productivity',
+    'analytics',
+    'storage',
+  ]),
   provider: z.string(),
   version: z.string(),
   icon: z.string().optional(),
@@ -27,11 +34,13 @@ export const IntegrationMetadataSchema = z.object({
   supportedFeatures: z.array(z.string()),
   requiredCredentials: z.array(z.string()),
   webhookSupport: z.boolean().default(false),
-  rateLimits: z.object({
-    requestsPerMinute: z.number().optional(),
-    requestsPerHour: z.number().optional(),
-    requestsPerDay: z.number().optional(),
-  }).optional(),
+  rateLimits: z
+    .object({
+      requestsPerMinute: z.number().optional(),
+      requestsPerHour: z.number().optional(),
+      requestsPerDay: z.number().optional(),
+    })
+    .optional(),
 });
 
 export type IntegrationMetadata = z.infer<typeof IntegrationMetadataSchema>;
@@ -191,7 +200,13 @@ export const CLOUD_INTEGRATIONS: Partial<IntegrationMetadata>[] = [
     pricing: 'paid',
     popularity: 96,
     rating: 4.8,
-    supportedFeatures: ['upload_file', 'download_file', 'delete_file', 'list_objects', 'presigned_urls'],
+    supportedFeatures: [
+      'upload_file',
+      'download_file',
+      'delete_file',
+      'list_objects',
+      'presigned_urls',
+    ],
     requiredCredentials: ['access_key_id', 'secret_access_key', 'region'],
     webhookSupport: true,
   },
@@ -204,7 +219,13 @@ export const CLOUD_INTEGRATIONS: Partial<IntegrationMetadata>[] = [
     pricing: 'paid',
     popularity: 88,
     rating: 4.6,
-    supportedFeatures: ['upload_file', 'download_file', 'delete_file', 'list_objects', 'signed_urls'],
+    supportedFeatures: [
+      'upload_file',
+      'download_file',
+      'delete_file',
+      'list_objects',
+      'signed_urls',
+    ],
     requiredCredentials: ['service_account_key'],
     webhookSupport: true,
   },
@@ -270,9 +291,11 @@ export class IntegrationMarketplace {
   /**
    * Get integrations by category
    */
-  async getIntegrationsByCategory(category: IntegrationMetadata['category']): Promise<IntegrationMetadata[]> {
+  async getIntegrationsByCategory(
+    category: IntegrationMetadata['category']
+  ): Promise<IntegrationMetadata[]> {
     return Array.from(this.integrations.values()).filter(
-      integration => integration.category === category
+      (integration) => integration.category === category
     );
   }
 
@@ -291,13 +314,11 @@ export class IntegrationMarketplace {
   async searchIntegrations(query: string): Promise<IntegrationMetadata[]> {
     const searchTerm = query.toLowerCase();
     return Array.from(this.integrations.values()).filter(
-      integration =>
+      (integration) =>
         integration.name.toLowerCase().includes(searchTerm) ||
         integration.description.toLowerCase().includes(searchTerm) ||
         integration.provider.toLowerCase().includes(searchTerm) ||
-        integration.supportedFeatures.some(feature =>
-          feature.toLowerCase().includes(searchTerm)
-        )
+        integration.supportedFeatures.some((feature) => feature.toLowerCase().includes(searchTerm))
     );
   }
 
@@ -311,7 +332,10 @@ export class IntegrationMarketplace {
   /**
    * Install integration
    */
-  async installIntegration(id: string, userId: string): Promise<{
+  async installIntegration(
+    id: string,
+    userId: string
+  ): Promise<{
     success: boolean;
     integration?: IntegrationMetadata;
     error?: string;
@@ -362,17 +386,20 @@ export class IntegrationMarketplace {
     }>;
   }> {
     const integrations = Array.from(this.integrations.values());
-    const totalInstalls = Array.from(this.installCounts.values()).reduce((sum, count) => sum + count, 0);
+    const totalInstalls = Array.from(this.installCounts.values()).reduce(
+      (sum, count) => sum + count,
+      0
+    );
 
     // Count by category
     const categoryCounts: Record<string, number> = {};
-    integrations.forEach(integration => {
+    integrations.forEach((integration) => {
       categoryCounts[integration.category] = (categoryCounts[integration.category] || 0) + 1;
     });
 
     // Top integrations by install count
     const topIntegrations = integrations
-      .map(integration => ({
+      .map((integration) => ({
         id: integration.id,
         name: integration.name,
         installs: this.installCounts.get(integration.id) || 0,
@@ -391,7 +418,9 @@ export class IntegrationMarketplace {
   /**
    * Add custom integration
    */
-  async addCustomIntegration(integration: Omit<IntegrationMetadata, 'totalInstalls' | 'lastUpdated'>): Promise<{
+  async addCustomIntegration(
+    integration: Omit<IntegrationMetadata, 'totalInstalls' | 'lastUpdated'>
+  ): Promise<{
     success: boolean;
     error?: string;
   }> {
@@ -429,7 +458,10 @@ export class IntegrationMarketplace {
   /**
    * Update integration metadata
    */
-  async updateIntegration(id: string, updates: Partial<IntegrationMetadata>): Promise<{
+  async updateIntegration(
+    id: string,
+    updates: Partial<IntegrationMetadata>
+  ): Promise<{
     success: boolean;
     error?: string;
   }> {
@@ -495,12 +527,12 @@ export class IntegrationMarketplace {
   /**
    * Get integration recommendations based on usage patterns
    */
-  async getRecommendations(userId: string, limit = 5): Promise<IntegrationMetadata[]> {
+  async getRecommendations(_userId: string, limit = 5): Promise<IntegrationMetadata[]> {
     // Simple recommendation based on popularity and rating
     // In production, this would use ML algorithms and user behavior
     return Array.from(this.integrations.values())
-      .filter(integration => integration.popularity > 80 && integration.rating > 4.0)
-      .sort((a, b) => (b.popularity * b.rating) - (a.popularity * a.rating))
+      .filter((integration) => integration.popularity > 80 && integration.rating > 4.0)
+      .sort((a, b) => b.popularity * b.rating - a.popularity * a.rating)
       .slice(0, limit);
   }
 

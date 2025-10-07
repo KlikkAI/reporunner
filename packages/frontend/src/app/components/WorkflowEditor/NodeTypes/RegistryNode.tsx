@@ -2,9 +2,9 @@ import type React from 'react';
 import { memo, useMemo, useRef, useState } from 'react';
 import type { NodeProps } from 'reactflow';
 import { Handle, Position } from 'reactflow';
+import { useSmartMenuPosition } from '@/app/hooks/useSmartMenuPosition';
 import { getCustomBodyComponent } from '@/app/node-extensions/nodeUiRegistry';
 import { nodeRegistry, type WorkflowNodeInstance } from '@/core';
-import { useSmartMenuPosition } from '@/app/hooks/useSmartMenuPosition';
 import NodeToolbar from './BaseNode/NodeToolbar';
 
 interface RegistryNodeData extends WorkflowNodeInstance {

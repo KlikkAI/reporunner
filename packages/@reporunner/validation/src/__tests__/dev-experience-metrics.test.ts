@@ -13,7 +13,7 @@ vi.mock('node:child_process', () => ({
     }),
     kill: vi.fn(),
   })),
-  exec: vi.fn((_cmd,_optionss, callback) => {
+  exec: vi.fn((_cmd, _optionss, callback) => {
     if (callback) {
       setTimeout(() => callback(null, { stdout: '10\n' }), 10);
     }

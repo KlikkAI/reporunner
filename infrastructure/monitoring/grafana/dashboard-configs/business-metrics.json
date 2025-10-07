@@ -1,5 +1,5 @@
 {
-  "annotations": {"list": []},
+  "annotations": { "list": [] },
   "editable": true,
   "gnetId": null,
   "graphTooltip": 1,
@@ -10,7 +10,7 @@
     {
       "type": "stat",
       "title": "Total Active Users",
-      "gridPos": {"h": 4, "w": 6, "x": 0, "y": 0},
+      "gridPos": { "h": 4, "w": 6, "x": 0, "y": 0 },
       "targets": [
         {
           "expr": "count(count by (user_id) (reporunner_user_activity_total))",
@@ -18,15 +18,13 @@
           "refId": "A"
         }
       ],
-      "datasource": {"type": "prometheus", "uid": "PROM_DS"},
+      "datasource": { "type": "prometheus", "uid": "PROM_DS" },
       "fieldConfig": {
         "defaults": {
           "unit": "short",
           "thresholds": {
             "mode": "absolute",
-            "steps": [
-              {"color": "green", "value": null}
-            ]
+            "steps": [{ "color": "green", "value": null }]
           }
         }
       }
@@ -34,7 +32,7 @@
     {
       "type": "stat",
       "title": "Total Workflows",
-      "gridPos": {"h": 4, "w": 6, "x": 6, "y": 0},
+      "gridPos": { "h": 4, "w": 6, "x": 6, "y": 0 },
       "targets": [
         {
           "expr": "reporunner_workflows_total",
@@ -42,15 +40,13 @@
           "refId": "A"
         }
       ],
-      "datasource": {"type": "prometheus", "uid": "PROM_DS"},
+      "datasource": { "type": "prometheus", "uid": "PROM_DS" },
       "fieldConfig": {
         "defaults": {
           "unit": "short",
           "thresholds": {
             "mode": "absolute",
-            "steps": [
-              {"color": "green", "value": null}
-            ]
+            "steps": [{ "color": "green", "value": null }]
           }
         }
       }
@@ -58,7 +54,7 @@
     {
       "type": "stat",
       "title": "Total Executions (24h)",
-      "gridPos": {"h": 4, "w": 6, "x": 12, "y": 0},
+      "gridPos": { "h": 4, "w": 6, "x": 12, "y": 0 },
       "targets": [
         {
           "expr": "sum(increase(reporunner_workflow_executions_total[24h]))",
@@ -66,15 +62,13 @@
           "refId": "A"
         }
       ],
-      "datasource": {"type": "prometheus", "uid": "PROM_DS"},
+      "datasource": { "type": "prometheus", "uid": "PROM_DS" },
       "fieldConfig": {
         "defaults": {
           "unit": "short",
           "thresholds": {
             "mode": "absolute",
-            "steps": [
-              {"color": "green", "value": null}
-            ]
+            "steps": [{ "color": "green", "value": null }]
           }
         }
       }
@@ -82,7 +76,7 @@
     {
       "type": "stat",
       "title": "Success Rate (24h)",
-      "gridPos": {"h": 4, "w": 6, "x": 18, "y": 0},
+      "gridPos": { "h": 4, "w": 6, "x": 18, "y": 0 },
       "targets": [
         {
           "expr": "sum(increase(reporunner_workflow_executions_total{status=\"success\"}[24h])) / sum(increase(reporunner_workflow_executions_total[24h])) * 100",
@@ -90,16 +84,16 @@
           "refId": "A"
         }
       ],
-      "datasource": {"type": "prometheus", "uid": "PROM_DS"},
+      "datasource": { "type": "prometheus", "uid": "PROM_DS" },
       "fieldConfig": {
         "defaults": {
           "unit": "percent",
           "thresholds": {
             "mode": "absolute",
             "steps": [
-              {"color": "red", "value": null},
-              {"color": "yellow", "value": 90},
-              {"color": "green", "value": 95}
+              { "color": "red", "value": null },
+              { "color": "yellow", "value": 90 },
+              { "color": "green", "value": 95 }
             ]
           }
         }
@@ -108,7 +102,7 @@
     {
       "type": "timeseries",
       "title": "Daily Active Users",
-      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 4},
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 4 },
       "targets": [
         {
           "expr": "count(count by (user_id) (increase(reporunner_user_activity_total[24h]) > 0))",
@@ -116,18 +110,18 @@
           "refId": "A"
         }
       ],
-      "datasource": {"type": "prometheus", "uid": "PROM_DS"},
+      "datasource": { "type": "prometheus", "uid": "PROM_DS" },
       "fieldConfig": {
         "defaults": {
           "unit": "short",
-          "color": {"mode": "palette-classic"}
+          "color": { "mode": "palette-classic" }
         }
       }
     },
     {
       "type": "timeseries",
       "title": "Workflow Executions per Hour",
-      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 4},
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 4 },
       "targets": [
         {
           "expr": "sum(rate(reporunner_workflow_executions_total[1h]))",
@@ -135,18 +129,18 @@
           "refId": "A"
         }
       ],
-      "datasource": {"type": "prometheus", "uid": "PROM_DS"},
+      "datasource": { "type": "prometheus", "uid": "PROM_DS" },
       "fieldConfig": {
         "defaults": {
           "unit": "short",
-          "color": {"mode": "palette-classic"}
+          "color": { "mode": "palette-classic" }
         }
       }
     },
     {
       "type": "timeseries",
       "title": "Execution Status Distribution",
-      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 12},
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 12 },
       "targets": [
         {
           "expr": "sum(rate(reporunner_workflow_executions_total[5m])) by (status)",
@@ -154,18 +148,18 @@
           "refId": "A"
         }
       ],
-      "datasource": {"type": "prometheus", "uid": "PROM_DS"},
+      "datasource": { "type": "prometheus", "uid": "PROM_DS" },
       "fieldConfig": {
         "defaults": {
           "unit": "ops",
-          "color": {"mode": "palette-classic"}
+          "color": { "mode": "palette-classic" }
         }
       }
     },
     {
       "type": "piechart",
       "title": "Workflows by Integration",
-      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 12},
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 12 },
       "targets": [
         {
           "expr": "sum(reporunner_workflows_by_integration) by (integration)",
@@ -173,7 +167,7 @@
           "refId": "A"
         }
       ],
-      "datasource": {"type": "prometheus", "uid": "PROM_DS"},
+      "datasource": { "type": "prometheus", "uid": "PROM_DS" },
       "fieldConfig": {
         "defaults": {
           "unit": "short"
@@ -183,7 +177,7 @@
     {
       "type": "timeseries",
       "title": "New User Signups",
-      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 20},
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 20 },
       "targets": [
         {
           "expr": "increase(reporunner_users_total[1d])",
@@ -191,18 +185,18 @@
           "refId": "A"
         }
       ],
-      "datasource": {"type": "prometheus", "uid": "PROM_DS"},
+      "datasource": { "type": "prometheus", "uid": "PROM_DS" },
       "fieldConfig": {
         "defaults": {
           "unit": "short",
-          "color": {"mode": "palette-classic"}
+          "color": { "mode": "palette-classic" }
         }
       }
     },
     {
       "type": "timeseries",
       "title": "Workflow Creation Rate",
-      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 20},
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 20 },
       "targets": [
         {
           "expr": "increase(reporunner_workflows_created_total[1h])",
@@ -210,18 +204,18 @@
           "refId": "A"
         }
       ],
-      "datasource": {"type": "prometheus", "uid": "PROM_DS"},
+      "datasource": { "type": "prometheus", "uid": "PROM_DS" },
       "fieldConfig": {
         "defaults": {
           "unit": "short",
-          "color": {"mode": "palette-classic"}
+          "color": { "mode": "palette-classic" }
         }
       }
     },
     {
       "type": "timeseries",
       "title": "Average Workflow Execution Time",
-      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 28},
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 28 },
       "targets": [
         {
           "expr": "sum(rate(reporunner_workflow_execution_duration_seconds_sum[5m])) / sum(rate(reporunner_workflow_execution_duration_seconds_count[5m]))",
@@ -229,18 +223,18 @@
           "refId": "A"
         }
       ],
-      "datasource": {"type": "prometheus", "uid": "PROM_DS"},
+      "datasource": { "type": "prometheus", "uid": "PROM_DS" },
       "fieldConfig": {
         "defaults": {
           "unit": "s",
-          "color": {"mode": "palette-classic"}
+          "color": { "mode": "palette-classic" }
         }
       }
     },
     {
       "type": "timeseries",
       "title": "Integration Usage",
-      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 28},
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 28 },
       "targets": [
         {
           "expr": "sum(rate(reporunner_integration_usage_total[5m])) by (integration)",
@@ -248,18 +242,18 @@
           "refId": "A"
         }
       ],
-      "datasource": {"type": "prometheus", "uid": "PROM_DS"},
+      "datasource": { "type": "prometheus", "uid": "PROM_DS" },
       "fieldConfig": {
         "defaults": {
           "unit": "ops",
-          "color": {"mode": "palette-classic"}
+          "color": { "mode": "palette-classic" }
         }
       }
     },
     {
       "type": "table",
       "title": "Top 10 Active Workflows",
-      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 36},
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 36 },
       "targets": [
         {
           "expr": "topk(10, sum(increase(reporunner_workflow_executions_total[24h])) by (workflow_id, workflow_name))",
@@ -269,14 +263,14 @@
           "format": "table"
         }
       ],
-      "datasource": {"type": "prometheus", "uid": "PROM_DS"},
+      "datasource": { "type": "prometheus", "uid": "PROM_DS" },
       "transformations": [
         {
           "id": "organize",
           "options": {
-            "excludeByName": {"Time": true, "__name__": true, "workflow_id": true},
-            "indexByName": {"workflow_name": 0, "Value": 1},
-            "renameByName": {"workflow_name": "Workflow Name", "Value": "Executions (24h)"}
+            "excludeByName": { "Time": true, "__name__": true, "workflow_id": true },
+            "indexByName": { "workflow_name": 0, "Value": 1 },
+            "renameByName": { "workflow_name": "Workflow Name", "Value": "Executions (24h)" }
           }
         }
       ]
@@ -284,7 +278,7 @@
     {
       "type": "table",
       "title": "User Engagement Metrics",
-      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 36},
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 36 },
       "targets": [
         {
           "expr": "topk(10, sum(increase(reporunner_user_activity_total[24h])) by (user_id))",
@@ -294,14 +288,14 @@
           "format": "table"
         }
       ],
-      "datasource": {"type": "prometheus", "uid": "PROM_DS"},
+      "datasource": { "type": "prometheus", "uid": "PROM_DS" },
       "transformations": [
         {
           "id": "organize",
           "options": {
-            "excludeByName": {"Time": true, "__name__": true},
-            "indexByName": {"user_id": 0, "Value": 1},
-            "renameByName": {"user_id": "User ID", "Value": "Activity Score"}
+            "excludeByName": { "Time": true, "__name__": true },
+            "indexByName": { "user_id": 0, "Value": 1 },
+            "renameByName": { "user_id": "User ID", "Value": "Activity Score" }
           }
         }
       ]
@@ -309,7 +303,7 @@
     {
       "type": "stat",
       "title": "Credential Count",
-      "gridPos": {"h": 4, "w": 6, "x": 0, "y": 44},
+      "gridPos": { "h": 4, "w": 6, "x": 0, "y": 44 },
       "targets": [
         {
           "expr": "reporunner_credentials_total",
@@ -317,15 +311,13 @@
           "refId": "A"
         }
       ],
-      "datasource": {"type": "prometheus", "uid": "PROM_DS"},
+      "datasource": { "type": "prometheus", "uid": "PROM_DS" },
       "fieldConfig": {
         "defaults": {
           "unit": "short",
           "thresholds": {
             "mode": "absolute",
-            "steps": [
-              {"color": "green", "value": null}
-            ]
+            "steps": [{ "color": "green", "value": null }]
           }
         }
       }
@@ -333,7 +325,7 @@
     {
       "type": "stat",
       "title": "Active Integrations",
-      "gridPos": {"h": 4, "w": 6, "x": 6, "y": 44},
+      "gridPos": { "h": 4, "w": 6, "x": 6, "y": 44 },
       "targets": [
         {
           "expr": "count(count by (integration) (reporunner_integration_usage_total > 0))",
@@ -341,15 +333,13 @@
           "refId": "A"
         }
       ],
-      "datasource": {"type": "prometheus", "uid": "PROM_DS"},
+      "datasource": { "type": "prometheus", "uid": "PROM_DS" },
       "fieldConfig": {
         "defaults": {
           "unit": "short",
           "thresholds": {
             "mode": "absolute",
-            "steps": [
-              {"color": "green", "value": null}
-            ]
+            "steps": [{ "color": "green", "value": null }]
           }
         }
       }
@@ -357,7 +347,7 @@
     {
       "type": "stat",
       "title": "Avg Nodes per Workflow",
-      "gridPos": {"h": 4, "w": 6, "x": 12, "y": 44},
+      "gridPos": { "h": 4, "w": 6, "x": 12, "y": 44 },
       "targets": [
         {
           "expr": "avg(reporunner_workflow_nodes_count)",
@@ -365,16 +355,14 @@
           "refId": "A"
         }
       ],
-      "datasource": {"type": "prometheus", "uid": "PROM_DS"},
+      "datasource": { "type": "prometheus", "uid": "PROM_DS" },
       "fieldConfig": {
         "defaults": {
           "unit": "short",
           "decimals": 1,
           "thresholds": {
             "mode": "absolute",
-            "steps": [
-              {"color": "green", "value": null}
-            ]
+            "steps": [{ "color": "green", "value": null }]
           }
         }
       }
@@ -382,7 +370,7 @@
     {
       "type": "stat",
       "title": "Total Organizations",
-      "gridPos": {"h": 4, "w": 6, "x": 18, "y": 44},
+      "gridPos": { "h": 4, "w": 6, "x": 18, "y": 44 },
       "targets": [
         {
           "expr": "reporunner_organizations_total",
@@ -390,15 +378,13 @@
           "refId": "A"
         }
       ],
-      "datasource": {"type": "prometheus", "uid": "PROM_DS"},
+      "datasource": { "type": "prometheus", "uid": "PROM_DS" },
       "fieldConfig": {
         "defaults": {
           "unit": "short",
           "thresholds": {
             "mode": "absolute",
-            "steps": [
-              {"color": "green", "value": null}
-            ]
+            "steps": [{ "color": "green", "value": null }]
           }
         }
       }
@@ -408,8 +394,8 @@
   "schemaVersion": 37,
   "style": "dark",
   "tags": ["reporunner", "business", "metrics", "analytics"],
-  "templating": {"list": []},
-  "time": {"from": "now-7d", "to": "now"},
+  "templating": { "list": [] },
+  "time": { "from": "now-7d", "to": "now" },
   "timezone": "",
   "title": "Reporunner Business Metrics",
   "uid": "reporunner-business-metrics",

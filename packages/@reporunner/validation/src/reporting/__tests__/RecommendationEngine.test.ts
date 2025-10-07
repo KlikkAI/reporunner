@@ -1,6 +1,6 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
+import type { ValidationResults } from '../../types/index.js';
 import { RecommendationEngine } from '../RecommendationEngine.js';
-import type { ValidationResults, OptimizationRecommendation } from '../../types/index.js';
 
 describe('RecommendationEngine', () => {
   let engine: RecommendationEngine;
@@ -379,15 +379,15 @@ describe('RecommendationEngine', () => {
       const recommendations = engine.generateRecommendations(mockValidationResults);
 
       // Should have critical recommendations first
-      const criticalRecs = recommendations.filter(r => r.priority === 'critical');
-      const highRecs = recommendations.filter(r => r.priority === 'high');
+      const criticalRecs = recommendations.filter((r) => r.priority === 'critical');
+      const highRecs = recommendations.filter((r) => r.priority === 'high');
 
       expect(criticalRecs.length).toBeGreaterThan(0);
       expect(highRecs.length).toBeGreaterThan(0);
 
       // Critical should come before high priority
-      const firstCriticalIndex = recommendations.findIndex(r => r.priority === 'critical');
-      const firstHighIndex = recommendations.findIndex(r => r.priority === 'high');
+      const firstCriticalIndex = recommendations.findIndex((r) => r.priority === 'critical');
+      const firstHighIndex = recommendations.findIndex((r) => r.priority === 'high');
 
       if (firstCriticalIndex !== -1 && firstHighIndex !== -1) {
         expect(firstCriticalIndex).toBeLessThan(firstHighIndex);
@@ -397,8 +397,8 @@ describe('RecommendationEngine', () => {
     it('should generate build performance recommendations', () => {
       const recommendations = engine.generateRecommendations(mockValidationResults);
 
-      const buildRec = recommendations.find(r =>
-        r.category === 'performance' && r.title.includes('Build Performance')
+      const buildRec = recommendations.find(
+        (r) => r.category === 'performance' && r.title.includes('Build Performance')
       );
 
       expect(buildRec).toBeDefined();
@@ -409,8 +409,8 @@ describe('RecommendationEngine', () => {
     it('should generate cache efficiency recommendations', () => {
       const recommendations = engine.generateRecommendations(mockValidationResults);
 
-      const cacheRec = recommendations.find(r =>
-        r.category === 'build' && r.title.includes('Cache Efficiency')
+      const cacheRec = recommendations.find(
+        (r) => r.category === 'build' && r.title.includes('Cache Efficiency')
       );
 
       expect(cacheRec).toBeDefined();
@@ -420,8 +420,8 @@ describe('RecommendationEngine', () => {
     it('should generate bundle size recommendations', () => {
       const recommendations = engine.generateRecommendations(mockValidationResults);
 
-      const bundleRec = recommendations.find(r =>
-        r.category === 'performance' && r.title.includes('Bundle Size')
+      const bundleRec = recommendations.find(
+        (r) => r.category === 'performance' && r.title.includes('Bundle Size')
       );
 
       expect(bundleRec).toBeDefined();
@@ -431,20 +431,22 @@ describe('RecommendationEngine', () => {
     it('should generate memory leak recommendations', () => {
       const recommendations = engine.generateRecommendations(mockValidationResults);
 
-      const memoryRec = recommendations.find(r =>
-        r.category === 'performance' && r.title.includes('Memory Leaks')
+      const memoryRec = recommendations.find(
+        (r) => r.category === 'performance' && r.title.includes('Memory Leaks')
       );
 
       expect(memoryRec).toBeDefined();
       expect(memoryRec?.priority).toBe('critical'); // Has high severity leaks
-      expect(memoryRec?.steps).toContain('Fix memory leak in package-a/memory-leak.ts: Fix event listener cleanup');
+      expect(memoryRec?.steps).toContain(
+        'Fix memory leak in package-a/memory-leak.ts: Fix event listener cleanup'
+      );
     });
 
     it('should generate test coverage recommendations', () => {
       const recommendations = engine.generateRecommendations(mockValidationResults);
 
-      const testRec = recommendations.find(r =>
-        r.category === 'build' && r.title.includes('Test Coverage')
+      const testRec = recommendations.find(
+        (r) => r.category === 'build' && r.title.includes('Test Coverage')
       );
 
       expect(testRec).toBeDefined();
@@ -454,8 +456,8 @@ describe('RecommendationEngine', () => {
     it('should generate failing tests recommendations', () => {
       const recommendations = engine.generateRecommendations(mockValidationResults);
 
-      const failingTestsRec = recommendations.find(r =>
-        r.category === 'build' && r.title.includes('Failing Tests')
+      const failingTestsRec = recommendations.find(
+        (r) => r.category === 'build' && r.title.includes('Failing Tests')
       );
 
       expect(failingTestsRec).toBeDefined();
@@ -465,8 +467,8 @@ describe('RecommendationEngine', () => {
     it('should generate API endpoint recommendations', () => {
       const recommendations = engine.generateRecommendations(mockValidationResults);
 
-      const apiRec = recommendations.find(r =>
-        r.category === 'build' && r.title.includes('API Endpoint')
+      const apiRec = recommendations.find(
+        (r) => r.category === 'build' && r.title.includes('API Endpoint')
       );
 
       expect(apiRec).toBeDefined();
@@ -476,8 +478,8 @@ describe('RecommendationEngine', () => {
     it('should generate circular dependency recommendations', () => {
       const recommendations = engine.generateRecommendations(mockValidationResults);
 
-      const circularRec = recommendations.find(r =>
-        r.category === 'architecture' && r.title.includes('Circular Dependencies')
+      const circularRec = recommendations.find(
+        (r) => r.category === 'architecture' && r.title.includes('Circular Dependencies')
       );
 
       expect(circularRec).toBeDefined();
@@ -487,8 +489,8 @@ describe('RecommendationEngine', () => {
     it('should generate architecture health recommendations', () => {
       const recommendations = engine.generateRecommendations(mockValidationResults);
 
-      const healthRec = recommendations.find(r =>
-        r.category === 'architecture' && r.title.includes('Architecture Health')
+      const healthRec = recommendations.find(
+        (r) => r.category === 'architecture' && r.title.includes('Architecture Health')
       );
 
       expect(healthRec).toBeDefined();
@@ -498,11 +500,11 @@ describe('RecommendationEngine', () => {
     it('should generate developer experience recommendations', () => {
       const recommendations = engine.generateRecommendations(mockValidationResults);
 
-      const dxRecs = recommendations.filter(r => r.category === 'developer-experience');
+      const dxRecs = recommendations.filter((r) => r.category === 'developer-experience');
 
       expect(dxRecs.length).toBeGreaterThan(0);
 
-      const autocompleteRec = dxRecs.find(r => r.title.includes('Autocomplete'));
+      const autocompleteRec = dxRecs.find((r) => r.title.includes('Autocomplete'));
       expect(autocompleteRec).toBeDefined();
       expect(autocompleteRec?.priority).toBe('medium'); // 1500ms > 1000ms threshold
     });
@@ -515,8 +517,8 @@ describe('RecommendationEngine', () => {
       const performanceRecs = engine.filterByCategory(recommendations, 'performance');
       const architectureRecs = engine.filterByCategory(recommendations, 'architecture');
 
-      expect(performanceRecs.every(r => r.category === 'performance')).toBe(true);
-      expect(architectureRecs.every(r => r.category === 'architecture')).toBe(true);
+      expect(performanceRecs.every((r) => r.category === 'performance')).toBe(true);
+      expect(architectureRecs.every((r) => r.category === 'architecture')).toBe(true);
     });
   });
 
@@ -527,8 +529,8 @@ describe('RecommendationEngine', () => {
       const criticalRecs = engine.filterByPriority(recommendations, 'critical');
       const highRecs = engine.filterByPriority(recommendations, 'high');
 
-      expect(criticalRecs.every(r => r.priority === 'critical')).toBe(true);
-      expect(highRecs.every(r => r.priority === 'high')).toBe(true);
+      expect(criticalRecs.every((r) => r.priority === 'critical')).toBe(true);
+      expect(highRecs.every((r) => r.priority === 'high')).toBe(true);
     });
   });
 
@@ -539,7 +541,7 @@ describe('RecommendationEngine', () => {
       const packageARecs = engine.getPackageRecommendations(recommendations, 'package-a');
 
       expect(packageARecs.length).toBeGreaterThan(0);
-      expect(packageARecs.every(r => r.affectedPackages.includes('package-a'))).toBe(true);
+      expect(packageARecs.every((r) => r.affectedPackages.includes('package-a'))).toBe(true);
     });
   });
 
@@ -623,7 +625,7 @@ describe('RecommendationEngine', () => {
       const recommendations = engine.generateRecommendations(perfectResults);
 
       // Should have very few or no recommendations for perfect results
-      const criticalRecs = recommendations.filter(r => r.priority === 'critical');
+      const criticalRecs = recommendations.filter((r) => r.priority === 'critical');
       expect(criticalRecs.length).toBe(0);
     });
   });
