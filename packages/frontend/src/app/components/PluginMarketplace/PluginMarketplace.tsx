@@ -14,7 +14,7 @@ import {
 import type { PluginMetadata, PluginSearchQuery } from '@reporunner/platform';
 import {
   Avatar,
-  Button
+  Button,
   Col,
   Empty,
   Input,
@@ -23,13 +23,15 @@ import {
   message,
   Pagination,
   Rate,
-  Row,t,
+  Row,
+  Select,
   Space,
   Spin,
   Statistic,
   Tabs,
   Tag,
-  Typog 'antd';
+  Typography,
+} from 'antd';
 import type React from 'react';
 import { useEffect, useState } from 'react';
 import { usePluginMarketplace } from '../../hooks/usePluginMarketplace';

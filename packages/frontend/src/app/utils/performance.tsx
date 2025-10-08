@@ -82,7 +82,7 @@ setInterval(() => {
 }, 5 * 60 * 1000);
 
 // Hook for caching API responses
-export const useCachedFetch = <T>(
+export const useCachedFetch = <T,>(
   url: string,
   options?: RequestInit,
   ttl = 5 * 60 * 1000
@@ -141,7 +141,7 @@ export const useCachedFetch = <T>(
 };
 
 // Hook for debounced values
-export const useDebounce = <T>(value: T, delay: number): T => {
+export const useDebounce = <T,>(value: T, delay: number): T => {
   const [debouncedValue, setDebouncedValue] = useState<T>(value);
 
   useEffect(() => {
@@ -226,7 +226,7 @@ export const useIntersectionObserver = (
 };
 
 // Hook for virtual scrolling
-export const useVirtualScroll = <T>(
+export const useVirtualScroll = <T,>(
   items: T[],
   itemHeight: number,
   containerHeight: number
@@ -280,7 +280,7 @@ export class PerformanceMonitor {
   }
 
   // Measure function execution time
-  measure<T>(name: string, fn: () => T): T {
+  measure<T,>(name: string, fn: () => T): T {
     const start = performance.now();
     const result = fn();
     const end = performance.now();
@@ -290,7 +290,7 @@ export class PerformanceMonitor {
   }
 
   // Measure async function execution time
-  async measureAsync<T>(name: string, fn: () => Promise<T>): Promise<T> {
+  async measureAsync<T,>(name: string, fn: () => Promise<T>): Promise<T> {
     const start = performance.now();
     const result = await fn();
     const end = performance.now();
@@ -371,11 +371,11 @@ export const usePerformanceMonitor = (name: string) => {
     return 0;
   }, [name]);
 
-  const measure = useCallback(<T>(fn: () => T): T => {
+  const measure = useCallback(<T,>(fn: () => T): T => {
     return performanceMonitor.measure(name, fn);
   }, [name]);
 
-  const measureAsync = useCallback(<T>(fn: () => Promise<T>): Promise<T> => {
+  const measureAsync = useCallback(<T,>(fn: () => Promise<T>): Promise<T> => {
     return performanceMonitor.measureAsync(name, fn);
   }, [name]);
 
@@ -396,8 +396,8 @@ export const LazyImage: React.FC<{
   className?: string;
   style?: React.CSSProperties;
 }> = ({ src, alt, placeholder, className, style }) => {
-  const [_imageSrc, setImageSrc] = useState(placeholder || '');
-  const [imageRef, _setImageRef] = useState<HTMLImageElement | null>(null);
+  const [imageSrc, setImageSrc] = useState(placeholder || '');
+  const [imageRef, setImageRef] = useState<HTMLImageElement | null>(null);
   const { targetRef, hasIntersected } = useIntersectionObserver();
 
   useEffect(() => {
@@ -414,7 +414,7 @@ export const LazyImage: React.FC<{
     <img
       ref={(_el) => {
         setImageRef(_el);
-        (targetRef as any).current = el;
+        (targetRef as any).current = _el;
       }}
       src={imageSrc}
       alt={alt}

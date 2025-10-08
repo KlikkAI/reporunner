@@ -137,6 +137,7 @@ export const ERROR_CODES = {
   INVALID_CREDENTIALS: 'INVALID_CREDENTIALS',
   TOKEN_EXPIRED: 'TOKEN_EXPIRED',
   TOKEN_INVALID: 'TOKEN_INVALID',
+  TOKEN_REVOKED: 'TOKEN_REVOKED',
   UNAUTHORIZED_ACCESS: 'UNAUTHORIZED_ACCESS',
 
   // Validation errors
@@ -149,10 +150,17 @@ export const ERROR_CODES = {
   RESOURCE_ALREADY_EXISTS: 'RESOURCE_ALREADY_EXISTS',
   RESOURCE_CONFLICT: 'RESOURCE_CONFLICT',
 
+  // HTTP Status errors
+  UNAUTHORIZED: 'UNAUTHORIZED',
+  FORBIDDEN: 'FORBIDDEN',
+  BAD_REQUEST: 'BAD_REQUEST',
+  NOT_FOUND: 'NOT_FOUND',
+
   // Security errors
   SECURITY_THREAT_DETECTED: 'SECURITY_THREAT_DETECTED',
   VULNERABILITY_FOUND: 'VULNERABILITY_FOUND',
   COMPLIANCE_VIOLATION: 'COMPLIANCE_VIOLATION',
+  SECURITY_VIOLATION: 'SECURITY_VIOLATION',
   RATE_LIMIT_EXCEEDED: 'RATE_LIMIT_EXCEEDED',
 
   // System errors
@@ -175,6 +183,10 @@ export const ERROR_CODES = {
   SCHEDULE_EXECUTION_FAILED: 'SCHEDULE_EXECUTION_FAILED',
   INVALID_CRON_EXPRESSION: 'INVALID_CRON_EXPRESSION',
   SCHEDULE_CONFLICT: 'SCHEDULE_CONFLICT',
+
+  // File errors
+  FILE_UPLOAD_ERROR: 'FILE_UPLOAD_ERROR',
+  FILE_TOO_LARGE: 'FILE_TOO_LARGE',
 } as const;
 
 // ============================================================================
@@ -419,6 +431,7 @@ export function getErrorMessage(code: keyof typeof ERROR_CODES): string {
     INVALID_CREDENTIALS: 'Invalid username or password',
     TOKEN_EXPIRED: 'Authentication token has expired',
     TOKEN_INVALID: 'Invalid authentication token',
+    TOKEN_REVOKED: 'Authentication token has been revoked',
     UNAUTHORIZED_ACCESS: 'Unauthorized access',
     VALIDATION_ERROR: 'Validation error',
     INVALID_INPUT: 'Invalid input provided',
@@ -426,9 +439,14 @@ export function getErrorMessage(code: keyof typeof ERROR_CODES): string {
     RESOURCE_NOT_FOUND: 'Resource not found',
     RESOURCE_ALREADY_EXISTS: 'Resource already exists',
     RESOURCE_CONFLICT: 'Resource conflict',
+    UNAUTHORIZED: 'Unauthorized',
+    FORBIDDEN: 'Forbidden',
+    BAD_REQUEST: 'Bad request',
+    NOT_FOUND: 'Not found',
     SECURITY_THREAT_DETECTED: 'Security threat detected',
     VULNERABILITY_FOUND: 'Vulnerability found',
     COMPLIANCE_VIOLATION: 'Compliance violation',
+    SECURITY_VIOLATION: 'Security violation',
     RATE_LIMIT_EXCEEDED: 'Rate limit exceeded',
     INTERNAL_ERROR: 'Internal server error',
     SERVICE_UNAVAILABLE: 'Service unavailable',
@@ -443,6 +461,8 @@ export function getErrorMessage(code: keyof typeof ERROR_CODES): string {
     SCHEDULE_EXECUTION_FAILED: 'Schedule execution failed',
     INVALID_CRON_EXPRESSION: 'Invalid cron expression',
     SCHEDULE_CONFLICT: 'Schedule conflict',
+    FILE_UPLOAD_ERROR: 'File upload error',
+    FILE_TOO_LARGE: 'File too large',
   };
 
   return messages[code] || 'Unknown error';

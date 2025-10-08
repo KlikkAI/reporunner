@@ -74,7 +74,7 @@ export const TenantSchema = z.object({
   createdAt: z.date(),
   updatedAt: z.date(),
   createdBy: z.string(),
-  metadata: z.record(z.any()).optional(),
+  metadata: z.record(z.string(), z.unknown()).optional(),
 });
 
 export type Tenant = z.infer<typeof TenantSchema>;

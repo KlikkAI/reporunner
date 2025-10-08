@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@reporunner/auth": "workspace:*",
+    "@reporunner/core": "workspace:*",
     "samlify": "^2.8.10",
     "ldapjs": "^3.0.7"
   },

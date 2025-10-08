@@ -12,6 +12,10 @@
     "./api": {
       "types": "./dist/api/index.d.ts",
       "default": "./dist/api/index.js"
+    },
+    "./types": {
+      "types": "./dist/types/index.d.ts",
+      "default": "./dist/types/index.js"
     }
   },
   "scripts": {
@@ -27,6 +31,7 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {
+    "@types/express": "catalog:",
     "@types/swagger-ui-express": "^4.1.8",
     "openapi-types": "^12.1.3",
     "rimraf": "^3.0.2",

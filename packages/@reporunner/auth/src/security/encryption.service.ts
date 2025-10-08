@@ -1,12 +1,12 @@
-import type { Cipher, Decipher } from 'node:crypto';
+import type { Cipheriv, Decipheriv } from 'node:crypto';
 import { createCipheriv, createDecipheriv, createHash, randomBytes, scrypt } from 'node:crypto';
 import { promisify } from 'node:util';
 
-interface CipherGCM extends Cipher {
+interface CipherGCM extends Cipheriv {
   getAuthTag(): Buffer;
 }
 
-interface DecipherGCM extends Decipher {
+interface DecipherGCM extends Decipheriv {
   setAuthTag(buffer: Buffer): void;
 }
 
@@ -162,7 +162,7 @@ export class EncryptionService {
       if (obj[field] !== undefined && obj[field] !== null) {
         const fieldKey = await this.generateFieldKey(masterKey, String(field));
         const encryptedData = await this.encrypt(String(obj[field]), fieldKey);
-        (encrypted as Record<string, unknown>)[field] = JSON.stringify(encryptedData);
+        (encrypted as Record<string, unknown>)[String(field)] = JSON.stringify(encryptedData);
       }
     }
 
@@ -184,7 +184,7 @@ export class EncryptionService {
         try {
           const fieldKey = await this.generateFieldKey(masterKey, String(field));
           const encryptedData = JSON.parse(String(obj[field]));
-          (decrypted as Record<string, unknown>)[field] = await this.decrypt(
+          (decrypted as Record<string, unknown>)[String(field)] = await this.decrypt(
             encryptedData,
             fieldKey
           );

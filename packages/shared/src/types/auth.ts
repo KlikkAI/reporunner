@@ -1,3 +1,5 @@
+import type { Request } from 'express';
+
 export interface AuthenticatedUser {
   id: string;
   email?: string;
@@ -10,5 +12,9 @@ export interface AuthenticatedUser {
   [key: string]: unknown;
 }
 
-// NOTE: AuthenticatedRequest is now defined globally in express.d.ts
-// This provides proper Express Request augmentation with all custom properties
+// Export AuthenticatedRequest type for use in middleware and controllers
+// This leverages the global Express.Request augmentation from express.d.ts
+// Using intersection type to ensure user is required while maintaining all Request properties
+export type AuthenticatedRequest = Request & {
+  user: AuthenticatedUser;
+};

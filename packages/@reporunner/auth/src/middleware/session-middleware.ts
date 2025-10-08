@@ -1,13 +1,6 @@
 import * as crypto from 'node:crypto';
 import type { NextFunction, Request, Response } from 'express';
 
-export interface SessionRequest extends Request {
-  session?: Session;
-  sessionId?: string;
-  createSession?: (userId: string, data?: Record<string, unknown>) => Promise<Session>;
-  destroySession?: () => Promise<void>;
-}
-
 export interface Session {
   id: string;
   userId: string;
@@ -77,6 +70,8 @@ export class InMemorySessionStore implements SessionStore {
 export interface SessionRequest extends Omit<Request, 'session'> {
   session?: Session;
   sessionId?: string;
+  createSession?: (userId: string, data?: Record<string, unknown>) => Promise<Session>;
+  destroySession?: () => Promise<void>;
 }
 
 export function createSessionMiddleware(config: SessionConfig) {

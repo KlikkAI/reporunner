@@ -45,8 +45,8 @@ export const ExecutionDocumentSchema = z.object({
   startTime: z.date(),
   endTime: z.date().optional(),
   executionTime: z.number().optional(),
-  nodeExecutions: z.record(z.any()).optional(),
-  context: z.record(z.any()).optional(),
+  nodeExecutions: z.record(z.string(), z.any()).optional(),
+  context: z.record(z.string(), z.any()).optional(),
   error: z.string().optional(),
   createdAt: z.date(),
   updatedAt: z.date(),
@@ -71,7 +71,7 @@ export const OrganizationDocumentSchema = z.object({
   name: z.string(),
   domain: z.string().optional(),
   isActive: z.boolean().default(true),
-  settings: z.record(z.any()).optional(),
+  settings: z.record(z.string(), z.any()).optional(),
   createdAt: z.date(),
   updatedAt: z.date(),
 });
@@ -80,7 +80,7 @@ export const CredentialDocumentSchema = z.object({
   _id: z.string().optional(),
   name: z.string(),
   type: z.string(),
-  data: z.record(z.any()),
+  data: z.record(z.string(), z.any()),
   ownerId: z.string(),
   organizationId: z.string().optional(),
   isActive: z.boolean().default(true),
@@ -100,7 +100,7 @@ export const EmbeddingTableSchema = z.object({
   id: z.string().uuid(),
   content: z.string(),
   embedding: z.array(z.number()), // Vector
-  metadata: z.record(z.any()).optional(),
+  metadata: z.record(z.string(), z.any()).optional(),
   created_at: z.date(),
   updated_at: z.date(),
 });

@@ -97,7 +97,7 @@ const AuditEventSchema = z.object({
   severity: z.enum(['low', 'medium', 'high', 'critical']),
   status: z.enum(['success', 'failure', 'error']),
   message: z.string(),
-  metadata: z.record(z.any()),
+  metadata: z.record(z.string(), z.unknown()),
   changes: z
     .object({
       before: z.any().optional(),
@@ -128,7 +128,7 @@ export class AuditLogger extends EventEmitter {
     this.logger = new Logger('AuditLogger');
     this.maxEvents = options.maxEvents || 100000;
     this.retentionDays = options.retentionDays || 365;
-    this.complianceMode = options.complianceMode;
+    this.complianceMode = options.complianceMode ?? false;
 
     // Start cleanup interval
     this.startCleanupInterval();
@@ -340,10 +340,12 @@ export class AuditLogger extends EventEmitter {
         filteredEvents = filteredEvents.filter((e) => e.action === query.action);
       }
       if (query.startDate) {
-        filteredEvents = filteredEvents.filter((e) => e.timestamp >= query.startDate);
+        const startDate = query.startDate;
+        filteredEvents = filteredEvents.filter((e) => e.timestamp >= startDate);
       }
       if (query.endDate) {
-        filteredEvents = filteredEvents.filter((e) => e.timestamp <= query.endDate);
+        const endDate = query.endDate;
+        filteredEvents = filteredEvents.filter((e) => e.timestamp <= endDate);
       }
 
       // Sort by timestamp (newest first)

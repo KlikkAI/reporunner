@@ -198,7 +198,8 @@ export class SecurityHeadersMiddleware extends SecurityMiddleware {
 
   private setCORSHeaders(req: Request, res: Response): void {
     const { cors } = this.config;
-    const origin = req.headers.origin;
+    const originHeader = req.headers.origin;
+    const origin = Array.isArray(originHeader) ? originHeader[0] : originHeader;
 
     // Handle preflight requests
     if (req.method === 'OPTIONS') {
@@ -214,7 +215,7 @@ export class SecurityHeadersMiddleware extends SecurityMiddleware {
     }
 
     // Set CORS headers
-    if (cors?.origins?.includes('*') || cors?.origins?.includes(origin)) {
+    if (cors?.origins?.includes('*') || (origin && cors?.origins?.includes(origin))) {
       res.setHeader('Access-Control-Allow-Origin', origin || '*');
     }
     if (cors?.credentials) {

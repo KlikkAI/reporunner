@@ -40,12 +40,19 @@ export class APIKeyStrategy {
   private extractAPIKey(req: Request): string | null {
     // Check header first
     if (this.options.headerName && req.headers[this.options.headerName]) {
-      return req.headers[this.options.headerName];
+      const headerValue = req.headers[this.options.headerName];
+      return Array.isArray(headerValue) ? headerValue[0] : (headerValue ?? null);
     }
 
     // Check query parameter
     if (this.options.queryName && req.query[this.options.queryName]) {
-      return req.query[this.options.queryName];
+      const queryValue = req.query[this.options.queryName];
+      if (typeof queryValue === 'string') {
+        return queryValue;
+      }
+      if (Array.isArray(queryValue) && typeof queryValue[0] === 'string') {
+        return queryValue[0];
+      }
     }
 
     return null;

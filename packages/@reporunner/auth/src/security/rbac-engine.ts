@@ -1,5 +1,5 @@
 import { Logger } from '@reporunner/core';
-import type { AuthenticatedRequest } from '@reporunner/shared/types';
+import type { AuthenticatedRequest } from '@reporunner/shared';
 import type { NextFunction, Response } from 'express';
 import { z } from 'zod';
 
@@ -51,7 +51,7 @@ const PermissionSchema = z.object({
   name: z.string(),
   resource: z.string(),
   action: z.string(),
-  conditions: z.record(z.any()).optional(),
+  conditions: z.record(z.string(), z.unknown()).optional(),
   description: z.string().optional(),
 });
 
@@ -170,7 +170,7 @@ export class RBACEngine {
       return {
         allowed: false,
         reason: 'Permission conditions not met',
-        appliedRules: matchingPermissions.map((p) => p?.id),
+        appliedRules: matchingPermissions.map((p) => p?.id).filter((id): id is string => id !== undefined),
       };
     } catch (error) {
       this.logger.error('Failed to check permission', { error, context });
@@ -387,12 +387,12 @@ export class RBACEngine {
     // Time-based access
     if (conditions.timeRange) {
       const now = new Date();
-      const { start, end } = conditions.timeRange;
+      const timeRange = conditions.timeRange as { start?: string; end?: string };
 
-      if (start && now < new Date(start)) {
+      if (timeRange.start && now < new Date(timeRange.start)) {
         return { allowed: false };
       }
-      if (end && now > new Date(end)) {
+      if (timeRange.end && now > new Date(timeRange.end)) {
         return { allowed: false };
       }
 

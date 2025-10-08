@@ -6,6 +6,9 @@ import {
 } from '@reporunner/core';
 import type { Request } from 'express';
 
+type ParsedQs = Record<string, string | string[] | ParsedQs | ParsedQs[] | undefined>;
+type ParamsDictionary = Record<string, string>;
+
 export interface ValidationConfig {
   /**
    * Schema to validate request body
@@ -66,7 +69,7 @@ export class ValidationMiddleware extends BaseMiddleware {
         if (error instanceof ValidationError) {
           errors.body = error.details;
         } else {
-          errors.body = (error as Error).message;
+          errors.body = [(error as Error).message];
         }
       }
     }
@@ -79,7 +82,7 @@ export class ValidationMiddleware extends BaseMiddleware {
         if (error instanceof ValidationError) {
           errors.query = error.details;
         } else {
-          errors.query = (error as Error).message;
+          errors.query = [(error as Error).message];
         }
       }
     }
@@ -92,7 +95,7 @@ export class ValidationMiddleware extends BaseMiddleware {
         if (error instanceof ValidationError) {
           errors.params = error.details;
         } else {
-          errors.params = (error as Error).message;
+          errors.params = [(error as Error).message];
         }
       }
     }
@@ -105,7 +108,7 @@ export class ValidationMiddleware extends BaseMiddleware {
         if (error instanceof ValidationError) {
           errors.custom = error.details;
         } else {
-          errors.custom = (error as Error).message;
+          errors.custom = [(error as Error).message];
         }
       }
     }
@@ -126,10 +129,10 @@ export class ValidationMiddleware extends BaseMiddleware {
       req.body = this.sanitizeObject(req.body);
     }
     if (req.query) {
-      req.query = this.sanitizeObject(req.query);
+      req.query = this.sanitizeObject(req.query) as ParsedQs;
     }
     if (req.params) {
-      req.params = this.sanitizeObject(req.params);
+      req.params = this.sanitizeObject(req.params) as ParamsDictionary;
     }
   }
 
@@ -144,7 +147,7 @@ export class ValidationMiddleware extends BaseMiddleware {
           typeof item === 'string' ? this.sanitizeString(item) : item
         );
       } else if (typeof value === 'object' && value !== null) {
-        sanitized[key] = this.sanitizeObject(value);
+        sanitized[key] = this.sanitizeObject(value as Record<string, unknown>);
       } else {
         sanitized[key] = value;
       }

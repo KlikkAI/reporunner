@@ -205,7 +205,7 @@ export function createValidationMiddleware(schema: ValidationSchema) {
     }
 
     // Attach validated data to request
-    (req as { validated: Record<string, unknown> }).validated = validatedData;
+    (req as unknown as { validated: Record<string, unknown> }).validated = validatedData;
     next();
   };
 }
@@ -238,24 +238,27 @@ function validateType(value: unknown, type?: string): string | null {
       break;
 
     case 'email':
-      if (!validator.isEmail(value)) {
+      if (typeof value !== 'string' || !validator.isEmail(value)) {
         return 'Invalid email address';
       }
       break;
 
     case 'url':
-      if (!validator.isURL(value)) {
+      if (typeof value !== 'string' || !validator.isURL(value)) {
         return 'Invalid URL';
       }
       break;
 
     case 'uuid':
-      if (!validator.isUUID(value)) {
+      if (typeof value !== 'string' || !validator.isUUID(value)) {
         return 'Invalid UUID';
       }
       break;
 
     case 'json':
+      if (typeof value !== 'string') {
+        return 'Expected string for JSON parsing';
+      }
       try {
         JSON.parse(value);
       } catch {

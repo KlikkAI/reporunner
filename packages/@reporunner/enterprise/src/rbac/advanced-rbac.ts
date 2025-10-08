@@ -32,7 +32,7 @@ export const PermissionSchema = z.object({
       })
     )
     .optional(),
-  metadata: z.record(z.any()).optional(),
+  metadata: z.record(z.string(), z.unknown()).optional(),
 });
 
 export type Permission = z.infer<typeof PermissionSchema>;
@@ -50,7 +50,7 @@ export const RoleSchema = z.object({
   createdAt: z.date(),
   updatedAt: z.date(),
   createdBy: z.string(),
-  metadata: z.record(z.any()).optional(),
+  metadata: z.record(z.string(), z.unknown()).optional(),
 });
 
 export type Role = z.infer<typeof RoleSchema>;
@@ -646,7 +646,7 @@ export class AdvancedRBAC {
 
     return activeAssignments
       .map((assignment) => this.roles.get(assignment.roleId))
-      .filter((role): role is Role => role?.isActive);
+      .filter((role): role is Role => role !== undefined && role.isActive);
   }
 
   /**
@@ -704,7 +704,7 @@ export class AdvancedRBAC {
    * Evaluate conditions
    */
   private evaluateConditions(
-    conditions: unknown[],
+    conditions: Array<{ field: string; operator: string; value: unknown }>,
     resourceData: Record<string, unknown>
   ): boolean {
     return conditions.every((condition) => {

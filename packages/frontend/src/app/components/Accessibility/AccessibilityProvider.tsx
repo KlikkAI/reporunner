@@ -82,7 +82,7 @@ export const AccessibilityProvider: React.FC<AccessibilityProviderProps> = ({ ch
     localStorage.setItem('accessibility_settings', JSON.stringify(settings));
     applyAccessibilityStyles(settings);
   }, [settings, applyAccessibilityStyles]);
-, applyAccessibilityStyles
+
   const updateSettings = (newSettings: Partial<AccessibilitySettings>) => {
     setSettings((prev) => ({ ...prev, ...newSettings }));
   };

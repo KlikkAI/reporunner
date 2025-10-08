@@ -15,6 +15,7 @@ export const WorkflowExecutionSchema = BaseEntitySchema.extend({
   executionTime: z.number().optional(),
   nodeExecutions: z
     .record(
+      z.string(),
       z.object({
         nodeId: z.string(),
         status: z.enum(['pending', 'running', 'success', 'error', 'skipped', 'waiting']),
@@ -25,7 +26,7 @@ export const WorkflowExecutionSchema = BaseEntitySchema.extend({
       })
     )
     .optional(),
-  context: z.record(z.any()).optional(),
+  context: z.record(z.string(), z.any()).optional(),
   error: z.string().optional(),
 });
 

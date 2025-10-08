@@ -1,0 +1,21 @@
+{
+  "extends": "../../shared/tsconfig.json",
+  "compilerOptions": {
+    "composite": true,
+    "declaration": true,
+    "declarationMap": true,
+    "outDir": "./dist",
+    "rootDir": "."
+  },
+  "files": [],
+  "references": [
+    { "path": "./analytics-service" },
+    { "path": "./audit-service" },
+    { "path": "./auth-service" },
+    { "path": "./execution-service" },
+    { "path": "./notification-service" },
+    { "path": "./tenant-service" },
+    { "path": "./workflow-service" }
+  ],
+  "_package": "services"
+}

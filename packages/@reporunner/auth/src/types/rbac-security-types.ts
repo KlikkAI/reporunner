@@ -28,7 +28,7 @@ export const PermissionSchema = z.object({
   description: z.string().optional(),
   resource: z.string(),
   action: z.string(),
-  conditions: z.record(z.any()).optional(),
+  conditions: z.record(z.string(), z.unknown()).optional(),
 });
 
 export const RoleSchema = z.object({

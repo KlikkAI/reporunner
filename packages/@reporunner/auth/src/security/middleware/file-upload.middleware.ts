@@ -394,7 +394,8 @@ async function scanFileForVirus(
   } catch (error: unknown) {
     // ClamAV returns exit code 1 if virus is found
     if (error && typeof error === 'object' && 'code' in error && error.code === 1) {
-      const match = error.stdout?.match(/: (.+) found/i);
+      const errorWithStdout = error as { code: number; stdout?: string };
+      const match = errorWithStdout.stdout?.match(/: (.+) found/i);
       const threat = match ? match[1] : 'Unknown threat';
       return { scanned: true, clean: false, threat };
     }

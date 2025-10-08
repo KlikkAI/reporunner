@@ -18,10 +18,11 @@ import {
   Steps,
   Typography,
   Upload,
-} from ' type { UploadFile } from '
+} from 'antd';
+import type { UploadFile } from 'antd/es/upload/interface';
 import {
   UploadOutlined,
-} from '@ant-design/icons';antd/es/upload/interface';
+} from '@ant-design/icons';
 
 import type React from 'react';
 import { useState } from 'react';
@@ -73,7 +74,7 @@ export const PublishPlugin: React.FC<PublishPluginProps> = ({ onClose }) => {
   };
 
   // Handle plugin validation
-  const handleValidation = async _values
+  const handleValidation = async (_values: PluginFormData) => {
     if (!pluginFile) {
       message.error('Please upload a plugin file');
       return;
@@ -114,8 +115,9 @@ export const PublishPlugin: React.FC<PublishPluginProps> = ({ onClose }) => {
     } catch (_error) {
       message.error('Validation failed');
       setCurrentStep(1);
-    };
-_error
+    }
+  };
+
   // Handle plugin publishing
   const handlePublish = async () => {
     if (!(validationResult && pluginFile)) {

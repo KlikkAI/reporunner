@@ -276,7 +276,7 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
 
   const _getStatusColor = (status: string) => {
     switch (status) {
-      cess':
+      case 'success':
         return 'green';
       case 'error':
         return 'red';
@@ -481,7 +481,7 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
                     <Cell
                       key={`cell-${index}`}
                       fill={['#ff4d4f', '#faad14', '#1890ff', '#52c41a'][index % 4]}
-                    />_entry
+                    />
                   ))}
                 </Pie>
                 <RechartsTooltip />

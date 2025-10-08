@@ -224,10 +224,12 @@ export const usePluginMarketplace = (): UsePluginMarketplaceReturn => {
         throw new Error(response.error || 'Failed to get featured plugins');
       }
     } catch (err) {
-      const _errorMessage = err instanceof Error ? err.message : 'Failed to get featured plugins';for featured plugins as it's not critical
+      // Silently ignore errors for featured plugins as it's not critical
+      const _errorMessage = err instanceof Error ? err.message : 'Failed to get featured plugins';
+      console.warn(_errorMessage);
     }
   }, [apiCall, plugins]);
-apiCall
+
   return {
     // State
     plugins,
