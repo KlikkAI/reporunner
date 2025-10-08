@@ -6,8 +6,8 @@ import type { ImportOptimizationReport } from './types';
 
 export class ImportPathOptimizer {
   private workspaceRoot: string;
-  private circularDependencyDetector: CircularDependencyDetector;
-  private importConsistencyValidator: ImportConsistencyValidator;
+  public circularDependencyDetector: CircularDependencyDetector;
+  public importConsistencyValidator: ImportConsistencyValidator;
   private pathSuggestionEngine: PathSuggestionEngine;
 
   constructor(workspaceRoot: string) {

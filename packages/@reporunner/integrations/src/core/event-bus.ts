@@ -3,10 +3,10 @@ import { EventEmitter } from 'node:events';
 export interface EventPayload {
   source: string;
   event: string;
-  data: any;
+  data: unknown;
   timestamp: Date;
   correlationId?: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 export interface EventSubscription {
@@ -54,8 +54,8 @@ export class IntegrationEventBus extends EventEmitter {
   async publish(
     source: string,
     event: string,
-    data: any,
-    metadata?: Record<string, any>
+    data: unknown,
+    metadata?: Record<string, unknown>
   ): Promise<void> {
     const payload: EventPayload = {
       source,
@@ -174,7 +174,7 @@ export class IntegrationEventBus extends EventEmitter {
         if (subscription.once) {
           this.subscriptions.delete(subscription.id);
         }
-      } catch (error: any) {
+      } catch (error: unknown) {
         this.handleError(subscription, payload, error);
       }
     }
@@ -270,6 +270,7 @@ export class IntegrationEventBus extends EventEmitter {
     });
 
     if (this.config.enableLogging) {
+      // Log event processing for debugging
     }
   }
 
@@ -280,8 +281,9 @@ export class IntegrationEventBus extends EventEmitter {
     this.eventHistory.push(payload);
 
     // Trim history if needed
-    if (this.eventHistory.length > this.config.maxEventHistory!) {
-      this.eventHistory = this.eventHistory.slice(-this.config.maxEventHistory!);
+    const maxHistory = this.config.maxEventHistory || 1000;
+    if (this.eventHistory.length > maxHistory) {
+      this.eventHistory = this.eventHistory.slice(-maxHistory);
     }
   }
 
@@ -304,7 +306,7 @@ export class IntegrationEventBus extends EventEmitter {
         history = history.filter((e) => e.event === filter.event);
       }
       if (filter.since) {
-        history = history.filter((e) => e.timestamp >= filter.since!);
+        history = history.filter((e) => filter.since && e.timestamp >= filter.since);
       }
       if (filter.limit) {
         history = history.slice(-filter.limit);
@@ -350,7 +352,13 @@ export class IntegrationEventBus extends EventEmitter {
   /**
    * Log event
    */
-  private logEvent(_action: string, _payload: EventPayload, _extra?: Record<string, any>): void {}
+  private logEvent(
+    _action: string,
+    _payload: EventPayload,
+    _extra?: Record<string, unknown>
+  ): void {
+    // Empty by default - override in subclass for logging
+  }
 
   /**
    * Generate correlation ID
@@ -375,7 +383,12 @@ export class IntegrationEventBus extends EventEmitter {
     historySize: number;
     subscriptionsByPattern: Record<string, number>;
   } {
-    const stats: any = {
+    const stats: {
+      totalSubscriptions: number;
+      queueSize: number;
+      historySize: number;
+      subscriptionsByPattern: Record<string, number>;
+    } = {
       totalSubscriptions: this.subscriptions.size,
       queueSize: this.processingQueue.length,
       historySize: this.eventHistory.length,
@@ -413,7 +426,7 @@ export class EventChannel {
   /**
    * Publish event to channel
    */
-  async publish(event: string, data: any, metadata?: Record<string, any>): Promise<void> {
+  async publish(event: string, data: unknown, metadata?: Record<string, unknown>): Promise<void> {
     await this.bus.publish(this.namespace, event, data, metadata);
   }
 

@@ -58,6 +58,7 @@ export interface WorkspaceMetrics {
 
 export class IDEPerformanceAnalyzer {
   private workspaceRoot: string;
+  private tsConfigPath: string;
 
   constructor(workspaceRoot: string = process.cwd()) {
     this.workspaceRoot = workspaceRoot;
@@ -325,7 +326,7 @@ export class IDEPerformanceAnalyzer {
       // Scale down to simulate autocomplete response (should be much faster than full compilation)
       return Math.min(responseTime / 10, 2000);
     } catch (_error) {
-      return _error; // Default slow response time
+      return 2000; // Default slow response time
     }
   }
 
@@ -362,7 +363,7 @@ export class IDEPerformanceAnalyzer {
       await this.runCommand('npx', ['tsc', '--showConfig'], { timeout: 3000 });
       return Math.min(performance.now() - start, 1000);
     } catch (_error) {
-      return _error; // Default slow import suggestion time
+      return 1500; // Default slow import suggestion time
     }
   }
 
@@ -374,7 +375,7 @@ export class IDEPerformanceAnalyzer {
       await this.runCommand('npx', ['tsc', '--listFiles'], { timeout: 5000 });
       return Math.min(performance.now() - start, 500);
     } catch (_error) {
-      return _error;
+      return 500;
     }
   }
 
@@ -387,7 +388,7 @@ export class IDEPerformanceAnalyzer {
       const totalTime = performance.now() - start;
       return Math.min(totalTime / 5, 2000); // Scale down for reference finding
     } catch (_error) {
-      return _error;
+      return 500;
     }
   }
 
@@ -401,7 +402,7 @@ export class IDEPerformanceAnalyzer {
       });
       return performance.now() - start;
     } catch (_error) {
-      return _error;
+      return 500;
     }
   }
 
@@ -417,7 +418,7 @@ export class IDEPerformanceAnalyzer {
       );
       return performance.now() - start;
     } catch (_error) {
-      return _error;
+      return 500;
     }
   }
 
@@ -429,7 +430,7 @@ export class IDEPerformanceAnalyzer {
       await this.runCommand('npx', ['tsc', '--listFiles', '--skipLibCheck'], { timeout: 15000 });
       return performance.now() - start;
     } catch (_error) {
-      return _error;
+      return 500;
     }
   }
 
@@ -442,7 +443,7 @@ export class IDEPerformanceAnalyzer {
       const totalTime = performance.now() - start;
       return Math.min(totalTime / 20, 200); // Scale down for hover info
     } catch (_error) {
-      return _error;
+      return 500;
     }
   }
 
@@ -455,7 +456,7 @@ export class IDEPerformanceAnalyzer {
       const totalTime = performance.now() - start;
       return Math.min(totalTime / 25, 150);
     } catch (_error) {
-      return _error;
+      return 500;
     }
   }
 
@@ -480,7 +481,7 @@ export class IDEPerformanceAnalyzer {
       const baseTime = 100 + errorCount * 10;
       return Math.min(baseTime, 1000);
     } catch (_error) {
-      return _error;
+      return 500;
     }
   }
 

@@ -15,7 +15,7 @@ export interface EnterpriseConfig {
 export interface SSOProvider {
   name: string;
   type: 'saml' | 'oauth' | 'ldap';
-  config: Record<string, any>;
+  config: Record<string, unknown>;
   enabled: boolean;
 }
 

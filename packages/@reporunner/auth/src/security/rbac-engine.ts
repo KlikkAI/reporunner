@@ -1,4 +1,6 @@
 import { Logger } from '@reporunner/core';
+import type { AuthenticatedRequest } from '@reporunner/shared/types';
+import type { NextFunction, Response } from 'express';
 import { z } from 'zod';
 
 export interface Permission {
@@ -6,7 +8,7 @@ export interface Permission {
   name: string;
   resource: string;
   action: string;
-  conditions?: Record<string, any>;
+  conditions?: Record<string, unknown>;
   description?: string;
 }
 
@@ -25,7 +27,7 @@ export interface User {
   email: string;
   roles: string[];
   organizationId?: string;
-  attributes?: Record<string, any>;
+  attributes?: Record<string, unknown>;
 }
 
 export interface RBACContext {
@@ -34,14 +36,14 @@ export interface RBACContext {
   action: string;
   resourceId?: string;
   organizationId?: string;
-  attributes?: Record<string, any>;
+  attributes?: Record<string, unknown>;
 }
 
 export interface AccessDecision {
   allowed: boolean;
   reason: string;
   appliedRules: string[];
-  conditions?: Record<string, any>;
+  conditions?: Record<string, unknown>;
 }
 
 const PermissionSchema = z.object({
@@ -129,7 +131,7 @@ export class RBACEngine {
    */
   async checkPermission(context: RBACContext): Promise<AccessDecision> {
     try {
-      const { user, resource, action, resourceId, organizationId } = context;
+      const { user, resource, action } = context;
 
       // Get all user permissions (including inherited)
       const userPermissions = this.getUserPermissions(user.id);
@@ -199,7 +201,10 @@ export class RBACEngine {
    */
   getUserPermissions(userId: string): Set<string> {
     if (this.permissionCache.has(userId)) {
-      return this.permissionCache.get(userId)!;
+      const permissions = this.permissionCache.get(userId);
+      if (permissions) {
+        return permissions;
+      }
     }
 
     const userRoles = this.userRoleCache.get(userId) || [];
@@ -207,7 +212,9 @@ export class RBACEngine {
 
     for (const roleId of userRoles) {
       const rolePermissions = this.getRolePermissions(roleId);
-      rolePermissions.forEach((perm) => permissions.add(perm));
+      for (const perm of rolePermissions) {
+        permissions.add(perm);
+      }
     }
 
     this.permissionCache.set(userId, permissions);
@@ -229,7 +236,9 @@ export class RBACEngine {
     if (role.inherits) {
       for (const inheritedRoleId of role.inherits) {
         const inheritedPermissions = this.getRolePermissions(inheritedRoleId);
-        inheritedPermissions.forEach((perm) => permissions.add(perm));
+        for (const perm of inheritedPermissions) {
+          permissions.add(perm);
+        }
       }
     }
 
@@ -298,7 +307,7 @@ export class RBACEngine {
    * Create permission middleware for Express
    */
   createPermissionMiddleware(resource: string, action: string) {
-    return async (req: any, res: any, next: any) => {
+    return async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
       try {
         const user = req.user;
         if (!user) {
@@ -350,15 +359,15 @@ export class RBACEngine {
   }
 
   private async evaluateConditions(
-    conditions: Record<string, any>,
+    conditions: Record<string, unknown>,
     context: RBACContext
-  ): Promise<{ allowed: boolean; conditions?: Record<string, any> }> {
+  ): Promise<{ allowed: boolean; conditions?: Record<string, unknown> }> {
     // If no conditions, allow access
     if (Object.keys(conditions).length === 0) {
       return { allowed: true };
     }
 
-    const evaluatedConditions: Record<string, any> = {};
+    const evaluatedConditions: Record<string, unknown> = {};
 
     // Organization-based access
     if (conditions.organizationId) {

@@ -678,7 +678,7 @@ export class TenantManager {
     // Map resource to usage field
     const usageField = this.getUsageField(resource);
     if (usageField && usageField in tenant.usage) {
-      (tenant.usage as any)[usageField] += amount;
+      (tenant.usage as Record<string, number>)[usageField] += amount;
       tenant.updatedAt = new Date();
     }
   }

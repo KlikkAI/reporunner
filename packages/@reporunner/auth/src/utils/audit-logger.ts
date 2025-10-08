@@ -7,7 +7,7 @@ export interface AuditLogEntry {
   userId?: string;
   email?: string;
   organizationId?: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
   ipAddress?: string;
   userAgent?: string;
   success: boolean;
@@ -44,6 +44,7 @@ export class AuditLogger extends EventEmitter {
 
     // Log to console in development
     if (process.env.NODE_ENV === 'development') {
+      // Log to console in development mode
     }
   }
 

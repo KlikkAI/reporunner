@@ -5,7 +5,7 @@
 
 import { Logger } from '@reporunner/core';
 import { z } from 'zod';
-import type { LLMProvider } from './base/ai-provider';
+import type { ILLMProvider } from './base/ai-provider';
 
 // Workflow analysis schemas
 export const WorkflowAnalysisSchema = z.object({
@@ -94,9 +94,9 @@ export type OptimizationReport = z.infer<typeof OptimizationReportSchema>;
 
 export class WorkflowOptimizer {
   private logger: Logger;
-  private llmProvider: LLMProvider;
+  private llmProvider: ILLMProvider;
 
-  constructor(llmProvider: LLMProvider) {
+  constructor(llmProvider: ILLMProvider) {
     this.logger = new Logger('WorkflowOptimizer');
     this.llmProvider = llmProvider;
   }
@@ -265,7 +265,7 @@ export class WorkflowOptimizer {
         type: 'reliability',
         priority: 'high',
         title: `Improve reliability of ${node.name}`,
-        description: `Node "${node.name}" has an error rate of ${(node.errorRate! * 100).toFixed(1)}%, which is above the recommended threshold.`,
+        description: `Node "${node.name}" has an error rate of ${((node.errorRate || 0) * 100).toFixed(1)}%, which is above the recommended threshold.`,
         impact: {
           reliabilityImprovement: 25,
         },

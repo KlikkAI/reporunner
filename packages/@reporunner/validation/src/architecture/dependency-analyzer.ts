@@ -177,7 +177,7 @@ export class DependencyAnalyzer {
           continue;
         }
 
-        const result = await madge(srcPath, config);
+        const result = await madge.default(srcPath, config);
         const packageCirculars = result.circular();
 
         for (const circular of packageCirculars) {
@@ -348,11 +348,11 @@ export class DependencyAnalyzer {
       const packageName = await this.getPackageName(packagePath);
       const dependencies = await this.getPackageDependencies(packagePath);
 
-      const currentLayer = packageLayers[packageName] || 999;
+      const currentLayer = (packageLayers as Record<string, number>)[packageName] || 999;
 
       for (const dep of dependencies) {
         totalChecks++;
-        const depLayer = packageLayers[dep] || 999;
+        const depLayer = (packageLayers as Record<string, number>)[dep] || 999;
 
         // Check layer violations (higher layers shouldn't depend on lower layers)
         if (depLayer > currentLayer) {
@@ -625,7 +625,7 @@ export class DependencyAnalyzer {
     };
 
     for (const node of nodes) {
-      const color = layerColors[node.layer] || '#ffffff';
+      const color = (layerColors as Record<string, string>)[node.layer] || '#ffffff';
       lines.push(
         `  "${node.id}" [fillcolor="${color}", label="${node.name}\\n(${node.dependencies} deps, ${node.dependents} dependents)"];`
       );

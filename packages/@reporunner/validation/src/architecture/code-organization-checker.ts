@@ -353,7 +353,7 @@ export class CodeOrganizationChecker {
           endLines,
         });
 
-        files.forEach((file) => affectedFiles.add(file));
+        files.forEach((file: string) => affectedFiles.add(file));
       }
     }
 

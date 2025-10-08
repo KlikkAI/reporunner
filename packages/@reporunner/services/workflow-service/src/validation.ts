@@ -18,7 +18,7 @@ export interface ValidationWarning {
 }
 
 export class WorkflowValidator {
-  async validate(_workflow: any): Promise<ValidationResult> {
+  async validate(_workflow: Record<string, unknown>): Promise<ValidationResult> {
     const errors: ValidationError[] = [];
     const warnings: ValidationWarning[] = [];
 

@@ -1,7 +1,8 @@
-import type { IExecution, Workflow } from '@reporunner/shared';
-import { CrudControllerBase } from '@reporunner/shared';
 import type { Request, Response } from 'express';
 import { injectable } from 'inversify';
+import { CrudControllerBase } from '../../base/enhanced-base-controller';
+import type { IExecution } from '../../types/execution';
+import type { Workflow } from '../../types/workflow';
 
 @injectable()
 export class WorkflowController extends CrudControllerBase {

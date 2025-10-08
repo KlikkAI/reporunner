@@ -119,25 +119,25 @@ export class SocketManager {
       });
 
       // Handle workflow operations (with OT)
-      socket.on('operation:apply', async (operation: any) => {
+      socket.on('operation:apply', async (operation: unknown) => {
         await this.handleOperation(socket, operation);
       });
 
       // Handle node operations
-      socket.on('node:add', (data: any) => this.handleNodeAdd(socket, data));
-      socket.on('node:update', (data: any) => this.handleNodeUpdate(socket, data));
-      socket.on('node:delete', (data: any) => this.handleNodeDelete(socket, data));
-      socket.on('node:move', (data: any) => this.handleNodeMove(socket, data));
+      socket.on('node:add', (data: unknown) => this.handleNodeAdd(socket, data));
+      socket.on('node:update', (data: unknown) => this.handleNodeUpdate(socket, data));
+      socket.on('node:delete', (data: unknown) => this.handleNodeDelete(socket, data));
+      socket.on('node:move', (data: unknown) => this.handleNodeMove(socket, data));
 
       // Handle edge operations
-      socket.on('edge:add', (data: any) => this.handleEdgeAdd(socket, data));
-      socket.on('edge:update', (data: any) => this.handleEdgeUpdate(socket, data));
-      socket.on('edge:delete', (data: any) => this.handleEdgeDelete(socket, data));
+      socket.on('edge:add', (data: unknown) => this.handleEdgeAdd(socket, data));
+      socket.on('edge:update', (data: unknown) => this.handleEdgeUpdate(socket, data));
+      socket.on('edge:delete', (data: unknown) => this.handleEdgeDelete(socket, data));
 
       // Handle comments
-      socket.on('comment:add', (data: any) => this.handleCommentAdd(socket, data));
-      socket.on('comment:reply', (data: any) => this.handleCommentReply(socket, data));
-      socket.on('comment:resolve', (data: any) => this.handleCommentResolve(socket, data));
+      socket.on('comment:add', (data: unknown) => this.handleCommentAdd(socket, data));
+      socket.on('comment:reply', (data: unknown) => this.handleCommentReply(socket, data));
+      socket.on('comment:resolve', (data: unknown) => this.handleCommentResolve(socket, data));
 
       // Handle typing indicators
       socket.on('typing:start', (data: { nodeId: string; field: string }) => {
@@ -258,7 +258,7 @@ export class SocketManager {
     });
   }
 
-  private async handleOperation(socket: Socket, operation: any): Promise<void> {
+  private async handleOperation(socket: Socket, operation: unknown): Promise<void> {
     const workflowId = socket.data.workflowId;
     const user = socket.data.user as IJwtPayload;
 
@@ -291,7 +291,7 @@ export class SocketManager {
     }
   }
 
-  private handleNodeAdd(socket: Socket, data: any): void {
+  private handleNodeAdd(socket: Socket, data: unknown): void {
     const workflowId = socket.data.workflowId;
     const user = socket.data.user as IJwtPayload;
 
@@ -307,7 +307,7 @@ export class SocketManager {
     });
   }
 
-  private handleNodeUpdate(socket: Socket, data: any): void {
+  private handleNodeUpdate(socket: Socket, data: unknown): void {
     const workflowId = socket.data.workflowId;
     const user = socket.data.user as IJwtPayload;
 
@@ -316,9 +316,9 @@ export class SocketManager {
     }
 
     // Check for conflicts
-    const isLocked = this.checkNodeLock(workflowId, data.nodeId, user.sub);
+    const isLocked = this.checkNodeLock(workflowId, (data as { nodeId: string }).nodeId, user.sub);
     if (isLocked) {
-      socket.emit('node:locked', { nodeId: data.nodeId });
+      socket.emit('node:locked', { nodeId: (data as { nodeId: string }).nodeId });
       return;
     }
 
@@ -330,7 +330,7 @@ export class SocketManager {
     });
   }
 
-  private handleNodeDelete(socket: Socket, data: any): void {
+  private handleNodeDelete(socket: Socket, data: unknown): void {
     const workflowId = socket.data.workflowId;
     const user = socket.data.user as IJwtPayload;
 
@@ -345,7 +345,7 @@ export class SocketManager {
     });
   }
 
-  private handleNodeMove(socket: Socket, data: any): void {
+  private handleNodeMove(socket: Socket, data: unknown): void {
     const workflowId = socket.data.workflowId;
     const user = socket.data.user as IJwtPayload;
 
@@ -360,7 +360,7 @@ export class SocketManager {
     });
   }
 
-  private handleEdgeAdd(socket: Socket, data: any): void {
+  private handleEdgeAdd(socket: Socket, data: unknown): void {
     const workflowId = socket.data.workflowId;
     const user = socket.data.user as IJwtPayload;
 
@@ -375,7 +375,7 @@ export class SocketManager {
     });
   }
 
-  private handleEdgeUpdate(socket: Socket, data: any): void {
+  private handleEdgeUpdate(socket: Socket, data: unknown): void {
     const workflowId = socket.data.workflowId;
     const user = socket.data.user as IJwtPayload;
 
@@ -390,7 +390,7 @@ export class SocketManager {
     });
   }
 
-  private handleEdgeDelete(socket: Socket, data: any): void {
+  private handleEdgeDelete(socket: Socket, data: unknown): void {
     const workflowId = socket.data.workflowId;
     const user = socket.data.user as IJwtPayload;
 
@@ -405,7 +405,7 @@ export class SocketManager {
     });
   }
 
-  private handleCommentAdd(socket: Socket, data: any): void {
+  private handleCommentAdd(socket: Socket, data: unknown): void {
     const workflowId = socket.data.workflowId;
     const user = socket.data.user as IJwtPayload;
 
@@ -425,7 +425,7 @@ export class SocketManager {
     this.io.to(`workflow:${workflowId}`).emit('comment:added', comment);
   }
 
-  private handleCommentReply(socket: Socket, data: any): void {
+  private handleCommentReply(socket: Socket, data: unknown): void {
     const workflowId = socket.data.workflowId;
     const user = socket.data.user as IJwtPayload;
 
@@ -444,7 +444,7 @@ export class SocketManager {
     this.io.to(`workflow:${workflowId}`).emit('comment:replied', reply);
   }
 
-  private handleCommentResolve(socket: Socket, data: any): void {
+  private handleCommentResolve(socket: Socket, data: unknown): void {
     const workflowId = socket.data.workflowId;
     const user = socket.data.user as IJwtPayload;
 
@@ -572,7 +572,9 @@ export class SocketManager {
     return false;
   }
 
-  private async applyOperationToWorkflow(_workflowId: string, _operation: any): Promise<void> {}
+  private async applyOperationToWorkflow(_workflowId: string, _operation: unknown): Promise<void> {
+    // Placeholder for OT implementation
+  }
 
   // Public methods
   public getActiveCollaborators(workflowId: string): CollaborationSession[] {
@@ -581,7 +583,7 @@ export class SocketManager {
     );
   }
 
-  public broadcastToWorkflow(workflowId: string, event: string, data: any): void {
+  public broadcastToWorkflow(workflowId: string, event: string, data: unknown): void {
     this.io.to(`workflow:${workflowId}`).emit(event, data);
   }
 }

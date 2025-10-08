@@ -1,5 +1,5 @@
 import { ERROR_CODES } from '@reporunner/shared';
-import type { NextFunction, Request, Response } from 'express';
+import type { NextFunction, Request, RequestHandler, Response } from 'express';
 import DOMPurify from 'isomorphic-dompurify';
 import validator from 'validator';
 
@@ -13,16 +13,16 @@ export interface ValidationRule {
   minLength?: number;
   maxLength?: number;
   pattern?: RegExp;
-  enum?: any[];
-  custom?: (value: any) => boolean | string;
+  enum?: unknown[];
+  custom?: (value: unknown) => boolean | string;
   sanitize?: boolean;
   trim?: boolean;
   escape?: boolean;
   normalizeEmail?: boolean;
   toLowerCase?: boolean;
   toUpperCase?: boolean;
-  default?: any;
-  transform?: (value: any) => any;
+  default?: unknown;
+  transform?: (value: unknown) => unknown;
 }
 
 export interface ValidationSchema {
@@ -35,7 +35,7 @@ export interface ValidationSchema {
 export interface ValidationError {
   field: string;
   message: string;
-  value?: any;
+  value?: unknown;
   location?: string;
 }
 
@@ -86,12 +86,12 @@ const COMMAND_INJECTION_PATTERNS = [/[;&|`$()]/g, /\$\(/g, /`[^`]*`/g, /\|\|/g, 
 export function createValidationMiddleware(schema: ValidationSchema) {
   return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const errors: ValidationError[] = [];
-    const validatedData: any = {};
+    const validatedData: Record<string, unknown> = {};
 
     // Process each rule
     for (const rule of schema.rules) {
       const location = rule.location || 'body';
-      const source = req[location as keyof Request] as any;
+      const source = req[location as keyof Request] as Record<string, unknown>;
       let value = source?.[rule.field];
 
       // Check required fields
@@ -169,7 +169,7 @@ export function createValidationMiddleware(schema: ValidationSchema) {
     // Handle unknown fields
     if (schema.stripUnknown) {
       for (const location of ['body', 'query', 'params']) {
-        const source = req[location as keyof Request] as any;
+        const source = req[location as keyof Request] as Record<string, unknown>;
         if (source && typeof source === 'object') {
           const knownFields = schema.rules
             .filter((r) => (r.location || 'body') === location)
@@ -205,7 +205,7 @@ export function createValidationMiddleware(schema: ValidationSchema) {
     }
 
     // Attach validated data to request
-    (req as any).validated = validatedData;
+    (req as { validated: Record<string, unknown> }).validated = validatedData;
     next();
   };
 }
@@ -213,7 +213,7 @@ export function createValidationMiddleware(schema: ValidationSchema) {
 /**
  * Validate type of value
  */
-function validateType(value: any, type?: string): string | null {
+function validateType(value: unknown, type?: string): string | null {
   if (!type) {
     return null;
   }
@@ -282,7 +282,7 @@ function validateType(value: any, type?: string): string | null {
 /**
  * Validate constraints
  */
-function validateConstraints(value: any, rule: ValidationRule): string[] {
+function validateConstraints(value: unknown, rule: ValidationRule): string[] {
   const errors: string[] = [];
 
   // Min/Max for numbers
@@ -334,7 +334,7 @@ function validateConstraints(value: any, rule: ValidationRule): string[] {
 /**
  * Sanitize input based on rules
  */
-function sanitizeInput(value: any, rule: ValidationRule): any {
+function sanitizeInput(value: unknown, rule: ValidationRule): unknown {
   if (typeof value !== 'string') {
     return value;
   }
@@ -376,7 +376,7 @@ function sanitizeInput(value: any, rule: ValidationRule): any {
  */
 export function createSQLInjectionProtection() {
   return (req: Request, res: Response, next: NextFunction): void => {
-    const checkValue = (value: any, _field: string): boolean => {
+    const checkValue = (value: unknown, _field: string): boolean => {
       if (typeof value !== 'string') {
         return true;
       }
@@ -391,7 +391,7 @@ export function createSQLInjectionProtection() {
 
     // Check all input sources
     for (const location of ['body', 'query', 'params']) {
-      const source = req[location as keyof Request] as any;
+      const source = req[location as keyof Request] as Record<string, unknown> | undefined;
       if (source && typeof source === 'object') {
         for (const [key, value] of Object.entries(source)) {
           if (!checkValue(value, `${location}.${key}`)) {
@@ -417,7 +417,7 @@ export function createSQLInjectionProtection() {
  */
 export function createNoSQLInjectionProtection() {
   return (req: Request, res: Response, next: NextFunction): void => {
-    const checkValue = (value: any): boolean => {
+    const checkValue = (value: unknown): boolean => {
       const valueStr = JSON.stringify(value);
 
       for (const pattern of NOSQL_INJECTION_PATTERNS) {
@@ -459,7 +459,7 @@ export function createNoSQLInjectionProtection() {
  */
 export function createXSSProtection() {
   return (req: Request, _res: Response, next: NextFunction) => {
-    const sanitizeValue = (value: any): any => {
+    const sanitizeValue = (value: unknown): unknown => {
       if (typeof value === 'string') {
         // Check for XSS patterns
         for (const pattern of XSS_PATTERNS) {
@@ -475,7 +475,7 @@ export function createXSSProtection() {
       } else if (Array.isArray(value)) {
         return value.map(sanitizeValue);
       } else if (value && typeof value === 'object') {
-        const sanitized: any = {};
+        const sanitized: Record<string, unknown> = {};
         for (const [key, val] of Object.entries(value)) {
           sanitized[key] = sanitizeValue(val);
         }
@@ -544,7 +544,7 @@ export function createPathTraversalProtection() {
  */
 export function createCommandInjectionProtection() {
   return (req: Request, res: Response, next: NextFunction): void => {
-    const checkValue = (value: any): boolean => {
+    const checkValue = (value: unknown): boolean => {
       if (typeof value !== 'string') {
         return true;
       }
@@ -559,7 +559,7 @@ export function createCommandInjectionProtection() {
 
     // Check all input that might be used in commands
     for (const location of ['body', 'query', 'params']) {
-      const source = req[location as keyof Request] as any;
+      const source = req[location as keyof Request] as Record<string, unknown> | undefined;
       if (source && typeof source === 'object') {
         for (const [key, value] of Object.entries(source)) {
           if (key.includes('cmd') || key.includes('command') || key.includes('exec')) {
@@ -594,7 +594,7 @@ export function createSecurityValidationMiddleware(
     enableCommandInjectionProtection?: boolean;
   } = {}
 ) {
-  const middlewares: any[] = [];
+  const middlewares: RequestHandler[] = [];
 
   if (options.enableSQLProtection !== false) {
     middlewares.push(createSQLInjectionProtection());
@@ -681,7 +681,7 @@ export const CommonSchemas = {
         type: 'number',
         min: 1,
         default: 1,
-        transform: (v: any) => Number.parseInt(v, 10),
+        transform: (v: unknown) => Number.parseInt(String(v), 10),
       },
       {
         field: 'limit',
@@ -690,7 +690,7 @@ export const CommonSchemas = {
         min: 1,
         max: 100,
         default: 20,
-        transform: (v: any) => Number.parseInt(v, 10),
+        transform: (v: unknown) => Number.parseInt(String(v), 10),
       },
       {
         field: 'sort',

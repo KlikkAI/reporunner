@@ -30,11 +30,14 @@ export interface SSOUser {
   name: string;
   roles?: string[];
   groups?: string[];
-  attributes?: Record<string, any>;
+  attributes?: Record<string, unknown>;
 }
 
 export class SSOManager {
-  async authenticate(_provider: string, _credentials: any): Promise<SSOUser | null> {
+  async authenticate(
+    _provider: string,
+    _credentials: Record<string, unknown>
+  ): Promise<SSOUser | null> {
     // TODO: Implement SSO authentication
     return null;
   }

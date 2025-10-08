@@ -70,7 +70,7 @@ export interface ScalingPolicy {
   }>;
   actions: Array<{
     type: 'scale_up' | 'scale_down' | 'notification' | 'throttle';
-    parameters: Record<string, any>;
+    parameters: Record<string, unknown>;
   }>;
   cooldown: number; // seconds
   enabled: boolean;

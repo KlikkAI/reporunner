@@ -1,5 +1,8 @@
 import type { OpenAPIV3 } from 'openapi-types';
 
+// Re-export allSchemas from schemas subdirectory
+export { allSchemas } from './schemas/index';
+
 /**
  * Common OpenAPI schemas used across the API
  */

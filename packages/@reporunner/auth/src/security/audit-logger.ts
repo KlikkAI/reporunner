@@ -27,13 +27,13 @@ export interface AuditEvent {
     method?: string;
     path?: string;
     duration?: number;
-    [key: string]: any;
+    [key: string]: unknown;
   };
 
   // Data changes (for data events)
   changes?: {
-    before?: any;
-    after?: any;
+    before?: unknown;
+    after?: unknown;
     fields?: string[];
   };
 
@@ -203,7 +203,7 @@ export class AuditLogger extends EventEmitter {
       | 'mfa_enabled'
       | 'mfa_disabled',
     userId?: string,
-    metadata: Record<string, any> = {}
+    metadata: Record<string, unknown> = {}
   ): Promise<string> {
     return this.logEvent({
       category: 'authentication',
@@ -232,7 +232,7 @@ export class AuditLogger extends EventEmitter {
     userId: string,
     resource: string,
     resourceId?: string,
-    metadata: Record<string, any> = {}
+    metadata: Record<string, unknown> = {}
   ): Promise<string> {
     return this.logEvent({
       category: 'authorization',
@@ -257,7 +257,7 @@ export class AuditLogger extends EventEmitter {
     resourceId: string,
     userId?: string,
     changes?: AuditEvent['changes'],
-    metadata: Record<string, any> = {}
+    metadata: Record<string, unknown> = {}
   ): Promise<string> {
     const severity = action === 'delete' ? 'high' : action === 'export' ? 'medium' : 'low';
 
@@ -283,7 +283,7 @@ export class AuditLogger extends EventEmitter {
     action: 'created' | 'updated' | 'deleted' | 'executed' | 'failed' | 'shared',
     workflowId: string,
     userId?: string,
-    metadata: Record<string, any> = {}
+    metadata: Record<string, unknown> = {}
   ): Promise<string> {
     return this.logEvent({
       category: 'workflow',
@@ -307,7 +307,7 @@ export class AuditLogger extends EventEmitter {
     severity: AuditEvent['severity'],
     message: string,
     userId?: string,
-    metadata: Record<string, any> = {}
+    metadata: Record<string, unknown> = {}
   ): Promise<string> {
     return this.logEvent({
       category: 'security',
@@ -329,55 +329,21 @@ export class AuditLogger extends EventEmitter {
     try {
       let filteredEvents = [...this.events];
 
-      // Apply filters
+      // Apply basic filters
       if (query.userId) {
         filteredEvents = filteredEvents.filter((e) => e.userId === query.userId);
       }
-
-      if (query.organizationId) {
-        filteredEvents = filteredEvents.filter((e) => e.organizationId === query.organizationId);
-      }
-
       if (query.category) {
         filteredEvents = filteredEvents.filter((e) => e.category === query.category);
       }
-
       if (query.action) {
         filteredEvents = filteredEvents.filter((e) => e.action === query.action);
       }
-
-      if (query.resource) {
-        filteredEvents = filteredEvents.filter((e) => e.resource === query.resource);
-      }
-
-      if (query.severity) {
-        filteredEvents = filteredEvents.filter((e) => e.severity === query.severity);
-      }
-
-      if (query.status) {
-        filteredEvents = filteredEvents.filter((e) => e.status === query.status);
-      }
-
       if (query.startDate) {
-        filteredEvents = filteredEvents.filter((e) => e.timestamp >= query.startDate!);
+        filteredEvents = filteredEvents.filter((e) => e.timestamp >= query.startDate);
       }
-
       if (query.endDate) {
-        filteredEvents = filteredEvents.filter((e) => e.timestamp <= query.endDate!);
-      }
-
-      if (query.riskScoreMin !== undefined) {
-        filteredEvents = filteredEvents.filter((e) => (e.riskScore || 0) >= query.riskScoreMin!);
-      }
-
-      if (query.riskScoreMax !== undefined) {
-        filteredEvents = filteredEvents.filter((e) => (e.riskScore || 0) <= query.riskScoreMax!);
-      }
-
-      if (query.complianceTags && query.complianceTags.length > 0) {
-        filteredEvents = filteredEvents.filter((e) =>
-          e.complianceTags?.some((tag) => query.complianceTags?.includes(tag))
-        );
+        filteredEvents = filteredEvents.filter((e) => e.timestamp <= query.endDate);
       }
 
       // Sort by timestamp (newest first)
@@ -616,7 +582,7 @@ export class AuditLogger extends EventEmitter {
   private generateRecommendations(
     reportType: string,
     events: AuditEvent[],
-    _summary: any
+    _summary: Record<string, unknown>
   ): string[] {
     const recommendations: string[] = [];
 

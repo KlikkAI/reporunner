@@ -17,7 +17,7 @@ import { PermissionEngine } from '../rbac/permission-engine';
 export interface AuthServiceConfig {
   database: DatabaseService;
   tokenManager: TokenManager;
-  emailService?: any; // Email service for verification emails
+  emailService?: { sendEmail: (to: string, subject: string, body: string) => Promise<void> };
 }
 
 export interface RegisterUserData extends IRegisterRequest {
@@ -37,7 +37,9 @@ export interface SSOLoginData {
 export class AuthService {
   private db: DatabaseService;
   private tokenManager: TokenManager;
-  private emailService: any;
+  private emailService: {
+    sendEmail: (to: string, subject: string, body: string) => Promise<void>;
+  } | null;
 
   constructor(config: AuthServiceConfig) {
     this.db = config.database;
@@ -390,7 +392,9 @@ export class AuthService {
 
       // Send reset email
       await this.sendPasswordResetEmail(user.email, user.firstName, resetToken);
-    } catch (_error) {}
+    } catch (_error) {
+      // Ignore email sending errors for password reset
+    }
   }
 
   /**
@@ -500,7 +504,9 @@ export class AuthService {
     });
   }
 
-  private async getSessionByRefreshToken(refreshToken: string): Promise<any> {
+  private async getSessionByRefreshToken(
+    refreshToken: string
+  ): Promise<{ userId: string; refreshToken: string } | null> {
     return await this.db.mongo.db.collection('sessions').findOne({ refreshToken });
   }
 

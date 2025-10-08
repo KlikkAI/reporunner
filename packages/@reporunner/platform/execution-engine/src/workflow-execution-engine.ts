@@ -34,13 +34,13 @@ export interface ExecutionContext {
   organizationId: string;
   mode: 'manual' | 'trigger' | 'schedule' | 'webhook';
   startedAt: Date;
-  variables: Map<string, any>;
+  variables: Map<string, unknown>;
   nodeResults: Map<string, INodeExecutionData>;
-  credentials: Map<string, any>;
+  credentials: Map<string, unknown>;
 }
 
 export interface NodeExecutor {
-  execute(node: INode, context: ExecutionContext, inputData: any): Promise<any>;
+  execute(node: INode, context: ExecutionContext, inputData: unknown): Promise<unknown>;
 }
 
 export class WorkflowExecutionEngine extends EventEmitter {
@@ -88,7 +88,7 @@ export class WorkflowExecutionEngine extends EventEmitter {
     workflowId: string,
     userId: string,
     mode: ExecutionContext['mode'] = 'manual',
-    triggerData?: any
+    triggerData?: Record<string, unknown>
   ): Promise<string> {
     try {
       // Load workflow
@@ -130,7 +130,7 @@ export class WorkflowExecutionEngine extends EventEmitter {
           executionId,
           workflowId,
           userId,
-          organizationId: (workflow as any).organizationId || '',
+          organizationId: (workflow as { organizationId?: string }).organizationId || '',
           mode,
           triggerData,
         },
@@ -159,7 +159,7 @@ export class WorkflowExecutionEngine extends EventEmitter {
   /**
    * Execute specific node chain (for testing/debugging)
    */
-  async executeNodeChain(nodeId: string, workflowId: string, userId: string): Promise<any> {
+  async executeNodeChain(nodeId: string, workflowId: string, userId: string): Promise<unknown> {
     const workflow = (await this.db.mongo.workflows.findOne({
       id: workflowId,
     })) as IWorkflow;
@@ -181,7 +181,7 @@ export class WorkflowExecutionEngine extends EventEmitter {
       executionId: uuidv4(),
       workflowId,
       userId,
-      organizationId: (workflow as any).organizationId || '',
+      organizationId: (workflow as { organizationId?: string }).organizationId || '',
       mode: 'manual',
       startedAt: new Date(),
       variables: new Map(),
@@ -230,7 +230,7 @@ export class WorkflowExecutionEngine extends EventEmitter {
   /**
    * Process workflow execution
    */
-  private async processExecution(jobData: any): Promise<any> {
+  private async processExecution(jobData: Record<string, unknown>): Promise<unknown> {
     const { executionId, workflowId, userId, organizationId, mode, triggerData } = jobData;
 
     try {
@@ -289,14 +289,17 @@ export class WorkflowExecutionEngine extends EventEmitter {
     workflow: IWorkflow,
     context: ExecutionContext,
     startNodes: INode[],
-    triggerData?: any
-  ): Promise<any> {
+    triggerData?: Record<string, unknown>
+  ): Promise<unknown> {
     const executedNodes = new Set<string>();
     const nodesToExecute = [...startNodes];
-    const results: any = {};
+    const results: Record<string, unknown> = {};
 
     while (nodesToExecute.length > 0) {
-      const node = nodesToExecute.shift()!;
+      const node = nodesToExecute.shift();
+      if (!node) {
+        break;
+      }
 
       if (executedNodes.has(node.id)) {
         continue;
@@ -345,7 +348,7 @@ export class WorkflowExecutionEngine extends EventEmitter {
   private async executeNode(
     node: INode,
     context: ExecutionContext,
-    inputData: any
+    inputData: unknown
   ): Promise<INodeExecutionData> {
     const startTime = Date.now();
 
@@ -471,7 +474,7 @@ export class WorkflowExecutionEngine extends EventEmitter {
     node: INode,
     edges: IEdge[],
     nodeResults: Map<string, INodeExecutionData>
-  ): any {
+  ): unknown {
     const inputEdges = edges.filter((e) => e.target === node.id);
 
     if (inputEdges.length === 0) {
@@ -484,7 +487,7 @@ export class WorkflowExecutionEngine extends EventEmitter {
     }
 
     // Multiple inputs
-    const combinedInput: any = {};
+    const combinedInput: Record<string, unknown> = {};
     inputEdges.forEach((edge) => {
       const result = nodeResults.get(edge.source);
       const key = edge.sourceHandle || 'input';
@@ -510,11 +513,12 @@ export class WorkflowExecutionEngine extends EventEmitter {
     // Currently handled in the nodesToExecute filter below
 
     // Remove nodes from other branches
-    nodesToExecute.filter((n, index) => {
+    nodesToExecute = nodesToExecute.filter((n) => {
       const edge = edges.find((e) => e.source === node.id && e.target === n.id);
       if (edge?.data?.branch && edge.data.branch !== branchToTake) {
-        nodesToExecute.splice(index, 1);
+        return false;
       }
+      return true;
     });
   }
 
@@ -540,9 +544,9 @@ export class WorkflowExecutionEngine extends EventEmitter {
   private async updateExecutionStatus(
     executionId: string,
     status: ExecutionStatus,
-    error?: any
+    error?: Error
   ): Promise<void> {
-    const update: any = {
+    const update: Record<string, unknown> = {
       status,
       updatedAt: new Date(),
     };
@@ -567,7 +571,7 @@ export class WorkflowExecutionEngine extends EventEmitter {
    */
   private async updateExecutionResults(
     executionId: string,
-    results: any,
+    results: Map<string, INodeExecutionData>,
     status: ExecutionStatus
   ): Promise<void> {
     await this.db.mongo.executions.updateOne(

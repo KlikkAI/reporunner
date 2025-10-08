@@ -172,7 +172,7 @@ export class EncryptionService {
   /**
    * Decrypt specific fields in an object
    */
-  async decryptFields<T extends Record<string, any>>(
+  async decryptFields<T extends Record<string, unknown>>(
     obj: T,
     fields: (keyof T)[],
     masterKey: string
@@ -184,8 +184,13 @@ export class EncryptionService {
         try {
           const fieldKey = await this.generateFieldKey(masterKey, String(field));
           const encryptedData = JSON.parse(String(obj[field]));
-          (decrypted as any)[field] = await this.decrypt(encryptedData, fieldKey);
-        } catch (_error) {}
+          (decrypted as Record<string, unknown>)[field] = await this.decrypt(
+            encryptedData,
+            fieldKey
+          );
+        } catch (_error) {
+          // Failed to decrypt field, leave as is
+        }
       }
     }
 

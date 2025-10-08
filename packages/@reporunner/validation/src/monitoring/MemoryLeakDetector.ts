@@ -423,6 +423,12 @@ export class MemoryLeakDetector extends EventEmitter {
    * Get current tracking statistics
    */
   getTrackingStats(): LeakDetectionStats {
+    const firstSnapshot = this.memoryHistory[0];
+    const lastSnapshot = this.memoryHistory[this.memoryHistory.length - 1];
+    const duration = firstSnapshot && lastSnapshot
+      ? lastSnapshot.timestamp - firstSnapshot.timestamp
+      : 0;
+
     return {
       isTracking: this.isTracking,
       historyLength: this.memoryHistory.length,
@@ -432,6 +438,8 @@ export class MemoryLeakDetector extends EventEmitter {
         this.memoryHistory.length > 0
           ? new Date(this.memoryHistory[this.memoryHistory.length - 1].timestamp)
           : null,
+      duration,
+      snapshotCount: this.memoryHistory.length,
     };
   }
 
@@ -487,4 +495,6 @@ interface LeakDetectionStats {
   trackedObjectTypes: number;
   thresholds: LeakThresholds;
   lastAnalysis: Date | null;
+  duration: number;
+  snapshotCount: number;
 }

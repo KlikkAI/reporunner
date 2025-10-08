@@ -6,9 +6,9 @@ export interface WorkflowState {
   currentNode: string;
   executedNodes: string[];
   nodeStates: Map<string, NodeState>;
-  variables: Record<string, any>;
-  inputs: Record<string, any>;
-  outputs: Record<string, any>;
+  variables: Record<string, unknown>;
+  inputs: Record<string, unknown>;
+  outputs: Record<string, unknown>;
   startTime: Date;
   endTime?: Date;
   error?: string;
@@ -25,8 +25,8 @@ export interface NodeState {
   status: 'pending' | 'running' | 'completed' | 'failed' | 'skipped';
   startTime?: Date;
   endTime?: Date;
-  inputs?: Record<string, any>;
-  outputs?: Record<string, any>;
+  inputs?: Record<string, unknown>;
+  outputs?: Record<string, unknown>;
   error?: string;
   retryCount: number;
   executionTime?: number;
@@ -191,10 +191,10 @@ export class WorkflowStateStore {
 
     if (query.startTime) {
       if (query.startTime.from) {
-        states = states.filter((s) => s.startTime >= query.startTime?.from!);
+        states = states.filter((s) => query.startTime?.from && s.startTime >= query.startTime.from);
       }
       if (query.startTime.to) {
-        states = states.filter((s) => s.startTime <= query.startTime?.to!);
+        states = states.filter((s) => query.startTime?.to && s.startTime <= query.startTime.to);
       }
     }
 
@@ -355,17 +355,26 @@ export class WorkflowStateStore {
     // Convert Map to object for serialization
     return {
       ...state,
-      nodeStates: Object.fromEntries(state.nodeStates) as any,
+      nodeStates: Object.fromEntries(state.nodeStates) as unknown as Map<string, NodeState>,
     };
   }
 
-  private deserializeState(serializedState: any): WorkflowState {
+  private deserializeState(serializedState: unknown): WorkflowState {
     // Convert object back to Map
+    const state = serializedState as WorkflowState & {
+      nodeStates: Record<string, NodeState>;
+      startTime: string | Date;
+      endTime?: string | Date;
+    };
     return {
-      ...serializedState,
-      nodeStates: new Map(Object.entries(serializedState.nodeStates)),
-      startTime: new Date(serializedState.startTime),
-      endTime: serializedState.endTime ? new Date(serializedState.endTime) : undefined,
+      ...state,
+      nodeStates: new Map(Object.entries(state.nodeStates)),
+      startTime: typeof state.startTime === 'string' ? new Date(state.startTime) : state.startTime,
+      endTime: state.endTime
+        ? typeof state.endTime === 'string'
+          ? new Date(state.endTime)
+          : state.endTime
+        : undefined,
     };
   }
 

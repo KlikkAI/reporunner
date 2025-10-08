@@ -4,9 +4,10 @@ import { SourceMappingValidator } from './source-mapping-validator';
 import type { IDEPerformanceReport } from './types';
 
 export class IDEPerformanceValidator {
-  private navigationTester: NavigationTester;
-  private intelliSenseTester: IntelliSenseTester;
-  private sourceMappingValidator: SourceMappingValidator;
+  private workspaceRoot: string;
+  public navigationTester: NavigationTester;
+  public intelliSenseTester: IntelliSenseTester;
+  public sourceMappingValidator: SourceMappingValidator;
 
   constructor(workspaceRoot: string) {
     this.workspaceRoot = workspaceRoot;

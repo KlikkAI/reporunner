@@ -227,7 +227,14 @@ export class ConfigurationValidator {
   /**
    * Validate configuration
    */
-  validate(name: string, config: any): { success: boolean; data?: any; errors?: any[] } {
+  validate(
+    name: string,
+    config: unknown
+  ): {
+    success: boolean;
+    data?: unknown;
+    errors?: Array<{ message?: string; path?: string; code?: string }>;
+  } {
     const schema = this.schemas.get(name) || this.schemas.get('base');
 
     if (!schema) {
@@ -240,7 +247,7 @@ export class ConfigurationValidator {
     try {
       const data = schema.parse(config);
       return { success: true, data };
-    } catch (error: any) {
+    } catch (error: unknown) {
       if (error instanceof z.ZodError) {
         return {
           success: false,
@@ -253,7 +260,7 @@ export class ConfigurationValidator {
       }
       return {
         success: false,
-        errors: [{ message: error.message }],
+        errors: [{ message: error instanceof Error ? error.message : 'Unknown error' }],
       };
     }
   }
@@ -261,7 +268,14 @@ export class ConfigurationValidator {
   /**
    * Validate partial configuration (for updates)
    */
-  validatePartial(name: string, config: any): { success: boolean; data?: any; errors?: any[] } {
+  validatePartial(
+    name: string,
+    config: unknown
+  ): {
+    success: boolean;
+    data?: unknown;
+    errors?: Array<{ message?: string; path?: string; code?: string }>;
+  } {
     const schema = this.schemas.get(name) || this.schemas.get('base');
 
     if (!schema) {
@@ -275,7 +289,7 @@ export class ConfigurationValidator {
       const partialSchema = schema.partial();
       const data = partialSchema.parse(config);
       return { success: true, data };
-    } catch (error: any) {
+    } catch (error: unknown) {
       if (error instanceof z.ZodError) {
         return {
           success: false,
@@ -288,7 +302,7 @@ export class ConfigurationValidator {
       }
       return {
         success: false,
-        errors: [{ message: error.message }],
+        errors: [{ message: error instanceof Error ? error.message : 'Unknown error' }],
       };
     }
   }
@@ -310,7 +324,7 @@ export class ConfigurationValidator {
   /**
    * Generate default configuration
    */
-  generateDefault(name: string): any {
+  generateDefault(name: string): unknown {
     const schema = this.schemas.get(name) || this.schemas.get('base');
 
     if (!schema) {
@@ -321,7 +335,7 @@ export class ConfigurationValidator {
     // In a real implementation, you'd walk the schema and generate appropriate defaults
     try {
       return schema.parse({});
-    } catch (_error: any) {
+    } catch (_error: unknown) {
       // Return a minimal valid config
       return {
         name,
@@ -334,43 +348,49 @@ export class ConfigurationValidator {
   /**
    * Merge configurations
    */
-  mergeConfigs(base: any, override: any): any {
+  mergeConfigs(
+    base: Record<string, unknown>,
+    override: Record<string, unknown>
+  ): Record<string, unknown> {
     return {
       ...base,
       ...override,
       authentication: override.authentication || base.authentication,
-      connection: { ...base.connection, ...override.connection },
-      webhooks: { ...base.webhooks, ...override.webhooks },
-      rateLimit: { ...base.rateLimit, ...override.rateLimit },
-      features: { ...base.features, ...override.features },
-      settings: { ...base.settings, ...override.settings },
+      connection: { ...(base.connection as object), ...(override.connection as object) },
+      webhooks: { ...(base.webhooks as object), ...(override.webhooks as object) },
+      rateLimit: { ...(base.rateLimit as object), ...(override.rateLimit as object) },
+      features: { ...(base.features as object), ...(override.features as object) },
+      settings: { ...(base.settings as object), ...(override.settings as object) },
     };
   }
 
   /**
    * Sanitize configuration (remove sensitive data)
    */
-  sanitize(config: any): any {
-    const sanitized = { ...config };
+  sanitize(config: Record<string, unknown>): Record<string, unknown> {
+    const sanitized = { ...config } as Record<string, unknown>;
 
     // Remove sensitive fields
-    if (sanitized.authentication?.config) {
-      if (sanitized.authentication.config.clientSecret) {
-        sanitized.authentication.config.clientSecret = '***';
+    const auth = sanitized.authentication as Record<string, unknown> | undefined;
+    if (auth?.config) {
+      const authConfig = auth.config as Record<string, unknown>;
+      if (authConfig.clientSecret) {
+        authConfig.clientSecret = '***';
       }
-      if (sanitized.authentication.config.key) {
-        sanitized.authentication.config.key = '***';
+      if (authConfig.key) {
+        authConfig.key = '***';
       }
-      if (sanitized.authentication.config.password) {
-        sanitized.authentication.config.password = '***';
+      if (authConfig.password) {
+        authConfig.password = '***';
       }
-      if (sanitized.authentication.config.token) {
-        sanitized.authentication.config.token = '***';
+      if (authConfig.token) {
+        authConfig.token = '***';
       }
     }
 
-    if (sanitized.webhooks?.configs) {
-      sanitized.webhooks.configs = sanitized.webhooks.configs.map((wh: any) => ({
+    const webhooks = sanitized.webhooks as Record<string, unknown> | undefined;
+    if (webhooks?.configs) {
+      webhooks.configs = (webhooks.configs as Array<Record<string, unknown>>).map((wh) => ({
         ...wh,
         secret: wh.secret ? '***' : undefined,
       }));

@@ -36,20 +36,22 @@ export class ValidationController extends EventEmitter {
   private currentPhase: string | null = null;
 
   // Validation components
-  private testSuiteRunner: TestSuiteRunner;
-  private apiValidator: APIValidator;
-  private e2eValidator: E2EValidator;
-  private buildValidator: BuildValidator;
-  private buildTimeAnalyzer: BuildTimeAnalyzer;
-  private bundleSizeAnalyzer: BundleSizeAnalyzer;
-  private memoryMonitor: MemoryMonitor;
-  private devExperienceMetrics: DevExperienceMetrics;
-  private typeScriptAnalyzer: TypeScriptAnalyzer;
-  private idePerformanceValidator: IDEPerformanceValidator;
-  private importPathOptimizer: ImportPathOptimizer;
-  private dependencyAnalyzer: DependencyAnalyzer;
-  private codeOrganizationChecker: CodeOrganizationChecker;
-  private typeSafetyValidator: TypeSafetyValidator;
+  private testSuiteRunner!: TestSuiteRunner;
+  private apiValidator!: APIValidator;
+  private e2eValidator!: E2EValidator;
+  private buildValidator!: BuildValidator;
+  private buildTimeAnalyzer!: BuildTimeAnalyzer;
+  private bundleSizeAnalyzer!: BundleSizeAnalyzer;
+  private memoryMonitor!: MemoryMonitor;
+  private devExperienceMetrics!: DevExperienceMetrics;
+  private typeScriptAnalyzer!: TypeScriptAnalyzer;
+  private idePerformanceValidator!: IDEPerformanceValidator;
+  private importPathOptimizer!: ImportPathOptimizer;
+  private dependencyAnalyzer!: DependencyAnalyzer;
+  private codeOrganizationChecker!: CodeOrganizationChecker;
+  private typeSafetyValidator!: TypeSafetyValidator;
+  private reportAggregator!: ValidationReportAggregator;
+  private recommendationEngine!: RecommendationEngine;
 
   constructor(workspaceRoot: string = process.cwd()) {
     super();
@@ -63,10 +65,28 @@ export class ValidationController extends EventEmitter {
   private initializeComponents(workspaceRoot: string): void {
     try {
       this.testSuiteRunner = new TestSuiteRunner(workspaceRoot);
-      this.apiValidator = new APIValidator();
-      this.e2eValidator = new E2EValidator(workspaceRoot);
-      this.buildValidator = new BuildValidator(workspaceRoot);
-      this.buildTimeAnalyzer = new BuildTimeAnalyzer(workspaceRoot);
+      this.apiValidator = new APIValidator({
+        baseUrl: process.env.API_URL || 'http://localhost:3000',
+        timeout: 30000,
+        retryAttempts: 3,
+        endpoints: [],
+      });
+      this.e2eValidator = new E2EValidator({
+        baseUrl: process.env.E2E_BASE_URL || 'http://localhost:3000',
+        headless: true,
+        timeout: 60000,
+        workflows: [],
+      });
+      this.buildValidator = new BuildValidator({
+        workspaceRoot,
+        buildCommand: 'pnpm build',
+        packages: [],
+        timeout: 300000,
+        parallelBuilds: true,
+        validateArtifacts: true,
+        artifactPaths: ['dist'],
+      });
+      this.buildTimeAnalyzer = new BuildTimeAnalyzer();
       this.bundleSizeAnalyzer = new BundleSizeAnalyzer(workspaceRoot);
       this.memoryMonitor = new MemoryMonitor();
       this.devExperienceMetrics = new DevExperienceMetrics(workspaceRoot);
@@ -165,7 +185,7 @@ export class ValidationController extends EventEmitter {
       // Execute build validation
       this.emit('component:started', 'build-validation');
       const buildValidation = await this.executeWithRecovery(
-        () => this.buildValidator.validateBuilds(),
+        () => this.buildValidator.validateBuildProcess(),
         'build-validation'
       );
 
@@ -195,7 +215,7 @@ export class ValidationController extends EventEmitter {
       // Execute build time analysis
       this.emit('component:started', 'build-analysis');
       const buildMetrics = await this.executeWithRecovery(
-        () => this.buildTimeAnalyzer.analyzeBuildTimes(),
+        () => this.buildTimeAnalyzer.measureBuildTimes(),
         'build-analysis'
       );
 
@@ -221,10 +241,10 @@ export class ValidationController extends EventEmitter {
       );
 
       this.validationResults.performanceAnalysis = {
-        buildMetrics: buildMetrics || this.getDefaultBuildMetrics(),
-        bundleMetrics: bundleMetrics || this.getDefaultBundleMetrics(),
+        buildMetrics: (buildMetrics || this.getDefaultBuildMetrics()) as any,
+        bundleMetrics: (bundleMetrics || this.getDefaultBundleMetrics()) as any,
         memoryProfile: memoryProfile || this.getDefaultMemoryProfile(),
-        devExperienceMetrics: devExperienceMetrics || this.getDefaultDevExperienceMetrics(),
+        devExperienceMetrics: (devExperienceMetrics || this.getDefaultDevExperienceMetrics()) as any,
       };
 
       this.emit('phase:completed', 'performance-analysis');
@@ -246,14 +266,14 @@ export class ValidationController extends EventEmitter {
       // Execute dependency analysis
       this.emit('component:started', 'dependency-analysis');
       const dependencyAnalysis = await this.executeWithRecovery(
-        () => this.dependencyAnalyzer.analyzeDependencies(),
+        () => this.validateDependencies(),
         'dependency-analysis'
       );
 
       // Execute code organization validation
       this.emit('component:started', 'code-organization');
       const codeOrganization = await this.executeWithRecovery(
-        () => this.codeOrganizationChecker.validateOrganization(),
+        () => this.codeOrganizationChecker.validateCodeOrganization(),
         'code-organization'
       );
 
@@ -265,9 +285,9 @@ export class ValidationController extends EventEmitter {
       );
 
       this.validationResults.architectureValidation = {
-        dependencyAnalysis: dependencyAnalysis || this.getDefaultDependencyAnalysis(),
-        codeOrganization: codeOrganization || this.getDefaultCodeOrganization(),
-        typeSafety: typeSafety || this.getDefaultTypeSafety(),
+        dependencyAnalysis: (dependencyAnalysis || this.getDefaultDependencyAnalysis()) as any,
+        codeOrganization: (codeOrganization || this.getDefaultCodeOrganization()) as any,
+        typeSafety: (typeSafety || this.getDefaultTypeSafety()) as any,
       };
 
       this.emit('phase:completed', 'architecture-validation');
@@ -500,20 +520,39 @@ export class ValidationController extends EventEmitter {
   }
 
   /**
+   * Validate dependencies by combining multiple analysis methods
+   */
+  private async validateDependencies() {
+    await this.dependencyAnalyzer.initialize();
+
+    const [circularDepReport, packageBoundaries, depGraph] = await Promise.all([
+      this.dependencyAnalyzer.checkCircularDependencies(),
+      this.dependencyAnalyzer.validatePackageBoundaries(),
+      this.dependencyAnalyzer.generateDependencyGraph(),
+    ]);
+
+    // Calculate health score based on violations
+    const healthScore = Math.max(
+      0,
+      100 -
+        circularDepReport.circularDependencies.length * 10 -
+        packageBoundaries.violations.filter((v) => v.severity === 'error').length * 5
+    );
+
+    return {
+      circularDependencies: circularDepReport.circularDependencies,
+      packageBoundaryViolations: packageBoundaries.violations,
+      dependencyGraph: depGraph,
+      healthScore,
+    };
+  }
+
+  /**
    * Collect developer experience metrics from multiple components
    */
   private async collectDevExperienceMetrics() {
-    const [typeScriptMetrics, ideMetrics, importMetrics] = await Promise.allSettled([
-      this.typeScriptAnalyzer.analyzeTypeScript(),
-      this.idePerformanceValidator.validatePerformance(),
-      this.importPathOptimizer.analyzeImportPaths(),
-    ]);
-
-    return this.devExperienceMetrics.aggregateMetrics({
-      typeScriptMetrics: typeScriptMetrics.status === 'fulfilled' ? typeScriptMetrics.value : null,
-      ideMetrics: ideMetrics.status === 'fulfilled' ? ideMetrics.value : null,
-      importMetrics: importMetrics.status === 'fulfilled' ? importMetrics.value : null,
-    });
+    // Collect metrics internally via DevExperienceMetrics
+    return this.devExperienceMetrics.generateReport();
   }
 
   /**

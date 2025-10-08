@@ -1,7 +1,7 @@
 export interface MiddlewareConfig {
   name: string;
   enabled: boolean;
-  options?: Record<string, any>;
+  options?: Record<string, unknown>;
 }
 
 export interface RequestContext {

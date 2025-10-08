@@ -1,3 +1,4 @@
+import type { Request, Response } from 'express';
 import {
   type SecurityConfig,
   type SecurityContext,
@@ -195,7 +196,7 @@ export class SecurityHeadersMiddleware extends SecurityMiddleware {
     });
   }
 
-  private setCORSHeaders(req: any, res: any): void {
+  private setCORSHeaders(req: Request, res: Response): void {
     const { cors } = this.config;
     const origin = req.headers.origin;
 

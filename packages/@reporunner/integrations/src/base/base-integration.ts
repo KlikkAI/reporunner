@@ -19,7 +19,7 @@ export interface IntegrationConfig {
 
 export interface IntegrationCredentials {
   type: string;
-  data: Record<string, any>;
+  data: Record<string, unknown>;
   expiresAt?: Date;
   refreshToken?: string;
 }
@@ -30,14 +30,14 @@ export interface IntegrationContext {
   workflowId: string;
   executionId: string;
   credentials?: IntegrationCredentials;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 export interface RequestOptions {
   method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
   headers?: Record<string, string>;
-  body?: any;
-  queryParams?: Record<string, any>;
+  body?: unknown;
+  queryParams?: Record<string, string | number | boolean | undefined>;
   timeout?: number;
   retryCount?: number;
   retryDelay?: number;
@@ -46,7 +46,7 @@ export interface RequestOptions {
 export interface IntegrationError extends Error {
   code: string;
   statusCode?: number;
-  details?: any;
+  details?: unknown;
   retryable?: boolean;
 }
 
@@ -106,12 +106,12 @@ export abstract class BaseIntegration extends EventEmitter {
   /**
    * Execute an action
    */
-  abstract executeAction(actionName: string, parameters: any): Promise<any>;
+  abstract executeAction(actionName: string, parameters: Record<string, unknown>): Promise<unknown>;
 
   /**
    * Make an authenticated request to the integration
    */
-  protected async makeRequest(endpoint: string, options: RequestOptions = {}): Promise<any> {
+  protected async makeRequest(endpoint: string, options: RequestOptions = {}): Promise<unknown> {
     // Check rate limits
     await this.checkRateLimit();
 
@@ -142,7 +142,10 @@ export abstract class BaseIntegration extends EventEmitter {
   /**
    * Build full URL with query parameters
    */
-  private buildUrl(endpoint: string, queryParams?: Record<string, any>): string {
+  private buildUrl(
+    endpoint: string,
+    queryParams?: Record<string, string | number | boolean | undefined>
+  ): string {
     const baseUrl = this.config.baseUrl || '';
     let url = endpoint.startsWith('http') ? endpoint : `${baseUrl}${endpoint}`;
 
@@ -230,7 +233,7 @@ export abstract class BaseIntegration extends EventEmitter {
   /**
    * Perform the actual HTTP request
    */
-  private async performRequest(url: string, options: RequestOptions): Promise<any> {
+  private async performRequest(url: string, options: RequestOptions): Promise<unknown> {
     const controller = new AbortController();
     const timeout = options.timeout || 30000;
 
@@ -256,10 +259,10 @@ export abstract class BaseIntegration extends EventEmitter {
       }
 
       return await response.text();
-    } catch (error: any) {
+    } catch (error: unknown) {
       clearTimeout(timeoutId);
 
-      if (error.name === 'AbortError') {
+      if (error instanceof Error && error.name === 'AbortError') {
         throw this.createError('TIMEOUT', `Request timed out after ${timeout}ms`);
       }
 
@@ -271,7 +274,7 @@ export abstract class BaseIntegration extends EventEmitter {
    * Handle HTTP response errors
    */
   private async handleResponseError(response: Response): Promise<IntegrationError> {
-    let errorBody: any;
+    let errorBody: unknown;
 
     try {
       errorBody = await response.json();
@@ -281,7 +284,8 @@ export abstract class BaseIntegration extends EventEmitter {
 
     const error = this.createError(
       `HTTP_${response.status}`,
-      errorBody?.message || `Request failed with status ${response.status}`,
+      (errorBody as { message?: string })?.message ||
+        `Request failed with status ${response.status}`,
       response.status,
       errorBody
     );
@@ -300,15 +304,16 @@ export abstract class BaseIntegration extends EventEmitter {
     maxRetries: number = 3,
     delay: number = 1000
   ): Promise<T> {
-    let lastError: any;
+    let lastError: unknown;
 
     for (let attempt = 0; attempt <= maxRetries; attempt++) {
       try {
         return await fn();
-      } catch (error: any) {
+      } catch (error: unknown) {
         lastError = error;
 
-        if (!error.retryable || attempt === maxRetries) {
+        const isRetryable = error instanceof Error && (error as IntegrationError).retryable;
+        if (!isRetryable || attempt === maxRetries) {
           throw error;
         }
 
@@ -363,7 +368,7 @@ export abstract class BaseIntegration extends EventEmitter {
     code: string,
     message: string,
     statusCode?: number,
-    details?: any
+    details?: unknown
   ): IntegrationError {
     const error = new Error(message) as IntegrationError;
     error.code = code;
@@ -419,14 +424,14 @@ export interface ActionParameter {
   displayName: string;
   type: 'string' | 'number' | 'boolean' | 'json' | 'options' | 'file';
   required: boolean;
-  default?: any;
+  default?: unknown;
   description?: string;
-  options?: Array<{ name: string; value: any }>;
+  options?: Array<{ name: string; value: unknown }>;
   validation?: {
     min?: number;
     max?: number;
     pattern?: string;
-    enum?: any[];
+    enum?: unknown[];
   };
 }
 

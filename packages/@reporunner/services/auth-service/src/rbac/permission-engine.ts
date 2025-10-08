@@ -112,13 +112,17 @@ export class PermissionEngine {
 
     // Add direct role permissions
     const directPermissions = PermissionEngine.ROLE_PERMISSIONS[role] || [];
-    directPermissions.forEach((p) => permissions.add(p));
+    for (const p of directPermissions) {
+      permissions.add(p);
+    }
 
     // Add inherited permissions from lower roles
     const inheritedRoles = PermissionEngine.ROLE_HIERARCHY[role] || [];
     inheritedRoles.forEach((inheritedRole) => {
       const inheritedPermissions = PermissionEngine.ROLE_PERMISSIONS[inheritedRole] || [];
-      inheritedPermissions.forEach((p) => permissions.add(p));
+      for (const p of inheritedPermissions) {
+        permissions.add(p);
+      }
     });
 
     return Array.from(permissions);

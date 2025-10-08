@@ -31,7 +31,7 @@ export interface WebhookEvent {
   id: string;
   webhookId: string;
   headers: Record<string, string>;
-  body: any;
+  body: unknown;
   query: Record<string, string>;
   timestamp: Date;
   signature?: string;
@@ -40,7 +40,7 @@ export interface WebhookEvent {
   error?: string;
 }
 
-export type WebhookHandler = (event: WebhookEvent) => Promise<any>;
+export type WebhookHandler = (event: WebhookEvent) => Promise<unknown>;
 
 export class WebhookManager extends EventEmitter {
   private webhooks: Map<string, WebhookRegistration> = new Map();
@@ -69,7 +69,7 @@ export class WebhookManager extends EventEmitter {
       });
 
       req.on('end', () => {
-        (req as any).rawBody = Buffer.concat(chunks);
+        (req as { rawBody: Buffer }).rawBody = Buffer.concat(chunks);
         next();
       });
     });
@@ -126,7 +126,7 @@ export class WebhookManager extends EventEmitter {
           ] as string;
           event.signature = signature;
           event.verified = this.verifySignature(
-            (req as any).rawBody,
+            (req as { rawBody: Buffer }).rawBody,
             signature,
             registration.config.secret,
             registration.config.signatureAlgorithm
@@ -154,9 +154,9 @@ export class WebhookManager extends EventEmitter {
         res.status(200).json({ received: true, eventId: event.id });
 
         this.emit('webhook:received', { webhookId: registration.id, event });
-      } catch (error: any) {
+      } catch (error: unknown) {
         registration.status = 'error';
-        registration.error = error.message;
+        registration.error = error instanceof Error ? error.message : 'Unknown error';
 
         this.emit('webhook:error', { webhookId: registration.id, error });
 
@@ -232,8 +232,8 @@ export class WebhookManager extends EventEmitter {
         event.processed = true;
 
         this.emit('webhook:processed', { webhookId: event.webhookId, event });
-      } catch (error: any) {
-        event.error = error.message;
+      } catch (error: unknown) {
+        event.error = error instanceof Error ? error.message : 'Unknown error';
 
         this.emit('webhook:processing_failed', {
           webhookId: event.webhookId,
@@ -264,7 +264,7 @@ export class WebhookManager extends EventEmitter {
     maxRetries: number = 3,
     delay: number = 1000
   ): Promise<T> {
-    let lastError: any;
+    let lastError: unknown;
 
     for (let attempt = 0; attempt <= maxRetries; attempt++) {
       try {
@@ -294,7 +294,9 @@ export class WebhookManager extends EventEmitter {
 
     // Remove route
     const routes = this.router.stack;
-    const index = routes.findIndex((layer: any) => layer.route?.path === webhook.config.path);
+    const index = routes.findIndex(
+      (layer: { route?: { path: string } }) => layer.route?.path === webhook.config.path
+    );
 
     if (index !== -1) {
       routes.splice(index, 1);

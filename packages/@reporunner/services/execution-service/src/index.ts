@@ -8,7 +8,7 @@ export interface ExecutionConfig {
 export interface ExecutionRequest {
   workflowId: string;
   triggeredBy: string;
-  inputData?: Record<string, any>;
+  inputData?: Record<string, unknown>;
   options?: {
     timeout?: number;
     retries?: number;
@@ -22,7 +22,7 @@ export interface ExecutionResult {
   status: 'pending' | 'running' | 'completed' | 'failed' | 'cancelled';
   startedAt: Date;
   completedAt?: Date;
-  outputData?: Record<string, any>;
+  outputData?: Record<string, unknown>;
   error?: string;
 }
 

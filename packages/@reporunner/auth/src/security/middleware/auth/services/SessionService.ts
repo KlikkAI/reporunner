@@ -13,9 +13,17 @@ export interface SessionConfig {
   };
 }
 
+interface SessionUser {
+  id: string;
+  email?: string;
+  roles?: string[];
+  permissions?: string[];
+  [key: string]: unknown;
+}
+
 export interface Session {
   id: string;
-  user: any;
+  user: SessionUser;
   createdAt: Date;
   expiresAt: Date;
 }
@@ -42,7 +50,7 @@ export class SessionService {
   /**
    * Create new session
    */
-  public async createSession(user: any, ttl: number = 24 * 60 * 60): Promise<Session> {
+  public async createSession(user: SessionUser, ttl: number = 24 * 60 * 60): Promise<Session> {
     const session: Session = {
       id: this.generateSessionId(),
       user,

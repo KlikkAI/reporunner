@@ -43,7 +43,7 @@ export class TurboMetricsCollector {
     const enhancedCommand = [...command, '--summarize'];
 
     return new Promise((resolve, reject) => {
-      const process = spawn('turbo', enhancedCommand, {
+      const childProcess = spawn('turbo', enhancedCommand, {
         stdio: 'pipe',
         cwd: options.cwd || process.cwd(),
         env: { ...process.env, TURBO_TELEMETRY_DISABLED: '1' },
@@ -52,15 +52,15 @@ export class TurboMetricsCollector {
       let stdout = '';
       let stderr = '';
 
-      process.stdout?.on('data', (data) => {
+      childProcess.stdout?.on('data', (data: Buffer) => {
         stdout += data.toString();
       });
 
-      process.stderr?.on('data', (data) => {
+      childProcess.stderr?.on('data', (data: Buffer) => {
         stderr += data.toString();
       });
 
-      process.on('close', async (code) => {
+      childProcess.on('close', async (code: number | null) => {
         const endTime = Date.now();
         const totalDuration = endTime - startTime;
 
@@ -255,14 +255,15 @@ export class TurboMetricsCollector {
     if (summaryData.tasks) {
       for (const [taskId, taskData] of Object.entries(summaryData.tasks as any)) {
         const [packageName, taskName] = taskId.split('#');
+        const task = taskData as any;
 
         tasks.push({
           task: taskName,
           package: packageName,
-          hash: taskData.hash || '',
-          duration: taskData.execution?.duration || 0,
-          cached: taskData.cache?.status === 'HIT',
-          dependencies: taskData.dependencies || [],
+          hash: task.hash || '',
+          duration: task.execution?.duration || 0,
+          cached: task.cache?.status === 'HIT',
+          dependencies: task.dependencies || [],
         });
       }
     }

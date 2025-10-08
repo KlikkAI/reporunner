@@ -530,7 +530,7 @@ export class AdvancedRBAC {
     context?: {
       organizationId?: string;
       resourceId?: string;
-      resourceData?: Record<string, any>;
+      resourceData?: Record<string, unknown>;
     }
   ): Promise<boolean> {
     try {
@@ -610,14 +610,18 @@ export class AdvancedRBAC {
       }
 
       // Add direct permissions
-      role.permissions.forEach((permissionId) => permissionIds.add(permissionId));
+      for (const permissionId of role.permissions) {
+        permissionIds.add(permissionId);
+      }
 
       // Add inherited permissions
       if (role.inheritsFrom) {
         for (const parentRoleId of role.inheritsFrom) {
           const parentRole = this.roles.get(parentRoleId);
           if (parentRole?.isActive) {
-            parentRole.permissions.forEach((permissionId) => permissionIds.add(permissionId));
+            for (const permissionId of parentRole.permissions) {
+              permissionIds.add(permissionId);
+            }
           }
         }
       }
@@ -699,7 +703,10 @@ export class AdvancedRBAC {
   /**
    * Evaluate conditions
    */
-  private evaluateConditions(conditions: any[], resourceData: Record<string, any>): boolean {
+  private evaluateConditions(
+    conditions: unknown[],
+    resourceData: Record<string, unknown>
+  ): boolean {
     return conditions.every((condition) => {
       const fieldValue = resourceData[condition.field];
 

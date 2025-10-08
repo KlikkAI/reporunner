@@ -7,7 +7,7 @@ export interface Permission {
   description?: string;
   resource: string;
   action: string;
-  conditions?: Record<string, any>;
+  conditions?: Record<string, unknown>;
 }
 
 export interface Role {
@@ -74,7 +74,7 @@ export interface SecurityRule {
   condition: string;
   action: 'allow' | 'deny' | 'require_mfa';
   priority: number;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 // Session Management

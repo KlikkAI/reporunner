@@ -174,7 +174,7 @@ export class AdvancedRateLimiter {
       this.limiters.set(
         name,
         new RateLimiterRedis({
-          storeClient: this.redisClient as any,
+          storeClient: this.redisClient as unknown,
           ...limiterOptions,
         })
       );
@@ -296,7 +296,9 @@ export class AdvancedRateLimiter {
           remaining: res.remainingPoints,
         };
       }
-    } catch (_error) {}
+    } catch (_error) {
+      // Ignore Redis errors, fallback to memory limiter
+    }
 
     return null;
   }
@@ -387,11 +389,15 @@ export class AdvancedRateLimiter {
     // Reduce all limits by 50%
     for (const [name, limiter] of this.limiters) {
       if (name !== 'ddos') {
-        const currentPoints = (limiter as any).points;
+        const limiterWithProps = limiter as {
+          points: number;
+          duration: number;
+          blockDuration: number;
+        };
         this.createLimiter(name, {
-          points: Math.floor(currentPoints / 2),
-          duration: (limiter as any).duration,
-          blockDuration: (limiter as any).blockDuration * 2,
+          points: Math.floor(limiterWithProps.points / 2),
+          duration: limiterWithProps.duration,
+          blockDuration: limiterWithProps.blockDuration * 2,
         });
       }
     }
@@ -451,6 +457,7 @@ export class AdvancedRateLimiter {
         totalRequests > 0 ? (this.ddosMetrics.blockedCount / totalRequests) * 100 : 0;
 
       if (blockRate > 50) {
+        // High block rate detected - could implement additional alerting here
       }
 
       // Reset counters but keep suspicious IPs and patterns for longer
@@ -477,12 +484,16 @@ export class AdvancedRateLimiter {
   /**
    * Log security event
    */
-  private async logSecurityEvent(_event: any): Promise<void> {}
+  private async logSecurityEvent(_event: Record<string, unknown>): Promise<void> {
+    // TODO: Implement security event logging
+  }
 
   /**
    * Send DDoS alert
    */
-  private async sendDDoSAlert(_identifier: string): Promise<void> {}
+  private async sendDDoSAlert(_identifier: string): Promise<void> {
+    // TODO: Implement DDoS alert system
+  }
 
   /**
    * Get current metrics

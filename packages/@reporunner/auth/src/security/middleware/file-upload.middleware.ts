@@ -4,7 +4,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { promisify } from 'node:util';
 import { ERROR_CODES } from '@reporunner/shared';
-import type { NextFunction, Request, Response } from 'express';
+import type { NextFunction, Request, RequestHandler, Response } from 'express';
 import multer, { type FileFilterCallback, MulterError } from 'multer';
 
 const execAsync = promisify(exec);
@@ -209,7 +209,7 @@ export function createFileUploadMiddleware(config: FileUploadConfig = {}) {
 /**
  * Create upload handler with additional security checks
  */
-function createUploadHandler(multerMiddleware: any, config: FileUploadConfig) {
+function createUploadHandler(multerMiddleware: RequestHandler, config: FileUploadConfig) {
   return [
     multerMiddleware,
     async (req: Request, res: Response, next: NextFunction) => {
@@ -237,7 +237,7 @@ function createUploadHandler(multerMiddleware: any, config: FileUploadConfig) {
             }
 
             // Scan for viruses
-            let virusScanResult;
+            let virusScanResult: { clean: boolean; threat?: string } | undefined;
             if (config.scanForVirus) {
               virusScanResult = await scanFileForVirus(file.path, config.clamavPath);
               if (!virusScanResult.clean) {
@@ -250,17 +250,17 @@ function createUploadHandler(multerMiddleware: any, config: FileUploadConfig) {
             }
 
             // Calculate file hash
-            let hash;
+            let hash: string | undefined;
             if (config.hashAlgorithm) {
               hash = await calculateFileHash(file.path, config.hashAlgorithm);
             }
 
             // Create file metadata
-            let metadata;
+            let metadata: Record<string, unknown> | undefined;
             if (config.metadata) {
               metadata = {
                 uploadedAt: new Date(),
-                uploadedBy: (req as any).user?.id,
+                uploadedBy: (req as { user?: { id: string } }).user?.id,
                 ipAddress: req.ip,
                 userAgent: req.headers['user-agent'],
                 virusScanResult,
@@ -272,9 +272,12 @@ function createUploadHandler(multerMiddleware: any, config: FileUploadConfig) {
               hash,
               metadata,
             } as UploadedFile);
-          } catch (error: any) {
-            errors.push(`Error processing file ${file.originalname}: ${error.message}`);
-            await unlinkAsync(file.path).catch(() => {});
+          } catch (error: unknown) {
+            const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+            errors.push(`Error processing file ${file.originalname}: ${errorMessage}`);
+            await unlinkAsync(file.path).catch(() => {
+              // Ignore cleanup errors
+            });
           }
         }
 
@@ -291,17 +294,20 @@ function createUploadHandler(multerMiddleware: any, config: FileUploadConfig) {
 
         // Attach processed files to request
         if (req.file) {
-          req.file = processedFiles[0] as any;
+          (req as { file: UploadedFile }).file = processedFiles[0] as UploadedFile;
         } else {
-          req.files = processedFiles as any;
+          (req as { files: UploadedFile[] }).files = processedFiles as UploadedFile[];
         }
 
         // Log upload audit event if audit logger is available
-        if ((global as any).auditLogger) {
-          await (global as any).auditLogger.log({
+        const globalWithAudit = global as {
+          auditLogger?: { log: (event: unknown) => Promise<void> };
+        };
+        if (globalWithAudit.auditLogger) {
+          await globalWithAudit.auditLogger.log({
             type: 'FILE_UPLOADED',
             severity: 'LOW',
-            userId: (req as any).user?.id,
+            userId: (req as { user?: { id: string } }).user?.id,
             action: 'File upload',
             result: 'SUCCESS',
             details: {
@@ -371,6 +377,7 @@ async function scanFileForVirus(
     const { stdout, stderr } = await execAsync(`${clamavPath} --no-summary "${filePath}"`);
 
     if (stderr) {
+      // ClamAV stderr output (warnings, etc.)
     }
 
     const output = stdout.toLowerCase();
@@ -384,9 +391,9 @@ async function scanFileForVirus(
     }
 
     return { scanned: true, clean: true };
-  } catch (error: any) {
+  } catch (error: unknown) {
     // ClamAV returns exit code 1 if virus is found
-    if (error.code === 1) {
+    if (error && typeof error === 'object' && 'code' in error && error.code === 1) {
       const match = error.stdout?.match(/: (.+) found/i);
       const threat = match ? match[1] : 'Unknown threat';
       return { scanned: true, clean: false, threat };
@@ -441,7 +448,7 @@ function sanitizeFilenameString(filename: string): string {
  * Create file cleanup middleware
  */
 export function createFileCleanupMiddleware() {
-  return async (err: any, req: Request, res: Response, next: NextFunction): Promise<void> => {
+  return async (err: unknown, req: Request, res: Response, next: NextFunction): Promise<void> => {
     // Clean up uploaded files on error
     if (err) {
       const files = req.file ? [req.file] : (req.files as Express.Multer.File[]) || [];
@@ -449,7 +456,9 @@ export function createFileCleanupMiddleware() {
       for (const file of files) {
         try {
           await unlinkAsync(file.path);
-        } catch (_error) {}
+        } catch (_error) {
+          // Ignore file cleanup errors
+        }
       }
     }
 
@@ -561,7 +570,7 @@ export function createSecureDownloadMiddleware(
   return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       // Check authentication if required
-      if (options.requireAuth && !(req as any).user) {
+      if (options.requireAuth && !(req as { user?: { id: string } }).user) {
         res.status(401).json({
           success: false,
           error: {
@@ -630,11 +639,14 @@ export function createSecureDownloadMiddleware(
       }
 
       // Log download if enabled
-      if (options.logDownloads && (global as any).auditLogger) {
-        await (global as any).auditLogger.log({
+      const globalWithAudit = global as {
+        auditLogger?: { log: (event: unknown) => Promise<void> };
+      };
+      if (options.logDownloads && globalWithAudit.auditLogger) {
+        await globalWithAudit.auditLogger.log({
           type: 'FILE_DOWNLOADED',
           severity: 'LOW',
-          userId: (req as any).user?.id,
+          userId: (req as { user?: { id: string } }).user?.id,
           action: 'File download',
           result: 'SUCCESS',
           details: { filename },

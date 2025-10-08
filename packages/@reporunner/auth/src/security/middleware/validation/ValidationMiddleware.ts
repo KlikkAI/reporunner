@@ -56,7 +56,7 @@ export class ValidationMiddleware extends BaseMiddleware {
   }
 
   protected async implementation({ req }: { req: Request }): Promise<void> {
-    const errors: Record<string, any> = {};
+    const errors: Record<string, string[]> = {};
 
     // Validate body
     if (this.bodyValidator && req.body) {
@@ -133,8 +133,8 @@ export class ValidationMiddleware extends BaseMiddleware {
     }
   }
 
-  private sanitizeObject(obj: Record<string, any>): Record<string, any> {
-    const sanitized: Record<string, any> = {};
+  private sanitizeObject(obj: Record<string, unknown>): Record<string, unknown> {
+    const sanitized: Record<string, unknown> = {};
 
     for (const [key, value] of Object.entries(obj)) {
       if (typeof value === 'string') {

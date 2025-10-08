@@ -1,5 +1,5 @@
 import cors, { type CorsOptions } from 'cors';
-import type { NextFunction, Request, Response } from 'express';
+import type { NextFunction, Request, RequestHandler, Response } from 'express';
 
 export interface SecurityHeadersConfig {
   cors?: CorsConfig;
@@ -79,7 +79,7 @@ const DEFAULT_CSP_DIRECTIVES: CSPDirectives = {
 /**
  * Create CORS middleware with security best practices
  */
-export function createCorsMiddleware(config: CorsConfig = {}): any {
+export function createCorsMiddleware(config: CorsConfig = {}): RequestHandler {
   const {
     enabled = true,
     origins = ['http://localhost:3000'],
@@ -109,7 +109,7 @@ export function createCorsMiddleware(config: CorsConfig = {}): any {
 
   // Configure origin
   if (dynamicOrigin) {
-    corsOptions.origin = dynamicOrigin as any;
+    corsOptions.origin = dynamicOrigin as CorsOptions['origin'];
   } else if (origins === '*') {
     corsOptions.origin = true; // Allow all origins
   } else if (Array.isArray(origins)) {

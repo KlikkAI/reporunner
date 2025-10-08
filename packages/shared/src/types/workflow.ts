@@ -148,3 +148,7 @@ export interface IWorkflowVersion {
 export type Node = z.infer<typeof NodeSchema>;
 export type Edge = z.infer<typeof EdgeSchema>;
 export type Workflow = z.infer<typeof WorkflowSchema>;
+
+// Type aliases for compatibility
+export type WorkflowNode = Node;
+export type WorkflowEdge = Edge;

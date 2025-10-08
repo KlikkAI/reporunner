@@ -65,14 +65,14 @@ export class RoleService {
   /**
    * Check if user has a specific permission
    */
-  public async hasPermission(user: any, permission: string): Promise<boolean> {
+  public async hasPermission(user: User, permission: string): Promise<boolean> {
     return this.checkPermissions(user, [permission]);
   }
 
   /**
    * Get all roles for a user
    */
-  public async getUserRoles(user: any): Promise<string[]> {
+  public async getUserRoles(user: User): Promise<string[]> {
     if (!user?.roles) {
       return [];
     }
@@ -83,7 +83,7 @@ export class RoleService {
   /**
    * Get all permissions for a user
    */
-  public async getUserPermissions(user: any): Promise<string[]> {
+  public async getUserPermissions(user: User): Promise<string[]> {
     if (!user?.permissions) {
       return [];
     }

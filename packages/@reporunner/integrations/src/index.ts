@@ -5,6 +5,16 @@
  * with third-party services in the RepoRunner platform.
  */
 
+// Import singleton instances for internal use
+import { configValidator } from './config/configuration-schema';
+import { integrationEventBus } from './core/event-bus';
+import { integrationRegistry } from './core/integration-registry';
+import { healthMonitor } from './monitoring/health-monitor';
+import { getCredentialManager } from './security/credential-manager';
+import { integrationTester } from './testing/test-framework';
+import { rateLimiter } from './utils/rate-limiter';
+import { webhookManager } from './webhook/webhook-manager';
+
 // Authentication
 export {
   AuthorizationRequest,
@@ -135,7 +145,7 @@ export class IntegrationFramework {
    */
   async initialize(config?: {
     masterKey?: string;
-    eventBusConfig?: any;
+    eventBusConfig?: Record<string, unknown>;
     healthCheckInterval?: number;
   }): Promise<void> {
     // Initialize credential manager with master key if provided
@@ -158,56 +168,73 @@ export class IntegrationFramework {
   /**
    * Register a new integration
    */
-  registerIntegration(definition: any): void {
+  registerIntegration(definition: Record<string, unknown>): void {
     this.registry.registerDefinition(definition);
   }
 
   /**
    * Create integration instance
    */
-  async createIntegration(name: string, context: any): Promise<string> {
+  async createIntegration(name: string, context: Record<string, unknown>): Promise<string> {
     return this.registry.createInstance(name, context);
   }
 
   /**
    * Execute integration action
    */
-  async executeAction(instanceId: string, action: string, params: any): Promise<any> {
+  async executeAction(
+    instanceId: string,
+    action: string,
+    params: Record<string, unknown>
+  ): Promise<unknown> {
     return this.registry.executeAction(instanceId, action, params);
   }
 
   /**
    * Get integration health
    */
-  getHealth(integrationName?: string): any {
+  getHealth(integrationName?: string): unknown {
     return this.healthMonitor.getHealthStatus(integrationName);
   }
 
   /**
    * Configure rate limiting
    */
-  configureRateLimit(config: any): void {
+  configureRateLimit(config: Record<string, unknown>): void {
     this.rateLimiter.configure(config);
   }
 
   /**
    * Register webhook
    */
-  registerWebhook(integrationName: string, config: any, handler: any): string {
+  registerWebhook(
+    integrationName: string,
+    config: Record<string, unknown>,
+    handler: (data: unknown) => void
+  ): string {
     return this.webhookManager.registerWebhook(integrationName, config, handler);
   }
 
   /**
    * Publish event
    */
-  async publishEvent(source: string, event: string, data: any, metadata?: any): Promise<void> {
+  async publishEvent(
+    source: string,
+    event: string,
+    data: unknown,
+    metadata?: Record<string, unknown>
+  ): Promise<void> {
     await this.eventBus.publish(source, event, data, metadata);
   }
 
   /**
    * Subscribe to events
    */
-  subscribeToEvents(pattern: string | RegExp, handler: any, options?: any): string {
+  subscribeToEvents(
+    pattern: string | RegExp,
+    handler: (data: unknown) => void,
+    options?: Record<string, unknown>
+  ): string {
     return this.eventBus.subscribe(pattern, handler, options);
   }
 
@@ -215,11 +242,11 @@ export class IntegrationFramework {
    * Get framework statistics
    */
   getStatistics(): {
-    registry: any;
-    eventBus: any;
-    webhooks: any;
-    health: any;
-    rateLimit: any;
+    registry: Record<string, unknown>;
+    eventBus: Record<string, unknown>;
+    webhooks: Record<string, unknown>;
+    health: Record<string, unknown>;
+    rateLimit: Record<string, unknown>;
   } {
     return {
       registry: this.registry.getStatistics(),

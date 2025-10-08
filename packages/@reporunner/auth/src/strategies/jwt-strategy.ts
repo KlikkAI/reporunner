@@ -20,12 +20,12 @@ export class JWTStrategy {
     };
   }
 
-  async sign(_payload: any): Promise<string> {
+  async sign(_payload: Record<string, unknown>): Promise<string> {
     // Placeholder implementation - will use actual JWT library when needed
     return 'jwt-token';
   }
 
-  async verify(_token: string): Promise<any> {
+  async verify(_token: string): Promise<Record<string, unknown>> {
     // Placeholder implementation - will use actual JWT library when needed
     return { id: 'user-id', email: 'user@example.com' };
   }

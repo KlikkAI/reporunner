@@ -81,7 +81,7 @@ export class BuildTimeAnalyzer {
         await this.buildPackage(pkg);
         packageTimes[pkg] = performance.now() - pkgStartTime;
       } catch (_error) {
-        package_error[pkg] = -1;
+        packageTimes[pkg] = -1;
       }
     }
 
@@ -100,9 +100,10 @@ export class BuildTimeAnalyzer {
     };
 
     await this.saveMetrics(metrics);
+    return metrics;
   }
 
-  async compareWithBaseline(currentMetrics: BuildMetrics): Promise<BuildComparison | null> {
+  async compareWithBaseline(currentMetrics: BuildMetrics): Promise<BuildComparison | undefined> {
     try {
       const baselineData = await readFile(this.baselineFile, 'utf-8');
       const baseline: BuildMetrics = JSON.parse(baselineData);
@@ -123,7 +124,7 @@ export class BuildTimeAnalyzer {
       };
     } catch (_error) {
       await this.saveBaseline(currentMetrics);
-      return _error
+      return undefined;
     }
   }
 
@@ -184,3 +185,4 @@ export class BuildTimeAnalyzer {
   private async saveBaseline(metrics: BuildMetrics): Promise<void> {
     await writeFile(this.baselineFile, JSON.stringify(metrics, null, 2));
   }
+}

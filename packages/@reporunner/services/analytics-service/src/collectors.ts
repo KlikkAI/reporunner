@@ -140,7 +140,9 @@ export class CollectorManager {
   }
 
   stop(): void {
-    this.intervals.forEach((interval) => clearInterval(interval));
+    for (const interval of this.intervals) {
+      clearInterval(interval);
+    }
     this.intervals = [];
   }
 

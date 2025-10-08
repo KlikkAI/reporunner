@@ -86,7 +86,7 @@ export function createRateLimitMiddleware(
       // Track response for conditional consuming
       if (skipSuccessfulRequests || skipFailedRequests) {
         const originalSend = res.send;
-        res.send = function (data: any) {
+        res.send = function (data: unknown) {
           const statusCode = res.statusCode;
 
           // Refund points based on response status
@@ -95,7 +95,9 @@ export function createRateLimitMiddleware(
             (skipFailedRequests && statusCode >= 400)
           ) {
             // Reset the limit to refund the points
-            rateLimiter.resetLimit(type, key).catch((_err) => {});
+            rateLimiter.resetLimit(type, key).catch((_err) => {
+              // Ignore reset errors
+            });
           }
 
           return originalSend.call(this, data);
@@ -137,7 +139,7 @@ function defaultKeyGenerator(req: Request): string {
 /**
  * User-based key generator
  */
-export function userKeyGenerator(req: Request & { user?: any }): string {
+export function userKeyGenerator(req: Request & { user?: { id: string } }): string {
   if (req.user?.id) {
     return `user:${req.user.id}`;
   }
@@ -158,7 +160,7 @@ export function apiKeyGenerator(req: Request): string {
 /**
  * Combined key generator (user + IP)
  */
-export function combinedKeyGenerator(req: Request & { user?: any }): string {
+export function combinedKeyGenerator(req: Request & { user?: { id: string } }): string {
   const ip = defaultKeyGenerator(req);
   if (req.user?.id) {
     return `user:${req.user.id}:${ip}`;
@@ -292,7 +294,7 @@ export function createTieredRateLimiter(
     enterprise: 1000,
   }
 ) {
-  return async (req: Request & { user?: any }, res: Response, next: NextFunction) => {
+  return async (req: Request & { user?: { tier?: string } }, res: Response, next: NextFunction) => {
     const tier = req.user?.tier || 'free';
     const points = tierPoints[tier] || tierPoints.free;
 

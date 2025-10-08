@@ -7,9 +7,9 @@ import type { CompilationMetrics, TypeScriptAnalysisReport } from './types';
 
 export class TypeScriptAnalyzer {
   private workspaceRoot: string;
-  private autocompleteTester: AutocompleteTester;
-  private typeResolutionValidator: TypeResolutionValidator;
-  private compilationAnalyzer: CompilationAnalyzer;
+  public autocompleteTester: AutocompleteTester;
+  public typeResolutionValidator: TypeResolutionValidator;
+  public compilationAnalyzer: CompilationAnalyzer;
 
   constructor(workspaceRoot: string) {
     this.workspaceRoot = workspaceRoot;

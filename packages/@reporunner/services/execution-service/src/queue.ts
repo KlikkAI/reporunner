@@ -4,7 +4,7 @@ export interface QueueItem {
   priority: number;
   scheduledAt: Date;
   attempts: number;
-  data: Record<string, any>;
+  data: Record<string, unknown>;
 }
 
 export interface QueueConfig {

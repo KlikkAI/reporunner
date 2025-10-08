@@ -5,7 +5,7 @@ export interface AnalyticsEvent {
   organizationId: string;
   eventType: string;
   eventName: string;
-  properties: Record<string, any>;
+  properties: Record<string, unknown>;
   sessionId?: string;
   ip?: string;
   userAgent?: string;
@@ -35,7 +35,7 @@ export interface AnalyticsQuery {
   endDate: Date;
   groupBy?: string[];
   aggregation?: 'count' | 'sum' | 'avg' | 'min' | 'max';
-  filters?: Record<string, any>;
+  filters?: Record<string, unknown>;
 }
 
 export interface AnalyticsResult {

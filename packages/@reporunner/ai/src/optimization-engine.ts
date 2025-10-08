@@ -197,7 +197,7 @@ Analyze this workflow for performance prediction:
 Nodes: ${workflow.nodes.length}
 Edges: ${workflow.edges.length}
 
-Node Types: ${workflow.nodes.map((n) => n.type).join(', ')}
+Node Types: ${workflow.nodes.map((n: WorkflowNode) => n.type).join(', ')}
 
 Provide performance prediction in JSON format:
 {
@@ -257,7 +257,7 @@ Provide performance prediction in JSON format:
               ruleId: 'sequential_execution',
               severity: 'medium',
               message: `${parallelizableNodes.length} nodes can be executed in parallel`,
-              nodeIds: parallelizableNodes.map((n) => n.id),
+              nodeIds: parallelizableNodes.map((n: WorkflowNode) => n.id),
               suggestion: 'Configure parallel execution to improve performance',
               autoFixable: true,
               estimatedImpact: { performance: 40 },
@@ -362,7 +362,7 @@ Provide performance prediction in JSON format:
         severity: 'medium',
         check: (workflow) => {
           const issues: OptimizationIssue[] = [];
-          const expensiveNodes = workflow.nodes.filter((node) => this.isExpensiveOperation(node));
+          const expensiveNodes = workflow.nodes.filter((node: WorkflowNode) => this.isExpensiveOperation(node));
 
           for (const node of expensiveNodes) {
             issues.push({
@@ -446,7 +446,7 @@ Analyze this workflow and provide optimization recommendations:
 Workflow: ${workflow.nodes.length} nodes, ${workflow.edges.length} edges
 Issues found: ${issues.map((i) => `${i.severity}: ${i.message}`).join('; ')}
 
-Node types: ${workflow.nodes.map((n) => n.type).join(', ')}
+Node types: ${workflow.nodes.map((n: WorkflowNode) => n.type).join(', ')}
 
 Provide recommendations in JSON format:
 [
@@ -531,7 +531,7 @@ Provide recommendations in JSON format:
       case 'error_handling':
         return {
           newNodes: workflow.nodes
-            .filter((node) => !this.hasErrorHandling(node, workflow.edges))
+            .filter((node: WorkflowNode) => !this.hasErrorHandling(node, workflow.edges))
             .map((node) => ({
               id: `error_handler_${node.id}_${Date.now()}`,
               type: 'error-handler',
@@ -584,13 +584,13 @@ Provide recommendations in JSON format:
     // Find nodes that don't have dependencies on each other
     const dependencyMap = new Map<string, string[]>();
 
-    workflow.edges.forEach((edge) => {
+    workflow.edges.forEach((edge: WorkflowEdge) => {
       const deps = dependencyMap.get(edge.target) || [];
       deps.push(edge.source);
       dependencyMap.set(edge.target, deps);
     });
 
-    return workflow.nodes.filter((node) => {
+    return workflow.nodes.filter((node: WorkflowNode) => {
       const deps = dependencyMap.get(node.id) || [];
       return deps.length <= 1 && !this.isCriticalSequentialNode(node);
     });
@@ -635,7 +635,7 @@ Provide recommendations in JSON format:
 
   private calculateCyclomaticComplexity(workflow: Workflow): number {
     // Simplified cyclomatic complexity calculation
-    const decisionNodes = workflow.nodes.filter((node) =>
+    const decisionNodes = workflow.nodes.filter((node: WorkflowNode) =>
       ['condition', 'switch', 'loop'].includes(node.type)
     ).length;
 
@@ -648,8 +648,8 @@ Provide recommendations in JSON format:
   }
 
   private calculateErrorHandlingScore(workflow: Workflow): number {
-    const criticalNodes = workflow.nodes.filter((node) => this.isCriticalNode(node));
-    const nodesWithErrorHandling = criticalNodes.filter((node) =>
+    const criticalNodes = workflow.nodes.filter((node: WorkflowNode) => this.isCriticalNode(node));
+    const nodesWithErrorHandling = criticalNodes.filter((node: WorkflowNode) =>
       this.hasErrorHandling(node, workflow.edges)
     );
 
@@ -660,7 +660,7 @@ Provide recommendations in JSON format:
 
   private calculateResourceEfficiency(workflow: Workflow): number {
     // Simplified resource efficiency calculation
-    const expensiveNodes = workflow.nodes.filter((node) => this.isExpensiveOperation(node));
+    const expensiveNodes = workflow.nodes.filter((node: WorkflowNode) => this.isExpensiveOperation(node));
     const totalNodes = workflow.nodes.length;
 
     return totalNodes > 0 ? Math.round((1 - expensiveNodes.length / totalNodes) * 100) : 100;

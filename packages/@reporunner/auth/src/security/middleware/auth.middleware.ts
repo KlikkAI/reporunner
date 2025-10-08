@@ -135,8 +135,9 @@ export function createAuthMiddleware(
       req.sessionId = user.sessionId;
 
       next();
-    } catch (error: any) {
-      if (error.message === 'Token has expired') {
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      if (errorMessage === 'Token has expired') {
         return res.status(401).json({
           success: false,
           error: {
@@ -212,7 +213,7 @@ export function createRefreshTokenMiddleware(sessionManager: JWTSessionManager) 
         success: true,
         data: tokens,
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       return res.status(401).json({
         success: false,
         error: {
@@ -263,7 +264,7 @@ export function createLogoutMiddleware(sessionManager: JWTSessionManager) {
         success: true,
         message: logoutAll ? 'All sessions have been terminated' : 'Logged out successfully',
       });
-    } catch (_error: any) {
+    } catch (_error: unknown) {
       return res.status(500).json({
         success: false,
         error: {

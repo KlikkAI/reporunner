@@ -1,6 +1,15 @@
+import type { Request } from 'express';
+
+interface BasicAuthUser {
+  id: string;
+  username: string;
+  permissions?: string[];
+  [key: string]: unknown;
+}
+
 // Basic Auth Strategy implementation reusing patterns from security middleware
 export interface BasicAuthStrategyOptions {
-  validateCredentials: (username: string, password: string) => Promise<any>;
+  validateCredentials: (username: string, password: string) => Promise<BasicAuthUser>;
   realm?: string;
 }
 
@@ -14,7 +23,7 @@ export class BasicAuthStrategy {
     };
   }
 
-  async authenticate(req: any): Promise<any> {
+  async authenticate(req: Request): Promise<BasicAuthUser> {
     const credentials = this.extractCredentials(req);
 
     if (!credentials) {
@@ -27,7 +36,7 @@ export class BasicAuthStrategy {
     return await this.options.validateCredentials(username, password);
   }
 
-  private extractCredentials(req: any): { username: string; password: string } | null {
+  private extractCredentials(req: Request): { username: string; password: string } | null {
     const authHeader = req.headers.authorization;
 
     if (!authHeader?.startsWith('Basic ')) {

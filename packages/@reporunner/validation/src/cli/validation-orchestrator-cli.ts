@@ -14,7 +14,7 @@ import type { ValidationResults } from '../types/index.js';
  */
 export class ValidationOrchestratorCLI {
   private controller: ValidationController;
-  private spinner: ora.Ora;
+  private spinner: ReturnType<typeof ora>;
   private outputDir: string;
   private verbose: boolean = false;
 
@@ -75,7 +75,7 @@ export class ValidationOrchestratorCLI {
       phases?: string[];
     } = {}
   ): Promise<ValidationResults> {
-    this.verbose = options.verbose;
+    this.verbose = options.verbose ?? false;
 
     if (options.output) {
       this.outputDir = options.output;

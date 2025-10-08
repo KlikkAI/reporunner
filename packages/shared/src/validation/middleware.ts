@@ -4,6 +4,7 @@
  */
 
 import type { NextFunction, Request, Response } from 'express';
+import { z } from 'zod';
 
 export interface ValidationOptions {
   /**
@@ -69,28 +70,28 @@ export interface ValidationOptions {
 export interface ValidationError {
   field: string;
   message: string;
-  value?: any;
+  value?: unknown;
   code?: string;
 }
 
 export interface ValidationResult {
   valid: boolean;
   errors: ValidationError[];
-  query?: any;
-  body?: any;
-  params?: any;
-  headers?: any;
-  cookies?: any;
-  files?: any;
+  query?: Record<string, unknown>;
+  body?: Record<string, unknown>;
+  params?: Record<string, unknown>;
+  headers?: Record<string, unknown>;
+  cookies?: Record<string, unknown>;
+  files?: Record<string, unknown>;
 }
 
 export interface ValidationSchema {
-  query?: any;
-  body?: any;
-  params?: any;
-  headers?: any;
-  cookies?: any;
-  files?: any;
+  query?: z.ZodSchema<any>;
+  body?: z.ZodSchema<any>;
+  params?: z.ZodSchema<any>;
+  headers?: z.ZodSchema<any>;
+  cookies?: z.ZodSchema<any>;
+  files?: z.ZodSchema<any>;
 }
 
 export class ValidationMiddleware {
@@ -123,13 +124,13 @@ export class ValidationMiddleware {
 
       // Update request with validated data
       if (this.options.validateQuery && result.query) {
-        req.query = result.query;
+        req.query = result.query as any;
       }
       if (this.options.validateBody && result.body) {
-        req.body = result.body;
+        req.body = result.body as any;
       }
       if (this.options.validateParams && result.params) {
-        req.params = result.params;
+        req.params = result.params as any;
       }
 
       // Store validation result in request for downstream middleware

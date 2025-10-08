@@ -30,6 +30,8 @@ export class AnthropicProvider extends CombinedAIProvider {
   ];
 
   private apiKey: string;
+  private _baseUrl: string;
+  private _anthropicVersion: string;
 
   constructor(config: AnthropicConfig) {
     super(config);

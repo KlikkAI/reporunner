@@ -1,8 +1,17 @@
+import type { Request } from 'express';
+
+interface APIKeyUser {
+  id: string;
+  name?: string;
+  permissions?: string[];
+  [key: string]: unknown;
+}
+
 // API Key Strategy implementation reusing patterns from security middleware
 export interface APIKeyStrategyOptions {
   headerName?: string;
   queryName?: string;
-  validateKey: (key: string) => Promise<any>;
+  validateKey: (key: string) => Promise<APIKeyUser>;
 }
 
 export class APIKeyStrategy {
@@ -16,7 +25,7 @@ export class APIKeyStrategy {
     };
   }
 
-  async authenticate(req: any): Promise<any> {
+  async authenticate(req: Request): Promise<APIKeyUser> {
     // Extract API key from header or query parameter
     const apiKey = this.extractAPIKey(req);
 
@@ -28,7 +37,7 @@ export class APIKeyStrategy {
     return await this.options.validateKey(apiKey);
   }
 
-  private extractAPIKey(req: any): string | null {
+  private extractAPIKey(req: Request): string | null {
     // Check header first
     if (this.options.headerName && req.headers[this.options.headerName]) {
       return req.headers[this.options.headerName];

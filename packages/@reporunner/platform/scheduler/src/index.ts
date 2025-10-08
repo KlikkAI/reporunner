@@ -38,7 +38,7 @@ export interface ScheduleExecution {
   scheduledAt: Date;
   startedAt?: Date;
   completedAt?: Date;
-  result?: any;
+  result?: unknown;
   error?: string;
   attempts: number;
   nextRetryAt?: Date;

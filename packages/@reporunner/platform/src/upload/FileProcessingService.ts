@@ -23,7 +23,7 @@ export interface ProcessedFile {
   mimeType: string;
   extension: string;
   hash: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
   thumbnails?: {
     small: string;
     medium: string;
@@ -311,8 +311,8 @@ export class FileProcessingService extends EventEmitter {
   private async extractMetadata(
     file: Express.Multer.File,
     filePath: string
-  ): Promise<Record<string, any>> {
-    const metadata: Record<string, any> = {
+  ): Promise<Record<string, unknown>> {
+    const metadata: Record<string, unknown> = {
       originalName: file.originalname,
       size: file.size,
       mimeType: file.mimetype,

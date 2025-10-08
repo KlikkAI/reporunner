@@ -4,7 +4,7 @@ export interface ComplianceRule {
   description: string;
   type: 'data_retention' | 'access_control' | 'encryption' | 'audit_logging';
   enabled: boolean;
-  config: Record<string, any>;
+  config: Record<string, unknown>;
 }
 
 export interface ComplianceReport {
@@ -46,7 +46,7 @@ export class ComplianceManager {
     // TODO: Implement rule updates
   }
 
-  async generateReport(_framework: string, _options?: any): Promise<string> {
+  async generateReport(_framework: string, _options?: Record<string, unknown>): Promise<string> {
     // TODO: Implement report generation
     return '';
   }

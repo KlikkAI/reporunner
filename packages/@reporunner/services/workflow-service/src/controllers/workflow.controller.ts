@@ -1,4 +1,4 @@
-import type { NextFunction, Request, Response } from 'express';
+import type { NextFunction, Response } from 'express';
 import { z } from 'zod';
 import type { WorkflowDefinition, WorkflowService } from '../index';
 
@@ -12,7 +12,7 @@ const CreateWorkflowSchema = z.object({
         id: z.string(),
         type: z.string(),
         position: z.object({ x: z.number(), y: z.number() }),
-        data: z.record(z.any()),
+        data: z.record(z.unknown()),
       })
     )
     .min(1),
@@ -67,10 +67,10 @@ const ShareWorkflowSchema = z.object({
 export class WorkflowController {
   constructor(private workflowService: WorkflowService) {}
 
-  async create(req: Request, res: Response, next: NextFunction): Promise<void> {
+  async create(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const validated = CreateWorkflowSchema.parse(req.body);
-      const userId = (req as any).user?.id;
+      const userId = req.user?.id;
 
       const workflow = await this.workflowService.create(validated, userId);
 
@@ -92,13 +92,13 @@ export class WorkflowController {
     }
   }
 
-  async list(req: Request, res: Response, next: NextFunction): Promise<void> {
+  async list(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const validated = ListWorkflowsSchema.parse(req.query);
 
       const filters = {
         organizationId: validated.organizationId,
-        userId: validated.userId || (req as any).user?.id,
+        userId: validated.userId || req.user?.id,
         status: validated.status,
         tags: validated.tags,
         search: validated.search,
@@ -139,7 +139,7 @@ export class WorkflowController {
     }
   }
 
-  async getById(req: Request, res: Response, next: NextFunction): Promise<void> {
+  async getById(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const { id } = req.params;
 
@@ -154,7 +154,7 @@ export class WorkflowController {
       }
 
       // Check permissions
-      const userId = (req as any).user?.id;
+      const userId = req.user?.id;
       if (!this.hasViewPermission(workflow, userId)) {
         res.status(403).json({
           success: false,
@@ -172,11 +172,11 @@ export class WorkflowController {
     }
   }
 
-  async update(req: Request, res: Response, next: NextFunction): Promise<void> {
+  async update(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const { id } = req.params;
       const validated = UpdateWorkflowSchema.parse(req.body);
-      const userId = (req as any).user?.id;
+      const userId = req.user?.id;
 
       const workflow = await this.workflowService.update(id, validated, userId);
 
@@ -192,12 +192,12 @@ export class WorkflowController {
           errors: error.errors,
           message: 'Validation failed',
         });
-      } else if ((error as any).message?.includes('not found')) {
+      } else if (error instanceof Error && error.message?.includes('not found')) {
         res.status(404).json({
           success: false,
           message: 'Workflow not found',
         });
-      } else if ((error as any).message?.includes('permissions')) {
+      } else if (error instanceof Error && error.message?.includes('permissions')) {
         res.status(403).json({
           success: false,
           message: 'Access denied',
@@ -208,10 +208,10 @@ export class WorkflowController {
     }
   }
 
-  async delete(req: Request, res: Response, next: NextFunction): Promise<void> {
+  async delete(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const { id } = req.params;
-      const userId = (req as any).user?.id;
+      const userId = req.user?.id;
 
       const success = await this.workflowService.delete(id, userId);
 
@@ -228,7 +228,8 @@ export class WorkflowController {
         message: 'Workflow deleted successfully',
       });
     } catch (error) {
-      if ((error as any).message?.includes('permissions')) {
+      const errorMessage = error instanceof Error ? error.message : '';
+      if (errorMessage.includes('permissions')) {
         res.status(403).json({
           success: false,
           message: 'Access denied',
@@ -239,11 +240,11 @@ export class WorkflowController {
     }
   }
 
-  async execute(req: Request, res: Response, next: NextFunction): Promise<void> {
+  async execute(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const { id } = req.params;
       const validated = ExecuteWorkflowSchema.parse(req.body);
-      const userId = (req as any).user?.id;
+      const userId = req.user?.id;
 
       const workflow = await this.workflowService.get(id);
 
@@ -291,9 +292,9 @@ export class WorkflowController {
     }
   }
 
-  async getExecutions(req: Request, res: Response, next: NextFunction): Promise<void> {
+  async getExecutions(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      const { id } = req.params;
+      // const { id } = req.params; // TODO: Use workflow ID for filtering executions
       const { page = 1, limit = 20 } = req.query;
 
       // This would query the executions collection
@@ -312,11 +313,11 @@ export class WorkflowController {
     }
   }
 
-  async share(req: Request, res: Response, next: NextFunction): Promise<void> {
+  async share(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const { id } = req.params;
       const validated = ShareWorkflowSchema.parse(req.body);
-      const userId = (req as any).user?.id;
+      const userId = req.user?.id;
 
       const workflow = await this.workflowService.get(id);
 
@@ -353,10 +354,10 @@ export class WorkflowController {
     }
   }
 
-  async duplicate(req: Request, res: Response, next: NextFunction): Promise<void> {
+  async duplicate(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const { id } = req.params;
-      const userId = (req as any).user?.id;
+      const userId = req.user?.id;
       const { name } = req.body;
 
       const workflow = await this.workflowService.get(id);
@@ -382,11 +383,11 @@ export class WorkflowController {
         {
           ...workflow,
           name: name || `${workflow.name} (Copy)`,
-          id: undefined as any,
-          version: undefined as any,
-          createdAt: undefined as any,
-          updatedAt: undefined as any,
-        },
+          id: undefined,
+          version: undefined,
+          createdAt: undefined,
+          updatedAt: undefined,
+        } as WorkflowDefinition,
         userId
       );
 
@@ -400,9 +401,9 @@ export class WorkflowController {
     }
   }
 
-  async getVersions(req: Request, res: Response, next: NextFunction): Promise<void> {
+  async getVersions(_req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      const { id } = req.params;
+      // const { id } = req.params; // TODO: Use workflow ID for version filtering
 
       // This would query the workflow_history collection
       res.json({
@@ -415,11 +416,11 @@ export class WorkflowController {
     }
   }
 
-  async createVersion(req: Request, res: Response, next: NextFunction): Promise<void> {
+  async createVersion(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const { id } = req.params;
-      const { message } = req.body;
-      const userId = (req as any).user?.id;
+      // const { message } = req.body; // TODO: Use message for workflow operations
+      const userId = req.user?.id;
 
       const workflow = await this.workflowService.get(id);
 
@@ -478,11 +479,15 @@ export class WorkflowController {
     }
   }
 
-  async createFromTemplate(req: Request, res: Response, next: NextFunction): Promise<void> {
+  async createFromTemplate(
+    req: AuthenticatedRequest,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
     try {
-      const { templateId } = req.params;
-      const { name, organizationId } = req.body;
-      const _userId = (req as any).user?.id;
+      // const { templateId } = req.params; // TODO: Use template ID for workflow creation
+      // const { name, organizationId } = req.body; // TODO: Use name and org ID for workflow creation
+      const _userId = req.user?.id;
 
       // This would fetch the template and create a new workflow
       res.json({

@@ -134,9 +134,9 @@ export class ComplianceFramework {
     });
   }
 
-  private getFieldValue(event: AuditEvent, field: string): any {
+  private getFieldValue(event: AuditEvent, field: string): unknown {
     const fields = field.split('.');
-    let value: any = event;
+    let value: unknown = event;
 
     for (const f of fields) {
       value = value?.[f];

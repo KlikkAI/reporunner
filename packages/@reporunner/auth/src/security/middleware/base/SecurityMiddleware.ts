@@ -26,7 +26,7 @@ export interface SecurityConfig {
   /**
    * Additional configuration options
    */
-  options?: Record<string, any>;
+  options?: Record<string, unknown>;
 }
 
 /**
