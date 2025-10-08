@@ -134,7 +134,8 @@ export class ValidationMiddleware {
       }
 
       // Store validation result in request for downstream middleware
-      (req as unknown as Request & { validationResult: ValidationResult }).validationResult = result;
+      (req as unknown as Request & { validationResult: ValidationResult }).validationResult =
+        result;
 
       next();
     } catch (error) {
@@ -161,7 +162,7 @@ export class ValidationMiddleware {
     // Basic validation - in a real implementation, this would use Zod or similar
     if (this.options.validateBody && this.schema.body) {
       try {
-        result.body = this.schema.body.parse(req.body);
+        result.body = this.schema.body.parse(req.body) as Record<string, unknown>;
       } catch (error) {
         result.valid = false;
         result.errors.push({
@@ -173,7 +174,7 @@ export class ValidationMiddleware {
 
     if (this.options.validateQuery && this.schema.query) {
       try {
-        result.query = this.schema.query.parse(req.query);
+        result.query = this.schema.query.parse(req.query) as Record<string, unknown>;
       } catch (error) {
         result.valid = false;
         result.errors.push({
@@ -185,7 +186,7 @@ export class ValidationMiddleware {
 
     if (this.options.validateParams && this.schema.params) {
       try {
-        result.params = this.schema.params.parse(req.params);
+        result.params = this.schema.params.parse(req.params) as Record<string, unknown>;
       } catch (error) {
         result.valid = false;
         result.errors.push({

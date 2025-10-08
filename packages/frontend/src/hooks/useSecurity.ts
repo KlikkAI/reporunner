@@ -4,10 +4,10 @@
  */
 
 import type {
-  ComplianceFrameworkDTO,
   ComplianceRequirementDTO,
   ScanType,
   SecurityAlertDTO,
+  SecurityComplianceFrameworkDTO,
   SecurityEvidenceDTO,
   SecurityMetricsDTO,
   SecurityThreatDTO,
@@ -20,17 +20,17 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 // Re-export types for convenience
 export type {
-  SecurityThreatDTO as SecurityThreat,
-  SecurityEvidenceDTO as SecurityEvidence,
-  VulnerabilityScanDTO as VulnerabilityScan,
-  VulnerabilityFinding,
-  SecurityMetricsDTO as SecurityMetrics,
-  SecurityAlertDTO as SecurityAlert,
-  ComplianceFrameworkDTO as ComplianceFramework,
   ComplianceRequirementDTO as ComplianceRequirement,
-  ThreatStatus,
   ScanType,
+  SecurityAlertDTO as SecurityAlert,
+  SecurityComplianceFrameworkDTO as ComplianceFramework,
+  SecurityEvidenceDTO as SecurityEvidence,
+  SecurityMetricsDTO as SecurityMetrics,
+  SecurityThreatDTO as SecurityThreat,
   SeverityLevel,
+  ThreatStatus,
+  VulnerabilityFinding,
+  VulnerabilityScanDTO as VulnerabilityScan,
 };
 
 /**
@@ -159,7 +159,7 @@ export const useStartVulnerabilityScan = () => {
       metadata = {},
     }: {
       type: ScanType;
-      metadata?: Record<string, any>;
+      metadata?: Record<string, unknown>;
     }) => {
       const response = await fetch('/api/security/scans', {
         method: 'POST',

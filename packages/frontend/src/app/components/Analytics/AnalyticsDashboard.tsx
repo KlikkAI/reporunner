@@ -5,6 +5,8 @@
  */
 
 import {
+  ArrowDownOutlined,
+  ArrowUpOutlined,
   BarChartOutlined,
   CheckCircleOutlined,
   ClockCircleOutlined,
@@ -12,8 +14,6 @@ import {
   LineChartOutlined,
   PieChartOutlined,
   RocketOutlined,
-  TrendingDownOutlined,
-  TrendingUpOutlined,
 } from '@ant-design/icons';
 import {
   Alert,
@@ -30,6 +30,7 @@ import {
   Table,
   Tabs,
   Tag,
+  Typography,
 } from 'antd';
 import dayjs from 'dayjs';
 import type React from 'react';
@@ -37,6 +38,8 @@ import { useEffect, useState } from 'react';
 import {
   Area,
   AreaChart,
+  CartesianGrid,
+  Cell,
   Legend,
   Line,
   LineChart,
@@ -128,10 +131,10 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
   timeRange = [dayjs().subtract(7, 'days'), dayjs()],
   onTimeRangeChange,
 }) => {
-  const [_loading, setLoading] = useState(false);
-  const [_data, setData] = useState<AnalyticsData | null>(null);
-  const [_selectedMetric, _setSelectedMetric] = useState<string>('executions');
-  const [_activeTab, _setActiveTab] = useState('overview');
+  const [loading, setLoading] = useState(false);
+  const [data, setData] = useState<AnalyticsData | null>(null);
+  const [selectedMetric, setSelectedMetric] = useState<string>('executions');
+  const [activeTab, setActiveTab] = useState('overview');
 
   // Mock data - in production, this would come from API
   useEffect(() => {
@@ -274,7 +277,7 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
     }, 1000);
   }, []);
 
-  const _getStatusColor = (status: string) => {
+  const getStatusColor = (status: string) => {
     switch (status) {
       case 'success':
         return 'green';
@@ -290,9 +293,9 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
   const getTrendIcon = (trend: string) => {
     switch (trend) {
       case 'up':
-        return <TrendingUpOutlined style={{ color: '#f5222d' }} />;
+        return <ArrowUpOutlined style={{ color: '#f5222d' }} />;
       case 'down':
-        return <TrendingDownOutlined style={{ color: '#52c41a' }} />;
+        return <ArrowDownOutlined style={{ color: '#52c41a' }} />;
       default:
         return <ClockCircleOutlined style={{ color: '#faad14' }} />;
     }
