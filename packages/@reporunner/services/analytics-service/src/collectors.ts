@@ -1,4 +1,4 @@
-import type { AnalyticsEvent } from './index';
+import type { AnalyticsEvent } from './types';
 
 export interface CollectorConfig {
   enabled: boolean;
@@ -132,7 +132,11 @@ export class CollectorManager {
   start(): void {
     this.collectors.forEach((collector) => {
       const interval = setInterval(() => {
-        collector.collect().catch(console.error);
+        collector.collect().catch((error: Error) => {
+          // TODO: Replace with proper logger (Winston/Pino)
+          // biome-ignore lint/suspicious/noConsole: Temporary error handling until logger is integrated
+          console.error(`Collector error: ${error.message}`);
+        });
       }, collector.config.flushInterval);
 
       this.intervals.push(interval);

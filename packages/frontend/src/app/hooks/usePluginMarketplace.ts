@@ -71,131 +71,146 @@ export const usePluginMarketplace = (): UsePluginMarketplaceReturn => {
   };
 
   // Search plugins
-  const searchPlugins = useCallback(async (query: PluginSearchQuery) => {
-    try {
-      setLoading(true);
-      setError(null);
+  const searchPlugins = useCallback(
+    async (query: PluginSearchQuery) => {
+      try {
+        setLoading(true);
+        setError(null);
 
-      const params = new URLSearchParams();
-      Object.entries(query).forEach(([key, value]) => {
-        if (value !== undefined && value !== null) {
-          if (Array.isArray(value)) {
-            value.forEach((v) => params.append(key, v.toString()));
-          } else {
-            params.append(key, value.toString());
+        const params = new URLSearchParams();
+        Object.entries(query).forEach(([key, value]) => {
+          if (value !== undefined && value !== null) {
+            if (Array.isArray(value)) {
+              value.forEach((v) => params.append(key, v.toString()));
+            } else {
+              params.append(key, value.toString());
+            }
           }
+        });
+
+        const response = await apiCall(`/plugins?${params.toString()}`);
+
+        if (response.success) {
+          setPlugins(response.data.plugins);
+          setTotal(response.data.total);
+          setHasMore(response.data.hasMore);
+        } else {
+          throw new Error(response.error || 'Failed to search plugins');
         }
-      });
-
-      const response = await apiCall(`/plugins?${params.toString()}`);
-
-      if (response.success) {
-        setPlugins(response.data.plugins);
-        setTotal(response.data.total);
-        setHasMore(response.data.hasMore);
-      } else {
-        throw new Error(response.error || 'Failed to search plugins');
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : 'Failed to search plugins';
+        setError(errorMessage);
+        message.error(errorMessage);
+      } finally {
+        setLoading(false);
       }
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to search plugins';
-      setError(errorMessage);
-      message.error(errorMessage);
-    } finally {
-      setLoading(false);
-    }
-  }, [apiCall]);
+    },
+    [apiCall]
+  );
 
   // Get single plugin
-  const getPlugin = useCallback(async (pluginId: string): Promise<PluginMetadata | null> => {
-    try {
-      const response = await apiCall(`/plugins/${pluginId}`);
+  const getPlugin = useCallback(
+    async (pluginId: string): Promise<PluginMetadata | null> => {
+      try {
+        const response = await apiCall(`/plugins/${pluginId}`);
 
-      if (response.success) {
-        return response.data;
-      } else {
-        throw new Error(response.error || 'Plugin not found');
+        if (response.success) {
+          return response.data;
+        } else {
+          throw new Error(response.error || 'Plugin not found');
+        }
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : 'Failed to get plugin';
+        message.error(errorMessage);
+        return null;
       }
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to get plugin';
-      message.error(errorMessage);
-      return null;
-    }
-  }, [apiCall]);
+    },
+    [apiCall]
+  );
 
   // Download plugin
-  const downloadPlugin = useCallback(async (request: DownloadRequest) => {
-    try {
-      setLoading(true);
+  const downloadPlugin = useCallback(
+    async (request: DownloadRequest) => {
+      try {
+        setLoading(true);
 
-      const response = await apiCall(`/plugins/${request.pluginId}/download`, {
-        method: 'POST',
-        body: JSON.stringify(request),
-      });
+        const response = await apiCall(`/plugins/${request.pluginId}/download`, {
+          method: 'POST',
+          body: JSON.stringify(request),
+        });
 
-      if (response.success) {
-        // Handle successful download
-        message.success('Plugin downloaded successfully');
+        if (response.success) {
+          // Handle successful download
+          message.success('Plugin downloaded successfully');
 
-        // If there's a download URL, trigger download
-        if (response.data.downloadUrl) {
-          window.open(response.data.downloadUrl, '_blank');
+          // If there's a download URL, trigger download
+          if (response.data.downloadUrl) {
+            window.open(response.data.downloadUrl, '_blank');
+          }
+        } else {
+          throw new Error(response.error || 'Failed to download plugin');
         }
-      } else {
-        throw new Error(response.error || 'Failed to download plugin');
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : 'Failed to download plugin';
+        message.error(errorMessage);
+        throw err;
+      } finally {
+        setLoading(false);
       }
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to download plugin';
-      message.error(errorMessage);
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  }, [apiCall]);
+    },
+    [apiCall]
+  );
 
   // Publish plugin
-  const publishPlugin = useCallback(async (request: PublishRequest) => {
-    try {
-      setLoading(true);
+  const publishPlugin = useCallback(
+    async (request: PublishRequest) => {
+      try {
+        setLoading(true);
 
-      const response = await apiCall('/plugins', {
-        method: 'POST',
-        body: JSON.stringify(request),
-      });
+        const response = await apiCall('/plugins', {
+          method: 'POST',
+          body: JSON.stringify(request),
+        });
 
-      if (response.success) {
-        message.success('Plugin published successfully');
-        return response.data;
-      } else {
-        throw new Error(response.error || 'Failed to publish plugin');
+        if (response.success) {
+          message.success('Plugin published successfully');
+          return response.data;
+        } else {
+          throw new Error(response.error || 'Failed to publish plugin');
+        }
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : 'Failed to publish plugin';
+        message.error(errorMessage);
+        throw err;
+      } finally {
+        setLoading(false);
       }
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to publish plugin';
-      message.error(errorMessage);
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  }, [apiCall]);
+    },
+    [apiCall]
+  );
 
   // Validate plugin
-  const validatePlugin = useCallback(async (pluginPackage: any) => {
-    try {
-      const response = await apiCall(`/plugins/${pluginPackage.metadata.id}/validate`, {
-        method: 'POST',
-        body: JSON.stringify(pluginPackage),
-      });
+  const validatePlugin = useCallback(
+    async (pluginPackage: any) => {
+      try {
+        const response = await apiCall(`/plugins/${pluginPackage.metadata.id}/validate`, {
+          method: 'POST',
+          body: JSON.stringify(pluginPackage),
+        });
 
-      if (response.success) {
-        return response.data;
-      } else {
-        throw new Error(response.error || 'Failed to validate plugin');
+        if (response.success) {
+          return response.data;
+        } else {
+          throw new Error(response.error || 'Failed to validate plugin');
+        }
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : 'Failed to validate plugin';
+        message.error(errorMessage);
+        throw err;
       }
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to validate plugin';
-      message.error(errorMessage);
-      throw err;
-    }
-  }, [apiCall]);
+    },
+    [apiCall]
+  );
 
   // Get marketplace statistics
   const getMarketplaceStats = useCallback(async () => {

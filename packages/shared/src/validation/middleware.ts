@@ -4,7 +4,7 @@
  */
 
 import type { NextFunction, Request, Response } from 'express';
-import { z } from 'zod';
+import type { z } from 'zod';
 
 export interface ValidationOptions {
   /**
@@ -86,12 +86,12 @@ export interface ValidationResult {
 }
 
 export interface ValidationSchema {
-  query?: z.ZodSchema<any>;
-  body?: z.ZodSchema<any>;
-  params?: z.ZodSchema<any>;
-  headers?: z.ZodSchema<any>;
-  cookies?: z.ZodSchema<any>;
-  files?: z.ZodSchema<any>;
+  query?: z.ZodSchema<unknown>;
+  body?: z.ZodSchema<unknown>;
+  params?: z.ZodSchema<unknown>;
+  headers?: z.ZodSchema<unknown>;
+  cookies?: z.ZodSchema<unknown>;
+  files?: z.ZodSchema<unknown>;
 }
 
 export class ValidationMiddleware {
@@ -124,17 +124,17 @@ export class ValidationMiddleware {
 
       // Update request with validated data
       if (this.options.validateQuery && result.query) {
-        req.query = result.query as any;
+        req.query = result.query as unknown as Request['query'];
       }
       if (this.options.validateBody && result.body) {
-        req.body = result.body as any;
+        req.body = result.body as unknown as Request['body'];
       }
       if (this.options.validateParams && result.params) {
-        req.params = result.params as any;
+        req.params = result.params as unknown as Request['params'];
       }
 
       // Store validation result in request for downstream middleware
-      (req as any).validationResult = result;
+      (req as unknown as Request & { validationResult: ValidationResult }).validationResult = result;
 
       next();
     } catch (error) {
@@ -151,6 +151,7 @@ export class ValidationMiddleware {
   /**
    * Validate request data
    */
+  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Request validation requires checking multiple fields (query, body, params, headers, cookies, files) with individual error handling
   private async validate(req: Request): Promise<ValidationResult> {
     const result: ValidationResult = {
       valid: true,

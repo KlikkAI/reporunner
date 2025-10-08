@@ -69,7 +69,7 @@ export class WebhookManager extends EventEmitter {
       });
 
       req.on('end', () => {
-        (req as { rawBody: Buffer }).rawBody = Buffer.concat(chunks);
+        (req as unknown as { rawBody: Buffer }).rawBody = Buffer.concat(chunks);
         next();
       });
     });
@@ -126,7 +126,7 @@ export class WebhookManager extends EventEmitter {
           ] as string;
           event.signature = signature;
           event.verified = this.verifySignature(
-            (req as { rawBody: Buffer }).rawBody,
+            (req as unknown as { rawBody: Buffer }).rawBody,
             signature,
             registration.config.secret,
             registration.config.signatureAlgorithm
@@ -211,6 +211,7 @@ export class WebhookManager extends EventEmitter {
   /**
    * Process queued events
    */
+  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Event processing requires queue management, retry logic, and webhook dispatch coordination
   private async processEvents(): Promise<void> {
     this.processing = true;
 

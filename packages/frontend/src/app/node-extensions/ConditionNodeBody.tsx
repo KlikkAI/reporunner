@@ -3,7 +3,7 @@ import { useRef, useState } from 'react';
 import { Handle, Position } from 'reactflow';
 import NodeToolbar from '../components/WorkflowEditor/NodeTypes/BaseNode/NodeToolbar';
 import { useSmartMenuPosition } from '../hooks/useSmartMenuPosition';
-import type { CustomNodeBodyProps } from './nodeUiRegistry';
+import type { CustomNodeBodyProps } from './types';
 import { NodeIcon, NodeLabel, StatusBadge } from './shared';
 
 /**

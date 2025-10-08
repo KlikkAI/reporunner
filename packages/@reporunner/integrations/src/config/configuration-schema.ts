@@ -19,14 +19,14 @@ export const OAuth2ConfigSchema = z.object({
   useStateParameter: z.boolean().default(true),
   accessType: z.enum(['online', 'offline']).optional(),
   prompt: z.enum(['none', 'consent', 'select_account']).optional(),
-  additionalParams: z.record(z.string()).optional(),
+  additionalParams: z.record(z.string(), z.unknown()).optional(),
 });
 
 export const WebhookConfigSchema = z.object({
   url: z.string().url(),
   secret: z.string().optional(),
   events: z.array(z.string()).default(['*']),
-  headers: z.record(z.string()).optional(),
+  headers: z.record(z.string(), z.string()).optional(),
   validateSignature: z.boolean().default(true),
   signatureHeader: z.string().default('x-signature'),
   signatureAlgorithm: z.enum(['sha1', 'sha256', 'sha512']).default('sha256'),
@@ -105,7 +105,7 @@ export const BaseIntegrationConfigSchema = z.object({
       }),
       z.object({
         type: z.literal('custom'),
-        config: z.record(z.any()),
+        config: z.record(z.string(), z.unknown()),
       }),
     ])
     .optional(),
@@ -126,10 +126,10 @@ export const BaseIntegrationConfigSchema = z.object({
   rateLimit: RateLimitConfigSchema.optional(),
 
   // Feature flags
-  features: z.record(z.boolean()).optional(),
+  features: z.record(z.string(), z.boolean()).optional(),
 
   // Custom settings
-  settings: z.record(z.any()).optional(),
+  settings: z.record(z.string(), z.unknown()).optional(),
 
   // Permissions
   requiredPermissions: z.array(z.string()).optional(),
@@ -200,7 +200,7 @@ export const JiraIntegrationConfigSchema = BaseIntegrationConfigSchema.extend({
       defaultAssignee: z.string().optional(),
       autoCreateIssues: z.boolean().default(false),
       syncComments: z.boolean().default(true),
-      customFields: z.record(z.any()).optional(),
+      customFields: z.record(z.string(), z.unknown()).optional(),
     })
     .optional(),
 });
@@ -251,7 +251,7 @@ export class ConfigurationValidator {
       if (error instanceof z.ZodError) {
         return {
           success: false,
-          errors: error.errors.map((e) => ({
+          errors: error.issues.map((e: z.ZodIssue) => ({
             path: e.path.join('.'),
             message: e.message,
             code: e.code,
@@ -286,14 +286,15 @@ export class ConfigurationValidator {
     }
 
     try {
-      const partialSchema = schema.partial();
+      // Cast schema to ZodObject to access .partial() method
+      const partialSchema = (schema as z.ZodObject<z.ZodRawShape>).partial();
       const data = partialSchema.parse(config);
       return { success: true, data };
     } catch (error: unknown) {
       if (error instanceof z.ZodError) {
         return {
           success: false,
-          errors: error.errors.map((e) => ({
+          errors: error.issues.map((e: z.ZodIssue) => ({
             path: e.path.join('.'),
             message: e.message,
             code: e.code,

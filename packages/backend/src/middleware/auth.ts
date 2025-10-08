@@ -3,9 +3,9 @@
  * Implements JWT verification with RBAC permission checking
  */
 
+import type { AuthenticatedUser } from '@reporunner/shared';
 import type { NextFunction, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
-import type { AuthenticatedUser } from '@reporunner/shared';
 import { UserRepository } from '../domains/auth/repositories/UserRepository';
 import { type Permission, PermissionService } from '../services/PermissionService';
 import { AppError } from './errorHandlers';
@@ -30,11 +30,9 @@ export interface AuthPayload {
 
 export class AuthMiddleware {
   private userRepository: UserRepository;
-  private permissionService: PermissionService;
 
   constructor() {
     this.userRepository = new UserRepository();
-    this.permissionService = PermissionService.getInstance();
   }
 
   /**

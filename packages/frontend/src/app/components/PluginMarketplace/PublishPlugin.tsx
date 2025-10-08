@@ -3,6 +3,7 @@
  * Form for publishing new plugins to the marketplace
  */
 
+import { UploadOutlined } from '@ant-design/icons';
 import {
   Alert,
   Button,
@@ -20,9 +21,6 @@ import {
   Upload,
 } from 'antd';
 import type { UploadFile } from 'antd/es/upload/interface';
-import {
-  UploadOutlined,
-} from '@ant-design/icons';
 
 import type React from 'react';
 import { useState } from 'react';
@@ -170,11 +168,14 @@ export const PublishPlugin: React.FC<PublishPluginProps> = ({ onClose }) => {
     } finally {
       setPublishing(false);
     }
-  };_error
+  };
+  _error;
 
   // Render validation results
   const renderValidationResults = () => {
-    if (!validationResult) { return null; }
+    if (!validationResult) {
+      return null;
+    }
 
     const { isValid, score, issues, recommendations } = validationResult;
 

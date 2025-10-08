@@ -45,7 +45,7 @@ export class IntegrationEventBus extends EventEmitter {
       maxEventHistory: config.maxEventHistory || 1000,
     };
 
-    this.setMaxListeners(this.config.maxListeners);
+    this.setMaxListeners(this.config.maxListeners || 100);
   }
 
   /**
@@ -175,7 +175,8 @@ export class IntegrationEventBus extends EventEmitter {
           this.subscriptions.delete(subscription.id);
         }
       } catch (error: unknown) {
-        this.handleError(subscription, payload, error);
+        const errorObj = error instanceof Error ? error : new Error(String(error));
+        this.handleError(subscription, payload, errorObj);
       }
     }
   }

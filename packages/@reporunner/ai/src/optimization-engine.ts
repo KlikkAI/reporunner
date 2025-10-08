@@ -360,7 +360,9 @@ Provide performance prediction in JSON format:
         severity: 'medium',
         check: (workflow) => {
           const issues: OptimizationIssue[] = [];
-          const expensiveNodes = workflow.nodes.filter((node: WorkflowNode) => this.isExpensiveOperation(node));
+          const expensiveNodes = workflow.nodes.filter((node: WorkflowNode) =>
+            this.isExpensiveOperation(node)
+          );
 
           for (const node of expensiveNodes) {
             issues.push({
@@ -654,7 +656,9 @@ Provide recommendations in JSON format:
 
   private calculateResourceEfficiency(workflow: Workflow): number {
     // Simplified resource efficiency calculation
-    const expensiveNodes = workflow.nodes.filter((node: WorkflowNode) => this.isExpensiveOperation(node));
+    const expensiveNodes = workflow.nodes.filter((node: WorkflowNode) =>
+      this.isExpensiveOperation(node)
+    );
     const totalNodes = workflow.nodes.length;
 
     return totalNodes > 0 ? Math.round((1 - expensiveNodes.length / totalNodes) * 100) : 100;

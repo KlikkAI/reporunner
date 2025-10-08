@@ -77,55 +77,57 @@ class PerformanceCache {
 export const performanceCache = new PerformanceCache(200);
 
 // Cleanup expired cache entries every 5 minutes
-setInterval(() => {
-  performanceCache.cleanup();
-}, 5 * 60 * 1000);
+setInterval(
+  () => {
+    performanceCache.cleanup();
+  },
+  5 * 60 * 1000
+);
 
 // Hook for caching API responses
-export const useCachedFetch = <T,>(
-  url: string,
-  options?: RequestInit,
-  ttl = 5 * 60 * 1000
-) => {
+export const useCachedFetch = <T,>(url: string, options?: RequestInit, ttl = 5 * 60 * 1000) => {
   const [data, setData] = useState<T | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
-  const fetchData = useCallback(async (forceRefresh = false) => {
-    const cacheKey = `fetch:${url}:${JSON.stringify(options)}`;
+  const fetchData = useCallback(
+    async (forceRefresh = false) => {
+      const cacheKey = `fetch:${url}:${JSON.stringify(options)}`;
 
-    // Check cache first
-    if (!forceRefresh) {
-      const cachedData = performanceCache.get(cacheKey);
-      if (cachedData) {
-        setData(cachedData);
-        return cachedData;
-      }
-    }
-
-    setLoading(true);
-    setError(null);
-
-    try {
-      const response = await fetch(url, options);
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      // Check cache first
+      if (!forceRefresh) {
+        const cachedData = performanceCache.get(cacheKey);
+        if (cachedData) {
+          setData(cachedData);
+          return cachedData;
+        }
       }
 
-      const result = await response.json();
+      setLoading(true);
+      setError(null);
 
-      // Cache the result
-      performanceCache.set(cacheKey, result, ttl);
-      setData(result);
-      return result;
-    } catch (err) {
-      const error = err instanceof Error ? err : new Error('Unknown error');
-      setError(error);
-      throw error;
-    } finally {
-      setLoading(false);
-    }
-  }, [url, options, ttl]);
+      try {
+        const response = await fetch(url, options);
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+
+        const result = await response.json();
+
+        // Cache the result
+        performanceCache.set(cacheKey, result, ttl);
+        setData(result);
+        return result;
+      } catch (err) {
+        const error = err instanceof Error ? err : new Error('Unknown error');
+        setError(error);
+        throw error;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [url, options, ttl]
+  );
 
   useEffect(() => {
     fetchData();
@@ -158,10 +160,7 @@ export const useDebounce = <T,>(value: T, delay: number): T => {
 };
 
 // Hook for throttled callbacks
-export const useThrottle = <T extends (...args: any[]) => any>(
-  callback: T,
-  delay: number
-): T => {
+export const useThrottle = <T extends (...args: any[]) => any>(callback: T, delay: number): T => {
   const throttledCallback = useRef(throttle(callback, delay));
 
   useEffect(() => {
@@ -186,16 +185,16 @@ export const useDebounceCallback = <T extends (...args: any[]) => any>(
 };
 
 // Hook for intersection observer (lazy loading)
-export const useIntersectionObserver = (
-  options: IntersectionObserverInit = {}
-) => {
+export const useIntersectionObserver = (options: IntersectionObserverInit = {}) => {
   const [isIntersecting, setIsIntersecting] = useState(false);
   const [hasIntersected, setHasIntersected] = useState(false);
   const targetRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     const target = targetRef.current;
-    if (!target) { return; }
+    if (!target) {
+      return;
+    }
 
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -226,11 +225,7 @@ export const useIntersectionObserver = (
 };
 
 // Hook for virtual scrolling
-export const useVirtualScroll = <T,>(
-  items: T[],
-  itemHeight: number,
-  containerHeight: number
-) => {
+export const useVirtualScroll = <T,>(items: T[], itemHeight: number, containerHeight: number) => {
   const [scrollTop, setScrollTop] = useState(0);
   const [containerRef, setContainerRef] = useState<HTMLElement | null>(null);
 
@@ -251,7 +246,9 @@ export const useVirtualScroll = <T,>(
   }, []);
 
   useEffect(() => {
-    if (!containerRef) { return; }
+    if (!containerRef) {
+      return;
+    }
 
     containerRef.addEventListener('scroll', handleScroll);
     return () => {
@@ -280,7 +277,7 @@ export class PerformanceMonitor {
   }
 
   // Measure function execution time
-  measure<T,>(name: string, fn: () => T): T {
+  measure<T>(name: string, fn: () => T): T {
     const start = performance.now();
     const result = fn();
     const end = performance.now();
@@ -290,7 +287,7 @@ export class PerformanceMonitor {
   }
 
   // Measure async function execution time
-  async measureAsync<T,>(name: string, fn: () => Promise<T>): Promise<T> {
+  async measureAsync<T>(name: string, fn: () => Promise<T>): Promise<T> {
     const start = performance.now();
     const result = await fn();
     const end = performance.now();
@@ -371,13 +368,19 @@ export const usePerformanceMonitor = (name: string) => {
     return 0;
   }, [name]);
 
-  const measure = useCallback(<T,>(fn: () => T): T => {
-    return performanceMonitor.measure(name, fn);
-  }, [name]);
+  const measure = useCallback(
+    <T,>(fn: () => T): T => {
+      return performanceMonitor.measure(name, fn);
+    },
+    [name]
+  );
 
-  const measureAsync = useCallback(<T,>(fn: () => Promise<T>): Promise<T> => {
-    return performanceMonitor.measureAsync(name, fn);
-  }, [name]);
+  const measureAsync = useCallback(
+    <T,>(fn: () => Promise<T>): Promise<T> => {
+      return performanceMonitor.measureAsync(name, fn);
+    },
+    [name]
+  );
 
   return {
     start,
@@ -434,11 +437,9 @@ export const analyzeBundleSize = () => {
   const scripts = Array.from(document.querySelectorAll('script[src]'));
   const styles = Array.from(document.querySelectorAll('link[rel="stylesheet"]'));
 
-  scripts.forEach((_script: any) => {
-  });
+  scripts.forEach((_script: any) => {});
 
-  styles.forEach((_style: any) => {
-  });
+  styles.forEach((_style: any) => {});
 };
 
 // Memory usage monitoring

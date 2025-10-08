@@ -155,9 +155,7 @@ program
       console.log(
         `Current Memory Usage: ${Math.round(report.currentMemoryUsage.rss / 1024 / 1024)}MB`
       );
-      console.log(
-        `Potential Savings: ${Math.round(report.totalPotentialSavings / 1024 / 1024)}MB`
-      );
+      console.log(`Potential Savings: ${Math.round(report.totalPotentialSavings / 1024 / 1024)}MB`);
       console.log(`Recommendations: ${report.recommendations.length}`);
 
       console.log('\n🎯 Top Recommendations:');

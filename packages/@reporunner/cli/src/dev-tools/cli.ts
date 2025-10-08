@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { Command } from 'commander';
-import { DevTools } from './index';
+import { DevTools } from './DevTools';
 
 const program = new Command();
 
@@ -56,6 +56,8 @@ program
       const result = await devTools.testWorkflow(workflowId, testData);
 
       if (result.status === 'passed') {
+        // Test passed successfully - exit with code 0
+        process.exit(0);
       } else {
         process.exit(1);
       }
@@ -87,8 +89,11 @@ program
       const results = await devTools.validateWorkflows(directory);
 
       if (results.errors.length > 0) {
+        // Log validation errors
         results.errors.forEach((error) => {
-          error.errors.forEach((_e) => {});
+          // TODO: Implement proper error logging with details from error.errors
+          // biome-ignore lint/suspicious/noConsole: CLI tool requires console output for user feedback
+          console.error(`Validation errors in ${error.file}`);
         });
         process.exit(1);
       }

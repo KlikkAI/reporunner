@@ -1,4 +1,4 @@
-import { ERROR_CODES, type AuthenticatedUser } from '@reporunner/shared';
+import { type AuthenticatedUser, ERROR_CODES } from '@reporunner/shared';
 import type { NextFunction, Request, Response } from 'express';
 // Removed unused JwtPayload import
 import type { JWTSessionManager } from '../jwt-session';
@@ -31,6 +31,7 @@ export function createAuthMiddleware(
     extractFromCookie = false,
   } = options;
 
+  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Core authentication middleware requires multiple security checks and path validations
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
       // Skip authentication for certain paths
@@ -81,11 +82,11 @@ export function createAuthMiddleware(
       // Build user object
       const user: AuthenticatedUser = {
         id: decoded.userId || (decoded.sub as string) || '',
-        email: (decoded.email as string | undefined),
+        email: decoded.email as string | undefined,
         roles: (decoded.roles as string[] | undefined) || [],
         permissions: (decoded.permissions as string[] | undefined) || [],
-        sessionId: (decoded.sessionId as string | undefined),
-        tokenId: (decoded.tokenId as string | undefined),
+        sessionId: decoded.sessionId as string | undefined,
+        tokenId: decoded.tokenId as string | undefined,
       };
 
       // Check role requirements

@@ -179,7 +179,10 @@ router.delete(
     const publisherInfo = {
       userId: req.user.id,
       organizationId: req.user.organizationId,
-      publisherType: (req.user.organizationId ? 'organization' : 'individual') as 'organization' | 'individual' | 'verified',
+      publisherType: (req.user.organizationId ? 'organization' : 'individual') as
+        | 'organization'
+        | 'individual'
+        | 'verified',
     };
 
     const result = await pluginDistribution.unpublishPlugin(pluginId, version, publisherInfo);

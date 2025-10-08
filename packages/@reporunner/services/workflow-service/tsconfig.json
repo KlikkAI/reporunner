@@ -1,6 +1,7 @@
 {
   "extends": "../../../shared/tsconfig.json",
   "compilerOptions": {
+    "composite": true,
     "outDir": "./dist/workflow-svc",
     "rootDir": "./src"
   },

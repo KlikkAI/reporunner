@@ -2,8 +2,8 @@
  * Express.js type extensions and augmentations
  */
 
-import type { Request } from 'express';
 import type { AuthenticatedUser } from '@reporunner/shared';
+import type { Request } from 'express';
 
 // Import AuthenticatedUser from shared package instead of declaring global namespace
 // The shared package already defines Express.Request augmentation

@@ -1,4 +1,4 @@
-import type { NotificationRequest } from './index';
+import type { NotificationRequest } from './types';
 
 export interface QueueJob {
   id: string;

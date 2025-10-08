@@ -170,7 +170,9 @@ export class RBACEngine {
       return {
         allowed: false,
         reason: 'Permission conditions not met',
-        appliedRules: matchingPermissions.map((p) => p?.id).filter((id): id is string => id !== undefined),
+        appliedRules: matchingPermissions
+          .map((p) => p?.id)
+          .filter((id): id is string => id !== undefined),
       };
     } catch (error) {
       this.logger.error('Failed to check permission', { error, context });
@@ -279,6 +281,7 @@ export class RBACEngine {
   /**
    * Get user's effective roles (including inherited)
    */
+  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Role inheritance resolution requires recursive traversal and permission merging
   getUserRoles(userId: string): Role[] {
     const roleIds = this.userRoleCache.get(userId) || [];
     const roles: Role[] = [];
@@ -358,6 +361,7 @@ export class RBACEngine {
     };
   }
 
+  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Complex condition evaluation with multiple operators and context resolution
   private async evaluateConditions(
     conditions: Record<string, unknown>,
     context: RBACContext
@@ -449,7 +453,7 @@ export class RBACEngine {
       name: 'Organization Administration',
       resource: 'organization',
       action: '*',
-      conditions: { organizationId: '${user.organizationId}' },
+      conditions: { organizationId: `\${user.organizationId}` },
     });
 
     this.addRole({
@@ -475,7 +479,7 @@ export class RBACEngine {
         name,
         resource: 'workflow',
         action,
-        conditions: { organizationId: '${user.organizationId}' },
+        conditions: { organizationId: `\${user.organizationId}` },
       });
     });
 

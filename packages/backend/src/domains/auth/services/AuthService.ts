@@ -3,11 +3,11 @@
  * Handles user registration, login, token management, and profile operations
  */
 
-import type { IRegistrationData, IUser, IUserProfile } from '../interfaces';
 import { AppError } from '../../../middleware/errorHandlers';
 import { User } from '../../../models/User';
 import { JWTService } from '../../../utils/jwt';
 import { logger } from '../../../utils/logger';
+import type { IRegistrationData, IUser, IUserProfile } from '../interfaces';
 
 interface AuthResult {
   user: IUser;
@@ -254,7 +254,7 @@ export class AuthService {
 
       for (const key of Object.keys(updates)) {
         if (allowedUpdates.includes(key)) {
-          (filteredUpdates as any)[key] = (updates as any)[key];
+          (filteredUpdates as Record<string, unknown>)[key] = (updates as Record<string, unknown>)[key];
         }
       }
 

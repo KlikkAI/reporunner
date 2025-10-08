@@ -67,7 +67,12 @@ class EnterpriseSecurityService {
     } as unknown as SecurityThreat;
   }
 
-  async updateThreatStatus(id: string, status: string, resolution?: string, assignedTo?: string): Promise<SecurityThreat> {
+  async updateThreatStatus(
+    id: string,
+    status: string,
+    resolution?: string,
+    assignedTo?: string
+  ): Promise<SecurityThreat> {
     // TODO: Implement threat status update
     return {
       id,

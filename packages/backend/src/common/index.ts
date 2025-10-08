@@ -1,13 +1,12 @@
 import type { NextFunction, Request, Response } from 'express';
-import type { AuthenticatedUser } from '@reporunner/shared';
 
-export interface ApiResponse<T = any> {
+export interface ApiResponse<T = unknown> {
   success: boolean;
   data?: T;
   error?: {
     code: string;
     message: string;
-    details?: any;
+    details?: unknown;
   };
   meta?: {
     timestamp: string;
@@ -42,7 +41,7 @@ export interface PaginationOptions {
 export interface ValidationError {
   field: string;
   message: string;
-  value?: any;
+  value?: unknown;
 }
 
 export class ApiError extends Error {
@@ -50,13 +49,13 @@ export class ApiError extends Error {
     public statusCode: number,
     public code: string,
     message: string,
-    public details?: any
+    public details?: unknown
   ) {
     super(message);
     this.name = 'ApiError';
   }
 
-  static badRequest(message: string, details?: any): ApiError {
+  static badRequest(message: string, details?: unknown): ApiError {
     return new ApiError(400, 'BAD_REQUEST', message, details);
   }
 
@@ -72,7 +71,7 @@ export class ApiError extends Error {
     return new ApiError(404, 'NOT_FOUND', message);
   }
 
-  static conflict(message: string, details?: any): ApiError {
+  static conflict(message: string, details?: unknown): ApiError {
     return new ApiError(409, 'CONFLICT', message, details);
   }
 
@@ -84,7 +83,7 @@ export class ApiError extends Error {
     return new ApiError(429, 'TOO_MANY_REQUESTS', message);
   }
 
-  static internalError(message: string = 'Internal server error', details?: any): ApiError {
+  static internalError(message: string = 'Internal server error', details?: unknown): ApiError {
     return new ApiError(500, 'INTERNAL_ERROR', message, details);
   }
 
@@ -153,7 +152,7 @@ export class ResponseHelper {
 }
 
 export const asyncHandler = (
-  fn: (req: Request, res: Response, next: NextFunction) => Promise<any>
+  fn: (req: Request, res: Response, next: NextFunction) => Promise<void>
 ) => {
   return (req: Request, res: Response, next: NextFunction) => {
     Promise.resolve(fn(req, res, next)).catch(next);

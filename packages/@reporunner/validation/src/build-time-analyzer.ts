@@ -69,7 +69,6 @@ export class BuildTimeAnalyzer {
   }
 
   async measureBuildTimes(): Promise<BuildMetrics> {
-
     const startTime = performance.now();
     const packageTimes: Record<string, number> = {};
 
@@ -168,8 +167,11 @@ export class BuildTimeAnalyzer {
       });
 
       process.on('close', (code) => {
-        if (code === 0) { resolve(); }
-        else { reject(new Error(`Build failed for ${packageName}`)); }
+        if (code === 0) {
+          resolve();
+        } else {
+          reject(new Error(`Build failed for ${packageName}`));
+        }
       });
 
       process.on('error', reject);

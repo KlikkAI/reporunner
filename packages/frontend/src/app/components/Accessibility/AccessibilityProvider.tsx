@@ -60,8 +60,7 @@ export const AccessibilityProvider: React.FC<AccessibilityProviderProps> = ({ ch
       try {
         const parsed = JSON.parse(savedSettings);
         setSettings({ ...defaultSettings, ...parsed });
-      } catch (_error) {
-      }
+      } catch (_error) {}
     }
 
     // Detect system preferences
@@ -381,7 +380,9 @@ export const useKeyboardNavigation = () => {
   const { settings } = useAccessibility();
 
   useEffect(() => {
-    if (!settings.keyboardNavigation) { return; }
+    if (!settings.keyboardNavigation) {
+      return;
+    }
 
     const handleKeyDown = (event: KeyboardEvent) => {
       // Implement keyboard shortcuts

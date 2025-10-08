@@ -425,9 +425,8 @@ export class MemoryLeakDetector extends EventEmitter {
   getTrackingStats(): LeakDetectionStats {
     const firstSnapshot = this.memoryHistory[0];
     const lastSnapshot = this.memoryHistory[this.memoryHistory.length - 1];
-    const duration = firstSnapshot && lastSnapshot
-      ? lastSnapshot.timestamp - firstSnapshot.timestamp
-      : 0;
+    const duration =
+      firstSnapshot && lastSnapshot ? lastSnapshot.timestamp - firstSnapshot.timestamp : 0;
 
     return {
       isTracking: this.isTracking,

@@ -10,7 +10,7 @@
 import type React from 'react';
 import { Handle, Position } from 'reactflow';
 import { ComponentGenerator } from '@/design-system';
-import type { HandleConfig } from './index';
+import type { HandleConfig } from './types';
 
 interface NodeHandlesProps {
   config: HandleConfig;

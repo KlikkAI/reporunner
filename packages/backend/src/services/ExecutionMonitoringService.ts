@@ -1,7 +1,7 @@
 import { EventEmitter } from 'node:events';
 import { Logger } from '@reporunner/core';
 import type { ExecutionStatus, IExecution, INodeExecutionData } from '@reporunner/shared';
-import type { Server as SocketIOServer} from 'socket.io';
+import type { Server as SocketIOServer } from 'socket.io';
 
 // Type aliases for backward compatibility
 type WorkflowExecution = IExecution;

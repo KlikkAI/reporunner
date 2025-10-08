@@ -244,7 +244,8 @@ export class ValidationController extends EventEmitter {
         buildMetrics: (buildMetrics || this.getDefaultBuildMetrics()) as any,
         bundleMetrics: (bundleMetrics || this.getDefaultBundleMetrics()) as any,
         memoryProfile: memoryProfile || this.getDefaultMemoryProfile(),
-        devExperienceMetrics: (devExperienceMetrics || this.getDefaultDevExperienceMetrics()) as any,
+        devExperienceMetrics: (devExperienceMetrics ||
+          this.getDefaultDevExperienceMetrics()) as any,
       };
 
       this.emit('phase:completed', 'performance-analysis');

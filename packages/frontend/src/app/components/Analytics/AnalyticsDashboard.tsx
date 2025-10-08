@@ -615,7 +615,8 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
                 <Button type="primary" size="small">
                   Apply
                 </Button>
-              ),_record
+              ),
+              _record,
             },
           ]}
         />

@@ -4,11 +4,7 @@
  */
 
 import { Logger } from '@reporunner/core';
-import {
-  type AuditEvent,
-  type AuditEventFilter,
-  type AuditExport,
-} from '@reporunner/shared';
+import type { AuditEvent, AuditEventFilter, AuditExport } from '@reporunner/shared';
 
 // Type aliases for backward compatibility
 type AuditQuery = AuditEventFilter;
@@ -23,35 +19,63 @@ class AuditLogger {
     this.config = config;
   }
 
-  async logAuthentication(action: string, userId?: string, metadata: Record<string, any> = {}): Promise<string> {
+  async logAuthentication(
+    action: string,
+    userId?: string,
+    metadata: Record<string, any> = {}
+  ): Promise<string> {
     const eventId = `audit_${Date.now()}`;
     // TODO: Implement actual audit logging
     console.log('Authentication event:', action, userId, metadata);
     return eventId;
   }
 
-  async logAuthorization(action: string, userId: string, resource: string, resourceId?: string, metadata: Record<string, any> = {}): Promise<string> {
+  async logAuthorization(
+    action: string,
+    userId: string,
+    resource: string,
+    resourceId?: string,
+    metadata: Record<string, any> = {}
+  ): Promise<string> {
     const eventId = `audit_${Date.now()}`;
     // TODO: Implement actual audit logging
     console.log('Authorization event:', action, userId, resource, resourceId, metadata);
     return eventId;
   }
 
-  async logWorkflowEvent(action: string, workflowId: string, userId?: string, metadata: Record<string, any> = {}): Promise<string> {
+  async logWorkflowEvent(
+    action: string,
+    workflowId: string,
+    userId?: string,
+    metadata: Record<string, any> = {}
+  ): Promise<string> {
     const eventId = `audit_${Date.now()}`;
     // TODO: Implement actual audit logging
     console.log('Workflow event:', action, workflowId, userId, metadata);
     return eventId;
   }
 
-  async logDataEvent(action: string, resource: string, resourceId: string, userId?: string, changes?: any, metadata: Record<string, any> = {}): Promise<string> {
+  async logDataEvent(
+    action: string,
+    resource: string,
+    resourceId: string,
+    userId?: string,
+    changes?: any,
+    metadata: Record<string, any> = {}
+  ): Promise<string> {
     const eventId = `audit_${Date.now()}`;
     // TODO: Implement actual audit logging
     console.log('Data event:', action, resource, resourceId, userId, changes, metadata);
     return eventId;
   }
 
-  async logSecurityEvent(action: string, severity: string, message: string, userId?: string, metadata: Record<string, any> = {}): Promise<string> {
+  async logSecurityEvent(
+    action: string,
+    severity: string,
+    message: string,
+    userId?: string,
+    metadata: Record<string, any> = {}
+  ): Promise<string> {
     const eventId = `audit_${Date.now()}`;
     // TODO: Implement actual audit logging
     console.log('Security event:', action, severity, message, userId, metadata);
@@ -63,7 +87,12 @@ class AuditLogger {
     return [];
   }
 
-  async generateReport(reportType: string, timeRange: { start: Date; end: Date }, filters: AuditEventFilter = {}, generatedBy: string): Promise<AuditExport> {
+  async generateReport(
+    reportType: string,
+    timeRange: { start: Date; end: Date },
+    filters: AuditEventFilter = {},
+    generatedBy: string
+  ): Promise<AuditExport> {
     // TODO: Implement actual report generation
     const report: AuditExport = {
       id: `report_${Date.now()}`,
@@ -76,7 +105,10 @@ class AuditLogger {
     return report;
   }
 
-  async exportEvents(query: AuditEventFilter = {}, format: 'json' | 'csv' | 'xml' = 'json'): Promise<string> {
+  async exportEvents(
+    query: AuditEventFilter = {},
+    format: 'json' | 'csv' | 'xml' = 'json'
+  ): Promise<string> {
     // TODO: Implement actual export logic
     if (format === 'json') {
       return JSON.stringify([]);

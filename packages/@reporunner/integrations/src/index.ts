@@ -5,7 +5,7 @@
  * with third-party services in the RepoRunner platform.
  */
 
-// Import singleton instances for internal use
+// Import singleton instances and types for internal use
 import { configValidator } from './config/configuration-schema';
 import { integrationEventBus } from './core/event-bus';
 import { integrationRegistry } from './core/integration-registry';
@@ -13,7 +13,12 @@ import { healthMonitor } from './monitoring/health-monitor';
 import { getCredentialManager } from './security/credential-manager';
 import { integrationTester } from './testing/test-framework';
 import { rateLimiter } from './utils/rate-limiter';
-import { webhookManager } from './webhook/webhook-manager';
+import {
+  type WebhookConfig,
+  type WebhookEvent,
+  type WebhookHandler,
+  webhookManager,
+} from './webhook/webhook-manager';
 
 // Authentication
 export {
@@ -23,6 +28,12 @@ export {
   OAuth2Session,
   OAuth2Token,
 } from './auth/oauth2-handler';
+// Core components
+export {
+  BaseIntegration,
+  IntegrationConfig,
+  IntegrationContext,
+} from './base/base-integration';
 // Configuration
 export {
   ApiKeySchema,
@@ -41,13 +52,14 @@ export {
   SlackIntegrationConfigSchema,
   WebhookConfigSchema,
 } from './config/configuration-schema';
-// Core components
-export {
-  BaseIntegration,
-  IntegrationConfig,
-  IntegrationContext,
-  IntegrationState,
-} from './core/base-integration';
+// IntegrationState type
+export type IntegrationState =
+  | 'idle'
+  | 'initializing'
+  | 'ready'
+  | 'executing'
+  | 'error'
+  | 'disposed';
 export {
   EventBusConfig,
   EventChannel,
@@ -212,7 +224,14 @@ export class IntegrationFramework {
     config: Record<string, unknown>,
     handler: (data: unknown) => void
   ): string {
-    return this.webhookManager.registerWebhook(integrationName, config, handler);
+    const webhookHandler: WebhookHandler = async (event: WebhookEvent) => {
+      handler(event);
+    };
+    return this.webhookManager.registerWebhook(
+      integrationName,
+      config as unknown as WebhookConfig,
+      webhookHandler
+    );
   }
 
   /**

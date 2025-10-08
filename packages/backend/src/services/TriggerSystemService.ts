@@ -381,7 +381,9 @@ export class TriggerSystemService extends EventEmitter {
 
     const lastTriggered =
       events.length > 0
-        ? events.sort((a: TriggerEvent, b: TriggerEvent) => b.timestamp.getTime() - a.timestamp.getTime())[0].timestamp
+        ? events.sort(
+            (a: TriggerEvent, b: TriggerEvent) => b.timestamp.getTime() - a.timestamp.getTime()
+          )[0].timestamp
         : undefined;
 
     return {
