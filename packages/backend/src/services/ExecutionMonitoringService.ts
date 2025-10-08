@@ -7,6 +7,18 @@ import type { Server as SocketIOServer} from 'socket.io';
 type WorkflowExecution = IExecution;
 type NodeExecutionState = INodeExecutionData;
 
+/**
+ * Monitoring state wrapper for IExecution
+ * Adds runtime monitoring fields without mutating the IExecution type
+ */
+interface MonitoringState {
+  execution: IExecution;
+  progress: number;
+  currentNodeId?: string;
+  nodeStates: Record<string, INodeExecutionData>;
+  updatedAt: Date;
+}
+
 export interface ExecutionEvent {
   type:
     | 'execution_started'
@@ -36,7 +48,7 @@ export interface ExecutionMetrics {
 export class ExecutionMonitoringService extends EventEmitter {
   private logger: Logger;
   private io: SocketIOServer;
-  private activeExecutions = new Map<string, WorkflowExecution>();
+  private activeExecutions = new Map<string, MonitoringState>();
   private executionMetrics: ExecutionMetrics = {
     totalExecutions: 0,
     successfulExecutions: 0,
@@ -58,7 +70,16 @@ export class ExecutionMonitoringService extends EventEmitter {
    */
   async startExecution(execution: WorkflowExecution): Promise<void> {
     try {
-      this.activeExecutions.set(execution.id, execution);
+      // Create monitoring state wrapper
+      const monitoringState: MonitoringState = {
+        execution,
+        progress: 0,
+        currentNodeId: undefined,
+        nodeStates: execution.data?.nodes || {},
+        updatedAt: new Date(),
+      };
+
+      this.activeExecutions.set(execution.id, monitoringState);
       this.executionMetrics.totalExecutions++;
       this.executionMetrics.activeExecutions++;
 
@@ -70,7 +91,7 @@ export class ExecutionMonitoringService extends EventEmitter {
         data: {
           status: execution.status,
           startedAt: execution.startedAt,
-          nodes: execution.nodes?.map((n: INodeExecutionData) => n.id) || [],
+          nodes: Object.keys(execution.data?.nodes || {}),
         },
       };
 
@@ -98,21 +119,21 @@ export class ExecutionMonitoringService extends EventEmitter {
     nodeStates?: Record<string, NodeExecutionState>
   ): Promise<void> {
     try {
-      const execution = this.activeExecutions.get(executionId);
-      if (!execution) {
+      const monitoringState = this.activeExecutions.get(executionId);
+      if (!monitoringState) {
         this.logger.warn('Execution not found for progress update', { executionId });
         return;
       }
 
-      execution.progress = progress;
-      execution.currentNodeId = currentNodeId;
-      execution.nodeStates = nodeStates || execution.nodeStates;
-      execution.updatedAt = new Date();
+      monitoringState.progress = progress;
+      monitoringState.currentNodeId = currentNodeId;
+      monitoringState.nodeStates = nodeStates || monitoringState.nodeStates;
+      monitoringState.updatedAt = new Date();
 
       const event: ExecutionEvent = {
         type: 'execution_progress',
         executionId,
-        workflowId: execution.workflowId,
+        workflowId: monitoringState.execution.workflowId,
         nodeId: currentNodeId,
         timestamp: new Date(),
         data: {
@@ -120,7 +141,7 @@ export class ExecutionMonitoringService extends EventEmitter {
           currentNodeId,
           nodeStates,
           activeNodes: Object.entries(nodeStates || {})
-            .filter(([, state]) => state.status === 'running')
+            .filter(([, state]) => state.executionStatus === 'running')
             .map(([nodeId]) => nodeId),
         },
       };
@@ -136,25 +157,26 @@ export class ExecutionMonitoringService extends EventEmitter {
    */
   async onNodeStart(executionId: string, nodeId: string, nodeData?: any): Promise<void> {
     try {
-      const execution = this.activeExecutions.get(executionId);
-      if (!execution) {
+      const monitoringState = this.activeExecutions.get(executionId);
+      if (!monitoringState) {
         return;
       }
 
-      if (!execution.nodeStates) {
-        execution.nodeStates = {};
+      if (!monitoringState.nodeStates) {
+        monitoringState.nodeStates = {};
       }
 
-      execution.nodeStates[nodeId] = {
-        status: 'running',
-        startedAt: new Date(),
+      monitoringState.nodeStates[nodeId] = {
+        startTime: Date.now(),
+        executionTime: 0,
+        executionStatus: 'running',
         data: nodeData,
       };
 
       const event: ExecutionEvent = {
         type: 'node_started',
         executionId,
-        workflowId: execution.workflowId,
+        workflowId: monitoringState.execution.workflowId,
         nodeId,
         timestamp: new Date(),
         data: nodeData,
@@ -177,17 +199,16 @@ export class ExecutionMonitoringService extends EventEmitter {
     executionTime: number
   ): Promise<void> {
     try {
-      const execution = this.activeExecutions.get(executionId);
-      if (!execution) {
+      const monitoringState = this.activeExecutions.get(executionId);
+      if (!monitoringState) {
         return;
       }
 
-      if (execution.nodeStates?.[nodeId]) {
-        execution.nodeStates[nodeId] = {
-          ...execution.nodeStates[nodeId],
-          status: 'success',
-          completedAt: new Date(),
-          result,
+      if (monitoringState.nodeStates?.[nodeId]) {
+        monitoringState.nodeStates[nodeId] = {
+          ...monitoringState.nodeStates[nodeId],
+          executionStatus: 'success',
+          output: result,
           executionTime,
         };
       }
@@ -199,7 +220,7 @@ export class ExecutionMonitoringService extends EventEmitter {
       const event: ExecutionEvent = {
         type: 'node_completed',
         executionId,
-        workflowId: execution.workflowId,
+        workflowId: monitoringState.execution.workflowId,
         nodeId,
         timestamp: new Date(),
         data: {
@@ -220,24 +241,26 @@ export class ExecutionMonitoringService extends EventEmitter {
    */
   async onNodeFail(executionId: string, nodeId: string, error: Error): Promise<void> {
     try {
-      const execution = this.activeExecutions.get(executionId);
-      if (!execution) {
+      const monitoringState = this.activeExecutions.get(executionId);
+      if (!monitoringState) {
         return;
       }
 
-      if (execution.nodeStates?.[nodeId]) {
-        execution.nodeStates[nodeId] = {
-          ...execution.nodeStates[nodeId],
-          status: 'error',
-          completedAt: new Date(),
-          error: error.message,
+      if (monitoringState.nodeStates?.[nodeId]) {
+        monitoringState.nodeStates[nodeId] = {
+          ...monitoringState.nodeStates[nodeId],
+          executionStatus: 'error',
+          error: {
+            message: error.message,
+            timestamp: new Date().toISOString(),
+          },
         };
       }
 
       const event: ExecutionEvent = {
         type: 'node_failed',
         executionId,
-        workflowId: execution.workflowId,
+        workflowId: monitoringState.execution.workflowId,
         nodeId,
         timestamp: new Date(),
         error: error.message,
@@ -260,15 +283,13 @@ export class ExecutionMonitoringService extends EventEmitter {
     error?: string
   ): Promise<void> {
     try {
-      const execution = this.activeExecutions.get(executionId);
-      if (!execution) {
+      const monitoringState = this.activeExecutions.get(executionId);
+      if (!monitoringState) {
         return;
       }
 
-      execution.status = status;
-      execution.completedAt = new Date();
-      execution.result = result;
-      execution.error = error;
+      // Update monitoring state only (keep execution immutable)
+      monitoringState.updatedAt = new Date();
 
       // Update metrics
       this.executionMetrics.activeExecutions--;
@@ -279,7 +300,10 @@ export class ExecutionMonitoringService extends EventEmitter {
       }
 
       // Calculate execution time
-      const executionTime = execution.completedAt.getTime() - execution.startedAt.getTime();
+      const startTime = new Date(monitoringState.execution.startedAt).getTime();
+      const endTime = monitoringState.updatedAt.getTime();
+      const executionTime = endTime - startTime;
+
       this.executionMetrics.averageExecutionTime =
         (this.executionMetrics.averageExecutionTime * (this.executionMetrics.totalExecutions - 1) +
           executionTime) /
@@ -288,13 +312,13 @@ export class ExecutionMonitoringService extends EventEmitter {
       const event: ExecutionEvent = {
         type: status === 'success' ? 'execution_completed' : 'execution_failed',
         executionId,
-        workflowId: execution.workflowId,
+        workflowId: monitoringState.execution.workflowId,
         timestamp: new Date(),
         data: {
           status,
           result,
           executionTime,
-          nodeStates: execution.nodeStates,
+          nodeStates: monitoringState.nodeStates,
         },
         error,
       };
@@ -320,14 +344,15 @@ export class ExecutionMonitoringService extends EventEmitter {
    * Get current execution status
    */
   getExecutionStatus(executionId: string): WorkflowExecution | null {
-    return this.activeExecutions.get(executionId) || null;
+    const monitoringState = this.activeExecutions.get(executionId);
+    return monitoringState?.execution || null;
   }
 
   /**
    * Get all active executions
    */
   getActiveExecutions(): WorkflowExecution[] {
-    return Array.from(this.activeExecutions.values());
+    return Array.from(this.activeExecutions.values()).map((state) => state.execution);
   }
 
   /**

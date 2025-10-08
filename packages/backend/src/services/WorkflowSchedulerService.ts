@@ -344,6 +344,7 @@ export class WorkflowSchedulerService extends EventEmitter {
       const task = this.cronJobs.get(scheduleId);
       if (task) {
         task.stop();
+        // @ts-expect-error - destroy() exists at runtime but not in @types/node-cron
         task.destroy();
         this.cronJobs.delete(scheduleId);
 
