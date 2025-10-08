@@ -15,7 +15,7 @@ export const WorkflowAnalysisSchema = z.object({
       id: z.string(),
       type: z.string(),
       name: z.string(),
-      config: z.record(z.any()),
+      config: z.record(z.string(), z.any()),
       connections: z.array(z.string()),
       executionTime: z.number().optional(),
       errorRate: z.number().optional(),
@@ -67,7 +67,7 @@ export const OptimizationSuggestionSchema = z.object({
       .array(
         z.object({
           nodeId: z.string(),
-          changes: z.record(z.any()),
+          changes: z.record(z.string(), z.any()),
         })
       )
       .optional(),
@@ -460,14 +460,16 @@ export class WorkflowOptimizer {
     try {
       const prompt = this.buildAnalysisPrompt(analysis);
 
-      const response = await this.llmProvider.generateCompletion({
+      const response = await this.llmProvider.complete({
+        model: 'gpt-4o',
         prompt,
         maxTokens: 1000,
         temperature: 0.3,
       });
 
       // Parse AI response and convert to suggestions
-      return this.parseAISuggestions(response.content);
+      const content = response.choices[0]?.message?.content || '';
+      return this.parseAISuggestions(content);
     } catch (error) {
       this.logger.error('Failed to generate AI suggestions:', error);
       return [];
@@ -618,13 +620,14 @@ ${suggestions
 Provide a brief, actionable summary in 2-3 sentences.
 `;
 
-      const response = await this.llmProvider.generateCompletion({
+      const response = await this.llmProvider.complete({
+        model: 'gpt-4o',
         prompt,
         maxTokens: 200,
         temperature: 0.3,
       });
 
-      return response.content;
+      return response.choices[0]?.message?.content || '';
     } catch (error) {
       this.logger.error('Failed to generate summary:', error);
       return `Workflow analysis completed with ${suggestions.length} optimization suggestions. Focus on ${suggestions.filter((s) => s.priority === 'high').length} high-priority improvements to enhance performance and reliability.`;

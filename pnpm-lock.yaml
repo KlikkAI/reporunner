@@ -704,9 +704,6 @@ importers:
 
   packages/@reporunner/platform:
     dependencies:
-      '@reporunner/backend':
-        specifier: workspace:*
-        version: link:../../backend
       '@reporunner/core':
         specifier: workspace:*
         version: link:../core
@@ -870,9 +867,15 @@ importers:
 
   packages/backend:
     dependencies:
+      '@reporunner/ai':
+        specifier: workspace:*
+        version: link:../@reporunner/ai
       '@reporunner/core':
         specifier: workspace:*
         version: link:../@reporunner/core
+      '@reporunner/platform':
+        specifier: workspace:*
+        version: link:../@reporunner/platform
       '@reporunner/shared':
         specifier: workspace:*
         version: link:../shared

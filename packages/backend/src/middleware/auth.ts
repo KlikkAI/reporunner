@@ -5,37 +5,16 @@
 
 import type { NextFunction, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
+import type { AuthenticatedUser } from '@reporunner/shared';
 import { UserRepository } from '../domains/auth/repositories/UserRepository';
 import { type Permission, PermissionService } from '../services/PermissionService';
 import { AppError } from './errorHandlers';
 
-// Extend Express Request type to include user data
-declare global {
-  namespace Express {
-    interface Request {
-      user?: {
-        id: string;
-        email: string;
-        role: string;
-        permissions: string[];
-        organizationId?: string;
-        isEmailVerified: boolean;
-      };
-    }
-  }
-}
+// Import AuthenticatedUser from shared package instead of declaring global namespace
+// The shared package already defines Express.Request augmentation
 
 export interface AuthRequest extends Request {
-  user?: {
-    id: string;
-    email: string;
-    role: string;
-    permissions: string[];
-    organizationId?: string;
-    isEmailVerified: boolean;
-    firstName?: string;
-    lastName?: string;
-  };
+  user?: AuthenticatedUser;
 }
 
 export interface AuthPayload {
@@ -51,6 +30,7 @@ export interface AuthPayload {
 
 export class AuthMiddleware {
   private userRepository: UserRepository;
+  private permissionService: PermissionService;
 
   constructor() {
     this.userRepository = new UserRepository();
@@ -86,11 +66,12 @@ export class AuthMiddleware {
         throw new AppError('Account is temporarily locked', 423);
       }
 
-      // Attach user data to request
+      // Attach user data to request - aligned with AuthenticatedUser from shared
       req.user = {
         id: decoded.userId,
         email: decoded.email,
         role: decoded.role,
+        roles: decoded.role ? [decoded.role] : [],
         permissions: decoded.permissions,
         organizationId: decoded.organizationId,
         isEmailVerified: decoded.isEmailVerified,
@@ -136,12 +117,14 @@ export class AuthMiddleware {
         }
 
         // Super admin has all permissions
-        if (req.user.role === 'super_admin') {
+        const userRoles = req.user.roles || (req.user.role ? [req.user.role] : []);
+        if (userRoles.includes('super_admin')) {
           return next();
         }
 
         // Check if user has the required permission
-        if (!req.user.permissions.includes(permission)) {
+        const userPermissions = req.user.permissions || [];
+        if (!userPermissions.includes(permission)) {
           throw new AppError('Insufficient permissions', 403);
         }
 
@@ -163,13 +146,15 @@ export class AuthMiddleware {
         }
 
         // Super admin has all permissions
-        if (req.user.role === 'super_admin') {
+        const userRoles = req.user.roles || (req.user.role ? [req.user.role] : []);
+        if (userRoles.includes('super_admin')) {
           return next();
         }
 
         // Check if user has any of the required permissions
+        const userPermissions = req.user.permissions || [];
         const hasPermission = permissions.some((permission) =>
-          req.user?.permissions.includes(permission)
+          userPermissions.includes(permission)
         );
 
         if (!hasPermission) {
@@ -195,7 +180,10 @@ export class AuthMiddleware {
           throw new AppError('Authentication required', 401);
         }
 
-        if (!roleArray.includes(req.user.role)) {
+        const userRoles = req.user.roles || (req.user.role ? [req.user.role] : []);
+        const hasRequiredRole = userRoles.some((userRole) => roleArray.includes(userRole));
+
+        if (!hasRequiredRole) {
           throw new AppError('Insufficient role privileges', 403);
         }
 
@@ -240,7 +228,10 @@ export class AuthMiddleware {
         }
 
         // Admin and super_admin can access any resource
-        if (['admin', 'super_admin'].includes(req.user.role)) {
+        const userRoles = req.user.roles || (req.user.role ? [req.user.role] : []);
+        const hasAdminRole = userRoles.some((role) => ['admin', 'super_admin'].includes(role));
+
+        if (hasAdminRole) {
           return next();
         }
 

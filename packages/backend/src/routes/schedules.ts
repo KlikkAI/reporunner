@@ -104,12 +104,12 @@ router.get('/:id', async (req, res) => {
       });
     }
 
-    res.json({
+    return res.json({
       success: true,
       data: schedule,
     });
   } catch (error) {
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       error: error instanceof Error ? error.message : 'Internal server error',
     });
@@ -234,12 +234,12 @@ router.get('/:id/executions', async (req, res) => {
 
     const executions = workflowSchedulerService.getScheduledExecutions(schedule.workflowId);
 
-    res.json({
+    return res.json({
       success: true,
       data: executions,
     });
   } catch (error) {
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       error: error instanceof Error ? error.message : 'Failed to get scheduled executions',
     });

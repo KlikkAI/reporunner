@@ -29,7 +29,7 @@ export class JWTService {
     };
 
     return jwt.sign(payload, JWTService.JWT_SECRET, {
-      expiresIn: JWTService.ACCESS_TOKEN_EXPIRES_IN,
+      expiresIn: JWTService.ACCESS_TOKEN_EXPIRES_IN as string | number,
     });
   }
 
@@ -45,7 +45,7 @@ export class JWTService {
     };
 
     return jwt.sign(payload, JWTService.JWT_SECRET, {
-      expiresIn: JWTService.REFRESH_TOKEN_EXPIRES_IN,
+      expiresIn: JWTService.REFRESH_TOKEN_EXPIRES_IN as string | number,
     });
   }
 

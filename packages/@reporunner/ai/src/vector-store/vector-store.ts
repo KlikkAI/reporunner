@@ -177,7 +177,7 @@ export class VectorStore {
           const conditions = [];
           for (const [key, value] of Object.entries(params.filter)) {
             conditions.push(`metadata->>'${key}' = $${paramIndex}`);
-            queryParams.push(value);
+            queryParams.push(String(value));
             paramIndex++;
           }
           sql += ` WHERE ${conditions.join(' AND ')}`;
@@ -311,7 +311,7 @@ export class VectorStore {
           const conditions = [];
           for (const [key, value] of Object.entries(filter)) {
             conditions.push(`metadata->>'${key}' = $${paramIndex}`);
-            queryParams.push(value);
+            queryParams.push(String(value));
             paramIndex++;
           }
           sql += ` WHERE ${conditions.join(' AND ')}`;

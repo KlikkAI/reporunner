@@ -15,7 +15,9 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
+    "@reporunner/ai": "workspace:*",
     "@reporunner/core": "workspace:*",
+    "@reporunner/platform": "workspace:*",
     "@reporunner/shared": "workspace:*",
     "@types/bcrypt": "^6.0.0",
     "@types/node-cron": "^3.0.11",

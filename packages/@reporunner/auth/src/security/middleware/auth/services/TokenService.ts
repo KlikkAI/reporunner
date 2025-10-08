@@ -18,11 +18,14 @@ interface TokenServiceInterface {
 
 interface TokenConfig {
   secret?: string;
-  expiresIn?: string;
+  expiresIn?: string | number;
+  refreshExpiresIn?: string | number;
   algorithm?: string;
 }
 
 export class JWTTokenService implements TokenServiceInterface {
+  private config?: TokenConfig;
+
   constructor(config?: TokenConfig) {
     this.config = config;
     // Config will be used in future JWT implementation

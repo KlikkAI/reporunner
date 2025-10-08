@@ -11,6 +11,8 @@ interface UserSession {
   userId: string;
   createdAt: Date;
   expiresAt: Date;
+  lastUsedAt?: Date;
+  refreshCount?: number;
   ipAddress?: string;
   userAgent?: string;
 }

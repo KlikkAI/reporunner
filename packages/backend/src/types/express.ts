@@ -3,33 +3,13 @@
  */
 
 import type { Request } from 'express';
+import type { AuthenticatedUser } from '@reporunner/shared';
 
-declare global {
-  namespace Express {
-    interface Request {
-      user?: {
-        id: string;
-        email: string;
-        role: string;
-        permissions: string[];
-        organizationId?: string;
-        isEmailVerified: boolean;
-      };
-      correlationId?: string;
-      startTime?: number;
-    }
-  }
-}
+// Import AuthenticatedUser from shared package instead of declaring global namespace
+// The shared package already defines Express.Request augmentation
 
 export interface AuthenticatedRequest extends Request {
-  user: {
-    id: string;
-    email: string;
-    role: string;
-    permissions: string[];
-    organizationId?: string;
-    isEmailVerified: boolean;
-  };
+  user: AuthenticatedUser;
 }
 
 export interface PaginatedRequest extends Request {

@@ -26,6 +26,10 @@ export const NodeSchema = z.object({
   }),
   data: z.record(z.string(), z.any()).optional(),
   integrationData: z.record(z.string(), z.any()).optional(),
+  name: z.string().optional(),
+  description: z.string().optional(),
+  parameters: z.record(z.string(), z.any()).optional(),
+  credentials: z.string().optional(),
 });
 
 /**

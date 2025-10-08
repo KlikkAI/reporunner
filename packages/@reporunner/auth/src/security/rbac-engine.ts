@@ -24,8 +24,8 @@ export interface Role {
 
 export interface User {
   id: string;
-  email: string;
-  roles: string[];
+  email?: string;
+  roles?: string[];
   organizationId?: string;
   attributes?: Record<string, unknown>;
 }
@@ -347,7 +347,7 @@ export class RBACEngine {
         // Add permission context to request
         req.rbac = {
           decision,
-          permissions: this.getUserPermissions(user.id),
+          permissions: Array.from(this.getUserPermissions(user.id)),
         };
 
         next();

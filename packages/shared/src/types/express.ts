@@ -2,14 +2,19 @@
  * Express type extensions for shared functionality
  */
 
+import type { AuthenticatedUser } from './auth';
+
 declare global {
   namespace Express {
     interface Request {
-      user?: {
-        id: string;
-        email: string;
-        role: string;
-        organizationId?: string;
+      user?: AuthenticatedUser;
+      userId?: string;
+      organizationId?: string;
+      sessionId?: string;
+      token?: string;
+      rbac?: {
+        decision?: any;
+        permissions?: string[];
       };
       organization?: {
         id: string;
@@ -20,6 +25,8 @@ declare global {
         page: number;
         limit: number;
         skip: number;
+        sortBy?: string;
+        sortOrder?: 'asc' | 'desc';
       };
       filters?: Record<string, any>;
     }

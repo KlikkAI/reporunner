@@ -3,6 +3,7 @@
  */
 
 import OpenAI from 'openai';
+import type { ChatCompletionMessageParam } from 'openai/resources/chat/completions';
 import { CombinedAIProvider } from '../../base/ai-provider';
 import type {
   EmbeddingRequest,
@@ -93,7 +94,7 @@ export class OpenAIProvider extends CombinedAIProvider {
           if (msg.name) {
             baseMsg.name = msg.name;
           }
-          return baseMsg;
+          return baseMsg as ChatCompletionMessageParam;
         }),
         temperature: request.temperature,
         max_tokens: request.maxTokens,
@@ -161,7 +162,7 @@ export class OpenAIProvider extends CombinedAIProvider {
           if (msg.name) {
             baseMsg.name = msg.name;
           }
-          return baseMsg;
+          return baseMsg as ChatCompletionMessageParam;
         }),
         temperature: request.temperature,
         max_tokens: request.maxTokens,

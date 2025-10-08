@@ -9,6 +9,7 @@ import marketplaceRoutes from './marketplace';
 import scheduleRoutes from './schedules';
 import securityRoutes from './security';
 import triggerRoutes from './triggers';
+import workflowOptimizationRoutes from './workflow-optimization';
 
 const router = Router();
 

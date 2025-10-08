@@ -110,12 +110,12 @@ router.get('/:id', async (req, res) => {
       });
     }
 
-    res.json({
+    return res.json({
       success: true,
       data: trigger,
     });
   } catch (error) {
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       error: error instanceof Error ? error.message : 'Internal server error',
     });
@@ -244,7 +244,7 @@ router.get('/:id/metrics', async (req, res) => {
  */
 router.all('/webhook/*', async (req, res) => {
   try {
-    const path = req.params[0]; // Get the wildcard path
+    const path = (req.params as string[])[0]; // Get the wildcard path
     const method = req.method;
     const headers = req.headers as Record<string, string>;
     const body = req.body;

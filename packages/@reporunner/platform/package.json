@@ -56,7 +56,6 @@
     "@reporunner/shared": "workspace:*",
     "@reporunner/core": "workspace:*",
     "@reporunner/workflow": "workspace:*",
-    "@reporunner/backend": "workspace:*",
     "bullmq": "catalog:",
     "ioredis": "catalog:",
     "winston": "catalog:",

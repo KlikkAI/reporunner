@@ -124,13 +124,15 @@ export const validateCompleteUserSetup = (
   ]);
 
   if (!combinedResult.success) {
-    return res.status(400).json({
+    res.status(400).json({
       success: false,
       message: 'Validation failed',
       errors: combinedResult.errors,
     });
+    return;
   }
 
-  req.validatedData = combinedResult.data;
+  // Store validated data in request body instead of custom property
+  req.body = combinedResult.data;
   next();
 };

@@ -12,14 +12,14 @@ import {
   StartVulnerabilityScanSchema,
   ThreatQuerySchema,
   toSecurityAlertDTO,
+  toSecurityComplianceFrameworkDTO,
   toSecurityMetricsDTO,
   toSecurityThreatDTO,
   toVulnerabilityScanDTO,
   UpdateThreatStatusSchema,
 } from '@reporunner/shared';
 import { type Request, type Response, Router } from 'express';
-
-// import { enterpriseSecurityService } from '../services/EnterpriseSecurityService';
+import { enterpriseSecurityService } from '../services/EnterpriseSecurityService';
 
 const router = Router();
 

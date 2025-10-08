@@ -42,9 +42,10 @@ Welcome to the comprehensive documentation for Reporunner, the open-source workf
 - [WebSocket API](./api/websocket-api.md) - Real-time communication
 
 ### 🛠️ Development
+- [**Development Documentation**](./development/README.md) - Complete development guide and standards
+- [Code Quality Standards](./development/CODE_QUALITY.md) - Enterprise-grade quality metrics (3,400+ errors eliminated)
 - [Development Setup](./development/setup.md) - Local development environment
 - [Contributing Guide](../CONTRIBUTING.md) - How to contribute to the project
-- [Code Standards](./development/code-standards.md) - Coding conventions and best practices
 - [Testing Guide](./development/testing.md) - Testing strategies and frameworks
 - [Plugin Development](./development/plugin-development.md) - Creating custom plugins
 

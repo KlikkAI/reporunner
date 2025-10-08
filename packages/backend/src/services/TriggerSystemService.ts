@@ -362,26 +362,26 @@ export class TriggerSystemService extends EventEmitter {
     lastTriggered?: Date;
   } {
     const events = triggerId
-      ? this.events.values().filter((e) => e.triggerId === triggerId)
+      ? Array.from(this.events.values()).filter((e: TriggerEvent) => e.triggerId === triggerId)
       : Array.from(this.events.values());
 
     const totalEvents = events.length;
-    const processedEvents = events.filter((e) => e.processed);
-    const successfulTriggers = processedEvents.filter((e) => !e.error).length;
-    const failedTriggers = processedEvents.filter((e) => e.error).length;
+    const processedEvents = events.filter((e: TriggerEvent) => e.processed);
+    const successfulTriggers = processedEvents.filter((e: TriggerEvent) => !e.error).length;
+    const failedTriggers = processedEvents.filter((e: TriggerEvent) => e.error).length;
 
     const processingTimes = processedEvents
-      .filter((e) => e.processingTime)
-      .map((e) => e.processingTime!);
+      .filter((e: TriggerEvent) => e.processingTime)
+      .map((e: TriggerEvent) => e.processingTime!);
 
     const averageProcessingTime =
       processingTimes.length > 0
-        ? processingTimes.reduce((a, b) => a + b, 0) / processingTimes.length
+        ? processingTimes.reduce((a: number, b: number) => a + b, 0) / processingTimes.length
         : 0;
 
     const lastTriggered =
       events.length > 0
-        ? events.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime())[0].timestamp
+        ? events.sort((a: TriggerEvent, b: TriggerEvent) => b.timestamp.getTime() - a.timestamp.getTime())[0].timestamp
         : undefined;
 
     return {

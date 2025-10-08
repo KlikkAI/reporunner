@@ -7,7 +7,7 @@ import { WorkflowAnalysisSchema } from '@reporunner/ai';
 import { Logger } from '@reporunner/core';
 import { Router } from 'express';
 import { z } from 'zod';
-import { authMiddleware } from '../middleware/auth';
+import { authenticate } from '../middleware/auth';
 import { asyncHandler } from '../utils/asyncHandler';
 
 const router = Router();
@@ -22,7 +22,7 @@ const logger = new Logger('WorkflowOptimizationAPI');
  */
 router.post(
   '/analyze',
-  authMiddleware,
+  authenticate,
   asyncHandler(async (req, res) => {
     try {
       // Validate request body
@@ -92,7 +92,7 @@ router.post(
 
       logger.info(`Workflow analysis completed for: ${workflowAnalysis.workflowId}`);
 
-      res.json({
+      return res.json({
         success: true,
         data: mockReport,
       });
@@ -103,11 +103,11 @@ router.post(
         return res.status(400).json({
           success: false,
           error: 'Invalid workflow analysis data',
-          details: error.errors,
+          details: error.issues,
         });
       }
 
-      res.status(500).json({
+      return res.status(500).json({
         success: false,
         error: 'Failed to analyze workflow',
       });
@@ -121,7 +121,7 @@ router.post(
  */
 router.get(
   '/suggestions/:workflowId',
-  authMiddleware,
+  authenticate,
   asyncHandler(async (req, res) => {
     const { workflowId } = req.params;
 
@@ -147,7 +147,7 @@ router.get(
  */
 router.post(
   '/apply-suggestion',
-  authMiddleware,
+  authenticate,
   asyncHandler(async (req, res) => {
     const { workflowId, suggestionId, autoApply } = req.body;
 
@@ -189,7 +189,7 @@ router.post(
  */
 router.get(
   '/metrics/:workflowId',
-  authMiddleware,
+  authenticate,
   asyncHandler(async (req, res) => {
     const { workflowId } = req.params;
     const { timeRange = '7d' } = req.query;
@@ -241,7 +241,7 @@ router.get(
  */
 router.post(
   '/batch-analyze',
-  authMiddleware,
+  authenticate,
   asyncHandler(async (req, res) => {
     const { workflowIds } = req.body;
 
@@ -285,7 +285,7 @@ router.post(
  */
 router.get(
   '/batch-status/:batchId',
-  authMiddleware,
+  authenticate,
   asyncHandler(async (req, res) => {
     const { batchId } = req.params;
 

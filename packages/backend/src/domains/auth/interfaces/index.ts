@@ -14,6 +14,9 @@ export interface IRegisterRequest {
   lastName: string;
 }
 
+// Alias for consistency with service usage
+export interface IRegistrationData extends IRegisterRequest {}
+
 export interface IAuthResponse {
   user: {
     id: string;
@@ -30,6 +33,22 @@ export interface IUser {
   firstName: string;
   lastName: string;
   password?: string;
+  role?: string;
+  permissions?: string[];
+  isActive?: boolean;
+  isEmailVerified?: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface IUserProfile {
+  id: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  role?: string;
+  organizationId?: string;
+  isEmailVerified?: boolean;
   createdAt: Date;
   updatedAt: Date;
 }

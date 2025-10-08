@@ -38,12 +38,13 @@ router.get('/events', async (req, res) => {
   try {
     const query = AuditQuerySchema.parse(req.query);
 
-    // Convert date strings to Date objects
+    // Convert date strings to Date objects and separate pagination from filters
+    const { startDate, endDate, limit, offset, status, ...filterQuery } = query;
     const auditQuery = {
-      ...query,
-      startDate: query.startDate ? new Date(query.startDate) : undefined,
-      endDate: query.endDate ? new Date(query.endDate) : undefined,
-    };
+      ...filterQuery,
+      startDate: startDate ? new Date(startDate) : undefined,
+      endDate: endDate ? new Date(endDate) : undefined,
+    } as import('@reporunner/shared').AuditEventFilter;
 
     const events = await auditService.queryEvents(auditQuery);
 
@@ -115,14 +116,17 @@ router.post('/export', async (req, res) => {
       format: z.enum(['json', 'csv', 'xml']).default('json'),
     });
 
-    const { query = {}, format } = schema.parse(req.body);
+    const parsed = schema.parse(req.body);
+    const format = parsed.format;
 
-    // Convert date strings to Date objects
-    const auditQuery = {
-      ...query,
-      startDate: query.startDate ? new Date(query.startDate) : undefined,
-      endDate: query.endDate ? new Date(query.endDate) : undefined,
-    };
+    // Convert date strings to Date objects if query exists
+    const auditQuery = parsed.query
+      ? {
+          ...parsed.query,
+          startDate: parsed.query.startDate ? new Date(parsed.query.startDate) : undefined,
+          endDate: parsed.query.endDate ? new Date(parsed.query.endDate) : undefined,
+        }
+      : {};
 
     const exportData = await auditService.exportEvents(auditQuery, format);
 

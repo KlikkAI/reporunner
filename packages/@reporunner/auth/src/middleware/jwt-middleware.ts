@@ -1,3 +1,4 @@
+import type { AuthenticatedUser } from '@reporunner/shared';
 import type { NextFunction, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 
@@ -9,15 +10,16 @@ export interface JWTConfig {
   expiresIn?: string;
 }
 
-interface JWTPayload {
+interface JWTPayload extends Partial<AuthenticatedUser> {
   userId?: string;
   sub?: string;
-  organizationId?: string;
+  iat?: number;
+  exp?: number;
   [key: string]: unknown;
 }
 
 export interface AuthenticatedRequest extends Request {
-  user?: JWTPayload;
+  user?: AuthenticatedUser;
   userId?: string;
   organizationId?: string;
 }
@@ -38,7 +40,18 @@ export function createJWTMiddleware(config: JWTConfig) {
         audience: config.audience,
       }) as JWTPayload;
 
-      req.user = decoded;
+      // Convert JWTPayload to AuthenticatedUser
+      req.user = {
+        id: decoded.userId || decoded.sub || decoded.id || '',
+        email: decoded.email,
+        role: decoded.role,
+        roles: decoded.roles,
+        permissions: decoded.permissions,
+        organizationId: decoded.organizationId,
+        tokenId: decoded.tokenId,
+        sessionId: decoded.sessionId,
+        tier: decoded.tier,
+      };
       req.userId = decoded.userId || decoded.sub;
       req.organizationId = decoded.organizationId;
 

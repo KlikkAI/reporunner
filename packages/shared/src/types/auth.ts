@@ -9,6 +9,9 @@ export interface AuthenticatedUser {
   permissions?: string[];
   tier?: string;
   organizationId?: string;
+  tokenId?: string;
+  sessionId?: string;
+  profileCompleted?: boolean;
   [key: string]: unknown;
 }
 

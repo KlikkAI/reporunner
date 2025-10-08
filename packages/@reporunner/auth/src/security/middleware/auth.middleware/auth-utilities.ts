@@ -1,12 +1,8 @@
+import type { AuthenticatedUser } from '@reporunner/shared';
 import type { NextFunction, Request, Response } from 'express';
 
 export interface AuthRequest extends Request {
-  user?: {
-    id: string;
-    email: string;
-    organizationId: string;
-    permissions?: string[];
-  };
+  user?: AuthenticatedUser;
   userId?: string;
   organizationId?: string;
 }
@@ -23,6 +19,8 @@ interface UserSession {
   userId: string;
   createdAt: Date;
   expiresAt: Date;
+  lastUsedAt?: Date;
+  refreshCount?: number;
   ipAddress?: string;
   userAgent?: string;
 }
@@ -88,14 +86,21 @@ export function createAuthMiddleware(
     const token = authHeader.substring(7);
 
     try {
-      const user = await sessionManager.verifyToken(token);
-      req.user = user;
-      req.userId = user.id;
-      req.organizationId = user.organizationId;
+      const payload = await sessionManager.verifyToken(token);
+
+      // Convert JWTPayload to AuthenticatedUser
+      req.user = {
+        id: (payload.userId || payload.sub) as string,
+        email: payload.email as string | undefined,
+        organizationId: payload.organizationId as string | undefined,
+        permissions: (payload.permissions as string[]) || [],
+      };
+      req.userId = payload.userId || payload.sub;
+      req.organizationId = payload.organizationId as string | undefined;
 
       // Check permissions if required
       if (permissions.length > 0) {
-        const userPermissions = user.permissions || [];
+        const userPermissions = (payload.permissions as string[]) || [];
         const hasRequiredPermission = permissions.some((perm) => userPermissions.includes(perm));
 
         if (!hasRequiredPermission) {

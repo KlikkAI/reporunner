@@ -329,8 +329,6 @@ Provide performance prediction in JSON format:
                   retryDelay: 1000,
                   fallbackAction: 'continue',
                 },
-                credentials: [],
-                disabled: false,
               };
 
               const errorEdge: WorkflowEdge = {
@@ -522,8 +520,6 @@ Provide recommendations in JSON format:
                 ttl: 3600,
                 strategy: 'lru',
               },
-              credentials: [],
-              disabled: false,
             },
           ],
         };
@@ -541,8 +537,6 @@ Provide recommendations in JSON format:
                 retryCount: 3,
                 retryDelay: 1000,
               },
-              credentials: [],
-              disabled: false,
             })),
         };
 

@@ -14,7 +14,7 @@ import {
 } from '@reporunner/platform';
 import { Router } from 'express';
 import { z } from 'zod';
-import { authMiddleware } from '../middleware/auth';
+import { authenticate } from '../middleware/auth';
 import { asyncHandler } from '../utils/asyncHandler';
 
 const router = Router();
@@ -36,7 +36,7 @@ router.get(
 
     const result = await pluginRegistry.searchPlugins(searchQuery);
 
-    res.json({
+    return res.json({
       success: true,
       data: result,
     });
@@ -64,7 +64,7 @@ router.get(
     // Get version information
     const versions = await pluginDistribution.getPluginVersions(pluginId);
 
-    res.json({
+    return res.json({
       success: true,
       data: {
         ...plugin,
@@ -80,14 +80,21 @@ router.get(
  */
 router.post(
   '/plugins',
-  authMiddleware,
+  authenticate,
   asyncHandler(async (req, res) => {
+    if (!req.user) {
+      return res.status(401).json({
+        success: false,
+        error: 'Authentication required',
+      });
+    }
+
     const publishRequest = PublishRequestSchema.parse({
       ...req.body,
       publisherInfo: {
         userId: req.user.id,
         organizationId: req.user.organizationId,
-        publisherType: req.user.type || 'individual',
+        publisherType: req.user.organizationId ? 'organization' : 'individual',
       },
     });
 
@@ -116,7 +123,7 @@ router.post(
     // Register plugin in marketplace
     await pluginRegistry.registerPlugin(publishRequest.pluginPackage);
 
-    res.status(201).json({
+    return res.status(201).json({
       success: true,
       data: publishResult,
     });
@@ -129,7 +136,7 @@ router.post(
  */
 router.put(
   '/plugins/:pluginId',
-  authMiddleware,
+  authenticate,
   asyncHandler(async (req, res) => {
     const { pluginId } = req.params;
     const updates = req.body;
@@ -145,7 +152,7 @@ router.put(
       });
     }
 
-    res.json({
+    return res.json({
       success: true,
       message: 'Plugin updated successfully',
     });
@@ -158,14 +165,21 @@ router.put(
  */
 router.delete(
   '/plugins/:pluginId/versions/:version',
-  authMiddleware,
+  authenticate,
   asyncHandler(async (req, res) => {
+    if (!req.user) {
+      return res.status(401).json({
+        success: false,
+        error: 'Authentication required',
+      });
+    }
+
     const { pluginId, version } = req.params;
 
     const publisherInfo = {
       userId: req.user.id,
       organizationId: req.user.organizationId,
-      publisherType: req.user.type || 'individual',
+      publisherType: (req.user.organizationId ? 'organization' : 'individual') as 'organization' | 'individual' | 'verified',
     };
 
     const result = await pluginDistribution.unpublishPlugin(pluginId, version, publisherInfo);
@@ -177,7 +191,7 @@ router.delete(
       });
     }
 
-    res.json({
+    return res.json({
       success: true,
       message: 'Plugin version unpublished successfully',
     });
@@ -190,8 +204,15 @@ router.delete(
  */
 router.post(
   '/plugins/:pluginId/download',
-  authMiddleware,
+  authenticate,
   asyncHandler(async (req, res) => {
+    if (!req.user) {
+      return res.status(401).json({
+        success: false,
+        error: 'Authentication required',
+      });
+    }
+
     const { pluginId } = req.params;
     const { version } = req.body;
 
@@ -211,7 +232,7 @@ router.post(
       });
     }
 
-    res.json({
+    return res.json({
       success: true,
       data: {
         downloadUrl: result.downloadUrl,
@@ -260,7 +281,7 @@ router.get(
 
     res.setHeader('Content-Type', 'application/octet-stream');
     res.setHeader('Content-Disposition', `attachment; filename="${pluginId}-${version}.zip"`);
-    res.send(bundle);
+    return res.send(bundle);
   })
 );
 
@@ -270,13 +291,13 @@ router.get(
  */
 router.post(
   '/plugins/:pluginId/validate',
-  authMiddleware,
+  authenticate,
   asyncHandler(async (req, res) => {
     const pluginPackage = req.body;
 
     const validationResult = await pluginValidator.validatePlugin(pluginPackage);
 
-    res.json({
+    return res.json({
       success: true,
       data: validationResult,
     });
@@ -295,7 +316,7 @@ router.get(
       pluginDistribution.getDownloadStats(),
     ]);
 
-    res.json({
+    return res.json({
       success: true,
       data: {
         ...registryStats,
@@ -320,7 +341,7 @@ router.get(
       { id: 'ai', name: 'AI & ML', description: 'Artificial intelligence and machine learning' },
     ];
 
-    res.json({
+    return res.json({
       success: true,
       data: categories,
     });
@@ -337,13 +358,14 @@ router.get(
     const searchQuery = {
       featured: true,
       limit: 10,
+      offset: 0,
       sortBy: 'downloads' as const,
       sortOrder: 'desc' as const,
     };
 
     const result = await pluginRegistry.searchPlugins(searchQuery);
 
-    res.json({
+    return res.json({
       success: true,
       data: result.plugins,
     });
@@ -356,8 +378,15 @@ router.get(
  */
 router.post(
   '/plugins/:pluginId/review',
-  authMiddleware,
+  authenticate,
   asyncHandler(async (req, res) => {
+    if (!req.user) {
+      return res.status(401).json({
+        success: false,
+        error: 'Authentication required',
+      });
+    }
+
     const { pluginId } = req.params;
     const { rating, comment } = req.body;
 
@@ -380,7 +409,7 @@ router.post(
       rating: reviewData.rating,
     });
 
-    res.json({
+    return res.json({
       success: true,
       message: 'Review submitted successfully',
     });

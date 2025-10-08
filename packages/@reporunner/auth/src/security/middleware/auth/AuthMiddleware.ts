@@ -130,6 +130,10 @@ export class AuthMiddleware extends SecurityMiddleware {
   private async authorize(req: Request): Promise<void> {
     const { rbac } = this.config;
 
+    if (!req.user) {
+      throw new AuthorizationError('User not authenticated');
+    }
+
     try {
       // Check roles if specified
       if (rbac?.roles?.length) {

@@ -1,4 +1,5 @@
 import type { NextFunction, Request, Response } from 'express';
+import type { AuthenticatedUser } from '@reporunner/shared';
 
 export interface ApiResponse<T = any> {
   success: boolean;
@@ -164,7 +165,7 @@ export const contextMiddleware = (req: Request, res: Response, next: NextFunctio
     requestId: Math.random().toString(36).substr(2, 9),
     userId: req.user?.id,
     organizationId: req.user?.organizationId,
-    roles: req.user?.roles || [],
+    roles: req.user?.roles || (req.user?.role ? [req.user.role] : []),
     permissions: req.user?.permissions || [],
     ip: req.ip || req.connection.remoteAddress || 'unknown',
     userAgent: req.get('User-Agent') || 'unknown',
@@ -217,6 +218,7 @@ export const validatePagination = (req: Request, _res: Response, next: NextFunct
   req.pagination = {
     page,
     limit,
+    skip: (page - 1) * limit,
     sortBy,
     sortOrder,
   };
@@ -224,18 +226,12 @@ export const validatePagination = (req: Request, _res: Response, next: NextFunct
   next();
 };
 
-// Extend Express Request interface
+// Extend Express Request interface with backend-specific properties
+// user and pagination are already declared in shared package
 declare global {
   namespace Express {
     interface Request {
       context?: RequestContext;
-      user?: {
-        id: string;
-        organizationId: string;
-        roles: string[];
-        permissions: string[];
-      };
-      pagination?: PaginationOptions;
     }
   }
 }

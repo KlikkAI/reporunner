@@ -1,29 +1,10 @@
-import { ERROR_CODES } from '@reporunner/shared';
+import { ERROR_CODES, type AuthenticatedUser } from '@reporunner/shared';
 import type { NextFunction, Request, Response } from 'express';
 // Removed unused JwtPayload import
 import type { JWTSessionManager } from '../jwt-session';
 
-// Extend Express Request type
-declare global {
-  namespace Express {
-    interface Request {
-      user?: AuthenticatedUser;
-      token?: string;
-      sessionId?: string;
-    }
-  }
-}
-
-export interface AuthenticatedUser {
-  id: string;
-  email?: string;
-  roles?: string[];
-  permissions?: string[];
-  sessionId?: string;
-  tokenId?: string;
-  profileCompleted?: boolean;
-  tier?: string;
-}
+// Re-export AuthenticatedUser for backward compatibility
+export type { AuthenticatedUser };
 
 export interface AuthMiddlewareOptions {
   required?: boolean;
@@ -99,12 +80,12 @@ export function createAuthMiddleware(
 
       // Build user object
       const user: AuthenticatedUser = {
-        id: decoded.userId || (decoded.sub as string),
-        email: decoded.email,
-        roles: decoded.roles || [],
-        permissions: decoded.permissions || [],
-        sessionId: decoded.sessionId,
-        tokenId: decoded.tokenId,
+        id: decoded.userId || (decoded.sub as string) || '',
+        email: (decoded.email as string | undefined),
+        roles: (decoded.roles as string[] | undefined) || [],
+        permissions: (decoded.permissions as string[] | undefined) || [],
+        sessionId: (decoded.sessionId as string | undefined),
+        tokenId: (decoded.tokenId as string | undefined),
       };
 
       // Check role requirements
@@ -145,7 +126,7 @@ export function createAuthMiddleware(
             message: 'Access token has expired',
           },
         });
-      } else if (error.message === 'Token has been revoked') {
+      } else if (errorMessage === 'Token has been revoked') {
         return res.status(401).json({
           success: false,
           error: {
@@ -214,11 +195,12 @@ export function createRefreshTokenMiddleware(sessionManager: JWTSessionManager) 
         data: tokens,
       });
     } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Authentication error';
       return res.status(401).json({
         success: false,
         error: {
           code: ERROR_CODES.UNAUTHORIZED,
-          message: error.message,
+          message: errorMessage,
         },
       });
     }
@@ -299,7 +281,7 @@ export function createSessionManagementMiddleware(sessionManager: JWTSessionMana
         success: true,
         data: sessions.map((session) => ({
           sessionId: session.sessionId,
-          createdAt: session.issuedAt,
+          createdAt: session.createdAt,
           expiresAt: session.expiresAt,
           lastUsedAt: session.lastUsedAt,
           refreshCount: session.refreshCount,

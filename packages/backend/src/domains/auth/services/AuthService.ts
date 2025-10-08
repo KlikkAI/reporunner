@@ -3,7 +3,7 @@
  * Handles user registration, login, token management, and profile operations
  */
 
-import type { IRegistrationData, IUser, IUserProfile } from '@reporunner/shared';
+import type { IRegistrationData, IUser, IUserProfile } from '../interfaces';
 import { AppError } from '../../../middleware/errorHandlers';
 import { User } from '../../../models/User';
 import { JWTService } from '../../../utils/jwt';
@@ -79,7 +79,7 @@ export class AuthService {
       logger.info(`New user registered: ${user.email}`);
 
       return {
-        user,
+        user: user.toObject() as IUser,
         accessToken,
         refreshToken,
       };

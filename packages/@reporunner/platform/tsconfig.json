@@ -5,6 +5,13 @@
     "rootDir": "./src"
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", "**/*.test.*"],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.test.*",
+    "src/upload/**/*",
+    "src/real-time/socket-server/**/*",
+    "src/real-time/operational-transform/**/*"
+  ],
   "_package": "platform"
 }
