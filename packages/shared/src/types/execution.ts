@@ -140,3 +140,8 @@ export interface IExecutionFilter {
   startDateTo?: Timestamp;
   finished?: boolean;
 }
+
+/**
+ * Type alias for frontend compatibility
+ */
+export type WorkflowExecution = IExecution;

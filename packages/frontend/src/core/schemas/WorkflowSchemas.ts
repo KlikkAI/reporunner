@@ -2,7 +2,6 @@ import {
   EdgeSchema as ApiEdgeSchema,
   NodeSchema as ApiNodeSchema,
   WorkflowSchema as ApiWorkflowSchema,
-  ExecutionStatus,
 } from '@reporunner/shared';
 import { z } from 'zod';
 import {
@@ -15,8 +14,17 @@ import {
   TimestampSchema,
 } from './BaseSchemas';
 
-// Define WorkflowStatus locally (not exported from api-types)
+// Define status enums locally
 export const WorkflowStatus = z.enum(['active', 'inactive', 'draft']);
+export const ExecutionStatusSchema = z.enum([
+  'pending',
+  'running',
+  'success',
+  'error',
+  'cancelled',
+  'waiting',
+  'crashed',
+]);
 
 // Node schemas
 export const WorkflowNodeSchema = ApiNodeSchema.extend({
@@ -75,7 +83,7 @@ export const WorkflowSchema = WorkflowDefinitionSchema.and(
     lastExecution: z
       .object({
         id: IdSchema,
-        status: z.nativeEnum(ExecutionStatus),
+        status: ExecutionStatusSchema,
         startTime: TimestampSchema,
         endTime: TimestampSchema.optional(),
         duration: z.number().int().min(0).optional(),
@@ -120,7 +128,7 @@ export const WorkflowExecutionSchema = z.object({
   id: IdSchema,
   workflowId: IdSchema,
   workflowName: z.string(),
-  status: z.nativeEnum(ExecutionStatus),
+  status: ExecutionStatusSchema,
   startTime: TimestampSchema,
   endTime: TimestampSchema.optional(),
   duration: z.number().int().min(0).optional(),
@@ -271,7 +279,7 @@ export const WorkflowFilterSchema = z.object({
 
 export const ExecutionFilterSchema = z.object({
   workflowId: IdSchema.optional(),
-  status: z.nativeEnum(ExecutionStatus).optional(),
+  status: ExecutionStatusSchema.optional(),
   triggerType: z.enum(['manual', 'webhook', 'schedule', 'event']).optional(),
   startDate: TimestampSchema.optional(),
   endDate: TimestampSchema.optional(),

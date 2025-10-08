@@ -2,8 +2,8 @@ import { z } from 'zod';
 
 // Common field schemas
 export const IdSchema = z.string().min(1);
-export const MetadataSchema = z.record(z.any());
-export const NodeParametersSchema = z.record(z.any());
+export const MetadataSchema = z.record(z.string(), z.unknown());
+export const NodeParametersSchema = z.record(z.string(), z.unknown());
 export const StatusSchema = z.enum(['active', 'inactive', 'expired', 'pending', 'error']);
 
 // Base schemas for common data structures

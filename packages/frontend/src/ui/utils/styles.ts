@@ -111,6 +111,7 @@ export function getFieldWrapperClasses({
 } = {}) {
   return cn('flex flex-col gap-1', {
     'opacity-50 cursor-not-allowed': disabled,
+    'border-red-500': error,
   });
 }
 
