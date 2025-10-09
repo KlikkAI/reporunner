@@ -8,7 +8,7 @@ import type {
   PluginMetadata,
   PluginSearchQuery,
   PublishRequest,
-} from '@reporunner/platform';
+} from '../types/plugin';
 import { message } from 'antd';
 import { useCallback, useState } from 'react';
 
@@ -223,7 +223,7 @@ export const usePluginMarketplace = (): UsePluginMarketplaceReturn => {
         throw new Error(response.error || 'Failed to get stats');
       }
     } catch (err) {
-      const _errorMessage = err instanceof Error ? err.message : 'Failed to get marketplace stats';
+      const __errorMessage = err instanceof Error ? err.message : 'Failed to get marketplace stats';
       // Don't show error message for stats as it's not critical
     }
   }, [apiCall]);
@@ -240,10 +240,9 @@ export const usePluginMarketplace = (): UsePluginMarketplaceReturn => {
       }
     } catch (err) {
       // Silently ignore errors for featured plugins as it's not critical
-      const _errorMessage = err instanceof Error ? err.message : 'Failed to get featured plugins';
-      console.warn(_errorMessage);
+      const __errorMessage = err instanceof Error ? err.message : 'Failed to get featured plugins';
     }
-  }, [apiCall, plugins]);
+  }, [apiCall]);
 
   return {
     // State

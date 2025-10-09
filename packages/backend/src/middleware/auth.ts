@@ -7,7 +7,7 @@ import type { AuthenticatedUser } from '@reporunner/shared';
 import type { NextFunction, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import { UserRepository } from '../domains/auth/repositories/UserRepository';
-import { type Permission, PermissionService } from '../services/PermissionService';
+import type { Permission } from '../services/PermissionService';
 import { AppError } from './errorHandlers';
 
 // Import AuthenticatedUser from shared package instead of declaring global namespace

@@ -21,6 +21,26 @@ export interface AppConfig {
     aiAssistant: boolean;
     collaboration: boolean;
     analytics: boolean;
+    enablePerformanceMonitoring?: boolean;
+    enableAnalytics?: boolean;
+    enableErrorReporting?: boolean;
+    enableMockData?: boolean;
+    enableDebug?: boolean;
+  };
+  logging?: {
+    level: string;
+    enableConsole: boolean;
+    enableRemote: boolean;
+    remoteEndpoint?: string;
+    bufferSize: number;
+  };
+  performance?: {
+    renderTimeThreshold: number;
+    bundleSizeWarningThreshold: number;
+  };
+  auth: {
+    tokenKey: string;
+    refreshTokenKey: string;
   };
 }
 
@@ -48,7 +68,28 @@ export class ConfigService {
       timeout: 30000, // 30 seconds
       retryAttempts: 3,
       enableCaching: true,
-      features: environmentConfig.features,
+      features: {
+        ...environmentConfig.features,
+        enablePerformanceMonitoring: true,
+        enableAnalytics: true,
+        enableErrorReporting: true,
+        enableMockData: false,
+        enableDebug: import.meta.env.DEV,
+      },
+      logging: {
+        level: 'info',
+        enableConsole: true,
+        enableRemote: false,
+        bufferSize: 100,
+      },
+      performance: {
+        renderTimeThreshold: 16, // 16ms = 60fps
+        bundleSizeWarningThreshold: 500000, // 500KB
+      },
+      auth: {
+        tokenKey: 'auth_token',
+        refreshTokenKey: 'refresh_token',
+      },
     };
   }
 
@@ -69,11 +110,23 @@ export class ConfigService {
   }
 
   isFeatureEnabled(feature: keyof AppConfig['features']): boolean {
-    return this.config.features[feature];
+    return this.config.features[feature] ?? false;
   }
 
   updateConfig(updates: Partial<AppConfig>): void {
     this.config = { ...this.config, ...updates };
+  }
+
+  isDevelopment(): boolean {
+    return import.meta.env.DEV;
+  }
+
+  getEnvironment(): string {
+    return import.meta.env.MODE || 'development';
+  }
+
+  get<K extends keyof AppConfig>(key: K): AppConfig[K] {
+    return this.config[key];
   }
 }
 

@@ -7,7 +7,8 @@ import NodeToolbar from './NodeToolbar';
 
 // Export and import types from the types file
 export * from './types';
-import type { BaseNodeConfig, BaseNodeData, BaseNodeProps } from './types';
+
+import type { BaseNodeConfig, BaseNodeProps } from './types';
 
 interface BaseNodeComponentProps extends BaseNodeProps {
   config: BaseNodeConfig;

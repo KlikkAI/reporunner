@@ -79,19 +79,6 @@ export const TriggerPanel: React.FC<TriggerPanelProps> = ({ workflowId, visible,
   const [testModalVisible, setTestModalVisible] = useState(false);
   const [webhookUrl, setWebhookUrl] = useState('');
 
-  useEffect(() => {
-    if (visible) {
-      loadTriggers();
-      loadRecentEvents();
-    }
-  }, [visible, loadRecentEvents, loadTriggers]);
-
-  useEffect(() => {
-    if (selectedTrigger) {
-      loadMetrics(selectedTrigger.id);
-    }
-  }, [selectedTrigger, loadMetrics]);
-
   const loadTriggers = () => {
     const allTriggers = advancedTriggerSystem.getAllTriggers();
     const workflowTriggers = allTriggers.filter((t: any) => t.workflowId === workflowId);
@@ -119,6 +106,19 @@ export const TriggerPanel: React.FC<TriggerPanelProps> = ({ workflowId, visible,
       setMetrics(triggerMetrics);
     } catch (_error) {}
   };
+
+  useEffect(() => {
+    if (visible) {
+      loadTriggers();
+      loadRecentEvents();
+    }
+  }, [visible]);
+
+  useEffect(() => {
+    if (selectedTrigger) {
+      loadMetrics(selectedTrigger.id);
+    }
+  }, [selectedTrigger]);
 
   const handleCreateTrigger = async (values: any) => {
     setLoading(true);

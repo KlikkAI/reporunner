@@ -4,19 +4,49 @@
  * Minimal types provided for backward compatibility.
  */
 
+export type TemplateCategory =
+  | 'communication'
+  | 'data-processing'
+  | 'automation'
+  | 'ai-ml'
+  | 'business'
+  | 'development'
+  | 'monitoring'
+  | 'integration'
+  | 'social-media'
+  | 'ecommerce';
+
 export interface WorkflowTemplate {
   id: string;
   name: string;
   description: string;
-  category: string;
+  category: TemplateCategory;
   nodes: any[];
   edges: any[];
   difficulty?: 'beginner' | 'intermediate' | 'advanced';
   estimatedSetupTime?: string;
+  tags?: string[];
+  variables?: Array<{
+    name: string;
+    type: string;
+    description: string;
+    required?: boolean;
+  }>;
+  configuration?: {
+    requiredIntegrations: string[];
+    conditionalBranches: number;
+    schedulingRequired: boolean;
+    triggersRequired: boolean;
+    resourceRequirements: {
+      memory: 'low' | 'medium' | 'high';
+      cpu: 'low' | 'medium' | 'high';
+    };
+  };
   metadata?: {
     usageCount?: number;
     rating?: number;
     tags?: string[];
+    updatedAt?: string;
     [key: string]: any;
   };
 }
@@ -25,15 +55,11 @@ export interface AutomationPattern {
   id: string;
   name: string;
   description: string;
+  pattern?: 'sequential' | 'parallel' | 'conditional';
+  complexity?: 'simple' | 'moderate' | 'complex';
+  applicableNodes?: string[];
+  benefits?: string[];
   category: string;
-}
-
-export interface TemplateCategory {
-  id: string;
-  name: string;
-  description: string;
-  icon?: string;
-  templateCount?: number;
 }
 
 // Stub service class
@@ -67,6 +93,10 @@ class WorkflowTemplates {
 
   async removeFromFavorites(_templateId: string): Promise<void> {
     // Stub
+  }
+
+  async getRecentlyUsedTemplates(): Promise<WorkflowTemplate[]> {
+    return [];
   }
 }
 

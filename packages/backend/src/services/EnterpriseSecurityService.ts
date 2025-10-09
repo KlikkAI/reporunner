@@ -48,7 +48,7 @@ class EnterpriseSecurityService {
     } as unknown as SecurityMetrics;
   }
 
-  getSecurityThreats(status?: string): SecurityThreat[] {
+  getSecurityThreats(_status?: string): SecurityThreat[] {
     // TODO: Implement actual threat retrieval
     return [];
   }
@@ -70,8 +70,8 @@ class EnterpriseSecurityService {
   async updateThreatStatus(
     id: string,
     status: string,
-    resolution?: string,
-    assignedTo?: string
+    _resolution?: string,
+    _assignedTo?: string
   ): Promise<SecurityThreat> {
     // TODO: Implement threat status update
     return {
@@ -86,7 +86,7 @@ class EnterpriseSecurityService {
     } as unknown as SecurityThreat;
   }
 
-  async startVulnerabilityScan(type: string, metadata?: any): Promise<VulnerabilityScan> {
+  async startVulnerabilityScan(type: string, _metadata?: any): Promise<VulnerabilityScan> {
     // TODO: Implement vulnerability scanning
     return {
       id: `scan_${Date.now()}`,
@@ -99,12 +99,12 @@ class EnterpriseSecurityService {
     } as unknown as VulnerabilityScan;
   }
 
-  getVulnerabilityScans(type?: string): VulnerabilityScan[] {
+  getVulnerabilityScans(_type?: string): VulnerabilityScan[] {
     // TODO: Implement scan retrieval
     return [];
   }
 
-  getSecurityAlerts(acknowledged?: boolean): SecurityAlert[] {
+  getSecurityAlerts(_acknowledged?: boolean): SecurityAlert[] {
     // TODO: Implement alert retrieval
     return [];
   }

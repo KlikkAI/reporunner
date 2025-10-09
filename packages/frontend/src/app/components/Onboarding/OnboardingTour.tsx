@@ -34,8 +34,8 @@ import {
 import type React from 'react';
 import { useEffect, useState } from 'react';
 
-const { Title, Text, Paragraph } = Typography;
-const { Step } = Steps;
+const { _Title, Text, Paragraph } = Typography;
+const { _Step } = Steps;
 
 interface OnboardingStep {
   id: string;

@@ -52,7 +52,6 @@ import { useState } from 'react';
 const { Title, Text, Paragraph } = Typography;
 const { TabPane } = Tabs;
 const { TextArea } = Input;
-const { Option } = Select;
 
 interface CommunityChallenge {
   id: string;

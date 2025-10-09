@@ -5,46 +5,43 @@
  */
 
 // AI Assistant - User-facing AI features (UI only)
-export { AIAssistantService } from './aiAssistantService';
-export type { AIAssistantConfig, ChatMessage, WorkflowSuggestion } from './aiAssistantService';
+export type { AIAssistantConfig, ChatMessage, AIWorkflowSuggestion } from './aiAssistantService';
+export { AIAssistantService, aiAssistantService } from './aiAssistantService';
 
 // Analytics - Client-side analytics and tracking (UI only)
-// Use PerformanceMetric from analyticsService as the canonical version
-export { analyticsService } from './analyticsService';
 export type {
   AnalyticsEvent,
-  AnalyticsEventType,
   PerformanceMetric,
-  UserJourneyStep,
   WorkflowAnalytics,
+  NodePerformanceStats,
+  ExecutionMetrics,
+  NodeMetrics,
+  BottleneckAnalysis,
+  PredictiveInsight,
+  TimeSeriesPoint,
+  CostOptimization,
 } from './analyticsService';
+export { analyticsService, AnalyticsService } from './analyticsService';
 
 // Config - Application configuration (UI only)
-export { configService } from './ConfigService';
-export type { ConfigService } from './ConfigService';
+export type { AppConfig, ApiEndpoints } from './ConfigService';
+export { configService, ConfigService } from './ConfigService';
+// Re-export LogLevel from ConfigService (where it's defined)
+export type { LogLevel } from './ConfigService';
 
 // Logging - Client-side logging (UI only, sends to backend)
-export { loggingService } from './LoggingService';
 export type {
   LogEntry,
-  LogLevel,
-  LoggingConfig,
-  PerformanceMetric as LoggingPerformanceMetric, // Rename to avoid conflict
+  LogContext,
+  PerformanceMetric as LoggingPerformanceMetric,
+  UserAction,
 } from './LoggingService';
+export { logger, Logger } from './LoggingService';
 
 // Performance - Client-side performance monitoring (UI only)
-export { performanceService } from './PerformanceService';
 export type {
-  PerformanceMetric as PerformanceServiceMetric, // Rename to avoid conflict
-  PerformanceReport,
-  RenderMetric,
+  PerformanceMetric as PerformanceServiceMetric,
+  WebVital,
+  ComponentPerformance,
 } from './PerformanceService';
-
-// Credential service
-export { credentialService } from './credentialService';
-
-// Integration service
-export { integrationService } from './integrationService';
-
-// Workflow exporter service
-export { workflowExporterService } from './workflowExporterService';
+export { performanceService, PerformanceMonitoringService } from './PerformanceService';

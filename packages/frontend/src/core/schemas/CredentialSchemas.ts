@@ -161,7 +161,7 @@ export const CredentialPermissionSchema = z.object({
   grantedBy: z.string(),
 });
 
-export const CredentialWithPermissionsSchema = CredentialSchema.and(
+export const CredentialWithPermissionsSchema = CredentialSchema.merge(
   z.object({
     permissions: z.array(CredentialPermissionSchema).default([]),
     isShared: z.boolean().default(false),
@@ -182,7 +182,7 @@ export const CredentialFilterSchema = z.object({
 // API request schemas
 export const CreateCredentialRequestSchema = CredentialConfigSchema;
 
-export const UpdateCredentialRequestSchema = CredentialConfigSchema.partial().and(
+export const UpdateCredentialRequestSchema = CredentialConfigSchema.partial().merge(
   z.object({
     id: IdSchema,
   })

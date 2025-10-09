@@ -65,7 +65,7 @@ export const useLeanWorkflowStore = create<LeanWorkflowState>()(
       createWorkflow: async (workflow) => {
         try {
           set({ isLoading: true, error: null });
-          const createdWorkflow = await workflowApiService.createWorkflow(workflow);
+          const createdWorkflow = await workflowApiService.createWorkflow(workflow as any);
           const { workflows } = get();
           set({
             workflows: [...workflows, createdWorkflow],

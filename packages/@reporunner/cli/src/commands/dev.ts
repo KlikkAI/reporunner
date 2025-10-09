@@ -13,8 +13,8 @@ export const devCommand = new Command()
       command = 'dev:backend';
     } else if (options.frontendOnly) {
       command = 'dev:frontend';
-    } else {
     }
+    // Default: dev:full (set at initialization)
 
     try {
       await execa('pnpm', [command], {

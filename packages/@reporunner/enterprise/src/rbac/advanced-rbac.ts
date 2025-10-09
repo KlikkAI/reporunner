@@ -646,7 +646,7 @@ export class AdvancedRBAC {
 
     return activeAssignments
       .map((assignment) => this.roles.get(assignment.roleId))
-      .filter((role): role is Role => role !== undefined && role.isActive);
+      .filter((role): role is Role => role !== undefined && role.isActive === true);
   }
 
   /**

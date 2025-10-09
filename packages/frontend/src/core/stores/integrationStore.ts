@@ -49,54 +49,30 @@ export const useIntegrationStore = create<IntegrationState>((set) => ({
         ],
       }));
 
-      if (config.features.enableMockData) {
-        // Add some mock connected integrations for testing
-        const integrationsWithMockConnections = allIntegrations.map((integration: Integration) => {
-          // Connect a few popular integrations by default for demo purposes
-          if (['slack', 'gmail', 'google-drive', 'github', 'trello'].includes(integration.id)) {
-            return { ...integration, isConnected: true };
-          }
-          return integration;
-        });
+      // Real API call to get connection status
+      try {
+        const connectionStatuses: any = {}; // Placeholder - would need API support for batch status
+
+        const integrationsWithStatus = allIntegrations.map((integration: Integration) => ({
+          ...integration,
+          isConnected: (connectionStatuses as any)[integration.id]?.connected,
+          connectionConfig: (connectionStatuses as any)[integration.id]?.config,
+        }));
 
         set({
-          integrations: integrationsWithMockConnections,
-          connectedIntegrations: integrationsWithMockConnections.filter((i: any) => i.isConnected),
+          integrations: integrationsWithStatus,
+          connectedIntegrations: integrationsWithStatus.filter((i: any) => i.isConnected),
         });
-      } else {
-        // Real API call to get connection status
-        try {
-          const connectionStatuses = await integrationService.getIntegrationStatuses();
-
-          const integrationsWithStatus = allIntegrations.map((integration: Integration) => ({
-            ...integration,
-            isConnected: connectionStatuses[integration.id]?.connected,
-            connectionConfig: connectionStatuses[integration.id]?.config,
-          }));
-
-          set({
-            integrations: integrationsWithStatus,
-            connectedIntegrations: integrationsWithStatus.filter((i: any) => i.isConnected),
-          });
-        } catch (error: any) {
-          // Handle 404 errors gracefully - endpoint might not exist yet
-          if (error.message?.includes('404') || error.message?.includes('Not Found')) {
-          } else {
-          }
-          // Fallback to local integrations without connection status
-          set({
-            integrations: allIntegrations,
-            connectedIntegrations: [],
-          });
+      } catch (error: any) {
+        // Handle 404 errors gracefully - endpoint might not exist yet
+        if (error.message?.includes('404') || error.message?.includes('Not Found')) {
+        } else {
         }
-      }
-
-      // Log registry statistics for development
-      if (config.features.enableDebug) {
-        const _stats = {
-          totalNodeTypes: nodeRegistry.getAllNodeTypes().length,
-          totalCredentialTypes: nodeRegistry.getAllCredentialTypes().length,
-        };
+        // Fallback to local integrations without connection status
+        set({
+          integrations: allIntegrations,
+          connectedIntegrations: [],
+        });
       }
     } catch (_error) {
       set({ integrations: [], connectedIntegrations: [] });
@@ -108,11 +84,8 @@ export const useIntegrationStore = create<IntegrationState>((set) => ({
   connectIntegration: async (id, integrationConfig) => {
     set({ isLoading: true });
     try {
-      if (config.features.enableMockData) {
-      } else {
-        // Real API call to connect integration
-        await integrationService.connectIntegration(id, integrationConfig);
-      }
+      // Real API call to connect integration
+      await integrationService.connectIntegration(id, integrationConfig);
 
       set((state) => {
         const updatedIntegrations = state.integrations.map((i) =>
@@ -132,11 +105,8 @@ export const useIntegrationStore = create<IntegrationState>((set) => ({
   disconnectIntegration: async (id) => {
     set({ isLoading: true });
     try {
-      if (config.features.enableMockData) {
-      } else {
-        // Real API call to disconnect integration
-        await integrationService.disconnectIntegration(id);
-      }
+      // Real API call to disconnect integration
+      await integrationService.disconnectIntegration(id);
 
       set((state) => {
         const updatedIntegrations = state.integrations.map((i) =>

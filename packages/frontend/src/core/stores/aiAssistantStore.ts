@@ -253,20 +253,20 @@ export const useAIAssistantStore = create<AIAssistantState>()(
             modularity: 0.5,
           },
           patterns: { detected: [], recommendations: [] },
-        } as WorkflowAnalysis;
+        } as unknown as WorkflowAnalysis;
 
         set({
           currentAnalysis: analysis,
           isAnalyzing: false,
           analysisTimestamp: new Date().toISOString(),
-          activeIssues: (analysis.reliability?.missingErrorHandling || [])
+          activeIssues: ((analysis as any).reliability?.missingErrorHandling || [])
             .map((issue: any, index: number) => ({
               id: `issue_${index}`,
               message: issue,
               type: 'error_handling',
             }))
             .filter((issue: any) => !get().dismissedIssues.has(issue.id)),
-          activeSuggestions: (analysis.reliability?.suggestions || [])
+          activeSuggestions: ((analysis as any).reliability?.suggestions || [])
             .map((suggestion: any, index: number) => ({
               id: `suggestion_${index}`,
               type: 'enhancement' as const,
@@ -338,7 +338,7 @@ export const useAIAssistantStore = create<AIAssistantState>()(
 
       try {
         // Apply the suggestion based on its type
-        switch (suggestion.type) {
+        switch ((suggestion as any).type) {
           case 'optimization':
             break;
 

@@ -35,7 +35,7 @@ export const useCredentialStore = create<CredentialState>()(
         try {
           set({ isLoading: true, error: null });
           const response = await credentialApiService.getCredentials();
-          set({ credentials: response.data, isLoading: false });
+          set({ credentials: response.items, isLoading: false });
         } catch (error) {
           const message = error instanceof Error ? error.message : 'Failed to fetch credentials';
           set({ error: message, isLoading: false });
@@ -45,8 +45,8 @@ export const useCredentialStore = create<CredentialState>()(
       fetchCredentialTypes: async () => {
         try {
           set({ isLoading: true, error: null });
-          const response = await credentialApiService.getCredentialTypes();
-          set({ credentialTypes: response.data, isLoading: false });
+          const credentialTypes: any = await credentialApiService.getCredentialTypes();
+          set({ credentialTypes, isLoading: false });
         } catch (error) {
           const message =
             error instanceof Error ? error.message : 'Failed to fetch credential types';
@@ -57,10 +57,13 @@ export const useCredentialStore = create<CredentialState>()(
       createCredential: async (credential) => {
         try {
           set({ isLoading: true, error: null });
-          const response = await credentialApiService.createCredential(credential);
+          const newCredential = await credentialApiService.createCredential({
+            ...credential,
+            testOnCreate: false, // Add required field with default value
+          } as any);
           const { credentials } = get();
           set({
-            credentials: [...credentials, response.data as Credential],
+            credentials: [...credentials, newCredential],
             isLoading: false,
           });
         } catch (error) {
@@ -72,11 +75,11 @@ export const useCredentialStore = create<CredentialState>()(
       updateCredential: async (id, updates) => {
         try {
           set({ isLoading: true, error: null });
-          const response = await credentialApiService.updateCredential(id, updates);
+          const updatedCredential = await credentialApiService.updateCredential(id, updates as any);
           const { credentials } = get();
           set({
             credentials: credentials.map((cred) =>
-              cred.id === id ? (response.data as Credential) : cred
+              cred.id === id ? updatedCredential : cred
             ),
             isLoading: false,
           });
@@ -104,9 +107,9 @@ export const useCredentialStore = create<CredentialState>()(
       testCredential: async (id) => {
         try {
           set({ isLoading: true, error: null });
-          const response = await credentialApiService.testCredential(id);
+          const result = await credentialApiService.testCredential(id);
           set({ isLoading: false });
-          return response.data.success;
+          return result.success;
         } catch (error) {
           const message = error instanceof Error ? error.message : 'Failed to test credential';
           set({ error: message, isLoading: false });

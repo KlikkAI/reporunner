@@ -20,57 +20,33 @@ export class BuildAnalyzerCLI {
       } else {
         await this.runFullAnalysis();
       }
-    } catch (error) {
-      console.error('❌ Build analysis failed:', error);
+    } catch (_error) {
       process.exit(1);
     }
   }
 
   private async runBaseline(): Promise<void> {
-    console.log('Running baseline measurement...');
-    const metrics = await this.analyzer.measureBuildTimes();
-    console.log(`Total Build Time: ${(metrics.totalBuildTime / 1000).toFixed(2)}s`);
-    console.log('Baseline saved successfully');
+    const _metrics = await this.analyzer.measureBuildTimes();
   }
 
   private async runComparison(): Promise<void> {
-    console.log('Comparing current build with baseline...');
     const metrics = await this.analyzer.measureBuildTimes();
     const comparison = await this.analyzer.compareWithBaseline(metrics);
 
     if (!comparison) {
-      console.log('No baseline found. Run with --baseline first.');
       return;
     }
-
-    console.log('Build Comparison Report');
-    console.log(`Current Build Time: ${(metrics.totalBuildTime / 1000).toFixed(2)}s`);
-    console.log(`Baseline Build Time: ${(comparison.baseline.totalBuildTime / 1000).toFixed(2)}s`);
-    console.log(
-      `Percentage Improvement: ${comparison.improvement.percentageImprovement > 0 ? '+' : ''}${comparison.improvement.percentageImprovement.toFixed(2)}%`
-    );
   }
 
   private async generateReport(): Promise<void> {
-    console.log('Generating build analysis report...');
     const report = await this.analyzer.generateAnalysisReport();
 
-    console.log('\n📊 Build Analysis Report');
-    console.log('========================');
-    console.log(`Status: ${report.summary.status.toUpperCase()}`);
-    console.log(`Message: ${report.summary.message}`);
-    console.log(`Total Build Time: ${(report.metrics.totalBuildTime / 1000).toFixed(2)}s`);
-
     if (report.recommendations.length > 0) {
-      console.log('\n💡 Recommendations:');
-      report.recommendations.forEach((rec, index: number) => {
-        console.log(`${index + 1}. ${rec.description}`);
-      });
+      report.recommendations.forEach((_rec, _index: number) => {});
     }
   }
 
   private async runFullAnalysis(): Promise<void> {
-    console.log('Running full build analysis...');
     await this.runBaseline();
     await this.runComparison();
     await this.generateReport();

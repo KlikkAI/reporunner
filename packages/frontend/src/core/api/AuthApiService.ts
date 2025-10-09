@@ -72,7 +72,7 @@ export class AuthApiService {
   async login(credentials: LoginCredentials): Promise<LoginResponse> {
     const result = await ApiErrorHandler.withErrorHandling(
       async () => {
-        const response = await apiClient.post('/auth/login', credentials, LoginApiResponseSchema);
+        const response: any = await apiClient.post('/auth/login', credentials, LoginApiResponseSchema as any);
 
         // Store tokens in localStorage
         if (response.token) {
@@ -100,7 +100,7 @@ export class AuthApiService {
    */
   async register(userData: RegisterRequest): Promise<LoginResponse> {
     try {
-      const response = await apiClient.post('/auth/register', userData, LoginApiResponseSchema);
+      const response: any = await apiClient.post('/auth/register', userData, LoginApiResponseSchema as any);
 
       // Store tokens in localStorage
       if (response.token) {
@@ -121,7 +121,7 @@ export class AuthApiService {
    */
   async logout(): Promise<{ message: string; sessionId: string }> {
     try {
-      const response = await apiClient.post('/auth/logout', {}, LogoutResponseSchema);
+      const response = await apiClient.post('/auth/logout', {}, LogoutResponseSchema as any);
 
       // Clear stored tokens
       this.clearAuthData();
@@ -145,10 +145,10 @@ export class AuthApiService {
         throw new ApiClientError('No refresh token available', 401, 'NO_REFRESH_TOKEN');
       }
 
-      const response = await apiClient.post(
+      const response: any = await apiClient.post(
         '/auth/refresh',
         { refreshToken: token },
-        AuthTokensApiResponseSchema
+        AuthTokensApiResponseSchema as any
       );
 
       // Update stored tokens
@@ -178,7 +178,7 @@ export class AuthApiService {
       return await apiClient.post(
         '/auth/password/reset-request',
         { email },
-        PasswordResetResponseSchema
+        PasswordResetResponseSchema as any
       );
     } catch (error) {
       throw new ApiClientError(
@@ -198,7 +198,7 @@ export class AuthApiService {
       return await apiClient.post(
         '/auth/password/reset-confirm',
         resetData,
-        ApiResponseSchema(z.object({ message: z.string() }))
+        ApiResponseSchema(z.object({ message: z.string() })) as any
       );
     } catch (error) {
       throw new ApiClientError(
@@ -218,7 +218,7 @@ export class AuthApiService {
       return await apiClient.post(
         '/auth/password/change',
         passwordData,
-        ApiResponseSchema(z.object({ message: z.string() }))
+        ApiResponseSchema(z.object({ message: z.string() })) as any
       );
     } catch (error) {
       throw new ApiClientError('Password change failed', 0, 'PASSWORD_CHANGE_ERROR', error);
@@ -322,7 +322,7 @@ export class AuthApiService {
       return await apiClient.post(
         '/auth/email/verify-request',
         {},
-        EmailVerificationResponseSchema
+        EmailVerificationResponseSchema as any
       );
     } catch (error) {
       throw new ApiClientError(
@@ -342,7 +342,7 @@ export class AuthApiService {
       return await apiClient.post(
         '/auth/email/verify-confirm',
         { token },
-        ApiResponseSchema(z.object({ message: z.string() }))
+        ApiResponseSchema(z.object({ message: z.string() })) as any
       );
     } catch (error) {
       throw new ApiClientError(
@@ -363,7 +363,7 @@ export class AuthApiService {
    */
   async getSessionInfo(): Promise<SessionInfo> {
     try {
-      return await apiClient.get('/auth/session', SessionInfoApiResponseSchema);
+      return await apiClient.get('/auth/session', SessionInfoApiResponseSchema as any);
     } catch (error) {
       throw new ApiClientError(
         'Failed to fetch session information',
@@ -381,7 +381,7 @@ export class AuthApiService {
     try {
       return await apiClient.get(
         '/auth/sessions',
-        ApiResponseSchema(z.array(z.any())) // Use any for now to avoid circular refs
+        ApiResponseSchema(z.array(z.any())) as any // Use any for now to avoid circular refs
       );
     } catch (error) {
       throw new ApiClientError(
@@ -400,7 +400,7 @@ export class AuthApiService {
     try {
       return await apiClient.delete(
         `/auth/sessions/${sessionId}`,
-        ApiResponseSchema(z.object({ message: z.string() }))
+        ApiResponseSchema(z.object({ message: z.string() })) as any
       );
     } catch (error) {
       throw new ApiClientError(
@@ -421,7 +421,7 @@ export class AuthApiService {
    */
   async getApiKeys(): Promise<ApiKey[]> {
     try {
-      return await apiClient.get('/auth/api-keys', ApiKeyListApiResponseSchema);
+      return await apiClient.get('/auth/api-keys', ApiKeyListApiResponseSchema as any);
     } catch (error) {
       throw new ApiClientError('Failed to fetch API keys', 0, 'API_KEYS_FETCH_ERROR', error);
     }
@@ -432,7 +432,7 @@ export class AuthApiService {
    */
   async createApiKey(keyData: CreateApiKeyRequest): Promise<ApiKey> {
     try {
-      return await apiClient.post('/auth/api-keys', keyData, ApiKeyApiResponseSchema);
+      return await apiClient.post('/auth/api-keys', keyData, ApiKeyApiResponseSchema as any);
     } catch (error) {
       throw new ApiClientError('Failed to create API key', 0, 'API_KEY_CREATE_ERROR', error);
     }
@@ -445,7 +445,7 @@ export class AuthApiService {
     try {
       return await apiClient.delete(
         `/auth/api-keys/${keyId}`,
-        ApiResponseSchema(z.object({ message: z.string() }))
+        ApiResponseSchema(z.object({ message: z.string() })) as any
       );
     } catch (error) {
       throw new ApiClientError(
@@ -479,7 +479,7 @@ export class AuthApiService {
             qrCode: z.string().optional(),
             backupCodes: z.array(z.string()),
           })
-        )
+        ) as any
       )) as {
         secret?: string | undefined;
         qrCode?: string | undefined;
@@ -503,7 +503,7 @@ export class AuthApiService {
             message: z.string(),
             verified: z.boolean(),
           })
-        )
+        ) as any
       );
     } catch (error) {
       throw new ApiClientError('MFA verification failed', 0, 'MFA_VERIFY_ERROR', error);
@@ -518,7 +518,7 @@ export class AuthApiService {
       return await apiClient.post(
         '/auth/mfa/disable',
         { password },
-        ApiResponseSchema(z.object({ message: z.string() }))
+        ApiResponseSchema(z.object({ message: z.string() })) as any
       );
     } catch (error) {
       throw new ApiClientError('Failed to disable MFA', 0, 'MFA_DISABLE_ERROR', error);

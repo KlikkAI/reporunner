@@ -127,7 +127,8 @@ class Logger {
     const config = configService.getConfig();
 
     // Check if log level should be output
-    if (LOG_LEVEL_PRIORITY[level] < LOG_LEVEL_PRIORITY[config.logging.level]) {
+    const configLevel = (config.logging?.level || 'info') as LogLevel;
+    if (LOG_LEVEL_PRIORITY[level] < LOG_LEVEL_PRIORITY[configLevel]) {
       return;
     }
 
@@ -146,12 +147,13 @@ class Logger {
     this.buffer.push(logEntry);
 
     // Console output if enabled
-    if (config.logging.enableConsole) {
+    if (config.logging?.enableConsole) {
       this.logToConsole(logEntry);
     }
 
     // Flush buffer if it's getting full
-    if (this.buffer.length >= config.logging.bufferSize) {
+    const bufferSize = config.logging?.bufferSize || 100;
+    if (this.buffer.length >= bufferSize) {
       this.flush();
     }
   }
@@ -235,9 +237,9 @@ class Logger {
    */
   private logToConsole(entry: LogEntry): void {
     const timestamp = new Date(entry.timestamp).toLocaleTimeString();
-    const _prefix = `[${timestamp}] ${entry.level.toUpperCase()}`;
+    const __prefix = `[${timestamp}] ${entry.level.toUpperCase()}`;
 
-    const _style = this.getConsoleStyle(entry.level);
+    const __style = this.getConsoleStyle(entry.level);
 
     if (entry.context && Object.keys(entry.context).length > 0) {
       if (entry.stack) {
@@ -270,7 +272,7 @@ class Logger {
   private setupAutoFlush(): void {
     const config = configService.getConfig();
 
-    if (config.logging.enableRemote) {
+    if (config.logging?.enableRemote) {
       this.flushInterval = setInterval(() => {
         this.flush();
       }, 30000); // Flush every 30 seconds
@@ -376,7 +378,7 @@ class Logger {
   flush(): void {
     const config = configService.getConfig();
 
-    if (!(config.logging.enableRemote && config.logging.remoteEndpoint)) {
+    if (!(config.logging?.enableRemote && config.logging?.remoteEndpoint)) {
       // If remote logging is disabled, just clear buffers
       this.clearBuffers();
       return;
@@ -399,7 +401,7 @@ class Logger {
     };
 
     // Send to remote endpoint
-    fetch(config.logging.remoteEndpoint, {
+    fetch(config.logging.remoteEndpoint!, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

@@ -62,6 +62,7 @@ export interface CredentialRequirement {
   required: boolean;
   displayName?: string;
   testedBy?: string;
+  documentationUrl?: string;
 }
 
 /**

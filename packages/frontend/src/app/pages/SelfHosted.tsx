@@ -129,7 +129,7 @@ export const SelfHosted: React.FC = () => {
     },
   };
 
-  const _systemRequirements = {
+  const __systemRequirements = {
     minimum: [
       { component: 'CPU', requirement: '2 vCPUs', icon: Cpu },
       { component: 'RAM', requirement: '4 GB', icon: MemoryStick },

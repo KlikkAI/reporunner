@@ -86,11 +86,6 @@ const SecurityDashboard: React.FC<SecurityDashboardProps> = ({ className }) => {
     endDate: null as any,
   });
 
-  // Load data on component mount
-  useEffect(() => {
-    loadSecurityData();
-  }, [loadSecurityData]);
-
   const loadSecurityData = useCallback(async () => {
     setIsLoading(true);
     try {
@@ -115,6 +110,11 @@ const SecurityDashboard: React.FC<SecurityDashboardProps> = ({ className }) => {
       setIsLoading(false);
     }
   }, []);
+
+  // Load data on component mount
+  useEffect(() => {
+    loadSecurityData();
+  }, [loadSecurityData]);
 
   const getSeverityColor = (severity: string) => {
     switch (severity) {

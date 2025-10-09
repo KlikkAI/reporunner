@@ -108,7 +108,7 @@ class PerformanceMonitoringService {
     this.componentMetrics.push(componentMetric);
 
     // Log slow renders
-    const threshold = configService.getConfig().performance.renderTimeThreshold;
+    const threshold = configService.getConfig().performance?.renderTimeThreshold || 16;
     if (renderTime > threshold) {
       logger.warn(`Slow component render: ${componentName}`, {
         renderTime,
@@ -171,7 +171,7 @@ class PerformanceMonitoringService {
     });
 
     // Check bundle size warning threshold
-    const threshold = configService.getConfig().performance.bundleSizeWarningThreshold;
+    const threshold = configService.getConfig().performance?.bundleSizeWarningThreshold || 500000;
     if (size > threshold) {
       logger.warn(`Large bundle detected: ${chunkName}`, {
         size,
@@ -195,7 +195,7 @@ class PerformanceMonitoringService {
     const averageRenderTime =
       renderTimes.length > 0 ? renderTimes.reduce((a, b) => a + b, 0) / renderTimes.length : 0;
 
-    const threshold = configService.getConfig().performance.renderTimeThreshold;
+    const threshold = configService.getConfig().performance?.renderTimeThreshold || 16;
     const slowComponents = this.componentMetrics
       .filter((m) => m.renderTime > threshold)
       .map((m) => m.componentName)

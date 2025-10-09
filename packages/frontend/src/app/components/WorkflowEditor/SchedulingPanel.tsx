@@ -71,19 +71,6 @@ export const SchedulingPanel: React.FC<SchedulingPanelProps> = ({
   const [loading, setLoading] = useState(false);
   const [editingSchedule, setEditingSchedule] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (visible) {
-      loadSchedules();
-      loadActiveExecutions();
-    }
-  }, [visible, loadActiveExecutions, loadSchedules]);
-
-  useEffect(() => {
-    if (selectedSchedule) {
-      loadAnalytics(selectedSchedule.id);
-    }
-  }, [selectedSchedule, loadAnalytics]);
-
   const loadSchedules = () => {
     const allSchedules = workflowScheduler.getAllSchedules();
     const workflowSchedules = allSchedules.filter((s: any) => s.workflowId === workflowId);
@@ -102,6 +89,19 @@ export const SchedulingPanel: React.FC<SchedulingPanelProps> = ({
       setAnalytics(analytics);
     } catch (_error) {}
   };
+
+  useEffect(() => {
+    if (visible) {
+      loadSchedules();
+      loadActiveExecutions();
+    }
+  }, [visible]);
+
+  useEffect(() => {
+    if (selectedSchedule) {
+      loadAnalytics(selectedSchedule.id);
+    }
+  }, [selectedSchedule]);
 
   const handleCreateSchedule = async (values: any) => {
     setLoading(true);

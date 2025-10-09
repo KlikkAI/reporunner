@@ -254,7 +254,9 @@ export class AuthService {
 
       for (const key of Object.keys(updates)) {
         if (allowedUpdates.includes(key)) {
-          (filteredUpdates as Record<string, unknown>)[key] = (updates as Record<string, unknown>)[key];
+          (filteredUpdates as Record<string, unknown>)[key] = (updates as Record<string, unknown>)[
+            key
+          ];
         }
       }
 

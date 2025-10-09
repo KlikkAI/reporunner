@@ -1,7 +1,7 @@
 // Export DevTools class and related types
-export * from './DevTools';
 
 // Export CLI, generators, and testing modules
 export * from './cli';
+export * from './DevTools';
 export * from './generators';
 export * from './testing';

@@ -46,7 +46,7 @@ export class ApiErrorHandler {
       apiError.code = error.code;
 
       if (error.response?.data) {
-        const responseData = error.response.data;
+        const responseData: any = error.response.data;
 
         // Extract message from various response formats
         apiError.message =

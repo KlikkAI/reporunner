@@ -1,6 +1,6 @@
-import type { INodeProperty } from '@/core';
-import type { INodePropertyOptions } from '../nodes/types';
-import type { NodeProperty, PropertyOption } from '../types/dynamicProperties';
+import type { NodeProperty } from '@/core';
+import type { INodeProperty, INodePropertyOptions } from '../nodes/types';
+import type { PropertyOption } from '../types/dynamicProperties';
 
 /**
  * Reverse Type adapters to convert from dynamic properties back to n8n-inspired types
@@ -15,10 +15,10 @@ function convertPropertyOptionToNodePropertyOptions(
 ): INodePropertyOptions[] {
   return options.map((option) => ({
     name: option.name,
-    displayName: option.displayName || option.name,
+    displayName: (option as any).displayName || option.name,
     value: option.value || option.name,
     description: option.description,
-    action: option.action,
+    action: (option as any).action,
   }));
 }
 

@@ -72,14 +72,6 @@ const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({
   const [selectedSuggestion, setSelectedSuggestion] = useState<AIWorkflowSuggestion | null>(null);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
 
-  // Load suggestions when workflow changes
-  useEffect(() => {
-    if (workflow) {
-      loadSuggestions();
-      loadAnalysis();
-    }
-  }, [workflow, loadAnalysis, loadSuggestions]);
-
   const loadSuggestions = useCallback(async () => {
     if (!workflow) {
       return;
@@ -120,6 +112,14 @@ const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({
       setAnalysis(mockAnalysis);
     } catch (_error) {}
   }, [workflow]);
+
+  // Load suggestions when workflow changes
+  useEffect(() => {
+    if (workflow) {
+      loadSuggestions();
+      loadAnalysis();
+    }
+  }, [workflow, loadAnalysis, loadSuggestions]);
 
   const handleGenerateWorkflow = useCallback(async () => {
     if (!naturalLanguageInput.trim()) {

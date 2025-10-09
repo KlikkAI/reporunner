@@ -5,6 +5,7 @@ import {
   ValidationError,
 } from '@reporunner/core';
 import type { Request } from 'express';
+import type { ParsedQs } from 'qs';
 
 // Type definitions for Express request components
 type ParamsDictionary = Record<string, string>;
@@ -129,7 +130,7 @@ export class ValidationMiddleware extends BaseMiddleware {
       req.body = this.sanitizeObject(req.body);
     }
     if (req.query) {
-      req.query = this.sanitizeObject(req.query) as any;
+      req.query = this.sanitizeObject(req.query) as ParsedQs;
     }
     if (req.params) {
       req.params = this.sanitizeObject(req.params) as ParamsDictionary;

@@ -9,6 +9,8 @@ import {
 } from '@/core/constants/categories';
 import { useAIAssistantStore } from '@/core/stores/aiAssistantStore';
 import { VirtualizedList } from '@/design-system';
+import type { WorkflowNodeInstance, WorkflowEdge } from '@/core/types/workflow';
+import type { INodeTypeDescription } from '@/core/types/node';
 
 interface AdvancedNodePanelProps {
   isCollapsed: boolean;
@@ -35,7 +37,7 @@ const AdvancedNodePanel: React.FC<AdvancedNodePanelProps> = ({ isCollapsed, onTo
   const allRegistryDescriptions = nodeRegistry.getAllNodeTypeDescriptions();
 
   const registryNodes = allRegistryDescriptions
-    .map((description) => ({
+    .map((description: INodeTypeDescription) => ({
       id: `registry-${description.name || 'unknown'}`,
       displayName: description.displayName || description.name || 'Unknown Node',
       description: description.description || 'No description available',
@@ -49,7 +51,7 @@ const AdvancedNodePanel: React.FC<AdvancedNodePanelProps> = ({ isCollapsed, onTo
       },
       isCore: true, // All registry nodes are core nodes
     }))
-    .filter((node) => node.type !== 'unknown'); // Filter out malformed nodes
+    .filter((node: any) => node.type !== 'unknown'); // Filter out malformed nodes
 
   // Add container nodes
   const containerNodes = Object.values(CONTAINER_TEMPLATES).map((template) => ({
@@ -163,18 +165,18 @@ const AdvancedNodePanel: React.FC<AdvancedNodePanelProps> = ({ isCollapsed, onTo
     }
 
     // Find node with no outgoing connections (target but no source edges)
-    const nodesWithOutgoing = new Set(edges.map((edge) => edge.source));
-    const candidateNodes = nodes.filter((node) => !nodesWithOutgoing.has(node.id));
+    const nodesWithOutgoing = new Set(edges.map((edge: WorkflowEdge) => edge.source));
+    const candidateNodes = nodes.filter((node: WorkflowNodeInstance) => !nodesWithOutgoing.has(node.id));
 
     if (candidateNodes.length === 0) {
       // If all nodes have outgoing connections, use the rightmost positioned node
-      return nodes.reduce((rightmost, current) =>
+      return nodes.reduce((rightmost: WorkflowNodeInstance, current: WorkflowNodeInstance) =>
         current.position.x > rightmost.position.x ? current : rightmost
       );
     }
 
     // Among candidates with no outgoing connections, pick the rightmost
-    return candidateNodes.reduce((rightmost, current) =>
+    return candidateNodes.reduce((rightmost: WorkflowNodeInstance, current: WorkflowNodeInstance) =>
       current.position.x > rightmost.position.x ? current : rightmost
     );
   }, [nodes, edges]);

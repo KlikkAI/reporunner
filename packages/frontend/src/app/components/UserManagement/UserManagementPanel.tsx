@@ -80,15 +80,6 @@ const UserManagementPanel: React.FC<UserManagementPanelProps> = ({ className }) 
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Load data on component mount
-  useEffect(() => {
-    loadUsers();
-    loadRoles();
-    loadAPIKeys();
-    loadInvitations();
-    loadSSOProviders();
-  }, [loadAPIKeys, loadInvitations, loadRoles, loadSSOProviders, loadUsers]);
-
   const loadUsers = useCallback(async () => {
     setIsLoading(true);
     try {
@@ -411,6 +402,15 @@ const UserManagementPanel: React.FC<UserManagementPanelProps> = ({ className }) 
       setSSOProviders(mockProviders);
     } catch (_error) {}
   }, []);
+
+  // Load data on component mount
+  useEffect(() => {
+    loadUsers();
+    loadRoles();
+    loadAPIKeys();
+    loadInvitations();
+    loadSSOProviders();
+  }, [loadAPIKeys, loadInvitations, loadRoles, loadSSOProviders, loadUsers]);
 
   const getStatusColor = (status: string) => {
     switch (status) {

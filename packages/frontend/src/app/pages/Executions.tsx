@@ -149,7 +149,7 @@ export const Executions: React.FC = () => {
   ];
 
   // Generate execution items using ComponentPatterns
-  const _executionItems = executions.map((execution) =>
+  const __executionItems = executions.map((execution) =>
     ComponentPatterns.executionItem(
       {
         ...execution,

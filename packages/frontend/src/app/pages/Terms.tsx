@@ -27,7 +27,7 @@ export const Terms: React.FC = () => {
   const [lastUpdated] = useState('January 20, 2025');
   const [_activeSection, _setActiveSection] = useState('overview');
 
-  const _sections = [
+  const __sections = [
     { id: 'overview', title: 'Overview', icon: Eye },
     { id: 'acceptance', title: 'Acceptance', icon: CheckCircle },
     { id: 'services', title: 'Services', icon: Globe },

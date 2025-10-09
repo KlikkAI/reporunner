@@ -76,39 +76,6 @@ export const AccessibilityProvider: React.FC<AccessibilityProviderProps> = ({ ch
     }
   }, []);
 
-  // Save settings to localStorage when changed
-  useEffect(() => {
-    localStorage.setItem('accessibility_settings', JSON.stringify(settings));
-    applyAccessibilityStyles(settings);
-  }, [settings, applyAccessibilityStyles]);
-
-  const updateSettings = (newSettings: Partial<AccessibilitySettings>) => {
-    setSettings((prev) => ({ ...prev, ...newSettings }));
-  };
-
-  const announceToScreenReader = (message: string, priority: 'polite' | 'assertive' = 'polite') => {
-    const announcement = document.createElement('div');
-    announcement.setAttribute('aria-live', priority);
-    announcement.setAttribute('aria-atomic', 'true');
-    announcement.className = 'sr-only';
-    announcement.textContent = message;
-
-    document.body.appendChild(announcement);
-
-    // Remove after announcement
-    setTimeout(() => {
-      document.body.removeChild(announcement);
-    }, 1000);
-  };
-
-  const focusElement = (selector: string) => {
-    const element = document.querySelector(selector) as HTMLElement;
-    if (element) {
-      element.focus();
-      element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }
-  };
-
   // Apply accessibility styles to document
   const applyAccessibilityStyles = (settings: AccessibilitySettings) => {
     const root = document.documentElement;
@@ -154,6 +121,39 @@ export const AccessibilityProvider: React.FC<AccessibilityProviderProps> = ({ ch
       root.classList.add('keyboard-navigation');
     } else {
       root.classList.remove('keyboard-navigation');
+    }
+  };
+
+  // Save settings to localStorage when changed
+  useEffect(() => {
+    localStorage.setItem('accessibility_settings', JSON.stringify(settings));
+    applyAccessibilityStyles(settings);
+  }, [settings]);
+
+  const updateSettings = (newSettings: Partial<AccessibilitySettings>) => {
+    setSettings((prev) => ({ ...prev, ...newSettings }));
+  };
+
+  const announceToScreenReader = (message: string, priority: 'polite' | 'assertive' = 'polite') => {
+    const announcement = document.createElement('div');
+    announcement.setAttribute('aria-live', priority);
+    announcement.setAttribute('aria-atomic', 'true');
+    announcement.className = 'sr-only';
+    announcement.textContent = message;
+
+    document.body.appendChild(announcement);
+
+    // Remove after announcement
+    setTimeout(() => {
+      document.body.removeChild(announcement);
+    }, 1000);
+  };
+
+  const focusElement = (selector: string) => {
+    const element = document.querySelector(selector) as HTMLElement;
+    if (element) {
+      element.focus();
+      element.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
   };
 

@@ -11,10 +11,10 @@ import {
   StarOutlined,
   TrophyOutlined,
 } from '@ant-design/icons';
-import type { PluginMetadata, PluginSearchQuery } from '@reporunner/platform';
+import type { PluginMetadata, PluginSearchQuery } from '../../types/plugin';
 import {
-  Avatar,
   Button,
+  Card,
   Col,
   Empty,
   Input,
@@ -22,14 +22,12 @@ import {
   Modal,
   message,
   Pagination,
-  Rate,
   Row,
   Select,
   Space,
   Spin,
   Statistic,
   Tabs,
-  Tag,
   Typography,
 } from 'antd';
 import type React from 'react';
@@ -39,7 +37,7 @@ import { PluginCard } from './PluginCard';
 import { PluginDetails } from './PluginDetails';
 import { PublishPlugin } from './PublishPlugin';
 
-const { Content, Sider } = Layout;
+const { Content } = Layout;
 const { Search } = Input;
 const { Option } = Select;
 const { Title, Text } = Typography;
@@ -72,7 +70,6 @@ export const PluginMarketplace: React.FC<PluginMarketplaceProps> = ({
     loading,
     error,
     total,
-    hasMore,
     stats,
     featuredPlugins,
     searchPlugins,
@@ -84,12 +81,12 @@ export const PluginMarketplace: React.FC<PluginMarketplaceProps> = ({
   useEffect(() => {
     searchPlugins(searchQuery);
     getMarketplaceStats();
-  }, []);
+  }, [getMarketplaceStats, searchPlugins, searchQuery]);
 
   // Handle search
   const handleSearch = (value: string) => {
     const newQuery = { ...searchQuery, query: value, offset: 0 };
-    sesearchQuerysearchPluginsgetMarketplaceStatstSearchQuery(newQuery);
+    setSearchQuery(newQuery);
     searchPlugins(newQuery);
   };
 
@@ -117,7 +114,7 @@ export const PluginMarketplace: React.FC<PluginMarketplaceProps> = ({
       await downloadPlugin({ pluginId: plugin.id });
       message.success(`Plugin "${plugin.name}" installed successfully!`);
       onPluginInstall?.(plugin);
-    } catch (error) {
+    } catch (_error) {
       message.error('Failed to install plugin');
     }
   };
@@ -212,7 +209,7 @@ export const PluginMarketplace: React.FC<PluginMarketplaceProps> = ({
               placeholder="Pricing"
               allowClear
               style={{ width: '100%' }}
-              onChange={(value) => handleFilterChange('pricing', value)}
+              onChange={(value) => handleFilterChange('category' as any, value)}
             >
               <Option value="free">Free</Option>
               <Option value="paid">Paid</Option>
@@ -264,11 +261,11 @@ export const PluginMarketplace: React.FC<PluginMarketplaceProps> = ({
           ))}
         </Row>
 
-        {total > searchQuery.limit && (
+        {total > (searchQuery.limit || 12) && (
           <div style={{ textAlign: 'center', marginTop: 24 }}>
             <Pagination
-              current={Math.floor(searchQuery.offset / searchQuery.limit) + 1}
-              pageSize={searchQuery.limit}
+              current={Math.floor((searchQuery.offset || 0) / (searchQuery.limit || 12)) + 1}
+              pageSize={searchQuery.limit || 12}
               total={total}
               showSizeChanger
               showQuickJumper

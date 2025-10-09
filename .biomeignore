@@ -29,6 +29,10 @@ __generated__/
 **/generated/**
 **/__generated__/**
 
+# Duplication reports
+reports/
+**/reports/**
+
 # Compiled binaries
 target/
 **/target/**

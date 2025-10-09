@@ -105,7 +105,7 @@ export const PricingPage: React.FC = () => {
     },
   ];
 
-  const _addOns = [
+  const __addOns = [
     {
       name: 'Additional Executions',
       description: 'Extra workflow executions beyond your plan limit',
@@ -299,7 +299,7 @@ export const PricingPage: React.FC = () => {
     },
   ];
 
-  const _faqs = [
+  const __faqs = [
     {
       question: 'What happens after the free trial?',
       answer:

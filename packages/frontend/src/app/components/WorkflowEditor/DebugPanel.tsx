@@ -77,14 +77,15 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ workflowId, executionId, classN
   const [selectedNodeId, setSelectedNodeId] = useState<string>('');
   const [newWatchExpression, setNewWatchExpression] = useState('');
 
-  // Subscribe to debug events
-  useEffect(() => {
-    const unsubscribe = enhancedDebuggingService.subscribe((event: DebugEvent) => {
-      handleDebugEvent(event);
-    });
-
-    return unsubscribe;
-  }, [handleDebugEvent]);
+  const updateSessionData = useCallback(() => {
+    const currentSession = enhancedDebuggingService.getCurrentSession();
+    if (currentSession) {
+      setSession(currentSession);
+      setCallStack(enhancedDebuggingService.getCallStack());
+      setVariables(enhancedDebuggingService.getVariables());
+      setMetrics(enhancedDebuggingService.getDebugMetrics());
+    }
+  }, []);
 
   const handleDebugEvent = useCallback(
     (event: DebugEvent) => {
@@ -114,15 +115,14 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ workflowId, executionId, classN
     [updateSessionData]
   );
 
-  const updateSessionData = useCallback(() => {
-    const currentSession = enhancedDebuggingService.getCurrentSession();
-    if (currentSession) {
-      setSession(currentSession);
-      setCallStack(enhancedDebuggingService.getCallStack());
-      setVariables(enhancedDebuggingService.getVariables());
-      setMetrics(enhancedDebuggingService.getDebugMetrics());
-    }
-  }, []);
+  // Subscribe to debug events
+  useEffect(() => {
+    const unsubscribe = enhancedDebuggingService.subscribe((event: DebugEvent) => {
+      handleDebugEvent(event);
+    });
+
+    return unsubscribe;
+  }, [handleDebugEvent]);
 
   const startDebugging = useCallback(async () => {
     if (!(workflowId && executionId)) {

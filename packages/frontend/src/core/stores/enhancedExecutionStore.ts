@@ -87,19 +87,17 @@ export const useEnhancedExecutionStore = create<EnhancedExecutionState>()(
       const execution: WorkflowExecution = {
         id: executionId,
         workflowId,
+        workflowName: executionData.workflowName || 'Unknown Workflow',
         status: 'running',
         startTime: new Date().toISOString(),
+        triggerType: executionData.triggerType || 'manual',
         progress: {
           completedNodes: [],
           totalNodes: executionData.nodeCount || 0,
           currentNode: executionData.startNode || 'start',
         },
         results: {},
-        metrics: {
-          duration: 0,
-          nodesExecuted: 0,
-          errorsCount: 0,
-        },
+        logs: [],
       };
 
       set((state) => ({
@@ -146,7 +144,7 @@ export const useEnhancedExecutionStore = create<EnhancedExecutionState>()(
 
       // Find the most recent execution for this node
       for (const [executionId, execution] of activeExecutions) {
-        if (execution.status === 'running' || execution.status === 'completed') {
+        if (execution.status === 'running' || execution.status === 'success') {
           const nodeExecs = nodeExecutions.get(executionId);
           const nodeState = nodeExecs?.get(nodeId);
           if (nodeState) {

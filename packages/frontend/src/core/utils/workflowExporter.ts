@@ -174,7 +174,7 @@ class WorkflowExporter {
           : undefined,
       }))
       .filter(
-        (node): node is Node<WorkflowNodeData> => node.data !== undefined
+        (node) => node.data !== undefined
       ) as Node<WorkflowNodeData>[]; // Type guard: Remove nodes without data
   }
 

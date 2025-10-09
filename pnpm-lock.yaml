@@ -1120,7 +1120,7 @@ importers:
     dependencies:
       '@asteasolutions/zod-to-openapi':
         specifier: ^8.1.0
-        version: 8.1.0(zod@3.25.76)
+        version: 8.1.0(zod@4.1.11)
       express-slow-down:
         specifier: ^3.0.0
         version: 3.0.0(express@4.21.2)
@@ -1131,8 +1131,8 @@ importers:
         specifier: ^5.0.1
         version: 5.0.1(express@4.21.2)
       zod:
-        specifier: ^3.22.4
-        version: 3.25.76
+        specifier: 'catalog:'
+        version: 4.1.11
     devDependencies:
       '@types/express':
         specifier: 'catalog:'
@@ -10154,10 +10154,10 @@ snapshots:
 
   '@asamuzakjp/nwsapi@2.3.9': {}
 
-  '@asteasolutions/zod-to-openapi@8.1.0(zod@3.25.76)':
+  '@asteasolutions/zod-to-openapi@8.1.0(zod@4.1.11)':
     dependencies:
       openapi3-ts: 4.5.0
-      zod: 3.25.76
+      zod: 4.1.11
 
   '@authenio/xml-encryption@2.0.2':
     dependencies:

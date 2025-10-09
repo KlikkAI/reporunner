@@ -59,10 +59,9 @@ class NodeGenerator {
     const nodeData: WorkflowNodeData = {
       id: nodeId,
       type: config.type,
-      name: config.name || nodeType.displayName || config.type,
-      description: nodeType.description,
+      label: config.name || (nodeType as any).displayName || config.type,
       properties: {
-        ...nodeType.defaults,
+        ...(nodeType as any).defaults,
         ...config.properties,
       },
       integrationData: config.integration
@@ -72,9 +71,7 @@ class NodeGenerator {
             version: '1.0.0',
           }
         : undefined,
-      version: 1,
-      inputs: nodeType.inputs || [],
-      outputs: nodeType.outputs || [],
+      outputs: (nodeType as any).outputs || [],
     };
 
     return {

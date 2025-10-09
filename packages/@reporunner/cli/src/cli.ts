@@ -35,7 +35,9 @@ Run ${chalk.cyan(`pnpm add -g ${packageJson.name}`)} to update`,
 }
 
 // ASCII Art Banner
-function showBanner(): void {}
+function showBanner(): void {
+  // TODO: Implement ASCII art banner display
+}
 
 // Create CLI program
 const program = new Command();
@@ -63,8 +65,9 @@ program.addCommand(workflowCommand);
 program.addCommand(authCommand);
 
 // Global error handler
-process.on('uncaughtException', (_error) => {
+process.on('uncaughtException', (error) => {
   if (program.opts().verbose) {
+    console.error(chalk.red('Uncaught exception:'), error);
   }
   process.exit(1);
 });

@@ -21,7 +21,7 @@
       "**/*.gql"
     ],
     "ignoreUnknown": false,
-    "maxSize": 1048576
+    "maxSize": 10485760
   },
   "formatter": {
     "enabled": true,

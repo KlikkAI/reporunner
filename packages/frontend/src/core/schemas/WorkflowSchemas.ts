@@ -72,7 +72,7 @@ export const WorkflowDefinitionSchema = ApiWorkflowSchema.extend({
 });
 
 // Workflow with metadata (from API)
-export const WorkflowSchema = WorkflowDefinitionSchema.and(
+export const WorkflowSchema = WorkflowDefinitionSchema.merge(
   z.object({
     id: IdSchema, // Required for saved workflows
     _id: IdSchema.optional(), // MongoDB ObjectId
@@ -206,10 +206,10 @@ export const CreateWorkflowRequestSchema = WorkflowDefinitionSchema.omit({
   createdAt: true,
   updatedAt: true,
 }).extend({
-  version: z.number().int().min(1).default(1),
+  version: z.number().int().min(1).default(1) as z.ZodDefault<z.ZodNumber>,
 });
 
-export const UpdateWorkflowRequestSchema = WorkflowDefinitionSchema.partial().and(
+export const UpdateWorkflowRequestSchema = WorkflowDefinitionSchema.partial().merge(
   z.object({
     id: IdSchema,
   })
@@ -260,7 +260,7 @@ export const BackendWorkflowSchema = z.object({
 
 export const ExecuteWorkflowRequestSchema = z.object({
   workflowId: OptionalIdSchema,
-  workflow: z.union([WorkflowDefinitionSchema, BackendWorkflowSchema]).optional(), // Support both formats
+  workflow: z.union([WorkflowDefinitionSchema as z.ZodTypeAny, BackendWorkflowSchema as z.ZodTypeAny]).optional(), // Support both formats
   triggerData: z.record(z.string(), z.unknown()).default({}),
   options: z
     .object({
@@ -295,7 +295,7 @@ export const WorkflowResponseSchema = ApiResponseSchema(
   })
 );
 export const WorkflowListResponseSchema = ApiResponseSchema(
-  PaginatedResponseSchema(WorkflowSchema)
+  PaginatedResponseSchema(WorkflowSchema as z.ZodTypeAny)
 );
 export const ExecutionResponseSchema = ApiResponseSchema(WorkflowExecutionSchema);
 export const ExecutionListResponseSchema = ApiResponseSchema(

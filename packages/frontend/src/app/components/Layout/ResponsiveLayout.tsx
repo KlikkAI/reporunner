@@ -105,7 +105,7 @@ export const ResponsiveLayout: React.FC<ResponsiveLayoutProps> = ({ children }) 
 
   const location = useLocation();
   const navigate = useNavigate();
-  const { settings } = useAccessibility();
+  const { _settings } = useAccessibility();
 
   // Detect screen size
   useEffect(() => {

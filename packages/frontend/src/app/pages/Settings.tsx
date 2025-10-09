@@ -14,7 +14,7 @@ import { AuthApiService } from '@/core';
 import type { PageAction, PropertyRendererConfig } from '@/design-system';
 import { PageTemplates, UniversalForm } from '@/design-system';
 
-const _authApiService = new AuthApiService();
+const __authApiService = new AuthApiService();
 const logger = new Logger('Settings');
 
 interface SettingsData {

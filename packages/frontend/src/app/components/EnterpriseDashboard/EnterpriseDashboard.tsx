@@ -103,11 +103,6 @@ export const EnterpriseDashboard: React.FC = () => {
 
   const { organizations, canManageOrganization } = useRBACStore();
 
-  useEffect(() => {
-    loadDashboardData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [loadDashboardData]);
-
   const loadDashboardData = async () => {
     setLoading(true);
     try {
@@ -197,6 +192,10 @@ export const EnterpriseDashboard: React.FC = () => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    loadDashboardData();
+  }, []);
 
   const getActivityIcon = (type: ActivityEvent['type']) => {
     switch (type) {

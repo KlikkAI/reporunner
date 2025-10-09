@@ -86,8 +86,8 @@ export const EnhancedDashboard: React.FC = () => {
   ]);
 
   // Hooks
-  const { isMobile, isTablet } = useResponsive();
-  const { settings } = useAccessibility();
+  const { isMobile, _isTablet } = useResponsive();
+  const { _settings } = useAccessibility();
   const { announceNavigation, announceSuccess } = useScreenReaderAnnouncements();
   const {
     isOnboardingOpen,

@@ -16,7 +16,7 @@ interface TokenServiceInterface {
   revokeToken(token: string): Promise<void>;
 }
 
-interface TokenConfig {
+export interface TokenConfig {
   secret?: string;
   expiresIn?: string | number;
   refreshExpiresIn?: string | number;
@@ -24,11 +24,8 @@ interface TokenConfig {
 }
 
 export class JWTTokenService implements TokenServiceInterface {
-  private config?: TokenConfig;
-
-  constructor(config?: TokenConfig) {
-    this.config = config;
-    // Config will be used in future JWT implementation
+  constructor(_config?: TokenConfig) {
+    // TODO: Implement JWT configuration - config will be used for signing/verification
   }
 
   async generateToken(payload: TokenPayload): Promise<string> {

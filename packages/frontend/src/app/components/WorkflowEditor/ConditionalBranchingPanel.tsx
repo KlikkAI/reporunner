@@ -116,12 +116,6 @@ export const ConditionalBranchingPanel: React.FC<ConditionalBranchingPanelProps>
   const [editingBranch, setEditingBranch] = useState<string | null>(null);
   const [testModalVisible, setTestModalVisible] = useState(false);
 
-  useEffect(() => {
-    if (visible) {
-      loadExistingBranches();
-    }
-  }, [visible, loadExistingBranches]);
-
   const loadExistingBranches = () => {
     // Extract conditional branches from existing workflow
     const conditionNodes = nodes.filter(
@@ -146,6 +140,12 @@ export const ConditionalBranchingPanel: React.FC<ConditionalBranchingPanelProps>
 
     setBranches(extractedBranches);
   };
+
+  useEffect(() => {
+    if (visible) {
+      loadExistingBranches();
+    }
+  }, [visible]);
 
   const extractConditionsFromNode = (node: WorkflowNodeInstance): BranchCondition[] => {
     const properties = node.parameters?.properties || node.parameters || {};

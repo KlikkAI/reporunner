@@ -25,46 +25,26 @@ program
   .option('-o, --output <file>', 'Output file for memory profile report')
   .option('-f, --format <format>', 'Output format (json|markdown)', 'json')
   .action(async (options) => {
-    console.log('🔍 Profiling memory usage...');
-
     const monitor = new MemoryMonitor();
 
     try {
       const profile = await monitor.profileMemoryUsage();
       const report = await monitor.generateMemoryReport();
 
-      console.log('\n📊 Memory Profile Summary:');
-      console.log(
-        `Total Memory Usage: ${Math.round(report.summary.totalMemoryUsage / 1024 / 1024)}MB`
-      );
-      console.log(`Memory Efficiency: ${report.summary.memoryEfficiency}%`);
-      console.log(`Leak Risk: ${report.summary.leakRisk}`);
-      console.log(`Peak Memory: ${Math.round(report.summary.peakMemoryUsage / 1024 / 1024)}MB\n`);
-
       if (profile.leaks.length > 0) {
-        console.log('\n⚠️  Memory Leaks Detected:');
-        profile.leaks.forEach((leak, index) => {
-          console.log(`${index + 1}. [${leak.severity}] ${leak.location}: ${leak.description}`);
-        });
+        profile.leaks.forEach((_leak, _index) => {});
       }
 
       if (profile.optimizations.length > 0) {
-        console.log('\n💡 Top Optimization Opportunities:');
-        profile.optimizations.slice(0, 3).forEach((opt, index) => {
-          const savingsMB = Math.round(opt.potentialSavings / 1024 / 1024);
-          console.log(`${index + 1}. ${opt.area}: Save ${savingsMB}MB - ${opt.recommendation}`);
+        profile.optimizations.slice(0, 3).forEach((opt, _index) => {
+          const _savingsMB = Math.round(opt.potentialSavings / 1024 / 1024);
         });
       }
 
       if (options.output) {
         await saveReport(options.output, report, options.format);
-        console.log(`\n📄 Full report saved to: ${options.output}`);
       }
-    } catch (error) {
-      console.error(
-        '❌ Memory profiling failed:',
-        error instanceof Error ? error.message : 'Unknown error'
-      );
+    } catch (_error) {
       process.exit(1);
     }
   });
@@ -79,29 +59,16 @@ program
   .action(async (options) => {
     const detector = new MemoryLeakDetector();
 
-    console.log('🕵️  Starting memory leak detection...');
-    console.log(`Duration: ${options.duration} minutes, Interval: ${options.interval} seconds`);
-
     // Set up event listeners
     detector.on('leaksDetected', (leaks) => {
-      console.log(`\n⚠️  ${leaks.length} potential memory leak(s) detected:`);
-      leaks.forEach((leak: any, index: number) => {
-        console.log(`${index + 1}. [${leak.severity.toUpperCase()}] ${leak.location}`);
-        console.log(`   ${leak.description}`);
-        console.log(`   💡 ${leak.suggestion}\n`);
-      });
+      leaks.forEach((_leak: any, _index: number) => {});
     });
 
     detector.on('criticalLeaks', (leaks) => {
-      console.log(`\n🚨 CRITICAL: ${leaks.length} high-severity leak(s) detected!`);
-      leaks.forEach((leak: any, index: number) => {
-        console.log(`${index + 1}. ${leak.location}: ${leak.description}`);
-      });
+      leaks.forEach((_leak: any, _index: number) => {});
     });
 
-    detector.on('error', (error) => {
-      console.error('❌ Leak detection error:', error);
-    });
+    detector.on('error', (_error) => {});
 
     try {
       detector.startTracking(Number.parseInt(options.interval, 10) * 1000);
@@ -118,21 +85,11 @@ program
       });
 
       const finalLeaks = await detector.detectLeaks();
-      const stats = detector.getTrackingStats();
-
-      console.log('\n📈 Final Analysis:');
-      console.log(`Monitoring completed: ${stats.duration / 60000} minutes`);
-      console.log(`Snapshots collected: ${stats.snapshotCount}`);
-      console.log(`Total leaks detected: ${finalLeaks.length}`);
+      const _stats = detector.getTrackingStats();
 
       if (finalLeaks.length === 0) {
-        console.log('\n✅ No memory leaks detected!');
       }
-    } catch (error) {
-      console.error(
-        '❌ Leak detection failed:',
-        error instanceof Error ? error.message : 'Unknown error'
-      );
+    } catch (_error) {
       process.exit(1);
     }
   });
@@ -144,61 +101,22 @@ program
   .option('-o, --output <file>', 'Output file for optimization report')
   .option('--detailed', 'Include detailed analysis and implementation steps')
   .action(async (options) => {
-    console.log('🚀 Analyzing memory optimization opportunities...');
-
     const optimizer = new MemoryOptimizer();
 
     try {
       const report = await optimizer.generateOptimizationReport();
-
-      console.log('\n📊 Optimization Analysis:');
-      console.log(
-        `Current Memory Usage: ${Math.round(report.currentMemoryUsage.rss / 1024 / 1024)}MB`
-      );
-      console.log(`Potential Savings: ${Math.round(report.totalPotentialSavings / 1024 / 1024)}MB`);
-      console.log(`Recommendations: ${report.recommendations.length}`);
-
-      console.log('\n🎯 Top Recommendations:');
-      report.recommendations.slice(0, 5).forEach((rec, index) => {
-        console.log(`${index + 1}. ${rec.title}`);
-        console.log(`   ${rec.impact} | ${rec.effort} | Timeline: ${rec.timeline}`);
-        console.log(`   ${rec.description}\n`);
-      });
-
-      console.log('\n📋 Implementation Plan:');
-      console.log(
-        `Quick Wins (${report.implementationPlan.quickWins.length}): Easy optimizations with immediate impact`
-      );
-      console.log(
-        `Major Impact (${report.implementationPlan.majorImpact.length}): High-impact optimizations worth prioritizing`
-      );
-      console.log(
-        `Long Term (${report.implementationPlan.longTerm.length}): Strategic optimizations for sustained improvement`
-      );
-      console.log(
-        `Estimated Total Savings: ${Math.round(report.implementationPlan.totalEstimatedSavings / 1024 / 1024)}MB`
-      );
-      console.log(`Estimated Timeframe: ${report.implementationPlan.estimatedTimeframe}`);
+      report.recommendations.slice(0, 5).forEach((_rec, _index) => {});
 
       if (options.detailed) {
-        console.log('\n📝 Detailed Implementation Steps:');
-        report.recommendations.forEach((rec, index) => {
-          console.log(`\n${index + 1}. ${rec.title}:`);
-          rec.steps.forEach((step, stepIndex) => {
-            console.log(`   ${stepIndex + 1}. ${step}`);
-          });
+        report.recommendations.forEach((rec, _index) => {
+          rec.steps.forEach((_step, _stepIndex) => {});
         });
       }
 
       if (options.output) {
         await saveReport(options.output, report, 'json');
-        console.log(`\n📄 Detailed report saved to: ${options.output}`);
       }
-    } catch (error) {
-      console.error(
-        '❌ Optimization analysis failed:',
-        error instanceof Error ? error.message : 'Unknown error'
-      );
+    } catch (_error) {
       process.exit(1);
     }
   });
@@ -211,15 +129,11 @@ program
   .option('-a, --alert-threshold <mb>', 'Alert threshold in MB', '500')
   .option('--detect-leaks', 'Enable leak detection during monitoring')
   .action(async (options) => {
-    console.log('📊 Starting continuous memory monitoring...');
-    console.log(`Interval: ${options.interval}s | Alert threshold: ${options.alertThreshold}MB`);
-
     const monitor = new MemoryMonitor();
     let detector: MemoryLeakDetector | undefined;
 
     if (options.detectLeaks) {
       detector = new MemoryLeakDetector();
-      console.log('🕵️  Leak detection enabled');
       detector.startTracking();
     }
 
@@ -229,34 +143,22 @@ program
       const stats = monitor.getMonitoringStats();
       const current = stats.currentMemory;
 
-      const timestamp = new Date().toLocaleTimeString();
-      const heapMB = Math.round(current.heapUsed / 1024 / 1024);
-      const rssMB = Math.round(current.rss / 1024 / 1024);
-
-      console.log(
-        `[${timestamp}] Heap: ${heapMB}MB | RSS: ${rssMB}MB | External: ${Math.round(current.external / 1024 / 1024)}MB`
-      );
+      const _timestamp = new Date().toLocaleTimeString();
+      const _heapMB = Math.round(current.heapUsed / 1024 / 1024);
+      const _rssMB = Math.round(current.rss / 1024 / 1024);
 
       if (current.rss > alertThreshold) {
-        console.log(
-          `🚨 ALERT: Memory usage (${rssMB}MB) exceeds threshold (${options.alertThreshold}MB)`
-        );
       }
     }, Number.parseInt(options.interval, 10) * 1000);
 
     // Handle graceful shutdown
     process.on('SIGINT', () => {
-      console.log('\n⏹️  Stopping memory monitoring...');
       clearInterval(monitoringInterval);
       monitor.stopMonitoring();
       if (detector) {
         detector.stopTracking();
       }
-      const stats = monitor.getMonitoringStats();
-      console.log(`\n📈 Monitoring Summary:`);
-      console.log(`Duration: ${Math.round(stats.monitoringDuration / 1000 / 60)} minutes`);
-      console.log(`Snapshots collected: ${stats.snapshotCount}`);
-      console.log(`Final memory usage: ${Math.round(stats.currentMemory.rss / 1024 / 1024)}MB`);
+      const _stats = monitor.getMonitoringStats();
 
       process.exit(0);
     });

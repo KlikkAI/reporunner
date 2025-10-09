@@ -63,16 +63,6 @@ export const AuditDashboard: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>();
   const [searchTerm, setSearchTerm] = useState<string>('');
 
-  useEffect(() => {
-    loadAuditData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [loadAuditData]);
-
-  useEffect(() => {
-    applyFilters();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [applyFilters]);
-
   const loadAuditData = async () => {
     setLoading(true);
     try {
@@ -223,6 +213,14 @@ export const AuditDashboard: React.FC = () => {
       setFilteredEvents(events);
     }
   };
+
+  useEffect(() => {
+    loadAuditData();
+  }, []);
+
+  useEffect(() => {
+    applyFilters();
+  }, [dateRange, selectedUser, selectedAction, selectedResource, selectedSeverity, selectedCategory, searchTerm, events]);
 
   const clearFilters = () => {
     setDateRange(null);

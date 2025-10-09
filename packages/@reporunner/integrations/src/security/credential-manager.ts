@@ -31,6 +31,11 @@ export interface CredentialRotationPolicy {
 
 export class CredentialManager {
   private credentials = new Map<string, Credential>();
+  private masterKey: string;
+
+  constructor(masterKey: string) {
+    this.masterKey = masterKey;
+  }
 
   async store(_credential: Credential): Promise<string> {
     const id = `cred_${Date.now()}`;

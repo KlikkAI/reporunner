@@ -8,7 +8,22 @@ import ora from 'ora';
 
 const execAsync = promisify(exec);
 
-export async function handleCreateNode(options: any): Promise<void> {
+interface CreateNodeOptions {
+  name?: string;
+  category?: string;
+  template?: string;
+  skipInstall?: boolean;
+}
+
+interface InquirerAnswers {
+  name?: string;
+  category?: string;
+  template?: string;
+  description?: string;
+  author?: string;
+}
+
+export async function handleCreateNode(options: CreateNodeOptions): Promise<void> {
   const spinner = ora('Creating node...').start();
 
   try {
@@ -58,7 +73,7 @@ export async function handleCreateNode(options: any): Promise<void> {
         type: 'input',
         name: 'description',
         message: 'Node description:',
-        default: (answers: any) => `${answers.name || options.name} integration for Reporunner`,
+        default: (answers: InquirerAnswers) => `${answers.name || options.name} integration for Reporunner`,
       },
       {
         type: 'input',

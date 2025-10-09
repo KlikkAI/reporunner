@@ -5,24 +5,29 @@
 export * from './api';
 // Constants
 export * from './constants';
-// Configuration
-export * from './config';
-// Schemas
-export * from './schemas';
-
 // Nodes - export types from nodes (source of truth for NodeProperty, ValidationRule)
-export * from './nodes';
+export type { NodeProperty, ValidationRule } from './nodes';
+// Schemas - exclude WorkflowEdge (from stores)
+export type {
+  ApiResponse,
+  CreateWorkflowRequest,
+  ExecutionFilter,
+  ExecutionStats,
+  PaginatedResponse,
+  UpdateWorkflowRequest,
+  Workflow,
+  WorkflowDefinition,
+  WorkflowExecution,
+  WorkflowFilter,
+} from './schemas';
 
 // Services - exclude AIAssistantConfig (use the one from stores instead)
 export {
   AIAssistantService,
   analyticsService,
   configService,
-  credentialService,
-  integrationService,
-  loggingService,
   performanceService,
-  workflowExporterService,
+  logger,
 } from './services';
 
 // Stores - source of truth for AIAssistantConfig, WorkflowEdge
@@ -30,22 +35,23 @@ export * from './stores';
 
 // Types - exclude NodeProperty (from nodes), WorkflowEdge (from stores)
 export type {
-  AppConfig,
-  FeatureFlags,
-  FrontendUser,
   WorkflowNodeData,
 } from './types';
 
-// Utils - exclude ApiError (from api), ValidationRule (from nodes)
+// Utils - exclude ApiError (from api), ValidationRule (from nodes), cn (from design-system)
 export {
-  apiErrorHandler,
-  cn,
+  ApiErrorHandler,
+  handleApiErrors,
   enhancedPropertyEvaluator,
+  EnhancedPropertyEvaluator,
+  useEnhancedPropertyEvaluator,
   expressionEvaluator,
   nodeGenerator,
+  NodeGenerator,
   nodeRegistry,
   propertyEvaluator,
-  reverseTypeAdapters,
+  convertNodePropertyToINodeProperty,
+  convertNodePropertiesToINodeProperties,
   typeValidation,
   workflowExporter,
 } from './utils';
