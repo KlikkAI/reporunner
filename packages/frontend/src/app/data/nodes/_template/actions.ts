@@ -4,7 +4,8 @@
  * Implement the actual integration logic here
  */
 
-export const {INTEGRATION_NAME}Actions = {
+// Template: Replace TemplateIntegration with your integration name
+export const TemplateIntegrationActions = {
   async execute(input: any, context: any) {
     const { operation, resourceId } = context.parameters;
     const credentials = context.credentials;
@@ -52,4 +53,4 @@ export const {INTEGRATION_NAME}Actions = {
   },
 };
 
-export default {INTEGRATION_NAME}Actions;
+export default TemplateIntegrationActions;

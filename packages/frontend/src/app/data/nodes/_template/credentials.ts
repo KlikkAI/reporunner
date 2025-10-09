@@ -1,10 +1,21 @@
 /**
- * {INTEGRATION_NAME} Credentials Definition
+ * Template Integration Credentials Definition
+ * Template: Replace TemplateIntegration with your integration name
  */
 
 import { z } from 'zod';
 
-export const {INTEGRATION_NAME}Credentials: CredentialDefinition = {
+type CredentialDefinition = {
+  name: string;
+  displayName: string;
+  documentationUrl?: string;
+  properties: any[];
+  schema: z.ZodObject<any>;
+  test: (credentials: any) => Promise<boolean>;
+};
+
+// Template: Replace TemplateIntegration with your integration name
+export const TemplateIntegrationCredentials: CredentialDefinition = {
   name: '{integration-id}',
   displayName: '{INTEGRATION_NAME}',
   documentationUrl: 'https://docs.{integration-id}.com/api',

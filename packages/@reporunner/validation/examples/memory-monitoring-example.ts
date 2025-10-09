@@ -10,48 +10,73 @@ import { MemoryMonitor } from '../src/monitoring/MemoryMonitor.js';
 import { MemoryOptimizer } from '../src/monitoring/MemoryOptimizer.js';
 
 async function demonstrateMemoryMonitoring() {
+  console.log('🧠 Memory Monitoring System Demonstration\n');
+  console.log('='.repeat(50));
 
+  // 1. Memory Profiling
+  console.log('\n1. Memory Profiling');
+  console.log('='.repeat(50));
 
   const monitor = new MemoryMonitor();
 
+  try {
     const profile = await monitor.profileMemoryUsage();
 
-    console.log('Memory Profile Results:');
+    console.log('\nMemory Profile Results:');
     console.log(`Development Memory: ${Math.round(profile.development.rss / 1024 / 1024)}MB RSS`);
     console.log(`Build Memory: ${Math.round(profile.build.rss / 1024 / 1024)}MB RSS`);
-    console.log(`Runtime Memory: ${Math.round(profile.r: ${profile.optimizations.length}`);
+    console.log(`Runtime Memory: ${Math.round(profile.runtime.rss / 1024 / 1024)}MB RSS`);
 
     if (profile.leaks.length > 0) {
-      profile.leaks.forEach((leak, index) => {`);
+      console.log(`\n⚠️  ${profile.leaks.length} potential memory leak(s) detected:`);
+      profile.leaks.forEach((leak, index) => {
+        console.log(`  ${index + 1}. [${leak.severity.toUpperCase()}] ${leak.location}`);
         console.log(`     ${leak.description}`);
-    }
-    if (profile.optimizations.length > 0) {
-      profile.optimizations.slice(0, 3).forEach((opt, index) => {
-        const savings = Math.round(opt.potentialSavings / 1024 / 1024);
-        console.log(`  ${index + 1}}`);
       });
     }
-    console.error('Memory profiling failed:', error);
+
+    if (profile.optimizations.length > 0) {
+      console.log(`\n💡 ${profile.optimizations.length} optimization opportunities:`);
+      profile.optimizations.slice(0, 3).forEach((opt, index) => {
+        const savings = Math.round(opt.potentialSavings / 1024 / 1024);
+        console.log(`  ${index + 1}. ${opt.title} (${savings}MB potential savings)`);
+      });
+    }
+
+    console.log('\n✅ Memory profiling completed');
+  } catch (error) {
+    console.error('❌ Memory profiling failed:', error);
+  }
 
   console.log('\n');
 
   // 2. Memory Leak Detection
   console.log('2. Memory Leak Detection');
+  console.log('='.repeat(50));
 
   const detector = new MemoryLeakDetector({
     sustainedGrowthThreshold: 0.05, // 5% growth threshold
+    snapshotInterval: 1000,
   });
+
   // Set up event listeners
   detector.on('leaksDetected', (leaks) => {
-    console.log(`⚠️  ${leaks.length} potential memory leak(s) detected:`);
-    leaks.forEach((oUpperCase()}] $leak.location`);
-      console.log(`     $leak.description`);
-   
+    console.log(`\n⚠️  ${leaks.length} potential memory leak(s) detected:`);
+    leaks.forEach((leak, index) => {
+      console.log(`  ${index + 1}. [${leak.severity.toUpperCase()}] ${leak.location}`);
+      console.log(`     ${leak.description}`);
+    });
+  });
 
-  detector.on('criti
-  console.log('Starting leak detection (5 seconds)...');
+  detector.on('criticalLeak', (leak) => {
+    console.log(`\n🚨 CRITICAL LEAK DETECTED: ${leak.location}`);
+    console.log(`   ${leak.description}`);
+  });
+
+  console.log('\nStarting leak detection (5 seconds)...');
   detector.startTracking(1000); // Check every second
-e patterns
+
+  // Simulate some memory usage patterns
   await simulateMemoryUsage();
 
   // Wait for detection
@@ -60,18 +85,24 @@ e patterns
   detector.stopTracking();
 
   const finalLeaks = await detector.detectLeaks();
-  const detectorStats = detector.getTrackin
+  const detectorStats = detector.getTrackingStats();
+
   console.log(`\nLeak Detection Summary:`);
-  console.log(`Snapshots collected: 
+  console.log(`Snapshots collected: ${detectorStats.snapshotCount}`);
+  console.log(`Total leaks found: ${finalLeaks.length}`);
 
   console.log('\n');
+
   // 3. Memory Optimization Analysis
   console.log('3. Memory Optimization Analysis');
   console.log('='.repeat(50));
 
   const optimizer = new MemoryOptimizer();
+
   try {
-    c
+    const report = await optimizer.generateOptimizationReport();
+
+    console.log('\nOptimization Report:');
     console.log(
       `Current Memory Usage: ${Math.round(report.currentMemoryUsage.rss / 1024 / 1024)}MB`
     );
@@ -86,58 +117,97 @@ e patterns
       console.log(`     Impact: ${rec.impact}`);
       console.log(`     Effort: ${rec.effort}`);
       console.log(`     Timeline: ${rec.timeline}`);
+    });
 
-    console.log('\nImplementation Plan:');length} optimizations`);
-    console.log(`  Major Impact: ${report.implementationPlan.majorImp.longTerm.length} optimizations`);
+    console.log('\nImplementation Plan:');
+    console.log(`  Quick Wins: ${report.implementationPlan.quickWins.length} optimizations`);
+    console.log(`  Short Term: ${report.implementationPlan.shortTerm.length} optimizations`);
+    console.log(`  Medium Term: ${report.implementationPlan.mediumTerm.length} optimizations`);
+    console.log(`  Long Term: ${report.implementationPlan.longTerm.length} optimizations`);
     console.log(
       `  Total Estimated Savings: ${Math.round(report.implementationPlan.totalEstimatedSavings / 1024 / 1024)}MB`
-    );stimated Timeframe: $report.implementationPlan.estimatedTimeframe`);
+    );
+    console.log(`  Estimated Timeframe: ${report.implementationPlan.estimatedTimeframe}`);
+
+    console.log('\n✅ Optimization analysis completed');
   } catch (error) {
+    console.error('❌ Optimization analysis failed:', error);
+  }
+
   console.log('\n');
 
-  // 4. Continuous Monitoring Demoonitoring Demo');
+  // 4. Continuous Monitoring Demo
+  console.log('4. Continuous Monitoring Demo');
   console.log('='.repeat(50));
 
-  console.log('Starting continuous monitoring (10 seconds)...');
+  console.log('\nStarting continuous monitoring (10 seconds)...');
 
   monitor.startMonitoring(2000); // Monitor every 2 seconds
-(() => {
+
+  let monitoringCount = 0;
+  const monitoringInterval = setInterval(() => {
+    monitoringCount++;
     const stats = monitor.getMonitoringStats();
-    const current = stats.currentMemory;nsole.log(
-      `[$monitoringCount] Heap: $Math.round(current.heapUsed / 1024 / 1024)MB | RSS: $Math.round(current.rss / 1024 / 1024)MB`
+    const current = stats.currentMemory;
+
+    console.log(
+      `[${monitoringCount}] Heap: ${Math.round(current.heapUsed / 1024 / 1024)}MB | RSS: ${Math.round(current.rss / 1024 / 1024)}MB`
     );
-monitor.stopMonitoring();
-
-      console.log('\nMonitoring Summary:');
-      / 1000)} seconds`);
-
   }, 2000);
 
-  // Wait for monitoring to completee, 12000));
-on completed!');
+  // Wait for monitoring to complete
+  await new Promise((resolve) => setTimeout(resolve, 10000));
+
+  clearInterval(monitoringInterval);
+  monitor.stopMonitoring();
+
+  const finalStats = monitor.getMonitoringStats();
+  console.log('\nMonitoring Summary:');
+  console.log(`Total snapshots: ${finalStats.snapshotCount}`);
+  console.log(`Duration: ${Math.round(finalStats.duration / 1000)} seconds`);
+
+  console.log('\n✅ Continuous monitoring completed');
+
+  // 5. Build Process Integration
+  await integrateWithBuildProcess();
+
+  console.log('\n🎉 Memory monitoring demonstration completed!');
 }
+
 /**
- */<void> {
+ * Simulate memory usage patterns for leak detection
+ */
+async function simulateMemoryUsage(): Promise<void> {
   // Simulate some memory allocation and cleanup
-  const
+  const data: any[] = [];
+
   for (let i = 0; i < 1000; i++) {
     data.push({
+      id: i,
       data: new Array(100).fill(`item-${i}`),
     });
+  }
 
   // Partial cleanup (simulate potential leak)
   data.splice(0, 800);
 
   for (let i = 1000; i < 1500; i++) {
     data.push({
+      id: i,
       data: new Array(150).fill(`item-${i}`),
-   
+    });
+  }
 
-  await new Promise(
+  await new Promise((resolve) => setTimeout(resolve, 500));
+
+  if (global.gc) {
     global.gc();
   }
 }
+
 /**
+ * Example: Integrate with build process
+ */
 async function integrateWithBuildProcess() {
   console.log('\n🔧 Build Process Integration Example');
   console.log('='.repeat(50));
@@ -146,19 +216,26 @@ async function integrateWithBuildProcess() {
   const optimizer = new MemoryOptimizer();
 
   try {
-    console.log('Starting build process memory monitoring...');
+    console.log('\nStarting build process memory monitoring...');
 
-    // Start monitorin Simulate build process
+    // Start monitoring
+    monitor.startMonitoring(500);
+
+    // Simulate build process
     console.log('Simulating build process...');
     await simulateBuildProcess();
 
     // Stop monitoring and get results
     monitor.stopMonitoring();
     const report = await monitor.generateMemoryReport();
-round(report.summary.peakMemoryUsage / 1024 / 1024)}MB`);
+
+    console.log('\nBuild Process Memory Results:');
+    console.log(`Peak Memory Usage: ${Math.round(report.summary.peakMemoryUsage / 1024 / 1024)}MB`);
     console.log(`Memory Efficiency: ${report.summary.memoryEfficiency}%`);
 
-      console.log(`⚠️  Memory leak risk detected: ${report.summar
+    if (report.summary.hasMemoryLeakRisk) {
+      console.log(`⚠️  Memory leak risk detected: ${report.summary.leakRiskDescription}`);
+    }
 
     // Get optimization recommendations
     const optimizationReport = await optimizer.generateOptimizationReport();
@@ -166,11 +243,15 @@ round(report.summary.peakMemoryUsage / 1024 / 1024)}MB`);
     if (optimizationReport.recommendations.length > 0) {
       console.log('\nBuild Optimization Recommendations:');
       optimizationReport.recommendations.slice(0, 2).forEach((rec, index) => {
-        console.log(`  ${index + 1}. ${rec.title}: ${rec.impa
+        console.log(`  ${index + 1}. ${rec.title}: ${rec.impact} impact`);
+      });
+    }
+
+    console.log('\n✅ Build process integration completed');
 
     monitor.reset();
   } catch (error) {
-    console.error('Build process monitoring failed:', error);
+    console.error('❌ Build process monitoring failed:', error);
   }
 }
 
@@ -214,10 +295,14 @@ async function simulateBuildProcess(): Promise<void> {
 // Run the demonstration
 if (import.meta.url === `file://${process.argv[1]}`) {
   demonstrateMemoryMonitoring()
-    .then(() => {monstrations completed successfully!');
+    .then(() => {
+      console.log('\n✨ Memory monitoring demonstrations completed successfully!');
       process.exit(0);
     })
     .catch((error) => {
       console.error('❌ Demonstration failed:', error);
       process.exit(1);
     });
+}
+
+export { demonstrateMemoryMonitoring, simulateMemoryUsage, integrateWithBuildProcess };

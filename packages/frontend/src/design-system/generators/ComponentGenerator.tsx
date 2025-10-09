@@ -108,7 +108,7 @@ export class ComponentGenerator {
           config.renderItem ||
           ((item, index) => (
             <List.Item key={index}>
-              {typeof item === 'object' ? JSON.stringify(item) : item}
+              {typeof item === 'object' ? JSON.stringify(item) : (item as React.ReactNode)}
             </List.Item>
           ))
         }
@@ -381,7 +381,7 @@ export class ComponentGenerator {
         // Content type is a simple wrapper that renders its children
         return (
           <div key={config.id} className={config.className} {...config.props}>
-            {config.props?.children}
+            {config.props?.children as React.ReactNode}
             {config.children && ComponentGenerator.generateChildren(config.children)}
           </div>
         );
@@ -402,6 +402,8 @@ interface WorkflowItem {
   status?: string;
   trigger?: string;
   lastRun?: string;
+  nodeCount?: number;
+  isActive?: boolean;
 }
 
 interface CredentialItem {

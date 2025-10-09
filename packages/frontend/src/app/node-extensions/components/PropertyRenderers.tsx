@@ -211,7 +211,7 @@ export const createPropertyRenderers = (
     formData: formState,
     errors: {},
     touched: {},
-    isSubmitting: options?.disabled || false,
+    isSubmitting: options?.disabled ?? false,
     setFieldValue: onChange,
     setFieldError: () => {},
     validateField: async () => {},

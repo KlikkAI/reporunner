@@ -203,6 +203,10 @@
         "rules": {
           "style": {
             "noDefaultExport": "off"
+          },
+          "suspicious": {
+            "noExplicitAny": "warn",
+            "noConsole": "warn"
           }
         }
       }
@@ -306,7 +310,7 @@
       }
     },
     {
-      "includes": ["examples/**/*"],
+      "includes": ["**/examples/**/*", "**/*.example.{ts,js}", "**/*.example.{tsx,jsx}"],
       "linter": {
         "rules": {
           "suspicious": {
@@ -315,6 +319,23 @@
           },
           "complexity": {
             "noExcessiveCognitiveComplexity": "off"
+          },
+          "correctness": {
+            "noUnusedVariables": "warn"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["**/_template/**/*", "**/templates/**/*"],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noExplicitAny": "off",
+            "noConsole": "off"
+          },
+          "style": {
+            "noDefaultExport": "off"
           }
         }
       }

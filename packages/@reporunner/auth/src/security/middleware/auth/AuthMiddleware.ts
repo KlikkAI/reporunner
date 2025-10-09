@@ -129,7 +129,8 @@ export class AuthMiddleware extends SecurityMiddleware {
   }
 
   private async checkRoleAuthorization(user: Express.User, roles: string[]): Promise<void> {
-    const hasRole = await this.roleService.checkRoles(user, roles);
+    // Type assertion: Express.User should have id from authentication
+    const hasRole = await this.roleService.checkRoles(user as Express.User & { id: string }, roles);
     if (!hasRole) {
       throw new AuthorizationError(`User lacks required roles. Required: ${roles.join(', ')}`);
     }
@@ -139,7 +140,11 @@ export class AuthMiddleware extends SecurityMiddleware {
     user: Express.User,
     permissions: string[]
   ): Promise<void> {
-    const hasPermissions = await this.roleService.checkPermissions(user, permissions);
+    // Type assertion: Express.User should have id from authentication
+    const hasPermissions = await this.roleService.checkPermissions(
+      user as Express.User & { id: string },
+      permissions
+    );
     if (!hasPermissions) {
       throw new AuthorizationError(
         `User lacks required permissions. Required: ${permissions.join(', ')}`
@@ -148,7 +153,11 @@ export class AuthMiddleware extends SecurityMiddleware {
   }
 
   private async checkOwnershipAuthorization(user: Express.User, resourceId: string): Promise<void> {
-    const isOwner = await this.roleService.checkResourceOwnership(user, resourceId);
+    // Type assertion: Express.User should have id from authentication
+    const isOwner = await this.roleService.checkResourceOwnership(
+      user as Express.User & { id: string },
+      resourceId
+    );
     if (!isOwner) {
       throw new AuthorizationError('User does not own this resource');
     }

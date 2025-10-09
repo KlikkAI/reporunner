@@ -1,9 +1,24 @@
 /**
- * {INTEGRATION_NAME} Node Definition
+ * Template Integration Node Definition
+ * Template: Replace TemplateIntegration with your integration name
  */
 
+type NodeDefinition = {
+  id: string;
+  name: string;
+  category: string;
+  description: string;
+  icon: { type: string; name: string };
+  version: string;
+  inputs: any;
+  outputs: any;
+  credentials: any[];
+  properties: any[];
+  execute: (input: any, context: any) => Promise<any>;
+};
 
-export const {INTEGRATION_NAME}Node: NodeDefinition = {
+// Template: Replace TemplateIntegration with your integration name
+export const TemplateIntegrationNode: NodeDefinition = {
   id: '{integration-id}',
   name: '{INTEGRATION_NAME}',
   category: '{CATEGORY}', // ai-ml, communication, data-storage, etc.

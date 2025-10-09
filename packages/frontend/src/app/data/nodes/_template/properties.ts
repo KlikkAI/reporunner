@@ -1,11 +1,23 @@
 /**
- * {INTEGRATION_NAME} Node Properties
+ * Template Integration Node Properties
+ * Template: Replace TemplateIntegration with your integration name
  *
  * Define the configuration UI for this integration
  */
 
+type NodeProperty = {
+  displayName: string;
+  name: string;
+  type: string;
+  default: any;
+  required?: boolean;
+  description?: string;
+  options?: Array<{ name: string; value: string; description?: string }>;
+  displayOptions?: any;
+};
 
-export const {INTEGRATION_NAME}Properties: NodeProperty[] = [
+// Template: Replace TemplateIntegration with your integration name
+export const TemplateIntegrationProperties: NodeProperty[] = [
   {
     displayName: 'Operation',
     name: 'operation',
