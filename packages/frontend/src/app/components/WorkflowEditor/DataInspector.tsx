@@ -37,7 +37,7 @@ import {
 } from 'antd';
 import type React from 'react';
 import { useCallback, useMemo, useState } from 'react';
-import type { DataInspector } from '@/core/types/debugging';
+import type { DataInspector as DataInspectorType } from '@/core/types/debugging';
 import { JsonViewer } from '@/design-system';
 import { cn } from '@/design-system/utils';
 
@@ -49,7 +49,7 @@ const { TreeNode } = Tree;
 interface DataInspectorProps {
   data: any;
   nodeId: string;
-  type: DataInspector['type'];
+  type: DataInspectorType['type'];
   onClose?: () => void;
   className?: string;
 }

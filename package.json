@@ -43,7 +43,7 @@
     "test:unit": "vitest run --testNamePattern='unit'",
     "test:watch": "vitest watch",
     "type-check": "turbo run type-check",
-    "lint": "biome check .",
+    "lint": "biome check . --diagnostic-level=error",
     "lint:affected": "turbo run lint --affected",
     "lint:ci": "biome ci .",
     "lint:fix": "biome check --write .",

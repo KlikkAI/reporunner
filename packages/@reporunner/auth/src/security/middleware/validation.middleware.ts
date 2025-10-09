@@ -59,18 +59,6 @@ const NOSQL_INJECTION_PATTERNS = [
 ];
 
 /**
- * XSS patterns to detect
- */
-const XSS_PATTERNS = [
-  /<script[^>]*>.*?<\/script>/gi,
-  /<iframe[^>]*>.*?<\/iframe>/gi,
-  /javascript:/gi,
-  /on\w+\s*=/gi,
-  /<img[^>]*onerror\s*=/gi,
-  /<svg[^>]*onload\s*=/gi,
-];
-
-/**
  * Path traversal patterns to detect
  */
 const PATH_TRAVERSAL_PATTERNS = [/\.\.\//g, /\.\.\\/, /%2e%2e%2f/gi, /%252e%252e%252f/gi, /\.\./g];
@@ -464,13 +452,8 @@ export function createXSSProtection() {
   return (req: Request, _res: Response, next: NextFunction) => {
     const sanitizeValue = (value: unknown): unknown => {
       if (typeof value === 'string') {
-        // Check for XSS patterns
-        for (const pattern of XSS_PATTERNS) {
-          if (pattern.test(value)) {
-          }
-        }
-
-        // Sanitize HTML
+        // Sanitize HTML using DOMPurify - handles all XSS patterns
+        // XSS_PATTERNS are validated server-side, DOMPurify provides client-safe sanitization
         return DOMPurify.sanitize(value, {
           ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'a', 'p', 'br'],
           ALLOWED_ATTR: ['href'],

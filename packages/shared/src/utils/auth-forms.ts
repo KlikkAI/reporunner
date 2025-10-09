@@ -12,11 +12,34 @@ export const createAuthFormState = () => ({
   error: null,
 });
 
-export const authFormSubmitHandler = async (data: any, _type: 'login' | 'register') => {
+interface AuthFormData {
+  email: string;
+  password: string;
+  confirmPassword?: string;
+}
+
+interface AuthResponse {
+  success: boolean;
+  data: AuthFormData;
+}
+
+interface ApiError {
+  response?: {
+    data?: {
+      message?: string;
+    };
+  };
+}
+
+export const authFormSubmitHandler = async (
+  data: AuthFormData,
+  _type: 'login' | 'register'
+): Promise<AuthResponse> => {
   // Common form submission logic
   return { success: true, data };
 };
 
-export const authFormErrorHandler = (error: any) => {
-  return error.response?.data?.message || 'Authentication failed';
+export const authFormErrorHandler = (error: unknown): string => {
+  const apiError = error as ApiError;
+  return apiError.response?.data?.message || 'Authentication failed';
 };

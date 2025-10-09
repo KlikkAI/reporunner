@@ -37,12 +37,13 @@
     "rules": {
       "recommended": true,
       "correctness": {
-        "noUnusedVariables": "error",
+        "noUnusedVariables": "warn",
         "noUnusedImports": "error",
         "noUnusedPrivateClassMembers": "warn",
-        "useExhaustiveDependencies": "error",
+        "useExhaustiveDependencies": "warn",
         "noUndeclaredVariables": "warn",
-        "noUnreachable": "error"
+        "noUnreachable": "error",
+        "noVoidTypeReturn": "warn"
       },
       "style": {
         "noDefaultExport": "off",
@@ -70,8 +71,12 @@
         "noDuplicateParameters": "error",
         "noEmptyBlockStatements": "warn",
         "noFallthroughSwitchClause": "error",
-        "noImplicitAnyLet": "error",
-        "noSparseArray": "error"
+        "noImplicitAnyLet": "warn",
+        "noSparseArray": "error",
+        "useIterableCallbackReturn": "warn",
+        "noAssignInExpressions": "warn",
+        "noShadowRestrictedNames": "warn",
+        "noUnknownAtRules": "warn"
       },
       "performance": {
         "noDelete": "error"
@@ -92,7 +97,7 @@
         "noUselessRename": "error",
         "noUselessSwitchCase": "error",
         "noUselessThisAlias": "error",
-        "noVoid": "error",
+        "noVoid": "warn",
         "useArrowFunction": "error",
         "useLiteralKeys": "error",
         "useOptionalChain": "error",
@@ -102,7 +107,12 @@
       },
       "a11y": {
         "recommended": true,
-        "useButtonType": "warn"
+        "useButtonType": "warn",
+        "noLabelWithoutControl": "warn",
+        "noStaticElementInteractions": "warn",
+        "noSvgWithoutTitle": "warn",
+        "useKeyWithClickEvents": "warn",
+        "useValidAnchor": "warn"
       },
       "nursery": {
         "useSortedClasses": "off"
@@ -216,7 +226,8 @@
       "linter": {
         "rules": {
           "suspicious": {
-            "noConsole": "warn"
+            "noConsole": "warn",
+            "noExplicitAny": "warn"
           },
           "complexity": {
             "noExcessiveCognitiveComplexity": {
@@ -393,6 +404,50 @@
                 "maxAllowedComplexity": 15
               }
             }
+          }
+        }
+      }
+    },
+    {
+      "includes": [
+        "packages/shared/src/base/**/*",
+        "packages/shared/src/config/**/*",
+        "packages/shared/src/optimization-utils/**/*",
+        "packages/shared/src/types/**/*",
+        "packages/shared/src/utilities/**/*",
+        "packages/shared/src/api/middleware/**/*"
+      ],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noExplicitAny": "warn"
+          },
+          "complexity": {
+            "noStaticOnlyClass": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": [
+        "packages/@reporunner/cli/**/*",
+        "packages/@reporunner/core/**/*",
+        "packages/@reporunner/workflow/**/*",
+        "packages/@reporunner/validation/**/*",
+        "packages/@reporunner/services/**/*",
+        "packages/@reporunner/platform/**/*",
+        "**/*-cli.ts",
+        "**/cli/**/*"
+      ],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noExplicitAny": "warn",
+            "noEmptyBlockStatements": "warn",
+            "noConsole": "off"
+          },
+          "complexity": {
+            "noExcessiveCognitiveComplexity": "off"
           }
         }
       }

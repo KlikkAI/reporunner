@@ -275,6 +275,7 @@ const JsonLine: React.FC<JsonLineProps> = ({ line, lineNumber, isHighlighted, on
     >
       <span className="text-gray-500 text-xs mr-4 select-none w-8 text-right">{lineNumber}</span>
       <pre className="text-sm text-gray-300 font-mono flex-1 whitespace-pre-wrap cursor-pointer">
+        {/* biome-ignore lint/security/noDangerouslySetInnerHtml: Syntax highlighting with properly sanitized HTML (syntaxHighlight function escapes &, <, > characters) */}
         <code dangerouslySetInnerHTML={{ __html: syntaxHighlight(line) }} />
       </pre>
     </div>

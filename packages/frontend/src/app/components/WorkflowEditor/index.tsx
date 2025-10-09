@@ -628,7 +628,7 @@ const WorkflowEditor: React.FC = () => {
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       // Convert React Flow nodes back to lean format
-      const leanNodes = localNodes
+      const newLeanNodes = localNodes
         .filter((node) => node.type)
         .map((node) => ({
           id: node.id,
@@ -643,12 +643,12 @@ const WorkflowEditor: React.FC = () => {
           executeOnce: node.data?.executeOnce,
         }));
 
-      if (JSON.stringify(leanNodes) !== JSON.stringify(leanNodes)) {
-        updateNodes(leanNodes);
+      if (JSON.stringify(newLeanNodes) !== JSON.stringify(leanNodes)) {
+        updateNodes(newLeanNodes);
       }
     }, 300);
     return () => clearTimeout(timeoutId);
-  }, [localNodes, updateNodes]);
+  }, [localNodes, leanNodes, updateNodes]);
 
   useEffect(() => {
     const timeoutId = setTimeout(() => {

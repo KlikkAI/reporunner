@@ -328,22 +328,22 @@ export function createUpdateSchema<T extends z.ZodRawShape>(baseSchema: z.ZodObj
 /**
  * Create a query schema with common filters
  */
-export function createQuerySchema(
-  specificFilters: z.ZodObject<any>,
+export function createQuerySchema<T extends z.ZodRawShape>(
+  specificFilters: z.ZodObject<T>,
   options: {
     includePagination?: boolean;
     includeSearch?: boolean;
     includeSorting?: boolean;
   } = {}
-) {
-  let schema = specificFilters;
+): z.ZodObject<z.ZodRawShape> {
+  let schema: z.ZodObject<z.ZodRawShape> = specificFilters;
 
   if (options.includePagination) {
-    schema = schema.merge(PaginationQuerySchema) as any;
+    schema = schema.merge(PaginationQuerySchema);
   }
 
   if (options.includeSearch) {
-    schema = schema.merge(SearchQuerySchema.partial()) as any;
+    schema = schema.merge(SearchQuerySchema.partial());
   }
 
   return schema;
@@ -374,9 +374,9 @@ export function createEnumSchema<T extends readonly [string, ...string[]]>(value
 /**
  * Create conditional schema based on discriminator
  */
-export function createConditionalSchema<T extends string>(
-  discriminator: T,
-  schemas: Record<string, z.ZodTypeAny>
-) {
-  return z.discriminatedUnion(discriminator as any, Object.values(schemas) as any);
+export function createConditionalSchema<
+  T extends string,
+  U extends readonly [z.ZodDiscriminatedUnionOption<T>, ...z.ZodDiscriminatedUnionOption<T>[]],
+>(discriminator: T, schemas: U) {
+  return z.discriminatedUnion(discriminator, schemas);
 }
