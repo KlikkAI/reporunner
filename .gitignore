@@ -110,3 +110,6 @@ Thumbs.db
 # Turbo
 .turbo
 html/
+
+# Test data
+test-performance-data-*/
