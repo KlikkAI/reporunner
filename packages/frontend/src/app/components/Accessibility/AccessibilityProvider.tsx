@@ -6,7 +6,7 @@
 
 import { App, ConfigProvider, theme } from 'antd';
 import type React from 'react';
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 
 interface AccessibilitySettings {
@@ -60,7 +60,9 @@ export const AccessibilityProvider: React.FC<AccessibilityProviderProps> = ({ ch
       try {
         const parsed = JSON.parse(savedSettings);
         setSettings({ ...defaultSettings, ...parsed });
-      } catch (_error) {}
+      } catch (_error) {
+        // Silently ignore parse errors and use default settings
+      }
     }
 
     // Detect system preferences
@@ -77,7 +79,7 @@ export const AccessibilityProvider: React.FC<AccessibilityProviderProps> = ({ ch
   }, []);
 
   // Apply accessibility styles to document
-  const applyAccessibilityStyles = (settings: AccessibilitySettings) => {
+  const applyAccessibilityStyles = useCallback((settings: AccessibilitySettings) => {
     const root = document.documentElement;
 
     // Font size
@@ -122,7 +124,7 @@ export const AccessibilityProvider: React.FC<AccessibilityProviderProps> = ({ ch
     } else {
       root.classList.remove('keyboard-navigation');
     }
-  };
+  }, []);
 
   // Save settings to localStorage when changed
   useEffect(() => {
@@ -157,23 +159,43 @@ export const AccessibilityProvider: React.FC<AccessibilityProviderProps> = ({ ch
     }
   };
 
+  // Helper: Calculate font size based on settings
+  const getFontSizeValue = (fontSize: string): number => {
+    const fontSizeMap: Record<string, number> = {
+      small: 12,
+      default: 14,
+      large: 16,
+      'extra-large': 18,
+    };
+    return fontSizeMap[fontSize] || 14;
+  };
+
+  // Helper: Get motion duration values
+  const getMotionDurations = (reducedMotion: boolean) => ({
+    motionDurationSlow: reducedMotion ? '0s' : '0.3s',
+    motionDurationMid: reducedMotion ? '0s' : '0.2s',
+    motionDurationFast: reducedMotion ? '0s' : '0.1s',
+  });
+
+  // Helper: Get high contrast color tokens
+  const getHighContrastColors = () => ({
+    colorPrimary: '#0066cc',
+    colorSuccess: '#00aa00',
+    colorWarning: '#ff8800',
+    colorError: '#cc0000',
+    colorBgContainer: '#000000',
+    colorText: '#ffffff',
+    colorBorder: '#ffffff',
+  });
+
   // Custom theme based on accessibility settings
   const getThemeConfig = () => {
     const baseTheme = {
       algorithm: settings.highContrast ? theme.darkAlgorithm : theme.defaultAlgorithm,
       token: {
-        fontSize:
-          settings.fontSize === 'small'
-            ? 12
-            : settings.fontSize === 'large'
-              ? 16
-              : settings.fontSize === 'extra-large'
-                ? 18
-                : 14,
+        fontSize: getFontSizeValue(settings.fontSize),
         borderRadius: settings.reducedMotion ? 2 : 6,
-        motionDurationSlow: settings.reducedMotion ? '0s' : '0.3s',
-        motionDurationMid: settings.reducedMotion ? '0s' : '0.2s',
-        motionDurationFast: settings.reducedMotion ? '0s' : '0.1s',
+        ...getMotionDurations(settings.reducedMotion),
       },
     };
 
@@ -181,14 +203,8 @@ export const AccessibilityProvider: React.FC<AccessibilityProviderProps> = ({ ch
     if (settings.highContrast) {
       baseTheme.token = {
         ...baseTheme.token,
-        colorPrimary: '#0066cc',
-        colorSuccess: '#00aa00',
-        colorWarning: '#ff8800',
-        colorError: '#cc0000',
-        colorBgContainer: '#000000',
-        colorText: '#ffffff',
-        colorBorder: '#ffffff',
-      } as any;
+        ...getHighContrastColors(),
+      };
     }
 
     return baseTheme;
@@ -317,6 +333,7 @@ export const AccessibilityProvider: React.FC<AccessibilityProviderProps> = ({ ch
 
         {/* Color blind SVG filters */}
         <svg style={{ position: 'absolute', width: 0, height: 0 }}>
+          <title>Color blindness filter definitions</title>
           <defs>
             <filter id="protanopia-filter">
               <feColorMatrix

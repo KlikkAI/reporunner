@@ -480,9 +480,9 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
                   dataKey="count"
                   label={({ type, percentage }) => `${type}: ${percentage}%`}
                 >
-                  {data?.performance.errorPatterns.map((_entry, index) => (
+                  {data?.performance.errorPatterns.map((entry, index) => (
                     <Cell
-                      key={`cell-${index}`}
+                      key={`cell-${entry.type}`}
                       fill={['#ff4d4f', '#faad14', '#1890ff', '#52c41a'][index % 4]}
                     />
                   ))}

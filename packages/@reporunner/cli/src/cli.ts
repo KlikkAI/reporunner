@@ -67,6 +67,7 @@ program.addCommand(authCommand);
 // Global error handler
 process.on('uncaughtException', (_error) => {
   if (program.opts().verbose) {
+    // Verbose error logging would go here when implemented
   }
   process.exit(1);
 });

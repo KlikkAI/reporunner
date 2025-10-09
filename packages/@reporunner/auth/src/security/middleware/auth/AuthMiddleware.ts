@@ -76,7 +76,7 @@ export class AuthMiddleware extends SecurityMiddleware {
     this.config = config;
 
     // Add default config if token is undefined
-    const tokenConfig = config.auth?.token || {
+    const _tokenConfig = config.auth?.token || {
       secret: 'default-secret',
       expiresIn: '1h',
       refreshExpiresIn: '7d',
@@ -85,8 +85,7 @@ export class AuthMiddleware extends SecurityMiddleware {
     this.tokenService = new JWTTokenService();
     this.sessionService = new SessionService(config.auth?.session);
     this.roleService = new RoleService();
-    // TODO: Pass tokenConfig to JWTTokenService when constructor is implemented
-    void tokenConfig; // Suppress unused variable warning
+    // TODO: Pass _tokenConfig to JWTTokenService when constructor is implemented
   }
 
   protected async implementation({ req }: SecurityContext): Promise<void> {
@@ -129,6 +128,32 @@ export class AuthMiddleware extends SecurityMiddleware {
     }
   }
 
+  private async checkRoleAuthorization(user: Express.User, roles: string[]): Promise<void> {
+    const hasRole = await this.roleService.checkRoles(user, roles);
+    if (!hasRole) {
+      throw new AuthorizationError(`User lacks required roles. Required: ${roles.join(', ')}`);
+    }
+  }
+
+  private async checkPermissionAuthorization(
+    user: Express.User,
+    permissions: string[]
+  ): Promise<void> {
+    const hasPermissions = await this.roleService.checkPermissions(user, permissions);
+    if (!hasPermissions) {
+      throw new AuthorizationError(
+        `User lacks required permissions. Required: ${permissions.join(', ')}`
+      );
+    }
+  }
+
+  private async checkOwnershipAuthorization(user: Express.User, resourceId: string): Promise<void> {
+    const isOwner = await this.roleService.checkResourceOwnership(user, resourceId);
+    if (!isOwner) {
+      throw new AuthorizationError('User does not own this resource');
+    }
+  }
+
   private async authorize(req: Request): Promise<void> {
     const { rbac } = this.config;
 
@@ -139,33 +164,17 @@ export class AuthMiddleware extends SecurityMiddleware {
     try {
       // Check roles if specified
       if (rbac?.roles?.length) {
-        const hasRole = await this.roleService.checkRoles(req.user, rbac.roles);
-        if (!hasRole) {
-          throw new AuthorizationError(
-            `User lacks required roles. Required: ${rbac.roles.join(', ')}`
-          );
-        }
+        await this.checkRoleAuthorization(req.user, rbac.roles);
       }
 
       // Check permissions if specified
       if (rbac?.permissions?.length) {
-        const hasPermissions = await this.roleService.checkPermissions(req.user, rbac.permissions);
-        if (!hasPermissions) {
-          throw new AuthorizationError(
-            `User lacks required permissions. Required: ${rbac.permissions.join(', ')}`
-          );
-        }
+        await this.checkPermissionAuthorization(req.user, rbac.permissions);
       }
 
       // Check resource ownership if required
       if (rbac?.requireOwnership) {
-        const isOwner = await this.roleService.checkResourceOwnership(
-          req.user,
-          req.params.id // Assuming resource ID is in params
-        );
-        if (!isOwner) {
-          throw new AuthorizationError('User does not own this resource');
-        }
+        await this.checkOwnershipAuthorization(req.user, req.params.id);
       }
 
       // Run custom authorization check if provided

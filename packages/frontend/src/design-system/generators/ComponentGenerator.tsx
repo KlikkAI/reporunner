@@ -16,7 +16,7 @@ import { cn } from '../utils';
 export interface GeneratorConfig {
   id: string;
   type: string;
-  props?: Record<string, any>;
+  props?: Record<string, unknown>;
   className?: string;
   children?: GeneratorConfig[];
   title?: string;
@@ -36,18 +36,23 @@ export interface CardConfig extends GeneratorConfig {
   size?: 'default' | 'small';
 }
 
-export interface ListConfig extends GeneratorConfig {
-  items: any[];
-  renderItem?: (item: any, index: number) => React.ReactNode;
+export interface ListConfig<T = unknown> extends GeneratorConfig {
+  items: T[];
+  renderItem?: (item: T, index: number) => React.ReactNode;
   emptyText?: string;
   pagination?: false | { pageSize?: number; total?: number; current?: number };
   split?: boolean;
   size?: 'default' | 'large' | 'small';
 }
 
-export interface TableConfig extends GeneratorConfig {
-  columns: any[];
-  dataSource: any[];
+export interface TableConfig<T = unknown> extends GeneratorConfig {
+  columns: Array<{
+    title: string;
+    dataIndex: string;
+    key: string;
+    render?: (value: unknown, record: T) => React.ReactNode;
+  }>;
+  dataSource: T[];
   pagination?: false | { pageSize?: number; total?: number; current?: number };
   loading?: boolean;
   size?: 'large' | 'middle' | 'small';
@@ -63,7 +68,9 @@ export interface FormItemConfig extends GeneratorConfig {
 
 /**
  * Component Generator for Common UI Patterns
+ * Static-only class pattern is intentional for utility generators
  */
+// biome-ignore lint/complexity/noStaticOnlyClass: Utility pattern for React component generation
 export class ComponentGenerator {
   /**
    * Generate a card component
@@ -149,8 +156,8 @@ export class ComponentGenerator {
   ): React.ReactElement {
     return (
       <ResponsiveGrid columns={{ xs: 1, sm: 2, lg: 4 }} gap="1.5rem" className="stats-grid">
-        {stats.map((stat, index) => (
-          <Card key={index} className="text-center">
+        {stats.map((stat) => (
+          <Card key={stat.title} className="text-center">
             <Statistic
               title={stat.title}
               value={stat.value}
@@ -169,18 +176,18 @@ export class ComponentGenerator {
    * Generate a tag list
    */
   static generateTagList(
-    items: Array<{ label: string; value?: any; color?: string }>,
+    items: Array<{ label: string; value?: unknown; color?: string }>,
     config?: {
       closable?: boolean;
-      onClose?: (item: any) => void;
+      onClose?: (item: { label: string; value?: unknown; color?: string }) => void;
       className?: string;
     }
   ): React.ReactElement {
     return (
       <Space wrap className={cn('tag-list', config?.className)}>
-        {items.map((item, index) => (
+        {items.map((item) => (
           <Tag
-            key={index}
+            key={item.label}
             color={item.color}
             closable={config?.closable}
             onClose={() => config?.onClose?.(item)}
@@ -215,9 +222,9 @@ export class ComponentGenerator {
           align === 'right' && 'justify-end'
         )}
       >
-        {actions.map((action, index) => (
+        {actions.map((action) => (
           <Button
-            key={index}
+            key={action.label}
             type={action.type}
             icon={action.icon}
             onClick={action.onClick}
@@ -387,11 +394,37 @@ export class ComponentGenerator {
 /**
  * Pre-built Component Patterns
  */
+// Type definitions for component patterns
+interface WorkflowItem {
+  id: string;
+  name: string;
+  description?: string;
+  status?: string;
+  trigger?: string;
+  lastRun?: string;
+}
+
+interface CredentialItem {
+  id: string;
+  name: string;
+  type: string;
+  verified: boolean;
+}
+
+interface ExecutionItem {
+  id: string;
+  workflowId?: string;
+  workflowName?: string;
+  status: string;
+  startTime: string;
+  duration?: number;
+}
+
 export const ComponentPatterns = {
   /**
    * Create a workflow item card
    */
-  workflowCard: (workflow: any, onEdit?: () => void, onDelete?: () => void) =>
+  workflowCard: (workflow: WorkflowItem, onEdit?: () => void, onDelete?: () => void) =>
     ComponentGenerator.generateCard({
       id: `workflow-${workflow.id}`,
       type: 'card',
@@ -432,7 +465,11 @@ export const ComponentPatterns = {
   /**
    * Create a credential item
    */
-  credentialItem: (credential: any, onTest?: () => void, onEdit?: () => void) => (
+  credentialItem: (
+    credential: CredentialItem & { createdAt?: string; isValid?: boolean },
+    onTest?: () => void,
+    onEdit?: () => void
+  ) => (
     <List.Item
       key={credential.id}
       actions={[
@@ -464,7 +501,7 @@ export const ComponentPatterns = {
   /**
    * Create an execution item
    */
-  executionItem: (execution: any, onView?: () => void) => (
+  executionItem: (execution: ExecutionItem & { startedAt?: string }, onView?: () => void) => (
     <List.Item
       key={execution.id}
       actions={[
