@@ -53,6 +53,7 @@ export interface WorkflowAnalysis {
   performance?: {
     estimatedImprovement: number;
     bottlenecks?: string[];
+    optimizationOpportunities?: string[];
   };
   maintainability?:
     | number
@@ -80,6 +81,8 @@ export interface ChatMessage {
     workflowId?: string;
     nodeId?: string;
     type?: 'workflow-analysis' | 'node-help' | 'general';
+    currentState?: any;
+    currentWorkflow?: any;
   };
 }
 
@@ -93,11 +96,14 @@ export interface ErrorDiagnosis {
 }
 
 export interface NaturalLanguageRequest {
-  query: string;
+  query?: string;
+  text?: string;
   context?: {
     workflowId?: string;
     nodeId?: string;
     currentState?: any;
+    currentWorkflow?: any;
+    userIntent?: string;
   };
   expectedOutput?: 'suggestion' | 'action' | 'explanation';
 }

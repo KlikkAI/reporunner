@@ -195,7 +195,7 @@ export const EnterpriseDashboard: React.FC = () => {
 
   useEffect(() => {
     loadDashboardData();
-  }, []);
+  }, [loadDashboardData]);
 
   const getActivityIcon = (type: ActivityEvent['type']) => {
     switch (type) {

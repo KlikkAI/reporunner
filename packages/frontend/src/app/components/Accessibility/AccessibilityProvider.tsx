@@ -128,7 +128,7 @@ export const AccessibilityProvider: React.FC<AccessibilityProviderProps> = ({ ch
   useEffect(() => {
     localStorage.setItem('accessibility_settings', JSON.stringify(settings));
     applyAccessibilityStyles(settings);
-  }, [settings]);
+  }, [settings, applyAccessibilityStyles]);
 
   const updateSettings = (newSettings: Partial<AccessibilitySettings>) => {
     setSettings((prev) => ({ ...prev, ...newSettings }));
@@ -188,7 +188,7 @@ export const AccessibilityProvider: React.FC<AccessibilityProviderProps> = ({ ch
         colorBgContainer: '#000000',
         colorText: '#ffffff',
         colorBorder: '#ffffff',
-      };
+      } as any;
     }
 
     return baseTheme;
@@ -364,8 +364,8 @@ export const AccessibilityProvider: React.FC<AccessibilityProviderProps> = ({ ch
 export const AccessibilitySettings: React.FC<{
   open: boolean;
   onClose: () => void;
-}> = ({ open, onClose }) => {
-  const { settings, updateSettings } = useAccessibility();
+}> = ({ open: _open, onClose: _onClose }) => {
+  const { settings: _settings, updateSettings: _updateSettings } = useAccessibility();
 
   return (
     <div>

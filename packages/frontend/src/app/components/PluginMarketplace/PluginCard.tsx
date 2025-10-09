@@ -10,9 +10,9 @@ import {
   UserOutlined,
   VerifiedOutlined,
 } from '@ant-design/icons';
-import type { PluginMetadata } from '@reporunner/platform';
 import { Avatar, Badge, Button, Card, Rate, Space, Tag, Tooltip, Typography } from 'antd';
 import type React from 'react';
+import type { PluginMetadata } from '../../types/plugin';
 
 const { Text, Title } = Typography;
 const { Meta } = Card;
@@ -134,14 +134,16 @@ export const PluginCard: React.FC<PluginCardProps> = ({
           }
           description={
             <div>
-              <Text type="secondary" ellipsis={{ rows: 2 }}>
+              <Text type="secondary" ellipsis={{ rows: 2 } as any}>
                 {plugin.description}
               </Text>
 
               <div style={{ marginTop: 8 }}>
                 <Space wrap>
                   <Tag color={getCategoryColor(plugin.category)}>{plugin.category}</Tag>
-                  <Tag color={getPricingColor(plugin.pricing)}>{plugin.pricing}</Tag>
+                  {plugin.pricing && (
+                    <Tag color={getPricingColor(plugin.pricing.type)}>{plugin.pricing.type}</Tag>
+                  )}
                 </Space>
               </div>
 
@@ -169,11 +171,9 @@ export const PluginCard: React.FC<PluginCardProps> = ({
                 <div style={{ marginTop: 8 }}>
                   <Space wrap>
                     {plugin.tags.slice(0, 3).map((tag) => (
-                      <Tag key={tag} size="small">
-                        {tag}
-                      </Tag>
+                      <Tag key={tag}>{tag}</Tag>
                     ))}
-                    {plugin.tags.length > 3 && <Tag size="small">+{plugin.tags.length - 3}</Tag>}
+                    {plugin.tags.length > 3 && <Tag>+{plugin.tags.length - 3}</Tag>}
                   </Space>
                 </div>
               )}

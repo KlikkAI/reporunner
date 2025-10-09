@@ -131,11 +131,11 @@ export const WorkflowTemplatesPanel: React.FC<WorkflowTemplatesPanelProps> = ({
     if (visible) {
       loadTemplatesAndPatterns();
     }
-  }, [visible]);
+  }, [visible, loadTemplatesAndPatterns]);
 
   useEffect(() => {
     filterTemplates();
-  }, [selectedCategory, searchQuery, sortBy, templates]);
+  }, [filterTemplates]);
 
   const handleCreateFromTemplate = async (template: WorkflowTemplate) => {
     try {
@@ -411,11 +411,12 @@ export const WorkflowTemplatesPanel: React.FC<WorkflowTemplatesPanelProps> = ({
             <Text>
               {selectedTemplate.nodes.length} nodes, {selectedTemplate.edges.length} connections
             </Text>
-            {selectedTemplate.configuration && selectedTemplate.configuration.conditionalBranches > 0 && (
-              <Tag color="orange" style={{ marginLeft: 8 }}>
-                <BranchesOutlined /> {selectedTemplate.configuration.conditionalBranches} branches
-              </Tag>
-            )}
+            {selectedTemplate.configuration &&
+              selectedTemplate.configuration.conditionalBranches > 0 && (
+                <Tag color="orange" style={{ marginLeft: 8 }}>
+                  <BranchesOutlined /> {selectedTemplate.configuration.conditionalBranches} branches
+                </Tag>
+              )}
             {selectedTemplate.configuration?.schedulingRequired && (
               <Tag color="purple" style={{ marginLeft: 8 }}>
                 <ClockCircleOutlined /> Scheduling

@@ -172,7 +172,7 @@ export const OrganizationSettingsComponent: React.FC<OrganizationSettingsProps> 
         <Select
           value={role}
           onChange={(newRole) => handleUpdateUserRole(record.userId, newRole)}
-          disabled={!canManageUsers() || record.role === 'owner'}
+          disabled={!canManageUsers || record.role === 'owner'}
           style={{ width: 120 }}
         >
           <Option value="owner">Owner</Option>
@@ -193,7 +193,7 @@ export const OrganizationSettingsComponent: React.FC<OrganizationSettingsProps> 
       key: 'actions',
       render: (_: unknown, record: OrganizationMember) => (
         <Space>
-          {canManageUsers() && record.role !== 'owner' && (
+          {canManageUsers && record.role !== 'owner' && (
             <Button
               type="link"
               danger
@@ -427,7 +427,7 @@ export const OrganizationSettingsComponent: React.FC<OrganizationSettingsProps> 
               <Button
                 type="primary"
                 onClick={() => setInviteModalVisible(true)}
-                disabled={!canManageUsers()}
+                disabled={!canManageUsers}
                 icon={<TeamOutlined />}
               >
                 Invite User

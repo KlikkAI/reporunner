@@ -29,7 +29,7 @@ export const WorkflowTester: React.FC<{
 }> = ({ nodes, edges, onClose }) => {
   const [testResult, setTestResult] = useState<any>(null);
   const [testing, setTesting] = useState(false);
-  const [executionId, setExecutionId] = useState<string | null>(null);
+  const [executionId, setExecutionId] = useState<string | undefined>(undefined);
   const [triggerData, setTriggerData] = useState('');
   const [testMode, setTestMode] = useState<'validate' | 'dry_run' | 'full_test'>('validate');
 
@@ -53,7 +53,9 @@ export const WorkflowTester: React.FC<{
           nodes: workflowJson.nodes.map((node) => ({
             id: node.id,
             type: node.type || 'unknown',
-            position: { x: node.position[0], y: node.position[1] },
+            position: Array.isArray(node.position)
+              ? { x: node.position[0], y: node.position[1] }
+              : node.position,
             data: node.data || {},
           })),
           edges: workflowJson.edges || [],
@@ -74,7 +76,9 @@ export const WorkflowTester: React.FC<{
           nodes: workflowJson.nodes.map((node) => ({
             id: node.id,
             type: node.type || 'unknown',
-            position: { x: node.position[0], y: node.position[1] },
+            position: Array.isArray(node.position)
+              ? { x: node.position[0], y: node.position[1] }
+              : node.position,
             data: node.data || {},
           })),
           edges: workflowJson.edges || [],
@@ -167,18 +171,14 @@ export const WorkflowTester: React.FC<{
     <div>
       <div className="mb-4">
         <Alert
-          type={
-            exec.status === 'completed' ? 'success' : exec.status === 'failed' ? 'error' : 'info'
-          }
+          type={exec.status === 'success' ? 'success' : exec.status === 'error' ? 'error' : 'info'}
           message={`Execution ${exec.status}`}
           description={
             <div>
               <div>
-                Started: {exec.startedAt ? new Date(exec.startedAt).toLocaleString() : 'N/A'}
+                Started: {exec.startTime ? new Date(exec.startTime).toLocaleString() : 'N/A'}
               </div>
-              {exec.completedAt && (
-                <div>Completed: {new Date(exec.completedAt).toLocaleString()}</div>
-              )}
+              {exec.endTime && <div>Completed: {new Date(exec.endTime).toLocaleString()}</div>}
               {exec.duration && <div>Duration: {Math.round(exec.duration / 1000)}s</div>}
               <div>
                 Progress: {exec.progress?.completedNodes?.length || 0} /{' '}
@@ -191,7 +191,7 @@ export const WorkflowTester: React.FC<{
 
       <Card title="Node Execution Timeline" size="small">
         <Timeline>
-          {exec.results?.map((result: any) => (
+          {(Array.isArray(exec.results) ? exec.results : []).map((result: any) => (
             <Timeline.Item
               key={result.nodeId}
               color={
@@ -228,11 +228,11 @@ export const WorkflowTester: React.FC<{
             </Timeline.Item>
           ))}
 
-          {exec.progress?.currentNodeId && exec.status === 'running' && (
+          {exec.progress?.currentNode && exec.status === 'running' && (
             <Timeline.Item color="blue" dot={<Spin size="small" />}>
               <div>
                 <strong>Currently executing...</strong>
-                <div className="text-gray-500 text-sm">Node: {exec.progress?.currentNodeId}</div>
+                <div className="text-gray-500 text-sm">Node: {exec.progress?.currentNode}</div>
               </div>
             </Timeline.Item>
           )}
@@ -243,20 +243,26 @@ export const WorkflowTester: React.FC<{
         <Card title="Execution Error" className="mt-4 border-red-200">
           <Alert
             type="error"
-            message={exec.error.message}
+            message={
+              typeof exec.error === 'string'
+                ? exec.error
+                : (exec.error as any).message || 'Unknown error'
+            }
             description={
-              <div>
-                {exec.error.nodeId && (
-                  <div>
-                    Failed at node: <code>{exec.error.nodeId}</code>
-                  </div>
-                )}
-                {exec.error.code && (
-                  <div>
-                    Error code: <code>{exec.error.code}</code>
-                  </div>
-                )}
-              </div>
+              typeof exec.error === 'object' && exec.error !== null ? (
+                <div>
+                  {(exec.error as any).nodeId && (
+                    <div>
+                      Failed at node: <code>{(exec.error as any).nodeId}</code>
+                    </div>
+                  )}
+                  {(exec.error as any).code && (
+                    <div>
+                      Error code: <code>{(exec.error as any).code}</code>
+                    </div>
+                  )}
+                </div>
+              ) : null
             }
           />
         </Card>

@@ -347,7 +347,9 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
       <Card title="Node Performance Analysis" size="small">
         <Table
           size="small"
-          dataSource={currentAnalytics?.nodePerformance || []}
+          dataSource={
+            currentAnalytics?.nodePerformance ? Object.values(currentAnalytics.nodePerformance) : []
+          }
           rowKey="nodeId"
           pagination={{ pageSize: 10 }}
           columns={[

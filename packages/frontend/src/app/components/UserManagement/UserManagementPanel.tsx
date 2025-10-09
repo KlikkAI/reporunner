@@ -92,7 +92,10 @@ const UserManagementPanel: React.FC<UserManagementPanelProps> = ({ className }) 
           role: 'admin',
           status: 'active',
           createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
           lastLoginAt: new Date(Date.now() - 3600000).toISOString(),
+          authProvider: 'local' as const,
+          emailVerified: true,
           mfaEnabled: true,
           preferences: {
             theme: 'dark',
@@ -136,7 +139,10 @@ const UserManagementPanel: React.FC<UserManagementPanelProps> = ({ className }) 
           role: 'member',
           status: 'active',
           createdAt: new Date(Date.now() - 86400000).toISOString(),
+          updatedAt: new Date(Date.now() - 86400000).toISOString(),
           lastLoginAt: new Date(Date.now() - 7200000).toISOString(),
+          authProvider: 'local' as const,
+          emailVerified: true,
           mfaEnabled: false,
           preferences: {
             theme: 'light',
@@ -180,6 +186,9 @@ const UserManagementPanel: React.FC<UserManagementPanelProps> = ({ className }) 
           role: 'viewer',
           status: 'pending',
           createdAt: new Date(Date.now() - 172800000).toISOString(),
+          updatedAt: new Date(Date.now() - 172800000).toISOString(),
+          authProvider: 'local' as const,
+          emailVerified: false,
           mfaEnabled: false,
           preferences: {
             theme: 'dark',

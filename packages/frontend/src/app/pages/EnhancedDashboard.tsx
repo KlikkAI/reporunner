@@ -36,7 +36,7 @@ import {
 import dayjs from 'dayjs';
 import type React from 'react';
 import { useEffect, useState } from 'react';
-import { useAccessibility, useScreenReaderAnnouncements } from '../components/Accessibility';
+import { useScreenReaderAnnouncements } from '../components/Accessibility';
 import { AnalyticsDashboard } from '../components/Analytics';
 import { useResponsive } from '../components/Layout';
 import { OnboardingProgress, OnboardingTour, useOnboarding } from '../components/Onboarding';
@@ -86,8 +86,8 @@ export const EnhancedDashboard: React.FC = () => {
   ]);
 
   // Hooks
-  const { isMobile, _isTablet } = useResponsive();
-  const { _settings } = useAccessibility();
+  const { isMobile } = useResponsive();
+  // useAccessibility hook available if needed
   const { announceNavigation, announceSuccess } = useScreenReaderAnnouncements();
   const {
     isOnboardingOpen,
@@ -510,7 +510,11 @@ export const EnhancedDashboard: React.FC = () => {
       </div>
 
       {/* Main Content */}
-      <Tabs activeKey={activeTab} onChange={setActiveTab} size={isMobile ? 'small' : 'default'}>
+      <Tabs
+        activeKey={activeTab}
+        onChange={setActiveTab}
+        size={(isMobile ? 'small' : 'default') as any}
+      >
         <TabPane tab="Overview" key="overview">
           {renderOverviewTab()}
         </TabPane>

@@ -63,6 +63,17 @@ export interface CredentialRequirement {
   displayName?: string;
   testedBy?: string;
   documentationUrl?: string;
+  properties?: Array<{
+    displayName: string;
+    name: string;
+    type: string;
+    default?: any;
+    required?: boolean;
+    description?: string;
+    typeOptions?: Record<string, any>;
+    placeholder?: string;
+    options?: Array<{ name: string; value: any; displayName?: string }>;
+  }>;
 }
 
 /**

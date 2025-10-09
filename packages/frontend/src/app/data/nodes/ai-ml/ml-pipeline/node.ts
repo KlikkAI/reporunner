@@ -9,11 +9,9 @@ export const mlPipelineNode: EnhancedIntegrationNodeType = {
   description:
     'Orchestrate end-to-end machine learning pipelines with data preprocessing, training, validation, and deployment',
   type: 'ai-agent',
-  category: 'AI/ML',
-  subcategory: 'MLOps',
   icon: '🔄',
   configuration: {
-    properties: mlPipelineNodeDefinition.description.properties,
+    properties: mlPipelineNodeDefinition.description.properties as any,
     credentials: mlPipelineCredentials,
     polling: {
       enabled: true,

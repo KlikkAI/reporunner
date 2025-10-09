@@ -243,6 +243,15 @@ export const CredentialTypeDefinitionSchema = z.object({
         required: z.boolean().optional(),
         placeholder: z.string().optional(),
         description: z.string().optional(),
+        options: z
+          .array(
+            z.object({
+              name: z.string(),
+              value: z.union([z.string(), z.number()]),
+            })
+          )
+          .optional(),
+        validation: z.record(z.string(), z.unknown()).optional(),
       })
     )
     .optional(),

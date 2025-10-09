@@ -5,43 +5,41 @@
  */
 
 // AI Assistant - User-facing AI features (UI only)
-export type { AIAssistantConfig, ChatMessage, AIWorkflowSuggestion } from './aiAssistantService';
+export type { AIAssistantConfig, AIWorkflowSuggestion, ChatMessage } from './aiAssistantService';
 export { AIAssistantService, aiAssistantService } from './aiAssistantService';
 
 // Analytics - Client-side analytics and tracking (UI only)
 export type {
   AnalyticsEvent,
-  PerformanceMetric,
-  WorkflowAnalytics,
-  NodePerformanceStats,
+  BottleneckAnalysis,
+  CostOptimization,
   ExecutionMetrics,
   NodeMetrics,
-  BottleneckAnalysis,
+  NodePerformanceStats,
+  PerformanceMetric,
   PredictiveInsight,
   TimeSeriesPoint,
-  CostOptimization,
+  WorkflowAnalytics,
 } from './analyticsService';
-export { analyticsService, AnalyticsService } from './analyticsService';
-
+export { AnalyticsService, analyticsService } from './analyticsService';
 // Config - Application configuration (UI only)
-export type { AppConfig, ApiEndpoints } from './ConfigService';
-export { configService, ConfigService } from './ConfigService';
 // Re-export LogLevel from ConfigService (where it's defined)
-export type { LogLevel } from './ConfigService';
+export type { ApiEndpoints, AppConfig, LogLevel } from './ConfigService';
+export { ConfigService, configService } from './ConfigService';
 
 // Logging - Client-side logging (UI only, sends to backend)
 export type {
-  LogEntry,
   LogContext,
+  LogEntry,
   PerformanceMetric as LoggingPerformanceMetric,
   UserAction,
 } from './LoggingService';
-export { logger, Logger } from './LoggingService';
+export { Logger, logger } from './LoggingService';
 
 // Performance - Client-side performance monitoring (UI only)
 export type {
+  ComponentPerformance,
   PerformanceMetric as PerformanceServiceMetric,
   WebVital,
-  ComponentPerformance,
 } from './PerformanceService';
-export { performanceService, PerformanceMonitoringService } from './PerformanceService';
+export { PerformanceMonitoringService, performanceService } from './PerformanceService';

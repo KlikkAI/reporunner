@@ -88,7 +88,11 @@ const Credentials: React.FC = () => {
       if (editingCredential) {
         await updateCredential(editingCredential.id, formData);
       } else {
-        await createCredential(credentialName, selectedType.name, formData);
+        await createCredential({
+          name: credentialName,
+          type: selectedType.name,
+          data: formData,
+        } as any);
       }
 
       setShowCreateForm(false);
@@ -104,7 +108,7 @@ const Credentials: React.FC = () => {
   const handleTest = async (credentialId: string) => {
     const result = await testCredential(credentialId);
     // Show result in a toast or modal
-    alert(result.message);
+    alert(result ? 'Credential test successful' : 'Credential test failed');
   };
 
   const handleDelete = async (credentialId: string, credentialName: string) => {

@@ -149,7 +149,7 @@ const ConditionNodeBody: React.FC<CustomNodeBodyProps> = ({
                 onDelete?.();
               }}
               onMenuToggle={() => setShowLocalMenu(!showLocalMenu)}
-              menuTriggerRef={menuTriggerRef}
+              menuTriggerRef={menuTriggerRef as any}
             />
 
             {/* Menu Dropdown */}

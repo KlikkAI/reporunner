@@ -96,6 +96,7 @@ const ResizablePanel: React.FC<ResizablePanelProps> = ({
         document.removeEventListener('mouseup', handleMouseUp);
       };
     }
+    return undefined;
   }, [isResizing, handleMouseMove, handleMouseUp]);
 
   return (

@@ -99,7 +99,7 @@ export const ExecutionPanel: React.FC<ExecutionPanelProps> = ({
         <div className="flex justify-between items-center mb-2">
           <span className="text-sm font-medium text-gray-300">Execution Progress</span>
           <span className="text-sm text-gray-400">
-            {completedNodes}/{totalNodes} nodes
+            {completedNodes.length}/{totalNodes} nodes
           </span>
         </div>
 
@@ -107,14 +107,14 @@ export const ExecutionPanel: React.FC<ExecutionPanelProps> = ({
           <div
             className={cn(
               'h-2 rounded-full transition-all duration-300',
-              failedNodes > 0 ? 'bg-red-500' : 'bg-blue-500'
+              failedNodes.length > 0 ? 'bg-red-500' : 'bg-blue-500'
             )}
             style={{ width: `${progressPercentage}%` }}
           />
         </div>
 
-        {failedNodes > 0 && (
-          <div className="mt-2 text-xs text-red-400">{failedNodes} node(s) failed</div>
+        {failedNodes.length > 0 && (
+          <div className="mt-2 text-xs text-red-400">{failedNodes.length} node(s) failed</div>
         )}
       </div>
     );
@@ -217,12 +217,13 @@ export const ExecutionPanel: React.FC<ExecutionPanelProps> = ({
           {/* Execution time metrics */}
           <div className="bg-gray-900 rounded border border-gray-700 p-3">
             <h4 className="text-xs font-semibold text-gray-400 mb-2">Node Execution Times</h4>
-            {performanceMetrics.nodeExecutionTimes.size === 0 ? (
+            {!performanceMetrics?.nodeExecutionTimes ||
+            performanceMetrics.nodeExecutionTimes.size === 0 ? (
               <div className="text-gray-500 text-xs">No timing data available</div>
             ) : (
               <div className="space-y-1">
                 {Array.from(performanceMetrics.nodeExecutionTimes.entries()).map(
-                  ([nodeId, time]) => (
+                  ([nodeId, time]: [string, number]) => (
                     <div key={nodeId} className="flex justify-between text-xs">
                       <span className="text-blue-400">{nodeId}</span>
                       <span className="text-gray-300">
@@ -242,7 +243,7 @@ export const ExecutionPanel: React.FC<ExecutionPanelProps> = ({
               <div className="flex justify-between">
                 <span className="text-gray-400">Peak Memory:</span>
                 <span className="text-gray-300">
-                  {performanceMetrics.resourceUsage.peakMemory
+                  {performanceMetrics?.resourceUsage?.peakMemory
                     ? `${(performanceMetrics.resourceUsage.peakMemory / 1024 / 1024).toFixed(1)} MB`
                     : 'N/A'}
                 </span>
@@ -250,7 +251,7 @@ export const ExecutionPanel: React.FC<ExecutionPanelProps> = ({
               <div className="flex justify-between">
                 <span className="text-gray-400">CPU Time:</span>
                 <span className="text-gray-300">
-                  {performanceMetrics.resourceUsage.totalCpuTime
+                  {performanceMetrics?.resourceUsage?.totalCpuTime
                     ? `${performanceMetrics.resourceUsage.totalCpuTime}ms`
                     : 'N/A'}
                 </span>
@@ -258,7 +259,7 @@ export const ExecutionPanel: React.FC<ExecutionPanelProps> = ({
               <div className="flex justify-between">
                 <span className="text-gray-400">Network Requests:</span>
                 <span className="text-gray-300">
-                  {performanceMetrics.resourceUsage.networkRequests || 0}
+                  {performanceMetrics?.resourceUsage?.networkRequests || 0}
                 </span>
               </div>
             </div>

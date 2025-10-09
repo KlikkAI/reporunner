@@ -40,7 +40,7 @@ export const Dashboard: React.FC = () => {
       value: workflows.length,
       icon: <PlayCircleOutlined />,
       color: 'blue',
-      trend: { value: 12, isPositive: true },
+      trend: { value: 12, isPositive: true, label: '+12%' },
       loading: isLoading,
     },
     {

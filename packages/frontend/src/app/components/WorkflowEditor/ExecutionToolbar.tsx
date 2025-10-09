@@ -109,30 +109,29 @@ export const ExecutionToolbar: React.FC<ExecutionToolbarProps> = ({
 
     try {
       setSaving(true);
-      const workflowJson = exportWorkflowToBackend(nodes, edges);
 
+      // Use React Flow nodes directly - they already match WorkflowNode schema
       await workflowApiService.createWorkflow({
+        active: true,
         name: `Workflow ${new Date().toLocaleDateString()}`,
         description: 'Saved from workflow editor',
-        nodes: workflowJson.nodes.map((node) => ({
+        nodes: nodes.map((node) => ({
           id: node.id,
           type: node.type || 'unknown',
-          position: { x: node.position[0], y: node.position[1] },
-          data: {
-            label: node.name,
-            parameters: node.parameters,
-            credentials:
-              typeof node.credentials === 'object' && node.credentials
-                ? Object.keys(node.credentials)[0] || undefined
-                : (node.credentials as string | undefined),
-            disabled: node.disabled,
-            notes: node.notes,
-          },
+          position: node.position,
+          data: node.data,
         })),
-        edges: [], // Convert connections to edges if needed
+        edges: edges.map((edge) => ({
+          id: edge.id,
+          source: edge.source,
+          target: edge.target,
+          sourceHandle: edge.sourceHandle || undefined,
+          targetHandle: edge.targetHandle || undefined,
+          data: edge.data,
+        })),
         tags: ['editor'],
         isActive: true,
-      });
+      } as any);
 
       message.success('Workflow saved successfully');
     } catch (error: any) {
@@ -242,16 +241,16 @@ export const ExecutionToolbar: React.FC<ExecutionToolbarProps> = ({
               status={
                 currentExecution.status === 'running'
                   ? 'processing'
-                  : currentExecution.status === 'completed'
+                  : currentExecution.status === 'success'
                     ? 'success'
-                    : currentExecution.status === 'failed'
+                    : currentExecution.status === 'error'
                       ? 'error'
                       : 'default'
               }
               text={
                 <span className="text-sm">
                   {currentExecution.status === 'running'
-                    ? `Running (${(currentExecution as any).progress?.completedNodes?.length || 0}/${(currentExecution as any).progress?.totalNodes || 0})`
+                    ? `Running (${currentExecution.progress?.completedNodes?.length || 0}/${currentExecution.progress?.totalNodes || 0})`
                     : `${currentExecution.status} - ${Math.round((currentExecution.duration || 0) / 1000)}s`}
                 </span>
               }

@@ -13,16 +13,14 @@ import {
   PlayCircleOutlined,
   SyncOutlined,
 } from '@ant-design/icons';
-import { Logger } from '@reporunner/core';
 import type React from 'react';
 import { useCallback, useEffect, useState } from 'react';
 import { WorkflowApiService } from '@/core';
 import type { WorkflowExecution } from '@/core/types/execution';
 import type { PageSectionConfig, Statistic } from '@/design-system';
-import { ComponentPatterns, PageTemplates } from '@/design-system';
+import { PageTemplates } from '@/design-system';
 
 const workflowApiService = new WorkflowApiService();
-const logger = new Logger('Executions');
 
 export const Executions: React.FC = () => {
   const [executions, setExecutions] = useState<WorkflowExecution[]>([]);
@@ -58,20 +56,26 @@ export const Executions: React.FC = () => {
         results: Array.isArray(execution.results)
           ? execution.results.map((nodeResult) => ({
               ...nodeResult,
+              // Map backend status values to correct NodeExecution status type
               status:
-                nodeResult.status === 'completed'
-                  ? ('success' as const)
-                  : nodeResult.status === 'failed'
-                    ? ('error' as const)
-                    : (nodeResult.status as 'success' | 'error' | 'skipped'),
+                (nodeResult.status as any) === 'success'
+                  ? ('completed' as const)
+                  : (nodeResult.status as any) === 'error'
+                    ? ('failed' as const)
+                    : (nodeResult.status as
+                        | 'pending'
+                        | 'running'
+                        | 'completed'
+                        | 'failed'
+                        | 'skipped'),
             }))
           : undefined,
       }));
 
       if (page === 1) {
-        setExecutions(transformedExecutions);
+        setExecutions(transformedExecutions as any);
       } else {
-        setExecutions((prev) => [...prev, ...transformedExecutions]);
+        setExecutions((prev) => [...prev, ...transformedExecutions] as any);
       }
     } catch (_error) {
       setExecutions([]);
@@ -147,21 +151,6 @@ export const Executions: React.FC = () => {
     { key: 'error', label: 'Failed' },
     { key: 'cancelled', label: 'Cancelled' },
   ];
-
-  // Generate execution items using ComponentPatterns
-  const __executionItems = executions.map((execution) =>
-    ComponentPatterns.executionItem(
-      {
-        ...execution,
-        workflowName: `Workflow ${execution.workflowId}`,
-        startedAt: execution.startTime ? new Date(execution.startTime).toLocaleString() : 'N/A',
-      },
-      () => {
-        // View execution details
-        logger.info('View execution', { executionId: execution.id });
-      }
-    )
-  );
 
   // Custom filter section
   const filterSection: PageSectionConfig = {

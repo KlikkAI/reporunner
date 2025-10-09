@@ -59,7 +59,7 @@ export interface BottleneckAnalysis {
   impact: 'low' | 'medium' | 'high';
   suggestions: string[];
   metrics: NodePerformanceStats;
-  severity?: 'low' | 'medium' | 'high';
+  severity?: 'low' | 'medium' | 'high' | 'critical';
   description?: string;
   recommendation?: string;
   type?: string;
@@ -89,7 +89,12 @@ export interface CostOptimization {
   currentCost: number;
   optimizedCost: number;
   savings: number;
-  recommendations: string[];
+  recommendations: Array<{
+    description: string;
+    estimatedSavings: number;
+    implementation: string;
+    impact: 'low' | 'medium' | 'high';
+  }>;
   description?: string;
   estimatedSavings?: string;
   implementation?: string;

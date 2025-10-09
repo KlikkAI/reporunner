@@ -73,7 +73,8 @@ export async function handleCreateNode(options: CreateNodeOptions): Promise<void
         type: 'input',
         name: 'description',
         message: 'Node description:',
-        default: (answers: InquirerAnswers) => `${answers.name || options.name} integration for Reporunner`,
+        default: (answers: InquirerAnswers) =>
+          `${answers.name || options.name} integration for Reporunner`,
       },
       {
         type: 'input',

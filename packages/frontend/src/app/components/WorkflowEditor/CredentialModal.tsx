@@ -104,18 +104,17 @@ export const CredentialModal: React.FC<CredentialModalProps> = ({
         const property: PropertyRendererConfig = {
           id: field.name,
           type: field.type === 'password' ? 'password' : 'text',
-          label: field.displayName || field.name,
+          label: field.name, // Use name as label since displayName doesn't exist
           description: field.description,
           required: field.required,
           placeholder: field.placeholder,
         };
 
-        if (field.type === 'options' && field.options) {
+        // Note: options type is defined in schema but options array is not provided
+        // Would need backend to provide this if field.type === 'options'
+        if (field.type === 'options') {
           property.type = 'select';
-          property.options = field.options.map((option: any) => ({
-            label: option.name,
-            value: option.value,
-          }));
+          property.options = []; // Empty until backend provides options
         }
 
         properties.push(property);

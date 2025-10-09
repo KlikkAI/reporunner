@@ -149,6 +149,9 @@ export const WorkflowExecutionSchema = z.object({
     .optional(),
   error: z.string().optional(),
   nodeExecutions: z.array(NodeExecutionSchema).optional(),
+  // Enhanced execution properties for UI state
+  nodeStates: z.record(z.string(), z.unknown()).optional(),
+  activeEdges: z.array(z.string()).optional(),
   logs: z
     .array(
       z.object({
@@ -260,7 +263,9 @@ export const BackendWorkflowSchema = z.object({
 
 export const ExecuteWorkflowRequestSchema = z.object({
   workflowId: OptionalIdSchema,
-  workflow: z.union([WorkflowDefinitionSchema as z.ZodTypeAny, BackendWorkflowSchema as z.ZodTypeAny]).optional(), // Support both formats
+  workflow: z
+    .union([WorkflowDefinitionSchema as z.ZodTypeAny, BackendWorkflowSchema as z.ZodTypeAny])
+    .optional(), // Support both formats
   triggerData: z.record(z.string(), z.unknown()).default({}),
   options: z
     .object({
@@ -286,6 +291,7 @@ export const ExecutionFilterSchema = z.object({
   limit: z.number().int().min(1).max(100).optional(),
   offset: z.number().int().min(0).optional(),
   page: z.number().int().min(1).optional(),
+  sortOrder: z.enum(['asc', 'desc']).optional(),
 });
 
 // API Response types

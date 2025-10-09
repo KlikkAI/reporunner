@@ -10,13 +10,8 @@ import {
   CheckCircle,
   Download,
   ExternalLink,
-  Eye,
   FileText,
-  Globe,
   Mail,
-  Scale,
-  Shield,
-  Users,
 } from 'lucide-react';
 import type React from 'react';
 import { useState } from 'react';
@@ -25,21 +20,6 @@ import { Header } from '../components/Landing/Header';
 
 export const Terms: React.FC = () => {
   const [lastUpdated] = useState('January 20, 2025');
-  const [_activeSection, _setActiveSection] = useState('overview');
-
-  const __sections = [
-    { id: 'overview', title: 'Overview', icon: Eye },
-    { id: 'acceptance', title: 'Acceptance', icon: CheckCircle },
-    { id: 'services', title: 'Services', icon: Globe },
-    { id: 'accounts', title: 'User Accounts', icon: Users },
-    { id: 'usage', title: 'Acceptable Use', icon: Shield },
-    { id: 'privacy', title: 'Privacy & Data', icon: FileText },
-    { id: 'payment', title: 'Payment Terms', icon: Scale },
-    { id: 'termination', title: 'Termination', icon: AlertTriangle },
-    { id: 'liability', title: 'Liability', icon: Scale },
-    { id: 'changes', title: 'Updates', icon: Calendar },
-  ];
-
   const keyTerms = [
     {
       term: 'Service Availability',

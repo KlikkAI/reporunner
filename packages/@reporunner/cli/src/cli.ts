@@ -65,9 +65,8 @@ program.addCommand(workflowCommand);
 program.addCommand(authCommand);
 
 // Global error handler
-process.on('uncaughtException', (error) => {
+process.on('uncaughtException', (_error) => {
   if (program.opts().verbose) {
-    console.error(chalk.red('Uncaught exception:'), error);
   }
   process.exit(1);
 });

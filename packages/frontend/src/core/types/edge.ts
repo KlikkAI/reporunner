@@ -25,6 +25,8 @@ export type ConnectionTypeValue = `${ConnectionType}`;
 export interface WorkflowEdgeData {
   connectionType: ConnectionType;
   label?: string;
+  status?: 'idle' | 'running' | 'success' | 'error' | 'pinned';
+  onDelete?: (edgeId: string) => void;
   conditions?: Array<{
     field: string;
     operator: string;
@@ -40,6 +42,8 @@ export interface WorkflowEdgeData {
 // Custom edge props for React Flow
 export interface CustomEdgeProps extends EdgeProps {
   data?: WorkflowEdgeData;
+  hovered?: boolean;
+  bringToFront?: boolean;
 }
 
 // Connection validation

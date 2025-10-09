@@ -19,7 +19,7 @@ class PerformanceCache {
   set(key: string, data: any, ttl = 5 * 60 * 1000): void {
     // Remove oldest entries if cache is full
     if (this.cache.size >= this.maxSize) {
-      const oldestKey = this.cache.keys().next().value;
+      const oldestKey = this.cache.keys().next().value as string;
       this.cache.delete(oldestKey);
     }
 
@@ -167,7 +167,7 @@ export const useThrottle = <T extends (...args: any[]) => any>(callback: T, dela
     throttledCallback.current = throttle(callback, delay);
   }, [callback, delay]);
 
-  return throttledCallback.current as T;
+  return throttledCallback.current as unknown as T;
 };
 
 // Hook for debounced callbacks
@@ -181,7 +181,7 @@ export const useDebounceCallback = <T extends (...args: any[]) => any>(
     debouncedCallback.current = debounce(callback, delay);
   }, [callback, delay]);
 
-  return debouncedCallback.current as T;
+  return debouncedCallback.current as unknown as T;
 };
 
 // Hook for intersection observer (lazy loading)

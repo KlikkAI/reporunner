@@ -46,12 +46,38 @@ import {
 } from 'antd';
 import type React from 'react';
 import { useEffect, useState } from 'react';
-import {
-  advancedTriggerSystem,
-  type TriggerConfiguration,
-  type TriggerEvent,
-  type TriggerMetrics,
-} from '@/core/services/advancedTriggerSystem';
+
+// TODO: Module not found - needs implementation
+// import {
+//   advancedTriggerSystem,
+//   type TriggerConfiguration,
+//   type TriggerEvent,
+//   type TriggerMetrics,
+// } from '@/core/services/advancedTriggerSystem';
+
+// Stub types until advancedTriggerSystem is implemented
+type TriggerConfiguration = any;
+type TriggerEvent = any;
+type TriggerMetrics = any;
+
+interface EventSource {
+  source: string;
+  count: number;
+}
+
+const advancedTriggerSystem = {
+  getTriggers: async (..._args: any[]): Promise<TriggerConfiguration[]> => [],
+  createTrigger: async (..._args: any[]): Promise<TriggerConfiguration> => ({}) as any,
+  updateTrigger: async (..._args: any[]): Promise<TriggerConfiguration> => ({}) as any,
+  deleteTrigger: async (..._args: any[]): Promise<void> => {},
+  getRecentEvents: async (..._args: any[]): Promise<TriggerEvent[]> => [],
+  getMetrics: async (..._args: any[]): Promise<TriggerMetrics> => ({}) as any,
+  getTriggerMetrics: async (_triggerId: string): Promise<any> => ({}) as any,
+  toggleTrigger: async (_triggerId: string, _enabled: boolean): Promise<void> => {},
+  testTrigger: async (..._args: any[]): Promise<any> => ({}) as any,
+  generateWebhookUrl: (..._args: any[]): string => '',
+};
+
 import { colors } from '@/design-system/tokens';
 import { cn } from '@/design-system/utils';
 
@@ -79,30 +105,30 @@ export const TriggerPanel: React.FC<TriggerPanelProps> = ({ workflowId, visible,
   const [testModalVisible, setTestModalVisible] = useState(false);
   const [webhookUrl, setWebhookUrl] = useState('');
 
-  const loadTriggers = () => {
-    const allTriggers = advancedTriggerSystem.getAllTriggers();
+  const loadTriggers = async () => {
+    const allTriggers = await advancedTriggerSystem.getTriggers();
     const workflowTriggers = allTriggers.filter((t: any) => t.workflowId === workflowId);
     setTriggers(workflowTriggers);
   };
 
-  const loadRecentEvents = () => {
-    const allTriggers = advancedTriggerSystem.getAllTriggers();
+  const loadRecentEvents = async () => {
+    const allTriggers = await advancedTriggerSystem.getTriggers();
     const workflowTriggers = allTriggers.filter((t: any) => t.workflowId === workflowId);
 
     const events: TriggerEvent[] = [];
-    workflowTriggers.forEach((trigger: any) => {
-      const triggerEvents = advancedTriggerSystem.getRecentEvents(trigger.id, 50);
+    for (const trigger of workflowTriggers) {
+      const triggerEvents = await advancedTriggerSystem.getRecentEvents(trigger.id, 50);
       events.push(...triggerEvents);
-    });
+    }
 
     // Sort by timestamp descending
     events.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
     setRecentEvents(events.slice(0, 100));
   };
 
-  const loadMetrics = (triggerId: string) => {
+  const loadMetrics = async (triggerId: string) => {
     try {
-      const triggerMetrics = advancedTriggerSystem.getTriggerMetrics(triggerId);
+      const triggerMetrics = await advancedTriggerSystem.getTriggerMetrics(triggerId);
       setMetrics(triggerMetrics);
     } catch (_error) {}
   };
@@ -112,13 +138,13 @@ export const TriggerPanel: React.FC<TriggerPanelProps> = ({ workflowId, visible,
       loadTriggers();
       loadRecentEvents();
     }
-  }, [visible]);
+  }, [visible, loadRecentEvents, loadTriggers]);
 
   useEffect(() => {
     if (selectedTrigger) {
       loadMetrics(selectedTrigger.id);
     }
-  }, [selectedTrigger]);
+  }, [selectedTrigger, loadMetrics]);
 
   const handleCreateTrigger = async (values: any) => {
     setLoading(true);
@@ -156,7 +182,7 @@ export const TriggerPanel: React.FC<TriggerPanelProps> = ({ workflowId, visible,
         metadata: {},
       };
 
-      const created = advancedTriggerSystem.createTrigger(triggerConfig);
+      const created = await advancedTriggerSystem.createTrigger(triggerConfig);
 
       if (created.triggerType === 'webhook') {
         const config = created.configuration as any;
@@ -818,7 +844,7 @@ export const TriggerPanel: React.FC<TriggerPanelProps> = ({ workflowId, visible,
           <Card title="Top Sources" size="small">
             <List
               dataSource={metrics.topSources}
-              renderItem={(source) => (
+              renderItem={(source: EventSource) => (
                 <List.Item>
                   <List.Item.Meta title={source.source} description={`${source.count} events`} />
                   <Progress

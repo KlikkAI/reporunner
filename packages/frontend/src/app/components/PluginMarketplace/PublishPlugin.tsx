@@ -25,6 +25,7 @@ import type { UploadFile } from 'antd/es/upload/interface';
 import type React from 'react';
 import { useState } from 'react';
 import { usePluginMarketplace } from '../../hooks/usePluginMarketplace';
+import type { PublishRequest } from '../../types/plugin';
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -148,13 +149,18 @@ export const PublishPlugin: React.FC<PublishPluginProps> = ({ onClose }) => {
           checksum: 'mock-checksum',
         };
 
-        const publishRequest = {
-          pluginPackage,
-          publisherInfo: {
-            userId: 'current-user', // TODO: Get from auth context
-            publisherType: 'individual' as const,
+        const publishRequest: PublishRequest = {
+          metadata: pluginPackage.metadata,
+          packageData: {
+            manifest: pluginPackage.manifest,
+            bundle: pluginPackage.bundle,
+            checksum: pluginPackage.checksum,
+            publisherInfo: {
+              userId: 'current-user', // TODO: Get from auth context
+              publisherType: 'individual' as const,
+            },
           },
-          releaseNotes: form.getFieldValue('releaseNotes'),
+          readme: form.getFieldValue('releaseNotes'),
         };
 
         await publishPlugin(publishRequest);
@@ -169,7 +175,6 @@ export const PublishPlugin: React.FC<PublishPluginProps> = ({ onClose }) => {
       setPublishing(false);
     }
   };
-  _error;
 
   // Render validation results
   const renderValidationResults = () => {
@@ -387,7 +392,11 @@ export const PublishPlugin: React.FC<PublishPluginProps> = ({ onClose }) => {
               <Alert message={`File selected: ${pluginFile.name}`} type="success" showIcon />
             )}
 
-            <Button type="primary" onClick={handleValidation} disabled={!pluginFile}>
+            <Button
+              type="primary"
+              onClick={() => handleValidation(form.getFieldsValue())}
+              disabled={!pluginFile}
+            >
               Next: Validate Plugin
             </Button>
           </Space>

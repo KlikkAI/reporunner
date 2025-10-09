@@ -165,6 +165,8 @@ export interface EnhancedIntegrationNodeType {
   id: string;
   type: string;
   name: string;
+  displayName?: string; // User-friendly display name
+  icon?: string; // Icon identifier (e.g., 'fa:envelope', 'lucide:mail')
   description?: string;
   configuration: DynamicNodeConfiguration;
   inputs?: any[];

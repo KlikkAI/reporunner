@@ -22,6 +22,19 @@ export interface PluginMetadata {
   repository?: string;
   license?: string;
   homepage?: string;
+  // Additional properties for plugin details
+  reviews?: number;
+  pricing?: {
+    type: 'free' | 'paid' | 'freemium';
+    price?: number;
+  };
+  compatibility?: {
+    minVersion?: string;
+    maxVersion?: string;
+    platforms?: string[];
+  };
+  dependencies?: string[];
+  documentation?: string;
 }
 
 export interface PluginSearchQuery {

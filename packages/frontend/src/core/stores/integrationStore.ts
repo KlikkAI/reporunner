@@ -1,7 +1,6 @@
 import { create } from 'zustand';
 import { integrationService } from '@/app/services/integrationService';
 import { nodeRegistry } from '@/core';
-import { config } from '../config/environment';
 import type { Integration } from '../types/integration';
 
 interface IntegrationState {

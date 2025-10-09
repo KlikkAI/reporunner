@@ -401,7 +401,7 @@ export const IntegrationsPage: React.FC = () => {
                     className="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow group cursor-pointer"
                   >
                     <div className="flex items-center gap-4 mb-4">
-                      <div className="text-4xl">{integration.icon}</div>
+                      <div className="text-4xl">{integration.logo}</div>
                       <div>
                         <h3 className="font-semibold text-lg text-gray-900">{integration.name}</h3>
                         <p className="text-gray-600 text-sm">{integration.category}</p>
@@ -412,12 +412,12 @@ export const IntegrationsPage: React.FC = () => {
 
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        {integration.popular && (
+                        {integration.featured && (
                           <span className="px-2 py-1 bg-yellow-100 text-yellow-700 text-xs font-medium rounded-full">
                             Popular
                           </span>
                         )}
-                        {integration.verified && (
+                        {integration.status === 'stable' && (
                           <span className="px-2 py-1 bg-green-100 text-green-700 text-xs font-medium rounded-full">
                             Verified
                           </span>

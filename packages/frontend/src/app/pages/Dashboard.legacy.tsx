@@ -35,9 +35,9 @@ const Dashboard: React.FC = () => {
       const workflowsWithDefaults = result.items.map((workflow) => ({
         ...workflow,
         connections: (workflow as any).connections || {},
-        createdAt: workflow.createdAt || new Date().toISOString(),
-        updatedAt: workflow.updatedAt || new Date().toISOString(),
-        status: (workflow.status === 'expired' ? 'draft' : workflow.status) || 'draft',
+        createdAt: (workflow as any).createdAt || new Date().toISOString(),
+        updatedAt: (workflow as any).updatedAt || new Date().toISOString(),
+        status: ((workflow.status as any) === 'expired' ? 'draft' : workflow.status) || 'draft',
         settings: workflow.settings
           ? {
               ...workflow.settings,
@@ -51,17 +51,17 @@ const Dashboard: React.FC = () => {
           ? workflow.nodes.map((node) => ({
               ...node,
               data: {
-                ...node.data,
-                label: node.data.label || node.id, // Ensure label is always present
+                ...(node.data || {}),
+                label: node.data?.label || node.id, // Ensure label is always present
                 credentials:
-                  typeof node.data.credentials === 'string'
-                    ? [node.data.credentials]
-                    : node.data.credentials,
+                  typeof node.data?.credentials === 'string'
+                    ? [node.data?.credentials]
+                    : node.data?.credentials,
               },
             }))
           : [],
       }));
-      setWorkflows(workflowsWithDefaults);
+      setWorkflows(workflowsWithDefaults as any);
     } catch (error) {
       setWorkflows([]);
 

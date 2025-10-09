@@ -11,7 +11,6 @@ import {
   StarOutlined,
   TrophyOutlined,
 } from '@ant-design/icons';
-import type { PluginMetadata, PluginSearchQuery } from '../../types/plugin';
 import {
   Button,
   Card,
@@ -33,6 +32,7 @@ import {
 import type React from 'react';
 import { useEffect, useState } from 'react';
 import { usePluginMarketplace } from '../../hooks/usePluginMarketplace';
+import type { PluginMetadata, PluginSearchQuery } from '../../types/plugin';
 import { PluginCard } from './PluginCard';
 import { PluginDetails } from './PluginDetails';
 import { PublishPlugin } from './PublishPlugin';

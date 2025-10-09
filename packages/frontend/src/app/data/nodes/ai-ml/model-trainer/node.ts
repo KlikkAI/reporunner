@@ -8,11 +8,9 @@ export const modelTrainerNode: EnhancedIntegrationNodeType = {
   name: 'Model Trainer',
   description: 'Train and fine-tune AI/ML models with advanced configuration options',
   type: 'ai-agent',
-  category: 'AI/ML',
-  subcategory: 'Training',
   icon: '🤖',
   configuration: {
-    properties: modelTrainerNodeDefinition.description.properties,
+    properties: modelTrainerNodeDefinition.description.properties as any,
     credentials: modelTrainerCredentials,
     polling: {
       enabled: true,

@@ -14,7 +14,8 @@ import { AuthApiService } from '@/core';
 import type { PageAction, PropertyRendererConfig } from '@/design-system';
 import { PageTemplates, UniversalForm } from '@/design-system';
 
-const __authApiService = new AuthApiService();
+const _authApiService = new AuthApiService();
+void _authApiService; // Suppress unused variable warning
 const logger = new Logger('Settings');
 
 interface SettingsData {

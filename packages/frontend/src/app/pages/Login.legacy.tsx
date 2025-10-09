@@ -5,18 +5,25 @@ import { AuthForm } from '@/design-system/components/AuthForm';
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
-  const { login, loading, error } = useAuthStore();
+  const { login, isLoading, error } = useAuthStore();
 
   const handleLogin = async (values: { email: string; password: string }) => {
-    const success = await login(values.email, values.password);
-    if (success) {
+    try {
+      await login({ ...values, rememberMe: false });
       navigate('/dashboard');
+    } catch (_error) {
+      // Error is handled by the store
     }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <AuthForm type="login" onSubmit={handleLogin} loading={loading} error={error || undefined} />
+      <AuthForm
+        type="login"
+        onSubmit={handleLogin}
+        loading={isLoading}
+        error={error || undefined}
+      />
     </div>
   );
 };

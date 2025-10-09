@@ -36,7 +36,6 @@ import {
 import type React from 'react';
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useAccessibility } from '../Accessibility/AccessibilityProvider';
 
 const { Header, Sider, Content, Footer } = Layout;
 const { Text } = Typography;
@@ -105,7 +104,7 @@ export const ResponsiveLayout: React.FC<ResponsiveLayoutProps> = ({ children }) 
 
   const location = useLocation();
   const navigate = useNavigate();
-  const { _settings } = useAccessibility();
+  // useAccessibility hook available if needed
 
   // Detect screen size
   useEffect(() => {
@@ -144,7 +143,7 @@ export const ResponsiveLayout: React.FC<ResponsiveLayoutProps> = ({ children }) 
   // Generate breadcrumb from current path
   const generateBreadcrumb = () => {
     const pathSegments = location.pathname.split('/').filter(Boolean);
-    const breadcrumbItems = [
+    const breadcrumbItems: Array<{ title: React.ReactNode; path: string }> = [
       {
         title: <HomeOutlined />,
         path: '/',
@@ -178,7 +177,7 @@ export const ResponsiveLayout: React.FC<ResponsiveLayoutProps> = ({ children }) 
       label: 'Settings',
     },
     {
-      type: 'divider',
+      type: 'divider' as const,
     },
     {
       key: 'logout',

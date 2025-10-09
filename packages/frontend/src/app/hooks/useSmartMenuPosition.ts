@@ -54,6 +54,7 @@ export const useSmartMenuPosition = ({
         document.removeEventListener('mousedown', handleClickOutside, true);
       };
     }
+    return undefined;
   }, [isOpen, triggerRef, menuRef, onClose]);
 
   // Calculate initial position based on trigger only (Phase 1: Immediate)

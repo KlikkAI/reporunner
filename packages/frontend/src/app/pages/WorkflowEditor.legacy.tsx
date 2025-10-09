@@ -20,7 +20,9 @@ const WorkflowEditor: React.FC = () => {
   }, [id, loadWorkflow]);
 
   const handleSave = async () => {
-    await saveWorkflow();
+    if (currentWorkflow) {
+      await saveWorkflow(currentWorkflow);
+    }
   };
 
   return (

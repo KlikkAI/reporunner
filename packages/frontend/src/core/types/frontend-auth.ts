@@ -286,23 +286,33 @@ export function hasPermission(user: User, resource: ResourceType, action: Action
 
 /**
  * Check if user has role level at or above threshold
+ * Note: Since role is a string, we map roles to levels for comparison
  */
 export function hasRoleLevel(user: User, minLevel: number): boolean {
-  return user.role.level >= minLevel;
+  const roleLevels: Record<string, number> = {
+    viewer: 1,
+    member: 3,
+    editor: 5,
+    manager: 7,
+    admin: 9,
+    owner: 10,
+  };
+  const userLevel = roleLevels[user.role as string] || 0;
+  return userLevel >= minLevel;
 }
 
 /**
  * Check if user is admin
  */
 export function isAdmin(user: User): boolean {
-  return user.role.level >= 8;
+  return user.role === 'admin' || user.role === 'owner';
 }
 
 /**
  * Check if invitation is still valid
  */
 export function isInvitationValid(invitation: UserInvitation): boolean {
-  return invitation.status === 'pending' && invitation.expiresAt > Date.now();
+  return invitation.status === 'pending' && new Date(invitation.expiresAt).getTime() > Date.now();
 }
 
 /**
@@ -315,7 +325,7 @@ export function isAPIKeyActive(apiKey: APIKey): boolean {
   if (!apiKey.expiresAt) {
     return true;
   }
-  return apiKey.expiresAt > Date.now();
+  return new Date(apiKey.expiresAt).getTime() > Date.now();
 }
 
 // ============================================================================
@@ -331,9 +341,17 @@ export function createDefaultPreferences(): FrontendUserPreferences {
     language: 'en',
     timezone: 'UTC',
     notifications: {
-      email: true,
+      email: {
+        workflowSuccess: true,
+        workflowFailure: true,
+        weeklyDigest: true,
+      },
       push: false,
-      inApp: true,
+      inApp: {
+        workflowEvents: true,
+        mentions: true,
+        systemUpdates: true,
+      },
       workflows: true,
       executions: true,
       security: true,

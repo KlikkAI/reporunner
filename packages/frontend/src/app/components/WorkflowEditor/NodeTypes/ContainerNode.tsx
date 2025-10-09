@@ -55,6 +55,7 @@ export const ContainerNode: React.FC<ContainerNodeProps> = ({ id, data, selected
       if (nodeType) {
         const dropEvent: ContainerDropEvent = {
           containerId: id,
+          nodeId: `node-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
           nodeType,
           position: { x: event.clientX, y: event.clientY },
         };
@@ -102,7 +103,7 @@ export const ContainerNode: React.FC<ContainerNodeProps> = ({ id, data, selected
             id: 'iterationCount',
             type: 'number',
             label: 'Max Iterations',
-            defaultValue: data.config.maxIterations || 10,
+            defaultValue: data.config.executionConfig?.loopLimit || 10,
             validation: {
               rules: [
                 { type: 'min', value: 1, message: 'Must be at least 1' },
@@ -125,7 +126,7 @@ export const ContainerNode: React.FC<ContainerNodeProps> = ({ id, data, selected
             id: 'maxConcurrency',
             type: 'number',
             label: 'Max Concurrent Executions',
-            defaultValue: data.config.maxConcurrency || 5,
+            defaultValue: data.config.executionConfig?.maxConcurrency || 5,
             validation: {
               rules: [
                 { type: 'min', value: 1, message: 'Must be at least 1' },
@@ -342,14 +343,17 @@ export const ContainerNode: React.FC<ContainerNodeProps> = ({ id, data, selected
         />
 
         {/* Execution Progress */}
-        {data.executionState?.progress !== undefined && (
-          <div className="absolute bottom-0 left-0 right-0 h-1 bg-gray-200 dark:bg-gray-700 rounded-b-lg overflow-hidden">
-            <div
-              className="h-full bg-blue-500 transition-all duration-300"
-              style={{ width: `${data.executionState.progress * 100}%` }}
-            />
-          </div>
-        )}
+        {data.executionState?.currentIteration !== undefined &&
+          data.executionState?.totalIterations !== undefined && (
+            <div className="absolute bottom-0 left-0 right-0 h-1 bg-gray-200 dark:bg-gray-700 rounded-b-lg overflow-hidden">
+              <div
+                className="h-full bg-blue-500 transition-all duration-300"
+                style={{
+                  width: `${(data.executionState.currentIteration / data.executionState.totalIterations) * 100}%`,
+                }}
+              />
+            </div>
+          )}
       </div>
 
       {/* Configuration Modal */}

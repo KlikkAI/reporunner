@@ -56,11 +56,7 @@ const Integrations: React.FC = () => {
   const filteredIntegrations = filteredIntegrationsState;
 
   const handleConnect = async (_integration: any) => {
-    // Mock connection config - Pure Registry System handles this automatically
-    const __config = {
-      apiKey: 'mock-api-key',
-      connectedAt: new Date().toISOString(),
-    };
+    // Mock connection - Pure Registry System handles this automatically
   };
 
   const handleDisconnect = async (_integrationId: string) => {

@@ -3,7 +3,7 @@
 
 import type React from 'react';
 
-interface PageFooterProps {
+export interface PageFooterProps {
   className?: string;
   children?: React.ReactNode;
   variant?: 'default' | 'compact' | 'minimal';

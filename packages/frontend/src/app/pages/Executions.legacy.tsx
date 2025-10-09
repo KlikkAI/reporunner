@@ -45,22 +45,29 @@ const Executions: React.FC = () => {
         results: Array.isArray(execution.results)
           ? execution.results.map((nodeResult) => ({
               ...nodeResult,
+              // Map backend status values to correct NodeExecution status type
               status:
-                nodeResult.status === 'completed'
-                  ? ('success' as const)
-                  : nodeResult.status === 'failed'
-                    ? ('error' as const)
-                    : (nodeResult.status as 'success' | 'error' | 'skipped'),
+                (nodeResult.status as any) === 'success'
+                  ? ('completed' as const)
+                  : (nodeResult.status as any) === 'error'
+                    ? ('failed' as const)
+                    : (nodeResult.status as
+                        | 'pending'
+                        | 'running'
+                        | 'completed'
+                        | 'failed'
+                        | 'skipped'),
             }))
           : undefined,
       }));
 
       if (page === 1) {
-        setExecutions(transformedExecutions);
+        setExecutions(transformedExecutions as any);
       } else {
-        setExecutions((prev) => [...prev, ...transformedExecutions]);
+        setExecutions((prev) => [...prev, ...transformedExecutions] as any);
       }
-      setHasMore(result.hasMore);
+      // Check if there are more results (if we got a full page)
+      setHasMore(result.items.length >= 20);
     } catch (_error) {
       setExecutions([]);
     } finally {

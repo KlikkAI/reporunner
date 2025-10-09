@@ -12,7 +12,6 @@ import type React from 'react';
 import { useCallback, useMemo, useState } from 'react';
 import type { Node } from 'reactflow';
 import { Handle, Position, useReactFlow } from 'reactflow';
-import { useLeanWorkflowStore } from '@/core/stores/leanWorkflowStore';
 import { cn } from '@/design-system/utils';
 
 export type ContainerType = 'loop' | 'parallel' | 'conditional' | 'subflow';
@@ -163,7 +162,6 @@ const DropZone: React.FC<{
 
 export const ContainerNode: React.FC<ContainerNodeProps> = ({ id, data, selected = false }) => {
   const { setNodes } = useReactFlow();
-  const { addNode } = useLeanWorkflowStore();
   const [isDragOver, setIsDragOver] = useState(false);
 
   const { containerType, children, dimensions, isExpanded, config } = data;
@@ -224,11 +222,11 @@ export const ContainerNode: React.FC<ContainerNodeProps> = ({ id, data, selected
           },
         };
 
-        addNode(newNode);
-
-        // Update container to include this child
-        setNodes((nodes) =>
-          nodes.map((node) =>
+        // Add the new node and update container to include this child
+        setNodes((nodes) => [
+          ...nodes,
+          newNode,
+          ...nodes.map((node) =>
             node.id === id
               ? {
                   ...node,
@@ -238,11 +236,11 @@ export const ContainerNode: React.FC<ContainerNodeProps> = ({ id, data, selected
                   },
                 }
               : node
-          )
-        );
+          ),
+        ]);
       } catch (_error) {}
     },
-    [id, containerType, addNode, setNodes]
+    [id, containerType, setNodes]
   );
 
   const handleDragOver = useCallback((event: React.DragEvent) => {

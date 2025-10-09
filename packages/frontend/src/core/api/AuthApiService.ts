@@ -72,7 +72,11 @@ export class AuthApiService {
   async login(credentials: LoginCredentials): Promise<LoginResponse> {
     const result = await ApiErrorHandler.withErrorHandling(
       async () => {
-        const response: any = await apiClient.post('/auth/login', credentials, LoginApiResponseSchema as any);
+        const response: any = await apiClient.post(
+          '/auth/login',
+          credentials,
+          LoginApiResponseSchema as any
+        );
 
         // Store tokens in localStorage
         if (response.token) {
@@ -100,7 +104,11 @@ export class AuthApiService {
    */
   async register(userData: RegisterRequest): Promise<LoginResponse> {
     try {
-      const response: any = await apiClient.post('/auth/register', userData, LoginApiResponseSchema as any);
+      const response: any = await apiClient.post(
+        '/auth/register',
+        userData,
+        LoginApiResponseSchema as any
+      );
 
       // Store tokens in localStorage
       if (response.token) {

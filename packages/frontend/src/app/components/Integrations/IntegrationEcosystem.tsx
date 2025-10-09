@@ -404,12 +404,12 @@ export const IntegrationEcosystem: React.FC = () => {
               </Text>
               <div style={{ marginTop: 4 }}>
                 {integration.supportedFeatures.slice(0, 3).map((feature) => (
-                  <Tag key={feature} size="small" style={{ marginBottom: 2 }}>
+                  <Tag key={feature} style={{ marginBottom: 2 }}>
                     {feature}
                   </Tag>
                 ))}
                 {integration.supportedFeatures.length > 3 && (
-                  <Tag size="small">+{integration.supportedFeatures.length - 3} more</Tag>
+                  <Tag>+{integration.supportedFeatures.length - 3} more</Tag>
                 )}
               </div>
             </div>
@@ -690,7 +690,6 @@ export const IntegrationEcosystem: React.FC = () => {
 
             <Title level={5}>Features:</Title>
             <List
-              size="small"
               dataSource={selectedIntegration.supportedFeatures}
               renderItem={(feature) => (
                 <List.Item>

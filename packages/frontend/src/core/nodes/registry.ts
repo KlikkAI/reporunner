@@ -399,6 +399,56 @@ class NodeRegistry {
   }
 
   /**
+   * Get all available integrations
+   * @returns Array of integrations with their basic information
+   */
+  public getAvailableIntegrations(): Array<{
+    id: string;
+    name: string;
+    displayName?: string;
+    icon?: string;
+    description?: string;
+    category?: string;
+    nodeTypes?: string[];
+  }> {
+    const integrations = new Map<
+      string,
+      {
+        id: string;
+        name: string;
+        displayName?: string;
+        icon?: string;
+        description?: string;
+        category?: string;
+        nodeTypes: Set<string>;
+      }
+    >();
+
+    // Collect integrations from enhanced node types
+    for (const enhancedNode of this.enhancedNodeTypes.values()) {
+      if (!integrations.has(enhancedNode.id)) {
+        integrations.set(enhancedNode.id, {
+          id: enhancedNode.id,
+          name: enhancedNode.name,
+          displayName: enhancedNode.displayName || enhancedNode.name,
+          icon: enhancedNode.icon,
+          description: enhancedNode.description,
+          category: enhancedNode.codex?.categories[0],
+          nodeTypes: new Set([enhancedNode.type]),
+        });
+      } else {
+        integrations.get(enhancedNode.id)?.nodeTypes.add(enhancedNode.type);
+      }
+    }
+
+    // Convert to array format
+    return Array.from(integrations.values()).map((integration) => ({
+      ...integration,
+      nodeTypes: Array.from(integration.nodeTypes),
+    }));
+  }
+
+  /**
    * Get registry statistics
    * @returns Object with registry statistics
    */

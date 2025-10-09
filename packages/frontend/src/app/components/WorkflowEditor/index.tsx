@@ -636,11 +636,11 @@ const WorkflowEditor: React.FC = () => {
           position: node.position,
           parameters: node.data?.parameters || {},
           credentials: node.data?.credentials || [],
-          disabled: node.data?.disabled || false,
+          disabled: node.data?.disabled,
           notes: node.data?.notes || '',
           name: node.data?.name || node.data?.label || node.type || '',
-          continueOnFail: node.data?.continueOnFail || false,
-          executeOnce: node.data?.executeOnce || false,
+          continueOnFail: node.data?.continueOnFail,
+          executeOnce: node.data?.executeOnce,
         }));
 
       if (JSON.stringify(leanNodes) !== JSON.stringify(leanNodes)) {
@@ -670,11 +670,11 @@ const WorkflowEditor: React.FC = () => {
             position: node.position,
             parameters: node.data?.parameters || {},
             credentials: node.data?.credentials || [],
-            disabled: node.data?.disabled || false,
+            disabled: node.data?.disabled,
             notes: node.data?.notes || '',
             name: node.data?.name || node.data?.label || node.type || '',
-            continueOnFail: node.data?.continueOnFail || false,
-            executeOnce: node.data?.executeOnce || false,
+            continueOnFail: node.data?.continueOnFail,
+            executeOnce: node.data?.executeOnce,
           })),
           localEdges.map((edge) => ({
             id: edge.id,

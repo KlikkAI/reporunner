@@ -11,19 +11,15 @@ import {
   Cloud,
   Container,
   Copy,
-  Cpu,
   Database,
   Download,
   ExternalLink,
   Globe,
-  HardDrive,
   Lock,
-  MemoryStick,
   Play,
   Server,
   Shield,
   Terminal,
-  Wifi,
   Zap,
 } from 'lucide-react';
 import type React from 'react';
@@ -127,27 +123,6 @@ export const SelfHosted: React.FC = () => {
         },
       ],
     },
-  };
-
-  const __systemRequirements = {
-    minimum: [
-      { component: 'CPU', requirement: '2 vCPUs', icon: Cpu },
-      { component: 'RAM', requirement: '4 GB', icon: MemoryStick },
-      { component: 'Storage', requirement: '20 GB SSD', icon: HardDrive },
-      { component: 'Network', requirement: '1 Gbps', icon: Wifi },
-    ],
-    recommended: [
-      { component: 'CPU', requirement: '4+ vCPUs', icon: Cpu },
-      { component: 'RAM', requirement: '8+ GB', icon: MemoryStick },
-      { component: 'Storage', requirement: '100+ GB SSD', icon: HardDrive },
-      { component: 'Network', requirement: '10 Gbps', icon: Wifi },
-    ],
-    enterprise: [
-      { component: 'CPU', requirement: '8+ vCPUs', icon: Cpu },
-      { component: 'RAM', requirement: '32+ GB', icon: MemoryStick },
-      { component: 'Storage', requirement: '500+ GB NVMe', icon: HardDrive },
-      { component: 'Network', requirement: '10+ Gbps', icon: Wifi },
-    ],
   };
 
   const features = [

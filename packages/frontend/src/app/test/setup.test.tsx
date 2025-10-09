@@ -11,8 +11,9 @@ describe('Testing Setup', () => {
   it('should render test component successfully', () => {
     render(<TestComponent />);
     const element = screen.getByTestId('test-component');
-    expect(element).toBeInTheDocument();
-    expect(element).toHaveTextContent('Testing Setup Works!');
+    // TODO: Add @testing-library/jest-dom for toBeInTheDocument and toHaveTextContent matchers
+    expect(element).toBeTruthy();
+    expect(element.textContent).toBe('Testing Setup Works!');
   });
 
   it('should perform basic arithmetic operations', () => {

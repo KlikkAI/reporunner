@@ -14,15 +14,11 @@ import {
 } from 'antd';
 import type React from 'react';
 import { useCallback, useEffect, useState } from 'react';
-import type {
-  INodeProperty,
-  PropertyEvaluationContext,
-  PropertyFormState,
-  PropertyValue,
-} from '@/core';
+import type { NodeProperty, PropertyFormState, PropertyValue } from '@/core';
+import type { PropertyEvaluationContext } from '@/core/types/dynamicProperties';
 
-// Simple property evaluation for INodeProperty (registry system)
-const evaluateINodeProperty = (property: INodeProperty, context: PropertyEvaluationContext) => {
+// Simple property evaluation for NodeProperty (registry system)
+const evaluateNodeProperty = (property: NodeProperty, context: PropertyEvaluationContext) => {
   // For registry system, we use simpler logic
   const formState = context.formState || {};
   const displayOptions = property.displayOptions;
@@ -65,7 +61,7 @@ const { TextArea } = Input;
 const { Option } = Select;
 
 interface DynamicPropertyRendererProps {
-  properties: INodeProperty[];
+  properties: NodeProperty[];
   formState: PropertyFormState;
   onChange: (name: string, value: PropertyValue) => void;
   context?: Partial<PropertyEvaluationContext>;
@@ -74,7 +70,7 @@ interface DynamicPropertyRendererProps {
 }
 
 interface PropertyFieldProps {
-  property: INodeProperty;
+  property: NodeProperty;
   value: PropertyValue;
   onChange: (value: PropertyValue) => void;
   context: PropertyEvaluationContext;
@@ -115,7 +111,7 @@ const PropertyField: React.FC<PropertyFieldProps> = ({
   disabled = false,
   theme = 'dark',
 }) => {
-  const evaluation = evaluateINodeProperty(property, context);
+  const evaluation = evaluateNodeProperty(property, context);
 
   if (!evaluation.visible) {
     return null;
@@ -564,7 +560,7 @@ const PropertyField: React.FC<PropertyFieldProps> = ({
           {property.values?.map((valueProperty: any) => (
             <PropertyField
               key={valueProperty.name}
-              property={valueProperty as INodeProperty}
+              property={valueProperty as NodeProperty}
               value={itemValue[valueProperty.name]}
               onChange={(newValue) => {
                 const newItem = {
@@ -612,7 +608,7 @@ const PropertyField: React.FC<PropertyFieldProps> = ({
             {property.values?.map((valueProperty: any) => (
               <PropertyField
                 key={`${index}-${valueProperty.name}`}
-                property={valueProperty as INodeProperty}
+                property={valueProperty as NodeProperty}
                 value={item[valueProperty.name]}
                 onChange={(newValue) => {
                   const newItems = [...collectionValue];
@@ -733,14 +729,14 @@ const DynamicPropertyRenderer: React.FC<DynamicPropertyRendererProps> = ({
       groups[groupName].push(property);
       return groups;
     },
-    {} as Record<string, INodeProperty[]>
+    {} as Record<string, NodeProperty[]>
   );
 
   return (
     <div className="dynamic-property-renderer">
       {Object.entries(groupedProperties).map(([groupName, groupProperties]) => (
         <div key={groupName}>
-          {(groupProperties as INodeProperty[]).map((property: any, index: number) => (
+          {(groupProperties as NodeProperty[]).map((property: any, index: number) => (
             <PropertyField
               key={`${property.name}-${index}`}
               property={property}

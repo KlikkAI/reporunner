@@ -237,9 +237,11 @@ class Logger {
    */
   private logToConsole(entry: LogEntry): void {
     const timestamp = new Date(entry.timestamp).toLocaleTimeString();
-    const __prefix = `[${timestamp}] ${entry.level.toUpperCase()}`;
+    const _prefix = `[${timestamp}] ${entry.level.toUpperCase()}`;
+    void _prefix; // Suppress unused variable warning
 
-    const __style = this.getConsoleStyle(entry.level);
+    const _style = this.getConsoleStyle(entry.level);
+    void _style; // Suppress unused variable warning
 
     if (entry.context && Object.keys(entry.context).length > 0) {
       if (entry.stack) {

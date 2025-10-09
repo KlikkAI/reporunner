@@ -3,7 +3,7 @@
 
 import type React from 'react';
 
-interface PageContainerProps {
+export interface PageContainerProps {
   children: React.ReactNode;
   className?: string;
   maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'full';

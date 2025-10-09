@@ -150,7 +150,11 @@ export const Credentials: React.FC = () => {
       if (editingCredential) {
         await updateCredential(editingCredential.id, credentialData);
       } else {
-        await createCredential(credentialName, selectedType.name, credentialData);
+        await createCredential({
+          name: credentialName,
+          type: selectedType.name,
+          data: credentialData,
+        } as any);
       }
 
       setShowCreateForm(false);
@@ -193,7 +197,9 @@ export const Credentials: React.FC = () => {
                     {
                       label: testingCredential === credential.id ? 'Testing...' : 'Test',
                       onClick: () =>
-                        testCredential(credential.id).then((result) => alert(result.message)),
+                        testCredential(credential.id).then((result) =>
+                          alert(result ? 'Credential test successful' : 'Credential test failed')
+                        ),
                       disabled: testingCredential === credential.id,
                     },
                     ...(credential.type !== 'gmailOAuth2'
@@ -339,7 +345,7 @@ export const Credentials: React.FC = () => {
           stats.map((stat) => ({
             title: stat.title,
             value: stat.value,
-            prefix: stat.icon,
+            prefix: stat.icon as any,
           }))
         )}
       </div>

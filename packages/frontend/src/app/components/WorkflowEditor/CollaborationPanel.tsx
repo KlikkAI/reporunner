@@ -35,8 +35,14 @@ import {
 } from 'antd';
 import type React from 'react';
 import { useCallback, useState } from 'react';
-import type { CollaborationConflict } from '../../../core/services/collaborationService';
+
+// import type { CollaborationConflict } from '../../../core/services/collaborationService';
+
+// Stub type until collaborationService is implemented
+type CollaborationConflict = any;
+
 import { useCollaborationStore } from '../../../core/stores/collaborationStore';
+import { useLeanWorkflowStore } from '../../../core/stores/leanWorkflowStore';
 
 const { TextArea } = Input;
 const { TabPane } = Tabs;
@@ -68,8 +74,8 @@ export const CollaborationPanel: React.FC<CollaborationPanelProps> = ({ isVisibl
     setSelectedComment: selectComment,
   } = useCollaborationStore();
 
-  // activeWorkflow would be used for collaboration features
-  // const { activeWorkflow } = useLeanWorkflowStore();
+  // Get active workflow for collaboration features
+  const { activeWorkflow } = useLeanWorkflowStore();
 
   // Stub values for features not yet implemented
   const operationHistory: any[] = [];
@@ -114,18 +120,18 @@ export const CollaborationPanel: React.FC<CollaborationPanelProps> = ({ isVisibl
 
     try {
       await addComment({
-        workflowId: currentWorkflow?.id || '',
+        workflowId: activeWorkflow?.id || '',
         content: newCommentContent,
         position: newCommentPosition,
         nodeId: selectedNodeIds.length === 1 ? selectedNodeIds[0] : undefined,
         resolved: false,
         mentions: [], // TODO: Parse mentions from content
-      });
+      } as any);
 
       setNewCommentContent('');
       setNewCommentPosition(null);
     } catch (_error) {}
-  }, [newCommentContent, newCommentPosition, addComment]);
+  }, [newCommentContent, newCommentPosition, addComment, activeWorkflow?.id]);
 
   // Handle replying to a comment
   const handleReplyToComment = useCallback(

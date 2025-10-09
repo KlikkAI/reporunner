@@ -15,9 +15,9 @@ import type { INodePropertyTypeOptions, NodePropertyType } from '@/core/nodes/ty
 // Define interfaces locally to avoid circular imports
 
 import {
-  type IExpressionContext as CoreExpressionContext,
-  ExpressionEvaluator,
+  type ExpressionContext as CoreExpressionContext,
   ExpressionUtils,
+  expressionEvaluator,
 } from '@/core/utils/expressionEvaluator';
 import { cn } from '@/design-system/utils';
 
@@ -394,7 +394,8 @@ export const ExpressionRenderer: React.FC<PropertyRendererProps> = ({
     ExpressionUtils.hasExpressions(value)
   );
 
-  const evaluator = useMemo(() => (context ? new ExpressionEvaluator(context) : null), [context]);
+  // Use the singleton expressionEvaluator instance
+  const evaluator = useMemo(() => (context ? expressionEvaluator : null), [context]);
 
   const [previewValue, setPreviewValue] = useState<any>(null);
 

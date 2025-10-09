@@ -12,14 +12,13 @@ import {
   UserOutlined,
   VerifiedOutlined,
 } from '@ant-design/icons';
-import type { PluginMetadata } from '@reporunner/platform';
 import {
   Alert,
   Avatar,
   Button,
   Card,
   Col,
-  Comment,
+  // Comment, // Removed in Ant Design 5.x - use @ant-design/compatible if needed
   Divider,
   Image,
   List,
@@ -34,6 +33,7 @@ import {
 } from 'antd';
 import type React from 'react';
 import { useState } from 'react';
+import type { PluginMetadata } from '../../types/plugin';
 
 const { Text, Title, Paragraph } = Typography;
 const { TabPane } = Tabs;
@@ -44,7 +44,11 @@ interface PluginDetailsProps {
   onClose: () => void;
 }
 
-export const PluginDetails: React.FC<PluginDetailsProps> = ({ plugin, onInstall, onClose }) => {
+export const PluginDetails: React.FC<PluginDetailsProps> = ({
+  plugin,
+  onInstall,
+  onClose: _onClose,
+}) => {
   const [activeTab, setActiveTab] = useState('overview');
 
   // Mock data for demonstration
@@ -68,13 +72,13 @@ export const PluginDetails: React.FC<PluginDetailsProps> = ({ plugin, onInstall,
   const mockVersionHistory = [
     {
       version: plugin.version,
-      date: plugin.updatedAt.toISOString().split('T')[0],
+      date: new Date(plugin.updatedAt).toISOString().split('T')[0],
       changes: ['Added new features', 'Fixed bugs', 'Improved performance'],
       current: true,
     },
     {
       version: '1.0.0',
-      date: plugin.createdAt.toISOString().split('T')[0],
+      date: new Date(plugin.createdAt).toISOString().split('T')[0],
       changes: ['Initial release'],
       current: false,
     },
@@ -145,10 +149,12 @@ export const PluginDetails: React.FC<PluginDetailsProps> = ({ plugin, onInstall,
 
           <Card title="Compatibility">
             <Space direction="vertical">
-              <Text>
-                <strong>Minimum Version:</strong> {plugin.compatibility.minVersion}
-              </Text>
-              {plugin.compatibility.maxVersion && (
+              {plugin.compatibility?.minVersion && (
+                <Text>
+                  <strong>Minimum Version:</strong> {plugin.compatibility.minVersion}
+                </Text>
+              )}
+              {plugin.compatibility?.maxVersion && (
                 <Text>
                   <strong>Maximum Version:</strong> {plugin.compatibility.maxVersion}
                 </Text>
@@ -201,10 +207,12 @@ export const PluginDetails: React.FC<PluginDetailsProps> = ({ plugin, onInstall,
                 <Tag color={getCategoryColor(plugin.category)}>{plugin.category}</Tag>
               </div>
 
-              <div>
-                <Text strong>Pricing: </Text>
-                <Tag color={getPricingColor(plugin.pricing)}>{plugin.pricing}</Tag>
-              </div>
+              {plugin.pricing && (
+                <div>
+                  <Text strong>Pricing: </Text>
+                  <Tag color={getPricingColor(plugin.pricing.type)}>{plugin.pricing.type}</Tag>
+                </div>
+              )}
 
               <div>
                 <Text strong>Version: </Text>
@@ -277,17 +285,20 @@ export const PluginDetails: React.FC<PluginDetailsProps> = ({ plugin, onInstall,
           dataSource={mockReviews}
           renderItem={(review) => (
             <List.Item>
-              <Comment
-                author={review.author}
-                avatar={<Avatar icon={<UserOutlined />} />}
-                content={review.comment}
-                datetime={
+              {/* Comment component removed in Ant Design 5.x */}
+              <div style={{ display: 'flex', gap: 12 }}>
+                <Avatar icon={<UserOutlined />} />
+                <div style={{ flex: 1 }}>
+                  <div style={{ marginBottom: 8 }}>
+                    <Text strong>{review.author}</Text>
+                  </div>
+                  <div style={{ marginBottom: 8 }}>{review.comment}</div>
                   <Space>
                     <Rate disabled value={review.rating} style={{ fontSize: 12 }} />
                     <Text type="secondary">{review.date}</Text>
                   </Space>
-                }
-              />
+                </div>
+              </div>
             </List.Item>
           )}
         />

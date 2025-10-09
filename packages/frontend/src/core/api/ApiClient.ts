@@ -2,7 +2,13 @@ import type { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse } fro
 import axios from 'axios';
 import type { ZodSchema } from 'zod';
 import { z } from 'zod';
-import type { ApiError, ApiResponse, PaginatedResponse, PaginationParams } from '../schemas';
+import type {
+  ApiError,
+  ApiResponse,
+  ErrorResponseSchema,
+  PaginatedResponse,
+  PaginationParams,
+} from '../schemas';
 import { configService } from '../services/ConfigService';
 import { logger } from '../services/LoggingService';
 
@@ -346,11 +352,13 @@ export class ApiClient {
 
       // Check if the API response indicates success
       if (!validatedResponse.success) {
+        // Type guard: if success is false, it's an ErrorResponse
+        const errorResponse = validatedResponse as unknown as z.infer<typeof ErrorResponseSchema>;
         throw new ApiClientError(
-          validatedResponse.message || 'API request failed',
+          errorResponse.error || validatedResponse.message || 'API request failed',
           response.status,
           'API_ERROR',
-          validatedResponse.errors
+          errorResponse.details
         );
       }
 

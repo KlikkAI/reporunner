@@ -336,6 +336,17 @@ export class ModelTrainerNodeDefinition extends BaseNodeDefinition {
   public getRendererConfigurations(): PropertyRendererConfig[] {
     return this.getPropertyConfigs();
   }
+
+  /**
+   * Execute the model trainer node
+   */
+  async execute(): Promise<any> {
+    // Stub implementation - will be replaced with actual model training logic
+    return {
+      success: true,
+      message: 'Model Trainer execution stub - not yet implemented',
+    };
+  }
 }
 
 export const modelTrainerNodeDefinition = new ModelTrainerNodeDefinition();

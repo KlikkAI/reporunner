@@ -13,6 +13,8 @@ export interface WorkflowNodeData {
   id?: string; // Node ID (required by some utilities)
   type?: string; // Node type identifier (e.g., 'trigger', 'action', 'condition')
   label: string;
+  description?: string;
+  version?: string | number;
   integration?: string;
   nodeType?: string;
   configuration?: Record<string, any>; // Node parameters/config
@@ -36,6 +38,7 @@ export interface WorkflowNodeData {
   outputData?: any;
   conditionRules?: any[];
   defaultOutput?: string;
+  inputs?: any[];
   outputs?: any[];
   provider?: string;
   model?: string;

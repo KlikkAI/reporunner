@@ -4,10 +4,10 @@ import type { NodeProps } from 'reactflow';
 import { Handle, Position } from 'reactflow';
 import { useSmartMenuPosition } from '@/app/hooks/useSmartMenuPosition';
 import { getCustomBodyComponent } from '@/app/node-extensions/nodeUiRegistry';
-import { nodeRegistry, type WorkflowNodeInstance } from '@/core';
+import { nodeRegistry, type WorkflowNodeData } from '@/core';
 import NodeToolbar from './BaseNode/NodeToolbar';
 
-interface RegistryNodeData extends WorkflowNodeInstance {
+interface RegistryNodeData extends WorkflowNodeData {
   onDelete?: () => void;
   onEdit?: () => void;
   onOpenProperties?: () => void;
@@ -38,7 +38,7 @@ const RegistryNode: React.FC<RegistryNodeProps> = ({ data, selected, id }) => {
   // Click-outside handling is now centralized in useSmartMenuPosition hook
   // Look up the node definition from the registry
   const nodeDefinition = useMemo(() => {
-    return nodeRegistry.getNodeTypeDescription(data.type);
+    return nodeRegistry.getNodeTypeDescription(data.type || 'unknown');
   }, [data.type]);
 
   // Get visual configuration
@@ -57,7 +57,7 @@ const RegistryNode: React.FC<RegistryNodeProps> = ({ data, selected, id }) => {
     if (subtitle && data.parameters) {
       subtitle = subtitle.replace(/\{\{[^}]+\}\}/g, (match) => {
         const paramPath = match.replace('{{$parameter["', '').replace('"]}}', '');
-        return data.parameters[paramPath] || '';
+        return data.parameters?.[paramPath] || '';
       });
     }
 
@@ -319,10 +319,10 @@ const RegistryNode: React.FC<RegistryNodeProps> = ({ data, selected, id }) => {
             </div>
 
             {/* Status Indicators */}
-            {(data.disabled || data.retryOnFail || data.continueOnFail) && (
+            {(data.disabled || (data as any).retryOnFail || (data as any).continueOnFail) && (
               <div className="absolute -top-2 -right-2 w-4 h-4 bg-red-500 rounded-full flex items-center justify-center">
                 <span className="text-white text-xs">
-                  {data.disabled ? '!' : data.retryOnFail ? 'R' : 'C'}
+                  {data.disabled ? '!' : (data as any).retryOnFail ? 'R' : 'C'}
                 </span>
               </div>
             )}

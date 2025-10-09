@@ -115,6 +115,7 @@ export interface ContainerDropEvent {
   containerId: string;
   nodeId: string;
   position: { x: number; y: number };
+  nodeType?: string;
 }
 
 export interface ContainerConnectionEvent {

@@ -7,6 +7,7 @@
 import {
   BulbOutlined,
   CalendarOutlined,
+  ClockCircleOutlined,
   CodeOutlined,
   CrownOutlined,
   FireOutlined,
@@ -21,6 +22,7 @@ import {
   TrophyOutlined,
   TwitterOutlined,
   UploadOutlined,
+  UserOutlined,
 } from '@ant-design/icons';
 import {
   Alert,
@@ -36,7 +38,6 @@ import {
   message,
   Progress,
   Row,
-  Select,
   Space,
   Statistic,
   Tabs,
@@ -392,9 +393,7 @@ export const CommunityHub: React.FC = () => {
                     </Space>
                     <div style={{ marginTop: 8 }}>
                       {challenge.tags.map((tag) => (
-                        <Tag key={tag} size="small">
-                          {tag}
-                        </Tag>
+                        <Tag key={tag}>{tag}</Tag>
                       ))}
                     </div>
                   </div>
@@ -467,16 +466,12 @@ export const CommunityHub: React.FC = () => {
                   <div>
                     <Paragraph ellipsis={{ rows: 1 }}>{contributor.bio}</Paragraph>
                     <Space wrap style={{ marginTop: 8 }}>
-                      <Statistic
-                        title="Contributions"
-                        value={contributor.contributions}
-                        size="small"
-                      />
-                      <Statistic title="Reputation" value={contributor.reputation} size="small" />
+                      <Statistic title="Contributions" value={contributor.contributions} />
+                      <Statistic title="Reputation" value={contributor.reputation} />
                     </Space>
                     <div style={{ marginTop: 8 }}>
                       {contributor.badges.map((badge) => (
-                        <Tag key={badge} color="blue" size="small">
+                        <Tag key={badge} color="blue">
                           {badge}
                         </Tag>
                       ))}

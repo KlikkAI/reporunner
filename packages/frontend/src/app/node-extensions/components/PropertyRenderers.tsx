@@ -50,7 +50,7 @@ const convertLegacyProperty = (
 ): PropertyRendererConfig => {
   // Map legacy types to new factory types
   const getFactoryType = (legacyType: NodePropertyType): PropertyType => {
-    switch (legacyType) {
+    switch (legacyType as string) {
       case 'string':
         return 'text';
       case 'number':
@@ -90,7 +90,7 @@ const convertLegacyProperty = (
       case 'authentication':
         return 'credentials';
       case 'password':
-        return 'password';
+        return 'password' as any;
       default:
         return 'text';
     }
@@ -137,7 +137,7 @@ const convertLegacyProperty = (
     };
 
     if (property.typeOptions.minValue !== undefined) {
-      config.validation.rules.push({
+      config.validation?.rules?.push({
         type: 'min',
         value: property.typeOptions.minValue,
         message: `Value must be at least ${property.typeOptions.minValue}`,
@@ -145,7 +145,7 @@ const convertLegacyProperty = (
     }
 
     if (property.typeOptions.maxValue !== undefined) {
-      config.validation.rules.push({
+      config.validation?.rules?.push({
         type: 'max',
         value: property.typeOptions.maxValue,
         message: `Value must be at most ${property.typeOptions.maxValue}`,
@@ -211,7 +211,7 @@ export const createPropertyRenderers = (
     formData: formState,
     errors: {},
     touched: {},
-    isSubmitting: options?.disabled,
+    isSubmitting: options?.disabled || false,
     setFieldValue: onChange,
     setFieldError: () => {},
     validateField: async () => {},

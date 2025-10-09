@@ -32,7 +32,7 @@ export interface Credential
   > {
   _id?: string; // MongoDB _id for backward compatibility
   type: CredentialType; // Credential type identifier (use base type)
-  integration?: string; // Associated integration
+  integration: string; // Associated integration (required)
   testedAt?: string; // Last test timestamp
   isValid?: boolean; // Test validation status
 }

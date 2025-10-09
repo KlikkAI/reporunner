@@ -32,6 +32,15 @@ interface ExecutionMetrics {
   skippedNodes: number;
   averageNodeDuration: number;
   totalDuration: number;
+  nodeExecutionTimes: Map<string, number>;
+  resourceUsage: {
+    cpu: number;
+    memory: number;
+    peakMemory: number;
+    totalCpuTime: number;
+    network: number;
+    networkRequests: number;
+  };
 }
 
 interface EnhancedExecutionState {
@@ -51,6 +60,29 @@ interface EnhancedExecutionState {
   selectedExecution: string | null;
   isMonitoring: boolean;
   autoRefresh: boolean;
+
+  // ExecutionPanel properties
+  currentExecution: WorkflowExecution | null;
+  progress: {
+    totalNodes: number;
+    completedNodes: string[];
+    failedNodes: string[];
+    progressPercentage: number;
+    currentNode?: string;
+  } | null;
+  nodeStates: Map<string, NodeExecution>;
+  performanceMetrics: ExecutionMetrics | null;
+  executionHistory: WorkflowExecution[];
+  isConnected: boolean;
+  debugMode: boolean;
+  setDebugMode: (enabled: boolean) => void;
+
+  // ExecutionStateOverlay properties
+  activeNodes: Set<string>;
+  pendingNodes: Set<string>;
+  completedNodes: Set<string>;
+  failedNodes: Set<string>;
+  breakpoints: Set<string>;
 
   // Actions
   startExecution: (workflowId: string, executionData: any) => Promise<string>;
@@ -79,6 +111,23 @@ export const useEnhancedExecutionStore = create<EnhancedExecutionState>()(
     selectedExecution: null,
     isMonitoring: false,
     autoRefresh: true,
+
+    // ExecutionPanel initial state
+    currentExecution: null,
+    progress: null,
+    nodeStates: new Map(),
+    performanceMetrics: null,
+    executionHistory: [],
+    isConnected: false,
+    debugMode: false,
+    setDebugMode: (enabled: boolean) => set({ debugMode: enabled }),
+
+    // ExecutionStateOverlay initial state
+    activeNodes: new Set(),
+    pendingNodes: new Set(),
+    completedNodes: new Set(),
+    failedNodes: new Set(),
+    breakpoints: new Set(),
 
     // Start execution
     startExecution: async (workflowId: string, executionData: any): Promise<string> => {

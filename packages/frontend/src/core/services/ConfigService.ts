@@ -13,6 +13,10 @@ export interface ApiEndpoints {
 
 export interface AppConfig {
   apiBaseUrl: string;
+  api: {
+    baseUrl: string;
+    timeout: number;
+  };
   endpoints: ApiEndpoints;
   timeout: number;
   retryAttempts: number;
@@ -56,6 +60,10 @@ export class ConfigService {
 
     return {
       apiBaseUrl: baseUrl,
+      api: {
+        baseUrl: baseUrl,
+        timeout: 30000, // 30 seconds
+      },
       endpoints: {
         auth: `${baseUrl}/auth`,
         workflows: `${baseUrl}/workflows`,

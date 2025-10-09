@@ -240,8 +240,8 @@ export const useEnhancedWorkflowStore = create<WorkflowStore>()(
     },
 
     duplicateWorkflow: async (id: string) => {
-      const { workflows } = get();
-      const originalWorkflow = workflows[id];
+      const { workflows: _workflows } = get();
+      const originalWorkflow = _workflows[id];
       if (!originalWorkflow) {
         throw new Error('Workflow not found');
       }
@@ -249,11 +249,11 @@ export const useEnhancedWorkflowStore = create<WorkflowStore>()(
       const duplicatedWorkflow = {
         ...originalWorkflow,
         name: `${originalWorkflow.name} (Copy)`,
-        nodes: originalWorkflow.nodes.map((node) => ({
+        nodes: originalWorkflow.nodes.map((node: any) => ({
           ...node,
           id: `${node.id}_copy_${Date.now()}`,
         })),
-        edges: originalWorkflow.edges.map((edge) => ({
+        edges: originalWorkflow.edges.map((edge: any) => ({
           ...edge,
           id: `${edge.id}_copy_${Date.now()}`,
           source: `${edge.source}_copy_${Date.now()}`,
@@ -266,7 +266,7 @@ export const useEnhancedWorkflowStore = create<WorkflowStore>()(
 
     // Node Actions
     addNode: (node: Omit<WorkflowNode, 'id'>) => {
-      const { activeWorkflowId, workflows } = get();
+      const { activeWorkflowId } = get();
       if (!activeWorkflowId) {
         return;
       }
@@ -294,7 +294,7 @@ export const useEnhancedWorkflowStore = create<WorkflowStore>()(
     },
 
     updateNode: (id: string, updates: Partial<WorkflowNode>) => {
-      const { activeWorkflowId, workflows } = get();
+      const { activeWorkflowId } = get();
       if (!activeWorkflowId) {
         return;
       }
@@ -319,7 +319,7 @@ export const useEnhancedWorkflowStore = create<WorkflowStore>()(
     },
 
     removeNode: (id: string) => {
-      const { activeWorkflowId, workflows } = get();
+      const { activeWorkflowId } = get();
       if (!activeWorkflowId) {
         return;
       }
@@ -351,7 +351,7 @@ export const useEnhancedWorkflowStore = create<WorkflowStore>()(
 
     // Edge Actions
     addEdge: (edge: Omit<WorkflowEdge, 'id'>) => {
-      const { activeWorkflowId, workflows } = get();
+      const { activeWorkflowId } = get();
       if (!activeWorkflowId) {
         return;
       }
@@ -379,7 +379,7 @@ export const useEnhancedWorkflowStore = create<WorkflowStore>()(
     },
 
     updateEdge: (id: string, updates: Partial<WorkflowEdge>) => {
-      const { activeWorkflowId, workflows } = get();
+      const { activeWorkflowId } = get();
       if (!activeWorkflowId) {
         return;
       }
@@ -398,7 +398,7 @@ export const useEnhancedWorkflowStore = create<WorkflowStore>()(
     },
 
     removeEdge: (id: string) => {
-      const { activeWorkflowId, workflows } = get();
+      const { activeWorkflowId } = get();
       if (!activeWorkflowId) {
         return;
       }
@@ -417,7 +417,7 @@ export const useEnhancedWorkflowStore = create<WorkflowStore>()(
 
     // Execution Actions
     executeWorkflow: async (workflowId?: string, inputData?: any) => {
-      const { activeWorkflowId, workflows } = get();
+      const { activeWorkflowId } = get();
       const targetWorkflowId = workflowId || activeWorkflowId;
       if (!targetWorkflowId) {
         throw new Error('No workflow selected');

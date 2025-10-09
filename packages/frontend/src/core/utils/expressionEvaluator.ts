@@ -113,6 +113,16 @@ class ExpressionEvaluator {
       };
     }
   }
+
+  /**
+   * Check if a string contains expression syntax ({{...}})
+   */
+  hasExpressions(text: string): boolean {
+    if (!text || typeof text !== 'string') {
+      return false;
+    }
+    return /\{\{.*?\}\}/.test(text);
+  }
 }
 
 export const expressionEvaluator = new ExpressionEvaluator();

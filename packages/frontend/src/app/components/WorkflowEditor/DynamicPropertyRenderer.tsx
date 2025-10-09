@@ -9,17 +9,13 @@
 
 import type React from 'react';
 import { useMemo } from 'react';
-import type {
-  INodeProperty,
-  PropertyEvaluationContext,
-  PropertyFormState,
-  PropertyValue,
-} from '@/core';
+import type { NodeProperty, PropertyFormState, PropertyValue } from '@/core';
+import type { PropertyEvaluationContext } from '@/core/types/dynamicProperties';
 import type { PropertyContext, PropertyRendererConfig } from '@/design-system';
 import { PropertyRenderer } from '@/design-system';
 
 interface DynamicPropertyRendererProps {
-  properties: INodeProperty[];
+  properties: NodeProperty[];
   formState: PropertyFormState;
   onChange: (name: string, value: PropertyValue) => void;
   context?: Partial<PropertyEvaluationContext>;
@@ -28,9 +24,9 @@ interface DynamicPropertyRendererProps {
 }
 
 /**
- * Convert INodeProperty to PropertyRendererConfig
+ * Convert NodeProperty to PropertyRendererConfig
  */
-const convertNodePropertyToConfig = (property: INodeProperty): PropertyRendererConfig => {
+const convertNodePropertyToConfig = (property: NodeProperty): PropertyRendererConfig => {
   // Map node property types to renderer types
   const getRendererType = (nodeType: string): any => {
     switch (nodeType) {
@@ -193,7 +189,7 @@ export const LegacyDynamicPropertyRenderer: React.FC<DynamicPropertyRendererProp
  * Factory method for creating property renderers
  */
 export const createPropertyRenderer = (
-  properties: INodeProperty[],
+  properties: NodeProperty[],
   formState: PropertyFormState,
   onChange: (name: string, value: PropertyValue) => void,
   options?: {

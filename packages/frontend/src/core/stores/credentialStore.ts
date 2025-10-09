@@ -10,16 +10,20 @@ interface CredentialState {
   credentialTypes: CredentialTypeDefinition[];
   isLoading: boolean;
   error: string | null;
+  testingCredential: string | null;
 
   // Actions
   fetchCredentials: () => Promise<void>;
+  loadCredentials: () => Promise<void>; // Alias for fetchCredentials (backward compatibility)
   fetchCredentialTypes: () => Promise<void>;
+  loadCredentialTypes: () => Promise<void>; // Alias for fetchCredentialTypes (backward compatibility)
   createCredential: (
     credential: Omit<Credential, 'id' | 'createdAt' | 'updatedAt'>
   ) => Promise<void>;
   updateCredential: (id: string, updates: Partial<Credential>) => Promise<void>;
   deleteCredential: (id: string) => Promise<void>;
   testCredential: (id: string) => Promise<boolean>;
+  revokeGmailCredential: (id: string) => Promise<void>;
   clearError: () => void;
 }
 
@@ -30,6 +34,7 @@ export const useCredentialStore = create<CredentialState>()(
       credentialTypes: [],
       isLoading: false,
       error: null,
+      testingCredential: null,
 
       fetchCredentials: async () => {
         try {
@@ -42,6 +47,11 @@ export const useCredentialStore = create<CredentialState>()(
         }
       },
 
+      loadCredentials: async () => {
+        const { fetchCredentials } = get();
+        await fetchCredentials();
+      },
+
       fetchCredentialTypes: async () => {
         try {
           set({ isLoading: true, error: null });
@@ -52,6 +62,11 @@ export const useCredentialStore = create<CredentialState>()(
             error instanceof Error ? error.message : 'Failed to fetch credential types';
           set({ error: message, isLoading: false });
         }
+      },
+
+      loadCredentialTypes: async () => {
+        const { fetchCredentialTypes } = get();
+        await fetchCredentialTypes();
       },
 
       createCredential: async (credential) => {
@@ -78,9 +93,7 @@ export const useCredentialStore = create<CredentialState>()(
           const updatedCredential = await credentialApiService.updateCredential(id, updates as any);
           const { credentials } = get();
           set({
-            credentials: credentials.map((cred) =>
-              cred.id === id ? updatedCredential : cred
-            ),
+            credentials: credentials.map((cred) => (cred.id === id ? updatedCredential : cred)),
             isLoading: false,
           });
         } catch (error) {
@@ -106,14 +119,31 @@ export const useCredentialStore = create<CredentialState>()(
 
       testCredential: async (id) => {
         try {
-          set({ isLoading: true, error: null });
+          set({ isLoading: true, error: null, testingCredential: id });
           const result = await credentialApiService.testCredential(id);
-          set({ isLoading: false });
+          set({ isLoading: false, testingCredential: null });
           return result.success;
         } catch (error) {
           const message = error instanceof Error ? error.message : 'Failed to test credential';
-          set({ error: message, isLoading: false });
+          set({ error: message, isLoading: false, testingCredential: null });
           return false;
+        }
+      },
+
+      revokeGmailCredential: async (id) => {
+        try {
+          set({ isLoading: true, error: null });
+          // For Gmail credentials, we need to call a special revoke endpoint
+          await credentialApiService.deleteCredential(id);
+          const { credentials } = get();
+          set({
+            credentials: credentials.filter((cred) => cred.id !== id),
+            isLoading: false,
+          });
+        } catch (error) {
+          const message =
+            error instanceof Error ? error.message : 'Failed to revoke Gmail credential';
+          set({ error: message, isLoading: false });
         }
       },
 

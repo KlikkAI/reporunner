@@ -24,10 +24,6 @@ export interface TokenConfig {
 }
 
 export class JWTTokenService implements TokenServiceInterface {
-  constructor(_config?: TokenConfig) {
-    // TODO: Implement JWT configuration - config will be used for signing/verification
-  }
-
   async generateToken(payload: TokenPayload): Promise<string> {
     // TODO: Implement JWT generation with config
     return Buffer.from(JSON.stringify(payload)).toString('base64');

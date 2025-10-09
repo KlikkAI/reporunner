@@ -12,7 +12,7 @@ export { default as ConditionInputPanel } from './ConditionInputPanel';
 export { default as ContainerNodePanel } from './ContainerNodePanel';
 export { default as CredentialModal } from './CredentialModal';
 export { default as CustomEdge } from './CustomEdge';
-export { default as DataInspector } from './DataInspector';
+export type { default as DataInspector } from './DataInspector';
 export { default as DebugPanel } from './DebugPanel';
 export { default as DynamicPropertyRenderer } from './DynamicPropertyRenderer';
 export { default as EmailInputPanel } from './EmailInputPanel';

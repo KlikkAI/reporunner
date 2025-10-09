@@ -393,7 +393,7 @@ export const PropertyGroupRenderer: React.FC<PropertyGroupRendererProps> = ({
   return (
     <div className="space-y-4">
       <DynamicPropertyRenderer
-        properties={visibleProperties as INodeProperty[]}
+        properties={visibleProperties as any}
         formState={values}
         onChange={onChange}
         context={context}

@@ -45,7 +45,16 @@ import {
 } from 'antd';
 import type React from 'react';
 import { useCallback, useEffect, useState } from 'react';
-import { enterpriseSecurityService } from '@/core/services/enterpriseSecurityService';
+
+// import { enterpriseSecurityService } from '@/core/services/enterpriseSecurityService';
+
+// Stub service until enterpriseSecurityService is implemented
+const enterpriseSecurityService = {
+  getSecurityMetrics: async () => ({}) as any,
+  getAuditLogs: async (..._args: any[]) => [] as any[],
+  getVulnerabilityScans: async () => [] as any[],
+};
+
 import type {
   AuditCategory,
   AuditLog,

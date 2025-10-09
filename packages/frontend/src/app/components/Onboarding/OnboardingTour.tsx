@@ -25,7 +25,6 @@ import {
   Modal,
   Progress,
   Space,
-  Steps,
   Tag,
   Tooltip,
   Tour,
@@ -34,8 +33,7 @@ import {
 import type React from 'react';
 import { useEffect, useState } from 'react';
 
-const { _Title, Text, Paragraph } = Typography;
-const { _Step } = Steps;
+const { Text, Paragraph } = Typography;
 
 interface OnboardingStep {
   id: string;
@@ -385,7 +383,10 @@ export const OnboardingTour: React.FC<OnboardingTourProps> = ({
         steps={steps.map((step) => ({
           title: step.title,
           description: step.description,
-          target: step.target,
+          target:
+            typeof step.target === 'string'
+              ? () => document.querySelector(step.target) as HTMLElement
+              : step.target,
           cover: step.content,
           placement: step.placement,
           nextButtonProps: step.nextButtonProps,

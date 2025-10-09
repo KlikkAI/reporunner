@@ -411,6 +411,17 @@ export class MLPipelineNodeDefinition extends BaseNodeDefinition {
   public getRendererConfigurations(): PropertyRendererConfig[] {
     return this.getPropertyConfigs();
   }
+
+  /**
+   * Execute the ML pipeline node
+   */
+  async execute(): Promise<any> {
+    // Stub implementation - will be replaced with actual ML pipeline orchestration logic
+    return {
+      success: true,
+      message: 'ML Pipeline execution stub - not yet implemented',
+    };
+  }
 }
 
 export const mlPipelineNodeDefinition = new MLPipelineNodeDefinition();

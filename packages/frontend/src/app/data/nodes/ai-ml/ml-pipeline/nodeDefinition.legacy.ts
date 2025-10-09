@@ -138,7 +138,7 @@ export class MLPipelineNodeDefinition extends BaseNodeDefinition {
                 description: 'Maximum execution time for this stage',
               }),
             ],
-          },
+          } as any,
         ],
       },
 

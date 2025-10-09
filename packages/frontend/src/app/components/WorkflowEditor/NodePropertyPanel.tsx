@@ -36,7 +36,7 @@ const NodeConfigurationPanel: React.FC<NodeConfigurationPanelProps> = ({
   onClose,
   nodeId,
 }) => {
-  const { getNodeById, updateNodeParameters, saveWorkflow, currentWorkflow, nodes, edges } =
+  const { getNodeById, updateNodeParameters, saveWorkflow, currentWorkflow } =
     useLeanWorkflowStore();
   const { credentials, loadCredentials, credentialTypes } = useCredentialStore();
 
@@ -85,6 +85,8 @@ const NodeConfigurationPanel: React.FC<NodeConfigurationPanelProps> = ({
 
   // Get connected input nodes for display
   const connectedInputNodes = useMemo(() => {
+    const nodes = currentWorkflow?.nodes;
+    const edges = currentWorkflow?.edges;
     if (!(currentNode && Array.isArray(nodes) && Array.isArray(edges))) {
       return [];
     }
@@ -92,7 +94,7 @@ const NodeConfigurationPanel: React.FC<NodeConfigurationPanelProps> = ({
       .filter((edge) => edge.target === currentNode.id)
       .map((edge) => nodes.find((node) => node.id === edge.source))
       .filter(Boolean);
-  }, [currentNode, edges, nodes]);
+  }, [currentNode, currentWorkflow]);
 
   // Extract input data from connected nodes
   const inputData = useMemo(() => {
@@ -286,6 +288,7 @@ const NodeConfigurationPanel: React.FC<NodeConfigurationPanelProps> = ({
         document.removeEventListener('mouseup', handleMouseUp);
       };
     }
+    return undefined;
   }, [isDragging, handleMouseMove, handleMouseUp]);
 
   const handleSaveWorkflow = useCallback(async () => {
@@ -295,7 +298,7 @@ const NodeConfigurationPanel: React.FC<NodeConfigurationPanelProps> = ({
     }
     setIsSaving(true);
     try {
-      await saveWorkflow();
+      await saveWorkflow(currentWorkflow);
       message.success('Workflow saved successfully');
     } catch (error: any) {
       message.error(`Failed to save workflow: ${error.message || 'Unknown error'}`);
@@ -476,7 +479,7 @@ const NodeConfigurationPanel: React.FC<NodeConfigurationPanelProps> = ({
               />
             ) : (
               <DynamicPropertyRenderer
-                properties={registryProperties as INodeProperty[]}
+                properties={registryProperties as any}
                 formState={formState}
                 onChange={handleParameterChange}
                 context={evaluationContext}

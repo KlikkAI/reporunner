@@ -82,9 +82,11 @@ export class AuthMiddleware extends SecurityMiddleware {
       refreshExpiresIn: '7d',
     };
 
-    this.tokenService = new JWTTokenService(tokenConfig);
+    this.tokenService = new JWTTokenService();
     this.sessionService = new SessionService(config.auth?.session);
     this.roleService = new RoleService();
+    // TODO: Pass tokenConfig to JWTTokenService when constructor is implemented
+    void tokenConfig; // Suppress unused variable warning
   }
 
   protected async implementation({ req }: SecurityContext): Promise<void> {

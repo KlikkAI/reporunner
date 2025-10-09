@@ -19,6 +19,11 @@ export interface GeneratorConfig {
   props?: Record<string, any>;
   className?: string;
   children?: GeneratorConfig[];
+  title?: string;
+  subtitle?: string;
+  size?: string | number;
+  hoverable?: boolean;
+  actions?: React.ReactNode;
 }
 
 export interface CardConfig extends GeneratorConfig {

@@ -43,9 +43,13 @@ export class CredentialApiService {
     filter?: CredentialFilter & PaginationParams
   ): Promise<PaginatedResponse<Credential>> {
     try {
-      const response: any = await apiClient.get('/credentials', CredentialListResponseSchema as any, {
-        params: filter,
-      });
+      const response: any = await apiClient.get(
+        '/credentials',
+        CredentialListResponseSchema as any,
+        {
+          params: filter,
+        }
+      );
 
       // Convert backend response to PaginatedResponse format
       return {
@@ -97,7 +101,11 @@ export class CredentialApiService {
     updates: Omit<UpdateCredentialRequest, 'id'>
   ): Promise<Credential> {
     try {
-      return await apiClient.put(`/credentials/${credentialId}`, updates, CredentialResponseSchema as any);
+      return await apiClient.put(
+        `/credentials/${credentialId}`,
+        updates,
+        CredentialResponseSchema as any
+      );
     } catch (error) {
       throw new ApiClientError(
         `Failed to update credential ${credentialId}`,
@@ -163,7 +171,11 @@ export class CredentialApiService {
    */
   async testCredentialConfig(config: CredentialConfig): Promise<CredentialTestResult> {
     try {
-      return await apiClient.post('/credentials/test-config', config, CredentialTestResponseSchema as any);
+      return await apiClient.post(
+        '/credentials/test-config',
+        config,
+        CredentialTestResponseSchema as any
+      );
     } catch (error) {
       throw new ApiClientError(
         'Failed to test credential configuration',
@@ -206,7 +218,11 @@ export class CredentialApiService {
     state: string;
   }> {
     try {
-      return await apiClient.post('/credentials/oauth2/init', request, OAuth2InitResponseSchema as any);
+      return await apiClient.post(
+        '/credentials/oauth2/init',
+        request,
+        OAuth2InitResponseSchema as any
+      );
     } catch (error) {
       throw new ApiClientError('Failed to initiate OAuth2 flow', 0, 'OAUTH2_INIT_ERROR', error);
     }
@@ -217,7 +233,11 @@ export class CredentialApiService {
    */
   async handleOAuth2Callback(request: OAuth2CallbackRequest): Promise<OAuth2TokenResponse> {
     try {
-      return await apiClient.post('/credentials/oauth2/callback', request, OAuth2TokenSchema as any);
+      return await apiClient.post(
+        '/credentials/oauth2/callback',
+        request,
+        OAuth2TokenSchema as any
+      );
     } catch (error) {
       throw new ApiClientError(
         'Failed to handle OAuth2 callback',

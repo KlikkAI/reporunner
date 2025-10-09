@@ -44,12 +44,12 @@ export class ValidationController extends EventEmitter {
   private bundleSizeAnalyzer!: BundleSizeAnalyzer;
   private memoryMonitor!: MemoryMonitor;
   private devExperienceMetrics!: DevExperienceMetrics;
-  private typeScriptAnalyzer!: TypeScriptAnalyzer;
-  private idePerformanceValidator!: IDEPerformanceValidator;
-  private importPathOptimizer!: ImportPathOptimizer;
   private dependencyAnalyzer!: DependencyAnalyzer;
   private codeOrganizationChecker!: CodeOrganizationChecker;
   private typeSafetyValidator!: TypeSafetyValidator;
+  private typeScriptAnalyzer!: TypeScriptAnalyzer;
+  private idePerformanceValidator!: IDEPerformanceValidator;
+  private importPathOptimizer!: ImportPathOptimizer;
   private reportAggregator!: ValidationReportAggregator;
   private recommendationEngine!: RecommendationEngine;
 

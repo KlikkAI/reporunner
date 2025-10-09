@@ -106,6 +106,7 @@ export const useAnalyticsStore = create<AnalyticsState>()(
 
       try {
         const _analyticsPeriod = period || get().analyticsPeriod;
+        void _analyticsPeriod; // Suppress unused variable warning
         const analytics = await analyticsService.generateWorkflowAnalytics(workflowId);
 
         // Extract time series data (stub implementation - will be enhanced when backend is ready)

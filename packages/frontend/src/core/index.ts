@@ -26,8 +26,8 @@ export {
   AIAssistantService,
   analyticsService,
   configService,
-  performanceService,
   logger,
+  performanceService,
 } from './services';
 
 // Stores - source of truth for AIAssistantConfig, WorkflowEdge
@@ -35,23 +35,25 @@ export * from './stores';
 
 // Types - exclude NodeProperty (from nodes), WorkflowEdge (from stores)
 export type {
+  PropertyFormState,
+  PropertyValue,
   WorkflowNodeData,
 } from './types';
 
 // Utils - exclude ApiError (from api), ValidationRule (from nodes), cn (from design-system)
 export {
   ApiErrorHandler,
-  handleApiErrors,
-  enhancedPropertyEvaluator,
+  convertNodePropertiesToINodeProperties,
+  convertNodePropertyToINodeProperty,
   EnhancedPropertyEvaluator,
-  useEnhancedPropertyEvaluator,
+  enhancedPropertyEvaluator,
   expressionEvaluator,
-  nodeGenerator,
+  handleApiErrors,
   NodeGenerator,
+  nodeGenerator,
   nodeRegistry,
   propertyEvaluator,
-  convertNodePropertyToINodeProperty,
-  convertNodePropertiesToINodeProperties,
   typeValidation,
+  useEnhancedPropertyEvaluator,
   workflowExporter,
 } from './utils';

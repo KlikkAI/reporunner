@@ -3,7 +3,7 @@
 
 import type React from 'react';
 
-interface PageHeaderProps {
+export interface PageHeaderProps {
   title: string;
   subtitle?: string;
   className?: string;

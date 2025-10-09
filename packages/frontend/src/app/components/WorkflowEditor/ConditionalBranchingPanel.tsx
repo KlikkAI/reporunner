@@ -145,7 +145,7 @@ export const ConditionalBranchingPanel: React.FC<ConditionalBranchingPanelProps>
     if (visible) {
       loadExistingBranches();
     }
-  }, [visible]);
+  }, [visible, loadExistingBranches]);
 
   const extractConditionsFromNode = (node: WorkflowNodeInstance): BranchCondition[] => {
     const properties = node.parameters?.properties || node.parameters || {};

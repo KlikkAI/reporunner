@@ -95,7 +95,10 @@ export class WorkflowApiService {
    */
   async getWorkflow(workflowId: string): Promise<Workflow> {
     try {
-      const response: any = await apiClient.get(`/workflows/${workflowId}`, WorkflowResponseSchema as any);
+      const response: any = await apiClient.get(
+        `/workflows/${workflowId}`,
+        WorkflowResponseSchema as any
+      );
 
       return response.workflow;
     } catch (error) {
@@ -114,7 +117,11 @@ export class WorkflowApiService {
   async createWorkflow(workflow: CreateWorkflowRequest): Promise<Workflow> {
     try {
       // WorkflowResponseSchema now handles nested structure extraction
-      const response: any = await apiClient.post('/workflows', workflow, WorkflowResponseSchema as any);
+      const response: any = await apiClient.post(
+        '/workflows',
+        workflow,
+        WorkflowResponseSchema as any
+      );
 
       // Response is already in the correct format
       return response.workflow;
@@ -305,7 +312,10 @@ export class WorkflowApiService {
    */
   async getExecution(executionId: string): Promise<WorkflowExecution> {
     try {
-      return await apiClient.get(`/workflows/executions/${executionId}`, ExecutionResponseSchema as any);
+      return await apiClient.get(
+        `/workflows/executions/${executionId}`,
+        ExecutionResponseSchema as any
+      );
     } catch (error) {
       throw new ApiClientError(
         `Failed to fetch execution ${executionId}`,
@@ -338,9 +348,13 @@ export class WorkflowApiService {
    */
   async getExecutionStats(workflowId?: string): Promise<ExecutionStats> {
     try {
-      return await apiClient.get('/workflows/executions/stats', ExecutionStatsResponseSchema as any, {
-        params: workflowId ? { workflowId } : undefined,
-      });
+      return await apiClient.get(
+        '/workflows/executions/stats',
+        ExecutionStatsResponseSchema as any,
+        {
+          params: workflowId ? { workflowId } : undefined,
+        }
+      );
     } catch (error) {
       throw new ApiClientError(
         'Failed to fetch execution statistics',

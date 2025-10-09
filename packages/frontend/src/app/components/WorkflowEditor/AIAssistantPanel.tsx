@@ -92,21 +92,35 @@ const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({
     try {
       // Simulate analysis loading
       const mockAnalysis: WorkflowAnalysis = {
-        complexity: 0.6,
-        performance: {
-          bottlenecks: ['Sequential processing', 'Large data sets'],
-          optimizationOpportunities: ['Parallel processing', 'Data caching'],
-          estimatedImprovement: 0.4,
-        },
-        reliability: {
-          errorProneNodes: ['http-node-1', 'database-node-2'],
-          missingErrorHandling: ['http-node-1'],
-          suggestions: ['Add try-catch containers', 'Implement retry logic'],
-        },
-        maintainability: 0.7,
-        patterns: {
-          detected: ['Sequential Pattern', 'Data Transformation Pattern'],
-          recommendations: ['Use Parallel Container', 'Add Error Handling'],
+        id: `analysis-${Date.now()}`,
+        workflowId: workflow.id || 'unknown',
+        timestamp: new Date().toISOString(),
+        score: 0.75,
+        issues: [
+          {
+            id: 'issue-1',
+            severity: 'medium',
+            type: 'reliability',
+            title: 'Missing Error Handling',
+            description: 'HTTP node lacks error handling',
+            nodeId: 'http-node-1',
+            suggestion: 'Add try-catch container',
+          },
+          {
+            id: 'issue-2',
+            severity: 'low',
+            type: 'performance',
+            title: 'Sequential Processing',
+            description: 'Could benefit from parallel processing',
+            suggestion: 'Use parallel container',
+          },
+        ],
+        suggestions: [],
+        metrics: {
+          complexity: 0.6,
+          efficiency: 0.7,
+          maintainability: 0.7,
+          testability: 0.65,
         },
       };
       setAnalysis(mockAnalysis);
@@ -136,7 +150,7 @@ const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({
         },
       };
 
-      const result = await aiAssistantService.generateWorkflowFromText(request.text);
+      const result = await aiAssistantService.generateWorkflowFromText(request.text || '');
       onGenerateWorkflow?.(result.workflow);
 
       // Show success message
@@ -280,14 +294,11 @@ const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({
               <div className="flex justify-between text-sm mb-1">
                 <span className="text-gray-300">Complexity</span>
                 <span className="text-gray-400">
-                  {typeof analysis.complexity === 'number'
-                    ? (analysis.complexity * 100).toFixed(0)
-                    : '0'}
-                  %
+                  {(analysis.metrics.complexity * 100).toFixed(0)}%
                 </span>
               </div>
               <Progress
-                percent={typeof analysis.complexity === 'number' ? analysis.complexity * 100 : 0}
+                percent={analysis.metrics.complexity * 100}
                 strokeColor="#3b82f6"
                 showInfo={false}
                 size="small"
@@ -296,21 +307,13 @@ const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({
 
             <div>
               <div className="flex justify-between text-sm mb-1">
-                <span className="text-gray-300">Performance</span>
+                <span className="text-gray-300">Efficiency</span>
                 <span className="text-gray-400">
-                  {(analysis.performance?.estimatedImprovement
-                    ? analysis.performance.estimatedImprovement * 100
-                    : 0
-                  ).toFixed(0)}
-                  % improvement possible
+                  {(analysis.metrics.efficiency * 100).toFixed(0)}%
                 </span>
               </div>
               <Progress
-                percent={
-                  analysis.performance?.estimatedImprovement
-                    ? analysis.performance.estimatedImprovement * 100
-                    : 0
-                }
+                percent={analysis.metrics.efficiency * 100}
                 strokeColor="#22c55e"
                 showInfo={false}
                 size="small"
@@ -321,20 +324,11 @@ const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({
               <div className="flex justify-between text-sm mb-1">
                 <span className="text-gray-300">Maintainability</span>
                 <span className="text-gray-400">
-                  {typeof analysis.maintainability === 'object' &&
-                  analysis.maintainability?.codeQuality
-                    ? (analysis.maintainability.codeQuality * 100).toFixed(0)
-                    : '0'}
-                  %
+                  {(analysis.metrics.maintainability * 100).toFixed(0)}%
                 </span>
               </div>
               <Progress
-                percent={
-                  typeof analysis.maintainability === 'object' &&
-                  analysis.maintainability?.codeQuality
-                    ? analysis.maintainability.codeQuality * 100
-                    : 0
-                }
+                percent={analysis.metrics.maintainability * 100}
                 strokeColor="#f59e0b"
                 showInfo={false}
                 size="small"
@@ -343,16 +337,18 @@ const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({
           </div>
         </Card>
 
-        {analysis.performance?.bottlenecks && analysis.performance.bottlenecks.length > 0 && (
+        {analysis.issues.filter((issue) => issue.type === 'performance').length > 0 && (
           <Alert
-            message="Performance Bottlenecks Detected"
+            message="Performance Issues Detected"
             description={
               <ul className="mt-2">
-                {analysis.performance.bottlenecks.map((bottleneck, index) => (
-                  <li key={index} className="text-sm">
-                    {bottleneck}
-                  </li>
-                ))}
+                {analysis.issues
+                  .filter((issue) => issue.type === 'performance')
+                  .map((issue) => (
+                    <li key={issue.id} className="text-sm">
+                      {issue.description}
+                    </li>
+                  ))}
               </ul>
             }
             type="warning"
@@ -361,17 +357,15 @@ const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({
           />
         )}
 
-        {typeof analysis.reliability === 'object' &&
-          analysis.reliability?.missingErrorHandling &&
-          analysis.reliability.missingErrorHandling.length > 0 && (
-            <Alert
-              message="Missing Error Handling"
-              description={`${analysis.reliability.missingErrorHandling.length} nodes need error handling`}
-              type="error"
-              showIcon
-              className="bg-red-900 border-red-600"
-            />
-          )}
+        {analysis.issues.filter((issue) => issue.type === 'reliability').length > 0 && (
+          <Alert
+            message="Reliability Issues"
+            description={`${analysis.issues.filter((issue) => issue.type === 'reliability').length} reliability issues detected`}
+            type="error"
+            showIcon
+            className="bg-red-900 border-red-600"
+          />
+        )}
       </div>
     );
   };

@@ -5,7 +5,7 @@
  * Different plans and enterprise options
  */
 
-import { ArrowRight, Check, Cloud, Phone, Star, Users, X, Zap } from 'lucide-react';
+import { ArrowRight, Check, Phone, Star, X } from 'lucide-react';
 import React, { useState } from 'react';
 import { Footer } from '../components/Landing/Footer';
 import { Header } from '../components/Landing/Header';
@@ -102,33 +102,6 @@ export const PricingPage: React.FC = () => {
       },
       cta: 'Contact Sales',
       ctaStyle: 'secondary',
-    },
-  ];
-
-  const __addOns = [
-    {
-      name: 'Additional Executions',
-      description: 'Extra workflow executions beyond your plan limit',
-      price: '$0.001 per execution',
-      icon: Zap,
-    },
-    {
-      name: 'Premium Support',
-      description: '24/7 phone and chat support with 1-hour response SLA',
-      price: '$199/month',
-      icon: Phone,
-    },
-    {
-      name: 'Professional Services',
-      description: 'Custom development, migration, and training services',
-      price: '$2,500/week',
-      icon: Users,
-    },
-    {
-      name: 'Dedicated Cloud',
-      description: 'Managed cloud deployment with dedicated resources',
-      price: 'Starting at $500/month',
-      icon: Cloud,
     },
   ];
 
@@ -296,49 +269,6 @@ export const PricingPage: React.FC = () => {
           enterprise: true,
         },
       ],
-    },
-  ];
-
-  const __faqs = [
-    {
-      question: 'What happens after the free trial?',
-      answer:
-        'Your free trial includes all Professional features for 14 days. After the trial, you can continue with the Community plan (free) or upgrade to Professional. No credit card required for the trial.',
-    },
-    {
-      question: 'Can I migrate from other platforms?',
-      answer:
-        'Yes! We provide migration tools and professional services to help you migrate from n8n, Zapier, Make, or any other workflow platform. Our team can assist with the migration process.',
-    },
-    {
-      question: "What's included in self-hosted deployment?",
-      answer:
-        'You get Docker Compose files, Kubernetes Helm charts, comprehensive documentation, and setup scripts. For Enterprise customers, we also provide air-gap deployment options and professional deployment services.',
-    },
-    {
-      question: 'How do execution limits work?',
-      answer:
-        'An execution is counted each time a workflow runs, regardless of how many nodes it contains. Failed executions also count toward your limit. You can purchase additional executions if needed.',
-    },
-    {
-      question: 'What AI integrations are included?',
-      answer:
-        "Professional and Enterprise plans include integrations with OpenAI, Anthropic Claude, Google Gemini, Hugging Face, and Ollama. We're constantly adding new AI providers.",
-    },
-    {
-      question: 'Do you offer custom integrations?',
-      answer:
-        'Yes! Enterprise customers can request custom integrations. Our development team will build and maintain custom nodes for your specific needs. Community users can build their own using our Node SDK.',
-    },
-    {
-      question: "What's your uptime guarantee?",
-      answer:
-        'Professional plans include 99.9% SLA. Enterprise plans can negotiate custom SLAs up to 99.99%. This applies to our managed cloud offering - self-hosted uptime depends on your infrastructure.',
-    },
-    {
-      question: 'Can I use Reporunner in air-gapped environments?',
-      answer:
-        'Yes! Enterprise customers can deploy Reporunner in completely offline environments. This includes all dependencies and updates delivered through secure offline channels.',
     },
   ];
 

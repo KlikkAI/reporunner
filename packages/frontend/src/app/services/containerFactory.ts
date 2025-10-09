@@ -82,6 +82,7 @@ class ContainerFactoryService {
       data: {
         id: containerId,
         type: 'container',
+        label: template.name,
         name: template.name,
         description: template.description,
         properties: {
@@ -151,6 +152,7 @@ class ContainerFactoryService {
       data: {
         id: containerId,
         type: 'container',
+        label: name,
         name,
         description,
         properties: {

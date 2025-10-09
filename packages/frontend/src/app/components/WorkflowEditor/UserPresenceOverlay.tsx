@@ -7,7 +7,18 @@
 
 import { Avatar, Tooltip } from 'antd';
 import React, { useCallback } from 'react';
-import type { UserPresence } from '../../../core/services/collaborationService';
+
+// import type { UserPresence } from '../../../core/services/collaborationService';
+
+// Stub type until collaborationService is implemented
+type UserPresence = {
+  userId: string;
+  user: { name: string; avatar?: string };
+  cursor?: { x: number; y: number };
+  selection?: { nodeIds: string[] };
+  viewport?: { x: number; y: number; zoom: number };
+};
+
 import { useCollaborationStore } from '../../../core/stores/collaborationStore';
 import { useLeanWorkflowStore } from '../../../core/stores/leanWorkflowStore';
 

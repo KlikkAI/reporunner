@@ -1,5 +1,4 @@
 import type React from 'react';
-import type { IntegrationNodeType } from '@/core';
 
 // Base props interface that all nodes extend
 export interface BaseNodeData {
@@ -11,14 +10,12 @@ export interface BaseNodeData {
     icon: string;
     category: string;
   };
-  nodeTypeData?:
-    | IntegrationNodeType
-    | {
-        id: string;
-        name: string;
-        type: string;
-        description: string;
-      };
+  nodeTypeData?: {
+    id: string;
+    name: string;
+    type: string;
+    description: string;
+  };
   config?: Record<string, unknown>;
   parameters?: Record<string, unknown>;
   icon?: string;

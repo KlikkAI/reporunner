@@ -38,12 +38,42 @@ import {
 } from 'antd';
 import type React from 'react';
 import { useEffect, useState } from 'react';
-import {
-  type ScheduleAnalytics,
-  type ScheduleConfiguration,
-  type ScheduledExecution,
-  workflowScheduler,
-} from '@/core/services/workflowScheduler';
+
+// TODO: Module not found - needs implementation
+// import {
+//   type ScheduleAnalytics,
+//   type ScheduleConfiguration,
+//   type ScheduledExecution,
+//   workflowScheduler,
+// } from '@/core/services/workflowScheduler';
+
+// Stub types until workflowScheduler is implemented
+type ScheduleConfiguration = any;
+type ScheduledExecution = any;
+type ScheduleAnalytics = any;
+
+interface Recommendation {
+  description: string;
+  priority: 'high' | 'medium' | 'low';
+  implementation: string;
+  estimatedImpact: string;
+}
+
+const workflowScheduler = {
+  getSchedules: async (..._args: any[]): Promise<ScheduleConfiguration[]> => [],
+  createSchedule: async (..._args: any[]): Promise<ScheduleConfiguration> => ({}) as any,
+  updateSchedule: async (..._args: any[]): Promise<ScheduleConfiguration> => ({}) as any,
+  deleteSchedule: async (..._args: any[]): Promise<void> => {},
+  getActiveExecutions: async (..._args: any[]): Promise<ScheduledExecution[]> => [],
+  getAnalytics: async (..._args: any[]): Promise<ScheduleAnalytics> => ({}) as any,
+  pauseSchedule: async (..._args: any[]): Promise<void> => {},
+  resumeSchedule: async (..._args: any[]): Promise<void> => {},
+  getScheduleAnalytics: async (_scheduleId: string): Promise<ScheduleAnalytics> => ({}) as any,
+  toggleSchedule: async (_scheduleId: string, _enabled: boolean): Promise<void> => {},
+  triggerSchedule: async (_scheduleId: string, _manual: boolean): Promise<void> => {},
+  cancelExecution: async (_executionId: string): Promise<void> => {},
+};
+
 import { colors } from '@/design-system/tokens';
 import { cn } from '@/design-system/utils';
 
@@ -71,14 +101,14 @@ export const SchedulingPanel: React.FC<SchedulingPanelProps> = ({
   const [loading, setLoading] = useState(false);
   const [editingSchedule, setEditingSchedule] = useState<string | null>(null);
 
-  const loadSchedules = () => {
-    const allSchedules = workflowScheduler.getAllSchedules();
+  const loadSchedules = async () => {
+    const allSchedules = await workflowScheduler.getSchedules();
     const workflowSchedules = allSchedules.filter((s: any) => s.workflowId === workflowId);
     setSchedules(workflowSchedules);
   };
 
-  const loadActiveExecutions = () => {
-    const allExecutions = workflowScheduler.getActiveExecutions();
+  const loadActiveExecutions = async () => {
+    const allExecutions = await workflowScheduler.getActiveExecutions();
     const workflowExecutions = allExecutions.filter((e: any) => e.workflowId === workflowId);
     setActiveExecutions(workflowExecutions);
   };
@@ -95,13 +125,13 @@ export const SchedulingPanel: React.FC<SchedulingPanelProps> = ({
       loadSchedules();
       loadActiveExecutions();
     }
-  }, [visible]);
+  }, [visible, loadActiveExecutions, loadSchedules]);
 
   useEffect(() => {
     if (selectedSchedule) {
       loadAnalytics(selectedSchedule.id);
     }
-  }, [selectedSchedule]);
+  }, [selectedSchedule, loadAnalytics]);
 
   const handleCreateSchedule = async (values: any) => {
     setLoading(true);
@@ -590,7 +620,7 @@ export const SchedulingPanel: React.FC<SchedulingPanelProps> = ({
           <Card title="Recommendations" size="small">
             <List
               dataSource={analytics.recommendations}
-              renderItem={(rec) => (
+              renderItem={(rec: Recommendation) => (
                 <List.Item>
                   <List.Item.Meta
                     title={
