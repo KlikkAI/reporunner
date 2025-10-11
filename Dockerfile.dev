@@ -1,5 +1,6 @@
 # Development Dockerfile for Reporunner
 # Optimized for development with hot reload and debugging
+# Updated for 12-package monorepo structure
 
 FROM node:18-alpine
 
@@ -17,10 +18,26 @@ RUN apk add --no-cache \
 # Create app directory
 WORKDIR /app
 
-# Copy package files first for better caching
+# Copy workspace configuration first
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
-COPY packages/*/package.json ./packages/*/
-COPY packages/@reporunner/*/package.json ./packages/@reporunner/*/
+
+# Copy all package.json files for dependency installation
+# Main packages
+COPY packages/backend/package.json ./packages/backend/
+COPY packages/frontend/package.json ./packages/frontend/
+COPY packages/shared/package.json ./packages/shared/
+
+# Copy @reporunner scoped packages
+COPY packages/@reporunner/ai/package.json ./packages/@reporunner/ai/
+COPY packages/@reporunner/auth/package.json ./packages/@reporunner/auth/
+COPY packages/@reporunner/cli/package.json ./packages/@reporunner/cli/
+COPY packages/@reporunner/core/package.json ./packages/@reporunner/core/
+COPY packages/@reporunner/enterprise/package.json ./packages/@reporunner/enterprise/
+COPY packages/@reporunner/integrations/package.json ./packages/@reporunner/integrations/
+COPY packages/@reporunner/platform/package.json ./packages/@reporunner/platform/
+COPY packages/@reporunner/services/package.json ./packages/@reporunner/services/
+COPY packages/@reporunner/validation/package.json ./packages/@reporunner/validation/
+COPY packages/@reporunner/workflow/package.json ./packages/@reporunner/workflow/
 
 # Install all dependencies (including dev dependencies)
 RUN pnpm install --frozen-lockfile
