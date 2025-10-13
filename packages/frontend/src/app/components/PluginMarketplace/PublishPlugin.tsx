@@ -178,20 +178,32 @@ export const PublishPlugin: React.FC<PublishPluginProps> = ({ onClose }) => {
 
   // Helper functions for rendering validation results
   const getProgressStatus = (score: number) => {
-    if (score >= 80) return 'success';
-    if (score >= 60) return 'normal';
+    if (score >= 80) {
+      return 'success';
+    }
+    if (score >= 60) {
+      return 'normal';
+    }
     return 'exception';
   };
 
   const getProgressColor = (score: number) => {
-    if (score >= 80) return '#52c41a';
-    if (score >= 60) return '#1890ff';
+    if (score >= 80) {
+      return '#52c41a';
+    }
+    if (score >= 60) {
+      return '#1890ff';
+    }
     return '#ff4d4f';
   };
 
   const getIssueSeverityType = (severity: string) => {
-    if (severity === 'critical') return 'error';
-    if (severity === 'high') return 'warning';
+    if (severity === 'critical') {
+      return 'error';
+    }
+    if (severity === 'high') {
+      return 'warning';
+    }
     return 'info';
   };
 
