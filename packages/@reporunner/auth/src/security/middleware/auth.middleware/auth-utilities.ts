@@ -49,6 +49,101 @@ export interface AuthMiddlewareOptions {
 }
 
 /**
+ * Check if the request path is a public endpoint
+ */
+function isPublicPath(path: string): boolean {
+  const publicPaths = ['/health', '/docs', '/openapi.json'];
+  return publicPaths.some((publicPath) => path.startsWith(publicPath));
+}
+
+/**
+ * Validate authorization header format and extract token
+ */
+function validateAuthHeader(authHeader: string | undefined): {
+  valid: boolean;
+  token?: string;
+  error?: { status: number; body: { error: string; message: string } };
+} {
+  if (!authHeader) {
+    return {
+      valid: false,
+      error: {
+        status: 401,
+        body: { error: 'No authorization header', message: 'Authentication required' },
+      },
+    };
+  }
+
+  if (!authHeader.startsWith('Bearer ')) {
+    return {
+      valid: false,
+      error: {
+        status: 401,
+        body: { error: 'Invalid authorization format', message: 'Bearer token required' },
+      },
+    };
+  }
+
+  return { valid: true, token: authHeader.substring(7) };
+}
+
+/**
+ * Build authenticated user from JWT payload
+ */
+function buildAuthenticatedUser(payload: JWTPayload, req: AuthRequest): void {
+  req.user = {
+    id: (payload.userId || payload.sub) as string,
+    email: payload.email as string | undefined,
+    organizationId: payload.organizationId as string | undefined,
+    permissions: (payload.permissions as string[]) || [],
+  };
+  req.userId = payload.userId || payload.sub;
+  req.organizationId = payload.organizationId as string | undefined;
+}
+
+/**
+ * Check if user has required permissions
+ */
+function checkUserPermissions(
+  payload: JWTPayload,
+  requiredPermissions: string[]
+): { allowed: boolean; error?: { status: number; body: { error: string; message: string } } } {
+  if (requiredPermissions.length === 0) {
+    return { allowed: true };
+  }
+
+  const userPermissions = (payload.permissions as string[]) || [];
+  const hasRequiredPermission = requiredPermissions.some((perm) => userPermissions.includes(perm));
+
+  if (!hasRequiredPermission) {
+    return {
+      allowed: false,
+      error: {
+        status: 403,
+        body: {
+          error: 'Insufficient permissions',
+          message: `One of the following permissions is required: ${requiredPermissions.join(', ')}`,
+        },
+      },
+    };
+  }
+
+  return { allowed: true };
+}
+
+/**
+ * Check if missing auth header should be skipped (for optional auth)
+ */
+function shouldSkipMissingAuth(
+  required: boolean,
+  error?: { status: number; body: { error: string; message: string } }
+): boolean {
+  if (required) return false;
+  if (!error || error.status !== 401) return false;
+  return error.body.error === 'No authorization header';
+}
+
+/**
  * Create authentication middleware
  */
 export function createAuthMiddleware(
@@ -59,56 +154,33 @@ export function createAuthMiddleware(
     const { required = true, permissions = [] } = options;
 
     // Skip auth for public endpoints
-    const publicPaths = ['/health', '/docs', '/openapi.json'];
-    if (publicPaths.some((path) => req.path.startsWith(path))) {
+    if (isPublicPath(req.path)) {
       return next();
     }
 
-    const authHeader = req.headers.authorization;
-
-    if (!authHeader) {
-      if (!required) {
+    // Validate authorization header
+    const headerValidation = validateAuthHeader(req.headers.authorization);
+    if (!headerValidation.valid) {
+      if (shouldSkipMissingAuth(required, headerValidation.error)) {
         return next();
       }
-      return res.status(401).json({
-        error: 'No authorization header',
-        message: 'Authentication required',
-      });
+      if (headerValidation.error) {
+        return res.status(headerValidation.error.status).json(headerValidation.error.body);
+      }
     }
 
-    if (!authHeader.startsWith('Bearer ')) {
-      return res.status(401).json({
-        error: 'Invalid authorization format',
-        message: 'Bearer token required',
-      });
-    }
-
-    const token = authHeader.substring(7);
+    const token = headerValidation.token as string;
 
     try {
       const payload = await sessionManager.verifyToken(token);
 
-      // Convert JWTPayload to AuthenticatedUser
-      req.user = {
-        id: (payload.userId || payload.sub) as string,
-        email: payload.email as string | undefined,
-        organizationId: payload.organizationId as string | undefined,
-        permissions: (payload.permissions as string[]) || [],
-      };
-      req.userId = payload.userId || payload.sub;
-      req.organizationId = payload.organizationId as string | undefined;
+      // Build authenticated user
+      buildAuthenticatedUser(payload, req);
 
-      // Check permissions if required
-      if (permissions.length > 0) {
-        const userPermissions = (payload.permissions as string[]) || [];
-        const hasRequiredPermission = permissions.some((perm) => userPermissions.includes(perm));
-
-        if (!hasRequiredPermission) {
-          return res.status(403).json({
-            error: 'Insufficient permissions',
-            message: `One of the following permissions is required: ${permissions.join(', ')}`,
-          });
-        }
+      // Check permissions
+      const permissionCheck = checkUserPermissions(payload, permissions);
+      if (!permissionCheck.allowed && permissionCheck.error) {
+        return res.status(permissionCheck.error.status).json(permissionCheck.error.body);
       }
 
       next();

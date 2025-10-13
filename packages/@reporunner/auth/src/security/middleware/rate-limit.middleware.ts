@@ -16,6 +16,101 @@ export interface RateLimitOptions {
 }
 
 /**
+ * Check if the key is whitelisted
+ */
+function isWhitelisted(key: string, whitelist: string[]): boolean {
+  return whitelist.includes(key);
+}
+
+/**
+ * Set rate limit headers on the response
+ */
+function setRateLimitHeaders(
+  res: Response,
+  points: number,
+  remaining: number | undefined,
+  retryAfter: number | undefined,
+  useDraftHeaders: boolean
+): void {
+  if (remaining === undefined) return;
+
+  if (useDraftHeaders) {
+    res.setHeader('RateLimit-Limit', points.toString());
+    res.setHeader('RateLimit-Remaining', remaining.toString());
+    if (retryAfter) {
+      res.setHeader('RateLimit-Reset', retryAfter);
+    }
+  } else {
+    res.setHeader('X-RateLimit-Limit', points.toString());
+    res.setHeader('X-RateLimit-Remaining', remaining.toString());
+    if (retryAfter) {
+      res.setHeader('X-RateLimit-Reset', retryAfter);
+    }
+  }
+}
+
+/**
+ * Handle rate limit exceeded response
+ */
+function handleRateLimitExceeded(
+  res: Response,
+  statusCode: number,
+  message: string,
+  retryAfter: number | undefined,
+  blocked: boolean | undefined
+): void {
+  if (retryAfter) {
+    res.setHeader('Retry-After', retryAfter);
+  }
+
+  res.status(statusCode).json({
+    success: false,
+    error: {
+      code: ERROR_CODES.RATE_LIMIT_EXCEEDED,
+      message,
+      retryAfter,
+      blocked,
+    },
+  });
+}
+
+/**
+ * Check if points should be refunded based on response status
+ */
+function shouldRefundPoints(
+  statusCode: number,
+  skipSuccessfulRequests: boolean,
+  skipFailedRequests: boolean
+): boolean {
+  return (skipSuccessfulRequests && statusCode < 400) || (skipFailedRequests && statusCode >= 400);
+}
+
+/**
+ * Wrap response.send to refund points on certain status codes
+ */
+function wrapResponseForConditionalConsume(
+  res: Response,
+  rateLimiter: AdvancedRateLimiter,
+  type: string,
+  key: string,
+  skipSuccessfulRequests: boolean,
+  skipFailedRequests: boolean
+): void {
+  const originalSend = res.send;
+  res.send = function (data: unknown) {
+    const statusCode = res.statusCode;
+
+    if (shouldRefundPoints(statusCode, skipSuccessfulRequests, skipFailedRequests)) {
+      rateLimiter.resetLimit(type, key).catch((_err) => {
+        // Ignore reset errors
+      });
+    }
+
+    return originalSend.call(this, data);
+  };
+}
+
+/**
  * Create rate limiting middleware
  */
 export function createRateLimitMiddleware(
@@ -37,11 +132,10 @@ export function createRateLimitMiddleware(
 
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
-      // Generate key for this request
       const key = keyGenerator(req);
 
       // Check whitelist
-      if (whitelist.includes(key)) {
+      if (isWhitelisted(key, whitelist)) {
         return next();
       }
 
@@ -49,59 +143,32 @@ export function createRateLimitMiddleware(
       const result = await rateLimiter.checkLimit(type, key, points);
 
       // Add rate limit headers
-      if (headers && result.remaining !== undefined) {
-        if (draft_polli_ratelimit_headers) {
-          res.setHeader('RateLimit-Limit', points.toString());
-          res.setHeader('RateLimit-Remaining', result.remaining.toString());
-          if (result.retryAfter) {
-            res.setHeader('RateLimit-Reset', result.retryAfter);
-          }
-        } else {
-          res.setHeader('X-RateLimit-Limit', points.toString());
-          res.setHeader('X-RateLimit-Remaining', result.remaining.toString());
-          if (result.retryAfter) {
-            res.setHeader('X-RateLimit-Reset', result.retryAfter);
-          }
-        }
+      if (headers) {
+        setRateLimitHeaders(
+          res,
+          points,
+          result.remaining,
+          result.retryAfter,
+          draft_polli_ratelimit_headers
+        );
       }
 
+      // Handle rate limit exceeded
       if (!result.allowed) {
-        // Add Retry-After header
-        if (result.retryAfter) {
-          res.setHeader('Retry-After', result.retryAfter);
-        }
-
-        // Send error response
-        return res.status(statusCode).json({
-          success: false,
-          error: {
-            code: ERROR_CODES.RATE_LIMIT_EXCEEDED,
-            message,
-            retryAfter: result.retryAfter,
-            blocked: result.blocked,
-          },
-        });
+        handleRateLimitExceeded(res, statusCode, message, result.retryAfter, result.blocked);
+        return;
       }
 
       // Track response for conditional consuming
       if (skipSuccessfulRequests || skipFailedRequests) {
-        const originalSend = res.send;
-        res.send = function (data: unknown) {
-          const statusCode = res.statusCode;
-
-          // Refund points based on response status
-          if (
-            (skipSuccessfulRequests && statusCode < 400) ||
-            (skipFailedRequests && statusCode >= 400)
-          ) {
-            // Reset the limit to refund the points
-            rateLimiter.resetLimit(type, key).catch((_err) => {
-              // Ignore reset errors
-            });
-          }
-
-          return originalSend.call(this, data);
-        };
+        wrapResponseForConditionalConsume(
+          res,
+          rateLimiter,
+          type,
+          key,
+          skipSuccessfulRequests,
+          skipFailedRequests
+        );
       }
 
       next();

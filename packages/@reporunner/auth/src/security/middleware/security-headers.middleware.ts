@@ -131,6 +131,75 @@ export function createCorsMiddleware(config: CorsConfig = {}): RequestHandler {
 }
 
 /**
+ * Convert camelCase directive name to kebab-case
+ */
+function buildDirectiveName(key: string): string {
+  return key.replace(/([A-Z])/g, '-$1').toLowerCase();
+}
+
+/**
+ * Format a single CSP directive value
+ */
+function formatDirectiveValue(
+  key: string,
+  value: string[] | boolean | undefined | null
+): string | null {
+  if (value === undefined || value === null) {
+    return null;
+  }
+
+  const directiveName = buildDirectiveName(key);
+
+  if (typeof value === 'boolean') {
+    return value ? directiveName : null;
+  }
+
+  if (Array.isArray(value) && value.length > 0) {
+    return `${directiveName} ${value.join(' ')}`;
+  }
+
+  return null;
+}
+
+/**
+ * Build policy directives array from CSP directives object
+ */
+function buildPolicyDirectives(directives: CSPDirectives): string[] {
+  const policyDirectives: string[] = [];
+
+  for (const [key, value] of Object.entries(directives)) {
+    const formatted = formatDirectiveValue(key, value);
+    if (formatted) {
+      policyDirectives.push(formatted);
+    }
+  }
+
+  return policyDirectives;
+}
+
+/**
+ * Add optional CSP directives
+ */
+function addOptionalDirectives(
+  policyDirectives: string[],
+  upgradeInsecureRequests: boolean,
+  blockAllMixedContent: boolean,
+  reportUri: string | undefined
+): void {
+  if (upgradeInsecureRequests) {
+    policyDirectives.push('upgrade-insecure-requests');
+  }
+
+  if (blockAllMixedContent) {
+    policyDirectives.push('block-all-mixed-content');
+  }
+
+  if (reportUri) {
+    policyDirectives.push(`report-uri ${reportUri}`);
+  }
+}
+
+/**
  * Create Content Security Policy middleware
  */
 export function createCSPMiddleware(
@@ -151,41 +220,16 @@ export function createCSPMiddleware(
     }
 
     // Build CSP header
-    const policyDirectives: string[] = [];
-
-    // Add directives
     const mergedDirectives = { ...DEFAULT_CSP_DIRECTIVES, ...directives };
+    const policyDirectives = buildPolicyDirectives(mergedDirectives);
 
-    for (const [key, value] of Object.entries(mergedDirectives)) {
-      if (value === undefined || value === null) {
-        continue;
-      }
-
-      const directiveName = key.replace(/([A-Z])/g, '-$1').toLowerCase();
-
-      if (typeof value === 'boolean') {
-        if (value) {
-          policyDirectives.push(directiveName);
-        }
-      } else if (Array.isArray(value) && value.length > 0) {
-        policyDirectives.push(`${directiveName} ${value.join(' ')}`);
-      }
-    }
-
-    // Add upgrade-insecure-requests
-    if (upgradeInsecureRequests) {
-      policyDirectives.push('upgrade-insecure-requests');
-    }
-
-    // Add block-all-mixed-content
-    if (blockAllMixedContent) {
-      policyDirectives.push('block-all-mixed-content');
-    }
-
-    // Add report-uri if specified
-    if (reportUri) {
-      policyDirectives.push(`report-uri ${reportUri}`);
-    }
+    // Add optional directives
+    addOptionalDirectives(
+      policyDirectives,
+      upgradeInsecureRequests,
+      blockAllMixedContent,
+      reportUri
+    );
 
     const policy = policyDirectives.join('; ');
     const headerName = reportOnly

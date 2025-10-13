@@ -59,59 +59,62 @@ export class ValidationMiddleware extends BaseMiddleware {
     }
   }
 
+  /**
+   * Validate with a schema or function and capture errors
+   */
+  private async validateWithHandler(
+    validationFn: () => Promise<void>,
+    errorKey: string,
+    errors: Record<string, string[]>
+  ): Promise<void> {
+    try {
+      await validationFn();
+    } catch (error) {
+      if (error instanceof ValidationError) {
+        errors[errorKey] = error.details;
+      } else {
+        errors[errorKey] = [(error as Error).message];
+      }
+    }
+  }
+
   protected async implementation({ req }: { req: Request }): Promise<void> {
     const errors: Record<string, string[]> = {};
 
     // Validate body
     if (this.bodyValidator && req.body) {
-      try {
-        await this.bodyValidator.validate(req.body);
-      } catch (error) {
-        if (error instanceof ValidationError) {
-          errors.body = error.details;
-        } else {
-          errors.body = [(error as Error).message];
-        }
-      }
+      await this.validateWithHandler(
+        async () => this.bodyValidator!.validate(req.body),
+        'body',
+        errors
+      );
     }
 
     // Validate query
     if (this.queryValidator && req.query) {
-      try {
-        await this.queryValidator.validate(req.query);
-      } catch (error) {
-        if (error instanceof ValidationError) {
-          errors.query = error.details;
-        } else {
-          errors.query = [(error as Error).message];
-        }
-      }
+      await this.validateWithHandler(
+        async () => this.queryValidator!.validate(req.query),
+        'query',
+        errors
+      );
     }
 
     // Validate params
     if (this.paramsValidator && req.params) {
-      try {
-        await this.paramsValidator.validate(req.params);
-      } catch (error) {
-        if (error instanceof ValidationError) {
-          errors.params = error.details;
-        } else {
-          errors.params = [(error as Error).message];
-        }
-      }
+      await this.validateWithHandler(
+        async () => this.paramsValidator!.validate(req.params),
+        'params',
+        errors
+      );
     }
 
     // Run custom validation
     if (this.validationConfig.customValidation) {
-      try {
-        await this.validationConfig.customValidation(req);
-      } catch (error) {
-        if (error instanceof ValidationError) {
-          errors.custom = error.details;
-        } else {
-          errors.custom = [(error as Error).message];
-        }
-      }
+      await this.validateWithHandler(
+        async () => this.validationConfig.customValidation!(req),
+        'custom',
+        errors
+      );
     }
 
     // If there are any errors, throw a validation error

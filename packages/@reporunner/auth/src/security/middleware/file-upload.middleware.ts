@@ -207,6 +207,194 @@ export function createFileUploadMiddleware(config: FileUploadConfig = {}) {
 }
 
 /**
+ * Process a single file with security checks
+ */
+async function processSingleFile(
+  file: Express.Multer.File,
+  config: FileUploadConfig,
+  req: Request
+): Promise<{ file?: UploadedFile; error?: string }> {
+  try {
+    // Validate magic numbers
+    const magicValidation = await validateFileMagicNumber(file, config);
+    if (!magicValidation.valid) {
+      await unlinkAsync(file.path);
+      return { error: magicValidation.error };
+    }
+
+    // Scan for viruses
+    const virusScan = await scanFileIfRequired(file, config);
+    if (!virusScan.clean) {
+      await unlinkAsync(file.path);
+      return { error: virusScan.error };
+    }
+
+    // Calculate hash and create metadata
+    const hash = config.hashAlgorithm
+      ? await calculateFileHash(file.path, config.hashAlgorithm)
+      : undefined;
+
+    const metadata = config.metadata ? createFileMetadata(req, virusScan.result) : undefined;
+
+    return {
+      file: {
+        ...file,
+        hash,
+        metadata,
+      } as UploadedFile,
+    };
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    await unlinkAsync(file.path).catch(() => {});
+    return { error: `Error processing file ${file.originalname}: ${errorMessage}` };
+  }
+}
+
+/**
+ * Validate file magic number if configured
+ */
+async function validateFileMagicNumber(
+  file: Express.Multer.File,
+  config: FileUploadConfig
+): Promise<{ valid: boolean; error?: string }> {
+  if (!config.validateMagicNumbers) {
+    return { valid: true };
+  }
+
+  const isValid = await validateMagicNumber(file.path, file.mimetype);
+  if (!isValid) {
+    return {
+      valid: false,
+      error: `File ${file.originalname} content does not match declared MIME type`,
+    };
+  }
+
+  return { valid: true };
+}
+
+/**
+ * Scan file for viruses if configured
+ */
+async function scanFileIfRequired(
+  file: Express.Multer.File,
+  config: FileUploadConfig
+): Promise<{ clean: boolean; error?: string; result?: { clean: boolean; threat?: string } }> {
+  if (!config.scanForVirus) {
+    return { clean: true };
+  }
+
+  const virusScanResult = await scanFileForVirus(file.path, config.clamavPath);
+  if (!virusScanResult.clean) {
+    return {
+      clean: false,
+      error: `File ${file.originalname} contains malware: ${virusScanResult.threat}`,
+      result: virusScanResult,
+    };
+  }
+
+  return { clean: true, result: virusScanResult };
+}
+
+/**
+ * Create file metadata from request
+ */
+function createFileMetadata(
+  req: Request,
+  virusScanResult?: { clean: boolean; threat?: string }
+): FileMetadata {
+  return {
+    uploadedAt: new Date(),
+    uploadedBy: (req as { user?: { id: string } }).user?.id,
+    ipAddress: req.ip,
+    userAgent: req.headers['user-agent'],
+    virusScanResult: virusScanResult ? { scanned: true, ...virusScanResult } : undefined,
+  };
+}
+
+/**
+ * Log file upload audit event
+ */
+async function logUploadAuditEvent(req: Request, files: UploadedFile[]): Promise<void> {
+  const globalWithAudit = global as {
+    auditLogger?: { log: (event: unknown) => Promise<void> };
+  };
+
+  if (!globalWithAudit.auditLogger) {
+    return;
+  }
+
+  await globalWithAudit.auditLogger.log({
+    type: 'FILE_UPLOADED',
+    severity: 'LOW',
+    userId: (req as { user?: { id: string } }).user?.id,
+    action: 'File upload',
+    result: 'SUCCESS',
+    details: {
+      files: files.map((f) => ({
+        filename: f.filename,
+        originalname: f.originalname,
+        size: f.size,
+        mimetype: f.mimetype,
+        hash: f.hash,
+      })),
+    },
+  });
+}
+
+/**
+ * Get uploaded files from request
+ */
+function getUploadedFiles(req: Request): Express.Multer.File[] {
+  return req.file ? [req.file] : (req.files as Express.Multer.File[]) || [];
+}
+
+/**
+ * Separate processing results into successful files and errors
+ */
+function separateProcessingResults(results: Array<{ file?: UploadedFile; error?: string }>): {
+  processedFiles: UploadedFile[];
+  errors: string[];
+} {
+  const processedFiles: UploadedFile[] = [];
+  const errors: string[] = [];
+
+  for (const result of results) {
+    if (result.file) processedFiles.push(result.file);
+    if (result.error) errors.push(result.error);
+  }
+
+  return { processedFiles, errors };
+}
+
+/**
+ * Handle case when all files failed processing
+ */
+function handleAllFilesFailed(res: Response, errors: string[]): boolean {
+  if (errors.length === 0) return false;
+
+  res.status(400).json({
+    success: false,
+    error: {
+      code: ERROR_CODES.FILE_UPLOAD_ERROR,
+      message: 'File upload failed',
+      details: errors,
+    },
+  });
+  return true;
+}
+
+/**
+ * Attach processed files to request
+ */
+function attachFilesToRequest(req: Request, processedFiles: UploadedFile[]): void {
+  if (req.file) {
+    (req as { file: UploadedFile }).file = processedFiles[0] as UploadedFile;
+  } else {
+    (req as { files: UploadedFile[] }).files = processedFiles as UploadedFile[];
+  }
+}
+
+/**
  * Create upload handler with additional security checks
  */
 function createUploadHandler(multerMiddleware: RequestHandler, config: FileUploadConfig) {
@@ -214,113 +402,27 @@ function createUploadHandler(multerMiddleware: RequestHandler, config: FileUploa
     multerMiddleware,
     async (req: Request, res: Response, next: NextFunction) => {
       try {
-        const files = req.file ? [req.file] : (req.files as Express.Multer.File[]) || [];
-
+        const files = getUploadedFiles(req);
         if (files.length === 0) {
           return next();
         }
 
-        // Process each uploaded file
-        const processedFiles: UploadedFile[] = [];
-        const errors: string[] = [];
+        // Process all files in parallel
+        const results = await Promise.all(
+          files.map((file) => processSingleFile(file, config, req))
+        );
 
-        for (const file of files) {
-          try {
-            // Validate magic numbers
-            if (config.validateMagicNumbers) {
-              const isValid = await validateMagicNumber(file.path, file.mimetype);
-              if (!isValid) {
-                errors.push(`File ${file.originalname} content does not match declared MIME type`);
-                await unlinkAsync(file.path);
-                continue;
-              }
-            }
+        // Separate successes from failures
+        const { processedFiles, errors } = separateProcessingResults(results);
 
-            // Scan for viruses
-            let virusScanResult: { clean: boolean; threat?: string } | undefined;
-            if (config.scanForVirus) {
-              virusScanResult = await scanFileForVirus(file.path, config.clamavPath);
-              if (!virusScanResult.clean) {
-                errors.push(
-                  `File ${file.originalname} contains malware: ${virusScanResult.threat}`
-                );
-                await unlinkAsync(file.path);
-                continue;
-              }
-            }
-
-            // Calculate file hash
-            let hash: string | undefined;
-            if (config.hashAlgorithm) {
-              hash = await calculateFileHash(file.path, config.hashAlgorithm);
-            }
-
-            // Create file metadata
-            let metadata: Record<string, unknown> | undefined;
-            if (config.metadata) {
-              metadata = {
-                uploadedAt: new Date(),
-                uploadedBy: (req as { user?: { id: string } }).user?.id,
-                ipAddress: req.ip,
-                userAgent: req.headers['user-agent'],
-                virusScanResult,
-              };
-            }
-
-            processedFiles.push({
-              ...file,
-              hash,
-              metadata,
-            } as UploadedFile);
-          } catch (error: unknown) {
-            const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-            errors.push(`Error processing file ${file.originalname}: ${errorMessage}`);
-            await unlinkAsync(file.path).catch(() => {
-              // Ignore cleanup errors
-            });
-          }
+        // Handle all failures
+        if (processedFiles.length === 0 && handleAllFilesFailed(res, errors)) {
+          return;
         }
 
-        if (errors.length > 0 && processedFiles.length === 0) {
-          return res.status(400).json({
-            success: false,
-            error: {
-              code: ERROR_CODES.FILE_UPLOAD_ERROR,
-              message: 'File upload failed',
-              details: errors,
-            },
-          });
-        }
-
-        // Attach processed files to request
-        if (req.file) {
-          (req as { file: UploadedFile }).file = processedFiles[0] as UploadedFile;
-        } else {
-          (req as { files: UploadedFile[] }).files = processedFiles as UploadedFile[];
-        }
-
-        // Log upload audit event if audit logger is available
-        const globalWithAudit = global as {
-          auditLogger?: { log: (event: unknown) => Promise<void> };
-        };
-        if (globalWithAudit.auditLogger) {
-          await globalWithAudit.auditLogger.log({
-            type: 'FILE_UPLOADED',
-            severity: 'LOW',
-            userId: (req as { user?: { id: string } }).user?.id,
-            action: 'File upload',
-            result: 'SUCCESS',
-            details: {
-              files: processedFiles.map((f) => ({
-                filename: f.filename,
-                originalname: f.originalname,
-                size: f.size,
-                mimetype: f.mimetype,
-                hash: f.hash,
-              })),
-            },
-          });
-        }
+        // Attach files and log
+        attachFilesToRequest(req, processedFiles);
+        await logUploadAuditEvent(req, processedFiles);
 
         next();
       } catch (error) {
@@ -446,38 +548,49 @@ function sanitizeFilenameString(filename: string): string {
 }
 
 /**
+ * Clean up uploaded files from request
+ */
+async function cleanupUploadedFiles(req: Request): Promise<void> {
+  const files = req.file ? [req.file] : (req.files as Express.Multer.File[]) || [];
+
+  for (const file of files) {
+    try {
+      await unlinkAsync(file.path);
+    } catch (_error) {
+      // Ignore file cleanup errors
+    }
+  }
+}
+
+/**
+ * Get error message for Multer error code
+ */
+function getMulterErrorMessage(code: string): string {
+  switch (code) {
+    case 'LIMIT_FILE_SIZE':
+      return 'File too large';
+    case 'LIMIT_FILE_COUNT':
+      return 'Too many files';
+    case 'LIMIT_UNEXPECTED_FILE':
+      return 'Unexpected field';
+    default:
+      return 'File upload error';
+  }
+}
+
+/**
  * Create file cleanup middleware
  */
 export function createFileCleanupMiddleware() {
   return async (err: unknown, req: Request, res: Response, next: NextFunction): Promise<void> => {
     // Clean up uploaded files on error
     if (err) {
-      const files = req.file ? [req.file] : (req.files as Express.Multer.File[]) || [];
-
-      for (const file of files) {
-        try {
-          await unlinkAsync(file.path);
-        } catch (_error) {
-          // Ignore file cleanup errors
-        }
-      }
+      await cleanupUploadedFiles(req);
     }
 
     // Handle multer errors
     if (err instanceof MulterError) {
-      let message = 'File upload error';
-
-      switch (err.code) {
-        case 'LIMIT_FILE_SIZE':
-          message = 'File too large';
-          break;
-        case 'LIMIT_FILE_COUNT':
-          message = 'Too many files';
-          break;
-        case 'LIMIT_UNEXPECTED_FILE':
-          message = 'Unexpected field';
-          break;
-      }
+      const message = getMulterErrorMessage(err.code);
 
       res.status(400).json({
         success: false,
@@ -558,6 +671,111 @@ export function createFieldSizeLimiter(limits: Record<string, number>) {
 }
 
 /**
+ * Validate download request filename
+ */
+function validateDownloadFilename(filename: unknown): {
+  valid: boolean;
+  filename?: string;
+  error?: { code: string; message: string };
+} {
+  if (!filename || typeof filename !== 'string') {
+    return {
+      valid: false,
+      error: {
+        code: ERROR_CODES.VALIDATION_ERROR,
+        message: 'Filename is required',
+      },
+    };
+  }
+
+  // Prevent path traversal
+  if (filename.includes('../') || filename.includes('..\\')) {
+    return {
+      valid: false,
+      error: {
+        code: ERROR_CODES.SECURITY_VIOLATION,
+        message: 'Invalid filename',
+      },
+    };
+  }
+
+  return { valid: true, filename };
+}
+
+/**
+ * Validate file path is within base path
+ */
+function validateFilePath(
+  filePath: string,
+  basePath: string
+): { valid: boolean; resolvedPath?: string; error?: { code: string; message: string } } {
+  const resolvedPath = path.resolve(filePath);
+  const resolvedBase = path.resolve(basePath);
+
+  if (!resolvedPath.startsWith(resolvedBase)) {
+    return {
+      valid: false,
+      error: {
+        code: ERROR_CODES.FORBIDDEN,
+        message: 'Access denied',
+      },
+    };
+  }
+
+  return { valid: true, resolvedPath };
+}
+
+/**
+ * Check if file exists
+ */
+async function checkFileExists(
+  filePath: string
+): Promise<{ exists: boolean; error?: { code: string; message: string } }> {
+  try {
+    await statAsync(filePath);
+    return { exists: true };
+  } catch (_error) {
+    return {
+      exists: false,
+      error: {
+        code: ERROR_CODES.NOT_FOUND,
+        message: 'File not found',
+      },
+    };
+  }
+}
+
+/**
+ * Log file download audit event
+ */
+async function logDownloadAuditEvent(req: Request, filename: string): Promise<void> {
+  const globalWithAudit = global as {
+    auditLogger?: { log: (event: unknown) => Promise<void> };
+  };
+
+  if (!globalWithAudit.auditLogger) {
+    return;
+  }
+
+  await globalWithAudit.auditLogger.log({
+    type: 'FILE_DOWNLOADED',
+    severity: 'LOW',
+    userId: (req as { user?: { id: string } }).user?.id,
+    action: 'File download',
+    result: 'SUCCESS',
+    details: { filename },
+  });
+}
+
+/**
+ * Set download security headers
+ */
+function setDownloadSecurityHeaders(res: Response): void {
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('Content-Security-Policy', "default-src 'none'");
+}
+
+/**
  * Create secure file download middleware
  */
 export function createSecureDownloadMiddleware(
@@ -582,94 +800,62 @@ export function createSecureDownloadMiddleware(
         return;
       }
 
-      // Get requested file path
-      const filename = req.params.filename || req.query.filename;
+      // Validate filename
+      const rawFilename = req.params.filename || req.query.filename;
+      const filenameValidation = validateDownloadFilename(rawFilename);
 
-      if (!filename || typeof filename !== 'string') {
+      if (!filenameValidation.valid) {
         res.status(400).json({
           success: false,
-          error: {
-            code: ERROR_CODES.VALIDATION_ERROR,
-            message: 'Filename is required',
-          },
+          error: filenameValidation.error,
         });
         return;
       }
 
-      // Prevent path traversal
-      if (filename.includes('../') || filename.includes('..\\')) {
-        res.status(400).json({
-          success: false,
-          error: {
-            code: ERROR_CODES.SECURITY_VIOLATION,
-            message: 'Invalid filename',
-          },
-        });
-        return;
-      }
-
+      const filename = filenameValidation.filename as string;
       const filePath = path.join(options.basePath, filename);
 
-      // Verify file is within allowed paths
-      const resolvedPath = path.resolve(filePath);
-      const resolvedBase = path.resolve(options.basePath);
+      // Validate file path
+      const pathValidation = validateFilePath(filePath, options.basePath);
 
-      if (!resolvedPath.startsWith(resolvedBase)) {
+      if (!pathValidation.valid) {
         res.status(403).json({
           success: false,
-          error: {
-            code: ERROR_CODES.FORBIDDEN,
-            message: 'Access denied',
-          },
+          error: pathValidation.error,
         });
         return;
       }
 
-      // Check if file exists
-      try {
-        await statAsync(resolvedPath);
-      } catch (_error) {
+      const resolvedPath = pathValidation.resolvedPath as string;
+
+      // Check file exists
+      const fileCheck = await checkFileExists(resolvedPath);
+
+      if (!fileCheck.exists) {
         res.status(404).json({
           success: false,
-          error: {
-            code: ERROR_CODES.NOT_FOUND,
-            message: 'File not found',
-          },
+          error: fileCheck.error,
         });
         return;
       }
 
       // Log download if enabled
-      const globalWithAudit = global as {
-        auditLogger?: { log: (event: unknown) => Promise<void> };
-      };
-      if (options.logDownloads && globalWithAudit.auditLogger) {
-        await globalWithAudit.auditLogger.log({
-          type: 'FILE_DOWNLOADED',
-          severity: 'LOW',
-          userId: (req as { user?: { id: string } }).user?.id,
-          action: 'File download',
-          result: 'SUCCESS',
-          details: { filename },
-        });
+      if (options.logDownloads) {
+        await logDownloadAuditEvent(req, filename);
       }
 
-      // Set security headers
-      res.setHeader('X-Content-Type-Options', 'nosniff');
-      res.setHeader('Content-Security-Policy', "default-src 'none'");
+      // Set security headers and send file
+      setDownloadSecurityHeaders(res);
 
-      // Send file
       res.download(resolvedPath, path.basename(filename), (err) => {
-        if (err) {
-          if (!res.headersSent) {
-            res.status(500).json({
-              success: false,
-              error: {
-                code: ERROR_CODES.INTERNAL_ERROR,
-                message: 'Failed to download file',
-              },
-            });
-          }
+        if (err && !res.headersSent) {
+          res.status(500).json({
+            success: false,
+            error: {
+              code: ERROR_CODES.INTERNAL_ERROR,
+              message: 'Failed to download file',
+            },
+          });
         }
       });
     } catch (error) {

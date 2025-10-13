@@ -376,7 +376,7 @@ export function createEnumSchema<T extends readonly [string, ...string[]]>(value
  */
 export function createConditionalSchema<T extends string>(
   discriminator: T,
-  schemas: readonly [z.ZodDiscriminatedUnionOption<T>, ...z.ZodDiscriminatedUnionOption<T>[]]
+  schemas: Parameters<typeof z.discriminatedUnion>[1]
 ) {
   return z.discriminatedUnion(discriminator, schemas);
 }
