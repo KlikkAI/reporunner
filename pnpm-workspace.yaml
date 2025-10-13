@@ -78,7 +78,7 @@ catalog:
   morgan: ^1.10.0
   multer: ^2.0.2
   node-cron: ^3.0.3
-  openai: ^4.24.7
+  openai: ^6.3.0
   p-limit: ^5.0.0
   p-queue: ^8.0.1
   pg: ^8.16.3
@@ -123,6 +123,9 @@ packageExtensions:
   openai:
     peerDependencies:
       zod: "*"
+  chromadb:
+    peerDependencies:
+      openai: "*"
 
 shamefullyHoist: false
 

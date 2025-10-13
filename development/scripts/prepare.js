@@ -14,7 +14,7 @@ try {
   // Install husky hooks
   if (existsSync('.husky')) {
     console.log('📦 Installing husky hooks...');
-    execSync('pnpm dlx husky install', { stdio: 'inherit' });
+    execSync('pnpm dlx husky', { stdio: 'inherit' });
   }
 
   // Build core packages first (temporarily disabled due to TypeScript errors)

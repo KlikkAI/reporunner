@@ -25,6 +25,10 @@ build/
 */dist/
 */build/
 
+# Bundled config files (tsup temporary artifacts)
+*.bundled_*.mjs
+**/tsup.config.bundled_*.mjs
+
 # Logs
 logs
 *.log
