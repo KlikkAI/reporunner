@@ -304,36 +304,49 @@ export const ComparisonTable: React.FC = () => {
     },
   ];
 
+  // Feature value rendering helpers
+  const renderBooleanValue = (value: boolean, isReporunner: boolean) => {
+    return value ? (
+      <Check className={`w-5 h-5 mx-auto ${isReporunner ? 'text-blue-600' : 'text-green-500'}`} />
+    ) : (
+      <X className="w-5 h-5 text-gray-400 mx-auto" />
+    );
+  };
+
+  const getTagStyles = (tag: string) => {
+    switch (tag) {
+      case 'Enterprise':
+        return 'bg-purple-100 text-purple-700';
+      case 'Paid':
+        return 'bg-yellow-100 text-yellow-700';
+      default:
+        return 'bg-gray-100 text-gray-700';
+    }
+  };
+
+  const renderTagValue = (value: string) => {
+    return <span className={`text-xs px-2 py-1 rounded-full ${getTagStyles(value)}`}>{value}</span>;
+  };
+
+  const renderStringValue = (value: string, isReporunner: boolean) => {
+    return (
+      <span className={`text-sm font-medium ${isReporunner ? 'text-blue-600' : 'text-gray-700'}`}>
+        {value}
+      </span>
+    );
+  };
+
+  const isTag = (value: string) => {
+    return value === 'Enterprise' || value === 'Paid' || value === 'Basic';
+  };
+
   const renderFeatureValue = (value: any, isReporunner: boolean = false) => {
     if (typeof value === 'boolean') {
-      return value ? (
-        <Check className={`w-5 h-5 mx-auto ${isReporunner ? 'text-blue-600' : 'text-green-500'}`} />
-      ) : (
-        <X className="w-5 h-5 text-gray-400 mx-auto" />
-      );
+      return renderBooleanValue(value, isReporunner);
     }
 
     if (typeof value === 'string') {
-      if (value === 'Enterprise' || value === 'Paid' || value === 'Basic') {
-        return (
-          <span
-            className={`text-xs px-2 py-1 rounded-full ${
-              value === 'Enterprise'
-                ? 'bg-purple-100 text-purple-700'
-                : value === 'Paid'
-                  ? 'bg-yellow-100 text-yellow-700'
-                  : 'bg-gray-100 text-gray-700'
-            }`}
-          >
-            {value}
-          </span>
-        );
-      }
-      return (
-        <span className={`text-sm font-medium ${isReporunner ? 'text-blue-600' : 'text-gray-700'}`}>
-          {value}
-        </span>
-      );
+      return isTag(value) ? renderTagValue(value) : renderStringValue(value, isReporunner);
     }
 
     return null;

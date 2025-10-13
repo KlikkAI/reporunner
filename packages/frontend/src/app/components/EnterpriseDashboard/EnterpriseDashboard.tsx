@@ -334,6 +334,510 @@ export const EnterpriseDashboard: React.FC = () => {
     },
   ];
 
+  // Tab rendering functions
+  const renderOverviewTab = () => (
+    <div>
+      {/* Key Metrics */}
+      <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
+        <Col span={6}>
+          <Card>
+            <Statistic
+              title="Total Organizations"
+              value={metrics?.organizations.total}
+              prefix={<TeamOutlined />}
+              suffix={
+                <span style={{ fontSize: '14px', color: '#52c41a' }}>
+                  <RiseOutlined /> {metrics?.organizations.growth}%
+                </span>
+              }
+            />
+          </Card>
+        </Col>
+        <Col span={6}>
+          <Card>
+            <Statistic
+              title="Active Users"
+              value={metrics?.users.active}
+              prefix={<UserOutlined />}
+              suffix={
+                <span style={{ fontSize: '14px', color: '#52c41a' }}>
+                  <RiseOutlined /> {metrics?.users.growth}%
+                </span>
+              }
+            />
+          </Card>
+        </Col>
+        <Col span={6}>
+          <Card>
+            <Statistic
+              title="Workflow Executions"
+              value={metrics?.workflows.executions}
+              prefix={<ThunderboltOutlined />}
+              suffix={
+                <span style={{ fontSize: '14px' }}>{metrics?.workflows.successRate}% success</span>
+              }
+            />
+          </Card>
+        </Col>
+        <Col span={6}>
+          <Card>
+            <Statistic
+              title="System Uptime"
+              value={metrics?.performance.systemUptime}
+              precision={2}
+              suffix="%"
+              prefix={<CheckCircleOutlined />}
+              valueStyle={{ color: '#52c41a' }}
+            />
+          </Card>
+        </Col>
+      </Row>
+
+      {/* Charts */}
+      <Row gutter={[16, 16]}>
+        <Col span={12}>
+          <Card
+            title="Execution Trends"
+            extra={
+              <Button icon={<ExportOutlined />} size="small">
+                Export
+              </Button>
+            }
+          >
+            <Line
+              data={executionTrendData}
+              xField="date"
+              yField="executions"
+              height={300}
+              smooth
+              point={{ size: 5, shape: 'circle' }}
+            />
+          </Card>
+        </Col>
+        <Col span={12}>
+          <Card
+            title="User Growth"
+            extra={
+              <Button icon={<ExportOutlined />} size="small">
+                Export
+              </Button>
+            }
+          >
+            <Column
+              data={userGrowthData}
+              xField="month"
+              yField="total"
+              height={300}
+              columnStyle={{ fill: '#1890ff' }}
+            />
+          </Card>
+        </Col>
+      </Row>
+    </div>
+  );
+
+  const renderPerformanceTab = () => (
+    <div>
+      <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
+        <Col span={6}>
+          <Card>
+            <Statistic
+              title="Avg Execution Time"
+              value={metrics?.performance.avgExecutionTime}
+              precision={1}
+              suffix="s"
+              prefix={<ClockCircleOutlined />}
+            />
+          </Card>
+        </Col>
+        <Col span={6}>
+          <Card>
+            <Statistic
+              title="Error Rate"
+              value={metrics?.performance.errorRate ?? 0}
+              precision={1}
+              suffix="%"
+              prefix={<BugOutlined />}
+              valueStyle={{
+                color: (metrics?.performance.errorRate ?? 0) > 2 ? '#cf1322' : '#52c41a',
+              }}
+            />
+          </Card>
+        </Col>
+        <Col span={6}>
+          <Card>
+            <Statistic
+              title="Throughput"
+              value={metrics?.performance.throughput}
+              suffix="/hour"
+              prefix={<ApiOutlined />}
+            />
+          </Card>
+        </Col>
+        <Col span={6}>
+          <Card>
+            <Statistic
+              title="Monthly Spend"
+              value={metrics?.costs.monthlySpend}
+              prefix="$"
+              suffix={
+                <span
+                  style={{
+                    fontSize: '14px',
+                    color: (metrics?.costs.growth ?? 0) < 0 ? '#52c41a' : '#cf1322',
+                  }}
+                >
+                  {(metrics?.costs.growth ?? 0) < 0 ? <FallOutlined /> : <RiseOutlined />}{' '}
+                  {Math.abs(metrics?.costs.growth ?? 0)}%
+                </span>
+              }
+            />
+          </Card>
+        </Col>
+      </Row>
+
+      <Row gutter={[16, 16]}>
+        <Col span={16}>
+          <Card
+            title="System Performance (24h)"
+            extra={
+              <Button icon={<ReloadOutlined />} size="small">
+                Refresh
+              </Button>
+            }
+          >
+            <Area
+              data={performanceData}
+              xField="time"
+              yField="cpu"
+              height={300}
+              // @ts-expect-error Area config shape may differ by version
+              areaStyle={{ fill: 'l(270) 0:#ffffff 0.5:#7ec2f3 1:#1890ff' }}
+            />
+          </Card>
+        </Col>
+        <Col span={8}>
+          <Card title="Workflow Categories">
+            <Pie
+              data={workflowCategoriesData}
+              angleField="value"
+              colorField="type"
+              height={300}
+              radius={0.8}
+              label={{
+                type: 'spider',
+                content: '{name}\n{percentage}',
+              }}
+            />
+          </Card>
+        </Col>
+      </Row>
+    </div>
+  );
+
+  // Security tab helper functions
+  const renderSecurityMetrics = () => (
+    <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
+      <Col span={6}>
+        <Card>
+          <Statistic
+            title="Active Threats"
+            value={metrics?.security.threats ?? 0}
+            prefix={<WarningOutlined />}
+            valueStyle={{
+              color: (metrics?.security.threats ?? 0) > 0 ? '#cf1322' : '#52c41a',
+            }}
+          />
+        </Card>
+      </Col>
+      <Col span={6}>
+        <Card>
+          <Statistic
+            title="Security Alerts"
+            value={metrics?.security.alerts ?? 0}
+            prefix={<SecurityScanOutlined />}
+            valueStyle={{
+              color: (metrics?.security.alerts ?? 0) > 5 ? '#fa8c16' : '#52c41a',
+            }}
+          />
+        </Card>
+      </Col>
+      <Col span={6}>
+        <Card>
+          <Statistic
+            title="Compliance Score"
+            value={metrics?.security.complianceScore ?? 0}
+            suffix="%"
+            prefix={<CheckCircleOutlined />}
+            valueStyle={{
+              color: (metrics?.security?.complianceScore ?? 0) >= 90 ? '#52c41a' : '#fa8c16',
+            }}
+          />
+        </Card>
+      </Col>
+      <Col span={6}>
+        <Card>
+          <Statistic
+            title="Last Incident"
+            value={
+              metrics?.security.lastIncident
+                ? Math.floor(
+                    (Date.now() - metrics.security.lastIncident.getTime()) / (24 * 60 * 60 * 1000)
+                  )
+                : 0
+            }
+            suffix=" days ago"
+            prefix={<ClockCircleOutlined />}
+          />
+        </Card>
+      </Col>
+    </Row>
+  );
+
+  const renderSecurityAlert = () => {
+    const alertCount = metrics?.security.alerts ?? 0;
+    if (alertCount === 0) {
+      return null;
+    }
+
+    return (
+      <Alert
+        message="Security Alerts Require Attention"
+        description={`There are ${alertCount} active security alerts that need investigation.`}
+        type="warning"
+        showIcon
+        style={{ marginBottom: 24 }}
+        action={
+          <Button size="small" type="primary">
+            View All Alerts
+          </Button>
+        }
+      />
+    );
+  };
+
+  const renderSecurityOverview = () => (
+    <Card title="Security Overview">
+      <Row gutter={16}>
+        <Col span={12}>
+          <div style={{ marginBottom: 16 }}>
+            <Text strong>Threat Detection</Text>
+            <Progress percent={85} status="active" strokeColor="#52c41a" />
+          </div>
+          <div style={{ marginBottom: 16 }}>
+            <Text strong>Access Control</Text>
+            <Progress percent={92} status="active" strokeColor="#1890ff" />
+          </div>
+          <div style={{ marginBottom: 16 }}>
+            <Text strong>Data Encryption</Text>
+            <Progress percent={98} status="active" strokeColor="#722ed1" />
+          </div>
+        </Col>
+        <Col span={12}>
+          <div style={{ marginBottom: 16 }}>
+            <Text strong>Audit Coverage</Text>
+            <Progress percent={94} status="active" strokeColor="#fa8c16" />
+          </div>
+          <div style={{ marginBottom: 16 }}>
+            <Text strong>Vulnerability Management</Text>
+            <Progress percent={88} status="active" strokeColor="#13c2c2" />
+          </div>
+          <div style={{ marginBottom: 16 }}>
+            <Text strong>Incident Response</Text>
+            <Progress percent={90} status="active" strokeColor="#eb2f96" />
+          </div>
+        </Col>
+      </Row>
+    </Card>
+  );
+
+  const renderSecurityTab = () => (
+    <div>
+      {renderSecurityMetrics()}
+      {renderSecurityAlert()}
+      {renderSecurityOverview()}
+    </div>
+  );
+
+  const renderOrganizationsTab = () => (
+    <div>
+      <Card
+        title="Top Organizations"
+        extra={
+          <Space>
+            <Button icon={<ExportOutlined />} size="small">
+              Export
+            </Button>
+            <Button icon={<ReloadOutlined />} size="small">
+              Refresh
+            </Button>
+          </Space>
+        }
+      >
+        <Table
+          dataSource={topOrganizationsData}
+          pagination={false}
+          columns={[
+            {
+              title: 'Organization',
+              dataIndex: 'name',
+              key: 'name',
+              render: (name: string) => (
+                <div>
+                  <Avatar size="small" style={{ backgroundColor: '#1890ff', marginRight: 8 }}>
+                    {name.charAt(0)}
+                  </Avatar>
+                  <Text strong>{name}</Text>
+                </div>
+              ),
+            },
+            {
+              title: 'Users',
+              dataIndex: 'users',
+              key: 'users',
+              render: (users: number) => <Statistic value={users} />,
+            },
+            {
+              title: 'Workflows',
+              dataIndex: 'workflows',
+              key: 'workflows',
+              render: (workflows: number) => <Statistic value={workflows} />,
+            },
+            {
+              title: 'Executions',
+              dataIndex: 'executions',
+              key: 'executions',
+              render: (executions: number) => <Statistic value={executions} />,
+            },
+            {
+              title: 'Growth',
+              dataIndex: 'growth',
+              key: 'growth',
+              render: (growth: number) => (
+                <span style={{ color: growth >= 0 ? '#52c41a' : '#cf1322' }}>
+                  {growth >= 0 ? <RiseOutlined /> : <FallOutlined />} {Math.abs(growth)}%
+                </span>
+              ),
+            },
+          ]}
+        />
+      </Card>
+
+      <Card title="Top Users" style={{ marginTop: 16 }}>
+        <Table
+          dataSource={topUsersData}
+          pagination={false}
+          columns={[
+            {
+              title: 'User',
+              dataIndex: 'name',
+              key: 'name',
+              render: (name: string, record: any) => (
+                <div>
+                  <Avatar size="small" icon={<UserOutlined />} style={{ marginRight: 8 }} />
+                  <div>
+                    <Text strong>{name}</Text>
+                    <br />
+                    <Text type="secondary">{record.organization}</Text>
+                  </div>
+                </div>
+              ),
+            },
+            {
+              title: 'Executions',
+              dataIndex: 'executions',
+              key: 'executions',
+              render: (executions: number) => <Statistic value={executions} />,
+            },
+            {
+              title: 'Success Rate',
+              dataIndex: 'successRate',
+              key: 'successRate',
+              render: (rate: number) => (
+                <Progress
+                  percent={rate}
+                  size="small"
+                  status={rate >= 95 ? 'success' : rate >= 90 ? 'normal' : 'exception'}
+                />
+              ),
+            },
+          ]}
+        />
+      </Card>
+    </div>
+  );
+
+  const renderActivityTab = () => (
+    <div>
+      <Card
+        title="Recent Activity"
+        extra={
+          <Space>
+            <Select defaultValue="all" style={{ width: 120 }}>
+              <Option value="all">All Events</Option>
+              <Option value="security">Security</Option>
+              <Option value="workflow">Workflows</Option>
+              <Option value="user">Users</Option>
+            </Select>
+            <Button icon={<ReloadOutlined />} size="small">
+              Refresh
+            </Button>
+          </Space>
+        }
+      >
+        <Timeline>
+          {activities.map((activity) => (
+            <Timeline.Item
+              key={activity.id}
+              dot={
+                <Avatar
+                  size="small"
+                  style={{
+                    backgroundColor: getSeverityColor(activity.severity),
+                  }}
+                  icon={getActivityIcon(activity.type)}
+                />
+              }
+            >
+              <div>
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                  }}
+                >
+                  <Text strong>{activity.title}</Text>
+                  <Text type="secondary" style={{ fontSize: '12px' }}>
+                    {activity.timestamp.toLocaleTimeString()}
+                  </Text>
+                </div>
+                <div style={{ marginTop: 4 }}>
+                  <Text>{activity.description}</Text>
+                </div>
+                {(activity.user || activity.organization) && (
+                  <div style={{ marginTop: 8 }}>
+                    {activity.user && (
+                      <Tag icon={<UserOutlined />} color="blue">
+                        {activity.user}
+                      </Tag>
+                    )}
+                    {activity.organization && (
+                      <Tag icon={<TeamOutlined />} color="green">
+                        {activity.organization}
+                      </Tag>
+                    )}
+                    <Tag color={getSeverityColor(activity.severity)}>{activity.severity}</Tag>
+                  </div>
+                )}
+              </div>
+            </Timeline.Item>
+          ))}
+        </Timeline>
+      </Card>
+    </div>
+  );
+
   const tabs = [
     {
       key: 'overview',
@@ -343,108 +847,7 @@ export const EnterpriseDashboard: React.FC = () => {
           Overview
         </span>
       ),
-      children: (
-        <div>
-          {/* Key Metrics */}
-          <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
-            <Col span={6}>
-              <Card>
-                <Statistic
-                  title="Total Organizations"
-                  value={metrics?.organizations.total}
-                  prefix={<TeamOutlined />}
-                  suffix={
-                    <span style={{ fontSize: '14px', color: '#52c41a' }}>
-                      <RiseOutlined /> {metrics?.organizations.growth}%
-                    </span>
-                  }
-                />
-              </Card>
-            </Col>
-            <Col span={6}>
-              <Card>
-                <Statistic
-                  title="Active Users"
-                  value={metrics?.users.active}
-                  prefix={<UserOutlined />}
-                  suffix={
-                    <span style={{ fontSize: '14px', color: '#52c41a' }}>
-                      <RiseOutlined /> {metrics?.users.growth}%
-                    </span>
-                  }
-                />
-              </Card>
-            </Col>
-            <Col span={6}>
-              <Card>
-                <Statistic
-                  title="Workflow Executions"
-                  value={metrics?.workflows.executions}
-                  prefix={<ThunderboltOutlined />}
-                  suffix={
-                    <span style={{ fontSize: '14px' }}>
-                      {metrics?.workflows.successRate}% success
-                    </span>
-                  }
-                />
-              </Card>
-            </Col>
-            <Col span={6}>
-              <Card>
-                <Statistic
-                  title="System Uptime"
-                  value={metrics?.performance.systemUptime}
-                  precision={2}
-                  suffix="%"
-                  prefix={<CheckCircleOutlined />}
-                  valueStyle={{ color: '#52c41a' }}
-                />
-              </Card>
-            </Col>
-          </Row>
-
-          {/* Charts */}
-          <Row gutter={[16, 16]}>
-            <Col span={12}>
-              <Card
-                title="Execution Trends"
-                extra={
-                  <Button icon={<ExportOutlined />} size="small">
-                    Export
-                  </Button>
-                }
-              >
-                <Line
-                  data={executionTrendData}
-                  xField="date"
-                  yField="executions"
-                  height={300}
-                  smooth
-                  point={{ size: 5, shape: 'circle' }}
-                />
-              </Card>
-            </Col>
-            <Col span={12}>
-              <Card
-                title="User Growth"
-                extra={
-                  <Button icon={<ExportOutlined />} size="small">
-                    Export
-                  </Button>
-                }
-              >
-                <Column
-                  data={userGrowthData}
-                  xField="month"
-                  yField="total"
-                  height={300}
-                  columnStyle={{ fill: '#1890ff' }}
-                />
-              </Card>
-            </Col>
-          </Row>
-        </div>
-      ),
+      children: renderOverviewTab(),
     },
     {
       key: 'performance',
@@ -454,104 +857,7 @@ export const EnterpriseDashboard: React.FC = () => {
           Performance
         </span>
       ),
-      children: (
-        <div>
-          <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
-            <Col span={6}>
-              <Card>
-                <Statistic
-                  title="Avg Execution Time"
-                  value={metrics?.performance.avgExecutionTime}
-                  precision={1}
-                  suffix="s"
-                  prefix={<ClockCircleOutlined />}
-                />
-              </Card>
-            </Col>
-            <Col span={6}>
-              <Card>
-                <Statistic
-                  title="Error Rate"
-                  value={metrics?.performance.errorRate ?? 0}
-                  precision={1}
-                  suffix="%"
-                  prefix={<BugOutlined />}
-                  valueStyle={{
-                    color: (metrics?.performance.errorRate ?? 0) > 2 ? '#cf1322' : '#52c41a',
-                  }}
-                />
-              </Card>
-            </Col>
-            <Col span={6}>
-              <Card>
-                <Statistic
-                  title="Throughput"
-                  value={metrics?.performance.throughput}
-                  suffix="/hour"
-                  prefix={<ApiOutlined />}
-                />
-              </Card>
-            </Col>
-            <Col span={6}>
-              <Card>
-                <Statistic
-                  title="Monthly Spend"
-                  value={metrics?.costs.monthlySpend}
-                  prefix="$"
-                  suffix={
-                    <span
-                      style={{
-                        fontSize: '14px',
-                        color: (metrics?.costs.growth ?? 0) < 0 ? '#52c41a' : '#cf1322',
-                      }}
-                    >
-                      {(metrics?.costs.growth ?? 0) < 0 ? <FallOutlined /> : <RiseOutlined />}{' '}
-                      {Math.abs(metrics?.costs.growth ?? 0)}%
-                    </span>
-                  }
-                />
-              </Card>
-            </Col>
-          </Row>
-
-          <Row gutter={[16, 16]}>
-            <Col span={16}>
-              <Card
-                title="System Performance (24h)"
-                extra={
-                  <Button icon={<ReloadOutlined />} size="small">
-                    Refresh
-                  </Button>
-                }
-              >
-                <Area
-                  data={performanceData}
-                  xField="time"
-                  yField="cpu"
-                  height={300}
-                  // @ts-expect-error Area config shape may differ by version
-                  areaStyle={{ fill: 'l(270) 0:#ffffff 0.5:#7ec2f3 1:#1890ff' }}
-                />
-              </Card>
-            </Col>
-            <Col span={8}>
-              <Card title="Workflow Categories">
-                <Pie
-                  data={workflowCategoriesData}
-                  angleField="value"
-                  colorField="type"
-                  height={300}
-                  radius={0.8}
-                  label={{
-                    type: 'spider',
-                    content: '{name}\n{percentage}',
-                  }}
-                />
-              </Card>
-            </Col>
-          </Row>
-        </div>
-      ),
+      children: renderPerformanceTab(),
     },
     {
       key: 'security',
@@ -564,114 +870,7 @@ export const EnterpriseDashboard: React.FC = () => {
           )}
         </span>
       ),
-      children: (
-        <div>
-          <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
-            <Col span={6}>
-              <Card>
-                <Statistic
-                  title="Active Threats"
-                  value={metrics?.security.threats ?? 0}
-                  prefix={<WarningOutlined />}
-                  valueStyle={{
-                    color: (metrics?.security.threats ?? 0) > 0 ? '#cf1322' : '#52c41a',
-                  }}
-                />
-              </Card>
-            </Col>
-            <Col span={6}>
-              <Card>
-                <Statistic
-                  title="Security Alerts"
-                  value={metrics?.security.alerts ?? 0}
-                  prefix={<SecurityScanOutlined />}
-                  valueStyle={{
-                    color: (metrics?.security.alerts ?? 0) > 5 ? '#fa8c16' : '#52c41a',
-                  }}
-                />
-              </Card>
-            </Col>
-            <Col span={6}>
-              <Card>
-                <Statistic
-                  title="Compliance Score"
-                  value={metrics?.security.complianceScore ?? 0}
-                  suffix="%"
-                  prefix={<CheckCircleOutlined />}
-                  valueStyle={{
-                    color: (metrics?.security?.complianceScore ?? 0) >= 90 ? '#52c41a' : '#fa8c16',
-                  }}
-                />
-              </Card>
-            </Col>
-            <Col span={6}>
-              <Card>
-                <Statistic
-                  title="Last Incident"
-                  value={
-                    metrics?.security.lastIncident
-                      ? Math.floor(
-                          (Date.now() - metrics.security.lastIncident.getTime()) /
-                            (24 * 60 * 60 * 1000)
-                        )
-                      : 0
-                  }
-                  suffix=" days ago"
-                  prefix={<ClockCircleOutlined />}
-                />
-              </Card>
-            </Col>
-          </Row>
-
-          {(metrics?.security.alerts ?? 0) > 0 && (
-            <Alert
-              message="Security Alerts Require Attention"
-              description={`There are ${metrics?.security.alerts ?? 0} active security alerts that need investigation.`}
-              type="warning"
-              showIcon
-              style={{ marginBottom: 24 }}
-              action={
-                <Button size="small" type="primary">
-                  View All Alerts
-                </Button>
-              }
-            />
-          )}
-
-          <Card title="Security Overview">
-            <Row gutter={16}>
-              <Col span={12}>
-                <div style={{ marginBottom: 16 }}>
-                  <Text strong>Threat Detection</Text>
-                  <Progress percent={85} status="active" strokeColor="#52c41a" />
-                </div>
-                <div style={{ marginBottom: 16 }}>
-                  <Text strong>Access Control</Text>
-                  <Progress percent={92} status="active" strokeColor="#1890ff" />
-                </div>
-                <div style={{ marginBottom: 16 }}>
-                  <Text strong>Data Encryption</Text>
-                  <Progress percent={98} status="active" strokeColor="#722ed1" />
-                </div>
-              </Col>
-              <Col span={12}>
-                <div style={{ marginBottom: 16 }}>
-                  <Text strong>Audit Coverage</Text>
-                  <Progress percent={94} status="active" strokeColor="#fa8c16" />
-                </div>
-                <div style={{ marginBottom: 16 }}>
-                  <Text strong>Vulnerability Management</Text>
-                  <Progress percent={88} status="active" strokeColor="#13c2c2" />
-                </div>
-                <div style={{ marginBottom: 16 }}>
-                  <Text strong>Incident Response</Text>
-                  <Progress percent={90} status="active" strokeColor="#eb2f96" />
-                </div>
-              </Col>
-            </Row>
-          </Card>
-        </div>
-      ),
+      children: renderSecurityTab(),
     },
     {
       key: 'organizations',
@@ -681,113 +880,7 @@ export const EnterpriseDashboard: React.FC = () => {
           Organizations
         </span>
       ),
-      children: (
-        <div>
-          <Card
-            title="Top Organizations"
-            extra={
-              <Space>
-                <Button icon={<ExportOutlined />} size="small">
-                  Export
-                </Button>
-                <Button icon={<ReloadOutlined />} size="small">
-                  Refresh
-                </Button>
-              </Space>
-            }
-          >
-            <Table
-              dataSource={topOrganizationsData}
-              pagination={false}
-              columns={[
-                {
-                  title: 'Organization',
-                  dataIndex: 'name',
-                  key: 'name',
-                  render: (name: string) => (
-                    <div>
-                      <Avatar size="small" style={{ backgroundColor: '#1890ff', marginRight: 8 }}>
-                        {name.charAt(0)}
-                      </Avatar>
-                      <Text strong>{name}</Text>
-                    </div>
-                  ),
-                },
-                {
-                  title: 'Users',
-                  dataIndex: 'users',
-                  key: 'users',
-                  render: (users: number) => <Statistic value={users} />,
-                },
-                {
-                  title: 'Workflows',
-                  dataIndex: 'workflows',
-                  key: 'workflows',
-                  render: (workflows: number) => <Statistic value={workflows} />,
-                },
-                {
-                  title: 'Executions',
-                  dataIndex: 'executions',
-                  key: 'executions',
-                  render: (executions: number) => <Statistic value={executions} />,
-                },
-                {
-                  title: 'Growth',
-                  dataIndex: 'growth',
-                  key: 'growth',
-                  render: (growth: number) => (
-                    <span style={{ color: growth >= 0 ? '#52c41a' : '#cf1322' }}>
-                      {growth >= 0 ? <RiseOutlined /> : <FallOutlined />} {Math.abs(growth)}%
-                    </span>
-                  ),
-                },
-              ]}
-            />
-          </Card>
-
-          <Card title="Top Users" style={{ marginTop: 16 }}>
-            <Table
-              dataSource={topUsersData}
-              pagination={false}
-              columns={[
-                {
-                  title: 'User',
-                  dataIndex: 'name',
-                  key: 'name',
-                  render: (name: string, record: any) => (
-                    <div>
-                      <Avatar size="small" icon={<UserOutlined />} style={{ marginRight: 8 }} />
-                      <div>
-                        <Text strong>{name}</Text>
-                        <br />
-                        <Text type="secondary">{record.organization}</Text>
-                      </div>
-                    </div>
-                  ),
-                },
-                {
-                  title: 'Executions',
-                  dataIndex: 'executions',
-                  key: 'executions',
-                  render: (executions: number) => <Statistic value={executions} />,
-                },
-                {
-                  title: 'Success Rate',
-                  dataIndex: 'successRate',
-                  key: 'successRate',
-                  render: (rate: number) => (
-                    <Progress
-                      percent={rate}
-                      size="small"
-                      status={rate >= 95 ? 'success' : rate >= 90 ? 'normal' : 'exception'}
-                    />
-                  ),
-                },
-              ]}
-            />
-          </Card>
-        </div>
-      ),
+      children: renderOrganizationsTab(),
     },
     {
       key: 'activity',
@@ -797,76 +890,7 @@ export const EnterpriseDashboard: React.FC = () => {
           Activity
         </span>
       ),
-      children: (
-        <div>
-          <Card
-            title="Recent Activity"
-            extra={
-              <Space>
-                <Select defaultValue="all" style={{ width: 120 }}>
-                  <Option value="all">All Events</Option>
-                  <Option value="security">Security</Option>
-                  <Option value="workflow">Workflows</Option>
-                  <Option value="user">Users</Option>
-                </Select>
-                <Button icon={<ReloadOutlined />} size="small">
-                  Refresh
-                </Button>
-              </Space>
-            }
-          >
-            <Timeline>
-              {activities.map((activity) => (
-                <Timeline.Item
-                  key={activity.id}
-                  dot={
-                    <Avatar
-                      size="small"
-                      style={{
-                        backgroundColor: getSeverityColor(activity.severity),
-                      }}
-                      icon={getActivityIcon(activity.type)}
-                    />
-                  }
-                >
-                  <div>
-                    <div
-                      style={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                      }}
-                    >
-                      <Text strong>{activity.title}</Text>
-                      <Text type="secondary" style={{ fontSize: '12px' }}>
-                        {activity.timestamp.toLocaleTimeString()}
-                      </Text>
-                    </div>
-                    <div style={{ marginTop: 4 }}>
-                      <Text>{activity.description}</Text>
-                    </div>
-                    {(activity.user || activity.organization) && (
-                      <div style={{ marginTop: 8 }}>
-                        {activity.user && (
-                          <Tag icon={<UserOutlined />} color="blue">
-                            {activity.user}
-                          </Tag>
-                        )}
-                        {activity.organization && (
-                          <Tag icon={<TeamOutlined />} color="green">
-                            {activity.organization}
-                          </Tag>
-                        )}
-                        <Tag color={getSeverityColor(activity.severity)}>{activity.severity}</Tag>
-                      </div>
-                    )}
-                  </div>
-                </Timeline.Item>
-              ))}
-            </Timeline>
-          </Card>
-        </div>
-      ),
+      children: renderActivityTab(),
     },
   ];
 

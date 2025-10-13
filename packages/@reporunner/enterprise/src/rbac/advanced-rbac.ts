@@ -522,6 +522,85 @@ export class AdvancedRBAC {
   }
 
   /**
+   * Get active user assignments filtered by context
+   */
+  private getActiveUserAssignments(
+    userId: string,
+    context?: { organizationId?: string }
+  ): UserRoleAssignment[] {
+    const userAssignments = this.userRoleAssignments.get(userId) || [];
+    return userAssignments.filter(
+      (assignment) =>
+        assignment.isActive &&
+        (!assignment.expiresAt || assignment.expiresAt > new Date()) &&
+        (!context?.organizationId || assignment.organizationId === context.organizationId)
+    );
+  }
+
+  /**
+   * Get active role from assignment
+   */
+  private getActiveRole(assignment: UserRoleAssignment): Role | null {
+    const role = this.roles.get(assignment.roleId);
+    return role?.isActive ? role : null;
+  }
+
+  /**
+   * Check direct permission with scope validation
+   */
+  private checkDirectPermissionWithScope(
+    role: Role,
+    assignment: UserRoleAssignment,
+    permissionId: string,
+    context?: {
+      resourceId?: string;
+      resourceData?: Record<string, unknown>;
+    }
+  ): boolean {
+    if (!role.permissions.includes(permissionId)) {
+      return false;
+    }
+
+    // Check scope conditions if any
+    if (assignment.scope?.conditions) {
+      const conditionsMet = this.evaluateConditions(
+        assignment.scope.conditions,
+        context?.resourceData || {}
+      );
+      if (!conditionsMet) {
+        return false;
+      }
+    }
+
+    // Check resource scope if any
+    if (assignment.scope?.resources && context?.resourceId) {
+      if (!assignment.scope.resources.includes(context.resourceId)) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  /**
+   * Check inherited permissions from parent roles
+   */
+  private checkInheritedPermissions(role: Role, permissionId: string): boolean {
+    if (!role.inheritsFrom) {
+      return false;
+    }
+
+    for (const parentRoleId of role.inheritsFrom) {
+      const parentRole = this.roles.get(parentRoleId);
+      if (parentRole?.isActive && parentRole.permissions.includes(permissionId)) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  /**
    * Check if user has permission
    */
   async hasPermission(
@@ -534,51 +613,22 @@ export class AdvancedRBAC {
     }
   ): Promise<boolean> {
     try {
-      const userAssignments = this.userRoleAssignments.get(userId) || [];
-      const activeAssignments = userAssignments.filter(
-        (assignment) =>
-          assignment.isActive &&
-          (!assignment.expiresAt || assignment.expiresAt > new Date()) &&
-          (!context?.organizationId || assignment.organizationId === context.organizationId)
-      );
+      const activeAssignments = this.getActiveUserAssignments(userId, context);
 
       for (const assignment of activeAssignments) {
-        const role = this.roles.get(assignment.roleId);
-        if (!role?.isActive) {
+        const role = this.getActiveRole(assignment);
+        if (!role) {
           continue;
         }
 
-        // Check direct permissions
-        if (role.permissions.includes(permissionId)) {
-          // Check scope conditions if any
-          if (assignment.scope?.conditions) {
-            const conditionsMet = this.evaluateConditions(
-              assignment.scope.conditions,
-              context?.resourceData || {}
-            );
-            if (!conditionsMet) {
-              continue;
-            }
-          }
-
-          // Check resource scope if any
-          if (assignment.scope?.resources && context?.resourceId) {
-            if (!assignment.scope.resources.includes(context.resourceId)) {
-              continue;
-            }
-          }
-
+        // Check direct permissions with scope
+        if (this.checkDirectPermissionWithScope(role, assignment, permissionId, context)) {
           return true;
         }
 
         // Check inherited permissions
-        if (role.inheritsFrom) {
-          for (const parentRoleId of role.inheritsFrom) {
-            const parentRole = this.roles.get(parentRoleId);
-            if (parentRole?.isActive && parentRole.permissions.includes(permissionId)) {
-              return true;
-            }
-          }
+        if (this.checkInheritedPermissions(role, permissionId)) {
+          return true;
         }
       }
 
@@ -590,46 +640,66 @@ export class AdvancedRBAC {
   }
 
   /**
-   * Get user permissions
+   * Add direct permissions from a role
    */
-  async getUserPermissions(userId: string, organizationId?: string): Promise<Permission[]> {
-    const userAssignments = this.userRoleAssignments.get(userId) || [];
-    const activeAssignments = userAssignments.filter(
-      (assignment) =>
-        assignment.isActive &&
-        (!assignment.expiresAt || assignment.expiresAt > new Date()) &&
-        (!organizationId || assignment.organizationId === organizationId)
-    );
+  private addDirectPermissions(role: Role, permissionIds: Set<string>): void {
+    for (const permissionId of role.permissions) {
+      permissionIds.add(permissionId);
+    }
+  }
 
-    const permissionIds = new Set<string>();
+  /**
+   * Add inherited permissions from parent roles
+   */
+  private addInheritedPermissions(role: Role, permissionIds: Set<string>): void {
+    if (!role.inheritsFrom) {
+      return;
+    }
 
-    for (const assignment of activeAssignments) {
-      const role = this.roles.get(assignment.roleId);
-      if (!role?.isActive) {
-        continue;
-      }
-
-      // Add direct permissions
-      for (const permissionId of role.permissions) {
-        permissionIds.add(permissionId);
-      }
-
-      // Add inherited permissions
-      if (role.inheritsFrom) {
-        for (const parentRoleId of role.inheritsFrom) {
-          const parentRole = this.roles.get(parentRoleId);
-          if (parentRole?.isActive) {
-            for (const permissionId of parentRole.permissions) {
-              permissionIds.add(permissionId);
-            }
-          }
+    for (const parentRoleId of role.inheritsFrom) {
+      const parentRole = this.roles.get(parentRoleId);
+      if (parentRole?.isActive) {
+        for (const permissionId of parentRole.permissions) {
+          permissionIds.add(permissionId);
         }
       }
     }
+  }
 
+  /**
+   * Collect permissions from role and its hierarchy
+   */
+  private collectRolePermissions(role: Role, permissionIds: Set<string>): void {
+    this.addDirectPermissions(role, permissionIds);
+    this.addInheritedPermissions(role, permissionIds);
+  }
+
+  /**
+   * Convert permission IDs to Permission objects
+   */
+  private resolvePermissions(permissionIds: Set<string>): Permission[] {
     return Array.from(permissionIds)
       .map((id) => this.permissions.get(id))
       .filter((permission): permission is Permission => permission !== undefined);
+  }
+
+  /**
+   * Get user permissions
+   */
+  async getUserPermissions(userId: string, organizationId?: string): Promise<Permission[]> {
+    const activeAssignments = this.getActiveUserAssignments(userId, { organizationId });
+    const permissionIds = new Set<string>();
+
+    for (const assignment of activeAssignments) {
+      const role = this.getActiveRole(assignment);
+      if (!role) {
+        continue;
+      }
+
+      this.collectRolePermissions(role, permissionIds);
+    }
+
+    return this.resolvePermissions(permissionIds);
   }
 
   /**

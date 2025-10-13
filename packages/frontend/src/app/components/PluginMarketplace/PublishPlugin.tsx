@@ -176,6 +176,86 @@ export const PublishPlugin: React.FC<PublishPluginProps> = ({ onClose }) => {
     }
   };
 
+  // Helper functions for rendering validation results
+  const getProgressStatus = (score: number) => {
+    if (score >= 80) return 'success';
+    if (score >= 60) return 'normal';
+    return 'exception';
+  };
+
+  const getProgressColor = (score: number) => {
+    if (score >= 80) return '#52c41a';
+    if (score >= 60) return '#1890ff';
+    return '#ff4d4f';
+  };
+
+  const getIssueSeverityType = (severity: string) => {
+    if (severity === 'critical') return 'error';
+    if (severity === 'high') return 'warning';
+    return 'info';
+  };
+
+  const renderScoreProgress = (score: number) => (
+    <div>
+      <Text strong>Overall Score: </Text>
+      <Progress
+        percent={score}
+        status={getProgressStatus(score)}
+        strokeColor={getProgressColor(score)}
+      />
+    </div>
+  );
+
+  const renderIssues = (issues: any[]) => {
+    if (!issues || issues.length === 0) {
+      return null;
+    }
+
+    return (
+      <div>
+        <Title level={5}>Issues Found:</Title>
+        {issues.map((issue: any, index: number) => (
+          <Alert
+            key={index}
+            type={getIssueSeverityType(issue.severity)}
+            message={issue.message}
+            style={{ marginBottom: 8 }}
+          />
+        ))}
+      </div>
+    );
+  };
+
+  const renderRecommendations = (recommendations: string[]) => {
+    if (!recommendations || recommendations.length === 0) {
+      return null;
+    }
+
+    return (
+      <div>
+        <Title level={5}>Recommendations:</Title>
+        <ul>
+          {recommendations.map((rec: string, index: number) => (
+            <li key={index}>{rec}</li>
+          ))}
+        </ul>
+      </div>
+    );
+  };
+
+  const renderValidationStatus = (isValid: boolean) => (
+    <Alert
+      type={isValid ? 'success' : 'error'}
+      message={isValid ? 'Plugin validation passed!' : 'Plugin validation failed'}
+      description={
+        isValid
+          ? 'Your plugin meets our quality standards and can be published.'
+          : 'Please fix the critical issues before publishing.'
+      }
+      showIcon
+    />
+  );
+
   // Render validation results
   const renderValidationResults = () => {
     if (!validationResult) {
@@ -187,56 +267,10 @@ export const PublishPlugin: React.FC<PublishPluginProps> = ({ onClose }) => {
     return (
       <Card title="Validation Results">
         <Space direction="vertical" style={{ width: '100%' }}>
-          <div>
-            <Text strong>Overall Score: </Text>
-            <Progress
-              percent={score}
-              status={score >= 80 ? 'success' : score >= 60 ? 'normal' : 'exception'}
-              strokeColor={score >= 80 ? '#52c41a' : score >= 60 ? '#1890ff' : '#ff4d4f'}
-            />
-          </div>
-
-          {issues && issues.length > 0 && (
-            <div>
-              <Title level={5}>Issues Found:</Title>
-              {issues.map((issue: any, index: number) => (
-                <Alert
-                  key={index}
-                  type={
-                    issue.severity === 'critical'
-                      ? 'error'
-                      : issue.severity === 'high'
-                        ? 'warning'
-                        : 'info'
-                  }
-                  message={issue.message}
-                  style={{ marginBottom: 8 }}
-                />
-              ))}
-            </div>
-          )}
-
-          {recommendations && recommendations.length > 0 && (
-            <div>
-              <Title level={5}>Recommendations:</Title>
-              <ul>
-                {recommendations.map((rec: string, index: number) => (
-                  <li key={index}>{rec}</li>
-                ))}
-              </ul>
-            </div>
-          )}
-
-          <Alert
-            type={isValid ? 'success' : 'error'}
-            message={isValid ? 'Plugin validation passed!' : 'Plugin validation failed'}
-            description={
-              isValid
-                ? 'Your plugin meets our quality standards and can be published.'
-                : 'Please fix the critical issues before publishing.'
-            }
-            showIcon
-          />
+          {renderScoreProgress(score)}
+          {renderIssues(issues)}
+          {renderRecommendations(recommendations)}
+          {renderValidationStatus(isValid)}
         </Space>
       </Card>
     );

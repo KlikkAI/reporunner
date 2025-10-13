@@ -23,6 +23,17 @@ export const PricingSection: React.FC = () => {
     }
   };
 
+  // Helper function to render feature cell value
+  const renderFeatureValue = (value: boolean | string) => {
+    if (value === true) {
+      return <Check className="w-5 h-5 text-green-500 mx-auto" />;
+    }
+    if (value === false) {
+      return <span className="text-gray-400">—</span>;
+    }
+    return <span className="text-sm text-gray-600">{value}</span>;
+  };
+
   const plans = [
     {
       name: 'Community',
@@ -364,31 +375,11 @@ export const PricingSection: React.FC = () => {
                       <tr key={featureIndex} className="border-b border-gray-100">
                         <td className="py-3 pr-6 text-gray-700">{feature.name}</td>
                         <td className="text-center py-3 px-4">
-                          {feature.community === true ? (
-                            <Check className="w-5 h-5 text-green-500 mx-auto" />
-                          ) : feature.community === false ? (
-                            <span className="text-gray-400">—</span>
-                          ) : (
-                            <span className="text-sm text-gray-600">{feature.community}</span>
-                          )}
+                          {renderFeatureValue(feature.community)}
                         </td>
+                        <td className="text-center py-3 px-4">{renderFeatureValue(feature.pro)}</td>
                         <td className="text-center py-3 px-4">
-                          {feature.pro === true ? (
-                            <Check className="w-5 h-5 text-green-500 mx-auto" />
-                          ) : feature.pro === false ? (
-                            <span className="text-gray-400">—</span>
-                          ) : (
-                            <span className="text-sm text-gray-600">{feature.pro}</span>
-                          )}
-                        </td>
-                        <td className="text-center py-3 px-4">
-                          {feature.enterprise === true ? (
-                            <Check className="w-5 h-5 text-green-500 mx-auto" />
-                          ) : feature.enterprise === false ? (
-                            <span className="text-gray-400">—</span>
-                          ) : (
-                            <span className="text-sm text-gray-600">{feature.enterprise}</span>
-                          )}
+                          {renderFeatureValue(feature.enterprise)}
                         </td>
                       </tr>
                     ))}

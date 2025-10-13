@@ -172,6 +172,79 @@ export const AuditDashboard: React.FC = () => {
     }
   };
 
+  // Filter helper functions
+  const matchesDateRange = (event: AuditEvent, filter: AuditFilter): boolean => {
+    if (filter.startDate && event.timestamp < filter.startDate) {
+      return false;
+    }
+    if (filter.endDate && event.timestamp > filter.endDate) {
+      return false;
+    }
+    return true;
+  };
+
+  const matchesUser = (event: AuditEvent, filter: AuditFilter): boolean => {
+    if (filter.userId && event.userId !== filter.userId) {
+      return false;
+    }
+    return true;
+  };
+
+  const matchesAction = (event: AuditEvent, filter: AuditFilter): boolean => {
+    if (filter.action && !event.action.includes(filter.action)) {
+      return false;
+    }
+    return true;
+  };
+
+  const matchesResource = (event: AuditEvent, filter: AuditFilter): boolean => {
+    if (filter.resource && event.resource !== filter.resource) {
+      return false;
+    }
+    return true;
+  };
+
+  const matchesSeverity = (event: AuditEvent, filter: AuditFilter): boolean => {
+    if (filter.severity && event.severity !== filter.severity) {
+      return false;
+    }
+    return true;
+  };
+
+  const matchesCategory = (event: AuditEvent, filter: AuditFilter): boolean => {
+    if (filter.category && event.category !== filter.category) {
+      return false;
+    }
+    return true;
+  };
+
+  const matchesSearchTerm = (event: AuditEvent, filter: AuditFilter): boolean => {
+    if (filter.searchTerm) {
+      const searchLower = filter.searchTerm.toLowerCase();
+      const matchesSearch =
+        event.action.toLowerCase().includes(searchLower) ||
+        event.resource.toLowerCase().includes(searchLower) ||
+        event.userName.toLowerCase().includes(searchLower) ||
+        JSON.stringify(event.details).toLowerCase().includes(searchLower);
+      if (!matchesSearch) {
+        return false;
+      }
+    }
+    return true;
+  };
+
+  const filterEvent = (event: AuditEvent, filter: AuditFilter): boolean => {
+    return (
+      matchesDateRange(event, filter) &&
+      matchesUser(event, filter) &&
+      matchesAction(event, filter) &&
+      matchesResource(event, filter) &&
+      matchesSeverity(event, filter) &&
+      matchesCategory(event, filter) &&
+      matchesSearchTerm(event, filter)
+    );
+  };
+
   const applyFilters = async () => {
     const newFilter: AuditFilter = {
       ...filter,
@@ -188,43 +261,7 @@ export const AuditDashboard: React.FC = () => {
     try {
       const filtered = await auditService.getEvents(newFilter, 1000, 0);
       setFilteredEvents(
-        filtered.length > 0
-          ? filtered
-          : events.filter((event) => {
-              if (newFilter.startDate && event.timestamp < newFilter.startDate) {
-                return false;
-              }
-              if (newFilter.endDate && event.timestamp > newFilter.endDate) {
-                return false;
-              }
-              if (newFilter.userId && event.userId !== newFilter.userId) {
-                return false;
-              }
-              if (newFilter.action && !event.action.includes(newFilter.action)) {
-                return false;
-              }
-              if (newFilter.resource && event.resource !== newFilter.resource) {
-                return false;
-              }
-              if (newFilter.severity && event.severity !== newFilter.severity) {
-                return false;
-              }
-              if (newFilter.category && event.category !== newFilter.category) {
-                return false;
-              }
-              if (newFilter.searchTerm) {
-                const searchLower = newFilter.searchTerm.toLowerCase();
-                const matchesSearch =
-                  event.action.toLowerCase().includes(searchLower) ||
-                  event.resource.toLowerCase().includes(searchLower) ||
-                  event.userName.toLowerCase().includes(searchLower) ||
-                  JSON.stringify(event.details).toLowerCase().includes(searchLower);
-                if (!matchesSearch) {
-                  return false;
-                }
-              }
-              return true;
-            })
+        filtered.length > 0 ? filtered : events.filter((event) => filterEvent(event, newFilter))
       );
     } catch (_error) {
       setFilteredEvents(events);

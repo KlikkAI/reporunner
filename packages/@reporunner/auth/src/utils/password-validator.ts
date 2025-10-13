@@ -12,6 +12,11 @@ export interface PasswordPolicy {
   preventSequentialChars?: number;
 }
 
+interface ValidationCheck {
+  errors: string[];
+  score: number;
+}
+
 export interface PasswordValidationResult {
   isValid: boolean;
   errors: string[];
@@ -62,14 +67,10 @@ export class PasswordValidator {
     ]);
   }
 
-  validate(
-    password: string,
-    userInfo?: { email?: string; username?: string; firstName?: string; lastName?: string }
-  ): PasswordValidationResult {
+  private validateLength(password: string): ValidationCheck {
     const errors: string[] = [];
     let score = 0;
 
-    // Length checks
     if (password.length < this.policy.minLength) {
       errors.push(`Password must be at least ${this.policy.minLength} characters long`);
     } else {
@@ -80,7 +81,13 @@ export class PasswordValidator {
       errors.push(`Password must not exceed ${this.policy.maxLength} characters`);
     }
 
-    // Character type checks
+    return { errors, score };
+  }
+
+  private validateCharacterTypes(password: string): ValidationCheck {
+    const errors: string[] = [];
+    let score = 0;
+
     if (this.policy.requireUppercase && !/[A-Z]/.test(password)) {
       errors.push('Password must contain at least one uppercase letter');
     } else if (this.policy.requireUppercase) {
@@ -105,7 +112,13 @@ export class PasswordValidator {
       score += 10;
     }
 
-    // Unique characters check
+    return { errors, score };
+  }
+
+  private validateUniqueChars(password: string): ValidationCheck {
+    const errors: string[] = [];
+    let score = 0;
+
     const uniqueChars = new Set(password).size;
     if (uniqueChars < this.policy.minUniqueChars) {
       errors.push(`Password must contain at least ${this.policy.minUniqueChars} unique characters`);
@@ -113,14 +126,29 @@ export class PasswordValidator {
       score += 10;
     }
 
-    // Common passwords check
+    return { errors, score };
+  }
+
+  private validateNotCommonPassword(password: string): ValidationCheck {
+    const errors: string[] = [];
+    let score = 0;
+
     if (this.policy.preventCommonPasswords && this.commonPasswords.has(password.toLowerCase())) {
       errors.push('Password is too common. Please choose a more unique password');
     } else if (this.policy.preventCommonPasswords) {
       score += 10;
     }
 
-    // User info check
+    return { errors, score };
+  }
+
+  private validateNotUserInfo(
+    password: string,
+    userInfo?: { email?: string; username?: string; firstName?: string; lastName?: string }
+  ): ValidationCheck {
+    const errors: string[] = [];
+    let score = 0;
+
     if (this.policy.preventUserInfo && userInfo) {
       const lowerPassword = password.toLowerCase();
       const checks = [
@@ -136,12 +164,19 @@ export class PasswordValidator {
           break;
         }
       }
-      if (!errors.includes('Password must not contain personal information')) {
+
+      if (errors.length === 0) {
         score += 10;
       }
     }
 
-    // Repeating characters check
+    return { errors, score };
+  }
+
+  private validateNoRepeatingChars(password: string): ValidationCheck {
+    const errors: string[] = [];
+    let score = 0;
+
     if (this.policy.preventRepeatingChars) {
       const repeatRegex = new RegExp(`(.)\\1{${this.policy.preventRepeatingChars - 1},}`);
       if (repeatRegex.test(password)) {
@@ -153,7 +188,13 @@ export class PasswordValidator {
       }
     }
 
-    // Sequential characters check
+    return { errors, score };
+  }
+
+  private validateNoSequentialChars(password: string): ValidationCheck {
+    const errors: string[] = [];
+    let score = 0;
+
     if (this.policy.preventSequentialChars) {
       if (this.hasSequentialChars(password, this.policy.preventSequentialChars)) {
         errors.push(
@@ -164,20 +205,51 @@ export class PasswordValidator {
       }
     }
 
+    return { errors, score };
+  }
+
+  private calculateStrength(score: number): 'weak' | 'fair' | 'strong' | 'very-strong' {
+    if (score < 30) {
+      return 'weak';
+    }
+    if (score < 60) {
+      return 'fair';
+    }
+    if (score < 80) {
+      return 'strong';
+    }
+    return 'very-strong';
+  }
+
+  validate(
+    password: string,
+    userInfo?: { email?: string; username?: string; firstName?: string; lastName?: string }
+  ): PasswordValidationResult {
+    const errors: string[] = [];
+    let score = 0;
+
+    // Run all validation checks
+    const checks = [
+      this.validateLength(password),
+      this.validateCharacterTypes(password),
+      this.validateUniqueChars(password),
+      this.validateNotCommonPassword(password),
+      this.validateNotUserInfo(password, userInfo),
+      this.validateNoRepeatingChars(password),
+      this.validateNoSequentialChars(password),
+    ];
+
+    // Aggregate results
+    for (const check of checks) {
+      errors.push(...check.errors);
+      score += check.score;
+    }
+
     // Extra points for length
     score += Math.min((password.length - this.policy.minLength) * 2, 20);
 
     // Calculate strength
-    let strength: 'weak' | 'fair' | 'strong' | 'very-strong';
-    if (score < 30) {
-      strength = 'weak';
-    } else if (score < 60) {
-      strength = 'fair';
-    } else if (score < 80) {
-      strength = 'strong';
-    } else {
-      strength = 'very-strong';
-    }
+    const strength = this.calculateStrength(score);
 
     return {
       isValid: errors.length === 0,
