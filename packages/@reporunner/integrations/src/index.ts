@@ -6,17 +6,18 @@
  */
 
 // Import singleton instances and types for internal use
-import { configValidator } from './config/configuration-schema';
-import { integrationEventBus } from './core/event-bus';
-import { integrationRegistry } from './core/integration-registry';
-import { healthMonitor } from './monitoring/health-monitor';
+import { type ConfigurationValidator, configValidator } from './config/configuration-schema';
+import { type IntegrationEventBus, integrationEventBus } from './core/event-bus';
+import { type IntegrationRegistry, integrationRegistry } from './core/integration-registry';
+import { healthMonitor, type IntegrationHealthMonitor } from './monitoring/health-monitor';
 import { getCredentialManager } from './security/credential-manager';
-import { integrationTester } from './testing/test-framework';
-import { rateLimiter } from './utils/rate-limiter';
+import { type IntegrationTester, integrationTester } from './testing/test-framework';
+import { type RateLimiter, rateLimiter } from './utils/rate-limiter';
 import {
   type WebhookConfig,
   type WebhookEvent,
   type WebhookHandler,
+  type WebhookManager,
   webhookManager,
 } from './webhook/webhook-manager';
 
@@ -132,13 +133,13 @@ export {
 export class IntegrationFramework {
   private static instance: IntegrationFramework;
 
-  public readonly registry = integrationRegistry;
-  public readonly eventBus = integrationEventBus;
-  public readonly webhookManager = webhookManager;
-  public readonly healthMonitor = healthMonitor;
-  public readonly rateLimiter = rateLimiter;
-  public readonly configValidator = configValidator;
-  public readonly tester = integrationTester;
+  public readonly registry: IntegrationRegistry = integrationRegistry;
+  public readonly eventBus: IntegrationEventBus = integrationEventBus;
+  public readonly webhookManager: WebhookManager = webhookManager;
+  public readonly healthMonitor: IntegrationHealthMonitor = healthMonitor;
+  public readonly rateLimiter: RateLimiter = rateLimiter;
+  public readonly configValidator: ConfigurationValidator = configValidator;
+  public readonly tester: IntegrationTester = integrationTester;
 
   private constructor() {}
 
