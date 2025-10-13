@@ -138,8 +138,12 @@ function shouldSkipMissingAuth(
   required: boolean,
   error?: { status: number; body: { error: string; message: string } }
 ): boolean {
-  if (required) return false;
-  if (!error || error.status !== 401) return false;
+  if (required) {
+    return false;
+  }
+  if (!error || error.status !== 401) {
+    return false;
+  }
   return error.body.error === 'No authorization header';
 }
 

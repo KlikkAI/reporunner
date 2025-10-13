@@ -297,7 +297,9 @@ function validateType(value: unknown, type?: string): string | null {
  */
 function validateNumericConstraints(value: unknown, rule: ValidationRule): string[] {
   const errors: string[] = [];
-  if (typeof value !== 'number') return errors;
+  if (typeof value !== 'number') {
+    return errors;
+  }
 
   if (rule.min !== undefined && value < rule.min) {
     errors.push(`Value must be at least ${rule.min}`);
@@ -313,7 +315,9 @@ function validateNumericConstraints(value: unknown, rule: ValidationRule): strin
  */
 function validateLengthConstraints(value: unknown, rule: ValidationRule): string[] {
   const errors: string[] = [];
-  if (typeof value !== 'string' && !Array.isArray(value)) return errors;
+  if (typeof value !== 'string' && !Array.isArray(value)) {
+    return errors;
+  }
 
   const length = value.length;
   if (rule.minLength !== undefined && length < rule.minLength) {
@@ -329,7 +333,9 @@ function validateLengthConstraints(value: unknown, rule: ValidationRule): string
  * Validate pattern constraint
  */
 function validatePatternConstraint(value: unknown, rule: ValidationRule): string | null {
-  if (!rule.pattern || typeof value !== 'string') return null;
+  if (!rule.pattern || typeof value !== 'string') {
+    return null;
+  }
   return !rule.pattern.test(value) ? 'Value does not match required pattern' : null;
 }
 
@@ -337,7 +343,9 @@ function validatePatternConstraint(value: unknown, rule: ValidationRule): string
  * Validate enum constraint
  */
 function validateEnumConstraint(value: unknown, rule: ValidationRule): string | null {
-  if (!rule.enum) return null;
+  if (!rule.enum) {
+    return null;
+  }
   return !rule.enum.includes(value) ? `Value must be one of: ${rule.enum.join(', ')}` : null;
 }
 
@@ -345,11 +353,17 @@ function validateEnumConstraint(value: unknown, rule: ValidationRule): string | 
  * Validate custom constraint
  */
 function validateCustomConstraint(value: unknown, rule: ValidationRule): string | null {
-  if (!rule.custom) return null;
+  if (!rule.custom) {
+    return null;
+  }
 
   const result = rule.custom(value);
-  if (typeof result === 'string') return result;
-  if (!result) return 'Custom validation failed';
+  if (typeof result === 'string') {
+    return result;
+  }
+  if (!result) {
+    return 'Custom validation failed';
+  }
   return null;
 }
 
@@ -367,15 +381,21 @@ function validateConstraints(value: unknown, rule: ValidationRule): string[] {
 
   // Pattern constraint
   const patternError = validatePatternConstraint(value, rule);
-  if (patternError) errors.push(patternError);
+  if (patternError) {
+    errors.push(patternError);
+  }
 
   // Enum constraint
   const enumError = validateEnumConstraint(value, rule);
-  if (enumError) errors.push(enumError);
+  if (enumError) {
+    errors.push(enumError);
+  }
 
   // Custom constraint
   const customError = validateCustomConstraint(value, rule);
-  if (customError) errors.push(customError);
+  if (customError) {
+    errors.push(customError);
+  }
 
   return errors;
 }

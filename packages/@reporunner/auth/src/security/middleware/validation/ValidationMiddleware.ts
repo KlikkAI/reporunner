@@ -84,7 +84,7 @@ export class ValidationMiddleware extends BaseMiddleware {
     // Validate body
     if (this.bodyValidator && req.body) {
       await this.validateWithHandler(
-        async () => this.bodyValidator!.validate(req.body),
+        async () => this.bodyValidator?.validate(req.body),
         'body',
         errors
       );
@@ -93,7 +93,7 @@ export class ValidationMiddleware extends BaseMiddleware {
     // Validate query
     if (this.queryValidator && req.query) {
       await this.validateWithHandler(
-        async () => this.queryValidator!.validate(req.query),
+        async () => this.queryValidator?.validate(req.query),
         'query',
         errors
       );
@@ -102,7 +102,7 @@ export class ValidationMiddleware extends BaseMiddleware {
     // Validate params
     if (this.paramsValidator && req.params) {
       await this.validateWithHandler(
-        async () => this.paramsValidator!.validate(req.params),
+        async () => this.paramsValidator?.validate(req.params),
         'params',
         errors
       );
@@ -111,7 +111,7 @@ export class ValidationMiddleware extends BaseMiddleware {
     // Run custom validation
     if (this.validationConfig.customValidation) {
       await this.validateWithHandler(
-        async () => this.validationConfig.customValidation!(req),
+        async () => this.validationConfig.customValidation?.(req),
         'custom',
         errors
       );

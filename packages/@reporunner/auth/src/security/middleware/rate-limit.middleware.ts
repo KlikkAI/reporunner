@@ -32,7 +32,9 @@ function setRateLimitHeaders(
   retryAfter: number | undefined,
   useDraftHeaders: boolean
 ): void {
-  if (remaining === undefined) return;
+  if (remaining === undefined) {
+    return;
+  }
 
   if (useDraftHeaders) {
     res.setHeader('RateLimit-Limit', points.toString());
