@@ -123,7 +123,7 @@ enableGlobalCache: true
 
 enableGlobalHoist: true
 
-engines: {node: '>=18.0.0', pnpm: '>=8.0.0'}
+engines: {node: '>=18.20.0', pnpm: '>=10.18.1'}
 
 packageExtensions:
   '@reactflow/background':
@@ -139,7 +139,7 @@ packageExtensions:
     peerDependencies:
       zod: '*'
 
-packageManager: pnpm@9.15.2
+packageManager: pnpm@10.18.1
 
 shamefullyHoist: false
 

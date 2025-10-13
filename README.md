@@ -217,7 +217,6 @@ pnpm run test:unit --filter=@reporunner/backend
 pnpm run test:integration --filter=@reporunner/workflow
 pnpm run test:e2e --headed
 ```
-
 ## 🐳 Docker & Kubernetes
 
 ### Local Development
