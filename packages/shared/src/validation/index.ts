@@ -374,9 +374,9 @@ export function createEnumSchema<T extends readonly [string, ...string[]]>(value
 /**
  * Create conditional schema based on discriminator
  */
-export function createConditionalSchema<T extends string, U extends z.ZodObject<z.ZodRawShape>>(
+export function createConditionalSchema<T extends string>(
   discriminator: T,
-  schemas: readonly [U, U, ...U[]]
+  schemas: readonly [z.ZodDiscriminatedUnionOption<T>, ...z.ZodDiscriminatedUnionOption<T>[]]
 ) {
   return z.discriminatedUnion(discriminator, schemas);
 }

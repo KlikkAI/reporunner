@@ -90,15 +90,3 @@ export abstract class CombinedAIProvider
   abstract getDimensions(model: string): number;
   abstract getMaxTokens(model: string): number;
 }
-
-/**
- * Provider capability flags
- */
-export interface ProviderCapabilities {
-  llm: boolean;
-  embeddings: boolean;
-  multimodal: boolean;
-  function_calling: boolean;
-  streaming: boolean;
-  fine_tuning: boolean;
-}

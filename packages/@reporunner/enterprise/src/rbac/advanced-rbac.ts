@@ -704,7 +704,7 @@ export class AdvancedRBAC {
    * Evaluate conditions
    */
   private evaluateConditions(
-    conditions: Array<{ field: string; operator: string; value: unknown }>,
+    conditions: Array<{ field: string; operator: string; value?: unknown }>,
     resourceData: Record<string, unknown>
   ): boolean {
     return conditions.every((condition) => {

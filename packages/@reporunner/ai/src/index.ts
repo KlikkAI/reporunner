@@ -1,14 +1,7 @@
-// AI package main index - reusing patterns from other packages
+// AI package main index
 
 export * from './ai-registry';
-// Re-export specific items from base to avoid conflicts
-export {
-  BaseAIProvider,
-  CombinedAIProvider,
-  IEmbeddingProvider,
-  ILLMProvider,
-  IVectorStoreProvider,
-} from './base';
+export * from './base';
 export * from './embeddings';
 export * from './llm';
 export * from './llm-manager';

@@ -106,6 +106,7 @@
   "devDependencies": {
     "@biomejs/biome": "catalog:",
     "@changesets/cli": "^2.29.7",
+    "@swc/core": "^1.7.36",
     "@commitlint/cli": "^20.1.0",
     "@commitlint/config-conventional": "^20.0.0",
     "@commitlint/cz-commitlint": "^20.1.0",

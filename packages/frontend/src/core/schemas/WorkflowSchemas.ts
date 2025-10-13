@@ -206,8 +206,6 @@ export const ExecutionStatsSchema = z
 // API request/response schemas
 export const CreateWorkflowRequestSchema = WorkflowDefinitionSchema.omit({
   id: true,
-  createdAt: true,
-  updatedAt: true,
 }).extend({
   version: z.number().int().min(1).default(1) as z.ZodDefault<z.ZodNumber>,
 });

@@ -1,40 +1,54 @@
 // Re-export auth components with explicit exports to avoid conflicts
 
-// Middleware exports - only export what exists
-export {
-  AuthenticatedRequest,
-  createJWTMiddleware,
-  JWTConfig,
-} from './middleware/jwt-middleware';
-export {
-  createRoleMiddleware,
-  Permission as MiddlewarePermission,
-  RBACConfig,
-  Role as MiddlewareRole,
-} from './middleware/rbac-middleware';
-export {
-  createSessionMiddleware,
-  SessionConfig,
-} from './middleware/session-middleware';
-// Provider exports with existing exports
+// Middleware exports
+export * from './middleware/jwt-middleware';
+export * from './middleware/rbac-middleware';
+export * from './middleware/session-middleware';
+
+// Provider exports
 export * from './providers';
+
 // Strategy exports
 export * from './strategies';
 
-export {
+// Type exports - explicit exports to avoid conflicts
+export type {
+  AuthEvent,
+  AuthEventData,
+  AuthProviderConfig,
   OAuthConfig,
-  SAMLConfig as TypeSAMLConfig,
+  SAMLConfig,
+  TwoFactorSettings,
 } from './types/auth-provider-types';
-// Type exports - export what exists in types directory
-export {
+
+export type {
   Permission as TypePermission,
-  PermissionSchema,
   PermissionType,
   Role as TypeRole,
-  RoleSchema,
   RoleType,
+  SecurityPolicy,
+  SecurityRule,
+  SecuritySession,
+  TwoFactorSetup,
+  TwoFactorVerification,
 } from './types/rbac-security-types';
-export { UserProfile } from './types/user-organization-types';
+
+export {
+  PermissionSchema,
+  RoleSchema,
+} from './types/rbac-security-types';
+
+export type {
+  AuthUser,
+  CreateOrganizationRequest,
+  CreateUserRequest,
+  OrganizationInfo,
+  UpdateOrganizationRequest,
+  UpdateUserRequest,
+  UserMembership,
+  UserProfile,
+  UserRole,
+} from './types/user-organization-types';
 
 // Utility exports
 export * from './utils';
