@@ -245,7 +245,9 @@ async function processSingleFile(
     };
   } catch (error: unknown) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    await unlinkAsync(file.path).catch(() => {});
+    await unlinkAsync(file.path).catch(() => {
+      // Intentionally ignore unlink errors - file may not exist or be locked
+    });
     return { error: `Error processing file ${file.originalname}: ${errorMessage}` };
   }
 }
@@ -359,8 +361,12 @@ function separateProcessingResults(results: Array<{ file?: UploadedFile; error?:
   const errors: string[] = [];
 
   for (const result of results) {
-    if (result.file) processedFiles.push(result.file);
-    if (result.error) errors.push(result.error);
+    if (result.file) {
+      processedFiles.push(result.file);
+    }
+    if (result.error) {
+      errors.push(result.error);
+    }
   }
 
   return { processedFiles, errors };
@@ -370,7 +376,9 @@ function separateProcessingResults(results: Array<{ file?: UploadedFile; error?:
  * Handle case when all files failed processing
  */
 function handleAllFilesFailed(res: Response, errors: string[]): boolean {
-  if (errors.length === 0) return false;
+  if (errors.length === 0) {
+    return false;
+  }
 
   res.status(400).json({
     success: false,
