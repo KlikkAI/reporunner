@@ -25,7 +25,7 @@ CYAN='\033[0;36m'
 NC='\033[0m' # No Color
 
 # Configuration
-COMPOSE_FILE_URL="https://raw.githubusercontent.com/reporunner/reporunner/main/docker-compose.simple.yml"
+COMPOSE_FILE_URL="https://raw.githubusercontent.com/KlikkAI/reporunner/main/docker-compose.simple.yml"
 INSTALL_DIR="${REPORUNNER_INSTALL_DIR:-$HOME/.reporunner}"
 FRONTEND_PORT="${FRONTEND_PORT:-3000}"
 BACKEND_PORT="${BACKEND_PORT:-3001}"

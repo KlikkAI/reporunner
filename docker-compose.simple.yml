@@ -33,7 +33,7 @@ services:
   # Frontend - React Application (Nginx)
   # ==========================================
   frontend:
-    image: ghcr.io/reporunner/frontend:latest
+    image: ghcr.io/klikkai/frontend:latest
     container_name: reporunner-frontend
     restart: unless-stopped
     ports:
@@ -59,7 +59,7 @@ services:
   # Backend - Express API Server
   # ==========================================
   backend:
-    image: ghcr.io/reporunner/backend:latest
+    image: ghcr.io/klikkai/backend:latest
     container_name: reporunner-backend
     restart: unless-stopped
     ports:
@@ -118,7 +118,7 @@ services:
   # Worker - Background Job Processor
   # ==========================================
   worker:
-    image: ghcr.io/reporunner/worker:latest
+    image: ghcr.io/klikkai/worker:latest
     container_name: reporunner-worker
     restart: unless-stopped
     environment:

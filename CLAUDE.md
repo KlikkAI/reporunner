@@ -494,7 +494,7 @@ Access monitoring:
 The **fastest way** to deploy Reporunner:
 
 ```bash
-curl -fsSL https://get.reporunner.io/install.sh | sh
+curl -fsSL https://raw.githubusercontent.com/KlikkAI/reporunner/main/scripts/install.sh | sh
 ```
 
 **The installer automatically:**
@@ -510,10 +510,10 @@ curl -fsSL https://get.reporunner.io/install.sh | sh
 **Custom installation:**
 ```bash
 # Custom ports
-FRONTEND_PORT=8080 BACKEND_PORT=8081 curl -fsSL https://get.reporunner.io/install.sh | sh
+FRONTEND_PORT=8080 BACKEND_PORT=8081 curl -fsSL https://raw.githubusercontent.com/KlikkAI/reporunner/main/scripts/install.sh | sh
 
 # Custom directory
-REPORUNNER_INSTALL_DIR=/opt/reporunner curl -fsSL https://get.reporunner.io/install.sh | sh
+REPORUNNER_INSTALL_DIR=/opt/reporunner curl -fsSL https://raw.githubusercontent.com/KlikkAI/reporunner/main/scripts/install.sh | sh
 ```
 
 **📖 Complete Guide:** See [DOCKER.md](./DOCKER.md) for comprehensive documentation

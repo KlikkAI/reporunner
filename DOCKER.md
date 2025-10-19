@@ -26,7 +26,7 @@ Complete guide for deploying Reporunner using Docker and Docker Compose.
 The **fastest way** to get Reporunner running is with our one-command installer:
 
 ```bash
-curl -fsSL https://get.reporunner.io/install.sh | sh
+curl -fsSL https://raw.githubusercontent.com/KlikkAI/reporunner/main/scripts/install.sh | sh
 ```
 
 ### What the Installer Does
@@ -46,22 +46,22 @@ The installer automatically:
 
 **Default Installation** (ports 3000/3001):
 ```bash
-curl -fsSL https://get.reporunner.io/install.sh | sh
+curl -fsSL https://raw.githubusercontent.com/KlikkAI/reporunner/main/scripts/install.sh | sh
 ```
 
 **Custom Installation Directory**:
 ```bash
-REPORUNNER_INSTALL_DIR=/opt/reporunner curl -fsSL https://get.reporunner.io/install.sh | sh
+REPORUNNER_INSTALL_DIR=/opt/reporunner curl -fsSL https://raw.githubusercontent.com/KlikkAI/reporunner/main/scripts/install.sh | sh
 ```
 
 **Custom Ports**:
 ```bash
-FRONTEND_PORT=8080 BACKEND_PORT=8081 curl -fsSL https://get.reporunner.io/install.sh | sh
+FRONTEND_PORT=8080 BACKEND_PORT=8081 curl -fsSL https://raw.githubusercontent.com/KlikkAI/reporunner/main/scripts/install.sh | sh
 ```
 
 **Manual Download** (for review before execution):
 ```bash
-wget https://get.reporunner.io/install.sh
+wget https://raw.githubusercontent.com/KlikkAI/reporunner/main/scripts/install.sh
 chmod +x install.sh
 ./install.sh
 ```

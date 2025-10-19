@@ -55,7 +55,7 @@
 **Get Reporunner running in 60 seconds** with a single command:
 
 ```bash
-curl -fsSL https://get.reporunner.io/install.sh | sh
+curl -fsSL https://raw.githubusercontent.com/KlikkAI/reporunner/main/scripts/install.sh | sh
 ```
 
 **That's it!** The installer will:
@@ -78,7 +78,7 @@ curl -fsSL https://get.reporunner.io/install.sh | sh
 **Manual Installation** (if you prefer):
 ```bash
 # Download and run installer locally
-wget https://get.reporunner.io/install.sh
+wget https://raw.githubusercontent.com/KlikkAI/reporunner/main/scripts/install.sh
 chmod +x install.sh
 ./install.sh
 
