@@ -1,0 +1,239 @@
+# ============================================
+# Reporunner - Simple Docker Compose
+# One-Command Deployment (Uses Pre-built Images)
+# ============================================
+#
+# Quick Start:
+#   curl -fsSL https://get.reporunner.io/install.sh | sh
+#
+# Manual Start:
+#   docker-compose -f docker-compose.simple.yml up -d
+#
+# ============================================
+
+version: '3.8'
+
+networks:
+  reporunner-simple:
+    name: reporunner-simple
+    driver: bridge
+
+volumes:
+  reporunner_data:
+    name: reporunner_data
+  mongo_data:
+    name: reporunner_mongo_data
+  postgres_data:
+    name: reporunner_postgres_data
+  redis_data:
+    name: reporunner_redis_data
+
+services:
+  # ==========================================
+  # Frontend - React Application (Nginx)
+  # ==========================================
+  frontend:
+    image: ghcr.io/reporunner/frontend:latest
+    container_name: reporunner-frontend
+    restart: unless-stopped
+    ports:
+      - "${FRONTEND_PORT:-3000}:80"
+    environment:
+      - VITE_API_URL=${VITE_API_URL:-http://localhost:3001}
+      - VITE_WS_URL=${VITE_WS_URL:-ws://localhost:3001}
+    networks:
+      - reporunner-simple
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost/health"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 128M
+
+  # ==========================================
+  # Backend - Express API Server
+  # ==========================================
+  backend:
+    image: ghcr.io/reporunner/backend:latest
+    container_name: reporunner-backend
+    restart: unless-stopped
+    ports:
+      - "${BACKEND_PORT:-3001}:3001"
+    environment:
+      - NODE_ENV=production
+      - PORT=3001
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+
+      # Database URLs
+      - MONGODB_URI=mongodb://mongo:27017/reporunner
+      - POSTGRES_URL=postgresql://postgres:${POSTGRES_PASSWORD:-reporunner_pg_2024}@postgres:5432/reporunner
+      - REDIS_URL=redis://redis:6379
+
+      # Authentication (Auto-generated if not set)
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_EXPIRES_IN=${JWT_EXPIRES_IN:-7d}
+      - CREDENTIAL_ENCRYPTION_KEY=${ENCRYPTION_KEY}
+
+      # Optional: AI Services
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
+      - GOOGLE_AI_API_KEY=${GOOGLE_AI_API_KEY:-}
+
+      # Optional: Email
+      - SMTP_HOST=${SMTP_HOST:-}
+      - SMTP_PORT=${SMTP_PORT:-587}
+      - SMTP_USER=${SMTP_USER:-}
+      - SMTP_PASSWORD=${SMTP_PASSWORD:-}
+      - SMTP_FROM=${SMTP_FROM:-noreply@reporunner.local}
+
+    volumes:
+      - reporunner_data:/app/data
+    depends_on:
+      mongo:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - reporunner-simple
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001/health"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 15s
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+
+  # ==========================================
+  # Worker - Background Job Processor
+  # ==========================================
+  worker:
+    image: ghcr.io/reporunner/worker:latest
+    container_name: reporunner-worker
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+      - WORKER_MODE=true
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+
+      # Database URLs
+      - MONGODB_URI=mongodb://mongo:27017/reporunner
+      - POSTGRES_URL=postgresql://postgres:${POSTGRES_PASSWORD:-reporunner_pg_2024}@postgres:5432/reporunner
+      - REDIS_URL=redis://redis:6379
+
+      # AI Services
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
+      - GOOGLE_AI_API_KEY=${GOOGLE_AI_API_KEY:-}
+
+    depends_on:
+      mongo:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      backend:
+        condition: service_healthy
+    networks:
+      - reporunner-simple
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+
+  # ==========================================
+  # MongoDB - Primary Database
+  # ==========================================
+  mongo:
+    image: mongo:7.0
+    container_name: reporunner-mongo
+    restart: unless-stopped
+    environment:
+      - MONGO_INITDB_DATABASE=reporunner
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - reporunner-simple
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+
+  # ==========================================
+  # PostgreSQL + pgvector - AI Database
+  # ==========================================
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: reporunner-postgres
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DB=reporunner
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-reporunner_pg_2024}
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    command: >
+      postgres
+      -c shared_preload_libraries=pg_stat_statements
+      -c pg_stat_statements.track=all
+      -c max_connections=200
+    networks:
+      - reporunner-simple
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+
+  # ==========================================
+  # Redis - Caching & Queue
+  # ==========================================
+  redis:
+    image: redis:7-alpine
+    container_name: reporunner-redis
+    restart: unless-stopped
+    volumes:
+      - redis_data:/data
+    command: >
+      redis-server
+      --appendonly yes
+      --appendfsync everysec
+      --maxmemory 256mb
+      --maxmemory-policy allkeys-lru
+    networks:
+      - reporunner-simple
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M

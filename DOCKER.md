@@ -8,8 +8,9 @@ Complete guide for deploying Reporunner using Docker and Docker Compose.
 
 ## 📋 Table of Contents
 
+- [One-Command Installation (Recommended)](#-one-command-installation-recommended)
 - [Prerequisites](#-prerequisites)
-- [Quick Start](#-quick-start)
+- [Manual Docker Compose Setup](#-manual-docker-compose-setup)
 - [Docker Profiles](#-docker-profiles)
 - [Environment Configuration](#-environment-configuration)
 - [Service Access URLs](#-service-access-urls)
@@ -17,6 +18,94 @@ Complete guide for deploying Reporunner using Docker and Docker Compose.
 - [Troubleshooting](#-troubleshooting)
 - [Production Deployment](#-production-deployment)
 - [Kubernetes Deployment](#-kubernetes-deployment)
+
+---
+
+## ⚡ One-Command Installation (Recommended)
+
+The **fastest way** to get Reporunner running is with our one-command installer:
+
+```bash
+curl -fsSL https://get.reporunner.io/install.sh | sh
+```
+
+### What the Installer Does
+
+The installer automatically:
+1. ✅ **Checks Prerequisites**: Verifies Docker and Docker Compose are installed and running
+2. ✅ **Verifies Ports**: Ensures ports 3000 and 3001 are available
+3. ✅ **Downloads Configuration**: Pulls the latest docker-compose.simple.yml
+4. ✅ **Generates Secrets**: Creates secure JWT_SECRET and ENCRYPTION_KEY
+5. ✅ **Creates Environment**: Sets up .env file with sensible defaults
+6. ✅ **Pulls Images**: Downloads pre-built Docker images from GitHub Container Registry
+7. ✅ **Starts Services**: Launches all 6 core containers (Frontend, Backend, Worker, MongoDB, PostgreSQL, Redis)
+8. ✅ **Health Checks**: Waits for services to become healthy
+9. ✅ **Success Message**: Shows access URLs and useful commands
+
+### Installation Options
+
+**Default Installation** (ports 3000/3001):
+```bash
+curl -fsSL https://get.reporunner.io/install.sh | sh
+```
+
+**Custom Installation Directory**:
+```bash
+REPORUNNER_INSTALL_DIR=/opt/reporunner curl -fsSL https://get.reporunner.io/install.sh | sh
+```
+
+**Custom Ports**:
+```bash
+FRONTEND_PORT=8080 BACKEND_PORT=8081 curl -fsSL https://get.reporunner.io/install.sh | sh
+```
+
+**Manual Download** (for review before execution):
+```bash
+wget https://get.reporunner.io/install.sh
+chmod +x install.sh
+./install.sh
+```
+
+### Post-Installation
+
+After installation completes:
+
+1. **Access the Application**:
+   - Frontend: http://localhost:3000
+   - Default credentials: `admin@reporunner.local` / `admin123`
+
+2. **View Logs**:
+   ```bash
+   cd ~/.reporunner
+   docker compose logs -f
+   ```
+
+3. **Configure AI Services** (optional):
+   ```bash
+   cd ~/.reporunner
+   nano .env
+   # Add your API keys:
+   # OPENAI_API_KEY=sk-...
+   # ANTHROPIC_API_KEY=sk-ant-...
+   # GOOGLE_AI_API_KEY=...
+   docker compose restart backend worker
+   ```
+
+4. **Uninstall** (if needed):
+   ```bash
+   cd ~/.reporunner
+   docker compose down -v
+   ```
+
+### Why Use the One-Command Installer?
+
+- **Zero Configuration**: No manual .env setup or secret generation
+- **Pre-built Images**: Instant deployment without compilation
+- **Automatic Health Checks**: Waits for services to be ready
+- **Production-Ready**: Same images used in production deployments
+- **Multi-Platform**: Supports both amd64 and arm64 architectures
+
+**Note**: If you prefer to build from source or need custom deployment, see [Manual Docker Compose Setup](#-manual-docker-compose-setup) below.
 
 ---
 
@@ -38,7 +127,9 @@ docker-compose --version  # Should be 2.20+
 
 ---
 
-## 🚀 Quick Start
+## 🚀 Manual Docker Compose Setup
+
+For users who prefer to build from source or need custom deployment configurations.
 
 ### 1. Clone the Repository
 

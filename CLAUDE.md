@@ -489,9 +489,38 @@ Access monitoring:
 
 ## 🐳 Docker & Kubernetes Deployment
 
+### ⚡ One-Command Installation (Recommended)
+
+The **fastest way** to deploy Reporunner:
+
+```bash
+curl -fsSL https://get.reporunner.io/install.sh | sh
+```
+
+**The installer automatically:**
+- ✅ Verifies Docker prerequisites
+- ✅ Downloads pre-built images from GitHub Container Registry
+- ✅ Generates secure JWT_SECRET and ENCRYPTION_KEY
+- ✅ Starts all 6 core services (Frontend, Backend, Worker, MongoDB, PostgreSQL, Redis)
+- ✅ Waits for health checks
+- ✅ Opens http://localhost:3000
+
+**Default credentials:** `admin@reporunner.local` / `admin123`
+
+**Custom installation:**
+```bash
+# Custom ports
+FRONTEND_PORT=8080 BACKEND_PORT=8081 curl -fsSL https://get.reporunner.io/install.sh | sh
+
+# Custom directory
+REPORUNNER_INSTALL_DIR=/opt/reporunner curl -fsSL https://get.reporunner.io/install.sh | sh
+```
+
+**📖 Complete Guide:** See [DOCKER.md](./DOCKER.md) for comprehensive documentation
+
 ### Docker Deployment (Profile-Based System)
 
-Reporunner uses a **flexible profile-based Docker architecture** for easy scaling:
+For advanced deployments, Reporunner supports **flexible profile-based architecture**:
 
 **Core Services (6 containers):**
 ```bash
@@ -513,15 +542,17 @@ docker-compose --profile full up -d    # All services including HA, logging, dev
 - `--profile logging` - ELK Stack (Elasticsearch, Kibana, Filebeat)
 - `--profile dev` - Developer Tools (Mailhog, Adminer, Redis Commander)
 
-**📖 Complete Guide:** See [DOCKER.md](./DOCKER.md) for comprehensive documentation
+### Manual Docker Compose Setup
 
-### Quick Start
+For building from source:
 
 ```bash
-# 1. Copy environment template
-cp .env.example .env
+# 1. Clone repository
+git clone https://github.com/reporunner/reporunner.git
+cd reporunner
 
-# 2. Generate JWT secret
+# 2. Configure environment
+cp .env.example .env
 echo "JWT_SECRET=$(openssl rand -base64 32)" >> .env
 
 # 3. Start core services

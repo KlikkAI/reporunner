@@ -50,12 +50,136 @@
 
 ## 🚀 Quick Start
 
-### Prerequisites
-- **Node.js** 18+ and **pnpm** 9+
-- **Docker** and **Docker Compose**
-- **Git**
+### ⚡ One-Command Installation (Recommended)
 
-### Development Setup
+**Get Reporunner running in 60 seconds** with a single command:
+
+```bash
+curl -fsSL https://get.reporunner.io/install.sh | sh
+```
+
+**That's it!** The installer will:
+- ✅ Automatically check Docker prerequisites
+- ✅ Download the latest Reporunner images
+- ✅ Generate secure JWT secrets and encryption keys
+- ✅ Start all 6 core services (Frontend, Backend, Worker, MongoDB, PostgreSQL, Redis)
+- ✅ Wait for services to become healthy
+- ✅ Open http://localhost:3000 in your browser
+
+**Default credentials**: `admin@reporunner.local` / `admin123`
+
+**What you get**:
+- React 19 frontend with real-time updates
+- Express.js API with JWT authentication
+- MongoDB + PostgreSQL hybrid database
+- Redis + BullMQ queue-based execution
+- Automated database initialization
+
+**Manual Installation** (if you prefer):
+```bash
+# Download and run installer locally
+wget https://get.reporunner.io/install.sh
+chmod +x install.sh
+./install.sh
+
+# Or specify custom ports
+FRONTEND_PORT=3001 BACKEND_PORT=3002 ./install.sh
+```
+
+### 🔧 Alternative: Docker Compose
+
+If you prefer to build from source or customize your deployment:
+
+```bash
+# Clone and start
+git clone https://github.com/reporunner/reporunner.git
+cd reporunner
+docker-compose up -d
+
+# Access the platform
+open http://localhost:3000
+```
+
+### 🎯 Progressive Deployment Profiles
+
+Choose your deployment complexity:
+
+#### Solo Developer (6 containers, ~2GB RAM)
+```bash
+docker-compose up -d
+# Core services only - perfect for local development
+```
+
+#### Team Development (12 containers, ~4GB RAM)
+```bash
+docker-compose --profile monitoring up -d
+# Adds: Prometheus, Grafana (7 dashboards), AlertManager, exporters
+# Access Grafana: http://localhost:3030 (admin/admin)
+```
+
+#### Production Ready (10 containers, ~6GB RAM)
+```bash
+docker-compose --profile ha up -d
+# Adds: Load balancer, automated backups, multiple backend/worker instances
+```
+
+#### Enterprise Full Stack (22 containers, ~12GB RAM)
+```bash
+docker-compose --profile full up -d
+# Complete platform: Monitoring + HA + Logging (ELK) + Dev Tools
+```
+
+#### Custom Mix & Match
+```bash
+docker-compose --profile monitoring --profile ha up -d
+# Mix profiles as needed for your use case
+```
+
+### 📦 What's Included Out-of-the-Box
+
+**Core Platform (Always Included)**:
+- **Frontend**: Nginx + React 19 SPA (~25MB image)
+- **Backend**: Express.js API server (~80MB image)
+- **Worker**: BullMQ workflow executor (~85MB image)
+- **MongoDB**: Primary database for workflows & users
+- **PostgreSQL + pgvector**: AI/ML database for embeddings
+- **Redis**: Queue management and caching
+
+**Monitoring Profile** (adds 6 containers):
+- **Prometheus**: Metrics collection (15s scrape interval)
+- **Grafana**: 7 pre-configured dashboards (API, workflows, system, DB, queues, security, business)
+- **AlertManager**: Alert routing and silencing
+- **Exporters**: node-exporter, redis-exporter, mongodb-exporter
+
+**High Availability Profile** (adds 4 containers):
+- **Nginx Load Balancer**: Round-robin to multiple backends
+- **Backup Service**: Automated daily backups (MongoDB + PostgreSQL) with S3 support
+- **Backend-2**: Additional backend instance for redundancy
+- **Worker-2**: Additional worker instance for parallel execution
+
+**Logging Profile** (adds 3 containers):
+- **Elasticsearch**: Centralized log storage
+- **Kibana**: Log visualization and analysis
+- **Filebeat**: Log shipper from all services
+
+**Dev Tools Profile** (adds 3 containers):
+- **MailHog**: Email testing (catches all outbound emails)
+- **Adminer**: Database management UI (MongoDB + PostgreSQL)
+- **Redis Commander**: Redis key/value browser
+
+### 🌐 Access Points
+
+| Service | URL | Credentials |
+|---------|-----|-------------|
+| **Frontend** | http://localhost:3000 | demo@reporunner.com / demo123 |
+| **API** | http://localhost:3001 | - |
+| **Grafana** | http://localhost:3030 | admin / admin |
+| **Prometheus** | http://localhost:9090 | - |
+| **Kibana** | http://localhost:5601 | - |
+| **MailHog** | http://localhost:8025 | - |
+| **Adminer** | http://localhost:8080 | - |
+
+### 🔧 Development Setup (Without Docker)
 
 ```bash
 # Clone the repository
@@ -65,32 +189,24 @@ cd reporunner
 # Install dependencies
 pnpm install
 
-# Start development environment
+# Start databases with Docker
+docker-compose up -d mongo postgres redis
+
+# Start development servers
 pnpm dev
 
-# Install dependencies
-pnpm install
-
-# Start development environment
-cd infrastructure/docker && docker-compose up -d
-
-# Start frontend and backend
-pnpm dev
+# Visit http://localhost:3000
 ```
 
-Visit [http://localhost:3000](http://localhost:3000) to access the web interface.
+### 🚢 Production Deployment Options
 
-### Production Deployment
+Comprehensive deployment guide available at [DEPLOYMENT.md](./DEPLOYMENT.md) covering:
 
-```bash
-# Using Docker Compose
-cd infrastructure/docker && docker-compose -f docker-compose.prod.yml up -d
-
-# Using Kubernetes with Helm
-cd infrastructure/kubernetes && helm install reporunner ./helm/reporunner \
-  --set ingress.hosts[0].host=your-domain.com \
-  --set postgresql.auth.password=your-secure-password
-```
+- **Docker Compose**: 5 deployment scenarios (solo → enterprise)
+- **Kubernetes**: Helm charts with auto-scaling
+- **AWS**: ECS Fargate ($220-$1,950/mo) or EKS
+- **GCP**: Cloud Run ($110-$1,850/mo) or GKE
+- **Azure**: Container Instances ($220-$2,650/mo) or AKS
 
 ## 📁 Project Structure
 
@@ -219,33 +335,201 @@ pnpm run test:e2e --headed
 ```
 ## 🐳 Docker & Kubernetes
 
-### Local Development
+### Docker Compose (Recommended for Most Users)
+
+Reporunner's Docker Compose setup is **production-complete** from day one:
+
 ```bash
-docker-compose up -d        # Start all services
-docker-compose logs -f      # View logs
-docker-compose down -v      # Stop and cleanup
+# Core services (60 seconds)
+docker-compose up -d
+
+# Add monitoring (90 seconds total)
+docker-compose --profile monitoring up -d
+
+# Production HA setup (120 seconds total)
+docker-compose --profile ha up -d
+
+# Everything (180 seconds total)
+docker-compose --profile full up -d
 ```
 
-### Production Deployment
+**Why Docker Compose First?**
+- **No complexity** - Single command deployment
+- **Production-ready** - Same config from dev to prod
+- **Progressive scaling** - Start small, grow as needed
+- **Local parity** - Develop exactly as deployed
+- **Cost-effective** - $0-$50/mo on a single VPS
+
+### Kubernetes (For Advanced Scaling)
+
+Deploy with Helm when you need:
+- **Auto-scaling** based on CPU/memory/custom metrics
+- **Multi-region** deployments with failover
+- **100+ workflows** executing concurrently
+- **Enterprise compliance** (SOC 2, HIPAA, etc.)
+
 ```bash
-# Helm deployment
+# Add Helm repo
 helm repo add reporunner https://charts.reporunner.com
-helm install reporunner reporunner/reporunner
+helm repo update
+
+# Install with defaults
+helm install reporunner reporunner/reporunner \
+  --namespace reporunner \
+  --create-namespace
+
+# Production install with custom values
+helm install reporunner reporunner/reporunner \
+  --namespace reporunner \
+  --create-namespace \
+  --values production-values.yaml
+```
+
+### Common Docker Commands
+
+```bash
+# Start/Stop
+docker-compose up -d                          # Start all core services
+docker-compose --profile full up -d           # Start all services
+docker-compose down                           # Stop (keep data)
+docker-compose down -v                        # Stop and delete data
+
+# View logs
+docker-compose logs -f                        # All services
+docker-compose logs -f backend                # Specific service
+docker-compose logs --tail=100 worker         # Last 100 lines
+
+# Health & Status
+docker-compose ps                             # Service status
+docker stats                                  # Resource usage
+curl http://localhost:3000/health             # Frontend health
+curl http://localhost:3001/api/health         # Backend health
+
+# Scale services
+docker-compose up -d --scale worker=5         # Scale workers to 5 instances
+docker-compose up -d --scale backend=3        # Scale backends to 3 instances
+
+# Database access
+docker-compose exec mongo mongosh             # MongoDB shell
+docker-compose exec postgres psql -U postgres # PostgreSQL shell
+docker-compose exec redis redis-cli           # Redis shell
+
+# Restart services
+docker-compose restart backend                # Restart backend
+docker-compose restart                        # Restart all
+
+# Update to latest images
+docker-compose pull                           # Pull latest images
+docker-compose up -d                          # Recreate containers
 ```
 
 ## 📊 Monitoring & Observability
 
-Reporunner includes comprehensive monitoring out of the box:
+### 7 Production-Ready Grafana Dashboards
 
-- **Prometheus** for metrics collection
-- **Grafana** for visualization and alerting
-- **Jaeger** for distributed tracing
-- **Winston** for structured logging
+Reporunner includes **7 pre-configured Grafana dashboards** - no setup required:
 
-Access monitoring dashboards:
-- Grafana: [http://localhost:3030](http://localhost:3030)
-- Prometheus: [http://localhost:9090](http://localhost:9090)
-- Jaeger: [http://localhost:16686](http://localhost:16686)
+1. **API Performance Dashboard**
+   - Request rates, latency (p50, p95, p99), error rates
+   - Status code distribution, active connections
+   - Top 10 slowest endpoints with response times
+   - **Alerts**: High error rate (>5%), slow response time (>2s)
+
+2. **Workflow Execution Dashboard**
+   - Execution rates by status (success/error/pending)
+   - Success rate gauge with color thresholds
+   - Average execution duration and p95 latency
+   - Node execution time breakdown by type
+   - Failed workflow analysis table
+
+3. **System Health Dashboard**
+   - CPU usage per instance with 80% alert threshold
+   - Memory usage percentage
+   - Disk usage gauge with 85% warning
+   - Network I/O (transmit/receive)
+   - Container health status table
+   - System uptime
+
+4. **Database Performance Dashboard**
+   - MongoDB: operations/sec, connections, query latency, memory usage
+   - PostgreSQL: connection pool, transaction rate, cache hit ratio (95%+ target)
+   - Database sizes table with growth trends
+
+5. **Queue Metrics Dashboard**
+   - BullMQ job processing rate (completed/failed)
+   - Queue depth (waiting/active/delayed) with 1000-job alert
+   - Job processing time (p50/p95)
+   - Redis connection pool usage
+   - Redis memory usage and commands/sec
+   - Active worker count
+
+6. **Security Dashboard**
+   - Authentication attempts (successful/failed)
+   - Failed login rate with 50% alert threshold
+   - Rate limiting violations
+   - Active sessions count
+   - Account lockouts
+   - Top failed login IPs
+   - OAuth token grants
+   - Invalid token attempts
+
+7. **Business Metrics Dashboard**
+   - Daily Active Users (DAU) trend
+   - Total workflows and active workflows
+   - Total executions (24h window)
+   - Workflow creation trend
+   - Execution success rate
+   - Average workflows per user
+   - Top 10 most active users
+   - Top 10 most used integrations
+
+**Access**: http://localhost:3030 (default: `admin` / `admin`)
+
+### Prometheus Metrics
+
+**50+ custom metrics** collected at 15-second intervals:
+
+```promql
+# API Performance
+http_requests_total{service="backend"}
+http_request_duration_seconds{service="backend"}
+
+# Workflow Execution
+workflow_executions_total{status="success|error|pending"}
+workflow_execution_duration_seconds
+
+# Queue Metrics
+bullmq_queue_waiting{service="worker"}
+bullmq_jobs_completed_total{service="worker"}
+
+# System Resources
+node_cpu_seconds_total
+node_memory_MemAvailable_bytes
+redis_connected_clients
+mongodb_opcounters_total
+```
+
+**Access**: http://localhost:9090
+
+### Logging Stack (ELK)
+
+Enable with `--profile logging`:
+
+- **Elasticsearch**: Centralized log storage (7 days default retention)
+- **Kibana**: Log analysis and visualization
+- **Filebeat**: Automatic log shipping from all services
+
+**Access**: http://localhost:5601
+
+### Distributed Tracing
+
+**OpenTelemetry + Jaeger** for distributed tracing (optional):
+
+```bash
+docker-compose --profile tracing up -d
+```
+
+**Access**: http://localhost:16686
 
 ## 🌐 API & SDK Ecosystem
 
