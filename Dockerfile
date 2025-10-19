@@ -6,7 +6,7 @@
 FROM node:20-alpine AS base
 
 # Install pnpm globally
-RUN npm install -g pnpm@10.18.2
+RUN npm install -g pnpm@10.18.1
 
 # Set working directory
 WORKDIR /app
