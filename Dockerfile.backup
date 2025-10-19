@@ -1,0 +1,64 @@
+# ============================================
+# Backup Service Dockerfile - Reporunner
+# Automated MongoDB + PostgreSQL backups
+# Target size: ~45MB
+# Supports: Local backups + Optional S3 upload
+# ============================================
+
+FROM alpine:3.19
+
+# Install required packages
+RUN apk add --no-cache \
+    mongodb-tools=100.9.4-r0 \
+    postgresql16-client=16.2-r0 \
+    aws-cli=1.32.23-r0 \
+    curl=8.5.0-r0 \
+    bash=5.2.21-r0 \
+    tzdata=2024a-r0 \
+    dcron=4.5-r8 \
+    && rm -rf /var/cache/apk/*
+
+# Create non-root user
+RUN addgroup -g 1001 -S backup && \
+    adduser -S backup -u 1001 -G backup
+
+# Create backup directory
+RUN mkdir -p /backups && \
+    chown -R backup:backup /backups
+
+# Set working directory
+WORKDIR /app
+
+# Copy backup script
+COPY infrastructure/docker/scripts/backup.sh /app/backup.sh
+RUN chmod +x /app/backup.sh && \
+    chown backup:backup /app/backup.sh
+
+# Copy cron configuration script
+COPY infrastructure/docker/scripts/setup-cron.sh /app/setup-cron.sh
+RUN chmod +x /app/setup-cron.sh && \
+    chown backup:backup /app/setup-cron.sh
+
+# Switch to non-root user
+USER backup
+
+# Set environment defaults
+ENV BACKUP_SCHEDULE="0 2 * * *" \
+    BACKUP_RETENTION_DAYS=7 \
+    TZ=UTC \
+    LOG_LEVEL=info
+
+# Health check
+HEALTHCHECK --interval=60s --timeout=5s --start-period=10s --retries=3 \
+  CMD test -f /tmp/backup-health || exit 1
+
+# Labels
+LABEL org.opencontainers.image.title="Reporunner Backup Service"
+LABEL org.opencontainers.image.description="Automated backup service for MongoDB and PostgreSQL databases"
+LABEL org.opencontainers.image.url="https://github.com/reporunner/reporunner"
+LABEL org.opencontainers.image.source="https://github.com/reporunner/reporunner"
+LABEL org.opencontainers.image.vendor="Reporunner Team"
+LABEL org.opencontainers.image.licenses="MIT"
+
+# Start cron daemon and backup scheduler
+CMD ["/app/setup-cron.sh"]

@@ -1,0 +1,228 @@
+{
+  "dashboard": {
+    "title": "Workflow Execution Dashboard",
+    "tags": ["reporunner", "workflows", "execution"],
+    "timezone": "browser",
+    "editable": true,
+    "graphTooltip": 1,
+    "time": {
+      "from": "now-6h",
+      "to": "now"
+    },
+    "refresh": "1m",
+    "panels": [
+      {
+        "id": 1,
+        "title": "Workflow Executions Rate",
+        "type": "graph",
+        "gridPos": {
+          "x": 0,
+          "y": 0,
+          "w": 12,
+          "h": 8
+        },
+        "targets": [
+          {
+            "expr": "rate(workflow_executions_total{service=\"backend\"}[5m])",
+            "legendFormat": "{{status}}",
+            "refId": "A"
+          }
+        ],
+        "yaxes": [
+          {
+            "format": "ops",
+            "label": "Executions/sec"
+          },
+          {
+            "format": "short"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Success Rate (%)",
+        "type": "gauge",
+        "gridPos": {
+          "x": 12,
+          "y": 0,
+          "w": 6,
+          "h": 8
+        },
+        "targets": [
+          {
+            "expr": "100 * sum(rate(workflow_executions_total{service=\"backend\",status=\"success\"}[5m])) / sum(rate(workflow_executions_total{service=\"backend\"}[5m]))",
+            "refId": "A"
+          }
+        ],
+        "options": {
+          "showThresholdLabels": true,
+          "showThresholdMarkers": true
+        },
+        "fieldConfig": {
+          "defaults": {
+            "min": 0,
+            "max": 100,
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "red",
+                  "value": 0
+                },
+                {
+                  "color": "yellow",
+                  "value": 80
+                },
+                {
+                  "color": "green",
+                  "value": 95
+                }
+              ]
+            },
+            "unit": "percent"
+          }
+        }
+      },
+      {
+        "id": 3,
+        "title": "Active Executions",
+        "type": "stat",
+        "gridPos": {
+          "x": 18,
+          "y": 0,
+          "w": 6,
+          "h": 8
+        },
+        "targets": [
+          {
+            "expr": "sum(workflow_executions_active{service=\"backend\"})",
+            "refId": "A"
+          }
+        ],
+        "options": {
+          "colorMode": "value",
+          "graphMode": "area",
+          "orientation": "auto",
+          "textMode": "value"
+        }
+      },
+      {
+        "id": 4,
+        "title": "Average Execution Duration",
+        "type": "graph",
+        "gridPos": {
+          "x": 0,
+          "y": 8,
+          "w": 12,
+          "h": 8
+        },
+        "targets": [
+          {
+            "expr": "rate(workflow_execution_duration_seconds_sum{service=\"backend\"}[5m]) / rate(workflow_execution_duration_seconds_count{service=\"backend\"}[5m])",
+            "legendFormat": "Avg duration",
+            "refId": "A"
+          },
+          {
+            "expr": "histogram_quantile(0.95, rate(workflow_execution_duration_seconds_bucket{service=\"backend\"}[5m]))",
+            "legendFormat": "p95 duration",
+            "refId": "B"
+          }
+        ],
+        "yaxes": [
+          {
+            "format": "s",
+            "label": "Duration"
+          },
+          {
+            "format": "short"
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "title": "Node Execution Time by Type",
+        "type": "graph",
+        "gridPos": {
+          "x": 12,
+          "y": 8,
+          "w": 12,
+          "h": 8
+        },
+        "targets": [
+          {
+            "expr": "avg(rate(node_execution_duration_seconds_sum{service=\"backend\"}[5m]) / rate(node_execution_duration_seconds_count{service=\"backend\"}[5m])) by (node_type)",
+            "legendFormat": "{{node_type}}",
+            "refId": "A"
+          }
+        ],
+        "yaxes": [
+          {
+            "format": "s",
+            "label": "Duration"
+          },
+          {
+            "format": "short"
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "title": "Failed Executions",
+        "type": "table",
+        "gridPos": {
+          "x": 0,
+          "y": 16,
+          "w": 12,
+          "h": 8
+        },
+        "targets": [
+          {
+            "expr": "topk(10, increase(workflow_executions_total{service=\"backend\",status=\"error\"}[1h]))",
+            "format": "table",
+            "instant": true,
+            "refId": "A"
+          }
+        ],
+        "transformations": [
+          {
+            "id": "organize",
+            "options": {
+              "renameByName": {
+                "Value": "Failed Count",
+                "workflow_id": "Workflow ID",
+                "workflow_name": "Workflow Name"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "id": 7,
+        "title": "Workflow Execution Trends (24h)",
+        "type": "graph",
+        "gridPos": {
+          "x": 12,
+          "y": 16,
+          "w": 12,
+          "h": 8
+        },
+        "targets": [
+          {
+            "expr": "sum(increase(workflow_executions_total{service=\"backend\"}[1h])) by (status)",
+            "legendFormat": "{{status}}",
+            "refId": "A"
+          }
+        ],
+        "yaxes": [
+          {
+            "format": "short",
+            "label": "Executions"
+          },
+          {
+            "format": "short"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -3,10 +3,10 @@
 # Updated for 12-package monorepo structure
 
 # Base image with Node.js LTS
-FROM node:18-alpine AS base
+FROM node:20-alpine AS base
 
 # Install pnpm globally
-RUN npm install -g pnpm@10.18.1
+RUN npm install -g pnpm@10.18.2
 
 # Set working directory
 WORKDIR /app
@@ -54,7 +54,7 @@ FROM base AS prod-deps
 RUN pnpm install --frozen-lockfile --prod
 
 # Runtime stage
-FROM node:18-alpine AS runtime
+FROM node:20-alpine AS runtime
 
 # Install dumb-init for proper signal handling
 RUN apk add --no-cache dumb-init

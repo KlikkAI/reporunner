@@ -1,0 +1,106 @@
+# ============================================
+# Frontend Dockerfile - Reporunner
+# Multi-stage build: React + Vite → Nginx
+# Target size: ~25MB
+# ============================================
+
+# ============================================
+# Stage 1: Base - Install pnpm
+# ============================================
+FROM node:20-alpine AS base
+
+# Install pnpm globally
+RUN npm install -g pnpm@10.18.2
+
+WORKDIR /app
+
+# Copy workspace configuration
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY .npmrc* ./
+
+# ============================================
+# Stage 2: Dependencies - Install all deps
+# ============================================
+FROM base AS deps
+
+# Copy all package.json files for dependency resolution
+COPY packages/frontend/package.json ./packages/frontend/
+COPY packages/shared/package.json ./packages/shared/
+COPY packages/@reporunner/core/package.json ./packages/@reporunner/core/
+
+# Install all dependencies (including devDependencies for build)
+# Skip preinstall script - only needed for local dev
+RUN pnpm install --frozen-lockfile --ignore-scripts
+
+# ============================================
+# Stage 3: Builder - Build React app
+# ============================================
+FROM base AS builder
+
+# Copy node_modules from deps stage
+COPY --from=deps /app/node_modules ./node_modules
+COPY --from=deps /app/packages ./packages
+
+# Copy source code
+COPY packages/frontend ./packages/frontend
+COPY packages/shared ./packages/shared
+COPY packages/@reporunner/core ./packages/@reporunner/core
+
+# Copy TypeScript configs
+COPY tsconfig.base.json ./
+COPY packages/frontend/tsconfig.json ./packages/frontend/
+COPY packages/shared/tsconfig.json ./packages/shared/
+COPY packages/@reporunner/core/tsconfig.json ./packages/@reporunner/core/
+
+# Copy Vite and other configs
+COPY packages/frontend/vite.config.ts ./packages/frontend/
+COPY packages/frontend/tailwind.config.js ./packages/frontend/
+COPY packages/frontend/postcss.config.js ./packages/frontend/
+COPY packages/frontend/index.html ./packages/frontend/
+
+# Build frontend
+WORKDIR /app/packages/frontend
+RUN pnpm build
+
+# ============================================
+# Stage 4: Runtime - Nginx server
+# ============================================
+FROM nginx:1.25-alpine AS runtime
+
+# Install dumb-init for proper signal handling
+RUN apk add --no-cache dumb-init
+
+# Copy custom nginx configuration
+COPY infrastructure/docker/nginx/frontend.conf /etc/nginx/nginx.conf
+
+# Copy built frontend from builder
+COPY --from=builder /app/packages/frontend/dist /usr/share/nginx/html
+
+# Set proper permissions for nginx user (user already exists in base image)
+RUN chown -R nginx:nginx /usr/share/nginx/html && \
+    chown -R nginx:nginx /var/cache/nginx && \
+    chown -R nginx:nginx /var/log/nginx && \
+    touch /var/run/nginx.pid && \
+    chown -R nginx:nginx /var/run/nginx.pid
+
+# Switch to non-root user
+USER nginx
+
+# Expose port
+EXPOSE 80
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD wget --no-verbose --tries=1 --spider http://localhost/health || exit 1
+
+# Labels for metadata
+LABEL org.opencontainers.image.title="Reporunner Frontend"
+LABEL org.opencontainers.image.description="Reporunner workflow automation platform - React frontend"
+LABEL org.opencontainers.image.url="https://github.com/reporunner/reporunner"
+LABEL org.opencontainers.image.source="https://github.com/reporunner/reporunner"
+LABEL org.opencontainers.image.vendor="Reporunner Team"
+LABEL org.opencontainers.image.licenses="MIT"
+
+# Start Nginx
+ENTRYPOINT ["dumb-init", "--"]
+CMD ["nginx", "-g", "daemon off;"]

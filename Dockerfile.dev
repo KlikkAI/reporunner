@@ -2,10 +2,10 @@
 # Optimized for development with hot reload and debugging
 # Updated for 12-package monorepo structure
 
-FROM node:18-alpine
+FROM node:20-alpine
 
 # Install pnpm globally
-RUN npm install -g pnpm@9.15.2
+RUN npm install -g pnpm@10.18.2
 
 # Install development tools
 RUN apk add --no-cache \

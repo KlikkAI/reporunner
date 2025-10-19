@@ -489,13 +489,48 @@ Access monitoring:
 
 ## 🐳 Docker & Kubernetes Deployment
 
-### Local Development
+### Docker Deployment (Profile-Based System)
+
+Reporunner uses a **flexible profile-based Docker architecture** for easy scaling:
+
+**Core Services (6 containers):**
+```bash
+docker-compose up -d          # Frontend, Backend, Worker, MongoDB, PostgreSQL, Redis
+```
+
+**With Monitoring (+6 containers):**
+```bash
+docker-compose --profile monitoring up -d    # + Prometheus, Grafana, Alertmanager, exporters
+```
+
+**Full Stack (22 containers):**
+```bash
+docker-compose --profile full up -d    # All services including HA, logging, dev tools
+```
+
+**Other Profiles:**
+- `--profile ha` - High Availability (load balancer, multiple replicas, backup service)
+- `--profile logging` - ELK Stack (Elasticsearch, Kibana, Filebeat)
+- `--profile dev` - Developer Tools (Mailhog, Adminer, Redis Commander)
+
+**📖 Complete Guide:** See [DOCKER.md](./DOCKER.md) for comprehensive documentation
+
+### Quick Start
 
 ```bash
-cd infrastructure/docker
-docker-compose up -d          # Start all services
-docker-compose logs -f        # View logs
-docker-compose down -v        # Stop and cleanup
+# 1. Copy environment template
+cp .env.example .env
+
+# 2. Generate JWT secret
+echo "JWT_SECRET=$(openssl rand -base64 32)" >> .env
+
+# 3. Start core services
+docker-compose up -d
+
+# 4. View logs
+docker-compose logs -f
+
+# 5. Access at http://localhost:3000
 ```
 
 ### Production Deployment
@@ -507,8 +542,8 @@ docker-compose -f docker-compose.prod.yml up -d
 
 **Kubernetes with Helm**:
 ```bash
-cd infrastructure/kubernetes
-helm install reporunner ./helm/reporunner \
+cd infrastructure/kubernetes/helm
+helm install reporunner . \
   --set ingress.hosts[0].host=your-domain.com \
   --set postgresql.auth.password=your-secure-password
 ```
@@ -563,6 +598,7 @@ All SDKs provide:
 ```
 README.md                 # Project overview and quick start
 CLAUDE.md                 # This file - AI assistant context
+DOCKER.md                 # Docker deployment quick start guide
 CONTRIBUTING.md           # Contribution guidelines
 SECURITY.md               # Security policy
 CODE_OF_CONDUCT.md        # Community code of conduct

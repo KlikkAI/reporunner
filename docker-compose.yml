@@ -1,0 +1,603 @@
+# ============================================
+# Reporunner - Complete Docker Compose
+# Profile-Based Architecture (Option C: Hybrid)
+# ============================================
+#
+# Simple Profiles (Marketing):
+#   docker-compose up -d                      # Core only (6 containers)
+#   docker-compose --profile monitoring up    # + Monitoring (12 containers)
+#   docker-compose --profile full up          # Everything (22 containers)
+#
+# Advanced Profiles (Power Users):
+#   docker-compose --profile ha up            # + High Availability (10 containers)
+#   docker-compose --profile logging up       # + Logging (9 containers)
+#   docker-compose --profile dev up           # + Dev Tools (9 containers)
+#
+# Mix and Match:
+#   docker-compose --profile monitoring --profile ha up
+#   docker-compose --profile monitoring --profile logging up
+#
+# ============================================
+# NETWORKS
+# ============================================
+networks:
+  reporunner-network:
+    name: reporunner_network
+    driver: bridge
+
+# ============================================
+# VOLUMES
+# ============================================
+volumes:
+  mongo_data:
+    name: reporunner_mongo_data
+  postgres_data:
+    name: reporunner_postgres_data
+  redis_data:
+    name: reporunner_redis_data
+  prometheus_data:
+    name: reporunner_prometheus_data
+  grafana_data:
+    name: reporunner_grafana_data
+  elasticsearch_data:
+    name: reporunner_elasticsearch_data
+  reporunner_uploads:
+    name: reporunner_uploads
+
+# ============================================
+# CORE SERVICES (Always Included) - 6 containers
+# ============================================
+services:
+  # ==========================================
+  # Application Tier
+  # ==========================================
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    image: reporunner/frontend:latest
+    container_name: reporunner-frontend
+    restart: unless-stopped
+    ports:
+      - "${FRONTEND_PORT:-3000}:80"
+    environment:
+      - VITE_API_URL=${VITE_API_URL:-http://localhost:3001}
+      - VITE_WS_URL=${VITE_WS_URL:-ws://localhost:3001}
+    networks:
+      - reporunner-network
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost/health"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 128M
+        reservations:
+          cpus: '0.1'
+          memory: 64M
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    image: reporunner/backend:latest
+    container_name: reporunner-backend
+    restart: unless-stopped
+    ports:
+      - "${BACKEND_PORT:-3001}:3001"
+    environment:
+      - NODE_ENV=${NODE_ENV:-production}
+      - PORT=3001
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+
+      # Database URLs
+      - MONGODB_URI=${MONGODB_URI:-mongodb://mongo:27017/reporunner}
+      - POSTGRES_URL=${POSTGRES_URL:-postgresql://postgres:password@postgres:5432/reporunner}
+      - REDIS_URL=${REDIS_URL:-redis://redis:6379}
+
+      # Authentication
+      - JWT_SECRET=${JWT_SECRET:?JWT_SECRET is required}
+      - JWT_EXPIRES_IN=${JWT_EXPIRES_IN:-7d}
+
+      # Optional Services
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
+      - GOOGLE_AI_API_KEY=${GOOGLE_AI_API_KEY:-}
+
+      # SMTP (Optional)
+      - SMTP_HOST=${SMTP_HOST:-}
+      - SMTP_PORT=${SMTP_PORT:-587}
+      - SMTP_USER=${SMTP_USER:-}
+      - SMTP_PASSWORD=${SMTP_PASSWORD:-}
+      - SMTP_FROM=${SMTP_FROM:-noreply@reporunner.com}
+
+    volumes:
+      - reporunner_uploads:/app/uploads
+    depends_on:
+      mongo:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - reporunner-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001/health"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile.worker
+    image: reporunner/worker:latest
+    container_name: reporunner-worker
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=${NODE_ENV:-production}
+      - WORKER_MODE=true
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+
+      # Database URLs
+      - MONGODB_URI=${MONGODB_URI:-mongodb://mongo:27017/reporunner}
+      - POSTGRES_URL=${POSTGRES_URL:-postgresql://postgres:password@postgres:5432/reporunner}
+      - REDIS_URL=${REDIS_URL:-redis://redis:6379}
+
+      # AI Services
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
+      - GOOGLE_AI_API_KEY=${GOOGLE_AI_API_KEY:-}
+
+    depends_on:
+      mongo:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - reporunner-network
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 1G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+
+  # ==========================================
+  # Data Tier
+  # ==========================================
+
+  mongo:
+    image: mongo:7.0
+    container_name: reporunner-mongo
+    restart: unless-stopped
+    ports:
+      - "${MONGO_PORT:-27017}:27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_ROOT_USER:-admin}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_ROOT_PASSWORD:-changeme}
+      - MONGO_INITDB_DATABASE=reporunner
+    volumes:
+      - mongo_data:/data/db
+      - ./infrastructure/docker/scripts/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+    networks:
+      - reporunner-network
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: reporunner-postgres
+    restart: unless-stopped
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    environment:
+      - POSTGRES_DB=reporunner
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-password}
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./infrastructure/docker/scripts/postgres-init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    command: >
+      postgres
+      -c shared_preload_libraries=pg_stat_statements
+      -c pg_stat_statements.track=all
+      -c max_connections=200
+    networks:
+      - reporunner-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+
+  redis:
+    image: redis:7-alpine
+    container_name: reporunner-redis
+    restart: unless-stopped
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - redis_data:/data
+    command: >
+      redis-server
+      --appendonly yes
+      --appendfsync everysec
+      --maxmemory 256mb
+      --maxmemory-policy allkeys-lru
+    networks:
+      - reporunner-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+        reservations:
+          cpus: '0.1'
+          memory: 128M
+
+# ============================================
+# MONITORING PROFILE (+6 containers)
+# Simple: docker-compose --profile monitoring up
+# ============================================
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: reporunner-prometheus
+    restart: unless-stopped
+    profiles: [monitoring, full]
+    ports:
+      - "${PROMETHEUS_PORT:-9090}:9090"
+    volumes:
+      - prometheus_data:/prometheus
+      - ./infrastructure/docker/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--storage.tsdb.retention.time=30d'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+      - '--web.enable-lifecycle'
+    networks:
+      - reporunner-network
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: reporunner-grafana
+    restart: unless-stopped
+    profiles: [monitoring, full]
+    ports:
+      - "${GRAFANA_PORT:-3030}:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN_USER:-admin}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD:-admin123}
+      - GF_INSTALL_PLUGINS=
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./infrastructure/docker/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./infrastructure/docker/grafana/dashboards:/etc/grafana/dashboards:ro
+    depends_on:
+      - prometheus
+    networks:
+      - reporunner-network
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+        reservations:
+          cpus: '0.1'
+          memory: 128M
+
+  alertmanager:
+    image: prom/alertmanager:latest
+    container_name: reporunner-alertmanager
+    restart: unless-stopped
+    profiles: [monitoring, full]
+    ports:
+      - "${ALERTMANAGER_PORT:-9093}:9093"
+    volumes:
+      - ./infrastructure/docker/alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
+    command:
+      - '--config.file=/etc/alertmanager/alertmanager.yml'
+      - '--storage.path=/alertmanager'
+    networks:
+      - reporunner-network
+    deploy:
+      resources:
+        limits:
+          cpus: '0.25'
+          memory: 128M
+
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: reporunner-node-exporter
+    restart: unless-stopped
+    profiles: [monitoring, full]
+    command:
+      - '--path.rootfs=/host'
+    pid: host
+    volumes:
+      - '/:/host:ro,rslave'
+    networks:
+      - reporunner-network
+    deploy:
+      resources:
+        limits:
+          cpus: '0.25'
+          memory: 64M
+
+  redis-exporter:
+    image: oliver006/redis_exporter:latest
+    container_name: reporunner-redis-exporter
+    restart: unless-stopped
+    profiles: [monitoring, full]
+    environment:
+      - REDIS_ADDR=redis:6379
+    networks:
+      - reporunner-network
+    deploy:
+      resources:
+        limits:
+          cpus: '0.25'
+          memory: 64M
+
+  mongodb-exporter:
+    image: percona/mongodb_exporter:latest
+    container_name: reporunner-mongodb-exporter
+    restart: unless-stopped
+    profiles: [monitoring, full]
+    command:
+      - '--mongodb.uri=mongodb://mongo:27017'
+      - '--compatible-mode'
+    networks:
+      - reporunner-network
+    deploy:
+      resources:
+        limits:
+          cpus: '0.25'
+          memory: 64M
+
+# ============================================
+# HIGH AVAILABILITY PROFILE (+4 containers)
+# Advanced: docker-compose --profile ha up
+# ============================================
+
+  nginx-lb:
+    image: nginx:alpine
+    container_name: reporunner-nginx-lb
+    restart: unless-stopped
+    profiles: [ha, full]
+    ports:
+      - "${LB_PORT:-80}:80"
+      - "${LB_SSL_PORT:-443}:443"
+    volumes:
+      - ./infrastructure/docker/nginx/loadbalancer.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - backend
+      - backend-2
+    networks:
+      - reporunner-network
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 128M
+
+  backup:
+    build:
+      context: .
+      dockerfile: Dockerfile.backup
+    image: reporunner/backup:latest
+    container_name: reporunner-backup
+    restart: unless-stopped
+    profiles: [ha, full]
+    environment:
+      - BACKUP_SCHEDULE=${BACKUP_SCHEDULE:-0 2 * * *}
+      - MONGODB_URI=mongodb://mongo:27017/reporunner
+      - POSTGRES_URL=postgresql://postgres:password@postgres:5432/reporunner
+      - S3_BUCKET=${BACKUP_S3_BUCKET:-}
+      - S3_ACCESS_KEY=${BACKUP_S3_ACCESS_KEY:-}
+      - S3_SECRET_KEY=${BACKUP_S3_SECRET_KEY:-}
+    volumes:
+      - ./backups:/backups
+    depends_on:
+      - mongo
+      - postgres
+    networks:
+      - reporunner-network
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+
+  backend-2:
+    extends:
+      service: backend
+    container_name: reporunner-backend-2
+    profiles: [ha, full]
+    ports:
+      - "${BACKEND_2_PORT:-3002}:3001"
+
+  worker-2:
+    extends:
+      service: worker
+    container_name: reporunner-worker-2
+    profiles: [ha, full]
+
+# ============================================
+# LOGGING PROFILE (+3 containers)
+# Advanced: docker-compose --profile logging up
+# ============================================
+
+  elasticsearch:
+    image: elasticsearch:8.11.0
+    container_name: reporunner-elasticsearch
+    restart: unless-stopped
+    profiles: [logging, full]
+    ports:
+      - "${ELASTICSEARCH_PORT:-9200}:9200"
+    environment:
+      - discovery.type=single-node
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - xpack.security.enabled=false
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    networks:
+      - reporunner-network
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 1G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+
+  kibana:
+    image: kibana:8.11.0
+    container_name: reporunner-kibana
+    restart: unless-stopped
+    profiles: [logging, full]
+    ports:
+      - "${KIBANA_PORT:-5601}:5601"
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    depends_on:
+      - elasticsearch
+    networks:
+      - reporunner-network
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+
+  filebeat:
+    image: elastic/filebeat:8.11.0
+    container_name: reporunner-filebeat
+    restart: unless-stopped
+    profiles: [logging, full]
+    user: root
+    volumes:
+      - ./infrastructure/logging/filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    depends_on:
+      - elasticsearch
+    networks:
+      - reporunner-network
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+
+# ============================================
+# DEVELOPER TOOLS PROFILE (+3 containers)
+# Advanced: docker-compose --profile dev up
+# ============================================
+
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: reporunner-mailhog
+    restart: unless-stopped
+    profiles: [dev, full]
+    ports:
+      - "${MAILHOG_SMTP_PORT:-1025}:1025"
+      - "${MAILHOG_WEB_PORT:-8025}:8025"
+    networks:
+      - reporunner-network
+    deploy:
+      resources:
+        limits:
+          cpus: '0.25'
+          memory: 64M
+
+  adminer:
+    image: adminer:latest
+    container_name: reporunner-adminer
+    restart: unless-stopped
+    profiles: [dev, full]
+    ports:
+      - "${ADMINER_PORT:-8080}:8080"
+    environment:
+      - ADMINER_DEFAULT_SERVER=postgres
+    networks:
+      - reporunner-network
+    deploy:
+      resources:
+        limits:
+          cpus: '0.25'
+          memory: 128M
+
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    container_name: reporunner-redis-commander
+    restart: unless-stopped
+    profiles: [dev, full]
+    ports:
+      - "${REDIS_COMMANDER_PORT:-8081}:8081"
+    environment:
+      - REDIS_HOSTS=local:redis:6379
+    networks:
+      - reporunner-network
+    deploy:
+      resources:
+        limits:
+          cpus: '0.25'
+          memory: 128M
