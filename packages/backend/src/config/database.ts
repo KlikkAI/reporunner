@@ -3,7 +3,7 @@
  */
 
 import mongoose from 'mongoose';
-import { ConfigService } from './ConfigService';
+import { ConfigService } from './ConfigService.js';
 
 export class DatabaseConfig {
   private static instance: DatabaseConfig;
