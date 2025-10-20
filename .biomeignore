@@ -128,3 +128,33 @@ assets/
 # HTML build output
 html/
 **/html/**
+
+# AI Assistant contexts and development tools
+.claude/
+.kiro/
+.qodo/
+**/.claude/**
+**/.kiro/**
+**/.qodo/**
+
+# Git hooks and changesets
+.husky/
+.changeset/
+**/.husky/**
+**/.changeset/**
+
+# Temporary output directories
+new-output-dir/
+**/new-output-dir/**
+
+# Test data
+test-performance-data-*/
+**/test-performance-data-*/**
+
+# Development-only documentation files
+DOCKER_FIXES.md
+DOCKER_OPENSOURCE_GUIDE.md
+DOCKER_OPENSOURCE_SUMMARY.md
+DOCKER_COMPARISON.md
+implementation.txt
+reporunner-analysis-report.txt

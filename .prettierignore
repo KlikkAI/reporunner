@@ -93,3 +93,24 @@ docker-compose*.yml
 *.zip
 *.tar
 *.gz
+
+# AI Assistant contexts and development tools
+.claude/
+.kiro/
+.qodo/
+
+# Git hooks
+.husky/
+.changeset/
+
+# Temporary directories
+new-output-dir/
+test-performance-data-*/
+
+# Development-only documentation
+DOCKER_FIXES.md
+DOCKER_OPENSOURCE_GUIDE.md
+DOCKER_OPENSOURCE_SUMMARY.md
+DOCKER_COMPARISON.md
+implementation.txt
+reporunner-analysis-report.txt

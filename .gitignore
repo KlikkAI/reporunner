@@ -117,3 +117,19 @@ html/
 
 # Test data
 test-performance-data-*/
+
+# AI Assistant contexts and development tools
+.claude/
+.kiro/
+.qodo/
+
+# Temporary output directories
+new-output-dir/
+
+# Additional development documentation (keep essential docs)
+DOCKER_FIXES.md
+DOCKER_OPENSOURCE_GUIDE.md
+DOCKER_OPENSOURCE_SUMMARY.md
+DOCKER_COMPARISON.md
+implementation.txt
+reporunner-analysis-report.txt

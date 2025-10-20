@@ -99,3 +99,41 @@ docker-compose*
 
 # Test data directories
 test-performance-data-*
+
+# AI Assistant contexts and development tools (NOT needed in Docker)
+.claude/
+.kiro/
+.qodo/
+
+# Git hooks and changesets (NOT needed in Docker)
+.husky/
+.changeset/
+
+# Additional build outputs
+html/
+new-output-dir/
+
+# Development-only documentation (NOT needed in production)
+DOCKER_FIXES.md
+DOCKER_OPENSOURCE_GUIDE.md
+DOCKER_OPENSOURCE_SUMMARY.md
+DOCKER_COMPARISON.md
+DEPLOYMENT.md
+DOCUMENTATION.md
+COMPLETION_ROADMAP.md
+implementation.txt
+reporunner-analysis-report.txt
+
+# Keep only essential docs in Docker image:
+# - README.md (main documentation)
+# - CLAUDE.md (for AI context)
+# - LICENSE (required)
+# - CHANGELOG.md (version history)
+# - SECURITY.md (security policy)
+# - CONTRIBUTING.md (for contributors)
+
+# Examples directory (NOT needed in production)
+examples/
+
+# Test directory (NOT needed in production)
+tests/
