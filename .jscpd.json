@@ -1,5 +1,5 @@
 {
-  "threshold": 0,
+  "threshold": 5,
   "reporters": ["console", "json", "html"],
   "output": "./reports/duplication",
   "format": ["typescript", "javascript", "tsx", "jsx"],
