@@ -337,8 +337,8 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Build frontend
-        run: pnpm --filter=@reporunner/frontend build
+      - name: Build frontend and dependencies
+        run: turbo run build --filter=@reporunner/frontend
 
       - name: Setup preview server
         run: |
