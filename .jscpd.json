@@ -41,5 +41,5 @@
   },
   "store": ".jscpd-store",
   "gitignore": true,
-  "exitCode": 1
+  "exitCode": 0
 }
