@@ -10,6 +10,15 @@ import ora from 'ora';
 
 const execAsync = promisify(exec);
 
+interface NodeGenerationData {
+  name: string;
+  category: string;
+  template: string;
+  description: string;
+  author: string;
+  credentialTypes?: string[];
+}
+
 export const nodeCommand = new Command('node')
   .description('Node development tools')
   .addCommand(createNodeCommand())
@@ -199,7 +208,7 @@ function validateNodeCommand(): Command {
     });
 }
 
-async function generateNodeFiles(nodeDir: string, data: Record<string, unknown>): Promise<void> {
+async function generateNodeFiles(nodeDir: string, data: NodeGenerationData): Promise<void> {
   // Package.json template
   const packageJsonTemplate = `{
   "name": "@reporunner/node-{{name}}",
