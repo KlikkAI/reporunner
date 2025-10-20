@@ -2,8 +2,8 @@ export interface TestCase {
   id: string;
   name: string;
   description?: string;
-  input: any;
-  expectedOutput?: any;
+  input: unknown;
+  expectedOutput?: unknown;
   expectedError?: string;
   timeout?: number;
 }
@@ -18,7 +18,7 @@ export interface TestResult {
   testCaseId: string;
   status: 'passed' | 'failed' | 'skipped';
   duration: number;
-  actualOutput?: any;
+  actualOutput?: unknown;
   error?: string;
   assertion?: string;
 }
@@ -85,7 +85,7 @@ export class WorkflowTester {
     }
   }
 
-  private async executeWorkflow(workflowId: string, input: any): Promise<any> {
+  private async executeWorkflow(workflowId: string, input: unknown): Promise<unknown> {
     // Mock workflow execution
     // In production, this would call the actual workflow engine
 
@@ -139,7 +139,7 @@ export class WorkflowTester {
 }
 
 export class NodeTester {
-  async testNode(nodeClass: any, testCases: TestCase[]): Promise<TestResult[]> {
+  async testNode(nodeClass: unknown, testCases: TestCase[]): Promise<TestResult[]> {
     const results: TestResult[] = [];
 
     for (const testCase of testCases) {
@@ -150,7 +150,7 @@ export class NodeTester {
     return results;
   }
 
-  private async runNodeTest(nodeClass: any, testCase: TestCase): Promise<TestResult> {
+  private async runNodeTest(nodeClass: unknown, testCase: TestCase): Promise<TestResult> {
     const startTime = Date.now();
 
     try {

@@ -1,5 +1,5 @@
 export class WorkflowGenerator {
-  generateBasicWorkflow(name: string, description?: string): any {
+  generateBasicWorkflow(name: string, description?: string): unknown {
     return {
       id: this.generateId(),
       name,
@@ -36,7 +36,7 @@ export class WorkflowGenerator {
     };
   }
 
-  generateAPIWorkflow(name: string, description?: string): any {
+  generateAPIWorkflow(name: string, description?: string): unknown {
     return {
       id: this.generateId(),
       name,

@@ -2,7 +2,10 @@ import { join } from 'node:path';
 import { ensureDirSync, writeFileSync } from 'fs-extra';
 import Mustache from 'mustache';
 
-export async function generateNodeFiles(nodeDir: string, data: any): Promise<void> {
+export async function generateNodeFiles(
+  nodeDir: string,
+  data: Record<string, unknown>
+): Promise<void> {
   // Package.json template
   const packageJsonTemplate = `{
   "name": "@reporunner/node-{{name}}",

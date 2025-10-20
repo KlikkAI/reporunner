@@ -74,7 +74,8 @@ function createNodeCommand(): Command {
             type: 'input',
             name: 'description',
             message: 'Node description:',
-            default: (answers: any) => `${answers.name || options.name} integration for Reporunner`,
+            default: (answers: Record<string, unknown>) =>
+              `${answers.name || options.name} integration for Reporunner`,
           },
           {
             type: 'input',
@@ -198,7 +199,7 @@ function validateNodeCommand(): Command {
     });
 }
 
-async function generateNodeFiles(nodeDir: string, data: any): Promise<void> {
+async function generateNodeFiles(nodeDir: string, data: Record<string, unknown>): Promise<void> {
   // Package.json template
   const packageJsonTemplate = `{
   "name": "@reporunner/node-{{name}}",

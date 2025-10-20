@@ -92,7 +92,6 @@ program
         // Log validation errors
         results.errors.forEach((error) => {
           // TODO: Implement proper error logging with details from error.errors
-          // biome-ignore lint/suspicious/noConsole: CLI tool requires console output for user feedback
           console.error(`Validation errors in ${error.file}`);
         });
         process.exit(1);
