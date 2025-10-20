@@ -106,12 +106,12 @@
   "devDependencies": {
     "@biomejs/biome": "catalog:",
     "@changesets/cli": "^2.29.7",
-    "@swc/core": "^1.7.36",
     "@commitlint/cli": "^20.1.0",
     "@commitlint/config-conventional": "^20.0.0",
     "@commitlint/cz-commitlint": "^20.1.0",
     "@playwright/test": "^1.56.0",
     "@size-limit/preset-big-lib": "^11.2.0",
+    "@swc/core": "^1.7.36",
     "@types/jest": "^30.0.0",
     "@types/node": "catalog:",
     "@types/supertest": "^6.0.3",
@@ -173,7 +173,8 @@
       "brace-expansion@1": "1.1.12",
       "brace-expansion@2": "2.0.2",
       "date-fns": "2.30.0",
-      "form-data": "4.0.4"
+      "form-data": "4.0.4",
+      "tmp@<=0.2.3": ">=0.2.4"
     },
     "packageExtensions": {
       "@anthropic-ai/sdk": {

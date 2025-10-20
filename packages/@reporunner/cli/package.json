@@ -55,7 +55,7 @@
     "@types/fs-extra": "^11.0.0",
     "@types/mustache": "^4.2.0",
     "@types/semver": "^7.5.0",
-    "@types/update-notifier": "^7.0.0",
+    "@types/update-notifier": "^6.0.8",
     "typescript": "catalog:",
     "@types/node": "catalog:",
     "jest": "catalog:",
