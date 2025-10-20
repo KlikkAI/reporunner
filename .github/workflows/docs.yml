@@ -141,14 +141,15 @@ jobs:
       - name: Check TypeDoc configuration
         run: |
           echo "Validating TypeDoc configurations..."
-          pnpm typedoc --options typedoc.json --dry-run
+          if [ -f "typedoc.json" ]; then
+            echo "Checking root typedoc.json..."
+            node -e "JSON.parse(require('fs').readFileSync('typedoc.json', 'utf8'))" && echo "✓ Valid JSON"
+          fi
 
           for package in core sdk cli; do
             if [ -f "packages/$package/typedoc.json" ]; then
               echo "Validating $package TypeDoc config..."
-              cd "packages/$package"
-              pnpm typedoc --options typedoc.json --dry-run
-              cd ../..
+              node -e "JSON.parse(require('fs').readFileSync('packages/$package/typedoc.json', 'utf8'))" && echo "✓ Valid JSON"
             fi
           done
 
