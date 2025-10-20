@@ -1,6 +1,6 @@
 {
   "statistics": {
-    "detectionDate": "2025-10-09T18:21:24.741Z",
+    "detectionDate": "2025-10-20T11:30:11.238Z",
     "formats": {
       "typescript": {
         "sources": {
@@ -617,8 +617,8 @@
             "newClones": 0
           },
           "/home/margon/Reporunner/reporunner/packages/@reporunner/auth/src/security/middleware/validation/ValidationMiddleware.ts": {
-            "lines": 185,
-            "tokens": 1508,
+            "lines": 188,
+            "tokens": 1459,
             "sources": 1,
             "clones": 0,
             "duplicatedLines": 0,
@@ -665,14 +665,14 @@
             "newClones": 0
           },
           "/home/margon/Reporunner/reporunner/packages/@reporunner/auth/src/security/middleware/auth.middleware/auth-utilities.ts": {
-            "lines": 135,
-            "tokens": 1137,
+            "lines": 211,
+            "tokens": 1711,
             "sources": 1,
             "clones": 2,
             "duplicatedLines": 32,
             "duplicatedTokens": 283,
-            "percentage": 23.7,
-            "percentageTokens": 24.89,
+            "percentage": 15.17,
+            "percentageTokens": 16.54,
             "newDuplicatedLines": 0,
             "newClones": 0
           },
@@ -2093,20 +2093,20 @@
             "newClones": 0
           },
           "/home/margon/Reporunner/reporunner/packages/@reporunner/auth/src/security/middleware/validation.middleware.ts": {
-            "lines": 707,
-            "tokens": 5287,
+            "lines": 845,
+            "tokens": 6217,
             "sources": 1,
-            "clones": 3,
-            "duplicatedLines": 41,
-            "duplicatedTokens": 286,
-            "percentage": 5.8,
-            "percentageTokens": 5.41,
+            "clones": 2,
+            "duplicatedLines": 32,
+            "duplicatedTokens": 196,
+            "percentage": 3.79,
+            "percentageTokens": 3.15,
             "newDuplicatedLines": 0,
             "newClones": 0
           },
           "/home/margon/Reporunner/reporunner/packages/@reporunner/auth/src/security/middleware/security-headers.middleware.ts": {
-            "lines": 367,
-            "tokens": 2799,
+            "lines": 411,
+            "tokens": 3017,
             "sources": 1,
             "clones": 0,
             "duplicatedLines": 0,
@@ -2117,8 +2117,8 @@
             "newClones": 0
           },
           "/home/margon/Reporunner/reporunner/packages/@reporunner/auth/src/security/middleware/rate-limit.middleware.ts": {
-            "lines": 351,
-            "tokens": 2558,
+            "lines": 420,
+            "tokens": 2881,
             "sources": 1,
             "clones": 0,
             "duplicatedLines": 0,
@@ -2129,14 +2129,14 @@
             "newClones": 0
           },
           "/home/margon/Reporunner/reporunner/packages/@reporunner/auth/src/security/middleware/file-upload.middleware.ts": {
-            "lines": 678,
-            "tokens": 5796,
+            "lines": 872,
+            "tokens": 7101,
             "sources": 1,
-            "clones": 3,
-            "duplicatedLines": 20,
-            "duplicatedTokens": 264,
-            "percentage": 2.95,
-            "percentageTokens": 4.55,
+            "clones": 5,
+            "duplicatedLines": 40,
+            "duplicatedTokens": 444,
+            "percentage": 4.59,
+            "percentageTokens": 6.25,
             "newDuplicatedLines": 0,
             "newClones": 0
           },
@@ -2504,11 +2504,11 @@
             "lines": 103,
             "tokens": 1072,
             "sources": 1,
-            "clones": 1,
-            "duplicatedLines": 9,
-            "duplicatedTokens": 90,
-            "percentage": 8.74,
-            "percentageTokens": 8.4,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
             "newDuplicatedLines": 0,
             "newClones": 0
           },
@@ -3389,14 +3389,14 @@
             "newClones": 0
           },
           "/home/margon/Reporunner/reporunner/packages/frontend/src/core/schemas/WorkflowSchemas.ts": {
-            "lines": 332,
-            "tokens": 3860,
+            "lines": 330,
+            "tokens": 3846,
             "sources": 1,
             "clones": 2,
             "duplicatedLines": 16,
             "duplicatedTokens": 252,
-            "percentage": 4.82,
-            "percentageTokens": 6.53,
+            "percentage": 4.85,
+            "percentageTokens": 6.55,
             "newDuplicatedLines": 0,
             "newClones": 0
           },
@@ -5525,14 +5525,14 @@
             "newClones": 0
           },
           "/home/margon/Reporunner/reporunner/packages/@reporunner/enterprise/src/rbac/advanced-rbac.ts": {
-            "lines": 758,
-            "tokens": 5712,
+            "lines": 828,
+            "tokens": 6108,
             "sources": 1,
-            "clones": 3,
-            "duplicatedLines": 25,
-            "duplicatedTokens": 272,
-            "percentage": 3.3,
-            "percentageTokens": 4.76,
+            "clones": 1,
+            "duplicatedLines": 7,
+            "duplicatedTokens": 72,
+            "percentage": 0.85,
+            "percentageTokens": 1.18,
             "newDuplicatedLines": 0,
             "newClones": 0
           },
@@ -6293,8 +6293,8 @@
             "newClones": 0
           },
           "/home/margon/Reporunner/reporunner/packages/@reporunner/auth/src/utils/password-validator.ts": {
-            "lines": 240,
-            "tokens": 2111,
+            "lines": 312,
+            "tokens": 2713,
             "sources": 1,
             "clones": 0,
             "duplicatedLines": 0,
@@ -6701,8 +6701,8 @@
             "newClones": 0
           },
           "/home/margon/Reporunner/reporunner/packages/@reporunner/ai/src/base/ai-provider.ts": {
-            "lines": 103,
-            "tokens": 684,
+            "lines": 91,
+            "tokens": 629,
             "sources": 1,
             "clones": 0,
             "duplicatedLines": 0,
@@ -6726,7 +6726,7 @@
           },
           "/home/margon/Reporunner/reporunner/packages/shared/src/validation/index.ts": {
             "lines": 381,
-            "tokens": 3355,
+            "tokens": 3365,
             "sources": 1,
             "clones": 0,
             "duplicatedLines": 0,
@@ -6737,8 +6737,8 @@
             "newClones": 0
           },
           "/home/margon/Reporunner/reporunner/packages/shared/src/utils/auth-forms.ts": {
-            "lines": 21,
-            "tokens": 211,
+            "lines": 44,
+            "tokens": 331,
             "sources": 1,
             "clones": 0,
             "duplicatedLines": 0,
@@ -7326,7 +7326,7 @@
           },
           "/home/margon/Reporunner/reporunner/packages/backend/src/services/TriggerSystemService.ts": {
             "lines": 607,
-            "tokens": 5032,
+            "tokens": 5033,
             "sources": 1,
             "clones": 1,
             "duplicatedLines": 9,
@@ -7937,8 +7937,8 @@
             "newClones": 0
           },
           "/home/margon/Reporunner/reporunner/packages/@reporunner/integrations/src/index.ts": {
-            "lines": 301,
-            "tokens": 1714,
+            "lines": 302,
+            "tokens": 1771,
             "sources": 1,
             "clones": 0,
             "duplicatedLines": 0,
@@ -8057,8 +8057,8 @@
             "newClones": 0
           },
           "/home/margon/Reporunner/reporunner/packages/@reporunner/auth/src/index.ts": {
-            "lines": 39,
-            "tokens": 196,
+            "lines": 53,
+            "tokens": 234,
             "sources": 1,
             "clones": 0,
             "duplicatedLines": 0,
@@ -8129,8 +8129,8 @@
             "newClones": 0
           },
           "/home/margon/Reporunner/reporunner/packages/@reporunner/ai/src/index.ts": {
-            "lines": 20,
-            "tokens": 133,
+            "lines": 13,
+            "tokens": 109,
             "sources": 1,
             "clones": 0,
             "duplicatedLines": 0,
@@ -8164,6 +8164,18 @@
             "newDuplicatedLines": 0,
             "newClones": 0
           },
+          "/home/margon/Reporunner/reporunner/packages/backend/src/worker.ts": {
+            "lines": 39,
+            "tokens": 265,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
           "/home/margon/Reporunner/reporunner/packages/backend/src/server.ts": {
             "lines": 76,
             "tokens": 603,
@@ -8178,14 +8190,14 @@
           }
         },
         "total": {
-          "lines": 115625,
-          "tokens": 871967,
-          "sources": 681,
-          "clones": 166,
-          "duplicatedLines": 2558,
-          "duplicatedTokens": 22964,
-          "percentage": 2.21,
-          "percentageTokens": 2.63,
+          "lines": 116347,
+          "tokens": 876664,
+          "sources": 682,
+          "clones": 165,
+          "duplicatedLines": 2550,
+          "duplicatedTokens": 22864,
+          "percentage": 2.19,
+          "percentageTokens": 2.61,
           "newDuplicatedLines": 0,
           "newClones": 0
         }
@@ -8661,8 +8673,8 @@
             "newClones": 0
           },
           "/home/margon/Reporunner/reporunner/packages/frontend/src/design-system/components/DataVisualization/JsonView.tsx": {
-            "lines": 288,
-            "tokens": 2062,
+            "lines": 289,
+            "tokens": 2065,
             "sources": 1,
             "clones": 0,
             "duplicatedLines": 0,
@@ -9261,8 +9273,8 @@
             "newClones": 0
           },
           "/home/margon/Reporunner/reporunner/packages/frontend/src/app/components/PluginMarketplace/PublishPlugin.tsx": {
-            "lines": 281,
-            "tokens": 2247,
+            "lines": 302,
+            "tokens": 2394,
             "sources": 1,
             "clones": 0,
             "duplicatedLines": 0,
@@ -9393,8 +9405,8 @@
             "newClones": 0
           },
           "/home/margon/Reporunner/reporunner/packages/frontend/src/app/components/Landing/PricingSection.tsx": {
-            "lines": 290,
-            "tokens": 2563,
+            "lines": 270,
+            "tokens": 2325,
             "sources": 1,
             "clones": 0,
             "duplicatedLines": 0,
@@ -9489,8 +9501,8 @@
             "newClones": 0
           },
           "/home/margon/Reporunner/reporunner/packages/frontend/src/app/components/Landing/ComparisonTable.tsx": {
-            "lines": 106,
-            "tokens": 844,
+            "lines": 119,
+            "tokens": 1038,
             "sources": 1,
             "clones": 0,
             "duplicatedLines": 0,
@@ -9537,8 +9549,8 @@
             "newClones": 0
           },
           "/home/margon/Reporunner/reporunner/packages/frontend/src/app/components/EnterpriseDashboard/EnterpriseDashboard.tsx": {
-            "lines": 569,
-            "tokens": 4345,
+            "lines": 601,
+            "tokens": 4565,
             "sources": 1,
             "clones": 0,
             "duplicatedLines": 0,
@@ -10150,13 +10162,13 @@
           }
         },
         "total": {
-          "lines": 27406,
-          "tokens": 213966,
+          "lines": 27453,
+          "tokens": 214292,
           "sources": 163,
           "clones": 21,
           "duplicatedLines": 1072,
           "duplicatedTokens": 8245,
-          "percentage": 3.91,
+          "percentage": 3.9,
           "percentageTokens": 3.85,
           "newDuplicatedLines": 0,
           "newClones": 0
@@ -10633,8 +10645,8 @@
             "newClones": 0
           },
           "/home/margon/Reporunner/reporunner/packages/frontend/src/design-system/components/DataVisualization/JsonView.tsx": {
-            "lines": 439,
-            "tokens": 2725,
+            "lines": 440,
+            "tokens": 2728,
             "sources": 1,
             "clones": 0,
             "duplicatedLines": 0,
@@ -11042,7 +11054,7 @@
           },
           "/home/margon/Reporunner/reporunner/packages/frontend/src/app/components/WorkflowEditor/DataInspector.tsx": {
             "lines": 613,
-            "tokens": 5284,
+            "tokens": 5288,
             "sources": 1,
             "clones": 0,
             "duplicatedLines": 0,
@@ -11269,14 +11281,14 @@
             "newClones": 0
           },
           "/home/margon/Reporunner/reporunner/packages/frontend/src/app/components/PluginMarketplace/PublishPlugin.tsx": {
-            "lines": 475,
-            "tokens": 3750,
+            "lines": 521,
+            "tokens": 4074,
             "sources": 1,
             "clones": 2,
             "duplicatedLines": 34,
             "duplicatedTokens": 352,
-            "percentage": 7.16,
-            "percentageTokens": 9.39,
+            "percentage": 6.53,
+            "percentageTokens": 8.64,
             "newDuplicatedLines": 0,
             "newClones": 0
           },
@@ -11401,8 +11413,8 @@
             "newClones": 0
           },
           "/home/margon/Reporunner/reporunner/packages/frontend/src/app/components/Landing/PricingSection.tsx": {
-            "lines": 509,
-            "tokens": 3926,
+            "lines": 500,
+            "tokens": 3803,
             "sources": 1,
             "clones": 0,
             "duplicatedLines": 0,
@@ -11497,14 +11509,14 @@
             "newClones": 0
           },
           "/home/margon/Reporunner/reporunner/packages/frontend/src/app/components/Landing/ComparisonTable.tsx": {
-            "lines": 510,
-            "tokens": 3699,
+            "lines": 523,
+            "tokens": 3877,
             "sources": 1,
             "clones": 2,
             "duplicatedLines": 10,
             "duplicatedTokens": 124,
-            "percentage": 1.96,
-            "percentageTokens": 3.35,
+            "percentage": 1.91,
+            "percentageTokens": 3.2,
             "newDuplicatedLines": 0,
             "newClones": 0
           },
@@ -11545,8 +11557,8 @@
             "newClones": 0
           },
           "/home/margon/Reporunner/reporunner/packages/frontend/src/app/components/EnterpriseDashboard/EnterpriseDashboard.tsx": {
-            "lines": 920,
-            "tokens": 7054,
+            "lines": 944,
+            "tokens": 7237,
             "sources": 1,
             "clones": 0,
             "duplicatedLines": 0,
@@ -11581,8 +11593,8 @@
             "newClones": 0
           },
           "/home/margon/Reporunner/reporunner/packages/frontend/src/app/components/AuditDashboard/AuditDashboard.tsx": {
-            "lines": 735,
-            "tokens": 6220,
+            "lines": 772,
+            "tokens": 6600,
             "sources": 1,
             "clones": 0,
             "duplicatedLines": 0,
@@ -12194,14 +12206,14 @@
           }
         },
         "total": {
-          "lines": 55548,
-          "tokens": 427703,
+          "lines": 55660,
+          "tokens": 428652,
           "sources": 169,
           "clones": 129,
           "duplicatedLines": 2156,
           "duplicatedTokens": 18270,
-          "percentage": 3.88,
-          "percentageTokens": 4.27,
+          "percentage": 3.87,
+          "percentageTokens": 4.26,
           "newDuplicatedLines": 0,
           "newClones": 0
         }
@@ -12260,14 +12272,14 @@
       }
     },
     "total": {
-      "lines": 198710,
-      "tokens": 1514128,
-      "sources": 1016,
-      "clones": 316,
-      "duplicatedLines": 5786,
-      "duplicatedTokens": 49479,
-      "percentage": 2.91,
-      "percentageTokens": 3.27,
+      "lines": 199591,
+      "tokens": 1520100,
+      "sources": 1017,
+      "clones": 315,
+      "duplicatedLines": 5778,
+      "duplicatedTokens": 49379,
+      "percentage": 2.89,
+      "percentageTokens": 3.25,
       "newDuplicatedLines": 0,
       "newClones": 0
     }
@@ -15448,32 +15460,32 @@
       "tokens": 0,
       "firstFile": {
         "name": "/home/margon/Reporunner/reporunner/packages/frontend/src/app/components/Landing/ComparisonTable.tsx",
-        "start": 405,
-        "end": 410,
+        "start": 418,
+        "end": 423,
         "startLoc": {
-          "line": 405,
+          "line": 418,
           "column": 2,
-          "position": 2628
+          "position": 2806
         },
         "endLoc": {
-          "line": 410,
+          "line": 423,
           "column": 3,
-          "position": 2690
+          "position": 2868
         }
       },
       "secondFile": {
         "name": "/home/margon/Reporunner/reporunner/packages/frontend/src/app/components/Landing/ComparisonTable.tsx",
-        "start": 403,
-        "end": 409,
+        "start": 416,
+        "end": 422,
         "startLoc": {
-          "line": 403,
+          "line": 416,
           "column": 3,
-          "position": 2612
+          "position": 2790
         },
         "endLoc": {
-          "line": 409,
+          "line": 422,
           "column": 2,
-          "position": 2676
+          "position": 2854
         }
       }
     },
@@ -16312,32 +16324,32 @@
       "tokens": 0,
       "firstFile": {
         "name": "/home/margon/Reporunner/reporunner/packages/@reporunner/auth/src/security/middleware/validation.middleware.ts",
-        "start": 649,
-        "end": 665,
+        "start": 787,
+        "end": 803,
         "startLoc": {
-          "line": 649,
+          "line": 787,
           "column": 13,
-          "position": 4894
+          "position": 5824
         },
         "endLoc": {
-          "line": 665,
+          "line": 803,
           "column": 8,
-          "position": 4992
+          "position": 5922
         }
       },
       "secondFile": {
         "name": "/home/margon/Reporunner/reporunner/packages/@reporunner/auth/src/security/middleware/validation.middleware.ts",
-        "start": 629,
-        "end": 645,
+        "start": 767,
+        "end": 783,
         "startLoc": {
-          "line": 629,
+          "line": 767,
           "column": 6,
-          "position": 4782
+          "position": 5712
         },
         "endLoc": {
-          "line": 645,
+          "line": 783,
           "column": 2,
-          "position": 4880
+          "position": 5810
         }
       }
     },
@@ -16348,17 +16360,17 @@
       "tokens": 0,
       "firstFile": {
         "name": "/home/margon/Reporunner/reporunner/packages/@reporunner/auth/src/security/middleware/file-upload.middleware.ts",
-        "start": 412,
-        "end": 422,
+        "start": 522,
+        "end": 532,
         "startLoc": {
-          "line": 412,
+          "line": 522,
           "column": 9,
-          "position": 3715
+          "position": 4487
         },
         "endLoc": {
-          "line": 422,
+          "line": 532,
           "column": 4,
-          "position": 3787
+          "position": 4559
         }
       },
       "secondFile": {
@@ -16384,32 +16396,68 @@
       "tokens": 0,
       "firstFile": {
         "name": "/home/margon/Reporunner/reporunner/packages/@reporunner/auth/src/security/middleware/file-upload.middleware.ts",
-        "start": 537,
-        "end": 542,
+        "start": 658,
+        "end": 663,
         "startLoc": {
-          "line": 537,
+          "line": 658,
           "column": 7,
-          "position": 4655
+          "position": 5475
         },
         "endLoc": {
-          "line": 542,
+          "line": 663,
           "column": 6,
-          "position": 4751
+          "position": 5571
         }
       },
       "secondFile": {
         "name": "/home/margon/Reporunner/reporunner/packages/@reporunner/auth/src/security/middleware/file-upload.middleware.ts",
-        "start": 500,
-        "end": 505,
+        "start": 621,
+        "end": 626,
         "startLoc": {
-          "line": 500,
+          "line": 621,
           "column": 2,
-          "position": 4349
+          "position": 5169
         },
         "endLoc": {
-          "line": 505,
+          "line": 626,
           "column": 11,
-          "position": 4445
+          "position": 5265
+        }
+      }
+    },
+    {
+      "format": "typescript",
+      "lines": 11,
+      "fragment": "): Promise<void> {\n  const globalWithAudit = global as {\n    auditLogger?: { log: (event: unknown) => Promise<void> };\n  };\n\n  if (!globalWithAudit.auditLogger) {\n    return;\n  }\n\n  await globalWithAudit.auditLogger.log({\n    type: 'FILE_DOWNLOADED'",
+      "tokens": 0,
+      "firstFile": {
+        "name": "/home/margon/Reporunner/reporunner/packages/@reporunner/auth/src/security/middleware/file-upload.middleware.ts",
+        "start": 759,
+        "end": 769,
+        "startLoc": {
+          "line": 759,
+          "column": 7,
+          "position": 6229
+        },
+        "endLoc": {
+          "line": 769,
+          "column": 18,
+          "position": 6319
+        }
+      },
+      "secondFile": {
+        "name": "/home/margon/Reporunner/reporunner/packages/@reporunner/auth/src/security/middleware/file-upload.middleware.ts",
+        "start": 319,
+        "end": 329,
+        "startLoc": {
+          "line": 319,
+          "column": 2,
+          "position": 2754
+        },
+        "endLoc": {
+          "line": 329,
+          "column": 16,
+          "position": 2844
         }
       }
     },
@@ -16770,42 +16818,6 @@
           "line": 46,
           "column": 39,
           "position": 286
-        }
-      }
-    },
-    {
-      "format": "typescript",
-      "lines": 10,
-      "fragment": "${rule.enum.join(', ')}`);\n      }\n\n      // Custom validation\n      if (rule.custom) {\n        const result = rule.custom(value);\n        if (typeof result === 'string') {\n          errors.push(result);\n        } else if (!result) {\n          errors.push(`",
-      "tokens": 0,
-      "firstFile": {
-        "name": "/home/margon/Reporunner/reporunner/packages/shared/src/api/middleware/validation.ts",
-        "start": 67,
-        "end": 76,
-        "startLoc": {
-          "line": 67,
-          "column": 18,
-          "position": 758
-        },
-        "endLoc": {
-          "line": 76,
-          "column": 2,
-          "position": 848
-        }
-      },
-      "secondFile": {
-        "name": "/home/margon/Reporunner/reporunner/packages/@reporunner/auth/src/security/middleware/validation.middleware.ts",
-        "start": 321,
-        "end": 330,
-        "startLoc": {
-          "line": 321,
-          "column": 24,
-          "position": 2436
-        },
-        "endLoc": {
-          "line": 330,
-          "column": 27,
-          "position": 2526
         }
       }
     },
@@ -22391,42 +22403,6 @@
     },
     {
       "format": "typescript",
-      "lines": 10,
-      "fragment": "[]> {\n    const userAssignments = this.userRoleAssignments.get(userId) || [];\n    const activeAssignments = userAssignments.filter(\n      (assignment) =>\n        assignment.isActive &&\n        (!assignment.expiresAt || assignment.expiresAt > new Date()) &&\n        (!organizationId || assignment.organizationId === organizationId)\n    );\n\n    return",
-      "tokens": 0,
-      "firstFile": {
-        "name": "/home/margon/Reporunner/reporunner/packages/@reporunner/enterprise/src/rbac/advanced-rbac.ts",
-        "start": 638,
-        "end": 647,
-        "startLoc": {
-          "line": 638,
-          "column": 5,
-          "position": 4606
-        },
-        "endLoc": {
-          "line": 647,
-          "column": 7,
-          "position": 4706
-        }
-      },
-      "secondFile": {
-        "name": "/home/margon/Reporunner/reporunner/packages/@reporunner/enterprise/src/rbac/advanced-rbac.ts",
-        "start": 595,
-        "end": 604,
-        "startLoc": {
-          "line": 595,
-          "column": 11,
-          "position": 4215
-        },
-        "endLoc": {
-          "line": 604,
-          "column": 6,
-          "position": 4315
-        }
-      }
-    },
-    {
-      "format": "typescript",
       "lines": 8,
       "fragment": "),\n  createdAt: z.date(),\n  updatedAt: z.date(),\n  createdBy: z.string(),\n  metadata: z.record(z.string(), z.unknown()).optional(),\n});\n\nexport type Tenant",
       "tokens": 0,
@@ -23157,12 +23133,12 @@
         "startLoc": {
           "line": 598,
           "column": 8,
-          "position": 4922
+          "position": 4923
         },
         "endLoc": {
           "line": 607,
           "column": 21,
-          "position": 5016
+          "position": 5017
         }
       },
       "secondFile": {
