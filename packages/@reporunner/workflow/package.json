@@ -2,6 +2,7 @@
   "name": "@reporunner/workflow",
   "version": "1.0.0",
   "description": "Core workflow execution engine - Similar to n8n-workflow",
+  "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "exports": {

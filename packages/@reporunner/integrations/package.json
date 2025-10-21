@@ -2,6 +2,7 @@
   "name": "@reporunner/integrations",
   "version": "1.0.0",
   "description": "Integration framework for third-party services and workflow nodes",
+  "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "exports": {

@@ -2,6 +2,7 @@
   "name": "@reporunner/platform",
   "version": "1.0.0",
   "description": "Core platform services: event-bus, execution-engine, resource-manager, scheduler, state-store, gateway, real-time, upload",
+  "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "exports": {

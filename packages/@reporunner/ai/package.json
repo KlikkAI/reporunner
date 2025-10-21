@@ -2,6 +2,7 @@
   "name": "@reporunner/ai",
   "version": "1.0.0",
   "description": "AI and ML capabilities for Reporunner workflow automation",
+  "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "exports": {

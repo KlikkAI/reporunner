@@ -38,6 +38,9 @@ RUN pnpm install --frozen-lockfile --ignore-scripts
 # ============================================
 FROM base AS prod-deps
 
+# IMPORTANT: pnpm needs workspace config FIRST to understand workspace:* dependencies
+# Already copied in base stage: package.json, pnpm-lock.yaml, pnpm-workspace.yaml
+
 # Copy package files
 COPY packages/backend/package.json ./packages/backend/
 COPY packages/shared/package.json ./packages/shared/
@@ -45,8 +48,22 @@ COPY packages/@reporunner/ai/package.json ./packages/@reporunner/ai/
 COPY packages/@reporunner/core/package.json ./packages/@reporunner/core/
 COPY packages/@reporunner/platform/package.json ./packages/@reporunner/platform/
 
-# Install production dependencies only (skip preinstall script - only needed for local dev)
-RUN pnpm install --frozen-lockfile --prod --ignore-scripts
+# Copy dist folders for workspace packages (needed for pnpm workspace linking)
+COPY packages/shared/dist ./packages/shared/dist
+COPY packages/@reporunner/ai/dist ./packages/@reporunner/ai/dist
+COPY packages/@reporunner/core/dist ./packages/@reporunner/core/dist
+COPY packages/@reporunner/platform/dist ./packages/@reporunner/platform/dist
+
+# Install all dependencies including workspace packages (--prod doesn't properly link workspace:* deps)
+# The final image size is controlled by what we COPY in runtime stage, not by --prod flag
+RUN pnpm install --frozen-lockfile --ignore-scripts
+
+# Manually create symlinks for workspace packages (pnpm with shamefullyHoist:false may not create them)
+RUN mkdir -p node_modules/@reporunner && \
+    ln -sf ../../packages/@reporunner/ai node_modules/@reporunner/ai && \
+    ln -sf ../../packages/@reporunner/core node_modules/@reporunner/core && \
+    ln -sf ../../packages/@reporunner/platform node_modules/@reporunner/platform && \
+    ln -sf ../../packages/shared node_modules/@reporunner/shared
 
 # ============================================
 # Stage 4: Runtime - Run the server with tsx

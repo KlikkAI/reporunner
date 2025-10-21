@@ -2,6 +2,7 @@
   "name": "@reporunner/validation",
   "version": "1.0.0",
   "description": "Phase A validation framework for consolidated package architecture",
+  "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {

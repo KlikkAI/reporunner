@@ -2,6 +2,7 @@
   "name": "@reporunner/auth",
   "version": "1.0.0",
   "description": "Enterprise authentication and authorization for Reporunner",
+  "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "exports": {
