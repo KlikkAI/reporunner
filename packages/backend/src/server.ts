@@ -12,9 +12,10 @@ dotenv.config();
 import { DatabaseConfig } from './config/database.js';
 // Import routes
 import authRoutes from './domains/auth/routes/authRoutes.js';
+import apiRoutes from './routes/index.js';
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.BACKEND_PORT || process.env.PORT || 3001;
 
 // Connect to MongoDB
 const dbConfig = DatabaseConfig.getInstance();
@@ -47,16 +48,18 @@ app.get('/health', (_req, res) => {
     status: 'ok',
     timestamp: new Date().toISOString(),
     service: '@reporunner/backend',
+    port: PORT,
   });
 });
 
-// Register auth routes
+// Register auth routes (legacy path for backward compatibility)
 app.use('/auth', authRoutes);
 
-// API routes placeholder
-app.get('/api', (_req, res) => {
-  res.json({ message: 'Reporunner Backend API' });
-});
+// Mount all API routes at /api
+app.use('/api', apiRoutes);
+
+// Also mount auth under /api for consistency
+app.use('/api/auth', authRoutes);
 
 // Error handling middleware
 app.use((err: any, _req: any, res: any, _next: any) => {

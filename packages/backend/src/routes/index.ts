@@ -4,12 +4,17 @@
  */
 
 import { Router } from 'express';
-import auditRoutes from './audit';
-import marketplaceRoutes from './marketplace';
-import scheduleRoutes from './schedules';
-import securityRoutes from './security';
-import triggerRoutes from './triggers';
-import workflowOptimizationRoutes from './workflow-optimization';
+import collaborationRoutes from '../domains/collaboration/routes/collaborationRoutes.js';
+import nodeExecutionRoutes from '../domains/executions/routes/nodeExecutionRoutes.js';
+import oauthRoutes from '../domains/oauth/routes/oauthRoutes.js';
+// Import domain routes
+import workflowRoutes from '../domains/workflows/routes/workflowRoutes.js';
+import auditRoutes from './audit.js';
+import marketplaceRoutes from './marketplace.js';
+import scheduleRoutes from './schedules.js';
+import securityRoutes from './security.js';
+import triggerRoutes from './triggers.js';
+import workflowOptimizationRoutes from './workflow-optimization.js';
 
 const router = Router();
 
@@ -21,6 +26,12 @@ router.use('/security', securityRoutes);
 router.use('/marketplace', marketplaceRoutes);
 router.use('/workflow-optimization', workflowOptimizationRoutes);
 
+// Mount domain routes
+router.use('/workflows', workflowRoutes);
+router.use('/executions', nodeExecutionRoutes);
+router.use('/collaboration', collaborationRoutes);
+router.use('/oauth', oauthRoutes);
+
 // Health check endpoint
 router.get('/health', (_req, res) => {
   res.json({
@@ -28,10 +39,16 @@ router.get('/health', (_req, res) => {
     message: 'Backend API is healthy',
     timestamp: new Date().toISOString(),
     services: {
+      workflows: 'operational',
+      executions: 'operational',
+      collaboration: 'operational',
+      oauth: 'operational',
       audit: 'operational',
       triggers: 'operational',
       schedules: 'operational',
+      security: 'operational',
       marketplace: 'operational',
+      workflowOptimization: 'operational',
     },
   });
 });
@@ -45,9 +62,14 @@ router.get('/info', (_req, res) => {
       version: '1.0.0',
       description: 'Backend services for workflow automation platform',
       endpoints: {
+        workflows: '/api/workflows',
+        executions: '/api/executions',
+        collaboration: '/api/collaboration',
+        oauth: '/api/oauth',
         audit: '/api/audit',
         triggers: '/api/triggers',
         schedules: '/api/schedules',
+        security: '/api/security',
         marketplace: '/api/marketplace',
         workflowOptimization: '/api/workflow-optimization',
       },

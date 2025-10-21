@@ -14,7 +14,8 @@ const getEnvironmentConfig = (): EnvironmentConfig => {
   const env = import.meta.env;
 
   return {
-    apiBaseUrl: env.VITE_API_BASE_URL || 'http://localhost:5000/api/v1',
+    // Updated to match backend port (3001) and remove /v1 (backend uses /api not /api/v1)
+    apiBaseUrl: env.VITE_API_BASE_URL || 'http://localhost:3001/api',
     environment: (env.VITE_NODE_ENV as any) || 'development',
     enableDebugLogs: env.VITE_DEBUG_LOGS === 'true',
     features: {
