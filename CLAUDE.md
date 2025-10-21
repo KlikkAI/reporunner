@@ -1,4 +1,4 @@
-# CLAUDE.md - Reporunner Project Context
+# CLAUDE.md - KlikkFlow Project Context
 
 This file provides comprehensive context to Claude Code (claude.ai/code) when working with code in this repository.
 
@@ -25,7 +25,7 @@ This principle applies to:
 
 ## 📋 Project Overview
 
-**Reporunner** is an open-source workflow automation platform powered by AI, designed as a next-generation alternative to n8n with:
+**KlikkFlow** is an open-source workflow automation platform powered by AI, designed as a next-generation alternative to n8n with:
 
 - **AI-First Design**: Native LLM integration (OpenAI, Anthropic, Google AI, Ollama)
 - **Hybrid Database**: PostgreSQL with pgvector + MongoDB for optimal performance
@@ -60,7 +60,7 @@ packages/
 ├── frontend/              # React 19 web application
 ├── backend/               # Express.js API server (includes common, database, monitoring)
 ├── shared/                # Shared utilities, types, validation, API definitions
-└── @reporunner/           # Scoped packages (9 total):
+└── @klikkflow/           # Scoped packages (9 total):
     ├── ai/                # AI/ML capabilities and services
     ├── auth/              # Authentication & security services
     ├── cli/               # CLI tools and dev utilities
@@ -123,7 +123,7 @@ pnpm run build:backend            # Build backend only
 pnpm run test                     # Run all tests
 pnpm run test:unit                # Unit tests only
 pnpm run test:e2e                 # E2E tests with Playwright
-pnpm --filter @reporunner/backend test  # Test specific package
+pnpm --filter @klikkflow/backend test  # Test specific package
 
 # Code Quality
 pnpm run quality                  # Run all quality checks (lint, type-check, format check)
@@ -133,9 +133,9 @@ biome check --apply .             # Auto-fix Biome issues
 pnpm run type-check               # TypeScript type checking
 
 # Architecture Validation
-pnpm --filter @reporunner/validation architecture:validate      # Complete validation
-pnpm --filter @reporunner/validation architecture:dependencies  # Dependency analysis
-pnpm --filter @reporunner/validation architecture:organization  # Code organization check
+pnpm --filter @klikkflow/validation architecture:validate      # Complete validation
+pnpm --filter @klikkflow/validation architecture:dependencies  # Dependency analysis
+pnpm --filter @klikkflow/validation architecture:organization  # Code organization check
 
 # Dependency Management
 pnpm run deps:check               # Check for updates
@@ -349,46 +349,46 @@ interface DisplayOptions {
 - API definitions
 - Constants and enums
 
-### @reporunner Scoped Packages
+### @klikkflow Scoped Packages
 
-**@reporunner/ai**: AI/ML capabilities
+**@klikkflow/ai**: AI/ML capabilities
 - LLM integration (OpenAI, Anthropic, Google AI, Ollama)
 - Embedding generation and vector search
 - AI agent system
 - Workflow optimization engine
 
-**@reporunner/auth**: Authentication & security
+**@klikkflow/auth**: Authentication & security
 - JWT-based authentication
 - OAuth2 flows
 - Password hashing (bcrypt, 12 rounds)
 - Account locking mechanism
 - Enterprise SSO preparation
 
-**@reporunner/cli**: CLI tools and dev utilities
-- Node generator (`pnpm reporunner generate node`)
+**@klikkflow/cli**: CLI tools and dev utilities
+- Node generator (`pnpm klikkflow generate node`)
 - Development scaffolding
 - Code generation templates
 - Dev tools and scripts
 
-**@reporunner/core**: Core utilities and base classes
+**@klikkflow/core**: Core utilities and base classes
 - Base classes for services
 - Common utilities
 - Type definitions
 - Helper functions
 
-**@reporunner/enterprise**: Enterprise features
+**@klikkflow/enterprise**: Enterprise features
 - SSO (SAML, OAuth)
 - RBAC (Role-Based Access Control)
 - Audit logging
 - Compliance features (SOC 2, GDPR, HIPAA preparation)
 
-**@reporunner/integrations**: Integration framework
+**@klikkflow/integrations**: Integration framework
 - Plugin system
 - Node type registry
 - Custom connector builder
 - Integration marketplace foundation
 
-**@reporunner/platform**: Platform services (8 core services)
+**@klikkflow/platform**: Platform services (8 core services)
 - **event-bus**: Distributed event bus for microservices communication
 - **execution-engine**: Core workflow execution engine for platform
 - **gateway**: API gateway and routing
@@ -398,7 +398,7 @@ interface DisplayOptions {
 - **state-store**: Enterprise state management for workflow execution state and persistence
 - **upload**: File upload and storage
 
-**@reporunner/services**: Microservices
+**@klikkflow/services**: Microservices
 - **analytics-service**: Usage analytics and metrics
 - **audit-service**: Audit logging and compliance
 - **auth-service**: Authentication service
@@ -407,13 +407,13 @@ interface DisplayOptions {
 - **tenant-service**: Multi-tenancy management
 - **workflow-service**: Workflow CRUD operations
 
-**@reporunner/validation**: Architecture validation
+**@klikkflow/validation**: Architecture validation
 - Package dependency validation
 - Code organization checks
 - Type safety validation
 - Circular dependency detection
 
-**@reporunner/workflow**: Workflow execution engine
+**@klikkflow/workflow**: Workflow execution engine
 - Core execution logic (similar to n8n-workflow)
 - Node execution order (topological sort)
 - Error handling and retry logic
@@ -446,7 +446,7 @@ interface DisplayOptions {
 pnpm run test
 
 # Specific package
-pnpm --filter @reporunner/backend test
+pnpm --filter @klikkflow/backend test
 pnpm --filter frontend test
 
 # E2E tests
@@ -491,10 +491,10 @@ Access monitoring:
 
 ### ⚡ One-Command Installation (Recommended)
 
-The **fastest way** to deploy Reporunner:
+The **fastest way** to deploy KlikkFlow:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/KlikkAI/reporunner/main/scripts/install.sh | sh
+curl -fsSL https://raw.githubusercontent.com/KlikkAI/klikkflow/main/scripts/install.sh | sh
 ```
 
 **The installer automatically:**
@@ -505,22 +505,22 @@ curl -fsSL https://raw.githubusercontent.com/KlikkAI/reporunner/main/scripts/ins
 - ✅ Waits for health checks
 - ✅ Opens http://localhost:3000
 
-**Default credentials:** `admin@reporunner.local` / `admin123`
+**Default credentials:** `admin@klikkflow.local` / `admin123`
 
 **Custom installation:**
 ```bash
 # Custom ports
-FRONTEND_PORT=8080 BACKEND_PORT=8081 curl -fsSL https://raw.githubusercontent.com/KlikkAI/reporunner/main/scripts/install.sh | sh
+FRONTEND_PORT=8080 BACKEND_PORT=8081 curl -fsSL https://raw.githubusercontent.com/KlikkAI/klikkflow/main/scripts/install.sh | sh
 
 # Custom directory
-REPORUNNER_INSTALL_DIR=/opt/reporunner curl -fsSL https://raw.githubusercontent.com/KlikkAI/reporunner/main/scripts/install.sh | sh
+KLIKKFLOW_INSTALL_DIR=/opt/klikkflow curl -fsSL https://raw.githubusercontent.com/KlikkAI/klikkflow/main/scripts/install.sh | sh
 ```
 
 **📖 Complete Guide:** See [DOCKER.md](./DOCKER.md) for comprehensive documentation
 
 ### Docker Deployment (Profile-Based System)
 
-For advanced deployments, Reporunner supports **flexible profile-based architecture**:
+For advanced deployments, KlikkFlow supports **flexible profile-based architecture**:
 
 **Core Services (6 containers):**
 ```bash
@@ -548,8 +548,8 @@ For building from source:
 
 ```bash
 # 1. Clone repository
-git clone https://github.com/reporunner/reporunner.git
-cd reporunner
+git clone https://github.com/klikkflow/klikkflow.git
+cd klikkflow
 
 # 2. Configure environment
 cp .env.example .env
@@ -574,7 +574,7 @@ docker-compose -f docker-compose.prod.yml up -d
 **Kubernetes with Helm**:
 ```bash
 cd infrastructure/kubernetes/helm
-helm install reporunner . \
+helm install klikkflow . \
   --set ingress.hosts[0].host=your-domain.com \
   --set postgresql.auth.password=your-secure-password
 ```
@@ -606,13 +606,13 @@ helm install reporunner . \
 
 | Language | Package | Installation |
 |----------|---------|--------------|
-| **TypeScript** | `@reporunner/sdk` | `pnpm add @reporunner/sdk` |
-| **Python** | `reporunner-sdk` | `pip install reporunner-sdk` |
-| **Go** | `go-sdk` | `go get github.com/reporunner/reporunner/go-sdk` |
-| **Rust** | `reporunner-sdk` | `cargo add reporunner-sdk` |
-| **Java** | `reporunner-java-sdk` | Maven/Gradle |
-| **PHP** | `reporunner/php-sdk` | `composer require reporunner/php-sdk` |
-| **.NET** | `Reporunner.Sdk` | `dotnet add package Reporunner.Sdk` |
+| **TypeScript** | `@klikkflow/sdk` | `pnpm add @klikkflow/sdk` |
+| **Python** | `klikkflow-sdk` | `pip install klikkflow-sdk` |
+| **Go** | `go-sdk` | `go get github.com/klikkflow/klikkflow/go-sdk` |
+| **Rust** | `klikkflow-sdk` | `cargo add klikkflow-sdk` |
+| **Java** | `klikkflow-java-sdk` | Maven/Gradle |
+| **PHP** | `klikkflow/php-sdk` | `composer require klikkflow/php-sdk` |
+| **.NET** | `KlikkFlow.Sdk` | `dotnet add package KlikkFlow.Sdk` |
 
 All SDKs provide:
 - Workflow management (CRUD)
@@ -853,7 +853,7 @@ chore: Update dependencies
 
 1. **Generate Scaffold**:
 ```bash
-pnpm reporunner generate node --name MyService --category communication
+pnpm klikkflow generate node --name MyService --category communication
 ```
 
 2. **Define Properties** (`properties.ts`):
@@ -956,6 +956,6 @@ grep -r "utility function" packages/shared/
 ---
 
 **Last Updated**: October 11, 2025
-**Maintained By**: Reporunner Development Team
+**Maintained By**: KlikkFlow Development Team
 **Format**: Markdown
 **Encoding**: UTF-8

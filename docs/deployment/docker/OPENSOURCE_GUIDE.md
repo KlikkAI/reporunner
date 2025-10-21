@@ -1,6 +1,6 @@
-# 🐳 Open Source Docker Image Guide for Reporunner
+# 🐳 Open Source Docker Image Guide for KlikkFlow
 
-**Complete checklist and best practices for distributing Reporunner as an open-source Docker image**
+**Complete checklist and best practices for distributing KlikkFlow as an open-source Docker image**
 
 Last Updated: October 11, 2025
 
@@ -50,8 +50,8 @@ ENV DATABASE_PASSWORD=""
 ```dockerfile
 # Current implementation is good:
 RUN addgroup -g 1001 -S nodejs && \
-    adduser -S reporunner -u 1001
-USER reporunner
+    adduser -S klikkflow -u 1001
+USER klikkflow
 ```
 
 #### 3. **Minimal Base Image** ✅ Using Alpine
@@ -63,9 +63,9 @@ USER reporunner
 #### 4. **Security Scanning**
 ```bash
 # Add to CI/CD pipeline
-docker scan reporunner:latest
-trivy image reporunner:latest
-snyk container test reporunner:latest
+docker scan klikkflow:latest
+trivy image klikkflow:latest
+snyk container test klikkflow:latest
 ```
 
 **Action Items:**
@@ -79,10 +79,10 @@ snyk container test reporunner:latest
 ```bash
 # Sign images with Docker Content Trust
 export DOCKER_CONTENT_TRUST=1
-docker push reporunner/reporunner:latest
+docker push klikkflow/klikkflow:latest
 
 # Or use Cosign
-cosign sign reporunner/reporunner:latest
+cosign sign klikkflow/klikkflow:latest
 ```
 
 **Action Items:**
@@ -99,7 +99,7 @@ cosign sign reporunner/reporunner:latest
 ```yaml
 # Example secure docker-compose.yml
 services:
-  reporunner:
+  klikkflow:
     security_opt:
       - no-new-privileges:true
     read_only: true
@@ -119,21 +119,21 @@ services:
 
 #### 1. **Docker Hub** (Primary)
 ```
-reporunner/reporunner:latest
-reporunner/reporunner:1.0.0
-reporunner/reporunner:1.0.0-alpine
+klikkflow/klikkflow:latest
+klikkflow/klikkflow:1.0.0
+klikkflow/klikkflow:1.0.0-alpine
 ```
 
 **Setup:**
-- [ ] Create Docker Hub organization: `reporunner`
+- [ ] Create Docker Hub organization: `klikkflow`
 - [ ] Set up automated builds
 - [ ] Configure README from GitHub
 - [ ] Add badges to README
 
 #### 2. **GitHub Container Registry** (Recommended)
 ```
-ghcr.io/reporunner/reporunner:latest
-ghcr.io/reporunner/reporunner:1.0.0
+ghcr.io/klikkflow/klikkflow:latest
+ghcr.io/klikkflow/klikkflow:1.0.0
 ```
 
 **Benefits:**
@@ -153,22 +153,22 @@ ghcr.io/reporunner/reporunner:1.0.0
 # GitHub Actions example
 - name: Push to multiple registries
   run: |
-    docker tag reporunner:latest reporunner/reporunner:latest
-    docker tag reporunner:latest ghcr.io/reporunner/reporunner:latest
-    docker push reporunner/reporunner:latest
-    docker push ghcr.io/reporunner/reporunner:latest
+    docker tag klikkflow:latest klikkflow/klikkflow:latest
+    docker tag klikkflow:latest ghcr.io/klikkflow/klikkflow:latest
+    docker push klikkflow/klikkflow:latest
+    docker push ghcr.io/klikkflow/klikkflow:latest
 ```
 
 ### **Image Variants to Publish**
 
 ```
 # Recommended variants
-reporunner/reporunner:latest          # Latest stable
-reporunner/reporunner:1.0.0           # Specific version
-reporunner/reporunner:1.0            # Minor version
-reporunner/reporunner:1               # Major version
-reporunner/reporunner:edge            # Development branch
-reporunner/reporunner:1.0.0-alpine   # Explicit base
+klikkflow/klikkflow:latest          # Latest stable
+klikkflow/klikkflow:1.0.0           # Specific version
+klikkflow/klikkflow:1.0            # Minor version
+klikkflow/klikkflow:1               # Major version
+klikkflow/klikkflow:edge            # Development branch
+klikkflow/klikkflow:1.0.0-alpine   # Explicit base
 ```
 
 **Action Items:**
@@ -196,17 +196,17 @@ Should include:
 
 Pull the latest image:
 \`\`\`bash
-docker pull reporunner/reporunner:latest
+docker pull klikkflow/klikkflow:latest
 \`\`\`
 
 Run with defaults:
 \`\`\`bash
-docker run -p 3000:3000 reporunner/reporunner:latest
+docker run -p 3000:3000 klikkflow/klikkflow:latest
 \`\`\`
 
 Or use docker-compose:
 \`\`\`bash
-curl -o docker-compose.yml https://raw.githubusercontent.com/reporunner/reporunner/main/docker-compose.yml
+curl -o docker-compose.yml https://raw.githubusercontent.com/klikkflow/klikkflow/main/docker-compose.yml
 docker-compose up
 \`\`\`
 ```
@@ -239,8 +239,8 @@ NODE_ENV=production
 PORT=3000
 
 # Database
-MONGODB_URI=mongodb://mongo:27017/reporunner
-POSTGRES_URL=postgres://postgres:password@postgres:5432/reporunner
+MONGODB_URI=mongodb://mongo:27017/klikkflow
+POSTGRES_URL=postgres://postgres:password@postgres:5432/klikkflow
 REDIS_URL=redis://redis:6379
 
 # Authentication
@@ -309,7 +309,7 @@ export function validateConfig() {
   if (missing.length > 0) {
     console.error('❌ Missing required environment variables:');
     missing.forEach(key => console.error(`   - ${key}`));
-    console.error('\n📖 See: https://docs.reporunner.com/docker/env-vars');
+    console.error('\n📖 See: https://docs.klikkflow.com/docker/env-vars');
     process.exit(1);
   }
 }
@@ -329,10 +329,10 @@ export function validateConfig() {
 #### 2. **Volume Mount for Config**
 ```yaml
 services:
-  reporunner:
+  klikkflow:
     volumes:
       - ./config:/app/config/custom:ro
-      - reporunner-data:/app/data
+      - klikkflow-data:/app/data
 ```
 
 **Action Items:**
@@ -453,8 +453,8 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: |
-            reporunner/reporunner
-            ghcr.io/reporunner/reporunner
+            klikkflow/klikkflow
+            ghcr.io/klikkflow/klikkflow
           tags: |
             type=ref,event=branch
             type=ref,event=pr
@@ -493,12 +493,12 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Build image
-        run: docker build -t reporunner:test .
+        run: docker build -t klikkflow:test .
 
       - name: Run Trivy
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: reporunner:test
+          image-ref: klikkflow:test
           format: 'sarif'
           output: 'trivy-results.sarif'
 
@@ -522,7 +522,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Build image
-        run: docker build -t reporunner:test .
+        run: docker build -t klikkflow:test .
 
       - name: Start services
         run: docker-compose -f docker-compose.test.yml up -d
@@ -532,7 +532,7 @@ jobs:
           timeout 60 bash -c 'until curl -f http://localhost:3000/health; do sleep 2; done'
 
       - name: Run tests
-        run: docker exec reporunner-test npm test
+        run: docker exec klikkflow-test npm test
 
       - name: Check logs
         if: failure()
@@ -565,7 +565,7 @@ docker buildx create --name multiarch --use
 # Build for multiple platforms
 docker buildx build \
   --platform linux/amd64,linux/arm64 \
-  -t reporunner/reporunner:latest \
+  -t klikkflow/klikkflow:latest \
   --push \
   .
 ```
@@ -578,8 +578,8 @@ platforms: linux/amd64,linux/arm64
 ### **Testing Multi-Arch**
 ```bash
 # Test on different architectures
-docker run --platform linux/amd64 reporunner/reporunner:latest
-docker run --platform linux/arm64 reporunner/reporunner:latest
+docker run --platform linux/amd64 klikkflow/klikkflow:latest
+docker run --platform linux/arm64 klikkflow/klikkflow:latest
 ```
 
 **Action Items:**
@@ -598,18 +598,18 @@ docker run --platform linux/arm64 reporunner/reporunner:latest
 #### 1. **Include License in Image**
 ```dockerfile
 # Add to Dockerfile
-COPY --chown=reporunner:nodejs LICENSE /app/LICENSE
-COPY --chown=reporunner:nodejs README.md /app/README.md
+COPY --chown=klikkflow:nodejs LICENSE /app/LICENSE
+COPY --chown=klikkflow:nodejs README.md /app/README.md
 ```
 
 #### 2. **License Labels**
 ```dockerfile
 LABEL org.opencontainers.image.licenses="MIT"
-LABEL org.opencontainers.image.title="Reporunner"
+LABEL org.opencontainers.image.title="KlikkFlow"
 LABEL org.opencontainers.image.description="Open-source workflow automation platform"
-LABEL org.opencontainers.image.url="https://github.com/reporunner/reporunner"
-LABEL org.opencontainers.image.source="https://github.com/reporunner/reporunner"
-LABEL org.opencontainers.image.vendor="Reporunner Team"
+LABEL org.opencontainers.image.url="https://github.com/klikkflow/klikkflow"
+LABEL org.opencontainers.image.source="https://github.com/klikkflow/klikkflow"
+LABEL org.opencontainers.image.vendor="KlikkFlow Team"
 ```
 
 #### 3. **Third-Party Licenses**
@@ -672,7 +672,7 @@ import winston from 'winston';
 
 const logger = winston.createLogger({
   format: winston.format.json(),
-  defaultMeta: { service: 'reporunner' },
+  defaultMeta: { service: 'klikkflow' },
   transports: [
     new winston.transports.Console()
   ]
@@ -696,7 +696,7 @@ app.get('/metrics', async (req, res) => {
 
 ### **Container Labels for Monitoring**
 ```dockerfile
-LABEL com.datadoghq.ad.check_names='["reporunner"]'
+LABEL com.datadoghq.ad.check_names='["klikkflow"]'
 LABEL com.datadoghq.ad.init_configs='[{}]'
 LABEL com.datadoghq.ad.instances='[{"prometheus_url": "http://%%host%%:3000/metrics"}]'
 ```
@@ -719,13 +719,13 @@ LABEL com.datadoghq.ad.instances='[{"prometheus_url": "http://%%host%%:3000/metr
 ```bash
 # Goal: User should be able to run this and have working system
 docker run -d \
-  --name reporunner \
+  --name klikkflow \
   -p 3000:3000 \
   -e JWT_SECRET="$(openssl rand -base64 32)" \
-  -v reporunner-data:/app/data \
-  reporunner/reporunner:latest
+  -v klikkflow-data:/app/data \
+  klikkflow/klikkflow:latest
 
-echo "🎉 Reporunner started! Visit http://localhost:3000"
+echo "🎉 KlikkFlow started! Visit http://localhost:3000"
 ```
 
 ### **Docker Compose Quick Start**
@@ -734,21 +734,21 @@ echo "🎉 Reporunner started! Visit http://localhost:3000"
 version: '3.8'
 
 services:
-  reporunner:
-    image: reporunner/reporunner:latest
+  klikkflow:
+    image: klikkflow/klikkflow:latest
     ports:
       - "3000:3000"
     environment:
       - JWT_SECRET=${JWT_SECRET:-change-me-in-production}
-      - MONGODB_URI=mongodb://mongo:27017/reporunner
-      - POSTGRES_URL=postgres://postgres:password@postgres:5432/reporunner
+      - MONGODB_URI=mongodb://mongo:27017/klikkflow
+      - POSTGRES_URL=postgres://postgres:password@postgres:5432/klikkflow
       - REDIS_URL=redis://redis:6379
     depends_on:
       - mongo
       - postgres
       - redis
     volumes:
-      - reporunner-data:/app/data
+      - klikkflow-data:/app/data
 
   mongo:
     image: mongo:7-alpine
@@ -768,7 +768,7 @@ services:
       - redis-data:/data
 
 volumes:
-  reporunner-data:
+  klikkflow-data:
   mongo-data:
   postgres-data:
   redis-data:
@@ -778,7 +778,7 @@ volumes:
 ```bash
 # setup.sh
 #!/bin/bash
-echo "🐳 Reporunner Docker Setup"
+echo "🐳 KlikkFlow Docker Setup"
 echo "=========================="
 
 # Generate JWT secret
@@ -790,8 +790,8 @@ fi
 # Create .env file
 cat > .env << EOF
 JWT_SECRET=$JWT_SECRET
-MONGODB_URI=mongodb://mongo:27017/reporunner
-POSTGRES_URL=postgres://postgres:password@postgres:5432/reporunner
+MONGODB_URI=mongodb://mongo:27017/klikkflow
+POSTGRES_URL=postgres://postgres:password@postgres:5432/klikkflow
 REDIS_URL=redis://redis:6379
 EOF
 
@@ -806,7 +806,7 @@ echo "🎉 Done! Visit http://localhost:3000"
 ```typescript
 // Display helpful information on startup
 console.log(`
-🚀 Reporunner is starting...
+🚀 KlikkFlow is starting...
 
 📋 Configuration:
    - Environment: ${process.env.NODE_ENV}
@@ -814,9 +814,9 @@ console.log(`
    - MongoDB: ${process.env.MONGODB_URI?.replace(/:[^:]*@/, ':****@')}
    - Redis: ${process.env.REDIS_URL}
 
-📖 Documentation: https://docs.reporunner.com
-🐛 Issues: https://github.com/reporunner/reporunner/issues
-💬 Community: https://discord.gg/reporunner
+📖 Documentation: https://docs.klikkflow.com
+🐛 Issues: https://github.com/klikkflow/klikkflow/issues
+💬 Community: https://discord.gg/klikkflow
 
 Waiting for database connections...
 `);
@@ -846,13 +846,13 @@ MAJOR.MINOR.PATCH
 
 ### **Docker Tag Strategy**
 ```
-reporunner/reporunner:latest          # Latest stable
-reporunner/reporunner:1                # Major version
-reporunner/reporunner:1.0              # Minor version
-reporunner/reporunner:1.0.0            # Patch version
-reporunner/reporunner:edge             # Development
-reporunner/reporunner:1.0.0-alpine    # Base image variant
-reporunner/reporunner:sha-abc123      # Git commit
+klikkflow/klikkflow:latest          # Latest stable
+klikkflow/klikkflow:1                # Major version
+klikkflow/klikkflow:1.0              # Minor version
+klikkflow/klikkflow:1.0.0            # Patch version
+klikkflow/klikkflow:edge             # Development
+klikkflow/klikkflow:1.0.0-alpine    # Base image variant
+klikkflow/klikkflow:sha-abc123      # Git commit
 ```
 
 ### **Release Process**
@@ -870,8 +870,8 @@ reporunner/reporunner:sha-abc123      # Git commit
 ### From 0.x to 1.0
 1. Backup your data
 2. Update docker-compose.yml
-3. Pull new image: `docker pull reporunner/reporunner:1.0`
-4. Run migrations: `docker exec reporunner npm run migrate`
+3. Pull new image: `docker pull klikkflow/klikkflow:1.0`
+4. Run migrations: `docker exec klikkflow npm run migrate`
 5. Restart: `docker-compose up -d`
 
 ### Breaking Changes in 1.0
@@ -896,10 +896,10 @@ reporunner/reporunner:sha-abc123      # Git commit
 #### 1. **Build Testing**
 ```bash
 # Test build succeeds
-docker build -t reporunner:test .
+docker build -t klikkflow:test .
 
 # Test image size
-SIZE=$(docker images reporunner:test --format "{{.Size}}")
+SIZE=$(docker images klikkflow:test --format "{{.Size}}")
 echo "Image size: $SIZE"
 ```
 
@@ -938,7 +938,7 @@ metadataTest:
 
   exposedPorts: ["3000"]
 
-  user: "reporunner"
+  user: "klikkflow"
 
   workdir: "/app"
 ```
@@ -975,7 +975,7 @@ echo "✅ All tests passed!"
 # GitHub Actions quality gates
 - name: Check image size
   run: |
-    SIZE=$(docker images reporunner:test --format "{{.Size}}" | sed 's/MB//')
+    SIZE=$(docker images klikkflow:test --format "{{.Size}}" | sed 's/MB//')
     if (( $(echo "$SIZE > 150" | bc -l) )); then
       echo "❌ Image too large: ${SIZE}MB (max: 150MB)"
       exit 1
@@ -983,7 +983,7 @@ echo "✅ All tests passed!"
 
 - name: Security scan
   run: |
-    trivy image --severity HIGH,CRITICAL --exit-code 1 reporunner:test
+    trivy image --severity HIGH,CRITICAL --exit-code 1 klikkflow:test
 ```
 
 **Action Items:**

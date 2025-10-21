@@ -61,7 +61,7 @@
 #### **Audit Service**
 ```typescript
 // ✅ CREATED: packages/backend/src/services/AuditService.ts
-- Integrates with @reporunner/security AuditLogger
+- Integrates with @klikkflow/security AuditLogger
 - Secure audit event logging
 - Compliance reporting
 - Data export functionality
@@ -217,7 +217,7 @@ Backend (Business Logic):
 
 ### **Type Safety**
 ```
-✅ Shared types via @reporunner/types
+✅ Shared types via @klikkflow/types
 ✅ API request/response validation with Zod
 ✅ TypeScript strict mode throughout
 ✅ Runtime type checking on API boundaries

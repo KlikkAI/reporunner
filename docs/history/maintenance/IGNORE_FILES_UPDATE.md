@@ -45,7 +45,7 @@
 - `DOCUMENTATION.md` - Documentation notes
 - `COMPLETION_ROADMAP.md` - Roadmap documentation
 - `implementation.txt` - Implementation notes
-- `reporunner-analysis-report.txt` - Analysis report
+- `klikkflow-analysis-report.txt` - Analysis report
 
 **Why**: Development/planning docs not needed in production Docker images or version control.
 
@@ -76,7 +76,7 @@ DOCKER_OPENSOURCE_GUIDE.md
 DOCKER_OPENSOURCE_SUMMARY.md
 DOCKER_COMPARISON.md
 implementation.txt
-reporunner-analysis-report.txt
+klikkflow-analysis-report.txt
 ```
 
 ### `.dockerignore` Changes
@@ -104,7 +104,7 @@ DEPLOYMENT.md
 DOCUMENTATION.md
 COMPLETION_ROADMAP.md
 implementation.txt
-reporunner-analysis-report.txt
+klikkflow-analysis-report.txt
 
 # Examples and tests (NOT needed in production)
 examples/
@@ -142,7 +142,7 @@ DOCKER_OPENSOURCE_GUIDE.md
 DOCKER_OPENSOURCE_SUMMARY.md
 DOCKER_COMPARISON.md
 implementation.txt
-reporunner-analysis-report.txt
+klikkflow-analysis-report.txt
 ```
 
 ### `.prettierignore` Changes
@@ -229,12 +229,12 @@ Added same patterns as Biome (for legacy compatibility).
 
 1. **Test Docker Build**
    ```bash
-   docker build -t reporunner:test .
+   docker build -t klikkflow:test .
    ```
 
 2. **Verify Image Size**
    ```bash
-   docker images reporunner:test
+   docker images klikkflow:test
    ```
 
 3. **Check Git Status**

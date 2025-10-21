@@ -1,6 +1,6 @@
-# Reporunner SDK Ecosystem Comparison 🔍
+# KlikkFlow SDK Ecosystem Comparison 🔍
 
-This document provides a comprehensive comparison of all Reporunner SDKs across different programming languages, helping you choose the right SDK for your project.
+This document provides a comprehensive comparison of all KlikkFlow SDKs across different programming languages, helping you choose the right SDK for your project.
 
 ## 📊 Feature Matrix
 
@@ -75,13 +75,13 @@ Java:       ████████████████████      20
 
 | SDK | Package Manager | Registry | Installation |
 |-----|----------------|----------|-------------|
-| **TypeScript** | npm/pnpm/yarn | npmjs.com | `pnpm add @reporunner/sdk` |
-| **Python** | pip/poetry/conda | PyPI | `pip install reporunner-sdk` |
-| **Go** | go mod | Go Modules | `go get github.com/reporunner/go-sdk` |
-| **Rust** | cargo | crates.io | `cargo add reporunner-sdk` |
+| **TypeScript** | npm/pnpm/yarn | npmjs.com | `pnpm add @klikkflow/sdk` |
+| **Python** | pip/poetry/conda | PyPI | `pip install klikkflow-sdk` |
+| **Go** | go mod | Go Modules | `go get github.com/klikkflow/go-sdk` |
+| **Rust** | cargo | crates.io | `cargo add klikkflow-sdk` |
 | **Java** | Maven/Gradle | Maven Central | `<dependency>...</dependency>` |
-| **PHP** | Composer | Packagist | `composer require reporunner/php-sdk` |
-| **.NET** | NuGet | nuget.org | `dotnet add package Reporunner.Sdk` |
+| **PHP** | Composer | Packagist | `composer require klikkflow/php-sdk` |
+| **.NET** | NuGet | nuget.org | `dotnet add package KlikkFlow.Sdk` |
 
 ## 🎯 Use Case Recommendations
 
@@ -205,10 +205,10 @@ Java:       ████████████████████      20
 
 ## 📞 Getting Help
 
-- **General Questions**: [GitHub Discussions](https://github.com/reporunner/reporunner/discussions)
-- **Bug Reports**: [GitHub Issues](https://github.com/reporunner/reporunner/issues)
-- **Community Chat**: [Discord Server](https://discord.gg/reporunner)
-- **Commercial Support**: [enterprise@reporunner.com](mailto:enterprise@reporunner.com)
+- **General Questions**: [GitHub Discussions](https://github.com/klikkflow/klikkflow/discussions)
+- **Bug Reports**: [GitHub Issues](https://github.com/klikkflow/klikkflow/issues)
+- **Community Chat**: [Discord Server](https://discord.gg/klikkflow)
+- **Commercial Support**: [enterprise@klikkflow.com](mailto:enterprise@klikkflow.com)
 
 ---
 

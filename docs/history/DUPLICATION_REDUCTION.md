@@ -49,8 +49,8 @@
 - Validation duplication → `BaseValidationMiddleware`
 
 **Key Implementations:**
-- `packages/@reporunner/core/src/repository/BaseRepository.ts`
-- `packages/@reporunner/core/src/middleware/BaseValidationMiddleware.ts`
+- `packages/@klikkflow/core/src/repository/BaseRepository.ts`
+- `packages/@klikkflow/core/src/middleware/BaseValidationMiddleware.ts`
 - Consistent CRUD operations, pagination, caching
 
 ## ✅ Implementation Timeline (Completed)
@@ -130,7 +130,7 @@
 - `utils/apiErrorHandler.ts` - Centralized API error handling
 - `nodes/BaseNodeDefinition.ts` - Node definition patterns
 
-### Shared Libraries (`packages/@reporunner/core/`)
+### Shared Libraries (`packages/@klikkflow/core/`)
 - `repository/BaseRepository.ts` - Generic repository pattern
 - `middleware/BaseValidationMiddleware.ts` - Request validation utilities
 - `shared.ts` - Common interfaces and types

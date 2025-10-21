@@ -14,7 +14,7 @@
 
 #### #39 - Node-SAML SAML Signature Verification Vulnerability
 - **Package**: `passport-saml@3.2.4`
-- **Location**: `packages/@reporunner/auth`
+- **Location**: `packages/@klikkflow/auth`
 - **Fix Applied**: Migrated to maintained fork `@node-saml/passport-saml@^5.1.0`
 - **Impact**: Prevents SAML authentication bypass attacks
 - **Status**: ✅ **RESOLVED**
@@ -25,7 +25,7 @@
 
 #### #16, #15, #14, #13 - Multer DoS Vulnerabilities (API Package)
 - **Package**: `multer`
-- **Location**: `packages/@reporunner/api`
+- **Location**: `packages/@klikkflow/api`
 - **Vulnerabilities**:
   - Denial of Service via unhandled exception from malformed requests
   - Denial of Service via unhandled exception
@@ -36,7 +36,7 @@
 
 #### #6, #5, #4, #3 - Multer DoS Vulnerabilities (Security Package)
 - **Package**: `multer`
-- **Location**: `packages/@reporunner/security`
+- **Location**: `packages/@klikkflow/security`
 - **Vulnerabilities**: Same as above
 - **Fix Applied**: Updated to latest multer version
 - **Status**: ✅ **RESOLVED**
@@ -93,7 +93,7 @@
 
 ### #38, #36, #19, #17, #12 - tsup DOM Clobbering
 - **Package**: `tsup` (<=8.3.4)
-- **Location**: Multiple packages (@reporunner/ai, @reporunner/database, @reporunner/auth, @reporunner/api)
+- **Location**: Multiple packages (@klikkflow/ai, @klikkflow/database, @klikkflow/auth, @klikkflow/api)
 - **Severity**: LOW
 - **Patched Versions**: `<0.0.0` (no patch available from maintainers)
 - **Status**: ⚠️ **UNRESOLVED - No patch available**
@@ -138,11 +138,11 @@
 
 ```bash
 # Critical fix - passport-saml
-pnpm remove passport-saml --filter @reporunner/auth
-pnpm add @node-saml/passport-saml --filter @reporunner/auth
+pnpm remove passport-saml --filter @klikkflow/auth
+pnpm add @node-saml/passport-saml --filter @klikkflow/auth
 
 # High severity - multer updates
-pnpm update multer --filter @reporunner/api --filter @reporunner/security
+pnpm update multer --filter @klikkflow/api --filter @klikkflow/security
 
 # High severity - Python cryptography
 # Updated sdks/python/pyproject.toml: cryptography = "^44.0.0"
@@ -226,7 +226,7 @@ After these fixes, the following Dependabot alerts should auto-close:
 2. **Verify Dependabot Alert Closure**
    ```bash
    # Check alert status
-   gh api /repos/KlikkAI/reporunner/dependabot/alerts | jq '[.[] | select(.state == "open")] | length'
+   gh api /repos/klikkflow/klikkflow/dependabot/alerts | jq '[.[] | select(.state == "open")] | length'
    ```
 
 3. **Deploy to Production**

@@ -8,11 +8,11 @@ After analyzing the current structure and comparing with open source best practi
 
 ### **Current Layout:**
 ```
-reporunner/
+klikkflow/
 ├── packages/              # Monorepo packages (Node.js/TypeScript)
 │   ├── frontend/
 │   ├── backend/
-│   └── @reporunner/
+│   └── @klikkflow/
 ├── infrastructure/        # Infrastructure as Code (IaC)
 │   ├── docker/
 │   ├── kubernetes/
@@ -103,7 +103,7 @@ aws/
 ├── aws-sdk-go/            # Go SDK (separate repo)
 └── aws-sdk-java/          # Java SDK (separate repo)
 
-reporunner/ (CURRENT - GOOD!)
+klikkflow/ (CURRENT - GOOD!)
 ├── packages/              # TypeScript/Node.js packages
 ├── sdks/                  # Multi-language SDKs
 └── infrastructure/        # Infrastructure as Code
@@ -113,12 +113,12 @@ reporunner/ (CURRENT - GOOD!)
 
 ### **Recommended Layout (Keep Current):**
 ```
-reporunner/
+klikkflow/
 ├── packages/              # 🎯 Internal application packages (TypeScript/Node.js)
 │   ├── frontend/          # React application
 │   ├── backend/           # Express API server
 │   ├── shared/            # Shared utilities
-│   └── @reporunner/       # Scoped packages
+│   └── @klikkflow/       # Scoped packages
 │       ├── core/          # Business logic
 │       ├── database/      # Database layer
 │       ├── security/      # Security & auth
@@ -216,16 +216,16 @@ packages/
 
 ### **Option 2: Separate Repositories (❌ Over-Engineering)**
 ```
-reporunner/reporunner      # Main application
-reporunner/infrastructure  # Infrastructure
-reporunner/sdk-typescript  # TypeScript SDK
-reporunner/sdk-python      # Python SDK
+klikkflow/klikkflow      # Main application
+klikkflow/infrastructure  # Infrastructure
+klikkflow/sdk-typescript  # TypeScript SDK
+klikkflow/sdk-python      # Python SDK
 ```
 **Problems:** Over-complicates development, harder to maintain consistency
 
 ### **Option 3: Current Structure (✅ Optimal)**
 ```
-reporunner/
+klikkflow/
 ├── packages/              # Internal app packages
 ├── infrastructure/        # Infrastructure as Code
 ├── sdks/                  # Multi-language SDKs

@@ -1,14 +1,14 @@
-# Contributing to Reporunner
+# Contributing to KlikkFlow
 
-Thank you for your interest in contributing to Reporunner! This guide will help you get started.
+Thank you for your interest in contributing to KlikkFlow! This guide will help you get started.
 
 ## 🚀 Quick Start
 
 1. **Fork the repository** on GitHub
 2. **Clone your fork** locally:
    ```bash
-   git clone https://github.com/your-username/reporunner.git
-   cd reporunner
+   git clone https://github.com/your-username/klikkflow.git
+   cd klikkflow
    ```
 3. **Install dependencies**:
    ```bash
@@ -65,8 +65,8 @@ packages/
 pnpm dev
 
 # Work on specific packages
-pnpm dev --filter=@reporunner/frontend
-pnpm build --filter=@reporunner/backend
+pnpm dev --filter=@klikkflow/frontend
+pnpm build --filter=@klikkflow/backend
 
 # Quality checks
 pnpm lint
@@ -176,7 +176,7 @@ For feature requests:
 - **Never commit secrets** (API keys, passwords, etc.)
 - **Use environment variables** for configuration
 - **Follow OWASP guidelines** for web security
-- **Report vulnerabilities** privately to security@reporunner.dev
+- **Report vulnerabilities** privately to security@klikkflow.dev
 
 ## 📝 Documentation
 
@@ -251,4 +251,4 @@ Contributors are recognized in:
 - **Contributor badge** in GitHub
 - **Annual contributor showcase**
 
-Thank you for contributing to Reporunner! 🚀
+Thank you for contributing to KlikkFlow! 🚀

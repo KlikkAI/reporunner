@@ -1,4 +1,4 @@
-# 📚 RepoRunner Complete Project Documentation 2025
+# 📚 KlikkFlow Complete Project Documentation 2025
 
 ## Table of Contents
 
@@ -16,7 +16,7 @@
 
 ## Overview
 
-Successfully implemented the enterprise-grade infrastructure scaling roadmap for Reporunner, transforming it into a large-scale workflow automation platform capable of competing with n8n, SIM, and Zapier.
+Successfully implemented the enterprise-grade infrastructure scaling roadmap for KlikkFlow, transforming it into a large-scale workflow automation platform capable of competing with n8n, SIM, and Zapier.
 
 ## ✅ Completed Phases
 
@@ -24,19 +24,19 @@ Successfully implemented the enterprise-grade infrastructure scaling roadmap for
 
 #### 1.1 Monorepo Package Restructuring ✅
 
-- **Created @reporunner scoped packages**:
-  - `@reporunner/api-types` - Shared TypeScript types and interfaces
-  - `@reporunner/constants` - Platform-wide constants and configurations
-  - `@reporunner/database` - Hybrid database layer (MongoDB + PostgreSQL)
-  - `@reporunner/platform/*` - Core platform services
-  - `@reporunner/services/*` - Microservices architecture
-  - `@reporunner/plugin-framework` - Base integration framework
-  - `@reporunner/real-time` - WebSocket collaboration infrastructure
-  - `@reporunner/integrations` - **NEW: Complete integration framework**
+- **Created @klikkflow scoped packages**:
+  - `@klikkflow/api-types` - Shared TypeScript types and interfaces
+  - `@klikkflow/constants` - Platform-wide constants and configurations
+  - `@klikkflow/database` - Hybrid database layer (MongoDB + PostgreSQL)
+  - `@klikkflow/platform/*` - Core platform services
+  - `@klikkflow/services/*` - Microservices architecture
+  - `@klikkflow/plugin-framework` - Base integration framework
+  - `@klikkflow/real-time` - WebSocket collaboration infrastructure
+  - `@klikkflow/integrations` - **NEW: Complete integration framework**
 
 - **Key Files Created**:
-  - `/packages/@reporunner/api-types/src/workflow.types.ts` - Complete workflow type definitions
-  - `/packages/@reporunner/api-types/src/auth.types.ts` - Authentication and authorization types
+  - `/packages/@klikkflow/api-types/src/workflow.types.ts` - Complete workflow type definitions
+  - `/packages/@klikkflow/api-types/src/auth.types.ts` - Authentication and authorization types
   - `tsconfig.base.json` - Shared TypeScript configuration
 
 #### 1.2 Database Architecture Implementation ✅
@@ -46,7 +46,7 @@ Successfully implemented the enterprise-grade infrastructure scaling roadmap for
   - PostgreSQL with pgvector for AI embeddings and analytics
   - Redis for caching and pub/sub messaging
 - **Key Implementation**:
-  - `/packages/@reporunner/database/src/database-service.ts` - Intelligent database routing
+  - `/packages/@klikkflow/database/src/database-service.ts` - Intelligent database routing
   - MongoDB schemas with proper indexing
   - PostgreSQL tables for vector search and analytics
   - Health check and connection pooling
@@ -59,8 +59,8 @@ Successfully implemented the enterprise-grade infrastructure scaling roadmap for
   - Support for SSO (OAuth2/SAML) and MFA
   - API key management system
 - **Key Components**:
-  - `/packages/@reporunner/services/auth-service/src/jwt/token-manager.ts`
-  - `/packages/@reporunner/services/auth-service/src/rbac/permission-engine.ts`
+  - `/packages/@klikkflow/services/auth-service/src/jwt/token-manager.ts`
+  - `/packages/@klikkflow/services/auth-service/src/rbac/permission-engine.ts`
   - Comprehensive permission system with 5 user roles
   - Account lockout and security policies
 
@@ -74,7 +74,7 @@ Successfully implemented the enterprise-grade infrastructure scaling roadmap for
   - Trigger and action registration system
   - Rate limiting and error handling
 - **Key Implementation**:
-  - `/packages/@reporunner/plugin-framework/src/base/base-integration.ts`
+  - `/packages/@klikkflow/plugin-framework/src/base/base-integration.ts`
   - Type-safe integration development with Zod validation
   - Event-driven architecture for real-time updates
 
@@ -86,7 +86,7 @@ Successfully implemented the enterprise-grade infrastructure scaling roadmap for
   - Webhook support for real-time triggers
   - Full type safety with Zod schemas
 - **Key Features**:
-  - `/packages/@reporunner/integrations/src/gmail/gmail.integration.ts`
+  - `/packages/@klikkflow/integrations/src/gmail/gmail.integration.ts`
   - Support for attachments and HTML emails
   - Thread management and reply tracking
   - Rate limiting compliance with Gmail API
@@ -101,7 +101,7 @@ Successfully implemented the enterprise-grade infrastructure scaling roadmap for
   - Operational Transform for conflict resolution
   - Comment system with threading
 - **Key Components**:
-  - `/packages/@reporunner/real-time/src/socket-server/socket-manager.ts`
+  - `/packages/@klikkflow/real-time/src/socket-server/socket-manager.ts`
   - Room-based collaboration sessions
   - Typing indicators and selection synchronization
   - Node locking to prevent conflicts
@@ -421,7 +421,7 @@ await integrationTester.runTest("stripe", "payment-creation", async (h) => {
 
 ```typescript
 // Example Framework Usage
-import { integrationFramework } from "@reporunner/integrations";
+import { integrationFramework } from "@klikkflow/integrations";
 
 await integrationFramework.initialize({
   masterKey: "your-encryption-key",
@@ -517,7 +517,7 @@ class OptimizedDatabaseService extends DatabaseService {
 #### 1.2 Connection Pooling Enhancement
 
 ```typescript
-// packages/@reporunner/db/src/connection-pool.ts
+// packages/@klikkflow/db/src/connection-pool.ts
 export class ConnectionPoolManager {
   private pools: Map<string, any> = new Map();
   private healthChecks: Map<string, NodeJS.Timer> = new Map();
@@ -547,7 +547,7 @@ export class ConnectionPoolManager {
 #### 2.1 Advanced Encryption
 
 ```typescript
-// packages/@reporunner/security/src/encryption.service.ts
+// packages/@klikkflow/security/src/encryption.service.ts
 import { createCipheriv, createDecipheriv, randomBytes, scrypt } from "crypto";
 
 export class EncryptionService {
@@ -581,7 +581,7 @@ export class EncryptionService {
 #### 2.2 Rate Limiting & DDoS Protection
 
 ```typescript
-// packages/@reporunner/gateway/src/rate-limiter.ts
+// packages/@klikkflow/gateway/src/rate-limiter.ts
 import { RateLimiterRedis, RateLimiterMemory } from "rate-limiter-flexible";
 
 export class AdvancedRateLimiter {
@@ -624,7 +624,7 @@ export class AdvancedRateLimiter {
 #### 3.1 Distributed Tracing
 
 ```typescript
-// packages/@reporunner/monitoring/src/tracing.ts
+// packages/@klikkflow/monitoring/src/tracing.ts
 import { NodeSDK } from "@opentelemetry/sdk-node";
 import { JaegerExporter } from "@opentelemetry/exporter-jaeger";
 
@@ -650,7 +650,7 @@ export class TracingService {
 #### 4.1 Integration Testing Framework
 
 ```typescript
-// packages/@reporunner/testing/src/integration-test-base.ts
+// packages/@klikkflow/testing/src/integration-test-base.ts
 import { TestContainers } from "testcontainers";
 
 export class IntegrationTestBase {
@@ -674,7 +674,7 @@ export class IntegrationTestBase {
 #### 5.1 Workflow Optimization Engine
 
 ```typescript
-// packages/@reporunner/ai/src/optimization-engine.ts
+// packages/@klikkflow/ai/src/optimization-engine.ts
 import * as tf from "@tensorflow/tfjs-node";
 
 export class WorkflowOptimizationEngine {
@@ -702,14 +702,14 @@ export class WorkflowOptimizationEngine {
 
 ## Overview
 
-This guide documents the complete refactoring of the Reporunner codebase to utilize the new modular architecture with @reporunner scoped packages.
+This guide documents the complete refactoring of the KlikkFlow codebase to utilize the new modular architecture with @klikkflow scoped packages.
 
 ## ✅ Completed Refactoring
 
 ### 1. Authentication System Migration
 
 - **From**: `packages/backend/src/domains/auth/*`
-- **To**: `packages/@reporunner/services/auth-service/`
+- **To**: `packages/@klikkflow/services/auth-service/`
 - **Changes**:
   - Migrated AuthService to use new TokenManager and PermissionEngine
   - Integrated with hybrid database architecture
@@ -721,14 +721,14 @@ This guide documents the complete refactoring of the Reporunner codebase to util
 - **From**:
   - `packages/backend/src/constants/*`
   - `packages/core/src/constants/*`
-- **To**: `packages/@reporunner/constants/`
+- **To**: `packages/@klikkflow/constants/`
 - **Changes**:
   - Consolidated all constants into single package
   - Added new constants for node types, AI providers, and system configuration
 
 ### 3. Integration Framework Addition ✅
 
-- **NEW**: `packages/@reporunner/integrations/`
+- **NEW**: `packages/@klikkflow/integrations/`
 - **Components**:
   - Webhook management system
   - OAuth2 authentication handler
@@ -749,12 +749,12 @@ This guide documents the complete refactoring of the Reporunner codebase to util
 // packages/backend/package.json
 {
   "dependencies": {
-    "@reporunner/api-types": "workspace:*",
-    "@reporunner/constants": "workspace:*",
-    "@reporunner/db": "workspace:*",
-    "@reporunner/integrations": "workspace:*",
-    "@reporunner/services": "workspace:*",
-    "@reporunner/platform": "workspace:*"
+    "@klikkflow/api-types": "workspace:*",
+    "@klikkflow/constants": "workspace:*",
+    "@klikkflow/db": "workspace:*",
+    "@klikkflow/integrations": "workspace:*",
+    "@klikkflow/services": "workspace:*",
+    "@klikkflow/platform": "workspace:*"
   }
 }
 ```
@@ -771,21 +771,21 @@ import { AUTH_CONSTANTS } from "../constants/index.js";
 #### After:
 
 ```typescript
-import { IUser } from "@reporunner/api-types";
-import { AUTH, ERROR_CODES } from "@reporunner/constants";
-import { integrationFramework } from "@reporunner/integrations";
+import { IUser } from "@klikkflow/api-types";
+import { AUTH, ERROR_CODES } from "@klikkflow/constants";
+import { integrationFramework } from "@klikkflow/integrations";
 ```
 
 ## 📦 Package Migration Map
 
 | Original Location                | New Package                             | Purpose                        |
 | -------------------------------- | --------------------------------------- | ------------------------------ |
-| `backend/domains/auth/*`         | `@reporunner/services/auth-service`     | Authentication & authorization |
-| `backend/domains/workflows/*`    | `@reporunner/services/workflow-service` | Workflow management            |
-| `backend/domains/executions/*`   | `@reporunner/platform/execution-engine` | Workflow execution             |
-| `backend/domains/integrations/*` | `@reporunner/integrations`              | **NEW: Integration framework** |
-| `backend/models/*`               | `@reporunner/db/mongodb/schemas`        | Database schemas               |
-| `backend/constants/*`            | `@reporunner/constants`                 | Shared constants               |
+| `backend/domains/auth/*`         | `@klikkflow/services/auth-service`     | Authentication & authorization |
+| `backend/domains/workflows/*`    | `@klikkflow/services/workflow-service` | Workflow management            |
+| `backend/domains/executions/*`   | `@klikkflow/platform/execution-engine` | Workflow execution             |
+| `backend/domains/integrations/*` | `@klikkflow/integrations`              | **NEW: Integration framework** |
+| `backend/models/*`               | `@klikkflow/db/mongodb/schemas`        | Database schemas               |
+| `backend/constants/*`            | `@klikkflow/constants`                 | Shared constants               |
 
 ---
 
@@ -800,15 +800,15 @@ services:
   mongodb:
     image: mongo:7.0
     environment:
-      MONGO_INITDB_DATABASE: reporunner
+      MONGO_INITDB_DATABASE: klikkflow
     volumes:
       - mongo_data:/data/db
 
   postgresql:
     image: pgvector/pgvector:pg16
     environment:
-      POSTGRES_DB: reporunner
-      POSTGRES_USER: reporunner
+      POSTGRES_DB: klikkflow
+      POSTGRES_USER: klikkflow
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - postgres_data:/var/lib/postgresql/data
@@ -819,7 +819,7 @@ services:
       - redis_data:/data
 
   integration-service:
-    build: ./packages/@reporunner/integrations
+    build: ./packages/@klikkflow/integrations
     environment:
       MASTER_KEY: ${MASTER_KEY}
       REDIS_URL: redis://redis:6379
@@ -828,7 +828,7 @@ services:
       - mongodb
 
   auth-service:
-    build: ./packages/@reporunner/services/auth-service
+    build: ./packages/@klikkflow/services/auth-service
     environment:
       DATABASE_URL: ${DATABASE_URL}
       JWT_SECRET: ${JWT_SECRET}
@@ -850,9 +850,9 @@ services:
 
 ```bash
 # Database
-MONGODB_URI=mongodb://localhost:27017/reporunner
+MONGODB_URI=mongodb://localhost:27017/klikkflow
 POSTGRES_HOST=localhost
-POSTGRES_DATABASE=reporunner
+POSTGRES_DATABASE=klikkflow
 REDIS_URL=redis://localhost:6379
 
 # Security
@@ -878,7 +878,7 @@ ELASTICSEARCH_URL=http://localhost:9200
 ## 🏗️ Architecture Overview
 
 ```
-RepoRunner Architecture
+KlikkFlow Architecture
 ├── Frontend Layer
 │   ├── React Application
 │   ├── Real-time Collaboration
@@ -1032,15 +1032,15 @@ pnpm deploy:prod
 
 ## 📚 Additional Resources
 
-- [Integration Framework Guide](./packages/@reporunner/integrations/README.md)
-- [API Types Documentation](./packages/@reporunner/api-types/README.md)
-- [Database Service Guide](./packages/@reporunner/db/README.md)
-- [Authentication Service Guide](./packages/@reporunner/services/auth-service/README.md)
-- [Execution Engine Guide](./packages/@reporunner/platform/execution-engine/README.md)
+- [Integration Framework Guide](./packages/@klikkflow/integrations/README.md)
+- [API Types Documentation](./packages/@klikkflow/api-types/README.md)
+- [Database Service Guide](./packages/@klikkflow/db/README.md)
+- [Authentication Service Guide](./packages/@klikkflow/services/auth-service/README.md)
+- [Execution Engine Guide](./packages/@klikkflow/platform/execution-engine/README.md)
 
 ## Conclusion
 
-The RepoRunner platform has been successfully transformed into an enterprise-grade workflow automation system with a complete integration framework. The modular architecture, comprehensive type system, real-time collaboration features, and production-ready integration framework position RepoRunner as a serious competitor to established platforms.
+The KlikkFlow platform has been successfully transformed into an enterprise-grade workflow automation system with a complete integration framework. The modular architecture, comprehensive type system, real-time collaboration features, and production-ready integration framework position KlikkFlow as a serious competitor to established platforms.
 
 The newly implemented integration framework provides all necessary components for building secure, scalable, and maintainable integrations with third-party services. With built-in security, monitoring, and testing capabilities, developers can rapidly build and deploy new integrations while maintaining high quality and reliability standards.
 

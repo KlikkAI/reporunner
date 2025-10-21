@@ -33,7 +33,7 @@
 - **Type**: Type extension
 - **Time**: ~30 minutes
 - **Risk**: 🟢 LOW
-- **Impact**: Extends IUser from @reporunner/types
+- **Impact**: Extends IUser from @klikkflow/types
 - **Lines Saved**: 137 lines (~30% reduction)
 - **Files Affected**: 1 file
 - **Errors Introduced**: 0
@@ -63,7 +63,7 @@ export interface User {
 }
 
 // ✅ DO: Extend baseline + add specifics
-import type { IUser } from '@reporunner/types';
+import type { IUser } from '@klikkflow/types';
 export interface User extends Omit<IUser, 'settings'> {
   // Only frontend-specific fields
   name: string;
@@ -76,13 +76,13 @@ export interface User extends Omit<IUser, 'settings'> {
 
 ### 3. Respect Sophisticated Implementations
 **Decision**: Keep LoggingService.ts (500 lines, enterprise-grade)
-**Reason**: More advanced than @reporunner/core baseline
+**Reason**: More advanced than @klikkflow/core baseline
 
 **Lesson**: Foundation packages provide **baseline utilities**, not replacements for advanced implementations
 
 ### 4. Separate Concerns: Zod vs TypeScript
 **Discovery**: Frontend uses Zod for runtime validation, TypeScript for compile-time types
-**Decision**: Keep Zod schemas for API boundaries, use @reporunner/types internally
+**Decision**: Keep Zod schemas for API boundaries, use @klikkflow/types internally
 
 **Lesson**: Different type systems serve different purposes
 
@@ -135,7 +135,7 @@ export interface User extends Omit<IUser, 'settings'> {
 **Risk**: 🟢 LOW (no behavior changes)
 
 #### Type Migrations
-6. **credentials.ts** (8.9 KB) - Can extend `ICredential` from @reporunner/types
+6. **credentials.ts** (8.9 KB) - Can extend `ICredential` from @klikkflow/types
 7. **workflow.ts** (3.1 KB) - Extend `IWorkflow`, keep UI-specific types
 8. **edge.ts** (5.2 KB) - Extend `IEdge` with React Flow types
 
@@ -227,7 +227,7 @@ export interface User extends Omit<IUser, 'settings'> {
 
 **2. Migrate credentials.ts** - Type migration
 - Check import usage first
-- Extend ICredential from @reporunner/types
+- Extend ICredential from @klikkflow/types
 - Time: 30-45 minutes
 
 ### Short-term (This Week)
@@ -260,7 +260,7 @@ export interface User extends Omit<IUser, 'settings'> {
 
 ### Technical Metrics
 - [ ] 20+ console.log statements migrated
-- [ ] 5+ type files using @reporunner/types
+- [ ] 5+ type files using @klikkflow/types
 - [ ] Zero breaking changes introduced
 - [ ] Type-check passes consistently
 

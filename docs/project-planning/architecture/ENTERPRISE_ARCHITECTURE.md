@@ -1,10 +1,10 @@
-# Reporunner Enterprise Architecture
+# KlikkFlow Enterprise Architecture
 
-This document outlines the enterprise-grade architecture of Reporunner, designed for large-scale deployments, multi-tenancy, and mission-critical workflow automation.
+This document outlines the enterprise-grade architecture of KlikkFlow, designed for large-scale deployments, multi-tenancy, and mission-critical workflow automation.
 
 ## 🏗️ Architecture Overview
 
-Reporunner follows a **microservices architecture** with **domain-driven design** principles, enabling horizontal scaling, fault isolation, and independent deployment of components.
+KlikkFlow follows a **microservices architecture** with **domain-driven design** principles, enabling horizontal scaling, fault isolation, and independent deployment of components.
 
 ```
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
@@ -33,39 +33,39 @@ Reporunner follows a **microservices architecture** with **domain-driven design*
 
 ## 📦 Package Architecture
 
-### Core Platform (`packages/@reporunner/platform/`)
+### Core Platform (`packages/@klikkflow/platform/`)
 
-#### Event Bus (`@reporunner/event-bus`)
+#### Event Bus (`@klikkflow/event-bus`)
 **Purpose**: Distributed messaging and event-driven communication
 - **Message Broker**: RabbitMQ with clustering support
 - **Event Sourcing**: Immutable event log for audit and replay
 - **CQRS Pattern**: Command Query Responsibility Segregation
 - **Dead Letter Queues**: Error handling and retry mechanisms
 
-#### Scheduler (`@reporunner/scheduler`)
+#### Scheduler (`@klikkflow/scheduler`)
 **Purpose**: Distributed job scheduling and cron management
 - **Distributed Scheduling**: Multi-instance coordination
 - **Cron Expression Support**: Complex scheduling patterns
 - **Timezone Management**: Global deployment support
 - **Job Persistence**: Database-backed job storage
 
-#### Resource Manager (`@reporunner/resource-manager`)
+#### Resource Manager (`@klikkflow/resource-manager`)
 **Purpose**: Resource allocation and quota management
 - **Multi-tenancy**: Isolated resource pools per organization
 - **Quota Enforcement**: CPU, memory, and execution limits
 - **Auto-scaling**: Dynamic resource allocation
 - **Cost Tracking**: Usage-based billing support
 
-#### State Store (`@reporunner/state-store`)
+#### State Store (`@klikkflow/state-store`)
 **Purpose**: Distributed state management and synchronization
 - **Consensus Algorithm**: Raft for distributed consistency
 - **Conflict Resolution**: Operational Transform for real-time collaboration
 - **Version Vectors**: Optimistic concurrency control
 - **Snapshot Management**: Point-in-time state recovery
 
-### Enterprise Services (`packages/@reporunner/services/`)
+### Enterprise Services (`packages/@klikkflow/services/`)
 
-#### Authentication Service (`@reporunner/auth-service`)
+#### Authentication Service (`@klikkflow/auth-service`)
 **Enterprise Features**:
 - **Single Sign-On (SSO)**: SAML 2.0, OAuth2, OpenID Connect
 - **Multi-Factor Authentication**: TOTP, SMS, hardware tokens
@@ -93,7 +93,7 @@ interface EnterpriseAuthConfig {
 }
 ```
 
-#### Workflow Service (`@reporunner/workflow-service`)
+#### Workflow Service (`@klikkflow/workflow-service`)
 **Enterprise Features**:
 - **Version Control**: Git-like workflow versioning
 - **Branch Management**: Feature branches and merging
@@ -101,7 +101,7 @@ interface EnterpriseAuthConfig {
 - **Approval Workflows**: Change management and approvals
 - **Template Library**: Organization-wide workflow templates
 
-#### Execution Service (`@reporunner/execution-service`)
+#### Execution Service (`@klikkflow/execution-service`)
 **Enterprise Features**:
 - **Horizontal Scaling**: Auto-scaling execution workers
 - **Priority Queues**: Business-critical workflow prioritization
@@ -109,7 +109,7 @@ interface EnterpriseAuthConfig {
 - **Execution Policies**: Timeout, retry, and failure handling
 - **Performance Monitoring**: Detailed execution metrics
 
-#### Analytics Service (`@reporunner/analytics-service`)
+#### Analytics Service (`@klikkflow/analytics-service`)
 **Enterprise Features**:
 - **Usage Analytics**: Workflow usage patterns and optimization
 - **Performance Metrics**: Execution time analysis and bottleneck identification
@@ -117,7 +117,7 @@ interface EnterpriseAuthConfig {
 - **Compliance Reporting**: Audit reports and regulatory compliance
 - **Predictive Analytics**: ML-based workflow optimization
 
-#### Audit Service (`@reporunner/audit-service`)
+#### Audit Service (`@klikkflow/audit-service`)
 **Enterprise Features**:
 - **Immutable Audit Log**: Tamper-proof event recording
 - **Compliance Standards**: SOX, GDPR, HIPAA support
@@ -125,7 +125,7 @@ interface EnterpriseAuthConfig {
 - **Retention Policies**: Configurable data retention
 - **Export Capabilities**: Audit data export for external tools
 
-#### Notification Service (`@reporunner/notification-service`)
+#### Notification Service (`@klikkflow/notification-service`)
 **Enterprise Features**:
 - **Multi-channel**: Email, SMS, Slack, Teams, webhooks
 - **Template Engine**: Rich notification templates
@@ -133,7 +133,7 @@ interface EnterpriseAuthConfig {
 - **Delivery Tracking**: Message delivery confirmation
 - **Rate Limiting**: Prevent notification spam
 
-#### Tenant Service (`@reporunner/tenant-service`)
+#### Tenant Service (`@klikkflow/tenant-service`)
 **Enterprise Features**:
 - **Multi-tenancy**: Complete organizational isolation
 - **Tenant Provisioning**: Automated tenant setup
@@ -141,7 +141,7 @@ interface EnterpriseAuthConfig {
 - **Billing Integration**: Usage tracking and billing
 - **Data Residency**: Geographic data placement control
 
-### Enterprise Features (`packages/@reporunner/enterprise/`)
+### Enterprise Features (`packages/@klikkflow/enterprise/`)
 
 #### Single Sign-On (SSO)
 ```typescript
@@ -176,7 +176,7 @@ interface Role {
 
 ### Infrastructure Components
 
-#### API Gateway (`@reporunner/gateway`)
+#### API Gateway (`@klikkflow/gateway`)
 **Enterprise Features**:
 - **Rate Limiting**: Per-tenant and per-user rate limits
 - **Load Balancing**: Intelligent request routing
@@ -184,7 +184,7 @@ interface Role {
 - **Request/Response Transformation**: Protocol adaptation
 - **Analytics**: API usage analytics and monitoring
 
-#### Monitoring (`@reporunner/monitoring`)
+#### Monitoring (`@klikkflow/monitoring`)
 **Enterprise Features**:
 - **Application Performance Monitoring (APM)**: Distributed tracing
 - **Infrastructure Monitoring**: System resource monitoring
@@ -192,7 +192,7 @@ interface Role {
 - **Alerting**: Multi-channel alert delivery
 - **SLA Monitoring**: Service level agreement tracking
 
-#### Security (`@reporunner/security`)
+#### Security (`@klikkflow/security`)
 **Enterprise Features**:
 - **Web Application Firewall (WAF)**: Attack prevention
 - **DDoS Protection**: Distributed denial of service mitigation
@@ -200,16 +200,16 @@ interface Role {
 - **Penetration Testing**: Scheduled security assessments
 - **Security Information and Event Management (SIEM)**: Security event correlation
 
-### Development Tools (`packages/@reporunner/dev-tools/`)
+### Development Tools (`packages/@klikkflow/dev-tools/`)
 
-#### CLI (`@reporunner/cli`)
+#### CLI (`@klikkflow/cli`)
 **Enterprise Features**:
 - **Workflow Deployment**: CI/CD integration
 - **Environment Management**: Multi-environment deployments
 - **Testing Framework**: Workflow testing and validation
 - **Migration Tools**: Version migration utilities
 
-#### SDK Core (`@reporunner/sdk-core`)
+#### SDK Core (`@klikkflow/sdk-core`)
 **Multi-language Support**:
 - **TypeScript/JavaScript**: Native web and Node.js support
 - **Python**: Async/await with Pydantic models
@@ -240,7 +240,7 @@ spec:
     spec:
       containers:
       - name: auth-service
-        image: reporunner/auth-service:latest
+        image: klikkflow/auth-service:latest
         env:
         - name: DATABASE_URL
           valueFrom:

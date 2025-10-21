@@ -8,7 +8,7 @@
 
 ## 📊 Summary
 
-Successfully consolidated and reorganized Reporunner documentation, reducing root-level clutter by **47%** (17 → 9 files) while improving discoverability and maintaining all historical information.
+Successfully consolidated and reorganized KlikkFlow documentation, reducing root-level clutter by **47%** (17 → 9 files) while improving discoverability and maintaining all historical information.
 
 ---
 

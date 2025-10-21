@@ -8,7 +8,7 @@ Based on my analysis, here are the essential components missing for a successful
 
 ### **CONTRIBUTING.md**
 ```markdown
-# Contributing to Reporunner
+# Contributing to KlikkFlow
 
 ## 🚀 Quick Start
 1. Fork the repository
@@ -97,7 +97,7 @@ Examples of behavior that contributes to a positive environment:
 - Showing empathy towards other community members
 
 ## Enforcement
-Instances of abusive, harassing, or otherwise unacceptable behavior may be reported to the community leaders responsible for enforcement at conduct@reporunner.com.
+Instances of abusive, harassing, or otherwise unacceptable behavior may be reported to the community leaders responsible for enforcement at conduct@klikkflow.com.
 
 ## Attribution
 This Code of Conduct is adapted from the Contributor Covenant, version 2.1.
@@ -116,7 +116,7 @@ This Code of Conduct is adapted from the Contributor Covenant, version 2.1.
 ## Reporting a Vulnerability
 **Please do not report security vulnerabilities through public GitHub issues.**
 
-Instead, please report them via email to security@reporunner.com.
+Instead, please report them via email to security@klikkflow.com.
 
 Include:
 - Description of the vulnerability
@@ -139,16 +139,16 @@ We will respond within 48 hours and provide regular updates on our progress.
 
 ### **Enhanced CLI with Cloud Integration**
 ```typescript
-// packages/@reporunner/cli/src/commands/cloud.ts
+// packages/@klikkflow/cli/src/commands/cloud.ts
 import { Command } from 'commander';
 import { CloudService } from '../services/CloudService';
 
 export const cloudCommand = new Command('cloud')
-  .description('Reporunner Cloud operations');
+  .description('KlikkFlow Cloud operations');
 
 cloudCommand
   .command('login')
-  .description('Login to Reporunner Cloud')
+  .description('Login to KlikkFlow Cloud')
   .action(async () => {
     const cloudService = new CloudService();
     await cloudService.login();
@@ -177,7 +177,7 @@ cloudCommand
 
 ### **Plugin Development Kit**
 ```typescript
-// packages/@reporunner/plugin-sdk/src/PluginSDK.ts
+// packages/@klikkflow/plugin-sdk/src/PluginSDK.ts
 export class PluginSDK {
   /**
    * Create a new node definition
@@ -237,10 +237,10 @@ export class PluginSDK {
 // tools/migration/n8n-importer/src/N8nImporter.ts
 export class N8nImporter {
   /**
-   * Import n8n workflow to Reporunner format
+   * Import n8n workflow to KlikkFlow format
    */
-  async importWorkflow(n8nWorkflow: N8nWorkflow): Promise<ReporunnerWorkflow> {
-    const workflow: ReporunnerWorkflow = {
+  async importWorkflow(n8nWorkflow: N8nWorkflow): Promise<KlikkFlowWorkflow> {
+    const workflow: KlikkFlowWorkflow = {
       id: generateId(),
       name: n8nWorkflow.name,
       description: n8nWorkflow.description || '',
@@ -251,8 +251,8 @@ export class N8nImporter {
 
     // Convert nodes
     for (const n8nNode of n8nWorkflow.nodes) {
-      const reporunnerNode = await this.convertNode(n8nNode);
-      workflow.nodes.push(reporunnerNode);
+      const klikkflowNode = await this.convertNode(n8nNode);
+      workflow.nodes.push(klikkflowNode);
     }
 
     // Convert connections
@@ -261,8 +261,8 @@ export class N8nImporter {
     return workflow;
   }
 
-  private async convertNode(n8nNode: N8nNode): Promise<ReporunnerNode> {
-    // Map n8n node types to Reporunner node types
+  private async convertNode(n8nNode: N8nNode): Promise<KlikkFlowNode> {
+    // Map n8n node types to KlikkFlow node types
     const nodeTypeMapping = {
       'n8n-nodes-base.httpRequest': 'http-request',
       'n8n-nodes-base.gmail': 'gmail',
@@ -270,11 +270,11 @@ export class N8nImporter {
       // ... more mappings
     };
 
-    const reporunnerType = nodeTypeMapping[n8nNode.type] || 'custom';
+    const klikkflowType = nodeTypeMapping[n8nNode.type] || 'custom';
 
     return {
       id: n8nNode.name,
-      type: reporunnerType,
+      type: klikkflowType,
       position: n8nNode.position,
       parameters: this.convertParameters(n8nNode.parameters, n8nNode.type),
       credentials: n8nNode.credentials
@@ -365,7 +365,7 @@ export class PluginRegistry {
 ### **Plugin Templates**
 ```bash
 # CLI command to create plugin
-npx @reporunner/cli plugin create my-awesome-plugin
+npx @klikkflow/cli plugin create my-awesome-plugin
 
 # Generated structure:
 my-awesome-plugin/
@@ -564,12 +564,12 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Build Docker image
-        run: docker build -t reporunner:test .
+        run: docker build -t klikkflow:test .
 
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: 'reporunner:test'
+          image-ref: 'klikkflow:test'
           format: 'sarif'
           output: 'trivy-results.sarif'
 
@@ -591,7 +591,7 @@ jobs:
 
 ### **Compliance Framework**
 ```typescript
-// packages/@reporunner/security/src/compliance/ComplianceFramework.ts
+// packages/@klikkflow/security/src/compliance/ComplianceFramework.ts
 export class ComplianceFramework {
   /**
    * Generate SOC 2 compliance report
@@ -639,8 +639,8 @@ export class ComplianceFramework {
 
 ### **Enhanced TypeScript SDK**
 ```typescript
-// sdks/typescript/src/ReporunnerClient.ts
-export class ReporunnerClient {
+// sdks/typescript/src/KlikkFlowClient.ts
+export class KlikkFlowClient {
   private apiClient: ApiClient;
   private wsClient: WebSocketClient;
 
@@ -682,13 +682,13 @@ export class ReporunnerClient {
 
 ### **Python SDK with Async Support**
 ```python
-# sdks/python/reporunner/client.py
+# sdks/python/klikkflow/client.py
 import asyncio
 import aiohttp
 from typing import Dict, List, Optional, Any
 from .models import Workflow, Execution, Plugin
 
-class ReporunnerClient:
+class KlikkFlowClient:
     def __init__(self, base_url: str, api_key: str):
         self.base_url = base_url
         self.api_key = api_key
@@ -768,4 +768,4 @@ class ReporunnerClient:
 3. ✅ Plugin management APIs
 4. ✅ Comprehensive documentation
 
-This implementation will establish Reporunner as a **world-class open source platform** with enterprise-grade capabilities, comprehensive developer tools, and a thriving community ecosystem.
+This implementation will establish KlikkFlow as a **world-class open source platform** with enterprise-grade capabilities, comprehensive developer tools, and a thriving community ecosystem.

@@ -1,4 +1,4 @@
-# Complete Docker Distribution Plan for Reporunner
+# Complete Docker Distribution Plan for KlikkFlow
 ## All-in-One Solution for Any Scale
 
 **Created:** October 2025
@@ -42,7 +42,7 @@ Create an all-in-one Docker solution like Supabase, n8n, and Directus that works
 - **Stage 4:** Runtime
 - Features:
   - Multi-stage build for optimization
-  - Non-root user (reporunner:1001)
+  - Non-root user (klikkflow:1001)
   - Security hardened (dumb-init, no-new-privileges)
   - Built-in health checks
   - Production-only node_modules
@@ -73,15 +73,15 @@ services:
   # CORE SERVICES (Always included)
   # ============================================
   frontend:
-    image: reporunner/frontend:latest
+    image: klikkflow/frontend:latest
     # React app with Nginx
 
   backend:
-    image: reporunner/backend:latest
+    image: klikkflow/backend:latest
     # Express API server
 
   worker:
-    image: reporunner/worker:latest
+    image: klikkflow/worker:latest
     # BullMQ workflow execution worker
 
   mongo:
@@ -136,7 +136,7 @@ services:
 
   backup:
     profiles: [full]
-    image: reporunner/backup:latest
+    image: klikkflow/backup:latest
     # Automated database backups
 
   elasticsearch:
@@ -177,7 +177,7 @@ docker-compose --profile full up -d
 // - Set up collections with validation
 // - Create database users with appropriate permissions
 
-db = db.getSiblingDB('reporunner');
+db = db.getSiblingDB('klikkflow');
 
 // Create collections
 db.createCollection('workflows');
@@ -325,7 +325,7 @@ upstream backend_servers {
 
 server {
     listen 80;
-    server_name api.reporunner.local;
+    server_name api.klikkflow.local;
 
     location / {
         proxy_pass http://backend_servers;
@@ -363,11 +363,11 @@ PORT=3000
 LOG_LEVEL=info
 
 # Database - MongoDB (Primary)
-MONGODB_URI=mongodb://admin:changeme@mongo:27017/reporunner?authSource=admin
+MONGODB_URI=mongodb://admin:changeme@mongo:27017/klikkflow?authSource=admin
 MONGO_ROOT_PASSWORD=changeme
 
 # Database - PostgreSQL (AI/Analytics)
-POSTGRES_URL=postgresql://postgres:changeme@postgres:5432/reporunner
+POSTGRES_URL=postgresql://postgres:changeme@postgres:5432/klikkflow
 POSTGRES_PASSWORD=changeme
 
 # Database - Redis (Cache/Queue)
@@ -388,7 +388,7 @@ SMTP_HOST=
 SMTP_PORT=587
 SMTP_USER=
 SMTP_PASSWORD=
-SMTP_FROM=noreply@reporunner.com
+SMTP_FROM=noreply@klikkflow.com
 SMTP_SECURE=false
 
 # AI Services (Optional)
@@ -494,7 +494,7 @@ on:
 
 env:
   REGISTRY: docker.io
-  IMAGE_PREFIX: reporunner
+  IMAGE_PREFIX: klikkflow
 
 jobs:
   build-and-push:
@@ -604,7 +604,7 @@ jobs:
 **`DEPLOYMENT.md`** (Structure):
 
 ```markdown
-# Reporunner Deployment Guide
+# KlikkFlow Deployment Guide
 
 ## Table of Contents
 1. Quick Start (Developer)
@@ -631,8 +631,8 @@ Perfect for: Solo developers, testing, local development
 ### Steps
 ```bash
 # Clone repository
-git clone https://github.com/yourorg/reporunner.git
-cd reporunner
+git clone https://github.com/yourorg/klikkflow.git
+cd klikkflow
 
 # Create environment file
 cp .env.example .env
@@ -718,12 +718,12 @@ See Kubernetes section below for production-grade deployment.
 
 ```bash
 # Using Helm
-helm repo add reporunner https://charts.reporunner.com
-helm install reporunner reporunner/reporunner \
+helm repo add klikkflow https://charts.klikkflow.com
+helm install klikkflow klikkflow/klikkflow \
   --set replicaCount=3 \
   --set monitoring.enabled=true \
   --set ingress.enabled=true \
-  --set ingress.hosts[0].host=reporunner.company.com
+  --set ingress.hosts[0].host=klikkflow.company.com
 ```
 
 [... continues with full deployment guide ...]
@@ -837,7 +837,7 @@ docker-compose --profile full up -d
 **Command:**
 ```bash
 # Kubernetes with Helm
-helm install reporunner ./infrastructure/kubernetes/helm/reporunner \
+helm install klikkflow ./infrastructure/kubernetes/helm/klikkflow \
   --set replicaCount=3 \
   --set autoscaling.enabled=true \
   --set autoscaling.minReplicas=3 \
@@ -919,7 +919,7 @@ helm install reporunner ./infrastructure/kubernetes/helm/reporunner \
 ## 📂 Complete File Structure
 
 ```
-reporunner/
+klikkflow/
 ├── Dockerfile.frontend                   # ✅ NEW - Frontend with Nginx
 ├── Dockerfile.backend                    # ✅ NEW - Backend API
 ├── Dockerfile.worker                     # ✅ NEW - BullMQ worker
@@ -950,7 +950,7 @@ reporunner/
 │   │
 │   └── kubernetes/                       # EXISTS - Reference
 │       └── helm/
-│           └── reporunner/
+│           └── klikkflow/
 │
 ├── .github/
 │   └── workflows/

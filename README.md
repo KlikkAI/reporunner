@@ -1,9 +1,9 @@
-# Reporunner 🚀
+# KlikkFlow 🚀
 
 > **Open-source workflow automation platform powered by AI**
 > The next-generation alternative to n8n with built-in AI/ML capabilities, modern architecture, and enterprise-grade scaling.
 
-[![CI/CD](https://github.com/reporunner/reporunner/actions/workflows/ci.yml/badge.svg)](https://github.com/reporunner/reporunner/actions/workflows/ci.yml)
+[![CI/CD](https://github.com/klikkflow/klikkflow/actions/workflows/ci.yml/badge.svg)](https://github.com/klikkflow/klikkflow/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![React](https://img.shields.io/badge/React-20232A?logo=react&logoColor=61DAFB)](https://reactjs.org/)
@@ -52,21 +52,21 @@
 
 ### ⚡ One-Command Installation (Recommended)
 
-**Get Reporunner running in 60 seconds** with a single command:
+**Get KlikkFlow running in 60 seconds** with a single command:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/KlikkAI/reporunner/main/scripts/install.sh | sh
+curl -fsSL https://raw.githubusercontent.com/KlikkAI/klikkflow/main/scripts/install.sh | sh
 ```
 
 **That's it!** The installer will:
 - ✅ Automatically check Docker prerequisites
-- ✅ Download the latest Reporunner images
+- ✅ Download the latest KlikkFlow images
 - ✅ Generate secure JWT secrets and encryption keys
 - ✅ Start all 6 core services (Frontend, Backend, Worker, MongoDB, PostgreSQL, Redis)
 - ✅ Wait for services to become healthy
 - ✅ Open http://localhost:3000 in your browser
 
-**Default credentials**: `admin@reporunner.local` / `admin123`
+**Default credentials**: `admin@klikkflow.local` / `admin123`
 
 **What you get**:
 - React 19 frontend with real-time updates
@@ -78,7 +78,7 @@ curl -fsSL https://raw.githubusercontent.com/KlikkAI/reporunner/main/scripts/ins
 **Manual Installation** (if you prefer):
 ```bash
 # Download and run installer locally
-wget https://raw.githubusercontent.com/KlikkAI/reporunner/main/scripts/install.sh
+wget https://raw.githubusercontent.com/KlikkAI/klikkflow/main/scripts/install.sh
 chmod +x install.sh
 ./install.sh
 
@@ -92,8 +92,8 @@ If you prefer to build from source or customize your deployment:
 
 ```bash
 # Clone and start
-git clone https://github.com/reporunner/reporunner.git
-cd reporunner
+git clone https://github.com/klikkflow/klikkflow.git
+cd klikkflow
 docker-compose up -d
 
 # Access the platform
@@ -171,7 +171,7 @@ docker-compose --profile monitoring --profile ha up -d
 
 | Service | URL | Credentials |
 |---------|-----|-------------|
-| **Frontend** | http://localhost:3000 | demo@reporunner.com / demo123 |
+| **Frontend** | http://localhost:3000 | demo@klikkflow.com / demo123 |
 | **API** | http://localhost:3001 | - |
 | **Grafana** | http://localhost:3030 | admin / admin |
 | **Prometheus** | http://localhost:9090 | - |
@@ -183,8 +183,8 @@ docker-compose --profile monitoring --profile ha up -d
 
 ```bash
 # Clone the repository
-git clone https://github.com/reporunner/reporunner.git
-cd reporunner
+git clone https://github.com/klikkflow/klikkflow.git
+cd klikkflow
 
 # Install dependencies
 pnpm install
@@ -211,12 +211,12 @@ Comprehensive deployment guide available at [DEPLOYMENT.md](./DEPLOYMENT.md) cov
 ## 📁 Project Structure
 
 ```
-reporunner/
+klikkflow/
 ├── packages/              # Optimized monorepo (12 packages, 58.6% reduction)
 │   ├── frontend/          # React 19 web application
 │   ├── backend/           # Express.js API server (includes common, database, monitoring)
 │   ├── shared/            # Shared utilities, types, validation, API definitions
-│   └── @reporunner/       # Scoped packages (9 total)
+│   └── @klikkflow/       # Scoped packages (9 total)
 │       ├── ai/            # AI/ML capabilities and services
 │       ├── auth/          # Authentication & security services
 │       ├── cli/           # CLI tools and dev utilities
@@ -274,10 +274,10 @@ pnpm run quality:fix      # Fix linting, formatting, and imports
 pnpm run validate         # Full validation including security
 
 # Architecture Validation
-pnpm --filter @reporunner/validation architecture:validate      # Complete architecture validation
-pnpm --filter @reporunner/validation architecture:dependencies # Dependency analysis
-pnpm --filter @reporunner/validation architecture:organization # Code organization validation
-pnpm --filter @reporunner/validation architecture:types        # Type safety validation
+pnpm --filter @klikkflow/validation architecture:validate      # Complete architecture validation
+pnpm --filter @klikkflow/validation architecture:dependencies # Dependency analysis
+pnpm --filter @klikkflow/validation architecture:organization # Code organization validation
+pnpm --filter @klikkflow/validation architecture:types        # Type safety validation
 
 # Dependency Management
 pnpm run deps:check       # Check for dependency updates
@@ -292,12 +292,12 @@ pnpm run clean:all        # Clean all node_modules and build artifacts
 
 1. **Generate Node Scaffold**
 ```bash
-pnpm reporunner generate node --name MyService --category communication
+pnpm klikkflow generate node --name MyService --category communication
 ```
 
 2. **Define Node Properties**
 ```typescript
-// packages/@reporunner/nodes/src/communication/myservice/properties.ts
+// packages/@klikkflow/nodes/src/communication/myservice/properties.ts
 export const myServiceProperties: NodeProperty[] = [
   {
     displayName: 'API Key',
@@ -311,7 +311,7 @@ export const myServiceProperties: NodeProperty[] = [
 
 3. **Implement Execution Logic**
 ```typescript
-// packages/@reporunner/nodes/src/communication/myservice/actions.ts
+// packages/@klikkflow/nodes/src/communication/myservice/actions.ts
 export async function execute(node: NodeData, context: ExecutionContext) {
   // Your integration logic here
   return { success: true, data: result };
@@ -329,15 +329,15 @@ We maintain comprehensive test coverage across all packages:
 
 ```bash
 # Run specific test suites
-pnpm run test:unit --filter=@reporunner/backend
-pnpm run test:integration --filter=@reporunner/workflow
+pnpm run test:unit --filter=@klikkflow/backend
+pnpm run test:integration --filter=@klikkflow/workflow
 pnpm run test:e2e --headed
 ```
 ## 🐳 Docker & Kubernetes
 
 ### Docker Compose (Recommended for Most Users)
 
-Reporunner's Docker Compose setup is **production-complete** from day one:
+KlikkFlow's Docker Compose setup is **production-complete** from day one:
 
 ```bash
 # Core services (60 seconds)
@@ -370,17 +370,17 @@ Deploy with Helm when you need:
 
 ```bash
 # Add Helm repo
-helm repo add reporunner https://charts.reporunner.com
+helm repo add klikkflow https://charts.klikkflow.com
 helm repo update
 
 # Install with defaults
-helm install reporunner reporunner/reporunner \
-  --namespace reporunner \
+helm install klikkflow klikkflow/klikkflow \
+  --namespace klikkflow \
   --create-namespace
 
 # Production install with custom values
-helm install reporunner reporunner/reporunner \
-  --namespace reporunner \
+helm install klikkflow klikkflow/klikkflow \
+  --namespace klikkflow \
   --create-namespace \
   --values production-values.yaml
 ```
@@ -427,7 +427,7 @@ docker-compose up -d                          # Recreate containers
 
 ### 7 Production-Ready Grafana Dashboards
 
-Reporunner includes **7 pre-configured Grafana dashboards** - no setup required:
+KlikkFlow includes **7 pre-configured Grafana dashboards** - no setup required:
 
 1. **API Performance Dashboard**
    - Request rates, latency (p50, p95, p99), error rates
@@ -550,19 +550,19 @@ POST /api/executions
 
 | Language | Package | Installation |
 |----------|---------|--------------|
-| **TypeScript/Node.js** | `@reporunner/sdk` | `pnpm add @reporunner/sdk` |
-| **Python** | `reporunner-sdk` | `pip install reporunner-sdk` |
-| **Go** | `go-sdk` | `go get github.com/reporunner/reporunner/go-sdk` |
-| **Rust** | `reporunner-sdk` | `cargo add reporunner-sdk` |
-| **Java** | `reporunner-java-sdk` | Maven/Gradle |
-| **PHP** | `reporunner/php-sdk` | `composer require reporunner/php-sdk` |
-| **.NET** | `Reporunner.Sdk` | `dotnet add package Reporunner.Sdk` |
+| **TypeScript/Node.js** | `@klikkflow/sdk` | `pnpm add @klikkflow/sdk` |
+| **Python** | `klikkflow-sdk` | `pip install klikkflow-sdk` |
+| **Go** | `go-sdk` | `go get github.com/klikkflow/klikkflow/go-sdk` |
+| **Rust** | `klikkflow-sdk` | `cargo add klikkflow-sdk` |
+| **Java** | `klikkflow-java-sdk` | Maven/Gradle |
+| **PHP** | `klikkflow/php-sdk` | `composer require klikkflow/php-sdk` |
+| **.NET** | `KlikkFlow.Sdk` | `dotnet add package KlikkFlow.Sdk` |
 
 ### TypeScript SDK
 ```typescript
-import { ReporunnerClient } from '@reporunner/sdk';
+import { KlikkFlowClient } from '@klikkflow/sdk';
 
-const client = new ReporunnerClient({
+const client = new KlikkFlowClient({
   apiUrl: 'http://localhost:3001',
   apiKey: 'your-api-key'
 });
@@ -574,9 +574,9 @@ const execution = await client.executeWorkflow('workflow-123', {
 
 ### Python SDK
 ```python
-from reporunner import ReporunnerClient
+from klikkflow import KlikkFlowClient
 
-async with ReporunnerClient(
+async with KlikkFlowClient(
     base_url='http://localhost:3001',
     api_key='your-api-key'
 ) as client:
@@ -587,7 +587,7 @@ async with ReporunnerClient(
 
 ### Go SDK
 ```go
-client := reporunner.NewClient(reporunner.ClientOptions{
+client := klikkflow.NewClient(klikkflow.ClientOptions{
     BaseURL: "http://localhost:3001",
     APIKey:  "your-api-key",
 })
@@ -612,7 +612,7 @@ let execution = client.execute_workflow(
 
 ### Java SDK
 ```java
-ReporunnerClient client = new ReporunnerClient(
+KlikkFlowClient client = new KlikkFlowClient(
     "http://localhost:3001",
     "your-api-key"
 );
@@ -625,7 +625,7 @@ ExecutionResult execution = client.executeWorkflow(
 
 ### PHP SDK
 ```php
-$client = new ReporunnerClient(
+$client = new KlikkFlowClient(
     'http://localhost:3001',
     'your-api-key'
 );
@@ -637,7 +637,7 @@ $execution = $client->executeWorkflow('workflow-123', [
 
 ### .NET SDK
 ```csharp
-var client = new ReporunnerClient(httpClient, options, logger);
+var client = new KlikkFlowClient(httpClient, options, logger);
 
 var execution = await client.ExecuteWorkflowAsync("workflow-123",
     new Dictionary<string, object> {
@@ -647,7 +647,7 @@ var execution = await client.ExecuteWorkflowAsync("workflow-123",
 
 ## 📚 Documentation
 
-Comprehensive documentation is available to help you get the most out of Reporunner:
+Comprehensive documentation is available to help you get the most out of KlikkFlow:
 
 ### 🚀 Getting Started
 - **[DOCKER.md](DOCKER.md)** - One-command Docker installation guide
@@ -723,13 +723,13 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📞 Support & Community
 
-- **Documentation**: [docs.reporunner.com](https://docs.reporunner.com)
-- **GitHub Issues**: [Bug reports and features](https://github.com/reporunner/reporunner/issues)
-- **Discord**: [Community chat](https://discord.gg/reporunner)
-- **Twitter**: [@reporunner](https://twitter.com/reporunner)
+- **Documentation**: [docs.klikkflow.com](https://docs.klikkflow.com)
+- **GitHub Issues**: [Bug reports and features](https://github.com/klikkflow/klikkflow/issues)
+- **Discord**: [Community chat](https://discord.gg/klikkflow)
+- **Twitter**: [@klikkflow](https://twitter.com/klikkflow)
 
 ---
 
 <p align="center">
-  <strong>⭐ If you find Reporunner helpful, please star the repository!</strong>
+  <strong>⭐ If you find KlikkFlow helpful, please star the repository!</strong>
 </p>

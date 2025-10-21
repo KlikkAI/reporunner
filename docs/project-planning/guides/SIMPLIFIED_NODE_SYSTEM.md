@@ -24,7 +24,7 @@
 
 ### **1. Single Node Registry**
 ```typescript
-// @reporunner/nodes/src/NodeRegistry.ts
+// @klikkflow/nodes/src/NodeRegistry.ts
 export class NodeRegistry {
   // Core methods
   register(definition, executor, validator?)
@@ -101,8 +101,8 @@ export interface PropertyDefinition {
 
 ### **HTTP Request Node**
 ```typescript
-// @reporunner/nodes/src/definitions/actions/http-request.node.ts
-import type { NodeDefinition, NodeExecuteFunction } from '@reporunner/types';
+// @klikkflow/nodes/src/definitions/actions/http-request.node.ts
+import type { NodeDefinition, NodeExecuteFunction } from '@klikkflow/types';
 
 const execute: NodeExecuteFunction = async (config, context) => {
   try {
@@ -192,7 +192,7 @@ export const httpRequestNode: NodeDefinition = {
 
 ### **Email Send Node**
 ```typescript
-// @reporunner/nodes/src/definitions/actions/email-send.node.ts
+// @klikkflow/nodes/src/definitions/actions/email-send.node.ts
 const execute: NodeExecuteFunction = async (config, context) => {
   try {
     const { to, subject, body, from } = config;
@@ -277,7 +277,7 @@ export const emailSendNode: NodeDefinition = {
 
 ### **Condition Node**
 ```typescript
-// @reporunner/nodes/src/definitions/conditions/if.node.ts
+// @klikkflow/nodes/src/definitions/conditions/if.node.ts
 const execute: NodeExecuteFunction = async (config, context) => {
   try {
     const { condition, operator, value } = config;
@@ -371,7 +371,7 @@ export const ifNode: NodeDefinition = {
 
 ### **Register Nodes**
 ```typescript
-import { NodeRegistry } from '@reporunner/nodes';
+import { NodeRegistry } from '@klikkflow/nodes';
 import { httpRequestNode } from './definitions/actions/http-request.node';
 import { emailSendNode } from './definitions/actions/email-send.node';
 import { ifNode } from './definitions/conditions/if.node';

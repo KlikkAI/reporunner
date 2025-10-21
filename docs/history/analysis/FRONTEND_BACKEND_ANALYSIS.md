@@ -26,7 +26,7 @@ Backend:  API + Business Logic + Security + Audit + All Services
 #### **Multiple Registries:**
 - `packages/frontend/src/core/nodes/registry.ts` (500+ lines)
 - `packages/frontend/src/app/node-extensions/nodeUiRegistry.ts` (300+ lines)
-- `packages/@reporunner/nodes/src/registry/NodeRegistry.ts` (1000+ lines)
+- `packages/@klikkflow/nodes/src/registry/NodeRegistry.ts` (1000+ lines)
 
 #### **Complex Node System:**
 - 3 different node type systems (INodeType, EnhancedIntegrationNodeType, CustomNodeBodyProps)
@@ -38,31 +38,31 @@ Backend:  API + Business Logic + Security + Audit + All Services
 
 #### **Current: 27 Packages**
 ```
-@reporunner/ai                    # AI services
-@reporunner/api                   # API layer
-@reporunner/auth                  # Authentication
-@reporunner/backend-common        # Backend utilities
-@reporunner/cli                   # CLI tools
-@reporunner/constants             # Constants
-@reporunner/core                  # Core utilities
-@reporunner/database              # Database layer
-@reporunner/design-system         # Design system
-@reporunner/dev-tools             # Development tools
-@reporunner/enterprise            # Enterprise features
-@reporunner/gateway               # API gateway
-@reporunner/integrations          # External integrations
-@reporunner/monitoring            # Monitoring
-@reporunner/platform              # Platform services
-@reporunner/plugin-framework      # Plugin system
-@reporunner/real-time             # Real-time features
-@reporunner/security              # Security
-@reporunner/services              # Shared services
-@reporunner/types                 # Type definitions
-@reporunner/ui                    # UI components
-@reporunner/upload                # File upload
-@reporunner/validation            # Validation
-@reporunner/workflow              # Workflow logic
-@reporunner/workflow-engine       # Workflow execution
+@klikkflow/ai                    # AI services
+@klikkflow/api                   # API layer
+@klikkflow/auth                  # Authentication
+@klikkflow/backend-common        # Backend utilities
+@klikkflow/cli                   # CLI tools
+@klikkflow/constants             # Constants
+@klikkflow/core                  # Core utilities
+@klikkflow/database              # Database layer
+@klikkflow/design-system         # Design system
+@klikkflow/dev-tools             # Development tools
+@klikkflow/enterprise            # Enterprise features
+@klikkflow/gateway               # API gateway
+@klikkflow/integrations          # External integrations
+@klikkflow/monitoring            # Monitoring
+@klikkflow/platform              # Platform services
+@klikkflow/plugin-framework      # Plugin system
+@klikkflow/real-time             # Real-time features
+@klikkflow/security              # Security
+@klikkflow/services              # Shared services
+@klikkflow/types                 # Type definitions
+@klikkflow/ui                    # UI components
+@klikkflow/upload                # File upload
+@klikkflow/validation            # Validation
+@klikkflow/workflow              # Workflow logic
+@klikkflow/workflow-engine       # Workflow execution
 frontend                          # React app
 backend                           # Express server
 ```
@@ -79,17 +79,17 @@ backend                           # Express server
 
 ```
 Core Packages (6):
-├── @reporunner/types          # All types, schemas, interfaces
-├── @reporunner/core           # Business logic, utilities, validation
-├── @reporunner/database       # Database layer, models, migrations
-├── @reporunner/security       # RBAC, audit, auth, encryption
-├── @reporunner/ai             # AI services, optimization
-└── @reporunner/nodes          # Node definitions, registry, execution
+├── @klikkflow/types          # All types, schemas, interfaces
+├── @klikkflow/core           # Business logic, utilities, validation
+├── @klikkflow/database       # Database layer, models, migrations
+├── @klikkflow/security       # RBAC, audit, auth, encryption
+├── @klikkflow/ai             # AI services, optimization
+└── @klikkflow/nodes          # Node definitions, registry, execution
 
 Service Packages (3):
-├── @reporunner/api            # REST API, GraphQL, webhooks
-├── @reporunner/engine         # Workflow execution engine
-└── @reporunner/integrations   # External service connectors
+├── @klikkflow/api            # REST API, GraphQL, webhooks
+├── @klikkflow/engine         # Workflow execution engine
+└── @klikkflow/integrations   # External service connectors
 
 Application Packages (3):
 ├── frontend                   # React app (UI only)
@@ -142,7 +142,7 @@ Application Packages (3):
 
 #### **Single Node Registry:**
 ```typescript
-// @reporunner/nodes/src/NodeRegistry.ts (Already created)
+// @klikkflow/nodes/src/NodeRegistry.ts (Already created)
 export class NodeRegistry {
   // Simple, powerful, debuggable
   register(definition, executor, validator?)
@@ -154,7 +154,7 @@ export class NodeRegistry {
 
 #### **Clean Node Structure:**
 ```
-@reporunner/nodes/
+@klikkflow/nodes/
 ├── src/
 │   ├── registry/
 │   │   └── NodeRegistry.ts          # ✅ Single registry
@@ -234,13 +234,13 @@ rm packages/frontend/src/core/services/executionMonitorService.ts
 ### **Week 2: Consolidate Packages**
 ```bash
 # Merge related packages:
-mv packages/@reporunner/constants/* packages/@reporunner/types/src/
-mv packages/@reporunner/validation/* packages/@reporunner/types/src/validation/
-mv packages/@reporunner/backend-common/* packages/@reporunner/core/src/
-mv packages/@reporunner/services/* packages/@reporunner/core/src/services/
-mv packages/@reporunner/auth/* packages/@reporunner/security/src/auth/
-mv packages/@reporunner/workflow/* packages/@reporunner/engine/src/workflow/
-mv packages/@reporunner/workflow-engine/* packages/@reporunner/engine/src/engine/
+mv packages/@klikkflow/constants/* packages/@klikkflow/types/src/
+mv packages/@klikkflow/validation/* packages/@klikkflow/types/src/validation/
+mv packages/@klikkflow/backend-common/* packages/@klikkflow/core/src/
+mv packages/@klikkflow/services/* packages/@klikkflow/core/src/services/
+mv packages/@klikkflow/auth/* packages/@klikkflow/security/src/auth/
+mv packages/@klikkflow/workflow/* packages/@klikkflow/engine/src/workflow/
+mv packages/@klikkflow/workflow-engine/* packages/@klikkflow/engine/src/engine/
 ```
 
 ### **Week 3: Implement Single API Client**
@@ -269,7 +269,7 @@ export class ApiClient {
 ### **Week 4: Simplify Node System**
 ```typescript
 // Replace complex node registries with simple one:
-import { NodeRegistry } from '@reporunner/nodes';
+import { NodeRegistry } from '@klikkflow/nodes';
 
 const nodeRegistry = new NodeRegistry();
 
@@ -316,4 +316,4 @@ const result = await nodeRegistry.execute('http-request', config, context);
 5. **Simplify Nodes**: Implement new node registry
 6. **Test & Deploy**: Validate each phase thoroughly
 
-This architecture will make Reporunner **simpler, more powerful, scalable, manageable, and debuggable** while maintaining all current functionality.
+This architecture will make KlikkFlow **simpler, more powerful, scalable, manageable, and debuggable** while maintaining all current functionality.

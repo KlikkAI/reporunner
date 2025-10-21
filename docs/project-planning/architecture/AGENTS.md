@@ -2,7 +2,7 @@
 
 ## Project Structure & Module Organization
 - Monorepo managed by pnpm and TurboRepo.
-- Application packages live in `packages/*` and `packages/@reporunner/*`:
+- Application packages live in `packages/*` and `packages/@klikkflow/*`:
   - Backend: `packages/backend` (TypeScript, Express)
   - Frontend: `packages/frontend` (React + Vite)
   - Shared: `packages/core`
@@ -21,7 +21,7 @@
 - Language: TypeScript with ESM. Path aliases defined in `tsconfig.base.json`.
 - Formatting/linting via Biome; do not hand-format. Run `pnpm format` and `pnpm lint:fix`.
 - Naming: camelCase (variables/functions), PascalCase (classes, types, React components), kebab-case (package and non-component file names).
-- Imports: prefer workspace aliases (e.g., `@reporunner/core`) over relative deep paths.
+- Imports: prefer workspace aliases (e.g., `@klikkflow/core`) over relative deep paths.
 
 ## Testing Guidelines
 - Primary framework: Vitest (`vitest`). Some packages may use Jest (root `jest.config.js`).
@@ -41,6 +41,6 @@
 
 ## Agent-Specific Instructions
 - Scope: entire repository. Keep changes minimal and targeted; avoid reformatting unrelated files.
-- Prefer Turbo filters to limit work (e.g., `turbo run build --filter=@reporunner/backend`).
+- Prefer Turbo filters to limit work (e.g., `turbo run build --filter=@klikkflow/backend`).
 - Do not alter licenses. Update docs/tests alongside code when applicable.
 

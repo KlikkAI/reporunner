@@ -1,6 +1,6 @@
 @startuml System Overview
 !theme plain
-title Reporunner System Architecture
+title KlikkFlow System Architecture
 
 actor User as user
 participant "Frontend\n(React)" as frontend

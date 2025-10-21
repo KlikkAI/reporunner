@@ -1,8 +1,8 @@
 # Foundation Packages Migration Guide
 
-**Migrating to @reporunner/types and @reporunner/core**
+**Migrating to @klikkflow/types and @klikkflow/core**
 
-This guide provides step-by-step instructions for migrating your packages to use the foundational packages (`@reporunner/types` and `@reporunner/core`) instead of duplicated implementations.
+This guide provides step-by-step instructions for migrating your packages to use the foundational packages (`@klikkflow/types` and `@klikkflow/core`) instead of duplicated implementations.
 
 ## 📋 Table of Contents
 
@@ -28,12 +28,12 @@ This guide provides step-by-step instructions for migrating your packages to use
 
 ### What Changes?
 
-**@reporunner/types:**
+**@klikkflow/types:**
 - All TypeScript type definitions
 - Zod schemas for validation
 - Type guards for runtime checking
 
-**@reporunner/core:**
+**@klikkflow/core:**
 - Error handling utilities
 - Logger implementation
 - Validation utilities
@@ -49,10 +49,10 @@ Add to your package's dependencies:
 
 ```bash
 # In your package directory
-cd packages/@reporunner/your-package
+cd packages/@klikkflow/your-package
 
 # Add dependencies
-pnpm add @reporunner/types @reporunner/core
+pnpm add @klikkflow/types @klikkflow/core
 ```
 
 Or add to `package.json`:
@@ -60,8 +60,8 @@ Or add to `package.json`:
 ```json
 {
   "dependencies": {
-    "@reporunner/types": "workspace:*",
-    "@reporunner/core": "workspace:*"
+    "@klikkflow/types": "workspace:*",
+    "@klikkflow/core": "workspace:*"
   }
 }
 ```
@@ -93,7 +93,7 @@ grep -r "validate.*Email\|validate.*URL\|\.test\\(" src/
 
 ## Phase 1: Type Migration
 
-**Goal:** Replace all custom type definitions with `@reporunner/types`
+**Goal:** Replace all custom type definitions with `@klikkflow/types`
 
 **Risk Level:** 🟢 LOW (Type-only changes, easy to rollback)
 
@@ -122,7 +122,7 @@ interface User { ... }
 ### Step 1.2: Replace with Centralized Types
 
 ```typescript
-// ✅ Import from @reporunner/types
+// ✅ Import from @klikkflow/types
 import type {
   IWorkflow,
   IExecution,
@@ -131,7 +131,7 @@ import type {
   IEdge,
   ICredential,
   IUser
-} from '@reporunner/types';
+} from '@klikkflow/types';
 ```
 
 ### Step 1.3: Update Type References
@@ -161,7 +161,7 @@ class WorkflowService {
 // Remove src/types/workflow.ts entirely
 
 // src/services/WorkflowService.ts
-import type { IWorkflow } from '@reporunner/types';
+import type { IWorkflow } from '@klikkflow/types';
 
 class WorkflowService {
   async getWorkflow(id: string): Promise<IWorkflow> {
@@ -176,7 +176,7 @@ If you have package-specific extensions:
 
 ```typescript
 // ✅ Extend centralized types
-import type { IWorkflow } from '@reporunner/types';
+import type { IWorkflow } from '@klikkflow/types';
 
 // Add package-specific fields
 interface WorkflowWithCache extends IWorkflow {
@@ -214,9 +214,9 @@ rm src/types/user.ts
 
 ### Migration Checklist - Types
 
-- [ ] Install `@reporunner/types` dependency
+- [ ] Install `@klikkflow/types` dependency
 - [ ] Search for duplicate type definitions
-- [ ] Replace imports with `@reporunner/types`
+- [ ] Replace imports with `@klikkflow/types`
 - [ ] Run `pnpm type-check` successfully
 - [ ] Update all test files
 - [ ] Remove old type definition files
@@ -226,7 +226,7 @@ rm src/types/user.ts
 
 ## Phase 2: Utility Migration
 
-**Goal:** Replace custom utilities with `@reporunner/core`
+**Goal:** Replace custom utilities with `@klikkflow/core`
 
 **Risk Level:** 🟡 MEDIUM (Runtime code changes, needs testing)
 
@@ -265,12 +265,12 @@ const handler = new CustomErrorHandler();
 const result = await handler.retry(() => fetchData());
 ```
 
-**After (@reporunner/core):**
+**After (@klikkflow/core):**
 ```typescript
 // Remove src/utils/errorHandler.ts
 
 // Usage
-import { ErrorHandler } from '@reporunner/core';
+import { ErrorHandler } from '@klikkflow/core';
 
 const errorHandler = new ErrorHandler({ maxRetries: 3 });
 const result = await errorHandler.handleAsync(
@@ -286,7 +286,7 @@ Find all usages:
 grep -r "CustomErrorHandler\|errorHandler\\.retry" src/
 ```
 
-Replace with `@reporunner/core` ErrorHandler.
+Replace with `@klikkflow/core` ErrorHandler.
 
 ### 2B: Logger Migration
 
@@ -307,10 +307,10 @@ console.error('Error fetching workflow:', error);
 console.warn('Rate limit approaching');
 ```
 
-**After (@reporunner/core):**
+**After (@klikkflow/core):**
 ```typescript
 // src/services/logger.ts
-import { Logger } from '@reporunner/core';
+import { Logger } from '@klikkflow/core';
 
 export const logger = new Logger('YourPackage', {
   minLevel: process.env.NODE_ENV === 'production' ? 'info' : 'debug'
@@ -330,7 +330,7 @@ Create a single logger instance for your package:
 
 ```typescript
 // src/services/logger.ts
-import { Logger } from '@reporunner/core';
+import { Logger } from '@klikkflow/core';
 
 export const logger = new Logger('YourPackageName');
 
@@ -385,10 +385,10 @@ if (!urlPattern.test(url)) {
 }
 ```
 
-**After (@reporunner/core):**
+**After (@klikkflow/core):**
 ```typescript
 // src/validators/common.ts
-import { Validator } from '@reporunner/core';
+import { Validator } from '@klikkflow/core';
 
 export const validators = {
   email: new Validator<string>()
@@ -420,7 +420,7 @@ Group common validators:
 
 ```typescript
 // src/validators/user.ts
-import { Validator, SchemaValidator } from '@reporunner/core';
+import { Validator, SchemaValidator } from '@klikkflow/core';
 
 export const userValidators = {
   email: new Validator<string>().required().email(),
@@ -465,7 +465,7 @@ export const userSchema = new SchemaValidator({
 
 ### Migration Checklist - Utilities
 
-- [ ] Install `@reporunner/core` dependency
+- [ ] Install `@klikkflow/core` dependency
 - [ ] Migrate error handling
   - [ ] Replace custom ErrorHandler
   - [ ] Update all try/catch blocks
@@ -552,10 +552,10 @@ Check if you're mixing old and new types:
 ```typescript
 // ❌ Mixing types
 import { Workflow } from './old-types';
-import type { IWorkflow } from '@reporunner/types';
+import type { IWorkflow } from '@klikkflow/types';
 
 // ✅ Use only new types
-import type { IWorkflow } from '@reporunner/types';
+import type { IWorkflow } from '@klikkflow/types';
 ```
 
 ### Issue: Validator Errors Not Showing
@@ -597,10 +597,10 @@ Error: Circular dependency detected
 Use type-only imports:
 ```typescript
 // ✅ Type-only import
-import type { IWorkflow } from '@reporunner/types';
+import type { IWorkflow } from '@klikkflow/types';
 
 // Not
-import { IWorkflow } from '@reporunner/types';
+import { IWorkflow } from '@klikkflow/types';
 ```
 
 ---
@@ -673,8 +673,8 @@ rm src/**/*.old.ts
 
 Track your migration progress:
 
-- [ ] **Type Migration**: All packages use `@reporunner/types`
-- [ ] **Utility Migration**: All packages use `@reporunner/core`
+- [ ] **Type Migration**: All packages use `@klikkflow/types`
+- [ ] **Utility Migration**: All packages use `@klikkflow/core`
 - [ ] **Code Reduction**: 15-20% reduction in codebase size
 - [ ] **Zero Type Drift**: Same types used everywhere
 - [ ] **Consistent Logging**: Structured logs across all packages
@@ -686,8 +686,8 @@ Track your migration progress:
 ## Need Help?
 
 - Check package READMEs:
-  - `packages/@reporunner/types/README.md`
-  - `packages/@reporunner/core/README.md`
+  - `packages/@klikkflow/types/README.md`
+  - `packages/@klikkflow/core/README.md`
 - Review code examples in the READMEs
 - Ask in team chat
 

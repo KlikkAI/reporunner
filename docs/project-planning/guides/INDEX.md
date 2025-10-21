@@ -1,6 +1,6 @@
 # Development & Planning Guides
 
-This directory contains comprehensive guides for implementing, optimizing, and extending the Reporunner platform. These guides provide structured approaches for major development initiatives and architectural improvements.
+This directory contains comprehensive guides for implementing, optimizing, and extending the KlikkFlow platform. These guides provide structured approaches for major development initiatives and architectural improvements.
 
 ## 📁 Guides in This Directory
 

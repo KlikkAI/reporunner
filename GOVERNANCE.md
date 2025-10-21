@@ -15,7 +15,7 @@
 - Releases via `pnpm release`
 
 ## Security
-- Report vulnerabilities to security@reporunner.com
+- Report vulnerabilities to security@klikkflow.com
 - See `SECURITY.md` for policy
 
 ## Code of Conduct

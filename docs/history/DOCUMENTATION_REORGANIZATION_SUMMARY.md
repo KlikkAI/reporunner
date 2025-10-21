@@ -139,7 +139,7 @@ Successfully reorganized 17 Markdown files from the project root into a well-str
 ## 📁 Final Directory Structure
 
 \`\`\`
-reporunner/
+klikkflow/
 ├── *.md (9 standard files)
 │   ├── README.md
 │   ├── CONTRIBUTING.md

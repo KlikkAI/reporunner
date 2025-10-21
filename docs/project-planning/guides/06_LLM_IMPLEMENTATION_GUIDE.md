@@ -2,7 +2,7 @@
 
 ## Overview
 
-This guide provides a structured approach for LLMs to implement the planned features in Reporunner, with clear dependencies, implementation order, and detailed specifications for each component.
+This guide provides a structured approach for LLMs to implement the planned features in KlikkFlow, with clear dependencies, implementation order, and detailed specifications for each component.
 
 ## Implementation Phases & Dependencies
 
@@ -27,13 +27,13 @@ graph TD
 
 ```bash
 # New package structure
-reporunner/
+klikkflow/
 ├── packages/
-│   ├── @reporunner/core/
-│   ├── @reporunner/api-types/
-│   ├── @reporunner/backend-common/
-│   ├── @reporunner/constants/
-│   └── @reporunner/database/
+│   ├── @klikkflow/core/
+│   ├── @klikkflow/api-types/
+│   ├── @klikkflow/backend-common/
+│   ├── @klikkflow/constants/
+│   └── @klikkflow/database/
 ├── turbo.json
 ├── pnpm-workspace.yaml
 └── package.json (root)
@@ -43,15 +43,15 @@ reporunner/
 
 1. Create root `pnpm-workspace.yaml`
 2. Setup `turbo.json` with build pipelines
-3. Move existing code to `@reporunner/core` package
-4. Create shared type definitions in `@reporunner/api-types`
-5. Setup dependency injection in `@reporunner/di`
+3. Move existing code to `@klikkflow/core` package
+4. Create shared type definitions in `@klikkflow/api-types`
+5. Setup dependency injection in `@klikkflow/di`
 
 **Key Files**:
 
 - `pnpm-workspace.yaml` - Workspace configuration
 - `turbo.json` - Build pipeline definitions
-- `packages/@reporunner/core/package.json` - Core package definition
+- `packages/@klikkflow/core/package.json` - Core package definition
 
 ### 1.2 Database Architecture (Week 2)
 
@@ -62,7 +62,7 @@ reporunner/
 **Files to Create**:
 
 ```typescript
-// packages/@reporunner/database/src/
+// packages/@klikkflow/database/src/
 ├── mongodb/
 │   ├── connection.ts
 │   ├── schemas/
@@ -98,7 +98,7 @@ reporunner/
 **Files to Create**:
 
 ```typescript
-// packages/@reporunner/auth/src/
+// packages/@klikkflow/auth/src/
 ├── jwt/
 │   ├── token-manager.ts
 │   └── token-validator.ts
@@ -139,7 +139,7 @@ reporunner/
 **Files to Create**:
 
 ```typescript
-// packages/@reporunner/integrations/src/
+// packages/@klikkflow/integrations/src/
 ├── base/
 │   ├── base-integration.ts
 │   ├── base-node.ts
@@ -169,7 +169,7 @@ reporunner/
 **Implementation Pattern per Integration**:
 
 ```typescript
-// packages/@reporunner/nodes-communication/src/gmail/
+// packages/@klikkflow/nodes-communication/src/gmail/
 ├── node.ts              # Node definition
 ├── properties.ts        # Form properties
 ├── credentials.ts       # Auth configuration
@@ -201,7 +201,7 @@ reporunner/
 **Files to Create**:
 
 ```typescript
-// packages/@reporunner/real-time/src/
+// packages/@klikkflow/real-time/src/
 ├── socket-server/
 │   ├── socket-manager.ts
 │   ├── room-manager.ts
@@ -253,7 +253,7 @@ reporunner/
 **Files to Create**:
 
 ```typescript
-// packages/@reporunner/debug-tools/src/
+// packages/@klikkflow/debug-tools/src/
 ├── debugger/
 │   ├── execution-debugger.ts
 │   ├── breakpoint-manager.ts
@@ -299,7 +299,7 @@ reporunner/
 **Files to Create**:
 
 ```typescript
-// packages/@reporunner/enterprise-security/src/
+// packages/@klikkflow/enterprise-security/src/
 ├── audit-logging/
 │   ├── audit-logger.ts
 │   ├── tamper-detection.ts
@@ -344,7 +344,7 @@ reporunner/
 **Files to Create**:
 
 ```typescript
-// packages/@reporunner/ai-assistant/src/
+// packages/@klikkflow/ai-assistant/src/
 ├── nlp/
 │   ├── intent-analyzer.ts
 │   ├── workflow-generator.ts

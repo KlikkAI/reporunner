@@ -1,8 +1,8 @@
-# Reporunner Project Planning Index
+# KlikkFlow Project Planning Index
 
 **Last Updated**: October 7, 2025
 
-This directory contains active development planning and strategic documentation for the Reporunner platform.
+This directory contains active development planning and strategic documentation for the KlikkFlow platform.
 
 ---
 
@@ -113,7 +113,7 @@ System design documentation, architectural patterns, and technical specification
    - Microservices architecture overview
    - Domain-driven design principles
    - Service mesh and API gateway
-   - Package architecture (@reporunner/* packages)
+   - Package architecture (@klikkflow/* packages)
    - Event-driven communication (RabbitMQ)
    - CQRS and event sourcing patterns
    - Horizontal scaling strategies
@@ -129,7 +129,7 @@ System design documentation, architectural patterns, and technical specification
    - Agent orchestration patterns
 
 **Architecture Highlights:**
-- 📦 28+ scoped packages (@reporunner/*)
+- 📦 28+ scoped packages (@klikkflow/*)
 - 🔄 Event-driven microservices
 - 🗄️ Hybrid database (MongoDB + PostgreSQL)
 - 🔐 Enterprise security (SSO, RBAC, audit logging)
@@ -322,6 +322,6 @@ Visual documentation using PlantUML for architecture, API flows, and workflow ex
 
 ---
 
-**Maintained By**: Reporunner Development Team
+**Maintained By**: KlikkFlow Development Team
 **Format**: Markdown + PlantUML
 **Encoding**: UTF-8

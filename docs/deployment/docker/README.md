@@ -1,6 +1,6 @@
 # Docker Deployment Documentation
 
-Complete Docker deployment documentation for Reporunner workflow automation platform.
+Complete Docker deployment documentation for KlikkFlow workflow automation platform.
 
 **Last Updated**: October 21, 2025
 
@@ -25,7 +25,7 @@ Complete Docker deployment documentation for Reporunner workflow automation plat
   - Size optimization techniques
 
 - **[COMPARISON.md](./COMPARISON.md)** - Docker distribution comparison
-  - Reporunner vs n8n vs Sim Studio
+  - KlikkFlow vs n8n vs Sim Studio
   - Architecture analysis (22 containers max)
   - Profile-based system benefits
   - Production readiness comparison
@@ -44,7 +44,7 @@ Complete Docker deployment documentation for Reporunner workflow automation plat
 ### One-Command Installation (Recommended)
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/KlikkAI/reporunner/main/scripts/install.sh | sh
+curl -fsSL https://raw.githubusercontent.com/KlikkAI/klikkflow/main/scripts/install.sh | sh
 ```
 
 **What it does:**
@@ -55,7 +55,7 @@ curl -fsSL https://raw.githubusercontent.com/KlikkAI/reporunner/main/scripts/ins
 - ✅ Waits for health checks
 - ✅ Opens http://localhost:3000
 
-**Default credentials:** `admin@reporunner.local` / `admin123`
+**Default credentials:** `admin@klikkflow.local` / `admin123`
 
 For more details, see [Root DOCKER.md](../../../DOCKER.md).
 
@@ -63,7 +63,7 @@ For more details, see [Root DOCKER.md](../../../DOCKER.md).
 
 ## 📦 Docker Profiles
 
-Reporunner uses Docker Compose profiles for progressive complexity:
+KlikkFlow uses Docker Compose profiles for progressive complexity:
 
 ### Available Profiles
 
@@ -151,8 +151,8 @@ JWT_SECRET=<generated-secret>
 ENCRYPTION_KEY=<32-char-key>
 
 # Databases
-MONGODB_URI=mongodb://mongo:27017/reporunner
-POSTGRES_URI=postgresql://postgres:password@postgres:5432/reporunner
+MONGODB_URI=mongodb://mongo:27017/klikkflow
+POSTGRES_URI=postgresql://postgres:password@postgres:5432/klikkflow
 REDIS_URL=redis://redis:6379
 
 # AI Services (optional)
@@ -306,7 +306,7 @@ For more troubleshooting, see [Root DOCKER.md](../../../DOCKER.md#-troubleshooti
 - [Multi-stage Builds](https://docs.docker.com/build/building/multi-stage/)
 - [Health Checks](https://docs.docker.com/engine/reference/builder/#healthcheck)
 
-### Reporunner Resources
+### KlikkFlow Resources
 - [Contributing Guide](../../../CONTRIBUTING.md)
 - [Main README](../../../README.md)
 - [Architecture Documentation](../../project-planning/architecture/ENTERPRISE_ARCHITECTURE.md)
@@ -325,5 +325,5 @@ For more troubleshooting, see [Root DOCKER.md](../../../DOCKER.md#-troubleshooti
 ---
 
 **Last Updated**: October 21, 2025
-**Maintained By**: Reporunner DevOps Team
-**Questions?** Open an issue at [GitHub Issues](https://github.com/reporunner/reporunner/issues)
+**Maintained By**: KlikkFlow DevOps Team
+**Questions?** Open an issue at [GitHub Issues](https://github.com/klikkflow/klikkflow/issues)

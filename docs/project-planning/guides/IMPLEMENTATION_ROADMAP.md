@@ -44,7 +44,7 @@ rm packages/frontend/src/core/api/WorkflowApiService.ts
 ### **Priority 3: Fix Node Registry Chaos**
 ```typescript
 // Use the new NodeRegistry (already created)
-// packages/@reporunner/nodes/src/registry/NodeRegistry.ts
+// packages/@klikkflow/nodes/src/registry/NodeRegistry.ts
 
 // Deprecate old registries:
 // - packages/frontend/src/core/nodes/registry.ts
@@ -58,16 +58,16 @@ rm packages/frontend/src/core/api/WorkflowApiService.ts
 #### **Step 1: Types & Constants**
 ```bash
 # Consolidate all types and constants
-mkdir -p packages/@reporunner/types/src/constants
-mkdir -p packages/@reporunner/types/src/validation
+mkdir -p packages/@klikkflow/types/src/constants
+mkdir -p packages/@klikkflow/types/src/validation
 
 # Move constants
-mv packages/@reporunner/constants/* packages/@reporunner/types/src/constants/
-rm -rf packages/@reporunner/constants
+mv packages/@klikkflow/constants/* packages/@klikkflow/types/src/constants/
+rm -rf packages/@klikkflow/constants
 
 # Move validation
-mv packages/@reporunner/validation/* packages/@reporunner/types/src/validation/
-rm -rf packages/@reporunner/validation
+mv packages/@klikkflow/validation/* packages/@klikkflow/types/src/validation/
+rm -rf packages/@klikkflow/validation
 
 # Update package.json references
 ```
@@ -75,67 +75,67 @@ rm -rf packages/@reporunner/validation
 #### **Step 2: Core Services**
 ```bash
 # Consolidate core functionality
-mkdir -p packages/@reporunner/core/src/services
-mkdir -p packages/@reporunner/core/src/utils
+mkdir -p packages/@klikkflow/core/src/services
+mkdir -p packages/@klikkflow/core/src/utils
 
 # Move backend-common
-mv packages/@reporunner/backend-common/* packages/@reporunner/core/src/
-rm -rf packages/@reporunner/backend-common
+mv packages/@klikkflow/backend-common/* packages/@klikkflow/core/src/
+rm -rf packages/@klikkflow/backend-common
 
 # Move services
-mv packages/@reporunner/services/* packages/@reporunner/core/src/services/
-rm -rf packages/@reporunner/services
+mv packages/@klikkflow/services/* packages/@klikkflow/core/src/services/
+rm -rf packages/@klikkflow/services
 ```
 
 #### **Step 3: Security & Auth**
 ```bash
 # Consolidate security
-mkdir -p packages/@reporunner/security/src/auth
-mkdir -p packages/@reporunner/security/src/rbac
+mkdir -p packages/@klikkflow/security/src/auth
+mkdir -p packages/@klikkflow/security/src/rbac
 
 # Move auth into security
-mv packages/@reporunner/auth/* packages/@reporunner/security/src/auth/
-rm -rf packages/@reporunner/auth
+mv packages/@klikkflow/auth/* packages/@klikkflow/security/src/auth/
+rm -rf packages/@klikkflow/auth
 ```
 
 #### **Step 4: Workflow Engine**
 ```bash
 # Consolidate workflow functionality
-mkdir -p packages/@reporunner/engine/src/workflow
-mkdir -p packages/@reporunner/engine/src/execution
+mkdir -p packages/@klikkflow/engine/src/workflow
+mkdir -p packages/@klikkflow/engine/src/execution
 
 # Move workflow packages
-mv packages/@reporunner/workflow/* packages/@reporunner/engine/src/workflow/
-mv packages/@reporunner/workflow-engine/* packages/@reporunner/engine/src/execution/
-rm -rf packages/@reporunner/workflow
-rm -rf packages/@reporunner/workflow-engine
+mv packages/@klikkflow/workflow/* packages/@klikkflow/engine/src/workflow/
+mv packages/@klikkflow/workflow-engine/* packages/@klikkflow/engine/src/execution/
+rm -rf packages/@klikkflow/workflow
+rm -rf packages/@klikkflow/workflow-engine
 ```
 
 #### **Step 5: Platform Services**
 ```bash
 # Consolidate platform functionality
-mkdir -p packages/@reporunner/platform/src/monitoring
-mkdir -p packages/@reporunner/platform/src/realtime
+mkdir -p packages/@klikkflow/platform/src/monitoring
+mkdir -p packages/@klikkflow/platform/src/realtime
 
 # Move monitoring and real-time
-mv packages/@reporunner/monitoring/* packages/@reporunner/platform/src/monitoring/
-mv packages/@reporunner/real-time/* packages/@reporunner/platform/src/realtime/
-rm -rf packages/@reporunner/monitoring
-rm -rf packages/@reporunner/real-time
+mv packages/@klikkflow/monitoring/* packages/@klikkflow/platform/src/monitoring/
+mv packages/@klikkflow/real-time/* packages/@klikkflow/platform/src/realtime/
+rm -rf packages/@klikkflow/monitoring
+rm -rf packages/@klikkflow/real-time
 ```
 
 ### **Final Package Structure:**
 ```
-@reporunner/types          # All types, schemas, constants, validation
-@reporunner/core           # Business logic, utilities, services
-@reporunner/database       # Database layer, models, migrations
-@reporunner/security       # RBAC, audit, auth, encryption
-@reporunner/ai             # AI services, optimization
-@reporunner/nodes          # Node definitions, registry, execution
-@reporunner/api            # REST API, GraphQL, webhooks
-@reporunner/engine         # Workflow execution engine
-@reporunner/integrations   # External service connectors
-@reporunner/ui             # Shared UI components
+@klikkflow/types          # All types, schemas, constants, validation
+@klikkflow/core           # Business logic, utilities, services
+@klikkflow/database       # Database layer, models, migrations
+@klikkflow/security       # RBAC, audit, auth, encryption
+@klikkflow/ai             # AI services, optimization
+@klikkflow/nodes          # Node definitions, registry, execution
+@klikkflow/api            # REST API, GraphQL, webhooks
+@klikkflow/engine         # Workflow execution engine
+@klikkflow/integrations   # External service connectors
+@klikkflow/ui             # Shared UI components
 frontend                   # React app (UI only)
 backend                    # Express server (API only)
 ```
@@ -186,7 +186,7 @@ backend                    # Express server (API only)
 ### **Implement Simple Node Registry:**
 ```typescript
 // Use the NodeRegistry we already created
-import { NodeRegistry } from '@reporunner/nodes';
+import { NodeRegistry } from '@klikkflow/nodes';
 
 const nodeRegistry = new NodeRegistry();
 
@@ -202,7 +202,7 @@ nodeRegistry.register(ifNode, ifNode.execute);
 
 ### **Create Node Definitions:**
 ```
-@reporunner/nodes/src/definitions/
+@klikkflow/nodes/src/definitions/
 ├── triggers/
 │   ├── webhook.node.ts
 │   ├── schedule.node.ts
@@ -333,8 +333,8 @@ jobs:
     steps:
       - name: Deploy backend
         run: |
-          docker build -t reporunner-backend ./packages/backend
-          docker push $REGISTRY/reporunner-backend
+          docker build -t klikkflow-backend ./packages/backend
+          docker push $REGISTRY/klikkflow-backend
 
       - name: Deploy frontend
         run: |
@@ -401,4 +401,4 @@ registry.on('node:execute:complete', (event) => {
 2. **Update build scripts and CI/CD**
 3. **Comprehensive testing**
 
-This roadmap will transform Reporunner into a **simpler, more powerful, scalable, manageable, and debuggable** platform while maintaining all current functionality and improving performance significantly.
+This roadmap will transform KlikkFlow into a **simpler, more powerful, scalable, manageable, and debuggable** platform while maintaining all current functionality and improving performance significantly.

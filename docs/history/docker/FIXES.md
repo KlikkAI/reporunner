@@ -3,13 +3,13 @@
 ## ✅ **FIXED FILES**
 
 ### 1. **Dockerfile** (Production) ✅
-**File**: `/home/margon/Reporunner/reporunner/Dockerfile`
+**File**: `/home/margon/KlikkFlow/klikkflow/Dockerfile`
 
 **Key Fixes Applied:**
 - ✅ **Fixed COPY patterns**: Replaced wildcard patterns with explicit paths for all 12 packages
 - ✅ **Fixed entry point**: Changed from `index.js` to `server.js` (line 106)
 - ✅ **Removed non-existent path**: Removed `/app/dist` copy that doesn't exist
-- ✅ **Added all @reporunner packages**: Explicit COPY for all 9 scoped packages
+- ✅ **Added all @klikkflow packages**: Explicit COPY for all 9 scoped packages
 - ✅ **Added dist directory copies**: Proper copying of built packages in runtime stage
 - ✅ **Updated comments**: Clear documentation of 12-package structure
 
@@ -24,7 +24,7 @@ Multi-stage build:
 ```
 
 ### 2. **Dockerfile.dev** (Development) ✅
-**File**: `/home/margon/Reporunner/reporunner/Dockerfile.dev`
+**File**: `/home/margon/KlikkFlow/klikkflow/Dockerfile.dev`
 
 **Key Fixes Applied:**
 - ✅ **Fixed package.json copying**: Explicit paths for all 12 packages
@@ -32,7 +32,7 @@ Multi-stage build:
 - ✅ **Development optimizations**: Includes dev tools (git, curl, bash, vim)
 
 ### 3. **.dockerignore** ✅
-**File**: `/home/margon/Reporunner/reporunner/.dockerignore`
+**File**: `/home/margon/KlikkFlow/klikkflow/.dockerignore`
 
 **Critical Fix:**
 - ✅ **Removed pnpm-lock.yaml exclusion**: Now properly included for `--frozen-lockfile`
@@ -46,7 +46,7 @@ Multi-stage build:
 - Test results and reports
 
 ### 4. **docker-copy-packages.sh** ✅ NEW
-**File**: `/home/margon/Reporunner/reporunner/docker-copy-packages.sh`
+**File**: `/home/margon/KlikkFlow/klikkflow/docker-copy-packages.sh`
 
 **Purpose**: Helper script for maintaining Docker builds when package structure changes
 
@@ -65,17 +65,17 @@ Multi-stage build:
 ✅ packages/frontend/
 ✅ packages/shared/
 
-### @reporunner Scoped Packages (9):
-✅ packages/@reporunner/ai/
-✅ packages/@reporunner/auth/
-✅ packages/@reporunner/cli/
-✅ packages/@reporunner/core/
-✅ packages/@reporunner/enterprise/
-✅ packages/@reporunner/integrations/
-✅ packages/@reporunner/platform/
-✅ packages/@reporunner/services/
-✅ packages/@reporunner/validation/
-✅ packages/@reporunner/workflow/
+### @klikkflow Scoped Packages (9):
+✅ packages/@klikkflow/ai/
+✅ packages/@klikkflow/auth/
+✅ packages/@klikkflow/cli/
+✅ packages/@klikkflow/core/
+✅ packages/@klikkflow/enterprise/
+✅ packages/@klikkflow/integrations/
+✅ packages/@klikkflow/platform/
+✅ packages/@klikkflow/services/
+✅ packages/@klikkflow/validation/
+✅ packages/@klikkflow/workflow/
 
 **Total**: 12 packages (3 main + 9 scoped)
 
@@ -87,7 +87,7 @@ Multi-stage build:
 **Before:**
 ```dockerfile
 COPY packages/*/package.json ./packages/*/
-COPY packages/@reporunner/*/package.json ./packages/@reporunner/*/
+COPY packages/@klikkflow/*/package.json ./packages/@klikkflow/*/
 ```
 
 **After:**
@@ -120,16 +120,16 @@ COPY packages/frontend/package.json ./packages/frontend/
 ### Production Build:
 ```bash
 # Build production image
-docker build -t reporunner:latest -f Dockerfile .
+docker build -t klikkflow:latest -f Dockerfile .
 
 # Run production container
-docker run -p 3000:3000 reporunner:latest
+docker run -p 3000:3000 klikkflow:latest
 ```
 
 ### Development Build:
 ```bash
 # Build development image
-docker build -t reporunner:dev -f Dockerfile.dev .
+docker build -t klikkflow:dev -f Dockerfile.dev .
 
 # Run with docker-compose
 docker-compose -f docker-compose.dev.yml up
@@ -181,12 +181,12 @@ docker-compose -f docker-compose.dev.yml up
 
 1. **Test the build**:
    ```bash
-   docker build -t reporunner:test .
+   docker build -t klikkflow:test .
    ```
 
 2. **If build succeeds**, test the container:
    ```bash
-   docker run -p 3000:3000 -e NODE_ENV=production reporunner:test
+   docker run -p 3000:3000 -e NODE_ENV=production klikkflow:test
    ```
 
 3. **Test with docker-compose**:

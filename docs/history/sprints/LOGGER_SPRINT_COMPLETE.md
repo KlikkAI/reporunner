@@ -10,7 +10,7 @@
 
 ## Summary
 
-Successfully migrated **23 console statements** across **9 files** to use centralized `Logger` from `@reporunner/core`. This establishes consistent, structured logging throughout the frontend application.
+Successfully migrated **23 console statements** across **9 files** to use centralized `Logger` from `@klikkflow/core`. This establishes consistent, structured logging throughout the frontend application.
 
 ---
 
@@ -37,7 +37,7 @@ Successfully migrated **23 console statements** across **9 files** to use centra
 
 **Step 1: Import Logger**
 ```typescript
-import { Logger } from '@reporunner/core';
+import { Logger } from '@klikkflow/core';
 ```
 
 **Step 2: Create Service-Level Logger**
@@ -182,7 +182,7 @@ logger.error('Failed to save credential', { error, credentialType });
 ✅ **Semantic log levels** (debug/info/warn/error) properly used
 ✅ **Zero errors** introduced (verified with type-check)
 ✅ **Production-ready** logging infrastructure
-✅ **Type-safe** Logger imports from @reporunner/core
+✅ **Type-safe** Logger imports from @klikkflow/core
 ✅ **Fast execution** (~10 min per file average)
 
 ---
@@ -217,7 +217,7 @@ console.error('Failed to save credential:', error);
 ### After Logger Sprint
 ```typescript
 // Import centralized Logger
-import { Logger } from '@reporunner/core';
+import { Logger } from '@klikkflow/core';
 const logger = new Logger('ServiceName');
 
 // Structured logging with semantic levels
@@ -242,13 +242,13 @@ logger.error('Failed to save credential', { error, credentialType });
 With Logger Sprint complete, the next phase is **Type Migration Sprint**:
 
 ### Target Files (3-4 files, 2-3 hours)
-1. **credentials.ts** (8.9 KB) - Extend `ICredential` from @reporunner/types
+1. **credentials.ts** (8.9 KB) - Extend `ICredential` from @klikkflow/types
 2. **workflow.ts** (3.1 KB) - Extend `IWorkflow` types
 3. **edge.ts** (5.2 KB) - Extend `IEdge` with React Flow types
 
 ### Expected Impact
 - **Code Reduction**: ~17 KB → ~10 KB (40% reduction)
-- **Type Centralization**: Baseline types from @reporunner/types
+- **Type Centralization**: Baseline types from @klikkflow/types
 - **Pattern**: "Extend, don't replace" (proven successful with authentication.ts)
 
 ---
