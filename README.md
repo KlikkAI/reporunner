@@ -645,6 +645,52 @@ var execution = await client.ExecuteWorkflowAsync("workflow-123",
     });
 ```
 
+## 📚 Documentation
+
+Comprehensive documentation is available to help you get the most out of Reporunner:
+
+### 🚀 Getting Started
+- **[DOCKER.md](DOCKER.md)** - One-command Docker installation guide
+- **[docs/user-guide/GETTING_STARTED.md](docs/user-guide/GETTING_STARTED.md)** - Your first workflow tutorial
+- **[docs/user-guide/INTEGRATIONS_GUIDE.md](docs/user-guide/INTEGRATIONS_GUIDE.md)** - Available integrations and how to use them
+
+### 🏗️ Deployment & Operations
+- **[docs/deployment/](docs/deployment/)** - Complete deployment guides
+  - [Docker Deployment](docs/deployment/docker/README.md) - Profile-based Docker deployments
+  - [Kubernetes](docs/deployment/kubernetes/README.md) - K8s + Helm charts
+  - [Cloud Providers](docs/deployment/cloud-providers/README.md) - AWS, GCP, Azure
+- **[docs/operations/](docs/operations/)** - Operations guides
+  - [Monitoring](docs/operations/monitoring/README.md) - Prometheus, Grafana dashboards
+  - [Logging](docs/operations/logging/README.md) - ELK stack setup
+  - [Backup & Recovery](docs/operations/backup-recovery/README.md) - Data protection
+
+### 🔧 Development
+- **[CLAUDE.md](CLAUDE.md)** - Comprehensive AI assistant context (architecture, commands, guidelines)
+- **[docs/development/](docs/development/)** - Development guides
+  - [Code Quality](docs/development/CODE_QUALITY.md) - Standards and best practices
+  - [Development Setup](docs/development/README.md) - Local environment setup
+- **[CONTRIBUTING.md](CONTRIBUTING.md)** - Contribution guidelines
+
+### 🎨 Features
+- **[docs/features/PLUGIN_MARKETPLACE.md](docs/features/PLUGIN_MARKETPLACE.md)** - Plugin system documentation
+- **[docs/features/AI_WORKFLOW_OPTIMIZATION.md](docs/features/AI_WORKFLOW_OPTIMIZATION.md)** - AI optimization features
+
+### 📖 API Reference
+- **[docs/api/](docs/api/)** - API documentation
+  - [OpenAPI Specification](docs/api/OPENAPI_README.md) - 30+ endpoints
+  - [Plugin Marketplace API](docs/api/PLUGIN_MARKETPLACE_API.md)
+  - [Workflow Optimization API](docs/api/WORKFLOW_OPTIMIZATION_API.md)
+
+### 📋 Planning & Architecture
+- **[docs/project-planning/](docs/project-planning/)** - Project roadmaps and architecture
+  - [Active Roadmap](docs/project-planning/roadmaps/ACTIVE_ROADMAP.md) - Current priorities
+  - [Enterprise Architecture](docs/project-planning/architecture/ENTERPRISE_ARCHITECTURE.md) - System design
+  - [Platform Gap Analysis](docs/project-planning/PLATFORM_GAP_ANALYSIS_2025.md) - Status & priorities
+
+For the complete documentation index, see **[docs/README.md](docs/README.md)**.
+
+---
+
 ## 🤝 Contributing
 
 We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.

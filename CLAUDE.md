@@ -636,7 +636,7 @@ CODE_OF_CONDUCT.md        # Community code of conduct
 GOVERNANCE.md             # Project governance
 MAINTAINERS.md            # Team structure
 CHANGELOG.md              # Version history
-COMPLETION_ROADMAP.md     # Package consolidation progress
+LICENSE                   # MIT License
 ```
 
 ### Documentation Directories
@@ -649,7 +649,9 @@ COMPLETION_ROADMAP.md     # Package consolidation progress
 
 **docs/history/** - Historical documentation and completed work
 - `phases/` - Phase implementation summaries (B, C, D)
-- `consolidation/` - Package consolidation history
+- `consolidation/` - Package consolidation history (includes COMPLETION_ROADMAP.md)
+- `docker/` - Docker configuration fixes history
+- `maintenance/` - Maintenance updates and file changes
 - `analysis/` - Architectural analyses
 - `migrations/` - Monorepo migration guides
 - `security/` - Security audit reports
@@ -662,7 +664,10 @@ COMPLETION_ROADMAP.md     # Package consolidation progress
 - Workflow Optimization API
 
 **docs/deployment/** - Deployment guides
-- Docker, Kubernetes, cloud providers (AWS, GCP, Azure)
+- `README.md` - Complete deployment overview
+- `docker/` - Docker deployment documentation (COMPARISON.md, OPENSOURCE_GUIDE.md)
+- `kubernetes/` - Kubernetes + Helm deployment
+- `cloud-providers/` - AWS, GCP, Azure Terraform modules
 
 **docs/operations/** - Operations guides
 - Monitoring, logging, tracing, scaling, backup-recovery
