@@ -29,6 +29,7 @@ export const Header: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [closeTimeout, setCloseTimeout] = useState<NodeJS.Timeout | null>(null);
 
   // Handle scroll effect
   useEffect(() => {
@@ -45,6 +46,15 @@ export const Header: React.FC = () => {
     setActiveDropdown(null);
   }, []);
 
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (closeTimeout) {
+        clearTimeout(closeTimeout);
+      }
+    };
+  }, [closeTimeout]);
+
   const handleAuth = () => {
     if (isAuthenticated) {
       navigate('/app/dashboard');
@@ -59,6 +69,24 @@ export const Header: React.FC = () => {
     } else {
       navigate('/register');
     }
+  };
+
+  // Handle dropdown hover with delay
+  const handleDropdownEnter = (label: string) => {
+    // Clear any pending close timeout
+    if (closeTimeout) {
+      clearTimeout(closeTimeout);
+      setCloseTimeout(null);
+    }
+    setActiveDropdown(label);
+  };
+
+  const handleDropdownLeave = () => {
+    // Delay closing the dropdown by 200ms
+    const timeout = setTimeout(() => {
+      setActiveDropdown(null);
+    }, 200);
+    setCloseTimeout(timeout);
   };
 
   const menuItems = [
@@ -205,8 +233,8 @@ export const Header: React.FC = () => {
               <div
                 key={index}
                 className="relative group"
-                onMouseEnter={() => setActiveDropdown(menu.label)}
-                onMouseLeave={() => setActiveDropdown(null)}
+                onMouseEnter={() => handleDropdownEnter(menu.label)}
+                onMouseLeave={handleDropdownLeave}
               >
                 <button className="flex items-center gap-1 text-gray-700 hover:text-blue-600 font-medium transition-colors py-2">
                   {menu.label}
@@ -215,30 +243,32 @@ export const Header: React.FC = () => {
 
                 {/* Dropdown */}
                 {activeDropdown === menu.label && (
-                  <div className="absolute top-full left-0 mt-2 w-80 bg-white rounded-xl shadow-xl border border-gray-200 py-4 z-50">
-                    <div className="px-4 pb-2 mb-2 border-b border-gray-100">
-                      <h3 className="font-semibold text-gray-900">{menu.label}</h3>
-                    </div>
-                    {menu.items.map((item, itemIndex) => (
-                      <Link
-                        key={itemIndex}
-                        to={item.href}
-                        target={item.external ? '_blank' : undefined}
-                        rel={item.external ? 'noopener noreferrer' : undefined}
-                        className="flex items-start gap-3 px-4 py-3 hover:bg-gray-50 transition-colors group"
-                      >
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2">
-                            <span className="font-medium text-gray-900 group-hover:text-blue-600">
-                              {item.name}
-                            </span>
-                            {item.external && <ExternalLink className="w-3 h-3 text-gray-400" />}
+                  <div className="absolute top-full left-0 -mt-1 pt-3 w-80 z-50">
+                    <div className="bg-white rounded-xl shadow-xl border border-gray-200 py-4">
+                      <div className="px-4 pb-2 mb-2 border-b border-gray-100">
+                        <h3 className="font-semibold text-gray-900">{menu.label}</h3>
+                      </div>
+                      {menu.items.map((item, itemIndex) => (
+                        <Link
+                          key={itemIndex}
+                          to={item.href}
+                          target={item.external ? '_blank' : undefined}
+                          rel={item.external ? 'noopener noreferrer' : undefined}
+                          className="flex items-start gap-3 px-4 py-3 hover:bg-gray-50 transition-colors group"
+                        >
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2">
+                              <span className="font-medium text-gray-900 group-hover:text-blue-600">
+                                {item.name}
+                              </span>
+                              {item.external && <ExternalLink className="w-3 h-3 text-gray-400" />}
+                            </div>
+                            <p className="text-sm text-gray-500 mt-1">{item.description}</p>
                           </div>
-                          <p className="text-sm text-gray-500 mt-1">{item.description}</p>
-                        </div>
-                        <ArrowRight className="w-4 h-4 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity mt-1" />
-                      </Link>
-                    ))}
+                          <ArrowRight className="w-4 h-4 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity mt-1" />
+                        </Link>
+                      ))}
+                    </div>
                   </div>
                 )}
               </div>
