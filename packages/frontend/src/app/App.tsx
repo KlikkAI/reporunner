@@ -5,6 +5,8 @@ import { nodeRegistry } from '@/core';
 import { logger } from '@/core/services/LoggingService';
 import GlobalErrorBoundary from '@/design-system/components/ErrorBoundary/GlobalErrorBoundary';
 import ProtectedRoute from './components/Auth/ProtectedRoute';
+// Documentation components
+import { DocsLayout } from './components/Documentation';
 import Layout from './components/Layout/Layout';
 import { RouteTransition } from './components/RouteTransition';
 import About from './pages/About';
@@ -13,6 +15,16 @@ import Contact from './pages/Contact';
 import Credentials from './pages/Credentials';
 import Dashboard from './pages/Dashboard';
 import Documentation from './pages/Documentation';
+import {
+  CloudProviders,
+  DockerDeployment,
+  GettingStarted,
+  IntegrationsGuide,
+  KubernetesDeployment,
+  PluginMarketplaceAPI,
+  WorkflowExamples,
+  WorkflowOptimizationAPI,
+} from './pages/docs';
 import Enterprise from './pages/Enterprise';
 import Executions from './pages/Executions';
 import Features from './pages/Features';
@@ -62,7 +74,26 @@ function App() {
 
           {/* Developer Pages */}
           <Route path="/documentation" element={<Documentation />} />
-          <Route path="/docs" element={<Documentation />} />
+
+          {/* Documentation Routes with Layout */}
+          <Route path="/docs" element={<DocsLayout />}>
+            <Route index element={<Navigate to="/documentation" replace />} />
+
+            {/* Getting Started */}
+            <Route path="getting-started" element={<GettingStarted />} />
+            <Route path="integrations-guide" element={<IntegrationsGuide />} />
+            <Route path="workflow-examples" element={<WorkflowExamples />} />
+
+            {/* Deployment */}
+            <Route path="deployment/docker" element={<DockerDeployment />} />
+            <Route path="deployment/kubernetes" element={<KubernetesDeployment />} />
+            <Route path="deployment/cloud" element={<CloudProviders />} />
+
+            {/* API Reference */}
+            <Route path="api/plugin-marketplace" element={<PluginMarketplaceAPI />} />
+            <Route path="api/workflow-optimization" element={<WorkflowOptimizationAPI />} />
+          </Route>
+
           <Route path="/api-reference" element={<APIReference />} />
           <Route path="/api" element={<APIReference />} />
 

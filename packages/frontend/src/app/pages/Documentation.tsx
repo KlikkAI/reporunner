@@ -6,9 +6,7 @@
  */
 
 import {
-  ArrowRight,
   BookOpen,
-  Brain,
   ChevronRight,
   Clock,
   Cloud,
@@ -19,21 +17,20 @@ import {
   Layers,
   Play,
   Search,
-  Settings,
-  Shield,
   Star,
   Users,
-  Video,
   Webhook,
 } from 'lucide-react';
 import type React from 'react';
 import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { Footer } from '../components/Landing/Footer';
 import { Header } from '../components/Landing/Header';
 
 export const Documentation: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('getting-started');
+  const navigate = useNavigate();
 
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
@@ -63,21 +60,18 @@ export const Documentation: React.FC = () => {
 
   const quickLinks = [
     { title: 'Quick Start', icon: Play, url: '/docs/getting-started' },
-    { title: 'API Reference', icon: Code, url: '/docs/api' },
-    { title: 'Video Tutorials', icon: Video, url: '/docs/videos' },
-    { title: 'GitHub', icon: ExternalLink, url: 'https://github.com/reporunner' },
+    { title: 'Integrations', icon: Layers, url: '/docs/integrations-guide' },
+    { title: 'Deployment', icon: Cloud, url: '/docs/deployment/docker' },
+    { title: 'GitHub', icon: ExternalLink, url: 'https://github.com/KlikkAI/reporunner' },
   ];
 
   const categories = [
-    { id: 'getting-started', name: 'Getting Started', icon: Play },
-    { id: 'installation', name: 'Installation', icon: Download },
-    { id: 'workflows', name: 'Workflows', icon: GitBranch },
-    { id: 'nodes', name: 'Nodes & Integrations', icon: Layers },
-    { id: 'ai-ml', name: 'AI & ML', icon: Brain },
-    { id: 'enterprise', name: 'Enterprise', icon: Shield },
-    { id: 'deployment', name: 'Deployment', icon: Cloud },
-    { id: 'api', name: 'API Reference', icon: Code },
-    { id: 'sdk', name: 'SDK & Extensions', icon: Settings },
+    { id: 'getting-started', name: 'Getting Started', icon: Play, path: '/docs/getting-started' },
+    { id: 'installation', name: 'Installation', icon: Download, path: '/docs/deployment/docker' },
+    { id: 'workflows', name: 'Workflows', icon: GitBranch, path: '/docs/workflow-examples' },
+    { id: 'nodes', name: 'Nodes & Integrations', icon: Layers, path: '/docs/integrations-guide' },
+    { id: 'deployment', name: 'Deployment', icon: Cloud, path: '/docs/deployment/docker' },
+    { id: 'api', name: 'API Reference', icon: Code, path: '/docs/api/plugin-marketplace' },
   ];
 
   const documentation = {
@@ -90,185 +84,137 @@ export const Documentation: React.FC = () => {
         difficulty: 'Beginner',
         popular: true,
         lastUpdated: '2 days ago',
+        path: '/docs/getting-started',
       },
       {
-        title: 'Core Concepts',
-        description: 'Understanding workflows, nodes, and executions',
-        type: 'guide',
-        readTime: '10 min',
-        difficulty: 'Beginner',
-        popular: true,
-        lastUpdated: '1 week ago',
-      },
-      {
-        title: 'Your First Workflow',
-        description: 'Build your first automated workflow step by step',
+        title: 'Workflow Examples',
+        description: 'Learn from example workflows - AI automation, data processing, and more',
         type: 'tutorial',
         readTime: '15 min',
         difficulty: 'Beginner',
         popular: true,
         lastUpdated: '3 days ago',
+        path: '/docs/workflow-examples',
       },
       {
-        title: 'Workflow Editor Overview',
-        description: 'Navigate the visual workflow editor like a pro',
+        title: 'Integrations Guide',
+        description: 'Complete guide to available integrations and authentication',
         type: 'guide',
-        readTime: '8 min',
+        readTime: '10 min',
         difficulty: 'Beginner',
-        popular: false,
-        lastUpdated: '5 days ago',
+        popular: true,
+        lastUpdated: '1 week ago',
+        path: '/docs/integrations-guide',
       },
     ],
     installation: [
       {
-        title: 'Docker Installation',
-        description: 'Deploy Reporunner using Docker Compose',
+        title: 'Docker Deployment',
+        description: 'Deploy Reporunner using Docker Compose - Quick start and configuration',
         type: 'guide',
         readTime: '10 min',
         difficulty: 'Beginner',
         popular: true,
         lastUpdated: '1 day ago',
+        path: '/docs/deployment/docker',
       },
       {
         title: 'Kubernetes Deployment',
-        description: 'Production deployment with Kubernetes and Helm',
+        description: 'Production deployment with Kubernetes and Helm charts',
         type: 'guide',
         readTime: '20 min',
         difficulty: 'Intermediate',
         popular: true,
         lastUpdated: '1 week ago',
+        path: '/docs/deployment/kubernetes',
       },
       {
-        title: 'Manual Installation',
-        description: 'Install from source for custom configurations',
+        title: 'Cloud Providers',
+        description: 'Deploy on AWS, GCP, or Azure with Terraform modules',
         type: 'guide',
         readTime: '30 min',
         difficulty: 'Advanced',
         popular: false,
         lastUpdated: '2 weeks ago',
-      },
-      {
-        title: 'Environment Variables',
-        description: 'Complete reference for environment configuration',
-        type: 'reference',
-        readTime: '5 min',
-        difficulty: 'Intermediate',
-        popular: false,
-        lastUpdated: '4 days ago',
+        path: '/docs/deployment/cloud',
       },
     ],
     workflows: [
       {
-        title: 'Workflow Fundamentals',
-        description: 'Understanding workflow structure and execution',
-        type: 'guide',
-        readTime: '12 min',
+        title: 'Workflow Examples',
+        description: 'Learn from example workflows - AI automation and data processing',
+        type: 'tutorial',
+        readTime: '15 min',
         difficulty: 'Beginner',
         popular: true,
-        lastUpdated: '1 week ago',
-      },
-      {
-        title: 'Advanced Workflow Patterns',
-        description: 'Loops, conditions, error handling, and more',
-        type: 'guide',
-        readTime: '25 min',
-        difficulty: 'Intermediate',
-        popular: true,
         lastUpdated: '3 days ago',
-      },
-      {
-        title: 'Workflow Testing & Debugging',
-        description: 'Best practices for testing and debugging workflows',
-        type: 'guide',
-        readTime: '15 min',
-        difficulty: 'Intermediate',
-        popular: false,
-        lastUpdated: '1 week ago',
-      },
-      {
-        title: 'Performance Optimization',
-        description: 'Optimize workflow performance and resource usage',
-        type: 'guide',
-        readTime: '18 min',
-        difficulty: 'Advanced',
-        popular: false,
-        lastUpdated: '2 weeks ago',
+        path: '/docs/workflow-examples',
       },
     ],
     nodes: [
       {
-        title: 'Node Types Overview',
-        description: 'Complete guide to all available node types',
+        title: 'Integrations Guide',
+        description: 'Complete guide to available integrations and connectors',
         type: 'reference',
         readTime: '20 min',
         difficulty: 'Beginner',
         popular: true,
         lastUpdated: '2 days ago',
-      },
-      {
-        title: 'Building Custom Nodes',
-        description: 'Create custom nodes with the Node SDK',
-        type: 'tutorial',
-        readTime: '35 min',
-        difficulty: 'Advanced',
-        popular: true,
-        lastUpdated: '1 week ago',
-      },
-      {
-        title: 'Integration Credentials',
-        description: 'Managing API keys, OAuth, and authentication',
-        type: 'guide',
-        readTime: '12 min',
-        difficulty: 'Intermediate',
-        popular: true,
-        lastUpdated: '4 days ago',
-      },
-      {
-        title: 'Transform Node Guide',
-        description: 'Data transformation and JavaScript expressions',
-        type: 'tutorial',
-        readTime: '22 min',
-        difficulty: 'Intermediate',
-        popular: false,
-        lastUpdated: '1 week ago',
+        path: '/docs/integrations-guide',
       },
     ],
-    'ai-ml': [
+    deployment: [
       {
-        title: 'AI Agent Setup',
-        description: 'Configure and deploy AI agents in workflows',
-        type: 'tutorial',
-        readTime: '25 min',
+        title: 'Docker Deployment',
+        description: 'Deploy with Docker Compose - profiles, configuration, troubleshooting',
+        type: 'guide',
+        readTime: '10 min',
+        difficulty: 'Beginner',
+        popular: true,
+        lastUpdated: '1 day ago',
+        path: '/docs/deployment/docker',
+      },
+      {
+        title: 'Kubernetes Deployment',
+        description: 'Production-ready Kubernetes deployment with Helm',
+        type: 'guide',
+        readTime: '20 min',
+        difficulty: 'Intermediate',
+        popular: true,
+        lastUpdated: '1 week ago',
+        path: '/docs/deployment/kubernetes',
+      },
+      {
+        title: 'Cloud Providers',
+        description: 'Multi-cloud deployment on AWS, GCP, and Azure',
+        type: 'guide',
+        readTime: '30 min',
+        difficulty: 'Advanced',
+        popular: false,
+        lastUpdated: '2 weeks ago',
+        path: '/docs/deployment/cloud',
+      },
+    ],
+    api: [
+      {
+        title: 'Plugin Marketplace API',
+        description: 'API reference for plugin publishing and validation',
+        type: 'reference',
+        readTime: '15 min',
         difficulty: 'Intermediate',
         popular: true,
         lastUpdated: '1 day ago',
+        path: '/docs/api/plugin-marketplace',
       },
       {
-        title: 'Vector Database Integration',
-        description: 'Using pgvector for semantic search and embeddings',
-        type: 'guide',
+        title: 'Workflow Optimization API',
+        description: 'AI-powered workflow analysis and optimization API',
+        type: 'reference',
         readTime: '18 min',
         difficulty: 'Advanced',
         popular: true,
         lastUpdated: '3 days ago',
-      },
-      {
-        title: 'Multi-LLM Workflows',
-        description: 'Orchestrate multiple AI models in single workflows',
-        type: 'tutorial',
-        readTime: '30 min',
-        difficulty: 'Advanced',
-        popular: false,
-        lastUpdated: '1 week ago',
-      },
-      {
-        title: 'AI Model Comparison',
-        description: 'Compare OpenAI, Anthropic, and local models',
-        type: 'guide',
-        readTime: '15 min',
-        difficulty: 'Intermediate',
-        popular: false,
-        lastUpdated: '5 days ago',
+        path: '/docs/api/workflow-optimization',
       },
     ],
   };
@@ -332,16 +278,33 @@ export const Documentation: React.FC = () => {
               <div className="flex flex-wrap justify-center gap-4">
                 {quickLinks.map((link, index) => {
                   const Icon = link.icon;
+                  const isExternal = link.url.startsWith('http');
+
+                  if (isExternal) {
+                    return (
+                      <a
+                        key={index}
+                        href={link.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors text-gray-700 hover:text-gray-900"
+                      >
+                        <Icon className="w-4 h-4" />
+                        <span className="font-medium">{link.title}</span>
+                        <ExternalLink className="w-3 h-3" />
+                      </a>
+                    );
+                  }
+
                   return (
-                    <a
+                    <Link
                       key={index}
-                      href={link.url}
+                      to={link.url}
                       className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors text-gray-700 hover:text-gray-900"
                     >
                       <Icon className="w-4 h-4" />
                       <span className="font-medium">{link.title}</span>
-                      {link.url.startsWith('http') && <ExternalLink className="w-3 h-3" />}
-                    </a>
+                    </Link>
                   );
                 })}
               </div>
@@ -364,7 +327,12 @@ export const Documentation: React.FC = () => {
                     return (
                       <button
                         key={category.id}
-                        onClick={() => setSelectedCategory(category.id)}
+                        onClick={() => {
+                          setSelectedCategory(category.id);
+                          if (category.path) {
+                            navigate(category.path);
+                          }
+                        }}
                         className={`w-full flex items-center gap-3 p-3 rounded-lg text-left transition-colors ${
                           selectedCategory === category.id
                             ? 'bg-blue-50 text-blue-700 border border-blue-200'
@@ -385,9 +353,10 @@ export const Documentation: React.FC = () => {
               <div className="space-y-6">
                 {documentation[selectedCategory as keyof typeof documentation]?.map(
                   (doc, index) => (
-                    <div
+                    <Link
                       key={index}
-                      className="bg-white border border-gray-200 rounded-xl p-6 hover:border-blue-300 hover:shadow-lg transition-all duration-300 cursor-pointer group"
+                      to={doc.path || '#'}
+                      className="block bg-white border border-gray-200 rounded-xl p-6 hover:border-blue-300 hover:shadow-lg transition-all duration-300 cursor-pointer group"
                     >
                       <div className="flex items-start justify-between mb-4">
                         <div className="flex-1">
@@ -423,7 +392,7 @@ export const Documentation: React.FC = () => {
                         </div>
                         <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-blue-600 transition-colors ml-4" />
                       </div>
-                    </div>
+                    </Link>
                   )
                 )}
               </div>
@@ -505,7 +474,7 @@ export const Documentation: React.FC = () => {
                       {tutorial.level}
                     </span>
                   </div>
-                  <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-blue-600 transition-colors" />
+                  <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-blue-600 transition-colors" />
                 </div>
               </div>
             ))}
@@ -573,14 +542,20 @@ export const Documentation: React.FC = () => {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="px-8 py-4 bg-white text-blue-600 font-semibold rounded-lg text-lg hover:bg-gray-100 transition-colors flex items-center gap-2 justify-center">
+            <Link
+              to="/docs/getting-started"
+              className="px-8 py-4 bg-white text-blue-600 font-semibold rounded-lg text-lg hover:bg-gray-100 transition-colors flex items-center gap-2 justify-center"
+            >
               <Play className="w-5 h-5" />
               Quick Start Guide
-            </button>
-            <button className="px-8 py-4 border-2 border-white/30 text-white font-semibold rounded-lg text-lg hover:bg-white/10 transition-colors flex items-center gap-2 justify-center">
-              <Video className="w-5 h-5" />
-              Watch Video Tutorial
-            </button>
+            </Link>
+            <Link
+              to="/docs/workflow-examples"
+              className="px-8 py-4 border-2 border-white/30 text-white font-semibold rounded-lg text-lg hover:bg-white/10 transition-colors flex items-center gap-2 justify-center"
+            >
+              <GitBranch className="w-5 h-5" />
+              View Examples
+            </Link>
           </div>
         </div>
       </section>
