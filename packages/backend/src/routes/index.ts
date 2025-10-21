@@ -5,6 +5,7 @@
 
 import { Router } from 'express';
 import collaborationRoutes from '../domains/collaboration/routes/collaborationRoutes.js';
+import credentialRoutes from '../domains/credentials/routes/credentialRoutes.js';
 import nodeExecutionRoutes from '../domains/executions/routes/nodeExecutionRoutes.js';
 import oauthRoutes from '../domains/oauth/routes/oauthRoutes.js';
 // Import domain routes
@@ -29,6 +30,7 @@ router.use('/workflow-optimization', workflowOptimizationRoutes);
 // Mount domain routes
 router.use('/workflows', workflowRoutes);
 router.use('/executions', nodeExecutionRoutes);
+router.use('/credentials', credentialRoutes);
 router.use('/collaboration', collaborationRoutes);
 router.use('/oauth', oauthRoutes);
 
@@ -41,6 +43,7 @@ router.get('/health', (_req, res) => {
     services: {
       workflows: 'operational',
       executions: 'operational',
+      credentials: 'operational',
       collaboration: 'operational',
       oauth: 'operational',
       audit: 'operational',
@@ -64,6 +67,7 @@ router.get('/info', (_req, res) => {
       endpoints: {
         workflows: '/api/workflows',
         executions: '/api/executions',
+        credentials: '/api/credentials',
         collaboration: '/api/collaboration',
         oauth: '/api/oauth',
         audit: '/api/audit',
