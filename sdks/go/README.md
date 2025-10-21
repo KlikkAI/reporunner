@@ -1,11 +1,11 @@
-# Reporunner Go SDK
+# KlikkFlow Go SDK
 
-The official Go SDK for Reporunner workflow automation platform.
+The official Go SDK for KlikkFlow workflow automation platform.
 
 ## Installation
 
 ```bash
-go get github.com/reporunner/reporunner/go-sdk
+go get github.com/klikkflow/klikkflow/go-sdk
 ```
 
 ## Quick Start
@@ -19,12 +19,12 @@ import (
     "log"
     "time"
 
-    reporunner "github.com/reporunner/reporunner/go-sdk"
+    klikkflow "github.com/klikkflow/klikkflow/go-sdk"
 )
 
 func main() {
     // Create client
-    client := reporunner.NewClient(reporunner.ClientOptions{
+    client := klikkflow.NewClient(klikkflow.ClientOptions{
         BaseURL: "http://localhost:3001",
         APIKey:  "your-api-key",
         Timeout: 30 * time.Second,
@@ -33,15 +33,15 @@ func main() {
     ctx := context.Background()
 
     // Create a workflow
-    workflow, err := client.CreateWorkflow(ctx, reporunner.CreateWorkflowRequest{
+    workflow, err := client.CreateWorkflow(ctx, klikkflow.CreateWorkflowRequest{
         Name:        "My Go Workflow",
         Description: "Created from Go SDK",
-        Nodes: []reporunner.NodeDefinition{
+        Nodes: []klikkflow.NodeDefinition{
             {
                 ID:   "trigger-1",
                 Name: "Start",
                 Type: "trigger",
-                Position: reporunner.Position{X: 100, Y: 100},
+                Position: klikkflow.Position{X: 100, Y: 100},
             },
         },
     })
@@ -67,7 +67,7 @@ func main() {
 
 ```go
 func streamExample() {
-    client := reporunner.NewClient(reporunner.ClientOptions{
+    client := klikkflow.NewClient(klikkflow.ClientOptions{
         BaseURL: "http://localhost:3001",
         APIKey:  "your-api-key",
     })

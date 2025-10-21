@@ -1,9 +1,9 @@
 // Main SDK exports
 
 // Re-export core types
-export * from '@reporunner/core';
-export type { ReporunnerClientConfig } from './client/ReporunnerClient.js';
-export { ReporunnerClient } from './client/ReporunnerClient.js';
+export * from '@klikkflow/core';
+export type { KlikkFlowClientConfig } from './client/KlikkFlowClient.js';
+export { KlikkFlowClient } from './client/KlikkFlowClient.js';
 export { WebSocketClient } from './client/WebSocketClient.js';
 
 // SDK-specific types
@@ -16,7 +16,7 @@ export interface SDKConfig {
 }
 
 // Convenience factory function
-import { ReporunnerClient } from './client/ReporunnerClient.js';
+import { KlikkFlowClient } from './client/KlikkFlowClient.js';
 export function createClient(config?: SDKConfig) {
-  return new ReporunnerClient(config);
+  return new KlikkFlowClient(config);
 }

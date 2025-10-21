@@ -1,9 +1,9 @@
-import type { ApiResponse, ExecutionResult, WorkflowDefinition } from '@reporunner/core';
-import type { ICredential } from '@reporunner/types';
+import type { ApiResponse, ExecutionResult, WorkflowDefinition } from '@klikkflow/core';
+import type { ICredential } from '@klikkflow/types';
 import axios, { type AxiosInstance } from 'axios';
 import { WebSocketClient } from './WebSocketClient.js';
 
-export interface ReporunnerClientConfig {
+export interface KlikkFlowClientConfig {
   apiUrl?: string;
   apiKey?: string;
   timeout?: number;
@@ -11,12 +11,12 @@ export interface ReporunnerClientConfig {
   wsUrl?: string;
 }
 
-export class ReporunnerClient {
+export class KlikkFlowClient {
   private http: AxiosInstance;
-  private config: Required<ReporunnerClientConfig>;
+  private config: Required<KlikkFlowClientConfig>;
   private ws?: WebSocketClient;
 
-  constructor(config: ReporunnerClientConfig = {}) {
+  constructor(config: KlikkFlowClientConfig = {}) {
     this.config = {
       apiUrl: config.apiUrl || 'http://localhost:5000',
       apiKey: config.apiKey || '',

@@ -1,6 +1,6 @@
 {
   "$schema": "https://typedoc.org/schema.json",
-  "name": "@reporunner/sdk",
+  "name": "@klikkflow/sdk",
   "entryPoints": ["src/index.ts"],
   "out": "../../docs/api/sdk",
   "exclude": ["**/*+(test|spec).ts", "node_modules/**", "dist/**"],

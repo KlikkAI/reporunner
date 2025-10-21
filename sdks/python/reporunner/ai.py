@@ -1,5 +1,5 @@
 """
-AI and ML capabilities for the Reporunner Python SDK.
+AI and ML capabilities for the KlikkFlow Python SDK.
 This module provides comprehensive AI operations including LLM interactions,
 embeddings, vector search, and AI workflow integrations.
 """
@@ -23,7 +23,7 @@ from .types import (
     PaginatedResponse
 )
 from .exceptions import (
-    ReporunnerAPIError,
+    KlikkFlowAPIError,
     AIError,
     ValidationError,
     RateLimitError
@@ -65,7 +65,7 @@ class AIManager:
             ]
             
         except Exception as e:
-            raise ReporunnerAPIError(f"Failed to list AI providers: {str(e)}")
+            raise KlikkFlowAPIError(f"Failed to list AI providers: {str(e)}")
 
     async def create_completion(
         self,
@@ -647,7 +647,7 @@ async def create_openai_completion(
     Convenience function for OpenAI completions.
     
     Args:
-        client: ReporunnerClient instance
+        client: KlikkFlowClient instance
         messages: Chat messages
         model: OpenAI model to use
         max_tokens: Maximum tokens
@@ -676,7 +676,7 @@ async def create_text_embedding(
     Convenience function to create text embeddings.
     
     Args:
-        client: ReporunnerClient instance
+        client: KlikkFlowClient instance
         text: Text to embed
         provider: AI provider
         model: Embedding model
@@ -706,7 +706,7 @@ async def semantic_search(
     Perform semantic search using text query.
     
     Args:
-        client: ReporunnerClient instance
+        client: KlikkFlowClient instance
         collection: Vector collection name
         query_text: Text to search for
         limit: Maximum results

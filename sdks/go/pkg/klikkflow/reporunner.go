@@ -1,19 +1,19 @@
-// Package reporunner provides a comprehensive Go SDK for interacting with the Reporunner workflow automation platform.
+// Package klikkflow provides a comprehensive Go SDK for interacting with the KlikkFlow workflow automation platform.
 //
 // This SDK offers enterprise-grade performance, comprehensive error handling, and full API coverage
 // for workflow management, execution monitoring, credential management, and real-time communication.
 //
 // # Basic Usage
 //
-//	import "github.com/reporunner/reporunner-go/pkg/reporunner"
+//	import "github.com/klikkflow/klikkflow-go/pkg/klikkflow"
 //
 //	// Create a client with API key authentication
-//	config := &reporunner.ClientConfig{
-//		BaseURL: "https://api.reporunner.com",
+//	config := &klikkflow.ClientConfig{
+//		BaseURL: "https://api.klikkflow.com",
 //		APIKey:  "your-api-key",
 //	}
 //
-//	client, err := reporunner.NewClient(config)
+//	client, err := klikkflow.NewClient(config)
 //	if err != nil {
 //		log.Fatal(err)
 //	}
@@ -22,12 +22,12 @@
 // # Workflow Management
 //
 //	// Create a new workflow
-//	workflow := &reporunner.Workflow{
+//	workflow := &klikkflow.Workflow{
 //		Name:        "My Workflow",
 //		Description: "A sample workflow",
 //		Active:      true,
-//		Nodes:       []reporunner.WorkflowNode{...},
-//		Connections: []reporunner.WorkflowConnection{...},
+//		Nodes:       []klikkflow.WorkflowNode{...},
+//		Connections: []klikkflow.WorkflowConnection{...},
 //	}
 //
 //	createdWorkflow, err := client.Workflows.Create(workflow)
@@ -68,7 +68,7 @@
 //	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Minute)
 //	defer cancel()
 //
-//	err = client.Executions.StreamUpdates(ctx, execution.ID, func(data *reporunner.ExecutionData) {
+//	err = client.Executions.StreamUpdates(ctx, execution.ID, func(data *klikkflow.ExecutionData) {
 //		fmt.Printf("Node %s completed\n", data.NodeName)
 //	})
 //	if err != nil {
@@ -78,7 +78,7 @@
 // # Credential Management
 //
 //	// Create a credential
-//	credential := &reporunner.Credential{
+//	credential := &klikkflow.Credential{
 //		Name: "My API Key",
 //		Type: "apiKey",
 //		Data: map[string]interface{}{
@@ -104,8 +104,8 @@
 // # Advanced Configuration
 //
 //	// Configure client with custom settings
-//	config := &reporunner.ClientConfig{
-//		BaseURL:          "https://api.reporunner.com",
+//	config := &klikkflow.ClientConfig{
+//		BaseURL:          "https://api.klikkflow.com",
 //		Username:         "user@example.com",
 //		Password:         "password",
 //		Timeout:          30 * time.Second,
@@ -113,18 +113,18 @@
 //		RetryWaitTime:    1 * time.Second,
 //		RetryMaxWaitTime: 30 * time.Second,
 //		Debug:            true,
-//		RateLimit: &reporunner.RateLimitConfig{
+//		RateLimit: &klikkflow.RateLimitConfig{
 //			RequestsPerSecond: 10,
 //			Burst:             20,
 //		},
-//		WebSocketConfig: &reporunner.WebSocketConfig{
-//			URL:          "wss://api.reporunner.com/ws",
+//		WebSocketConfig: &klikkflow.WebSocketConfig{
+//			URL:          "wss://api.klikkflow.com/ws",
 //			PingInterval: 54 * time.Second,
 //			PongWait:     60 * time.Second,
 //		},
 //	}
 //
-//	client, err := reporunner.NewClient(config)
+//	client, err := klikkflow.NewClient(config)
 //	if err != nil {
 //		log.Fatal(err)
 //	}
@@ -136,11 +136,11 @@
 //	_, err := client.Workflows.Get("non-existent-id")
 //	if err != nil {
 //		switch e := err.(type) {
-//		case *reporunner.NotFoundError:
+//		case *klikkflow.NotFoundError:
 //			fmt.Println("Workflow not found")
-//		case *reporunner.AuthenticationError:
+//		case *klikkflow.AuthenticationError:
 //			fmt.Println("Authentication failed")
-//		case *reporunner.ValidationError:
+//		case *klikkflow.ValidationError:
 //			fmt.Printf("Validation error: %s\n", e.Message)
 //		default:
 //			fmt.Printf("Unexpected error: %s\n", err)
@@ -152,29 +152,29 @@
 // The SDK supports multiple authentication methods:
 //
 //	// API Key authentication
-//	config := &reporunner.ClientConfig{
-//		BaseURL: "https://api.reporunner.com",
+//	config := &klikkflow.ClientConfig{
+//		BaseURL: "https://api.klikkflow.com",
 //		APIKey:  "your-api-key",
 //	}
 //
 //	// Username/password authentication
-//	config := &reporunner.ClientConfig{
-//		BaseURL:  "https://api.reporunner.com",
+//	config := &klikkflow.ClientConfig{
+//		BaseURL:  "https://api.klikkflow.com",
 //		Username: "user@example.com",
 //		Password: "password",
 //	}
 //
 //	// JWT token authentication
-//	config := &reporunner.ClientConfig{
-//		BaseURL: "https://api.reporunner.com",
-//		Token: &reporunner.AuthToken{
+//	config := &klikkflow.ClientConfig{
+//		BaseURL: "https://api.klikkflow.com",
+//		Token: &klikkflow.AuthToken{
 //			AccessToken:  "jwt-access-token",
 //			RefreshToken: "jwt-refresh-token",
 //		},
 //	}
 //
 // The SDK automatically handles token refresh and authentication errors.
-package reporunner
+package klikkflow
 
 import (
 	"encoding/json"
@@ -184,7 +184,7 @@ import (
 // SDK version information
 const (
 	Version = "1.0.0"
-	UserAgent = "reporunner-go-sdk/" + Version
+	UserAgent = "klikkflow-go-sdk/" + Version
 )
 
 // NewDefaultConfig creates a default client configuration
@@ -201,7 +201,7 @@ func NewDefaultConfig() *ClientConfig {
 
 // NewConfigFromEnvironment creates a configuration from environment variables
 // This function would typically read from environment variables like:
-// REPORUNNER_BASE_URL, REPORUNNER_API_KEY, etc.
+// KLIKKFLOW_BASE_URL, KLIKKFLOW_API_KEY, etc.
 func NewConfigFromEnvironment() *ClientConfig {
 	config := NewDefaultConfig()
 

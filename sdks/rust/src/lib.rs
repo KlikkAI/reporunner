@@ -1,6 +1,6 @@
-//! # Reporunner Rust SDK
+//! # KlikkFlow Rust SDK
 //!
-//! The official Rust SDK for the Reporunner workflow automation platform.
+//! The official Rust SDK for the KlikkFlow workflow automation platform.
 //!
 //! ## Features
 //!
@@ -13,7 +13,7 @@
 //! ## Quick Start
 //!
 //! ```rust
-//! use reporunner_sdk::{Client, CreateWorkflowRequest, NodeDefinition, Position};
+//! use klikkflow_sdk::{Client, CreateWorkflowRequest, NodeDefinition, Position};
 //! use std::collections::HashMap;
 //!
 //! #[tokio::main]
@@ -55,5 +55,5 @@ pub use models::*;
 /// Default timeout for HTTP requests
 pub const DEFAULT_TIMEOUT: Duration = Duration::from_secs(30);
 
-/// Default base URL for the Reporunner API
+/// Default base URL for the KlikkFlow API
 pub const DEFAULT_BASE_URL: &str = "http://localhost:3001";

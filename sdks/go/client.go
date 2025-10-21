@@ -1,4 +1,4 @@
-package reporunner
+package klikkflow
 
 import (
 	"bytes"
@@ -13,7 +13,7 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-// Client represents the Reporunner API client
+// Client represents the KlikkFlow API client
 type Client struct {
 	baseURL    string
 	apiKey     string
@@ -27,7 +27,7 @@ type ClientOptions struct {
 	Timeout time.Duration
 }
 
-// NewClient creates a new Reporunner client
+// NewClient creates a new KlikkFlow client
 func NewClient(options ClientOptions) *Client {
 	if options.Timeout == 0 {
 		options.Timeout = 30 * time.Second

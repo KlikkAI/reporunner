@@ -1,11 +1,11 @@
-package reporunner
+package klikkflow
 
 import (
 	"encoding/json"
 	"time"
 )
 
-// Core types for the Reporunner Go SDK
+// Core types for the KlikkFlow Go SDK
 
 // ExecutionStatus represents the status of a workflow execution
 type ExecutionStatus string

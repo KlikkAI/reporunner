@@ -8,7 +8,7 @@ use std::time::Duration;
 use tokio::time::{sleep, timeout};
 use tracing::{debug, error, info, warn};
 
-/// Reporunner API client
+/// KlikkFlow API client
 #[derive(Clone)]
 pub struct Client {
     http_client: HttpClient,

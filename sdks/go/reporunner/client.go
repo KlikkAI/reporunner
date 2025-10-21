@@ -1,6 +1,6 @@
-// Package reporunner provides a comprehensive Go SDK for the Reporunner visual workflow automation platform.
+// Package klikkflow provides a comprehensive Go SDK for the KlikkFlow visual workflow automation platform.
 // It offers enterprise-grade performance with comprehensive workflow, execution, credential, and AI management.
-package reporunner
+package klikkflow
 
 import (
 	"context"
@@ -15,9 +15,9 @@ import (
 	"github.com/google/uuid"
 )
 
-// ClientConfig holds configuration for the Reporunner client
+// ClientConfig holds configuration for the KlikkFlow client
 type ClientConfig struct {
-	// BaseURL is the base URL of the Reporunner API
+	// BaseURL is the base URL of the KlikkFlow API
 	BaseURL string
 	// APIKey for API authentication
 	APIKey string
@@ -40,16 +40,16 @@ type ClientConfig struct {
 // DefaultClientConfig returns a default client configuration
 func DefaultClientConfig() *ClientConfig {
 	return &ClientConfig{
-		BaseURL:       "https://api.reporunner.com",
+		BaseURL:       "https://api.klikkflow.com",
 		Timeout:       30 * time.Second,
 		RetryCount:    3,
 		RetryWaitTime: 1 * time.Second,
 		Debug:         false,
-		UserAgent:     "reporunner-go-sdk/1.0.0",
+		UserAgent:     "klikkflow-go-sdk/1.0.0",
 	}
 }
 
-// Client is the main Reporunner API client
+// Client is the main KlikkFlow API client
 type Client struct {
 	config      *ClientConfig
 	httpClient  *resty.Client
@@ -63,7 +63,7 @@ type Client struct {
 	AI          *AIManager
 }
 
-// NewClient creates a new Reporunner client with the given configuration
+// NewClient creates a new KlikkFlow client with the given configuration
 func NewClient(config *ClientConfig) *Client {
 	if config == nil {
 		config = DefaultClientConfig()
@@ -106,13 +106,13 @@ func NewClientFromEnv() *Client {
 	config := DefaultClientConfig()
 	
 	// Override from environment variables if present
-	if baseURL := getEnvVar("REPORUNNER_BASE_URL", "REPORUNNER_API_URL"); baseURL != "" {
+	if baseURL := getEnvVar("KLIKKFLOW_BASE_URL", "KLIKKFLOW_API_URL"); baseURL != "" {
 		config.BaseURL = baseURL
 	}
-	if apiKey := getEnvVar("REPORUNNER_API_KEY", "REPORUNNER_TOKEN"); apiKey != "" {
+	if apiKey := getEnvVar("KLIKKFLOW_API_KEY", "KLIKKFLOW_TOKEN"); apiKey != "" {
 		config.APIKey = apiKey
 	}
-	if accessToken := getEnvVar("REPORUNNER_ACCESS_TOKEN"); accessToken != "" {
+	if accessToken := getEnvVar("KLIKKFLOW_ACCESS_TOKEN"); accessToken != "" {
 		config.AccessToken = accessToken
 	}
 	
@@ -254,7 +254,7 @@ func (c *Client) Delete(ctx context.Context, path string, params map[string]stri
 	return c.makeRequest(ctx, http.MethodDelete, path, nil, params)
 }
 
-// Health checks the health of the Reporunner API
+// Health checks the health of the KlikkFlow API
 func (c *Client) Health(ctx context.Context) (map[string]interface{}, error) {
 	resp, err := c.Get(ctx, "/health", nil)
 	if err != nil {

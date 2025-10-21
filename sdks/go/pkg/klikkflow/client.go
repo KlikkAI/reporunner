@@ -1,4 +1,4 @@
-package reporunner
+package klikkflow
 
 import (
 	"bytes"
@@ -18,7 +18,7 @@ import (
 	"golang.org/x/time"
 )
 
-// ClientConfig represents the configuration for the Reporunner client
+// ClientConfig represents the configuration for the KlikkFlow client
 type ClientConfig struct {
 	BaseURL           string
 	APIKey            string
@@ -63,7 +63,7 @@ type TLSConfig struct {
 	CAFile             string
 }
 
-// Client represents the main Reporunner client
+// Client represents the main KlikkFlow client
 type Client struct {
 	config      *ClientConfig
 	httpClient  *resty.Client
@@ -81,7 +81,7 @@ type Client struct {
 	WebSocket   *WebSocketManager
 }
 
-// NewClient creates a new Reporunner client
+// NewClient creates a new KlikkFlow client
 func NewClient(config *ClientConfig) (*Client, error) {
 	if config == nil {
 		return nil, fmt.Errorf("client config is required")
@@ -105,7 +105,7 @@ func NewClient(config *ClientConfig) (*Client, error) {
 		config.RetryMaxWaitTime = 30 * time.Second
 	}
 	if config.UserAgent == "" {
-		config.UserAgent = "reporunner-go-sdk/1.0.0"
+		config.UserAgent = "klikkflow-go-sdk/1.0.0"
 	}
 
 	// Initialize logger

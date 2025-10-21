@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Reporunner;
+namespace KlikkFlow;
 
 use GuzzleHttp\Client as HttpClient;
 use GuzzleHttp\Exception\GuzzleException;
@@ -12,14 +12,14 @@ use GuzzleHttp\RequestOptions;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
-use Reporunner\Exception\ReporunnerException;
-use Reporunner\Model\CreateWorkflowRequest;
-use Reporunner\Model\ExecuteWorkflowRequest;
-use Reporunner\Model\ExecutionResult;
-use Reporunner\Model\ListWorkflowsOptions;
-use Reporunner\Model\UpdateWorkflowRequest;
-use Reporunner\Model\WorkflowDefinition;
-use Reporunner\Websocket\ExecutionWebSocket;
+use KlikkFlow\Exception\KlikkFlowException;
+use KlikkFlow\Model\CreateWorkflowRequest;
+use KlikkFlow\Model\ExecuteWorkflowRequest;
+use KlikkFlow\Model\ExecutionResult;
+use KlikkFlow\Model\ListWorkflowsOptions;
+use KlikkFlow\Model\UpdateWorkflowRequest;
+use KlikkFlow\Model\WorkflowDefinition;
+use KlikkFlow\Websocket\ExecutionWebSocket;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Normalizer\ArrayDenormalizer;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
@@ -27,16 +27,16 @@ use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
 
 /**
- * Main client for interacting with the Reporunner API.
+ * Main client for interacting with the KlikkFlow API.
  *
  * Provides comprehensive workflow management, execution, and monitoring capabilities
  * with enterprise features including connection pooling, retry logic, and structured logging.
  *
- * @package Reporunner
- * @author  Reporunner Team <team@reporunner.com>
+ * @package KlikkFlow
+ * @author  KlikkFlow Team <team@klikkflow.com>
  * @version 1.0.0
  */
-final class ReporunnerClient
+final class KlikkFlowClient
 {
     private const DEFAULT_BASE_URL = 'http://localhost:3001';
     private const DEFAULT_TIMEOUT = 30.0;
@@ -48,9 +48,9 @@ final class ReporunnerClient
     private ?string $apiKey;
 
     /**
-     * Create a new Reporunner client.
+     * Create a new KlikkFlow client.
      *
-     * @param string|null          $baseUrl Base URL of the Reporunner API
+     * @param string|null          $baseUrl Base URL of the KlikkFlow API
      * @param string|null          $apiKey  API key for authentication
      * @param float                $timeout Request timeout in seconds
      * @param LoggerInterface|null $logger  Logger instance
@@ -73,7 +73,7 @@ final class ReporunnerClient
             RequestOptions::HEADERS => [
                 'Content-Type' => 'application/json',
                 'Accept' => 'application/json',
-                'User-Agent' => 'Reporunner-PHP-SDK/1.0.0',
+                'User-Agent' => 'KlikkFlow-PHP-SDK/1.0.0',
             ],
         ]);
         
@@ -87,7 +87,7 @@ final class ReporunnerClient
             [new JsonEncoder()]
         );
         
-        $this->logger->info('Initialized Reporunner client', ['base_url' => $this->baseUrl]);
+        $this->logger->info('Initialized KlikkFlow client', ['base_url' => $this->baseUrl]);
     }
 
     /**
@@ -96,7 +96,7 @@ final class ReporunnerClient
      * @param CreateWorkflowRequest $request Workflow creation request
      *
      * @return WorkflowDefinition
-     * @throws ReporunnerException
+     * @throws KlikkFlowException
      */
     public function createWorkflow(CreateWorkflowRequest $request): WorkflowDefinition
     {
@@ -120,7 +120,7 @@ final class ReporunnerClient
      * @param string $workflowId Workflow ID
      *
      * @return WorkflowDefinition
-     * @throws ReporunnerException
+     * @throws KlikkFlowException
      */
     public function getWorkflow(string $workflowId): WorkflowDefinition
     {
@@ -142,7 +142,7 @@ final class ReporunnerClient
      * @param ListWorkflowsOptions|null $options Filtering options
      *
      * @return WorkflowDefinition[]
-     * @throws ReporunnerException
+     * @throws KlikkFlowException
      */
     public function listWorkflows(?ListWorkflowsOptions $options = null): array
     {
@@ -174,7 +174,7 @@ final class ReporunnerClient
      * @param bool                 $waitForCompletion Whether to wait for completion
      *
      * @return ExecutionResult
-     * @throws ReporunnerException
+     * @throws KlikkFlowException
      */
     public function executeWorkflow(
         string $workflowId,
@@ -206,7 +206,7 @@ final class ReporunnerClient
      * @param string $executionId Execution ID
      *
      * @return ExecutionResult
-     * @throws ReporunnerException
+     * @throws KlikkFlowException
      */
     public function getExecution(string $executionId): ExecutionResult
     {
@@ -227,7 +227,7 @@ final class ReporunnerClient
      *
      * @param string $executionId Execution ID to cancel
      *
-     * @throws ReporunnerException
+     * @throws KlikkFlowException
      */
     public function cancelExecution(string $executionId): void
     {
@@ -244,7 +244,7 @@ final class ReporunnerClient
      * @param callable $updateHandler  Handler for execution updates
      *
      * @return ExecutionWebSocket
-     * @throws ReporunnerException
+     * @throws KlikkFlowException
      */
     public function streamExecution(string $executionId, callable $updateHandler): ExecutionWebSocket
     {
@@ -259,7 +259,7 @@ final class ReporunnerClient
         try {
             return new ExecutionWebSocket($wsUrl, $this->apiKey, $updateHandler, $this->logger);
         } catch (\Throwable $e) {
-            throw new ReporunnerException('Failed to create WebSocket connection: ' . $e->getMessage(), 0, $e);
+            throw new KlikkFlowException('Failed to create WebSocket connection: ' . $e->getMessage(), 0, $e);
         }
     }
 
@@ -270,7 +270,7 @@ final class ReporunnerClient
      * @param UpdateWorkflowRequest $request    Update request
      *
      * @return WorkflowDefinition
-     * @throws ReporunnerException
+     * @throws KlikkFlowException
      */
     public function updateWorkflow(string $workflowId, UpdateWorkflowRequest $request): WorkflowDefinition
     {
@@ -291,7 +291,7 @@ final class ReporunnerClient
      *
      * @param string $workflowId Workflow ID to delete
      *
-     * @throws ReporunnerException
+     * @throws KlikkFlowException
      */
     public function deleteWorkflow(string $workflowId): void
     {
@@ -308,7 +308,7 @@ final class ReporunnerClient
      * @param ExecutionHistoryOptions|null   $options    Filtering options
      *
      * @return ExecutionResult[]
-     * @throws ReporunnerException
+     * @throws KlikkFlowException
      */
     public function getExecutionHistory(string $workflowId, $options = null): array
     {
@@ -338,7 +338,7 @@ final class ReporunnerClient
      * @param string $executionId Execution ID
      *
      * @return ExecutionResult
-     * @throws ReporunnerException
+     * @throws KlikkFlowException
      */
     private function waitForExecution(string $executionId): ExecutionResult
     {
@@ -356,7 +356,7 @@ final class ReporunnerClient
             $attempts++;
         }
         
-        throw new ReporunnerException('Execution wait timeout after ' . $maxAttempts . ' attempts');
+        throw new KlikkFlowException('Execution wait timeout after ' . $maxAttempts . ' attempts');
     }
 
     /**
@@ -367,7 +367,7 @@ final class ReporunnerClient
      * @param object|null $body   Request body
      *
      * @return ResponseInterface
-     * @throws ReporunnerException
+     * @throws KlikkFlowException
      */
     private function makeRequest(string $method, string $path, ?object $body = null): ResponseInterface
     {
@@ -393,7 +393,7 @@ final class ReporunnerClient
                     'body' => $errorBody,
                 ]);
                 
-                throw new ReporunnerException(
+                throw new KlikkFlowException(
                     sprintf('API request failed with status %d: %s', $response->getStatusCode(), $errorBody)
                 );
             }
@@ -402,10 +402,10 @@ final class ReporunnerClient
             
         } catch (GuzzleException $e) {
             $this->logger->error('HTTP request failed', ['exception' => $e]);
-            throw new ReporunnerException('HTTP request failed: ' . $e->getMessage(), 0, $e);
+            throw new KlikkFlowException('HTTP request failed: ' . $e->getMessage(), 0, $e);
         } catch (\JsonException $e) {
             $this->logger->error('JSON encoding failed', ['exception' => $e]);
-            throw new ReporunnerException('JSON encoding failed: ' . $e->getMessage(), 0, $e);
+            throw new KlikkFlowException('JSON encoding failed: ' . $e->getMessage(), 0, $e);
         }
     }
 }

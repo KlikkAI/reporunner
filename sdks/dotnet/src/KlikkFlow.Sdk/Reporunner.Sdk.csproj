@@ -6,22 +6,22 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <PackageId>Reporunner.Sdk</PackageId>
+    <PackageId>KlikkFlow.Sdk</PackageId>
     <PackageVersion>1.0.0</PackageVersion>
-    <Title>Reporunner .NET SDK</Title>
-    <Description>.NET SDK for Reporunner workflow automation platform</Description>
-    <Authors>Reporunner Team</Authors>
-    <Company>Reporunner</Company>
-    <Copyright>Copyright (c) 2024 Reporunner</Copyright>
+    <Title>KlikkFlow .NET SDK</Title>
+    <Description>.NET SDK for KlikkFlow workflow automation platform</Description>
+    <Authors>KlikkFlow Team</Authors>
+    <Company>KlikkFlow</Company>
+    <Copyright>Copyright (c) 2024 KlikkFlow</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageProjectUrl>https://github.com/reporunner/reporunner</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/klikkflow/klikkflow</PackageProjectUrl>
     <PackageIcon>icon.png</PackageIcon>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <RepositoryUrl>https://github.com/reporunner/reporunner</RepositoryUrl>
+    <RepositoryUrl>https://github.com/klikkflow/klikkflow</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>workflow;automation;api;sdk;async;dotnet</PackageTags>
     <PackageReleaseNotes>
-      Initial release of Reporunner .NET SDK with comprehensive workflow management capabilities.
+      Initial release of KlikkFlow .NET SDK with comprehensive workflow management capabilities.
     </PackageReleaseNotes>
   </PropertyGroup>
 

@@ -7,30 +7,30 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Websocket.Client;
 
-namespace Reporunner.Sdk;
+namespace KlikkFlow.Sdk;
 
 /// <summary>
-/// Main client for interacting with the Reporunner API.
+/// Main client for interacting with the KlikkFlow API.
 /// Provides comprehensive workflow management, execution, and real-time monitoring capabilities.
 /// </summary>
-public sealed class ReporunnerClient : IDisposable, IAsyncDisposable
+public sealed class KlikkFlowClient : IDisposable, IAsyncDisposable
 {
     private readonly HttpClient _httpClient;
-    private readonly ILogger<ReporunnerClient> _logger;
-    private readonly ReporunnerClientOptions _options;
+    private readonly ILogger<KlikkFlowClient> _logger;
+    private readonly KlikkFlowClientOptions _options;
     private readonly JsonSerializerOptions _jsonOptions;
     private bool _disposed;
 
     /// <summary>
-    /// Initializes a new instance of the ReporunnerClient class.
+    /// Initializes a new instance of the KlikkFlowClient class.
     /// </summary>
     /// <param name="httpClient">The HTTP client to use for API requests.</param>
     /// <param name="options">Configuration options for the client.</param>
     /// <param name="logger">Logger instance for structured logging.</param>
-    public ReporunnerClient(
+    public KlikkFlowClient(
         HttpClient httpClient,
-        IOptions<ReporunnerClientOptions> options,
-        ILogger<ReporunnerClient> logger)
+        IOptions<KlikkFlowClientOptions> options,
+        ILogger<KlikkFlowClient> logger)
     {
         _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
         _options = options?.Value ?? throw new ArgumentNullException(nameof(options));
@@ -39,7 +39,7 @@ public sealed class ReporunnerClient : IDisposable, IAsyncDisposable
         ConfigureHttpClient();
         ConfigureJsonOptions();
 
-        _logger.LogInformation("Initialized Reporunner client for: {BaseUrl}", _options.BaseUrl);
+        _logger.LogInformation("Initialized KlikkFlow client for: {BaseUrl}", _options.BaseUrl);
     }
 
     /// <summary>
@@ -67,7 +67,7 @@ public sealed class ReporunnerClient : IDisposable, IAsyncDisposable
 
         var workflow = await response.Content.ReadFromJsonAsync<WorkflowDefinition>(
             _jsonOptions,
-            cancellationToken) ?? throw new ReporunnerException("Failed to deserialize workflow response");
+            cancellationToken) ?? throw new KlikkFlowException("Failed to deserialize workflow response");
 
         _logger.LogDebug("Created workflow with ID: {WorkflowId}", workflow.Id);
         return workflow;
@@ -96,7 +96,7 @@ public sealed class ReporunnerClient : IDisposable, IAsyncDisposable
 
         return await response.Content.ReadFromJsonAsync<WorkflowDefinition>(
             _jsonOptions,
-            cancellationToken) ?? throw new ReporunnerException($"Workflow not found: {workflowId}");
+            cancellationToken) ?? throw new KlikkFlowException($"Workflow not found: {workflowId}");
     }
 
     /// <summary>
@@ -128,7 +128,7 @@ public sealed class ReporunnerClient : IDisposable, IAsyncDisposable
 
         var result = await response.Content.ReadFromJsonAsync<WorkflowListResponse>(
             _jsonOptions,
-            cancellationToken) ?? throw new ReporunnerException("Failed to deserialize workflow list response");
+            cancellationToken) ?? throw new KlikkFlowException("Failed to deserialize workflow list response");
 
         return result.Workflows.AsReadOnly();
     }
@@ -168,7 +168,7 @@ public sealed class ReporunnerClient : IDisposable, IAsyncDisposable
 
         var execution = await response.Content.ReadFromJsonAsync<ExecutionResult>(
             _jsonOptions,
-            cancellationToken) ?? throw new ReporunnerException("Failed to deserialize execution response");
+            cancellationToken) ?? throw new KlikkFlowException("Failed to deserialize execution response");
 
         if (waitForCompletion)
         {
@@ -202,7 +202,7 @@ public sealed class ReporunnerClient : IDisposable, IAsyncDisposable
 
         return await response.Content.ReadFromJsonAsync<ExecutionResult>(
             _jsonOptions,
-            cancellationToken) ?? throw new ReporunnerException($"Execution not found: {executionId}");
+            cancellationToken) ?? throw new KlikkFlowException($"Execution not found: {executionId}");
     }
 
     /// <summary>
@@ -282,7 +282,7 @@ public sealed class ReporunnerClient : IDisposable, IAsyncDisposable
             if (info.Type == DisconnectionType.Error)
             {
                 _logger.LogError("WebSocket disconnection: {Reason}", info.Exception?.Message);
-                subject.OnError(new ReporunnerException($"WebSocket disconnection: {info.Exception?.Message}"));
+                subject.OnError(new KlikkFlowException($"WebSocket disconnection: {info.Exception?.Message}"));
             }
             else
             {
@@ -331,7 +331,7 @@ public sealed class ReporunnerClient : IDisposable, IAsyncDisposable
 
         return await response.Content.ReadFromJsonAsync<WorkflowDefinition>(
             _jsonOptions,
-            cancellationToken) ?? throw new ReporunnerException("Failed to deserialize updated workflow response");
+            cancellationToken) ?? throw new KlikkFlowException("Failed to deserialize updated workflow response");
     }
 
     /// <summary>
@@ -360,7 +360,7 @@ public sealed class ReporunnerClient : IDisposable, IAsyncDisposable
         _httpClient.BaseAddress = new Uri(_options.BaseUrl);
         _httpClient.Timeout = TimeSpan.FromSeconds(_options.TimeoutSeconds);
         
-        _httpClient.DefaultRequestHeaders.Add("User-Agent", "Reporunner-DotNet-SDK/1.0.0");
+        _httpClient.DefaultRequestHeaders.Add("User-Agent", "KlikkFlow-DotNet-SDK/1.0.0");
         
         if (!string.IsNullOrEmpty(_options.ApiKey))
         {
@@ -401,7 +401,7 @@ public sealed class ReporunnerClient : IDisposable, IAsyncDisposable
             attempts++;
         }
 
-        throw new ReporunnerException($"Execution wait timeout after {maxAttempts} attempts");
+        throw new KlikkFlowException($"Execution wait timeout after {maxAttempts} attempts");
     }
 
     private async Task EnsureSuccessStatusCodeAsync(HttpResponseMessage response)
@@ -414,7 +414,7 @@ public sealed class ReporunnerClient : IDisposable, IAsyncDisposable
             _logger.LogError("API request failed: {StatusCode} {Content}", 
                 response.StatusCode, errorContent);
             
-            throw new ReporunnerException(message);
+            throw new KlikkFlowException(message);
         }
     }
 
@@ -430,7 +430,7 @@ public sealed class ReporunnerClient : IDisposable, IAsyncDisposable
         {
             _httpClient?.Dispose();
             _disposed = true;
-            _logger.LogDebug("Reporunner client disposed");
+            _logger.LogDebug("KlikkFlow client disposed");
         }
     }
 
@@ -441,7 +441,7 @@ public sealed class ReporunnerClient : IDisposable, IAsyncDisposable
         {
             _httpClient?.Dispose();
             _disposed = true;
-            _logger.LogDebug("Reporunner client disposed");
+            _logger.LogDebug("KlikkFlow client disposed");
             await Task.CompletedTask;
         }
     }

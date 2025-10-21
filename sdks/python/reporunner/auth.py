@@ -1,5 +1,5 @@
 """
-Authentication manager for the Reporunner Python SDK.
+Authentication manager for the KlikkFlow Python SDK.
 
 This module handles various authentication methods and token management,
 providing a unified interface for API authentication.
@@ -20,7 +20,7 @@ from .exceptions import AuthenticationError, ConfigurationError
 
 class AuthManager:
     """
-    Manages authentication for the Reporunner client.
+    Manages authentication for the KlikkFlow client.
 
     Supports multiple authentication methods:
     - API Key authentication
@@ -29,12 +29,12 @@ class AuthManager:
     - OAuth2 token authentication with automatic refresh
     """
 
-    def __init__(self, client: "ReporunnerClient", auth_config: AuthConfig) -> None:
+    def __init__(self, client: "KlikkFlowClient", auth_config: AuthConfig) -> None:
         """
         Initialize the authentication manager.
 
         Args:
-            client: Reporunner client instance
+            client: KlikkFlow client instance
             auth_config: Authentication configuration
         """
         self.client = client

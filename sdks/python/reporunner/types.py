@@ -1,5 +1,5 @@
 """
-Type definitions for the Reporunner Python SDK.
+Type definitions for the KlikkFlow Python SDK.
 
 This module provides comprehensive type definitions that mirror the TypeScript SDK
 while leveraging Python's type system with Pydantic for runtime validation.
@@ -17,8 +17,8 @@ from typing_extensions import Annotated
 T = TypeVar("T")
 
 
-class BaseReporunnerModel(BaseModel):
-    """Base model for all Reporunner types with common configuration."""
+class BaseKlikkFlowModel(BaseModel):
+    """Base model for all KlikkFlow types with common configuration."""
 
     model_config = ConfigDict(
         str_strip_whitespace=True,
@@ -94,13 +94,13 @@ class PropertyType(str, Enum):
 
 
 # Core data structures
-class Position(BaseReporunnerModel):
+class Position(BaseKlikkFlowModel):
     """Node position in the workflow canvas."""
     x: float = Field(..., description="X coordinate")
     y: float = Field(..., description="Y coordinate")
 
 
-class ConnectionDefinition(BaseReporunnerModel):
+class ConnectionDefinition(BaseKlikkFlowModel):
     """Connection between workflow nodes."""
     id: str = Field(..., description="Unique connection identifier")
     source: str = Field(..., description="Source node ID")
@@ -115,7 +115,7 @@ class ConnectionDefinition(BaseReporunnerModel):
         return v
 
 
-class NodeProperty(BaseReporunnerModel):
+class NodeProperty(BaseKlikkFlowModel):
     """Node property definition."""
     name: str = Field(..., description="Property name")
     display_name: str = Field(..., description="Human-readable display name")
@@ -134,7 +134,7 @@ class NodeProperty(BaseReporunnerModel):
         return v
 
 
-class NodeCredential(BaseReporunnerModel):
+class NodeCredential(BaseKlikkFlowModel):
     """Node credential requirement."""
     name: str = Field(..., description="Credential name")
     required: bool = Field(True, description="Whether credential is required")
@@ -143,7 +143,7 @@ class NodeCredential(BaseReporunnerModel):
     documentation_url: Optional[str] = Field(None, description="Documentation URL")
 
 
-class NodeDefinition(BaseReporunnerModel):
+class NodeDefinition(BaseKlikkFlowModel):
     """Workflow node definition."""
     id: str = Field(..., description="Unique node identifier")
     type: NodeType = Field(..., description="Node type")
@@ -165,7 +165,7 @@ class NodeDefinition(BaseReporunnerModel):
         return v
 
 
-class WorkflowSettings(BaseReporunnerModel):
+class WorkflowSettings(BaseKlikkFlowModel):
     """Workflow execution settings."""
     timezone: str = Field("UTC", description="Workflow timezone")
     timeout: int = Field(300000, description="Execution timeout in milliseconds")
@@ -180,7 +180,7 @@ class WorkflowSettings(BaseReporunnerModel):
         return v
 
 
-class WorkflowDefinition(BaseReporunnerModel):
+class WorkflowDefinition(BaseKlikkFlowModel):
     """Complete workflow definition."""
     id: Optional[str] = Field(None, description="Workflow ID")
     name: str = Field(..., description="Workflow name")
@@ -204,13 +204,13 @@ class WorkflowDefinition(BaseReporunnerModel):
 
 
 # Execution types
-class ExecutionData(BaseReporunnerModel):
+class ExecutionData(BaseKlikkFlowModel):
     """Execution data for a node."""
     json: Dict[str, Any] = Field(default_factory=dict, description="JSON data")
     binary: Optional[Dict[str, Any]] = Field(None, description="Binary data")
 
 
-class NodeExecution(BaseReporunnerModel):
+class NodeExecution(BaseKlikkFlowModel):
     """Individual node execution details."""
     node_id: str = Field(..., description="Node ID")
     status: NodeExecutionStatus = Field(..., description="Execution status")
@@ -223,7 +223,7 @@ class NodeExecution(BaseReporunnerModel):
     retry_count: int = Field(0, description="Number of retries")
 
 
-class ExecutionContext(BaseReporunnerModel):
+class ExecutionContext(BaseKlikkFlowModel):
     """Execution context information."""
     execution_id: str = Field(..., description="Execution ID")
     workflow_id: str = Field(..., description="Workflow ID")
@@ -233,7 +233,7 @@ class ExecutionContext(BaseReporunnerModel):
     environment: Dict[str, str] = Field(default_factory=dict, description="Environment variables")
 
 
-class ExecutionResult(BaseReporunnerModel):
+class ExecutionResult(BaseKlikkFlowModel):
     """Workflow execution result."""
     id: str = Field(..., description="Execution ID")
     workflow_id: str = Field(..., description="Workflow ID")
@@ -251,7 +251,7 @@ class ExecutionResult(BaseReporunnerModel):
 
 
 # API types
-class ApiResponse(BaseReporunnerModel, Generic[T]):
+class ApiResponse(BaseKlikkFlowModel, Generic[T]):
     """Generic API response wrapper."""
     success: bool = Field(..., description="Success status")
     data: Optional[T] = Field(None, description="Response data")
@@ -259,7 +259,7 @@ class ApiResponse(BaseReporunnerModel, Generic[T]):
     timestamp: datetime = Field(default_factory=datetime.utcnow, description="Response timestamp")
 
 
-class ErrorDetail(BaseReporunnerModel):
+class ErrorDetail(BaseKlikkFlowModel):
     """Error detail information."""
     code: str = Field(..., description="Error code")
     message: str = Field(..., description="Error message")
@@ -267,7 +267,7 @@ class ErrorDetail(BaseReporunnerModel):
     context: Optional[Dict[str, Any]] = Field(None, description="Additional error context")
 
 
-class ErrorResponse(BaseReporunnerModel):
+class ErrorResponse(BaseKlikkFlowModel):
     """API error response."""
     success: Literal[False] = Field(False, description="Success status")
     error: ErrorDetail = Field(..., description="Error details")
@@ -275,7 +275,7 @@ class ErrorResponse(BaseReporunnerModel):
     timestamp: datetime = Field(default_factory=datetime.utcnow, description="Error timestamp")
 
 
-class PaginationMeta(BaseReporunnerModel):
+class PaginationMeta(BaseKlikkFlowModel):
     """Pagination metadata."""
     page: int = Field(..., ge=1, description="Current page number")
     per_page: int = Field(..., ge=1, le=100, description="Items per page")
@@ -285,7 +285,7 @@ class PaginationMeta(BaseReporunnerModel):
     has_prev: bool = Field(..., description="Whether there is a previous page")
 
 
-class PaginatedResponse(BaseReporunnerModel, Generic[T]):
+class PaginatedResponse(BaseKlikkFlowModel, Generic[T]):
     """Paginated API response."""
     success: bool = Field(..., description="Success status")
     data: List[T] = Field(..., description="Response data items")
@@ -294,7 +294,7 @@ class PaginatedResponse(BaseReporunnerModel, Generic[T]):
 
 
 # Configuration types
-class AuthConfig(BaseReporunnerModel):
+class AuthConfig(BaseKlikkFlowModel):
     """Authentication configuration."""
     api_key: Optional[str] = Field(None, description="API key for authentication")
     access_token: Optional[str] = Field(None, description="Access token")
@@ -311,7 +311,7 @@ class AuthConfig(BaseReporunnerModel):
         return values
 
 
-class ClientConfig(BaseReporunnerModel):
+class ClientConfig(BaseKlikkFlowModel):
     """Client configuration."""
     base_url: str = Field(..., description="Base API URL")
     timeout: int = Field(30, description="Request timeout in seconds")
@@ -334,7 +334,7 @@ class ClientConfig(BaseReporunnerModel):
 
 
 # Credential types
-class CredentialData(BaseReporunnerModel):
+class CredentialData(BaseKlikkFlowModel):
     """Base credential data."""
     pass
 
@@ -362,7 +362,7 @@ class BasicAuthCredentialData(CredentialData):
     password: str = Field(..., description="Password")
 
 
-class Credential(BaseReporunnerModel):
+class Credential(BaseKlikkFlowModel):
     """Credential definition."""
     id: Optional[str] = Field(None, description="Credential ID")
     name: str = Field(..., description="Credential name")
@@ -381,14 +381,14 @@ class Credential(BaseReporunnerModel):
 
 
 # WebSocket types
-class WebSocketMessage(BaseReporunnerModel):
+class WebSocketMessage(BaseKlikkFlowModel):
     """WebSocket message structure."""
     type: str = Field(..., description="Message type")
     payload: Dict[str, Any] = Field(..., description="Message payload")
     timestamp: datetime = Field(default_factory=datetime.utcnow, description="Message timestamp")
 
 
-class ExecutionUpdate(BaseReporunnerModel):
+class ExecutionUpdate(BaseKlikkFlowModel):
     """Real-time execution update."""
     execution_id: str = Field(..., description="Execution ID")
     status: ExecutionStatus = Field(..., description="Current status")

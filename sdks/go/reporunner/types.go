@@ -1,4 +1,4 @@
-package reporunner
+package klikkflow
 
 import (
 	"encoding/json"
