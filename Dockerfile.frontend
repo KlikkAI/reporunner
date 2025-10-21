@@ -46,6 +46,9 @@ COPY packages/frontend ./packages/frontend
 COPY packages/shared ./packages/shared
 COPY packages/@klikkflow/core ./packages/@klikkflow/core
 
+# Copy documentation (required for DockerDeployment page)
+COPY docs ./docs
+
 # Copy TypeScript configs
 COPY tsconfig.base.json ./
 COPY packages/frontend/tsconfig.json ./packages/frontend/

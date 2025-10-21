@@ -46,10 +46,13 @@ pids
 *.pid.lock
 
 # Documentation (keep README.md)
-docs
+# NOTE: Frontend imports markdown files from docs/, so we need to include it
+# docs
 *.md
 !README.md
 !CLAUDE.md
+# Include docs directory for frontend markdown imports
+!docs/**/*.md
 
 # Git
 .git
