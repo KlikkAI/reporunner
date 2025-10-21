@@ -108,7 +108,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': '/src',
-      '@reporunner': '/packages/@reporunner',
+      '@klikkflow': '/packages/@klikkflow',
     },
   },
 });

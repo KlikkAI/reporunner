@@ -5,12 +5,12 @@ const { compilerOptions } = require('./tsconfig.base.json');
 module.exports = {
   projects: [
     '<rootDir>/packages/*/jest.config.js',
-    '<rootDir>/packages/@reporunner/*/jest.config.js',
+    '<rootDir>/packages/@klikkflow/*/jest.config.js',
     '<rootDir>/apps/*/jest.config.js',
   ],
   collectCoverageFrom: [
     'packages/*/src/**/*.{ts,tsx}',
-    'packages/@reporunner/*/src/**/*.{ts,tsx}',
+    'packages/@klikkflow/*/src/**/*.{ts,tsx}',
     'apps/*/src/**/*.{ts,tsx}',
     '!**/*.d.ts',
     '!**/*.test.{ts,tsx}',

@@ -7,7 +7,7 @@
   },
   {
     "name": "Core Package",
-    "path": "packages/@reporunner/core/dist/index.js",
+    "path": "packages/@klikkflow/core/dist/index.js",
     "limit": "50 KB",
     "gzip": true
   },

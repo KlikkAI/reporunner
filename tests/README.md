@@ -1,6 +1,6 @@
-# Reporunner Test Suite
+# KlikkFlow Test Suite
 
-Comprehensive testing setup for the Reporunner monorepo using Vitest.
+Comprehensive testing setup for the KlikkFlow monorepo using Vitest.
 
 ## Overview
 
@@ -25,7 +25,7 @@ pnpm test:coverage
 pnpm test:watch
 
 # Run tests for specific package
-pnpm test --filter @reporunner/backend
+pnpm test --filter @klikkflow/backend
 ```
 
 ### Run Tests by Type
@@ -71,7 +71,7 @@ packages/
 │   │   ├── integration/ # Integration tests
 │   │   └── setup.ts   # Backend test setup
 │   └── vitest.config.ts
-└── @reporunner/
+└── @klikkflow/
     ├── ai/tests/
     ├── auth/tests/
     ├── database/tests/
