@@ -15,7 +15,7 @@
       }
     ]
   },
-  "description": "Comprehensive overview of Reporunner platform metrics including workflows, executions, system health, and business KPIs",
+  "description": "Comprehensive overview of KlikkFlow platform metrics including workflows, executions, system health, and business KPIs",
   "editable": true,
   "fiscalYearStartMonth": 0,
   "gnetId": null,
@@ -27,9 +27,9 @@
       "icon": "external link",
       "includeVars": false,
       "keepTime": false,
-      "tags": ["reporunner"],
+      "tags": ["klikkflow"],
       "targetBlank": true,
-      "title": "Reporunner Dashboards",
+      "title": "KlikkFlow Dashboards",
       "tooltip": "",
       "type": "dashboards",
       "url": ""
@@ -86,7 +86,7 @@
       },
       "targets": [
         {
-          "expr": "sum by (status) (reporunner_workflow_executions_total)",
+          "expr": "sum by (status) (klikkflow_workflow_executions_total)",
           "interval": "",
           "legendFormat": "{{status}}",
           "refId": "A"
@@ -145,7 +145,7 @@
       "pluginVersion": "10.2.0",
       "targets": [
         {
-          "expr": "sum(reporunner_workflows_total)",
+          "expr": "sum(klikkflow_workflows_total)",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -208,7 +208,7 @@
       "pluginVersion": "10.2.0",
       "targets": [
         {
-          "expr": "sum(reporunner_workflow_executions_running)",
+          "expr": "sum(klikkflow_workflow_executions_running)",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -271,7 +271,7 @@
       "pluginVersion": "10.2.0",
       "targets": [
         {
-          "expr": "sum(rate(reporunner_workflow_executions_total{status=\"completed\"}[24h])) / sum(rate(reporunner_workflow_executions_total[24h])) * 100",
+          "expr": "sum(rate(klikkflow_workflow_executions_total{status=\"completed\"}[24h])) / sum(rate(klikkflow_workflow_executions_total[24h])) * 100",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -330,7 +330,7 @@
       "pluginVersion": "10.2.0",
       "targets": [
         {
-          "expr": "sum(reporunner_queue_size)",
+          "expr": "sum(klikkflow_queue_size)",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -415,7 +415,7 @@
       },
       "targets": [
         {
-          "expr": "sum(rate(http_requests_total{job=\"reporunner-backend\"}[5m])) by (method, code)",
+          "expr": "sum(rate(http_requests_total{job=\"klikkflow-backend\"}[5m])) by (method, code)",
           "interval": "",
           "legendFormat": "{{method}} {{code}}",
           "refId": "A"
@@ -500,7 +500,7 @@
       },
       "targets": [
         {
-          "expr": "rate(reporunner_workflow_executions_total[5m])",
+          "expr": "rate(klikkflow_workflow_executions_total[5m])",
           "interval": "",
           "legendFormat": "{{status}}",
           "refId": "A"
@@ -585,13 +585,13 @@
       },
       "targets": [
         {
-          "expr": "histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket{job=\"reporunner-backend\"}[5m])) by (le))",
+          "expr": "histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket{job=\"klikkflow-backend\"}[5m])) by (le))",
           "interval": "",
           "legendFormat": "95th percentile",
           "refId": "A"
         },
         {
-          "expr": "histogram_quantile(0.50, sum(rate(http_request_duration_seconds_bucket{job=\"reporunner-backend\"}[5m])) by (le))",
+          "expr": "histogram_quantile(0.50, sum(rate(http_request_duration_seconds_bucket{job=\"klikkflow-backend\"}[5m])) by (le))",
           "interval": "",
           "legendFormat": "50th percentile",
           "refId": "B"
@@ -695,7 +695,7 @@
   "refresh": "30s",
   "schemaVersion": 38,
   "style": "dark",
-  "tags": ["reporunner", "overview"],
+  "tags": ["klikkflow", "overview"],
   "templating": {
     "list": [
       {
@@ -708,7 +708,7 @@
           "type": "prometheus",
           "uid": "prometheus"
         },
-        "definition": "label_values(reporunner_workflow_executions_total, workflow_id)",
+        "definition": "label_values(klikkflow_workflow_executions_total, workflow_id)",
         "hide": 0,
         "includeAll": true,
         "label": "Workflow",
@@ -716,7 +716,7 @@
         "name": "workflow",
         "options": [],
         "query": {
-          "query": "label_values(reporunner_workflow_executions_total, workflow_id)",
+          "query": "label_values(klikkflow_workflow_executions_total, workflow_id)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -733,8 +733,8 @@
   },
   "timepicker": {},
   "timezone": "",
-  "title": "Reporunner Overview",
-  "uid": "reporunner-overview",
+  "title": "KlikkFlow Overview",
+  "uid": "klikkflow-overview",
   "version": 1,
   "weekStart": ""
 }

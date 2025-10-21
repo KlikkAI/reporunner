@@ -1,25 +1,25 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ include "reporunner.fullname" . }}-config
+  name: {{ include "klikkflow.fullname" . }}-config
   labels:
-    {{- include "reporunner.labels" . | nindent 4 }}
+    {{- include "klikkflow.labels" . | nindent 4 }}
 data:
-  NODE_ENV: {{ .Values.reporunner.env.NODE_ENV | quote }}
-  LOG_LEVEL: {{ .Values.reporunner.env.LOG_LEVEL | quote }}
-  CORS_ORIGIN: {{ .Values.reporunner.env.CORS_ORIGIN | quote }}
-  WORKER_CONCURRENCY: {{ .Values.reporunner.worker.concurrency | quote }}
+  NODE_ENV: {{ .Values.klikkflow.env.NODE_ENV | quote }}
+  LOG_LEVEL: {{ .Values.klikkflow.env.LOG_LEVEL | quote }}
+  CORS_ORIGIN: {{ .Values.klikkflow.env.CORS_ORIGIN | quote }}
+  WORKER_CONCURRENCY: {{ .Values.klikkflow.worker.concurrency | quote }}
 
   # Database configurations
-  POSTGRES_HOST: {{ include "reporunner.fullname" . }}-postgresql
+  POSTGRES_HOST: {{ include "klikkflow.fullname" . }}-postgresql
   POSTGRES_PORT: "5432"
   POSTGRES_DB: {{ .Values.postgresql.auth.database | quote }}
   POSTGRES_USER: {{ .Values.postgresql.auth.username | quote }}
 
-  MONGODB_HOST: {{ include "reporunner.fullname" . }}-mongodb
+  MONGODB_HOST: {{ include "klikkflow.fullname" . }}-mongodb
   MONGODB_PORT: "27017"
   MONGODB_DB: {{ .Values.mongodb.auth.database | quote }}
   MONGODB_USER: {{ .Values.mongodb.auth.username | quote }}
 
-  REDIS_HOST: {{ include "reporunner.fullname" . }}-redis-master
+  REDIS_HOST: {{ include "klikkflow.fullname" . }}-redis-master
   REDIS_PORT: "6379"

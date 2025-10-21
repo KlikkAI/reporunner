@@ -8,7 +8,7 @@ modules:
       valid_status_codes: [200, 201, 202, 204]
       method: GET
       headers:
-        Host: reporunner.com
+        Host: klikkflow.com
         Accept-Language: en-US
       no_follow_redirects: false
       preferred_ip_protocol: "ip4"
@@ -69,7 +69,7 @@ modules:
     prober: dns
     timeout: 5s
     dns:
-      query_name: "reporunner.com"
+      query_name: "klikkflow.com"
       query_type: "A"
       valid_rcodes:
         - NOERROR
@@ -161,7 +161,7 @@ modules:
         Accept: text/html
       valid_status_codes: [200]
       fail_if_body_not_matches_regexp:
-        - "<title>.*Reporunner.*</title>"
+        - "<title>.*KlikkFlow.*</title>"
       preferred_ip_protocol: "ip4"
 
   # SSL certificate expiry check

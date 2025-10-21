@@ -13,7 +13,7 @@
       "gridPos": { "h": 4, "w": 6, "x": 0, "y": 0 },
       "targets": [
         {
-          "expr": "count(count by (user_id) (reporunner_user_activity_total))",
+          "expr": "count(count by (user_id) (klikkflow_user_activity_total))",
           "legendFormat": "Active Users",
           "refId": "A"
         }
@@ -35,7 +35,7 @@
       "gridPos": { "h": 4, "w": 6, "x": 6, "y": 0 },
       "targets": [
         {
-          "expr": "reporunner_workflows_total",
+          "expr": "klikkflow_workflows_total",
           "legendFormat": "Workflows",
           "refId": "A"
         }
@@ -57,7 +57,7 @@
       "gridPos": { "h": 4, "w": 6, "x": 12, "y": 0 },
       "targets": [
         {
-          "expr": "sum(increase(reporunner_workflow_executions_total[24h]))",
+          "expr": "sum(increase(klikkflow_workflow_executions_total[24h]))",
           "legendFormat": "Executions",
           "refId": "A"
         }
@@ -79,7 +79,7 @@
       "gridPos": { "h": 4, "w": 6, "x": 18, "y": 0 },
       "targets": [
         {
-          "expr": "sum(increase(reporunner_workflow_executions_total{status=\"success\"}[24h])) / sum(increase(reporunner_workflow_executions_total[24h])) * 100",
+          "expr": "sum(increase(klikkflow_workflow_executions_total{status=\"success\"}[24h])) / sum(increase(klikkflow_workflow_executions_total[24h])) * 100",
           "legendFormat": "Success %",
           "refId": "A"
         }
@@ -105,7 +105,7 @@
       "gridPos": { "h": 8, "w": 12, "x": 0, "y": 4 },
       "targets": [
         {
-          "expr": "count(count by (user_id) (increase(reporunner_user_activity_total[24h]) > 0))",
+          "expr": "count(count by (user_id) (increase(klikkflow_user_activity_total[24h]) > 0))",
           "legendFormat": "DAU",
           "refId": "A"
         }
@@ -124,7 +124,7 @@
       "gridPos": { "h": 8, "w": 12, "x": 12, "y": 4 },
       "targets": [
         {
-          "expr": "sum(rate(reporunner_workflow_executions_total[1h]))",
+          "expr": "sum(rate(klikkflow_workflow_executions_total[1h]))",
           "legendFormat": "Executions/hr",
           "refId": "A"
         }
@@ -143,7 +143,7 @@
       "gridPos": { "h": 8, "w": 12, "x": 0, "y": 12 },
       "targets": [
         {
-          "expr": "sum(rate(reporunner_workflow_executions_total[5m])) by (status)",
+          "expr": "sum(rate(klikkflow_workflow_executions_total[5m])) by (status)",
           "legendFormat": "{{status}}",
           "refId": "A"
         }
@@ -162,7 +162,7 @@
       "gridPos": { "h": 8, "w": 12, "x": 12, "y": 12 },
       "targets": [
         {
-          "expr": "sum(reporunner_workflows_by_integration) by (integration)",
+          "expr": "sum(klikkflow_workflows_by_integration) by (integration)",
           "legendFormat": "{{integration}}",
           "refId": "A"
         }
@@ -180,7 +180,7 @@
       "gridPos": { "h": 8, "w": 12, "x": 0, "y": 20 },
       "targets": [
         {
-          "expr": "increase(reporunner_users_total[1d])",
+          "expr": "increase(klikkflow_users_total[1d])",
           "legendFormat": "New Users/day",
           "refId": "A"
         }
@@ -199,7 +199,7 @@
       "gridPos": { "h": 8, "w": 12, "x": 12, "y": 20 },
       "targets": [
         {
-          "expr": "increase(reporunner_workflows_created_total[1h])",
+          "expr": "increase(klikkflow_workflows_created_total[1h])",
           "legendFormat": "New Workflows/hr",
           "refId": "A"
         }
@@ -218,7 +218,7 @@
       "gridPos": { "h": 8, "w": 12, "x": 0, "y": 28 },
       "targets": [
         {
-          "expr": "sum(rate(reporunner_workflow_execution_duration_seconds_sum[5m])) / sum(rate(reporunner_workflow_execution_duration_seconds_count[5m]))",
+          "expr": "sum(rate(klikkflow_workflow_execution_duration_seconds_sum[5m])) / sum(rate(klikkflow_workflow_execution_duration_seconds_count[5m]))",
           "legendFormat": "Avg Duration",
           "refId": "A"
         }
@@ -237,7 +237,7 @@
       "gridPos": { "h": 8, "w": 12, "x": 12, "y": 28 },
       "targets": [
         {
-          "expr": "sum(rate(reporunner_integration_usage_total[5m])) by (integration)",
+          "expr": "sum(rate(klikkflow_integration_usage_total[5m])) by (integration)",
           "legendFormat": "{{integration}}",
           "refId": "A"
         }
@@ -256,7 +256,7 @@
       "gridPos": { "h": 8, "w": 12, "x": 0, "y": 36 },
       "targets": [
         {
-          "expr": "topk(10, sum(increase(reporunner_workflow_executions_total[24h])) by (workflow_id, workflow_name))",
+          "expr": "topk(10, sum(increase(klikkflow_workflow_executions_total[24h])) by (workflow_id, workflow_name))",
           "legendFormat": "{{workflow_name}}",
           "refId": "A",
           "instant": true,
@@ -281,7 +281,7 @@
       "gridPos": { "h": 8, "w": 12, "x": 12, "y": 36 },
       "targets": [
         {
-          "expr": "topk(10, sum(increase(reporunner_user_activity_total[24h])) by (user_id))",
+          "expr": "topk(10, sum(increase(klikkflow_user_activity_total[24h])) by (user_id))",
           "legendFormat": "{{user_id}}",
           "refId": "A",
           "instant": true,
@@ -306,7 +306,7 @@
       "gridPos": { "h": 4, "w": 6, "x": 0, "y": 44 },
       "targets": [
         {
-          "expr": "reporunner_credentials_total",
+          "expr": "klikkflow_credentials_total",
           "legendFormat": "Credentials",
           "refId": "A"
         }
@@ -328,7 +328,7 @@
       "gridPos": { "h": 4, "w": 6, "x": 6, "y": 44 },
       "targets": [
         {
-          "expr": "count(count by (integration) (reporunner_integration_usage_total > 0))",
+          "expr": "count(count by (integration) (klikkflow_integration_usage_total > 0))",
           "legendFormat": "Active",
           "refId": "A"
         }
@@ -350,7 +350,7 @@
       "gridPos": { "h": 4, "w": 6, "x": 12, "y": 44 },
       "targets": [
         {
-          "expr": "avg(reporunner_workflow_nodes_count)",
+          "expr": "avg(klikkflow_workflow_nodes_count)",
           "legendFormat": "Avg Nodes",
           "refId": "A"
         }
@@ -373,7 +373,7 @@
       "gridPos": { "h": 4, "w": 6, "x": 18, "y": 44 },
       "targets": [
         {
-          "expr": "reporunner_organizations_total",
+          "expr": "klikkflow_organizations_total",
           "legendFormat": "Organizations",
           "refId": "A"
         }
@@ -393,11 +393,11 @@
   "refresh": "1m",
   "schemaVersion": 37,
   "style": "dark",
-  "tags": ["reporunner", "business", "metrics", "analytics"],
+  "tags": ["klikkflow", "business", "metrics", "analytics"],
   "templating": { "list": [] },
   "time": { "from": "now-7d", "to": "now" },
   "timezone": "",
-  "title": "Reporunner Business Metrics",
-  "uid": "reporunner-business-metrics",
+  "title": "KlikkFlow Business Metrics",
+  "uid": "klikkflow-business-metrics",
   "version": 1
 }

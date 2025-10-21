@@ -1,7 +1,7 @@
 {
   "dashboard": {
     "title": "API Performance Dashboard",
-    "tags": ["reporunner", "api", "performance"],
+    "tags": ["klikkflow", "api", "performance"],
     "timezone": "browser",
     "editable": true,
     "graphTooltip": 1,

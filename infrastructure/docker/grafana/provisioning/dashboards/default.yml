@@ -6,9 +6,9 @@
 apiVersion: 1
 
 providers:
-  - name: 'Reporunner Dashboards'
+  - name: 'KlikkFlow Dashboards'
     orgId: 1
-    folder: 'Reporunner'
+    folder: 'KlikkFlow'
     type: file
     disableDeletion: false
     updateIntervalSeconds: 10

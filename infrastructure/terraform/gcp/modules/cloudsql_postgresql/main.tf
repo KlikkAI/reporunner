@@ -91,14 +91,14 @@ resource "google_sql_database_instance" "postgresql" {
 }
 
 # Database
-resource "google_sql_database" "reporunner" {
+resource "google_sql_database" "klikkflow" {
   name     = var.database_name
   instance = google_sql_database_instance.postgresql.name
   project  = var.project_id
 }
 
 # Database user
-resource "google_sql_user" "reporunner" {
+resource "google_sql_user" "klikkflow" {
   name     = var.database_user
   instance = google_sql_database_instance.postgresql.name
   password = random_password.db_password.result

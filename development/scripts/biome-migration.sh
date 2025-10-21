@@ -5,7 +5,7 @@
 
 set -e
 
-echo "🚀 Starting Biome migration for Reporunner..."
+echo "🚀 Starting Biome migration for KlikkFlow..."
 
 # Colors for output
 RED='\033[0;31m'
@@ -32,7 +32,7 @@ print_warning() {
 
 # Check if we're in the right directory
 if [ ! -f "package.json" ] || [ ! -f "biome.json" ]; then
-    print_error "Please run this script from the root of the Reporunner project"
+    print_error "Please run this script from the root of the KlikkFlow project"
     exit 1
 fi
 
@@ -119,7 +119,7 @@ cat > biome-migration-report.md << 'EOF'
 # Biome Migration Report
 
 ## Summary
-Successfully migrated from ESLint + Prettier to Biome for the Reporunner monorepo.
+Successfully migrated from ESLint + Prettier to Biome for the KlikkFlow monorepo.
 
 ## Benefits Achieved
 - **Performance**: ~80% faster linting and formatting

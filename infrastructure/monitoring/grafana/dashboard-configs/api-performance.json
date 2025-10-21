@@ -12,7 +12,7 @@
       "title": "API Request Rate",
       "targets": [
         {
-          "expr": "sum(rate(http_requests_total{job=\"reporunner-api\"}[5m]))",
+          "expr": "sum(rate(http_requests_total{job=\"klikkflow-api\"}[5m]))",
           "legendFormat": "req/s"
         }
       ],
@@ -23,7 +23,7 @@
       "title": "API Error Rate (5xx)",
       "targets": [
         {
-          "expr": "sum(rate(http_requests_total{job=\"reporunner-api\",status=~\"5..\"}[5m]))",
+          "expr": "sum(rate(http_requests_total{job=\"klikkflow-api\",status=~\"5..\"}[5m]))",
           "legendFormat": "5xx/s"
         }
       ],
@@ -34,7 +34,7 @@
       "title": "Latency p95",
       "targets": [
         {
-          "expr": "histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket{job=\"reporunner-api\"}[5m])) by (le))",
+          "expr": "histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket{job=\"klikkflow-api\"}[5m])) by (le))",
           "legendFormat": "p95"
         }
       ],
@@ -44,10 +44,10 @@
   "refresh": "30s",
   "schemaVersion": 37,
   "style": "dark",
-  "tags": ["reporunner", "api"],
+  "tags": ["klikkflow", "api"],
   "templating": { "list": [] },
   "time": { "from": "now-6h", "to": "now" },
   "timezone": "",
-  "title": "Reporunner API Performance",
+  "title": "KlikkFlow API Performance",
   "version": 1
 }

@@ -11,7 +11,7 @@ variable "project_id" {
 variable "project_name" {
   description = "Project name for resource naming"
   type        = string
-  default     = "reporunner"
+  default     = "klikkflow"
 }
 
 variable "environment" {

@@ -1,7 +1,7 @@
 global:
   smtp_smarthost: 'localhost:587'
-  smtp_from: 'alerts@reporunner.com'
-  smtp_auth_username: 'alerts@reporunner.com'
+  smtp_from: 'alerts@klikkflow.com'
+  smtp_auth_username: 'alerts@klikkflow.com'
   smtp_auth_password: 'your-smtp-password'
   slack_api_url: 'https://hooks.slack.com/services/YOUR/SLACK/WEBHOOK'
 
@@ -50,7 +50,7 @@ route:
 
     # Application alerts - notify dev team
     - match_re:
-        service: (reporunner-backend|reporunner-frontend|reporunner-workers)
+        service: (klikkflow-backend|klikkflow-frontend|klikkflow-workers)
       receiver: 'dev-team'
       group_wait: 30s
       repeat_interval: 30m
@@ -80,7 +80,7 @@ inhibit_rules:
 
   # If backend is down, don't alert on high error rates
   - source_match:
-      alertname: 'ReporunnerBackendDown'
+      alertname: 'KlikkFlowBackendDown'
     target_match_re:
       alertname: '(HighErrorRate|HighResponseTime)'
     equal: ['instance']
@@ -89,15 +89,15 @@ inhibit_rules:
   - source_match_re:
       alertname: '(MongoDBDown|PostgreSQLDown|RedisDown)'
     target_match_re:
-      alertname: '(ReporunnerBackendDown|WorkflowExecutionStuck)'
+      alertname: '(KlikkFlowBackendDown|WorkflowExecutionStuck)'
 
 # Receiver definitions
 receivers:
   # Default receiver - low priority alerts
   - name: 'default-receiver'
     email_configs:
-      - to: 'ops@reporunner.com'
-        subject: '[Reporunner] {{ .GroupLabels.alertname }} - {{ .CommonLabels.severity }}'
+      - to: 'ops@klikkflow.com'
+        subject: '[KlikkFlow] {{ .GroupLabels.alertname }} - {{ .CommonLabels.severity }}'
         body: |
           {{ range .Alerts }}
           Alert: {{ .Annotations.summary }}
@@ -108,7 +108,7 @@ receivers:
   # Critical alerts - multiple channels
   - name: 'critical-alerts'
     email_configs:
-      - to: 'critical@reporunner.com'
+      - to: 'critical@klikkflow.com'
         subject: '[CRITICAL] {{ .GroupLabels.alertname }}'
         body: |
           🚨 CRITICAL ALERT 🚨
@@ -151,7 +151,7 @@ receivers:
   # Security team notifications
   - name: 'security-team'
     email_configs:
-      - to: 'security@reporunner.com'
+      - to: 'security@klikkflow.com'
         subject: '[SECURITY] {{ .GroupLabels.alertname }}'
         body: |
           🔒 SECURITY ALERT 🔒
@@ -190,13 +190,13 @@ receivers:
         send_resolved: true
 
     email_configs:
-      - to: 'dev@reporunner.com'
+      - to: 'dev@klikkflow.com'
         subject: '[DEV] {{ .GroupLabels.alertname }}'
 
   # Database team notifications
   - name: 'database-team'
     email_configs:
-      - to: 'dba@reporunner.com'
+      - to: 'dba@klikkflow.com'
         subject: '[DATABASE] {{ .GroupLabels.alertname }}'
         body: |
           💾 DATABASE ALERT 💾
@@ -215,7 +215,7 @@ receivers:
   # Operations team notifications
   - name: 'ops-team'
     email_configs:
-      - to: 'ops@reporunner.com'
+      - to: 'ops@klikkflow.com'
         subject: '[OPS] {{ .GroupLabels.alertname }}'
 
     slack_configs:
@@ -238,7 +238,7 @@ receivers:
   # Product team notifications
   - name: 'product-team'
     email_configs:
-      - to: 'product@reporunner.com'
+      - to: 'product@klikkflow.com'
         subject: '[BUSINESS] {{ .GroupLabels.alertname }}'
         body: |
           📊 BUSINESS METRIC ALERT 📊

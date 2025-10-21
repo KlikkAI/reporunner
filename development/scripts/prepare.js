@@ -19,7 +19,7 @@ try {
 
   // Build core packages first (temporarily disabled due to TypeScript errors)
   console.log('🏗️  Skipping core package build (needs TypeScript fixes)...');
-  // execSync('pnpm turbo run build --filter=@reporunner/core', {
+  // execSync('pnpm turbo run build --filter=@klikkflow/core', {
   //   stdio: 'inherit',
   // });
 

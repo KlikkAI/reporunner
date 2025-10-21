@@ -1,7 +1,7 @@
 """
-Reporunner OpenTelemetry Instrumentation
+KlikkFlow OpenTelemetry Instrumentation
 
-This package provides comprehensive observability instrumentation for Reporunner
+This package provides comprehensive observability instrumentation for KlikkFlow
 Python applications including tracing, metrics, and logging.
 """
 
@@ -127,7 +127,7 @@ class LoggingConfig:
 
 @dataclass
 class InstrumentationConfig:
-    """Main configuration for Reporunner instrumentation"""
+    """Main configuration for KlikkFlow instrumentation"""
     service_name: str
     service_version: str = "1.0.0"
     environment: str = "development"
@@ -138,9 +138,9 @@ class InstrumentationConfig:
     exclude_urls: Optional[List[str]] = None
 
 
-class ReporunnerInstrumentor(BaseInstrumentor):
+class KlikkFlowInstrumentor(BaseInstrumentor):
     """
-    OpenTelemetry instrumentor for Reporunner applications
+    OpenTelemetry instrumentor for KlikkFlow applications
     """
 
     def __init__(self):
@@ -165,7 +165,7 @@ class ReporunnerInstrumentor(BaseInstrumentor):
         self._setup_propagators()
         self._instrument_libraries()
 
-        logger.info(f"🔍 Reporunner instrumentation started for {config.service_name}")
+        logger.info(f"🔍 KlikkFlow instrumentation started for {config.service_name}")
         logger.info(f"📊 Tracing enabled: {config.tracing.enabled}")
         logger.info(f"📈 Metrics enabled: {config.metrics.enabled}")
 
@@ -178,7 +178,7 @@ class ReporunnerInstrumentor(BaseInstrumentor):
                 logger.warning(f"Failed to uninstrument {instrumentor.__class__.__name__}: {e}")
 
         self._instrumentors.clear()
-        logger.info("🛑 Reporunner instrumentation stopped")
+        logger.info("🛑 KlikkFlow instrumentation stopped")
 
     def _setup_resource(self):
         """Setup OpenTelemetry resource"""
@@ -189,8 +189,8 @@ class ReporunnerInstrumentor(BaseInstrumentor):
             SERVICE_NAME: self._config.service_name,
             SERVICE_VERSION: self._config.service_version,
             DEPLOYMENT_ENVIRONMENT: self._config.environment,
-            "service.namespace": "reporunner",
-            "reporunner.component": self._get_component_type(),
+            "service.namespace": "klikkflow",
+            "klikkflow.component": self._get_component_type(),
         }
 
         if self._config.custom_attributes:
@@ -384,7 +384,7 @@ class WorkflowTracing:
 
     @staticmethod
     def get_tracer():
-        return trace.get_tracer("reporunner-workflow")
+        return trace.get_tracer("klikkflow-workflow")
 
     @classmethod
     def start_workflow_execution(cls, workflow_id: str, execution_id: str):
@@ -393,9 +393,9 @@ class WorkflowTracing:
         return tracer.start_span(
             "workflow.execution",
             attributes={
-                "reporunner.workflow.id": workflow_id,
-                "reporunner.execution.id": execution_id,
-                "reporunner.operation": "workflow_execution",
+                "klikkflow.workflow.id": workflow_id,
+                "klikkflow.execution.id": execution_id,
+                "klikkflow.operation": "workflow_execution",
             }
         )
 
@@ -406,10 +406,10 @@ class WorkflowTracing:
         return tracer.start_span(
             "workflow.node.execution",
             attributes={
-                "reporunner.node.id": node_id,
-                "reporunner.node.type": node_type,
-                "reporunner.execution.id": execution_id,
-                "reporunner.operation": "node_execution",
+                "klikkflow.node.id": node_id,
+                "klikkflow.node.type": node_type,
+                "klikkflow.execution.id": execution_id,
+                "klikkflow.operation": "node_execution",
             }
         )
 
@@ -420,24 +420,24 @@ class WorkflowTracing:
         return tracer.start_span(
             "integration.call",
             attributes={
-                "reporunner.integration.name": integration,
-                "reporunner.integration.operation": operation,
-                "reporunner.operation": "integration_call",
+                "klikkflow.integration.name": integration,
+                "klikkflow.integration.operation": operation,
+                "klikkflow.operation": "integration_call",
             }
         )
 
     @classmethod
     def record_workflow_metrics(cls, workflow_id: str, status: str, duration: float):
         """Record workflow execution metrics"""
-        meter = metrics.get_meter("reporunner-workflow")
+        meter = metrics.get_meter("klikkflow-workflow")
 
         execution_counter = meter.create_counter(
-            "reporunner_workflow_executions_total",
+            "klikkflow_workflow_executions_total",
             description="Total number of workflow executions",
         )
 
         execution_duration = meter.create_histogram(
-            "reporunner_workflow_execution_duration_seconds",
+            "klikkflow_workflow_execution_duration_seconds",
             description="Workflow execution duration in seconds",
         )
 
@@ -494,15 +494,15 @@ def _parse_headers(headers_str: str) -> Optional[Dict[str, str]]:
     return headers if headers else None
 
 
-def init_instrumentation(config: InstrumentationConfig) -> ReporunnerInstrumentor:
-    """Initialize Reporunner instrumentation with the given configuration"""
-    instrumentor = ReporunnerInstrumentor()
+def init_instrumentation(config: InstrumentationConfig) -> KlikkFlowInstrumentor:
+    """Initialize KlikkFlow instrumentation with the given configuration"""
+    instrumentor = KlikkFlowInstrumentor()
     instrumentor.instrument(config=config)
     return instrumentor
 
 
 # Convenience function for quick setup
-def auto_instrument(service_name: str, **kwargs) -> ReporunnerInstrumentor:
+def auto_instrument(service_name: str, **kwargs) -> KlikkFlowInstrumentor:
     """Automatically instrument with default configuration"""
     config = get_default_config(service_name)
 
@@ -515,7 +515,7 @@ def auto_instrument(service_name: str, **kwargs) -> ReporunnerInstrumentor:
 
 
 __all__ = [
-    "ReporunnerInstrumentor",
+    "KlikkFlowInstrumentor",
     "InstrumentationConfig",
     "TracingConfig",
     "MetricsConfig",

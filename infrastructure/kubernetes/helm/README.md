@@ -1,6 +1,6 @@
-# Reporunner Helm Chart
+# KlikkFlow Helm Chart
 
-This Helm chart deploys Reporunner, a visual workflow automation platform, on a Kubernetes cluster.
+This Helm chart deploys KlikkFlow, a visual workflow automation platform, on a Kubernetes cluster.
 
 ## Prerequisites
 
@@ -12,24 +12,24 @@ This Helm chart deploys Reporunner, a visual workflow automation platform, on a 
 
 ## Installing the Chart
 
-To install the chart with the release name `reporunner`:
+To install the chart with the release name `klikkflow`:
 
 ```bash
 helm repo add bitnami https://charts.bitnami.com/bitnami
 helm dependency update
-helm install reporunner . --namespace reporunner --create-namespace
+helm install klikkflow . --namespace klikkflow --create-namespace
 ```
 
-The command deploys Reporunner on the Kubernetes cluster in the default configuration. The [Parameters](#parameters) section lists the parameters that can be configured during installation.
+The command deploys KlikkFlow on the Kubernetes cluster in the default configuration. The [Parameters](#parameters) section lists the parameters that can be configured during installation.
 
 > **Tip**: List all releases using `helm list`
 
 ## Uninstalling the Chart
 
-To uninstall/delete the `reporunner` deployment:
+To uninstall/delete the `klikkflow` deployment:
 
 ```bash
-helm delete reporunner --namespace reporunner
+helm delete klikkflow --namespace klikkflow
 ```
 
 The command removes all the Kubernetes components associated with the chart and deletes the release.
@@ -44,74 +44,74 @@ The command removes all the Kubernetes components associated with the chart and 
 | `global.imagePullSecrets` | Global Docker registry secret names as an array| `[]`  |
 | `global.storageClass`     | Global StorageClass for Persistent Volume(s)   | `""`  |
 
-### Reporunner Image parameters
+### KlikkFlow Image parameters
 
 | Name                                | Description                                        | Value                    |
 | ----------------------------------- | -------------------------------------------------- | ------------------------ |
-| `reporunner.image.registry`         | Reporunner image registry                          | `docker.io`             |
-| `reporunner.image.repository`       | Reporunner image repository                        | `reporunner/reporunner`  |
-| `reporunner.image.tag`              | Reporunner image tag                               | `1.0.0`                  |
-| `reporunner.image.pullPolicy`       | Reporunner image pull policy                       | `IfNotPresent`           |
-| `reporunner.image.pullSecrets`      | Reporunner image pull secrets                      | `[]`                     |
+| `klikkflow.image.registry`         | KlikkFlow image registry                          | `docker.io`             |
+| `klikkflow.image.repository`       | KlikkFlow image repository                        | `klikkflow/klikkflow`  |
+| `klikkflow.image.tag`              | KlikkFlow image tag                               | `1.0.0`                  |
+| `klikkflow.image.pullPolicy`       | KlikkFlow image pull policy                       | `IfNotPresent`           |
+| `klikkflow.image.pullSecrets`      | KlikkFlow image pull secrets                      | `[]`                     |
 
 ### Backend parameters
 
 | Name                                      | Description                                    | Value      |
 | ----------------------------------------- | ---------------------------------------------- | ---------- |
-| `reporunner.backend.replicaCount`         | Number of backend replicas to deploy          | `3`        |
-| `reporunner.backend.image.repository`     | Backend image repository                       | `reporunner/backend` |
-| `reporunner.backend.image.tag`            | Backend image tag                              | `1.0.0`    |
-| `reporunner.backend.resources.limits`     | The resources limits for the backend containers    | `{}`       |
-| `reporunner.backend.resources.requests`   | The requested resources for the backend containers | `{}`       |
-| `reporunner.backend.autoscaling.enabled`  | Enable autoscaling for backend                | `true`     |
-| `reporunner.backend.autoscaling.minReplicas` | Minimum number of backend replicas         | `2`        |
-| `reporunner.backend.autoscaling.maxReplicas` | Maximum number of backend replicas         | `10`       |
-| `reporunner.backend.autoscaling.targetCPUUtilizationPercentage` | Target CPU utilization percentage | `70` |
+| `klikkflow.backend.replicaCount`         | Number of backend replicas to deploy          | `3`        |
+| `klikkflow.backend.image.repository`     | Backend image repository                       | `klikkflow/backend` |
+| `klikkflow.backend.image.tag`            | Backend image tag                              | `1.0.0`    |
+| `klikkflow.backend.resources.limits`     | The resources limits for the backend containers    | `{}`       |
+| `klikkflow.backend.resources.requests`   | The requested resources for the backend containers | `{}`       |
+| `klikkflow.backend.autoscaling.enabled`  | Enable autoscaling for backend                | `true`     |
+| `klikkflow.backend.autoscaling.minReplicas` | Minimum number of backend replicas         | `2`        |
+| `klikkflow.backend.autoscaling.maxReplicas` | Maximum number of backend replicas         | `10`       |
+| `klikkflow.backend.autoscaling.targetCPUUtilizationPercentage` | Target CPU utilization percentage | `70` |
 
 ### Frontend parameters
 
 | Name                                      | Description                                    | Value      |
 | ----------------------------------------- | ---------------------------------------------- | ---------- |
-| `reporunner.frontend.replicaCount`        | Number of frontend replicas to deploy         | `2`        |
-| `reporunner.frontend.image.repository`    | Frontend image repository                      | `reporunner/frontend` |
-| `reporunner.frontend.image.tag`           | Frontend image tag                             | `1.0.0`    |
-| `reporunner.frontend.resources.limits`    | The resources limits for the frontend containers   | `{}`       |
-| `reporunner.frontend.resources.requests`  | The requested resources for the frontend containers| `{}`       |
-| `reporunner.frontend.autoscaling.enabled` | Enable autoscaling for frontend               | `true`     |
-| `reporunner.frontend.autoscaling.minReplicas` | Minimum number of frontend replicas       | `2`        |
-| `reporunner.frontend.autoscaling.maxReplicas` | Maximum number of frontend replicas       | `5`        |
+| `klikkflow.frontend.replicaCount`        | Number of frontend replicas to deploy         | `2`        |
+| `klikkflow.frontend.image.repository`    | Frontend image repository                      | `klikkflow/frontend` |
+| `klikkflow.frontend.image.tag`           | Frontend image tag                             | `1.0.0`    |
+| `klikkflow.frontend.resources.limits`    | The resources limits for the frontend containers   | `{}`       |
+| `klikkflow.frontend.resources.requests`  | The requested resources for the frontend containers| `{}`       |
+| `klikkflow.frontend.autoscaling.enabled` | Enable autoscaling for frontend               | `true`     |
+| `klikkflow.frontend.autoscaling.minReplicas` | Minimum number of frontend replicas       | `2`        |
+| `klikkflow.frontend.autoscaling.maxReplicas` | Maximum number of frontend replicas       | `5`        |
 
 ### Worker parameters
 
 | Name                                      | Description                                    | Value      |
 | ----------------------------------------- | ---------------------------------------------- | ---------- |
-| `reporunner.worker.replicaCount`          | Number of worker replicas to deploy           | `3`        |
-| `reporunner.worker.image.repository`      | Worker image repository                        | `reporunner/worker` |
-| `reporunner.worker.image.tag`             | Worker image tag                               | `1.0.0`    |
-| `reporunner.worker.resources.limits`      | The resources limits for the worker containers     | `{}`       |
-| `reporunner.worker.resources.requests`    | The requested resources for the worker containers  | `{}`       |
-| `reporunner.worker.autoscaling.enabled`   | Enable autoscaling for worker                 | `true`     |
-| `reporunner.worker.autoscaling.minReplicas` | Minimum number of worker replicas           | `2`        |
-| `reporunner.worker.autoscaling.maxReplicas` | Maximum number of worker replicas           | `20`       |
-| `reporunner.worker.concurrency`           | Worker concurrency level                       | `10`       |
+| `klikkflow.worker.replicaCount`          | Number of worker replicas to deploy           | `3`        |
+| `klikkflow.worker.image.repository`      | Worker image repository                        | `klikkflow/worker` |
+| `klikkflow.worker.image.tag`             | Worker image tag                               | `1.0.0`    |
+| `klikkflow.worker.resources.limits`      | The resources limits for the worker containers     | `{}`       |
+| `klikkflow.worker.resources.requests`    | The requested resources for the worker containers  | `{}`       |
+| `klikkflow.worker.autoscaling.enabled`   | Enable autoscaling for worker                 | `true`     |
+| `klikkflow.worker.autoscaling.minReplicas` | Minimum number of worker replicas           | `2`        |
+| `klikkflow.worker.autoscaling.maxReplicas` | Maximum number of worker replicas           | `20`       |
+| `klikkflow.worker.concurrency`           | Worker concurrency level                       | `10`       |
 
 ### PostgreSQL parameters
 
 | Name                        | Description                                       | Value           |
 | --------------------------- | ------------------------------------------------- | --------------- |
 | `postgresql.enabled`        | Switch to enable or disable the PostgreSQL helm chart | `true`      |
-| `postgresql.auth.username`  | Name for a custom user to create                 | `reporunner`    |
-| `postgresql.auth.password`  | Password for the custom user to create           | `reporunner-password` |
-| `postgresql.auth.database`  | Name for a custom database to create             | `reporunner`    |
+| `postgresql.auth.username`  | Name for a custom user to create                 | `klikkflow`    |
+| `postgresql.auth.password`  | Password for the custom user to create           | `klikkflow-password` |
+| `postgresql.auth.database`  | Name for a custom database to create             | `klikkflow`    |
 
 ### MongoDB parameters
 
 | Name                     | Description                                       | Value           |
 | ------------------------ | ------------------------------------------------- | --------------- |
 | `mongodb.enabled`        | Switch to enable or disable the MongoDB helm chart | `true`        |
-| `mongodb.auth.username`  | MongoDB custom user                               | `reporunner`    |
-| `mongodb.auth.password`  | MongoDB custom user password                      | `reporunner-password` |
-| `mongodb.auth.database`  | MongoDB custom database                           | `reporunner`    |
+| `mongodb.auth.username`  | MongoDB custom user                               | `klikkflow`    |
+| `mongodb.auth.password`  | MongoDB custom user password                      | `klikkflow-password` |
+| `mongodb.auth.database`  | MongoDB custom database                           | `klikkflow`    |
 
 ### Redis parameters
 
@@ -125,7 +125,7 @@ The command removes all the Kubernetes components associated with the chart and 
 
 | Name                       | Description                                       | Value           |
 | -------------------------- | ------------------------------------------------- | --------------- |
-| `ingress.enabled`          | Enable ingress record generation for Reporunner  | `true`          |
+| `ingress.enabled`          | Enable ingress record generation for KlikkFlow  | `true`          |
 | `ingress.className`        | IngressClass that will be used to implement the Ingress | `nginx`   |
 | `ingress.annotations`      | Additional annotations for the Ingress resource  | `{}`            |
 | `ingress.hosts`            | An array with hosts and paths                     | `[]`            |
@@ -158,13 +158,13 @@ The command removes all the Kubernetes components associated with the chart and 
 | `backup.schedule`                 | Backup schedule (cron format)               | `0 2 * * *`   |
 | `backup.retention`                | Backup retention period                     | `30d`         |
 | `backup.storage.type`             | Backup storage type                          | `s3`          |
-| `backup.storage.bucket`           | S3 bucket for backups                       | `reporunner-backups` |
+| `backup.storage.bucket`           | S3 bucket for backups                       | `klikkflow-backups` |
 
 ## Configuration and installation details
 
 ### Setting up Ingress
 
-This chart provides support for Ingress resources. If you have an ingress controller installed on your cluster, such as nginx-ingress or HAProxy Ingress, you can create an Ingress resource to route traffic to Reporunner. To enable Ingress integration, set `ingress.enabled` to `true`.
+This chart provides support for Ingress resources. If you have an ingress controller installed on your cluster, such as nginx-ingress or HAProxy Ingress, you can create an Ingress resource to route traffic to KlikkFlow. To enable Ingress integration, set `ingress.enabled` to `true`.
 
 ### TLS secrets
 
@@ -199,7 +199,7 @@ This version introduces the following changes:
 
 This is the first major version of the chart. It includes:
 
-- Complete Kubernetes deployment for Reporunner
+- Complete Kubernetes deployment for KlikkFlow
 - PostgreSQL with pgvector for AI capabilities
 - MongoDB for primary data storage
 - Redis for caching and session management

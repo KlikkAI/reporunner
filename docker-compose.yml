@@ -1,5 +1,5 @@
 # ============================================
-# Reporunner - Complete Docker Compose
+# KlikkFlow - Complete Docker Compose
 # Profile-Based Architecture (Option C: Hybrid)
 # ============================================
 #
@@ -21,8 +21,8 @@
 # NETWORKS
 # ============================================
 networks:
-  reporunner-network:
-    name: reporunner_network
+  klikkflow-network:
+    name: klikkflow_network
     driver: bridge
 
 # ============================================
@@ -30,19 +30,19 @@ networks:
 # ============================================
 volumes:
   mongo_data:
-    name: reporunner_mongo_data
+    name: klikkflow_mongo_data
   postgres_data:
-    name: reporunner_postgres_data
+    name: klikkflow_postgres_data
   redis_data:
-    name: reporunner_redis_data
+    name: klikkflow_redis_data
   prometheus_data:
-    name: reporunner_prometheus_data
+    name: klikkflow_prometheus_data
   grafana_data:
-    name: reporunner_grafana_data
+    name: klikkflow_grafana_data
   elasticsearch_data:
-    name: reporunner_elasticsearch_data
-  reporunner_uploads:
-    name: reporunner_uploads
+    name: klikkflow_elasticsearch_data
+  klikkflow_uploads:
+    name: klikkflow_uploads
 
 # ============================================
 # CORE SERVICES (Always Included) - 6 containers
@@ -56,8 +56,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.frontend
-    image: reporunner/frontend:latest
-    container_name: reporunner-frontend
+    image: klikkflow/frontend:latest
+    container_name: klikkflow-frontend
     restart: unless-stopped
     ports:
       - "${FRONTEND_PORT:-3000}:80"
@@ -69,7 +69,7 @@ services:
       backend:
         condition: service_healthy
     networks:
-      - reporunner-network
+      - klikkflow-network
     healthcheck:
       test: ["CMD", "wget", "--spider", "-q", "http://localhost/health"]
       interval: 30s
@@ -89,8 +89,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.backend
-    image: reporunner/backend:latest
-    container_name: reporunner-backend
+    image: klikkflow/backend:latest
+    container_name: klikkflow-backend
     restart: unless-stopped
     ports:
       - "${BACKEND_PORT:-3001}:3001"
@@ -100,8 +100,8 @@ services:
       - LOG_LEVEL=${LOG_LEVEL:-info}
 
       # Database URLs
-      - MONGODB_URI=${MONGODB_URI:-mongodb://mongo:27017/reporunner}
-      - POSTGRES_URL=${POSTGRES_URL:-postgresql://postgres:password@postgres:5432/reporunner}
+      - MONGODB_URI=${MONGODB_URI:-mongodb://mongo:27017/klikkflow}
+      - POSTGRES_URL=${POSTGRES_URL:-postgresql://postgres:password@postgres:5432/klikkflow}
       - REDIS_URL=${REDIS_URL:-redis://redis:6379}
 
       # Authentication
@@ -118,10 +118,10 @@ services:
       - SMTP_PORT=${SMTP_PORT:-587}
       - SMTP_USER=${SMTP_USER:-}
       - SMTP_PASSWORD=${SMTP_PASSWORD:-}
-      - SMTP_FROM=${SMTP_FROM:-noreply@reporunner.com}
+      - SMTP_FROM=${SMTP_FROM:-noreply@klikkflow.com}
 
     volumes:
-      - reporunner_uploads:/app/uploads
+      - klikkflow_uploads:/app/uploads
     depends_on:
       mongo:
         condition: service_healthy
@@ -130,7 +130,7 @@ services:
       redis:
         condition: service_healthy
     networks:
-      - reporunner-network
+      - klikkflow-network
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3001/health"]
       interval: 30s
@@ -150,8 +150,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.worker
-    image: reporunner/worker:latest
-    container_name: reporunner-worker
+    image: klikkflow/worker:latest
+    container_name: klikkflow-worker
     restart: unless-stopped
     environment:
       - NODE_ENV=${NODE_ENV:-production}
@@ -159,8 +159,8 @@ services:
       - LOG_LEVEL=${LOG_LEVEL:-info}
 
       # Database URLs
-      - MONGODB_URI=${MONGODB_URI:-mongodb://mongo:27017/reporunner}
-      - POSTGRES_URL=${POSTGRES_URL:-postgresql://postgres:password@postgres:5432/reporunner}
+      - MONGODB_URI=${MONGODB_URI:-mongodb://mongo:27017/klikkflow}
+      - POSTGRES_URL=${POSTGRES_URL:-postgresql://postgres:password@postgres:5432/klikkflow}
       - REDIS_URL=${REDIS_URL:-redis://redis:6379}
 
       # AI Services
@@ -176,7 +176,7 @@ services:
       redis:
         condition: service_healthy
     networks:
-      - reporunner-network
+      - klikkflow-network
     deploy:
       resources:
         limits:
@@ -192,19 +192,19 @@ services:
 
   mongo:
     image: mongo:7.0
-    container_name: reporunner-mongo
+    container_name: klikkflow-mongo
     restart: unless-stopped
     ports:
       - "${MONGO_PORT:-27017}:27017"
     environment:
       - MONGO_INITDB_ROOT_USERNAME=${MONGO_ROOT_USER:-admin}
       - MONGO_INITDB_ROOT_PASSWORD=${MONGO_ROOT_PASSWORD:-changeme}
-      - MONGO_INITDB_DATABASE=reporunner
+      - MONGO_INITDB_DATABASE=klikkflow
     volumes:
       - mongo_data:/data/db
       - ./infrastructure/docker/scripts/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
     networks:
-      - reporunner-network
+      - klikkflow-network
     healthcheck:
       test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
       interval: 10s
@@ -222,12 +222,12 @@ services:
 
   postgres:
     image: pgvector/pgvector:pg16
-    container_name: reporunner-postgres
+    container_name: klikkflow-postgres
     restart: unless-stopped
     ports:
       - "${POSTGRES_PORT:-5432}:5432"
     environment:
-      - POSTGRES_DB=reporunner
+      - POSTGRES_DB=klikkflow
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-password}
       - PGDATA=/var/lib/postgresql/data/pgdata
@@ -240,7 +240,7 @@ services:
       -c pg_stat_statements.track=all
       -c max_connections=200
     networks:
-      - reporunner-network
+      - klikkflow-network
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 10s
@@ -257,7 +257,7 @@ services:
 
   redis:
     image: redis:7-alpine
-    container_name: reporunner-redis
+    container_name: klikkflow-redis
     restart: unless-stopped
     ports:
       - "${REDIS_PORT:-6379}:6379"
@@ -270,7 +270,7 @@ services:
       --maxmemory 256mb
       --maxmemory-policy allkeys-lru
     networks:
-      - reporunner-network
+      - klikkflow-network
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s
@@ -293,7 +293,7 @@ services:
 
   prometheus:
     image: prom/prometheus:latest
-    container_name: reporunner-prometheus
+    container_name: klikkflow-prometheus
     restart: unless-stopped
     profiles: [monitoring, full]
     ports:
@@ -309,7 +309,7 @@ services:
       - '--web.console.templates=/usr/share/prometheus/consoles'
       - '--web.enable-lifecycle'
     networks:
-      - reporunner-network
+      - klikkflow-network
     deploy:
       resources:
         limits:
@@ -321,7 +321,7 @@ services:
 
   grafana:
     image: grafana/grafana:latest
-    container_name: reporunner-grafana
+    container_name: klikkflow-grafana
     restart: unless-stopped
     profiles: [monitoring, full]
     ports:
@@ -337,7 +337,7 @@ services:
     depends_on:
       - prometheus
     networks:
-      - reporunner-network
+      - klikkflow-network
     deploy:
       resources:
         limits:
@@ -349,7 +349,7 @@ services:
 
   alertmanager:
     image: prom/alertmanager:latest
-    container_name: reporunner-alertmanager
+    container_name: klikkflow-alertmanager
     restart: unless-stopped
     profiles: [monitoring, full]
     ports:
@@ -360,7 +360,7 @@ services:
       - '--config.file=/etc/alertmanager/alertmanager.yml'
       - '--storage.path=/alertmanager'
     networks:
-      - reporunner-network
+      - klikkflow-network
     deploy:
       resources:
         limits:
@@ -369,7 +369,7 @@ services:
 
   node-exporter:
     image: prom/node-exporter:latest
-    container_name: reporunner-node-exporter
+    container_name: klikkflow-node-exporter
     restart: unless-stopped
     profiles: [monitoring, full]
     command:
@@ -378,7 +378,7 @@ services:
     volumes:
       - '/:/host:ro,rslave'
     networks:
-      - reporunner-network
+      - klikkflow-network
     deploy:
       resources:
         limits:
@@ -387,13 +387,13 @@ services:
 
   redis-exporter:
     image: oliver006/redis_exporter:latest
-    container_name: reporunner-redis-exporter
+    container_name: klikkflow-redis-exporter
     restart: unless-stopped
     profiles: [monitoring, full]
     environment:
       - REDIS_ADDR=redis:6379
     networks:
-      - reporunner-network
+      - klikkflow-network
     deploy:
       resources:
         limits:
@@ -402,14 +402,14 @@ services:
 
   mongodb-exporter:
     image: percona/mongodb_exporter:latest
-    container_name: reporunner-mongodb-exporter
+    container_name: klikkflow-mongodb-exporter
     restart: unless-stopped
     profiles: [monitoring, full]
     command:
       - '--mongodb.uri=mongodb://mongo:27017'
       - '--compatible-mode'
     networks:
-      - reporunner-network
+      - klikkflow-network
     deploy:
       resources:
         limits:
@@ -423,7 +423,7 @@ services:
 
   nginx-lb:
     image: nginx:alpine
-    container_name: reporunner-nginx-lb
+    container_name: klikkflow-nginx-lb
     restart: unless-stopped
     profiles: [ha, full]
     ports:
@@ -435,7 +435,7 @@ services:
       - backend
       - backend-2
     networks:
-      - reporunner-network
+      - klikkflow-network
     deploy:
       resources:
         limits:
@@ -446,14 +446,14 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.backup
-    image: reporunner/backup:latest
-    container_name: reporunner-backup
+    image: klikkflow/backup:latest
+    container_name: klikkflow-backup
     restart: unless-stopped
     profiles: [ha, full]
     environment:
       - BACKUP_SCHEDULE=${BACKUP_SCHEDULE:-0 2 * * *}
-      - MONGODB_URI=mongodb://mongo:27017/reporunner
-      - POSTGRES_URL=postgresql://postgres:password@postgres:5432/reporunner
+      - MONGODB_URI=mongodb://mongo:27017/klikkflow
+      - POSTGRES_URL=postgresql://postgres:password@postgres:5432/klikkflow
       - S3_BUCKET=${BACKUP_S3_BUCKET:-}
       - S3_ACCESS_KEY=${BACKUP_S3_ACCESS_KEY:-}
       - S3_SECRET_KEY=${BACKUP_S3_SECRET_KEY:-}
@@ -463,7 +463,7 @@ services:
       - mongo
       - postgres
     networks:
-      - reporunner-network
+      - klikkflow-network
     deploy:
       resources:
         limits:
@@ -473,7 +473,7 @@ services:
   backend-2:
     extends:
       service: backend
-    container_name: reporunner-backend-2
+    container_name: klikkflow-backend-2
     profiles: [ha, full]
     ports:
       - "${BACKEND_2_PORT:-3002}:3001"
@@ -481,7 +481,7 @@ services:
   worker-2:
     extends:
       service: worker
-    container_name: reporunner-worker-2
+    container_name: klikkflow-worker-2
     profiles: [ha, full]
 
 # ============================================
@@ -491,7 +491,7 @@ services:
 
   elasticsearch:
     image: elasticsearch:8.11.0
-    container_name: reporunner-elasticsearch
+    container_name: klikkflow-elasticsearch
     restart: unless-stopped
     profiles: [logging, full]
     ports:
@@ -503,7 +503,7 @@ services:
     volumes:
       - elasticsearch_data:/usr/share/elasticsearch/data
     networks:
-      - reporunner-network
+      - klikkflow-network
     deploy:
       resources:
         limits:
@@ -515,7 +515,7 @@ services:
 
   kibana:
     image: kibana:8.11.0
-    container_name: reporunner-kibana
+    container_name: klikkflow-kibana
     restart: unless-stopped
     profiles: [logging, full]
     ports:
@@ -525,7 +525,7 @@ services:
     depends_on:
       - elasticsearch
     networks:
-      - reporunner-network
+      - klikkflow-network
     deploy:
       resources:
         limits:
@@ -534,7 +534,7 @@ services:
 
   filebeat:
     image: elastic/filebeat:8.11.0
-    container_name: reporunner-filebeat
+    container_name: klikkflow-filebeat
     restart: unless-stopped
     profiles: [logging, full]
     user: root
@@ -545,7 +545,7 @@ services:
     depends_on:
       - elasticsearch
     networks:
-      - reporunner-network
+      - klikkflow-network
     deploy:
       resources:
         limits:
@@ -559,14 +559,14 @@ services:
 
   mailhog:
     image: mailhog/mailhog:latest
-    container_name: reporunner-mailhog
+    container_name: klikkflow-mailhog
     restart: unless-stopped
     profiles: [dev, full]
     ports:
       - "${MAILHOG_SMTP_PORT:-1025}:1025"
       - "${MAILHOG_WEB_PORT:-8025}:8025"
     networks:
-      - reporunner-network
+      - klikkflow-network
     deploy:
       resources:
         limits:
@@ -575,7 +575,7 @@ services:
 
   adminer:
     image: adminer:latest
-    container_name: reporunner-adminer
+    container_name: klikkflow-adminer
     restart: unless-stopped
     profiles: [dev, full]
     ports:
@@ -583,7 +583,7 @@ services:
     environment:
       - ADMINER_DEFAULT_SERVER=postgres
     networks:
-      - reporunner-network
+      - klikkflow-network
     deploy:
       resources:
         limits:
@@ -592,7 +592,7 @@ services:
 
   redis-commander:
     image: rediscommander/redis-commander:latest
-    container_name: reporunner-redis-commander
+    container_name: klikkflow-redis-commander
     restart: unless-stopped
     profiles: [dev, full]
     ports:
@@ -600,7 +600,7 @@ services:
     environment:
       - REDIS_HOSTS=local:redis:6379
     networks:
-      - reporunner-network
+      - klikkflow-network
     deploy:
       resources:
         limits:

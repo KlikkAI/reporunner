@@ -1,14 +1,14 @@
-# Production Docker Compose for Reporunner
+# Production Docker Compose for KlikkFlow
 # Complete setup with all required services
 # Last Updated: October 11, 2025
 
 version: '3.8'
 
 services:
-  # Main Reporunner Application
-  reporunner:
-    image: reporunner/reporunner:latest
-    container_name: reporunner-app
+  # Main KlikkFlow Application
+  klikkflow:
+    image: klikkflow/klikkflow:latest
+    container_name: klikkflow-app
     restart: unless-stopped
     ports:
       - "${PORT:-3000}:3000"
@@ -19,8 +19,8 @@ services:
       - LOG_LEVEL=${LOG_LEVEL:-info}
 
       # Database URLs
-      - MONGODB_URI=mongodb://mongo:27017/reporunner
-      - POSTGRES_URL=postgres://postgres:${POSTGRES_PASSWORD:-changeme}@postgres:5432/reporunner
+      - MONGODB_URI=mongodb://mongo:27017/klikkflow
+      - POSTGRES_URL=postgres://postgres:${POSTGRES_PASSWORD:-changeme}@postgres:5432/klikkflow
       - REDIS_URL=redis://:${REDIS_PASSWORD:-changeme}@redis:6379
 
       # Authentication (REQUIRED - Set in .env)
@@ -32,7 +32,7 @@ services:
       - SMTP_PORT=${SMTP_PORT:-587}
       - SMTP_USER=${SMTP_USER:-}
       - SMTP_PASS=${SMTP_PASS:-}
-      - SMTP_FROM=${SMTP_FROM:-noreply@reporunner.com}
+      - SMTP_FROM=${SMTP_FROM:-noreply@klikkflow.com}
 
       # AI Services (Optional)
       - OPENAI_API_KEY=${OPENAI_API_KEY:-}
@@ -47,9 +47,9 @@ services:
       - S3_ENDPOINT=${S3_ENDPOINT:-}  # For MinIO or custom S3
 
     volumes:
-      - reporunner-data:/app/data
-      - reporunner-logs:/app/logs
-      - reporunner-uploads:/app/uploads
+      - klikkflow-data:/app/data
+      - klikkflow-logs:/app/logs
+      - klikkflow-uploads:/app/uploads
 
     depends_on:
       mongo:
@@ -67,7 +67,7 @@ services:
       start_period: 40s
 
     networks:
-      - reporunner-network
+      - klikkflow-network
 
     security_opt:
       - no-new-privileges:true
@@ -84,14 +84,14 @@ services:
   # MongoDB - Primary Database
   mongo:
     image: mongo:7
-    container_name: reporunner-mongo
+    container_name: klikkflow-mongo
     restart: unless-stopped
     ports:
       - "${MONGO_PORT:-27017}:27017"
     environment:
       - MONGO_INITDB_ROOT_USERNAME=admin
       - MONGO_INITDB_ROOT_PASSWORD=${MONGO_ROOT_PASSWORD:-changeme}
-      - MONGO_INITDB_DATABASE=reporunner
+      - MONGO_INITDB_DATABASE=klikkflow
     volumes:
       - mongo-data:/data/db
       - mongo-config:/data/configdb
@@ -104,19 +104,19 @@ services:
       retries: 5
       start_period: 40s
     networks:
-      - reporunner-network
+      - klikkflow-network
     security_opt:
       - no-new-privileges:true
 
   # PostgreSQL with pgvector - AI Database
   postgres:
     image: pgvector/pgvector:pg16
-    container_name: reporunner-postgres
+    container_name: klikkflow-postgres
     restart: unless-stopped
     ports:
       - "${POSTGRES_PORT:-5432}:5432"
     environment:
-      - POSTGRES_DB=reporunner
+      - POSTGRES_DB=klikkflow
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-changeme}
       - PGDATA=/var/lib/postgresql/data/pgdata
@@ -134,14 +134,14 @@ services:
       timeout: 5s
       retries: 5
     networks:
-      - reporunner-network
+      - klikkflow-network
     security_opt:
       - no-new-privileges:true
 
   # Redis - Caching and Queue
   redis:
     image: redis:7-alpine
-    container_name: reporunner-redis
+    container_name: klikkflow-redis
     restart: unless-stopped
     ports:
       - "${REDIS_PORT:-6379}:6379"
@@ -160,14 +160,14 @@ services:
       timeout: 3s
       retries: 5
     networks:
-      - reporunner-network
+      - klikkflow-network
     security_opt:
       - no-new-privileges:true
 
   # Nginx - Reverse Proxy (Optional but recommended for production)
   nginx:
     image: nginx:alpine
-    container_name: reporunner-nginx
+    container_name: klikkflow-nginx
     restart: unless-stopped
     ports:
       - "80:80"
@@ -177,20 +177,20 @@ services:
       - ./infrastructure/docker/ssl:/etc/nginx/ssl:ro
       - nginx-cache:/var/cache/nginx
     depends_on:
-      - reporunner
+      - klikkflow
     networks:
-      - reporunner-network
+      - klikkflow-network
     security_opt:
       - no-new-privileges:true
     profiles:
       - with-nginx
 
 volumes:
-  reporunner-data:
+  klikkflow-data:
     driver: local
-  reporunner-logs:
+  klikkflow-logs:
     driver: local
-  reporunner-uploads:
+  klikkflow-uploads:
     driver: local
   mongo-data:
     driver: local
@@ -204,6 +204,6 @@ volumes:
     driver: local
 
 networks:
-  reporunner-network:
+  klikkflow-network:
     driver: bridge
-    name: reporunner-production
+    name: klikkflow-production

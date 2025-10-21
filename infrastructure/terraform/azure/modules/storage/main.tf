@@ -77,7 +77,7 @@ resource "azurerm_storage_container" "logs" {
 
 # File share (for persistent storage)
 resource "azurerm_storage_share" "main" {
-  name                 = "reporunner-share"
+  name                 = "klikkflow-share"
   storage_account_name = azurerm_storage_account.main.name
   quota                = var.file_share_quota_gb
 

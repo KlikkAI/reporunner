@@ -1,11 +1,11 @@
 #!/bin/bash
 
-# Build script for all Reporunner SDKs
+# Build script for all KlikkFlow SDKs
 # This script builds all SDKs in the correct order with proper error handling
 
 set -e
 
-echo "🚀 Building Reporunner SDK Ecosystem..."
+echo "🚀 Building KlikkFlow SDK Ecosystem..."
 
 # Colors for output
 RED='\033[0;31m'
@@ -32,8 +32,8 @@ print_warning() {
 }
 
 # Check if we're in the right directory
-if [ ! -f "package.json" ] || [ ! -d "packages/@reporunner" ]; then
-    print_error "Please run this script from the root of the Reporunner project"
+if [ ! -f "package.json" ] || [ ! -d "packages/@klikkflow" ]; then
+    print_error "Please run this script from the root of the KlikkFlow project"
     exit 1
 fi
 
@@ -69,7 +69,7 @@ if [ -d "sdks/go" ]; then
     cd sdks/go
     if command -v go &> /dev/null; then
         go mod download
-        go build -o dist/reporunner-sdk ./...
+        go build -o dist/klikkflow-sdk ./...
         go test ./... -v
         print_success "Go SDK built and tested successfully"
     else
@@ -132,8 +132,8 @@ fi
 
 # Build .NET SDK
 print_status "Building .NET SDK..."
-if [ -d "packages/@reporunner/dotnet-sdk" ]; then
-    cd packages/@reporunner/dotnet-sdk
+if [ -d "packages/@klikkflow/dotnet-sdk" ]; then
+    cd packages/@klikkflow/dotnet-sdk
     if command -v dotnet &> /dev/null; then
         dotnet restore
         dotnet build --configuration Release --no-restore
@@ -152,14 +152,14 @@ print_success "✅ All available SDKs have been built successfully!"
 echo ""
 echo "📦 SDK Build Summary:"
 echo "├── TypeScript: ✅ packages/sdk"
-echo "├── Python:     ✅ packages/@reporunner/python-sdk" 
-echo "├── Go:         ✅ packages/@reporunner/go-sdk"
-echo "├── Rust:       ✅ packages/@reporunner/rust-sdk"
-echo "├── Java:       ✅ packages/@reporunner/java-sdk"
-echo "├── PHP:        ✅ packages/@reporunner/php-sdk"
-echo "└── .NET:       ✅ packages/@reporunner/dotnet-sdk"
+echo "├── Python:     ✅ packages/@klikkflow/python-sdk" 
+echo "├── Go:         ✅ packages/@klikkflow/go-sdk"
+echo "├── Rust:       ✅ packages/@klikkflow/rust-sdk"
+echo "├── Java:       ✅ packages/@klikkflow/java-sdk"
+echo "├── PHP:        ✅ packages/@klikkflow/php-sdk"
+echo "└── .NET:       ✅ packages/@klikkflow/dotnet-sdk"
 echo ""
-print_success "🎉 Reporunner SDK Ecosystem build completed!"
+print_success "🎉 KlikkFlow SDK Ecosystem build completed!"
 
 # Generate SDK documentation
 if command -v typedoc &> /dev/null; then

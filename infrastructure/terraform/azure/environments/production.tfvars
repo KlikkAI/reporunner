@@ -1,8 +1,8 @@
-# Reporunner Azure Production Environment
+# KlikkFlow Azure Production Environment
 # High-availability production setup
 
 environment  = "production"
-project_name = "reporunner"
+project_name = "klikkflow"
 location     = "eastus"
 
 # Network

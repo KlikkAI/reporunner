@@ -1,10 +1,10 @@
-# Reporunner GCP Development Environment Configuration
+# KlikkFlow GCP Development Environment Configuration
 # Cost-optimized setup for development and testing
 
 # Project Configuration
 # project_id = "your-gcp-project-id"  # Set this via environment variable or CLI
 environment  = "dev"
-project_name = "reporunner"
+project_name = "klikkflow"
 region       = "us-central1"
 
 # Network Configuration

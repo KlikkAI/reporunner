@@ -1,103 +1,103 @@
-{{- if .Values.reporunner.backend.autoscaling.enabled }}
+{{- if .Values.klikkflow.backend.autoscaling.enabled }}
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: {{ include "reporunner.fullname" . }}-backend
+  name: {{ include "klikkflow.fullname" . }}-backend
   labels:
     {{- $component := "backend" }}
-    {{- include "reporunner.componentLabels" (dict "Chart" .Chart "Release" .Release "Values" .Values "component" $component) | nindent 4 }}
+    {{- include "klikkflow.componentLabels" (dict "Chart" .Chart "Release" .Release "Values" .Values "component" $component) | nindent 4 }}
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: {{ include "reporunner.fullname" . }}-backend
-  minReplicas: {{ .Values.reporunner.backend.autoscaling.minReplicas }}
-  maxReplicas: {{ .Values.reporunner.backend.autoscaling.maxReplicas }}
+    name: {{ include "klikkflow.fullname" . }}-backend
+  minReplicas: {{ .Values.klikkflow.backend.autoscaling.minReplicas }}
+  maxReplicas: {{ .Values.klikkflow.backend.autoscaling.maxReplicas }}
   metrics:
-    {{- if .Values.reporunner.backend.autoscaling.targetCPUUtilizationPercentage }}
+    {{- if .Values.klikkflow.backend.autoscaling.targetCPUUtilizationPercentage }}
     - type: Resource
       resource:
         name: cpu
         target:
           type: Utilization
-          averageUtilization: {{ .Values.reporunner.backend.autoscaling.targetCPUUtilizationPercentage }}
+          averageUtilization: {{ .Values.klikkflow.backend.autoscaling.targetCPUUtilizationPercentage }}
     {{- end }}
-    {{- if .Values.reporunner.backend.autoscaling.targetMemoryUtilizationPercentage }}
+    {{- if .Values.klikkflow.backend.autoscaling.targetMemoryUtilizationPercentage }}
     - type: Resource
       resource:
         name: memory
         target:
           type: Utilization
-          averageUtilization: {{ .Values.reporunner.backend.autoscaling.targetMemoryUtilizationPercentage }}
+          averageUtilization: {{ .Values.klikkflow.backend.autoscaling.targetMemoryUtilizationPercentage }}
     {{- end }}
 {{- end }}
 
 ---
-{{- if .Values.reporunner.frontend.autoscaling.enabled }}
+{{- if .Values.klikkflow.frontend.autoscaling.enabled }}
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: {{ include "reporunner.fullname" . }}-frontend
+  name: {{ include "klikkflow.fullname" . }}-frontend
   labels:
     {{- $component := "frontend" }}
-    {{- include "reporunner.componentLabels" (dict "Chart" .Chart "Release" .Release "Values" .Values "component" $component) | nindent 4 }}
+    {{- include "klikkflow.componentLabels" (dict "Chart" .Chart "Release" .Release "Values" .Values "component" $component) | nindent 4 }}
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: {{ include "reporunner.fullname" . }}-frontend
-  minReplicas: {{ .Values.reporunner.frontend.autoscaling.minReplicas }}
-  maxReplicas: {{ .Values.reporunner.frontend.autoscaling.maxReplicas }}
+    name: {{ include "klikkflow.fullname" . }}-frontend
+  minReplicas: {{ .Values.klikkflow.frontend.autoscaling.minReplicas }}
+  maxReplicas: {{ .Values.klikkflow.frontend.autoscaling.maxReplicas }}
   metrics:
-    {{- if .Values.reporunner.frontend.autoscaling.targetCPUUtilizationPercentage }}
+    {{- if .Values.klikkflow.frontend.autoscaling.targetCPUUtilizationPercentage }}
     - type: Resource
       resource:
         name: cpu
         target:
           type: Utilization
-          averageUtilization: {{ .Values.reporunner.frontend.autoscaling.targetCPUUtilizationPercentage }}
+          averageUtilization: {{ .Values.klikkflow.frontend.autoscaling.targetCPUUtilizationPercentage }}
     {{- end }}
-    {{- if .Values.reporunner.frontend.autoscaling.targetMemoryUtilizationPercentage }}
+    {{- if .Values.klikkflow.frontend.autoscaling.targetMemoryUtilizationPercentage }}
     - type: Resource
       resource:
         name: memory
         target:
           type: Utilization
-          averageUtilization: {{ .Values.reporunner.frontend.autoscaling.targetMemoryUtilizationPercentage }}
+          averageUtilization: {{ .Values.klikkflow.frontend.autoscaling.targetMemoryUtilizationPercentage }}
     {{- end }}
 {{- end }}
 
 ---
-{{- if .Values.reporunner.worker.autoscaling.enabled }}
+{{- if .Values.klikkflow.worker.autoscaling.enabled }}
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: {{ include "reporunner.fullname" . }}-worker
+  name: {{ include "klikkflow.fullname" . }}-worker
   labels:
     {{- $component := "worker" }}
-    {{- include "reporunner.componentLabels" (dict "Chart" .Chart "Release" .Release "Values" .Values "component" $component) | nindent 4 }}
+    {{- include "klikkflow.componentLabels" (dict "Chart" .Chart "Release" .Release "Values" .Values "component" $component) | nindent 4 }}
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: {{ include "reporunner.fullname" . }}-worker
-  minReplicas: {{ .Values.reporunner.worker.autoscaling.minReplicas }}
-  maxReplicas: {{ .Values.reporunner.worker.autoscaling.maxReplicas }}
+    name: {{ include "klikkflow.fullname" . }}-worker
+  minReplicas: {{ .Values.klikkflow.worker.autoscaling.minReplicas }}
+  maxReplicas: {{ .Values.klikkflow.worker.autoscaling.maxReplicas }}
   metrics:
-    {{- if .Values.reporunner.worker.autoscaling.targetCPUUtilizationPercentage }}
+    {{- if .Values.klikkflow.worker.autoscaling.targetCPUUtilizationPercentage }}
     - type: Resource
       resource:
         name: cpu
         target:
           type: Utilization
-          averageUtilization: {{ .Values.reporunner.worker.autoscaling.targetCPUUtilizationPercentage }}
+          averageUtilization: {{ .Values.klikkflow.worker.autoscaling.targetCPUUtilizationPercentage }}
     {{- end }}
-    {{- if .Values.reporunner.worker.autoscaling.targetMemoryUtilizationPercentage }}
+    {{- if .Values.klikkflow.worker.autoscaling.targetMemoryUtilizationPercentage }}
     - type: Resource
       resource:
         name: memory
         target:
           type: Utilization
-          averageUtilization: {{ .Values.reporunner.worker.autoscaling.targetMemoryUtilizationPercentage }}
+          averageUtilization: {{ .Values.klikkflow.worker.autoscaling.targetMemoryUtilizationPercentage }}
     {{- end }}
 {{- end }}

@@ -1,17 +1,17 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "reporunner.fullname" . }}-backend
+  name: {{ include "klikkflow.fullname" . }}-backend
   labels:
     {{- $component := "backend" }}
-    {{- include "reporunner.componentLabels" (dict "Chart" .Chart "Release" .Release "Values" .Values "component" $component) | nindent 4 }}
+    {{- include "klikkflow.componentLabels" (dict "Chart" .Chart "Release" .Release "Values" .Values "component" $component) | nindent 4 }}
 spec:
-  {{- if not .Values.reporunner.backend.autoscaling.enabled }}
-  replicas: {{ .Values.reporunner.backend.replicaCount }}
+  {{- if not .Values.klikkflow.backend.autoscaling.enabled }}
+  replicas: {{ .Values.klikkflow.backend.replicaCount }}
   {{- end }}
   selector:
     matchLabels:
-      {{- include "reporunner.selectorLabels" . | nindent 6 }}
+      {{- include "klikkflow.selectorLabels" . | nindent 6 }}
       app.kubernetes.io/component: backend
   template:
     metadata:
@@ -19,7 +19,7 @@ spec:
         checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
         checksum/secret: {{ include (print $.Template.BasePath "/secret.yaml") . | sha256sum }}
       labels:
-        {{- include "reporunner.selectorLabels" . | nindent 8 }}
+        {{- include "klikkflow.selectorLabels" . | nindent 8 }}
         app.kubernetes.io/component: backend
     spec:
       {{- with .Values.global.imagePullSecrets }}
@@ -27,7 +27,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       securityContext:
-        {{- include "reporunner.podSecurityContext" . | nindent 8 }}
+        {{- include "klikkflow.podSecurityContext" . | nindent 8 }}
       initContainers:
         - name: wait-for-postgresql
           image: postgres:16-alpine
@@ -35,7 +35,7 @@ spec:
             - sh
             - -c
             - |
-              until pg_isready -h {{ include "reporunner.fullname" . }}-postgresql -p 5432; do
+              until pg_isready -h {{ include "klikkflow.fullname" . }}-postgresql -p 5432; do
                 echo "Waiting for PostgreSQL..."
                 sleep 2
               done
@@ -45,7 +45,7 @@ spec:
             - sh
             - -c
             - |
-              until mongosh --host {{ include "reporunner.fullname" . }}-mongodb --port 27017 --eval "db.adminCommand('ping')"; do
+              until mongosh --host {{ include "klikkflow.fullname" . }}-mongodb --port 27017 --eval "db.adminCommand('ping')"; do
                 echo "Waiting for MongoDB..."
                 sleep 2
               done
@@ -55,44 +55,44 @@ spec:
             - sh
             - -c
             - |
-              until redis-cli -h {{ include "reporunner.fullname" . }}-redis-master -p 6379 ping; do
+              until redis-cli -h {{ include "klikkflow.fullname" . }}-redis-master -p 6379 ping; do
                 echo "Waiting for Redis..."
                 sleep 2
               done
       containers:
         - name: backend
           securityContext:
-            {{- include "reporunner.containerSecurityContext" . | nindent 12 }}
-          image: {{ include "reporunner.image" (dict "Chart" .Chart "Values" .Values "repository" .Values.reporunner.backend.image.repository "tag" .Values.reporunner.backend.image.tag) }}
-          imagePullPolicy: {{ .Values.reporunner.image.pullPolicy }}
+            {{- include "klikkflow.containerSecurityContext" . | nindent 12 }}
+          image: {{ include "klikkflow.image" (dict "Chart" .Chart "Values" .Values "repository" .Values.klikkflow.backend.image.repository "tag" .Values.klikkflow.backend.image.tag) }}
+          imagePullPolicy: {{ .Values.klikkflow.image.pullPolicy }}
           ports:
             - name: http
               containerPort: 3001
               protocol: TCP
           env:
             - name: NODE_ENV
-              value: {{ .Values.reporunner.env.NODE_ENV }}
+              value: {{ .Values.klikkflow.env.NODE_ENV }}
             - name: PORT
               value: "3001"
             - name: LOG_LEVEL
-              value: {{ .Values.reporunner.env.LOG_LEVEL }}
+              value: {{ .Values.klikkflow.env.LOG_LEVEL }}
             - name: CORS_ORIGIN
-              value: {{ .Values.reporunner.env.CORS_ORIGIN }}
+              value: {{ .Values.klikkflow.env.CORS_ORIGIN }}
             - name: DATABASE_URL
-              value: {{ include "reporunner.postgresql.connectionString" . }}
+              value: {{ include "klikkflow.postgresql.connectionString" . }}
             - name: MONGODB_URI
-              value: {{ include "reporunner.mongodb.connectionString" . }}
+              value: {{ include "klikkflow.mongodb.connectionString" . }}
             - name: REDIS_URL
-              value: {{ include "reporunner.redis.connectionString" . }}
+              value: {{ include "klikkflow.redis.connectionString" . }}
             - name: JWT_SECRET
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "reporunner.fullname" . }}-secrets
+                  name: {{ include "klikkflow.fullname" . }}-secrets
                   key: jwt-secret
             - name: JWT_REFRESH_SECRET
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "reporunner.fullname" . }}-secrets
+                  name: {{ include "klikkflow.fullname" . }}-secrets
                   key: jwt-refresh-secret
           livenessProbe:
             httpGet:
@@ -111,7 +111,7 @@ spec:
             timeoutSeconds: 3
             failureThreshold: 3
           resources:
-            {{- toYaml .Values.reporunner.backend.resources | nindent 12 }}
+            {{- toYaml .Values.klikkflow.backend.resources | nindent 12 }}
           volumeMounts:
             - name: logs
               mountPath: /app/logs
@@ -121,21 +121,21 @@ spec:
         - name: logs
           {{- if .Values.persistence.logs.enabled }}
           persistentVolumeClaim:
-            claimName: {{ include "reporunner.fullname" . }}-logs
+            claimName: {{ include "klikkflow.fullname" . }}-logs
           {{- else }}
           emptyDir: {}
           {{- end }}
         - name: tmp
           emptyDir: {}
-      {{- with .Values.reporunner.backend.nodeSelector }}
+      {{- with .Values.klikkflow.backend.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.reporunner.backend.affinity }}
+      {{- with .Values.klikkflow.backend.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.reporunner.backend.tolerations }}
+      {{- with .Values.klikkflow.backend.tolerations }}
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}

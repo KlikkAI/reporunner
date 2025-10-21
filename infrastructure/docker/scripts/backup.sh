@@ -1,6 +1,6 @@
 #!/bin/bash
 # ============================================
-# Reporunner Backup Script
+# KlikkFlow Backup Script
 # Automated MongoDB + PostgreSQL backups
 # Supports: Local storage + S3 upload
 # ============================================
@@ -13,7 +13,7 @@ set -euo pipefail
 
 # Required environment variables
 MONGO_URI="${MONGO_URI:-mongodb://mongo:27017}"
-POSTGRES_URI="${POSTGRES_URI:-postgresql://postgres:reporunner_dev_password@postgres:5432/reporunner}"
+POSTGRES_URI="${POSTGRES_URI:-postgresql://postgres:klikkflow_dev_password@postgres:5432/klikkflow}"
 BACKUP_DIR="${BACKUP_DIR:-/backups}"
 BACKUP_RETENTION_DAYS="${BACKUP_RETENTION_DAYS:-7}"
 LOG_LEVEL="${LOG_LEVEL:-info}"
@@ -245,7 +245,7 @@ generate_report() {
 
     {
         echo "======================================"
-        echo "Reporunner Backup Report"
+        echo "KlikkFlow Backup Report"
         echo "======================================"
         echo "Timestamp: $(date -Iseconds)"
         echo "Backup Directory: ${BACKUP_DIR}"
@@ -281,7 +281,7 @@ generate_report() {
 
 main() {
     log_info "========================================"
-    log_info "Reporunner Backup Service Starting"
+    log_info "KlikkFlow Backup Service Starting"
     log_info "========================================"
     log_info "Timestamp: $(date -Iseconds)"
     log_info "MongoDB URI: ${MONGO_URI%%@*}@***"  # Hide password

@@ -77,7 +77,7 @@ resource "azurerm_private_dns_zone_virtual_network_link" "postgresql" {
 }
 
 # Database
-resource "azurerm_postgresql_flexible_server_database" "reporunner" {
+resource "azurerm_postgresql_flexible_server_database" "klikkflow" {
   name      = var.database_name
   server_id = azurerm_postgresql_flexible_server.main.id
   charset   = "UTF8"

@@ -3,14 +3,14 @@
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: {{ include "reporunner.fullname" . }}-backend
+  name: {{ include "klikkflow.fullname" . }}-backend
   labels:
-    {{- include "reporunner.labels" . | nindent 4 }}
+    {{- include "klikkflow.labels" . | nindent 4 }}
     app.kubernetes.io/component: backend
 spec:
   selector:
     matchLabels:
-      {{- include "reporunner.selectorLabels" . | nindent 6 }}
+      {{- include "klikkflow.selectorLabels" . | nindent 6 }}
       app.kubernetes.io/component: backend
   endpoints:
     - port: http
@@ -22,14 +22,14 @@ spec:
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: {{ include "reporunner.fullname" . }}-worker
+  name: {{ include "klikkflow.fullname" . }}-worker
   labels:
-    {{- include "reporunner.labels" . | nindent 4 }}
+    {{- include "klikkflow.labels" . | nindent 4 }}
     app.kubernetes.io/component: worker
 spec:
   selector:
     matchLabels:
-      {{- include "reporunner.selectorLabels" . | nindent 6 }}
+      {{- include "klikkflow.selectorLabels" . | nindent 6 }}
       app.kubernetes.io/component: worker
   endpoints:
     - port: metrics

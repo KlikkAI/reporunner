@@ -13,7 +13,7 @@
       "gridPos": { "h": 4, "w": 6, "x": 0, "y": 0 },
       "targets": [
         {
-          "expr": "sum(reporunner_queue_jobs{state=\"active\"})",
+          "expr": "sum(klikkflow_queue_jobs{state=\"active\"})",
           "legendFormat": "Active",
           "refId": "A"
         }
@@ -39,7 +39,7 @@
       "gridPos": { "h": 4, "w": 6, "x": 6, "y": 0 },
       "targets": [
         {
-          "expr": "sum(reporunner_queue_jobs{state=\"waiting\"})",
+          "expr": "sum(klikkflow_queue_jobs{state=\"waiting\"})",
           "legendFormat": "Pending",
           "refId": "A"
         }
@@ -65,7 +65,7 @@
       "gridPos": { "h": 4, "w": 6, "x": 12, "y": 0 },
       "targets": [
         {
-          "expr": "sum(increase(reporunner_queue_jobs_failed_total[24h]))",
+          "expr": "sum(increase(klikkflow_queue_jobs_failed_total[24h]))",
           "legendFormat": "Failed",
           "refId": "A"
         }
@@ -91,7 +91,7 @@
       "gridPos": { "h": 4, "w": 6, "x": 18, "y": 0 },
       "targets": [
         {
-          "expr": "sum(rate(reporunner_queue_jobs_completed_total[5m]))",
+          "expr": "sum(rate(klikkflow_queue_jobs_completed_total[5m]))",
           "legendFormat": "Jobs/s",
           "refId": "A"
         }
@@ -113,7 +113,7 @@
       "gridPos": { "h": 8, "w": 12, "x": 0, "y": 4 },
       "targets": [
         {
-          "expr": "reporunner_queue_jobs",
+          "expr": "klikkflow_queue_jobs",
           "legendFormat": "{{state}}",
           "refId": "A"
         }
@@ -132,17 +132,17 @@
       "gridPos": { "h": 8, "w": 12, "x": 12, "y": 4 },
       "targets": [
         {
-          "expr": "histogram_quantile(0.50, sum(rate(reporunner_queue_job_duration_seconds_bucket[5m])) by (le, queue))",
+          "expr": "histogram_quantile(0.50, sum(rate(klikkflow_queue_job_duration_seconds_bucket[5m])) by (le, queue))",
           "legendFormat": "p50 {{queue}}",
           "refId": "A"
         },
         {
-          "expr": "histogram_quantile(0.95, sum(rate(reporunner_queue_job_duration_seconds_bucket[5m])) by (le, queue))",
+          "expr": "histogram_quantile(0.95, sum(rate(klikkflow_queue_job_duration_seconds_bucket[5m])) by (le, queue))",
           "legendFormat": "p95 {{queue}}",
           "refId": "B"
         },
         {
-          "expr": "histogram_quantile(0.99, sum(rate(reporunner_queue_job_duration_seconds_bucket[5m])) by (le, queue))",
+          "expr": "histogram_quantile(0.99, sum(rate(klikkflow_queue_job_duration_seconds_bucket[5m])) by (le, queue))",
           "legendFormat": "p99 {{queue}}",
           "refId": "C"
         }
@@ -161,12 +161,12 @@
       "gridPos": { "h": 8, "w": 12, "x": 0, "y": 12 },
       "targets": [
         {
-          "expr": "sum(rate(reporunner_queue_jobs_completed_total[5m]))",
+          "expr": "sum(rate(klikkflow_queue_jobs_completed_total[5m]))",
           "legendFormat": "Completed",
           "refId": "A"
         },
         {
-          "expr": "sum(rate(reporunner_queue_jobs_failed_total[5m]))",
+          "expr": "sum(rate(klikkflow_queue_jobs_failed_total[5m]))",
           "legendFormat": "Failed",
           "refId": "B"
         }
@@ -185,7 +185,7 @@
       "gridPos": { "h": 8, "w": 12, "x": 12, "y": 12 },
       "targets": [
         {
-          "expr": "reporunner_queue_workers_active / reporunner_queue_workers_total * 100",
+          "expr": "klikkflow_queue_workers_active / klikkflow_queue_workers_total * 100",
           "legendFormat": "{{queue}}",
           "refId": "A"
         }
@@ -212,7 +212,7 @@
       "gridPos": { "h": 8, "w": 12, "x": 0, "y": 20 },
       "targets": [
         {
-          "expr": "histogram_quantile(0.95, sum(rate(reporunner_queue_job_wait_duration_seconds_bucket[5m])) by (le, queue))",
+          "expr": "histogram_quantile(0.95, sum(rate(klikkflow_queue_job_wait_duration_seconds_bucket[5m])) by (le, queue))",
           "legendFormat": "p95 {{queue}}",
           "refId": "A"
         }
@@ -239,7 +239,7 @@
       "gridPos": { "h": 8, "w": 12, "x": 12, "y": 20 },
       "targets": [
         {
-          "expr": "sum(rate(reporunner_queue_job_retries_total[5m])) by (queue)",
+          "expr": "sum(rate(klikkflow_queue_job_retries_total[5m])) by (queue)",
           "legendFormat": "{{queue}}",
           "refId": "A"
         }
@@ -258,7 +258,7 @@
       "gridPos": { "h": 8, "w": 24, "x": 0, "y": 28 },
       "targets": [
         {
-          "expr": "reporunner_queue_jobs",
+          "expr": "klikkflow_queue_jobs",
           "legendFormat": "{{queue}} - {{state}}",
           "refId": "A",
           "instant": true,
@@ -281,11 +281,11 @@
   "refresh": "30s",
   "schemaVersion": 37,
   "style": "dark",
-  "tags": ["reporunner", "queue", "workers", "jobs"],
+  "tags": ["klikkflow", "queue", "workers", "jobs"],
   "templating": { "list": [] },
   "time": { "from": "now-6h", "to": "now" },
   "timezone": "",
-  "title": "Reporunner Queue Metrics",
-  "uid": "reporunner-queue-metrics",
+  "title": "KlikkFlow Queue Metrics",
+  "uid": "klikkflow-queue-metrics",
   "version": 1
 }

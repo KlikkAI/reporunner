@@ -1,7 +1,7 @@
 {
-  "name": "@reporunner/instrumentation-nodejs",
+  "name": "@klikkflow/instrumentation-nodejs",
   "version": "1.0.0",
-  "description": "OpenTelemetry instrumentation package for Reporunner Node.js applications",
+  "description": "OpenTelemetry instrumentation package for KlikkFlow Node.js applications",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
@@ -16,10 +16,10 @@
     "opentelemetry",
     "tracing",
     "observability",
-    "reporunner",
+    "klikkflow",
     "instrumentation"
   ],
-  "author": "Reporunner Team",
+  "author": "KlikkFlow Team",
   "license": "MIT",
   "dependencies": {
     "@opentelemetry/api": "^1.7.0",

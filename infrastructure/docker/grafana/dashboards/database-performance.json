@@ -1,7 +1,7 @@
 {
   "dashboard": {
     "title": "Database Performance Dashboard",
-    "tags": ["reporunner", "database", "mongodb", "postgresql"],
+    "tags": ["klikkflow", "database", "mongodb", "postgresql"],
     "timezone": "browser",
     "editable": true,
     "graphTooltip": 1,
@@ -141,7 +141,7 @@
         },
         "targets": [
           {
-            "expr": "pg_stat_database_numbackends{datname=\"reporunner\"}",
+            "expr": "pg_stat_database_numbackends{datname=\"klikkflow\"}",
             "refId": "A"
           }
         ],
@@ -186,12 +186,12 @@
         },
         "targets": [
           {
-            "expr": "rate(pg_stat_database_xact_commit{datname=\"reporunner\"}[5m])",
+            "expr": "rate(pg_stat_database_xact_commit{datname=\"klikkflow\"}[5m])",
             "legendFormat": "Commits",
             "refId": "A"
           },
           {
-            "expr": "rate(pg_stat_database_xact_rollback{datname=\"reporunner\"}[5m])",
+            "expr": "rate(pg_stat_database_xact_rollback{datname=\"klikkflow\"}[5m])",
             "legendFormat": "Rollbacks",
             "refId": "B"
           }
@@ -218,7 +218,7 @@
         },
         "targets": [
           {
-            "expr": "100 * (sum(pg_stat_database_blks_hit{datname=\"reporunner\"}) / (sum(pg_stat_database_blks_hit{datname=\"reporunner\"}) + sum(pg_stat_database_blks_read{datname=\"reporunner\"})))",
+            "expr": "100 * (sum(pg_stat_database_blks_hit{datname=\"klikkflow\"}) / (sum(pg_stat_database_blks_hit{datname=\"klikkflow\"}) + sum(pg_stat_database_blks_read{datname=\"klikkflow\"})))",
             "refId": "A"
           }
         ],
@@ -270,7 +270,7 @@
             "refId": "A"
           },
           {
-            "expr": "pg_database_size_bytes{datname=\"reporunner\"}",
+            "expr": "pg_database_size_bytes{datname=\"klikkflow\"}",
             "format": "table",
             "instant": true,
             "legendFormat": "PostgreSQL",

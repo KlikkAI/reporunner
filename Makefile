@@ -1,11 +1,11 @@
-# Reporunner Development and Deployment Makefile
+# KlikkFlow Development and Deployment Makefile
 # Provides convenient commands for common development tasks
 
 .PHONY: help install dev build test lint clean docker setup
 
 # Default target
 help: ## Show this help message
-	@echo "Reporunner Development Commands:"
+	@echo "KlikkFlow Development Commands:"
 	@echo ""
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
 
@@ -39,7 +39,7 @@ build: ## Build all packages
 
 build-docker: ## Build Docker image
 	@echo "🐳 Building Docker image..."
-	@docker build -t reporunner:latest .
+	@docker build -t klikkflow:latest .
 
 build-prod: ## Build for production
 	@echo "🏭 Building for production..."
@@ -138,7 +138,7 @@ clean: ## Clean build artifacts and cache
 
 clean-all: clean ## Clean everything including node_modules
 	@echo "🧹 Deep cleaning..."
-	@rm -rf node_modules packages/*/node_modules packages/@reporunner/*/node_modules
+	@rm -rf node_modules packages/*/node_modules packages/@klikkflow/*/node_modules
 
 reset: clean-all install ## Reset project (clean + install)
 

@@ -1,7 +1,7 @@
 {
   "dashboard": {
     "title": "Security Dashboard",
-    "tags": ["reporunner", "security", "authentication", "threats"],
+    "tags": ["klikkflow", "security", "authentication", "threats"],
     "timezone": "browser",
     "editable": true,
     "graphTooltip": 1,

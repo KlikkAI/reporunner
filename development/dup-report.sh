@@ -58,5 +58,5 @@ awk '{print $1}' "$TMP_HASHES" \
 
 rm -f "$TMP_HASHES"
 
-echo "Tip: For these clusters, consider centralizing into @reporunner/core or @reporunner/design-system and replacing local re-export stubs with direct imports."
+echo "Tip: For these clusters, consider centralizing into @klikkflow/core or @klikkflow/design-system and replacing local re-export stubs with direct imports."
 

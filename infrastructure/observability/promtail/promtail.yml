@@ -13,14 +13,14 @@ clients:
 
 scrape_configs:
   # Application logs from files
-  - job_name: reporunner-backend
+  - job_name: klikkflow-backend
     static_configs:
       - targets:
           - localhost
         labels:
-          job: reporunner-backend
+          job: klikkflow-backend
           environment: production
-          __path__: /var/log/reporunner/backend*.log
+          __path__: /var/log/klikkflow/backend*.log
     pipeline_stages:
       - json:
           expressions:
@@ -41,14 +41,14 @@ scrape_configs:
       - output:
           source: message
 
-  - job_name: reporunner-worker
+  - job_name: klikkflow-worker
     static_configs:
       - targets:
           - localhost
         labels:
-          job: reporunner-worker
+          job: klikkflow-worker
           environment: production
-          __path__: /var/log/reporunner/worker*.log
+          __path__: /var/log/klikkflow/worker*.log
     pipeline_stages:
       - json:
           expressions:

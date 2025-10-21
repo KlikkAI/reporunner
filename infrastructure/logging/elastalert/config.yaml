@@ -1,4 +1,4 @@
-# ElastAlert2 configuration for Reporunner log alerting
+# ElastAlert2 configuration for KlikkFlow log alerting
 
 # Basic configuration
 es_host: elasticsearch
@@ -83,8 +83,8 @@ smtp_host: localhost
 smtp_port: 587
 smtp_ssl: false
 smtp_auth_file: /opt/elastalert/smtp_auth.yaml
-email_reply_to: noreply@reporunner.com
-from_addr: alerts@reporunner.com
+email_reply_to: noreply@klikkflow.com
+from_addr: alerts@klikkflow.com
 
 # Slack settings
 slack_webhook_url: https://hooks.slack.com/services/YOUR/SLACK/WEBHOOK
@@ -140,4 +140,4 @@ disable_rules_on_error: false
 
 # Notify email
 # notify_email:
-#   - admin@reporunner.com
+#   - admin@klikkflow.com

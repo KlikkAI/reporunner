@@ -1,6 +1,6 @@
-# Reporunner GCP Infrastructure - Terraform Deployment Guide
+# KlikkFlow GCP Infrastructure - Terraform Deployment Guide
 
-This directory contains Terraform configurations for deploying Reporunner on Google Cloud Platform using GKE, Cloud SQL, Memorystore, and other managed services.
+This directory contains Terraform configurations for deploying KlikkFlow on Google Cloud Platform using GKE, Cloud SQL, Memorystore, and other managed services.
 
 ## Architecture Overview
 
@@ -49,10 +49,10 @@ gcloud services enable secretmanager.googleapis.com
 
 ```bash
 # Create GCS bucket for Terraform state
-gsutil mb -p YOUR_PROJECT_ID -l us-central1 gs://reporunner-terraform-state
+gsutil mb -p YOUR_PROJECT_ID -l us-central1 gs://klikkflow-terraform-state
 
 # Enable versioning
-gsutil versioning set on gs://reporunner-terraform-state
+gsutil versioning set on gs://klikkflow-terraform-state
 ```
 
 ### 3. Initialize Terraform
@@ -70,13 +70,13 @@ gcloud auth configure-docker
 
 # Build and push backend
 cd ../../packages/backend
-docker build -t gcr.io/YOUR_PROJECT_ID/reporunner-backend:dev .
-docker push gcr.io/YOUR_PROJECT_ID/reporunner-backend:dev
+docker build -t gcr.io/YOUR_PROJECT_ID/klikkflow-backend:dev .
+docker push gcr.io/YOUR_PROJECT_ID/klikkflow-backend:dev
 
 # Build and push frontend
 cd ../frontend
-docker build -t gcr.io/YOUR_PROJECT_ID/reporunner-frontend:dev .
-docker push gcr.io/YOUR_PROJECT_ID/reporunner-frontend:dev
+docker build -t gcr.io/YOUR_PROJECT_ID/klikkflow-frontend:dev .
+docker push gcr.io/YOUR_PROJECT_ID/klikkflow-frontend:dev
 ```
 
 ### 5. Configure Environment Variables
@@ -120,7 +120,7 @@ terraform apply -var-file=environments/production.tfvars -var="project_id=YOUR_P
 
 ```bash
 # Get credentials for your GKE cluster
-gcloud container clusters get-credentials reporunner-ENV-cluster \
+gcloud container clusters get-credentials klikkflow-ENV-cluster \
   --region us-central1 \
   --project YOUR_PROJECT_ID
 
@@ -242,7 +242,7 @@ terraform output postgresql_connection_name
 ./cloud-sql-proxy --port 5432 PROJECT:REGION:INSTANCE &
 
 # Connect with psql
-psql "host=127.0.0.1 port=5432 dbname=reporunner user=reporunner"
+psql "host=127.0.0.1 port=5432 dbname=klikkflow user=klikkflow"
 ```
 
 ### Memorystore Redis
@@ -265,20 +265,20 @@ MongoDB Atlas is managed separately. Connect using the Atlas connection string p
 
 1. **Build and push new images:**
    ```bash
-   docker build -t gcr.io/YOUR_PROJECT_ID/reporunner-backend:v1.1.0 .
-   docker push gcr.io/YOUR_PROJECT_ID/reporunner-backend:v1.1.0
+   docker build -t gcr.io/YOUR_PROJECT_ID/klikkflow-backend:v1.1.0 .
+   docker push gcr.io/YOUR_PROJECT_ID/klikkflow-backend:v1.1.0
    ```
 
 2. **Update Kubernetes deployment:**
    ```bash
-   kubectl set image deployment/backend backend=gcr.io/YOUR_PROJECT_ID/reporunner-backend:v1.1.0
+   kubectl set image deployment/backend backend=gcr.io/YOUR_PROJECT_ID/klikkflow-backend:v1.1.0
    ```
 
 ### Scale Services
 
 ```bash
 # Scale GKE nodes
-gcloud container clusters resize reporunner-prod-cluster \
+gcloud container clusters resize klikkflow-prod-cluster \
   --num-nodes=5 --region=us-central1
 
 # Scale Kubernetes deployments
@@ -317,7 +317,7 @@ kubectl scale deployment backend --replicas=5
 3. **Test from GKE pod:**
    ```bash
    kubectl run psql-test --rm -it --restart=Never \
-     --image=postgres:15 -- psql "host=PRIVATE_IP dbname=reporunner user=reporunner"
+     --image=postgres:15 -- psql "host=PRIVATE_IP dbname=klikkflow user=klikkflow"
    ```
 
 ### High Costs
@@ -343,7 +343,7 @@ kubectl scale deployment backend --replicas=5
 gcloud sql backups create --instance=INSTANCE_NAME
 
 # Export database
-gcloud sql export sql INSTANCE_NAME gs://BUCKET/backup.sql --database=reporunner
+gcloud sql export sql INSTANCE_NAME gs://BUCKET/backup.sql --database=klikkflow
 ```
 
 ### Disaster Recovery
@@ -405,8 +405,8 @@ https://cloud.google.com/products/calculator
 ## Support
 
 For issues or questions:
-- GitHub Issues: https://github.com/your-org/reporunner/issues
-- Documentation: https://docs.reporunner.com
+- GitHub Issues: https://github.com/your-org/klikkflow/issues
+- Documentation: https://docs.klikkflow.com
 - Google Cloud Support: https://cloud.google.com/support
 
 ## License

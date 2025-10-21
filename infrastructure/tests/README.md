@@ -1,6 +1,6 @@
 # Infrastructure Smoke Tests
 
-This directory contains comprehensive smoke tests for validating Reporunner's infrastructure configurations.
+This directory contains comprehensive smoke tests for validating KlikkFlow's infrastructure configurations.
 
 ## Overview
 
@@ -121,7 +121,7 @@ cd infrastructure/tests
 
 **Configurations tested:**
 - `infrastructure/monitoring/prometheus/prometheus.yml`
-- `infrastructure/monitoring/prometheus/alerts/reporunner-alerts.yml`
+- `infrastructure/monitoring/prometheus/alerts/klikkflow-alerts.yml`
 - `infrastructure/monitoring/grafana/provisioning/datasources/`
 - `infrastructure/monitoring/grafana/dashboard-configs/*.json`
 - `infrastructure/monitoring/alertmanager/alertmanager.yml`
@@ -310,4 +310,4 @@ For issues or questions:
 
 ## License
 
-Same as Reporunner project license.
+Same as KlikkFlow project license.

@@ -1,5 +1,5 @@
 /**
- * Reporunner Azure Infrastructure
+ * KlikkFlow Azure Infrastructure
  *
  * Complete production-ready infrastructure on Microsoft Azure
  * - AKS (Azure Kubernetes Service) for container orchestration
@@ -34,7 +34,7 @@ terraform {
   }
 
   backend "azurerm" {
-    storage_account_name = "reporunnerterraformstate"
+    storage_account_name = "klikkflowterraformstate"
     container_name       = "tfstate"
     key                  = "azure.terraform.tfstate"
   }
@@ -59,7 +59,7 @@ locals {
     Environment = var.environment
     Project     = var.project_name
     ManagedBy   = "terraform"
-    Platform    = "reporunner"
+    Platform    = "klikkflow"
   }
 }
 

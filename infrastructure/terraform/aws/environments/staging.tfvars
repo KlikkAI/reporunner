@@ -17,8 +17,8 @@ redis_node_type             = "cache.t3.medium"
 redis_num_cache_nodes       = 2
 
 # Container Images
-backend_container_image  = "123456789012.dkr.ecr.us-east-1.amazonaws.com/reporunner/backend:staging"
-frontend_container_image = "123456789012.dkr.ecr.us-east-1.amazonaws.com/reporunner/frontend:staging"
+backend_container_image  = "123456789012.dkr.ecr.us-east-1.amazonaws.com/klikkflow/backend:staging"
+frontend_container_image = "123456789012.dkr.ecr.us-east-1.amazonaws.com/klikkflow/frontend:staging"
 
 # ECS Task Configuration - Staging Sizing
 backend_cpu            = 1024
@@ -46,7 +46,7 @@ enable_https    = true
 certificate_arn = "arn:aws:acm:us-east-1:123456789012:certificate/staging-cert-id"
 
 # Monitoring
-alarm_sns_topic_arn = "arn:aws:sns:us-east-1:123456789012:reporunner-staging-alerts"
+alarm_sns_topic_arn = "arn:aws:sns:us-east-1:123456789012:klikkflow-staging-alerts"
 
 # Additional Tags
 additional_tags = {

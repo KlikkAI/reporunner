@@ -17,7 +17,7 @@ async function setupNode() {
   const nodeNameKebab = nodeName.toLowerCase().replace(/\s+/g, '-');
   const nodeDir = path.join(
     'packages',
-    '@reporunner',
+    '@klikkflow',
     'nodes',
     category.toLowerCase(),
     nodeNameKebab
@@ -32,9 +32,9 @@ async function setupNode() {
 
   // Package.json
   const packageJson = {
-    name: `@reporunner/node-${nodeNameKebab}`,
+    name: `@klikkflow/node-${nodeNameKebab}`,
     version: '1.0.0',
-    description: `${nodeName} node for Reporunner`,
+    description: `${nodeName} node for KlikkFlow`,
     main: 'dist/index.js',
     types: 'dist/index.d.ts',
     scripts: {
@@ -44,8 +44,8 @@ async function setupNode() {
       'test:watch': 'jest --watch',
     },
     dependencies: {
-      '@reporunner/core': 'workspace:*',
-      '@reporunner/shared': 'workspace:*',
+      '@klikkflow/core': 'workspace:*',
+      '@klikkflow/shared': 'workspace:*',
     },
     devDependencies: {
       typescript: 'catalog:',
@@ -75,7 +75,7 @@ async function setupNode() {
   INodeType,
   INodeTypeDescription,
   NodeOperationError,
-} from '@reporunner/core';
+} from '@klikkflow/core';
 
 export class ${nodeName.replace(/\s+/g, '')} implements INodeType {
   description: INodeTypeDescription = {

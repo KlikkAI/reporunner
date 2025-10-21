@@ -7,7 +7,7 @@
       "title": "Executions Started",
       "targets": [
         {
-          "expr": "sum(rate(reporunner_executions_started_total[5m]))",
+          "expr": "sum(rate(klikkflow_executions_started_total[5m]))",
           "legendFormat": "started/s"
         }
       ],
@@ -18,10 +18,10 @@
       "title": "Executions Succeeded/Failed",
       "targets": [
         {
-          "expr": "sum(rate(reporunner_executions_succeeded_total[5m]))",
+          "expr": "sum(rate(klikkflow_executions_succeeded_total[5m]))",
           "legendFormat": "success/s"
         },
-        { "expr": "sum(rate(reporunner_executions_failed_total[5m]))", "legendFormat": "failed/s" }
+        { "expr": "sum(rate(klikkflow_executions_failed_total[5m]))", "legendFormat": "failed/s" }
       ],
       "datasource": { "type": "prometheus", "uid": "PROM_DS" }
     },
@@ -30,7 +30,7 @@
       "title": "Average Execution Duration",
       "targets": [
         {
-          "expr": "rate(reporunner_execution_duration_seconds_sum[5m]) / rate(reporunner_execution_duration_seconds_count[5m])",
+          "expr": "rate(klikkflow_execution_duration_seconds_sum[5m]) / rate(klikkflow_execution_duration_seconds_count[5m])",
           "legendFormat": "avg s"
         }
       ],
@@ -40,7 +40,7 @@
   "refresh": "30s",
   "schemaVersion": 37,
   "style": "dark",
-  "tags": ["reporunner", "workflows"],
+  "tags": ["klikkflow", "workflows"],
   "templating": { "list": [] },
   "time": { "from": "now-6h", "to": "now" },
   "timezone": "",

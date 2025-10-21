@@ -45,7 +45,7 @@ fi
 # Test 2: Validate Chart.yaml
 echo -e "\n${YELLOW}Validating Chart.yaml...${NC}"
 if [ -f "$HELM_DIR/Chart.yaml" ]; then
-    if grep -q "name: reporunner" "$HELM_DIR/Chart.yaml" && grep -q "version:" "$HELM_DIR/Chart.yaml"; then
+    if grep -q "name: klikkflow" "$HELM_DIR/Chart.yaml" && grep -q "version:" "$HELM_DIR/Chart.yaml"; then
         print_result 0 "Chart.yaml is valid"
     else
         print_result 1 "Chart.yaml is missing required fields"

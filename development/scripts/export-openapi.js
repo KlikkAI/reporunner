@@ -15,7 +15,7 @@ async function main() {
   const generatorPath = join(
     process.cwd(),
     'packages',
-    '@reporunner',
+    '@klikkflow',
     'api',
     'src',
     'swagger',

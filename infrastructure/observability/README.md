@@ -1,6 +1,6 @@
-# Reporunner Observability Stack
+# KlikkFlow Observability Stack
 
-A comprehensive distributed tracing and observability solution for Reporunner using OpenTelemetry, Jaeger, Tempo, Loki, and various telemetry collectors. This stack provides end-to-end visibility into your Reporunner workflow automation platform.
+A comprehensive distributed tracing and observability solution for KlikkFlow using OpenTelemetry, Jaeger, Tempo, Loki, and various telemetry collectors. This stack provides end-to-end visibility into your KlikkFlow workflow automation platform.
 
 ## 🚀 Quick Start
 
@@ -128,13 +128,13 @@ Each service has its own configuration file:
 
 ```javascript
 // Install the instrumentation package
-pnpm add @reporunner/instrumentation-nodejs
+pnpm add @klikkflow/instrumentation-nodejs
 
 // Initialize in your application entry point
-const { ReporunnerInstrumentation } = require('@reporunner/instrumentation-nodejs');
+const { KlikkFlowInstrumentation } = require('@klikkflow/instrumentation-nodejs');
 
-const instrumentation = new ReporunnerInstrumentation({
-  serviceName: 'reporunner-backend',
+const instrumentation = new KlikkFlowInstrumentation({
+  serviceName: 'klikkflow-backend',
   tracing: {
     enabled: true,
     otlp: {
@@ -157,11 +157,11 @@ const express = require('express');
 const app = express();
 
 // Add tracing middleware
-const { reporunnerTracingMiddleware } = require('@reporunner/instrumentation-nodejs');
-app.use(reporunnerTracingMiddleware());
+const { klikkflowTracingMiddleware } = require('@klikkflow/instrumentation-nodejs');
+app.use(klikkflowTracingMiddleware());
 
 // Add workflow-specific tracing
-const { WorkflowTracing } = require('@reporunner/instrumentation-nodejs');
+const { WorkflowTracing } = require('@klikkflow/instrumentation-nodejs');
 
 async function executeWorkflow(workflowId, inputData) {
   const span = WorkflowTracing.startWorkflowExecution(workflowId, executionId);
@@ -188,19 +188,19 @@ async function executeWorkflow(workflowId, inputData) {
 
 ```python
 # Install the instrumentation package
-pip install reporunner-instrumentation
+pip install klikkflow-instrumentation
 
 # Initialize in your application
-from reporunner_instrumentation import auto_instrument, WorkflowTracing
+from klikkflow_instrumentation import auto_instrument, WorkflowTracing
 
 # Auto-instrument with default configuration
-instrumentor = auto_instrument('reporunner-backend')
+instrumentor = auto_instrument('klikkflow-backend')
 
 # Or use custom configuration
-from reporunner_instrumentation import InstrumentationConfig, TracingConfig
+from klikkflow_instrumentation import InstrumentationConfig, TracingConfig
 
 config = InstrumentationConfig(
-    service_name='reporunner-backend',
+    service_name='klikkflow-backend',
     tracing=TracingConfig(
         enabled=True,
         otlp_endpoint='http://localhost:4318/v1/traces'
@@ -227,7 +227,7 @@ Configure instrumentation through environment variables:
 
 ```bash
 # Service identification
-SERVICE_NAME=reporunner-backend
+SERVICE_NAME=klikkflow-backend
 SERVICE_VERSION=1.0.0
 ENVIRONMENT=production
 
@@ -265,7 +265,7 @@ LOG_CORRELATION=true
 
 Access pre-built dashboards at `http://localhost:3001`:
 
-1. **Reporunner Tracing Overview**
+1. **KlikkFlow Tracing Overview**
    - Service dependency map
    - Request rate and error rate
    - P95/P99 latency trends
@@ -319,7 +319,7 @@ limits_config:
   retention_period: 168h  # 7 days
 
 # Elasticsearch retention
-curl -X PUT "localhost:9200/_ilm/policy/reporunner-logs" -H 'Content-Type: application/json' -d'
+curl -X PUT "localhost:9200/_ilm/policy/klikkflow-logs" -H 'Content-Type: application/json' -d'
 {
   "policy": {
     "phases": {
@@ -490,4 +490,4 @@ alerting:
 
 ## 📄 License
 
-This observability configuration is part of the Reporunner project and follows the same licensing terms.
+This observability configuration is part of the KlikkFlow project and follows the same licensing terms.

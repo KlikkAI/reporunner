@@ -1,10 +1,10 @@
 # ============================================
-# Reporunner - Simple Docker Compose
+# KlikkFlow - Simple Docker Compose
 # One-Command Deployment (Uses Pre-built Images)
 # ============================================
 #
 # Quick Start:
-#   curl -fsSL https://get.reporunner.io/install.sh | sh
+#   curl -fsSL https://get.klikkflow.io/install.sh | sh
 #
 # Manual Start:
 #   docker-compose -f docker-compose.simple.yml up -d
@@ -14,27 +14,27 @@
 version: '3.8'
 
 networks:
-  reporunner-simple:
-    name: reporunner-simple
+  klikkflow-simple:
+    name: klikkflow-simple
     driver: bridge
 
 volumes:
-  reporunner_data:
-    name: reporunner_data
+  klikkflow_data:
+    name: klikkflow_data
   mongo_data:
-    name: reporunner_mongo_data
+    name: klikkflow_mongo_data
   postgres_data:
-    name: reporunner_postgres_data
+    name: klikkflow_postgres_data
   redis_data:
-    name: reporunner_redis_data
+    name: klikkflow_redis_data
 
 services:
   # ==========================================
   # Frontend - React Application (Nginx)
   # ==========================================
   frontend:
-    image: ghcr.io/klikkai/frontend:latest
-    container_name: reporunner-frontend
+    image: ghcr.io/klikkflow/frontend:latest
+    container_name: klikkflow-frontend
     restart: unless-stopped
     ports:
       - "${FRONTEND_PORT:-3000}:80"
@@ -42,7 +42,7 @@ services:
       - VITE_API_URL=${VITE_API_URL:-http://localhost:3001}
       - VITE_WS_URL=${VITE_WS_URL:-ws://localhost:3001}
     networks:
-      - reporunner-simple
+      - klikkflow-simple
     healthcheck:
       test: ["CMD", "wget", "--spider", "-q", "http://localhost/health"]
       interval: 30s
@@ -59,8 +59,8 @@ services:
   # Backend - Express API Server
   # ==========================================
   backend:
-    image: ghcr.io/klikkai/backend:latest
-    container_name: reporunner-backend
+    image: ghcr.io/klikkflow/backend:latest
+    container_name: klikkflow-backend
     restart: unless-stopped
     ports:
       - "${BACKEND_PORT:-3001}:3001"
@@ -70,8 +70,8 @@ services:
       - LOG_LEVEL=${LOG_LEVEL:-info}
 
       # Database URLs
-      - MONGODB_URI=mongodb://mongo:27017/reporunner
-      - POSTGRES_URL=postgresql://postgres:${POSTGRES_PASSWORD:-reporunner_pg_2024}@postgres:5432/reporunner
+      - MONGODB_URI=mongodb://mongo:27017/klikkflow
+      - POSTGRES_URL=postgresql://postgres:${POSTGRES_PASSWORD:-klikkflow_pg_2024}@postgres:5432/klikkflow
       - REDIS_URL=redis://redis:6379
 
       # Authentication (Auto-generated if not set)
@@ -89,10 +89,10 @@ services:
       - SMTP_PORT=${SMTP_PORT:-587}
       - SMTP_USER=${SMTP_USER:-}
       - SMTP_PASSWORD=${SMTP_PASSWORD:-}
-      - SMTP_FROM=${SMTP_FROM:-noreply@reporunner.local}
+      - SMTP_FROM=${SMTP_FROM:-noreply@klikkflow.local}
 
     volumes:
-      - reporunner_data:/app/data
+      - klikkflow_data:/app/data
     depends_on:
       mongo:
         condition: service_healthy
@@ -101,7 +101,7 @@ services:
       redis:
         condition: service_healthy
     networks:
-      - reporunner-simple
+      - klikkflow-simple
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3001/health"]
       interval: 30s
@@ -118,8 +118,8 @@ services:
   # Worker - Background Job Processor
   # ==========================================
   worker:
-    image: ghcr.io/klikkai/worker:latest
-    container_name: reporunner-worker
+    image: ghcr.io/klikkflow/worker:latest
+    container_name: klikkflow-worker
     restart: unless-stopped
     environment:
       - NODE_ENV=production
@@ -127,8 +127,8 @@ services:
       - LOG_LEVEL=${LOG_LEVEL:-info}
 
       # Database URLs
-      - MONGODB_URI=mongodb://mongo:27017/reporunner
-      - POSTGRES_URL=postgresql://postgres:${POSTGRES_PASSWORD:-reporunner_pg_2024}@postgres:5432/reporunner
+      - MONGODB_URI=mongodb://mongo:27017/klikkflow
+      - POSTGRES_URL=postgresql://postgres:${POSTGRES_PASSWORD:-klikkflow_pg_2024}@postgres:5432/klikkflow
       - REDIS_URL=redis://redis:6379
 
       # AI Services
@@ -146,7 +146,7 @@ services:
       backend:
         condition: service_healthy
     networks:
-      - reporunner-simple
+      - klikkflow-simple
     deploy:
       resources:
         limits:
@@ -158,14 +158,14 @@ services:
   # ==========================================
   mongo:
     image: mongo:7.0
-    container_name: reporunner-mongo
+    container_name: klikkflow-mongo
     restart: unless-stopped
     environment:
-      - MONGO_INITDB_DATABASE=reporunner
+      - MONGO_INITDB_DATABASE=klikkflow
     volumes:
       - mongo_data:/data/db
     networks:
-      - reporunner-simple
+      - klikkflow-simple
     healthcheck:
       test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
       interval: 10s
@@ -183,12 +183,12 @@ services:
   # ==========================================
   postgres:
     image: pgvector/pgvector:pg16
-    container_name: reporunner-postgres
+    container_name: klikkflow-postgres
     restart: unless-stopped
     environment:
-      - POSTGRES_DB=reporunner
+      - POSTGRES_DB=klikkflow
       - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-reporunner_pg_2024}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-klikkflow_pg_2024}
       - PGDATA=/var/lib/postgresql/data/pgdata
     volumes:
       - postgres_data:/var/lib/postgresql/data
@@ -198,7 +198,7 @@ services:
       -c pg_stat_statements.track=all
       -c max_connections=200
     networks:
-      - reporunner-simple
+      - klikkflow-simple
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 10s
@@ -215,7 +215,7 @@ services:
   # ==========================================
   redis:
     image: redis:7-alpine
-    container_name: reporunner-redis
+    container_name: klikkflow-redis
     restart: unless-stopped
     volumes:
       - redis_data:/data
@@ -226,7 +226,7 @@ services:
       --maxmemory 256mb
       --maxmemory-policy allkeys-lru
     networks:
-      - reporunner-simple
+      - klikkflow-simple
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s

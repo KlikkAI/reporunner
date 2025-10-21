@@ -13,7 +13,7 @@
       "gridPos": { "h": 4, "w": 6, "x": 0, "y": 0 },
       "targets": [
         {
-          "expr": "time() - process_start_time_seconds{job=~\"reporunner.*\"}",
+          "expr": "time() - process_start_time_seconds{job=~\"klikkflow.*\"}",
           "legendFormat": "{{job}}",
           "refId": "A"
         }
@@ -39,7 +39,7 @@
       "gridPos": { "h": 4, "w": 6, "x": 6, "y": 0 },
       "targets": [
         {
-          "expr": "count(up{job=~\"reporunner.*\"})",
+          "expr": "count(up{job=~\"klikkflow.*\"})",
           "legendFormat": "Services",
           "refId": "A"
         }
@@ -61,7 +61,7 @@
       "gridPos": { "h": 4, "w": 6, "x": 12, "y": 0 },
       "targets": [
         {
-          "expr": "count(up{job=~\"reporunner.*\"} == 0)",
+          "expr": "count(up{job=~\"klikkflow.*\"} == 0)",
           "legendFormat": "Down",
           "refId": "A"
         }
@@ -83,7 +83,7 @@
       "gridPos": { "h": 4, "w": 6, "x": 18, "y": 0 },
       "targets": [
         {
-          "expr": "count(ALERTS{alertstate=\"firing\", job=~\"reporunner.*\"})",
+          "expr": "count(ALERTS{alertstate=\"firing\", job=~\"klikkflow.*\"})",
           "legendFormat": "Firing",
           "refId": "A"
         }
@@ -109,7 +109,7 @@
       "gridPos": { "h": 8, "w": 12, "x": 0, "y": 4 },
       "targets": [
         {
-          "expr": "rate(process_cpu_seconds_total{job=~\"reporunner.*\"}[5m]) * 100",
+          "expr": "rate(process_cpu_seconds_total{job=~\"klikkflow.*\"}[5m]) * 100",
           "legendFormat": "{{job}}",
           "refId": "A"
         }
@@ -128,7 +128,7 @@
       "gridPos": { "h": 8, "w": 12, "x": 12, "y": 4 },
       "targets": [
         {
-          "expr": "process_resident_memory_bytes{job=~\"reporunner.*\"} / 1024 / 1024",
+          "expr": "process_resident_memory_bytes{job=~\"klikkflow.*\"} / 1024 / 1024",
           "legendFormat": "{{job}}",
           "refId": "A"
         }
@@ -197,7 +197,7 @@
       "gridPos": { "h": 8, "w": 24, "x": 0, "y": 20 },
       "targets": [
         {
-          "expr": "up{job=~\"reporunner.*\"}",
+          "expr": "up{job=~\"klikkflow.*\"}",
           "legendFormat": "{{job}}",
           "refId": "A",
           "instant": true,
@@ -240,11 +240,11 @@
   "refresh": "30s",
   "schemaVersion": 37,
   "style": "dark",
-  "tags": ["reporunner", "system", "health"],
+  "tags": ["klikkflow", "system", "health"],
   "templating": { "list": [] },
   "time": { "from": "now-6h", "to": "now" },
   "timezone": "",
-  "title": "Reporunner System Health Overview",
-  "uid": "reporunner-system-health",
+  "title": "KlikkFlow System Health Overview",
+  "uid": "klikkflow-system-health",
   "version": 1
 }

@@ -1,10 +1,10 @@
-# Reporunner GCP Production Environment Configuration
+# KlikkFlow GCP Production Environment Configuration
 # High-availability production setup
 
 # Project Configuration
 # project_id = "your-gcp-project-id"  # Set this via environment variable or CLI
 environment  = "production"
-project_name = "reporunner"
+project_name = "klikkflow"
 region       = "us-central1"
 
 # Network Configuration

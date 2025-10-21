@@ -1,8 +1,8 @@
-# Reporunner Azure Staging Environment
+# KlikkFlow Azure Staging Environment
 # Production-like for pre-production testing
 
 environment  = "staging"
-project_name = "reporunner"
+project_name = "klikkflow"
 location     = "eastus"
 
 # Network

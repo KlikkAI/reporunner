@@ -1,21 +1,21 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "reporunner.fullname" . }}-backend
+  name: {{ include "klikkflow.fullname" . }}-backend
   labels:
     {{- $component := "backend" }}
-    {{- include "reporunner.componentLabels" (dict "Chart" .Chart "Release" .Release "Values" .Values "component" $component) | nindent 4 }}
+    {{- include "klikkflow.componentLabels" (dict "Chart" .Chart "Release" .Release "Values" .Values "component" $component) | nindent 4 }}
 spec:
-  type: {{ .Values.reporunner.service.type }}
+  type: {{ .Values.klikkflow.service.type }}
   ports:
-    - port: {{ .Values.reporunner.service.port }}
-      targetPort: {{ .Values.reporunner.service.targetPort }}
+    - port: {{ .Values.klikkflow.service.port }}
+      targetPort: {{ .Values.klikkflow.service.targetPort }}
       protocol: TCP
       name: http
   selector:
-    {{- include "reporunner.selectorLabels" . | nindent 4 }}
+    {{- include "klikkflow.selectorLabels" . | nindent 4 }}
     app.kubernetes.io/component: backend
-  {{- with .Values.reporunner.service.annotations }}
+  {{- with .Values.klikkflow.service.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
   {{- end }}
@@ -24,21 +24,21 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "reporunner.fullname" . }}-frontend
+  name: {{ include "klikkflow.fullname" . }}-frontend
   labels:
     {{- $component := "frontend" }}
-    {{- include "reporunner.componentLabels" (dict "Chart" .Chart "Release" .Release "Values" .Values "component" $component) | nindent 4 }}
+    {{- include "klikkflow.componentLabels" (dict "Chart" .Chart "Release" .Release "Values" .Values "component" $component) | nindent 4 }}
 spec:
-  type: {{ .Values.reporunner.service.type }}
+  type: {{ .Values.klikkflow.service.type }}
   ports:
     - port: 80
       targetPort: 80
       protocol: TCP
       name: http
   selector:
-    {{- include "reporunner.selectorLabels" . | nindent 4 }}
+    {{- include "klikkflow.selectorLabels" . | nindent 4 }}
     app.kubernetes.io/component: frontend
-  {{- with .Values.reporunner.service.annotations }}
+  {{- with .Values.klikkflow.service.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
   {{- end }}

@@ -32,12 +32,12 @@ output "public_ip_address" {
 
 output "database_name" {
   description = "Database name"
-  value       = google_sql_database.reporunner.name
+  value       = google_sql_database.klikkflow.name
 }
 
 output "database_user" {
   description = "Database user"
-  value       = google_sql_user.reporunner.name
+  value       = google_sql_user.klikkflow.name
 }
 
 output "database_password_secret" {
@@ -47,7 +47,7 @@ output "database_password_secret" {
 
 output "connection_string" {
   description = "PostgreSQL connection string (without password)"
-  value       = "postgresql://${google_sql_user.reporunner.name}@${google_sql_database_instance.postgresql.private_ip_address}:5432/${google_sql_database.reporunner.name}?sslmode=require"
+  value       = "postgresql://${google_sql_user.klikkflow.name}@${google_sql_database_instance.postgresql.private_ip_address}:5432/${google_sql_database.klikkflow.name}?sslmode=require"
 }
 
 output "read_replica_connection_name" {
@@ -62,5 +62,5 @@ output "read_replica_ip_address" {
 
 output "psql_command" {
   description = "Command to connect with psql (requires password from Secret Manager)"
-  value       = "psql 'host=${google_sql_database_instance.postgresql.private_ip_address} port=5432 dbname=${google_sql_database.reporunner.name} user=${google_sql_user.reporunner.name} sslmode=require'"
+  value       = "psql 'host=${google_sql_database_instance.postgresql.private_ip_address} port=5432 dbname=${google_sql_database.klikkflow.name} user=${google_sql_user.klikkflow.name} sslmode=require'"
 }

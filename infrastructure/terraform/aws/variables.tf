@@ -1,12 +1,12 @@
 /**
- * Terraform Variables for Reporunner AWS Infrastructure
+ * Terraform Variables for KlikkFlow AWS Infrastructure
  */
 
 # General Configuration
 variable "project_name" {
   description = "Project name used for resource naming"
   type        = string
-  default     = "reporunner"
+  default     = "klikkflow"
 }
 
 variable "environment" {
@@ -47,13 +47,13 @@ variable "private_subnet_cidrs" {
 variable "postgres_database_name" {
   description = "PostgreSQL database name"
   type        = string
-  default     = "reporunner"
+  default     = "klikkflow"
 }
 
 variable "postgres_master_username" {
   description = "PostgreSQL master username"
   type        = string
-  default     = "reporunner_admin"
+  default     = "klikkflow_admin"
 }
 
 variable "postgres_instance_class" {
@@ -84,7 +84,7 @@ variable "documentdb_instance_class" {
 variable "documentdb_master_username" {
   description = "DocumentDB master username"
   type        = string
-  default     = "reporunner_admin"
+  default     = "klikkflow_admin"
 }
 
 # ElastiCache Redis Configuration

@@ -1,10 +1,10 @@
-# Reporunner GCP Staging Environment Configuration
+# KlikkFlow GCP Staging Environment Configuration
 # Production-like setup for pre-production testing
 
 # Project Configuration
 # project_id = "your-gcp-project-id"  # Set this via environment variable or CLI
 environment  = "staging"
-project_name = "reporunner"
+project_name = "klikkflow"
 region       = "us-central1"
 
 # Network Configuration

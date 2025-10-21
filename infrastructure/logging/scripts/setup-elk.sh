@@ -1,11 +1,11 @@
 #!/bin/bash
 
-# ELK Stack Setup Script for Reporunner
+# ELK Stack Setup Script for KlikkFlow
 # This script initializes the ELK stack with proper configurations
 
 set -e
 
-echo "🔧 Setting up ELK Stack for Reporunner..."
+echo "🔧 Setting up ELK Stack for KlikkFlow..."
 
 # Create necessary directories
 echo "📁 Creating directories..."
@@ -37,9 +37,9 @@ echo "✅ Elasticsearch is ready!"
 
 # Create index templates
 echo "📋 Creating index templates..."
-curl -X PUT "localhost:9200/_template/reporunner-logs" -H 'Content-Type: application/json' -d'
+curl -X PUT "localhost:9200/_template/klikkflow-logs" -H 'Content-Type: application/json' -d'
 {
-  "index_patterns": ["reporunner-*"],
+  "index_patterns": ["klikkflow-*"],
   "settings": {
     "number_of_shards": 2,
     "number_of_replicas": 1,
@@ -84,9 +84,9 @@ curl -X POST "localhost:5601/api/saved_objects/_import" \
     "objects": [
       {
         "type": "index-pattern",
-        "id": "reporunner-*",
+        "id": "klikkflow-*",
         "attributes": {
-          "title": "reporunner-*",
+          "title": "klikkflow-*",
           "timeFieldName": "@timestamp"
         }
       }

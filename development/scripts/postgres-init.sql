@@ -2,11 +2,11 @@
 -- This script sets up the development database with pgvector extension
 
 -- Create the database if it doesn't exist
-SELECT 'CREATE DATABASE reporunner_dev'
-WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'reporunner_dev');
+SELECT 'CREATE DATABASE klikkflow_dev'
+WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'klikkflow_dev');
 
 -- Connect to the development database
-\c reporunner_dev;
+\c klikkflow_dev;
 
 -- Enable pgvector extension for AI features
 CREATE EXTENSION IF NOT EXISTS vector;
@@ -90,25 +90,25 @@ CREATE TABLE IF NOT EXISTS analytics.performance_metrics (
 -- Create user for the application
 DO $$
 BEGIN
-  IF NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = 'reporunner_app') THEN
-    CREATE ROLE reporunner_app WITH LOGIN PASSWORD 'dev_password';
+  IF NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = 'klikkflow_app') THEN
+    CREATE ROLE klikkflow_app WITH LOGIN PASSWORD 'dev_password';
   END IF;
 END
 $$;
 
 -- Grant permissions
-GRANT USAGE ON SCHEMA ai TO reporunner_app;
-GRANT USAGE ON SCHEMA analytics TO reporunner_app;
-GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA ai TO reporunner_app;
-GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA analytics TO reporunner_app;
-GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA ai TO reporunner_app;
-GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA analytics TO reporunner_app;
+GRANT USAGE ON SCHEMA ai TO klikkflow_app;
+GRANT USAGE ON SCHEMA analytics TO klikkflow_app;
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA ai TO klikkflow_app;
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA analytics TO klikkflow_app;
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA ai TO klikkflow_app;
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA analytics TO klikkflow_app;
 
 -- Insert sample data for development
 INSERT INTO ai.knowledge_base (title, content, summary, tags, category) VALUES
-('Getting Started with Reporunner', 'Reporunner is a powerful workflow automation platform...', 'Introduction to Reporunner platform', ARRAY['tutorial', 'basics'], 'documentation'),
+('Getting Started with KlikkFlow', 'KlikkFlow is a powerful workflow automation platform...', 'Introduction to KlikkFlow platform', ARRAY['tutorial', 'basics'], 'documentation'),
 ('Email Integration Guide', 'Learn how to integrate Gmail and other email providers...', 'Email integration tutorial', ARRAY['email', 'gmail', 'integration'], 'tutorials'),
-('AI Features Overview', 'Explore the AI capabilities of Reporunner including...', 'AI features documentation', ARRAY['ai', 'features', 'automation'], 'documentation');
+('AI Features Overview', 'Explore the AI capabilities of KlikkFlow including...', 'AI features documentation', ARRAY['ai', 'features', 'automation'], 'documentation');
 
 -- Sample analytics events
 INSERT INTO analytics.events (event_type, user_id, properties) VALUES
@@ -141,5 +141,5 @@ BEGIN
   RAISE NOTICE '✅ PostgreSQL development database initialized successfully';
   RAISE NOTICE '🤖 pgvector extension enabled for AI features';
   RAISE NOTICE '📊 Analytics tables created';
-  RAISE NOTICE '🔑 Application user: reporunner_app';
+  RAISE NOTICE '🔑 Application user: klikkflow_app';
 END $$;

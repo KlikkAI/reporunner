@@ -1,12 +1,12 @@
 version: '3.8'
 
-name: reporunner-prod
+name: klikkflow-prod
 
 services:
   # Production PostgreSQL with pgvector
   postgres:
     image: pgvector/pgvector:pg16
-    container_name: reporunner-postgres-prod
+    container_name: klikkflow-postgres-prod
     restart: always
     environment:
       POSTGRES_DB: ${POSTGRES_DB}
@@ -20,12 +20,12 @@ services:
       timeout: 5s
       retries: 5
     networks:
-      - reporunner-network
+      - klikkflow-network
 
   # Production MongoDB
   mongodb:
     image: mongo:7.0
-    container_name: reporunner-mongodb-prod
+    container_name: klikkflow-mongodb-prod
     restart: always
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER}
@@ -39,12 +39,12 @@ services:
       timeout: 5s
       retries: 5
     networks:
-      - reporunner-network
+      - klikkflow-network
 
   # Production Redis
   redis:
     image: redis:7.4-alpine
-    container_name: reporunner-redis-prod
+    container_name: klikkflow-redis-prod
     restart: always
     command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD}
     volumes:
@@ -55,11 +55,11 @@ services:
       timeout: 5s
       retries: 5
     networks:
-      - reporunner-network
+      - klikkflow-network
 
   # Production Backend (multiple instances for HA)
   backend:
-    image: reporunner/backend:latest
+    image: klikkflow/backend:latest
     deploy:
       replicas: 3
       restart_policy:
@@ -98,7 +98,7 @@ services:
       redis:
         condition: service_healthy
     networks:
-      - reporunner-network
+      - klikkflow-network
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3001/health"]
       interval: 30s
@@ -107,7 +107,7 @@ services:
 
   # Production Frontend
   frontend:
-    image: reporunner/frontend:latest
+    image: klikkflow/frontend:latest
     deploy:
       replicas: 2
       restart_policy:
@@ -117,11 +117,11 @@ services:
     depends_on:
       - backend
     networks:
-      - reporunner-network
+      - klikkflow-network
 
   # Production Workers (multiple instances for scalability)
   worker:
-    image: reporunner/worker:latest
+    image: klikkflow/worker:latest
     deploy:
       replicas: 5
       restart_policy:
@@ -147,12 +147,12 @@ services:
       redis:
         condition: service_healthy
     networks:
-      - reporunner-network
+      - klikkflow-network
 
   # Nginx Load Balancer
   nginx:
     image: nginx:alpine
-    container_name: reporunner-nginx
+    container_name: klikkflow-nginx
     restart: always
     ports:
       - "80:80"
@@ -164,12 +164,12 @@ services:
       - backend
       - frontend
     networks:
-      - reporunner-network
+      - klikkflow-network
 
   # Production Monitoring
   prometheus:
     image: prom/prometheus:v2.48.1
-    container_name: reporunner-prometheus
+    container_name: klikkflow-prometheus
     restart: always
     ports:
       - "9090:9090"
@@ -182,11 +182,11 @@ services:
       - '--web.enable-lifecycle'
       - '--storage.tsdb.retention.time=30d'
     networks:
-      - reporunner-network
+      - klikkflow-network
 
   grafana:
     image: grafana/grafana:10.2.3
-    container_name: reporunner-grafana
+    container_name: klikkflow-grafana
     restart: always
     ports:
       - "3030:3000"
@@ -200,21 +200,21 @@ services:
     depends_on:
       - prometheus
     networks:
-      - reporunner-network
+      - klikkflow-network
 
 volumes:
   postgres_data:
-    name: reporunner_postgres_data_prod
+    name: klikkflow_postgres_data_prod
   mongodb_data:
-    name: reporunner_mongodb_data_prod
+    name: klikkflow_mongodb_data_prod
   redis_data:
-    name: reporunner_redis_data_prod
+    name: klikkflow_redis_data_prod
   prometheus_data:
-    name: reporunner_prometheus_data_prod
+    name: klikkflow_prometheus_data_prod
   grafana_data:
-    name: reporunner_grafana_data_prod
+    name: klikkflow_grafana_data_prod
 
 networks:
-  reporunner-network:
-    name: reporunner_network_prod
+  klikkflow-network:
+    name: klikkflow_network_prod
     driver: bridge

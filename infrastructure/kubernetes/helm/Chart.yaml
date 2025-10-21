@@ -1,5 +1,5 @@
 apiVersion: v2
-name: reporunner
+name: klikkflow
 description: A visual workflow automation platform for enterprise environments
 type: application
 version: 1.0.0
@@ -11,12 +11,12 @@ keywords:
   - visual-programming
   - ai
   - enterprise
-home: https://reporunner.com
+home: https://klikkflow.com
 sources:
-  - https://github.com/reporunner/reporunner
+  - https://github.com/klikkflow/klikkflow
 maintainers:
-  - name: Reporunner Team
-    email: team@reporunner.com
+  - name: KlikkFlow Team
+    email: team@klikkflow.com
 dependencies:
   - name: postgresql
     version: 15.x.x

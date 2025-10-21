@@ -1,7 +1,7 @@
 apiVersion: 1
 
 providers:
-  - name: 'Reporunner Dashboards'
+  - name: 'KlikkFlow Dashboards'
     type: file
     updateIntervalSeconds: 30
     allowUiUpdates: true

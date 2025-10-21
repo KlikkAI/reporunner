@@ -1,7 +1,7 @@
 {
   "dashboard": {
     "title": "Workflow Execution Dashboard",
-    "tags": ["reporunner", "workflows", "execution"],
+    "tags": ["klikkflow", "workflows", "execution"],
     "timezone": "browser",
     "editable": true,
     "graphTooltip": 1,
