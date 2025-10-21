@@ -1,7 +1,7 @@
 {
   "dashboard": {
     "title": "Business Metrics Dashboard",
-    "tags": ["reporunner", "business", "metrics", "kpi"],
+    "tags": ["klikkflow", "business", "metrics", "kpi"],
     "timezone": "browser",
     "editable": true,
     "graphTooltip": 1,

@@ -57,7 +57,7 @@ import {
   VulnerabilityScan, SecurityMetrics, SecurityAlert,
   ComplianceFramework, toSecurityThreatDTO,
   toVulnerabilityScanDTO, toSecurityMetricsDTO
-} from '@reporunner/shared';
+} from '@klikkflow/shared';
 ```
 
 ### **Backend Routes**
@@ -67,7 +67,7 @@ import {
   CreateThreatSchema, UpdateThreatStatusSchema,
   StartVulnerabilityScanSchema, AcknowledgeAlertSchema,
   ThreatQuerySchema, ScanQuerySchema, AlertQuerySchema
-} from '@reporunner/shared';
+} from '@klikkflow/shared';
 ```
 
 ### **Frontend Hooks**
@@ -77,7 +77,7 @@ import {
   SecurityThreatDTO, SecurityEvidenceDTO,
   VulnerabilityScanDTO, SecurityMetricsDTO,
   SecurityAlertDTO, ComplianceFrameworkDTO
-} from '@reporunner/shared';
+} from '@klikkflow/shared';
 ```
 
 ## 🏆 **Benefits Achieved**

@@ -1,5 +1,5 @@
 """
-Workflow management for the Reporunner Python SDK.
+Workflow management for the KlikkFlow Python SDK.
 
 This module provides comprehensive workflow operations including CRUD operations,
 validation, activation, and execution management.
@@ -15,7 +15,7 @@ from .types import (
     ApiResponse,
 )
 from .exceptions import (
-    ReporunnerError,
+    KlikkFlowError,
     WorkflowNotFoundError,
     ValidationError,
 )
@@ -23,18 +23,18 @@ from .exceptions import (
 
 class WorkflowManager:
     """
-    Manages workflow operations for the Reporunner client.
+    Manages workflow operations for the KlikkFlow client.
 
     Provides methods for creating, reading, updating, deleting, and executing workflows.
     Mirrors the TypeScript SDK API while providing Python-native features.
     """
 
-    def __init__(self, client: "ReporunnerClient") -> None:
+    def __init__(self, client: "KlikkFlowClient") -> None:
         """
         Initialize the workflow manager.
 
         Args:
-            client: Reporunner client instance
+            client: KlikkFlow client instance
         """
         self.client = client
 
@@ -65,7 +65,7 @@ class WorkflowManager:
 
         Raises:
             ValidationError: If parameters are invalid
-            ReporunnerError: If the request fails
+            KlikkFlowError: If the request fails
 
         Example:
             ```python
@@ -124,7 +124,7 @@ class WorkflowManager:
 
         Raises:
             WorkflowNotFoundError: If workflow is not found
-            ReporunnerError: If the request fails
+            KlikkFlowError: If the request fails
 
         Example:
             ```python
@@ -137,11 +137,11 @@ class WorkflowManager:
             data = response.json()
 
             if not data["success"]:
-                raise ReporunnerError(data.get("message", "Failed to get workflow"))
+                raise KlikkFlowError(data.get("message", "Failed to get workflow"))
 
             return WorkflowDefinition(**data["data"])
 
-        except ReporunnerError as e:
+        except KlikkFlowError as e:
             if "not found" in str(e).lower():
                 raise WorkflowNotFoundError(workflow_id)
             raise
@@ -163,7 +163,7 @@ class WorkflowManager:
 
         Raises:
             ValidationError: If workflow data is invalid
-            ReporunnerError: If the request fails
+            KlikkFlowError: If the request fails
 
         Example:
             ```python
@@ -221,7 +221,7 @@ class WorkflowManager:
                     data["error"]["message"],
                     validation_errors=data.get("error", {}).get("details", []),
                 )
-            raise ReporunnerError(data.get("message", "Failed to create workflow"))
+            raise KlikkFlowError(data.get("message", "Failed to create workflow"))
 
         return WorkflowDefinition(**data["data"])
 
@@ -243,7 +243,7 @@ class WorkflowManager:
         Raises:
             WorkflowNotFoundError: If workflow is not found
             ValidationError: If update data is invalid
-            ReporunnerError: If the request fails
+            KlikkFlowError: If the request fails
 
         Example:
             ```python
@@ -283,11 +283,11 @@ class WorkflowManager:
                         data["error"]["message"],
                         validation_errors=data.get("error", {}).get("details", []),
                     )
-                raise ReporunnerError(data.get("message", "Failed to update workflow"))
+                raise KlikkFlowError(data.get("message", "Failed to update workflow"))
 
             return WorkflowDefinition(**data["data"])
 
-        except ReporunnerError as e:
+        except KlikkFlowError as e:
             if "not found" in str(e).lower():
                 raise WorkflowNotFoundError(workflow_id)
             raise
@@ -304,7 +304,7 @@ class WorkflowManager:
 
         Raises:
             WorkflowNotFoundError: If workflow is not found
-            ReporunnerError: If the request fails
+            KlikkFlowError: If the request fails
 
         Example:
             ```python
@@ -319,7 +319,7 @@ class WorkflowManager:
 
             return data.get("success", False)
 
-        except ReporunnerError as e:
+        except KlikkFlowError as e:
             if "not found" in str(e).lower():
                 raise WorkflowNotFoundError(workflow_id)
             raise
@@ -336,7 +336,7 @@ class WorkflowManager:
 
         Raises:
             WorkflowNotFoundError: If workflow is not found
-            ReporunnerError: If the request fails
+            KlikkFlowError: If the request fails
 
         Example:
             ```python
@@ -358,7 +358,7 @@ class WorkflowManager:
 
         Raises:
             WorkflowNotFoundError: If workflow is not found
-            ReporunnerError: If the request fails
+            KlikkFlowError: If the request fails
 
         Example:
             ```python
@@ -387,7 +387,7 @@ class WorkflowManager:
 
         Raises:
             WorkflowNotFoundError: If source workflow is not found
-            ReporunnerError: If the request fails
+            KlikkFlowError: If the request fails
 
         Example:
             ```python
@@ -414,11 +414,11 @@ class WorkflowManager:
             data = response.json()
 
             if not data["success"]:
-                raise ReporunnerError(data.get("message", "Failed to duplicate workflow"))
+                raise KlikkFlowError(data.get("message", "Failed to duplicate workflow"))
 
             return WorkflowDefinition(**data["data"])
 
-        except ReporunnerError as e:
+        except KlikkFlowError as e:
             if "not found" in str(e).lower():
                 raise WorkflowNotFoundError(workflow_id)
             raise
@@ -434,7 +434,7 @@ class WorkflowManager:
             Validation result with any errors or warnings
 
         Raises:
-            ReporunnerError: If the request fails
+            KlikkFlowError: If the request fails
 
         Example:
             ```python
@@ -479,7 +479,7 @@ class WorkflowManager:
 
         Raises:
             WorkflowNotFoundError: If workflow is not found
-            ReporunnerError: If the request fails
+            KlikkFlowError: If the request fails
 
         Example:
             ```python
@@ -503,7 +503,7 @@ class WorkflowManager:
             response = await self.client.get(f"/workflows/{workflow_id}/export", params=params)
             return response.json()
 
-        except ReporunnerError as e:
+        except KlikkFlowError as e:
             if "not found" in str(e).lower():
                 raise WorkflowNotFoundError(workflow_id)
             raise
@@ -527,7 +527,7 @@ class WorkflowManager:
 
         Raises:
             ValidationError: If workflow data is invalid
-            ReporunnerError: If the request fails
+            KlikkFlowError: If the request fails
 
         Example:
             ```python
@@ -559,7 +559,7 @@ class WorkflowManager:
                     data["error"]["message"],
                     validation_errors=data.get("error", {}).get("details", []),
                 )
-            raise ReporunnerError(data.get("message", "Failed to import workflow"))
+            raise KlikkFlowError(data.get("message", "Failed to import workflow"))
 
         return WorkflowDefinition(**data["data"])
 
@@ -584,7 +584,7 @@ class WorkflowManager:
 
         Raises:
             WorkflowNotFoundError: If workflow is not found
-            ReporunnerError: If the request fails
+            KlikkFlowError: If the request fails
 
         Example:
             ```python
@@ -617,7 +617,7 @@ class WorkflowManager:
                 timestamp=datetime.fromisoformat(data["timestamp"]),
             )
 
-        except ReporunnerError as e:
+        except KlikkFlowError as e:
             if "not found" in str(e).lower():
                 raise WorkflowNotFoundError(workflow_id)
             raise

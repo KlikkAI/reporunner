@@ -2,9 +2,9 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: {{ include "reporunner.fullname" . }}-logs
+  name: {{ include "klikkflow.fullname" . }}-logs
   labels:
-    {{- include "reporunner.labels" . | nindent 4 }}
+    {{- include "klikkflow.labels" . | nindent 4 }}
 spec:
   accessModes:
     - {{ .Values.persistence.logs.accessMode }}
@@ -21,9 +21,9 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: {{ include "reporunner.fullname" . }}-uploads
+  name: {{ include "klikkflow.fullname" . }}-uploads
   labels:
-    {{- include "reporunner.labels" . | nindent 4 }}
+    {{- include "klikkflow.labels" . | nindent 4 }}
 spec:
   accessModes:
     - {{ .Values.persistence.uploads.accessMode }}

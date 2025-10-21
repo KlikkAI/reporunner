@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Reporunner Monitoring Setup Script
+# KlikkFlow Monitoring Setup Script
 # This script sets up the complete Prometheus + Grafana monitoring stack
 
 set -euo pipefail
@@ -59,7 +59,7 @@ GRAFANA_SECRET_KEY=$(openssl rand -base64 32)
 # AlertManager Configuration
 SMTP_HOST=localhost
 SMTP_PORT=587
-SMTP_USER=alerts@reporunner.com
+SMTP_USER=alerts@klikkflow.com
 SMTP_PASSWORD=your-smtp-password
 
 # Slack Webhooks (replace with your actual webhook URLs)
@@ -72,16 +72,16 @@ SLACK_WEBHOOK_SECURITY=https://hooks.slack.com/services/YOUR/SECURITY/WEBHOOK
 PAGERDUTY_ROUTING_KEY=your-pagerduty-integration-key
 
 # External URLs
-PROMETHEUS_EXTERNAL_URL=http://prometheus.reporunner.local:9090
-ALERTMANAGER_EXTERNAL_URL=http://alerts.reporunner.local:9093
-GRAFANA_EXTERNAL_URL=http://grafana.reporunner.local:3000
+PROMETHEUS_EXTERNAL_URL=http://prometheus.klikkflow.local:9090
+ALERTMANAGER_EXTERNAL_URL=http://alerts.klikkflow.local:9093
+GRAFANA_EXTERNAL_URL=http://grafana.klikkflow.local:3000
 
 # Data retention
 PROMETHEUS_RETENTION_TIME=15d
 PROMETHEUS_RETENTION_SIZE=10GB
 
 # Network settings
-MONITORING_NETWORK=reporunner-monitoring
+MONITORING_NETWORK=klikkflow-monitoring
 EOF
         log "Environment file created at $ENV_FILE"
         warn "Please update the environment variables in $ENV_FILE before starting the stack"
@@ -119,9 +119,9 @@ setup_local_dns() {
     log "Setting up local DNS entries..."
 
     local hosts_entries=(
-        "127.0.0.1 prometheus.reporunner.local"
-        "127.0.0.1 grafana.reporunner.local"
-        "127.0.0.1 alerts.reporunner.local"
+        "127.0.0.1 prometheus.klikkflow.local"
+        "127.0.0.1 grafana.klikkflow.local"
+        "127.0.0.1 alerts.klikkflow.local"
     )
 
     if [[ "$OSTYPE" == "darwin"* ]]; then
@@ -231,9 +231,9 @@ print_access_info() {
     log "Monitoring stack is ready!"
     echo
     echo -e "${BLUE}Access Information:${NC}"
-    echo -e "  Prometheus:   ${GREEN}http://localhost:9090${NC} or ${GREEN}http://prometheus.reporunner.local:9090${NC}"
-    echo -e "  Grafana:      ${GREEN}http://localhost:3000${NC} or ${GREEN}http://grafana.reporunner.local:3000${NC}"
-    echo -e "  AlertManager: ${GREEN}http://localhost:9093${NC} or ${GREEN}http://alerts.reporunner.local:9093${NC}"
+    echo -e "  Prometheus:   ${GREEN}http://localhost:9090${NC} or ${GREEN}http://prometheus.klikkflow.local:9090${NC}"
+    echo -e "  Grafana:      ${GREEN}http://localhost:3000${NC} or ${GREEN}http://grafana.klikkflow.local:3000${NC}"
+    echo -e "  AlertManager: ${GREEN}http://localhost:9093${NC} or ${GREEN}http://alerts.klikkflow.local:9093${NC}"
     echo
     echo -e "${BLUE}Default Credentials:${NC}"
     echo -e "  Grafana: ${GREEN}admin / admin123${NC}"

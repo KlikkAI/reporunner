@@ -13,7 +13,7 @@ import {
   PlayCircleOutlined,
   SaveOutlined,
 } from '@ant-design/icons';
-import { Logger } from '@reporunner/core';
+import { Logger } from '@klikkflow/core';
 import type React from 'react';
 import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';

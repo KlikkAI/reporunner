@@ -1,6 +1,6 @@
-# Reporunner Azure Infrastructure - Terraform Deployment Guide
+# KlikkFlow Azure Infrastructure - Terraform Deployment Guide
 
-This directory contains Terraform configurations for deploying Reporunner on Microsoft Azure using AKS, Azure Database for PostgreSQL, Cosmos DB, Azure Cache for Redis, and other managed services.
+This directory contains Terraform configurations for deploying KlikkFlow on Microsoft Azure using AKS, Azure Database for PostgreSQL, Cosmos DB, Azure Cache for Redis, and other managed services.
 
 ## Architecture Overview
 
@@ -37,7 +37,7 @@ az login
 az account set --subscription "YOUR_SUBSCRIPTION_ID"
 
 # Create service principal for Terraform (if not using Cloud Shell)
-az ad sp create-for-rbac --name "terraform-reporunner" --role="Contributor" \
+az ad sp create-for-rbac --name "terraform-klikkflow" --role="Contributor" \
   --scopes="/subscriptions/YOUR_SUBSCRIPTION_ID"
 
 # Set environment variables
@@ -55,7 +55,7 @@ az group create --name terraform-state-rg --location eastus
 
 # Create storage account
 az storage account create \
-  --name reporunnerterraformstate \
+  --name klikkflowterraformstate \
   --resource-group terraform-state-rg \
   --location eastus \
   --sku Standard_LRS \
@@ -64,7 +64,7 @@ az storage account create \
 # Create container
 az storage container create \
   --name tfstate \
-  --account-name reporunnerterraformstate
+  --account-name klikkflowterraformstate
 ```
 
 ### 3. Initialize Terraform
@@ -78,20 +78,20 @@ terraform init
 
 ```bash
 # Create Azure Container Registry
-az acr create --resource-group YOUR_RG --name reporunneracr --sku Basic
+az acr create --resource-group YOUR_RG --name klikkflowacr --sku Basic
 
 # Login to ACR
-az acr login --name reporunneracr
+az acr login --name klikkflowacr
 
 # Build and push backend
 cd ../../packages/backend
-docker build -t reporunneracr.azurecr.io/reporunner-backend:dev .
-docker push reporunneracr.azurecr.io/reporunner-backend:dev
+docker build -t klikkflowacr.azurecr.io/klikkflow-backend:dev .
+docker push klikkflowacr.azurecr.io/klikkflow-backend:dev
 
 # Build and push frontend
 cd ../frontend
-docker build -t reporunneracr.azurecr.io/reporunner-frontend:dev .
-docker push reporunneracr.azurecr.io/reporunner-frontend:dev
+docker build -t klikkflowacr.azurecr.io/klikkflow-frontend:dev .
+docker push klikkflowacr.azurecr.io/klikkflow-frontend:dev
 ```
 
 ### 5. Configure Environment Variables
@@ -136,8 +136,8 @@ terraform apply -var-file=environments/production.tfvars
 ```bash
 # Get AKS credentials
 az aks get-credentials \
-  --resource-group reporunner-ENV-rg \
-  --name reporunner-ENV-aks
+  --resource-group klikkflow-ENV-rg \
+  --name klikkflow-ENV-aks
 
 # Verify connection
 kubectl get nodes
@@ -256,11 +256,11 @@ terraform output postgresql_connection_string
 
 # Or retrieve from Key Vault
 az keyvault secret show \
-  --vault-name reporunner-ENV-kv \
+  --vault-name klikkflow-ENV-kv \
   --name postgresql-connection-string
 
 # Connect with psql
-psql "host=SERVER.postgres.database.azure.com port=5432 dbname=reporunner user=reporunner password=PASSWORD sslmode=require"
+psql "host=SERVER.postgres.database.azure.com port=5432 dbname=klikkflow user=klikkflow password=PASSWORD sslmode=require"
 ```
 
 ### Azure Cosmos DB (MongoDB API)
@@ -268,7 +268,7 @@ psql "host=SERVER.postgres.database.azure.com port=5432 dbname=reporunner user=r
 ```bash
 # Get connection string from Key Vault
 az keyvault secret show \
-  --vault-name reporunner-ENV-kv \
+  --vault-name klikkflow-ENV-kv \
   --name cosmosdb-connection-string
 
 # Connect with mongosh
@@ -291,13 +291,13 @@ kubectl run redis-client --rm -it --restart=Never \
 
 1. **Build and push new images:**
    ```bash
-   docker build -t reporunneracr.azurecr.io/reporunner-backend:v1.1.0 .
-   docker push reporunneracr.azurecr.io/reporunner-backend:v1.1.0
+   docker build -t klikkflowacr.azurecr.io/klikkflow-backend:v1.1.0 .
+   docker push klikkflowacr.azurecr.io/klikkflow-backend:v1.1.0
    ```
 
 2. **Update Kubernetes deployment:**
    ```bash
-   kubectl set image deployment/backend backend=reporunneracr.azurecr.io/reporunner-backend:v1.1.0
+   kubectl set image deployment/backend backend=klikkflowacr.azurecr.io/klikkflow-backend:v1.1.0
    ```
 
 ### Scale Services
@@ -342,7 +342,7 @@ kubectl scale deployment backend --replicas=5
 3. **Test from AKS pod:**
    ```bash
    kubectl run psql-test --rm -it --restart=Never \
-     --image=postgres:15 -- psql "host=SERVER_NAME port=5432 dbname=reporunner user=reporunner"
+     --image=postgres:15 -- psql "host=SERVER_NAME port=5432 dbname=klikkflow user=klikkflow"
    ```
 
 ### High Costs
@@ -441,8 +441,8 @@ https://azure.microsoft.com/en-us/pricing/calculator/
 ## Support
 
 For issues or questions:
-- GitHub Issues: https://github.com/your-org/reporunner/issues
-- Documentation: https://docs.reporunner.com
+- GitHub Issues: https://github.com/your-org/klikkflow/issues
+- Documentation: https://docs.klikkflow.com
 - Azure Support: https://azure.microsoft.com/en-us/support/
 
 ## License

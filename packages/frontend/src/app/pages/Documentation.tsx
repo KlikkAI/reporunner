@@ -1,7 +1,7 @@
 /**
  * Documentation Page
  *
- * Comprehensive documentation hub for Reporunner
+ * Comprehensive documentation hub for KlikkFlow
  * Getting started guides, tutorials, and references
  */
 
@@ -62,7 +62,7 @@ export const Documentation: React.FC = () => {
     { title: 'Quick Start', icon: Play, url: '/docs/getting-started' },
     { title: 'Integrations', icon: Layers, url: '/docs/integrations-guide' },
     { title: 'Deployment', icon: Cloud, url: '/docs/deployment/docker' },
-    { title: 'GitHub', icon: ExternalLink, url: 'https://github.com/KlikkAI/reporunner' },
+    { title: 'GitHub', icon: ExternalLink, url: 'https://github.com/KlikkAI/klikkflow' },
   ];
 
   const categories = [
@@ -78,7 +78,7 @@ export const Documentation: React.FC = () => {
     'getting-started': [
       {
         title: 'Quick Start Guide',
-        description: 'Get up and running with Reporunner in 5 minutes',
+        description: 'Get up and running with KlikkFlow in 5 minutes',
         type: 'guide',
         readTime: '5 min',
         difficulty: 'Beginner',
@@ -110,7 +110,7 @@ export const Documentation: React.FC = () => {
     installation: [
       {
         title: 'Docker Deployment',
-        description: 'Deploy Reporunner using Docker Compose - Quick start and configuration',
+        description: 'Deploy KlikkFlow using Docker Compose - Quick start and configuration',
         type: 'guide',
         readTime: '10 min',
         difficulty: 'Beginner',
@@ -258,7 +258,7 @@ export const Documentation: React.FC = () => {
               <br />& Guides
             </h1>
             <p className="text-xl text-slate-200 mb-8 max-w-3xl mx-auto leading-relaxed">
-              Everything you need to build powerful workflows with Reporunner. From quick starts to
+              Everything you need to build powerful workflows with KlikkFlow. From quick starts to
               advanced deployment guides.
             </p>
 
@@ -432,7 +432,7 @@ export const Documentation: React.FC = () => {
               },
               {
                 title: 'Multi-Cloud Deployment',
-                description: 'Deploy Reporunner across AWS, Azure, and GCP with Kubernetes',
+                description: 'Deploy KlikkFlow across AWS, Azure, and GCP with Kubernetes',
                 duration: '90 min',
                 level: 'Advanced',
                 thumbnail: '☁️',
@@ -498,7 +498,7 @@ export const Documentation: React.FC = () => {
                 </div>
                 <h3 className="text-xl font-bold text-gray-900 mb-3">Community Forum</h3>
                 <p className="text-gray-600 text-sm mb-4">
-                  Join thousands of developers building with Reporunner
+                  Join thousands of developers building with KlikkFlow
                 </p>
                 <button className="text-blue-600 font-medium hover:text-blue-700 transition-colors">
                   Join Community

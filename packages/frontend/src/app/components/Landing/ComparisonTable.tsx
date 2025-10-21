@@ -1,7 +1,7 @@
 /**
  * Comparison Table Section
  *
- * Competitive comparison showing how Reporunner
+ * Competitive comparison showing how KlikkFlow
  * stacks up against n8n and SIM
  */
 
@@ -15,7 +15,7 @@ export const ComparisonTable: React.FC = () => {
       items: [
         {
           feature: 'Self-Hosted Deployment',
-          reporunner: true,
+          klikkflow: true,
           zapier: false,
           make: false,
           n8n: true,
@@ -23,7 +23,7 @@ export const ComparisonTable: React.FC = () => {
         },
         {
           feature: 'Visual Workflow Builder',
-          reporunner: true,
+          klikkflow: true,
           zapier: 'Basic',
           make: true,
           n8n: true,
@@ -31,7 +31,7 @@ export const ComparisonTable: React.FC = () => {
         },
         {
           feature: 'Pre-built Integrations',
-          reporunner: '500+',
+          klikkflow: '500+',
           zapier: '8,000+',
           make: '2,000+',
           n8n: '400+',
@@ -39,7 +39,7 @@ export const ComparisonTable: React.FC = () => {
         },
         {
           feature: 'Custom Node Development',
-          reporunner: true,
+          klikkflow: true,
           zapier: false,
           make: false,
           n8n: true,
@@ -47,7 +47,7 @@ export const ComparisonTable: React.FC = () => {
         },
         {
           feature: 'Real-time Collaboration',
-          reporunner: true,
+          klikkflow: true,
           zapier: 'Team Plans',
           make: true,
           n8n: false,
@@ -55,7 +55,7 @@ export const ComparisonTable: React.FC = () => {
         },
         {
           feature: 'Version Control',
-          reporunner: true,
+          klikkflow: true,
           zapier: false,
           make: 'Basic',
           n8n: 'Basic',
@@ -68,7 +68,7 @@ export const ComparisonTable: React.FC = () => {
       items: [
         {
           feature: 'Native AI Integration',
-          reporunner: true,
+          klikkflow: true,
           zapier: true,
           make: true,
           n8n: false,
@@ -76,7 +76,7 @@ export const ComparisonTable: React.FC = () => {
         },
         {
           feature: 'Vector Search (pgvector)',
-          reporunner: true,
+          klikkflow: true,
           zapier: false,
           make: false,
           n8n: false,
@@ -84,7 +84,7 @@ export const ComparisonTable: React.FC = () => {
         },
         {
           feature: 'Intelligent Error Recovery',
-          reporunner: true,
+          klikkflow: true,
           zapier: 'Basic',
           make: 'Basic',
           n8n: false,
@@ -92,7 +92,7 @@ export const ComparisonTable: React.FC = () => {
         },
         {
           feature: 'AI-Powered Optimization',
-          reporunner: true,
+          klikkflow: true,
           zapier: 'Basic',
           make: 'Basic',
           n8n: false,
@@ -100,7 +100,7 @@ export const ComparisonTable: React.FC = () => {
         },
         {
           feature: 'AI Agents/Chatbots',
-          reporunner: true,
+          klikkflow: true,
           zapier: true,
           make: true,
           n8n: false,
@@ -108,7 +108,7 @@ export const ComparisonTable: React.FC = () => {
         },
         {
           feature: 'Natural Language Queries',
-          reporunner: true,
+          klikkflow: true,
           zapier: false,
           make: false,
           n8n: false,
@@ -121,7 +121,7 @@ export const ComparisonTable: React.FC = () => {
       items: [
         {
           feature: 'SSO/SAML Integration',
-          reporunner: true,
+          klikkflow: true,
           zapier: 'Enterprise',
           make: 'Enterprise',
           n8n: 'Enterprise',
@@ -129,7 +129,7 @@ export const ComparisonTable: React.FC = () => {
         },
         {
           feature: 'RBAC Permissions',
-          reporunner: true,
+          klikkflow: true,
           zapier: 'Enterprise',
           make: 'Enterprise',
           n8n: 'Enterprise',
@@ -137,7 +137,7 @@ export const ComparisonTable: React.FC = () => {
         },
         {
           feature: 'Audit Logging',
-          reporunner: true,
+          klikkflow: true,
           zapier: 'Enterprise',
           make: 'Enterprise',
           n8n: 'Enterprise',
@@ -145,7 +145,7 @@ export const ComparisonTable: React.FC = () => {
         },
         {
           feature: 'Compliance Certifications',
-          reporunner: true,
+          klikkflow: true,
           zapier: true,
           make: true,
           n8n: true,
@@ -153,7 +153,7 @@ export const ComparisonTable: React.FC = () => {
         },
         {
           feature: 'Multi-tenancy',
-          reporunner: true,
+          klikkflow: true,
           zapier: true,
           make: 'Basic',
           n8n: 'Enterprise',
@@ -161,7 +161,7 @@ export const ComparisonTable: React.FC = () => {
         },
         {
           feature: 'Enterprise Support',
-          reporunner: true,
+          klikkflow: true,
           zapier: 'Paid',
           make: 'Paid',
           n8n: 'Paid',
@@ -174,7 +174,7 @@ export const ComparisonTable: React.FC = () => {
       items: [
         {
           feature: 'Free Tier',
-          reporunner: 'Unlimited Self-hosted',
+          klikkflow: 'Unlimited Self-hosted',
           zapier: '100 ops/month',
           make: '1,000 ops/month',
           n8n: 'Unlimited Self-hosted',
@@ -182,7 +182,7 @@ export const ComparisonTable: React.FC = () => {
         },
         {
           feature: 'Pricing Model',
-          reporunner: 'One-time + Support',
+          klikkflow: 'One-time + Support',
           zapier: 'Per Task/User',
           make: 'Per Operation',
           n8n: 'Freemium + Cloud',
@@ -190,7 +190,7 @@ export const ComparisonTable: React.FC = () => {
         },
         {
           feature: 'Cloud Hosting Option',
-          reporunner: 'Coming Soon',
+          klikkflow: 'Coming Soon',
           zapier: true,
           make: true,
           n8n: true,
@@ -198,7 +198,7 @@ export const ComparisonTable: React.FC = () => {
         },
         {
           feature: 'On-Premise Only',
-          reporunner: true,
+          klikkflow: true,
           zapier: false,
           make: false,
           n8n: true,
@@ -206,7 +206,7 @@ export const ComparisonTable: React.FC = () => {
         },
         {
           feature: 'Cost at Scale',
-          reporunner: 'Very Low',
+          klikkflow: 'Very Low',
           zapier: 'High',
           make: 'Medium',
           n8n: 'Low',
@@ -219,7 +219,7 @@ export const ComparisonTable: React.FC = () => {
       items: [
         {
           feature: 'Hybrid Database Support',
-          reporunner: 'MongoDB + PostgreSQL',
+          klikkflow: 'MongoDB + PostgreSQL',
           zapier: 'Cloud Only',
           make: 'Cloud Only',
           n8n: 'Multi-DB',
@@ -227,7 +227,7 @@ export const ComparisonTable: React.FC = () => {
         },
         {
           feature: 'Vector Database',
-          reporunner: 'Built-in',
+          klikkflow: 'Built-in',
           zapier: false,
           make: false,
           n8n: false,
@@ -235,7 +235,7 @@ export const ComparisonTable: React.FC = () => {
         },
         {
           feature: 'Microservices Architecture',
-          reporunner: true,
+          klikkflow: true,
           zapier: 'Cloud Native',
           make: 'Cloud Native',
           n8n: 'Monolith',
@@ -243,7 +243,7 @@ export const ComparisonTable: React.FC = () => {
         },
         {
           feature: 'Horizontal Scaling',
-          reporunner: true,
+          klikkflow: true,
           zapier: 'Automatic',
           make: 'Automatic',
           n8n: 'Queue Only',
@@ -251,7 +251,7 @@ export const ComparisonTable: React.FC = () => {
         },
         {
           feature: 'Data Sovereignty',
-          reporunner: 'Complete',
+          klikkflow: 'Complete',
           zapier: false,
           make: false,
           n8n: 'Self-hosted Only',
@@ -263,7 +263,7 @@ export const ComparisonTable: React.FC = () => {
 
   const platforms = [
     {
-      name: 'Reporunner',
+      name: 'KlikkFlow',
       icon: Crown,
       tagline: 'Enterprise-grade with AI',
       highlight: 'Best Overall',
@@ -305,9 +305,9 @@ export const ComparisonTable: React.FC = () => {
   ];
 
   // Feature value rendering helpers
-  const renderBooleanValue = (value: boolean, isReporunner: boolean) => {
+  const renderBooleanValue = (value: boolean, isKlikkFlow: boolean) => {
     return value ? (
-      <Check className={`w-5 h-5 mx-auto ${isReporunner ? 'text-blue-600' : 'text-green-500'}`} />
+      <Check className={`w-5 h-5 mx-auto ${isKlikkFlow ? 'text-blue-600' : 'text-green-500'}`} />
     ) : (
       <X className="w-5 h-5 text-gray-400 mx-auto" />
     );
@@ -328,9 +328,9 @@ export const ComparisonTable: React.FC = () => {
     return <span className={`text-xs px-2 py-1 rounded-full ${getTagStyles(value)}`}>{value}</span>;
   };
 
-  const renderStringValue = (value: string, isReporunner: boolean) => {
+  const renderStringValue = (value: string, isKlikkFlow: boolean) => {
     return (
-      <span className={`text-sm font-medium ${isReporunner ? 'text-blue-600' : 'text-gray-700'}`}>
+      <span className={`text-sm font-medium ${isKlikkFlow ? 'text-blue-600' : 'text-gray-700'}`}>
         {value}
       </span>
     );
@@ -340,13 +340,13 @@ export const ComparisonTable: React.FC = () => {
     return value === 'Enterprise' || value === 'Paid' || value === 'Basic';
   };
 
-  const renderFeatureValue = (value: any, isReporunner: boolean = false) => {
+  const renderFeatureValue = (value: any, isKlikkFlow: boolean = false) => {
     if (typeof value === 'boolean') {
-      return renderBooleanValue(value, isReporunner);
+      return renderBooleanValue(value, isKlikkFlow);
     }
 
     if (typeof value === 'string') {
-      return isTag(value) ? renderTagValue(value) : renderStringValue(value, isReporunner);
+      return isTag(value) ? renderTagValue(value) : renderStringValue(value, isKlikkFlow);
     }
 
     return null;
@@ -358,13 +358,13 @@ export const ComparisonTable: React.FC = () => {
         {/* Section Header */}
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-            How Reporunner{' '}
+            How KlikkFlow{' '}
             <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
               Stacks Up
             </span>
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            See how Reporunner compares to leading automation platforms including Zapier, Make.com,
+            See how KlikkFlow compares to leading automation platforms including Zapier, Make.com,
             n8n, and SIM. We combine enterprise-grade features with self-hosting flexibility and
             competitive pricing.
           </p>
@@ -434,7 +434,7 @@ export const ComparisonTable: React.FC = () => {
                       <span className="text-gray-700 font-medium text-sm">{item.feature}</span>
                     </div>
                     <div className="p-3 text-center">
-                      {renderFeatureValue(item.reporunner, true)}
+                      {renderFeatureValue(item.klikkflow, true)}
                     </div>
                     <div className="p-3 text-center">{renderFeatureValue(item.zapier)}</div>
                     <div className="p-3 text-center">{renderFeatureValue(item.make)}</div>
@@ -450,7 +450,7 @@ export const ComparisonTable: React.FC = () => {
         {/* Summary Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-16">
           <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-xl p-6 border border-blue-200">
-            <h4 className="font-bold text-gray-900 mb-3">Why Choose Reporunner?</h4>
+            <h4 className="font-bold text-gray-900 mb-3">Why Choose KlikkFlow?</h4>
             <ul className="space-y-2 text-sm text-gray-700">
               <li className="flex items-center gap-2">
                 <Check className="w-4 h-4 text-blue-600" />
@@ -508,9 +508,9 @@ export const ComparisonTable: React.FC = () => {
         {/* CTA */}
         <div className="mt-16 text-center">
           <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-8 text-white">
-            <h3 className="text-2xl font-bold mb-4">Experience the Reporunner Advantage</h3>
+            <h3 className="text-2xl font-bold mb-4">Experience the KlikkFlow Advantage</h3>
             <p className="text-blue-100 mb-6 max-w-2xl mx-auto">
-              See for yourself why enterprises are choosing Reporunner for their mission-critical
+              See for yourself why enterprises are choosing KlikkFlow for their mission-critical
               workflow automation needs.
             </p>
             <button className="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-50 transition-colors">

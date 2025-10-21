@@ -87,7 +87,7 @@ const UserManagementPanel: React.FC<UserManagementPanelProps> = ({ className }) 
       const mockUsers: User[] = [
         {
           id: 'user_1',
-          email: 'admin@reporunner.com',
+          email: 'admin@klikkflow.com',
           name: 'Admin User',
           role: 'admin',
           status: 'active',
@@ -134,7 +134,7 @@ const UserManagementPanel: React.FC<UserManagementPanelProps> = ({ className }) 
         },
         {
           id: 'user_2',
-          email: 'editor@reporunner.com',
+          email: 'editor@klikkflow.com',
           name: 'Editor User',
           role: 'member',
           status: 'active',
@@ -181,7 +181,7 @@ const UserManagementPanel: React.FC<UserManagementPanelProps> = ({ className }) 
         },
         {
           id: 'user_3',
-          email: 'viewer@reporunner.com',
+          email: 'viewer@klikkflow.com',
           name: 'Viewer User',
           role: 'viewer',
           status: 'pending',
@@ -346,7 +346,7 @@ const UserManagementPanel: React.FC<UserManagementPanelProps> = ({ className }) 
           expiresAt: new Date(Date.now() + 6 * 24 * 60 * 60 * 1000).toISOString(),
           status: 'pending',
           token: 'token123',
-          message: 'Welcome to Reporunner!',
+          message: 'Welcome to KlikkFlow!',
         },
       ];
       setInvitations(mockInvitations);

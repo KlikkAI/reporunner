@@ -16,7 +16,7 @@ NC='\033[0m'
 
 echo -e "${BLUE}"
 echo "=================================================="
-echo "  Reporunner Infrastructure Test Suite"
+echo "  KlikkFlow Infrastructure Test Suite"
 echo "=================================================="
 echo -e "${NC}"
 

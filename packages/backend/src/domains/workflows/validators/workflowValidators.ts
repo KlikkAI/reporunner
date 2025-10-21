@@ -1,4 +1,4 @@
-import { BaseValidationMiddleware } from '@reporunner/core';
+import { BaseValidationMiddleware } from '@klikkflow/core';
 import { z } from 'zod';
 
 /**

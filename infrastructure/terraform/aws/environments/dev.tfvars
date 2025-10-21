@@ -17,8 +17,8 @@ redis_node_type             = "cache.t3.small"
 redis_num_cache_nodes       = 1
 
 # Container Images
-backend_container_image  = "123456789012.dkr.ecr.us-east-1.amazonaws.com/reporunner/backend:dev"
-frontend_container_image = "123456789012.dkr.ecr.us-east-1.amazonaws.com/reporunner/frontend:dev"
+backend_container_image  = "123456789012.dkr.ecr.us-east-1.amazonaws.com/klikkflow/backend:dev"
+frontend_container_image = "123456789012.dkr.ecr.us-east-1.amazonaws.com/klikkflow/frontend:dev"
 
 # ECS Task Configuration - Dev Sizing (Cost-Optimized)
 backend_cpu            = 512

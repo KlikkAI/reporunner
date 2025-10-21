@@ -69,11 +69,11 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, onToggle }) => {
               <div className="w-8 h-8 rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 flex items-center justify-center">
                 <span className="text-white text-sm">🔄</span>
               </div>
-              <span>RepoRunner</span>
+              <span>KlikkFlow</span>
             </Link>
           )}
           {isCollapsed && (
-            <Link to="/" className="text-2xl" title="RepoRunner">
+            <Link to="/" className="text-2xl" title="KlikkFlow">
               <div className="w-10 h-10 rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 flex items-center justify-center hover:scale-110 transition-transform">
                 <span className="text-white">🔄</span>
               </div>

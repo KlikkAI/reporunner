@@ -7,14 +7,14 @@ with open("requirements.txt", "r", encoding="utf-8") as fh:
     requirements = [line.strip() for line in fh if line.strip() and not line.startswith("#")]
 
 setup(
-    name="reporunner-instrumentation",
+    name="klikkflow-instrumentation",
     version="1.0.0",
-    author="Reporunner Team",
-    author_email="support@reporunner.com",
-    description="OpenTelemetry instrumentation package for Reporunner Python applications",
+    author="KlikkFlow Team",
+    author_email="support@klikkflow.com",
+    description="OpenTelemetry instrumentation package for KlikkFlow Python applications",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/reporunner/reporunner",
+    url="https://github.com/klikkflow/klikkflow",
     packages=find_packages(where="src"),
     package_dir={"": "src"},
     classifiers=[
@@ -68,21 +68,21 @@ setup(
     },
     entry_points={
         "opentelemetry_instrumentor": [
-            "reporunner = reporunner_instrumentation:ReporunnerInstrumentor",
+            "klikkflow = klikkflow_instrumentation:KlikkFlowInstrumentor",
         ],
     },
     keywords=[
         "opentelemetry",
         "tracing",
         "observability",
-        "reporunner",
+        "klikkflow",
         "instrumentation",
         "monitoring",
         "telemetry",
     ],
     project_urls={
-        "Bug Reports": "https://github.com/reporunner/reporunner/issues",
-        "Source": "https://github.com/reporunner/reporunner",
-        "Documentation": "https://docs.reporunner.com",
+        "Bug Reports": "https://github.com/klikkflow/klikkflow/issues",
+        "Source": "https://github.com/klikkflow/klikkflow",
+        "Documentation": "https://docs.klikkflow.com",
     },
 )

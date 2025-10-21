@@ -54,15 +54,15 @@ fi
 
 # Test 2: Check Prometheus alert rules
 echo -e "\n${YELLOW}Validating Prometheus alert rules...${NC}"
-if [ -f "$MONITORING_DIR/prometheus/alerts/reporunner-alerts.yml" ]; then
+if [ -f "$MONITORING_DIR/prometheus/alerts/klikkflow-alerts.yml" ]; then
     if command -v promtool &> /dev/null; then
-        if promtool check rules "$MONITORING_DIR/prometheus/alerts/reporunner-alerts.yml" > /dev/null 2>&1; then
+        if promtool check rules "$MONITORING_DIR/prometheus/alerts/klikkflow-alerts.yml" > /dev/null 2>&1; then
             print_result 0 "Prometheus alert rules are valid"
         else
             print_result 1 "Prometheus alert rules validation failed"
         fi
     else
-        if grep -q "groups:" "$MONITORING_DIR/prometheus/alerts/reporunner-alerts.yml"; then
+        if grep -q "groups:" "$MONITORING_DIR/prometheus/alerts/klikkflow-alerts.yml"; then
             print_result 0 "Alert rules file exists with groups"
         else
             print_result 1 "Alert rules file malformed"

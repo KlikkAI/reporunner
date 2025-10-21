@@ -1,0 +1,94 @@
+{
+  "name": "@klikkflow/ai",
+  "version": "1.0.0",
+  "description": "AI and ML capabilities for KlikkFlow workflow automation",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.js"
+    },
+    "./agents": {
+      "types": "./dist/agents/index.d.ts",
+      "import": "./dist/agents/index.js",
+      "require": "./dist/agents/index.js"
+    },
+    "./embeddings": {
+      "types": "./dist/embeddings/index.d.ts",
+      "import": "./dist/embeddings/index.js",
+      "require": "./dist/embeddings/index.js"
+    },
+    "./vector-store": {
+      "types": "./dist/vector-store/index.d.ts",
+      "import": "./dist/vector-store/index.js",
+      "require": "./dist/vector-store/index.js"
+    },
+    "./base": {
+      "types": "./dist/base/index.d.ts",
+      "import": "./dist/base/index.js",
+      "require": "./dist/base/index.js"
+    },
+    "./llm": {
+      "types": "./dist/llm/index.d.ts",
+      "import": "./dist/llm/index.js",
+      "require": "./dist/llm/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "clean": "rm -rf dist",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "format": "biome format --write .",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "catalog:",
+    "@google/generative-ai": "^0.1.0",
+    "@langchain/core": "^0.3.26",
+    "@klikkflow/core": "workspace:*",
+    "@klikkflow/shared": "workspace:*",
+    "chromadb": "^1.7.0",
+    "cohere-ai": "^7.0.0",
+    "openai": "catalog:",
+    "pg": "catalog:",
+    "pgvector": "catalog:",
+    "tiktoken": "^1.0.0",
+    "winston": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@types/jest": "catalog:",
+    "@types/node": "catalog:",
+    "@types/pg": "^8.15.5",
+    "jest": "catalog:",
+    "tsup": "^7.2.0",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "keywords": [
+    "ai",
+    "ml",
+    "langchain",
+    "openai",
+    "anthropic",
+    "embeddings",
+    "vector-store",
+    "agents",
+    "workflow",
+    "automation"
+  ],
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

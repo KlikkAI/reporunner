@@ -122,7 +122,7 @@ DEPLOYMENT.md
 DOCUMENTATION.md
 COMPLETION_ROADMAP.md
 implementation.txt
-reporunner-analysis-report.txt
+klikkflow-analysis-report.txt
 
 # Keep only essential docs in Docker image:
 # - README.md (main documentation)

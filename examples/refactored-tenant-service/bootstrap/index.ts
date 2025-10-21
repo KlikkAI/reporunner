@@ -44,7 +44,7 @@ export class TenantServiceBootstrap {
     // Infrastructure registration (Singletons)
     this.container.registerSingleton('MongoDatabase', () => {
       return createMongoConnection({
-        url: process.env.MONGO_URL || 'mongodb://localhost:27017/reporunner',
+        url: process.env.MONGO_URL || 'mongodb://localhost:27017/klikkflow',
         options: {
           maxPoolSize: 10,
           minPoolSize: 2,

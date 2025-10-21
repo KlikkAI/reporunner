@@ -452,11 +452,11 @@
   "refresh": "30s",
   "schemaVersion": 37,
   "style": "dark",
-  "tags": ["reporunner", "database", "mongodb", "postgresql", "redis"],
+  "tags": ["klikkflow", "database", "mongodb", "postgresql", "redis"],
   "templating": { "list": [] },
   "time": { "from": "now-6h", "to": "now" },
   "timezone": "",
-  "title": "Reporunner Database Performance",
-  "uid": "reporunner-database-performance",
+  "title": "KlikkFlow Database Performance",
+  "uid": "klikkflow-database-performance",
   "version": 1
 }

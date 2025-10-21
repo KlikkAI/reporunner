@@ -22,9 +22,9 @@ const workflow: WorkflowDefinition = ...;
 - **Runtime Validation**: Essential for type safety with external data
 
 ### What TO Change ✅
-- **Internal Type Annotations**: Use `@reporunner/types` where Zod isn't needed
+- **Internal Type Annotations**: Use `@klikkflow/types` where Zod isn't needed
 - **Store State Types**: Use centralized types
-- **Type-only Imports**: Replace with `@reporunner/types`
+- **Type-only Imports**: Replace with `@klikkflow/types`
 
 ## Current Workflow Store Analysis
 
@@ -45,10 +45,10 @@ import type { WorkflowDefinition, WorkflowExecution } from '@/core/schemas';
 **Benefit**: Zero risk, types stay in sync with schemas
 
 ### Option 2: Hybrid Approach
-Use `@reporunner/types` internally, convert at boundaries:
+Use `@klikkflow/types` internally, convert at boundaries:
 
 ```typescript
-import type { IWorkflow, IExecution } from '@reporunner/types';
+import type { IWorkflow, IExecution } from '@klikkflow/types';
 import { WorkflowDefinitionSchema } from '@/core/schemas';
 
 // At API boundary, validate and convert
@@ -60,11 +60,11 @@ const workflow: IWorkflow = validated; // Type compatibility needed
 **Challenge**: Need to ensure type compatibility
 
 ### Option 3: Type Compatibility Layer
-Create adapters between Zod types and `@reporunner/types`:
+Create adapters between Zod types and `@klikkflow/types`:
 
 ```typescript
 // src/core/types/adapters.ts
-import type { IWorkflow } from '@reporunner/types';
+import type { IWorkflow } from '@klikkflow/types';
 import type { WorkflowDefinition } from '@/core/schemas';
 
 export function toIWorkflow(def: WorkflowDefinition): IWorkflow {
@@ -119,25 +119,25 @@ Files that use types but don't validate:
 src/core/services/LoggingService.ts
 ```
 
-**Perfect candidate** for `@reporunner/core` Logger!
+**Perfect candidate** for `@klikkflow/core` Logger!
 
 ## Revised Migration Plan
 
 ### Phase 1: Replace Logger (Quick Win) ⚡
 **File**: `src/core/services/LoggingService.ts`
-**Replace with**: `Logger` from `@reporunner/core`
+**Replace with**: `Logger` from `@klikkflow/core`
 **Time**: 30 minutes
 **Risk**: 🟢 LOW
 
 ### Phase 2: Migrate Custom Type Files 📝
 **Files**: `src/core/types/*.ts` (non-schema files)
-**Replace with**: `@reporunner/types` + extensions
+**Replace with**: `@klikkflow/types` + extensions
 **Time**: 2-3 hours
 **Risk**: 🟢 LOW
 
 ### Phase 3: Update Imports 🔄
 **Scope**: Components, services, hooks
-**Change**: Import from `@reporunner/types` instead of local types
+**Change**: Import from `@klikkflow/types` instead of local types
 **Time**: 2-4 hours
 **Risk**: 🟡 MEDIUM
 
@@ -154,12 +154,12 @@ src/core/services/LoggingService.ts
 **The workflow store doesn't need migration** - it's already well-architected!
 
 **Better targets**:
-1. LoggingService → @reporunner/core Logger
-2. Custom type files → @reporunner/types
-3. Component type imports → @reporunner/types
+1. LoggingService → @klikkflow/core Logger
+2. Custom type files → @klikkflow/types
+3. Component type imports → @klikkflow/types
 
 This will achieve the same goals (eliminate duplication, centralize types) without touching the well-designed Zod validation layer.
 
 ---
 
-**Next Action**: Migrate LoggingService to @reporunner/core Logger (30 min, low risk)
+**Next Action**: Migrate LoggingService to @klikkflow/core Logger (30 min, low risk)

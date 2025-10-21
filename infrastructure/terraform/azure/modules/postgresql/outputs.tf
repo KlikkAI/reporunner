@@ -22,7 +22,7 @@ output "administrator_login" {
 
 output "database_name" {
   description = "Database name"
-  value       = azurerm_postgresql_flexible_server_database.reporunner.name
+  value       = azurerm_postgresql_flexible_server_database.klikkflow.name
 }
 
 output "database_password" {
@@ -33,13 +33,13 @@ output "database_password" {
 
 output "connection_string" {
   description = "PostgreSQL connection string"
-  value       = "postgresql://${azurerm_postgresql_flexible_server.main.administrator_login}@${azurerm_postgresql_flexible_server.main.name}:${random_password.db_password.result}@${azurerm_postgresql_flexible_server.main.fqdn}:5432/${azurerm_postgresql_flexible_server_database.reporunner.name}?sslmode=require"
+  value       = "postgresql://${azurerm_postgresql_flexible_server.main.administrator_login}@${azurerm_postgresql_flexible_server.main.name}:${random_password.db_password.result}@${azurerm_postgresql_flexible_server.main.fqdn}:5432/${azurerm_postgresql_flexible_server_database.klikkflow.name}?sslmode=require"
   sensitive   = true
 }
 
 output "psql_command" {
   description = "Command to connect with psql"
-  value       = "psql 'host=${azurerm_postgresql_flexible_server.main.fqdn} port=5432 dbname=${azurerm_postgresql_flexible_server_database.reporunner.name} user=${azurerm_postgresql_flexible_server.main.administrator_login} sslmode=require'"
+  value       = "psql 'host=${azurerm_postgresql_flexible_server.main.fqdn} port=5432 dbname=${azurerm_postgresql_flexible_server_database.klikkflow.name} user=${azurerm_postgresql_flexible_server.main.administrator_login} sslmode=require'"
 }
 
 output "private_dns_zone_id" {

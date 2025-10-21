@@ -1,6 +1,6 @@
-# Reporunner AWS Infrastructure - Terraform Deployment Guide
+# KlikkFlow AWS Infrastructure - Terraform Deployment Guide
 
-This directory contains Terraform configurations for deploying Reporunner on AWS using ECS Fargate, RDS PostgreSQL, DocumentDB, and ElastiCache Redis.
+This directory contains Terraform configurations for deploying KlikkFlow on AWS using ECS Fargate, RDS PostgreSQL, DocumentDB, and ElastiCache Redis.
 
 ## Architecture Overview
 
@@ -72,16 +72,16 @@ terraform init
 
 ```bash
 # Create S3 bucket for Terraform state
-aws s3 mb s3://reporunner-terraform-state --region us-east-1
+aws s3 mb s3://klikkflow-terraform-state --region us-east-1
 
 # Enable versioning
 aws s3api put-bucket-versioning \
-  --bucket reporunner-terraform-state \
+  --bucket klikkflow-terraform-state \
   --versioning-configuration Status=Enabled
 
 # Create DynamoDB table for state locking
 aws dynamodb create-table \
-  --table-name reporunner-terraform-locks \
+  --table-name klikkflow-terraform-locks \
   --attribute-definitions AttributeName=LockID,AttributeType=S \
   --key-schema AttributeName=LockID,KeyType=HASH \
   --billing-mode PAY_PER_REQUEST \
@@ -95,18 +95,18 @@ aws dynamodb create-table \
 aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 123456789012.dkr.ecr.us-east-1.amazonaws.com
 
 # Create ECR repositories (first time only)
-aws ecr create-repository --repository-name reporunner/backend --region us-east-1
-aws ecr create-repository --repository-name reporunner/frontend --region us-east-1
+aws ecr create-repository --repository-name klikkflow/backend --region us-east-1
+aws ecr create-repository --repository-name klikkflow/frontend --region us-east-1
 
 # Build and push backend
 cd ../../packages/backend
-docker build -t 123456789012.dkr.ecr.us-east-1.amazonaws.com/reporunner/backend:dev .
-docker push 123456789012.dkr.ecr.us-east-1.amazonaws.com/reporunner/backend:dev
+docker build -t 123456789012.dkr.ecr.us-east-1.amazonaws.com/klikkflow/backend:dev .
+docker push 123456789012.dkr.ecr.us-east-1.amazonaws.com/klikkflow/backend:dev
 
 # Build and push frontend
 cd ../frontend
-docker build -t 123456789012.dkr.ecr.us-east-1.amazonaws.com/reporunner/frontend:dev .
-docker push 123456789012.dkr.ecr.us-east-1.amazonaws.com/reporunner/frontend:dev
+docker build -t 123456789012.dkr.ecr.us-east-1.amazonaws.com/klikkflow/frontend:dev .
+docker push 123456789012.dkr.ecr.us-east-1.amazonaws.com/klikkflow/frontend:dev
 ```
 
 ### 5. Configure Environment Variables
@@ -279,7 +279,7 @@ After deployment:
 terraform output -json | jq -r '.rds_connection_string.value'
 
 # Connect with psql
-psql "postgresql://reporunner_admin:[password]@[endpoint]/reporunner?sslmode=require"
+psql "postgresql://klikkflow_admin:[password]@[endpoint]/klikkflow?sslmode=require"
 ```
 
 ### DocumentDB (MongoDB)
@@ -292,7 +292,7 @@ wget https://truststore.pki.rds.amazonaws.com/global/global-bundle.pem
 terraform output -json | jq -r '.documentdb_connection_string.value'
 
 # Connect with mongosh
-mongosh "mongodb://reporunner_admin:[password]@[endpoint]:27017/?tls=true&tlsCAFile=global-bundle.pem&replicaSet=rs0&readPreference=secondaryPreferred&retryWrites=false"
+mongosh "mongodb://klikkflow_admin:[password]@[endpoint]:27017/?tls=true&tlsCAFile=global-bundle.pem&replicaSet=rs0&readPreference=secondaryPreferred&retryWrites=false"
 ```
 
 ### Redis
@@ -311,13 +311,13 @@ rediss://:[auth-token]@[endpoint]:6379
 
 1. **Build and push new images:**
    ```bash
-   docker build -t 123456789012.dkr.ecr.us-east-1.amazonaws.com/reporunner/backend:v1.1.0 .
-   docker push 123456789012.dkr.ecr.us-east-1.amazonaws.com/reporunner/backend:v1.1.0
+   docker build -t 123456789012.dkr.ecr.us-east-1.amazonaws.com/klikkflow/backend:v1.1.0 .
+   docker push 123456789012.dkr.ecr.us-east-1.amazonaws.com/klikkflow/backend:v1.1.0
    ```
 
 2. **Update tfvars file:**
    ```hcl
-   backend_container_image = "123456789012.dkr.ecr.us-east-1.amazonaws.com/reporunner/backend:v1.1.0"
+   backend_container_image = "123456789012.dkr.ecr.us-east-1.amazonaws.com/klikkflow/backend:v1.1.0"
    ```
 
 3. **Apply changes:**
@@ -343,12 +343,12 @@ terraform apply -var-file=environments/production.tfvars
 
 1. **Check CloudWatch logs:**
    ```bash
-   aws logs tail /ecs/reporunner-production/backend --follow
+   aws logs tail /ecs/klikkflow-production/backend --follow
    ```
 
 2. **Check ECS task events:**
    ```bash
-   aws ecs describe-services --cluster reporunner-production-cluster --services reporunner-production-backend
+   aws ecs describe-services --cluster klikkflow-production-cluster --services klikkflow-production-backend
    ```
 
 3. **Verify secrets:**
@@ -388,10 +388,10 @@ terraform apply -var-file=environments/production.tfvars
 
 ```bash
 # RDS snapshot
-aws rds create-db-snapshot --db-instance-identifier reporunner-production-postgres --db-snapshot-identifier reporunner-backup-$(date +%Y%m%d)
+aws rds create-db-snapshot --db-instance-identifier klikkflow-production-postgres --db-snapshot-identifier klikkflow-backup-$(date +%Y%m%d)
 
 # DocumentDB snapshot
-aws docdb create-db-cluster-snapshot --db-cluster-identifier reporunner-production-docdb --db-cluster-snapshot-identifier reporunner-backup-$(date +%Y%m%d)
+aws docdb create-db-cluster-snapshot --db-cluster-identifier klikkflow-production-docdb --db-cluster-snapshot-identifier klikkflow-backup-$(date +%Y%m%d)
 ```
 
 ### Disaster Recovery
@@ -399,14 +399,14 @@ aws docdb create-db-cluster-snapshot --db-cluster-identifier reporunner-producti
 1. **RDS restore from snapshot:**
    ```bash
    aws rds restore-db-instance-from-db-snapshot \
-     --db-instance-identifier reporunner-restored \
+     --db-instance-identifier klikkflow-restored \
      --db-snapshot-identifier [snapshot-id]
    ```
 
 2. **DocumentDB restore:**
    ```bash
    aws docdb restore-db-cluster-from-snapshot \
-     --db-cluster-identifier reporunner-restored \
+     --db-cluster-identifier klikkflow-restored \
      --snapshot-identifier [snapshot-id]
    ```
 
@@ -456,8 +456,8 @@ https://calculator.aws/#/
 ## Support
 
 For issues or questions:
-- GitHub Issues: https://github.com/your-org/reporunner/issues
-- Documentation: https://docs.reporunner.com
+- GitHub Issues: https://github.com/your-org/klikkflow/issues
+- Documentation: https://docs.klikkflow.com
 - AWS Support: https://console.aws.amazon.com/support/
 
 ## License

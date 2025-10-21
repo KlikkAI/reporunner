@@ -1,0 +1,40 @@
+{
+  "name": "@klikkflow/audit-service",
+  "version": "1.0.0",
+  "description": "Enterprise audit service for compliance, security logging, and governance",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx watch src/index.ts",
+    "test": "vitest",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "format": "biome format --write .",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@klikkflow/shared": "workspace:*",
+    "@klikkflow/backend": "workspace:*",
+    "@klikkflow/auth": "workspace:*",
+    "crypto": "^1.0.1",
+    "uuid": "^9.0.1",
+    "date-fns": "^3.6.0"
+  },
+  "devDependencies": {
+    "@types/uuid": "^9.0.8",
+    "typescript": "catalog:",
+    "@types/node": "catalog:",
+    "vitest": "catalog:"
+  },
+  "keywords": [
+    "audit",
+    "compliance",
+    "security",
+    "governance",
+    "logging",
+    "enterprise"
+  ],
+  "author": "KlikkFlow Team",
+  "license": "MIT"
+}

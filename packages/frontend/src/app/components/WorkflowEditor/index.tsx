@@ -15,7 +15,7 @@ import ReactFlow, {
   useNodesState,
 } from 'reactflow';
 import 'reactflow/dist/style.css';
-import { Logger } from '@reporunner/core';
+import { Logger } from '@klikkflow/core';
 // Execution monitor hook removed - execution state managed via stores
 import { intelligentAutoConnect } from '@/app/services/intelligentAutoConnect';
 import { nodeRegistry, useLeanWorkflowStore } from '@/core';

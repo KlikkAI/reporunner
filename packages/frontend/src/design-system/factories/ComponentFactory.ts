@@ -7,7 +7,7 @@
  * Target: Eliminate 1,500+ lines of duplicated component patterns
  */
 
-import { Logger } from '@reporunner/core';
+import { Logger } from '@klikkflow/core';
 import type { ComponentType, ReactNode } from 'react';
 import React from 'react';
 

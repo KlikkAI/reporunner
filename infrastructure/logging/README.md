@@ -1,13 +1,13 @@
-# ELK Stack Configuration for Reporunner
+# ELK Stack Configuration for KlikkFlow
 
-This directory contains the complete ELK (Elasticsearch, Logstash, Kibana) stack configuration for centralized logging and monitoring of the Reporunner workflow automation platform.
+This directory contains the complete ELK (Elasticsearch, Logstash, Kibana) stack configuration for centralized logging and monitoring of the KlikkFlow workflow automation platform.
 
 ## 🏗️ Architecture Overview
 
 ```
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
 │   Applications  │───▶│    Logstash     │───▶│  Elasticsearch  │
-│  (Reporunner)   │    │   (Processing)  │    │    (Storage)    │
+│  (KlikkFlow)   │    │   (Processing)  │    │    (Storage)    │
 └─────────────────┘    └─────────────────┘    └─────────────────┘
                                                         │
 ┌─────────────────┐    ┌─────────────────┐             │
@@ -27,7 +27,7 @@ logging/
 ├── logstash/
 │   ├── logstash.yml           # Logstash main configuration
 │   └── pipeline/
-│       └── reporunner.conf    # Log processing pipeline
+│       └── klikkflow.conf    # Log processing pipeline
 ├── kibana/
 │   └── kibana.yml             # Kibana configuration
 ├── filebeat/
@@ -36,7 +36,7 @@ logging/
 │   ├── elastalert.yaml        # ElastAlert main config
 │   ├── smtp_auth.yaml         # Email authentication
 │   └── rules/
-│       └── reporunner-alerts.yaml  # Alerting rules
+│       └── klikkflow-alerts.yaml  # Alerting rules
 └── scripts/
     └── setup-elk.sh           # Automated setup script
 ```
@@ -51,7 +51,7 @@ logging/
 ### Setup
 1. **Run the setup script:**
    ```bash
-   cd reporunner/logging
+   cd klikkflow/logging
    ./scripts/setup-elk.sh
    ```
 
@@ -79,13 +79,13 @@ logging/
 
 ### Logstash
 - **Input:** Beats input on port 5044
-- **Processing:** Custom pipeline for Reporunner logs
-- **Output:** Elasticsearch with index pattern `reporunner-YYYY.MM.dd`
+- **Processing:** Custom pipeline for KlikkFlow logs
+- **Output:** Elasticsearch with index pattern `klikkflow-YYYY.MM.dd`
 - **Features:** JSON parsing, trace correlation, field extraction
 
 ### Kibana
-- **Dashboard:** Pre-configured for Reporunner logs
-- **Index Pattern:** `reporunner-*` with `@timestamp` field
+- **Dashboard:** Pre-configured for KlikkFlow logs
+- **Index Pattern:** `klikkflow-*` with `@timestamp` field
 - **Network:** Available on port 5601
 - **Features:** Log exploration, visualization, alerting
 
@@ -114,7 +114,7 @@ logging/
   "@timestamp": "2024-01-15T10:30:00.000Z",
   "level": "info|warn|error",
   "message": "Human-readable message",
-  "service_name": "reporunner-backend|frontend|worker",
+  "service_name": "klikkflow-backend|frontend|worker",
   "trace_id": "unique-trace-identifier",
   "span_id": "span-identifier",
   "user_id": "user-identifier",
@@ -144,14 +144,14 @@ const logger = winston.createLogger({
       '@timestamp': info.timestamp,
       level: info.level,
       message: info.message,
-      service_name: 'reporunner-backend',
+      service_name: 'klikkflow-backend',
       trace_id: info.traceId,
       ...info.metadata
     }))
   ),
   transports: [
     new winston.transports.File({
-      filename: '/var/log/reporunner/backend.log'
+      filename: '/var/log/klikkflow/backend.log'
     })
   ]
 });
@@ -167,7 +167,7 @@ const logToElk = (level, message, metadata) => {
     body: JSON.stringify({
       level,
       message,
-      service_name: 'reporunner-frontend',
+      service_name: 'klikkflow-frontend',
       '@timestamp': new Date().toISOString(),
       ...metadata
     })
@@ -188,7 +188,7 @@ const logToElk = (level, message, metadata) => {
    ```bash
    docker-compose exec elastalert elastalert-test-rule \
      --config /opt/elastalert/config.yaml \
-     rules/reporunner-alerts.yaml
+     rules/klikkflow-alerts.yaml
    ```
 
 ### Alert Types

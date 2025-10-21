@@ -1,7 +1,7 @@
 {
-  "name": "@reporunner/shared",
+  "name": "@klikkflow/shared",
   "version": "1.0.0",
-  "description": "Shared utilities and base classes for Reporunner",
+  "description": "Shared utilities and base classes for KlikkFlow",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

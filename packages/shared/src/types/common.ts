@@ -1,7 +1,7 @@
 /**
- * Common Types - Shared across all Reporunner packages
+ * Common Types - Shared across all KlikkFlow packages
  * Single source of truth for base type definitions
- * Consolidated from @reporunner/types
+ * Consolidated from @klikkflow/types
  */
 
 /**

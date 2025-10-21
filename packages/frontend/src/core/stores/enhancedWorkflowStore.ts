@@ -1,5 +1,5 @@
-import { Logger } from '@reporunner/core';
-import type { Workflow, WorkflowEdge, WorkflowExecution, WorkflowNode } from '@reporunner/shared';
+import { Logger } from '@klikkflow/core';
+import type { Workflow, WorkflowEdge, WorkflowExecution, WorkflowNode } from '@klikkflow/shared';
 import { io, type Socket } from 'socket.io-client';
 import { create } from 'zustand';
 import { subscribeWithSelector } from 'zustand/middleware';

@@ -1,5 +1,5 @@
 /**
- * Reporunner GCP Infrastructure
+ * KlikkFlow GCP Infrastructure
  *
  * Complete production-ready infrastructure on Google Cloud Platform
  * - GKE (Google Kubernetes Engine) for container orchestration
@@ -34,7 +34,7 @@ terraform {
   }
 
   backend "gcs" {
-    bucket = "reporunner-terraform-state"
+    bucket = "klikkflow-terraform-state"
     prefix = "gcp"
   }
 }
@@ -56,7 +56,7 @@ locals {
     environment = var.environment
     project     = var.project_name
     managed_by  = "terraform"
-    platform    = "reporunner"
+    platform    = "klikkflow"
   }
 }
 

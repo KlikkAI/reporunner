@@ -15,7 +15,7 @@ import type {
   ThreatStatus,
   VulnerabilityFinding,
   VulnerabilityScanDTO,
-} from '@reporunner/shared';
+} from '@klikkflow/shared';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 // Re-export types for convenience

@@ -1,7 +1,7 @@
 /**
  * Features Page
  *
- * Comprehensive feature showcase for Reporunner
+ * Comprehensive feature showcase for KlikkFlow
  * Highlighting AI capabilities, enterprise features, and competitive advantages
  */
 
@@ -315,7 +315,7 @@ export const Features: React.FC = () => {
             </h1>
             <p className="text-xl text-slate-200 mb-8 max-w-3xl mx-auto leading-relaxed">
               From AI-powered automation to enterprise-grade security, discover the features that
-              make Reporunner the most powerful self-hosted workflow platform.
+              make KlikkFlow the most powerful self-hosted workflow platform.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -416,14 +416,14 @@ export const Features: React.FC = () => {
       <section className="py-16 bg-gray-50">
         <div className="container mx-auto px-6">
           <div className="max-w-4xl mx-auto text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-900 mb-6">Why Choose Reporunner?</h2>
+            <h2 className="text-4xl font-bold text-gray-900 mb-6">Why Choose KlikkFlow?</h2>
             <p className="text-xl text-gray-600">
-              See how Reporunner compares to other workflow automation platforms
+              See how KlikkFlow compares to other workflow automation platforms
             </p>
           </div>
           <h2 className="text-4xl font-bold mb-6">Ready to Experience These Features?</h2>
           <p className="text-xl mb-8 max-w-2xl mx-auto opacity-90">
-            Start your free trial today and see how Reporunner can transform your workflow
+            Start your free trial today and see how KlikkFlow can transform your workflow
             automation.
           </p>
 

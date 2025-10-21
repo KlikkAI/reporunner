@@ -35,7 +35,7 @@ The AI-Powered Workflow Optimization system leverages machine learning and large
 ### Core Optimization Engine
 
 ```typescript
-// packages/@reporunner/ai/src/workflow-optimizer.ts
+// packages/@klikkflow/ai/src/workflow-optimizer.ts
 export class WorkflowOptimizer {
   constructor(llmProvider: LLMProvider) {
     this.llmProvider = llmProvider;
@@ -504,8 +504,8 @@ jobs:
       - uses: actions/checkout@v2
       - name: Analyze Workflows
         run: |
-          reporunner-cli analyze workflows/
-          reporunner-cli optimize --auto-apply=safe
+          klikkflow-cli analyze workflows/
+          klikkflow-cli optimize --auto-apply=safe
 ```
 
 ### Monitoring Integration

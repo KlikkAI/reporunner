@@ -13,10 +13,10 @@ export const IntegrationsGuide: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>Integrations Guide - Reporunner Documentation</title>
+        <title>Integrations Guide - KlikkFlow Documentation</title>
         <meta
           name="description"
-          content="Complete guide to Reporunner integrations - Available connectors, authentication, and usage examples"
+          content="Complete guide to KlikkFlow integrations - Available connectors, authentication, and usage examples"
         />
       </Helmet>
 

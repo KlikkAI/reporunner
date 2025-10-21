@@ -1,24 +1,24 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "reporunner.fullname" . }}-frontend
+  name: {{ include "klikkflow.fullname" . }}-frontend
   labels:
     {{- $component := "frontend" }}
-    {{- include "reporunner.componentLabels" (dict "Chart" .Chart "Release" .Release "Values" .Values "component" $component) | nindent 4 }}
+    {{- include "klikkflow.componentLabels" (dict "Chart" .Chart "Release" .Release "Values" .Values "component" $component) | nindent 4 }}
 spec:
-  {{- if not .Values.reporunner.frontend.autoscaling.enabled }}
-  replicas: {{ .Values.reporunner.frontend.replicaCount }}
+  {{- if not .Values.klikkflow.frontend.autoscaling.enabled }}
+  replicas: {{ .Values.klikkflow.frontend.replicaCount }}
   {{- end }}
   selector:
     matchLabels:
-      {{- include "reporunner.selectorLabels" . | nindent 6 }}
+      {{- include "klikkflow.selectorLabels" . | nindent 6 }}
       app.kubernetes.io/component: frontend
   template:
     metadata:
       annotations:
         checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
       labels:
-        {{- include "reporunner.selectorLabels" . | nindent 8 }}
+        {{- include "klikkflow.selectorLabels" . | nindent 8 }}
         app.kubernetes.io/component: frontend
     spec:
       {{- with .Values.global.imagePullSecrets }}
@@ -26,13 +26,13 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       securityContext:
-        {{- include "reporunner.podSecurityContext" . | nindent 8 }}
+        {{- include "klikkflow.podSecurityContext" . | nindent 8 }}
       containers:
         - name: frontend
           securityContext:
-            {{- include "reporunner.containerSecurityContext" . | nindent 12 }}
-          image: {{ include "reporunner.image" (dict "Chart" .Chart "Values" .Values "repository" .Values.reporunner.frontend.image.repository "tag" .Values.reporunner.frontend.image.tag) }}
-          imagePullPolicy: {{ .Values.reporunner.image.pullPolicy }}
+            {{- include "klikkflow.containerSecurityContext" . | nindent 12 }}
+          image: {{ include "klikkflow.image" (dict "Chart" .Chart "Values" .Values "repository" .Values.klikkflow.frontend.image.repository "tag" .Values.klikkflow.frontend.image.tag) }}
+          imagePullPolicy: {{ .Values.klikkflow.image.pullPolicy }}
           ports:
             - name: http
               containerPort: 80
@@ -59,7 +59,7 @@ spec:
             timeoutSeconds: 3
             failureThreshold: 3
           resources:
-            {{- toYaml .Values.reporunner.frontend.resources | nindent 12 }}
+            {{- toYaml .Values.klikkflow.frontend.resources | nindent 12 }}
           volumeMounts:
             - name: tmp
               mountPath: /tmp
@@ -74,15 +74,15 @@ spec:
           emptyDir: {}
         - name: run
           emptyDir: {}
-      {{- with .Values.reporunner.frontend.nodeSelector }}
+      {{- with .Values.klikkflow.frontend.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.reporunner.frontend.affinity }}
+      {{- with .Values.klikkflow.frontend.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.reporunner.frontend.tolerations }}
+      {{- with .Values.klikkflow.frontend.tolerations }}
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}

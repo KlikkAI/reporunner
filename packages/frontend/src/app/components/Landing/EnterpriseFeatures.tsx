@@ -202,7 +202,7 @@ export const EnterpriseFeatures: React.FC = () => {
         <div className="mt-16 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-8 text-white text-center">
           <h3 className="text-2xl font-bold mb-4">Ready to Scale Your Enterprise Workflows?</h3>
           <p className="text-blue-100 mb-6 max-w-2xl mx-auto">
-            Join enterprise customers who trust Reporunner for their mission-critical automation
+            Join enterprise customers who trust KlikkFlow for their mission-critical automation
             needs. Get dedicated support and custom deployment options.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">

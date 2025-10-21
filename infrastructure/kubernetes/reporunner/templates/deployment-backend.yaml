@@ -2,9 +2,9 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "reporunner.fullname" . }}-backend
+  name: {{ include "klikkflow.fullname" . }}-backend
   labels:
-    {{- include "reporunner.labels" . | nindent 4 }}
+    {{- include "klikkflow.labels" . | nindent 4 }}
     app.kubernetes.io/component: backend
 spec:
   {{- if not .Values.autoscaling.enabled }}
@@ -12,21 +12,21 @@ spec:
   {{- end }}
   selector:
     matchLabels:
-      {{- include "reporunner.selectorLabels" . | nindent 6 }}
+      {{- include "klikkflow.selectorLabels" . | nindent 6 }}
       app.kubernetes.io/component: backend
   template:
     metadata:
       annotations:
         checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
       labels:
-        {{- include "reporunner.selectorLabels" . | nindent 8 }}
+        {{- include "klikkflow.selectorLabels" . | nindent 8 }}
         app.kubernetes.io/component: backend
     spec:
       {{- with .Values.global.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccountName: {{ include "reporunner.serviceAccountName" . }}
+      serviceAccountName: {{ include "klikkflow.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
@@ -47,22 +47,22 @@ spec:
             - name: DATABASE_URL
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "reporunner.fullname" . }}-secrets
+                  name: {{ include "klikkflow.fullname" . }}-secrets
                   key: database-url
             - name: MONGODB_URI
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "reporunner.fullname" . }}-secrets
+                  name: {{ include "klikkflow.fullname" . }}-secrets
                   key: mongodb-uri
             - name: REDIS_URL
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "reporunner.fullname" . }}-secrets
+                  name: {{ include "klikkflow.fullname" . }}-secrets
                   key: redis-url
             - name: JWT_SECRET
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "reporunner.fullname" . }}-secrets
+                  name: {{ include "klikkflow.fullname" . }}-secrets
                   key: jwt-secret
             {{- range $key, $value := .Values.backend.env }}
             - name: {{ $key }}
@@ -101,7 +101,7 @@ spec:
         - name: uploads
           {{- if .Values.persistence.enabled }}
           persistentVolumeClaim:
-            claimName: {{ include "reporunner.fullname" . }}-uploads
+            claimName: {{ include "klikkflow.fullname" . }}-uploads
           {{- else }}
           emptyDir: {}
           {{- end }}

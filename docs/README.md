@@ -1,10 +1,10 @@
-# Reporunner Documentation
+# KlikkFlow Documentation
 
-Welcome to the comprehensive documentation for Reporunner, the open-source workflow automation platform powered by AI.
+Welcome to the comprehensive documentation for KlikkFlow, the open-source workflow automation platform powered by AI.
 
 **Last Updated**: October 7, 2025
 **Platform Status**: Production-Ready (92/100)
-**Package Count**: 13 packages (3 main + 10 @reporunner/*)
+**Package Count**: 13 packages (3 main + 10 @klikkflow/*)
 
 ## 📚 Documentation Structure
 
@@ -80,7 +80,7 @@ Welcome to the comprehensive documentation for Reporunner, the open-source workf
 - **Infrastructure**: 100/100 ✨ PERFECT (Multi-cloud: AWS, GCP, Azure)
 - **Code Quality**: 85/100 (3,383 errors, 1,319 warnings - active improvement in progress)
   - ✅ Type safety enforced (`noExplicitAny` strict)
-  - ✅ 11 critical `any` types fixed in Phase 1 (@reporunner/ai package)
+  - ✅ 11 critical `any` types fixed in Phase 1 (@klikkflow/ai package)
   - 📝 3,383 errors remaining (distributed across 1,198 files - mostly style violations)
   - 📝 1,319 warnings (non-critical style preferences)
 - **Observability**: 95/100 (7 Grafana dashboards, Prometheus, ELK, OpenTelemetry)
@@ -165,7 +165,7 @@ Welcome to the comprehensive documentation for Reporunner, the open-source workf
 ## 🔗 Quick Links
 
 ### For Users
-- [Getting Started](../README.md#quick-start) - Start using Reporunner
+- [Getting Started](../README.md#quick-start) - Start using KlikkFlow
 - [Plugin Marketplace](./features/PLUGIN_MARKETPLACE.md) - Discover and install plugins
 - [Workflow Optimization](./features/AI_WORKFLOW_OPTIMIZATION.md) - Optimize your workflows with AI
 
@@ -175,16 +175,16 @@ Welcome to the comprehensive documentation for Reporunner, the open-source workf
 - [Contributing](../CONTRIBUTING.md) - Contribute to the project
 
 ### For Administrators
-- [Deployment Guide](./deployment/) - Deploy Reporunner in your environment
-- [Security Guide](./security/) - Secure your Reporunner installation
+- [Deployment Guide](./deployment/) - Deploy KlikkFlow in your environment
+- [Security Guide](./security/) - Secure your KlikkFlow installation
 - [Operations Guide](./operations/) - Monitor and maintain your deployment
 
 ## 🆘 Need Help?
 
-- **GitHub Issues**: [Report bugs or request features](https://github.com/reporunner/reporunner/issues)
-- **Discord Community**: [Join our community chat](https://discord.gg/reporunner)
-- **Documentation Issues**: [Improve our docs](https://github.com/reporunner/reporunner/issues/new?labels=documentation)
-- **Enterprise Support**: [Contact us for enterprise support](mailto:enterprise@reporunner.com)
+- **GitHub Issues**: [Report bugs or request features](https://github.com/klikkflow/klikkflow/issues)
+- **Discord Community**: [Join our community chat](https://discord.gg/klikkflow)
+- **Documentation Issues**: [Improve our docs](https://github.com/klikkflow/klikkflow/issues/new?labels=documentation)
+- **Enterprise Support**: [Contact us for enterprise support](mailto:enterprise@klikkflow.com)
 
 ## 📝 Contributing to Documentation
 

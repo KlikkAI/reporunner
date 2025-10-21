@@ -3,7 +3,7 @@
  * Handles plugin publishing, searching, downloading, and management
  */
 
-import { Logger } from '@reporunner/core';
+import { Logger } from '@klikkflow/core';
 import {
   DownloadRequestSchema,
   PluginDistribution,
@@ -11,7 +11,7 @@ import {
   PluginSearchSchema,
   PluginValidator,
   PublishRequestSchema,
-} from '@reporunner/platform';
+} from '@klikkflow/platform';
 import { Router } from 'express';
 import { z } from 'zod';
 import { authenticate } from '../middleware/auth';

@@ -166,5 +166,5 @@ resource "azurerm_federated_identity_credential" "workload" {
   parent_id           = azurerm_user_assigned_identity.workload.id
   audience            = ["api://AzureADTokenExchange"]
   issuer              = azurerm_kubernetes_cluster.main.oidc_issuer_url
-  subject             = "system:serviceaccount:${var.workload_identity_namespace}:reporunner-backend"
+  subject             = "system:serviceaccount:${var.workload_identity_namespace}:klikkflow-backend"
 }

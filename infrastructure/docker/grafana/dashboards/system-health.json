@@ -1,7 +1,7 @@
 {
   "dashboard": {
     "title": "System Health Dashboard",
-    "tags": ["reporunner", "system", "health", "infrastructure"],
+    "tags": ["klikkflow", "system", "health", "infrastructure"],
     "timezone": "browser",
     "editable": true,
     "graphTooltip": 1,

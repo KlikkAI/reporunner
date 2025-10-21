@@ -179,7 +179,7 @@ const Register: React.FC = () => {
               <div className="w-12 h-12 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                 <Crown className="w-6 h-6 text-white" />
               </div>
-              <span className="text-3xl font-bold text-white">Reporunner</span>
+              <span className="text-3xl font-bold text-white">KlikkFlow</span>
             </Link>
 
             <h1 className="text-5xl font-bold text-white mb-6 leading-tight">
@@ -193,7 +193,7 @@ const Register: React.FC = () => {
             <p className="text-xl text-slate-200 mb-8 leading-relaxed max-w-lg">
               Start building powerful workflows with enterprise-grade security, AI intelligence, and
               complete data sovereignty. Join thousands of organizations already automating with
-              Reporunner.
+              KlikkFlow.
             </p>
 
             {/* Benefits */}
@@ -231,7 +231,7 @@ const Register: React.FC = () => {
                 <div className="w-12 h-12 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                   <Crown className="w-6 h-6 text-white" />
                 </div>
-                <span className="text-2xl font-bold text-white">Reporunner</span>
+                <span className="text-2xl font-bold text-white">KlikkFlow</span>
               </Link>
             </div>
 

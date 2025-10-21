@@ -64,14 +64,14 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Build frontend for analysis
-        run: pnpm --filter=@reporunner/frontend build:analyze
+        run: pnpm --filter=@klikkflow/frontend build:analyze
 
       - name: Analyze bundle size
         run: |
           mkdir -p reports/bundle-analysis
 
           # Generate bundle report
-          pnpm --filter=@reporunner/frontend exec webpack-bundle-analyzer \
+          pnpm --filter=@klikkflow/frontend exec webpack-bundle-analyzer \
             dist/assets/manifest.json \
             --report reports/bundle-analysis/report.html \
             --mode static
@@ -162,7 +162,7 @@ jobs:
 
           case "${{ matrix.benchmark }}" in
             "node-performance")
-              pnpm --filter=@reporunner/backend run benchmark:node > reports/benchmarks/node-performance.json
+              pnpm --filter=@klikkflow/backend run benchmark:node > reports/benchmarks/node-performance.json
               ;;
             "api-performance")
               pnpm run benchmark:api > reports/benchmarks/api-performance.json
@@ -211,10 +211,10 @@ jobs:
 
           case $ENVIRONMENT in
             "staging")
-              echo "TARGET_URL=https://staging.reporunner.com" >> $GITHUB_ENV
+              echo "TARGET_URL=https://staging.klikkflow.com" >> $GITHUB_ENV
               ;;
             "production")
-              echo "TARGET_URL=https://app.reporunner.com" >> $GITHUB_ENV
+              echo "TARGET_URL=https://app.klikkflow.com" >> $GITHUB_ENV
               ;;
           esac
 
@@ -338,11 +338,11 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Build frontend and dependencies
-        run: pnpm turbo run build --filter=@reporunner/frontend
+        run: pnpm turbo run build --filter=@klikkflow/frontend
 
       - name: Setup preview server
         run: |
-          pnpm --filter=@reporunner/frontend preview &
+          pnpm --filter=@klikkflow/frontend preview &
           sleep 10
 
       - name: Install Lighthouse CLI
@@ -620,18 +620,18 @@ jobs:
           mkdir -p reports/monitoring
 
           # API response times
-          curl -w "@scripts/curl-format.txt" -s -o /dev/null https://app.reporunner.com/health \
+          curl -w "@scripts/curl-format.txt" -s -o /dev/null https://app.klikkflow.com/health \
             > reports/monitoring/api-health.txt
 
           # Database connection times
-          curl -w "@scripts/curl-format.txt" -s -o /dev/null https://app.reporunner.com/api/health/database \
+          curl -w "@scripts/curl-format.txt" -s -o /dev/null https://app.klikkflow.com/api/health/database \
             > reports/monitoring/database-health.txt
 
       - name: Synthetic user tests
         run: |
           # Run synthetic user journey tests
           npm run test:synthetic -- \
-            --url https://app.reporunner.com \
+            --url https://app.klikkflow.com \
             --output reports/monitoring/synthetic-tests.json
 
       - name: Upload monitoring results

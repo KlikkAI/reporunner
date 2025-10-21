@@ -1,12 +1,12 @@
-# @reporunner/sdk
+# @klikkflow/sdk
 
-TypeScript SDK for the Reporunner workflow automation platform.
+TypeScript SDK for the KlikkFlow workflow automation platform.
 
 ## Overview
 
-The Reporunner SDK provides a comprehensive TypeScript client for interacting with the Reporunner platform programmatically. It includes:
+The KlikkFlow SDK provides a comprehensive TypeScript client for interacting with the KlikkFlow platform programmatically. It includes:
 
-- **Full API Coverage** - Complete access to all Reporunner APIs
+- **Full API Coverage** - Complete access to all KlikkFlow APIs
 - **Type Safety** - Comprehensive TypeScript definitions
 - **Real-time Updates** - WebSocket integration for live workflow monitoring
 - **Error Handling** - Robust error handling with automatic retries
@@ -15,15 +15,15 @@ The Reporunner SDK provides a comprehensive TypeScript client for interacting wi
 ## Installation
 
 ```bash
-pnpm add @reporunner/sdk
+pnpm add @klikkflow/sdk
 # or
-pnpm add @reporunner/sdk
+pnpm add @klikkflow/sdk
 ```
 
 ## Quick Start
 
 ```typescript
-import { createClient } from "@reporunner/sdk";
+import { createClient } from "@klikkflow/sdk";
 
 // Initialize the client
 const client = createClient({
@@ -137,7 +137,7 @@ if (client.ping()) {
 ## Configuration Options
 
 ```typescript
-interface ReporunnerClientConfig {
+interface KlikkFlowClientConfig {
   apiUrl?: string; // API base URL (default: http://localhost:5000)
   apiKey?: string; // Authentication API key
   timeout?: number; // Request timeout in ms (default: 30000)

@@ -1,13 +1,13 @@
 -- ============================================
 -- PostgreSQL Initialization Script
--- Reporunner - Workflow Automation Platform
+-- KlikkFlow - Workflow Automation Platform
 -- ============================================
 
 -- This script runs automatically when PostgreSQL container starts for the first time
 -- It enables extensions, creates tables, indexes, and functions
 
 \echo '========================================';
-\echo 'Reporunner PostgreSQL Initialization';
+\echo 'KlikkFlow PostgreSQL Initialization';
 \echo '========================================';
 
 -- ============================================
@@ -306,8 +306,8 @@ BEGIN
 
         -- Sample knowledge base entry
         INSERT INTO knowledge_base (title, content, category, embedding) VALUES
-        ('Getting Started with Reporunner',
-         'Reporunner is a workflow automation platform that helps you build and execute workflows easily.',
+        ('Getting Started with KlikkFlow',
+         'KlikkFlow is a workflow automation platform that helps you build and execute workflows easily.',
          'tutorial',
          array_fill(0.0, ARRAY[1536])::vector);
 
@@ -334,7 +334,7 @@ END $$;
 \echo '========================================';
 \echo 'PostgreSQL initialization complete!';
 \echo '========================================';
-\echo 'Database: reporunner';
+\echo 'Database: klikkflow';
 
 -- Count tables
 SELECT 'Tables created: ' || count(*)::text

@@ -1,8 +1,8 @@
-# Enterprise-Grade Infrastructure Scaling Roadmap for Reporunner
+# Enterprise-Grade Infrastructure Scaling Roadmap for KlikkFlow
 
 ## Executive Summary
 
-Based on comprehensive analysis of n8n and SIM platforms, this document outlines the complete roadmap to transform Reporunner into a large-scale enterprise-grade workflow automation platform. This plan addresses fundamental limitations in current workflow platforms around scale, security, and developer experience.
+Based on comprehensive analysis of n8n and SIM platforms, this document outlines the complete roadmap to transform KlikkFlow into a large-scale enterprise-grade workflow automation platform. This plan addresses fundamental limitations in current workflow platforms around scale, security, and developer experience.
 
 ## Strategic Architecture Overview
 
@@ -92,34 +92,34 @@ enterprise/
 
 **Migrate to pnpm workspaces** with Turborepo orchestration
 
-**Create @reporunner scoped packages**:
+**Create @klikkflow scoped packages**:
 
 ```
 packages/
-├── @reporunner/platform/          # Core platform services
+├── @klikkflow/platform/          # Core platform services
 │   ├── execution-engine/          # Workflow execution engine
 │   ├── event-bus/                 # Event streaming infrastructure
 │   ├── state-store/               # Distributed state management
 │   ├── scheduler/                 # Job scheduling service
 │   └── resource-manager/          # Resource allocation & scaling
-├── @reporunner/services/          # Microservices
+├── @klikkflow/services/          # Microservices
 │   ├── auth-service/              # Authentication microservice
 │   ├── workflow-service/          # Workflow management service
 │   ├── execution-service/         # Execution tracking service
 │   ├── tenant-service/            # Multi-tenancy service
 │   └── analytics-service/         # Analytics & reporting service
-├── @reporunner/gateway/           # API Gateway & routing
-├── @reporunner/sdk-core/          # Core SDK functionality
-├── @reporunner/sdk-typescript/    # TypeScript SDK
-├── @reporunner/sdk-python/        # Python SDK
-├── @reporunner/plugin-framework/  # Plugin development framework
-├── @reporunner/connector-sdk/     # Connector development toolkit
-├── @reporunner/dev-tools/         # Developer tooling
-├── @reporunner/security/          # Security & compliance
-├── @reporunner/monitoring/        # Observability tools
-├── @reporunner/deployment/        # Deployment configurations
-├── @reporunner/enterprise/        # Enterprise features
-└── @reporunner/operators/         # Kubernetes operators
+├── @klikkflow/gateway/           # API Gateway & routing
+├── @klikkflow/sdk-core/          # Core SDK functionality
+├── @klikkflow/sdk-typescript/    # TypeScript SDK
+├── @klikkflow/sdk-python/        # Python SDK
+├── @klikkflow/plugin-framework/  # Plugin development framework
+├── @klikkflow/connector-sdk/     # Connector development toolkit
+├── @klikkflow/dev-tools/         # Developer tooling
+├── @klikkflow/security/          # Security & compliance
+├── @klikkflow/monitoring/        # Observability tools
+├── @klikkflow/deployment/        # Deployment configurations
+├── @klikkflow/enterprise/        # Enterprise features
+└── @klikkflow/operators/         # Kubernetes operators
 ```
 
 **Current Package Integration Strategy**:
@@ -136,7 +136,7 @@ packages/
 │   ├── nodes/                     # ENHANCE - Categorized by integration type
 │   ├── utils/                     # NEW - Node-specific utilities
 │   └── types/                     # NEW - Node type definitions
-└── @reporunner/                   # NEW - Scoped internal packages
+└── @klikkflow/                   # NEW - Scoped internal packages
 ```
 
 ### 2. Hybrid Database Architecture (MongoDB + PostgreSQL)
@@ -221,44 +221,44 @@ services:
   # MongoDB (Primary Database)
   mongodb:
     image: mongo:7
-    container_name: reporunner-mongodb
+    container_name: klikkflow-mongodb
     ports:
       - "27017:27017"
     volumes:
       - mongodb_data:/data/db
     environment:
-      MONGO_INITDB_ROOT_USERNAME: reporunner
+      MONGO_INITDB_ROOT_USERNAME: klikkflow
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
-      MONGO_INITDB_DATABASE: reporunner
+      MONGO_INITDB_DATABASE: klikkflow
     networks:
-      - reporunner-network
+      - klikkflow-network
 
   # PostgreSQL with pgvector (AI Database)
   postgres:
     image: pgvector/pgvector:pg16
-    container_name: reporunner-postgres
+    container_name: klikkflow-postgres
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./init-scripts:/docker-entrypoint-initdb.d
     environment:
-      POSTGRES_DB: reporunner_ai
-      POSTGRES_USER: reporunner
+      POSTGRES_DB: klikkflow_ai
+      POSTGRES_USER: klikkflow
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     networks:
-      - reporunner-network
+      - klikkflow-network
 
   # Redis (Caching & Queues)
   redis:
     image: redis:7-alpine
-    container_name: reporunner-redis
+    container_name: klikkflow-redis
     ports:
       - "6379:6379"
     volumes:
       - redis_data:/data
     networks:
-      - reporunner-network
+      - klikkflow-network
 
 volumes:
   mongodb_data:
@@ -266,7 +266,7 @@ volumes:
   redis_data:
 
 networks:
-  reporunner-network:
+  klikkflow-network:
     driver: bridge
 ```
 
@@ -287,7 +287,7 @@ networks:
 - **SSO with enterprise** identity providers
 
 ```typescript
-// packages/@reporunner/auth/
+// packages/@klikkflow/auth/
 ├── jwt/                 # JWT token management
 ├── rbac/               # Role-based access control
 ├── sso/                # Single sign-on integration
@@ -509,7 +509,7 @@ export default function transformer(file, api) {
     .forEach((path) => {
       // Transform old imports to new scoped imports
       if (path.value.source.value.includes("../backend/src")) {
-        path.value.source.value = "@reporunner/platform/backend";
+        path.value.source.value = "@klikkflow/platform/backend";
       }
     })
     .toSource();
@@ -717,4 +717,4 @@ export default function transformer(file, api) {
 
 ---
 
-**This comprehensive roadmap positions Reporunner as the next-generation workflow automation platform, addressing current market limitations while providing a foundation for massive scale and enterprise adoption.**
+**This comprehensive roadmap positions KlikkFlow as the next-generation workflow automation platform, addressing current market limitations while providing a foundation for massive scale and enterprise adoption.**

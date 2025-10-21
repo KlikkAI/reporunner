@@ -177,6 +177,6 @@ resource "google_service_account_iam_binding" "workload_identity_binding" {
   role               = "roles/iam.workloadIdentityUser"
 
   members = [
-    "serviceAccount:${var.project_id}.svc.id.goog[${var.workload_identity_namespace}/reporunner-backend]",
+    "serviceAccount:${var.project_id}.svc.id.goog[${var.workload_identity_namespace}/klikkflow-backend]",
   ]
 }

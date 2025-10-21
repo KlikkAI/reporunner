@@ -13,7 +13,7 @@ export const WorkflowOptimizationAPI: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>Workflow Optimization API - Reporunner Documentation</title>
+        <title>Workflow Optimization API - KlikkFlow Documentation</title>
         <meta
           name="description"
           content="Workflow Optimization API reference - AI-powered analysis, performance insights, and recommendations"

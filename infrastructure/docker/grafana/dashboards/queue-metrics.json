@@ -1,7 +1,7 @@
 {
   "dashboard": {
     "title": "Queue Metrics Dashboard",
-    "tags": ["reporunner", "bullmq", "queue", "redis"],
+    "tags": ["klikkflow", "bullmq", "queue", "redis"],
     "timezone": "browser",
     "editable": true,
     "graphTooltip": 1,

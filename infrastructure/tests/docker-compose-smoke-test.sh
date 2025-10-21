@@ -67,18 +67,18 @@ fi
 
 # Test 5: Check Dockerfile syntax
 echo -e "\n${YELLOW}Testing Dockerfile...${NC}"
-if docker build -f "$INFRA_DIR/../Dockerfile" --target builder -t reporunner-test:builder "$INFRA_DIR/.." > /dev/null 2>&1; then
+if docker build -f "$INFRA_DIR/../Dockerfile" --target builder -t klikkflow-test:builder "$INFRA_DIR/.." > /dev/null 2>&1; then
     print_result 0 "Dockerfile multi-stage build is valid"
-    docker rmi reporunner-test:builder > /dev/null 2>&1 || true
+    docker rmi klikkflow-test:builder > /dev/null 2>&1 || true
 else
     print_result 1 "Dockerfile build failed"
 fi
 
 # Test 6: Check Dockerfile.dev syntax
 echo -e "\n${YELLOW}Testing Dockerfile.dev...${NC}"
-if docker build -f "$INFRA_DIR/../Dockerfile.dev" -t reporunner-test:dev "$INFRA_DIR/.." > /dev/null 2>&1; then
+if docker build -f "$INFRA_DIR/../Dockerfile.dev" -t klikkflow-test:dev "$INFRA_DIR/.." > /dev/null 2>&1; then
     print_result 0 "Dockerfile.dev build is valid"
-    docker rmi reporunner-test:dev > /dev/null 2>&1 || true
+    docker rmi klikkflow-test:dev > /dev/null 2>&1 || true
 else
     print_result 1 "Dockerfile.dev build failed"
 fi

@@ -1,6 +1,6 @@
 # Maintainers
 
-Current maintainers of Reporunner. Please open a PR to update.
+Current maintainers of KlikkFlow. Please open a PR to update.
 
 - @owner (Lead Maintainer)
 - @core-dev (Core Developer)

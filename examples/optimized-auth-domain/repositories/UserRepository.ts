@@ -4,7 +4,7 @@
  * BEFORE: Custom repository with 100+ lines of duplicate CRUD operations
  * AFTER: Extends BaseRepository, adds only domain-specific methods
  */
-import { BaseRepository } from '@reporunner/shared';
+import { BaseRepository } from '@klikkflow/shared';
 import type { User } from '../interfaces/User';
 
 export class UserRepository extends BaseRepository<User> {

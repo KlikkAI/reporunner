@@ -1,4 +1,4 @@
-# Production Dockerfile for Reporunner
+# Production Dockerfile for KlikkFlow
 # Multi-stage build for optimal image size and security
 # Updated for 12-package monorepo structure
 
@@ -20,17 +20,17 @@ COPY packages/backend/package.json ./packages/backend/
 COPY packages/frontend/package.json ./packages/frontend/
 COPY packages/shared/package.json ./packages/shared/
 
-# Copy @reporunner scoped packages
-COPY packages/@reporunner/ai/package.json ./packages/@reporunner/ai/
-COPY packages/@reporunner/auth/package.json ./packages/@reporunner/auth/
-COPY packages/@reporunner/cli/package.json ./packages/@reporunner/cli/
-COPY packages/@reporunner/core/package.json ./packages/@reporunner/core/
-COPY packages/@reporunner/enterprise/package.json ./packages/@reporunner/enterprise/
-COPY packages/@reporunner/integrations/package.json ./packages/@reporunner/integrations/
-COPY packages/@reporunner/platform/package.json ./packages/@reporunner/platform/
-COPY packages/@reporunner/services/package.json ./packages/@reporunner/services/
-COPY packages/@reporunner/validation/package.json ./packages/@reporunner/validation/
-COPY packages/@reporunner/workflow/package.json ./packages/@reporunner/workflow/
+# Copy @klikkflow scoped packages
+COPY packages/@klikkflow/ai/package.json ./packages/@klikkflow/ai/
+COPY packages/@klikkflow/auth/package.json ./packages/@klikkflow/auth/
+COPY packages/@klikkflow/cli/package.json ./packages/@klikkflow/cli/
+COPY packages/@klikkflow/core/package.json ./packages/@klikkflow/core/
+COPY packages/@klikkflow/enterprise/package.json ./packages/@klikkflow/enterprise/
+COPY packages/@klikkflow/integrations/package.json ./packages/@klikkflow/integrations/
+COPY packages/@klikkflow/platform/package.json ./packages/@klikkflow/platform/
+COPY packages/@klikkflow/services/package.json ./packages/@klikkflow/services/
+COPY packages/@klikkflow/validation/package.json ./packages/@klikkflow/validation/
+COPY packages/@klikkflow/workflow/package.json ./packages/@klikkflow/workflow/
 
 # Install dependencies stage
 FROM base AS deps
@@ -61,38 +61,38 @@ RUN apk add --no-cache dumb-init
 
 # Create non-root user
 RUN addgroup -g 1001 -S nodejs && \
-    adduser -S reporunner -u 1001
+    adduser -S klikkflow -u 1001
 
 # Set working directory
 WORKDIR /app
 
 # Copy built application (backend and frontend)
-COPY --from=builder --chown=reporunner:nodejs /app/packages/backend/dist ./packages/backend/dist
-COPY --from=builder --chown=reporunner:nodejs /app/packages/frontend/dist ./packages/frontend/dist
-COPY --from=builder --chown=reporunner:nodejs /app/packages/shared/dist ./packages/shared/dist
+COPY --from=builder --chown=klikkflow:nodejs /app/packages/backend/dist ./packages/backend/dist
+COPY --from=builder --chown=klikkflow:nodejs /app/packages/frontend/dist ./packages/frontend/dist
+COPY --from=builder --chown=klikkflow:nodejs /app/packages/shared/dist ./packages/shared/dist
 
-# Copy built @reporunner packages that have dist directories
-COPY --from=builder --chown=reporunner:nodejs /app/packages/@reporunner/ai/dist ./packages/@reporunner/ai/dist
-COPY --from=builder --chown=reporunner:nodejs /app/packages/@reporunner/auth/dist ./packages/@reporunner/auth/dist
-COPY --from=builder --chown=reporunner:nodejs /app/packages/@reporunner/cli/dist ./packages/@reporunner/cli/dist
-COPY --from=builder --chown=reporunner:nodejs /app/packages/@reporunner/core/dist ./packages/@reporunner/core/dist
-COPY --from=builder --chown=reporunner:nodejs /app/packages/@reporunner/enterprise/dist ./packages/@reporunner/enterprise/dist
-COPY --from=builder --chown=reporunner:nodejs /app/packages/@reporunner/integrations/dist ./packages/@reporunner/integrations/dist
-COPY --from=builder --chown=reporunner:nodejs /app/packages/@reporunner/platform/dist ./packages/@reporunner/platform/dist
-COPY --from=builder --chown=reporunner:nodejs /app/packages/@reporunner/services/dist ./packages/@reporunner/services/dist
-COPY --from=builder --chown=reporunner:nodejs /app/packages/@reporunner/validation/dist ./packages/@reporunner/validation/dist
-COPY --from=builder --chown=reporunner:nodejs /app/packages/@reporunner/workflow/dist ./packages/@reporunner/workflow/dist
+# Copy built @klikkflow packages that have dist directories
+COPY --from=builder --chown=klikkflow:nodejs /app/packages/@klikkflow/ai/dist ./packages/@klikkflow/ai/dist
+COPY --from=builder --chown=klikkflow:nodejs /app/packages/@klikkflow/auth/dist ./packages/@klikkflow/auth/dist
+COPY --from=builder --chown=klikkflow:nodejs /app/packages/@klikkflow/cli/dist ./packages/@klikkflow/cli/dist
+COPY --from=builder --chown=klikkflow:nodejs /app/packages/@klikkflow/core/dist ./packages/@klikkflow/core/dist
+COPY --from=builder --chown=klikkflow:nodejs /app/packages/@klikkflow/enterprise/dist ./packages/@klikkflow/enterprise/dist
+COPY --from=builder --chown=klikkflow:nodejs /app/packages/@klikkflow/integrations/dist ./packages/@klikkflow/integrations/dist
+COPY --from=builder --chown=klikkflow:nodejs /app/packages/@klikkflow/platform/dist ./packages/@klikkflow/platform/dist
+COPY --from=builder --chown=klikkflow:nodejs /app/packages/@klikkflow/services/dist ./packages/@klikkflow/services/dist
+COPY --from=builder --chown=klikkflow:nodejs /app/packages/@klikkflow/validation/dist ./packages/@klikkflow/validation/dist
+COPY --from=builder --chown=klikkflow:nodejs /app/packages/@klikkflow/workflow/dist ./packages/@klikkflow/workflow/dist
 
 # Copy production dependencies and package.json files
-COPY --from=prod-deps --chown=reporunner:nodejs /app/node_modules ./node_modules
-COPY --from=prod-deps --chown=reporunner:nodejs /app/packages/backend/package.json ./packages/backend/
-COPY --from=prod-deps --chown=reporunner:nodejs /app/packages/shared/package.json ./packages/shared/
+COPY --from=prod-deps --chown=klikkflow:nodejs /app/node_modules ./node_modules
+COPY --from=prod-deps --chown=klikkflow:nodejs /app/packages/backend/package.json ./packages/backend/
+COPY --from=prod-deps --chown=klikkflow:nodejs /app/packages/shared/package.json ./packages/shared/
 
 # Copy workspace configuration
-COPY --chown=reporunner:nodejs package.json pnpm-workspace.yaml ./
+COPY --chown=klikkflow:nodejs package.json pnpm-workspace.yaml ./
 
 # Switch to non-root user
-USER reporunner
+USER klikkflow
 
 # Expose backend port
 EXPOSE 3000

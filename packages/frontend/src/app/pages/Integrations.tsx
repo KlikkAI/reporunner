@@ -8,7 +8,7 @@
  */
 
 import { CheckCircleOutlined, LinkOutlined, RocketOutlined } from '@ant-design/icons';
-import { Logger } from '@reporunner/core';
+import { Logger } from '@klikkflow/core';
 import type React from 'react';
 import { useMemo, useState } from 'react';
 import { nodeRegistry } from '@/core';

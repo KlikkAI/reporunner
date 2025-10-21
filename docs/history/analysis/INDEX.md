@@ -1,6 +1,6 @@
 # Historical Analysis Documents
 
-This directory contains comprehensive analysis documents that identified architectural issues, security concerns, and optimization opportunities in the Reporunner codebase. These analyses led to significant improvements in code organization, security posture, and system architecture.
+This directory contains comprehensive analysis documents that identified architectural issues, security concerns, and optimization opportunities in the KlikkFlow codebase. These analyses led to significant improvements in code organization, security posture, and system architecture.
 
 ## 📁 Documents in This Directory
 

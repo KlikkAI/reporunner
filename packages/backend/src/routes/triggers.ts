@@ -3,7 +3,7 @@
  * Provides API access to workflow trigger management
  */
 
-// import { authMiddleware } from '@reporunner/security';
+// import { authMiddleware } from '@klikkflow/security';
 import { Router } from 'express';
 import { z } from 'zod';
 import { triggerSystemService } from '../services/TriggerSystemService';

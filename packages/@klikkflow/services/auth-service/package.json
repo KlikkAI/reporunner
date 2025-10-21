@@ -1,0 +1,38 @@
+{
+  "name": "@klikkflow/auth-service",
+  "version": "1.0.0",
+  "description": "Enterprise authentication service with JWT, OAuth2, and SSO support",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx watch src/index.ts",
+    "test": "vitest",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "format": "biome format --write .",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "jsonwebtoken": "^9.0.2",
+    "passport": "^0.7.0",
+    "passport-oauth2": "^1.8.0",
+    "bcryptjs": "^2.4.3",
+    "@klikkflow/backend": "workspace:*",
+    "@klikkflow/shared": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/jsonwebtoken": "^9.0.6",
+    "@types/passport": "^1.0.16",
+    "@types/bcryptjs": "^2.4.6"
+  },
+  "keywords": [
+    "authentication",
+    "jwt",
+    "oauth",
+    "sso",
+    "enterprise"
+  ],
+  "author": "KlikkFlow Team",
+  "license": "MIT"
+}

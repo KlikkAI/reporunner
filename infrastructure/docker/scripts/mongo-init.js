@@ -1,17 +1,17 @@
 // ============================================
 // MongoDB Initialization Script
-// Reporunner - Workflow Automation Platform
+// KlikkFlow - Workflow Automation Platform
 // ============================================
 
 // This script runs automatically when MongoDB container starts for the first time
 // It creates the database, collections, indexes, and users
 
 print('========================================');
-print('Reporunner MongoDB Initialization');
+print('KlikkFlow MongoDB Initialization');
 print('========================================');
 
-// Switch to reporunner database
-db = db.getSiblingDB('reporunner');
+// Switch to klikkflow database
+db = db.getSiblingDB('klikkflow');
 
 print('Creating collections...');
 
@@ -237,12 +237,12 @@ print('Indexes created successfully!');
 // In development, this might be skipped
 try {
   db.createUser({
-    user: 'reporunner_app',
-    pwd: process.env.MONGO_APP_PASSWORD || 'reporunner_dev_password',
+    user: 'klikkflow_app',
+    pwd: process.env.MONGO_APP_PASSWORD || 'klikkflow_dev_password',
     roles: [
       {
         role: 'readWrite',
-        db: 'reporunner',
+        db: 'klikkflow',
       },
     ],
   });
@@ -275,7 +275,7 @@ if (process.env.NODE_ENV === 'development') {
   const userId = new ObjectId();
   db.users.insertOne({
     _id: userId,
-    email: 'demo@reporunner.com',
+    email: 'demo@klikkflow.com',
     passwordHash: '$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewY5GyYa7W1lkJ/u',
     name: 'Demo User',
     organizationId: orgId.toString(),
@@ -329,7 +329,7 @@ print('');
 print('========================================');
 print('MongoDB initialization complete!');
 print('========================================');
-print('Database: reporunner');
+print('Database: klikkflow');
 print(`Collections created: ${db.getCollectionNames().length}`);
 print('');
 print('Collections:');

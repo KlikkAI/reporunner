@@ -1,5 +1,5 @@
 # ============================================
-# Worker Dockerfile - Reporunner
+# Worker Dockerfile - KlikkFlow
 # Multi-stage build: TypeScript → Node.js Worker
 # Target size: ~85MB
 # Based on backend, runs BullMQ worker process
@@ -27,10 +27,10 @@ FROM base AS deps
 # Copy all package.json files for complete monorepo dependency resolution
 COPY packages/backend/package.json ./packages/backend/
 COPY packages/shared/package.json ./packages/shared/
-COPY packages/@reporunner/ai/package.json ./packages/@reporunner/ai/
-COPY packages/@reporunner/core/package.json ./packages/@reporunner/core/
-COPY packages/@reporunner/platform/package.json ./packages/@reporunner/platform/
-COPY packages/@reporunner/workflow/package.json ./packages/@reporunner/workflow/
+COPY packages/@klikkflow/ai/package.json ./packages/@klikkflow/ai/
+COPY packages/@klikkflow/core/package.json ./packages/@klikkflow/core/
+COPY packages/@klikkflow/platform/package.json ./packages/@klikkflow/platform/
+COPY packages/@klikkflow/workflow/package.json ./packages/@klikkflow/workflow/
 
 # Install all dependencies (skip preinstall script - only needed for local dev)
 RUN pnpm install --frozen-lockfile --ignore-scripts
@@ -43,10 +43,10 @@ FROM base AS prod-deps
 # Copy package files
 COPY packages/backend/package.json ./packages/backend/
 COPY packages/shared/package.json ./packages/shared/
-COPY packages/@reporunner/ai/package.json ./packages/@reporunner/ai/
-COPY packages/@reporunner/core/package.json ./packages/@reporunner/core/
-COPY packages/@reporunner/platform/package.json ./packages/@reporunner/platform/
-COPY packages/@reporunner/workflow/package.json ./packages/@reporunner/workflow/
+COPY packages/@klikkflow/ai/package.json ./packages/@klikkflow/ai/
+COPY packages/@klikkflow/core/package.json ./packages/@klikkflow/core/
+COPY packages/@klikkflow/platform/package.json ./packages/@klikkflow/platform/
+COPY packages/@klikkflow/workflow/package.json ./packages/@klikkflow/workflow/
 
 # Install production dependencies only (skip preinstall script - only needed for local dev)
 RUN pnpm install --frozen-lockfile --prod --ignore-scripts
@@ -62,40 +62,40 @@ RUN apk add --no-cache dumb-init && \
 
 # Create non-root user
 RUN addgroup -g 1001 -S nodejs && \
-    adduser -S reporunner -u 1001 -G nodejs
+    adduser -S klikkflow -u 1001 -G nodejs
 
 # Set working directory
 WORKDIR /app
 
 # Copy source code for backend (run with tsx)
-COPY --chown=reporunner:nodejs packages/backend/src ./packages/backend/src
+COPY --chown=klikkflow:nodejs packages/backend/src ./packages/backend/src
 
-# Copy compiled dist for @reporunner packages (libraries)
-COPY --chown=reporunner:nodejs packages/shared/dist ./packages/shared/dist
-COPY --chown=reporunner:nodejs packages/@reporunner/ai/dist ./packages/@reporunner/ai/dist
-COPY --chown=reporunner:nodejs packages/@reporunner/core/dist ./packages/@reporunner/core/dist
-COPY --chown=reporunner:nodejs packages/@reporunner/platform/dist ./packages/@reporunner/platform/dist
-COPY --chown=reporunner:nodejs packages/@reporunner/workflow/dist ./packages/@reporunner/workflow/dist
+# Copy compiled dist for @klikkflow packages (libraries)
+COPY --chown=klikkflow:nodejs packages/shared/dist ./packages/shared/dist
+COPY --chown=klikkflow:nodejs packages/@klikkflow/ai/dist ./packages/@klikkflow/ai/dist
+COPY --chown=klikkflow:nodejs packages/@klikkflow/core/dist ./packages/@klikkflow/core/dist
+COPY --chown=klikkflow:nodejs packages/@klikkflow/platform/dist ./packages/@klikkflow/platform/dist
+COPY --chown=klikkflow:nodejs packages/@klikkflow/workflow/dist ./packages/@klikkflow/workflow/dist
 
 # Copy TypeScript config for backend (libraries use compiled dist)
-COPY --chown=reporunner:nodejs tsconfig.base.json ./
-COPY --chown=reporunner:nodejs packages/backend/tsconfig.json ./packages/backend/
+COPY --chown=klikkflow:nodejs tsconfig.base.json ./
+COPY --chown=klikkflow:nodejs packages/backend/tsconfig.json ./packages/backend/
 
 # Copy production dependencies
-COPY --from=prod-deps --chown=reporunner:nodejs /app/node_modules ./node_modules
-COPY --from=prod-deps --chown=reporunner:nodejs /app/packages/backend/node_modules ./packages/backend/node_modules
+COPY --from=prod-deps --chown=klikkflow:nodejs /app/node_modules ./node_modules
+COPY --from=prod-deps --chown=klikkflow:nodejs /app/packages/backend/node_modules ./packages/backend/node_modules
 
 # Copy package.json files
-COPY --chown=reporunner:nodejs package.json pnpm-workspace.yaml ./
-COPY --chown=reporunner:nodejs packages/backend/package.json ./packages/backend/
-COPY --chown=reporunner:nodejs packages/shared/package.json ./packages/shared/
-COPY --chown=reporunner:nodejs packages/@reporunner/ai/package.json ./packages/@reporunner/ai/
-COPY --chown=reporunner:nodejs packages/@reporunner/core/package.json ./packages/@reporunner/core/
-COPY --chown=reporunner:nodejs packages/@reporunner/platform/package.json ./packages/@reporunner/platform/
-COPY --chown=reporunner:nodejs packages/@reporunner/workflow/package.json ./packages/@reporunner/workflow/
+COPY --chown=klikkflow:nodejs package.json pnpm-workspace.yaml ./
+COPY --chown=klikkflow:nodejs packages/backend/package.json ./packages/backend/
+COPY --chown=klikkflow:nodejs packages/shared/package.json ./packages/shared/
+COPY --chown=klikkflow:nodejs packages/@klikkflow/ai/package.json ./packages/@klikkflow/ai/
+COPY --chown=klikkflow:nodejs packages/@klikkflow/core/package.json ./packages/@klikkflow/core/
+COPY --chown=klikkflow:nodejs packages/@klikkflow/platform/package.json ./packages/@klikkflow/platform/
+COPY --chown=klikkflow:nodejs packages/@klikkflow/workflow/package.json ./packages/@klikkflow/workflow/
 
 # Switch to non-root user
-USER reporunner
+USER klikkflow
 
 # Set environment
 ENV NODE_ENV=production
@@ -108,11 +108,11 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
   CMD ps aux | grep -v grep | grep -q "node" || exit 1
 
 # Labels for metadata
-LABEL org.opencontainers.image.title="Reporunner Worker"
-LABEL org.opencontainers.image.description="Reporunner workflow automation platform - BullMQ worker for workflow execution"
-LABEL org.opencontainers.image.url="https://github.com/reporunner/reporunner"
-LABEL org.opencontainers.image.source="https://github.com/reporunner/reporunner"
-LABEL org.opencontainers.image.vendor="Reporunner Team"
+LABEL org.opencontainers.image.title="KlikkFlow Worker"
+LABEL org.opencontainers.image.description="KlikkFlow workflow automation platform - BullMQ worker for workflow execution"
+LABEL org.opencontainers.image.url="https://github.com/klikkflow/klikkflow"
+LABEL org.opencontainers.image.source="https://github.com/klikkflow/klikkflow"
+LABEL org.opencontainers.image.vendor="KlikkFlow Team"
 LABEL org.opencontainers.image.licenses="MIT"
 
 # Start worker with dumb-init and tsx

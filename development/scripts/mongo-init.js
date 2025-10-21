@@ -1,7 +1,7 @@
 // MongoDB initialization script for development
 // This script sets up the development database with initial data
 
-db = db.getSiblingDB('reporunner_dev');
+db = db.getSiblingDB('klikkflow_dev');
 
 // Create collections
 db.createCollection('users');
@@ -26,7 +26,7 @@ db.credentials.createIndex({ type: 1 });
 // Insert development user
 db.users.insertOne({
   _id: ObjectId(),
-  email: 'dev@reporunner.local',
+  email: 'dev@klikkflow.local',
   name: 'Development User',
   password: '$2b$10$K7L1OJ45/4Y2nIvL0RMZOeXY8g8r1WjL4YzJlSGGBzGJl3xX9vI.m', // 'password123'
   role: 'admin',
@@ -51,5 +51,5 @@ db.organizations.insertOne({
 });
 
 print('✅ MongoDB development database initialized successfully');
-print('📧 Development user: dev@reporunner.local');
+print('📧 Development user: dev@klikkflow.local');
 print('🔑 Password: password123');

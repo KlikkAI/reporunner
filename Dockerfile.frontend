@@ -1,5 +1,5 @@
 # ============================================
-# Frontend Dockerfile - Reporunner
+# Frontend Dockerfile - KlikkFlow
 # Multi-stage build: React + Vite → Nginx
 # Target size: ~25MB
 # ============================================
@@ -26,7 +26,7 @@ FROM base AS deps
 # Copy all package.json files for dependency resolution
 COPY packages/frontend/package.json ./packages/frontend/
 COPY packages/shared/package.json ./packages/shared/
-COPY packages/@reporunner/core/package.json ./packages/@reporunner/core/
+COPY packages/@klikkflow/core/package.json ./packages/@klikkflow/core/
 
 # Install all dependencies (including devDependencies for build)
 # Skip preinstall script - only needed for local dev
@@ -44,13 +44,13 @@ COPY --from=deps /app/packages ./packages
 # Copy source code
 COPY packages/frontend ./packages/frontend
 COPY packages/shared ./packages/shared
-COPY packages/@reporunner/core ./packages/@reporunner/core
+COPY packages/@klikkflow/core ./packages/@klikkflow/core
 
 # Copy TypeScript configs
 COPY tsconfig.base.json ./
 COPY packages/frontend/tsconfig.json ./packages/frontend/
 COPY packages/shared/tsconfig.json ./packages/shared/
-COPY packages/@reporunner/core/tsconfig.json ./packages/@reporunner/core/
+COPY packages/@klikkflow/core/tsconfig.json ./packages/@klikkflow/core/
 
 # Copy Vite and other configs
 COPY packages/frontend/vite.config.ts ./packages/frontend/
@@ -94,11 +94,11 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
   CMD wget --no-verbose --tries=1 --spider http://localhost/health || exit 1
 
 # Labels for metadata
-LABEL org.opencontainers.image.title="Reporunner Frontend"
-LABEL org.opencontainers.image.description="Reporunner workflow automation platform - React frontend"
-LABEL org.opencontainers.image.url="https://github.com/reporunner/reporunner"
-LABEL org.opencontainers.image.source="https://github.com/reporunner/reporunner"
-LABEL org.opencontainers.image.vendor="Reporunner Team"
+LABEL org.opencontainers.image.title="KlikkFlow Frontend"
+LABEL org.opencontainers.image.description="KlikkFlow workflow automation platform - React frontend"
+LABEL org.opencontainers.image.url="https://github.com/klikkflow/klikkflow"
+LABEL org.opencontainers.image.source="https://github.com/klikkflow/klikkflow"
+LABEL org.opencontainers.image.vendor="KlikkFlow Team"
 LABEL org.opencontainers.image.licenses="MIT"
 
 # Start Nginx

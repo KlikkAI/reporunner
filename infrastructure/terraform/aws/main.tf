@@ -1,7 +1,7 @@
 /**
- * Reporunner AWS Infrastructure
+ * KlikkFlow AWS Infrastructure
  *
- * This Terraform configuration deploys Reporunner to AWS with:
+ * This Terraform configuration deploys KlikkFlow to AWS with:
  * - ECS Fargate for container orchestration
  * - RDS PostgreSQL for vector database
  * - DocumentDB (MongoDB-compatible) for primary database
@@ -25,11 +25,11 @@ terraform {
 
   # Backend configuration for state storage
   backend "s3" {
-    bucket         = "reporunner-terraform-state"
+    bucket         = "klikkflow-terraform-state"
     key            = "production/terraform.tfstate"
     region         = "us-east-1"
     encrypt        = true
-    dynamodb_table = "reporunner-terraform-locks"
+    dynamodb_table = "klikkflow-terraform-locks"
   }
 }
 
@@ -38,7 +38,7 @@ provider "aws" {
 
   default_tags {
     tags = {
-      Project     = "Reporunner"
+      Project     = "KlikkFlow"
       Environment = var.environment
       ManagedBy   = "Terraform"
     }
@@ -294,7 +294,7 @@ module "ecs_worker" {
 # Secrets Manager
 resource "aws_secretsmanager_secret" "jwt_secret" {
   name        = "${local.name_prefix}-jwt-secret"
-  description = "JWT secret for Reporunner"
+  description = "JWT secret for KlikkFlow"
 
   tags = local.common_tags
 }

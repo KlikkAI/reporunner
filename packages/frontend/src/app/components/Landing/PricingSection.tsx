@@ -400,10 +400,10 @@ export const PricingSection: React.FC = () => {
           </h3>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
-            {/* Reporunner */}
+            {/* KlikkFlow */}
             <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-xl p-6 border-2 border-blue-200">
               <div className="text-center">
-                <h4 className="font-bold text-gray-900 mb-2">Reporunner</h4>
+                <h4 className="font-bold text-gray-900 mb-2">KlikkFlow</h4>
                 <div className="text-2xl font-bold text-blue-600 mb-2">$49/user</div>
                 <p className="text-sm text-gray-600 mb-4">Self-hosted + Pro features</p>
                 <div className="text-xs text-gray-500">
@@ -473,7 +473,7 @@ export const PricingSection: React.FC = () => {
 
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-600">
-              💡 <strong>Reporunner advantage:</strong> Enterprise features at mid-market pricing
+              💡 <strong>KlikkFlow advantage:</strong> Enterprise features at mid-market pricing
               with complete self-hosting control
             </p>
           </div>

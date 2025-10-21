@@ -1,0 +1,148 @@
+{
+  "name": "@klikkflow/validation",
+  "version": "1.0.0",
+  "description": "Phase A validation framework for consolidated package architecture",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "clean": "rimraf dist",
+    "type-check": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest watch",
+    "analyze:build": "node dist/cli/build-analyzer-cli.js",
+    "analyze:build:baseline": "node dist/cli/build-analyzer-cli.js --baseline",
+    "analyze:build:compare": "node dist/cli/build-analyzer-cli.js --compare",
+    "analyze:build:report": "node dist/cli/build-analyzer-cli.js --report",
+    "analyze:bundle": "node dist/cli/bundle-analyzer-cli.js",
+    "analyze:bundle:baseline": "node dist/cli/bundle-analyzer-cli.js --baseline",
+    "analyze:bundle:compare": "node dist/cli/bundle-analyzer-cli.js --compare",
+    "analyze:bundle:report": "node dist/cli/bundle-analyzer-cli.js --report",
+    "dx:analyze": "node dist/cli/dev-experience-cli.js analyze",
+    "dx:benchmark": "node dist/cli/dev-experience-cli.js benchmark",
+    "dx:track": "node dist/cli/dev-experience-cli.js track",
+    "dx:report": "node dist/cli/dev-experience-cli.js report",
+    "typescript:analyze": "node dist/cli/typescript-analyzer-cli.js analyze",
+    "typescript:report": "node dist/cli/typescript-analyzer-cli.js report",
+    "ide:validate": "node dist/cli/ide-performance-cli.js validate",
+    "ide:report": "node dist/cli/ide-performance-cli.js report",
+    "imports:analyze": "node dist/cli/import-optimizer-cli.js analyze",
+    "imports:fix": "node dist/cli/import-optimizer-cli.js fix",
+    "imports:report": "node dist/cli/import-optimizer-cli.js report",
+    "architecture:validate": "node dist/cli/architecture-validator-cli.js validate",
+    "architecture:dependencies": "node dist/cli/architecture-validator-cli.js dependencies",
+    "architecture:organization": "node dist/cli/architecture-validator-cli.js organization",
+    "architecture:types": "node dist/cli/architecture-validator-cli.js types"
+  },
+  "dependencies": {
+    "@klikkflow/core": "workspace:*",
+    "axios": "^1.6.0",
+    "chalk": "^5.3.0",
+    "commander": "^12.0.0",
+    "madge": "^8.0.0",
+    "ora": "^8.0.1",
+    "playwright": "^1.40.0",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  },
+  "devDependencies": {
+    "@types/madge": "^5.0.3",
+    "@types/node": "catalog:",
+    "rimraf": "^6.0.1",
+    "typescript": "catalog:"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.js"
+    },
+    "./controller": {
+      "types": "./dist/controller/index.d.ts",
+      "import": "./dist/controller/index.js",
+      "require": "./dist/controller/index.js"
+    },
+    "./monitoring": {
+      "types": "./dist/monitoring/index.d.ts",
+      "import": "./dist/monitoring/index.js",
+      "require": "./dist/monitoring/index.js"
+    },
+    "./reporting": {
+      "types": "./dist/reporting/index.d.ts",
+      "import": "./dist/reporting/index.js",
+      "require": "./dist/reporting/index.js"
+    },
+    "./build-analyzer": {
+      "types": "./dist/build-time-analyzer.d.ts",
+      "import": "./dist/build-time-analyzer.js",
+      "require": "./dist/build-time-analyzer.js"
+    },
+    "./cli/build-analyzer": {
+      "types": "./dist/cli/build-analyzer-cli.d.ts",
+      "import": "./dist/cli/build-analyzer-cli.js",
+      "require": "./dist/cli/build-analyzer-cli.js"
+    },
+    "./bundle-analyzer": {
+      "types": "./dist/bundle-size-analyzer.d.ts",
+      "import": "./dist/bundle-size-analyzer.js",
+      "require": "./dist/bundle-size-analyzer.js"
+    },
+    "./cli/bundle-analyzer": {
+      "types": "./dist/cli/bundle-analyzer-cli.d.ts",
+      "import": "./dist/cli/bundle-analyzer-cli.js",
+      "require": "./dist/cli/bundle-analyzer-cli.js"
+    },
+    "./developer-experience": {
+      "types": "./dist/developer-experience/index.d.ts",
+      "import": "./dist/developer-experience/index.js",
+      "require": "./dist/developer-experience/index.js"
+    },
+    "./cli/dev-experience": {
+      "types": "./dist/cli/dev-experience-cli.d.ts",
+      "import": "./dist/cli/dev-experience-cli.js",
+      "require": "./dist/cli/dev-experience-cli.js"
+    },
+    "./typescript": {
+      "types": "./dist/typescript/index.d.ts",
+      "import": "./dist/typescript/index.js",
+      "require": "./dist/typescript/index.js"
+    },
+    "./cli/typescript-analyzer": {
+      "types": "./dist/cli/typescript-analyzer-cli.d.ts",
+      "import": "./dist/cli/typescript-analyzer-cli.js",
+      "require": "./dist/cli/typescript-analyzer-cli.js"
+    },
+    "./ide-performance": {
+      "types": "./dist/ide-performance/index.d.ts",
+      "import": "./dist/ide-performance/index.js",
+      "require": "./dist/ide-performance/index.js"
+    },
+    "./cli/ide-performance": {
+      "types": "./dist/cli/ide-performance-cli.d.ts",
+      "import": "./dist/cli/ide-performance-cli.js",
+      "require": "./dist/cli/ide-performance-cli.js"
+    },
+    "./import-optimization": {
+      "types": "./dist/import-optimization/index.d.ts",
+      "import": "./dist/import-optimization/index.js",
+      "require": "./dist/import-optimization/index.js"
+    },
+    "./cli/import-optimizer": {
+      "types": "./dist/cli/import-optimizer-cli.d.ts",
+      "import": "./dist/cli/import-optimizer-cli.js",
+      "require": "./dist/cli/import-optimizer-cli.js"
+    },
+    "./architecture": {
+      "types": "./dist/architecture/index.d.ts",
+      "import": "./dist/architecture/index.js",
+      "require": "./dist/architecture/index.js"
+    },
+    "./cli/architecture-validator": {
+      "types": "./dist/cli/architecture-validator-cli.d.ts",
+      "import": "./dist/cli/architecture-validator-cli.js",
+      "require": "./dist/cli/architecture-validator-cli.js"
+    }
+  }
+}

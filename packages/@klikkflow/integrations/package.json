@@ -1,0 +1,61 @@
+{
+  "name": "@klikkflow/integrations",
+  "version": "1.0.0",
+  "description": "Integration framework for third-party services and workflow nodes",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./plugins": {
+      "types": "./dist/plugins/index.d.ts",
+      "default": "./dist/plugins/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "vitest",
+    "type-check": "tsc --noEmit",
+    "clean": "rimraf dist",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "format": "biome format --write ."
+  },
+  "dependencies": {
+    "@klikkflow/shared": "workspace:*",
+    "@klikkflow/core": "workspace:*",
+    "@klikkflow/auth": "workspace:*",
+    "@klikkflow/backend": "workspace:*",
+    "axios": "catalog:",
+    "zod": "catalog:",
+    "winston": "catalog:"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "rimraf": "^6.0.1",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  },
+  "keywords": [
+    "klikkflow",
+    "integrations",
+    "oauth",
+    "webhook",
+    "gmail",
+    "workflow",
+    "automation",
+    "plugins",
+    "framework"
+  ],
+  "author": "KlikkFlow Team",
+  "license": "MIT",
+  "files": [
+    "dist",
+    "src",
+    "README.md"
+  ]
+}

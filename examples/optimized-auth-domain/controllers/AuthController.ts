@@ -5,7 +5,7 @@
  * AFTER: Extends BaseController, focuses on business logic
  */
 
-import { BaseController, LoggingUtils, StringUtils } from '@reporunner/shared';
+import { BaseController, LoggingUtils, StringUtils } from '@klikkflow/shared';
 import type { Request, Response } from 'express';
 import { inject, injectable } from 'inversify';
 import type { GetUserByIdUseCase } from '../use-cases/GetUserByIdUseCase';

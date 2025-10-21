@@ -1,12 +1,12 @@
 asyncapi: '2.6.0'
 info:
-  title: Reporunner Real-time API
+  title: KlikkFlow Real-time API
   version: '1.0.0'
   description: |
     Socket.IO-based real-time API for workflow collaboration and execution events.
 servers:
   production:
-    url: wss://api.reporunner.com
+    url: wss://api.klikkflow.com
     protocol: wss
   development:
     url: ws://localhost:3001

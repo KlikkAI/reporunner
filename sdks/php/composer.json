@@ -1,20 +1,20 @@
 {
-  "name": "reporunner/php-sdk",
-  "description": "PHP SDK for Reporunner workflow automation platform",
+  "name": "klikkflow/php-sdk",
+  "description": "PHP SDK for KlikkFlow workflow automation platform",
   "type": "library",
-  "keywords": ["workflow", "automation", "api", "sdk", "reporunner"],
-  "homepage": "https://github.com/reporunner/reporunner",
+  "keywords": ["workflow", "automation", "api", "sdk", "klikkflow"],
+  "homepage": "https://github.com/klikkflow/klikkflow",
   "license": "MIT",
   "authors": [
     {
-      "name": "Reporunner Team",
-      "email": "team@reporunner.com",
-      "homepage": "https://reporunner.com"
+      "name": "KlikkFlow Team",
+      "email": "team@klikkflow.com",
+      "homepage": "https://klikkflow.com"
     }
   ],
   "support": {
-    "issues": "https://github.com/reporunner/reporunner/issues",
-    "source": "https://github.com/reporunner/reporunner"
+    "issues": "https://github.com/klikkflow/klikkflow/issues",
+    "source": "https://github.com/klikkflow/klikkflow"
   },
   "require": {
     "php": "^8.1",
@@ -40,12 +40,12 @@
   },
   "autoload": {
     "psr-4": {
-      "Reporunner\\": "src/"
+      "KlikkFlow\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Reporunner\\Tests\\": "tests/"
+      "KlikkFlow\\Tests\\": "tests/"
     }
   },
   "scripts": {

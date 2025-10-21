@@ -36,7 +36,7 @@ variable "postgresql_version" {
 variable "administrator_login" {
   description = "Administrator login name"
   type        = string
-  default     = "reporunner"
+  default     = "klikkflow"
 }
 
 variable "delegated_subnet_id" {
@@ -94,7 +94,7 @@ variable "zone" {
 variable "database_name" {
   description = "Database name"
   type        = string
-  default     = "reporunner"
+  default     = "klikkflow"
 }
 
 variable "shared_buffers" {

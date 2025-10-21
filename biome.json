@@ -208,7 +208,7 @@
   },
   "overrides": [
     {
-      "includes": ["packages/frontend/**/*", "packages/@reporunner/design-system/**/*"],
+      "includes": ["packages/frontend/**/*", "packages/@klikkflow/design-system/**/*"],
       "linter": {
         "rules": {
           "style": {
@@ -222,7 +222,7 @@
       }
     },
     {
-      "includes": ["packages/backend/**/*", "packages/@reporunner/services/**/*"],
+      "includes": ["packages/backend/**/*", "packages/@klikkflow/services/**/*"],
       "linter": {
         "rules": {
           "suspicious": {
@@ -391,7 +391,7 @@
       }
     },
     {
-      "includes": ["packages/@reporunner/ai/**/*"],
+      "includes": ["packages/@klikkflow/ai/**/*"],
       "linter": {
         "rules": {
           "suspicious": {
@@ -430,12 +430,12 @@
     },
     {
       "includes": [
-        "packages/@reporunner/cli/**/*",
-        "packages/@reporunner/core/**/*",
-        "packages/@reporunner/workflow/**/*",
-        "packages/@reporunner/validation/**/*",
-        "packages/@reporunner/services/**/*",
-        "packages/@reporunner/platform/**/*",
+        "packages/@klikkflow/cli/**/*",
+        "packages/@klikkflow/core/**/*",
+        "packages/@klikkflow/workflow/**/*",
+        "packages/@klikkflow/validation/**/*",
+        "packages/@klikkflow/services/**/*",
+        "packages/@klikkflow/platform/**/*",
         "**/*-cli.ts",
         "**/cli/**/*"
       ],

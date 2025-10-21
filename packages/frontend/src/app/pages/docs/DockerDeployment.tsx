@@ -13,10 +13,10 @@ export const DockerDeployment: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>Docker Deployment - Reporunner Documentation</title>
+        <title>Docker Deployment - KlikkFlow Documentation</title>
         <meta
           name="description"
-          content="Deploy Reporunner with Docker - Quick start, profiles, configuration, and troubleshooting"
+          content="Deploy KlikkFlow with Docker - Quick start, profiles, configuration, and troubleshooting"
         />
       </Helmet>
 

@@ -1,6 +1,6 @@
 # OpenAPI/Swagger Documentation
 
-Comprehensive OpenAPI 3.0.3 specification for the Reporunner API.
+Comprehensive OpenAPI 3.0.3 specification for the KlikkFlow API.
 
 ## Overview
 

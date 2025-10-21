@@ -31,7 +31,7 @@ updates:
 
   # Core package - Shared utilities
   - package-ecosystem: "npm"
-    directory: "/packages/@reporunner/core"
+    directory: "/packages/@klikkflow/core"
     schedule:
       interval: "weekly"
       day: "monday"
@@ -56,7 +56,7 @@ updates:
 
   # Types package - Shared type definitions
   - package-ecosystem: "npm"
-    directory: "/packages/@reporunner/types"
+    directory: "/packages/@klikkflow/types"
     schedule:
       interval: "weekly"
       day: "monday"

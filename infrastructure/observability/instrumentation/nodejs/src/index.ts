@@ -1,7 +1,7 @@
 /**
- * Reporunner OpenTelemetry Instrumentation
+ * KlikkFlow OpenTelemetry Instrumentation
  *
- * This module provides comprehensive observability instrumentation for Reporunner
+ * This module provides comprehensive observability instrumentation for KlikkFlow
  * Node.js applications including tracing, metrics, and logging.
  */
 
@@ -63,7 +63,7 @@ export interface InstrumentationConfig {
   customInstrumentations?: Instrumentation[];
 }
 
-export class ReporunnerInstrumentation {
+export class KlikkFlowInstrumentation {
   private sdk: NodeSDK | null = null;
   private config: InstrumentationConfig;
 
@@ -112,8 +112,8 @@ export class ReporunnerInstrumentation {
       [SemanticResourceAttributes.SERVICE_NAME]: this.config.serviceName,
       [SemanticResourceAttributes.SERVICE_VERSION]: this.config.serviceVersion || '1.0.0',
       [SemanticResourceAttributes.DEPLOYMENT_ENVIRONMENT]: this.config.environment || 'development',
-      [SemanticResourceAttributes.SERVICE_NAMESPACE]: 'reporunner',
-      'reporunner.component': this.getComponentType(),
+      [SemanticResourceAttributes.SERVICE_NAMESPACE]: 'klikkflow',
+      'klikkflow.component': this.getComponentType(),
     });
 
     // Detect additional resource attributes
@@ -135,21 +135,21 @@ export class ReporunnerInstrumentation {
       new ExpressInstrumentation({
         requestHook: (span, info) => {
           span.setAttributes({
-            'reporunner.request.route': info.route,
-            'reporunner.request.method': info.req.method,
-            'reporunner.request.user_agent': info.req.headers['user-agent'],
+            'klikkflow.request.route': info.route,
+            'klikkflow.request.method': info.req.method,
+            'klikkflow.request.user_agent': info.req.headers['user-agent'],
           });
         },
       }),
       new HttpInstrumentation({
         requestHook: (span, request) => {
           span.setAttributes({
-            'reporunner.http.request.size': request.headers['content-length'] || 0,
+            'klikkflow.http.request.size': request.headers['content-length'] || 0,
           });
         },
         responseHook: (span, response) => {
           span.setAttributes({
-            'reporunner.http.response.size': response.headers['content-length'] || 0,
+            'klikkflow.http.response.size': response.headers['content-length'] || 0,
           });
         },
       }),
@@ -259,14 +259,14 @@ export class ReporunnerInstrumentation {
  * Create custom workflow-specific spans
  */
 export class WorkflowTracing {
-  private static tracer = require('@opentelemetry/api').trace.getTracer('reporunner-workflow');
+  private static tracer = require('@opentelemetry/api').trace.getTracer('klikkflow-workflow');
 
   static startWorkflowExecution(workflowId: string, executionId: string) {
     return WorkflowTracing.tracer.startSpan('workflow.execution', {
       attributes: {
-        'reporunner.workflow.id': workflowId,
-        'reporunner.execution.id': executionId,
-        'reporunner.operation': 'workflow_execution',
+        'klikkflow.workflow.id': workflowId,
+        'klikkflow.execution.id': executionId,
+        'klikkflow.operation': 'workflow_execution',
       },
     });
   }
@@ -274,10 +274,10 @@ export class WorkflowTracing {
   static startNodeExecution(nodeId: string, nodeType: string, executionId: string) {
     return WorkflowTracing.tracer.startSpan('workflow.node.execution', {
       attributes: {
-        'reporunner.node.id': nodeId,
-        'reporunner.node.type': nodeType,
-        'reporunner.execution.id': executionId,
-        'reporunner.operation': 'node_execution',
+        'klikkflow.node.id': nodeId,
+        'klikkflow.node.type': nodeType,
+        'klikkflow.execution.id': executionId,
+        'klikkflow.operation': 'node_execution',
       },
     });
   }
@@ -285,22 +285,22 @@ export class WorkflowTracing {
   static startIntegrationCall(integration: string, operation: string) {
     return WorkflowTracing.tracer.startSpan('integration.call', {
       attributes: {
-        'reporunner.integration.name': integration,
-        'reporunner.integration.operation': operation,
-        'reporunner.operation': 'integration_call',
+        'klikkflow.integration.name': integration,
+        'klikkflow.integration.operation': operation,
+        'klikkflow.operation': 'integration_call',
       },
     });
   }
 
   static recordWorkflowMetrics(workflowId: string, status: string, duration: number) {
-    const meter = require('@opentelemetry/api').metrics.getMeter('reporunner-workflow');
+    const meter = require('@opentelemetry/api').metrics.getMeter('klikkflow-workflow');
 
-    const executionCounter = meter.createCounter('reporunner_workflow_executions_total', {
+    const executionCounter = meter.createCounter('klikkflow_workflow_executions_total', {
       description: 'Total number of workflow executions',
     });
 
     const executionDuration = meter.createHistogram(
-      'reporunner_workflow_execution_duration_seconds',
+      'klikkflow_workflow_execution_duration_seconds',
       {
         description: 'Workflow execution duration in seconds',
       }
@@ -321,7 +321,7 @@ export class WorkflowTracing {
 /**
  * Express middleware for enhanced tracing
  */
-export function reporunnerTracingMiddleware(
+export function klikkflowTracingMiddleware(
   options: { includeHeaders?: boolean; includeBody?: boolean; excludePaths?: string[] } = {}
 ) {
   const {
@@ -341,26 +341,26 @@ export function reporunnerTracingMiddleware(
     if (span) {
       // Add custom attributes
       span.setAttributes({
-        'reporunner.request.id': req.headers['x-request-id'] || generateRequestId(),
-        'reporunner.request.ip': req.ip,
-        'reporunner.request.path': req.path,
-        'reporunner.request.query': JSON.stringify(req.query),
+        'klikkflow.request.id': req.headers['x-request-id'] || generateRequestId(),
+        'klikkflow.request.ip': req.ip,
+        'klikkflow.request.path': req.path,
+        'klikkflow.request.query': JSON.stringify(req.query),
       });
 
       if (includeHeaders) {
-        span.setAttribute('reporunner.request.headers', JSON.stringify(req.headers));
+        span.setAttribute('klikkflow.request.headers', JSON.stringify(req.headers));
       }
 
       if (includeBody && req.body) {
-        span.setAttribute('reporunner.request.body', JSON.stringify(req.body));
+        span.setAttribute('klikkflow.request.body', JSON.stringify(req.body));
       }
 
       // Add response attributes
       const originalSend = res.send;
       res.send = function (body: unknown) {
         span.setAttributes({
-          'reporunner.response.status': res.statusCode,
-          'reporunner.response.size': Buffer.byteLength(body || ''),
+          'klikkflow.response.status': res.statusCode,
+          'klikkflow.response.size': Buffer.byteLength(body || ''),
         });
 
         if (res.statusCode >= 400) {
@@ -433,4 +433,4 @@ export * from '@opentelemetry/api';
 export type { InstrumentationConfig };
 
 // Default export
-export default ReporunnerInstrumentation;
+export default KlikkFlowInstrumentation;

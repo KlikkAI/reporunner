@@ -108,7 +108,7 @@ variable "ip_range_filter" {
 variable "database_name" {
   description = "Database name"
   type        = string
-  default     = "reporunner"
+  default     = "klikkflow"
 }
 
 variable "serverless_mode" {

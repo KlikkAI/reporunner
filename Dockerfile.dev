@@ -1,4 +1,4 @@
-# Development Dockerfile for Reporunner
+# Development Dockerfile for KlikkFlow
 # Optimized for development with hot reload and debugging
 # Updated for 12-package monorepo structure
 
@@ -27,17 +27,17 @@ COPY packages/backend/package.json ./packages/backend/
 COPY packages/frontend/package.json ./packages/frontend/
 COPY packages/shared/package.json ./packages/shared/
 
-# Copy @reporunner scoped packages
-COPY packages/@reporunner/ai/package.json ./packages/@reporunner/ai/
-COPY packages/@reporunner/auth/package.json ./packages/@reporunner/auth/
-COPY packages/@reporunner/cli/package.json ./packages/@reporunner/cli/
-COPY packages/@reporunner/core/package.json ./packages/@reporunner/core/
-COPY packages/@reporunner/enterprise/package.json ./packages/@reporunner/enterprise/
-COPY packages/@reporunner/integrations/package.json ./packages/@reporunner/integrations/
-COPY packages/@reporunner/platform/package.json ./packages/@reporunner/platform/
-COPY packages/@reporunner/services/package.json ./packages/@reporunner/services/
-COPY packages/@reporunner/validation/package.json ./packages/@reporunner/validation/
-COPY packages/@reporunner/workflow/package.json ./packages/@reporunner/workflow/
+# Copy @klikkflow scoped packages
+COPY packages/@klikkflow/ai/package.json ./packages/@klikkflow/ai/
+COPY packages/@klikkflow/auth/package.json ./packages/@klikkflow/auth/
+COPY packages/@klikkflow/cli/package.json ./packages/@klikkflow/cli/
+COPY packages/@klikkflow/core/package.json ./packages/@klikkflow/core/
+COPY packages/@klikkflow/enterprise/package.json ./packages/@klikkflow/enterprise/
+COPY packages/@klikkflow/integrations/package.json ./packages/@klikkflow/integrations/
+COPY packages/@klikkflow/platform/package.json ./packages/@klikkflow/platform/
+COPY packages/@klikkflow/services/package.json ./packages/@klikkflow/services/
+COPY packages/@klikkflow/validation/package.json ./packages/@klikkflow/validation/
+COPY packages/@klikkflow/workflow/package.json ./packages/@klikkflow/workflow/
 
 # Install all dependencies (including dev dependencies)
 RUN pnpm install --frozen-lockfile
@@ -47,13 +47,13 @@ COPY . .
 
 # Create non-root user for development
 RUN addgroup -g 1001 -S nodejs && \
-    adduser -S reporunner -u 1001 -G nodejs
+    adduser -S klikkflow -u 1001 -G nodejs
 
 # Change ownership of the app directory
-RUN chown -R reporunner:nodejs /app
+RUN chown -R klikkflow:nodejs /app
 
 # Switch to non-root user
-USER reporunner
+USER klikkflow
 
 # Expose ports for frontend, backend, and debugging
 EXPOSE 3000 3001 5173 9229

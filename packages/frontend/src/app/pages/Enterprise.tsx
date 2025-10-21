@@ -1,7 +1,7 @@
 /**
  * Enterprise Page
  *
- * Comprehensive enterprise features and solutions for Reporunner
+ * Comprehensive enterprise features and solutions for KlikkFlow
  * Targeting large organizations with advanced needs
  */
 
@@ -36,7 +36,7 @@ export const Enterprise: React.FC = () => {
   // const _testimonials = [
   //   {
   //     quote:
-  //       'Reporunner has transformed our compliance reporting. What used to take weeks now happens automatically with full audit trails.',
+  //       'KlikkFlow has transformed our compliance reporting. What used to take weeks now happens automatically with full audit trails.',
   //     author: 'Sarah Chen',
   //     title: 'CTO',
   //     company: 'Global Financial Corp',
@@ -52,7 +52,7 @@ export const Enterprise: React.FC = () => {
   //   },
   //   {
   //     quote:
-  //       'Our development velocity increased 300% after implementing Reporunner for our CI/CD and incident response workflows.',
+  //       'Our development velocity increased 300% after implementing KlikkFlow for our CI/CD and incident response workflows.',
   //     author: 'Emma Thompson',
   //     title: 'VP Engineering',
   //     company: 'TechScale',
@@ -181,7 +181,7 @@ export const Enterprise: React.FC = () => {
   const customerTestimonials = [
     {
       quote:
-        "Reporunner's enterprise features allowed us to maintain compliance while accelerating our digital transformation. The air-gap deployment was crucial for our security requirements.",
+        "KlikkFlow's enterprise features allowed us to maintain compliance while accelerating our digital transformation. The air-gap deployment was crucial for our security requirements.",
       author: 'Sarah Chen',
       title: 'CTO',
       company: 'SecureBank',
@@ -197,7 +197,7 @@ export const Enterprise: React.FC = () => {
     },
     {
       quote:
-        'We migrated from multiple workflow tools to Reporunner and saw immediate ROI. The enterprise SSO and audit logging saved us months of compliance work.',
+        'We migrated from multiple workflow tools to KlikkFlow and saw immediate ROI. The enterprise SSO and audit logging saved us months of compliance work.',
       author: 'Jennifer Walsh',
       title: 'VP of Operations',
       company: 'GlobalManufacturing',
@@ -620,7 +620,7 @@ export const Enterprise: React.FC = () => {
         <div className="container mx-auto px-6 text-center text-white">
           <h2 className="text-4xl font-bold mb-6">Ready for Enterprise Automation?</h2>
           <p className="text-xl mb-8 max-w-2xl mx-auto opacity-90">
-            Join the world's most security-conscious organizations who trust Reporunner for their
+            Join the world's most security-conscious organizations who trust KlikkFlow for their
             mission-critical workflows.
           </p>
 

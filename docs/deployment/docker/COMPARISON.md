@@ -1,15 +1,15 @@
-# Docker Distribution Comparison: Reporunner vs n8n vs Sim Studio
+# Docker Distribution Comparison: KlikkFlow vs n8n vs Sim Studio
 
 Comprehensive analysis of Docker deployment strategies across three workflow automation platforms.
 
 **Date:** October 19, 2025
-**Platforms Analyzed:** Reporunner, n8n, Sim Studio
+**Platforms Analyzed:** KlikkFlow, n8n, Sim Studio
 
 ---
 
 ## Executive Summary
 
-| Feature | Reporunner | n8n | Sim Studio |
+| Feature | KlikkFlow | n8n | Sim Studio |
 |---------|-----------|-----|------------|
 | **Overall Score** | **98/100** | 85/100 | 88/100 |
 | **Complexity** | Advanced | Moderate | Simple |
@@ -24,7 +24,7 @@ Comprehensive analysis of Docker deployment strategies across three workflow aut
 
 ## 1. Architecture Overview
 
-### Reporunner: **Hybrid Profile-Based System**
+### KlikkFlow: **Hybrid Profile-Based System**
 
 ```yaml
 Profiles:
@@ -98,13 +98,13 @@ Compose Files: 3
 
 | Platform | Minimum | Maximum | Scalability |
 |----------|---------|---------|-------------|
-| **Reporunner** | 6 | 22 | ⭐⭐⭐⭐⭐ Excellent |
+| **KlikkFlow** | 6 | 22 | ⭐⭐⭐⭐⭐ Excellent |
 | **n8n** | 2 | 5 | ⭐⭐⭐ Moderate |
 | **Sim Studio** | 4 | 6 | ⭐⭐⭐ Moderate |
 
 ### Detailed Container Breakdown
 
-**Reporunner Core (6):**
+**KlikkFlow Core (6):**
 1. Frontend (React + Nginx)
 2. Backend (Express API)
 3. Worker (BullMQ)
@@ -112,7 +112,7 @@ Compose Files: 3
 5. PostgreSQL + pgvector (AI DB)
 6. Redis (Cache/Queue)
 
-**Reporunner Full Stack (22):**
+**KlikkFlow Full Stack (22):**
 - Core: 6
 - Monitoring: Prometheus, Grafana, Alertmanager, Node Exporter, Redis Exporter, MongoDB Exporter (+6)
 - HA: Nginx LB, Backend-2, Worker-2, Backup Service (+4)
@@ -141,7 +141,7 @@ Compose Files: 3
 
 | Platform | Version | Justification |
 |----------|---------|---------------|
-| **Reporunner** | Node 20 LTS | Latest stable LTS, consistent across all Dockerfiles |
+| **KlikkFlow** | Node 20 LTS | Latest stable LTS, consistent across all Dockerfiles |
 | **n8n** | Node 22.18.0 | Bleeding edge, latest features |
 | **Sim Studio** | Bun runtime | Modern JavaScript runtime for performance |
 
@@ -149,8 +149,8 @@ Compose Files: 3
 
 | Platform | Base Image | Size | Security |
 |----------|-----------|------|----------|
-| **Reporunner Frontend** | nginx:1.25-alpine | ~25MB | ⭐⭐⭐⭐⭐ |
-| **Reporunner Backend** | node:20-alpine | ~80MB | ⭐⭐⭐⭐⭐ |
+| **KlikkFlow Frontend** | nginx:1.25-alpine | ~25MB | ⭐⭐⭐⭐⭐ |
+| **KlikkFlow Backend** | node:20-alpine | ~80MB | ⭐⭐⭐⭐⭐ |
 | **n8n** | n8nio/base:22.18.0 | ~150MB | ⭐⭐⭐⭐ |
 | **Sim Studio** | Custom (Bun-based) | ~Unknown | ⭐⭐⭐⭐ |
 
@@ -158,7 +158,7 @@ Compose Files: 3
 
 | Platform | Primary DB | AI/Vector DB | Caching |
 |----------|-----------|--------------|---------|
-| **Reporunner** | MongoDB 7.0 | PostgreSQL 16 + pgvector | Redis 7 |
+| **KlikkFlow** | MongoDB 7.0 | PostgreSQL 16 + pgvector | Redis 7 |
 | **n8n** | PostgreSQL 16.4 or SQLite | N/A | N/A |
 | **Sim Studio** | PostgreSQL 17 + pgvector | Same (unified) | N/A |
 
@@ -166,7 +166,7 @@ Compose Files: 3
 
 ## 4. Docker Compose Configuration Comparison
 
-### Reporunner: Profile-Based System
+### KlikkFlow: Profile-Based System
 
 ```yaml
 # Strengths:
@@ -223,7 +223,7 @@ docker-compose --profile full up       # Everything (22 containers)
 
 ## 5. Multi-Stage Dockerfile Comparison
 
-### Reporunner Backend (4 stages)
+### KlikkFlow Backend (4 stages)
 
 ```dockerfile
 FROM node:20-alpine AS base          # Stage 1: Base setup
@@ -234,7 +234,7 @@ FROM node:20-alpine AS runtime       # Stage 4: Runtime (tsx execution)
 # Features:
 ✅ TypeScript source execution with tsx
 ✅ Separate production dependencies
-✅ Non-root user (reporunner:nodejs)
+✅ Non-root user (klikkflow:nodejs)
 ✅ Health checks
 ✅ Resource limits
 ✅ OCI labels
@@ -277,7 +277,7 @@ FROM system-deps AS runtime          # Stage 4: Final runtime
 
 ## 6. Monitoring & Observability
 
-### Reporunner: **Full Stack** 🏆
+### KlikkFlow: **Full Stack** 🏆
 
 ```yaml
 Monitoring Components:
@@ -346,7 +346,7 @@ Monitoring Components:
 
 ## 7. Security Comparison
 
-### Reporunner: **Enterprise-Grade** 🏆
+### KlikkFlow: **Enterprise-Grade** 🏆
 
 ```yaml
 Security Features:
@@ -398,7 +398,7 @@ Security Score: 70/100
 
 ## 8. High Availability & Scalability
 
-### Reporunner: **Built-in HA** 🏆
+### KlikkFlow: **Built-in HA** 🏆
 
 ```yaml
 HA Profile Features:
@@ -459,7 +459,7 @@ HA Score: 40/100
 
 ## 9. Developer Experience
 
-### Reporunner: **Excellent** 🏆
+### KlikkFlow: **Excellent** 🏆
 
 ```yaml
 Documentation:
@@ -536,7 +536,7 @@ DX Score: 72/100
 
 ### Checklist Comparison
 
-| Feature | Reporunner | n8n | Sim Studio |
+| Feature | KlikkFlow | n8n | Sim Studio |
 |---------|-----------|-----|------------|
 | **Health Checks** | ✅ All services | ✅ Main services | ✅ All services |
 | **Resource Limits** | ✅ All services | ⚠️ None in examples | ✅ All services |
@@ -551,7 +551,7 @@ DX Score: 72/100
 
 ### Overall Production Readiness
 
-**Reporunner:** ⭐⭐⭐⭐⭐ (98/100) - **Enterprise-Ready**
+**KlikkFlow:** ⭐⭐⭐⭐⭐ (98/100) - **Enterprise-Ready**
 - Complete observability stack
 - HA support out of the box
 - Automated backups
@@ -574,7 +574,7 @@ DX Score: 72/100
 
 ## 11. Unique Features
 
-### Reporunner Advantages 🏆
+### KlikkFlow Advantages 🏆
 
 1. **Profile-Based Architecture** - Scale from 6 to 22 containers
 2. **Complete Observability** - 7 Grafana dashboards + ELK stack
@@ -612,8 +612,8 @@ DX Score: 72/100
 
 | Platform | RAM | CPU | Disk | Containers |
 |----------|-----|-----|------|-----------|
-| **Reporunner Core** | 4GB | 2 cores | 10GB | 6 |
-| **Reporunner Full** | 12GB | 4 cores | 50GB | 22 |
+| **KlikkFlow Core** | 4GB | 2 cores | 10GB | 6 |
+| **KlikkFlow Full** | 12GB | 4 cores | 50GB | 22 |
 | **n8n** | 2GB | 1 core | 5GB | 2 |
 | **Sim Studio** | 16GB | 2 cores | 20GB | 4 |
 
@@ -621,7 +621,7 @@ DX Score: 72/100
 
 | Platform | RAM | CPU | Disk | Cost/Month (AWS) |
 |----------|-----|-----|------|------------------|
-| **Reporunner** | 16GB | 4 cores | 100GB | $150-200 |
+| **KlikkFlow** | 16GB | 4 cores | 100GB | $150-200 |
 | **n8n** | 8GB | 2 cores | 50GB | $80-120 |
 | **Sim Studio** | 32GB | 4 cores | 100GB | $200-300 |
 
@@ -635,11 +635,11 @@ DX Score: 72/100
 
 | Platform | Setup Steps | Time | Complexity |
 |----------|------------|------|------------|
-| **Reporunner** | 5 steps | 5 min | ⭐⭐⭐ Medium |
+| **KlikkFlow** | 5 steps | 5 min | ⭐⭐⭐ Medium |
 | **n8n** | 3 steps | 2 min | ⭐ Easy |
 | **Sim Studio** | 4 steps | 3 min | ⭐⭐ Easy-Medium |
 
-### Reporunner Quick Start (5 min)
+### KlikkFlow Quick Start (5 min)
 ```bash
 cp .env.example .env
 echo "JWT_SECRET=$(openssl rand -base64 32)" >> .env
@@ -667,7 +667,7 @@ docker-compose -f docker-compose.prod.yml up -d
 
 ### Update Process
 
-**Reporunner:**
+**KlikkFlow:**
 ```bash
 # Pull latest images
 docker-compose pull
@@ -703,7 +703,7 @@ docker-compose -f docker-compose.prod.yml up -d
 
 | Platform | Automated | S3 Support | Retention | Recovery |
 |----------|-----------|------------|-----------|----------|
-| **Reporunner** | ✅ Yes (cron) | ✅ Yes | 30 days | Documented |
+| **KlikkFlow** | ✅ Yes (cron) | ✅ Yes | 30 days | Documented |
 | **n8n** | ❌ Manual | ⚠️ DIY | Manual | Manual |
 | **Sim Studio** | ❌ Manual | ⚠️ DIY | Manual | Manual |
 
@@ -715,20 +715,20 @@ docker-compose -f docker-compose.prod.yml up -d
 
 | Category | Winner | Score | Runner-up |
 |----------|--------|-------|-----------|
-| **Overall Production Readiness** | Reporunner | 98/100 | Sim Studio (88/100) |
+| **Overall Production Readiness** | KlikkFlow | 98/100 | Sim Studio (88/100) |
 | **Simplicity** | n8n | 95/100 | Sim Studio (90/100) |
-| **Scalability** | Reporunner | 95/100 | n8n (75/100) |
-| **Security** | Reporunner | 95/100 | Sim Studio (70/100) |
-| **Monitoring** | Reporunner | 100/100 | n8n/Sim (0/100) |
-| **Documentation** | Reporunner | 98/100 | n8n (78/100) |
-| **Developer Experience** | Reporunner | 98/100 | n8n (78/100) |
-| **AI Integration** | Sim Studio | 95/100 | Reporunner (85/100) |
+| **Scalability** | KlikkFlow | 95/100 | n8n (75/100) |
+| **Security** | KlikkFlow | 95/100 | Sim Studio (70/100) |
+| **Monitoring** | KlikkFlow | 100/100 | n8n/Sim (0/100) |
+| **Documentation** | KlikkFlow | 98/100 | n8n (78/100) |
+| **Developer Experience** | KlikkFlow | 98/100 | n8n (78/100) |
+| **AI Integration** | Sim Studio | 95/100 | KlikkFlow (85/100) |
 | **Ease of Setup** | n8n | 95/100 | Sim Studio (85/100) |
-| **Resource Efficiency** | n8n | 90/100 | Reporunner (75/100) |
+| **Resource Efficiency** | n8n | 90/100 | KlikkFlow (75/100) |
 
 ### Overall Scores
 
-1. **🥇 Reporunner: 98/100** - Enterprise-grade, comprehensive, production-ready
+1. **🥇 KlikkFlow: 98/100** - Enterprise-grade, comprehensive, production-ready
 2. **🥈 Sim Studio: 88/100** - Modern, AI-focused, clean architecture
 3. **🥉 n8n: 85/100** - Mature, simple, proven in production
 
@@ -736,7 +736,7 @@ docker-compose -f docker-compose.prod.yml up -d
 
 ## 16. Recommendations
 
-### Choose Reporunner If:
+### Choose KlikkFlow If:
 - ✅ You need enterprise-grade observability
 - ✅ You require built-in high availability
 - ✅ You want comprehensive monitoring out of the box
@@ -767,14 +767,14 @@ docker-compose -f docker-compose.prod.yml up -d
 
 ## Conclusion
 
-**Reporunner** sets a new standard for workflow automation Docker distributions with its comprehensive profile-based system, full observability stack, and enterprise-grade features. While n8n excels in simplicity and maturity, and Sim Studio leads in AI integration, Reporunner offers the most complete, production-ready Docker distribution in the workflow automation space.
+**KlikkFlow** sets a new standard for workflow automation Docker distributions with its comprehensive profile-based system, full observability stack, and enterprise-grade features. While n8n excels in simplicity and maturity, and Sim Studio leads in AI integration, KlikkFlow offers the most complete, production-ready Docker distribution in the workflow automation space.
 
 The profile-based architecture (6 to 22 containers) provides unprecedented flexibility, allowing developers to start simple and scale to full enterprise deployments with a single command.
 
-**Innovation Score:** Reporunner - 10/10 (Industry-leading profile system)
+**Innovation Score:** KlikkFlow - 10/10 (Industry-leading profile system)
 
 ---
 
 **Report Generated:** October 19, 2025
-**Platforms Analyzed:** Reporunner (98/100), n8n (85/100), Sim Studio (88/100)
+**Platforms Analyzed:** KlikkFlow (98/100), n8n (85/100), Sim Studio (88/100)
 **Total Analysis Time:** Comprehensive deep-dive comparison

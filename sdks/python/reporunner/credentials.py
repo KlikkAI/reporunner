@@ -1,5 +1,5 @@
 """
-Credential management for the Reporunner Python SDK.
+Credential management for the KlikkFlow Python SDK.
 This module provides secure credential operations including OAuth flows,
 API key management, and credential validation.
 """
@@ -20,7 +20,7 @@ from .types import (
     PaginatedResponse
 )
 from .exceptions import (
-    ReporunnerAPIError,
+    KlikkFlowAPIError,
     CredentialNotFoundError,
     ValidationError,
     AuthenticationError
@@ -65,7 +65,7 @@ class CredentialManager:
             
         Raises:
             ValidationError: If credential data is invalid
-            ReporunnerAPIError: If API request fails
+            KlikkFlowAPIError: If API request fails
         """
         if not name or not credential_type or not data:
             raise ValidationError("name, credential_type, and data are required")
@@ -91,7 +91,7 @@ class CredentialManager:
             return Credential.model_validate(response["data"])
             
         except Exception as e:
-            raise ReporunnerAPIError(f"Failed to create credential: {str(e)}")
+            raise KlikkFlowAPIError(f"Failed to create credential: {str(e)}")
 
     async def get_credential(self, credential_id: str) -> Credential:
         """
@@ -105,7 +105,7 @@ class CredentialManager:
             
         Raises:
             CredentialNotFoundError: If credential doesn't exist
-            ReporunnerAPIError: If API request fails
+            KlikkFlowAPIError: If API request fails
         """
         try:
             response = await self.client._make_request(
@@ -118,7 +118,7 @@ class CredentialManager:
         except Exception as e:
             if "404" in str(e):
                 raise CredentialNotFoundError(f"Credential {credential_id} not found")
-            raise ReporunnerAPIError(f"Failed to get credential: {str(e)}")
+            raise KlikkFlowAPIError(f"Failed to get credential: {str(e)}")
 
     async def list_credentials(
         self,
@@ -168,7 +168,7 @@ class CredentialManager:
             )
             
         except Exception as e:
-            raise ReporunnerAPIError(f"Failed to list credentials: {str(e)}")
+            raise KlikkFlowAPIError(f"Failed to list credentials: {str(e)}")
 
     async def update_credential(
         self,
@@ -217,7 +217,7 @@ class CredentialManager:
         except Exception as e:
             if "404" in str(e):
                 raise CredentialNotFoundError(f"Credential {credential_id} not found")
-            raise ReporunnerAPIError(f"Failed to update credential: {str(e)}")
+            raise KlikkFlowAPIError(f"Failed to update credential: {str(e)}")
 
     async def delete_credential(self, credential_id: str) -> bool:
         """
@@ -231,7 +231,7 @@ class CredentialManager:
             
         Raises:
             CredentialNotFoundError: If credential doesn't exist
-            ReporunnerAPIError: If API request fails
+            KlikkFlowAPIError: If API request fails
         """
         try:
             response = await self.client._make_request(
@@ -244,7 +244,7 @@ class CredentialManager:
         except Exception as e:
             if "404" in str(e):
                 raise CredentialNotFoundError(f"Credential {credential_id} not found")
-            raise ReporunnerAPIError(f"Failed to delete credential: {str(e)}")
+            raise KlikkFlowAPIError(f"Failed to delete credential: {str(e)}")
 
     async def test_credential(self, credential_id: str) -> CredentialTest:
         """
@@ -265,7 +265,7 @@ class CredentialManager:
             return CredentialTest.model_validate(response["data"])
             
         except Exception as e:
-            raise ReporunnerAPIError(f"Failed to test credential: {str(e)}")
+            raise KlikkFlowAPIError(f"Failed to test credential: {str(e)}")
 
     async def start_oauth_flow(
         self,
@@ -309,7 +309,7 @@ class CredentialManager:
             }
             
         except Exception as e:
-            raise ReporunnerAPIError(f"Failed to start OAuth flow: {str(e)}")
+            raise KlikkFlowAPIError(f"Failed to start OAuth flow: {str(e)}")
 
     async def complete_oauth_flow(
         self,
@@ -392,7 +392,7 @@ class CredentialManager:
             return response.get("success", False)
             
         except Exception as e:
-            raise ReporunnerAPIError(f"Failed to revoke credential: {str(e)}")
+            raise KlikkFlowAPIError(f"Failed to revoke credential: {str(e)}")
 
     async def get_credential_usage(
         self, 
@@ -426,7 +426,7 @@ class CredentialManager:
             return response.get("data", {})
             
         except Exception as e:
-            raise ReporunnerAPIError(f"Failed to get credential usage: {str(e)}")
+            raise KlikkFlowAPIError(f"Failed to get credential usage: {str(e)}")
 
     def _validate_credential_data(
         self, 
@@ -578,7 +578,7 @@ async def create_gmail_credential(client: Any, name: str) -> Dict[str, str]:
     Start Gmail OAuth flow and return authorization URL.
     
     Args:
-        client: ReporunnerClient instance
+        client: KlikkFlowClient instance
         name: Name for the credential
         
     Returns:
@@ -598,7 +598,7 @@ async def create_slack_credential(client: Any, api_token: str, name: str) -> Cre
     Create a Slack API token credential.
     
     Args:
-        client: ReporunnerClient instance
+        client: KlikkFlowClient instance
         api_token: Slack API token
         name: Name for the credential
         

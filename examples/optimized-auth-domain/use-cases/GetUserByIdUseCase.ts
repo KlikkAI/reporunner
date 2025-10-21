@@ -5,7 +5,7 @@
  * AFTER: Extends BaseGetByIdUseCase, adds validation/authorization
  */
 
-import { BaseGetByIdUseCase, LoggingUtils } from '@reporunner/shared';
+import { BaseGetByIdUseCase, LoggingUtils } from '@klikkflow/shared';
 import { inject, injectable } from 'inversify';
 import type { User } from '../interfaces/User';
 import type { UserRepository } from '../repositories/UserRepository';

@@ -1,8 +1,8 @@
-# Reporunner Azure Development Environment
+# KlikkFlow Azure Development Environment
 # Cost-optimized for development and testing
 
 environment  = "dev"
-project_name = "reporunner"
+project_name = "klikkflow"
 location     = "eastus"
 
 # Network

@@ -116,7 +116,7 @@ export default defineConfig({
   webServer: process.env.CI
     ? undefined
     : {
-        command: 'pnpm --filter @reporunner/frontend dev',
+        command: 'pnpm --filter @klikkflow/frontend dev',
         url: 'http://localhost:3000',
         reuseExistingServer: !process.env.CI,
         timeout: 120 * 1000, // 2 minutes to start

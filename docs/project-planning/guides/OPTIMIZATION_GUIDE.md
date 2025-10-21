@@ -1,4 +1,4 @@
-# 🚀 Reporunner Optimization Guide
+# 🚀 KlikkFlow Optimization Guide
 
 This guide documents the optimizations implemented to improve performance, reduce bundle size, and enhance developer experience.
 
@@ -7,7 +7,7 @@ This guide documents the optimizations implemented to improve performance, reduc
 ### Before Optimizations
 - **590 package.json files** across the monorepo
 - **2.1GB node_modules** directory
-- **25+ packages** in `@reporunner/*` scope
+- **25+ packages** in `@klikkflow/*` scope
 - Mixed Jest/Vitest testing setup
 - Limited dependency deduplication
 
@@ -148,7 +148,7 @@ make project-stats
 pnpm analyze:bundle
 
 # Analyze specific chunks
-pnpm --filter @reporunner/frontend run build:analyze
+pnpm --filter @klikkflow/frontend run build:analyze
 ```
 
 #### Unused Dependencies

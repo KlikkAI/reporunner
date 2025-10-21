@@ -1,6 +1,6 @@
-# Reporunner Monitoring Stack
+# KlikkFlow Monitoring Stack
 
-A comprehensive monitoring solution for Reporunner using Prometheus, Grafana, AlertManager, and various exporters. This stack provides real-time monitoring, alerting, and visualization for your Reporunner workflow automation platform.
+A comprehensive monitoring solution for KlikkFlow using Prometheus, Grafana, AlertManager, and various exporters. This stack provides real-time monitoring, alerting, and visualization for your KlikkFlow workflow automation platform.
 
 ## 🚀 Quick Start
 
@@ -61,7 +61,7 @@ cd monitoring
 
 ### 📊 **Rich Visualizations**
 - **Pre-built Dashboards**: Application overview, system health, business metrics
-- **Custom Dashboards**: Tailored for Reporunner workflow monitoring
+- **Custom Dashboards**: Tailored for KlikkFlow workflow monitoring
 - **Real-time Updates**: Live monitoring with configurable refresh rates
 - **Mobile Responsive**: Access dashboards from any device
 
@@ -113,7 +113,7 @@ vi .env
 
 ## 📊 Dashboards
 
-### Reporunner Overview Dashboard
+### KlikkFlow Overview Dashboard
 - **Execution Metrics**: Success rate, execution counts, duration trends
 - **API Performance**: Request rate, response time, error rate
 - **Queue Status**: Backlog size, processing rate
@@ -217,7 +217,7 @@ const httpRequestDuration = new prometheus.Histogram({
 });
 
 const workflowExecutions = new prometheus.Counter({
-  name: 'reporunner_workflow_executions_total',
+  name: 'klikkflow_workflow_executions_total',
   help: 'Total number of workflow executions',
   labelNames: ['workflow_id', 'status']
 });
@@ -360,4 +360,4 @@ To extend the monitoring stack:
 
 ## 📄 License
 
-This monitoring configuration is part of the Reporunner project and follows the same licensing terms.
+This monitoring configuration is part of the KlikkFlow project and follows the same licensing terms.

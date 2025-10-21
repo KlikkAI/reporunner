@@ -1,5 +1,5 @@
 {
-  "name": "@reporunner/backend",
+  "name": "@klikkflow/backend",
   "version": "1.0.0",
   "description": "High-performance workflow automation backend - n8n competitor with MongoDB",
   "main": "dist/server.js",
@@ -22,12 +22,12 @@
     "organize-imports": "biome check --write .",
     "type-check": "tsc --noEmit",
     "clean": "rm -rf dist",
-    "deploy": "pnpm build && node -e \"console.log('Deploy for @reporunner/backend is not implemented yet');\"",
+    "deploy": "pnpm build && node -e \"console.log('Deploy for @klikkflow/backend is not implemented yet');\"",
     "seed": "tsx src/scripts/seed.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.57.0",
-    "@reporunner/core": "workspace:*",
+    "@klikkflow/core": "workspace:*",
     "@types/pg": "^8.15.5",
     "axios": "^1.6.5",
     "bcryptjs": "^2.4.3",

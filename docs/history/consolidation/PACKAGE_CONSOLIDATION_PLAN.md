@@ -1,50 +1,50 @@
 # Package Consolidation Plan
 
 ## Current State
-- 25+ packages in `@reporunner/*` scope
+- 25+ packages in `@klikkflow/*` scope
 - 590 total package.json files
 - 2.1GB node_modules
 
 ## Consolidation Strategy
 
 ### Phase 1: Immediate Merges (Low Risk)
-1. **@reporunner/constants** → **@reporunner/types**
+1. **@klikkflow/constants** → **@klikkflow/types**
    - Both are small, type-related packages
    - No external dependencies
    - Used together frequently
 
-2. **@reporunner/validation** → **@reporunner/core**
+2. **@klikkflow/validation** → **@klikkflow/core**
    - Validation is core functionality
    - Reduces circular dependencies
    - Simplifies imports
 
 ### Phase 2: Related Package Merges (Medium Risk)
-3. **@reporunner/backend-common** → **@reporunner/services**
+3. **@klikkflow/backend-common** → **@klikkflow/services**
    - Both are backend utilities
    - Often used together
    - Reduces package overhead
 
-4. **@reporunner/auth** + **@reporunner/security** → **@reporunner/auth**
+4. **@klikkflow/auth** + **@klikkflow/security** → **@klikkflow/auth**
    - Security is primarily auth-related
    - Logical grouping
    - Reduces auth complexity
 
 ### Phase 3: Infrastructure Consolidation (Higher Risk)
-5. **@reporunner/monitoring** + **@reporunner/real-time** → **@reporunner/platform**
+5. **@klikkflow/monitoring** + **@klikkflow/real-time** → **@klikkflow/platform**
    - Platform-level concerns
    - Shared infrastructure
    - Better separation of concerns
 
-6. **@reporunner/gateway** → **@reporunner/api**
+6. **@klikkflow/gateway** → **@klikkflow/api**
    - API gateway is part of API layer
    - Reduces network packages
    - Cleaner architecture
 
 ### Phase 4: Specialized Packages (Evaluate)
-7. **@reporunner/enterprise** - Keep separate (licensing)
-8. **@reporunner/cli** - Keep separate (distribution)
-9. **@reporunner/design-system** - Keep separate (frontend)
-10. **@reporunner/ai** - Keep separate (optional feature)
+7. **@klikkflow/enterprise** - Keep separate (licensing)
+8. **@klikkflow/cli** - Keep separate (distribution)
+9. **@klikkflow/design-system** - Keep separate (frontend)
+10. **@klikkflow/ai** - Keep separate (optional feature)
 
 ## Expected Benefits
 - Reduce from 25+ to ~15 packages

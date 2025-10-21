@@ -1,7 +1,7 @@
 /**
  * About Page
  *
- * Company information, team, mission, and values for Reporunner
+ * Company information, team, mission, and values for KlikkFlow
  */
 
 import {
@@ -127,7 +127,7 @@ export const About: React.FC = () => {
       year: '2023',
       title: 'Founded',
       description:
-        'Reporunner was founded by ex-Zapier and Google engineers with a vision for enterprise-grade workflow automation.',
+        'KlikkFlow was founded by ex-Zapier and Google engineers with a vision for enterprise-grade workflow automation.',
     },
     {
       year: '2023',
@@ -145,7 +145,7 @@ export const About: React.FC = () => {
       year: '2024',
       title: 'Enterprise Adoption',
       description:
-        '100+ enterprise customers adopted Reporunner for mission-critical workflow automation.',
+        '100+ enterprise customers adopted KlikkFlow for mission-critical workflow automation.',
     },
     {
       year: '2025',

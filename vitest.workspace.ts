@@ -23,10 +23,10 @@ export default defineWorkspace([
 
   // Core package - extends package config only
   {
-    extends: './packages/@reporunner/core/vitest.config.ts',
+    extends: './packages/@klikkflow/core/vitest.config.ts',
     test: {
       name: 'core',
-      root: './packages/@reporunner/core',
+      root: './packages/@klikkflow/core',
     },
   },
 
@@ -41,10 +41,10 @@ export default defineWorkspace([
 
   // Validation package - extends package config only
   {
-    extends: './packages/@reporunner/validation/vitest.config.ts',
+    extends: './packages/@klikkflow/validation/vitest.config.ts',
     test: {
       name: 'validation',
-      root: './packages/@reporunner/validation',
+      root: './packages/@klikkflow/validation',
     },
   },
 ]);

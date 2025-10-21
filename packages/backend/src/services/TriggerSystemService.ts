@@ -5,7 +5,7 @@
 
 import crypto from 'node:crypto';
 import { EventEmitter } from 'node:events';
-import { Logger } from '@reporunner/core';
+import { Logger } from '@klikkflow/core';
 
 export interface TriggerConfig {
   id: string;

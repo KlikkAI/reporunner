@@ -127,7 +127,7 @@ export const CommunityHub: React.FC = () => {
       id: '2',
       title: 'Integration Plugin Contest',
       description:
-        "Build a plugin that integrates Reporunner with a popular service that doesn't have an integration yet.",
+        "Build a plugin that integrates KlikkFlow with a popular service that doesn't have an integration yet.",
       category: 'plugin',
       difficulty: 'advanced',
       prize: '$2,000 + Marketplace Revenue Share',
@@ -564,7 +564,7 @@ export const CommunityHub: React.FC = () => {
             <Space direction="vertical" style={{ width: '100%' }}>
               <Alert
                 message="Join Our Advocacy Program!"
-                description="Help us grow the Reporunner community and get exclusive benefits."
+                description="Help us grow the KlikkFlow community and get exclusive benefits."
                 type="info"
                 showIcon
               />
@@ -592,7 +592,7 @@ export const CommunityHub: React.FC = () => {
               <List
                 size="small"
                 dataSource={[
-                  'Active in the Reporunner community',
+                  'Active in the KlikkFlow community',
                   'Created content about workflow automation',
                   'Contributed to open source projects',
                   'Passionate about helping developers',

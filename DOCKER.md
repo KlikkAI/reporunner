@@ -1,6 +1,6 @@
-# 🐳 Reporunner Docker Quick Start Guide
+# 🐳 KlikkFlow Docker Quick Start Guide
 
-Complete guide for deploying Reporunner using Docker and Docker Compose.
+Complete guide for deploying KlikkFlow using Docker and Docker Compose.
 
 **Last Updated:** October 19, 2025
 
@@ -23,10 +23,10 @@ Complete guide for deploying Reporunner using Docker and Docker Compose.
 
 ## ⚡ One-Command Installation (Recommended)
 
-The **fastest way** to get Reporunner running is with our one-command installer:
+The **fastest way** to get KlikkFlow running is with our one-command installer:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/KlikkAI/reporunner/main/scripts/install.sh | sh
+curl -fsSL https://raw.githubusercontent.com/KlikkAI/klikkflow/main/scripts/install.sh | sh
 ```
 
 ### What the Installer Does
@@ -46,22 +46,22 @@ The installer automatically:
 
 **Default Installation** (ports 3000/3001):
 ```bash
-curl -fsSL https://raw.githubusercontent.com/KlikkAI/reporunner/main/scripts/install.sh | sh
+curl -fsSL https://raw.githubusercontent.com/KlikkAI/klikkflow/main/scripts/install.sh | sh
 ```
 
 **Custom Installation Directory**:
 ```bash
-REPORUNNER_INSTALL_DIR=/opt/reporunner curl -fsSL https://raw.githubusercontent.com/KlikkAI/reporunner/main/scripts/install.sh | sh
+KLIKKFLOW_INSTALL_DIR=/opt/klikkflow curl -fsSL https://raw.githubusercontent.com/KlikkAI/klikkflow/main/scripts/install.sh | sh
 ```
 
 **Custom Ports**:
 ```bash
-FRONTEND_PORT=8080 BACKEND_PORT=8081 curl -fsSL https://raw.githubusercontent.com/KlikkAI/reporunner/main/scripts/install.sh | sh
+FRONTEND_PORT=8080 BACKEND_PORT=8081 curl -fsSL https://raw.githubusercontent.com/KlikkAI/klikkflow/main/scripts/install.sh | sh
 ```
 
 **Manual Download** (for review before execution):
 ```bash
-wget https://raw.githubusercontent.com/KlikkAI/reporunner/main/scripts/install.sh
+wget https://raw.githubusercontent.com/KlikkAI/klikkflow/main/scripts/install.sh
 chmod +x install.sh
 ./install.sh
 ```
@@ -72,17 +72,17 @@ After installation completes:
 
 1. **Access the Application**:
    - Frontend: http://localhost:3000
-   - Default credentials: `admin@reporunner.local` / `admin123`
+   - Default credentials: `admin@klikkflow.local` / `admin123`
 
 2. **View Logs**:
    ```bash
-   cd ~/.reporunner
+   cd ~/.klikkflow
    docker compose logs -f
    ```
 
 3. **Configure AI Services** (optional):
    ```bash
-   cd ~/.reporunner
+   cd ~/.klikkflow
    nano .env
    # Add your API keys:
    # OPENAI_API_KEY=sk-...
@@ -93,7 +93,7 @@ After installation completes:
 
 4. **Uninstall** (if needed):
    ```bash
-   cd ~/.reporunner
+   cd ~/.klikkflow
    docker compose down -v
    ```
 
@@ -134,8 +134,8 @@ For users who prefer to build from source or need custom deployment configuratio
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/reporunner/reporunner.git
-cd reporunner
+git clone https://github.com/klikkflow/klikkflow.git
+cd klikkflow
 ```
 
 ### 2. Configure Environment
@@ -168,7 +168,7 @@ docker-compose up -d
 docker-compose logs -f
 ```
 
-### 4. Access Reporunner
+### 4. Access KlikkFlow
 
 Once services are running:
 - **Frontend UI**: http://localhost:3000
@@ -179,7 +179,7 @@ Once services are running:
 
 ## 🎯 Docker Profiles
 
-Reporunner uses a **profile-based architecture** for flexible deployment:
+KlikkFlow uses a **profile-based architecture** for flexible deployment:
 
 ### Core Services (Default - 6 containers)
 
@@ -343,7 +343,7 @@ SMTP_HOST=smtp.gmail.com
 SMTP_PORT=587
 SMTP_USER=your-email@gmail.com
 SMTP_PASSWORD=your-app-password
-SMTP_FROM=noreply@reporunner.com
+SMTP_FROM=noreply@klikkflow.com
 ```
 
 ### See Full Configuration
@@ -470,7 +470,7 @@ docker-compose exec backend pnpm install
 docker-compose exec mongo mongosh
 
 # Access PostgreSQL shell
-docker-compose exec postgres psql -U postgres -d reporunner
+docker-compose exec postgres psql -U postgres -d klikkflow
 ```
 
 ### Cleanup
@@ -553,7 +553,7 @@ docker-compose up -d
 
 ```bash
 # Fix volume permissions
-docker-compose exec backend chown -R reporunner:nodejs /app
+docker-compose exec backend chown -R klikkflow:nodejs /app
 
 # Run as root temporarily (not recommended for production)
 docker-compose exec -u root backend sh
@@ -675,7 +675,7 @@ docker-compose -f docker-compose.prod.yml --profile full up -d
 
 For production-grade Kubernetes deployment, see:
 
-- **Helm Charts:** `infrastructure/kubernetes/helm/reporunner/`
+- **Helm Charts:** `infrastructure/kubernetes/helm/klikkflow/`
 - **Kubernetes Manifests:** `infrastructure/kubernetes/manifests/`
 - **Deployment Guide:** `docs/deployment/KUBERNETES.md`
 
@@ -684,15 +684,15 @@ For production-grade Kubernetes deployment, see:
 ```bash
 # Install with Helm
 cd infrastructure/kubernetes
-helm install reporunner ./helm/reporunner \
+helm install klikkflow ./helm/klikkflow \
   --set ingress.hosts[0].host=your-domain.com \
   --set postgresql.auth.password=your-secure-password
 
 # Check status
-kubectl get pods -n reporunner
+kubectl get pods -n klikkflow
 
 # View logs
-kubectl logs -f -n reporunner deployment/reporunner-backend
+kubectl logs -f -n klikkflow deployment/klikkflow-backend
 ```
 
 ---
@@ -713,7 +713,7 @@ kubectl logs -f -n reporunner deployment/reporunner-backend
 ## 🆘 Getting Help
 
 **Issues:**
-- GitHub Issues: https://github.com/reporunner/reporunner/issues
+- GitHub Issues: https://github.com/klikkflow/klikkflow/issues
 - Check [Troubleshooting](#-troubleshooting) section above
 
 **Community:**
@@ -722,7 +722,7 @@ kubectl logs -f -n reporunner deployment/reporunner-backend
 
 **Commercial Support:**
 - Enterprise support available
-- Contact: support@reporunner.com
+- Contact: support@klikkflow.com
 
 ---
 
@@ -732,4 +732,4 @@ This project is licensed under the MIT License - see [LICENSE](LICENSE) for deta
 
 ---
 
-**Made with ❤️ by the Reporunner Team**
+**Made with ❤️ by the KlikkFlow Team**

@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Plugin Marketplace is a comprehensive platform for discovering, publishing, and managing workflow plugins. Built on the consolidated architecture from Phase A, it provides a secure, scalable, and user-friendly environment for extending Reporunner's capabilities.
+The Plugin Marketplace is a comprehensive platform for discovering, publishing, and managing workflow plugins. Built on the consolidated architecture from Phase A, it provides a secure, scalable, and user-friendly environment for extending KlikkFlow's capabilities.
 
 ## Key Features
 
@@ -17,7 +17,7 @@ The Plugin Marketplace is a comprehensive platform for discovering, publishing, 
 - **Automated Security Scanning**: Comprehensive analysis for vulnerabilities and malicious code
 - **Code Quality Analysis**: Performance, maintainability, and best practice validation
 - **Compatibility Checking**: Ensures plugins work with platform versions
-- **Verification System**: Trusted plugins verified by the Reporunner team
+- **Verification System**: Trusted plugins verified by the KlikkFlow team
 - **Sandboxed Execution**: Safe plugin testing environment
 
 ### 📦 **Plugin Management**
@@ -40,7 +40,7 @@ The Plugin Marketplace is a comprehensive platform for discovering, publishing, 
 
 #### Plugin Registry Service
 ```typescript
-// packages/@reporunner/platform/src/marketplace/plugin-registry.ts
+// packages/@klikkflow/platform/src/marketplace/plugin-registry.ts
 export class PluginRegistry {
   async registerPlugin(pluginPackage: PluginPackage): Promise<{success: boolean; pluginId: string}>
   async searchPlugins(searchQuery: PluginSearchQuery): Promise<SearchResult>
@@ -53,7 +53,7 @@ export class PluginRegistry {
 
 #### Plugin Validator Service
 ```typescript
-// packages/@reporunner/platform/src/marketplace/plugin-validator.ts
+// packages/@klikkflow/platform/src/marketplace/plugin-validator.ts
 export class PluginValidator {
   async validatePlugin(pluginPackage: PluginPackage): Promise<ValidationResult>
   async quickValidate(pluginPackage: PluginPackage): Promise<{isValid: boolean; errors: string[]}>
@@ -62,7 +62,7 @@ export class PluginValidator {
 
 #### Plugin Distribution Service
 ```typescript
-// packages/@reporunner/platform/src/marketplace/plugin-distribution.ts
+// packages/@klikkflow/platform/src/marketplace/plugin-distribution.ts
 export class PluginDistribution {
   async publishPlugin(request: PublishRequest): Promise<PublishResult>
   async downloadPlugin(request: DownloadRequest): Promise<DownloadResult>
@@ -114,7 +114,7 @@ router.get('/featured', getFeaturedPlugins);     // Featured plugins
 ## Plugin Types
 
 ### Integration Plugins
-Connect Reporunner with external services and APIs.
+Connect KlikkFlow with external services and APIs.
 
 **Examples:**
 - Slack integration for notifications
@@ -236,19 +236,19 @@ interface PluginPermissions {
 
 ```bash
 # Install the PDK
-npm install -g @reporunner/plugin-dev-kit
+npm install -g @klikkflow/plugin-dev-kit
 
 # Create a new plugin
-reporunner-pdk create my-plugin --type=integration
+klikkflow-pdk create my-plugin --type=integration
 
 # Develop and test locally
-reporunner-pdk dev
+klikkflow-pdk dev
 
 # Validate before publishing
-reporunner-pdk validate
+klikkflow-pdk validate
 
 # Publish to marketplace
-reporunner-pdk publish
+klikkflow-pdk publish
 ```
 
 ### Plugin Template Structure
@@ -275,7 +275,7 @@ my-plugin/
 ### Testing Framework
 
 ```typescript
-import { PluginTester } from '@reporunner/plugin-dev-kit';
+import { PluginTester } from '@klikkflow/plugin-dev-kit';
 
 describe('My Plugin', () => {
   const tester = new PluginTester();

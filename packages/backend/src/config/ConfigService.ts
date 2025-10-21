@@ -30,8 +30,8 @@ export class ConfigService {
   getDatabaseConfig(): { uri: string; dbName: string } {
     // TODO: Implement database configuration
     return {
-      uri: this.get('MONGODB_URI') || 'mongodb://localhost:27017/reporunner',
-      dbName: this.get('DB_NAME') || 'reporunner',
+      uri: this.get('MONGODB_URI') || 'mongodb://localhost:27017/klikkflow',
+      dbName: this.get('DB_NAME') || 'klikkflow',
     };
   }
 }

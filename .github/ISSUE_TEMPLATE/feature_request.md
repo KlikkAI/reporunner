@@ -1,6 +1,6 @@
 ---
 name: Feature request
-description: Suggest an idea for Reporunner
+description: Suggest an idea for KlikkFlow
 labels: enhancement
 ---
 

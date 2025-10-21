@@ -1,34 +1,34 @@
 @startuml Monorepo Structure
 !theme plain
-title Reporunner Monorepo Architecture
+title KlikkFlow Monorepo Architecture
 
-package "Reporunner Monorepo" {
+package "KlikkFlow Monorepo" {
   package "packages/" {
-    component "@reporunner/core" as core {
+    component "@klikkflow/core" as core {
       note right: Shared types,\nutilities, schemas
     }
 
-    component "@reporunner/backend" as backend {
+    component "@klikkflow/backend" as backend {
       note right: Express.js API server\nWorkflow execution
     }
 
-    component "@reporunner/frontend" as frontend {
+    component "@klikkflow/frontend" as frontend {
       note right: React workflow editor\nUser interface
     }
 
-    component "@reporunner/cli" as cli {
+    component "@klikkflow/cli" as cli {
       note right: Command-line tools\nProject scaffolding
     }
 
-    component "@reporunner/sdk" as sdk {
+    component "@klikkflow/sdk" as sdk {
       note right: TypeScript SDK\nProgrammatic access
     }
 
-    component "@reporunner/nodes-base" as nodes {
+    component "@klikkflow/nodes-base" as nodes {
       note right: Core workflow nodes\nIntegrations
     }
 
-    component "@reporunner/workflow-engine" as engine {
+    component "@klikkflow/workflow-engine" as engine {
       note right: Execution engine\nNode processing
     }
   }

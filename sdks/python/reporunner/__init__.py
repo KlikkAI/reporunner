@@ -1,11 +1,11 @@
 """
-Reporunner Python SDK
+KlikkFlow Python SDK
 
-A comprehensive Python SDK for the Reporunner visual workflow automation platform.
+A comprehensive Python SDK for the KlikkFlow visual workflow automation platform.
 Provides the same API design as the TypeScript SDK with Python-native features.
 """
 
-from .client import ReporunnerClient
+from .client import KlikkFlowClient
 from .workflows import WorkflowManager
 from .executions import ExecutionManager
 from .credentials import CredentialManager
@@ -39,7 +39,7 @@ from .executions import ExecutionManager
 from .credentials import CredentialManager
 from .nodes import NodeRegistry
 from .exceptions import (
-    ReporunnerError,
+    KlikkFlowError,
     AuthenticationError,
     ValidationError,
     ExecutionError,
@@ -49,20 +49,20 @@ from .exceptions import (
 
 # Version information
 __version__ = "1.0.0"
-__author__ = "Reporunner Team"
-__email__ = "team@reporunner.com"
+__author__ = "KlikkFlow Team"
+__email__ = "team@klikkflow.com"
 __license__ = "Apache-2.0"
 
 # Package metadata
-__title__ = "reporunner-python"
-__description__ = "Python SDK for Reporunner - Visual workflow automation platform"
-__url__ = "https://github.com/reporunner/reporunner"
-__documentation__ = "https://docs.reporunner.com/sdks/python"
+__title__ = "klikkflow-python"
+__description__ = "Python SDK for KlikkFlow - Visual workflow automation platform"
+__url__ = "https://github.com/klikkflow/klikkflow"
+__documentation__ = "https://docs.klikkflow.com/sdks/python"
 
 # Public API
 __all__ = [
     # Main client
-    "ReporunnerClient",
+    "KlikkFlowClient",
     # Core types
     "WorkflowDefinition",
     "NodeDefinition",
@@ -91,7 +91,7 @@ __all__ = [
     "CredentialManager",
     "NodeRegistry",
     # Exceptions
-    "ReporunnerError",
+    "KlikkFlowError",
     "AuthenticationError",
     "ValidationError",
     "ExecutionError",
@@ -109,9 +109,9 @@ def get_version() -> str:
 
 def get_user_agent() -> str:
     """Get the User-Agent string for HTTP requests."""
-    return f"reporunner-python/{__version__}"
+    return f"klikkflow-python/{__version__}"
 
 
 # Convenient aliases for common usage patterns
-create_client = ReporunnerClient
-Client = ReporunnerClient
+create_client = KlikkFlowClient
+Client = KlikkFlowClient

@@ -1,0 +1,42 @@
+{
+  "name": "@klikkflow/analytics-service",
+  "version": "1.0.0",
+  "description": "Enterprise analytics service for usage metrics, performance tracking, and business intelligence",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx watch src/index.ts",
+    "test": "vitest",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "format": "biome format --write .",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@klikkflow/shared": "workspace:*",
+    "@klikkflow/backend": "workspace:*",
+    "drizzle-orm": "catalog:",
+    "postgres": "catalog:",
+    "pg": "catalog:",
+    "ioredis": "catalog:",
+    "date-fns": "^3.6.0",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "@types/uuid": "^9.0.8",
+    "typescript": "catalog:",
+    "@types/node": "catalog:",
+    "vitest": "catalog:"
+  },
+  "keywords": [
+    "analytics",
+    "metrics",
+    "performance",
+    "business-intelligence",
+    "usage-tracking",
+    "enterprise"
+  ],
+  "author": "KlikkFlow Team",
+  "license": "MIT"
+}

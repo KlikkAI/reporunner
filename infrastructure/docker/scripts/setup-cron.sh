@@ -1,6 +1,6 @@
 #!/bin/bash
 # ============================================
-# Reporunner Backup Cron Setup Script
+# KlikkFlow Backup Cron Setup Script
 # Configures automated backup scheduling
 # ============================================
 
@@ -95,7 +95,7 @@ log_info "Retention: ${BACKUP_RETENTION_DAYS} days"
 log_info "========================================"
 log_success "Backup service started successfully"
 log_info "Next backup will run according to schedule: ${BACKUP_SCHEDULE}"
-log_info "Use 'docker logs -f reporunner-backup' to monitor backups"
+log_info "Use 'docker logs -f klikkflow-backup' to monitor backups"
 log_info "========================================"
 
 # Start crond in foreground

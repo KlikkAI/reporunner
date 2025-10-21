@@ -1,0 +1,39 @@
+{
+  "name": "@klikkflow/state-store",
+  "version": "1.0.0",
+  "description": "Enterprise state management for workflow execution state, persistence, and recovery",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx watch src/index.ts",
+    "test": "vitest",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "format": "biome format --write .",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@klikkflow/shared": "workspace:*",
+    "@klikkflow/backend": "workspace:*",
+    "ioredis": "catalog:",
+    "uuid": "^9.0.1",
+    "date-fns": "^3.6.0",
+    "zstd-codec": "^0.1.4"
+  },
+  "devDependencies": {
+    "@types/uuid": "^9.0.8",
+    "typescript": "catalog:",
+    "@types/node": "catalog:",
+    "vitest": "catalog:"
+  },
+  "keywords": [
+    "state-management",
+    "workflow",
+    "persistence",
+    "recovery",
+    "enterprise"
+  ],
+  "author": "KlikkFlow Team",
+  "license": "MIT"
+}

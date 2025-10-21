@@ -1,5 +1,5 @@
 # ============================================
-# Backup Service Dockerfile - Reporunner
+# Backup Service Dockerfile - KlikkFlow
 # Automated MongoDB + PostgreSQL backups
 # Target size: ~45MB
 # Supports: Local backups + Optional S3 upload
@@ -53,11 +53,11 @@ HEALTHCHECK --interval=60s --timeout=5s --start-period=10s --retries=3 \
   CMD test -f /tmp/backup-health || exit 1
 
 # Labels
-LABEL org.opencontainers.image.title="Reporunner Backup Service"
+LABEL org.opencontainers.image.title="KlikkFlow Backup Service"
 LABEL org.opencontainers.image.description="Automated backup service for MongoDB and PostgreSQL databases"
-LABEL org.opencontainers.image.url="https://github.com/reporunner/reporunner"
-LABEL org.opencontainers.image.source="https://github.com/reporunner/reporunner"
-LABEL org.opencontainers.image.vendor="Reporunner Team"
+LABEL org.opencontainers.image.url="https://github.com/klikkflow/klikkflow"
+LABEL org.opencontainers.image.source="https://github.com/klikkflow/klikkflow"
+LABEL org.opencontainers.image.vendor="KlikkFlow Team"
 LABEL org.opencontainers.image.licenses="MIT"
 
 # Start cron daemon and backup scheduler

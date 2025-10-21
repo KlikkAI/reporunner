@@ -2,7 +2,7 @@ global:
   scrape_interval: 15s
   evaluation_interval: 15s
   external_labels:
-    cluster: 'reporunner'
+    cluster: 'klikkflow'
     environment: 'production'
 
 # Alertmanager configuration
@@ -25,10 +25,10 @@ scrape_configs:
     scrape_interval: 30s
     metrics_path: /metrics
 
-  # Reporunner Backend API
-  - job_name: 'reporunner-backend'
+  # KlikkFlow Backend API
+  - job_name: 'klikkflow-backend'
     static_configs:
-      - targets: ['reporunner-backend:3001']
+      - targets: ['klikkflow-backend:3001']
     scrape_interval: 15s
     metrics_path: /metrics
     scrape_timeout: 10s
@@ -36,18 +36,18 @@ scrape_configs:
     params:
       format: ['prometheus']
 
-  # Reporunner Frontend (if serving metrics)
-  - job_name: 'reporunner-frontend'
+  # KlikkFlow Frontend (if serving metrics)
+  - job_name: 'klikkflow-frontend'
     static_configs:
-      - targets: ['reporunner-frontend:3000']
+      - targets: ['klikkflow-frontend:3000']
     scrape_interval: 30s
     metrics_path: /metrics
     scrape_timeout: 10s
 
-  # Reporunner Worker Processes
-  - job_name: 'reporunner-workers'
+  # KlikkFlow Worker Processes
+  - job_name: 'klikkflow-workers'
     static_configs:
-      - targets: ['reporunner-worker-1:3002', 'reporunner-worker-2:3002']
+      - targets: ['klikkflow-worker-1:3002', 'klikkflow-worker-2:3002']
     scrape_interval: 15s
     metrics_path: /metrics
     scrape_timeout: 10s
@@ -101,9 +101,9 @@ scrape_configs:
       module: [http_2xx]
     static_configs:
       - targets:
-        - http://reporunner-backend:3001/health
-        - http://reporunner-frontend:3000
-        - https://api.reporunner.com/health
+        - http://klikkflow-backend:3001/health
+        - http://klikkflow-frontend:3000
+        - https://api.klikkflow.com/health
     relabel_configs:
       - source_labels: [__address__]
         target_label: __param_target
@@ -158,7 +158,7 @@ scrape_configs:
         namespaces:
           names:
             - default
-            - reporunner
+            - klikkflow
     scheme: https
     tls_config:
       ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
@@ -184,7 +184,7 @@ scrape_configs:
       - role: pod
         namespaces:
           names:
-            - reporunner
+            - klikkflow
     relabel_configs:
       - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
         action: keep

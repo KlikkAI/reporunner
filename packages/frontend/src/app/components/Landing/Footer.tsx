@@ -40,7 +40,7 @@ export const Footer: React.FC = () => {
         { name: 'Examples', href: '/documentation' },
         {
           name: 'GitHub',
-          href: 'https://github.com/reporunner/reporunner',
+          href: 'https://github.com/klikkflow/klikkflow',
           external: true,
         },
         { name: 'Community', href: '/contact' },
@@ -56,7 +56,7 @@ export const Footer: React.FC = () => {
         { name: 'Help Center', href: '/documentation' },
         {
           name: 'Status Page',
-          href: 'https://status.reporunner.dev',
+          href: 'https://status.klikkflow.dev',
           external: true,
         },
       ],
@@ -78,19 +78,19 @@ export const Footer: React.FC = () => {
     {
       name: 'GitHub',
       icon: Github,
-      href: 'https://github.com/reporunner/reporunner',
+      href: 'https://github.com/klikkflow/klikkflow',
       followers: '2.5K',
     },
     {
       name: 'Twitter',
       icon: Twitter,
-      href: 'https://twitter.com/reporunner',
+      href: 'https://twitter.com/klikkflow',
       followers: '8.2K',
     },
     {
       name: 'LinkedIn',
       icon: Linkedin,
-      href: 'https://linkedin.com/company/reporunner',
+      href: 'https://linkedin.com/company/klikkflow',
       followers: '5.1K',
     },
     { name: 'Slack', icon: Slack, href: '/contact', followers: '3.8K' },
@@ -102,7 +102,7 @@ export const Footer: React.FC = () => {
       <div className="border-b border-gray-800">
         <div className="container mx-auto px-6 py-12">
           <div className="max-w-4xl mx-auto text-center">
-            <h3 className="text-2xl font-bold mb-4">Stay Updated with Reporunner</h3>
+            <h3 className="text-2xl font-bold mb-4">Stay Updated with KlikkFlow</h3>
             <p className="text-gray-400 mb-8 max-w-2xl mx-auto">
               Get the latest updates on new features, integrations, and enterprise capabilities.
               Join our newsletter for exclusive insights and early access.
@@ -134,7 +134,7 @@ export const Footer: React.FC = () => {
           <div className="lg:col-span-2">
             <div className="mb-6">
               <h2 className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-                Reporunner
+                KlikkFlow
               </h2>
               <p className="text-gray-400 mt-2">
                 Enterprise-grade workflow automation with AI capabilities
@@ -150,7 +150,7 @@ export const Footer: React.FC = () => {
             <div className="space-y-3 mb-6">
               <div className="flex items-center gap-3 text-gray-400">
                 <Mail className="w-4 h-4" />
-                <span className="text-sm">hello@reporunner.dev</span>
+                <span className="text-sm">hello@klikkflow.dev</span>
               </div>
               <div className="flex items-center gap-3 text-gray-400">
                 <Phone className="w-4 h-4" />
@@ -209,7 +209,7 @@ export const Footer: React.FC = () => {
         <div className="container mx-auto px-6 py-6">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <div className="flex flex-col md:flex-row items-center gap-4">
-              <p className="text-gray-400 text-sm">© 2025 Reporunner. All rights reserved.</p>
+              <p className="text-gray-400 text-sm">© 2025 KlikkFlow. All rights reserved.</p>
               <div className="flex gap-6 text-sm">
                 <a href="/privacy" className="text-gray-400 hover:text-white transition-colors">
                   Privacy Policy
@@ -229,7 +229,7 @@ export const Footer: React.FC = () => {
                 <span>All systems operational</span>
               </div>
               <a
-                href="https://status.reporunner.dev"
+                href="https://status.klikkflow.dev"
                 className="text-gray-400 hover:text-white text-sm transition-colors flex items-center gap-1"
                 target="_blank"
                 rel="noopener noreferrer"

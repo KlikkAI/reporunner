@@ -1,10 +1,10 @@
-package com.reporunner;
+package com.klikkflow;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.reporunner.model.*;
-import com.reporunner.websocket.ExecutionWebSocket;
+import com.klikkflow.model.*;
+import com.klikkflow.websocket.ExecutionWebSocket;
 import okhttp3.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,16 +18,16 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 /**
- * Main client for interacting with the Reporunner API.
+ * Main client for interacting with the KlikkFlow API.
  * 
  * Provides comprehensive workflow management, execution, and real-time monitoring capabilities
  * with enterprise-grade features including connection pooling, retry logic, and structured logging.
  * 
- * @author Reporunner Team
+ * @author KlikkFlow Team
  * @version 1.0.0
  */
-public class ReporunnerClient implements AutoCloseable {
-    private static final Logger logger = LoggerFactory.getLogger(ReporunnerClient.class);
+public class KlikkFlowClient implements AutoCloseable {
+    private static final Logger logger = LoggerFactory.getLogger(KlikkFlowClient.class);
     
     private static final MediaType JSON = MediaType.get("application/json; charset=utf-8");
     private static final Duration DEFAULT_TIMEOUT = Duration.ofSeconds(30);
@@ -39,39 +39,39 @@ public class ReporunnerClient implements AutoCloseable {
     private final ObjectMapper objectMapper;
     
     /**
-     * Create a new Reporunner client with default settings.
+     * Create a new KlikkFlow client with default settings.
      */
-    public ReporunnerClient() {
+    public KlikkFlowClient() {
         this(DEFAULT_BASE_URL, null, DEFAULT_TIMEOUT);
     }
     
     /**
-     * Create a new Reporunner client with specified base URL.
+     * Create a new KlikkFlow client with specified base URL.
      * 
-     * @param baseUrl The base URL of the Reporunner API
+     * @param baseUrl The base URL of the KlikkFlow API
      */
-    public ReporunnerClient(String baseUrl) {
+    public KlikkFlowClient(String baseUrl) {
         this(baseUrl, null, DEFAULT_TIMEOUT);
     }
     
     /**
-     * Create a new Reporunner client with base URL and API key.
+     * Create a new KlikkFlow client with base URL and API key.
      * 
-     * @param baseUrl The base URL of the Reporunner API
+     * @param baseUrl The base URL of the KlikkFlow API
      * @param apiKey The API key for authentication
      */
-    public ReporunnerClient(String baseUrl, String apiKey) {
+    public KlikkFlowClient(String baseUrl, String apiKey) {
         this(baseUrl, apiKey, DEFAULT_TIMEOUT);
     }
     
     /**
-     * Create a new Reporunner client with full configuration.
+     * Create a new KlikkFlow client with full configuration.
      * 
-     * @param baseUrl The base URL of the Reporunner API
+     * @param baseUrl The base URL of the KlikkFlow API
      * @param apiKey The API key for authentication (can be null)
      * @param timeout The request timeout
      */
-    public ReporunnerClient(String baseUrl, String apiKey, Duration timeout) {
+    public KlikkFlowClient(String baseUrl, String apiKey, Duration timeout) {
         this.baseUrl = baseUrl.endsWith("/") ? baseUrl.substring(0, baseUrl.length() - 1) : baseUrl;
         this.apiKey = apiKey;
         
@@ -89,7 +89,7 @@ public class ReporunnerClient implements AutoCloseable {
                 .registerModule(new JavaTimeModule())
                 .setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
         
-        logger.info("Initialized Reporunner client for: {}", this.baseUrl);
+        logger.info("Initialized KlikkFlow client for: {}", this.baseUrl);
     }
     
     /**
@@ -97,9 +97,9 @@ public class ReporunnerClient implements AutoCloseable {
      * 
      * @param request The workflow creation request
      * @return The created workflow definition
-     * @throws ReporunnerException if the operation fails
+     * @throws KlikkFlowException if the operation fails
      */
-    public WorkflowDefinition createWorkflow(CreateWorkflowRequest request) throws ReporunnerException {
+    public WorkflowDefinition createWorkflow(CreateWorkflowRequest request) throws KlikkFlowException {
         logger.info("Creating workflow: {}", request.getName());
         
         WorkflowDefinition workflow = makeRequest("POST", "/api/workflows", request, WorkflowDefinition.class);
@@ -113,9 +113,9 @@ public class ReporunnerClient implements AutoCloseable {
      * 
      * @param workflowId The workflow ID
      * @return The workflow definition
-     * @throws ReporunnerException if the operation fails
+     * @throws KlikkFlowException if the operation fails
      */
-    public WorkflowDefinition getWorkflow(String workflowId) throws ReporunnerException {
+    public WorkflowDefinition getWorkflow(String workflowId) throws KlikkFlowException {
         logger.debug("Getting workflow: {}", workflowId);
         
         String path = String.format("/api/workflows/%s", workflowId);
@@ -127,9 +127,9 @@ public class ReporunnerClient implements AutoCloseable {
      * 
      * @param options The listing options (can be null for defaults)
      * @return List of workflow definitions
-     * @throws ReporunnerException if the operation fails
+     * @throws KlikkFlowException if the operation fails
      */
-    public List<WorkflowDefinition> listWorkflows(ListWorkflowsOptions options) throws ReporunnerException {
+    public List<WorkflowDefinition> listWorkflows(ListWorkflowsOptions options) throws KlikkFlowException {
         logger.debug("Listing workflows with options: {}", options);
         
         StringBuilder path = new StringBuilder("/api/workflows");
@@ -150,10 +150,10 @@ public class ReporunnerClient implements AutoCloseable {
      * @param workflowId The workflow ID to execute
      * @param inputData Input data for the workflow
      * @return The execution result
-     * @throws ReporunnerException if the operation fails
+     * @throws KlikkFlowException if the operation fails
      */
     public ExecutionResult executeWorkflow(String workflowId, Map<String, Object> inputData) 
-            throws ReporunnerException {
+            throws KlikkFlowException {
         return executeWorkflow(workflowId, inputData, true);
     }
     
@@ -164,10 +164,10 @@ public class ReporunnerClient implements AutoCloseable {
      * @param inputData Input data for the workflow
      * @param waitForCompletion Whether to wait for execution completion
      * @return The execution result
-     * @throws ReporunnerException if the operation fails
+     * @throws KlikkFlowException if the operation fails
      */
     public ExecutionResult executeWorkflow(String workflowId, Map<String, Object> inputData, 
-            boolean waitForCompletion) throws ReporunnerException {
+            boolean waitForCompletion) throws KlikkFlowException {
         logger.info("Executing workflow: {}", workflowId);
         
         ExecuteWorkflowRequest request = new ExecuteWorkflowRequest(workflowId, inputData);
@@ -193,7 +193,7 @@ public class ReporunnerClient implements AutoCloseable {
         return CompletableFuture.supplyAsync(() -> {
             try {
                 return executeWorkflow(workflowId, inputData, true);
-            } catch (ReporunnerException e) {
+            } catch (KlikkFlowException e) {
                 throw new RuntimeException(e);
             }
         });
@@ -204,9 +204,9 @@ public class ReporunnerClient implements AutoCloseable {
      * 
      * @param executionId The execution ID
      * @return The execution result
-     * @throws ReporunnerException if the operation fails
+     * @throws KlikkFlowException if the operation fails
      */
-    public ExecutionResult getExecution(String executionId) throws ReporunnerException {
+    public ExecutionResult getExecution(String executionId) throws KlikkFlowException {
         logger.debug("Getting execution: {}", executionId);
         
         String path = String.format("/api/executions/%s", executionId);
@@ -217,9 +217,9 @@ public class ReporunnerClient implements AutoCloseable {
      * Cancel a running execution.
      * 
      * @param executionId The execution ID to cancel
-     * @throws ReporunnerException if the operation fails
+     * @throws KlikkFlowException if the operation fails
      */
-    public void cancelExecution(String executionId) throws ReporunnerException {
+    public void cancelExecution(String executionId) throws KlikkFlowException {
         logger.info("Cancelling execution: {}", executionId);
         
         String path = String.format("/api/executions/%s/cancel", executionId);
@@ -232,10 +232,10 @@ public class ReporunnerClient implements AutoCloseable {
      * @param executionId The execution ID to monitor
      * @param updateHandler Handler for execution updates
      * @return ExecutionWebSocket for managing the connection
-     * @throws ReporunnerException if the operation fails
+     * @throws KlikkFlowException if the operation fails
      */
     public ExecutionWebSocket streamExecution(String executionId, 
-            Consumer<Map<String, Object>> updateHandler) throws ReporunnerException {
+            Consumer<Map<String, Object>> updateHandler) throws KlikkFlowException {
         logger.info("Starting execution stream for: {}", executionId);
         
         String wsUrl = String.format("%s/ws/execution/%s", 
@@ -244,7 +244,7 @@ public class ReporunnerClient implements AutoCloseable {
         try {
             return new ExecutionWebSocket(wsUrl, apiKey, updateHandler, objectMapper);
         } catch (Exception e) {
-            throw new ReporunnerException("Failed to create WebSocket connection: " + e.getMessage(), e);
+            throw new KlikkFlowException("Failed to create WebSocket connection: " + e.getMessage(), e);
         }
     }
     
@@ -254,10 +254,10 @@ public class ReporunnerClient implements AutoCloseable {
      * @param workflowId The workflow ID to update
      * @param request The update request
      * @return The updated workflow definition
-     * @throws ReporunnerException if the operation fails
+     * @throws KlikkFlowException if the operation fails
      */
     public WorkflowDefinition updateWorkflow(String workflowId, UpdateWorkflowRequest request) 
-            throws ReporunnerException {
+            throws KlikkFlowException {
         logger.info("Updating workflow: {}", workflowId);
         
         String path = String.format("/api/workflows/%s", workflowId);
@@ -268,9 +268,9 @@ public class ReporunnerClient implements AutoCloseable {
      * Delete a workflow.
      * 
      * @param workflowId The workflow ID to delete
-     * @throws ReporunnerException if the operation fails
+     * @throws KlikkFlowException if the operation fails
      */
-    public void deleteWorkflow(String workflowId) throws ReporunnerException {
+    public void deleteWorkflow(String workflowId) throws KlikkFlowException {
         logger.info("Deleting workflow: {}", workflowId);
         
         String path = String.format("/api/workflows/%s", workflowId);
@@ -283,10 +283,10 @@ public class ReporunnerClient implements AutoCloseable {
      * @param workflowId The workflow ID
      * @param options Filtering options (can be null)
      * @return List of execution results
-     * @throws ReporunnerException if the operation fails
+     * @throws KlikkFlowException if the operation fails
      */
     public List<ExecutionResult> getExecutionHistory(String workflowId, 
-            ExecutionHistoryOptions options) throws ReporunnerException {
+            ExecutionHistoryOptions options) throws KlikkFlowException {
         logger.debug("Getting execution history for workflow: {}", workflowId);
         
         StringBuilder path = new StringBuilder(String.format("/api/workflows/%s/executions", workflowId));
@@ -304,7 +304,7 @@ public class ReporunnerClient implements AutoCloseable {
     /**
      * Wait for execution completion with polling.
      */
-    private ExecutionResult waitForExecution(String executionId) throws ReporunnerException {
+    private ExecutionResult waitForExecution(String executionId) throws KlikkFlowException {
         int maxAttempts = 300; // 5 minutes with 1-second intervals
         int attempts = 0;
         
@@ -321,20 +321,20 @@ public class ReporunnerClient implements AutoCloseable {
                 Thread.sleep(1000); // Wait 1 second
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
-                throw new ReporunnerException("Execution wait interrupted", e);
+                throw new KlikkFlowException("Execution wait interrupted", e);
             }
             
             attempts++;
         }
         
-        throw new ReporunnerException("Execution wait timeout after " + maxAttempts + " attempts");
+        throw new KlikkFlowException("Execution wait timeout after " + maxAttempts + " attempts");
     }
     
     /**
      * Make an HTTP request to the API.
      */
     private <T> T makeRequest(String method, String path, Object body, Class<T> responseType) 
-            throws ReporunnerException {
+            throws KlikkFlowException {
         try {
             String url = baseUrl + path;
             logger.debug("Making {} request to: {}", method, url);
@@ -360,7 +360,7 @@ public class ReporunnerClient implements AutoCloseable {
                 if (!response.isSuccessful()) {
                     String errorBody = response.body() != null ? response.body().string() : "";
                     logger.error("API request failed with status {}: {}", response.code(), errorBody);
-                    throw new ReporunnerException(
+                    throw new KlikkFlowException(
                         String.format("API request failed with status %d: %s", response.code(), errorBody)
                     );
                 }
@@ -375,7 +375,7 @@ public class ReporunnerClient implements AutoCloseable {
             
         } catch (IOException e) {
             logger.error("HTTP request failed", e);
-            throw new ReporunnerException("HTTP request failed: " + e.getMessage(), e);
+            throw new KlikkFlowException("HTTP request failed: " + e.getMessage(), e);
         }
     }
     
@@ -385,6 +385,6 @@ public class ReporunnerClient implements AutoCloseable {
             httpClient.dispatcher().executorService().shutdown();
             httpClient.connectionPool().evictAll();
         }
-        logger.info("Reporunner client closed");
+        logger.info("KlikkFlow client closed");
     }
 }

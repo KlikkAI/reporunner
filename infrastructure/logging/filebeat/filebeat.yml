@@ -1,8 +1,8 @@
-# Filebeat configuration for Reporunner log collection
+# Filebeat configuration for KlikkFlow log collection
 
 # Global settings
-name: reporunner-filebeat
-tags: ["reporunner", "filebeat"]
+name: klikkflow-filebeat
+tags: ["klikkflow", "filebeat"]
 
 # Filebeat inputs
 filebeat.inputs:
@@ -10,10 +10,10 @@ filebeat.inputs:
   - type: log
     enabled: true
     paths:
-      - /var/log/reporunner/*.log
-      - /var/log/reporunner/**/*.log
+      - /var/log/klikkflow/*.log
+      - /var/log/klikkflow/**/*.log
     fields:
-      service: reporunner
+      service: klikkflow
       log_type: application
     fields_under_root: false
     multiline.pattern: '^\d{4}-\d{2}-\d{2}'
@@ -122,7 +122,7 @@ filebeat.inputs:
     include_matches:
       - "UNIT=docker.service"
       - "UNIT=nginx.service"
-      - "_SYSTEMD_UNIT=reporunner.service"
+      - "_SYSTEMD_UNIT=klikkflow.service"
     fields:
       service: systemd
       log_type: system
@@ -242,24 +242,24 @@ output.logstash:
 #   hosts: ["elasticsearch:9200"]
 #   username: "elastic"
 #   password: "elastic123"
-#   index: "reporunner-filebeat-%{+yyyy.MM.dd}"
+#   index: "klikkflow-filebeat-%{+yyyy.MM.dd}"
 #   template.settings:
 #     index.number_of_shards: 1
 #     index.number_of_replicas: 0
 
 # Setup template loading
 setup.template.enabled: true
-setup.template.name: "reporunner-filebeat"
-setup.template.pattern: "reporunner-filebeat-*"
+setup.template.name: "klikkflow-filebeat"
+setup.template.pattern: "klikkflow-filebeat-*"
 setup.template.settings:
   index.number_of_shards: 1
   index.number_of_replicas: 0
 
 # ILM Policy
 setup.ilm.enabled: true
-setup.ilm.rollover_alias: "reporunner-filebeat"
+setup.ilm.rollover_alias: "klikkflow-filebeat"
 setup.ilm.pattern: "{now/d}-000001"
-setup.ilm.policy: "reporunner-filebeat-policy"
+setup.ilm.policy: "klikkflow-filebeat-policy"
 
 # Kibana configuration
 setup.kibana:

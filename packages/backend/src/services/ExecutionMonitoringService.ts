@@ -1,6 +1,6 @@
 import { EventEmitter } from 'node:events';
-import { Logger } from '@reporunner/core';
-import type { ExecutionStatus, IExecution, INodeExecutionData } from '@reporunner/shared';
+import { Logger } from '@klikkflow/core';
+import type { ExecutionStatus, IExecution, INodeExecutionData } from '@klikkflow/shared';
 import type { Server as SocketIOServer } from 'socket.io';
 
 // Type aliases for backward compatibility

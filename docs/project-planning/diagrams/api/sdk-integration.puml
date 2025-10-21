@@ -1,6 +1,6 @@
 @startuml SDK Integration
 !theme plain
-title Reporunner SDK Usage Patterns
+title KlikkFlow SDK Usage Patterns
 
 actor Developer as dev
 participant "SDK Client" as sdk

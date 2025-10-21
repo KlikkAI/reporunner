@@ -4,11 +4,11 @@
     ".": {
       "entry": [
         "packages/*/src/index.{js,ts}",
-        "packages/@reporunner/*/src/index.{js,ts}",
+        "packages/@klikkflow/*/src/index.{js,ts}",
         "packages/backend/src/server.ts",
         "packages/frontend/src/main.tsx"
       ],
-      "project": ["packages/*/src/**/*.{js,ts,tsx}", "packages/@reporunner/*/src/**/*.{js,ts,tsx}"]
+      "project": ["packages/*/src/**/*.{js,ts,tsx}", "packages/@klikkflow/*/src/**/*.{js,ts,tsx}"]
     },
     "packages/backend": {
       "entry": ["src/server.ts"],

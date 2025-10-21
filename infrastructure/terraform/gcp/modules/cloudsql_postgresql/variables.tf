@@ -122,13 +122,13 @@ variable "maintenance_update_track" {
 variable "database_name" {
   description = "Database name"
   type        = string
-  default     = "reporunner"
+  default     = "klikkflow"
 }
 
 variable "database_user" {
   description = "Database user"
   type        = string
-  default     = "reporunner"
+  default     = "klikkflow"
 }
 
 variable "max_connections" {

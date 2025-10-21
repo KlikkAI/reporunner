@@ -13,10 +13,10 @@ export const KubernetesDeployment: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>Kubernetes Deployment - Reporunner Documentation</title>
+        <title>Kubernetes Deployment - KlikkFlow Documentation</title>
         <meta
           name="description"
-          content="Deploy Reporunner on Kubernetes - Helm charts, configuration, scaling, and best practices"
+          content="Deploy KlikkFlow on Kubernetes - Helm charts, configuration, scaling, and best practices"
         />
       </Helmet>
 

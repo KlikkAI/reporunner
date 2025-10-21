@@ -5,14 +5,14 @@
          http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.reporunner</groupId>
-    <artifactId>reporunner-java-sdk</artifactId>
+    <groupId>com.klikkflow</groupId>
+    <artifactId>klikkflow-java-sdk</artifactId>
     <version>1.0.0</version>
     <packaging>jar</packaging>
 
-    <name>Reporunner Java SDK</name>
-    <description>Java SDK for Reporunner workflow automation platform</description>
-    <url>https://github.com/reporunner/reporunner</url>
+    <name>KlikkFlow Java SDK</name>
+    <description>Java SDK for KlikkFlow workflow automation platform</description>
+    <url>https://github.com/klikkflow/klikkflow</url>
 
     <licenses>
         <license>
@@ -24,17 +24,17 @@
 
     <developers>
         <developer>
-            <name>Reporunner Team</name>
-            <email>team@reporunner.com</email>
-            <organization>Reporunner</organization>
-            <organizationUrl>https://reporunner.com</organizationUrl>
+            <name>KlikkFlow Team</name>
+            <email>team@klikkflow.com</email>
+            <organization>KlikkFlow</organization>
+            <organizationUrl>https://klikkflow.com</organizationUrl>
         </developer>
     </developers>
 
     <scm>
-        <connection>scm:git:git://github.com/reporunner/reporunner.git</connection>
-        <developerConnection>scm:git:ssh://github.com/reporunner/reporunner.git</developerConnection>
-        <url>https://github.com/reporunner/reporunner</url>
+        <connection>scm:git:git://github.com/klikkflow/klikkflow.git</connection>
+        <developerConnection>scm:git:ssh://github.com/klikkflow/klikkflow.git</developerConnection>
+        <url>https://github.com/klikkflow/klikkflow</url>
     </scm>
 
     <properties>

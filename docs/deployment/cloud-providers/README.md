@@ -1,6 +1,6 @@
 # Cloud Deployment Guides
 
-Provider-specific guides to deploy Reporunner.
+Provider-specific guides to deploy KlikkFlow.
 
 - AWS (EKS + RDS + ElastiCache) — coming soon
 - GCP (GKE + Cloud SQL + Memorystore) — coming soon

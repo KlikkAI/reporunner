@@ -107,7 +107,7 @@ const Login: React.FC = () => {
               <div className="w-12 h-12 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                 <Crown className="w-6 h-6 text-white" />
               </div>
-              <span className="text-3xl font-bold text-white">Reporunner</span>
+              <span className="text-3xl font-bold text-white">KlikkFlow</span>
             </Link>
 
             <h1 className="text-5xl font-bold text-white mb-6 leading-tight">
@@ -158,7 +158,7 @@ const Login: React.FC = () => {
                 <div className="w-12 h-12 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                   <Crown className="w-6 h-6 text-white" />
                 </div>
-                <span className="text-2xl font-bold text-white">Reporunner</span>
+                <span className="text-2xl font-bold text-white">KlikkFlow</span>
               </Link>
             </div>
 
@@ -287,7 +287,7 @@ const Login: React.FC = () => {
                     <div className="w-full border-t border-white/20" />
                   </div>
                   <div className="relative flex justify-center text-sm">
-                    <span className="px-4 bg-transparent text-slate-400">New to Reporunner?</span>
+                    <span className="px-4 bg-transparent text-slate-400">New to KlikkFlow?</span>
                   </div>
                 </div>
 

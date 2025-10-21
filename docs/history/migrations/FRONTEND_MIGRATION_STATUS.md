@@ -1,14 +1,14 @@
 # Frontend Package Migration Status
 
-**Package**: `@reporunner/frontend`
+**Package**: `@klikkflow/frontend`
 **Started**: 2025-09-30
 **Status**: 🟡 In Progress
 
 ## ✅ Completed Steps
 
 ### 1. Dependencies Installed
-- ✅ Added `@reporunner/types`: workspace:*
-- ✅ Added `@reporunner/core`: workspace:*
+- ✅ Added `@klikkflow/types`: workspace:*
+- ✅ Added `@klikkflow/core`: workspace:*
 - ✅ Ran `pnpm install` successfully
 
 ## 📊 Migration Analysis
@@ -40,7 +40,7 @@
 
 ### Duplication Assessment
 
-| Category | Custom Types | @reporunner/types Equivalent | Migration Priority |
+| Category | Custom Types | @klikkflow/types Equivalent | Migration Priority |
 |----------|--------------|------------------------------|-------------------|
 | Workflow | WorkflowConnection, WorkflowNodeData | IWorkflow, INode | 🔴 HIGH |
 | Execution | (Various execution types) | IExecution, ExecutionStatus | 🔴 HIGH |
@@ -69,7 +69,7 @@
 ## 🎯 Migration Strategy
 
 ### Phase 1: Type Foundation (CURRENT)
-**Goal**: Replace common types with `@reporunner/types`
+**Goal**: Replace common types with `@klikkflow/types`
 **Time**: 4-6 hours
 **Risk**: 🟢 LOW
 
@@ -88,7 +88,7 @@
 **Example**:
 ```typescript
 // frontend/src/core/types/workflow.ts
-import type { IWorkflow, INode } from '@reporunner/types';
+import type { IWorkflow, INode } from '@klikkflow/types';
 
 // Extend with frontend-specific properties
 export interface FrontendWorkflowNode extends INode {
@@ -101,12 +101,12 @@ export interface FrontendWorkflowNode extends INode {
 ```
 
 ### Phase 3: Utility Migration
-**Goal**: Replace custom utilities with `@reporunner/core`
+**Goal**: Replace custom utilities with `@klikkflow/core`
 **Time**: 4-6 hours
 **Risk**: 🟡 MEDIUM
 
 **Steps**:
-1. Replace LoggingService with `Logger` from `@reporunner/core`
+1. Replace LoggingService with `Logger` from `@klikkflow/core`
 2. Search and replace error handling
 3. Create package-level logger instance
 4. Replace console.log statements

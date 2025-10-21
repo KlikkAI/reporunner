@@ -59,7 +59,7 @@ export const DocsLayout: React.FC = () => {
 
     const docPath = pathMap[location.pathname];
     if (docPath) {
-      return `https://github.com/KlikkAI/reporunner/edit/main/${docPath}`;
+      return `https://github.com/KlikkAI/klikkflow/edit/main/${docPath}`;
     }
     return null;
   };

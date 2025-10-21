@@ -17,8 +17,8 @@ redis_node_type             = "cache.r5.large"
 redis_num_cache_nodes       = 3
 
 # Container Images
-backend_container_image  = "123456789012.dkr.ecr.us-east-1.amazonaws.com/reporunner/backend:latest"
-frontend_container_image = "123456789012.dkr.ecr.us-east-1.amazonaws.com/reporunner/frontend:latest"
+backend_container_image  = "123456789012.dkr.ecr.us-east-1.amazonaws.com/klikkflow/backend:latest"
+frontend_container_image = "123456789012.dkr.ecr.us-east-1.amazonaws.com/klikkflow/frontend:latest"
 
 # ECS Task Configuration - Production Sizing
 backend_cpu            = 2048
@@ -46,7 +46,7 @@ enable_https    = true
 certificate_arn = "arn:aws:acm:us-east-1:123456789012:certificate/12345678-1234-1234-1234-123456789012"
 
 # Monitoring
-alarm_sns_topic_arn = "arn:aws:sns:us-east-1:123456789012:reporunner-production-alerts"
+alarm_sns_topic_arn = "arn:aws:sns:us-east-1:123456789012:klikkflow-production-alerts"
 
 # Additional Tags
 additional_tags = {

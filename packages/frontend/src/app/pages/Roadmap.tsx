@@ -1,7 +1,7 @@
 /**
  * Roadmap Page
  *
- * Product roadmap and future features for Reporunner
+ * Product roadmap and future features for KlikkFlow
  * Showing completed features, current development, and planned features
  */
 
@@ -182,7 +182,7 @@ export const Roadmap: React.FC = () => {
       {
         id: 'federated-learning',
         title: 'Federated Learning Platform',
-        description: 'Distributed ML training across multiple Reporunner instances',
+        description: 'Distributed ML training across multiple KlikkFlow instances',
         category: 'ai-ml',
         status: 'research',
         quarter: 'Q2',
@@ -275,8 +275,8 @@ export const Roadmap: React.FC = () => {
               </span>
             </h1>
             <p className="text-xl text-slate-200 mb-8 max-w-3xl mx-auto leading-relaxed">
-              See what's coming next for Reporunner. Vote on features, track progress, and help
-              shape the future of workflow automation.
+              See what's coming next for KlikkFlow. Vote on features, track progress, and help shape
+              the future of workflow automation.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">

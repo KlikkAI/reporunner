@@ -1,6 +1,6 @@
 # Development Documentation 🛠️
 
-This directory contains all development-related documentation for Reporunner.
+This directory contains all development-related documentation for KlikkFlow.
 
 ## 📋 Table of Contents
 
@@ -50,10 +50,10 @@ This directory contains all development-related documentation for Reporunner.
 ### Package Status
 | Package | Errors Before | Errors After | Improvement |
 |---------|---------------|--------------|-------------|
-| @reporunner/auth | 3,380 | 16 | 99.5% |
-| @reporunner/services | 40 | 2 | 95% |
-| @reporunner/enterprise | 13 | 2 | 85% |
-| @reporunner/integrations | 69 | 43 | 38% |
+| @klikkflow/auth | 3,380 | 16 | 99.5% |
+| @klikkflow/services | 40 | 2 | 95% |
+| @klikkflow/enterprise | 13 | 2 | 85% |
+| @klikkflow/integrations | 69 | 43 | 38% |
 
 ## 🤝 Contributing
 
@@ -66,6 +66,6 @@ We welcome contributions! Please:
 
 ## 📞 Support
 
-- **Issues**: [GitHub Issues](https://github.com/reporunner/reporunner/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/reporunner/reporunner/discussions)
-- **Discord**: [Community Chat](https://discord.gg/reporunner)
+- **Issues**: [GitHub Issues](https://github.com/klikkflow/klikkflow/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/klikkflow/klikkflow/discussions)
+- **Discord**: [Community Chat](https://discord.gg/klikkflow)

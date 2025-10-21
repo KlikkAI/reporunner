@@ -1,5 +1,5 @@
 // Analytics service for tracking user interactions and performance metrics
-import { Logger } from '@reporunner/core';
+import { Logger } from '@klikkflow/core';
 
 const logger = new Logger('AnalyticsService');
 

@@ -1,6 +1,6 @@
 /**
  * Workflow Types - Workflow definition and configuration
- * Consolidated from @reporunner/types
+ * Consolidated from @klikkflow/types
  */
 
 import { z } from 'zod';

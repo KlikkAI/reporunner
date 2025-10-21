@@ -61,7 +61,7 @@ router.get('/info', (_req, res) => {
   res.json({
     success: true,
     data: {
-      name: 'Reporunner Backend API',
+      name: 'KlikkFlow Backend API',
       version: '1.0.0',
       description: 'Backend services for workflow automation platform',
       endpoints: {

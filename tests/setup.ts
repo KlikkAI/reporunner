@@ -15,8 +15,8 @@ process.env.NODE_ENV = 'test';
 
 // Set test environment variables
 process.env.JWT_SECRET = 'test-secret-key-for-testing-only';
-process.env.MONGODB_URI = 'mongodb://localhost:27017/reporunner-test';
-process.env.POSTGRES_URI = 'postgresql://localhost:5432/reporunner-test';
+process.env.MONGODB_URI = 'mongodb://localhost:27017/klikkflow-test';
+process.env.POSTGRES_URI = 'postgresql://localhost:5432/klikkflow-test';
 process.env.REDIS_URL = 'redis://localhost:6379/1';
 
 // Global test timeout

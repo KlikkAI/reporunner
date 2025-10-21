@@ -1,7 +1,7 @@
-# 🔒 Security Audit Report - Reporunner
+# 🔒 Security Audit Report - KlikkFlow
 
 **Date**: September 30, 2025
-**Repository**: KlikkAI/reporunner
+**Repository**: klikkflow/klikkflow
 **Audit Scope**: Full monorepo (all workspaces)
 **Audited By**: security-dependabot-checker agent
 
@@ -51,7 +51,7 @@ Two `.env` files are committed to the repository with **actual production secret
    - Client Secret: `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`
 
 2. **JWT Secret**
-   - `JWT_SECRET=reporunner-super-secure-jwt-secret-key-2024-production-ready-64-chars`
+   - `JWT_SECRET=klikkflow-super-secure-jwt-secret-key-2024-production-ready-64-chars`
 
 3. **Credential Encryption Key**
    - `CREDENTIAL_ENCRYPTION_KEY=bbde4cbdb8646eb7065048b4983a0e7f110cd0f1173621294f61a1e14db7663f`
@@ -100,7 +100,7 @@ git commit -m "security: remove exposed secrets and add .env.example templates"
 **GitHub Secret Scanning**:
 ```bash
 # Check if GitHub detected these secrets
-gh api /repos/KlikkAI/reporunner/secret-scanning/alerts
+gh api /repos/klikkflow/klikkflow/secret-scanning/alerts
 ```
 
 ---
@@ -110,7 +110,7 @@ gh api /repos/KlikkAI/reporunner/secret-scanning/alerts
 **Severity**: CRITICAL
 **Package**: `passport-saml` (<=3.2.4)
 **CVE**: GHSA-4mxg-3p6v-xgq3
-**Location**: `packages/@reporunner/auth`
+**Location**: `packages/@klikkflow/auth`
 
 **Description**:
 SAML signature verification vulnerability allowing authentication bypass.
@@ -126,7 +126,7 @@ SAML signature verification vulnerability allowing authentication bypass.
 pnpm list passport-saml
 
 # Update to safe version (if available) or remove package
-pnpm update passport-saml --filter @reporunner/auth
+pnpm update passport-saml --filter @klikkflow/auth
 
 # If no patch available, consider alternatives:
 # - @node-saml/passport-saml (maintained fork)
@@ -158,7 +158,7 @@ pnpm update passport-saml --filter @reporunner/auth
 pnpm update multer
 
 # Add error handling middleware
-# See: packages/@reporunner/api/src/middleware/fileUpload.ts
+# See: packages/@klikkflow/api/src/middleware/fileUpload.ts
 ```
 
 **Workaround** (until patch):
@@ -207,7 +207,7 @@ go get -u golang.org/x/crypto
 
 **Severity**: MODERATE
 **Package**: `xml2js` (<0.5.0)
-**Location**: `packages/@reporunner/auth > passport-saml > xml2js`
+**Location**: `packages/@klikkflow/auth > passport-saml > xml2js`
 **CVE**: GHSA-776f-qx25-q3cc
 
 **Description**:
@@ -217,7 +217,7 @@ Prototype pollution vulnerability in XML parsing.
 ```bash
 # This is a transitive dependency from passport-saml
 # Update passport-saml (which will update xml2js)
-pnpm update passport-saml --filter @reporunner/auth
+pnpm update passport-saml --filter @klikkflow/auth
 
 # Or force update xml2js
 pnpm update xml2js
@@ -322,7 +322,7 @@ pnpm update tmp commitizen
 
 **View all alerts**:
 ```bash
-gh api /repos/KlikkAI/reporunner/dependabot/alerts --jq '.[]'
+gh api /repos/klikkflow/klikkflow/dependabot/alerts --jq '.[]'
 ```
 
 ---
@@ -356,11 +356,11 @@ pnpm install
 ### Security Measures Already Implemented
 
 1. **✅ Helmet.js Security Headers**
-   - Configured in: `packages/@reporunner/api/src/server.ts`
+   - Configured in: `packages/@klikkflow/api/src/server.ts`
    - Provides: XSS protection, clickjacking prevention, HSTS
 
 2. **✅ Rate Limiting**
-   - Package: `@reporunner/security`
+   - Package: `@klikkflow/security`
    - Features: Distributed rate limiter with Redis support
    - Configuration: `RATE_LIMIT_WINDOW_MS=900000`, `RATE_LIMIT_MAX_REQUESTS=100`
 
@@ -396,7 +396,7 @@ pnpm install
 
 2. **🚨 Update passport-saml or Remove**
    ```bash
-   pnpm update passport-saml --filter @reporunner/auth
+   pnpm update passport-saml --filter @klikkflow/auth
    # Or migrate to @node-saml/passport-saml
    ```
 
@@ -436,7 +436,7 @@ pnpm install
 8. **Review and Close Dependabot Alerts**
    ```bash
    # After updates, verify alerts are resolved
-   gh api /repos/KlikkAI/reporunner/dependabot/alerts | jq '[.[] | select(.state == "open")]'
+   gh api /repos/klikkflow/klikkflow/dependabot/alerts | jq '[.[] | select(.state == "open")]'
    ```
 
 ### Long-term (Ongoing)
@@ -501,7 +501,7 @@ pnpm install
 ## 📞 Security Contact
 
 For security vulnerabilities, please contact:
-- **GitHub Security Advisories**: https://github.com/KlikkAI/reporunner/security/advisories
+- **GitHub Security Advisories**: https://github.com/klikkflow/klikkflow/security/advisories
 - **Email**: security@klikk.ai (recommended)
 
 ---

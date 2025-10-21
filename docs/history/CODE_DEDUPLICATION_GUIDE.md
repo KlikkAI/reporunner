@@ -1,6 +1,6 @@
 # Code Deduplication Implementation Guide
 
-This guide documents the comprehensive refactoring implemented to eliminate code duplication across the Reporunner project. The refactoring reduces duplication from **1.7%** to near-zero by creating reusable, configurable components and utilities.
+This guide documents the comprehensive refactoring implemented to eliminate code duplication across the KlikkFlow project. The refactoring reduces duplication from **1.7%** to near-zero by creating reusable, configurable components and utilities.
 
 ## 🎯 Overview
 
@@ -129,7 +129,7 @@ const result = await ApiErrorHandler.withErrorHandling(
 - Automatic retry logic with exponential backoff
 - Centralized logging and toast notifications
 
-### 5. Repository Pattern (`packages/@reporunner/core/src/repository/`)
+### 5. Repository Pattern (`packages/@klikkflow/core/src/repository/`)
 
 #### `BaseRepository.ts`
 - **Purpose**: Eliminates duplication in MongoDB repository classes
@@ -160,7 +160,7 @@ export class WorkflowRepository extends BaseRepository<Workflow> {
 - Built-in soft delete and timestamps
 - Type-safe operations with MongoDB
 
-### 6. Validation Middleware (`packages/@reporunner/core/src/middleware/`)
+### 6. Validation Middleware (`packages/@klikkflow/core/src/middleware/`)
 
 #### `BaseValidationMiddleware.ts`
 - **Purpose**: Eliminates duplication in request validation
@@ -169,7 +169,7 @@ export class WorkflowRepository extends BaseRepository<Workflow> {
 
 ```typescript
 // Usage Example
-import { BaseValidationMiddleware } from '@reporunner/core';
+import { BaseValidationMiddleware } from '@klikkflow/core';
 
 // Validate multiple request parts
 router.post('/workflows',
@@ -421,7 +421,7 @@ export class WorkflowRepository {
 
 **After:**
 ```typescript
-import { BaseRepository } from '@reporunner/core';
+import { BaseRepository } from '@klikkflow/core';
 
 export class WorkflowRepository extends BaseRepository<Workflow> {
   constructor(db: Db) {
@@ -497,9 +497,9 @@ export class WorkflowRepository extends BaseRepository<Workflow> {
 ### Core Utilities
 - `packages/frontend/src/core/utils/apiErrorHandler.ts`
 - `packages/frontend/src/core/nodes/BaseNodeDefinition.ts`
-- `packages/@reporunner/core/src/repository/BaseRepository.ts`
-- `packages/@reporunner/core/src/middleware/BaseValidationMiddleware.ts`
-- `packages/@reporunner/core/src/shared.ts`
+- `packages/@klikkflow/core/src/repository/BaseRepository.ts`
+- `packages/@klikkflow/core/src/middleware/BaseValidationMiddleware.ts`
+- `packages/@klikkflow/core/src/shared.ts`
 
 ### Documentation
 - `CODE_DEDUPLICATION_GUIDE.md` (this file)

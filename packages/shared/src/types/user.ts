@@ -1,6 +1,6 @@
 /**
  * User Types - User accounts and authentication
- * Consolidated from @reporunner/types
+ * Consolidated from @klikkflow/types
  */
 
 import type { BaseEntity, ID, Timestamp } from './common';

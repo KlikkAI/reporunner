@@ -1,6 +1,6 @@
-# Reporunner Deployment Guide
+# KlikkFlow Deployment Guide
 
-Complete deployment guide for Reporunner workflow automation platform across all environments and cloud providers.
+Complete deployment guide for KlikkFlow workflow automation platform across all environments and cloud providers.
 
 **Last Updated**: October 2025
 **Version**: 1.0.0
@@ -25,12 +25,12 @@ Complete deployment guide for Reporunner workflow automation platform across all
 
 ## Quick Start
 
-Get Reporunner running in **60 seconds** with the core stack:
+Get KlikkFlow running in **60 seconds** with the core stack:
 
 ```bash
 # Clone repository
-git clone https://github.com/reporunner/reporunner.git
-cd reporunner
+git clone https://github.com/klikkflow/klikkflow.git
+cd klikkflow
 
 # Start core services (6 containers)
 docker-compose up -d
@@ -48,14 +48,14 @@ curl http://localhost:3000/health
 - Redis: localhost:6379
 
 **Default Credentials**:
-- Email: `demo@reporunner.com`
+- Email: `demo@klikkflow.com`
 - Password: `demo123`
 
 ---
 
 ## Deployment Options Overview
 
-Reporunner supports multiple deployment strategies:
+KlikkFlow supports multiple deployment strategies:
 
 | Deployment Type | Use Case | Startup Time | Containers | Complexity |
 |----------------|----------|--------------|------------|------------|
@@ -72,7 +72,7 @@ Reporunner supports multiple deployment strategies:
 
 ### Profile-Based Architecture
 
-Reporunner uses Docker Compose profiles for progressive complexity:
+KlikkFlow uses Docker Compose profiles for progressive complexity:
 
 ```yaml
 # 5 Available Profiles:
@@ -152,8 +152,8 @@ PORT=3001
 FRONTEND_PORT=3000
 
 # Database URLs
-MONGODB_URI=mongodb://mongo:27017/reporunner
-POSTGRES_URI=postgresql://postgres:reporunner_prod_password@postgres:5432/reporunner
+MONGODB_URI=mongodb://mongo:27017/klikkflow
+POSTGRES_URI=postgresql://postgres:klikkflow_prod_password@postgres:5432/klikkflow
 REDIS_URL=redis://redis:6379
 
 # Security
@@ -168,7 +168,7 @@ GMAIL_CLIENT_SECRET=your-gmail-client-secret
 GRAFANA_ADMIN_PASSWORD=secure-grafana-password
 
 # Backup (Optional - for S3 backup)
-BACKUP_S3_BUCKET=reporunner-backups
+BACKUP_S3_BUCKET=klikkflow-backups
 BACKUP_S3_ENDPOINT=https://s3.amazonaws.com
 BACKUP_RETENTION_DAYS=7
 ```
@@ -222,17 +222,17 @@ docker system prune -a --volumes              # Clean Docker system
 
 ```bash
 # Add Helm repo (when available)
-helm repo add reporunner https://charts.reporunner.com
+helm repo add klikkflow https://charts.klikkflow.com
 helm repo update
 
 # Install with default values
-helm install reporunner reporunner/reporunner \
-  --namespace reporunner \
+helm install klikkflow klikkflow/klikkflow \
+  --namespace klikkflow \
   --create-namespace
 
 # Install with custom values
-helm install reporunner reporunner/reporunner \
-  --namespace reporunner \
+helm install klikkflow klikkflow/klikkflow \
+  --namespace klikkflow \
   --create-namespace \
   --values custom-values.yaml
 ```
@@ -242,12 +242,12 @@ helm install reporunner reporunner/reporunner \
 Create `custom-values.yaml`:
 
 ```yaml
-# Reporunner Configuration
-reporunner:
+# KlikkFlow Configuration
+klikkflow:
   backend:
     replicas: 3
     image:
-      repository: reporunner/backend
+      repository: klikkflow/backend
       tag: "1.0.0"
     resources:
       requests:
@@ -260,7 +260,7 @@ reporunner:
   frontend:
     replicas: 2
     image:
-      repository: reporunner/frontend
+      repository: klikkflow/frontend
       tag: "1.0.0"
     resources:
       requests:
@@ -273,7 +273,7 @@ reporunner:
   worker:
     replicas: 5
     image:
-      repository: reporunner/worker
+      repository: klikkflow/worker
       tag: "1.0.0"
     resources:
       requests:
@@ -291,9 +291,9 @@ mongodb:
   auth:
     enabled: true
     rootPassword: "change-this-mongodb-root-password"
-    username: reporunner
+    username: klikkflow
     password: "change-this-mongodb-password"
-    database: reporunner
+    database: klikkflow
   persistence:
     size: 50Gi
     storageClass: "gp3"  # AWS EBS gp3
@@ -303,9 +303,9 @@ postgresql:
   enabled: true
   auth:
     postgresPassword: "change-this-postgres-password"
-    username: reporunner
+    username: klikkflow
     password: "change-this-postgres-password"
-    database: reporunner
+    database: klikkflow
   primary:
     persistence:
       size: 20Gi
@@ -333,14 +333,14 @@ ingress:
     cert-manager.io/cluster-issuer: letsencrypt-prod
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
   hosts:
-    - host: app.reporunner.com
+    - host: app.klikkflow.com
       paths:
         - path: /
           pathType: Prefix
   tls:
-    - secretName: reporunner-tls
+    - secretName: klikkflow-tls
       hosts:
-        - app.reporunner.com
+        - app.klikkflow.com
 
 # Monitoring
 monitoring:
@@ -366,23 +366,23 @@ If not using Helm, deploy manually with kubectl:
 
 ```bash
 # Create namespace
-kubectl create namespace reporunner
+kubectl create namespace klikkflow
 
 # Apply secrets
-kubectl create secret generic reporunner-secrets \
+kubectl create secret generic klikkflow-secrets \
   --from-literal=jwt-secret=your-jwt-secret \
-  --from-literal=mongodb-uri=mongodb://user:pass@mongo:27017/reporunner \
-  --from-literal=postgres-uri=postgresql://user:pass@postgres:5432/reporunner \
+  --from-literal=mongodb-uri=mongodb://user:pass@mongo:27017/klikkflow \
+  --from-literal=postgres-uri=postgresql://user:pass@postgres:5432/klikkflow \
   --from-literal=redis-url=redis://:password@redis:6379 \
-  -n reporunner
+  -n klikkflow
 
 # Apply manifests
-kubectl apply -f infrastructure/kubernetes/manifests/ -n reporunner
+kubectl apply -f infrastructure/kubernetes/manifests/ -n klikkflow
 
 # Verify deployment
-kubectl get pods -n reporunner
-kubectl get services -n reporunner
-kubectl get ingress -n reporunner
+kubectl get pods -n klikkflow
+kubectl get services -n klikkflow
+kubectl get ingress -n klikkflow
 ```
 
 ---
@@ -401,8 +401,8 @@ cat > terraform.tfvars <<EOF
 region = "us-east-1"
 environment = "production"
 vpc_cidr = "10.0.0.0/16"
-mongodb_uri = "mongodb+srv://user:pass@cluster.mongodb.net/reporunner"
-postgres_uri = "postgresql://user:pass@rds-instance.region.rds.amazonaws.com:5432/reporunner"
+mongodb_uri = "mongodb+srv://user:pass@cluster.mongodb.net/klikkflow"
+postgres_uri = "postgresql://user:pass@rds-instance.region.rds.amazonaws.com:5432/klikkflow"
 redis_uri = "redis://elasticache-cluster.region.cache.amazonaws.com:6379"
 EOF
 
@@ -434,11 +434,11 @@ terraform plan
 terraform apply
 
 # Configure kubectl
-aws eks update-kubeconfig --region us-east-1 --name reporunner-cluster
+aws eks update-kubeconfig --region us-east-1 --name klikkflow-cluster
 
 # Install with Helm
-helm install reporunner ./infrastructure/kubernetes/helm/reporunner \
-  --namespace reporunner \
+helm install klikkflow ./infrastructure/kubernetes/helm/klikkflow \
+  --namespace klikkflow \
   --create-namespace \
   --values infrastructure/kubernetes/helm/values-aws.yaml
 ```
@@ -479,11 +479,11 @@ terraform init
 terraform apply
 
 # Get credentials
-gcloud container clusters get-credentials reporunner-cluster --region us-central1
+gcloud container clusters get-credentials klikkflow-cluster --region us-central1
 
 # Install with Helm
-helm install reporunner ./infrastructure/kubernetes/helm/reporunner \
-  --namespace reporunner \
+helm install klikkflow ./infrastructure/kubernetes/helm/klikkflow \
+  --namespace klikkflow \
   --create-namespace \
   --values infrastructure/kubernetes/helm/values-gcp.yaml
 ```
@@ -524,11 +524,11 @@ terraform init
 terraform apply
 
 # Get credentials
-az aks get-credentials --resource-group reporunner-rg --name reporunner-cluster
+az aks get-credentials --resource-group klikkflow-rg --name klikkflow-cluster
 
 # Install with Helm
-helm install reporunner ./infrastructure/kubernetes/helm/reporunner \
-  --namespace reporunner \
+helm install klikkflow ./infrastructure/kubernetes/helm/klikkflow \
+  --namespace klikkflow \
   --create-namespace \
   --values infrastructure/kubernetes/helm/values-azure.yaml
 ```
@@ -547,7 +547,7 @@ helm install reporunner ./infrastructure/kubernetes/helm/reporunner \
 
 # Example with AWS Secrets Manager
 aws secretsmanager create-secret \
-  --name reporunner/production/jwt-secret \
+  --name klikkflow/production/jwt-secret \
   --secret-string "your-secure-jwt-secret"
 
 # Rotate secrets regularly (90 days recommended)
@@ -684,7 +684,7 @@ backup:
   environment:
     BACKUP_SCHEDULE: "0 2 * * *"  # 2 AM daily
     BACKUP_RETENTION_DAYS: 7
-    S3_BUCKET: reporunner-backups
+    S3_BUCKET: klikkflow-backups
     S3_ENDPOINT: https://s3.amazonaws.com
 ```
 
@@ -699,10 +699,10 @@ backup:
 docker-compose exec backup /app/backup.sh
 
 # MongoDB manual backup
-docker-compose exec mongo mongodump --uri="mongodb://mongo:27017/reporunner" --gzip --archive=/backup/manual-mongodb.gz
+docker-compose exec mongo mongodump --uri="mongodb://mongo:27017/klikkflow" --gzip --archive=/backup/manual-mongodb.gz
 
 # PostgreSQL manual backup
-docker-compose exec postgres pg_dump -U postgres reporunner | gzip > manual-postgresql.sql.gz
+docker-compose exec postgres pg_dump -U postgres klikkflow | gzip > manual-postgresql.sql.gz
 ```
 
 ### Restore from Backup
@@ -712,7 +712,7 @@ docker-compose exec postgres pg_dump -U postgres reporunner | gzip > manual-post
 docker-compose exec mongo mongorestore --uri="mongodb://mongo:27017" --gzip --archive=/backup/mongodb_20251016_020000.gz
 
 # PostgreSQL restore
-gunzip < postgresql_20251016_020000.sql.gz | docker-compose exec -T postgres psql -U postgres -d reporunner
+gunzip < postgresql_20251016_020000.sql.gz | docker-compose exec -T postgres psql -U postgres -d klikkflow
 ```
 
 ### Disaster Recovery Plan
@@ -865,41 +865,41 @@ curl http://localhost:3001/api/health
 
 ```bash
 # Backup before upgrade
-kubectl create job backup-pre-upgrade-$(date +%Y%m%d) --from=cronjob/reporunner-backup -n reporunner
+kubectl create job backup-pre-upgrade-$(date +%Y%m%d) --from=cronjob/klikkflow-backup -n klikkflow
 
 # Upgrade with Helm
-helm upgrade reporunner reporunner/reporunner \
-  --namespace reporunner \
+helm upgrade klikkflow klikkflow/klikkflow \
+  --namespace klikkflow \
   --values custom-values.yaml \
-  --set reporunner.backend.image.tag=1.1.0 \
-  --set reporunner.frontend.image.tag=1.1.0 \
-  --set reporunner.worker.image.tag=1.1.0
+  --set klikkflow.backend.image.tag=1.1.0 \
+  --set klikkflow.frontend.image.tag=1.1.0 \
+  --set klikkflow.worker.image.tag=1.1.0
 
 # Monitor rollout
-kubectl rollout status deployment/reporunner-backend -n reporunner
+kubectl rollout status deployment/klikkflow-backend -n klikkflow
 
 # Rollback if needed
-helm rollback reporunner -n reporunner
+helm rollback klikkflow -n klikkflow
 ```
 
 ### Zero-Downtime Upgrade
 
 ```bash
 # Use blue-green deployment
-helm install reporunner-blue ./infrastructure/kubernetes/helm/reporunner \
-  --namespace reporunner \
-  --set reporunner.backend.image.tag=1.1.0
+helm install klikkflow-blue ./infrastructure/kubernetes/helm/klikkflow \
+  --namespace klikkflow \
+  --set klikkflow.backend.image.tag=1.1.0
 
 # Verify blue deployment
-kubectl wait --for=condition=ready pod -l version=blue -n reporunner
+kubectl wait --for=condition=ready pod -l version=blue -n klikkflow
 
 # Switch traffic
-kubectl patch service reporunner-backend -n reporunner \
+kubectl patch service klikkflow-backend -n klikkflow \
   --type='json' \
   -p='[{"op": "replace", "path": "/spec/selector/version", "value": "blue"}]'
 
 # Remove old green deployment
-helm uninstall reporunner-green -n reporunner
+helm uninstall klikkflow-green -n klikkflow
 ```
 
 ---
@@ -907,22 +907,22 @@ helm uninstall reporunner-green -n reporunner
 ## Support and Resources
 
 **Documentation**:
-- Main docs: https://docs.reporunner.com
-- API docs: https://docs.reporunner.com/api
-- Guides: https://docs.reporunner.com/guides
+- Main docs: https://docs.klikkflow.com
+- API docs: https://docs.klikkflow.com/api
+- Guides: https://docs.klikkflow.com/guides
 
 **Community**:
-- GitHub: https://github.com/reporunner/reporunner
-- Discord: https://discord.gg/reporunner
-- Stack Overflow: Tag `reporunner`
+- GitHub: https://github.com/klikkflow/klikkflow
+- Discord: https://discord.gg/klikkflow
+- Stack Overflow: Tag `klikkflow`
 
 **Commercial Support**:
-- Enterprise Support: enterprise@reporunner.com
-- Managed Hosting: https://reporunner.com/managed
+- Enterprise Support: enterprise@klikkflow.com
+- Managed Hosting: https://klikkflow.com/managed
 
 ---
 
 **Document Version**: 1.0.0
 **Last Updated**: October 2025
-**Maintained By**: Reporunner Team
+**Maintained By**: KlikkFlow Team
 **License**: MIT

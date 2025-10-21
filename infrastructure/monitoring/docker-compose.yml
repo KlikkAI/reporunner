@@ -4,7 +4,7 @@ services:
   # Prometheus - Metrics collection and alerting
   prometheus:
     image: prom/prometheus:v2.47.2
-    container_name: reporunner-prometheus
+    container_name: klikkflow-prometheus
     restart: unless-stopped
     ports:
       - "9090:9090"
@@ -24,13 +24,13 @@ services:
       - monitoring
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.prometheus.rule=Host(`prometheus.reporunner.local`)"
+      - "traefik.http.routers.prometheus.rule=Host(`prometheus.klikkflow.local`)"
       - "traefik.http.services.prometheus.loadbalancer.server.port=9090"
 
   # Grafana - Visualization and dashboards
   grafana:
     image: grafana/grafana:10.2.0
-    container_name: reporunner-grafana
+    container_name: klikkflow-grafana
     restart: unless-stopped
     ports:
       - "3000:3000"
@@ -50,13 +50,13 @@ services:
       - prometheus
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.grafana.rule=Host(`grafana.reporunner.local`)"
+      - "traefik.http.routers.grafana.rule=Host(`grafana.klikkflow.local`)"
       - "traefik.http.services.grafana.loadbalancer.server.port=3000"
 
   # AlertManager - Alert routing and management
   alertmanager:
     image: prom/alertmanager:v0.26.0
-    container_name: reporunner-alertmanager
+    container_name: klikkflow-alertmanager
     restart: unless-stopped
     ports:
       - "9093:9093"
@@ -71,13 +71,13 @@ services:
       - monitoring
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.alertmanager.rule=Host(`alerts.reporunner.local`)"
+      - "traefik.http.routers.alertmanager.rule=Host(`alerts.klikkflow.local`)"
       - "traefik.http.services.alertmanager.loadbalancer.server.port=9093"
 
   # Node Exporter - System metrics
   node-exporter:
     image: prom/node-exporter:v1.6.1
-    container_name: reporunner-node-exporter
+    container_name: klikkflow-node-exporter
     restart: unless-stopped
     ports:
       - "9100:9100"
@@ -96,7 +96,7 @@ services:
   # cAdvisor - Container metrics
   cadvisor:
     image: gcr.io/cadvisor/cadvisor:v0.47.2
-    container_name: reporunner-cadvisor
+    container_name: klikkflow-cadvisor
     restart: unless-stopped
     ports:
       - "8080:8080"
@@ -115,7 +115,7 @@ services:
   # Redis Exporter - Redis metrics (if using Redis)
   redis-exporter:
     image: oliver006/redis_exporter:v1.55.0
-    container_name: reporunner-redis-exporter
+    container_name: klikkflow-redis-exporter
     restart: unless-stopped
     ports:
       - "9121:9121"
@@ -129,7 +129,7 @@ services:
   # Redis for caching and queues
   redis:
     image: redis:7.2-alpine
-    container_name: reporunner-redis
+    container_name: klikkflow-redis
     restart: unless-stopped
     ports:
       - "6379:6379"
@@ -142,7 +142,7 @@ services:
   # MongoDB Exporter - MongoDB metrics
   mongodb-exporter:
     image: percona/mongodb_exporter:0.39.0
-    container_name: reporunner-mongodb-exporter
+    container_name: klikkflow-mongodb-exporter
     restart: unless-stopped
     ports:
       - "9216:9216"
@@ -157,7 +157,7 @@ services:
   # Nginx Exporter - Web server metrics
   nginx-exporter:
     image: nginx/nginx-prometheus-exporter:0.11.0
-    container_name: reporunner-nginx-exporter
+    container_name: klikkflow-nginx-exporter
     restart: unless-stopped
     ports:
       - "9113:9113"
@@ -169,7 +169,7 @@ services:
   # Blackbox Exporter - Endpoint monitoring
   blackbox-exporter:
     image: prom/blackbox-exporter:v0.24.0
-    container_name: reporunner-blackbox-exporter
+    container_name: klikkflow-blackbox-exporter
     restart: unless-stopped
     ports:
       - "9115:9115"
@@ -181,7 +181,7 @@ services:
   # Pushgateway - Metrics from batch jobs
   pushgateway:
     image: prom/pushgateway:v1.6.2
-    container_name: reporunner-pushgateway
+    container_name: klikkflow-pushgateway
     restart: unless-stopped
     ports:
       - "9091:9091"
@@ -201,4 +201,4 @@ volumes:
 networks:
   monitoring:
     driver: bridge
-    name: reporunner-monitoring
+    name: klikkflow-monitoring

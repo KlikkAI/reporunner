@@ -1,10 +1,10 @@
 /**
  * Frontend-Specific Authentication Types
  *
- * This file extends @reporunner/types with frontend-specific auth types
+ * This file extends @klikkflow/types with frontend-specific auth types
  * following the "extend, don't replace" pattern.
  *
- * Base types from @reporunner/types:
+ * Base types from @klikkflow/types:
  * - IUser: Basic user entity
  * - IAuthToken: JWT tokens
  * - IUserSettings: User preferences
@@ -22,7 +22,7 @@ import type {
   IUser,
   IUserSettings,
   Timestamp,
-} from '@reporunner/shared';
+} from '@klikkflow/shared';
 
 // ============================================================================
 // Extended User Types
@@ -70,7 +70,7 @@ export interface FrontendUserPreferences extends Omit<IUserSettings, 'notificati
  *
  * Adds:
  * - name, avatar: Display information
- * - role: Base user role (from @reporunner/types)
+ * - role: Base user role (from @klikkflow/types)
  * - mfaEnabled: Security status
  * - preferences: Enhanced UI preferences
  * - permissions: Granular permission system
@@ -80,7 +80,7 @@ export interface FrontendUserPreferences extends Omit<IUserSettings, 'notificati
 export interface User extends Omit<IUser, 'settings' | 'preferences' | 'role'> {
   name: string;
   avatar?: string;
-  role: BaseUserRole; // Use the base type alias from @reporunner/types
+  role: BaseUserRole; // Use the base type alias from @klikkflow/types
   mfaEnabled: boolean;
   preferences: FrontendUserPreferences;
   permissions: Permission[];

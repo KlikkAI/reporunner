@@ -13,10 +13,10 @@ export const GettingStarted: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>Getting Started - Reporunner Documentation</title>
+        <title>Getting Started - KlikkFlow Documentation</title>
         <meta
           name="description"
-          content="Get started with Reporunner - Prerequisites, installation, and creating your first workflow"
+          content="Get started with KlikkFlow - Prerequisites, installation, and creating your first workflow"
         />
       </Helmet>
 

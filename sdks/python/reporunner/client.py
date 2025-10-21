@@ -1,8 +1,8 @@
 """
-Main client for the Reporunner Python SDK.
+Main client for the KlikkFlow Python SDK.
 
-This module provides the primary ReporunnerClient class that serves as the entry point
-for interacting with the Reporunner API. It follows the same patterns as the TypeScript SDK
+This module provides the primary KlikkFlowClient class that serves as the entry point
+for interacting with the KlikkFlow API. It follows the same patterns as the TypeScript SDK
 while providing Python-native features.
 """
 
@@ -25,7 +25,7 @@ from .types import (
     PaginatedResponse,
 )
 from .exceptions import (
-    ReporunnerError,
+    KlikkFlowError,
     AuthenticationError,
     NetworkError,
     ConfigurationError,
@@ -41,21 +41,21 @@ from .websocket import WebSocketManager
 logger = logging.getLogger(__name__)
 
 
-class ReporunnerClient:
+class KlikkFlowClient:
     """
-    Main client for interacting with the Reporunner API.
+    Main client for interacting with the KlikkFlow API.
 
-    This client provides a high-level interface for all Reporunner operations,
+    This client provides a high-level interface for all KlikkFlow operations,
     including workflows, executions, credentials, and real-time features.
 
     Example:
         Basic usage:
         ```python
-        from reporunner import ReporunnerClient
+        from klikkflow import KlikkFlowClient
 
         # Initialize client
-        client = ReporunnerClient(
-            base_url="https://api.reporunner.com",
+        client = KlikkFlowClient(
+            base_url="https://api.klikkflow.com",
             api_key="your-api-key"
         )
 
@@ -73,19 +73,19 @@ class ReporunnerClient:
         With configuration:
         ```python
         config = ClientConfig(
-            base_url="https://api.reporunner.com",
+            base_url="https://api.klikkflow.com",
             timeout=60,
             max_retries=5
         )
 
         auth = AuthConfig(api_key="your-api-key")
 
-        client = ReporunnerClient(config=config, auth=auth)
+        client = KlikkFlowClient(config=config, auth=auth)
         ```
 
         As async context manager:
         ```python
-        async with ReporunnerClient(base_url="...", api_key="...") as client:
+        async with KlikkFlowClient(base_url="...", api_key="...") as client:
             workflows = await client.workflows.list()
         ```
     """
@@ -105,10 +105,10 @@ class ReporunnerClient:
         user_agent: Optional[str] = None,
     ) -> None:
         """
-        Initialize the Reporunner client.
+        Initialize the KlikkFlow client.
 
         Args:
-            base_url: Base URL for the Reporunner API
+            base_url: Base URL for the KlikkFlow API
             api_key: API key for authentication
             access_token: Access token for authentication
             username: Username for basic authentication
@@ -220,10 +220,10 @@ class ReporunnerClient:
         Raises:
             NetworkError: If the request fails
             AuthenticationError: If authentication fails
-            ReporunnerError: For other API errors
+            KlikkFlowError: For other API errors
         """
         if self._closed:
-            raise ReporunnerError("Client has been closed")
+            raise KlikkFlowError("Client has been closed")
 
         # Prepare headers
         request_headers = self._get_default_headers()
@@ -375,7 +375,7 @@ class ReporunnerClient:
             Dictionary containing version information
 
         Raises:
-            ReporunnerError: If the request fails
+            KlikkFlowError: If the request fails
         """
         response = await self.get("/version")
         return response.json()
@@ -389,7 +389,7 @@ class ReporunnerClient:
 
         Raises:
             AuthenticationError: If not authenticated
-            ReporunnerError: If the request fails
+            KlikkFlowError: If the request fails
         """
         response = await self.get("/user/me")
         return response.json()
@@ -427,7 +427,7 @@ class ReporunnerClient:
             await self.websocket.close()
             self._closed = True
 
-    async def __aenter__(self) -> "ReporunnerClient":
+    async def __aenter__(self) -> "KlikkFlowClient":
         """Async context manager entry."""
         return self
 

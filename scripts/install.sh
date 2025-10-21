@@ -1,14 +1,14 @@
 #!/bin/bash
 
 # ============================================
-# Reporunner One-Command Installer
+# KlikkFlow One-Command Installer
 # ============================================
 #
 # Quick Start:
-#   curl -fsSL https://get.reporunner.io/install.sh | sh
+#   curl -fsSL https://get.klikkflow.io/install.sh | sh
 #
 # Manual Install:
-#   wget https://get.reporunner.io/install.sh
+#   wget https://get.klikkflow.io/install.sh
 #   chmod +x install.sh
 #   ./install.sh
 #
@@ -25,8 +25,8 @@ CYAN='\033[0;36m'
 NC='\033[0m' # No Color
 
 # Configuration
-COMPOSE_FILE_URL="https://raw.githubusercontent.com/KlikkAI/reporunner/main/docker-compose.simple.yml"
-INSTALL_DIR="${REPORUNNER_INSTALL_DIR:-$HOME/.reporunner}"
+COMPOSE_FILE_URL="https://raw.githubusercontent.com/KlikkAI/klikkflow/main/docker-compose.simple.yml"
+INSTALL_DIR="${KLIKKFLOW_INSTALL_DIR:-$HOME/.klikkflow}"
 FRONTEND_PORT="${FRONTEND_PORT:-3000}"
 BACKEND_PORT="${BACKEND_PORT:-3001}"
 
@@ -38,7 +38,7 @@ print_header() {
     echo ""
     echo -e "${CYAN}╔════════════════════════════════════════════╗${NC}"
     echo -e "${CYAN}║                                            ║${NC}"
-    echo -e "${CYAN}║          ${GREEN}Reporunner Installer${CYAN}             ║${NC}"
+    echo -e "${CYAN}║          ${GREEN}KlikkFlow Installer${CYAN}             ║${NC}"
     echo -e "${CYAN}║                                            ║${NC}"
     echo -e "${CYAN}╚════════════════════════════════════════════╝${NC}"
     echo ""
@@ -205,7 +205,7 @@ create_env_file() {
 
     cat > .env << EOF
 # ============================================
-# Reporunner Configuration
+# KlikkFlow Configuration
 # Generated: $(date)
 # ============================================
 
@@ -219,7 +219,7 @@ JWT_EXPIRES_IN=7d
 ENCRYPTION_KEY=${ENCRYPTION_KEY}
 
 # Database Configuration
-POSTGRES_PASSWORD=reporunner_pg_2024
+POSTGRES_PASSWORD=klikkflow_pg_2024
 
 # API URLs (Auto-configured)
 VITE_API_URL=http://localhost:${BACKEND_PORT}
@@ -238,7 +238,7 @@ LOG_LEVEL=info
 # SMTP_PORT=587
 # SMTP_USER=
 # SMTP_PASSWORD=
-# SMTP_FROM=noreply@reporunner.local
+# SMTP_FROM=noreply@klikkflow.local
 EOF
 
     chmod 600 .env  # Secure permissions
@@ -246,7 +246,7 @@ EOF
 }
 
 start_services() {
-    print_step "Starting Reporunner services..."
+    print_step "Starting KlikkFlow services..."
 
     echo ""
     echo "This will download and start 6 containers:"
@@ -303,7 +303,7 @@ print_success_message() {
     echo ""
     echo -e "${GREEN}╔════════════════════════════════════════════╗${NC}"
     echo -e "${GREEN}║                                            ║${NC}"
-    echo -e "${GREEN}║     ✓ Reporunner Installed Successfully   ║${NC}"
+    echo -e "${GREEN}║     ✓ KlikkFlow Installed Successfully   ║${NC}"
     echo -e "${GREEN}║                                            ║${NC}"
     echo -e "${GREEN}╚════════════════════════════════════════════╝${NC}"
     echo ""
@@ -314,7 +314,7 @@ print_success_message() {
     echo -e "     ${BLUE}http://localhost:${FRONTEND_PORT}${NC}"
     echo ""
     echo -e "  ${GREEN}2.${NC} Default credentials:"
-    echo -e "     Email:    ${YELLOW}admin@reporunner.local${NC}"
+    echo -e "     Email:    ${YELLOW}admin@klikkflow.local${NC}"
     echo -e "     Password: ${YELLOW}admin123${NC}"
     echo ""
 
@@ -329,9 +329,9 @@ print_success_message() {
 
     echo -e "${CYAN}📚 Documentation:${NC}"
     echo ""
-    echo -e "  • Getting Started: ${BLUE}https://docs.reporunner.io/getting-started${NC}"
-    echo -e "  • Integrations:    ${BLUE}https://docs.reporunner.io/integrations${NC}"
-    echo -e "  • GitHub:          ${BLUE}https://github.com/reporunner/reporunner${NC}"
+    echo -e "  • Getting Started: ${BLUE}https://docs.klikkflow.io/getting-started${NC}"
+    echo -e "  • Integrations:    ${BLUE}https://docs.klikkflow.io/integrations${NC}"
+    echo -e "  • GitHub:          ${BLUE}https://github.com/klikkflow/klikkflow${NC}"
     echo ""
 
     echo -e "${CYAN}💡 Next Steps:${NC}"
@@ -352,7 +352,7 @@ cleanup_on_error() {
     echo "Troubleshooting:"
     echo "  • Check Docker is running: docker info"
     echo "  • Check logs: cd $INSTALL_DIR && $COMPOSE_CMD logs"
-    echo "  • Report issues: https://github.com/reporunner/reporunner/issues"
+    echo "  • Report issues: https://github.com/klikkflow/klikkflow/issues"
     echo ""
     exit 1
 }

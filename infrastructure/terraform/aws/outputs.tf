@@ -1,5 +1,5 @@
 /**
- * Terraform Outputs for Reporunner AWS Infrastructure
+ * Terraform Outputs for KlikkFlow AWS Infrastructure
  */
 
 # VPC Outputs

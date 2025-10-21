@@ -13,7 +13,7 @@
       "gridPos": { "h": 4, "w": 6, "x": 0, "y": 0 },
       "targets": [
         {
-          "expr": "sum(increase(reporunner_auth_failed_total[1h]))",
+          "expr": "sum(increase(klikkflow_auth_failed_total[1h]))",
           "legendFormat": "Failed Logins",
           "refId": "A"
         }
@@ -39,7 +39,7 @@
       "gridPos": { "h": 4, "w": 6, "x": 6, "y": 0 },
       "targets": [
         {
-          "expr": "sum(increase(reporunner_api_suspicious_total[1h]))",
+          "expr": "sum(increase(klikkflow_api_suspicious_total[1h]))",
           "legendFormat": "Suspicious",
           "refId": "A"
         }
@@ -65,7 +65,7 @@
       "gridPos": { "h": 4, "w": 6, "x": 12, "y": 0 },
       "targets": [
         {
-          "expr": "sum(increase(reporunner_rate_limit_exceeded_total[1h]))",
+          "expr": "sum(increase(klikkflow_rate_limit_exceeded_total[1h]))",
           "legendFormat": "Rate Limits",
           "refId": "A"
         }
@@ -91,7 +91,7 @@
       "gridPos": { "h": 4, "w": 6, "x": 18, "y": 0 },
       "targets": [
         {
-          "expr": "sum(increase(reporunner_auth_invalid_token_total[1h]))",
+          "expr": "sum(increase(klikkflow_auth_invalid_token_total[1h]))",
           "legendFormat": "Invalid Tokens",
           "refId": "A"
         }
@@ -117,7 +117,7 @@
       "gridPos": { "h": 8, "w": 12, "x": 0, "y": 4 },
       "targets": [
         {
-          "expr": "sum(rate(reporunner_auth_failed_total[5m])) by (reason)",
+          "expr": "sum(rate(klikkflow_auth_failed_total[5m])) by (reason)",
           "legendFormat": "{{reason}}",
           "refId": "A"
         }
@@ -136,7 +136,7 @@
       "gridPos": { "h": 8, "w": 12, "x": 12, "y": 4 },
       "targets": [
         {
-          "expr": "sum(rate(reporunner_security_events_total[5m])) by (type)",
+          "expr": "sum(rate(klikkflow_security_events_total[5m])) by (type)",
           "legendFormat": "{{type}}",
           "refId": "A"
         }
@@ -155,7 +155,7 @@
       "gridPos": { "h": 8, "w": 12, "x": 0, "y": 12 },
       "targets": [
         {
-          "expr": "topk(10, sum(rate(reporunner_auth_failed_total[5m])) by (ip))",
+          "expr": "topk(10, sum(rate(klikkflow_auth_failed_total[5m])) by (ip))",
           "legendFormat": "{{ip}}",
           "refId": "A"
         }
@@ -193,7 +193,7 @@
       "gridPos": { "h": 8, "w": 12, "x": 0, "y": 20 },
       "targets": [
         {
-          "expr": "sum(rate(reporunner_credential_access_total[5m])) by (action, result)",
+          "expr": "sum(rate(klikkflow_credential_access_total[5m])) by (action, result)",
           "legendFormat": "{{action}} - {{result}}",
           "refId": "A"
         }
@@ -212,7 +212,7 @@
       "gridPos": { "h": 8, "w": 12, "x": 12, "y": 20 },
       "targets": [
         {
-          "expr": "sum(rate(reporunner_permission_denied_total[5m])) by (resource)",
+          "expr": "sum(rate(klikkflow_permission_denied_total[5m])) by (resource)",
           "legendFormat": "{{resource}}",
           "refId": "A"
         }
@@ -231,7 +231,7 @@
       "gridPos": { "h": 8, "w": 12, "x": 0, "y": 28 },
       "targets": [
         {
-          "expr": "topk(20, sum(increase(reporunner_auth_failed_total[24h])) by (ip))",
+          "expr": "topk(20, sum(increase(klikkflow_auth_failed_total[24h])) by (ip))",
           "legendFormat": "{{ip}}",
           "refId": "A",
           "instant": true,
@@ -256,7 +256,7 @@
       "gridPos": { "h": 8, "w": 12, "x": 12, "y": 28 },
       "targets": [
         {
-          "expr": "reporunner_security_events_total",
+          "expr": "klikkflow_security_events_total",
           "legendFormat": "{{type}} - {{severity}}",
           "refId": "A",
           "instant": true,
@@ -281,7 +281,7 @@
       "gridPos": { "h": 8, "w": 24, "x": 0, "y": 36 },
       "targets": [
         {
-          "expr": "sum(rate(reporunner_auth_failed_total[1m])) by (ip) > 5",
+          "expr": "sum(rate(klikkflow_auth_failed_total[1m])) by (ip) > 5",
           "legendFormat": "{{ip}} (potential brute force)",
           "refId": "A"
         }
@@ -302,11 +302,11 @@
   "refresh": "30s",
   "schemaVersion": 37,
   "style": "dark",
-  "tags": ["reporunner", "security", "authentication", "events"],
+  "tags": ["klikkflow", "security", "authentication", "events"],
   "templating": { "list": [] },
   "time": { "from": "now-6h", "to": "now" },
   "timezone": "",
-  "title": "Reporunner Security Events",
-  "uid": "reporunner-security-events",
+  "title": "KlikkFlow Security Events",
+  "uid": "klikkflow-security-events",
   "version": 1
 }

@@ -3,13 +3,13 @@
  * Provides comprehensive security monitoring, threat detection, and compliance features
  */
 
-import { Logger } from '@reporunner/core';
+import { Logger } from '@klikkflow/core';
 import type {
   SecurityAlert,
   SecurityThreat,
   VulnerabilityFinding,
   VulnerabilityScan,
-} from '@reporunner/shared';
+} from '@klikkflow/shared';
 
 // Mock AuditLogger class
 class AuditLogger {

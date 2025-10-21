@@ -13,7 +13,7 @@ export const PluginMarketplaceAPI: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>Plugin Marketplace API - Reporunner Documentation</title>
+        <title>Plugin Marketplace API - KlikkFlow Documentation</title>
         <meta
           name="description"
           content="Plugin Marketplace API reference - Endpoints, authentication, publishing, and validation"

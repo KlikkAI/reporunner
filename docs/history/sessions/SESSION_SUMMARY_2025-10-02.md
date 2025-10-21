@@ -30,7 +30,7 @@
 - `docs/operations/troubleshooting/README.md`
 
 ### API Documentation
-- OpenAPI runtime generator expanded minimal paths in `packages/@reporunner/api/src/swagger/spec-generator.ts`
+- OpenAPI runtime generator expanded minimal paths in `packages/@klikkflow/api/src/swagger/spec-generator.ts`
 - Created `docs/api/OPENAPI_README.md`
 - Added `docs/api/asyncapi.yaml` (Socket.IO events skeleton)
 - Added export script and scripts:
@@ -117,7 +117,7 @@ Complete monorepo testing setup in `vitest.workspace.ts`:
 - **Documentation**: Complete testing README with examples, best practices, CI/CD integration
 
 ### OpenAPI Specification Expansion (NEW - Session 2)
-Comprehensive API documentation in `packages/@reporunner/api/src/swagger/`:
+Comprehensive API documentation in `packages/@klikkflow/api/src/swagger/`:
 - **Schema Files** (6 files):
   - `schemas/auth.schemas.ts` - Login, register, password reset, user profile (10+ schemas)
   - `schemas/workflow.schemas.ts` - Workflow CRUD, nodes, edges, settings (8+ schemas)

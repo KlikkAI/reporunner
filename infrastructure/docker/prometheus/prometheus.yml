@@ -1,13 +1,13 @@
 # ============================================
 # Prometheus Configuration
-# Reporunner Monitoring Stack
+# KlikkFlow Monitoring Stack
 # ============================================
 
 global:
   scrape_interval: 15s
   evaluation_interval: 15s
   external_labels:
-    cluster: 'reporunner'
+    cluster: 'klikkflow'
     environment: 'production'
 
 # Alertmanager configuration
@@ -39,7 +39,7 @@ scrape_configs:
           - 'backend-2:3001'
         labels:
           service: 'backend'
-          app: 'reporunner'
+          app: 'klikkflow'
 
   # Node Exporter (system metrics)
   - job_name: 'node-exporter'
@@ -81,7 +81,7 @@ scrape_configs:
           - 'worker-2:3001'
         labels:
           service: 'worker'
-          app: 'reporunner'
+          app: 'klikkflow'
 
   # Grafana self-monitoring
   - job_name: 'grafana'

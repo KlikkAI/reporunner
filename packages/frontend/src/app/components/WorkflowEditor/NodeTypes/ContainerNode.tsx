@@ -15,7 +15,7 @@ import {
   SettingOutlined,
   StopOutlined,
 } from '@ant-design/icons';
-import { Logger } from '@reporunner/core';
+import { Logger } from '@klikkflow/core';
 import { Badge, Tooltip } from 'antd';
 import type React from 'react';
 import { useCallback, useRef, useState } from 'react';

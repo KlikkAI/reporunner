@@ -1,0 +1,30 @@
+{
+  "name": "@klikkflow/workflow-service",
+  "version": "1.0.0",
+  "description": "Enterprise workflow management service with versioning and collaboration",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx watch src/index.ts",
+    "test": "vitest",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "format": "biome format --write .",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@klikkflow/workflow": "workspace:*",
+    "@klikkflow/backend": "workspace:*",
+    "@klikkflow/platform": "workspace:*",
+    "@klikkflow/shared": "workspace:*"
+  },
+  "keywords": [
+    "workflow",
+    "automation",
+    "versioning",
+    "collaboration"
+  ],
+  "author": "KlikkFlow Team",
+  "license": "MIT"
+}

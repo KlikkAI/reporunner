@@ -3,7 +3,7 @@
  * Provides secure access to audit logging functionality
  */
 
-// import { authMiddleware } from '@reporunner/security';
+// import { authMiddleware } from '@klikkflow/security';
 import { Router } from 'express';
 import { z } from 'zod';
 import { auditService } from '../services/AuditService';
@@ -44,7 +44,7 @@ router.get('/events', async (req, res) => {
       ...filterQuery,
       startDate: startDate ? new Date(startDate) : undefined,
       endDate: endDate ? new Date(endDate) : undefined,
-    } as import('@reporunner/shared').AuditEventFilter;
+    } as import('@klikkflow/shared').AuditEventFilter;
 
     const events = await auditService.queryEvents(auditQuery);
 

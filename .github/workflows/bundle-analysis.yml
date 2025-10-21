@@ -4,13 +4,13 @@ on:
   pull_request:
     paths:
       - 'packages/frontend/**'
-      - 'packages/@reporunner/design-system/**'
+      - 'packages/@klikkflow/design-system/**'
       - 'pnpm-lock.yaml'
   push:
     branches: [main]
     paths:
       - 'packages/frontend/**'
-      - 'packages/@reporunner/design-system/**'
+      - 'packages/@klikkflow/design-system/**'
 
 jobs:
   bundle-analysis:

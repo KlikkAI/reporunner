@@ -14,21 +14,21 @@ receivers:
   prometheus:
     config:
       scrape_configs:
-        - job_name: 'reporunner-backend'
+        - job_name: 'klikkflow-backend'
           static_configs:
-            - targets: ['reporunner-backend:3001']
+            - targets: ['klikkflow-backend:3001']
           scrape_interval: 15s
           metrics_path: /metrics
 
-        - job_name: 'reporunner-frontend'
+        - job_name: 'klikkflow-frontend'
           static_configs:
-            - targets: ['reporunner-frontend:3000']
+            - targets: ['klikkflow-frontend:3000']
           scrape_interval: 30s
           metrics_path: /metrics
 
-        - job_name: 'reporunner-workers'
+        - job_name: 'klikkflow-workers'
           static_configs:
-            - targets: ['reporunner-worker:3002']
+            - targets: ['klikkflow-worker:3002']
           scrape_interval: 15s
           metrics_path: /metrics
 
@@ -82,7 +82,7 @@ receivers:
   # Filelog receiver for reading log files
   filelog:
     include:
-      - /var/log/reporunner/*.log
+      - /var/log/klikkflow/*.log
       - /var/lib/docker/containers/*/*.log
     include_file_name: false
     include_file_path: true
@@ -123,7 +123,7 @@ processors:
         value: production
         action: upsert
       - key: service.namespace
-        value: reporunner
+        value: klikkflow
         action: upsert
       - key: deployment.environment
         value: docker-compose
@@ -153,8 +153,8 @@ processors:
     metric_statements:
       - context: metric
         statements:
-          - set(description, "Reporunner workflow execution duration") where name == "reporunner_workflow_execution_duration_seconds"
-          - set(unit, "s") where name == "reporunner_workflow_execution_duration_seconds"
+          - set(description, "KlikkFlow workflow execution duration") where name == "klikkflow_workflow_execution_duration_seconds"
+          - set(unit, "s") where name == "klikkflow_workflow_execution_duration_seconds"
 
   # Probabilistic sampler for traces (reduces volume)
   probabilistic_sampler:
@@ -183,11 +183,11 @@ processors:
         probabilistic:
           sampling_percentage: 10
       # Always sample specific services
-      - name: reporunner-backend-policy
+      - name: klikkflow-backend-policy
         type: string_attribute
         string_attribute:
           key: service.name
-          values: [reporunner-backend, reporunner-worker]
+          values: [klikkflow-backend, klikkflow-worker]
 
   # Filter processor to drop unwanted telemetry data
   filter/logs:
@@ -229,15 +229,15 @@ exporters:
   # Prometheus exporter for metrics
   prometheus:
     endpoint: "0.0.0.0:8889"
-    namespace: reporunner
+    namespace: klikkflow
     const_labels:
       environment: production
 
   # Elasticsearch exporter for logs and traces
   elasticsearch:
     endpoints: [http://elasticsearch:9200]
-    logs_index: reporunner-logs
-    traces_index: reporunner-traces
+    logs_index: klikkflow-logs
+    traces_index: klikkflow-traces
     mapping:
       mode: ecs
     timeout: 30s

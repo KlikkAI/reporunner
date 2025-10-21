@@ -1,14 +1,14 @@
-# Rebranding Plan: Reporunner → KlikkAI
+# Rebranding Plan: KlikkFlow → KlikkFlow
 
 **Date**: October 21, 2025
-**Status**: Planning Phase
-**Scope**: Complete rebrand from Reporunner to KlikkAI
+**Status**: In Progress
+**Scope**: Complete rebrand from KlikkFlow to KlikkFlow
 
 ---
 
 ## Overview
 
-This document outlines the comprehensive plan to rebrand the project from **Reporunner** to **KlikkAI**.
+This document outlines the comprehensive plan to rebrand the project from **KlikkFlow** to **KlikkFlow**.
 
 **Statistics**:
 - **5,819 occurrences** across **517 files**
@@ -50,10 +50,10 @@ This document outlines the comprehensive plan to rebrand the project from **Repo
 
 **Case-sensitive replacements**:
 ```bash
-Reporunner → KlikkAI      # Product name (proper noun)
-reporunner → klikkai      # Lowercase (URLs, packages, paths)
-REPORUNNER → KLIKKAI      # Constants, env vars
-@reporunner → @klikkai    # NPM package scope
+KlikkFlow → KlikkFlow    # Product name (proper noun)
+klikkflow → klikkflow    # Lowercase (URLs, packages, paths)
+KLIKKFLOW → KLIKKFLOW    # Constants, env vars
+@klikkflow → @klikkflow  # NPM package scope
 ```
 
 ### Commands to Execute
@@ -63,33 +63,33 @@ REPORUNNER → KLIKKAI      # Constants, env vars
 find . -name "*.md" -type f | wc -l
 
 # Step 2: Backup before changes
-git checkout -b rebrand-to-klikkai
+git checkout -b rebrand-to-klikkflow
 
 # Step 3: Replace in all markdown files
-find . -name "*.md" -type f -exec sed -i 's/Reporunner/KlikkAI/g' {} \;
-find . -name "*.md" -type f -exec sed -i 's/reporunner/klikkai/g' {} \;
-find . -name "*.md" -type f -exec sed -i 's/REPORUNNER/KLIKKAI/g' {} \;
-find . -name "*.md" -type f -exec sed -i 's/@reporunner/@klikkai/g' {} \;
+find . -name "*.md" -type f -exec sed -i 's/KlikkFlow/KlikkFlow/g' {} \;
+find . -name "*.md" -type f -exec sed -i 's/klikkflow/klikkflow/g' {} \;
+find . -name "*.md" -type f -exec sed -i 's/KLIKKFLOW/KLIKKFLOW/g' {} \;
+find . -name "*.md" -type f -exec sed -i 's/@klikkflow/@klikkflow/g' {} \;
 
 # Step 4: Verify changes
-grep -r "reporunner" --include="*.md" -i | wc -l  # Should be minimal
+grep -r "klikkflow" --include="*.md" -i | wc -l  # Should be minimal
 
 # Step 5: Commit
 git add .
-git commit -m "docs: rebrand from Reporunner to KlikkAI"
+git commit -m "docs: rebrand from KlikkFlow to KlikkFlow"
 ```
 
 ### Special Cases to Handle Manually
 
 **Preserve these**:
-- GitHub repository URL: `github.com/KlikkAI/reporunner` (if repo name stays)
+- GitHub repository URL: `github.com/KlikkFlow/klikkflow` (if repo name stays)
 - Git remote URLs
 - Historical references in CHANGELOG.md (optional)
 
 **Update these carefully**:
-- API endpoints: `/api/reporunner/v1` → `/api/klikkai/v1`
-- Docker image names: `reporunner/backend` → `klikkai/backend`
-- Environment variable prefixes: `REPORUNNER_` → `KLIKKAI_`
+- API endpoints: `/api/klikkflow/v1` → `/api/klikkflow/v1`
+- Docker image names: `klikkflow/backend` → `klikkflow/backend`
+- Environment variable prefixes: `KLIKKFLOW_` → `KLIKKFLOW_`
 
 ---
 
@@ -100,37 +100,37 @@ git commit -m "docs: rebrand from Reporunner to KlikkAI"
 **Current structure**:
 ```
 packages/
-├── frontend/              # @reporunner/frontend
-├── backend/               # @reporunner/backend
-├── shared/                # @reporunner/shared
-└── @reporunner/           # 9 scoped packages
-    ├── ai/                # @reporunner/ai
-    ├── auth/              # @reporunner/auth
-    ├── cli/               # @reporunner/cli
-    ├── core/              # @reporunner/core
-    ├── enterprise/        # @reporunner/enterprise
-    ├── integrations/      # @reporunner/integrations
-    ├── platform/          # @reporunner/platform
-    ├── services/          # @reporunner/services
-    └── workflow/          # @reporunner/workflow
+├── frontend/              # @klikkflow/frontend
+├── backend/               # @klikkflow/backend
+├── shared/                # @klikkflow/shared
+└── @klikkflow/           # 9 scoped packages
+    ├── ai/                # @klikkflow/ai
+    ├── auth/              # @klikkflow/auth
+    ├── cli/               # @klikkflow/cli
+    ├── core/              # @klikkflow/core
+    ├── enterprise/        # @klikkflow/enterprise
+    ├── integrations/      # @klikkflow/integrations
+    ├── platform/          # @klikkflow/platform
+    ├── services/          # @klikkflow/services
+    └── workflow/          # @klikkflow/workflow
 ```
 
 **Proposed structure**:
 ```
 packages/
-├── frontend/              # @klikkai/frontend
-├── backend/               # @klikkai/backend
-├── shared/                # @klikkai/shared
-└── @klikkai/              # Rename directory
-    ├── ai/                # @klikkai/ai
-    ├── auth/              # @klikkai/auth
-    ├── cli/               # @klikkai/cli
-    ├── core/              # @klikkai/core
-    ├── enterprise/        # @klikkai/enterprise
-    ├── integrations/      # @klikkai/integrations
-    ├── platform/          # @klikkai/platform
-    ├── services/          # @klikkai/services
-    └── workflow/          # @klikkai/workflow
+├── frontend/              # @klikkflow/frontend
+├── backend/               # @klikkflow/backend
+├── shared/                # @klikkflow/shared
+└── @klikkflow/              # Rename directory
+    ├── ai/                # @klikkflow/ai
+    ├── auth/              # @klikkflow/auth
+    ├── cli/               # @klikkflow/cli
+    ├── core/              # @klikkflow/core
+    ├── enterprise/        # @klikkflow/enterprise
+    ├── integrations/      # @klikkflow/integrations
+    ├── platform/          # @klikkflow/platform
+    ├── services/          # @klikkflow/services
+    └── workflow/          # @klikkflow/workflow
 ```
 
 ### Files to Update (Estimated)
@@ -141,9 +141,9 @@ packages/
 - Update `name`, `description`, scripts, dependencies
 
 **TypeScript/JavaScript files** (~400 files):
-- Import statements: `@reporunner/*` → `@klikkai/*`
+- Import statements: `@klikkflow/*` → `@klikkflow/*`
 - Comments and JSDoc
-- String literals with "reporunner"
+- String literals with "klikkflow"
 
 **Configuration files** (~30 files):
 - `tsconfig.json`, `tsconfig.base.json`
@@ -153,7 +153,7 @@ packages/
 - CI/CD workflows
 
 **Frontend files** (~200 files):
-- UI text: "Reporunner" → "KlikkAI"
+- UI text: "KlikkFlow" → "KlikkFlow"
 - Meta tags, titles
 - Logo references
 
@@ -161,17 +161,17 @@ packages/
 
 ```bash
 # Update package.json files
-find . -name "package.json" -type f -exec sed -i 's/"@reporunner/"@klikkai/g' {} \;
-find . -name "package.json" -type f -exec sed -i 's/"reporunner"/"klikkai"/g' {} \;
+find . -name "package.json" -type f -exec sed -i 's/"@klikkflow/"@klikkflow/g' {} \;
+find . -name "package.json" -type f -exec sed -i 's/"klikkflow"/"klikkflow"/g' {} \;
 
 # Update TypeScript/JavaScript imports
 find packages -name "*.ts" -o -name "*.tsx" -o -name "*.js" -o -name "*.jsx" | \
-  xargs sed -i "s/@reporunner/@klikkai/g"
+  xargs sed -i "s/@klikkflow/@klikkflow/g"
 
 # Update configuration files
-sed -i 's/reporunner/klikkai/g' tsconfig.base.json
-sed -i 's/reporunner/klikkai/g' turbo.json
-sed -i 's/REPORUNNER/KLIKKAI/g' .env.example
+sed -i 's/klikkflow/klikkflow/g' tsconfig.base.json
+sed -i 's/klikkflow/klikkflow/g' turbo.json
+sed -i 's/KLIKKFLOW/KLIKKFLOW/g' .env.example
 ```
 
 ---
@@ -182,10 +182,10 @@ sed -i 's/REPORUNNER/KLIKKAI/g' .env.example
 
 ```bash
 # Rename the main scoped package directory
-git mv packages/@reporunner packages/@klikkai
+git mv packages/@klikkflow packages/@klikkflow
 
 # Update pnpm workspace configuration
-sed -i 's/@reporunner/@klikkai/g' pnpm-workspace.yaml
+sed -i 's/@klikkflow/@klikkflow/g' pnpm-workspace.yaml
 
 # Reinstall dependencies
 pnpm install
@@ -207,9 +207,9 @@ pnpm install
 
 **Changes**:
 ```dockerfile
-# FROM reporunner/base → FROM klikkai/base
-# LABEL maintainer="Reporunner Team" → LABEL maintainer="KlikkAI Team"
-# ENV REPORUNNER_* → ENV KLIKKAI_*
+# FROM klikkflow/base → FROM klikkflow/base
+# LABEL maintainer="KlikkFlow Team" → LABEL maintainer="KlikkFlow Team"
+# ENV KLIKKFLOW_* → ENV KLIKKFLOW_*
 ```
 
 ### Kubernetes/Helm
@@ -233,32 +233,32 @@ pnpm install
 ### Official SDKs
 
 **TypeScript** (`sdks/typescript/`):
-- Package name: `@reporunner/sdk` → `@klikkai/sdk`
-- Class names: `ReporunnerClient` → `KlikkAIClient`
+- Package name: `@klikkflow/sdk` → `@klikkflow/sdk`
+- Class names: `KlikkFlowClient` → `KlikkFlowClient`
 
 **Python** (`sdks/python/`):
-- Package name: `reporunner-sdk` → `klikkai-sdk`
-- Module: `import reporunner` → `import klikkai`
+- Package name: `klikkflow-sdk` → `klikkflow-sdk`
+- Module: `import klikkflow` → `import klikkflow`
 
 **Go** (`sdks/go/`):
-- Module: `github.com/reporunner/reporunner/go-sdk` → `github.com/KlikkAI/klikkai/go-sdk`
-- Package: `package reporunner` → `package klikkai`
+- Module: `github.com/klikkflow/klikkflow/go-sdk` → `github.com/KlikkFlow/klikkflow/go-sdk`
+- Package: `package klikkflow` → `package klikkflow`
 
 **Rust** (`sdks/rust/`):
-- Crate: `reporunner-sdk` → `klikkai-sdk`
+- Crate: `klikkflow-sdk` → `klikkflow-sdk`
 - Cargo.toml updates
 
 **Java** (`sdks/java/`):
-- Group ID: `com.reporunner` → `com.klikkai`
-- Artifact ID: `reporunner-java-sdk` → `klikkai-java-sdk`
+- Group ID: `com.klikkflow` → `com.klikkflow`
+- Artifact ID: `klikkflow-java-sdk` → `klikkflow-java-sdk`
 
 **PHP** (`sdks/php/`):
-- Namespace: `Reporunner\` → `KlikkAI\`
-- Package: `reporunner/php-sdk` → `klikkai/php-sdk`
+- Namespace: `KlikkFlow\` → `KlikkFlow\`
+- Package: `klikkflow/php-sdk` → `klikkflow/php-sdk`
 
 **.NET** (`sdks/dotnet/`):
-- Namespace: `Reporunner.Sdk` → `KlikkAI.Sdk`
-- NuGet package: `Reporunner.Sdk` → `KlikkAI.Sdk`
+- Namespace: `KlikkFlow.Sdk` → `KlikkFlow.Sdk`
+- NuGet package: `KlikkFlow.Sdk` → `KlikkFlow.Sdk`
 
 ---
 
@@ -271,9 +271,9 @@ pnpm install
 **Option A: Rename Everything** (Complete rebrand)
 ```javascript
 // MongoDB collections
-db.reporunner_workflows.renameCollection("klikkai_workflows")
-db.reporunner_executions.renameCollection("klikkai_executions")
-db.reporunner_credentials.renameCollection("klikkai_credentials")
+db.klikkflow_workflows.renameCollection("klikkflow_workflows")
+db.klikkflow_executions.renameCollection("klikkflow_executions")
+db.klikkflow_credentials.renameCollection("klikkflow_credentials")
 // ... etc
 ```
 
@@ -286,10 +286,10 @@ db.reporunner_credentials.renameCollection("klikkai_credentials")
 
 ```bash
 # Old → New
-REPORUNNER_DB_URL → KLIKKAI_DB_URL
-REPORUNNER_API_KEY → KLIKKAI_API_KEY
-REPORUNNER_JWT_SECRET → KLIKKAI_JWT_SECRET
-REPORUNNER_REDIS_URL → KLIKKAI_REDIS_URL
+KLIKKFLOW_DB_URL → KLIKKFLOW_DB_URL
+KLIKKFLOW_API_KEY → KLIKKFLOW_API_KEY
+KLIKKFLOW_JWT_SECRET → KLIKKFLOW_JWT_SECRET
+KLIKKFLOW_REDIS_URL → KLIKKFLOW_REDIS_URL
 ```
 
 ---
@@ -298,11 +298,11 @@ REPORUNNER_REDIS_URL → KLIKKAI_REDIS_URL
 
 ### GitHub Repository
 
-**Option A**: Keep `KlikkAI/reporunner`
+**Option A**: Keep `KlikkFlow/klikkflow`
 - Pros: No broken links, backward compatible
 - Cons: Mixed branding
 
-**Option B**: Rename to `KlikkAI/klikkai`
+**Option B**: Rename to `KlikkFlow/klikkflow`
 - Pros: Complete rebrand
 - Cons: Breaks existing clones, requires redirect setup
 
@@ -310,11 +310,11 @@ REPORUNNER_REDIS_URL → KLIKKAI_REDIS_URL
 
 ```bash
 # Find all GitHub URLs
-grep -r "github.com.*reporunner" --include="*.ts" --include="*.tsx" --include="*.md"
+grep -r "github.com.*klikkflow" --include="*.ts" --include="*.tsx" --include="*.md"
 
 # Update to new URLs
 find . -type f \( -name "*.ts" -o -name "*.tsx" -o -name "*.md" \) \
-  -exec sed -i 's|github.com/reporunner/reporunner|github.com/KlikkAI/klikkai|g' {} \;
+  -exec sed -i 's|github.com/klikkflow/klikkflow|github.com/KlikkFlow/klikkflow|g' {} \;
 ```
 
 ---
@@ -362,7 +362,7 @@ git revert <commit-hash>
 
 # Or switch back to backup branch
 git checkout main
-git branch -D rebrand-to-klikkai
+git branch -D rebrand-to-klikkflow
 ```
 
 ---
@@ -372,25 +372,25 @@ git branch -D rebrand-to-klikkai
 **Option A: Single Large Commit**
 ```bash
 git add .
-git commit -m "rebrand: complete rebrand from Reporunner to KlikkAI"
+git commit -m "rebrand: complete rebrand from KlikkFlow to KlikkFlow"
 ```
 
 **Option B: Phased Commits** (Recommended)
 ```bash
 # Commit 1
-git commit -m "docs: rebrand documentation from Reporunner to KlikkAI"
+git commit -m "docs: rebrand documentation from KlikkFlow to KlikkFlow"
 
 # Commit 2
-git commit -m "refactor: rename @reporunner packages to @klikkai"
+git commit -m "refactor: rename @klikkflow packages to @klikkflow"
 
 # Commit 3
-git commit -m "refactor: rename directory packages/@reporunner to packages/@klikkai"
+git commit -m "refactor: rename directory packages/@klikkflow to packages/@klikkflow"
 
 # Commit 4
-git commit -m "build: update Docker and CI/CD for KlikkAI rebrand"
+git commit -m "build: update Docker and CI/CD for KlikkFlow rebrand"
 
 # Commit 5
-git commit -m "refactor: rebrand SDKs to KlikkAI"
+git commit -m "refactor: rebrand SDKs to KlikkFlow"
 ```
 
 ---
@@ -399,10 +399,10 @@ git commit -m "refactor: rebrand SDKs to KlikkAI"
 
 **For Users/Contributors**:
 
-1. **Package names changed**: `@reporunner/*` → `@klikkai/*`
+1. **Package names changed**: `@klikkflow/*` → `@klikkflow/*`
 2. **Import statements**: Update all imports
-3. **Environment variables**: `REPORUNNER_*` → `KLIKKAI_*`
-4. **Docker images**: `reporunner/*` → `klikkai/*`
+3. **Environment variables**: `KLIKKFLOW_*` → `KLIKKFLOW_*`
+4. **Docker images**: `klikkflow/*` → `klikkflow/*`
 5. **SDKs**: New package names across all 7 languages
 
 **Migration Guide Required**: Create `MIGRATION.md` to help users upgrade
@@ -426,8 +426,8 @@ git commit -m "refactor: rebrand SDKs to KlikkAI"
 
 ## Notes
 
-- Current GitHub repository: `KlikkAI/reporunner`
-- Working directory: `/home/margon/Reporunner/reporunner/`
+- Current GitHub repository: `KlikkFlow/klikkflow`
+- Working directory: `/home/margon/KlikkFlow/klikkflow/`
 - Total occurrences to replace: ~5,819
 - Critical: Test thoroughly after each phase
 - Recommend: Create backup branch before starting

@@ -49,7 +49,7 @@
       "outputs": ["packages/core/dist/**", "packages/core/lib/**"]
     },
     "build:backend": {
-      "dependsOn": ["@reporunner/core#build", "@reporunner/workflow#build"],
+      "dependsOn": ["@klikkflow/core#build", "@klikkflow/workflow#build"],
       "inputs": [
         "packages/backend/src/**",
         "packages/backend/package.json",
@@ -59,7 +59,7 @@
       "env": ["NODE_ENV", "DATABASE_URL", "MONGODB_URI", "JWT_SECRET"]
     },
     "build:frontend": {
-      "dependsOn": ["@reporunner/core#build", "@reporunner/design-system#build"],
+      "dependsOn": ["@klikkflow/core#build", "@klikkflow/design-system#build"],
       "inputs": [
         "packages/frontend/src/**",
         "packages/frontend/public/**",
@@ -71,37 +71,37 @@
       "env": ["NODE_ENV", "API_URL", "VITE_API_URL"]
     },
     "build:cli": {
-      "dependsOn": ["@reporunner/core#build"],
-      "inputs": ["packages/@reporunner/cli/src/**", "packages/@reporunner/cli/package.json"],
-      "outputs": ["packages/@reporunner/cli/dist/**"]
+      "dependsOn": ["@klikkflow/core#build"],
+      "inputs": ["packages/@klikkflow/cli/src/**", "packages/@klikkflow/cli/package.json"],
+      "outputs": ["packages/@klikkflow/cli/dist/**"]
     },
     "build:nodes": {
-      "dependsOn": ["@reporunner/core#build", "@reporunner/workflow#build"],
+      "dependsOn": ["@klikkflow/core#build", "@klikkflow/workflow#build"],
       "inputs": [
-        "packages/@reporunner/nodes-*/**",
-        "!packages/@reporunner/nodes-*/**/*.test.{js,ts}"
+        "packages/@klikkflow/nodes-*/**",
+        "!packages/@klikkflow/nodes-*/**/*.test.{js,ts}"
       ],
-      "outputs": ["packages/@reporunner/nodes-*/dist/**"]
+      "outputs": ["packages/@klikkflow/nodes-*/dist/**"]
     },
     "build:design-system": {
       "inputs": [
-        "packages/@reporunner/design-system/src/**",
-        "packages/@reporunner/design-system/package.json"
+        "packages/@klikkflow/design-system/src/**",
+        "packages/@klikkflow/design-system/package.json"
       ],
-      "outputs": ["packages/@reporunner/design-system/dist/**"]
+      "outputs": ["packages/@klikkflow/design-system/dist/**"]
     },
     "build:ai": {
-      "dependsOn": ["@reporunner/core#build"],
-      "inputs": ["packages/@reporunner/ai/src/**", "packages/@reporunner/ai/package.json"],
-      "outputs": ["packages/@reporunner/ai/dist/**"]
+      "dependsOn": ["@klikkflow/core#build"],
+      "inputs": ["packages/@klikkflow/ai/src/**", "packages/@klikkflow/ai/package.json"],
+      "outputs": ["packages/@klikkflow/ai/dist/**"]
     },
     "build:workflow": {
-      "dependsOn": ["@reporunner/core#build"],
+      "dependsOn": ["@klikkflow/core#build"],
       "inputs": [
-        "packages/@reporunner/workflow/src/**",
-        "packages/@reporunner/workflow/package.json"
+        "packages/@klikkflow/workflow/src/**",
+        "packages/@klikkflow/workflow/package.json"
       ],
-      "outputs": ["packages/@reporunner/workflow/dist/**"]
+      "outputs": ["packages/@klikkflow/workflow/dist/**"]
     },
     "dev": {
       "cache": false,
@@ -111,12 +111,12 @@
     "dev:backend": {
       "cache": false,
       "persistent": true,
-      "dependsOn": ["@reporunner/core#build", "@reporunner/workflow#build"]
+      "dependsOn": ["@klikkflow/core#build", "@klikkflow/workflow#build"]
     },
     "dev:frontend": {
       "cache": false,
       "persistent": true,
-      "dependsOn": ["@reporunner/design-system#build", "@reporunner/core#build"]
+      "dependsOn": ["@klikkflow/design-system#build", "@klikkflow/core#build"]
     },
     "test": {
       "dependsOn": ["^build"],

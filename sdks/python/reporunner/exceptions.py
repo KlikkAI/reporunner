@@ -1,16 +1,16 @@
 """
-Exception classes for the Reporunner Python SDK.
+Exception classes for the KlikkFlow Python SDK.
 
 This module defines a hierarchy of exceptions that provide detailed error information
-for various failure scenarios in the Reporunner SDK.
+for various failure scenarios in the KlikkFlow SDK.
 """
 
 from typing import Any, Dict, Optional, List
 from httpx import Response
 
 
-class ReporunnerError(Exception):
-    """Base exception for all Reporunner SDK errors."""
+class KlikkFlowError(Exception):
+    """Base exception for all KlikkFlow SDK errors."""
 
     def __init__(
         self,
@@ -19,7 +19,7 @@ class ReporunnerError(Exception):
         context: Optional[Dict[str, Any]] = None,
     ) -> None:
         """
-        Initialize a ReporunnerError.
+        Initialize a KlikkFlowError.
 
         Args:
             message: Human-readable error message
@@ -56,7 +56,7 @@ class ReporunnerError(Exception):
         }
 
 
-class AuthenticationError(ReporunnerError):
+class AuthenticationError(KlikkFlowError):
     """Raised when authentication fails."""
 
     def __init__(
@@ -68,7 +68,7 @@ class AuthenticationError(ReporunnerError):
         super().__init__(message, error_code, context)
 
 
-class AuthorizationError(ReporunnerError):
+class AuthorizationError(KlikkFlowError):
     """Raised when authorization fails (insufficient permissions)."""
 
     def __init__(
@@ -80,7 +80,7 @@ class AuthorizationError(ReporunnerError):
         super().__init__(message, error_code, context)
 
 
-class ValidationError(ReporunnerError):
+class ValidationError(KlikkFlowError):
     """Raised when input validation fails."""
 
     def __init__(
@@ -105,7 +105,7 @@ class ValidationError(ReporunnerError):
         return data
 
 
-class NetworkError(ReporunnerError):
+class NetworkError(KlikkFlowError):
     """Raised when network operations fail."""
 
     def __init__(
@@ -163,7 +163,7 @@ class RateLimitError(NetworkError):
         return data
 
 
-class ExecutionError(ReporunnerError):
+class ExecutionError(KlikkFlowError):
     """Raised when workflow or node execution fails."""
 
     def __init__(
@@ -191,7 +191,7 @@ class ExecutionError(ReporunnerError):
         return data
 
 
-class WorkflowNotFoundError(ReporunnerError):
+class WorkflowNotFoundError(KlikkFlowError):
     """Raised when a workflow is not found."""
 
     def __init__(
@@ -213,7 +213,7 @@ class WorkflowNotFoundError(ReporunnerError):
         return data
 
 
-class ExecutionNotFoundError(ReporunnerError):
+class ExecutionNotFoundError(KlikkFlowError):
     """Raised when an execution is not found."""
 
     def __init__(
@@ -235,7 +235,7 @@ class ExecutionNotFoundError(ReporunnerError):
         return data
 
 
-class CredentialNotFoundError(ReporunnerError):
+class CredentialNotFoundError(KlikkFlowError):
     """Raised when a credential is not found."""
 
     def __init__(
@@ -257,7 +257,7 @@ class CredentialNotFoundError(ReporunnerError):
         return data
 
 
-class ConfigurationError(ReporunnerError):
+class ConfigurationError(KlikkFlowError):
     """Raised when there are configuration issues."""
 
     def __init__(
@@ -277,7 +277,7 @@ class ConfigurationError(ReporunnerError):
         return data
 
 
-class WebSocketError(ReporunnerError):
+class WebSocketError(KlikkFlowError):
     """Raised when WebSocket operations fail."""
 
     def __init__(
@@ -297,7 +297,7 @@ class WebSocketError(ReporunnerError):
         return data
 
 
-class NodeRegistrationError(ReporunnerError):
+class NodeRegistrationError(KlikkFlowError):
     """Raised when node registration fails."""
 
     def __init__(
@@ -317,7 +317,7 @@ class NodeRegistrationError(ReporunnerError):
         return data
 
 
-class CredentialTestError(ReporunnerError):
+class CredentialTestError(KlikkFlowError):
     """Raised when credential testing fails."""
 
     def __init__(
@@ -347,9 +347,9 @@ HTTP_EXCEPTION_MAP = {
     400: ValidationError,
     401: AuthenticationError,
     403: AuthorizationError,
-    404: ReporunnerError,  # Will be specialized based on context
+    404: KlikkFlowError,  # Will be specialized based on context
     429: RateLimitError,
-    500: ReporunnerError,
+    500: KlikkFlowError,
     502: NetworkError,
     503: NetworkError,
     504: NetworkError,
@@ -361,7 +361,7 @@ def create_http_exception(
     message: str,
     response: Optional[Response] = None,
     context: Optional[Dict[str, Any]] = None,
-) -> ReporunnerError:
+) -> KlikkFlowError:
     """
     Create an appropriate exception based on HTTP status code.
 

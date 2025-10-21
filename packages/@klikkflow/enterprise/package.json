@@ -1,0 +1,37 @@
+{
+  "name": "@klikkflow/enterprise",
+  "version": "1.0.0",
+  "description": "Enterprise features including SSO, RBAC, audit logging, and compliance",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx watch src/index.ts",
+    "test": "vitest",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "format": "biome format --write .",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@klikkflow/auth": "workspace:*",
+    "@klikkflow/core": "workspace:*",
+    "samlify": "^2.8.10",
+    "ldapjs": "^3.0.7"
+  },
+  "devDependencies": {
+    "@types/ldapjs": "^3.0.6"
+  },
+  "keywords": [
+    "enterprise",
+    "sso",
+    "rbac",
+    "audit",
+    "compliance",
+    "saml",
+    "ldap"
+  ],
+  "author": "KlikkFlow Team",
+  "license": "MIT"
+}

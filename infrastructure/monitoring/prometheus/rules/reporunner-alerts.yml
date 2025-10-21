@@ -1,112 +1,112 @@
 groups:
-  - name: reporunner.application
+  - name: klikkflow.application
     rules:
       # Application Health Alerts
-      - alert: ReporunnerBackendDown
-        expr: up{job="reporunner-backend"} == 0
+      - alert: KlikkFlowBackendDown
+        expr: up{job="klikkflow-backend"} == 0
         for: 1m
         labels:
           severity: critical
-          service: reporunner-backend
+          service: klikkflow-backend
         annotations:
-          summary: "Reporunner Backend is down"
-          description: "Reporunner Backend has been down for more than 1 minute"
-          runbook_url: "https://docs.reporunner.com/runbooks/backend-down"
+          summary: "KlikkFlow Backend is down"
+          description: "KlikkFlow Backend has been down for more than 1 minute"
+          runbook_url: "https://docs.klikkflow.com/runbooks/backend-down"
 
-      - alert: ReporunnerFrontendDown
-        expr: up{job="reporunner-frontend"} == 0
+      - alert: KlikkFlowFrontendDown
+        expr: up{job="klikkflow-frontend"} == 0
         for: 2m
         labels:
           severity: warning
-          service: reporunner-frontend
+          service: klikkflow-frontend
         annotations:
-          summary: "Reporunner Frontend is down"
-          description: "Reporunner Frontend has been down for more than 2 minutes"
+          summary: "KlikkFlow Frontend is down"
+          description: "KlikkFlow Frontend has been down for more than 2 minutes"
 
-      - alert: ReporunnerWorkerDown
-        expr: up{job="reporunner-workers"} == 0
+      - alert: KlikkFlowWorkerDown
+        expr: up{job="klikkflow-workers"} == 0
         for: 1m
         labels:
           severity: critical
-          service: reporunner-workers
+          service: klikkflow-workers
         annotations:
-          summary: "Reporunner Worker is down"
-          description: "At least one Reporunner Worker has been down for more than 1 minute"
+          summary: "KlikkFlow Worker is down"
+          description: "At least one KlikkFlow Worker has been down for more than 1 minute"
 
       # Performance Alerts
       - alert: HighResponseTime
-        expr: histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket{job="reporunner-backend"}[5m])) by (le)) > 2
+        expr: histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket{job="klikkflow-backend"}[5m])) by (le)) > 2
         for: 5m
         labels:
           severity: warning
-          service: reporunner-backend
+          service: klikkflow-backend
         annotations:
           summary: "High response time detected"
           description: "95th percentile response time is {{ $value }}s for the last 5 minutes"
 
       - alert: HighErrorRate
-        expr: sum(rate(http_requests_total{job="reporunner-backend",code=~"5.."}[5m])) / sum(rate(http_requests_total{job="reporunner-backend"}[5m])) > 0.05
+        expr: sum(rate(http_requests_total{job="klikkflow-backend",code=~"5.."}[5m])) / sum(rate(http_requests_total{job="klikkflow-backend"}[5m])) > 0.05
         for: 5m
         labels:
           severity: critical
-          service: reporunner-backend
+          service: klikkflow-backend
         annotations:
           summary: "High error rate detected"
           description: "Error rate is {{ $value | humanizePercentage }} for the last 5 minutes"
 
       # Workflow Execution Alerts
       - alert: WorkflowExecutionFailureRateHigh
-        expr: sum(rate(reporunner_workflow_executions_total{status="failed"}[5m])) / sum(rate(reporunner_workflow_executions_total[5m])) > 0.1
+        expr: sum(rate(klikkflow_workflow_executions_total{status="failed"}[5m])) / sum(rate(klikkflow_workflow_executions_total[5m])) > 0.1
         for: 5m
         labels:
           severity: warning
-          service: reporunner-backend
+          service: klikkflow-backend
         annotations:
           summary: "High workflow execution failure rate"
           description: "Workflow execution failure rate is {{ $value | humanizePercentage }} for the last 5 minutes"
 
       - alert: WorkflowExecutionStuck
-        expr: sum(reporunner_workflow_executions_running) > 100
+        expr: sum(klikkflow_workflow_executions_running) > 100
         for: 10m
         labels:
           severity: warning
-          service: reporunner-backend
+          service: klikkflow-backend
         annotations:
           summary: "Too many running workflow executions"
           description: "There are {{ $value }} running workflow executions for more than 10 minutes"
 
       - alert: LongRunningExecution
-        expr: reporunner_workflow_execution_duration_seconds > 3600
+        expr: klikkflow_workflow_execution_duration_seconds > 3600
         for: 0m
         labels:
           severity: warning
-          service: reporunner-backend
+          service: klikkflow-backend
         annotations:
           summary: "Long running workflow execution detected"
           description: "Workflow execution {{ $labels.execution_id }} has been running for {{ $value | humanizeDuration }}"
 
       # Queue Alerts
       - alert: QueueBacklogHigh
-        expr: reporunner_queue_size{queue="workflow_execution"} > 1000
+        expr: klikkflow_queue_size{queue="workflow_execution"} > 1000
         for: 5m
         labels:
           severity: warning
-          service: reporunner-workers
+          service: klikkflow-workers
         annotations:
           summary: "High queue backlog"
           description: "Workflow execution queue has {{ $value }} pending jobs"
 
       - alert: QueueProcessingStalled
-        expr: rate(reporunner_queue_processed_total[5m]) == 0 and reporunner_queue_size > 0
+        expr: rate(klikkflow_queue_processed_total[5m]) == 0 and klikkflow_queue_size > 0
         for: 5m
         labels:
           severity: critical
-          service: reporunner-workers
+          service: klikkflow-workers
         annotations:
           summary: "Queue processing stalled"
           description: "Queue {{ $labels.queue }} has stopped processing jobs"
 
-  - name: reporunner.infrastructure
+  - name: klikkflow.infrastructure
     rules:
       # Database Alerts
       - alert: MongoDBDown
@@ -181,7 +181,7 @@ groups:
           summary: "Redis slow log entries detected"
           description: "{{ $value }} slow log entries in the last 5 minutes"
 
-  - name: reporunner.system
+  - name: klikkflow.system
     rules:
       # System Resource Alerts
       - alert: HighCPUUsage
@@ -255,7 +255,7 @@ groups:
           summary: "Container restarting frequently"
           description: "Container {{ $labels.name }} has restarted {{ $value }} times in the last hour"
 
-  - name: reporunner.security
+  - name: klikkflow.security
     rules:
       # Security Alerts
       - alert: SuspiciousRequestPattern
@@ -269,7 +269,7 @@ groups:
           description: "High rate of 403 responses: {{ $value }} requests/second on {{ $labels.instance }}"
 
       - alert: FailedLoginAttempts
-        expr: sum(rate(reporunner_auth_failures_total[5m])) > 5
+        expr: sum(rate(klikkflow_auth_failures_total[5m])) > 5
         for: 2m
         labels:
           severity: warning
@@ -288,11 +288,11 @@ groups:
           summary: "High unauthorized API access"
           description: "{{ $value }} unauthorized requests per second"
 
-  - name: reporunner.business
+  - name: klikkflow.business
     rules:
       # Business Logic Alerts
       - alert: LowWorkflowCreationRate
-        expr: sum(rate(reporunner_workflows_created_total[1h])) < 1
+        expr: sum(rate(klikkflow_workflows_created_total[1h])) < 1
         for: 1h
         labels:
           severity: info
@@ -302,7 +302,7 @@ groups:
           description: "Only {{ $value }} workflows created in the last hour"
 
       - alert: CredentialTestFailures
-        expr: sum(rate(reporunner_credential_test_failures_total[5m])) > 0.1
+        expr: sum(rate(klikkflow_credential_test_failures_total[5m])) > 0.1
         for: 5m
         labels:
           severity: warning
@@ -312,7 +312,7 @@ groups:
           description: "{{ $value }} credential test failures per second"
 
       - alert: IntegrationDown
-        expr: reporunner_integration_health{status!="healthy"} == 1
+        expr: klikkflow_integration_health{status!="healthy"} == 1
         for: 5m
         labels:
           severity: warning

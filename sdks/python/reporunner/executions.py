@@ -1,5 +1,5 @@
 """
-Execution management for the Reporunner Python SDK.
+Execution management for the KlikkFlow Python SDK.
 This module provides comprehensive execution operations including real-time monitoring,
 cancellation, and detailed execution data retrieval.
 """
@@ -20,7 +20,7 @@ from .types import (
     WebSocketMessage
 )
 from .exceptions import (
-    ReporunnerAPIError,
+    KlikkFlowAPIError,
     ExecutionNotFoundError,
     ExecutionError,
     ValidationError
@@ -67,7 +67,7 @@ class ExecutionManager:
             
         Raises:
             ValidationError: If workflow_id or parameters are invalid
-            ReporunnerAPIError: If API request fails
+            KlikkFlowAPIError: If API request fails
         """
         if not workflow_id:
             raise ValidationError("workflow_id is required")
@@ -90,7 +90,7 @@ class ExecutionManager:
             return Execution.model_validate(response["data"])
             
         except Exception as e:
-            raise ReporunnerAPIError(f"Failed to start execution: {str(e)}")
+            raise KlikkFlowAPIError(f"Failed to start execution: {str(e)}")
 
     async def get_execution(self, execution_id: str) -> Execution:
         """
@@ -104,7 +104,7 @@ class ExecutionManager:
             
         Raises:
             ExecutionNotFoundError: If execution doesn't exist
-            ReporunnerAPIError: If API request fails
+            KlikkFlowAPIError: If API request fails
         """
         try:
             response = await self.client._make_request(
@@ -117,7 +117,7 @@ class ExecutionManager:
         except Exception as e:
             if "404" in str(e):
                 raise ExecutionNotFoundError(f"Execution {execution_id} not found")
-            raise ReporunnerAPIError(f"Failed to get execution: {str(e)}")
+            raise KlikkFlowAPIError(f"Failed to get execution: {str(e)}")
 
     async def list_executions(
         self,
@@ -175,7 +175,7 @@ class ExecutionManager:
             )
             
         except Exception as e:
-            raise ReporunnerAPIError(f"Failed to list executions: {str(e)}")
+            raise KlikkFlowAPIError(f"Failed to list executions: {str(e)}")
 
     async def cancel_execution(self, execution_id: str) -> bool:
         """
@@ -204,7 +204,7 @@ class ExecutionManager:
                 raise ExecutionNotFoundError(f"Execution {execution_id} not found")
             if "cannot be cancelled" in str(e).lower():
                 raise ExecutionError(f"Execution {execution_id} cannot be cancelled")
-            raise ReporunnerAPIError(f"Failed to cancel execution: {str(e)}")
+            raise KlikkFlowAPIError(f"Failed to cancel execution: {str(e)}")
 
     async def retry_execution(
         self, 
@@ -235,7 +235,7 @@ class ExecutionManager:
             return Execution.model_validate(response["data"])
             
         except Exception as e:
-            raise ReporunnerAPIError(f"Failed to retry execution: {str(e)}")
+            raise KlikkFlowAPIError(f"Failed to retry execution: {str(e)}")
 
     async def get_execution_logs(
         self, 
@@ -270,7 +270,7 @@ class ExecutionManager:
             return response.get("data", [])
             
         except Exception as e:
-            raise ReporunnerAPIError(f"Failed to get execution logs: {str(e)}")
+            raise KlikkFlowAPIError(f"Failed to get execution logs: {str(e)}")
 
     async def stream_execution_updates(
         self, 
@@ -337,7 +337,7 @@ class ExecutionManager:
             return None
             
         except Exception as e:
-            raise ReporunnerAPIError(f"Failed to get node execution data: {str(e)}")
+            raise KlikkFlowAPIError(f"Failed to get node execution data: {str(e)}")
 
     def add_execution_listener(
         self, 
@@ -422,7 +422,7 @@ class ExecutionManager:
                 return response.get("data", b"")
                 
         except Exception as e:
-            raise ReporunnerAPIError(f"Failed to export execution data: {str(e)}")
+            raise KlikkFlowAPIError(f"Failed to export execution data: {str(e)}")
 
     async def get_execution_statistics(
         self,
@@ -458,7 +458,7 @@ class ExecutionManager:
             return response.get("data", {})
             
         except Exception as e:
-            raise ReporunnerAPIError(f"Failed to get execution statistics: {str(e)}")
+            raise KlikkFlowAPIError(f"Failed to get execution statistics: {str(e)}")
 
 
 # Convenience functions for common execution operations
@@ -471,7 +471,7 @@ async def start_workflow_execution(
     Convenience function to start a workflow execution.
     
     Args:
-        client: ReporunnerClient instance
+        client: KlikkFlowClient instance
         workflow_id: ID of the workflow to execute
         input_data: Optional input data for the workflow
         
@@ -491,7 +491,7 @@ async def wait_for_execution_completion(
     Wait for an execution to complete with optional timeout.
     
     Args:
-        client: ReporunnerClient instance
+        client: KlikkFlowClient instance
         execution_id: ID of the execution to wait for
         timeout: Optional timeout in seconds
         

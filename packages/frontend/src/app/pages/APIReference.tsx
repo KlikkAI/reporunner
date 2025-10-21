@@ -1,7 +1,7 @@
 /**
  * API Reference Page
  *
- * Comprehensive API documentation for Reporunner
+ * Comprehensive API documentation for KlikkFlow
  * REST API endpoints, authentication, and examples
  */
 
@@ -277,13 +277,13 @@ export const APIReference: React.FC = () => {
     ],
   };
 
-  const authenticationExample = `curl -X GET "https://api.reporunner.dev/api/workflows" \\
+  const authenticationExample = `curl -X GET "https://api.klikkflow.dev/api/workflows" \\
   -H "Authorization: Bearer YOUR_API_TOKEN" \\
   -H "Content-Type: application/json"`;
 
   const webhookExample = `// Webhook endpoint configuration
 {
-  "url": "https://your-domain.com/webhook/reporunner",
+  "url": "https://your-domain.com/webhook/klikkflow",
   "events": ["workflow.completed", "workflow.failed"],
   "secret": "your_webhook_secret"
 }
@@ -301,11 +301,11 @@ export const APIReference: React.FC = () => {
 }`;
 
   const sdkExample = `// Node.js SDK Example
-const { ReporunnerClient } = require('@reporunner/sdk');
+const { KlikkFlowClient } = require('@klikkflow/sdk');
 
-const client = new ReporunnerClient({
-  apiToken: process.env.REPORUNNER_API_TOKEN,
-  baseUrl: 'https://api.reporunner.dev'
+const client = new KlikkFlowClient({
+  apiToken: process.env.KLIKKFLOW_API_TOKEN,
+  baseUrl: 'https://api.klikkflow.dev'
 });
 
 // Execute a workflow
@@ -355,7 +355,7 @@ console.log('Execution result:', execution.data);`;
               Reference
             </h1>
             <p className="text-xl text-slate-200 mb-8 max-w-3xl mx-auto leading-relaxed">
-              Complete REST API documentation for Reporunner. Manage workflows, executions, and
+              Complete REST API documentation for KlikkFlow. Manage workflows, executions, and
               integrations programmatically with our powerful API.
             </p>
 
@@ -380,7 +380,7 @@ console.log('Execution result:', execution.data);`;
             <div className="text-center mb-12">
               <h2 className="text-4xl font-bold text-gray-900 mb-6">Quick Start</h2>
               <p className="text-xl text-gray-600">
-                Get up and running with the Reporunner API in minutes
+                Get up and running with the KlikkFlow API in minutes
               </p>
             </div>
 
@@ -687,7 +687,7 @@ console.log('Execution result:', execution.data);`;
                   <div className="flex items-center justify-between">
                     <div>
                       <h4 className="font-semibold text-gray-900">JavaScript</h4>
-                      <p className="text-gray-600 text-sm">npm install @reporunner/sdk</p>
+                      <p className="text-gray-600 text-sm">npm install @klikkflow/sdk</p>
                     </div>
                     <ExternalLink className="w-5 h-5 text-gray-400" />
                   </div>
@@ -696,7 +696,7 @@ console.log('Execution result:', execution.data);`;
                   <div className="flex items-center justify-between">
                     <div>
                       <h4 className="font-semibold text-gray-900">Python</h4>
-                      <p className="text-gray-600 text-sm">pip install reporunner</p>
+                      <p className="text-gray-600 text-sm">pip install klikkflow</p>
                     </div>
                     <ExternalLink className="w-5 h-5 text-gray-400" />
                   </div>
@@ -705,7 +705,7 @@ console.log('Execution result:', execution.data);`;
                   <div className="flex items-center justify-between">
                     <div>
                       <h4 className="font-semibold text-gray-900">Go</h4>
-                      <p className="text-gray-600 text-sm">go get github.com/reporunner/go-sdk</p>
+                      <p className="text-gray-600 text-sm">go get github.com/klikkflow/go-sdk</p>
                     </div>
                     <ExternalLink className="w-5 h-5 text-gray-400" />
                   </div>
@@ -721,7 +721,7 @@ console.log('Execution result:', execution.data);`;
         <div className="container mx-auto px-6 text-center">
           <h2 className="text-4xl font-bold mb-6 text-white">Ready to Start Building?</h2>
           <p className="text-xl mb-8 max-w-2xl mx-auto opacity-90">
-            Get your API key and start integrating Reporunner into your applications today.
+            Get your API key and start integrating KlikkFlow into your applications today.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">

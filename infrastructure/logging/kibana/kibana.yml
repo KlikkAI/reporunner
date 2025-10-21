@@ -1,7 +1,7 @@
-# Kibana configuration for Reporunner logging
+# Kibana configuration for KlikkFlow logging
 
 # Server settings
-server.name: reporunner-kibana
+server.name: klikkflow-kibana
 server.host: 0.0.0.0
 server.port: 5601
 server.basePath: ""
@@ -27,7 +27,7 @@ xpack.security.encryptionKey: "a7a6311933d3503b89bc2dbc235837c06c65681a06b6c0498
 # Reporting settings
 xpack.reporting.enabled: true
 xpack.reporting.encryptionKey: "a7a6311933d3503b89bc2dbc235837c06c65681a06b6c0498c55"
-xpack.reporting.kibanaServer.hostname: "reporunner-kibana"
+xpack.reporting.kibanaServer.hostname: "klikkflow-kibana"
 xpack.reporting.capture.browser.chromium.disableSandbox: true
 
 # Saved objects encryption
@@ -89,9 +89,9 @@ discover.sampleSize: 500
 # Visualization settings
 vis_type_vega.enableExternalUrls: false
 
-# Advanced settings for Reporunner
-reporunner:
-  defaultIndex: "reporunner-logs-*"
+# Advanced settings for KlikkFlow
+klikkflow:
+  defaultIndex: "klikkflow-logs-*"
   refreshInterval: 30s
   timeFilter:
     refreshIntervalDefaults:

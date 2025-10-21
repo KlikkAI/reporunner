@@ -1,0 +1,58 @@
+{
+  "name": "@klikkflow/services",
+  "version": "1.0.0",
+  "description": "Microservices: analytics, audit, auth, execution, notification, tenant, workflow",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "vitest",
+    "type-check": "tsc --noEmit",
+    "clean": "rimraf dist",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "format": "biome format --write ."
+  },
+  "dependencies": {
+    "@klikkflow/shared": "workspace:*",
+    "@klikkflow/core": "workspace:*",
+    "@klikkflow/auth": "workspace:*",
+    "@klikkflow/backend": "workspace:*",
+    "express": "catalog:",
+    "zod": "catalog:",
+    "winston": "catalog:"
+  },
+  "devDependencies": {
+    "@types/express": "catalog:",
+    "@types/node": "catalog:",
+    "rimraf": "^6.0.1",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  },
+  "keywords": [
+    "klikkflow",
+    "microservices",
+    "analytics",
+    "audit",
+    "auth",
+    "execution",
+    "notification",
+    "tenant",
+    "workflow"
+  ],
+  "author": "KlikkFlow Team",
+  "license": "MIT",
+  "files": [
+    "dist",
+    "analytics-service",
+    "audit-service",
+    "auth-service",
+    "execution-service",
+    "notification-service",
+    "tenant-service",
+    "workflow-service",
+    "README.md"
+  ]
+}

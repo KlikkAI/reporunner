@@ -1,15 +1,15 @@
-# Elasticsearch configuration for Reporunner logging
+# Elasticsearch configuration for KlikkFlow logging
 
 # Cluster settings
-cluster.name: reporunner-logs
-node.name: reporunner-elasticsearch
+cluster.name: klikkflow-logs
+node.name: klikkflow-elasticsearch
 network.host: 0.0.0.0
 http.port: 9200
 transport.port: 9300
 
 # Discovery settings (single node)
 discovery.type: single-node
-cluster.initial_master_nodes: ["reporunner-elasticsearch"]
+cluster.initial_master_nodes: ["klikkflow-elasticsearch"]
 
 # Node settings
 node.roles: [master, data, ingest, ml, remote_cluster_client]
@@ -40,7 +40,7 @@ xpack.monitoring.collection.enabled: true
 xpack.monitoring.elasticsearch.collection.enabled: true
 
 # Index settings
-action.auto_create_index: +reporunner-*,-*
+action.auto_create_index: +klikkflow-*,-*
 
 # Performance tuning
 indices.memory.index_buffer_size: 30%
@@ -70,8 +70,8 @@ http.cors.allow-methods: OPTIONS, HEAD, GET, POST, PUT, DELETE
 http.cors.allow-headers: X-Requested-With, X-Auth-Token, Content-Type, Content-Length, Authorization
 
 # Index lifecycle management
-index.lifecycle.name: reporunner-logs-policy
-index.lifecycle.rollover_alias: reporunner-logs
+index.lifecycle.name: klikkflow-logs-policy
+index.lifecycle.rollover_alias: klikkflow-logs
 
 # Circuit breaker settings
 indices.breaker.total.limit: 70%
