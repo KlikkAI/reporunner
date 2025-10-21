@@ -2,7 +2,7 @@
  * Express.js type extensions and augmentations
  */
 
-import type { AuthenticatedUser } from '@reporunner/shared';
+import type { AuthenticatedUser } from '@klikkflow/shared';
 import type { Request } from 'express';
 
 // Import AuthenticatedUser from shared package instead of declaring global namespace

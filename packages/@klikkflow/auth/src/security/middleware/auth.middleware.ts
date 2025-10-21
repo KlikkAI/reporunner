@@ -1,4 +1,4 @@
-import { type AuthenticatedUser, ERROR_CODES } from '@reporunner/shared';
+import { type AuthenticatedUser, ERROR_CODES } from '@klikkflow/shared';
 import type { NextFunction, Request, Response } from 'express';
 // Removed unused JwtPayload import
 import type { JWTSessionManager } from '../jwt-session';

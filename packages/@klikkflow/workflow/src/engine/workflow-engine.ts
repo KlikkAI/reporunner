@@ -1,4 +1,4 @@
-// Workflow Engine implementation reusing patterns from @reporunner/workflow
+// Workflow Engine implementation reusing patterns from @klikkflow/workflow
 import { EventEmitter } from 'node:events';
 import { v4 as uuid } from 'uuid';
 import { ExecutionStatus, TriggerType, type WorkflowExecution } from './types/execution-types';

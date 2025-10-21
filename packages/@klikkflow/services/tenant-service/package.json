@@ -1,5 +1,5 @@
 {
-  "name": "@reporunner/tenant-service",
+  "name": "@klikkflow/tenant-service",
   "version": "1.0.0",
   "description": "Enterprise multi-tenancy service for organization management, isolation, and billing",
   "main": "dist/index.js",
@@ -14,9 +14,9 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@reporunner/shared": "workspace:*",
-    "@reporunner/backend": "workspace:*",
-    "@reporunner/auth": "workspace:*",
+    "@klikkflow/shared": "workspace:*",
+    "@klikkflow/backend": "workspace:*",
+    "@klikkflow/auth": "workspace:*",
     "uuid": "^9.0.1",
     "date-fns": "^3.6.0",
     "stripe": "^14.21.0"
@@ -34,6 +34,6 @@
     "isolation",
     "enterprise"
   ],
-  "author": "Reporunner Team",
+  "author": "KlikkFlow Team",
   "license": "MIT"
 }

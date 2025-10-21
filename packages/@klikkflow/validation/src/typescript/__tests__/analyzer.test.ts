@@ -28,7 +28,7 @@ describe('TypeScriptAnalyzer', () => {
       // Mock the component results
       const mockAutocompleteResults = [
         {
-          packageName: '@reporunner/core',
+          packageName: '@klikkflow/core',
           testFile: 'test.ts',
           position: { line: 1, character: 10 },
           expectedSuggestions: ['WorkflowEngine'],
@@ -41,7 +41,7 @@ describe('TypeScriptAnalyzer', () => {
 
       const mockTypeResolutionResults = [
         {
-          packageName: '@reporunner/core',
+          packageName: '@klikkflow/core',
           typeDefinition: 'WorkflowEngine',
           resolutionTime: 25,
           resolved: true,
@@ -51,7 +51,7 @@ describe('TypeScriptAnalyzer', () => {
 
       const mockCompilationMetrics = [
         {
-          packageName: '@reporunner/core',
+          packageName: '@klikkflow/core',
           totalFiles: 10,
           compilationTime: 1000,
           memoryUsage: 50000000,
@@ -170,7 +170,7 @@ describe('TypeScriptAnalyzer', () => {
           pathStr.includes('backend') ||
           pathStr.includes('frontend') ||
           pathStr.includes('shared') ||
-          pathStr.includes('@reporunner')
+          pathStr.includes('@klikkflow')
         );
       });
 
@@ -185,7 +185,7 @@ describe('TypeScriptAnalyzer', () => {
       expect(directories).toContain(path.join(mockWorkspaceRoot, 'packages', 'backend'));
       expect(directories).toContain(path.join(mockWorkspaceRoot, 'packages', 'frontend'));
       expect(directories).toContain(path.join(mockWorkspaceRoot, 'packages', 'shared'));
-      expect(directories.length).toBeGreaterThan(3); // Should include @reporunner packages too
+      expect(directories.length).toBeGreaterThan(3); // Should include @klikkflow packages too
 
       mockExistsSync.mockRestore();
       mockReaddirSync.mockRestore();

@@ -3,7 +3,7 @@ import { execa } from 'execa';
 
 export const buildCommand = new Command()
   .name('build')
-  .description('Build the Reporunner project')
+  .description('Build the KlikkFlow project')
   .option('-p, --production', 'Build for production')
   .action(async (_options) => {
     try {

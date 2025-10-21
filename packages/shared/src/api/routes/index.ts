@@ -29,7 +29,7 @@ export function setupRoutes(app: Application): void {
   // API info endpoint
   app.get(`${apiPrefix}`, (_req, res) => {
     res.json({
-      name: 'Reporunner API',
+      name: 'KlikkFlow API',
       version: '1.0.0',
       description: 'AI-powered workflow automation platform',
       documentation: '/docs',

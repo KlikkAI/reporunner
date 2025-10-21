@@ -1,7 +1,7 @@
 /**
  * Terms of Service Page
  *
- * Terms of service and legal information for Reporunner
+ * Terms of service and legal information for KlikkFlow
  */
 
 import {
@@ -65,7 +65,7 @@ export const Terms: React.FC = () => {
               </span>
             </h1>
             <p className="text-xl text-slate-200 mb-8 max-w-3xl mx-auto leading-relaxed">
-              Clear, fair terms that protect both you and Reporunner. We believe in transparent
+              Clear, fair terms that protect both you and KlikkFlow. We believe in transparent
               agreements that build trust.
             </p>
 
@@ -111,7 +111,7 @@ export const Terms: React.FC = () => {
             <div className="text-center mb-12">
               <h2 className="text-4xl font-bold text-gray-900 mb-6">Complete Terms</h2>
               <p className="text-xl text-gray-600">
-                Detailed terms and conditions for using Reporunner
+                Detailed terms and conditions for using KlikkFlow
               </p>
             </div>
 
@@ -156,7 +156,7 @@ export const Terms: React.FC = () => {
                 <h3 className="font-semibold text-gray-900 mb-2">Legal Team</h3>
                 <p className="text-gray-600 text-sm mb-4">General legal questions</p>
                 <button className="text-blue-600 font-medium hover:text-blue-700 transition-colors">
-                  legal@reporunner.dev
+                  legal@klikkflow.dev
                 </button>
               </div>
 
@@ -187,7 +187,7 @@ export const Terms: React.FC = () => {
         <div className="container mx-auto px-6 text-center text-white">
           <h2 className="text-4xl font-bold mb-6">Ready to Get Started?</h2>
           <p className="text-xl mb-8 max-w-2xl mx-auto opacity-90">
-            By using Reporunner, you agree to these Terms of Service. Start building powerful
+            By using KlikkFlow, you agree to these Terms of Service. Start building powerful
             workflows today.
           </p>
 

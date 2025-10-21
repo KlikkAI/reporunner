@@ -4,7 +4,7 @@
  * Phase D: Community & Growth - Multi-tenant architecture
  */
 
-import { Logger } from '@reporunner/core';
+import { Logger } from '@klikkflow/core';
 import { z } from 'zod';
 
 // Tenant schema

@@ -39,13 +39,13 @@ export class TypeSafetyValidator {
       for (const pkg of mainPackages) {
         const pkgPath = path.join(packagesDir, pkg);
         const stat = await fs.stat(pkgPath);
-        if (stat.isDirectory() && pkg !== '@reporunner') {
+        if (stat.isDirectory() && pkg !== '@klikkflow') {
           packages.push(pkgPath);
         }
       }
 
-      // @reporunner scoped packages
-      const scopedDir = path.join(packagesDir, '@reporunner');
+      // @klikkflow scoped packages
+      const scopedDir = path.join(packagesDir, '@klikkflow');
       try {
         const scopedPackages = await fs.readdir(scopedDir);
         for (const pkg of scopedPackages) {
@@ -56,7 +56,7 @@ export class TypeSafetyValidator {
           }
         }
       } catch (_error) {
-        // @reporunner directory might not exist
+        // @klikkflow directory might not exist
       }
 
       return packages;
@@ -96,7 +96,7 @@ export class TypeSafetyValidator {
         rootDir: './src',
         baseUrl: '.',
         paths: {
-          '@reporunner/*': ['packages/@reporunner/*/src'],
+          '@klikkflow/*': ['packages/@klikkflow/*/src'],
           shared: ['packages/shared/src'],
           backend: ['packages/backend/src'],
           frontend: ['packages/frontend/src'],
@@ -390,7 +390,7 @@ export class TypeSafetyValidator {
     const packages = Array.from(new Set(definitions.map((d) => d.packageName)));
 
     if (packages.length > 1) {
-      return `Move ${typeName} to a shared package (e.g., @reporunner/core or shared) to ensure consistency across ${packages.join(', ')}`;
+      return `Move ${typeName} to a shared package (e.g., @klikkflow/core or shared) to ensure consistency across ${packages.join(', ')}`;
     }
 
     return `Consolidate different definitions of ${typeName} within the same package`;
@@ -888,7 +888,7 @@ export class TypeSafetyValidator {
     if (consistencyReport.consistencyScore < 80) {
       recommendations.push(
         '🔄 Type consistency improvements needed:',
-        '• Move shared types to common packages (@reporunner/core or shared)',
+        '• Move shared types to common packages (@klikkflow/core or shared)',
         '• Establish type naming conventions',
         '• Use type aliases for complex types',
         '• Document type definitions and their purposes'

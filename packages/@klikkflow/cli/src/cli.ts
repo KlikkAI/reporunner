@@ -43,8 +43,8 @@ function showBanner(): void {
 const program = new Command();
 
 program
-  .name('reporunner')
-  .description('Reporunner CLI - Build and manage AI-powered workflows')
+  .name('klikkflow')
+  .description('KlikkFlow CLI - Build and manage AI-powered workflows')
   .version(packageJson.version)
   .option('-v, --verbose', 'Enable verbose logging')
   .option('--no-banner', 'Disable banner display')

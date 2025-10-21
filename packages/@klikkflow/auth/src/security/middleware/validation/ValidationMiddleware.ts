@@ -3,7 +3,7 @@ import {
   type SchemaDefinition,
   SchemaValidator,
   ValidationError,
-} from '@reporunner/core';
+} from '@klikkflow/core';
 import type { Request } from 'express';
 import type { ParsedQs } from 'qs';
 

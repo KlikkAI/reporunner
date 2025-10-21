@@ -4,7 +4,7 @@
  * Phase D: Community & Growth - Advanced enterprise capabilities
  */
 
-import { Logger } from '@reporunner/core';
+import { Logger } from '@klikkflow/core';
 import { z } from 'zod';
 
 // Permission schema

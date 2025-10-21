@@ -98,7 +98,7 @@ export class WorkflowGenerator {
 
 export class NodeGenerator {
   generateActionNode(name: string, category: string): string {
-    return `import { Node, NodeConfig, ExecutionContext } from '@reporunner/core';
+    return `import { Node, NodeConfig, ExecutionContext } from '@klikkflow/core';
 
 export interface ${name}Config extends NodeConfig {
   // Add your configuration properties here
@@ -131,7 +131,7 @@ export default ${name};`;
   }
 
   generateTriggerNode(name: string, category: string): string {
-    return `import { TriggerNode, NodeConfig, ExecutionContext } from '@reporunner/core';
+    return `import { TriggerNode, NodeConfig, ExecutionContext } from '@klikkflow/core';
 
 export interface ${name}Config extends NodeConfig {
   schedule?: string;
@@ -162,7 +162,7 @@ export default ${name};`;
   }
 
   generateTransformNode(name: string, category: string): string {
-    return `import { Node, NodeConfig, ExecutionContext } from '@reporunner/core';
+    return `import { Node, NodeConfig, ExecutionContext } from '@klikkflow/core';
 
 export interface ${name}Config extends NodeConfig {
   mapping?: Record<string, string>;

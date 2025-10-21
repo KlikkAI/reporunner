@@ -72,7 +72,7 @@ export class BuildTimeAnalyzer {
     const startTime = performance.now();
     const packageTimes: Record<string, number> = {};
 
-    const packages = ['@reporunner/core', '@reporunner/workflow', 'backend', 'frontend'];
+    const packages = ['@klikkflow/core', '@klikkflow/workflow', 'backend', 'frontend'];
 
     for (const pkg of packages) {
       const pkgStartTime = performance.now();

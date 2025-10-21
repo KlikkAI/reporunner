@@ -3,7 +3,7 @@
  * Provides API access to workflow scheduling functionality
  */
 
-// import { authMiddleware } from '@reporunner/security';
+// import { authMiddleware } from '@klikkflow/security';
 import { Router } from 'express';
 import { z } from 'zod';
 import { workflowSchedulerService } from '../services/WorkflowSchedulerService';

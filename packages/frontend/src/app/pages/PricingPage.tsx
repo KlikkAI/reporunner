@@ -1,7 +1,7 @@
 /**
  * Pricing Page
  *
- * Comprehensive pricing showcase for Reporunner
+ * Comprehensive pricing showcase for KlikkFlow
  * Different plans and enterprise options
  */
 
@@ -447,7 +447,7 @@ export const PricingPage: React.FC = () => {
           <div className="max-w-4xl mx-auto text-center mb-12">
             <h2 className="text-4xl font-bold text-gray-900 mb-4">Add-ons & Services</h2>
             <p className="text-xl text-gray-600">
-              Extend your Reporunner experience with additional services
+              Extend your KlikkFlow experience with additional services
             </p>
           </div>
           <div className="max-w-6xl mx-auto">
@@ -547,7 +547,7 @@ export const PricingPage: React.FC = () => {
         <div className="container mx-auto px-6 text-center text-white">
           <h2 className="text-4xl font-bold mb-6">Ready to Get Started?</h2>
           <p className="text-xl mb-8 max-w-2xl mx-auto opacity-90">
-            Join thousands of developers and enterprises who trust Reporunner for their workflow
+            Join thousands of developers and enterprises who trust KlikkFlow for their workflow
             automation needs.
           </p>
 

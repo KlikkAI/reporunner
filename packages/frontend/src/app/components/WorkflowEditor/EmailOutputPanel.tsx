@@ -7,7 +7,7 @@
  * Reduction: ~120 lines → ~70 lines (42% reduction)
  */
 
-import { Logger } from '@reporunner/core';
+import { Logger } from '@klikkflow/core';
 import { CheckCircle, Edit, Pin } from 'lucide-react';
 import type React from 'react';
 import { useMemo } from 'react';

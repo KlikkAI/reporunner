@@ -78,7 +78,7 @@ export class PathSuggestionEngine {
 
   private isDeepImport(importPath: string): boolean {
     // Check if import goes deep into package structure
-    if (importPath.startsWith('@reporunner/')) {
+    if (importPath.startsWith('@klikkflow/')) {
       const parts = importPath.split('/');
       return parts.length > 2 && parts.includes('src');
     }
@@ -105,14 +105,14 @@ export class PathSuggestionEngine {
 
   private isPackageImport(importPath: string): boolean {
     return (
-      importPath.startsWith('@reporunner/') ||
+      importPath.startsWith('@klikkflow/') ||
       importPath.startsWith('../packages/') ||
       !(importPath.startsWith('./') || importPath.startsWith('../') || importPath.startsWith('/'))
     );
   }
 
   private suggestBarrelExport(importStmt: any): ImportSuggestion | null {
-    if (!importStmt.source.startsWith('@reporunner/')) {
+    if (!importStmt.source.startsWith('@klikkflow/')) {
       return null;
     }
 
@@ -140,9 +140,9 @@ export class PathSuggestionEngine {
       const relativePath = path.relative(this.workspaceRoot, resolvedPath);
 
       // Check if this could be a package import
-      if (relativePath.startsWith('packages/@reporunner/')) {
+      if (relativePath.startsWith('packages/@klikkflow/')) {
         const pathParts = relativePath.split('/');
-        const packageName = `@reporunner/${pathParts[2]}`;
+        const packageName = `@klikkflow/${pathParts[2]}`;
 
         return {
           type: 'optimize-path',
@@ -267,7 +267,7 @@ export class PathSuggestionEngine {
   }
 
   private extractPackageName(importPath: string): string {
-    if (importPath.startsWith('@reporunner/')) {
+    if (importPath.startsWith('@klikkflow/')) {
       return importPath.split('/').slice(0, 2).join('/');
     }
 
@@ -319,17 +319,17 @@ export class PathSuggestionEngine {
       await this.loadPackageInfo(pkg, pkgPath);
     }
 
-    // Load @reporunner packages
-    const reporunnerDir = path.join(packagesDir, '@reporunner');
-    if (fs.existsSync(reporunnerDir)) {
-      const reporunnerPackages = fs
-        .readdirSync(reporunnerDir, { withFileTypes: true })
+    // Load @klikkflow packages
+    const klikkflowDir = path.join(packagesDir, '@klikkflow');
+    if (fs.existsSync(klikkflowDir)) {
+      const klikkflowPackages = fs
+        .readdirSync(klikkflowDir, { withFileTypes: true })
         .filter((dirent) => dirent.isDirectory())
         .map((dirent) => dirent.name);
 
-      for (const pkg of reporunnerPackages) {
-        const pkgPath = path.join(reporunnerDir, pkg);
-        await this.loadPackageInfo(`@reporunner/${pkg}`, pkgPath);
+      for (const pkg of klikkflowPackages) {
+        const pkgPath = path.join(klikkflowDir, pkg);
+        await this.loadPackageInfo(`@klikkflow/${pkg}`, pkgPath);
       }
     }
   }

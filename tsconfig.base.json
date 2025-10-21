@@ -23,7 +23,7 @@
     "emitDecoratorMetadata": true,
     "baseUrl": ".",
     "paths": {
-      "@reporunner/*": ["packages/@reporunner/*/src"]
+      "@klikkflow/*": ["packages/@klikkflow/*/src"]
     }
   },
   "exclude": [

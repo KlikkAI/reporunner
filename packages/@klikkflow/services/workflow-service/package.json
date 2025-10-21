@@ -1,5 +1,5 @@
 {
-  "name": "@reporunner/workflow-service",
+  "name": "@klikkflow/workflow-service",
   "version": "1.0.0",
   "description": "Enterprise workflow management service with versioning and collaboration",
   "main": "dist/index.js",
@@ -14,10 +14,10 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@reporunner/workflow": "workspace:*",
-    "@reporunner/backend": "workspace:*",
-    "@reporunner/platform": "workspace:*",
-    "@reporunner/shared": "workspace:*"
+    "@klikkflow/workflow": "workspace:*",
+    "@klikkflow/backend": "workspace:*",
+    "@klikkflow/platform": "workspace:*",
+    "@klikkflow/shared": "workspace:*"
   },
   "keywords": [
     "workflow",
@@ -25,6 +25,6 @@
     "versioning",
     "collaboration"
   ],
-  "author": "Reporunner Team",
+  "author": "KlikkFlow Team",
   "license": "MIT"
 }

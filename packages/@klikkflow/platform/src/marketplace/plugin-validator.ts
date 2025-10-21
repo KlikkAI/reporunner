@@ -3,7 +3,7 @@
  * Handles security scanning, code analysis, and quality validation for plugins
  */
 
-import { Logger } from '@reporunner/core';
+import { Logger } from '@klikkflow/core';
 import { z } from 'zod';
 import type { PluginMetadata, PluginPackage } from './plugin-registry';
 

@@ -1,6 +1,6 @@
 /**
  * Validation Middleware
- * Consolidated from @reporunner/validation
+ * Consolidated from @klikkflow/validation
  */
 
 import type { NextFunction, Request, Response } from 'express';

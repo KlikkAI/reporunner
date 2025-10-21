@@ -1,4 +1,4 @@
-import { BaseRepository } from '@reporunner/core';
+import { BaseRepository } from '@klikkflow/core';
 import type { Db } from 'mongodb';
 import { Execution } from '../../../models/Execution';
 

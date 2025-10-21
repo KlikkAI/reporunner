@@ -1,6 +1,6 @@
 /**
  * Execution Types - Workflow execution tracking and results
- * Consolidated from @reporunner/types
+ * Consolidated from @klikkflow/types
  */
 
 import type { BaseEntity, ExecutionMode, ID, Timestamp } from './common';

@@ -22,4 +22,4 @@ export interface ValidationResult {
   }>;
 }
 
-// Note: For full validation functionality, import from @reporunner/validation as a built package
+// Note: For full validation functionality, import from @klikkflow/validation as a built package

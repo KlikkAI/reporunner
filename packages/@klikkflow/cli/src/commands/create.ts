@@ -3,7 +3,7 @@ import inquirer from 'inquirer';
 
 export const createCommand = new Command()
   .name('create')
-  .description('Create a new Reporunner project or component')
+  .description('Create a new KlikkFlow project or component')
   .argument('[name]', 'Project or component name')
   .option('-t, --template <template>', 'Template to use')
   .action(async (name, _options) => {
@@ -13,7 +13,7 @@ export const createCommand = new Command()
           type: 'input',
           name: 'name',
           message: 'What is the name of your project?',
-          default: 'my-reporunner-project',
+          default: 'my-klikkflow-project',
         },
       ]);
       name = answers.name;

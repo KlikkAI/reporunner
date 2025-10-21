@@ -1,5 +1,5 @@
 {
-  "name": "@reporunner/scheduler",
+  "name": "@klikkflow/scheduler",
   "version": "1.0.0",
   "description": "Enterprise workflow scheduler with cron support, distributed execution, and advanced scheduling",
   "main": "dist/index.js",
@@ -14,8 +14,8 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@reporunner/shared": "workspace:*",
-    "@reporunner/backend": "workspace:*",
+    "@klikkflow/shared": "workspace:*",
+    "@klikkflow/backend": "workspace:*",
     "node-cron": "^3.0.3",
     "cron-parser": "^4.9.0",
     "bullmq": "catalog:",
@@ -38,6 +38,6 @@
     "distributed",
     "enterprise"
   ],
-  "author": "Reporunner Team",
+  "author": "KlikkFlow Team",
   "license": "MIT"
 }

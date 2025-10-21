@@ -1,6 +1,6 @@
-# @reporunner/validation
+# @klikkflow/validation
 
-Phase A validation framework for the consolidated package architecture. This package provides comprehensive tools to validate and optimize the developer experience in the RepoRunner monorepo, featuring advanced reporting, performance tracking, and automated documentation generation.
+Phase A validation framework for the consolidated package architecture. This package provides comprehensive tools to validate and optimize the developer experience in the KlikkFlow monorepo, featuring advanced reporting, performance tracking, and automated documentation generation.
 
 ## Overview
 
@@ -17,7 +17,7 @@ The validation package includes seven main validation systems:
 ## Installation
 
 ```bash
-pnpm install @reporunner/validation
+pnpm install @klikkflow/validation
 ```
 
 ## Quick Start
@@ -25,7 +25,7 @@ pnpm install @reporunner/validation
 ### TypeScript Analysis
 
 ```typescript
-import { TypeScriptAnalyzer } from '@reporunner/validation/typescript';
+import { TypeScriptAnalyzer } from '@klikkflow/validation/typescript';
 
 const analyzer = new TypeScriptAnalyzer('/path/to/workspace');
 const report = await analyzer.analyzeTypeScriptSetup();
@@ -37,7 +37,7 @@ console.log(`Recommendations: ${report.recommendations.join(', ')}`);
 ### IDE Performance Validation
 
 ```typescript
-import { IDEPerformanceValidator } from '@reporunner/validation/ide-performance';
+import { IDEPerformanceValidator } from '@klikkflow/validation/ide-performance';
 
 const validator = new IDEPerformanceValidator('/path/to/workspace');
 const report = await validator.validateIDEPerformance();
@@ -49,7 +49,7 @@ console.log(`IntelliSense Accuracy: ${report.performanceMetrics.intelliSenseAccu
 ### Import Path Optimization
 
 ```typescript
-import { ImportPathOptimizer } from '@reporunner/validation/import-optimization';
+import { ImportPathOptimizer } from '@klikkflow/validation/import-optimization';
 
 const optimizer = new ImportPathOptimizer('/path/to/workspace');
 const report = await optimizer.optimizeImportPaths();
@@ -65,7 +65,7 @@ import {
   DependencyAnalyzer,
   CodeOrganizationChecker,
   TypeSafetyValidator
-} from '@reporunner/validation/architecture';
+} from '@klikkflow/validation/architecture';
 
 // Dependency Analysis
 const analyzer = new DependencyAnalyzer('/path/to/workspace');
@@ -95,7 +95,7 @@ import {
   DashboardGenerator,
   PerformanceTracker,
   BenchmarkingSystem
-} from '@reporunner/validation/reporting';
+} from '@klikkflow/validation/reporting';
 
 // Comprehensive Report Generation
 const aggregator = new ValidationReportAggregator();
@@ -133,7 +133,7 @@ console.log(`Benchmark Score: ${benchmarkResult.overallScore}/100 (Grade: ${benc
 ### Documentation Generation
 
 ```typescript
-import { DocumentationGenerator } from '@reporunner/validation/reporting';
+import { DocumentationGenerator } from '@klikkflow/validation/reporting';
 
 const docGenerator = new DocumentationGenerator('./docs');
 
@@ -159,7 +159,7 @@ import {
   ValidationController,
   ValidationOrchestratorCLI,
   ContinuousValidationIntegration
-} from '@reporunner/validation';
+} from '@klikkflow/validation';
 
 // Programmatic orchestration
 const controller = new ValidationController('/path/to/workspace');
@@ -289,22 +289,22 @@ node dist/cli/reporting-cli.js export --format csv --output performance-data.csv
 
 ```bash
 # Run complete Phase A validation workflow
-npx @reporunner/validation run --output ./validation-results --format html --verbose
+npx @klikkflow/validation run --output ./validation-results --format html --verbose
 
 # Run specific validation phases
-npx @reporunner/validation phases system-validation performance-analysis
-npx @reporunner/validation phases architecture-validation
+npx @klikkflow/validation phases system-validation performance-analysis
+npx @klikkflow/validation phases architecture-validation
 
 # Check current validation status
-npx @reporunner/validation status
+npx @klikkflow/validation status
 
 # Export results in different formats
-npx @reporunner/validation run --format json --output ./results.json
-npx @reporunner/validation run --format markdown --output ./report.md
+npx @klikkflow/validation run --format json --output ./results.json
+npx @klikkflow/validation run --format markdown --output ./report.md
 
 # CI/CD integration examples
-npx @reporunner/validation run --format json | jq '.status'  # Check exit status
-npx @reporunner/validation run --verbose 2>&1 | tee validation.log  # Log output
+npx @klikkflow/validation run --format json | jq '.status'  # Check exit status
+npx @klikkflow/validation run --verbose 2>&1 | tee validation.log  # Log output
 ```
 
 ## Features
@@ -489,12 +489,12 @@ jobs:
           node-version: '18'
           cache: 'pnpm'
       - run: pnpm install --frozen-lockfile
-      - run: pnpm build --filter=@reporunner/validation
+      - run: pnpm build --filter=@klikkflow/validation
 
       # Run complete Phase A validation
       - name: Run Phase A Validation
         run: |
-          npx @reporunner/validation run \
+          npx @klikkflow/validation run \
             --output ./validation-results \
             --format json \
             --verbose
@@ -569,7 +569,7 @@ ${results.recommendations.length > 3 ? `\n... and ${results.recommendations.leng
 {
   "husky": {
     "hooks": {
-      "pre-commit": "npx @reporunner/validation phases system-validation architecture-validation --format json"
+      "pre-commit": "npx @klikkflow/validation phases system-validation architecture-validation --format json"
     }
   }
 }
@@ -580,7 +580,7 @@ ${results.recommendations.length > 3 ? `\n... and ${results.recommendations.leng
 The `ContinuousValidationIntegration` class can generate ready-to-use CI configurations:
 
 ```typescript
-import { ContinuousValidationIntegration } from '@reporunner/validation';
+import { ContinuousValidationIntegration } from '@klikkflow/validation';
 
 const integration = new ContinuousValidationIntegration();
 
@@ -599,11 +599,11 @@ fs.writeFileSync('Jenkinsfile', jenkinsfile);
 
 ## Performance Benchmarks
 
-Based on the RepoRunner codebase analysis:
+Based on the KlikkFlow codebase analysis:
 
 - **Files Analyzed**: 990+ TypeScript files
 - **Imports Processed**: 1,700+ import statements
-- **Packages Validated**: 12 consolidated packages (@reporunner/* and main packages)
+- **Packages Validated**: 12 consolidated packages (@klikkflow/* and main packages)
 - **Architecture Components**: Dependencies, code organization, and type safety validation
 - **Analysis Time**: ~45 seconds for full validation (including architecture)
 - **Memory Usage**: ~250MB peak during analysis

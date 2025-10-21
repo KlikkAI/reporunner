@@ -1,4 +1,4 @@
-import type { AuthenticatedUser } from '@reporunner/shared';
+import type { AuthenticatedUser } from '@klikkflow/shared';
 import type { Request, Response } from 'express';
 import { BaseController } from '../../../base/BaseController';
 import { AppError } from '../../../middleware/errorHandlers';

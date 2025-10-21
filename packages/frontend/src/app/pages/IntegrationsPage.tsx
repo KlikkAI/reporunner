@@ -1,7 +1,7 @@
 /**
  * Integrations Page
  *
- * Comprehensive integrations showcase for Reporunner
+ * Comprehensive integrations showcase for KlikkFlow
  * Displaying available integrations, categories, and integration capabilities
  */
 

@@ -12,7 +12,7 @@ export const SocialProof: React.FC = () => {
   const testimonials = [
     {
       quote:
-        "Reporunner's hybrid database architecture and enterprise security features made it the perfect choice for our financial services workflows. The self-hosted deployment gives us complete control over our sensitive data.",
+        "KlikkFlow's hybrid database architecture and enterprise security features made it the perfect choice for our financial services workflows. The self-hosted deployment gives us complete control over our sensitive data.",
       author: 'Sarah Chen',
       title: 'Head of Digital Operations',
       company: 'FinTech Solutions',
@@ -32,7 +32,7 @@ export const SocialProof: React.FC = () => {
     },
     {
       quote:
-        'Moving from n8n to Reporunner was seamless, and the advanced collaboration features have revolutionized how our distributed team builds workflows. The real-time editing is game-changing.',
+        'Moving from n8n to KlikkFlow was seamless, and the advanced collaboration features have revolutionized how our distributed team builds workflows. The real-time editing is game-changing.',
       author: 'Emma Thompson',
       title: 'DevOps Lead',
       company: 'Global Tech Inc',
@@ -92,7 +92,7 @@ export const SocialProof: React.FC = () => {
             Worldwide
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Join thousands of companies who trust Reporunner for their mission-critical workflow
+            Join thousands of companies who trust KlikkFlow for their mission-critical workflow
             automation needs.
           </p>
         </div>
@@ -189,8 +189,8 @@ export const SocialProof: React.FC = () => {
               Enterprise Security & Compliance
             </h3>
             <p className="text-gray-600 max-w-2xl mx-auto">
-              Reporunner meets the highest standards for enterprise security and compliance,
-              ensuring your data and workflows are always protected.
+              KlikkFlow meets the highest standards for enterprise security and compliance, ensuring
+              your data and workflows are always protected.
             </p>
           </div>
 
@@ -220,7 +220,7 @@ export const SocialProof: React.FC = () => {
               Join the Growing Community of Successful Teams
             </h3>
             <p className="text-blue-100 mb-6 max-w-2xl mx-auto">
-              See how Reporunner can transform your workflow automation and drive enterprise success
+              See how KlikkFlow can transform your workflow automation and drive enterprise success
               for your organization.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">

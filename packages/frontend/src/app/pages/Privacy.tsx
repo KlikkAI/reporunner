@@ -1,7 +1,7 @@
 /**
  * Privacy Policy Page
  *
- * Privacy policy and data protection information for Reporunner
+ * Privacy policy and data protection information for KlikkFlow
  */
 
 import {
@@ -349,7 +349,7 @@ export const Privacy: React.FC = () => {
                 <Mail className="w-8 h-8 text-blue-600 mx-auto mb-4" />
                 <h3 className="font-semibold text-gray-900 mb-2">Email Us</h3>
                 <p className="text-gray-600 text-sm mb-4">For privacy-related questions</p>
-                <button className="text-blue-600 font-medium">privacy@reporunner.dev</button>
+                <button className="text-blue-600 font-medium">privacy@klikkflow.dev</button>
               </div>
 
               <div className="bg-white border border-gray-200 rounded-xl p-6">

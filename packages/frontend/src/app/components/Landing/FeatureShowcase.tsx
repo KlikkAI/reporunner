@@ -1,7 +1,7 @@
 /**
  * Feature Showcase Section
  *
- * Interactive demos of key Reporunner features with modern UI
+ * Interactive demos of key KlikkFlow features with modern UI
  * and engaging animations
  */
 
@@ -171,7 +171,7 @@ export const FeatureShowcase: React.FC = () => {
         {/* Section Header */}
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-            See Reporunner{' '}
+            See KlikkFlow{' '}
             <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
               in Action
             </span>

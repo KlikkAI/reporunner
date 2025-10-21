@@ -40,7 +40,7 @@ npx dev-experience-cli report 30
 
 ### Basic Usage
 ```typescript
-import { DevExperienceMetrics } from '@reporunner/validation';
+import { DevExperienceMetrics } from '@klikkflow/validation';
 
 const metrics = new DevExperienceMetrics();
 const report = await metrics.generateReport();
@@ -51,7 +51,7 @@ console.log(`Recommendations: ${report.recommendations.length}`);
 
 ### Productivity Tracking
 ```typescript
-import { ProductivityTracker } from '@reporunner/validation';
+import { ProductivityTracker } from '@klikkflow/validation';
 
 const tracker = new ProductivityTracker();
 await tracker.startSession();
@@ -63,7 +63,7 @@ const session = await tracker.endSession();
 
 ### IDE Benchmarking
 ```typescript
-import { IDEPerformanceAnalyzer } from '@reporunner/validation';
+import { IDEPerformanceAnalyzer } from '@klikkflow/validation';
 
 const analyzer = new IDEPerformanceAnalyzer();
 const report = await analyzer.analyzeIDEPerformance();

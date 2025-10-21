@@ -9,7 +9,7 @@ import type {
   SecurityMetrics,
   SecurityThreat,
   VulnerabilityScan,
-} from '@reporunner/shared';
+} from '@klikkflow/shared';
 
 class EnterpriseSecurityService {
   private static instance: EnterpriseSecurityService;

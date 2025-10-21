@@ -1,4 +1,4 @@
-// Execution types reusing patterns from @reporunner/types
+// Execution types reusing patterns from @klikkflow/types
 export enum ExecutionStatus {
   PENDING = 'pending',
   RUNNING = 'running',

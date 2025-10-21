@@ -4,7 +4,7 @@
  */
 
 import { EventEmitter } from 'node:events';
-import { Logger } from '@reporunner/core';
+import { Logger } from '@klikkflow/core';
 import * as cron from 'node-cron';
 
 export interface ScheduledWorkflow {

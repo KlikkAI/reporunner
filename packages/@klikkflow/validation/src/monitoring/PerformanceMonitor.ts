@@ -45,10 +45,10 @@ export class PerformanceMonitor {
     try {
       // Simulate package build times
       const packageBuildTimes = {
-        '@reporunner/core': 2000,
-        '@reporunner/auth': 1500,
-        '@reporunner/workflow': 1800,
-        '@reporunner/ai': 1500,
+        '@klikkflow/core': 2000,
+        '@klikkflow/auth': 1500,
+        '@klikkflow/workflow': 1800,
+        '@klikkflow/ai': 1500,
         backend: 2500,
         frontend: 3000,
         shared: 1200,
@@ -86,9 +86,9 @@ export class PerformanceMonitor {
       const packageSizes = {
         frontend: 2500000, // 2.5MB
         backend: 1800000, // 1.8MB
-        '@reporunner/core': 800000, // 800KB
-        '@reporunner/workflow': 600000, // 600KB
-        '@reporunner/ai': 1200000, // 1.2MB
+        '@klikkflow/core': 800000, // 800KB
+        '@klikkflow/workflow': 600000, // 600KB
+        '@klikkflow/ai': 1200000, // 1.2MB
         shared: 400000, // 400KB
       };
 

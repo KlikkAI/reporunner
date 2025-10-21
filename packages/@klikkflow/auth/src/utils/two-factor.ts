@@ -69,7 +69,7 @@ export class TwoFactorService {
    * Generate a QR code URL for Google Authenticator
    */
   private generateQRCodeUrl(email: string, secret: string): string {
-    const issuer = 'Reporunner';
+    const issuer = 'KlikkFlow';
     const algorithm = 'SHA1';
     const digits = 6;
     const period = 30;

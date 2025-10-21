@@ -3,8 +3,8 @@
  * Provides audit logging functionality for the backend API
  */
 
-import { Logger } from '@reporunner/core';
-import type { AuditEvent, AuditEventFilter, AuditExport } from '@reporunner/shared';
+import { Logger } from '@klikkflow/core';
+import type { AuditEvent, AuditEventFilter, AuditExport } from '@klikkflow/shared';
 
 // Type aliases for backward compatibility
 type AuditQuery = AuditEventFilter;

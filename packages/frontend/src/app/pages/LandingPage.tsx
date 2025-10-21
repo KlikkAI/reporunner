@@ -1,5 +1,5 @@
 /**
- * Modern Landing Page for Reporunner
+ * Modern Landing Page for KlikkFlow
  *
  * Enterprise-grade workflow automation platform landing page
  * designed to compete with n8n and SIM with superior UX/UI

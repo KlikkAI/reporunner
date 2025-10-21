@@ -200,14 +200,14 @@ export class ImportPathOptimizer {
       }
     }
 
-    // Get @reporunner packages
-    const reporunnerDir = path.join(packagesDir, '@reporunner');
-    if (fs.existsSync(reporunnerDir)) {
-      const reporunnerPackages = fs
-        .readdirSync(reporunnerDir, { withFileTypes: true })
+    // Get @klikkflow packages
+    const klikkflowDir = path.join(packagesDir, '@klikkflow');
+    if (fs.existsSync(klikkflowDir)) {
+      const klikkflowPackages = fs
+        .readdirSync(klikkflowDir, { withFileTypes: true })
         .filter((dirent: any) => dirent.isDirectory())
-        .map((dirent: any) => path.join(reporunnerDir, dirent.name));
-      packages.push(...reporunnerPackages);
+        .map((dirent: any) => path.join(klikkflowDir, dirent.name));
+      packages.push(...klikkflowPackages);
     }
 
     return packages;

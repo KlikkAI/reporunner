@@ -6,7 +6,7 @@ export function getNodeTemplate(template: string): string {
   INodeType,
   INodeTypeDescription,
   NodeOperationError,
-} from '@reporunner/core';
+} from '@klikkflow/core';
 
 export class {{name}} implements INodeType {
   description: INodeTypeDescription = {
@@ -88,7 +88,7 @@ export class {{name}} implements INodeType {
   INodeType,
   INodeTypeDescription,
   NodeOperationError,
-} from '@reporunner/core';
+} from '@klikkflow/core';
 
 export class {{name}} implements INodeType {
   description: INodeTypeDescription = {
@@ -170,7 +170,7 @@ export class {{name}} implements INodeType {
   IWebhookResponseData,
   INodeType,
   INodeTypeDescription,
-} from '@reporunner/core';
+} from '@klikkflow/core';
 
 export class {{name}} implements INodeType {
   description: INodeTypeDescription = {
@@ -240,7 +240,7 @@ export class {{name}} implements INodeType {
   INodeType,
   INodeTypeDescription,
   NodeOperationError,
-} from '@reporunner/core';
+} from '@klikkflow/core';
 
 export class {{name}} implements INodeType {
   description: INodeTypeDescription = {
@@ -364,7 +364,7 @@ export class {{name}} implements INodeType {
   INodeType,
   INodeTypeDescription,
   NodeOperationError,
-} from '@reporunner/core';
+} from '@klikkflow/core';
 
 export class {{name}} implements INodeType {
   description: INodeTypeDescription = {
@@ -463,7 +463,7 @@ export class {{name}} implements INodeType {
   INodeType,
   INodeTypeDescription,
   NodeOperationError,
-} from '@reporunner/core';
+} from '@klikkflow/core';
 
 export class {{name}} implements INodeType {
   description: INodeTypeDescription = {

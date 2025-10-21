@@ -26,7 +26,7 @@ Analyzes package dependencies and validates architectural boundaries.
 #### Usage
 
 ```typescript
-import { DependencyAnalyzer } from '@reporunner/validation/architecture';
+import { DependencyAnalyzer } from '@klikkflow/validation/architecture';
 
 const analyzer = new DependencyAnalyzer('/path/to/workspace');
 await analyzer.initialize();
@@ -49,10 +49,10 @@ console.log(`Graph has ${graph.nodes.length} nodes and ${graph.edges.length} edg
 The system enforces the following architectural layers:
 
 - **Foundation** (Layer 0): `shared`
-- **Core** (Layer 1): `@reporunner/core`
-- **Domain** (Layer 2): `@reporunner/auth`, `@reporunner/services`, `@reporunner/workflow`, `@reporunner/ai`
-- **Platform** (Layer 3): `@reporunner/platform`, `@reporunner/enterprise`
-- **Application** (Layer 4): `backend`, `frontend`, `@reporunner/cli`, `@reporunner/validation`
+- **Core** (Layer 1): `@klikkflow/core`
+- **Domain** (Layer 2): `@klikkflow/auth`, `@klikkflow/services`, `@klikkflow/workflow`, `@klikkflow/ai`
+- **Platform** (Layer 3): `@klikkflow/platform`, `@klikkflow/enterprise`
+- **Application** (Layer 4): `backend`, `frontend`, `@klikkflow/cli`, `@klikkflow/validation`
 
 ### CodeOrganizationChecker
 
@@ -68,7 +68,7 @@ Validates code organization and structural quality.
 #### Usage
 
 ```typescript
-import { CodeOrganizationChecker } from '@reporunner/validation/architecture';
+import { CodeOrganizationChecker } from '@klikkflow/validation/architecture';
 
 const checker = new CodeOrganizationChecker('/path/to/workspace');
 await checker.initialize();
@@ -114,7 +114,7 @@ Validates type safety across package boundaries.
 #### Usage
 
 ```typescript
-import { TypeSafetyValidator } from '@reporunner/validation/architecture';
+import { TypeSafetyValidator } from '@klikkflow/validation/architecture';
 
 const validator = new TypeSafetyValidator('/path/to/workspace');
 await validator.initialize();
@@ -204,7 +204,7 @@ interface ArchitectureValidationOptions {
 You can extend the validation rules by creating custom validators:
 
 ```typescript
-import { DependencyAnalyzer } from '@reporunner/validation/architecture';
+import { DependencyAnalyzer } from '@klikkflow/validation/architecture';
 
 class CustomDependencyAnalyzer extends DependencyAnalyzer {
   protected isUnauthorizedAccess(source: string, target: string): boolean {
@@ -286,7 +286,7 @@ jobs:
         with:
           node-version: '18'
       - run: pnpm install
-      - run: pnpm build --filter=@reporunner/validation
+      - run: pnpm build --filter=@klikkflow/validation
       - run: pnpm architecture:validate
       - name: Upload Architecture Report
         uses: actions/upload-artifact@v3
@@ -377,7 +377,7 @@ pnpm architecture:dependencies -- --verbose
 
 ### Benchmarks
 
-Based on the RepoRunner codebase:
+Based on the KlikkFlow codebase:
 
 - **Packages Analyzed**: 12 consolidated packages
 - **Files Processed**: 990+ TypeScript files
@@ -410,7 +410,7 @@ import {
   DependencyAnalyzer,
   CodeOrganizationChecker,
   TypeSafetyValidator
-} from '@reporunner/validation/architecture';
+} from '@klikkflow/validation/architecture';
 
 async function validateArchitecture() {
   const workspaceRoot = process.cwd();
@@ -457,7 +457,7 @@ validateArchitecture().catch(console.error);
 
 ```javascript
 // webpack.config.js
-const { DependencyAnalyzer } = require('@reporunner/validation/architecture');
+const { DependencyAnalyzer } = require('@klikkflow/validation/architecture');
 
 module.exports = {
   // ... other config

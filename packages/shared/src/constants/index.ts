@@ -1,7 +1,7 @@
 /**
  * Shared Constants
  * Centralized constants used across the application
- * Consolidated from @reporunner/constants and existing shared constants
+ * Consolidated from @klikkflow/constants and existing shared constants
  */
 
 export * from '../types/audit';
@@ -11,11 +11,11 @@ export * from '../types/security';
 export * from '../types/triggers';
 
 // ============================================================================
-// SYSTEM CONSTANTS (from @reporunner/constants)
+// SYSTEM CONSTANTS (from @klikkflow/constants)
 // ============================================================================
 
 export const SYSTEM = {
-  APP_NAME: 'Reporunner',
+  APP_NAME: 'KlikkFlow',
   VERSION: '1.0.0',
   DEFAULT_TIMEZONE: 'UTC',
   DEFAULT_LOCALE: 'en-US',
@@ -54,7 +54,7 @@ export const HTTP_STATUS = {
 } as const;
 
 // ============================================================================
-// API CONFIGURATION (from @reporunner/constants)
+// API CONFIGURATION (from @klikkflow/constants)
 // ============================================================================
 
 export const API = {
@@ -272,7 +272,7 @@ export const WEBHOOK_SETTINGS = {
 } as const;
 
 // ============================================================================
-// AUTHENTICATION & SECURITY SETTINGS (Enhanced from @reporunner/constants)
+// AUTHENTICATION & SECURITY SETTINGS (Enhanced from @klikkflow/constants)
 // ============================================================================
 
 export const AUTH = {
@@ -356,7 +356,7 @@ export const LOG_LEVELS = {
 } as const;
 
 // ============================================================================
-// DATABASE SETTINGS (Enhanced from @reporunner/constants)
+// DATABASE SETTINGS (Enhanced from @klikkflow/constants)
 // ============================================================================
 
 export const DATABASE = {
@@ -365,7 +365,7 @@ export const DATABASE = {
   MAX_CONNECTIONS: 20,
   IDLE_TIMEOUT: 10000, // 10 seconds
   RETRY_ATTEMPTS: 3,
-  // Additional from @reporunner/constants
+  // Additional from @klikkflow/constants
   MONGODB_POOL_SIZE: 10,
   POSTGRES_POOL_SIZE: 20,
   REDIS_TTL_DEFAULT: 3600, // 1 hour
@@ -490,7 +490,7 @@ export function isTest(): boolean {
 }
 
 // ============================================================================
-// ADDITIONAL CONSTANTS FROM @reporunner/constants
+// ADDITIONAL CONSTANTS FROM @klikkflow/constants
 // ============================================================================
 
 // WebSocket Configuration

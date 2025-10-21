@@ -55,7 +55,7 @@ export class CircularDependencyDetector {
           dependencies.push(resolvedPath);
         }
       } else if (
-        importPath.startsWith('@reporunner/') ||
+        importPath.startsWith('@klikkflow/') ||
         importPath.startsWith('../packages/') ||
         importPath.startsWith('./packages/')
       ) {
@@ -96,10 +96,10 @@ export class CircularDependencyDetector {
   }
 
   private resolveWorkspaceImport(importPath: string): string | null {
-    // Handle @reporunner/ imports
-    if (importPath.startsWith('@reporunner/')) {
+    // Handle @klikkflow/ imports
+    if (importPath.startsWith('@klikkflow/')) {
       const packageName = importPath.split('/')[1];
-      const packagePath = path.join(this.workspaceRoot, 'packages', '@reporunner', packageName);
+      const packagePath = path.join(this.workspaceRoot, 'packages', '@klikkflow', packageName);
 
       if (fs.existsSync(packagePath)) {
         // Try to find the main entry point
@@ -191,7 +191,7 @@ export class CircularDependencyDetector {
     const suggestions: string[] = [];
 
     // Check if cycle involves core packages (more critical)
-    const corePackages = ['@reporunner/core', 'shared'];
+    const corePackages = ['@klikkflow/core', 'shared'];
     const involvesCorePackage = cycle.some((filePath) =>
       corePackages.some((pkg) => filePath.includes(pkg))
     );

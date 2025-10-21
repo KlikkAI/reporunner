@@ -4,7 +4,7 @@
  * Phase D: Community & Growth - Integration ecosystem expansion
  */
 
-import { Logger } from '@reporunner/core';
+import { Logger } from '@klikkflow/core';
 import { z } from 'zod';
 
 // Integration metadata schema

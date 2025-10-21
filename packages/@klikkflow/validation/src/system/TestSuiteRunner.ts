@@ -15,14 +15,14 @@ export class TestSuiteRunner implements ITestSuiteRunner {
     'frontend',
     'backend',
     'shared',
-    '@reporunner/ai',
-    '@reporunner/api',
-    '@reporunner/auth',
-    '@reporunner/database',
-    '@reporunner/workflow-engine',
-    '@reporunner/core',
-    '@reporunner/design-system',
-    '@reporunner/validation',
+    '@klikkflow/ai',
+    '@klikkflow/api',
+    '@klikkflow/auth',
+    '@klikkflow/database',
+    '@klikkflow/workflow-engine',
+    '@klikkflow/core',
+    '@klikkflow/design-system',
+    '@klikkflow/validation',
   ];
 
   constructor(workspaceRoot = process.cwd()) {
@@ -89,7 +89,7 @@ export class TestSuiteRunner implements ITestSuiteRunner {
         '--coverage',
         '--reporter=json',
         '--workspace',
-        `packages/${packageName.replace('@reporunner/', '@reporunner/')}`,
+        `packages/${packageName.replace('@klikkflow/', '@klikkflow/')}`,
       ]);
 
       const results = await this.parseTestResults(testResult);
@@ -143,7 +143,7 @@ export class TestSuiteRunner implements ITestSuiteRunner {
 
       // Calculate package-specific coverage
       for (const packageName of this.packages) {
-        const packagePath = `packages/${packageName.replace('@reporunner/', '@reporunner/')}/`;
+        const packagePath = `packages/${packageName.replace('@klikkflow/', '@klikkflow/')}/`;
         const packageFiles = Object.keys(coverageData).filter((file) => file.includes(packagePath));
 
         if (packageFiles.length > 0) {
@@ -327,7 +327,7 @@ export class TestSuiteRunner implements ITestSuiteRunner {
    */
   private async generatePackageCoverageReport(packageName: string): Promise<CoverageReport> {
     try {
-      const packagePath = packageName.replace('@reporunner/', '@reporunner/');
+      const packagePath = packageName.replace('@klikkflow/', '@klikkflow/');
       const coveragePath = join(this.workspaceRoot, 'coverage', 'coverage-summary.json');
       const coverageData = await this.readCoverageFile(coveragePath);
 

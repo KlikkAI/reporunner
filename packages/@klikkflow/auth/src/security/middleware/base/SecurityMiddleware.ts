@@ -1,4 +1,4 @@
-import { BaseMiddleware, Logger } from '@reporunner/core';
+import { BaseMiddleware, Logger } from '@klikkflow/core';
 import type { NextFunction, Request, Response } from 'express';
 
 export interface SecurityContext {

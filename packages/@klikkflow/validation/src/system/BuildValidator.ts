@@ -519,7 +519,7 @@ export class BuildValidator implements IBuildValidator {
   private resolvePackagePath(packageName: string): string {
     // Handle different package naming conventions
     if (packageName.startsWith('@')) {
-      // Scoped package like @reporunner/validation
+      // Scoped package like @klikkflow/validation
       return join(this.config.workspaceRoot, 'packages', packageName);
     } else if (packageName.includes('/')) {
       // Path-like package name
@@ -558,7 +558,7 @@ export class BuildValidator implements IBuildValidator {
     return {
       workspaceRoot: resolve(workspaceRoot),
       buildCommand: 'npm run build',
-      packages: ['frontend', 'backend', '@reporunner/validation', '@reporunner/shared'],
+      packages: ['frontend', 'backend', '@klikkflow/validation', '@klikkflow/shared'],
       timeout: 300000, // 5 minutes
       parallelBuilds: true,
       validateArtifacts: true,

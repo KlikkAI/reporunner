@@ -235,7 +235,7 @@ export const ResponsiveLayout: React.FC<ResponsiveLayoutProps> = ({ children }) 
           onClick={() => setMobileDrawerOpen(true)}
           aria-label="Open navigation menu"
         />
-        <Text strong>Reporunner</Text>
+        <Text strong>KlikkFlow</Text>
       </Space>
 
       <Space>
@@ -328,7 +328,7 @@ export const ResponsiveLayout: React.FC<ResponsiveLayoutProps> = ({ children }) 
       }}
     >
       <Space direction={isMobile ? 'vertical' : 'horizontal'} size="middle">
-        <Text type="secondary">© 2024 Reporunner. All rights reserved.</Text>
+        <Text type="secondary">© 2024 KlikkFlow. All rights reserved.</Text>
         {!isMobile && (
           <>
             <Text type="secondary">|</Text>
@@ -439,7 +439,7 @@ export const ResponsiveLayout: React.FC<ResponsiveLayoutProps> = ({ children }) 
                   R
                 </Avatar>
                 <div>
-                  <Text strong>Reporunner</Text>
+                  <Text strong>KlikkFlow</Text>
                   <br />
                   <Text type="secondary" style={{ fontSize: '12px' }}>
                     Workflow Platform

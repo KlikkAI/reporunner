@@ -1,5 +1,5 @@
 {
-  "name": "@reporunner/resource-manager",
+  "name": "@klikkflow/resource-manager",
   "version": "1.0.0",
   "description": "Enterprise resource management for CPU, memory, scaling, and performance optimization",
   "main": "dist/index.js",
@@ -14,8 +14,8 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@reporunner/shared": "workspace:*",
-    "@reporunner/backend": "workspace:*",
+    "@klikkflow/shared": "workspace:*",
+    "@klikkflow/backend": "workspace:*",
     "systeminformation": "^5.21.22",
     "pidusage": "^3.0.2",
     "uuid": "^9.0.1",
@@ -34,6 +34,6 @@
     "monitoring",
     "enterprise"
   ],
-  "author": "Reporunner Team",
+  "author": "KlikkFlow Team",
   "license": "MIT"
 }

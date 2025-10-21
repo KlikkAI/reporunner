@@ -1,7 +1,7 @@
 /**
  * Contact Page
  *
- * Contact information and forms for Reporunner
+ * Contact information and forms for KlikkFlow
  * Sales, support, and general inquiries
  */
 
@@ -55,7 +55,7 @@ export const Contact: React.FC = () => {
       icon: Briefcase,
       color: 'blue',
       methods: [
-        { type: 'email', value: 'sales@reporunner.dev', icon: Mail },
+        { type: 'email', value: 'sales@klikkflow.dev', icon: Mail },
         { type: 'phone', value: '+1 (555) 123-4567', icon: Phone },
         { type: 'calendar', value: 'Schedule a demo', icon: Calendar },
       ],
@@ -66,7 +66,7 @@ export const Contact: React.FC = () => {
       icon: HelpCircle,
       color: 'green',
       methods: [
-        { type: 'email', value: 'support@reporunner.dev', icon: Mail },
+        { type: 'email', value: 'support@klikkflow.dev', icon: Mail },
         { type: 'docs', value: 'Documentation', icon: Code },
         { type: 'community', value: 'Community Forum', icon: Users },
       ],
@@ -77,7 +77,7 @@ export const Contact: React.FC = () => {
       icon: MessageSquare,
       color: 'purple',
       methods: [
-        { type: 'email', value: 'hello@reporunner.dev', icon: Mail },
+        { type: 'email', value: 'hello@klikkflow.dev', icon: Mail },
         { type: 'address', value: 'San Francisco, CA', icon: MapPin },
         { type: 'social', value: 'Follow us', icon: Globe },
       ],
@@ -92,7 +92,7 @@ export const Contact: React.FC = () => {
       address: '123 Market Street, Suite 300',
       postal: 'San Francisco, CA 94105',
       phone: '+1 (555) 123-4567',
-      email: 'us@reporunner.dev',
+      email: 'us@klikkflow.dev',
       hours: '9 AM - 6 PM PST',
     },
     {
@@ -102,7 +102,7 @@ export const Contact: React.FC = () => {
       address: '10 Downing Street, Floor 5',
       postal: 'London SW1A 2AA',
       phone: '+44 20 7946 0958',
-      email: 'uk@reporunner.dev',
+      email: 'uk@klikkflow.dev',
       hours: '9 AM - 6 PM GMT',
     },
     {
@@ -112,14 +112,14 @@ export const Contact: React.FC = () => {
       address: '1 Raffles Place, Level 20',
       postal: 'Singapore 048616',
       phone: '+65 6123 4567',
-      email: 'sg@reporunner.dev',
+      email: 'sg@klikkflow.dev',
       hours: '9 AM - 6 PM SGT',
     },
   ];
 
   const faqs = [
     {
-      question: 'How can I get started with Reporunner?',
+      question: 'How can I get started with KlikkFlow?',
       answer:
         'You can start with our free community edition or request a demo for enterprise features. Our quick start guide helps you deploy in minutes.',
     },
@@ -136,7 +136,7 @@ export const Contact: React.FC = () => {
     {
       question: 'Can I schedule a demo?',
       answer:
-        'Absolutely! You can book a personalized demo with our team to see how Reporunner fits your specific use case.',
+        'Absolutely! You can book a personalized demo with our team to see how KlikkFlow fits your specific use case.',
     },
   ];
 

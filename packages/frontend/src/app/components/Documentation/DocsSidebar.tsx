@@ -205,7 +205,7 @@ export const DocsSidebar: React.FC<{ className?: string }> = ({ className = '' }
             <span>Need help?</span>
           </Link>
           <a
-            href="https://github.com/KlikkAI/reporunner"
+            href="https://github.com/KlikkAI/klikkflow"
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-2 px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 rounded-lg transition-colors"

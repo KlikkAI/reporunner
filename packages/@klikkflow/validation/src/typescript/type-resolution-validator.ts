@@ -117,30 +117,30 @@ export class TypeResolutionValidator {
   private async generateTypeResolutionTestCases(): Promise<TypeResolutionTestCase[]> {
     const testCases: TypeResolutionTestCase[] = [];
 
-    // Test cases for @reporunner packages
+    // Test cases for @klikkflow packages
     testCases.push({
-      packageName: '@reporunner/core',
+      packageName: '@klikkflow/core',
       typeDefinition: 'WorkflowEngine',
       sourceFile: 'test-types-core.ts',
       description: 'Test WorkflowEngine type resolution from core package',
     });
 
     testCases.push({
-      packageName: '@reporunner/auth',
+      packageName: '@klikkflow/auth',
       typeDefinition: 'AuthService',
       sourceFile: 'test-types-auth.ts',
       description: 'Test AuthService type resolution from auth package',
     });
 
     testCases.push({
-      packageName: '@reporunner/workflow',
+      packageName: '@klikkflow/workflow',
       typeDefinition: 'WorkflowBuilder',
       sourceFile: 'test-types-workflow.ts',
       description: 'Test WorkflowBuilder type resolution from workflow package',
     });
 
     testCases.push({
-      packageName: '@reporunner/platform',
+      packageName: '@klikkflow/platform',
       typeDefinition: 'PlatformConfig',
       sourceFile: 'test-types-platform.ts',
       description: 'Test PlatformConfig type resolution from platform package',
@@ -160,7 +160,7 @@ export class TypeResolutionValidator {
   private async createTypeTestFile(testCase: TypeResolutionTestCase): Promise<void> {
     const testFilePath = path.join(this.workspaceRoot, testCase.sourceFile);
 
-    const packageImport = testCase.packageName.startsWith('@reporunner/')
+    const packageImport = testCase.packageName.startsWith('@klikkflow/')
       ? `import type { ${testCase.typeDefinition} } from '${testCase.packageName}';`
       : `import type { ${testCase.typeDefinition} } from '../packages/${testCase.packageName}/src';`;
 

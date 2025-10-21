@@ -295,7 +295,7 @@ describe('ContinuousValidationIntegration', () => {
       expect(workflow).toContain('push:');
       expect(workflow).toContain('pull_request:');
       expect(workflow).toContain('schedule:');
-      expect(workflow).toContain('npx @reporunner/validation run');
+      expect(workflow).toContain('npx @klikkflow/validation run');
       expect(workflow).toContain('actions/upload-artifact@v4');
     });
 
@@ -306,7 +306,7 @@ describe('ContinuousValidationIntegration', () => {
       expect(config).toContain('- validation');
       expect(config).toContain('phase-a-validation:');
       expect(config).toContain('image: node:18');
-      expect(config).toContain('npx @reporunner/validation run');
+      expect(config).toContain('npx @klikkflow/validation run');
       expect(config).toContain('artifacts:');
     });
 
@@ -318,7 +318,7 @@ describe('ContinuousValidationIntegration', () => {
       expect(jenkinsfile).toContain("nodejs '18'");
       expect(jenkinsfile).toContain('triggers {');
       expect(jenkinsfile).toContain("cron('H 2 * * *')");
-      expect(jenkinsfile).toContain('npx @reporunner/validation run');
+      expect(jenkinsfile).toContain('npx @klikkflow/validation run');
       expect(jenkinsfile).toContain('archiveArtifacts');
     });
   });

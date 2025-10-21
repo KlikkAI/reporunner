@@ -7,7 +7,7 @@
  * Reduction: ~250 lines → ~90 lines (64% reduction)
  */
 
-import { Logger } from '@reporunner/core';
+import { Logger } from '@klikkflow/core';
 import type React from 'react';
 import { useEffect, useState } from 'react';
 import { AuthApiService } from '@/core';
@@ -250,7 +250,7 @@ export const Settings: React.FC = () => {
         const url = URL.createObjectURL(dataBlob);
         const link = document.createElement('a');
         link.href = url;
-        link.download = 'reporunner-settings.json';
+        link.download = 'klikkflow-settings.json';
         link.click();
       },
     },

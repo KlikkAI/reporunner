@@ -3,7 +3,7 @@
  * Implements JWT verification with RBAC permission checking
  */
 
-import type { AuthenticatedUser } from '@reporunner/shared';
+import type { AuthenticatedUser } from '@klikkflow/shared';
 import type { NextFunction, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import { UserRepository } from '../domains/auth/repositories/UserRepository';

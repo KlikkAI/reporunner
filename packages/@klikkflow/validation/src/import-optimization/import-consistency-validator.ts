@@ -263,17 +263,17 @@ export class ImportConsistencyValidator {
             return true;
           }
 
-          // Check for deep imports into @reporunner packages
-          if (importPath.startsWith('@reporunner/')) {
+          // Check for deep imports into @klikkflow packages
+          if (importPath.startsWith('@klikkflow/')) {
             const parts = importPath.split('/');
-            // Allow @reporunner/package-name but not @reporunner/package-name/src/internal/deep
+            // Allow @klikkflow/package-name but not @klikkflow/package-name/src/internal/deep
             return parts.length <= 2 || !parts.includes('src');
           }
 
           return true;
         },
         suggestion: (importPath: string) => {
-          if (importPath.startsWith('@reporunner/')) {
+          if (importPath.startsWith('@klikkflow/')) {
             const packageName = importPath.split('/').slice(0, 2).join('/');
             return `Use barrel export: ${packageName}`;
           }

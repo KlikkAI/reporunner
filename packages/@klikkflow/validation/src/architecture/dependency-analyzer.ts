@@ -36,13 +36,13 @@ export class DependencyAnalyzer {
       for (const pkg of mainPackages) {
         const pkgPath = path.join(packagesDir, pkg);
         const stat = await fs.stat(pkgPath);
-        if (stat.isDirectory() && pkg !== '@reporunner') {
+        if (stat.isDirectory() && pkg !== '@klikkflow') {
           packages.push(pkgPath);
         }
       }
 
-      // @reporunner scoped packages
-      const scopedDir = path.join(packagesDir, '@reporunner');
+      // @klikkflow scoped packages
+      const scopedDir = path.join(packagesDir, '@klikkflow');
       try {
         const scopedPackages = await fs.readdir(scopedDir);
         for (const pkg of scopedPackages) {
@@ -53,7 +53,7 @@ export class DependencyAnalyzer {
           }
         }
       } catch (_error) {
-        // @reporunner directory might not exist
+        // @klikkflow directory might not exist
       }
 
       return packages;
@@ -217,7 +217,7 @@ export class DependencyAnalyzer {
 
       // Filter to only internal packages
       return dependencies.filter(
-        (dep) => dep.startsWith('@reporunner/') || ['backend', 'frontend', 'shared'].includes(dep)
+        (dep) => dep.startsWith('@klikkflow/') || ['backend', 'frontend', 'shared'].includes(dep)
       );
     } catch (_error) {
       return [];
@@ -330,18 +330,18 @@ export class DependencyAnalyzer {
     // Define package layers and allowed dependencies
     const packageLayers = {
       shared: 0,
-      '@reporunner/core': 1,
-      '@reporunner/auth': 2,
-      '@reporunner/services': 2,
-      '@reporunner/workflow': 2,
-      '@reporunner/ai': 2,
-      '@reporunner/integrations': 2,
-      '@reporunner/platform': 3,
-      '@reporunner/enterprise': 3,
+      '@klikkflow/core': 1,
+      '@klikkflow/auth': 2,
+      '@klikkflow/services': 2,
+      '@klikkflow/workflow': 2,
+      '@klikkflow/ai': 2,
+      '@klikkflow/integrations': 2,
+      '@klikkflow/platform': 3,
+      '@klikkflow/enterprise': 3,
       backend: 4,
       frontend: 4,
-      '@reporunner/cli': 4,
-      '@reporunner/validation': 4,
+      '@klikkflow/cli': 4,
+      '@klikkflow/validation': 4,
     };
 
     for (const packagePath of this.packagePaths) {
@@ -397,12 +397,12 @@ export class DependencyAnalyzer {
     // Define unauthorized access patterns
     const unauthorizedPatterns = [
       // Frontend shouldn't directly access backend internals
-      { source: 'frontend', target: '@reporunner/services' },
+      { source: 'frontend', target: '@klikkflow/services' },
       // CLI shouldn't access frontend components
-      { source: '@reporunner/cli', target: 'frontend' },
+      { source: '@klikkflow/cli', target: 'frontend' },
       // Core packages shouldn't depend on higher-level packages
-      { source: '@reporunner/core', target: '@reporunner/platform' },
-      { source: '@reporunner/core', target: '@reporunner/enterprise' },
+      { source: '@klikkflow/core', target: '@klikkflow/platform' },
+      { source: '@klikkflow/core', target: '@klikkflow/enterprise' },
     ];
 
     return unauthorizedPatterns.some(
@@ -553,23 +553,20 @@ export class DependencyAnalyzer {
     if (packageName === 'shared') {
       return 'foundation';
     }
-    if (packageName.startsWith('@reporunner/core')) {
+    if (packageName.startsWith('@klikkflow/core')) {
       return 'core';
     }
     if (
-      [
-        '@reporunner/auth',
-        '@reporunner/services',
-        '@reporunner/workflow',
-        '@reporunner/ai',
-      ].includes(packageName)
+      ['@klikkflow/auth', '@klikkflow/services', '@klikkflow/workflow', '@klikkflow/ai'].includes(
+        packageName
+      )
     ) {
       return 'domain';
     }
-    if (['@reporunner/platform', '@reporunner/enterprise'].includes(packageName)) {
+    if (['@klikkflow/platform', '@klikkflow/enterprise'].includes(packageName)) {
       return 'platform';
     }
-    if (['backend', 'frontend', '@reporunner/cli'].includes(packageName)) {
+    if (['backend', 'frontend', '@klikkflow/cli'].includes(packageName)) {
       return 'application';
     }
     return 'utility';

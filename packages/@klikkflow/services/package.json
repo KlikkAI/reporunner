@@ -1,5 +1,5 @@
 {
-  "name": "@reporunner/services",
+  "name": "@klikkflow/services",
   "version": "1.0.0",
   "description": "Microservices: analytics, audit, auth, execution, notification, tenant, workflow",
   "type": "module",
@@ -16,10 +16,10 @@
     "format": "biome format --write ."
   },
   "dependencies": {
-    "@reporunner/shared": "workspace:*",
-    "@reporunner/core": "workspace:*",
-    "@reporunner/auth": "workspace:*",
-    "@reporunner/backend": "workspace:*",
+    "@klikkflow/shared": "workspace:*",
+    "@klikkflow/core": "workspace:*",
+    "@klikkflow/auth": "workspace:*",
+    "@klikkflow/backend": "workspace:*",
     "express": "catalog:",
     "zod": "catalog:",
     "winston": "catalog:"
@@ -32,7 +32,7 @@
     "vitest": "catalog:"
   },
   "keywords": [
-    "reporunner",
+    "klikkflow",
     "microservices",
     "analytics",
     "audit",
@@ -42,7 +42,7 @@
     "tenant",
     "workflow"
   ],
-  "author": "Reporunner Team",
+  "author": "KlikkFlow Team",
   "license": "MIT",
   "files": [
     "dist",

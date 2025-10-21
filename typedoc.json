@@ -1,12 +1,12 @@
 {
   "$schema": "https://typedoc.org/schema.json",
-  "name": "Reporunner API Documentation",
+  "name": "KlikkFlow API Documentation",
   "entryPointStrategy": "packages",
   "entryPoints": [
     "packages/core",
     "packages/backend",
     "packages/frontend",
-    "packages/@reporunner/cli",
+    "packages/@klikkflow/cli",
     "sdks/typescript"
   ],
   "out": "docs/api",

@@ -32,7 +32,7 @@ export const CallToAction: React.FC = () => {
           </h2>
 
           <p className="text-xl md:text-2xl text-slate-200 mb-10 max-w-3xl mx-auto leading-relaxed">
-            Join thousands of developers and enterprises who trust Reporunner for their
+            Join thousands of developers and enterprises who trust KlikkFlow for their
             mission-critical automation needs.
           </p>
 

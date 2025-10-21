@@ -20,7 +20,7 @@ The reporting system consists of six main components:
 The `ValidationReportAggregator` combines validation results from multiple sources to create unified reports:
 
 ```typescript
-import { ValidationReportAggregator } from '@reporunner/validation/reporting';
+import { ValidationReportAggregator } from '@klikkflow/validation/reporting';
 
 const aggregator = new ValidationReportAggregator();
 aggregator.addValidationResults(validationResults);
@@ -41,7 +41,7 @@ const report = await aggregator.generateComprehensiveReport();
 The `RecommendationEngine` analyzes validation results using configurable thresholds to generate optimization suggestions:
 
 ```typescript
-import { RecommendationEngine } from '@reporunner/validation/reporting';
+import { RecommendationEngine } from '@klikkflow/validation/reporting';
 
 const engine = new RecommendationEngine();
 const recommendations = engine.generateRecommendations(validationResults);
@@ -68,7 +68,7 @@ const performanceRecs = engine.filterByCategory(recommendations, 'performance');
 The `DashboardGenerator` creates HTML dashboards with Chart.js visualizations:
 
 ```typescript
-import { DashboardGenerator } from '@reporunner/validation/reporting';
+import { DashboardGenerator } from '@klikkflow/validation/reporting';
 
 const generator = new DashboardGenerator('./reports/dashboard');
 const dashboardPath = await generator.generateDashboard(report);
@@ -86,7 +86,7 @@ const dashboardPath = await generator.generateDashboard(report);
 The `PerformanceTracker` stores historical data and provides trend analysis:
 
 ```typescript
-import { PerformanceTracker } from '@reporunner/validation/reporting';
+import { PerformanceTracker } from '@klikkflow/validation/reporting';
 
 const tracker = new PerformanceTracker('./performance-data');
 
@@ -115,7 +115,7 @@ const comparisons = await tracker.generateComparisons();
 The `BenchmarkingSystem` provides performance scoring against configurable targets:
 
 ```typescript
-import { BenchmarkingSystem } from '@reporunner/validation/reporting';
+import { BenchmarkingSystem } from '@klikkflow/validation/reporting';
 
 const benchmarking = new BenchmarkingSystem();
 
@@ -144,7 +144,7 @@ console.log(`Status: ${result.passed ? 'PASSED' : 'FAILED'}`);
 The `DocumentationGenerator` creates automated documentation with customizable templates:
 
 ```typescript
-import { DocumentationGenerator } from '@reporunner/validation/reporting';
+import { DocumentationGenerator } from '@klikkflow/validation/reporting';
 
 const generator = new DocumentationGenerator('./docs');
 
@@ -233,7 +233,7 @@ jobs:
         with:
           node-version: '18'
       - run: pnpm install
-      - run: pnpm build --filter=@reporunner/validation
+      - run: pnpm build --filter=@klikkflow/validation
 
       # Run validation with tracking
       - run: pnpm architecture:validate
@@ -258,7 +258,7 @@ jobs:
 
 ```typescript
 // scripts/update-docs.ts
-import { DocumentationGenerator, ValidationReportAggregator } from '@reporunner/validation/reporting';
+import { DocumentationGenerator, ValidationReportAggregator } from '@klikkflow/validation/reporting';
 
 async function updateDocumentation() {
   const aggregator = new ValidationReportAggregator();

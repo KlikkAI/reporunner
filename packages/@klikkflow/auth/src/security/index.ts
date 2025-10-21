@@ -1,5 +1,5 @@
 /**
- * @reporunner/security - Security middleware and utilities
+ * @klikkflow/security - Security middleware and utilities
  * Re-exports all existing security implementations
  */
 

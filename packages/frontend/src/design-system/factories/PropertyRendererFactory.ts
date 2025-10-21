@@ -7,7 +7,7 @@
  * Target: Replace 25+ duplicate property renderer files
  */
 
-import { Logger } from '@reporunner/core';
+import { Logger } from '@klikkflow/core';
 import type { ReactNode } from 'react';
 import React, { useCallback, useMemo, useState } from 'react';
 import type { z } from 'zod';

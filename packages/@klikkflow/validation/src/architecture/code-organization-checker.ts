@@ -35,13 +35,13 @@ export class CodeOrganizationChecker {
       for (const pkg of mainPackages) {
         const pkgPath = path.join(packagesDir, pkg);
         const stat = await fs.stat(pkgPath);
-        if (stat.isDirectory() && pkg !== '@reporunner') {
+        if (stat.isDirectory() && pkg !== '@klikkflow') {
           packages.push(pkgPath);
         }
       }
 
-      // @reporunner scoped packages
-      const scopedDir = path.join(packagesDir, '@reporunner');
+      // @klikkflow scoped packages
+      const scopedDir = path.join(packagesDir, '@klikkflow');
       try {
         const scopedPackages = await fs.readdir(scopedDir);
         for (const pkg of scopedPackages) {
@@ -52,7 +52,7 @@ export class CodeOrganizationChecker {
           }
         }
       } catch (_error) {
-        // @reporunner directory might not exist
+        // @klikkflow directory might not exist
       }
 
       return packages;

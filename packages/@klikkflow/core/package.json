@@ -1,7 +1,7 @@
 {
-  "name": "@reporunner/core",
+  "name": "@klikkflow/core",
   "version": "1.0.0",
-  "description": "Core utilities and base classes for RepoRunner",
+  "description": "Core utilities and base classes for KlikkFlow",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

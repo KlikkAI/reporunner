@@ -272,14 +272,14 @@ export class TestOrchestrator {
       'frontend',
       'backend',
       'shared',
-      '@reporunner/ai',
-      '@reporunner/api',
-      '@reporunner/auth',
-      '@reporunner/database',
-      '@reporunner/workflow-engine',
-      '@reporunner/core',
-      '@reporunner/design-system',
-      '@reporunner/validation',
+      '@klikkflow/ai',
+      '@klikkflow/api',
+      '@klikkflow/auth',
+      '@klikkflow/database',
+      '@klikkflow/workflow-engine',
+      '@klikkflow/core',
+      '@klikkflow/design-system',
+      '@klikkflow/validation',
     ];
   }
 
@@ -291,7 +291,7 @@ export class TestOrchestrator {
 
     // Critical: Core package failures
     const corePackageFailures = results.packageResults.filter(
-      (pkg) => ['@reporunner/core', 'shared'].includes(pkg.packageName) && pkg.status === 'failure'
+      (pkg) => ['@klikkflow/core', 'shared'].includes(pkg.packageName) && pkg.status === 'failure'
     );
 
     for (const failure of corePackageFailures) {

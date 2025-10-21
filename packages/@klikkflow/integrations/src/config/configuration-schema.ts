@@ -178,7 +178,7 @@ export const SlackIntegrationConfigSchema = BaseIntegrationConfigSchema.extend({
       notificationTypes: z
         .array(z.enum(['message', 'mention', 'reaction', 'thread']))
         .default(['message', 'mention']),
-      botName: z.string().default('RepoRunner Bot'),
+      botName: z.string().default('KlikkFlow Bot'),
       botIcon: z.string().optional(),
     })
     .optional(),

@@ -24,7 +24,7 @@ describe('BuildValidator', () => {
     config = {
       workspaceRoot: '/test/workspace',
       buildCommand: 'npm run build',
-      packages: ['frontend', 'backend', '@reporunner/validation'],
+      packages: ['frontend', 'backend', '@klikkflow/validation'],
       timeout: 30000,
       parallelBuilds: true,
       validateArtifacts: true,
@@ -426,7 +426,7 @@ describe('BuildValidator', () => {
     it('should resolve scoped package paths', async () => {
       const scopedConfig = {
         ...config,
-        packages: ['@reporunner/validation'],
+        packages: ['@klikkflow/validation'],
       };
       const scopedValidator = new BuildValidator(scopedConfig);
 
@@ -435,7 +435,7 @@ describe('BuildValidator', () => {
       expect(mockExecSync).toHaveBeenCalledWith(
         'npm run build',
         expect.objectContaining({
-          cwd: expect.stringContaining('@reporunner/validation'),
+          cwd: expect.stringContaining('@klikkflow/validation'),
         })
       );
     });

@@ -47,7 +47,7 @@ app.get('/health', (_req, res) => {
   res.status(200).json({
     status: 'ok',
     timestamp: new Date().toISOString(),
-    service: '@reporunner/backend',
+    service: '@klikkflow/backend',
     port: PORT,
   });
 });

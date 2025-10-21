@@ -2,7 +2,7 @@ import {
   EdgeSchema as ApiEdgeSchema,
   NodeSchema as ApiNodeSchema,
   WorkflowSchema as ApiWorkflowSchema,
-} from '@reporunner/shared';
+} from '@klikkflow/shared';
 import { z } from 'zod';
 import {
   ApiResponseSchema,

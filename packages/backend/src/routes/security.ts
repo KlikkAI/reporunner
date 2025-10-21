@@ -17,7 +17,7 @@ import {
   toSecurityThreatDTO,
   toVulnerabilityScanDTO,
   UpdateThreatStatusSchema,
-} from '@reporunner/shared';
+} from '@klikkflow/shared';
 import { type Request, type Response, Router } from 'express';
 import { enterpriseSecurityService } from '../services/EnterpriseSecurityService';
 

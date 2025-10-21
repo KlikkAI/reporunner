@@ -1,5 +1,5 @@
 import { randomBytes } from 'node:crypto';
-import type { DatabaseService } from '@reporunner/backend/database';
+import type { DatabaseService } from '@klikkflow/backend/database';
 import {
   AUTH,
   ERROR_CODES,
@@ -8,7 +8,7 @@ import {
   type IRegisterRequest,
   type IUser,
   UserRole,
-} from '@reporunner/shared';
+} from '@klikkflow/shared';
 import bcrypt from 'bcrypt';
 import { v4 as uuidv4 } from 'uuid';
 import type { TokenManager } from '../jwt/token-manager';

@@ -1,10 +1,10 @@
 /**
  * Frontend-Specific Credential Types
  *
- * Extends @reporunner/types with frontend-specific credential types
+ * Extends @klikkflow/types with frontend-specific credential types
  * following the "extend, don't replace" pattern.
  *
- * Base types from @reporunner/types:
+ * Base types from @klikkflow/types:
  * - ICredential: Basic credential entity
  * - ICredentialData: Credential data structure
  * - ICredentialTestResult: Test result structure
@@ -16,7 +16,7 @@
  * - Predefined credential configurations
  */
 
-import type { CredentialType, ICredential } from '@reporunner/shared';
+import type { CredentialType, ICredential } from '@klikkflow/shared';
 
 // ============================================================================
 // Extended Credential Types
@@ -115,7 +115,7 @@ export interface AuthenticateFunction {
 
 /**
  * Credential test result (frontend version)
- * Simpler than ICredentialTestResult from @reporunner/types
+ * Simpler than ICredentialTestResult from @klikkflow/types
  */
 export interface CredentialTestResult {
   success: boolean;

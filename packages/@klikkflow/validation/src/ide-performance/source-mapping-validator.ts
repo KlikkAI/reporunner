@@ -137,8 +137,8 @@ export class SourceMappingValidator {
 
     testCases.push({
       testName: 'Core package source mapping',
-      sourceFile: 'packages/@reporunner/core/src/workflow/test-engine.ts',
-      compiledFile: 'packages/@reporunner/core/dist/workflow/test-engine.js',
+      sourceFile: 'packages/@klikkflow/core/src/workflow/test-engine.ts',
+      compiledFile: 'packages/@klikkflow/core/dist/workflow/test-engine.js',
       testBreakpoints: [
         { line: 4, expectedSourceLine: 4 },
         { line: 12, expectedSourceLine: 12 },

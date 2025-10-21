@@ -7,7 +7,7 @@
  * Reduction: ~600 lines → ~150 lines (75% reduction)
  */
 
-import { Logger } from '@reporunner/core';
+import { Logger } from '@klikkflow/core';
 import { Modal, Tabs } from 'antd';
 import type React from 'react';
 import { useEffect, useMemo, useState } from 'react';

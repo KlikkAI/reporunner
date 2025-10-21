@@ -157,18 +157,18 @@ Comprehensive test suites have been created for:
 ### CLI Usage:
 ```bash
 # Run full validation
-npx @reporunner/validation run --output ./results --format html --verbose
+npx @klikkflow/validation run --output ./results --format html --verbose
 
 # Run specific phases
-npx @reporunner/validation phases system-validation performance-analysis
+npx @klikkflow/validation phases system-validation performance-analysis
 
 # Check status
-npx @reporunner/validation status
+npx @klikkflow/validation status
 ```
 
 ### Programmatic Usage:
 ```typescript
-import { ValidationController } from '@reporunner/validation';
+import { ValidationController } from '@klikkflow/validation';
 
 const controller = new ValidationController('/path/to/workspace');
 const results = await controller.executeValidation();
@@ -176,7 +176,7 @@ const results = await controller.executeValidation();
 
 ### CI Integration:
 ```typescript
-import { ContinuousValidationIntegration } from '@reporunner/validation';
+import { ContinuousValidationIntegration } from '@klikkflow/validation';
 
 const integration = new ContinuousValidationIntegration('/path/to/workspace');
 const ciResult = await integration.executeForCI();

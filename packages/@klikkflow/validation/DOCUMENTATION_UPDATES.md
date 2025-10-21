@@ -52,7 +52,7 @@ This document summarizes the documentation updates made to reflect the new valid
 ## Key Documentation Themes
 
 ### 1. Orchestration-First Approach
-- Positioned the orchestrated validation (`npx @reporunner/validation run`) as the primary recommended approach
+- Positioned the orchestrated validation (`npx @klikkflow/validation run`) as the primary recommended approach
 - Individual component validation is now presented as a secondary option for specific use cases
 - Emphasized the comprehensive nature of Phase A validation
 
@@ -86,16 +86,16 @@ node dist/cli/ide-performance-cli.js validate
 
 **New Recommended Approach:**
 ```bash
-npx @reporunner/validation run --output ./results --format html --verbose
+npx @klikkflow/validation run --output ./results --format html --verbose
 ```
 
 **For Specific Needs:**
 ```bash
 # Quick architecture check
-npx @reporunner/validation phases architecture-validation
+npx @klikkflow/validation phases architecture-validation
 
 # System and architecture only
-npx @reporunner/validation phases system-validation architecture-validation
+npx @klikkflow/validation phases system-validation architecture-validation
 ```
 
 ### CI/CD Integration Migration
@@ -111,7 +111,7 @@ npx @reporunner/validation phases system-validation architecture-validation
 ```yaml
 - name: Run Phase A Validation
   run: |
-    npx @reporunner/validation run \
+    npx @klikkflow/validation run \
       --output ./validation-results \
       --format json \
       --verbose

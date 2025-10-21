@@ -3,7 +3,7 @@
  * Handles plugin publishing, downloading, and version management
  */
 
-import { Logger } from '@reporunner/core';
+import { Logger } from '@klikkflow/core';
 import { z } from 'zod';
 import type { PluginPackage } from './plugin-registry';
 

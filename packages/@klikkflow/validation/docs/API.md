@@ -1,4 +1,4 @@
-# @reporunner/validation API Documentation
+# @klikkflow/validation API Documentation
 
 ## Table of Contents
 
@@ -18,7 +18,7 @@
 Main class for analyzing TypeScript setup and performance.
 
 ```typescript
-import { TypeScriptAnalyzer } from '@reporunner/validation/typescript';
+import { TypeScriptAnalyzer } from '@klikkflow/validation/typescript';
 
 const analyzer = new TypeScriptAnalyzer(workspaceRoot: string);
 ```
@@ -47,7 +47,7 @@ const packages = await analyzer.getPackageDirectories();
 Tests autocomplete functionality across packages.
 
 ```typescript
-import { AutocompleteTester } from '@reporunner/validation/typescript';
+import { AutocompleteTester } from '@klikkflow/validation/typescript';
 
 const tester = new AutocompleteTester(workspaceRoot: string);
 const results = await tester.runAutocompleteTests();
@@ -58,7 +58,7 @@ const results = await tester.runAutocompleteTests();
 Validates type resolution across package boundaries.
 
 ```typescript
-import { TypeResolutionValidator } from '@reporunner/validation/typescript';
+import { TypeResolutionValidator } from '@klikkflow/validation/typescript';
 
 const validator = new TypeResolutionValidator(workspaceRoot: string);
 const results = await validator.validateTypeResolution();
@@ -69,7 +69,7 @@ const results = await validator.validateTypeResolution();
 Analyzes TypeScript compilation performance.
 
 ```typescript
-import { CompilationAnalyzer } from '@reporunner/validation/typescript';
+import { CompilationAnalyzer } from '@klikkflow/validation/typescript';
 
 const analyzer = new CompilationAnalyzer(workspaceRoot: string);
 const metrics = await analyzer.analyzeCompilation();
@@ -82,7 +82,7 @@ const metrics = await analyzer.analyzeCompilation();
 Main class for validating IDE performance and developer experience.
 
 ```typescript
-import { IDEPerformanceValidator } from '@reporunner/validation/ide-performance';
+import { IDEPerformanceValidator } from '@klikkflow/validation/ide-performance';
 
 const validator = new IDEPerformanceValidator(workspaceRoot: string);
 ```
@@ -103,7 +103,7 @@ console.log(`Navigation Success Rate: ${report.performanceMetrics.navigationSucc
 Tests navigation speed and accuracy between files and packages.
 
 ```typescript
-import { NavigationTester } from '@reporunner/validation/ide-performance';
+import { NavigationTester } from '@klikkflow/validation/ide-performance';
 
 const tester = new NavigationTester(workspaceRoot: string);
 const results = await tester.runNavigationTests();
@@ -114,7 +114,7 @@ const results = await tester.runNavigationTests();
 Tests IntelliSense functionality including completions, hover, and signature help.
 
 ```typescript
-import { IntelliSenseTester } from '@reporunner/validation/ide-performance';
+import { IntelliSenseTester } from '@klikkflow/validation/ide-performance';
 
 const tester = new IntelliSenseTester(workspaceRoot: string);
 const results = await tester.runIntelliSenseTests();
@@ -125,7 +125,7 @@ const results = await tester.runIntelliSenseTests();
 Validates source mapping accuracy for debugging experience.
 
 ```typescript
-import { SourceMappingValidator } from '@reporunner/validation/ide-performance';
+import { SourceMappingValidator } from '@klikkflow/validation/ide-performance';
 
 const validator = new SourceMappingValidator(workspaceRoot: string);
 const results = await validator.validateSourceMapping();
@@ -138,7 +138,7 @@ const results = await validator.validateSourceMapping();
 Main class for analyzing and optimizing import paths.
 
 ```typescript
-import { ImportPathOptimizer } from '@reporunner/validation/import-optimization';
+import { ImportPathOptimizer } from '@klikkflow/validation/import-optimization';
 
 const optimizer = new ImportPathOptimizer(workspaceRoot: string);
 ```
@@ -168,7 +168,7 @@ const structure = await optimizer.analyzePackageStructure();
 Detects circular dependencies using graph analysis.
 
 ```typescript
-import { CircularDependencyDetector } from '@reporunner/validation/import-optimization';
+import { CircularDependencyDetector } from '@klikkflow/validation/import-optimization';
 
 const detector = new CircularDependencyDetector(workspaceRoot: string);
 const cycles = await detector.detectCircularDependencies();
@@ -193,7 +193,7 @@ Returns the internal dependency graph for analysis.
 Validates import path consistency across the codebase.
 
 ```typescript
-import { ImportConsistencyValidator } from '@reporunner/validation/import-optimization';
+import { ImportConsistencyValidator } from '@klikkflow/validation/import-optimization';
 
 const validator = new ImportConsistencyValidator(workspaceRoot: string);
 const results = await validator.validateImportConsistency();
@@ -204,7 +204,7 @@ const results = await validator.validateImportConsistency();
 Generates optimization suggestions for import paths.
 
 ```typescript
-import { PathSuggestionEngine } from '@reporunner/validation/import-optimization';
+import { PathSuggestionEngine } from '@klikkflow/validation/import-optimization';
 
 const engine = new PathSuggestionEngine(workspaceRoot: string);
 const suggestions = await engine.generateSuggestions(analyses);
@@ -217,7 +217,7 @@ const suggestions = await engine.generateSuggestions(analyses);
 Analyzes package dependencies and detects architectural issues.
 
 ```typescript
-import { DependencyAnalyzer } from '@reporunner/validation/architecture';
+import { DependencyAnalyzer } from '@klikkflow/validation/architecture';
 
 const analyzer = new DependencyAnalyzer(workspaceRoot: string);
 await analyzer.initialize();
@@ -239,7 +239,7 @@ console.log(`Health Score: ${report.healthScore}/100`);
 Validates code organization and separation of concerns.
 
 ```typescript
-import { CodeOrganizationChecker } from '@reporunner/validation/architecture';
+import { CodeOrganizationChecker } from '@klikkflow/validation/architecture';
 
 const checker = new CodeOrganizationChecker(workspaceRoot: string);
 const report = await checker.validateOrganization();
@@ -250,7 +250,7 @@ const report = await checker.validateOrganization();
 Validates type safety across package boundaries.
 
 ```typescript
-import { TypeSafetyValidator } from '@reporunner/validation/architecture';
+import { TypeSafetyValidator } from '@klikkflow/validation/architecture';
 
 const validator = new TypeSafetyValidator(workspaceRoot: string);
 const report = await validator.validateTypeSafety();
@@ -263,7 +263,7 @@ const report = await validator.validateTypeSafety();
 Aggregates validation results from multiple sources.
 
 ```typescript
-import { ValidationReportAggregator } from '@reporunner/validation/reporting';
+import { ValidationReportAggregator } from '@klikkflow/validation/reporting';
 
 const aggregator = new ValidationReportAggregator();
 aggregator.addValidationResults(results);
@@ -275,7 +275,7 @@ const report = await aggregator.generateComprehensiveReport();
 Generates AI-powered optimization recommendations.
 
 ```typescript
-import { RecommendationEngine } from '@reporunner/validation/reporting';
+import { RecommendationEngine } from '@klikkflow/validation/reporting';
 
 const engine = new RecommendationEngine();
 const recommendations = engine.generateRecommendations(validationResults);
@@ -286,7 +286,7 @@ const recommendations = engine.generateRecommendations(validationResults);
 Creates interactive HTML dashboards.
 
 ```typescript
-import { DashboardGenerator } from '@reporunner/validation/reporting';
+import { DashboardGenerator } from '@klikkflow/validation/reporting';
 
 const generator = new DashboardGenerator();
 const dashboardPath = await generator.generateDashboard(report);
@@ -297,7 +297,7 @@ const dashboardPath = await generator.generateDashboard(report);
 Tracks performance metrics over time.
 
 ```typescript
-import { PerformanceTracker } from '@reporunner/validation/reporting';
+import { PerformanceTracker } from '@klikkflow/validation/reporting';
 
 const tracker = new PerformanceTracker();
 await tracker.storePerformanceData(results, metadata);
@@ -311,7 +311,7 @@ const trends = await tracker.analyzeTrends(30);
 Main orchestration controller that integrates all validation phases.
 
 ```typescript
-import { ValidationController } from '@reporunner/validation';
+import { ValidationController } from '@klikkflow/validation';
 
 const controller = new ValidationController(workspaceRoot: string);
 ```
@@ -378,7 +378,7 @@ The ValidationController emits the following events:
 Command-line interface for validation execution.
 
 ```typescript
-import { ValidationOrchestratorCLI } from '@reporunner/validation';
+import { ValidationOrchestratorCLI } from '@klikkflow/validation';
 
 const cli = new ValidationOrchestratorCLI(workspaceRoot: string, outputDir?: string);
 ```
@@ -422,7 +422,7 @@ cli.getStatus(); // Prints status to console
 CI/CD integration with historical tracking and notifications.
 
 ```typescript
-import { ContinuousValidationIntegration } from '@reporunner/validation';
+import { ContinuousValidationIntegration } from '@klikkflow/validation';
 
 const integration = new ContinuousValidationIntegration(workspaceRoot: string);
 ```
@@ -530,18 +530,18 @@ node dist/cli/import-optimizer-cli.js report imports.json --format markdown --ou
 
 ```bash
 # Run complete Phase A validation workflow
-npx @reporunner/validation run --output ./validation-results --format html --verbose
+npx @klikkflow/validation run --output ./validation-results --format html --verbose
 
 # Run specific validation phases
-npx @reporunner/validation phases system-validation performance-analysis
-npx @reporunner/validation phases architecture-validation
+npx @klikkflow/validation phases system-validation performance-analysis
+npx @klikkflow/validation phases architecture-validation
 
 # Check current validation status
-npx @reporunner/validation status
+npx @klikkflow/validation status
 
 # Export results in different formats
-npx @reporunner/validation run --format json --output ./results.json
-npx @reporunner/validation run --format markdown --output ./report.md
+npx @klikkflow/validation run --format json --output ./results.json
+npx @klikkflow/validation run --format markdown --output ./report.md
 ```
 
 ### Architecture Validator CLI

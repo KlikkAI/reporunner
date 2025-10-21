@@ -1,5 +1,5 @@
-import { Logger } from '@reporunner/core';
-import type { AuthenticatedRequest } from '@reporunner/shared';
+import { Logger } from '@klikkflow/core';
+import type { AuthenticatedRequest } from '@klikkflow/shared';
 import type { NextFunction, Response } from 'express';
 import { z } from 'zod';
 

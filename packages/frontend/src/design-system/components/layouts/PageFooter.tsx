@@ -25,7 +25,7 @@ export const PageFooter: React.FC<PageFooterProps> = ({
     <footer className={`${baseClasses} ${variantClasses[variant]} ${className}`}>
       {children || (
         <div className="text-center text-gray-600">
-          <p>&copy; 2024 Reporunner. All rights reserved.</p>
+          <p>&copy; 2024 KlikkFlow. All rights reserved.</p>
         </div>
       )}
     </footer>

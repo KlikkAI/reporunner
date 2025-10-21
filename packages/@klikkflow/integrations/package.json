@@ -1,5 +1,5 @@
 {
-  "name": "@reporunner/integrations",
+  "name": "@klikkflow/integrations",
   "version": "1.0.0",
   "description": "Integration framework for third-party services and workflow nodes",
   "type": "module",
@@ -26,10 +26,10 @@
     "format": "biome format --write ."
   },
   "dependencies": {
-    "@reporunner/shared": "workspace:*",
-    "@reporunner/core": "workspace:*",
-    "@reporunner/auth": "workspace:*",
-    "@reporunner/backend": "workspace:*",
+    "@klikkflow/shared": "workspace:*",
+    "@klikkflow/core": "workspace:*",
+    "@klikkflow/auth": "workspace:*",
+    "@klikkflow/backend": "workspace:*",
     "axios": "catalog:",
     "zod": "catalog:",
     "winston": "catalog:"
@@ -41,7 +41,7 @@
     "vitest": "catalog:"
   },
   "keywords": [
-    "reporunner",
+    "klikkflow",
     "integrations",
     "oauth",
     "webhook",
@@ -51,7 +51,7 @@
     "plugins",
     "framework"
   ],
-  "author": "Reporunner Team",
+  "author": "KlikkFlow Team",
   "license": "MIT",
   "files": [
     "dist",

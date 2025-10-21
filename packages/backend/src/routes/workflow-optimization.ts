@@ -3,8 +3,8 @@
  * Handles AI-powered workflow analysis and optimization suggestions
  */
 
-import { WorkflowAnalysisSchema } from '@reporunner/ai';
-import { Logger } from '@reporunner/core';
+import { WorkflowAnalysisSchema } from '@klikkflow/ai';
+import { Logger } from '@klikkflow/core';
 import { Router } from 'express';
 import { z } from 'zod';
 import { authenticate } from '../middleware/auth';

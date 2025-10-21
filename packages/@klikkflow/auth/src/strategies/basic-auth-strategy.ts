@@ -18,7 +18,7 @@ export class BasicAuthStrategy {
 
   constructor(options: BasicAuthStrategyOptions) {
     this.options = {
-      realm: 'Reporunner API',
+      realm: 'KlikkFlow API',
       ...options,
     };
   }

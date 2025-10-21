@@ -38,10 +38,10 @@ This implementation addresses the following Phase A requirements:
 
 ## Installation
 
-The build time analyzer is part of the `@reporunner/validation` package:
+The build time analyzer is part of the `@klikkflow/validation` package:
 
 ```bash
-pnpm install @reporunner/validation
+pnpm install @klikkflow/validation
 ```
 
 ## Usage
@@ -81,7 +81,7 @@ Options:
 ### Programmatic Usage
 
 ```typescript
-import { BuildTimeAnalyzer } from '@reporunner/validation/build-analyzer';
+import { BuildTimeAnalyzer } from '@klikkflow/validation/build-analyzer';
 
 const analyzer = new BuildTimeAnalyzer();
 
@@ -212,7 +212,7 @@ interface OptimizationRecommendation {
 ### Basic Analysis
 
 ```typescript
-import { BuildTimeAnalyzer } from '@reporunner/validation';
+import { BuildTimeAnalyzer } from '@klikkflow/validation';
 
 async function analyzeBuilds() {
   const analyzer = new BuildTimeAnalyzer();
@@ -234,7 +234,7 @@ async function analyzeBuilds() {
 ### Continuous Integration
 
 ```typescript
-import { BuildTimeAnalyzer } from '@reporunner/validation';
+import { BuildTimeAnalyzer } from '@klikkflow/validation';
 
 async function ciAnalysis() {
   const analyzer = new BuildTimeAnalyzer();
@@ -259,7 +259,7 @@ async function ciAnalysis() {
 ### Advanced Turbo Analysis
 
 ```typescript
-import { TurboMetricsCollector } from '@reporunner/validation';
+import { TurboMetricsCollector } from '@klikkflow/validation';
 
 async function advancedAnalysis() {
   const collector = new TurboMetricsCollector();
@@ -311,7 +311,7 @@ jobs:
 
 ```typescript
 // monitor-builds.ts
-import { BuildTimeAnalyzer } from '@reporunner/validation';
+import { BuildTimeAnalyzer } from '@klikkflow/validation';
 
 async function monitorBuilds() {
   const analyzer = new BuildTimeAnalyzer();

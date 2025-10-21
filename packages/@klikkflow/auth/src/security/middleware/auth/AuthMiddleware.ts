@@ -1,4 +1,4 @@
-import { AuthenticationError, AuthorizationError } from '@reporunner/core';
+import { AuthenticationError, AuthorizationError } from '@klikkflow/core';
 import type { Request } from 'express';
 import {
   type SecurityConfig,

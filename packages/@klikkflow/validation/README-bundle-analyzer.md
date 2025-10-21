@@ -31,10 +31,10 @@ The Bundle Size Analyzer is a comprehensive tool for measuring, tracking, and op
 
 ## Installation
 
-The bundle analyzer is part of the `@reporunner/validation` package:
+The bundle analyzer is part of the `@klikkflow/validation` package:
 
 ```bash
-pnpm install @reporunner/validation
+pnpm install @klikkflow/validation
 ```
 
 ## Usage
@@ -42,7 +42,7 @@ pnpm install @reporunner/validation
 ### Programmatic API
 
 ```typescript
-import { BundleSizeAnalyzer } from '@reporunner/validation';
+import { BundleSizeAnalyzer } from '@klikkflow/validation';
 
 // Create analyzer instance
 const analyzer = new BundleSizeAnalyzer('./packages/frontend/dist');

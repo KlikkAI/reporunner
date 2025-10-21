@@ -1,4 +1,4 @@
-import { ERROR_CODES } from '@reporunner/shared';
+import { ERROR_CODES } from '@klikkflow/shared';
 import type { NextFunction, Request, Response } from 'express';
 import type { AdvancedRateLimiter } from '../rate-limiter';
 

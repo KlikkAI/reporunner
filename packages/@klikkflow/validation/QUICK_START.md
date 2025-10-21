@@ -1,17 +1,17 @@
 # Quick Start - Phase A Validation
 
-Get started with the RepoRunner Phase A validation system in minutes. This comprehensive validation framework orchestrates all validation phases including system validation, performance analysis, and architecture validation.
+Get started with the KlikkFlow Phase A validation system in minutes. This comprehensive validation framework orchestrates all validation phases including system validation, performance analysis, and architecture validation.
 
 ## Installation
 
-The validation package is already included in the RepoRunner monorepo. If you're setting up a new environment:
+The validation package is already included in the KlikkFlow monorepo. If you're setting up a new environment:
 
 ```bash
 # Install dependencies
 pnpm install
 
 # Build the validation package
-pnpm build --filter=@reporunner/validation
+pnpm build --filter=@klikkflow/validation
 ```
 
 ## Basic Usage
@@ -21,7 +21,7 @@ pnpm build --filter=@reporunner/validation
 Run the complete Phase A validation workflow with a single command:
 
 ```bash
-npx @reporunner/validation run --output ./validation-results --format html --verbose
+npx @klikkflow/validation run --output ./validation-results --format html --verbose
 ```
 
 This will execute all validation phases:
@@ -34,7 +34,7 @@ This will execute all validation phases:
 For faster feedback on architecture-specific issues:
 
 ```bash
-pnpm --filter @reporunner/validation architecture:validate
+pnpm --filter @klikkflow/validation architecture:validate
 ```
 
 This will analyze:
@@ -49,16 +49,16 @@ Run specific validation phases for targeted analysis:
 
 ```bash
 # System validation only (tests, APIs, E2E)
-npx @reporunner/validation phases system-validation
+npx @klikkflow/validation phases system-validation
 
 # Performance analysis only (build times, bundles, memory)
-npx @reporunner/validation phases performance-analysis
+npx @klikkflow/validation phases performance-analysis
 
 # Architecture validation only (dependencies, organization, types)
-npx @reporunner/validation phases architecture-validation
+npx @klikkflow/validation phases architecture-validation
 
 # Multiple specific phases
-npx @reporunner/validation phases system-validation architecture-validation
+npx @klikkflow/validation phases system-validation architecture-validation
 ```
 
 ### 4. Individual Architecture Components
@@ -67,13 +67,13 @@ For fastest feedback on specific architecture issues:
 
 ```bash
 # Dependency analysis only (fastest)
-pnpm --filter @reporunner/validation architecture:dependencies
+pnpm --filter @klikkflow/validation architecture:dependencies
 
 # Code organization validation
-pnpm --filter @reporunner/validation architecture:organization
+pnpm --filter @klikkflow/validation architecture:organization
 
 # Type safety validation
-pnpm --filter @reporunner/validation architecture:types
+pnpm --filter @klikkflow/validation architecture:types
 ```
 
 ### 5. Generate Reports
@@ -82,16 +82,16 @@ Create detailed reports in different formats:
 
 ```bash
 # HTML report with interactive dashboard
-npx @reporunner/validation run --format html --output ./validation-report.html
+npx @klikkflow/validation run --format html --output ./validation-report.html
 
 # Markdown report for documentation
-npx @reporunner/validation run --format markdown --output ./validation-report.md
+npx @klikkflow/validation run --format markdown --output ./validation-report.md
 
 # JSON report for programmatic use
-npx @reporunner/validation run --format json --output ./validation-results.json
+npx @klikkflow/validation run --format json --output ./validation-results.json
 
 # Architecture-specific reports
-pnpm --filter @reporunner/validation architecture:validate -- --output html --output-file architecture-report.html
+pnpm --filter @klikkflow/validation architecture:validate -- --output html --output-file architecture-report.html
 ```
 
 ### 6. Check Validation Status
@@ -100,7 +100,7 @@ Monitor ongoing validation progress:
 
 ```bash
 # Check current validation status
-npx @reporunner/validation status
+npx @klikkflow/validation status
 ```
 
 ### 7. Dependency Graph Visualization
@@ -109,7 +109,7 @@ Generate a visual dependency graph:
 
 ```bash
 # Generate DOT file for dependency graph
-pnpm --filter @reporunner/validation architecture:dependencies -- --generate-graph
+pnpm --filter @klikkflow/validation architecture:dependencies -- --generate-graph
 
 # Convert to PNG (requires Graphviz)
 dot -Tpng dependency-graph.dot -o dependency-graph.png
@@ -206,7 +206,7 @@ Add to your pre-commit hooks:
 {
   "husky": {
     "hooks": {
-      "pre-commit": "npx @reporunner/validation phases system-validation architecture-validation --format json"
+      "pre-commit": "npx @klikkflow/validation phases system-validation architecture-validation --format json"
     }
   }
 }
@@ -218,7 +218,7 @@ For faster pre-commit checks, use architecture-only validation:
 {
   "husky": {
     "hooks": {
-      "pre-commit": "pnpm --filter @reporunner/validation architecture:dependencies"
+      "pre-commit": "pnpm --filter @klikkflow/validation architecture:dependencies"
     }
   }
 }
@@ -231,7 +231,7 @@ Add to your GitHub Actions workflow:
 ```yaml
 - name: Run Phase A Validation
   run: |
-    npx @reporunner/validation run \
+    npx @klikkflow/validation run \
       --output ./validation-results \
       --format json \
       --verbose
@@ -258,7 +258,7 @@ For architecture-only validation:
 
 ```yaml
 - name: Validate Architecture
-  run: pnpm --filter @reporunner/validation architecture:validate
+  run: pnpm --filter @klikkflow/validation architecture:validate
 
 - name: Upload Architecture Report
   uses: actions/upload-artifact@v3
@@ -272,16 +272,16 @@ For architecture-only validation:
 
 ```bash
 # Before making major changes - full validation
-npx @reporunner/validation run --format json
+npx @klikkflow/validation run --format json
 
 # During development - quick architecture check
-pnpm --filter @reporunner/validation architecture:dependencies
+pnpm --filter @klikkflow/validation architecture:dependencies
 
 # Before committing - system and architecture validation
-npx @reporunner/validation phases system-validation architecture-validation
+npx @klikkflow/validation phases system-validation architecture-validation
 
 # Check current status during long-running validation
-npx @reporunner/validation status
+npx @klikkflow/validation status
 ```
 
 ## Programmatic Usage
@@ -289,7 +289,7 @@ npx @reporunner/validation status
 ### Complete Phase A Validation
 
 ```typescript
-import { ValidationController } from '@reporunner/validation';
+import { ValidationController } from '@klikkflow/validation';
 
 async function runPhaseAValidation() {
   const controller = new ValidationController(process.cwd());
@@ -323,7 +323,7 @@ import {
   DependencyAnalyzer,
   CodeOrganizationChecker,
   TypeSafetyValidator
-} from '@reporunner/validation/architecture';
+} from '@klikkflow/validation/architecture';
 
 async function validateArchitecture() {
   const workspaceRoot = process.cwd();
@@ -349,7 +349,7 @@ validateArchitecture().catch(console.error);
 ### CI/CD Integration
 
 ```typescript
-import { ContinuousValidationIntegration } from '@reporunner/validation';
+import { ContinuousValidationIntegration } from '@klikkflow/validation';
 
 async function runCIValidation() {
   const integration = new ContinuousValidationIntegration(process.cwd());
@@ -376,12 +376,12 @@ runCIValidation().catch(console.error);
 
 1. **"Cannot find module 'madge'"**
    ```bash
-   pnpm install --filter @reporunner/validation
+   pnpm install --filter @klikkflow/validation
    ```
 
 2. **"TypeScript compiler errors"**
    ```bash
-   pnpm type-check --filter @reporunner/validation
+   pnpm type-check --filter @klikkflow/validation
    ```
 
 3. **"No packages found"**
@@ -393,7 +393,7 @@ runCIValidation().catch(console.error);
 Enable verbose logging for detailed output:
 
 ```bash
-pnpm --filter @reporunner/validation architecture:validate -- --verbose
+pnpm --filter @klikkflow/validation architecture:validate -- --verbose
 ```
 
 ## Next Steps
@@ -407,9 +407,9 @@ pnpm --filter @reporunner/validation architecture:validate -- --verbose
 
 ### Validation Speed Guide
 
-- **Quick Check** (`npx @reporunner/validation phases architecture-validation`): ~15-20 seconds
-- **System + Architecture** (`npx @reporunner/validation phases system-validation architecture-validation`): ~30-40 seconds
-- **Full Phase A Validation** (`npx @reporunner/validation run`): ~45-60 seconds
+- **Quick Check** (`npx @klikkflow/validation phases architecture-validation`): ~15-20 seconds
+- **System + Architecture** (`npx @klikkflow/validation phases system-validation architecture-validation`): ~30-40 seconds
+- **Full Phase A Validation** (`npx @klikkflow/validation run`): ~45-60 seconds
 - **Architecture Dependencies Only** (`pnpm architecture:dependencies`): ~5-10 seconds (fastest)
 
 ### Optimization Tips
@@ -418,13 +418,13 @@ pnpm --filter @reporunner/validation architecture:validate -- --verbose
 - Run specific phases during development for faster feedback
 - Use architecture-only validation for pre-commit hooks
 - Full validation is recommended for CI/CD and before major releases
-- Monitor progress with `npx @reporunner/validation status` during long runs
+- Monitor progress with `npx @klikkflow/validation status` during long runs
 
 ## Support
 
 - 📚 [Full Documentation](./docs/ARCHITECTURE_VALIDATION.md)
-- 🐛 [Report Issues](https://github.com/reporunner/reporunner/issues)
-- 💬 [Discussions](https://github.com/reporunner/reporunner/discussions)
+- 🐛 [Report Issues](https://github.com/klikkflow/klikkflow/issues)
+- 💬 [Discussions](https://github.com/klikkflow/klikkflow/discussions)
 
 ---
 

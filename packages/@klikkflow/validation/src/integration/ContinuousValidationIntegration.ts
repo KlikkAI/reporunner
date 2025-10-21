@@ -122,7 +122,7 @@ jobs:
 
     - name: Run Phase A Validation
       run: |
-        npx @reporunner/validation run \\
+        npx @klikkflow/validation run \\
           --output ./validation-results \\
           --format json \\
           --verbose
@@ -200,7 +200,7 @@ phase-a-validation:
     - pnpm config set store-dir .pnpm-store
     - pnpm install --frozen-lockfile
   script:
-    - npx @reporunner/validation run --output ./validation-results --format json --verbose
+    - npx @klikkflow/validation run --output ./validation-results --format json --verbose
   artifacts:
     when: always
     paths:
@@ -243,7 +243,7 @@ pipeline {
         stage('Phase A Validation') {
             steps {
                 sh '''
-                    npx @reporunner/validation run \\
+                    npx @klikkflow/validation run \\
                         --output ./validation-results \\
                         --format json \\
                         --verbose

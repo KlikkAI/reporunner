@@ -1,26 +1,26 @@
-# Reporunner SDK Ecosystem 🌐
+# KlikkFlow SDK Ecosystem 🌐
 
-The Reporunner SDK ecosystem provides comprehensive APIs for interacting with the Reporunner workflow automation platform across multiple programming languages and environments.
+The KlikkFlow SDK ecosystem provides comprehensive APIs for interacting with the KlikkFlow workflow automation platform across multiple programming languages and environments.
 
 ## 📦 Available SDKs
 
 | SDK | Version | Status | Package Manager |
 |-----|---------|--------|----------------|
-| **TypeScript/Node.js** | ✅ 1.0.0 | Stable | `pnpm add @reporunner/sdk` |
-| **Python** | ✅ 1.0.0 | Stable | `pip install reporunner-sdk` |
-| **Go** | ✅ 1.0.0 | Stable | `go get github.com/reporunner/reporunner/go-sdk` |
-| **Rust** | ✅ 1.0.0 | Stable | `cargo add reporunner-sdk` |
+| **TypeScript/Node.js** | ✅ 1.0.0 | Stable | `pnpm add @klikkflow/sdk` |
+| **Python** | ✅ 1.0.0 | Stable | `pip install klikkflow-sdk` |
+| **Go** | ✅ 1.0.0 | Stable | `go get github.com/klikkflow/klikkflow/go-sdk` |
+| **Rust** | ✅ 1.0.0 | Stable | `cargo add klikkflow-sdk` |
 | **Java** | ✅ 1.0.0 | Stable | Maven/Gradle |
-| **PHP** | ✅ 1.0.0 | Stable | `composer require reporunner/php-sdk` |
-| **.NET** | ✅ 1.0.0 | Stable | `dotnet add package Reporunner.Sdk` |
+| **PHP** | ✅ 1.0.0 | Stable | `composer require klikkflow/php-sdk` |
+| **.NET** | ✅ 1.0.0 | Stable | `dotnet add package KlikkFlow.Sdk` |
 
 ## 🚀 Quick Start Examples
 
 ### TypeScript/Node.js
 ```typescript
-import { ReporunnerClient } from '@reporunner/sdk';
+import { KlikkFlowClient } from '@klikkflow/sdk';
 
-const client = new ReporunnerClient({
+const client = new KlikkFlowClient({
   apiUrl: 'http://localhost:3001',
   apiKey: 'your-api-key'
 });
@@ -32,9 +32,9 @@ const execution = await client.executeWorkflow('workflow-123', {
 
 ### Python
 ```python
-from reporunner import ReporunnerClient
+from klikkflow import KlikkFlowClient
 
-async with ReporunnerClient(
+async with KlikkFlowClient(
     base_url='http://localhost:3001',
     api_key='your-api-key'
 ) as client:
@@ -45,7 +45,7 @@ async with ReporunnerClient(
 
 ### Go
 ```go
-client := reporunner.NewClient(reporunner.ClientOptions{
+client := klikkflow.NewClient(klikkflow.ClientOptions{
     BaseURL: "http://localhost:3001",
     APIKey:  "your-api-key",
 })
@@ -70,7 +70,7 @@ let execution = client.execute_workflow(
 
 ### Java
 ```java
-ReporunnerClient client = new ReporunnerClient(
+KlikkFlowClient client = new KlikkFlowClient(
     "http://localhost:3001", 
     "your-api-key"
 );
@@ -83,7 +83,7 @@ ExecutionResult execution = client.executeWorkflow(
 
 ### PHP
 ```php
-$client = new ReporunnerClient(
+$client = new KlikkFlowClient(
     'http://localhost:3001',
     'your-api-key'
 );
@@ -95,7 +95,7 @@ $execution = $client->executeWorkflow('workflow-123', [
 
 ### C#/.NET
 ```csharp
-var client = new ReporunnerClient(httpClient, options, logger);
+var client = new KlikkFlowClient(httpClient, options, logger);
 
 var execution = await client.ExecuteWorkflowAsync("workflow-123", 
     new Dictionary<string, object> {
@@ -202,18 +202,18 @@ We welcome contributions to all SDK packages:
 
 | Package | Description |
 |---------|-------------|
-| `@reporunner/ai` | AI/ML integration package |
-| `@reporunner/workflow` | Core workflow execution engine |
-| `@reporunner/design-system` | UI component library |
-| `@reporunner/nodes` | Node type definitions |
+| `@klikkflow/ai` | AI/ML integration package |
+| `@klikkflow/workflow` | Core workflow execution engine |
+| `@klikkflow/design-system` | UI component library |
+| `@klikkflow/nodes` | Node type definitions |
 
 ## 🆘 Support & Community
 
-- **Documentation**: [docs.reporunner.com](https://docs.reporunner.com)
-- **API Reference**: [api.reporunner.com](https://api.reporunner.com)
-- **GitHub Issues**: [Report bugs and request features](https://github.com/reporunner/reporunner/issues)
-- **Discord**: [Join our community](https://discord.gg/reporunner)
-- **Stack Overflow**: Tag questions with `reporunner`
+- **Documentation**: [docs.klikkflow.com](https://docs.klikkflow.com)
+- **API Reference**: [api.klikkflow.com](https://api.klikkflow.com)
+- **GitHub Issues**: [Report bugs and request features](https://github.com/klikkflow/klikkflow/issues)
+- **Discord**: [Join our community](https://discord.gg/klikkflow)
+- **Stack Overflow**: Tag questions with `klikkflow`
 
 ---
 

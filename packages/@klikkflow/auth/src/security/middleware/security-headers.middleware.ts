@@ -303,7 +303,7 @@ export const SECURITY_CONFIGS = {
   staging: {
     cors: {
       enabled: true,
-      origins: ['https://staging.reporunner.com'],
+      origins: ['https://staging.klikkflow.com'],
       credentials: true,
     },
     csp: {
@@ -315,7 +315,7 @@ export const SECURITY_CONFIGS = {
   production: {
     cors: {
       enabled: true,
-      origins: ['https://reporunner.com', 'https://www.reporunner.com'],
+      origins: ['https://klikkflow.com', 'https://www.klikkflow.com'],
       credentials: true,
       maxAge: 86400,
     },
@@ -328,7 +328,7 @@ export const SECURITY_CONFIGS = {
         scriptSrc: ["'self'", "'sha256-...'"], // Add specific script hashes
         styleSrc: ["'self'", "'sha256-...'"], // Add specific style hashes
         imgSrc: ["'self'", 'https:', 'data:'],
-        connectSrc: ["'self'", 'https://api.reporunner.com'],
+        connectSrc: ["'self'", 'https://api.klikkflow.com'],
         fontSrc: ["'self'", 'https://fonts.gstatic.com'],
         frameSrc: ["'none'"],
         frameAncestors: ["'none'"],

@@ -1,4 +1,4 @@
-import { type IUser, PermissionType, UserRole } from '@reporunner/shared';
+import { type IUser, PermissionType, UserRole } from '@klikkflow/shared';
 
 export interface PermissionCheck {
   user: IUser;

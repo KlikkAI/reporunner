@@ -13,7 +13,7 @@ export const WorkflowExamples: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>Workflow Examples - Reporunner Documentation</title>
+        <title>Workflow Examples - KlikkFlow Documentation</title>
         <meta
           name="description"
           content="Learn from example workflows - AI automation, data processing, notifications, and more"

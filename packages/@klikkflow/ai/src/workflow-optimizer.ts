@@ -3,7 +3,7 @@
  * Analyzes workflows and provides optimization suggestions using AI
  */
 
-import { Logger } from '@reporunner/core';
+import { Logger } from '@klikkflow/core';
 import { z } from 'zod';
 import type { ILLMProvider } from './base/ai-provider';
 

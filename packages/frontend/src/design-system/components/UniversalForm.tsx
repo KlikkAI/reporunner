@@ -8,7 +8,7 @@
  * Targets: 20+ page components with duplicate form patterns
  */
 
-import { Logger } from '@reporunner/core';
+import { Logger } from '@klikkflow/core';
 import { Alert, Button, Spin } from 'antd';
 import type React from 'react';
 import { useCallback, useMemo, useState } from 'react';

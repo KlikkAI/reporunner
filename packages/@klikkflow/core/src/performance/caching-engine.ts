@@ -1,5 +1,5 @@
 import { EventEmitter } from 'node:events';
-import { Logger } from '@reporunner/core';
+import { Logger } from '@klikkflow/core';
 import { z } from 'zod';
 
 export interface CacheEntry<T = any> {

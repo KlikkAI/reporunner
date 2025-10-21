@@ -29,8 +29,8 @@ describe('BuildTimeAnalyzer', () => {
     timestamp: new Date('2024-01-01T00:00:00Z'),
     totalBuildTime: 60000, // 60 seconds
     packageBuildTimes: {
-      '@reporunner/core': 15000,
-      '@reporunner/workflow': 12000,
+      '@klikkflow/core': 15000,
+      '@klikkflow/workflow': 12000,
       backend: 20000,
       frontend: 13000,
     },
@@ -129,8 +129,8 @@ describe('BuildTimeAnalyzer', () => {
         ...mockMetrics,
         totalBuildTime: 90000, // 90 seconds (slower baseline)
         packageBuildTimes: {
-          '@reporunner/core': 20000,
-          '@reporunner/workflow': 18000,
+          '@klikkflow/core': 20000,
+          '@klikkflow/workflow': 18000,
           backend: 30000,
           frontend: 22000,
         },
@@ -164,8 +164,8 @@ describe('BuildTimeAnalyzer', () => {
         ...mockMetrics,
         totalBuildTime: 45000, // 45 seconds (faster baseline)
         packageBuildTimes: {
-          '@reporunner/core': 10000,
-          '@reporunner/workflow': 8000,
+          '@klikkflow/core': 10000,
+          '@klikkflow/workflow': 8000,
           backend: 15000,
           frontend: 12000,
         },

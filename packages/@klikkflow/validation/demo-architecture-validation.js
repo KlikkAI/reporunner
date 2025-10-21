@@ -33,8 +33,8 @@ const mockResults = {
           layer: 'foundation',
         },
         {
-          id: '@reporunner/core',
-          name: '@reporunner/core',
+          id: '@klikkflow/core',
+          name: '@klikkflow/core',
           type: 'package',
           size: 25,
           dependencies: 1,
@@ -61,9 +61,9 @@ const mockResults = {
         },
       ],
       edges: [
-        { from: '@reporunner/core', to: 'shared', weight: 1, type: 'direct' },
-        { from: 'backend', to: '@reporunner/core', weight: 1, type: 'direct' },
-        { from: 'frontend', to: '@reporunner/core', weight: 1, type: 'direct' },
+        { from: '@klikkflow/core', to: 'shared', weight: 1, type: 'direct' },
+        { from: 'backend', to: '@klikkflow/core', weight: 1, type: 'direct' },
+        { from: 'frontend', to: '@klikkflow/core', weight: 1, type: 'direct' },
       ],
       metrics: {
         totalNodes: 12,
@@ -92,7 +92,7 @@ const mockResults = {
       ],
       packageScores: {
         shared: 95.0,
-        '@reporunner/core': 88.5,
+        '@klikkflow/core': 88.5,
         backend: 82.1,
         frontend: 87.3,
       },
@@ -180,7 +180,7 @@ const mockResults = {
           conflictType: 'structure',
           severity: 'error',
           suggestion:
-            'Move User to a shared package (@reporunner/core or shared) to ensure consistency across backend, frontend',
+            'Move User to a shared package (@klikkflow/core or shared) to ensure consistency across backend, frontend',
         },
       ],
       totalTypes: 45,
@@ -194,8 +194,8 @@ const mockResults = {
     exportStructure: {
       issues: [
         {
-          packageName: '@reporunner/core',
-          filePath: 'packages/@reporunner/core/src/utils/helpers.ts',
+          packageName: '@klikkflow/core',
+          filePath: 'packages/@klikkflow/core/src/utils/helpers.ts',
           issueType: 'unused_export',
           description: "Export 'debugHelper' appears to be unused",
           severity: 'info',
@@ -210,7 +210,7 @@ const mockResults = {
     recommendations: [
       '✅ Excellent type safety! Your types are well-organized and consistent.',
       '🔄 Type consistency improvements needed:',
-      '• Move shared types to common packages (@reporunner/core or shared)',
+      '• Move shared types to common packages (@klikkflow/core or shared)',
     ],
   },
   overallScore: 88.6,

@@ -84,13 +84,13 @@ function createNodeCommand(): Command {
             name: 'description',
             message: 'Node description:',
             default: (answers: Record<string, unknown>) =>
-              `${answers.name || options.name} integration for Reporunner`,
+              `${answers.name || options.name} integration for KlikkFlow`,
           },
           {
             type: 'input',
             name: 'author',
             message: 'Author name:',
-            default: 'Reporunner Team',
+            default: 'KlikkFlow Team',
           },
           {
             type: 'confirm',
@@ -211,7 +211,7 @@ function validateNodeCommand(): Command {
 async function generateNodeFiles(nodeDir: string, data: NodeGenerationData): Promise<void> {
   // Package.json template
   const packageJsonTemplate = `{
-  "name": "@reporunner/node-{{name}}",
+  "name": "@klikkflow/node-{{name}}",
   "version": "1.0.0",
   "description": "{{description}}",
   "main": "dist/index.js",
@@ -225,8 +225,8 @@ async function generateNodeFiles(nodeDir: string, data: NodeGenerationData): Pro
     "lint:fix": "eslint src/**/*.ts --fix"
   },
   "dependencies": {
-    "@reporunner/core": "workspace:*",
-    "@reporunner/shared": "workspace:*"
+    "@klikkflow/core": "workspace:*",
+    "@klikkflow/shared": "workspace:*"
   },
   "devDependencies": {
     "typescript": "catalog:",
@@ -235,7 +235,7 @@ async function generateNodeFiles(nodeDir: string, data: NodeGenerationData): Pro
     "@types/jest": "catalog:",
     "eslint": "catalog:"
   },
-  "keywords": ["reporunner", "node", "{{category}}", "{{name}}"],
+  "keywords": ["klikkflow", "node", "{{category}}", "{{name}}"],
   "author": "{{author}}"
 }`;
 
@@ -274,7 +274,7 @@ pnpm test
 
 ## Usage
 
-This node provides {{name}} integration for Reporunner workflows.
+This node provides {{name}} integration for KlikkFlow workflows.
 
 ### Operations
 
@@ -283,7 +283,7 @@ This node provides {{name}} integration for Reporunner workflows.
 
 ### Credentials
 
-This node requires {{name}} credentials. Configure them in your Reporunner instance.
+This node requires {{name}} credentials. Configure them in your KlikkFlow instance.
 {{/addCredentials}}
 
 ## Author
@@ -327,7 +327,7 @@ function getNodeTemplate(template: string): string {
   INodeType,
   INodeTypeDescription,
   NodeOperationError,
-} from '@reporunner/core';
+} from '@klikkflow/core';
 
 export class {{name}} implements INodeType {
   description: INodeTypeDescription = {
@@ -418,7 +418,7 @@ export {};`;
   return `import {
   ICredentialType,
   INodeProperties,
-} from '@reporunner/core';
+} from '@klikkflow/core';
 
 export class {{name}}Api implements ICredentialType {
   name = '{{name}}Api';
@@ -445,7 +445,7 @@ export class {{name}}Api implements ICredentialType {
 }
 
 function getPropertiesTemplate(_template: string): string {
-  return `import { INodeProperties } from '@reporunner/core';
+  return `import { INodeProperties } from '@klikkflow/core';
 
 export const {{name}}Properties: INodeProperties[] = [
   {

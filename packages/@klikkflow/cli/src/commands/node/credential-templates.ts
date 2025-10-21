@@ -7,7 +7,7 @@ export {};`;
   return `import {
   ICredentialType,
   INodeProperties,
-} from '@reporunner/core';
+} from '@klikkflow/core';
 
 export class {{name}}Api implements ICredentialType {
   name = '{{name}}Api';
@@ -34,7 +34,7 @@ export class {{name}}Api implements ICredentialType {
 }
 
 export function getPropertiesTemplate(_template: string): string {
-  return `import { INodeProperties } from '@reporunner/core';
+  return `import { INodeProperties } from '@klikkflow/core';
 
 export const {{name}}Properties: INodeProperties[] = [
   {

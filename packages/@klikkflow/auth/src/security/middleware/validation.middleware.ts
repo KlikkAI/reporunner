@@ -1,4 +1,4 @@
-import { ERROR_CODES } from '@reporunner/shared';
+import { ERROR_CODES } from '@klikkflow/shared';
 import type { NextFunction, Request, RequestHandler, Response } from 'express';
 import DOMPurify from 'isomorphic-dompurify';
 import validator from 'validator';

@@ -1,5 +1,5 @@
 {
-  "name": "@reporunner/notification-service",
+  "name": "@klikkflow/notification-service",
   "version": "1.0.0",
   "description": "Enterprise notification service for workflow alerts, emails, and real-time notifications",
   "main": "dist/index.js",
@@ -14,8 +14,8 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@reporunner/shared": "workspace:*",
-    "@reporunner/backend": "workspace:*",
+    "@klikkflow/shared": "workspace:*",
+    "@klikkflow/backend": "workspace:*",
     "nodemailer": "^6.9.8",
     "twilio": "^4.19.3",
     "slack-web-api": "^7.0.4",
@@ -42,6 +42,6 @@
     "real-time",
     "enterprise"
   ],
-  "author": "Reporunner Team",
+  "author": "KlikkFlow Team",
   "license": "MIT"
 }

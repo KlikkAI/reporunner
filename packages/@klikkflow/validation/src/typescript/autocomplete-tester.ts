@@ -92,9 +92,9 @@ export class AutocompleteTester {
   private async generateAutocompleteTestCases(): Promise<AutocompleteTestCase[]> {
     const testCases: AutocompleteTestCase[] = [];
 
-    // Test cases for @reporunner packages
+    // Test cases for @klikkflow packages
     testCases.push({
-      packageName: '@reporunner/core',
+      packageName: '@klikkflow/core',
       testFile: 'test-autocomplete-core.ts',
       position: { line: 2, character: 20 },
       expectedSuggestions: ['WorkflowEngine', 'NodeRegistry', 'ExecutionContext'],
@@ -102,7 +102,7 @@ export class AutocompleteTester {
     });
 
     testCases.push({
-      packageName: '@reporunner/auth',
+      packageName: '@klikkflow/auth',
       testFile: 'test-autocomplete-auth.ts',
       position: { line: 2, character: 20 },
       expectedSuggestions: ['AuthService', 'UserManager', 'TokenValidator'],
@@ -110,7 +110,7 @@ export class AutocompleteTester {
     });
 
     testCases.push({
-      packageName: '@reporunner/workflow',
+      packageName: '@klikkflow/workflow',
       testFile: 'test-autocomplete-workflow.ts',
       position: { line: 2, character: 25 },
       expectedSuggestions: ['WorkflowBuilder', 'NodeExecutor', 'TriggerManager'],
@@ -131,7 +131,7 @@ export class AutocompleteTester {
 
   private async createTestFile(testCase: AutocompleteTestCase): Promise<void> {
     const testFilePath = path.join(this.workspaceRoot, testCase.testFile);
-    const packageImport = testCase.packageName.startsWith('@reporunner/')
+    const packageImport = testCase.packageName.startsWith('@klikkflow/')
       ? `import { } from '${testCase.packageName}';`
       : `import { } from '../packages/${testCase.packageName}/src';`;
 

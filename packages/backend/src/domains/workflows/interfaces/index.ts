@@ -7,7 +7,7 @@ import type {
   IWorkflowSettings as ApiWorkflowSettings,
   IEdge,
   INode,
-} from '@reporunner/shared';
+} from '@klikkflow/shared';
 
 export interface IWorkflow extends ApiWorkflow {
   userId: string;

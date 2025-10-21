@@ -1,13 +1,13 @@
-# @reporunner/core
+# @klikkflow/core
 
-**Centralized utilities and base classes for the Reporunner platform.**
+**Centralized utilities and base classes for the KlikkFlow platform.**
 
-This package provides battle-tested utilities that should be used across all Reporunner packages. By using these shared utilities, we eliminate code duplication, ensure consistent behavior, and reduce maintenance burden.
+This package provides battle-tested utilities that should be used across all KlikkFlow packages. By using these shared utilities, we eliminate code duplication, ensure consistent behavior, and reduce maintenance burden.
 
 ## 📦 Installation
 
 ```bash
-pnpm add @reporunner/core
+pnpm add @klikkflow/core
 ```
 
 ## 🎯 Purpose
@@ -32,7 +32,7 @@ Centralized error handling with retry logic and exponential backoff.
 - Async/sync operation support
 
 ```typescript
-import { ErrorHandler } from '@reporunner/core';
+import { ErrorHandler } from '@klikkflow/core';
 
 const errorHandler = new ErrorHandler({
   enableStackTrace: true,
@@ -84,7 +84,7 @@ Structured logging with multiple log levels and custom handlers.
 - Console and custom output support
 
 ```typescript
-import { Logger } from '@reporunner/core';
+import { Logger } from '@klikkflow/core';
 
 // Create a logger for your service
 const logger = new Logger('MyService', {
@@ -129,7 +129,7 @@ Comprehensive validation with fluent API.
 - Detailed error messages
 
 ```typescript
-import { Validator, SchemaValidator } from '@reporunner/core';
+import { Validator, SchemaValidator } from '@klikkflow/core';
 
 // Simple field validation
 const emailValidator = new Validator<string>()
@@ -225,7 +225,7 @@ try {
 ## 📦 Package Contents
 
 ```
-@reporunner/core/
+@klikkflow/core/
 ├── src/
 │   ├── base/             # Base classes for services and repositories
 │   ├── cache/            # Caching utilities
@@ -250,7 +250,7 @@ try {
 ### 1. Install the Package
 
 ```bash
-pnpm add @reporunner/core
+pnpm add @klikkflow/core
 ```
 
 ### 2. Import and Use
@@ -260,7 +260,7 @@ import {
   ErrorHandler,
   Logger,
   Validator
-} from '@reporunner/core';
+} from '@klikkflow/core';
 
 // Set up logger
 const logger = new Logger('MyService');
@@ -300,8 +300,8 @@ if (!email || !email.includes('@')) {
 
 **After:**
 ```typescript
-// ✅ Using @reporunner/core
-import { ErrorHandler, Logger, Validator } from '@reporunner/core';
+// ✅ Using @klikkflow/core
+import { ErrorHandler, Logger, Validator } from '@klikkflow/core';
 
 const errorHandler = new ErrorHandler();
 const logger = new Logger('AuthService');
@@ -330,7 +330,7 @@ await emailValidator.validate(email, 'email');
 
 ```typescript
 // services/logger.ts
-import { Logger } from '@reporunner/core';
+import { Logger } from '@klikkflow/core';
 
 export const logger = new Logger('MyPackage', {
   minLevel: process.env.NODE_ENV === 'production' ? 'info' : 'debug'
@@ -344,7 +344,7 @@ logger.info('Something happened');
 ### 2. Combine Utilities
 
 ```typescript
-import { ErrorHandler, Logger } from '@reporunner/core';
+import { ErrorHandler, Logger } from '@klikkflow/core';
 
 const logger = new Logger('APIService');
 const errorHandler = new ErrorHandler({
@@ -363,7 +363,7 @@ await errorHandler.handleAsync(
 
 ```typescript
 // validators/common.ts
-import { Validator } from '@reporunner/core';
+import { Validator } from '@klikkflow/core';
 
 export const validators = {
   email: new Validator<string>().required().email(),
@@ -384,14 +384,14 @@ await validators.email.validate(userEmail, 'email');
 
 ## 🔄 Migration Guide
 
-See [MIGRATION_GUIDE.md](../../../docs/MIGRATION_GUIDE.md) for detailed instructions on migrating from custom implementations to `@reporunner/core` utilities.
+See [MIGRATION_GUIDE.md](../../../docs/MIGRATION_GUIDE.md) for detailed instructions on migrating from custom implementations to `@klikkflow/core` utilities.
 
 ## 🤝 Contributing
 
 When you find yourself writing utility code, ask:
 
-1. **Is this already in @reporunner/core?** Check first!
-2. **Should this be in @reporunner/core?** If it's useful across packages, yes!
+1. **Is this already in @klikkflow/core?** Check first!
+2. **Should this be in @klikkflow/core?** If it's useful across packages, yes!
 3. **Is this package-specific?** Then keep it in your package.
 
 If you add new utilities to this package:
@@ -406,4 +406,4 @@ MIT License - See root LICENSE file
 
 ---
 
-**Stop duplicating code. Use @reporunner/core.**
+**Stop duplicating code. Use @klikkflow/core.**

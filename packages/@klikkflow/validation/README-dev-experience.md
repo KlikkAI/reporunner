@@ -36,7 +36,7 @@ The system consists of three main components:
 ## Installation
 
 ```bash
-pnpm add @reporunner/validation
+pnpm add @klikkflow/validation
 ```
 
 ## Quick Start
@@ -44,7 +44,7 @@ pnpm add @reporunner/validation
 ### Basic Developer Experience Analysis
 
 ```typescript
-import { DevExperienceMetrics } from '@reporunner/validation';
+import { DevExperienceMetrics } from '@klikkflow/validation';
 
 const devMetrics = new DevExperienceMetrics();
 
@@ -64,7 +64,7 @@ report.recommendations.forEach((rec, index) => {
 ### IDE Performance Benchmarking
 
 ```typescript
-import { IDEPerformanceAnalyzer } from '@reporunner/validation';
+import { IDEPerformanceAnalyzer } from '@klikkflow/validation';
 
 const analyzer = new IDEPerformanceAnalyzer();
 
@@ -80,7 +80,7 @@ console.log(`Navigation Speed: ${report.navigation.goToDefinitionTime}ms`);
 ### Productivity Tracking
 
 ```typescript
-import { ProductivityTracker } from '@reporunner/validation';
+import { ProductivityTracker } from '@klikkflow/validation';
 
 const tracker = new ProductivityTracker();
 

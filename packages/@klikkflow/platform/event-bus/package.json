@@ -1,5 +1,5 @@
 {
-  "name": "@reporunner/event-bus",
+  "name": "@klikkflow/event-bus",
   "version": "1.0.0",
   "description": "Distributed event bus for microservices communication",
   "main": "dist/index.js",
@@ -16,7 +16,7 @@
   "dependencies": {
     "amqplib": "^0.10.4",
     "eventemitter3": "^5.0.1",
-    "@reporunner/shared": "workspace:*"
+    "@klikkflow/shared": "workspace:*"
   },
   "devDependencies": {
     "@types/amqplib": "^0.10.5"
@@ -28,6 +28,6 @@
     "amqp",
     "rabbitmq"
   ],
-  "author": "Reporunner Team",
+  "author": "KlikkFlow Team",
   "license": "MIT"
 }

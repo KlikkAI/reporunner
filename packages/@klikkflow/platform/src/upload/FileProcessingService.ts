@@ -2,7 +2,7 @@ import crypto from 'node:crypto';
 import { EventEmitter } from 'node:events';
 import { createReadStream, promises as fs } from 'node:fs';
 import path from 'node:pses';
-import { Logger } from '@reporunner/core';
+import { Logger } from '@klikkflow/core';
 import { z } from 'zod';
 
 export interface FileUploadOptions {

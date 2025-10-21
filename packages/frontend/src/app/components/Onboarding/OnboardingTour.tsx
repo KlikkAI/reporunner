@@ -61,13 +61,13 @@ const ONBOARDING_STEPS: Record<string, OnboardingStep[]> = {
   developer: [
     {
       id: 'welcome',
-      title: 'Welcome to Reporunner! 🚀',
+      title: 'Welcome to KlikkFlow! 🚀',
       description: "Let's get you started with workflow automation",
       target: '.main-header',
       content: (
         <div>
           <Paragraph>
-            Welcome to Reporunner! We'll guide you through creating your first automated workflow in
+            Welcome to KlikkFlow! We'll guide you through creating your first automated workflow in
             just a few minutes.
           </Paragraph>
           <Alert
@@ -134,7 +134,7 @@ const ONBOARDING_STEPS: Record<string, OnboardingStep[]> = {
       content: (
         <div>
           <Paragraph>
-            Browse our marketplace to find plugins that extend Reporunner's capabilities. From AI
+            Browse our marketplace to find plugins that extend KlikkFlow's capabilities. From AI
             tools to database connectors, we've got you covered.
           </Paragraph>
           <Space>
@@ -179,7 +179,7 @@ const ONBOARDING_STEPS: Record<string, OnboardingStep[]> = {
           </div>
           <Paragraph>
             Congratulations! You've completed the onboarding tour. You're now ready to build
-            powerful automation workflows with Reporunner.
+            powerful automation workflows with KlikkFlow.
           </Paragraph>
           <Space direction="vertical" style={{ width: '100%' }}>
             <Button type="primary" block icon={<RocketOutlined />}>
@@ -196,13 +196,13 @@ const ONBOARDING_STEPS: Record<string, OnboardingStep[]> = {
   business: [
     {
       id: 'welcome',
-      title: 'Welcome to Reporunner! 💼',
+      title: 'Welcome to KlikkFlow! 💼',
       description: 'Automate your business processes with ease',
       target: '.main-header',
       content: (
         <div>
           <Paragraph>
-            Welcome to Reporunner! We'll show you how to automate your business processes and boost
+            Welcome to KlikkFlow! We'll show you how to automate your business processes and boost
             productivity without any coding required.
           </Paragraph>
           <Alert
@@ -250,7 +250,7 @@ const ONBOARDING_STEPS: Record<string, OnboardingStep[]> = {
       content: (
         <div>
           <Paragraph>
-            Connect Reporunner with your existing business tools like Salesforce, Slack, Google
+            Connect KlikkFlow with your existing business tools like Salesforce, Slack, Google
             Workspace, and hundreds of other applications.
           </Paragraph>
           <Space wrap>
@@ -423,7 +423,7 @@ export const OnboardingTour: React.FC<OnboardingTourProps> = ({
         <div style={{ marginBottom: 16 }}>
           <Paragraph>
             Great job completing the tour! Here are some resources to help you get the most out of
-            Reporunner:
+            KlikkFlow:
           </Paragraph>
           <Progress
             percent={100}

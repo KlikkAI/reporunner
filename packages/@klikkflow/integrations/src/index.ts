@@ -1,8 +1,8 @@
 /**
- * @reporunner/integrations - Integration Framework
+ * @klikkflow/integrations - Integration Framework
  *
  * A comprehensive framework for building and managing integrations
- * with third-party services in the RepoRunner platform.
+ * with third-party services in the KlikkFlow platform.
  */
 
 // Import singleton instances and types for internal use

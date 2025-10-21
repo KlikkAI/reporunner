@@ -1,4 +1,4 @@
-import { Logger } from '@reporunner/core';
+import { Logger } from '@klikkflow/core';
 import type { AxiosError } from 'axios';
 
 const logger = new Logger('ApiErrorHandler');

@@ -1,5 +1,5 @@
 /**
- * @reporunner/shared - Main export file
+ * @klikkflow/shared - Main export file
  *
  * This package consolidates utilities, types, validation, and constants that were previously
  * duplicated across multiple packages and services.

@@ -1,5 +1,5 @@
 // JWT Strategy implementation reusing patterns from security package
-// import type { JWTSessionManager } from '@reporunner/security';
+// import type { JWTSessionManager } from '@klikkflow/security';
 
 export interface JWTStrategyOptions {
   secretOrKey: string;

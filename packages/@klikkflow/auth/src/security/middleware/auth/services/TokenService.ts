@@ -1,4 +1,4 @@
-import { AuthenticationError } from '@reporunner/core';
+import { AuthenticationError } from '@klikkflow/core';
 
 export interface TokenPayload {
   id: string;

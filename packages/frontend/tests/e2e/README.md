@@ -1,6 +1,6 @@
-# Reporunner E2E Tests
+# KlikkFlow E2E Tests
 
-End-to-end testing suite for Reporunner using Playwright.
+End-to-end testing suite for KlikkFlow using Playwright.
 
 ## Overview
 
@@ -16,7 +16,7 @@ This test suite covers critical user journeys:
 
 ```bash
 # Install Playwright
-pnpm install --filter @reporunner/frontend
+pnpm install --filter @klikkflow/frontend
 
 # Install Playwright browsers
 pnpm exec playwright install

@@ -1,5 +1,5 @@
 import { EventEmitter } from 'node:events';
-import type { DatabaseService } from '@reporunner/backend/database';
+import type { DatabaseService } from '@klikkflow/backend/database';
 import {
   ERROR_CODES,
   EVENTS,
@@ -11,7 +11,7 @@ import {
   type IWorkflow,
   NodeType,
   SYSTEM,
-} from '@reporunner/shared';
+} from '@klikkflow/shared';
 import { type Job, Queue, Worker } from 'bullmq';
 import { v4 as uuidv4 } from 'uuid';
 import type { Logger } from 'winston';

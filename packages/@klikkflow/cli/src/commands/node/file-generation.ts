@@ -14,7 +14,7 @@ interface NodeGenerationData {
 export async function generateNodeFiles(nodeDir: string, data: NodeGenerationData): Promise<void> {
   // Package.json template
   const packageJsonTemplate = `{
-  "name": "@reporunner/node-{{name}}",
+  "name": "@klikkflow/node-{{name}}",
   "version": "1.0.0",
   "description": "{{description}}",
   "main": "dist/index.js",
@@ -28,8 +28,8 @@ export async function generateNodeFiles(nodeDir: string, data: NodeGenerationDat
     "lint:fix": "eslint src/**/*.ts --fix"
   },
   "dependencies": {
-    "@reporunner/core": "workspace:*",
-    "@reporunner/shared": "workspace:*"
+    "@klikkflow/core": "workspace:*",
+    "@klikkflow/shared": "workspace:*"
   },
   "devDependencies": {
     "typescript": "catalog:",
@@ -38,7 +38,7 @@ export async function generateNodeFiles(nodeDir: string, data: NodeGenerationDat
     "@types/jest": "catalog:",
     "eslint": "catalog:"
   },
-  "keywords": ["reporunner", "node", "{{category}}", "{{name}}"],
+  "keywords": ["klikkflow", "node", "{{category}}", "{{name}}"],
   "author": "{{author}}"
 }`;
 
@@ -81,7 +81,7 @@ pnpm test
 
 ## Usage
 
-This node provides {{name}} integration for Reporunner workflows.
+This node provides {{name}} integration for KlikkFlow workflows.
 
 ### Operations
 
@@ -90,7 +90,7 @@ This node provides {{name}} integration for Reporunner workflows.
 
 ### Credentials
 
-This node requires {{name}} credentials. Configure them in your Reporunner instance.
+This node requires {{name}} credentials. Configure them in your KlikkFlow instance.
 {{/addCredentials}}
 
 ## Author

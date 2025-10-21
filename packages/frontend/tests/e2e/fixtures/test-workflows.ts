@@ -131,7 +131,7 @@ export const emailWorkflow = {
         config: {
           to: 'test@example.com',
           subject: 'Test Email',
-          body: 'This is a test email from Reporunner',
+          body: 'This is a test email from KlikkFlow',
         },
       },
     },

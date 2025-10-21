@@ -1,5 +1,5 @@
 {
-  "name": "@reporunner/audit-service",
+  "name": "@klikkflow/audit-service",
   "version": "1.0.0",
   "description": "Enterprise audit service for compliance, security logging, and governance",
   "main": "dist/index.js",
@@ -14,9 +14,9 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@reporunner/shared": "workspace:*",
-    "@reporunner/backend": "workspace:*",
-    "@reporunner/auth": "workspace:*",
+    "@klikkflow/shared": "workspace:*",
+    "@klikkflow/backend": "workspace:*",
+    "@klikkflow/auth": "workspace:*",
     "crypto": "^1.0.1",
     "uuid": "^9.0.1",
     "date-fns": "^3.6.0"
@@ -35,6 +35,6 @@
     "logging",
     "enterprise"
   ],
-  "author": "Reporunner Team",
+  "author": "KlikkFlow Team",
   "license": "MIT"
 }

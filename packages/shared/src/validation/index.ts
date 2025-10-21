@@ -1,7 +1,7 @@
 /**
  * Shared Validation Schemas
  * Centralized validation schemas for API requests and responses
- * Consolidated from @reporunner/validation and existing shared validation
+ * Consolidated from @klikkflow/validation and existing shared validation
  */
 
 import { z } from 'zod';

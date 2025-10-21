@@ -5,7 +5,7 @@
  * to provide integration management capabilities.
  */
 
-import { Logger } from '@reporunner/core';
+import { Logger } from '@klikkflow/core';
 import { nodeRegistry } from '@/core';
 import type { Integration } from '@/core/types/integration';
 

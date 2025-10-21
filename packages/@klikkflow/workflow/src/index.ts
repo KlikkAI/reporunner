@@ -1,5 +1,5 @@
 /**
- * @reporunner/workflow - Core workflow execution engine
+ * @klikkflow/workflow - Core workflow execution engine
  *
  * Inspired by n8n-workflow but with enhanced capabilities:
  * - AI-first design with native LLM integration

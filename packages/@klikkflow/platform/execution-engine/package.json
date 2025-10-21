@@ -1,7 +1,7 @@
 {
-  "name": "@reporunner/execution-engine",
+  "name": "@klikkflow/execution-engine",
   "version": "0.0.1",
-  "description": "Core workflow execution engine for Reporunner platform",
+  "description": "Core workflow execution engine for KlikkFlow platform",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
@@ -19,8 +19,8 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@reporunner/shared": "workspace:*",
-    "@reporunner/backend": "workspace:*",
+    "@klikkflow/shared": "workspace:*",
+    "@klikkflow/backend": "workspace:*",
     "@types/winston": "^2.4.4",
     "bullmq": "^5.30.1",
     "eventemitter3": "^5.0.1",

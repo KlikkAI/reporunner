@@ -12,5 +12,5 @@ export default defineConfig({
   sourcemap: true,
   clean: true,
   splitting: false,
-  external: ['@reporunner/core', '@reporunner/shared', 'pg', 'pgvector', 'chromadb', 'faiss-node'],
+  external: ['@klikkflow/core', '@klikkflow/shared', 'pg', 'pgvector', 'chromadb', 'faiss-node'],
 });

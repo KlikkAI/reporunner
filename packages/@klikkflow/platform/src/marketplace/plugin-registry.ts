@@ -3,7 +3,7 @@
  * Manages plugin registration, validation, and distribution
  */
 
-import { Logger } from '@reporunner/core';
+import { Logger } from '@klikkflow/core';
 import { z } from 'zod';
 
 // Plugin metadata schema

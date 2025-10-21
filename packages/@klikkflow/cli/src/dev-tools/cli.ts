@@ -4,7 +4,7 @@ import { DevTools } from './DevTools';
 
 const program = new Command();
 
-program.name('reporunner-dev').description('Reporunner development tools CLI').version('1.0.0');
+program.name('klikkflow-dev').description('KlikkFlow development tools CLI').version('1.0.0');
 
 program
   .command('generate:workflow <name>')

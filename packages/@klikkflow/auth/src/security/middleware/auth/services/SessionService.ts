@@ -1,4 +1,4 @@
-import { AuthenticationError } from '@reporunner/core';
+import { AuthenticationError } from '@klikkflow/core';
 import type { Request } from 'express';
 import Redis from 'ioredis';
 

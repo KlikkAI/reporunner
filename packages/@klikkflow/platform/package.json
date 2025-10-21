@@ -1,5 +1,5 @@
 {
-  "name": "@reporunner/platform",
+  "name": "@klikkflow/platform",
   "version": "1.0.0",
   "description": "Core platform services: event-bus, execution-engine, resource-manager, scheduler, state-store, gateway, real-time, upload",
   "type": "module",
@@ -54,9 +54,9 @@
     "format": "biome format --write ."
   },
   "dependencies": {
-    "@reporunner/shared": "workspace:*",
-    "@reporunner/core": "workspace:*",
-    "@reporunner/workflow": "workspace:*",
+    "@klikkflow/shared": "workspace:*",
+    "@klikkflow/core": "workspace:*",
+    "@klikkflow/workflow": "workspace:*",
     "bullmq": "catalog:",
     "ioredis": "catalog:",
     "winston": "catalog:",
@@ -69,7 +69,7 @@
     "vitest": "catalog:"
   },
   "keywords": [
-    "reporunner",
+    "klikkflow",
     "platform",
     "event-bus",
     "execution-engine",
@@ -80,7 +80,7 @@
     "real-time",
     "upload"
   ],
-  "author": "Reporunner Team",
+  "author": "KlikkFlow Team",
   "license": "MIT",
   "files": [
     "dist",

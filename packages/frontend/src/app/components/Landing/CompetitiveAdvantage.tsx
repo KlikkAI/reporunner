@@ -1,7 +1,7 @@
 /**
  * Competitive Advantage Section
  *
- * Highlights Reporunner's key differentiators over n8n and SIM
+ * Highlights KlikkFlow's key differentiators over n8n and SIM
  * with modern card-based design and animations
  */
 
@@ -62,12 +62,12 @@ export const CompetitiveAdvantage: React.FC = () => {
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
             Why Enterprises Choose{' '}
             <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              Reporunner
+              KlikkFlow
             </span>
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
             While Zapier and Make.com excel at ease-of-use, and n8n offers self-hosting, only
-            Reporunner combines enterprise-grade security, native AI capabilities, complete
+            KlikkFlow combines enterprise-grade security, native AI capabilities, complete
             self-hosting control, and cost-effective scaling in one unified platform.
           </p>
         </div>

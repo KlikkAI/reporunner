@@ -123,7 +123,7 @@ export class NavigationTester {
       testName: 'Navigate to core WorkflowEngine',
       sourceFile: 'test-navigation-core.ts',
       targetSymbol: 'WorkflowEngine',
-      expectedTargetFile: 'packages/@reporunner/core/src/workflow/engine.ts',
+      expectedTargetFile: 'packages/@klikkflow/core/src/workflow/engine.ts',
       description: 'Test navigation from consumer to core WorkflowEngine',
     });
 
@@ -131,7 +131,7 @@ export class NavigationTester {
       testName: 'Navigate to auth AuthService',
       sourceFile: 'test-navigation-auth.ts',
       targetSymbol: 'AuthService',
-      expectedTargetFile: 'packages/@reporunner/auth/src/services/auth.service.ts',
+      expectedTargetFile: 'packages/@klikkflow/auth/src/services/auth.service.ts',
       description: 'Test navigation from consumer to auth service',
     });
 
@@ -171,10 +171,10 @@ export class NavigationTester {
 
     // Generate appropriate import and usage based on test case
     if (testCase.targetSymbol === 'WorkflowEngine') {
-      importStatement = `import { WorkflowEngine } from '@reporunner/core';`;
+      importStatement = `import { WorkflowEngine } from '@klikkflow/core';`;
       usageStatement = `const engine = new WorkflowEngine();`;
     } else if (testCase.targetSymbol === 'AuthService') {
-      importStatement = `import { AuthService } from '@reporunner/auth';`;
+      importStatement = `import { AuthService } from '@klikkflow/auth';`;
       usageStatement = `const auth = new AuthService();`;
     } else if (testCase.targetSymbol === 'BaseEntity') {
       importStatement = `import type { BaseEntity } from '../packages/shared/src';`;

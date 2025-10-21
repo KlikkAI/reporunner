@@ -1,7 +1,7 @@
 /**
  * Self-Hosted Page
  *
- * Comprehensive self-hosted deployment information for Reporunner
+ * Comprehensive self-hosted deployment information for KlikkFlow
  * Deployment options, system requirements, and getting started guides
  */
 
@@ -68,14 +68,14 @@ export const SelfHosted: React.FC = () => {
         {
           description: 'Download the docker-compose.yml file',
           command:
-            'curl -o docker-compose.yml https://raw.githubusercontent.com/reporunner/reporunner/main/docker-compose.yml',
+            'curl -o docker-compose.yml https://raw.githubusercontent.com/klikkflow/klikkflow/main/docker-compose.yml',
         },
         {
           description: 'Start all services',
           command: 'docker-compose up -d',
         },
         {
-          description: 'Access Reporunner',
+          description: 'Access KlikkFlow',
           command: '# Open http://localhost:5678 in your browser',
         },
       ],
@@ -84,21 +84,21 @@ export const SelfHosted: React.FC = () => {
       title: 'Kubernetes Deployment',
       steps: [
         {
-          description: 'Add Reporunner Helm repository',
-          command: 'helm repo add reporunner https://helm.reporunner.dev',
+          description: 'Add KlikkFlow Helm repository',
+          command: 'helm repo add klikkflow https://helm.klikkflow.dev',
         },
         {
           description: 'Update Helm repositories',
           command: 'helm repo update',
         },
         {
-          description: 'Install Reporunner',
+          description: 'Install KlikkFlow',
           command:
-            'helm install reporunner reporunner/reporunner --namespace reporunner --create-namespace',
+            'helm install klikkflow klikkflow/klikkflow --namespace klikkflow --create-namespace',
         },
         {
           description: 'Get the application URL',
-          command: 'kubectl get ingress -n reporunner',
+          command: 'kubectl get ingress -n klikkflow',
         },
       ],
     },
@@ -111,7 +111,7 @@ export const SelfHosted: React.FC = () => {
         },
         {
           description: 'Clone the repository',
-          command: 'git clone https://github.com/reporunner/reporunner.git && cd reporunner',
+          command: 'git clone https://github.com/klikkflow/klikkflow.git && cd klikkflow',
         },
         {
           description: 'Install dependencies',
@@ -194,8 +194,8 @@ export const SelfHosted: React.FC = () => {
               Workflow Automation
             </h1>
             <p className="text-xl text-slate-200 mb-8 max-w-3xl mx-auto leading-relaxed">
-              Complete control over your data and infrastructure. Deploy Reporunner anywhere -
-              cloud, on-premises, or air-gapped environments with enterprise-grade security.
+              Complete control over your data and infrastructure. Deploy KlikkFlow anywhere - cloud,
+              on-premises, or air-gapped environments with enterprise-grade security.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
@@ -409,7 +409,7 @@ export const SelfHosted: React.FC = () => {
           <div className="max-w-4xl mx-auto text-center mb-12">
             <h2 className="text-4xl font-bold text-gray-900 mb-6">Migration Made Easy</h2>
             <p className="text-xl text-gray-600">
-              Seamlessly migrate from existing workflow platforms to your self-hosted Reporunner
+              Seamlessly migrate from existing workflow platforms to your self-hosted KlikkFlow
             </p>
           </div>
           <h2 className="text-4xl font-bold mb-6">Ready to Deploy Your Own?</h2>

@@ -1,5 +1,5 @@
 /**
- * @reporunner/core - Shared core functionality for Reporunner
+ * @klikkflow/core - Shared core functionality for KlikkFlow
  * Provides base classes, interfaces, and utilities for consistent architecture
  */
 

@@ -74,13 +74,13 @@ export async function handleCreateNode(options: CreateNodeOptions): Promise<void
         name: 'description',
         message: 'Node description:',
         default: (answers: InquirerAnswers) =>
-          `${answers.name || options.name} integration for Reporunner`,
+          `${answers.name || options.name} integration for KlikkFlow`,
       },
       {
         type: 'input',
         name: 'author',
         message: 'Author name:',
-        default: 'Reporunner Team',
+        default: 'KlikkFlow Team',
       },
       {
         type: 'confirm',

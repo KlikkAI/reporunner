@@ -1,5 +1,5 @@
 {
-  "name": "@reporunner/frontend",
+  "name": "@klikkflow/frontend",
   "private": true,
   "version": "1.0.0",
   "type": "module",
@@ -17,7 +17,7 @@
     "test": "vitest --run",
     "test:watch": "vitest",
     "clean": "rm -rf dist node_modules/.cache .eslintcache",
-    "deploy": "pnpm build && node -e \"console.log('Deploy for @reporunner/frontend is not implemented yet');\"",
+    "deploy": "pnpm build && node -e \"console.log('Deploy for @klikkflow/frontend is not implemented yet');\"",
     "build:production": "NODE_ENV=production vite build"
   },
   "dependencies": {
@@ -31,7 +31,7 @@
     "@reactflow/controls": "^11.2.14",
     "@reactflow/core": "^11.11.4",
     "@reactflow/minimap": "^11.7.14",
-    "@reporunner/core": "workspace:*",
+    "@klikkflow/core": "workspace:*",
     "@tanstack/react-query": "^5.83.0",
     "@tanstack/react-virtual": "^3.13.12",
     "antd": "^5.26.4",

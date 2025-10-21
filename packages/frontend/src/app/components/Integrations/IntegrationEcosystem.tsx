@@ -598,7 +598,7 @@ export const IntegrationEcosystem: React.FC = () => {
           <ApiOutlined /> Integration Ecosystem
         </Title>
         <Paragraph>
-          Connect Reporunner with your favorite tools and services. From popular SaaS platforms to
+          Connect KlikkFlow with your favorite tools and services. From popular SaaS platforms to
           databases and cloud services, we've got you covered.
         </Paragraph>
       </div>

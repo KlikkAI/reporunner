@@ -150,7 +150,7 @@ export class IntelliSenseTester {
   private async generateIntelliSenseTestCases(): Promise<IntelliSenseTestCase[]> {
     const testCases: IntelliSenseTestCase[] = [];
 
-    // Test completions for @reporunner packages
+    // Test completions for @klikkflow packages
     testCases.push({
       testName: 'Core package completions',
       sourceFile: 'test-intellisense-core.ts',
@@ -205,21 +205,21 @@ export class IntelliSenseTester {
     // Generate appropriate test content based on test case
     if (testCase.testName.includes('Core package')) {
       testContent = `// IntelliSense test for core package
-import { WorkflowEngine, NodeRegistry } from '@reporunner/core';
+import { WorkflowEngine, NodeRegistry } from '@klikkflow/core';
 
 const engine = new WorkflowEngine();
 // Cursor position for testing completions
 `;
     } else if (testCase.testName.includes('Auth package')) {
       testContent = `// IntelliSense test for auth package
-import { AuthService } from '@reporunner/auth';
+import { AuthService } from '@klikkflow/auth';
 
 const auth = new AuthService();
 // Cursor position for testing completions
 `;
     } else if (testCase.testName.includes('Method completions')) {
       testContent = `// IntelliSense test for method completions
-import { WorkflowEngine } from '@reporunner/core';
+import { WorkflowEngine } from '@klikkflow/core';
 
 const engine = new WorkflowEngine();
 engine.
@@ -234,8 +234,8 @@ const entity: BaseEntity = {} as BaseEntity;
 `;
     } else if (testCase.testName.includes('Cross-package')) {
       testContent = `// IntelliSense test for cross-package references
-import { WorkflowEngine } from '@reporunner/core';
-import { AuthService } from '@reporunner/auth';
+import { WorkflowEngine } from '@klikkflow/core';
+import { AuthService } from '@klikkflow/auth';
 
 const engine = new WorkflowEngine();
 const auth = new AuthService();

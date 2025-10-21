@@ -150,7 +150,7 @@ export const Header: React.FC = () => {
         },
         {
           name: 'GitHub',
-          href: 'https://github.com/reporunner/reporunner',
+          href: 'https://github.com/klikkflow/klikkflow',
           description: 'Open source repository',
           external: true,
         },
@@ -181,7 +181,7 @@ export const Header: React.FC = () => {
         },
         {
           name: 'Status',
-          href: 'https://status.reporunner.dev',
+          href: 'https://status.klikkflow.dev',
           description: 'System status',
           external: true,
         },
@@ -223,7 +223,7 @@ export const Header: React.FC = () => {
               <Zap className="w-5 h-5 text-white" />
             </div>
             <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              Reporunner
+              KlikkFlow
             </span>
           </Link>
 

@@ -1,4 +1,4 @@
-# @reporunner/validation Usage Examples
+# @klikkflow/validation Usage Examples
 
 This document provides practical examples of using the validation framework in different scenarios.
 
@@ -7,7 +7,7 @@ This document provides practical examples of using the validation framework in d
 ### 1. Quick TypeScript Health Check
 
 ```typescript
-import { TypeScriptAnalyzer } from '@reporunner/validation/typescript';
+import { TypeScriptAnalyzer } from '@klikkflow/validation/typescript';
 
 async function quickHealthCheck() {
   const analyzer = new TypeScriptAnalyzer(process.cwd());
@@ -29,7 +29,7 @@ quickHealthCheck().catch(console.error);
 ### 2. IDE Performance Monitoring
 
 ```typescript
-import { IDEPerformanceValidator } from '@reporunner/validation/ide-performance';
+import { IDEPerformanceValidator } from '@klikkflow/validation/ide-performance';
 
 async function monitorIDEPerformance() {
   const validator = new IDEPerformanceValidator(process.cwd());
@@ -59,7 +59,7 @@ monitorIDEPerformance().catch(console.error);
 ### 3. Import Path Cleanup
 
 ```typescript
-import { ImportPathOptimizer } from '@reporunner/validation/import-optimization';
+import { ImportPathOptimizer } from '@klikkflow/validation/import-optimization';
 
 async function cleanupImports() {
   const optimizer = new ImportPathOptimizer(process.cwd());
@@ -102,7 +102,7 @@ import {
   TypeScriptAnalyzer,
   IDEPerformanceValidator,
   ImportPathOptimizer
-} from '@reporunner/validation';
+} from '@klikkflow/validation';
 
 class ValidationPipeline {
   private workspaceRoot: string;
@@ -182,7 +182,7 @@ pipeline.runFullValidation()
 import {
   TypeScriptAnalyzer,
   ImportPathOptimizer
-} from '@reporunner/validation';
+} from '@klikkflow/validation';
 
 async function validatePullRequest() {
   const workspaceRoot = process.cwd();
@@ -238,7 +238,7 @@ validatePullRequest();
 
 ```typescript
 // scripts/performance-dashboard.ts
-import { IDEPerformanceValidator } from '@reporunner/validation/ide-performance';
+import { IDEPerformanceValidator } from '@klikkflow/validation/ide-performance';
 import * as fs from 'fs';
 
 class PerformanceDashboard {
@@ -330,7 +330,7 @@ dashboard.collectMetrics()
 
 ```typescript
 // scripts/auto-fix-imports.ts
-import { ImportPathOptimizer } from '@reporunner/validation/import-optimization';
+import { ImportPathOptimizer } from '@klikkflow/validation/import-optimization';
 import * as fs from 'fs';
 
 class ImportAutoFixer {
@@ -428,28 +428,28 @@ jobs:
       run: pnpm install
 
     - name: Build validation package
-      run: pnpm build --filter=@reporunner/validation
+      run: pnpm build --filter=@klikkflow/validation
 
     - name: Run TypeScript analysis
       run: |
-        cd packages/@reporunner/validation
+        cd packages/@klikkflow/validation
         pnpm typescript:analyze --output ts-report.json
 
     - name: Run IDE performance validation
       run: |
-        cd packages/@reporunner/validation
+        cd packages/@klikkflow/validation
         pnpm ide:validate --output ide-report.json
 
     - name: Run import optimization
       run: |
-        cd packages/@reporunner/validation
+        cd packages/@klikkflow/validation
         pnpm imports:analyze --output import-report.json
 
     - name: Upload validation reports
       uses: actions/upload-artifact@v3
       with:
         name: validation-reports
-        path: packages/@reporunner/validation/*-report.json
+        path: packages/@klikkflow/validation/*-report.json
 
     - name: Comment PR with results
       if: github.event_name == 'pull_request'
@@ -457,9 +457,9 @@ jobs:
       with:
         script: |
           const fs = require('fs');
-          const tsReport = JSON.parse(fs.readFileSync('packages/@reporunner/validation/ts-report.json'));
-          const ideReport = JSON.parse(fs.readFileSync('packages/@reporunner/validation/ide-report.json'));
-          const importReport = JSON.parse(fs.readFileSync('packages/@reporunner/validation/import-report.json'));
+          const tsReport = JSON.parse(fs.readFileSync('packages/@klikkflow/validation/ts-report.json'));
+          const ideReport = JSON.parse(fs.readFileSync('packages/@klikkflow/validation/ide-report.json'));
+          const importReport = JSON.parse(fs.readFileSync('packages/@klikkflow/validation/import-report.json'));
 
           const comment = `## 📊 Validation Results
 
@@ -490,7 +490,7 @@ jobs:
 echo "🔍 Running validation checks..."
 
 # Quick TypeScript check
-cd packages/@reporunner/validation
+cd packages/@klikkflow/validation
 node dist/cli/typescript-analyzer-cli.js analyze --compilation-only
 
 if [ $? -ne 0 ]; then

@@ -165,7 +165,7 @@ export class E2EValidator implements IE2EValidator {
       },
       {
         fromPackage: 'frontend',
-        toPackage: '@reporunner/shared',
+        toPackage: '@klikkflow/shared',
         testScenario: 'Shared Component Usage',
         validationSteps: [
           { action: 'navigate', url: '/components' },
