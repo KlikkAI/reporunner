@@ -48,7 +48,8 @@ export abstract class BaseRepository<T extends BaseEntity> {
   constructor(db: Db, collectionName: string, options: RepositoryOptions = {}) {
     this.db = db;
     this.collectionName = collectionName;
-    this.collection = db.collection<T>(collectionName);
+    // Allow db to be undefined during initialization (repositories delegate to Mongoose)
+    this.collection = db?.collection<T>(collectionName) as Collection<T>;
     this.options = {
       enableTimestamps: true,
       enableSoftDelete: false,

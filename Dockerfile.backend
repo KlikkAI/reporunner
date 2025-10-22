@@ -106,6 +106,10 @@ COPY --chown=klikkflow:nodejs packages/@klikkflow/ai/package.json ./packages/@kl
 COPY --chown=klikkflow:nodejs packages/@klikkflow/core/package.json ./packages/@klikkflow/core/
 COPY --chown=klikkflow:nodejs packages/@klikkflow/platform/package.json ./packages/@klikkflow/platform/
 
+# Create logs directory with proper permissions before switching user
+RUN mkdir -p /app/packages/backend/logs && \
+    chown -R klikkflow:nodejs /app/packages/backend/logs
+
 # Switch to non-root user
 USER klikkflow
 
