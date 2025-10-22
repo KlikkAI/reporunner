@@ -6,7 +6,6 @@
     "allowJs": true,
     "allowSyntheticDefaultImports": true,
     "outDir": "./dist",
-    "rootDir": "./src",
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "exactOptionalPropertyTypes": false,

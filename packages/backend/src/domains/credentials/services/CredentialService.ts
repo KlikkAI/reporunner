@@ -82,7 +82,11 @@ export class CredentialService {
       // Decrypt the data before returning
       if (credential.data) {
         try {
-          credential.data = decrypt(credential.data);
+          // Data is stored as encrypted string, decrypt it back to object
+          credential.data = decrypt(credential.data as unknown as string) as Record<
+            string,
+            unknown
+          >;
         } catch (decryptError) {
           logger.error('Failed to decrypt credential data:', decryptError);
           throw new Error('Failed to decrypt credential data');
@@ -104,8 +108,8 @@ export class CredentialService {
     credentialData: CreateCredentialData
   ): Promise<ICredential> {
     try {
-      // Encrypt credential data before storing
-      const encryptedData = encrypt(credentialData.data);
+      // Encrypt credential data before storing (returns string, stored as Mixed type)
+      const encryptedData = encrypt(credentialData.data) as unknown as Record<string, unknown>;
 
       const credential = await Credential.create({
         userId,
@@ -121,7 +125,7 @@ export class CredentialService {
 
       // Remove encrypted data from response
       const credentialObj = credential.toObject();
-      credentialObj.data = undefined;
+      (credentialObj as { data?: unknown }).data = undefined;
 
       logger.info(`Credential created: ${credential._id} for user: ${userId}`);
       return credentialObj as ICredential;
@@ -155,8 +159,8 @@ export class CredentialService {
       }
 
       if (updates.data !== undefined) {
-        // Encrypt new data
-        credential.data = encrypt(updates.data);
+        // Encrypt new data (encrypt returns string, stored in data field)
+        credential.data = encrypt(updates.data) as unknown as Record<string, unknown>;
       }
 
       if (updates.expiresAt !== undefined) {
@@ -171,7 +175,7 @@ export class CredentialService {
 
       // Remove encrypted data from response
       const credentialObj = credential.toObject();
-      credentialObj.data = undefined;
+      (credentialObj as { data?: unknown }).data = undefined;
 
       logger.info(`Credential updated: ${credentialId}`);
       return credentialObj as ICredential;
