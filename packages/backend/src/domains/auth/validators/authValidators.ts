@@ -40,6 +40,7 @@ const RegisterSchema = z.object({
 const LoginSchema = z.object({
   email: EmailSchema,
   password: z.string().min(1, 'Password is required'),
+  rememberMe: z.boolean().optional().default(false),
 });
 
 // Refresh token validation schema
