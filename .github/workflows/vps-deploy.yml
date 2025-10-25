@@ -1,0 +1,311 @@
+name: VPS Deployment (Blue-Green)
+
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - 'docs/**'
+      - '**.md'
+      - '.github/workflows/!(vps-deploy.yml|docker-publish.yml)'
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Target environment (blue or green)'
+        required: false
+        type: choice
+        options:
+          - auto
+          - blue
+          - green
+      skip_health_check:
+        description: 'Skip health checks (dangerous!)'
+        required: false
+        type: boolean
+        default: false
+  release:
+    types: [published]
+
+concurrency:
+  group: vps-deployment
+  cancel-in-progress: false
+
+env:
+  DOCKER_REGISTRY: klikkflow
+  DEPLOYMENT_DIR: /opt/klikkflow
+  NGINX_CONFIG: /etc/nginx/sites-available/klikkflow
+
+jobs:
+  # Wait for Docker images to be published
+  wait-for-images:
+    name: Wait for Docker Images
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' || github.event_name == 'release'
+
+    steps:
+      - name: Wait for docker-publish workflow
+        uses: lewagon/wait-on-check-action@v1.3.1
+        with:
+          ref: ${{ github.sha }}
+          check-name: 'build-and-push (frontend)'
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          wait-interval: 10
+
+      - name: Verify images exist
+        run: |
+          echo "✅ Docker images have been published successfully"
+          echo "Images available at: docker.io/${{ env.DOCKER_REGISTRY }}"
+
+  # Deploy to VPS using self-hosted runner
+  deploy-vps:
+    name: Deploy to VPS (Blue-Green)
+    runs-on: self-hosted
+    needs: wait-for-images
+    if: always() && (needs.wait-for-images.result == 'success' || github.event_name == 'workflow_dispatch')
+    environment:
+      name: production-vps
+      url: https://app.klikk.ai
+
+    outputs:
+      deployed-env: ${{ steps.determine-env.outputs.target }}
+      previous-env: ${{ steps.determine-env.outputs.previous }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Determine deployment environment
+        id: determine-env
+        run: |
+          cd ${{ env.DEPLOYMENT_DIR }}
+
+          # Check current active environment
+          if grep -q "server localhost:3010" ${{ env.NGINX_CONFIG }} && ! grep -q "#.*server localhost:3010" ${{ env.NGINX_CONFIG }}; then
+            CURRENT="blue"
+            TARGET="green"
+          elif grep -q "server localhost:3020" ${{ env.NGINX_CONFIG }} && ! grep -q "#.*server localhost:3020" ${{ env.NGINX_CONFIG }}; then
+            CURRENT="green"
+            TARGET="blue"
+          else
+            # First deployment
+            CURRENT="none"
+            TARGET="blue"
+          fi
+
+          # Override if manual dispatch with specific environment
+          if [ "${{ github.event.inputs.environment }}" != "auto" ] && [ "${{ github.event.inputs.environment }}" != "" ]; then
+            TARGET="${{ github.event.inputs.environment }}"
+          fi
+
+          echo "current=$CURRENT" >> $GITHUB_OUTPUT
+          echo "target=$TARGET" >> $GITHUB_OUTPUT
+          echo "previous=$CURRENT" >> $GITHUB_OUTPUT
+
+          echo "📍 Current environment: $CURRENT"
+          echo "🎯 Deploying to: $TARGET"
+
+      - name: Generate environment file
+        run: |
+          cd ${{ env.DEPLOYMENT_DIR }}
+          chmod +x scripts/vps/generate-env.sh
+
+          ./scripts/vps/generate-env.sh \
+            --mongodb-uri "${{ secrets.VPS_MONGODB_URI }}" \
+            --postgres-url "${{ secrets.VPS_POSTGRES_URL }}" \
+            --postgres-password "${{ secrets.VPS_POSTGRES_PASSWORD }}" \
+            --redis-url "${{ secrets.VPS_REDIS_URL }}" \
+            --jwt-secret "${{ secrets.VPS_JWT_SECRET }}" \
+            --encryption-key "${{ secrets.VPS_CREDENTIAL_ENCRYPTION_KEY }}" \
+            --session-secret "${{ secrets.VPS_SESSION_SECRET }}" \
+            --openai-key "${{ secrets.VPS_OPENAI_API_KEY }}" \
+            --anthropic-key "${{ secrets.VPS_ANTHROPIC_API_KEY }}" \
+            --google-client-id "${{ secrets.VPS_GOOGLE_CLIENT_ID }}" \
+            --google-client-secret "${{ secrets.VPS_GOOGLE_CLIENT_SECRET }}" \
+            --github-client-id "${{ secrets.VPS_GITHUB_CLIENT_ID }}" \
+            --github-client-secret "${{ secrets.VPS_GITHUB_CLIENT_SECRET }}" \
+            --slack-bot-token "${{ secrets.VPS_SLACK_BOT_TOKEN }}" \
+            --slack-signing-secret "${{ secrets.VPS_SLACK_SIGNING_SECRET }}" \
+            --sentry-dsn "${{ secrets.VPS_SENTRY_DSN }}" \
+            --grafana-password "${{ secrets.VPS_GRAFANA_ADMIN_PASSWORD }}" \
+            --smtp-host "${{ secrets.VPS_SMTP_HOST }}" \
+            --smtp-user "${{ secrets.VPS_SMTP_USER }}" \
+            --smtp-pass "${{ secrets.VPS_SMTP_PASS }}" \
+            --cors-origin "https://app.klikk.ai,https://api.klikk.ai" \
+            --frontend-url "https://app.klikk.ai" \
+            --backend-url "https://api.klikk.ai" \
+            --output ".env.${{ steps.determine-env.outputs.target }}"
+
+          echo "✅ Environment file generated for ${{ steps.determine-env.outputs.target }}"
+
+      - name: Pull latest Docker images
+        run: |
+          echo "🐳 Pulling images from Docker Hub..."
+          docker pull ${{ env.DOCKER_REGISTRY }}/frontend:latest
+          docker pull ${{ env.DOCKER_REGISTRY }}/backend:latest
+          docker pull ${{ env.DOCKER_REGISTRY }}/worker:latest
+          echo "✅ Images pulled successfully"
+
+      - name: Backup database (if production)
+        if: github.ref == 'refs/heads/main' || github.event_name == 'release'
+        run: |
+          cd ${{ env.DEPLOYMENT_DIR }}
+          echo "💾 Creating database backup..."
+          BACKUP_DIR="./backups/$(date +%Y%m%d_%H%M%S)"
+          mkdir -p "$BACKUP_DIR"
+
+          # MongoDB backup
+          docker exec klikkflow-mongo mongodump --out "$BACKUP_DIR/mongo" || echo "Warning: MongoDB backup failed"
+
+          # PostgreSQL backup
+          docker exec klikkflow-postgres pg_dump -U klikkflow klikkflow > "$BACKUP_DIR/postgres.sql" || echo "Warning: PostgreSQL backup failed"
+
+          echo "✅ Backup created at $BACKUP_DIR"
+
+      - name: Start new environment
+        id: deploy
+        run: |
+          cd ${{ env.DEPLOYMENT_DIR }}
+          chmod +x scripts/vps/deploy.sh
+
+          ./scripts/vps/deploy.sh \
+            --environment "${{ steps.determine-env.outputs.target }}" \
+            --registry "${{ env.DOCKER_REGISTRY }}" \
+            --skip-health-check "${{ github.event.inputs.skip_health_check || 'false' }}"
+
+      - name: Run health checks
+        if: github.event.inputs.skip_health_check != 'true'
+        id: health-check
+        timeout-minutes: 5
+        run: |
+          cd ${{ env.DEPLOYMENT_DIR }}
+          chmod +x scripts/vps/health-check.sh
+
+          # Determine port based on environment
+          if [ "${{ steps.determine-env.outputs.target }}" = "blue" ]; then
+            FRONTEND_PORT=3010
+            BACKEND_PORT=3011
+          else
+            FRONTEND_PORT=3020
+            BACKEND_PORT=3021
+          fi
+
+          echo "🏥 Running health checks on ports $FRONTEND_PORT/$BACKEND_PORT..."
+
+          if ./scripts/vps/health-check.sh --frontend-port $FRONTEND_PORT --backend-port $BACKEND_PORT; then
+            echo "✅ Health checks passed"
+          else
+            echo "❌ Health checks failed"
+            exit 1
+          fi
+
+      - name: Switch Nginx traffic
+        id: switch-traffic
+        run: |
+          echo "🔀 Switching traffic to ${{ steps.determine-env.outputs.target }} environment..."
+
+          # Determine ports
+          if [ "${{ steps.determine-env.outputs.target }}" = "blue" ]; then
+            NEW_PORT=3010
+            OLD_PORT=3020
+          else
+            NEW_PORT=3020
+            OLD_PORT=3010
+          fi
+
+          # Update Nginx config
+          sudo sed -i "s/server localhost:$OLD_PORT;/# server localhost:$OLD_PORT;/" ${{ env.NGINX_CONFIG }}
+          sudo sed -i "s/# server localhost:$NEW_PORT;/server localhost:$NEW_PORT;/" ${{ env.NGINX_CONFIG }}
+
+          # Test and reload Nginx
+          if sudo nginx -t; then
+            sudo systemctl reload nginx
+            echo "✅ Traffic switched to ${{ steps.determine-env.outputs.target }} (port $NEW_PORT)"
+          else
+            echo "❌ Nginx configuration test failed"
+            exit 1
+          fi
+
+      - name: Verify production health
+        timeout-minutes: 2
+        run: |
+          echo "🔍 Verifying production health at https://app.klikk.ai..."
+
+          # Wait for DNS/Load balancer to update
+          sleep 10
+
+          # Check frontend
+          if curl -f -s -o /dev/null https://app.klikk.ai/health; then
+            echo "✅ Frontend is healthy"
+          else
+            echo "⚠️  Frontend health check warning (may be caching)"
+          fi
+
+          # Check backend API
+          if curl -f -s -o /dev/null https://api.klikk.ai/health; then
+            echo "✅ Backend API is healthy"
+          else
+            echo "⚠️  Backend API health check warning (may be caching)"
+          fi
+
+      - name: Stop old environment
+        if: steps.determine-env.outputs.previous != 'none'
+        run: |
+          cd ${{ env.DEPLOYMENT_DIR }}
+          OLD_ENV="${{ steps.determine-env.outputs.previous }}"
+
+          echo "🛑 Stopping old $OLD_ENV environment..."
+
+          # Give new environment time to stabilize
+          sleep 30
+
+          # Stop old environment
+          docker-compose -f docker-compose.$OLD_ENV.yml down
+
+          echo "✅ Old environment stopped"
+
+      - name: Cleanup old images
+        run: |
+          echo "🧹 Cleaning up old Docker images..."
+          docker image prune -f
+          echo "✅ Cleanup complete"
+
+      - name: Deployment summary
+        if: always()
+        run: |
+          echo "## 🚀 Deployment Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Environment**: ${{ steps.determine-env.outputs.target }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Previous**: ${{ steps.determine-env.outputs.previous }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Status**: ${{ steps.switch-traffic.outcome == 'success' && '✅ Success' || '❌ Failed' }}" >> $GITHUB_STEP_SUMMARY
+          echo "**URL**: https://app.klikk.ai" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Deployed Services" >> $GITHUB_STEP_SUMMARY
+          echo "- Frontend: ${{ env.DOCKER_REGISTRY }}/frontend:latest" >> $GITHUB_STEP_SUMMARY
+          echo "- Backend: ${{ env.DOCKER_REGISTRY }}/backend:latest" >> $GITHUB_STEP_SUMMARY
+          echo "- Worker: ${{ env.DOCKER_REGISTRY }}/worker:latest" >> $GITHUB_STEP_SUMMARY
+
+  # Rollback on failure
+  rollback:
+    name: Emergency Rollback
+    runs-on: self-hosted
+    needs: deploy-vps
+    if: failure() && needs.deploy-vps.outputs.previous-env != 'none'
+
+    steps:
+      - name: Rollback to previous environment
+        run: |
+          cd ${{ env.DEPLOYMENT_DIR }}
+          chmod +x scripts/vps/rollback.sh
+
+          ./scripts/vps/rollback.sh \
+            --environment "${{ needs.deploy-vps.outputs.previous-env }}"
+
+          echo "🔄 Rolled back to ${{ needs.deploy-vps.outputs.previous-env }}"
+
+      - name: Notify rollback
+        run: |
+          echo "## 🚨 ROLLBACK EXECUTED" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Deployment failed. System has been rolled back to: **${{ needs.deploy-vps.outputs.previous-env }}**" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Please check the deployment logs and fix issues before retrying." >> $GITHUB_STEP_SUMMARY

@@ -1,0 +1,131 @@
+# ============================================
+# KlikkFlow - Green Environment
+# Blue-Green Deployment on VPS
+# ============================================
+#
+# Usage:
+#   docker-compose -f docker-compose.green.yml up -d
+#
+# Ports:
+#   Frontend: 3020 → 80
+#   Backend: 3021 → 3001
+#
+# Note: Shares database infrastructure with blue environment
+# ============================================
+
+networks:
+  klikkflow-network:
+    external: true
+
+volumes:
+  klikkflow_uploads:
+    external: true
+
+services:
+  # ==========================================
+  # Green Environment - Application Tier
+  # ==========================================
+
+  frontend-green:
+    image: klikkflow/frontend:latest
+    container_name: klikkflow-frontend-green
+    restart: unless-stopped
+    ports:
+      - "3020:80"
+    environment:
+      - VITE_API_URL=${VITE_API_BASE_URL:-http://localhost:3021/api}
+      - VITE_API_BASE_URL=${VITE_API_BASE_URL:-http://localhost:3021/api}
+      - VITE_WS_URL=${VITE_WS_URL:-ws://localhost:3021}
+      - NODE_ENV=production
+    depends_on:
+      backend-green:
+        condition: service_healthy
+    networks:
+      - klikkflow-network
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 256M
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+    labels:
+      - "klikkflow.environment=green"
+      - "klikkflow.service=frontend"
+
+  backend-green:
+    image: klikkflow/backend:latest
+    container_name: klikkflow-backend-green
+    restart: unless-stopped
+    ports:
+      - "3021:3001"
+    env_file:
+      - .env.green
+    environment:
+      - NODE_ENV=production
+      - PORT=3001
+      - LOG_LEVEL=info
+      - FRONTEND_URL=https://app.klikk.ai
+      - CORS_ORIGIN=https://app.klikk.ai,https://api.klikk.ai
+      - ENABLE_REAL_TIME=true
+      - ENABLE_AI_FEATURES=true
+    networks:
+      - klikkflow-network
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:3001/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 1024M
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+    labels:
+      - "klikkflow.environment=green"
+      - "klikkflow.service=backend"
+
+  worker-green:
+    image: klikkflow/worker:latest
+    container_name: klikkflow-worker-green
+    restart: unless-stopped
+    env_file:
+      - .env.green
+    environment:
+      - NODE_ENV=production
+      - WORKER_MODE=true
+      - WORKER_CONCURRENCY=5
+      - LOG_LEVEL=info
+    depends_on:
+      backend-green:
+        condition: service_healthy
+    networks:
+      - klikkflow-network
+    healthcheck:
+      test: ["CMD-SHELL", "pgrep -f node || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+    deploy:
+      resources:
+        limits:
+          cpus: '1.5'
+          memory: 768M
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+    labels:
+      - "klikkflow.environment=green"
+      - "klikkflow.service=worker"
