@@ -27,7 +27,7 @@ services:
   # ==========================================
 
   frontend-green:
-    image: klikkflow/frontend:latest
+    image: klikkai/frontend:latest
     container_name: klikkflow-frontend-green
     restart: unless-stopped
     ports:
@@ -61,7 +61,7 @@ services:
       - "klikkflow.service=frontend"
 
   backend-green:
-    image: klikkflow/backend:latest
+    image: klikkai/backend:latest
     container_name: klikkflow-backend-green
     restart: unless-stopped
     ports:
@@ -97,7 +97,7 @@ services:
       - "klikkflow.service=backend"
 
   worker-green:
-    image: klikkflow/worker:latest
+    image: klikkai/worker:latest
     container_name: klikkflow-worker-green
     restart: unless-stopped
     env_file:
