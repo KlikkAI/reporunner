@@ -58,11 +58,11 @@ pnpm install
 1. Create new GitHub organization: `klikkflow`
 2. Transfer repository to new org
 3. Rename to `klikkflow`
-4. Final URL: `github.com/klikkflow/klikkflow`
+4. Final URL: `github.com/KlikkAI/klikkflow`
 
 **Update local remotes:**
 ```bash
-git remote set-url origin https://github.com/klikkflow/klikkflow.git
+git remote set-url origin https://github.com/KlikkAI/klikkflow.git
 git remote -v  # Verify
 ```
 
@@ -193,7 +193,7 @@ cd sdks/go
 git tag sdks/go/v1.0.0
 git push origin sdks/go/v1.0.0
 
-# Users can then: go get github.com/klikkflow/klikkflow/go-sdk@v1.0.0
+# Users can then: go get github.com/KlikkAI/klikkflow/go-sdk@v1.0.0
 ```
 
 ### Rust SDK
@@ -357,7 +357,7 @@ We're excited to announce that **Reporunner** has been rebranded to **KlikkFlow*
 
 ## What's Changing?
 - **Package names**: `@reporunner/*` → `@klikkflow/*`
-- **Repository**: `github.com/KlikkAI/reporunner` → `github.com/klikkflow/klikkflow`
+- **Repository**: `github.com/KlikkAI/reporunner` → `github.com/KlikkAI/klikkflow`
 - **Docker images**: `reporunner/*` → `klikkflow/*`
 - **Environment variables**: `REPORUNNER_*` → `KLIKKFLOW_*`
 
@@ -448,12 +448,12 @@ docker pull ghcr.io/klikkai/frontend:latest
 ## 📞 Support Contacts
 
 **For Questions**:
-- GitHub Discussions: https://github.com/klikkflow/klikkflow/discussions
+- GitHub Discussions: https://github.com/KlikkAI/klikkflow/discussions
 - Discord: [Your Discord link]
 - Email: support@klikkflow.com
 
 **For Issues**:
-- GitHub Issues: https://github.com/klikkflow/klikkflow/issues
+- GitHub Issues: https://github.com/KlikkAI/klikkflow/issues
 - Critical bugs: support@klikkflow.com
 
 ---

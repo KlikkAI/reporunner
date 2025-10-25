@@ -3,7 +3,7 @@
   "description": "PHP SDK for KlikkFlow workflow automation platform",
   "type": "library",
   "keywords": ["workflow", "automation", "api", "sdk", "klikkflow"],
-  "homepage": "https://github.com/klikkflow/klikkflow",
+  "homepage": "https://github.com/KlikkAI/klikkflow",
   "license": "MIT",
   "authors": [
     {
@@ -13,8 +13,8 @@
     }
   ],
   "support": {
-    "issues": "https://github.com/klikkflow/klikkflow/issues",
-    "source": "https://github.com/klikkflow/klikkflow"
+    "issues": "https://github.com/KlikkAI/klikkflow/issues",
+    "source": "https://github.com/KlikkAI/klikkflow"
   },
   "require": {
     "php": "^8.1",

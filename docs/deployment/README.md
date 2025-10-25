@@ -29,7 +29,7 @@ Get KlikkFlow running in **60 seconds** with the core stack:
 
 ```bash
 # Clone repository
-git clone https://github.com/klikkflow/klikkflow.git
+git clone https://github.com/KlikkAI/klikkflow.git
 cd klikkflow
 
 # Start core services (6 containers)
@@ -912,7 +912,7 @@ helm uninstall klikkflow-green -n klikkflow
 - Guides: https://docs.klikkflow.com/guides
 
 **Community**:
-- GitHub: https://github.com/klikkflow/klikkflow
+- GitHub: https://github.com/KlikkAI/klikkflow
 - Discord: https://discord.gg/klikkflow
 - Stack Overflow: Tag `klikkflow`
 

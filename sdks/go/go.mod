@@ -1,4 +1,4 @@
-module github.com/klikkflow/klikkflow/go-sdk
+module github.com/KlikkAI/klikkflow/go-sdk
 
 go 1.24.0
 

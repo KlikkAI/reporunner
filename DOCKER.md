@@ -134,7 +134,7 @@ For users who prefer to build from source or need custom deployment configuratio
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/klikkflow/klikkflow.git
+git clone https://github.com/KlikkAI/klikkflow.git
 cd klikkflow
 ```
 
@@ -713,7 +713,7 @@ kubectl logs -f -n klikkflow deployment/klikkflow-backend
 ## 🆘 Getting Help
 
 **Issues:**
-- GitHub Issues: https://github.com/klikkflow/klikkflow/issues
+- GitHub Issues: https://github.com/KlikkAI/klikkflow/issues
 - Check [Troubleshooting](#-troubleshooting) section above
 
 **Community:**

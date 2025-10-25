@@ -501,7 +501,7 @@ pnpm install
 ## 📞 Security Contact
 
 For security vulnerabilities, please contact:
-- **GitHub Security Advisories**: https://github.com/klikkflow/klikkflow/security/advisories
+- **GitHub Security Advisories**: https://github.com/KlikkAI/klikkflow/security/advisories
 - **Email**: security@klikk.ai (recommended)
 
 ---

@@ -111,7 +111,7 @@ GitHub will automatically set up redirects for old URLs.
 ```bash
 git remote set-url origin https://github.com/KlikkAI/klikkflow.git
 # Or if moving to new org:
-git remote set-url origin https://github.com/klikkflow/klikkflow.git
+git remote set-url origin https://github.com/KlikkAI/klikkflow.git
 ```
 
 ---
@@ -147,7 +147,7 @@ See [POST_MERGE_GUIDE.md](./POST_MERGE_GUIDE.md) for complete migration instruct
 - Docker: \`docker pull ghcr.io/klikkflow/frontend:latest\`
 - NPM: \`npm install @klikkflow/sdk\`
 
-**Full Changelog**: https://github.com/klikkflow/klikkflow/compare/v1.0.0...v2.0.0
+**Full Changelog**: https://github.com/KlikkAI/klikkflow/compare/v1.0.0...v2.0.0
 "
 ```
 
@@ -174,7 +174,7 @@ We're officially rebranding to **KlikkFlow**!
 
 🎨 **What's changing:**
 - Package name: @klikkflow (from @reporunner)
-- Repository: github.com/klikkflow/klikkflow
+- Repository: github.com/KlikkAI/klikkflow
 - Docker images: klikkflow/* (from reporunner/*)
 
 📖 **Migration Guide:** [link to POST_MERGE_GUIDE.md]

@@ -5,7 +5,7 @@ The official Go SDK for KlikkFlow workflow automation platform.
 ## Installation
 
 ```bash
-go get github.com/klikkflow/klikkflow/go-sdk
+go get github.com/KlikkAI/klikkflow/go-sdk
 ```
 
 ## Quick Start
@@ -19,7 +19,7 @@ import (
     "log"
     "time"
 
-    klikkflow "github.com/klikkflow/klikkflow/go-sdk"
+    klikkflow "github.com/KlikkAI/klikkflow/go-sdk"
 )
 
 func main() {

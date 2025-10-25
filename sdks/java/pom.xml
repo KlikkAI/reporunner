@@ -12,7 +12,7 @@
 
     <name>KlikkFlow Java SDK</name>
     <description>Java SDK for KlikkFlow workflow automation platform</description>
-    <url>https://github.com/klikkflow/klikkflow</url>
+    <url>https://github.com/KlikkAI/klikkflow</url>
 
     <licenses>
         <license>
@@ -32,9 +32,9 @@
     </developers>
 
     <scm>
-        <connection>scm:git:git://github.com/klikkflow/klikkflow.git</connection>
-        <developerConnection>scm:git:ssh://github.com/klikkflow/klikkflow.git</developerConnection>
-        <url>https://github.com/klikkflow/klikkflow</url>
+        <connection>scm:git:git://github.com/KlikkAI/klikkflow.git</connection>
+        <developerConnection>scm:git:ssh://github.com/KlikkAI/klikkflow.git</developerConnection>
+        <url>https://github.com/KlikkAI/klikkflow</url>
     </scm>
 
     <properties>

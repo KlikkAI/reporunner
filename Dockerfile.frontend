@@ -99,8 +99,8 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
 # Labels for metadata
 LABEL org.opencontainers.image.title="KlikkFlow Frontend"
 LABEL org.opencontainers.image.description="KlikkFlow workflow automation platform - React frontend"
-LABEL org.opencontainers.image.url="https://github.com/klikkflow/klikkflow"
-LABEL org.opencontainers.image.source="https://github.com/klikkflow/klikkflow"
+LABEL org.opencontainers.image.url="https://github.com/KlikkAI/klikkflow"
+LABEL org.opencontainers.image.source="https://github.com/KlikkAI/klikkflow"
 LABEL org.opencontainers.image.vendor="KlikkFlow Team"
 LABEL org.opencontainers.image.licenses="MIT"
 

@@ -8,7 +8,7 @@ The KlikkFlow SDK ecosystem provides comprehensive APIs for interacting with the
 |-----|---------|--------|----------------|
 | **TypeScript/Node.js** | ✅ 1.0.0 | Stable | `pnpm add @klikkflow/sdk` |
 | **Python** | ✅ 1.0.0 | Stable | `pip install klikkflow-sdk` |
-| **Go** | ✅ 1.0.0 | Stable | `go get github.com/klikkflow/klikkflow/go-sdk` |
+| **Go** | ✅ 1.0.0 | Stable | `go get github.com/KlikkAI/klikkflow/go-sdk` |
 | **Rust** | ✅ 1.0.0 | Stable | `cargo add klikkflow-sdk` |
 | **Java** | ✅ 1.0.0 | Stable | Maven/Gradle |
 | **PHP** | ✅ 1.0.0 | Stable | `composer require klikkflow/php-sdk` |
@@ -211,7 +211,7 @@ We welcome contributions to all SDK packages:
 
 - **Documentation**: [docs.klikkflow.com](https://docs.klikkflow.com)
 - **API Reference**: [api.klikkflow.com](https://api.klikkflow.com)
-- **GitHub Issues**: [Report bugs and request features](https://github.com/klikkflow/klikkflow/issues)
+- **GitHub Issues**: [Report bugs and request features](https://github.com/KlikkAI/klikkflow/issues)
 - **Discord**: [Join our community](https://discord.gg/klikkflow)
 - **Stack Overflow**: Tag questions with `klikkflow`
 

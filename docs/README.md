@@ -181,9 +181,9 @@ Welcome to the comprehensive documentation for KlikkFlow, the open-source workfl
 
 ## 🆘 Need Help?
 
-- **GitHub Issues**: [Report bugs or request features](https://github.com/klikkflow/klikkflow/issues)
+- **GitHub Issues**: [Report bugs or request features](https://github.com/KlikkAI/klikkflow/issues)
 - **Discord Community**: [Join our community chat](https://discord.gg/klikkflow)
-- **Documentation Issues**: [Improve our docs](https://github.com/klikkflow/klikkflow/issues/new?labels=documentation)
+- **Documentation Issues**: [Improve our docs](https://github.com/KlikkAI/klikkflow/issues/new?labels=documentation)
 - **Enterprise Support**: [Contact us for enterprise support](mailto:enterprise@klikkflow.com)
 
 ## 📝 Contributing to Documentation

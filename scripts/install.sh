@@ -331,7 +331,7 @@ print_success_message() {
     echo ""
     echo -e "  • Getting Started: ${BLUE}https://docs.klikkflow.io/getting-started${NC}"
     echo -e "  • Integrations:    ${BLUE}https://docs.klikkflow.io/integrations${NC}"
-    echo -e "  • GitHub:          ${BLUE}https://github.com/klikkflow/klikkflow${NC}"
+    echo -e "  • GitHub:          ${BLUE}https://github.com/KlikkAI/klikkflow${NC}"
     echo ""
 
     echo -e "${CYAN}💡 Next Steps:${NC}"
@@ -352,7 +352,7 @@ cleanup_on_error() {
     echo "Troubleshooting:"
     echo "  • Check Docker is running: docker info"
     echo "  • Check logs: cd $INSTALL_DIR && $COMPOSE_CMD logs"
-    echo "  • Report issues: https://github.com/klikkflow/klikkflow/issues"
+    echo "  • Report issues: https://github.com/KlikkAI/klikkflow/issues"
     echo ""
     exit 1
 }

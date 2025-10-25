@@ -3,7 +3,7 @@
 > **Open-source workflow automation platform powered by AI**
 > The next-generation alternative to n8n with built-in AI/ML capabilities, modern architecture, and enterprise-grade scaling.
 
-[![CI/CD](https://github.com/klikkflow/klikkflow/actions/workflows/ci.yml/badge.svg)](https://github.com/klikkflow/klikkflow/actions/workflows/ci.yml)
+[![CI/CD](https://github.com/KlikkAI/klikkflow/actions/workflows/ci.yml/badge.svg)](https://github.com/KlikkAI/klikkflow/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![React](https://img.shields.io/badge/React-20232A?logo=react&logoColor=61DAFB)](https://reactjs.org/)
@@ -92,7 +92,7 @@ If you prefer to build from source or customize your deployment:
 
 ```bash
 # Clone and start
-git clone https://github.com/klikkflow/klikkflow.git
+git clone https://github.com/KlikkAI/klikkflow.git
 cd klikkflow
 docker-compose up -d
 
@@ -183,7 +183,7 @@ docker-compose --profile monitoring --profile ha up -d
 
 ```bash
 # Clone the repository
-git clone https://github.com/klikkflow/klikkflow.git
+git clone https://github.com/KlikkAI/klikkflow.git
 cd klikkflow
 
 # Install dependencies
@@ -552,7 +552,7 @@ POST /api/executions
 |----------|---------|--------------|
 | **TypeScript/Node.js** | `@klikkflow/sdk` | `pnpm add @klikkflow/sdk` |
 | **Python** | `klikkflow-sdk` | `pip install klikkflow-sdk` |
-| **Go** | `go-sdk` | `go get github.com/klikkflow/klikkflow/go-sdk` |
+| **Go** | `go-sdk` | `go get github.com/KlikkAI/klikkflow/go-sdk` |
 | **Rust** | `klikkflow-sdk` | `cargo add klikkflow-sdk` |
 | **Java** | `klikkflow-java-sdk` | Maven/Gradle |
 | **PHP** | `klikkflow/php-sdk` | `composer require klikkflow/php-sdk` |
@@ -724,7 +724,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 📞 Support & Community
 
 - **Documentation**: [docs.klikkflow.com](https://docs.klikkflow.com)
-- **GitHub Issues**: [Bug reports and features](https://github.com/klikkflow/klikkflow/issues)
+- **GitHub Issues**: [Bug reports and features](https://github.com/KlikkAI/klikkflow/issues)
 - **Discord**: [Community chat](https://discord.gg/klikkflow)
 - **Twitter**: [@klikkflow](https://twitter.com/klikkflow)
 

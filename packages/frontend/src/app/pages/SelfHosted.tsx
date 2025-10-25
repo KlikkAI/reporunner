@@ -111,7 +111,7 @@ export const SelfHosted: React.FC = () => {
         },
         {
           description: 'Clone the repository',
-          command: 'git clone https://github.com/klikkflow/klikkflow.git && cd klikkflow',
+          command: 'git clone https://github.com/KlikkAI/klikkflow.git && cd klikkflow',
         },
         {
           description: 'Install dependencies',

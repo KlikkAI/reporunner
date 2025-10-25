@@ -14,7 +14,7 @@ setup(
     description="OpenTelemetry instrumentation package for KlikkFlow Python applications",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/klikkflow/klikkflow",
+    url="https://github.com/KlikkAI/klikkflow",
     packages=find_packages(where="src"),
     package_dir={"": "src"},
     classifiers=[
@@ -81,8 +81,8 @@ setup(
         "telemetry",
     ],
     project_urls={
-        "Bug Reports": "https://github.com/klikkflow/klikkflow/issues",
-        "Source": "https://github.com/klikkflow/klikkflow",
+        "Bug Reports": "https://github.com/KlikkAI/klikkflow/issues",
+        "Source": "https://github.com/KlikkAI/klikkflow",
         "Documentation": "https://docs.klikkflow.com",
     },
 )

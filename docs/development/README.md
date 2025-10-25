@@ -66,6 +66,6 @@ We welcome contributions! Please:
 
 ## 📞 Support
 
-- **Issues**: [GitHub Issues](https://github.com/klikkflow/klikkflow/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/klikkflow/klikkflow/discussions)
+- **Issues**: [GitHub Issues](https://github.com/KlikkAI/klikkflow/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/KlikkAI/klikkflow/discussions)
 - **Discord**: [Community Chat](https://discord.gg/klikkflow)

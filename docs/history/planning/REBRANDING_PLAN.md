@@ -241,7 +241,7 @@ pnpm install
 - Module: `import klikkflow` → `import klikkflow`
 
 **Go** (`sdks/go/`):
-- Module: `github.com/klikkflow/klikkflow/go-sdk` → `github.com/KlikkFlow/klikkflow/go-sdk`
+- Module: `github.com/KlikkAI/klikkflow/go-sdk` → `github.com/KlikkFlow/klikkflow/go-sdk`
 - Package: `package klikkflow` → `package klikkflow`
 
 **Rust** (`sdks/rust/`):
@@ -314,7 +314,7 @@ grep -r "github.com.*klikkflow" --include="*.ts" --include="*.tsx" --include="*.
 
 # Update to new URLs
 find . -type f \( -name "*.ts" -o -name "*.tsx" -o -name "*.md" \) \
-  -exec sed -i 's|github.com/klikkflow/klikkflow|github.com/KlikkFlow/klikkflow|g' {} \;
+  -exec sed -i 's|github.com/KlikkAI/klikkflow|github.com/KlikkFlow/klikkflow|g' {} \;
 ```
 
 ---

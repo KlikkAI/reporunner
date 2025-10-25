@@ -141,7 +141,7 @@ cd /home/margon/Reporunner/reporunner
 git remote set-url origin https://github.com/KlikkAI/klikkflow.git
 
 # Or if moving to new organization:
-git remote set-url origin https://github.com/klikkflow/klikkflow.git
+git remote set-url origin https://github.com/KlikkAI/klikkflow.git
 ```
 
 **Verify**:
@@ -169,9 +169,9 @@ docker push ghcr.io/klikkflow/worker:latest
 ```
 
 **Verify images**:
-- Frontend: https://github.com/klikkflow/klikkflow/pkgs/container/frontend
-- Backend: https://github.com/klikkflow/klikkflow/pkgs/container/backend
-- Worker: https://github.com/klikkflow/klikkflow/pkgs/container/worker
+- Frontend: https://github.com/KlikkAI/klikkflow/pkgs/container/frontend
+- Backend: https://github.com/KlikkAI/klikkflow/pkgs/container/backend
+- Worker: https://github.com/KlikkAI/klikkflow/pkgs/container/worker
 
 ### 3. Announce Rebranding (30 minutes)
 
@@ -185,7 +185,7 @@ Same powerful workflow automation platform, fresh new identity.
 ✨ What's new:
 📦 NPM: @klikkflow (was @reporunner)
 🐳 Docker: klikkflow/* images
-🔗 GitHub: github.com/klikkflow/klikkflow
+🔗 GitHub: github.com/KlikkAI/klikkflow
 
 Migration guide: [link to POST_MERGE_GUIDE.md]
 
@@ -201,7 +201,7 @@ We're officially **KlikkFlow** now! 🌊
 
 ## What Changed
 - **NPM packages**: `@klikkflow` (from `@reporunner`)
-- **GitHub**: `github.com/klikkflow/klikkflow`
+- **GitHub**: `github.com/KlikkAI/klikkflow`
 - **Docker images**: `klikkflow/*`
 - **Environment vars**: `KLIKKFLOW_*`
 

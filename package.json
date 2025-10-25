@@ -4,6 +4,14 @@
   "description": "Open-source workflow automation platform with native AI capabilities - n8n alternative",
   "private": true,
   "packageManager": "pnpm@10.18.1",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/KlikkAI/klikkflow.git"
+  },
+  "bugs": {
+    "url": "https://github.com/KlikkAI/klikkflow/issues"
+  },
+  "homepage": "https://github.com/KlikkAI/klikkflow#readme",
   "engines": {
     "node": ">=20.19.0",
     "pnpm": ">=10.18.1",

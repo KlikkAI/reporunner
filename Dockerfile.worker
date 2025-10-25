@@ -110,8 +110,8 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
 # Labels for metadata
 LABEL org.opencontainers.image.title="KlikkFlow Worker"
 LABEL org.opencontainers.image.description="KlikkFlow workflow automation platform - BullMQ worker for workflow execution"
-LABEL org.opencontainers.image.url="https://github.com/klikkflow/klikkflow"
-LABEL org.opencontainers.image.source="https://github.com/klikkflow/klikkflow"
+LABEL org.opencontainers.image.url="https://github.com/KlikkAI/klikkflow"
+LABEL org.opencontainers.image.source="https://github.com/KlikkAI/klikkflow"
 LABEL org.opencontainers.image.vendor="KlikkFlow Team"
 LABEL org.opencontainers.image.licenses="MIT"
 

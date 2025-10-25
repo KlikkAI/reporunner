@@ -49,7 +49,7 @@ Official SDKs are available for:
 
 - 📖 [Documentation](https://docs.klikkflow.com)
 - 💬 [Discord Community](https://discord.gg/klikkflow)
-- 🐛 [Bug Reports](https://github.com/klikkflow/klikkflow/issues)
+- 🐛 [Bug Reports](https://github.com/KlikkAI/klikkflow/issues)
   `,
   contact: {
     name: 'KlikkFlow Team',

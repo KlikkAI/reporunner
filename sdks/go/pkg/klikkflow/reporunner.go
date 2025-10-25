@@ -5,7 +5,7 @@
 //
 // # Basic Usage
 //
-//	import "github.com/klikkflow/klikkflow-go/pkg/klikkflow"
+//	import "github.com/KlikkAI/klikkflow-go/pkg/klikkflow"
 //
 //	// Create a client with API key authentication
 //	config := &klikkflow.ClientConfig{

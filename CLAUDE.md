@@ -548,7 +548,7 @@ For building from source:
 
 ```bash
 # 1. Clone repository
-git clone https://github.com/klikkflow/klikkflow.git
+git clone https://github.com/KlikkAI/klikkflow.git
 cd klikkflow
 
 # 2. Configure environment
@@ -608,7 +608,7 @@ helm install klikkflow . \
 |----------|---------|--------------|
 | **TypeScript** | `@klikkflow/sdk` | `pnpm add @klikkflow/sdk` |
 | **Python** | `klikkflow-sdk` | `pip install klikkflow-sdk` |
-| **Go** | `go-sdk` | `go get github.com/klikkflow/klikkflow/go-sdk` |
+| **Go** | `go-sdk` | `go get github.com/KlikkAI/klikkflow/go-sdk` |
 | **Rust** | `klikkflow-sdk` | `cargo add klikkflow-sdk` |
 | **Java** | `klikkflow-java-sdk` | Maven/Gradle |
 | **PHP** | `klikkflow/php-sdk` | `composer require klikkflow/php-sdk` |

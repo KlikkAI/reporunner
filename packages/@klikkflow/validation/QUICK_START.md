@@ -423,8 +423,8 @@ pnpm --filter @klikkflow/validation architecture:validate -- --verbose
 ## Support
 
 - 📚 [Full Documentation](./docs/ARCHITECTURE_VALIDATION.md)
-- 🐛 [Report Issues](https://github.com/klikkflow/klikkflow/issues)
-- 💬 [Discussions](https://github.com/klikkflow/klikkflow/discussions)
+- 🐛 [Report Issues](https://github.com/KlikkAI/klikkflow/issues)
+- 💬 [Discussions](https://github.com/KlikkAI/klikkflow/discussions)
 
 ---
 

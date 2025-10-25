@@ -14,10 +14,10 @@
     <Company>KlikkFlow</Company>
     <Copyright>Copyright (c) 2024 KlikkFlow</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageProjectUrl>https://github.com/klikkflow/klikkflow</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/KlikkAI/klikkflow</PackageProjectUrl>
     <PackageIcon>icon.png</PackageIcon>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <RepositoryUrl>https://github.com/klikkflow/klikkflow</RepositoryUrl>
+    <RepositoryUrl>https://github.com/KlikkAI/klikkflow</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>workflow;automation;api;sdk;async;dotnet</PackageTags>
     <PackageReleaseNotes>

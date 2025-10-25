@@ -56,7 +56,7 @@ __license__ = "Apache-2.0"
 # Package metadata
 __title__ = "klikkflow-python"
 __description__ = "Python SDK for KlikkFlow - Visual workflow automation platform"
-__url__ = "https://github.com/klikkflow/klikkflow"
+__url__ = "https://github.com/KlikkAI/klikkflow"
 __documentation__ = "https://docs.klikkflow.com/sdks/python"
 
 # Public API

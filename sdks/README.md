@@ -46,7 +46,7 @@ go mod tidy
 go build ./...
 
 # Usage
-import "github.com/klikkflow/klikkflow-go"
+import "github.com/KlikkAI/klikkflow-go"
 client := klikkflow.NewClient("your-api-key")
 ```
 
@@ -188,7 +188,7 @@ pip install klikkflow
 
 #### Go Modules
 ```bash
-go get github.com/klikkflow/klikkflow-go
+go get github.com/KlikkAI/klikkflow-go
 ```
 
 #### Maven Central (Java)

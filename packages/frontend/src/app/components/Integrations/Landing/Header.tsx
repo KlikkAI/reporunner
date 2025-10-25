@@ -150,7 +150,7 @@ export const Header: React.FC = () => {
         },
         {
           name: 'GitHub',
-          href: 'https://github.com/klikkflow/klikkflow',
+          href: 'https://github.com/KlikkAI/klikkflow',
           description: 'Open source repository',
           external: true,
         },

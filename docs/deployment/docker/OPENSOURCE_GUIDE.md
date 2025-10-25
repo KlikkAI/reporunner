@@ -607,8 +607,8 @@ COPY --chown=klikkflow:nodejs README.md /app/README.md
 LABEL org.opencontainers.image.licenses="MIT"
 LABEL org.opencontainers.image.title="KlikkFlow"
 LABEL org.opencontainers.image.description="Open-source workflow automation platform"
-LABEL org.opencontainers.image.url="https://github.com/klikkflow/klikkflow"
-LABEL org.opencontainers.image.source="https://github.com/klikkflow/klikkflow"
+LABEL org.opencontainers.image.url="https://github.com/KlikkAI/klikkflow"
+LABEL org.opencontainers.image.source="https://github.com/KlikkAI/klikkflow"
 LABEL org.opencontainers.image.vendor="KlikkFlow Team"
 ```
 
@@ -815,7 +815,7 @@ console.log(`
    - Redis: ${process.env.REDIS_URL}
 
 📖 Documentation: https://docs.klikkflow.com
-🐛 Issues: https://github.com/klikkflow/klikkflow/issues
+🐛 Issues: https://github.com/KlikkAI/klikkflow/issues
 💬 Community: https://discord.gg/klikkflow
 
 Waiting for database connections...

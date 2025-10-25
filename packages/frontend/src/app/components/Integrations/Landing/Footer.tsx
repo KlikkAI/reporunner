@@ -40,7 +40,7 @@ export const Footer: React.FC = () => {
         { name: 'Examples', href: '/documentation' },
         {
           name: 'GitHub',
-          href: 'https://github.com/klikkflow/klikkflow',
+          href: 'https://github.com/KlikkAI/klikkflow',
           external: true,
         },
         { name: 'Community', href: '/contact' },
@@ -78,7 +78,7 @@ export const Footer: React.FC = () => {
     {
       name: 'GitHub',
       icon: Github,
-      href: 'https://github.com/klikkflow/klikkflow',
+      href: 'https://github.com/KlikkAI/klikkflow',
       followers: '2.5K',
     },
     {

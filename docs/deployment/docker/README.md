@@ -326,4 +326,4 @@ For more troubleshooting, see [Root DOCKER.md](../../../DOCKER.md#-troubleshooti
 
 **Last Updated**: October 21, 2025
 **Maintained By**: KlikkFlow DevOps Team
-**Questions?** Open an issue at [GitHub Issues](https://github.com/klikkflow/klikkflow/issues)
+**Questions?** Open an issue at [GitHub Issues](https://github.com/KlikkAI/klikkflow/issues)

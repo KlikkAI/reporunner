@@ -205,8 +205,8 @@ Java:       ████████████████████      20
 
 ## 📞 Getting Help
 
-- **General Questions**: [GitHub Discussions](https://github.com/klikkflow/klikkflow/discussions)
-- **Bug Reports**: [GitHub Issues](https://github.com/klikkflow/klikkflow/issues)
+- **General Questions**: [GitHub Discussions](https://github.com/KlikkAI/klikkflow/discussions)
+- **Bug Reports**: [GitHub Issues](https://github.com/KlikkAI/klikkflow/issues)
 - **Community Chat**: [Discord Server](https://discord.gg/klikkflow)
 - **Commercial Support**: [enterprise@klikkflow.com](mailto:enterprise@klikkflow.com)
 

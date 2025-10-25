@@ -209,7 +209,7 @@ cd /home/margon/Reporunner/reporunner
 git remote set-url origin https://github.com/KlikkAI/klikkflow.git
 
 # Or if moving to new organization:
-git remote set-url origin https://github.com/klikkflow/klikkflow.git
+git remote set-url origin https://github.com/KlikkAI/klikkflow.git
 
 # Verify
 git remote -v
@@ -356,7 +356,7 @@ git remote -v
 
 ### GitHub
 - **Current Repo**: https://github.com/KlikkAI/reporunner
-- **Target Repo**: https://github.com/klikkflow/klikkflow (after rename)
+- **Target Repo**: https://github.com/KlikkAI/klikkflow (after rename)
 - **Release**: v2.0.0-klikkflow
 - **Release URL**: https://github.com/KlikkAI/reporunner/releases/tag/v2.0.0-klikkflow
 
