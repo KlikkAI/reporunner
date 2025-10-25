@@ -61,7 +61,7 @@ if [ ! -f ".env.$ENVIRONMENT" ]; then
 fi
 
 # Start containers
-docker-compose -f "docker-compose.$ENVIRONMENT.yml" up -d
+docker compose -f "docker-compose.$ENVIRONMENT.yml" up -d
 
 echo -e "${GREEN}✓ $ENVIRONMENT environment started${NC}"
 
