@@ -104,21 +104,36 @@ export class AuthApiService {
    */
   async register(userData: RegisterRequest): Promise<LoginResponse> {
     try {
-      const response: any = await apiClient.post(
-        '/auth/register',
-        userData,
-        LoginApiResponseSchema as any
-      );
+      // Use raw API call to bypass strict schema validation
+      // Backend returns nested { success, data: { user, token, refreshToken } }
+      const response = await apiClient.raw({
+        method: 'POST',
+        url: '/auth/register',
+        data: userData,
+      });
+
+      // Extract data from nested response structure
+      const responseData = response.data as any;
+      const loginData = responseData.data || responseData;
 
       // Store tokens in localStorage
-      if (response.token) {
-        localStorage.setItem(configService.get('auth').tokenKey, response.token);
+      if (loginData.token) {
+        localStorage.setItem(configService.get('auth').tokenKey, loginData.token);
       }
-      if (response.refreshToken) {
-        localStorage.setItem(configService.get('auth').refreshTokenKey, response.refreshToken);
+      if (loginData.refreshToken) {
+        localStorage.setItem(configService.get('auth').refreshTokenKey, loginData.refreshToken);
       }
 
-      return response as LoginResponse;
+      // Transform user data to match UserProfile interface
+      const transformedUser = this.transformUserProfile(loginData.user);
+
+      return {
+        user: transformedUser,
+        token: loginData.token,
+        refreshToken: loginData.refreshToken,
+        permissions: loginData.permissions || [],
+        sessionId: loginData.sessionId,
+      };
     } catch (error) {
       throw new ApiClientError('Registration failed', 0, 'REGISTRATION_ERROR', error);
     }
