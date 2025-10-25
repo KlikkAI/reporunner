@@ -401,7 +401,7 @@ services:
           memory: 64M
 
   mongodb-exporter:
-    image: percona/mongodb_exporter:latest
+    image: bitnami/mongodb-exporter:latest
     container_name: klikkflow-mongodb-exporter
     restart: unless-stopped
     profiles: [monitoring, full]
