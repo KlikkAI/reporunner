@@ -2,8 +2,6 @@
 # Complete setup with all required services
 # Last Updated: October 11, 2025
 
-version: '3.8'
-
 services:
   # Main KlikkFlow Application
   klikkflow:
