@@ -24,8 +24,8 @@ import {
 } from 'lucide-react';
 import type React from 'react';
 import { useState } from 'react';
-import { Footer } from '../components/Landing/Footer';
-import { Header } from '../components/Landing/Header';
+import { Footer } from '../components/Integrations/Landing/Footer';
+import { Header } from '../components/Integrations/Landing/Header';
 
 export const Features: React.FC = () => {
   const [activeCategory, setActiveCategory] = useState('ai-powered');

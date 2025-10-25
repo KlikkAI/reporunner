@@ -26,10 +26,12 @@ import {
 } from 'lucide-react';
 import type React from 'react';
 import { useState } from 'react';
-import { Footer } from '../components/Landing/Footer';
-import { Header } from '../components/Landing/Header';
+import { useNavigate } from 'react-router-dom';
+import { Footer } from '../components/Integrations/Landing/Footer';
+import { Header } from '../components/Integrations/Landing/Header';
 
 export const Enterprise: React.FC = () => {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('security');
 
   // Testimonials for future implementation
@@ -274,11 +276,17 @@ export const Enterprise: React.FC = () => {
                 </p>
 
                 <div className="flex flex-col sm:flex-row gap-4 mb-8">
-                  <button className="px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-lg text-lg hover:scale-105 transition-transform flex items-center gap-2">
+                  <button
+                    onClick={() => navigate('/contact')}
+                    className="px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-lg text-lg hover:scale-105 transition-transform flex items-center gap-2"
+                  >
                     <Calendar className="w-5 h-5" />
                     Schedule Demo
                   </button>
-                  <button className="px-8 py-4 bg-white/10 backdrop-blur-sm text-white font-semibold rounded-lg text-lg border border-white/20 hover:bg-white/20 transition-all flex items-center gap-2">
+                  <button
+                    onClick={() => navigate('/contact')}
+                    className="px-8 py-4 bg-white/10 backdrop-blur-sm text-white font-semibold rounded-lg text-lg border border-white/20 hover:bg-white/20 transition-all flex items-center gap-2"
+                  >
                     <Phone className="w-5 h-5" />
                     Talk to Sales
                   </button>
@@ -601,6 +609,7 @@ export const Enterprise: React.FC = () => {
                 </ul>
 
                 <button
+                  onClick={() => navigate(plan.price === 'Custom' ? '/contact' : '/register')}
                   className={`w-full py-3 px-6 rounded-lg font-semibold transition-colors ${
                     plan.popular
                       ? 'bg-blue-600 text-white hover:bg-blue-700'
@@ -625,11 +634,17 @@ export const Enterprise: React.FC = () => {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
-            <button className="px-8 py-4 bg-white text-blue-600 font-semibold rounded-lg text-lg hover:bg-gray-100 transition-colors flex items-center gap-2 justify-center">
+            <button
+              onClick={() => navigate('/contact')}
+              className="px-8 py-4 bg-white text-blue-600 font-semibold rounded-lg text-lg hover:bg-gray-100 transition-colors flex items-center gap-2 justify-center"
+            >
               <Calendar className="w-5 h-5" />
               Schedule Enterprise Demo
             </button>
-            <button className="px-8 py-4 border-2 border-white/30 text-white font-semibold rounded-lg text-lg hover:bg-white/10 transition-colors flex items-center gap-2 justify-center">
+            <button
+              onClick={() => navigate('/documentation')}
+              className="px-8 py-4 border-2 border-white/30 text-white font-semibold rounded-lg text-lg hover:bg-white/10 transition-colors flex items-center gap-2 justify-center"
+            >
               <ExternalLink className="w-5 h-5" />
               Enterprise Documentation
             </button>

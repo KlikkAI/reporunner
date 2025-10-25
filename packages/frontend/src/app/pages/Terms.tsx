@@ -15,10 +15,12 @@ import {
 } from 'lucide-react';
 import type React from 'react';
 import { useState } from 'react';
-import { Footer } from '../components/Landing/Footer';
-import { Header } from '../components/Landing/Header';
+import { useNavigate } from 'react-router-dom';
+import { Footer } from '../components/Integrations/Landing/Footer';
+import { Header } from '../components/Integrations/Landing/Header';
 
 export const Terms: React.FC = () => {
+  const navigate = useNavigate();
   const [lastUpdated] = useState('January 20, 2025');
   const keyTerms = [
     {
@@ -192,11 +194,17 @@ export const Terms: React.FC = () => {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="px-8 py-4 bg-white text-blue-600 font-semibold rounded-lg text-lg hover:bg-gray-100 transition-colors flex items-center gap-2 justify-center">
+            <button
+              onClick={() => navigate('/register')}
+              className="px-8 py-4 bg-white text-blue-600 font-semibold rounded-lg text-lg hover:bg-gray-100 transition-colors flex items-center gap-2 justify-center"
+            >
               <CheckCircle className="w-5 h-5" />
               Accept & Start Trial
             </button>
-            <button className="px-8 py-4 border-2 border-white/30 text-white font-semibold rounded-lg text-lg hover:bg-white/10 transition-colors flex items-center gap-2 justify-center">
+            <button
+              onClick={() => navigate('/privacy')}
+              className="px-8 py-4 border-2 border-white/30 text-white font-semibold rounded-lg text-lg hover:bg-white/10 transition-colors flex items-center gap-2 justify-center"
+            >
               <ExternalLink className="w-5 h-5" />
               Read Privacy Policy
             </button>

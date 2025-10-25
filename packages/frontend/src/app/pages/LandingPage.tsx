@@ -6,17 +6,17 @@
  */
 
 import type React from 'react';
-import { CallToAction } from '../components/Landing/CallToAction';
-import { ComparisonTable } from '../components/Landing/ComparisonTable';
-import { CompetitiveAdvantage } from '../components/Landing/CompetitiveAdvantage';
-import { EnterpriseFeatures } from '../components/Landing/EnterpriseFeatures';
-import { FeatureShowcase } from '../components/Landing/FeatureShowcase';
-import { Footer } from '../components/Landing/Footer';
-import { Header } from '../components/Landing/Header';
-import { HeroSection } from '../components/Landing/HeroSection';
-import { IntegrationEcosystem } from '../components/Landing/IntegrationEcosystem';
-import { PricingSection } from '../components/Landing/PricingSection';
-import { SocialProof } from '../components/Landing/SocialProof';
+import { CallToAction } from '../components/Integrations/Landing/CallToAction';
+import { ComparisonTable } from '../components/Integrations/Landing/ComparisonTable';
+import { CompetitiveAdvantage } from '../components/Integrations/Landing/CompetitiveAdvantage';
+import { EnterpriseFeatures } from '../components/Integrations/Landing/EnterpriseFeatures';
+import { FeatureShowcase } from '../components/Integrations/Landing/FeatureShowcase';
+import { Footer } from '../components/Integrations/Landing/Footer';
+import { Header } from '../components/Integrations/Landing/Header';
+import { HeroSection } from '../components/Integrations/Landing/HeroSection';
+import { IntegrationEcosystem } from '../components/Integrations/Landing/IntegrationEcosystem';
+import { PricingSection } from '../components/Integrations/Landing/PricingSection';
+import { SocialProof } from '../components/Integrations/Landing/SocialProof';
 
 export const LandingPage: React.FC = () => {
   return (

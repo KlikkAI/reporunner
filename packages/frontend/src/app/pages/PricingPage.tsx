@@ -7,8 +7,8 @@
 
 import { ArrowRight, Check, Phone, Star, X } from 'lucide-react';
 import React, { useState } from 'react';
-import { Footer } from '../components/Landing/Footer';
-import { Header } from '../components/Landing/Header';
+import { Footer } from '../components/Integrations/Landing/Footer';
+import { Header } from '../components/Integrations/Landing/Header';
 
 export const PricingPage: React.FC = () => {
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly');

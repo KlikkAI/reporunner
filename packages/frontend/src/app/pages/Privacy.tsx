@@ -17,10 +17,12 @@ import {
 } from 'lucide-react';
 import type React from 'react';
 import { useState } from 'react';
-import { Footer } from '../components/Landing/Footer';
-import { Header } from '../components/Landing/Header';
+import { useNavigate } from 'react-router-dom';
+import { Footer } from '../components/Integrations/Landing/Footer';
+import { Header } from '../components/Integrations/Landing/Header';
 
 export const Privacy: React.FC = () => {
+  const navigate = useNavigate();
   const [lastUpdated] = useState('January 20, 2025');
 
   const privacyPrinciples = [
@@ -236,7 +238,10 @@ export const Privacy: React.FC = () => {
                 >
                   <h3 className="text-lg font-bold text-gray-900 mb-3">{right.title}</h3>
                   <p className="text-gray-600 mb-4">{right.description}</p>
-                  <button className="text-blue-600 font-medium hover:text-blue-700 transition-colors flex items-center gap-2">
+                  <button
+                    onClick={() => navigate('/dashboard')}
+                    className="text-blue-600 font-medium hover:text-blue-700 transition-colors flex items-center gap-2"
+                  >
                     {right.action}
                     <ArrowRight className="w-4 h-4" />
                   </button>
@@ -327,7 +332,10 @@ export const Privacy: React.FC = () => {
                 cookies are first-party and respect your privacy preferences.
               </p>
 
-              <button className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors">
+              <button
+                onClick={() => navigate('/dashboard')}
+                className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+              >
                 Manage Cookie Preferences
               </button>
             </div>
@@ -349,21 +357,36 @@ export const Privacy: React.FC = () => {
                 <Mail className="w-8 h-8 text-blue-600 mx-auto mb-4" />
                 <h3 className="font-semibold text-gray-900 mb-2">Email Us</h3>
                 <p className="text-gray-600 text-sm mb-4">For privacy-related questions</p>
-                <button className="text-blue-600 font-medium">privacy@klikkflow.dev</button>
+                <button
+                  onClick={() => (window.location.href = 'mailto:privacy@klikkflow.dev')}
+                  className="text-blue-600 font-medium hover:text-blue-700 transition-colors"
+                >
+                  privacy@klikkflow.dev
+                </button>
               </div>
 
               <div className="bg-white border border-gray-200 rounded-xl p-6">
                 <Phone className="w-8 h-8 text-blue-600 mx-auto mb-4" />
                 <h3 className="font-semibold text-gray-900 mb-2">Call Us</h3>
                 <p className="text-gray-600 text-sm mb-4">Speak with our privacy officer</p>
-                <button className="text-blue-600 font-medium">+1 (555) 123-4567</button>
+                <button
+                  onClick={() => (window.location.href = 'tel:+15551234567')}
+                  className="text-blue-600 font-medium hover:text-blue-700 transition-colors"
+                >
+                  +1 (555) 123-4567
+                </button>
               </div>
 
               <div className="bg-white border border-gray-200 rounded-xl p-6">
                 <FileText className="w-8 h-8 text-blue-600 mx-auto mb-4" />
                 <h3 className="font-semibold text-gray-900 mb-2">Documentation</h3>
                 <p className="text-gray-600 text-sm mb-4">Detailed privacy resources</p>
-                <button className="text-blue-600 font-medium">View Privacy Docs</button>
+                <button
+                  onClick={() => navigate('/documentation')}
+                  className="text-blue-600 font-medium hover:text-blue-700 transition-colors"
+                >
+                  View Privacy Docs
+                </button>
               </div>
             </div>
           </div>
@@ -380,11 +403,17 @@ export const Privacy: React.FC = () => {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="px-8 py-4 bg-white text-blue-600 font-semibold rounded-lg text-lg hover:bg-gray-100 transition-colors flex items-center gap-2 justify-center">
+            <button
+              onClick={() => navigate('/register')}
+              className="px-8 py-4 bg-white text-blue-600 font-semibold rounded-lg text-lg hover:bg-gray-100 transition-colors flex items-center gap-2 justify-center"
+            >
               <Shield className="w-5 h-5" />
               Start Secure Trial
             </button>
-            <button className="px-8 py-4 border-2 border-white/30 text-white font-semibold rounded-lg text-lg hover:bg-white/10 transition-colors flex items-center gap-2 justify-center">
+            <button
+              onClick={() => navigate('/documentation')}
+              className="px-8 py-4 border-2 border-white/30 text-white font-semibold rounded-lg text-lg hover:bg-white/10 transition-colors flex items-center gap-2 justify-center"
+            >
               <FileText className="w-5 h-5" />
               Download Privacy Guide
             </button>

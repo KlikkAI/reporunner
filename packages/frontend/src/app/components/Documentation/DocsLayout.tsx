@@ -9,8 +9,8 @@ import { ChevronRight, Edit, Home, Menu, X } from 'lucide-react';
 import type React from 'react';
 import { useState } from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
-import { Footer } from '../Landing/Footer';
-import { Header } from '../Landing/Header';
+import { Footer } from '../Integrations/Landing/Footer';
+import { Header } from '../Integrations/Landing/Header';
 import { DocsSidebar } from './DocsSidebar';
 
 export const DocsLayout: React.FC = () => {

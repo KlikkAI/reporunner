@@ -7,8 +7,11 @@
 
 import { Bot, Check, Crown, Star, Workflow, X, Zap } from 'lucide-react';
 import type React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export const ComparisonTable: React.FC = () => {
+  const navigate = useNavigate();
+
   const features = [
     {
       category: 'Core Platform',
@@ -353,7 +356,7 @@ export const ComparisonTable: React.FC = () => {
   };
 
   return (
-    <section className="py-20 bg-white">
+    <section id="comparison" className="py-20 bg-white">
       <div className="container mx-auto px-6">
         {/* Section Header */}
         <div className="text-center mb-16">
@@ -513,7 +516,10 @@ export const ComparisonTable: React.FC = () => {
               See for yourself why enterprises are choosing KlikkFlow for their mission-critical
               workflow automation needs.
             </p>
-            <button className="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-50 transition-colors">
+            <button
+              onClick={() => navigate('/register')}
+              className="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-50 transition-colors"
+            >
               Start Your Free Trial
             </button>
           </div>

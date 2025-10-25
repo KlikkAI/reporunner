@@ -21,8 +21,8 @@ import {
   Zap,
 } from 'lucide-react';
 import type React from 'react';
-import { Footer } from '../components/Landing/Footer';
-import { Header } from '../components/Landing/Header';
+import { Footer } from '../components/Integrations/Landing/Footer';
+import { Header } from '../components/Integrations/Landing/Header';
 
 export const Contact: React.FC = () => {
   // Form state for future form implementation

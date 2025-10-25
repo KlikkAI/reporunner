@@ -9,6 +9,7 @@ import ProtectedRoute from './components/Auth/ProtectedRoute';
 import { DocsLayout } from './components/Documentation';
 import Layout from './components/Layout/Layout';
 import { RouteTransition } from './components/RouteTransition';
+import { ScrollToTop } from './components/ScrollToTop';
 import About from './pages/About';
 import APIReference from './pages/APIReference';
 import Contact from './pages/Contact';
@@ -57,6 +58,7 @@ if (import.meta.env.DEV) {
 function App() {
   return (
     <GlobalErrorBoundary>
+      <ScrollToTop />
       <RouteTransition>
         <Routes>
           {/* Public Routes */}

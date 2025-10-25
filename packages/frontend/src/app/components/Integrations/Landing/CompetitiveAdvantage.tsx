@@ -9,6 +9,13 @@ import { ArrowRight, Brain, Home, Shield } from 'lucide-react';
 import type React from 'react';
 
 export const CompetitiveAdvantage: React.FC = () => {
+  const scrollToComparison = () => {
+    const element = document.getElementById('comparison');
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
   const advantages = [
     {
       icon: Shield,
@@ -130,7 +137,10 @@ export const CompetitiveAdvantage: React.FC = () => {
         <div className="text-center">
           <div className="inline-flex items-center gap-4 bg-gray-50 rounded-full px-6 py-3 border border-gray-200">
             <span className="text-gray-600 font-medium">Ready to see the difference?</span>
-            <button className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2 rounded-full font-medium transition-all hover:scale-105 hover:shadow-lg">
+            <button
+              onClick={scrollToComparison}
+              className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2 rounded-full font-medium transition-all hover:scale-105 hover:shadow-lg"
+            >
               Compare Features
             </button>
           </div>

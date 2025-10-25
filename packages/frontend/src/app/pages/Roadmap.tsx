@@ -25,8 +25,8 @@ import {
 } from 'lucide-react';
 import type React from 'react';
 import { useState } from 'react';
-import { Footer } from '../components/Landing/Footer';
-import { Header } from '../components/Landing/Header';
+import { Footer } from '../components/Integrations/Landing/Footer';
+import { Header } from '../components/Integrations/Landing/Header';
 
 export const Roadmap: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState('all');
@@ -280,11 +280,19 @@ export const Roadmap: React.FC = () => {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-              <button className="px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-lg text-lg hover:scale-105 transition-transform flex items-center gap-2">
+              <button
+                onClick={() =>
+                  window.open('https://github.com/KlikkAI/klikkflow/issues/new', '_blank')
+                }
+                className="px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-lg text-lg hover:scale-105 transition-transform flex items-center gap-2"
+              >
                 <MessageSquare className="w-5 h-5" />
                 Request Feature
               </button>
-              <button className="px-8 py-4 bg-white/10 backdrop-blur-sm text-white font-semibold rounded-lg text-lg border border-white/20 hover:bg-white/20 transition-all flex items-center gap-2">
+              <button
+                onClick={() => window.open('https://github.com/KlikkAI/klikkflow/issues', '_blank')}
+                className="px-8 py-4 bg-white/10 backdrop-blur-sm text-white font-semibold rounded-lg text-lg border border-white/20 hover:bg-white/20 transition-all flex items-center gap-2"
+              >
                 <ExternalLink className="w-5 h-5" />
                 GitHub Issues
               </button>
@@ -492,11 +500,21 @@ export const Roadmap: React.FC = () => {
 
               <div className="text-center">
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                  <button className="px-8 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all flex items-center gap-2 justify-center">
+                  <button
+                    onClick={() =>
+                      window.open('https://github.com/KlikkAI/klikkflow/issues/new', '_blank')
+                    }
+                    className="px-8 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all flex items-center gap-2 justify-center"
+                  >
                     <MessageSquare className="w-5 h-5" />
                     Request Feature
                   </button>
-                  <button className="px-8 py-3 border border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 transition-colors flex items-center gap-2 justify-center">
+                  <button
+                    onClick={() =>
+                      window.open('https://github.com/KlikkAI/klikkflow/discussions', '_blank')
+                    }
+                    className="px-8 py-3 border border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 transition-colors flex items-center gap-2 justify-center"
+                  >
                     <ExternalLink className="w-5 h-5" />
                     Join Discussion
                   </button>
@@ -571,11 +589,19 @@ export const Roadmap: React.FC = () => {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="px-8 py-4 bg-white text-blue-600 font-semibold rounded-lg text-lg hover:bg-gray-100 transition-colors flex items-center gap-2 justify-center">
+            <button
+              onClick={() =>
+                window.open('https://github.com/KlikkAI/klikkflow/discussions', '_blank')
+              }
+              className="px-8 py-4 bg-white text-blue-600 font-semibold rounded-lg text-lg hover:bg-gray-100 transition-colors flex items-center gap-2 justify-center"
+            >
               <MessageSquare className="w-5 h-5" />
               Join Community
             </button>
-            <button className="px-8 py-4 border-2 border-white/30 text-white font-semibold rounded-lg text-lg hover:bg-white/10 transition-colors flex items-center gap-2 justify-center">
+            <button
+              onClick={() => window.open('https://github.com/KlikkAI/klikkflow', '_blank')}
+              className="px-8 py-4 border-2 border-white/30 text-white font-semibold rounded-lg text-lg hover:bg-white/10 transition-colors flex items-center gap-2 justify-center"
+            >
               <ExternalLink className="w-5 h-5" />
               Follow on GitHub
             </button>
