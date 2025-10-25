@@ -20,14 +20,57 @@ import {
   ApiResponseSchema,
   AuthTokensApiResponseSchema,
   EmailVerificationResponseSchema,
-  LoginApiResponseSchema,
   LogoutResponseSchema,
   PasswordResetResponseSchema,
   SessionInfoApiResponseSchema,
 } from '../schemas';
 import { configService } from '../services/ConfigService';
-import { ApiErrorHandler } from '../utils/apiErrorHandler';
 import { ApiClientError, apiClient } from './ApiClient';
+
+/**
+ * Backend response structures (includes extra fields from MongoDB)
+ */
+interface BackendUserData {
+  _id?: string;
+  id: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  role: string;
+  fullName?: string;
+  lastLogin?: string;
+  avatar?: string;
+  timezone?: string;
+  preferences?: unknown;
+  createdAt?: string;
+  updatedAt?: string;
+  lastLoginAt?: string;
+  isActive?: boolean;
+  isEmailVerified?: boolean;
+  __v?: number;
+  failedLoginAttempts?: number;
+  // Allow any other fields from backend
+  [key: string]: unknown;
+}
+
+interface BackendAuthResponse {
+  success: boolean;
+  message?: string;
+  data: {
+    user: BackendUserData;
+    token: string;
+    refreshToken: string;
+    permissions?: string[];
+    sessionId?: string;
+  };
+}
+
+interface BackendProfileResponse {
+  success: boolean;
+  data: {
+    user: BackendUserData;
+  };
+}
 
 /**
  * Type-safe Authentication API Service
@@ -43,7 +86,7 @@ export class AuthApiService {
   /**
    * Transform user data from backend response to UserProfile
    */
-  private transformUserProfile(userData: any): UserProfile {
+  private transformUserProfile(userData: BackendUserData): UserProfile {
     return {
       id: userData.id,
       email: userData.email,
@@ -70,33 +113,40 @@ export class AuthApiService {
    * Authenticate user with email and password
    */
   async login(credentials: LoginCredentials): Promise<LoginResponse> {
-    const result = await ApiErrorHandler.withErrorHandling(
-      async () => {
-        const response: any = await apiClient.post(
-          '/auth/login',
-          credentials,
-          LoginApiResponseSchema as any
-        );
+    try {
+      // Use raw API call to bypass strict schema validation
+      // Backend returns nested { success, data: { user, token, refreshToken } }
+      const response = await apiClient.raw({
+        method: 'POST',
+        url: '/auth/login',
+        data: credentials,
+      });
 
-        // Store tokens in localStorage
-        if (response.token) {
-          localStorage.setItem(configService.get('auth').tokenKey, response.token);
-        }
-        if (response.refreshToken) {
-          localStorage.setItem(configService.get('auth').refreshTokenKey, response.refreshToken);
-        }
+      // Extract data from nested response structure
+      const responseData = response.data as BackendAuthResponse;
+      const loginData = responseData.data || responseData;
 
-        return response;
-      },
-      'AuthApiService.login',
-      { showToast: true }
-    );
+      // Store tokens in localStorage
+      if (loginData.token) {
+        localStorage.setItem(configService.get('auth').tokenKey, loginData.token);
+      }
+      if (loginData.refreshToken) {
+        localStorage.setItem(configService.get('auth').refreshTokenKey, loginData.refreshToken);
+      }
 
-    if (!result.success) {
-      throw new ApiClientError(result.error.message, result.error.statusCode || 0, 'LOGIN_ERROR');
+      // Transform user data to match UserProfile interface
+      const transformedUser = this.transformUserProfile(loginData.user);
+
+      return {
+        user: transformedUser,
+        token: loginData.token,
+        refreshToken: loginData.refreshToken,
+        permissions: loginData.permissions || [],
+        sessionId: loginData.sessionId,
+      };
+    } catch (error) {
+      throw new ApiClientError('Login failed', 0, 'LOGIN_ERROR', error);
     }
-
-    return result.data as LoginResponse;
   }
 
   /**
@@ -113,7 +163,7 @@ export class AuthApiService {
       });
 
       // Extract data from nested response structure
-      const responseData = response.data as any;
+      const responseData = response.data as BackendAuthResponse;
       const loginData = responseData.data || responseData;
 
       // Store tokens in localStorage
@@ -144,12 +194,16 @@ export class AuthApiService {
    */
   async logout(): Promise<{ message: string; sessionId: string }> {
     try {
-      const response = await apiClient.post('/auth/logout', {}, LogoutResponseSchema as any);
+      const response = await apiClient.post<{ message: string; sessionId: string }>(
+        '/auth/logout',
+        {},
+        LogoutResponseSchema
+      );
 
       // Clear stored tokens
       this.clearAuthData();
 
-      return response as { message: string; sessionId: string };
+      return response;
     } catch (error) {
       // Even if logout fails on server, clear local tokens
       this.clearAuthData();
@@ -168,10 +222,10 @@ export class AuthApiService {
         throw new ApiClientError('No refresh token available', 401, 'NO_REFRESH_TOKEN');
       }
 
-      const response: any = await apiClient.post(
+      const response = await apiClient.post<AuthTokens>(
         '/auth/refresh',
         { refreshToken: token },
-        AuthTokensApiResponseSchema as any
+        AuthTokensApiResponseSchema
       );
 
       // Update stored tokens
@@ -180,7 +234,7 @@ export class AuthApiService {
         localStorage.setItem(configService.get('auth').refreshTokenKey, response.refreshToken);
       }
 
-      return response as AuthTokens;
+      return response;
     } catch (error) {
       // If refresh fails, clear tokens and throw error
       this.clearAuthData();
@@ -198,10 +252,10 @@ export class AuthApiService {
    */
   async requestPasswordReset(email: string): Promise<{ message: string; email: string }> {
     try {
-      return await apiClient.post(
+      return await apiClient.post<{ message: string; email: string }>(
         '/auth/password/reset-request',
         { email },
-        PasswordResetResponseSchema as any
+        PasswordResetResponseSchema
       );
     } catch (error) {
       throw new ApiClientError(
@@ -218,10 +272,10 @@ export class AuthApiService {
    */
   async confirmPasswordReset(resetData: PasswordResetConfirm): Promise<{ message: string }> {
     try {
-      return await apiClient.post(
+      return await apiClient.post<{ message: string }>(
         '/auth/password/reset-confirm',
         resetData,
-        ApiResponseSchema(z.object({ message: z.string() })) as any
+        ApiResponseSchema(z.object({ message: z.string() }))
       );
     } catch (error) {
       throw new ApiClientError(
@@ -238,10 +292,10 @@ export class AuthApiService {
    */
   async changePassword(passwordData: ChangePasswordRequest): Promise<{ message: string }> {
     try {
-      return await apiClient.post(
+      return await apiClient.post<{ message: string }>(
         '/auth/password/change',
         passwordData,
-        ApiResponseSchema(z.object({ message: z.string() })) as any
+        ApiResponseSchema(z.object({ message: z.string() }))
       );
     } catch (error) {
       throw new ApiClientError('Password change failed', 0, 'PASSWORD_CHANGE_ERROR', error);
@@ -265,8 +319,9 @@ export class AuthApiService {
 
       // Backend returns: { success, data: { user: UserProfile } }
       // Extract user from nested structure
-      const responseData = response.data as any;
-      const userData = responseData.data?.user || responseData.user;
+      const responseData = response.data as BackendProfileResponse;
+      const userData =
+        responseData.data?.user || (responseData as unknown as { user: BackendUserData }).user;
 
       if (!userData) {
         throw new ApiClientError('Invalid profile response structure', 422, 'INVALID_RESPONSE');
@@ -293,8 +348,9 @@ export class AuthApiService {
 
       // Backend returns: { success, data: { user: UserProfile } }
       // Extract user from nested structure
-      const responseData = response.data as any;
-      const userData = responseData.data?.user || responseData.user;
+      const responseData = response.data as BackendProfileResponse;
+      const userData =
+        responseData.data?.user || (responseData as unknown as { user: BackendUserData }).user;
 
       if (!userData) {
         throw new ApiClientError('Invalid profile response structure', 422, 'INVALID_RESPONSE');
@@ -342,10 +398,10 @@ export class AuthApiService {
     emailSent: boolean;
   }> {
     try {
-      return await apiClient.post(
+      return await apiClient.post<{ message: string; emailSent: boolean }>(
         '/auth/email/verify-request',
         {},
-        EmailVerificationResponseSchema as any
+        EmailVerificationResponseSchema
       );
     } catch (error) {
       throw new ApiClientError(
@@ -362,10 +418,10 @@ export class AuthApiService {
    */
   async confirmEmailVerification(token: string): Promise<{ message: string }> {
     try {
-      return await apiClient.post(
+      return await apiClient.post<{ message: string }>(
         '/auth/email/verify-confirm',
         { token },
-        ApiResponseSchema(z.object({ message: z.string() })) as any
+        ApiResponseSchema(z.object({ message: z.string() }))
       );
     } catch (error) {
       throw new ApiClientError(
@@ -386,7 +442,7 @@ export class AuthApiService {
    */
   async getSessionInfo(): Promise<SessionInfo> {
     try {
-      return await apiClient.get('/auth/session', SessionInfoApiResponseSchema as any);
+      return await apiClient.get<SessionInfo>('/auth/session', SessionInfoApiResponseSchema);
     } catch (error) {
       throw new ApiClientError(
         'Failed to fetch session information',
@@ -402,9 +458,9 @@ export class AuthApiService {
    */
   async getActiveSessions(): Promise<SessionInfo[]> {
     try {
-      return await apiClient.get(
+      return await apiClient.get<SessionInfo[]>(
         '/auth/sessions',
-        ApiResponseSchema(z.array(z.any())) as any // Use any for now to avoid circular refs
+        ApiResponseSchema(z.array(z.unknown()))
       );
     } catch (error) {
       throw new ApiClientError(
@@ -421,9 +477,9 @@ export class AuthApiService {
    */
   async revokeSession(sessionId: string): Promise<{ message: string }> {
     try {
-      return await apiClient.delete(
+      return await apiClient.delete<{ message: string }>(
         `/auth/sessions/${sessionId}`,
-        ApiResponseSchema(z.object({ message: z.string() })) as any
+        ApiResponseSchema(z.object({ message: z.string() }))
       );
     } catch (error) {
       throw new ApiClientError(
@@ -444,7 +500,7 @@ export class AuthApiService {
    */
   async getApiKeys(): Promise<ApiKey[]> {
     try {
-      return await apiClient.get('/auth/api-keys', ApiKeyListApiResponseSchema as any);
+      return await apiClient.get<ApiKey[]>('/auth/api-keys', ApiKeyListApiResponseSchema);
     } catch (error) {
       throw new ApiClientError('Failed to fetch API keys', 0, 'API_KEYS_FETCH_ERROR', error);
     }
@@ -455,7 +511,7 @@ export class AuthApiService {
    */
   async createApiKey(keyData: CreateApiKeyRequest): Promise<ApiKey> {
     try {
-      return await apiClient.post('/auth/api-keys', keyData, ApiKeyApiResponseSchema as any);
+      return await apiClient.post<ApiKey>('/auth/api-keys', keyData, ApiKeyApiResponseSchema);
     } catch (error) {
       throw new ApiClientError('Failed to create API key', 0, 'API_KEY_CREATE_ERROR', error);
     }
@@ -466,9 +522,9 @@ export class AuthApiService {
    */
   async revokeApiKey(keyId: string): Promise<{ message: string }> {
     try {
-      return await apiClient.delete(
+      return await apiClient.delete<{ message: string }>(
         `/auth/api-keys/${keyId}`,
-        ApiResponseSchema(z.object({ message: z.string() })) as any
+        ApiResponseSchema(z.object({ message: z.string() }))
       );
     } catch (error) {
       throw new ApiClientError(
@@ -493,7 +549,11 @@ export class AuthApiService {
     backupCodes: string[];
   }> {
     try {
-      return (await apiClient.post(
+      return await apiClient.post<{
+        secret?: string;
+        qrCode?: string;
+        backupCodes: string[];
+      }>(
         '/auth/mfa/setup',
         mfaData,
         ApiResponseSchema(
@@ -502,12 +562,8 @@ export class AuthApiService {
             qrCode: z.string().optional(),
             backupCodes: z.array(z.string()),
           })
-        ) as any
-      )) as {
-        secret?: string | undefined;
-        qrCode?: string | undefined;
-        backupCodes: string[];
-      };
+        )
+      );
     } catch (error) {
       throw new ApiClientError('MFA setup failed', 0, 'MFA_SETUP_ERROR', error);
     }
@@ -518,7 +574,7 @@ export class AuthApiService {
    */
   async verifyMfa(mfaData: MfaVerifyRequest): Promise<{ message: string; verified: boolean }> {
     try {
-      return await apiClient.post(
+      return await apiClient.post<{ message: string; verified: boolean }>(
         '/auth/mfa/verify',
         mfaData,
         ApiResponseSchema(
@@ -526,7 +582,7 @@ export class AuthApiService {
             message: z.string(),
             verified: z.boolean(),
           })
-        ) as any
+        )
       );
     } catch (error) {
       throw new ApiClientError('MFA verification failed', 0, 'MFA_VERIFY_ERROR', error);
@@ -538,10 +594,10 @@ export class AuthApiService {
    */
   async disableMfa(password: string): Promise<{ message: string }> {
     try {
-      return await apiClient.post(
+      return await apiClient.post<{ message: string }>(
         '/auth/mfa/disable',
         { password },
-        ApiResponseSchema(z.object({ message: z.string() })) as any
+        ApiResponseSchema(z.object({ message: z.string() }))
       );
     } catch (error) {
       throw new ApiClientError('Failed to disable MFA', 0, 'MFA_DISABLE_ERROR', error);
