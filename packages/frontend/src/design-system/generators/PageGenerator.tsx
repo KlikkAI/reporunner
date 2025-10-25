@@ -199,8 +199,8 @@ export class PageGenerator {
    * Render a page section based on its configuration
    */
   private static renderSection(section: PageSectionConfig): React.ReactElement {
+    const sectionKey = section.id;
     const sectionProps = {
-      key: section.id,
       title: section.title,
       subtitle: section.subtitle,
       actions: section.actions,
@@ -211,7 +211,7 @@ export class PageGenerator {
     switch (section.type) {
       case 'stats':
         return (
-          <PageSection {...sectionProps}>
+          <PageSection key={sectionKey} {...sectionProps}>
             <ResponsiveGrid columns={{ xs: 1, sm: 2, lg: 4 }} gap="1.5rem">
               {section.data?.map((stat: Statistic, index: number) => (
                 <StatsCard
@@ -228,7 +228,7 @@ export class PageGenerator {
 
       case 'form':
         return (
-          <PageSection {...sectionProps}>
+          <PageSection key={sectionKey} {...sectionProps}>
             <UniversalForm
               properties={section.config?.properties || []}
               initialValues={section.config?.initialValues}
@@ -240,11 +240,15 @@ export class PageGenerator {
         );
 
       case 'content':
-        return <PageSection {...sectionProps}>{section.data}</PageSection>;
+        return (
+          <PageSection key={sectionKey} {...sectionProps}>
+            {section.data}
+          </PageSection>
+        );
 
       case 'list':
         return (
-          <PageSection {...sectionProps}>
+          <PageSection key={sectionKey} {...sectionProps}>
             {section.data?.length > 0 ? (
               <div className="space-y-4">
                 {section.data.map(
@@ -264,7 +268,7 @@ export class PageGenerator {
 
       case 'grid':
         return (
-          <PageSection {...sectionProps}>
+          <PageSection key={sectionKey} {...sectionProps}>
             <ResponsiveGrid
               columns={section.config?.columns || { xs: 1, sm: 2, lg: 3 }}
               gap={section.config?.gap || '1.5rem'}
@@ -281,7 +285,7 @@ export class PageGenerator {
 
       case 'table':
         return (
-          <PageSection {...sectionProps}>
+          <PageSection key={sectionKey} {...sectionProps}>
             {/* Table implementation would go here */}
             <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
               <div className="p-6">
@@ -292,7 +296,11 @@ export class PageGenerator {
         );
 
       default:
-        return <PageSection {...sectionProps}>{section.data}</PageSection>;
+        return (
+          <PageSection key={sectionKey} {...sectionProps}>
+            {section.data}
+          </PageSection>
+        );
     }
   }
 }

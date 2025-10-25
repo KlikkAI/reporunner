@@ -380,7 +380,7 @@ export const ResponsiveLayout: React.FC<ResponsiveLayoutProps> = ({ children }) 
           <FloatButton
             icon={<AppstoreOutlined />}
             tooltip="New Workflow"
-            onClick={() => navigate('/workflows/new')}
+            onClick={() => navigate('/app/workflow')}
           />
           <FloatButton
             icon={<QuestionCircleOutlined />}

@@ -4,6 +4,9 @@ export interface TokenPayload {
   userId: string;
   email: string;
   role: string;
+  permissions: string[];
+  organizationId?: string;
+  isEmailVerified: boolean;
   type: 'access' | 'refresh';
 }
 
@@ -20,11 +23,21 @@ export class JWTService {
   /**
    * Generate access token
    */
-  static generateAccessToken(userId: string, email: string, role: string): string {
+  static generateAccessToken(
+    userId: string,
+    email: string,
+    role: string,
+    permissions: string[],
+    isEmailVerified: boolean,
+    organizationId?: string
+  ): string {
     const payload: TokenPayload = {
       userId,
       email,
       role,
+      permissions,
+      organizationId,
+      isEmailVerified,
       type: 'access',
     };
 
@@ -36,11 +49,21 @@ export class JWTService {
   /**
    * Generate refresh token
    */
-  static generateRefreshToken(userId: string, email: string, role: string): string {
+  static generateRefreshToken(
+    userId: string,
+    email: string,
+    role: string,
+    permissions: string[],
+    isEmailVerified: boolean,
+    organizationId?: string
+  ): string {
     const payload: TokenPayload = {
       userId,
       email,
       role,
+      permissions,
+      organizationId,
+      isEmailVerified,
       type: 'refresh',
     };
 

@@ -36,6 +36,7 @@ import {
 import dayjs from 'dayjs';
 import type React from 'react';
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useScreenReaderAnnouncements } from '../components/Accessibility';
 import { AnalyticsDashboard } from '../components/Analytics';
 import { useResponsive } from '../components/Layout';
@@ -86,6 +87,7 @@ export const EnhancedDashboard: React.FC = () => {
   ]);
 
   // Hooks
+  const navigate = useNavigate();
   const { isMobile } = useResponsive();
   // useAccessibility hook available if needed
   const { announceNavigation, announceSuccess } = useScreenReaderAnnouncements();
@@ -195,7 +197,7 @@ export const EnhancedDashboard: React.FC = () => {
         title: 'Create Workflow',
         description: 'Start building a new automation',
         icon: <PlusOutlined />,
-        action: () => {},
+        action: () => navigate('/app/workflow'),
         color: '#1890ff',
       },
       {

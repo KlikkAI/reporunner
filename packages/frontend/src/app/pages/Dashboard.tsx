@@ -75,7 +75,7 @@ export const Dashboard: React.FC = () => {
       label: 'Create Workflow',
       type: 'primary',
       icon: <PlusOutlined />,
-      onClick: () => navigate('/workflows/create'),
+      onClick: () => navigate('/app/workflow'),
     },
   ];
 
@@ -97,7 +97,7 @@ export const Dashboard: React.FC = () => {
             actions: ComponentGenerator.generateActionBar([
               {
                 label: 'Edit',
-                onClick: () => navigate(`/workflows/${workflow.id}/edit`),
+                onClick: () => navigate(`/app/workflow/${workflow.id}`),
               },
               {
                 label: 'Run',
@@ -114,7 +114,7 @@ export const Dashboard: React.FC = () => {
         {
           label: 'View All',
           type: 'link',
-          onClick: () => navigate('/workflows'),
+          onClick: () => navigate('/app/dashboard'),
         },
       ],
     },

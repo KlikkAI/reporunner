@@ -64,12 +64,18 @@ export class AuthService {
       const accessToken = JWTService.generateAccessToken(
         user._id.toString(),
         user.email,
-        user.role
+        user.role,
+        user.permissions,
+        user.isEmailVerified,
+        user.organizationId
       );
       const refreshToken = JWTService.generateRefreshToken(
         user._id.toString(),
         user.email,
-        user.role
+        user.role,
+        user.permissions,
+        user.isEmailVerified,
+        user.organizationId
       );
 
       // Store refresh token
@@ -87,6 +93,9 @@ export class AuthService {
       if (error instanceof AppError) {
         throw error;
       }
+      console.error('=== FULL REGISTRATION ERROR ===');
+      console.error(error);
+      console.error('=== END ERROR ===');
       logger.error('Registration error:', error);
       throw new AppError('Registration failed', 500);
     }
@@ -135,12 +144,18 @@ export class AuthService {
       const accessToken = JWTService.generateAccessToken(
         user._id.toString(),
         user.email,
-        user.role
+        user.role,
+        user.permissions,
+        user.isEmailVerified,
+        user.organizationId
       );
       const refreshToken = JWTService.generateRefreshToken(
         user._id.toString(),
         user.email,
-        user.role
+        user.role,
+        user.permissions,
+        user.isEmailVerified,
+        user.organizationId
       );
 
       // Store refresh token and update last login
@@ -194,12 +209,18 @@ export class AuthService {
       const newAccessToken = JWTService.generateAccessToken(
         user._id.toString(),
         user.email,
-        user.role
+        user.role,
+        user.permissions,
+        user.isEmailVerified,
+        user.organizationId
       );
       const newRefreshToken = JWTService.generateRefreshToken(
         user._id.toString(),
         user.email,
-        user.role
+        user.role,
+        user.permissions,
+        user.isEmailVerified,
+        user.organizationId
       );
 
       // Remove old refresh token and add new one

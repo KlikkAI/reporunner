@@ -110,7 +110,7 @@ export const useLeanWorkflowStore = create<LeanWorkflowState>()(
 
           // Navigate to the workflow editor if navigate function is provided
           if (navigate && createdWorkflow.id) {
-            navigate(`/workflows/${createdWorkflow.id}`);
+            navigate(`/app/workflow/${createdWorkflow.id}`);
           }
         } catch (error) {
           const message = error instanceof Error ? error.message : 'Failed to create workflow';
